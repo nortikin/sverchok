@@ -54,7 +54,7 @@ class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         mult = self.inputs['multiplier'].sv_get()
 
         if self.outputs[0].is_linked:
-            mov = sv_recursive_transformations(self.moving,vers,vecs,mult,self.separate)
+            mov = sv_recursive_transformations(self.moving,vers,vecs,mult,self.separate,1)
             self.outputs['vertices'].sv_set(mov)
 
     def moving(self, v, c, m):

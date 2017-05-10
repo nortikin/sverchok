@@ -26,7 +26,8 @@ def sv_recursive_transformations(*args):
     ''' main function takes 5 args 
     function, verts1, verts2, multiplyer, separate
     resulting levels arg to recursion'''
-    f,v1,v2,m,s = args
+    print('arguments recursive',len(args))
+    f,v1,v2,m,s,lev = args
     v1,v2,m = match_long_repeat([v1,v2,m])
     level1 = levelsOflist(v1)
     level2 = levelsOflist(v2)
@@ -45,14 +46,13 @@ def sv_recursion(function, verts1, verts2, multiplyer, separate, level):
     multiplyer - as named
     separate - boolean to group vertices
     level - depth of verts1,2 '''
-    
     if level:
         out = []
         outa = out.append
         oute = out.extend
         for v1,v2,m in zip(verts1, verts2, multiplyer):
             v1,v2,m = match_long_repeat(v1,v2,m)
-            out_ = sv_recursion(function, v1,v2,m,separate, level-1)
+            out_ = sv_recursion(function, v1,v2,m,separate, level)
             if level == 1 and separate:
                 oute(out_)
             else:

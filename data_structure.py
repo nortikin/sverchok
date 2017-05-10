@@ -198,10 +198,13 @@ def dataSpoil(data, dept):
     """from standart data to initial levels: to nested lists
      container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
     """
-    if dept:
-        out = []
+    out = []
+    if dept and type(data) not in (float,int):
         for d in data:
             out.append([dataSpoil(d, dept-1)])
+    elif dept and type(data) in (float, int):
+        for d in data:
+            out.append(dataSpoil(d,dept-1))
     else:
         out = data
     return out
