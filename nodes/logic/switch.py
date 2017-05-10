@@ -20,7 +20,7 @@ import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import get_other_socket, updateNode
+from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 
 
 class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,9 +30,15 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "selected_mode", expand=True)
+        row = layout.row()
+        split = row.split(0.6)
+        split.row().prop(self, "selected_mode", expand=True)
         if self.selected_mode == 'single':
             layout.prop(self, "switch_count")
+
+    def wrapped_updateNode(self, context):
+        self.switch_count = 1
+        self.process()
     
     def change_count(self, context):
         in_count = len(self.inputs)
@@ -50,17 +56,14 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.remove(self.inputs[n])
                 self.outputs.remove(self.outputs[-1])
         
-    switch_state = IntProperty(
-        name="state", min=0, max=1, default=1, update=updateNode)
-    
-    switch_count = IntProperty(
-        name="count", min=1, max=10, default=1, update=change_count)
+    switch_state = IntProperty(name="state", min=0, max=1, default=1, update=updateNode)
+    switch_count = IntProperty(name="count", min=1, max=10, default=1, update=change_count)
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["single", "multi"])]
 
     selected_mode = bpy.props.EnumProperty(
         description="pick a different processing mode", default="single",
-        items=mode_options, update=updateNode)
+        items=mode_options, update=wrapped_updateNode)
         
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "State").prop_name = 'switch_state'
@@ -84,6 +87,7 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                     self.outputs.new(other.bl_idname, name)
                     self.outputs.move(len(self.outputs)-1, i-1) 
                 count = i
+
     
     def process(self):
         if self.selected_mode == 'single':
@@ -105,8 +109,15 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                     out_s.sv_set(data)
         else:
             # this is an entirely different approach to switching
-            ...
-            
+            state_lists = self.inputs[0].sv_get()
+            A = self.inputs[1].sv_get()
+            B = self.inputs[2].sv_get()
+
+            data = []
+            for params in zip(*match_long_repeat([state_lists, A, B])):
+                data.append([[a, b][bool(state)] for state, a, b in zip(*match_long_repeat(params))])
+            self.outputs[0].sv_set(data)
+
         
 def register():
     bpy.utils.register_class(SvSwitchNode)
