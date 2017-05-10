@@ -113,6 +113,14 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             A = self.inputs[1].sv_get()
             B = self.inputs[2].sv_get()
 
+            # do this only for objects...
+            if len(A) > 0 and len(B) > 0:
+                if isinstance(A[0], (list, tuple)) and len(A[0]) > 0 and isinstance(A[0][0], bpy.types.Object):
+                    pass
+                elif isinstance(A[0], bpy.types.Object):
+                    A = [A]
+                    B = [B]
+
             data = []
             for params in zip(*match_long_repeat([state_lists, A, B])):
                 data.append([[a, b][bool(state)] for state, a, b in zip(*match_long_repeat(params))])
