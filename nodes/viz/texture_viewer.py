@@ -369,7 +369,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             pixels = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
             width, height = self.texture_width_height
 
-            transfer_to_image(np.resize(pixels, self.calculate_total_size()), self.texture_name, width, height, mode)
+            resized_np_array = np.resize(pixels, self.calculate_total_size())
+            transfer_to_image(resized_np_array, self.texture_name, width, height, mode)
 
         if self.activate:
             texture = self.get_buffer()
