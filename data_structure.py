@@ -74,8 +74,8 @@ def repeat_last(lst):
     """
     for x in lst:
         yield x
-    while True:
-        yield lst[-1]
+        while True:
+            yield lst[-1]
 
 
 def match_long_repeat(lsts):
