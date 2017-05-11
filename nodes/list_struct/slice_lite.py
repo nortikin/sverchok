@@ -23,6 +23,15 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets, repeat_last, match_long_repeat
 
 
+def list_split(sublist, num_slices):
+    ...
+
+
+def list_slices(data, slice_sizes):
+    ...
+
+
+
 class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ls slice incoming data /// yep'''
     bl_idname = 'SvListSliceLiteNode'
@@ -62,22 +71,19 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
         if self.end_early:
             return
 
-        # do the work
+        # do the work, but if num_slices == 0, pass data thru unchanged
+        data = self.inputs[0].sv_get()
+        out_data = data
+
         if not self.inputs[1].is_linked:
             num_slices = self.num_slices
-            if num_slices == 0:
-                # let it through unchanged
-                self.outputs[0].sv_set(self.inputs[0].sv_get())
-                return
-            else:
-                # try to divide the incoming sublists, by n times, and output remainder
-                self.num_slices
-
+            if num_slices > 0:
+                # divide the incoming sublists, by n times, and additionally output remainder / degenerate
+                out_data = [list_split(sublist, num_slices) for sublist in data]
         else:
-            ...
+            out_data = list_slices(data, self.inputs[1].sv_get)
 
-
-
+        self.outputs[0].sv_set(out_data)
 
 
 
