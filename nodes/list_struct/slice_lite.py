@@ -37,7 +37,7 @@ def list_split(sublist, num_slices):
 
 def list_slices(data, slice_sizes):
     out_data = []
-    for slices, sub_list in zip(data, slice_sizes):
+    for sub_list, slices in zip(data, slice_sizes):
         out_data.append(...)
     return out_data
 
