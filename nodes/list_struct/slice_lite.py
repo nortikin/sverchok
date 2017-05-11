@@ -62,6 +62,7 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
         if self.end_early:
             return
 
+        # do the work
         if not self.inputs[1].is_linked:
             num_slices = self.num_slices
             if num_slices == 0:
@@ -69,11 +70,12 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs[0].sv_set(self.inputs[0].sv_get())
                 return
             else:
+                # try to divide the incoming sublists, by n times, and output remainder
                 self.num_slices
+
         else:
             ...
 
-        # do the work
 
 
 
