@@ -22,9 +22,6 @@ from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets, repeat_last, match_long_repeat
 
-# import mathutils
-# from mathutils import Vector
-# from bpy.props import FloatProperty, BoolProperty
 
 class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ls slice incoming data /// yep'''
@@ -65,9 +62,18 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
         if self.end_early:
             return
 
-        # do the work
-        ...
+        if not self.inputs[1].is_linked:
+            num_slices = self.num_slices
+            if num_slices == 0:
+                # let it through unchanged
+                self.outputs[0].sv_set(self.inputs[0].sv_get())
+                return
+            else:
+                self.num_slices
+        else:
+            ...
 
+        # do the work
 
 
 
