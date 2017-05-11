@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 
-import itertools
+from itertools import zip_longest
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets, repeat_last, match_long_repeat
 
@@ -32,8 +32,6 @@ def grouper(iterable, n, fillvalue=None):
 
 
 def list_split(sublist, num_slices):
-    #for i in range(0, len(sublist), num_slices):
-    #    yield l[i:i + num_slices]
     return grouper(sublist, num_slices, fillvalue=sublist[-1])
 
 
@@ -41,7 +39,7 @@ def list_slices(data, slice_sizes):
     out_data = []
     for slices, sub_list in zip(data, slice_sizes):
         out_data.append(...)
-
+    return out_data
 
 
 class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
@@ -71,7 +69,6 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def end_early(self):
-        # end early
         if self.inputs[0].is_linked:
             self.change_socket_if_needed()
             if not self.outputs[0].is_linked:
@@ -93,7 +90,8 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
                 # divide the incoming sublists, by n times, and additionally output remainder / degenerate
                 out_data = [list_split(sublist, num_slices) for sublist in data]
         else:
-            out_data = list_slices(data, self.inputs[1].sv_get)
+            slice_data = self.inputs[1].sv_get()
+            out_data = list_slices(data, slice_data)
 
         self.outputs[0].sv_set(out_data)
 
