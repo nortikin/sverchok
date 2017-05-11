@@ -19,16 +19,28 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 
+import itertools
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets, repeat_last, match_long_repeat
 
+# from python 3.5 docs https://docs.python.org/3.5/library/itertools.html recipes
+def grouper(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return zip_longest(*args, fillvalue=fillvalue)
+
 
 def list_split(sublist, num_slices):
-    ...
+    #for i in range(0, len(sublist), num_slices):
+    #    yield l[i:i + num_slices]
+    return grouper(sublist, num_slices, fillvalue=sublist[-1])
 
 
 def list_slices(data, slice_sizes):
-    ...
+    out_data = []
+    for slices, sub_list in zip(data, slice_sizes):
+        out_data.append(...)
 
 
 
