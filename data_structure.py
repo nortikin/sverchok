@@ -54,14 +54,11 @@ def handle_read(handle):
 
 def handle_write(handle, prop):
     handle_delete(handle)
-
     temp_handle[handle] = {"prop" : prop}
 
 def handle_check(handle, prop):
-    if handle in handle_check and \
-            prop == handle_check[handle]['prop']:
-        return True
-    return False
+    return bool(handle in handle_check and
+                prop == handle_check[handle]['prop'])
 
 
 #####################################################
@@ -75,13 +72,10 @@ def repeat_last(lst):
     and then keep repeating the last element,
     use with terminating input
     """
-    i = -1
-    while lst:
-        i += 1
-        if len(lst) > i:
-            yield lst[i]
-        else:
-            yield lst[-1]
+    for x in lst:
+        yield x
+    while True:
+        yield lst[-1]
 
 
 def match_long_repeat(lsts):
