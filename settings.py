@@ -27,6 +27,14 @@ class SverchokPreferences(AddonPreferences):
         if self.auto_apply_theme:
             color_def.apply_theme()
 
+    tab_modes = [(k, k, '', i) for i, k in enumerate(["General", "Node Defaults", "Theme"])]
+    
+    selected_tab = bpy.props.EnumProperty(
+        items=tab_modes,
+        description="pick viewing mode",
+        default="General"
+    )
+
     #  debugish...
     show_debug = BoolProperty(
         name="Print update timings",
@@ -145,67 +153,83 @@ class SverchokPreferences(AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-        # row = layout.split(percentage=0.33)
-        row = layout
+       
+        layout.row().prop(self, 'selected_tab', expand=True)
 
-        col = row.column(align=True)
-        col.label(text="General:")
-        col.label(text="Frame change handler:")
-        row1 = col.row()
-        row1.prop(self, "frame_change_mode", expand=True)
-        col.prop(self, "show_icons")
-        col.prop(self, "over_sized_buttons")
-        col.prop(self, "enable_live_objin", text='Enable Live Object-In')
-        row_sub1 = col.row().split(0.5)
-        box_sub1 = row_sub1.box()
-        box_sub1_col = box_sub1.column(align=True)
-        box_sub1_col.label('stethoscope mk2 settings')
-        box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
-        box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
 
-        col.separator()
+        if self.selected_tab == "General":
 
-        col.label(text="Sverchok node theme settings")
+            col = layout.row().column()
+            col_split = col.split(0.5)
+            col1 = col_split.column()
+            col1.label(text="UI:")
+            col1.prop(self, "show_icons")
+            col1.prop(self, "over_sized_buttons")
+            col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
 
-        row2 = col.row()
-        row2.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
-        row2.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
+            # debug
+            col2 = col_split.split().column()
+            col2.label(text="Frame change handler:")
+            col2.row().prop(self, "frame_change_mode", expand=True)
 
-        row2.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
+            col2box = col2.box()
+            col2box.label(text="Debug:")
+            col2box.prop(self, "show_debug")
+            col2box.prop(self, "heat_map")
 
-        col1 = col.split(percentage=.5, align=True)
-        col1.prop(self, 'sv_theme')
-        col.separator()
+        if self.selected_tab == "Node Defaults":
 
-        split = col.split(percentage=0.5, align=True)
+            row = layout.row()
+            col = row.column(align=True)
+            row_sub1 = col.row().split(0.5)
+            box_sub1 = row_sub1.box()
+            box_sub1_col = box_sub1.column(align=True)
+            box_sub1_col.label('stethoscope mk2 settings')
+            box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
+            box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
 
-        col1 = split.column()
+        if self.selected_tab == "Theme":
 
-        for name in ['color_viz', 'color_tex', 'color_sce']:
-            r = col1.row()
-            r.prop(self, name)
-        col2 = split.column()
-        for name in ['color_lay', 'color_gen']:
-            r = col2.row()
-            r.prop(self, name)
+            row = layout.row()
+            col = row.column(align=True)
+            row2 = col.row()
+            row2.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
+            row2.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
 
-        # debug
-        col = row.column(align=True)
-        col.label(text="Debug:")
-        col.prop(self, "show_debug")
+            row2.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
 
-        col.label("Error colors")
-        row1 = col.row()
-        row1.prop(self, "exception_color")
-        row1.prop(self, "no_data_color")
+            col1 = col.split(percentage=.5, align=True)
+            col1.prop(self, 'sv_theme')
+            col.separator()
 
-        col.prop(self, "heat_map")
-        row1 = col.row()
-        row1.active = self.heat_map
+            split = col.split(percentage=0.5, align=True)
 
-        row1.prop(self, "heat_map_hot")
-        row1.prop(self, "heat_map_cold")
+            col1 = split.column()
 
+            for name in ['color_viz', 'color_tex', 'color_sce']:
+                r = col1.row()
+                r.prop(self, name)
+
+            col2 = split.column()
+            for name in ['color_lay', 'color_gen']:
+                r = col2.row()
+                r.prop(self, name)
+
+            row1 = col.row()
+            row1.active = self.heat_map
+
+            row1.prop(self, "heat_map_hot")
+            row1.prop(self, "heat_map_cold")
+
+            col.label("Error colors")
+            row1 = col.row()
+            row1.prop(self, "exception_color")
+            row1.prop(self, "no_data_color")
+
+
+        # FOOTER
+
+        row = layout.row()
         col = row.column(align=True)
         col.label(text="Links:")
         row1 = col.row(align=True)
