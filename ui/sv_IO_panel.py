@@ -24,8 +24,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_IO_panel_tools import (
     _EXPORTER_REVISION_,
     get_file_obj_from_zip,
-    find_enumerators,
-    compile_socket, write_json,
+    find_enumerators, write_json,
     has_state_switch_protection,
     create_dict_of_tree, import_tree)
 
