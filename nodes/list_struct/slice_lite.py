@@ -32,13 +32,30 @@ def grouper(iterable, n, fillvalue=None):
 
 
 def list_split(sublist, num_slices):
+    """ a wrapper for grouper function, to make a default last repeat """
     return grouper(sublist, num_slices, fillvalue=sublist[-1])
 
 
-def list_slices(data, slice_sizes):
+def list_slices(node, data, slice_sizes):
+
+    # firs auto extend where possible
+    # ......
+
+    # work
     out_data = []
-    for sub_list, slices in zip(data, slice_sizes):
-        out_data.append(...)
+    for idx, (sublist, sizes) in enumerate(zip(data, slice_sizes)):
+        index = 0
+        sliced = []
+        for size in sizes:
+            if (index + size) < len(sublist):
+                sliced.append(sublist[index:index + size])
+            else:
+                print(node.name, 'is being asked to slice beyond existing sublist boundary, iteration:', idx)
+                break
+            index += size
+
+        out_data.append(sliced)
+
     return out_data
 
 
@@ -91,7 +108,7 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
                 out_data = [list_split(sublist, num_slices) for sublist in data]
         else:
             slice_data = self.inputs[1].sv_get()
-            out_data = list_slices(data, slice_data)
+            out_data = list_slices(self, data, slice_data)
 
         self.outputs[0].sv_set(out_data)
 
