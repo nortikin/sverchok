@@ -193,11 +193,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
+    def wrapped_updateNode_(self, context):
+        self.activate = False
 
     n_id = StringProperty(default='')
     to_image_viewer = BoolProperty(
         name='Pass', description='Transfer pixels to image viewer',
-        default=False, update=updateNode)
+        default=False, update=wrapped_updateNode_)
 
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
@@ -364,13 +366,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         height = 0
 
         if self.to_image_viewer:
+
             mode = self.color_mode
-            self.activate = False
             pixels = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
             width, height = self.texture_width_height
-
             resized_np_array = np.resize(pixels, self.calculate_total_size())
             transfer_to_image(resized_np_array, self.texture_name, width, height, mode)
+
 
         if self.activate:
             texture = self.get_buffer()
