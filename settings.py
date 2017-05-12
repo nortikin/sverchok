@@ -1,6 +1,8 @@
+import os
+
 import bpy
 from bpy.types import AddonPreferences
-from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty
+from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
 
 from sverchok import data_structure
 from sverchok.core import handlers
@@ -150,6 +152,9 @@ class SverchokPreferences(AddonPreferences):
     stethoscope_view_xy_multiplier = FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
 
+    datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+    defaults_location = StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
+
 
     def draw(self, context):
         layout = self.layout
@@ -188,14 +193,19 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
             box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
 
+            col3 = row_sub1.split().column()
+            col3.label('Location of custom defaults')
+            col3.prop(self, 'defaults_location', text='')
+
+
         if self.selected_tab == "Theme":
 
             row = layout.row()
             col = row.column(align=True)
+
             row2 = col.row()
             row2.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
             row2.prop(self, 'apply_theme_on_open', text="Apply theme when opening file")
-
             row2.operator('node.sverchok_apply_theme', text="Apply theme to layouts")
 
             col1 = col.split(percentage=.5, align=True)
@@ -215,16 +225,17 @@ class SverchokPreferences(AddonPreferences):
                 r = col2.row()
                 r.prop(self, name)
 
+            col.label("Error colors")
+            row1 = col.row()
+            row1.prop(self, "exception_color")
+            row1.prop(self, "no_data_color")
+
             row1 = col.row()
             row1.active = self.heat_map
 
             row1.prop(self, "heat_map_hot")
             row1.prop(self, "heat_map_cold")
 
-            col.label("Error colors")
-            row1 = col.row()
-            row1.prop(self, "exception_color")
-            row1.prop(self, "no_data_color")
 
 
         # FOOTER
