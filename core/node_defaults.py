@@ -100,7 +100,3 @@ def set_defaults_if_defined(node):
         except Exception as err:
             print('failed to load', node.bl_idname, '\'s custom default script..')
             print('reason: ', repr(err))
-
-
-
-
