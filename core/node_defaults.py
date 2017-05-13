@@ -28,6 +28,12 @@ node_default_dict = {}
 node_default_functions = {}
 
 
+def register_defaults():
+    # print('called')
+    node_default_dict.update(get_dict())
+    # print('____', node_default_dict)
+
+
 def get_dict():
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
@@ -64,25 +70,22 @@ def get_function(func, node):
 
     else:
         if os.path.exists(path_to_function):
-            print('--- first time getting function path for ', node.bl_idname)
+            # print('--- first time getting function path for ', node.bl_idname)
             spec = getutil.spec_from_file_location(func, path_to_function)
             macro_module = getutil.module_from_spec(spec)
             spec.loader.exec_module(macro_module)
             node_default_functions[func] = getattr(macro_module, functionname)
+            return node_default_functions[func]
 
 
 def set_defaults_if_defined(node):
-    print('A')
     if not hasattr(node, 'bl_idname') and not len(node_default_dict):
         return
 
-    print('B')
-    print(node_default_dict)
     node_settings = node_default_dict.get(node.bl_idname)
     if not node_settings:
         return
 
-    print('C')
     props = node_settings.get('props')
     if props:
         for prop, value in props:
@@ -99,8 +102,5 @@ def set_defaults_if_defined(node):
             print('reason: ', repr(err))
 
 
-def register_defaults():
-    print('called')
-    node_default_dict = get_dict()
-    print(node_default_dict)
+
 
