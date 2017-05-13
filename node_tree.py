@@ -50,6 +50,8 @@ from sverchok.core.socket_conversions import (
     is_vector_to_matrix,
     is_matrix_to_vector)
 
+from sverchok.core.node_defaults import set_defaults_if_defined
+
 from sverchok.ui import color_def
 
 
@@ -459,12 +461,25 @@ class SverchCustomTreeNode:
         self.create_sockets()
 
     def init(self, context):
+        """
+        this function is triggered upon node creation, 
+        - freezes the node
+        - delegates further initialization information to sv_init
+        - sets node color
+        - unfreezes the node
+        - sets custom defaults (nodes, and sockets)
+
+        """
         ng = self.id_data
+
         ng.freeze()
         if hasattr(self, "sv_init"):
             self.sv_init(context)
         self.set_color()
         ng.unfreeze()
+
+        set_defaults_if_defined(self)
+
 
     def process_node(self, context):
         '''
@@ -498,6 +513,7 @@ def register():
     bpy.utils.register_class(StringsSocket)
     bpy.utils.register_class(VerticesSocket)
     bpy.utils.register_class(SvDummySocket)
+
 
 
 def unregister():
