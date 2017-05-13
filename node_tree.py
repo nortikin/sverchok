@@ -95,36 +95,58 @@ class SvColors(bpy.types.PropertyGroup):
 
 
 class SvSocketCommon:
+    someValue = 10
+
     use_prop = BoolProperty(default=False)
 
-    # use_expander = BoolProperty(default=get_use_expander())
     use_expander = BoolProperty(default=False)
     use_quicklink = BoolProperty(default=False)
     expanded = BoolProperty(default=False)
 
-    @property
-    def use_socket_expander(self):
-        with sv_preferences() as prefs:
-            # print("use expander called")
-            return prefs.use_socket_expander
-        # return sv_preferences.use_socket_expander
+    initialized = BoolProperty(default=False)
 
-    @property
-    def use_socket_quicklink(self):
-        with sv_preferences() as prefs:
-            # print("use expander called")
-            return prefs.use_socket_quicklink
-        # return sv_preferences.use_socket_expander
 
-    @property
-    def use_expand_sockets(self):
-        with sv_preferences() as prefs:
-            # print("use expander called")
-            return prefs.expand_input_sockets
+
+    # @property
+    # def use_socket_expander(self):
+    #     with sv_preferences() as prefs:
+    #         # print("use expander called")
+    #         return prefs.use_socket_expander
+    #     # return sv_preferences.use_socket_expander
+
+    # @property
+    # def use_socket_quicklink(self):
+    #     with sv_preferences() as prefs:
+    #         # print("use expander called")
+    #         return prefs.use_socket_quicklink
+    #     # return sv_preferences.use_socket_expander
+
+    # @property
+    # def use_expand_sockets(self):
+    #     with sv_preferences() as prefs:
+    #         # print("use expander called")
+    #         return prefs.expand_input_sockets
+
+    def __init__(self):
+        print("self=", self)
+        print("self.initialized=", self.initialized)
+        self.initialized = True
+        # self.someValue = 20
+        # ''' One time initializer '''
+        # with sv_preferences() as prefs:
+        #     if prefs:
+        #         self.use_expander = prefs.use_socket_expander
+        #         self.use_quicklink = prefs.use_socket_quicklink
+        #         self.expanded = prefs.expand_input_sockets
+        #     else:
+        #         print("No prefs available")
+        # self.initialized = True
+        # pass
 
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
-        if self.use_socket_expander:
-            # if self.use_expander:
+        # if self.use_socket_expander and self.bl_idname != "StringsSocket":
+        if self.use_expander and self.bl_idname != "StringsSocket":
+        # if self.use_expander:
             split = layout.split(percentage=.2, align=True)
             c1 = split.column(align=True)
             c2 = split.column(align=True)
@@ -140,10 +162,14 @@ class SvSocketCommon:
                 else:
                     row.template_component_menu(prop_origin, prop_name, name=self.name)
         else:
-            layout.template_component_menu(prop_origin, prop_name, name=self.name)
+            if self.bl_idname == "StringsSocket":
+                layout.prop(prop_origin, prop_name)
+            else:
+                layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
     def draw_quick_link(self, context, layout, node):
-        if self.use_socket_quicklink:
+        # if self.use_socket_quicklink:
+        if self.use_quicklink:
             if self.bl_idname == "MatrixSocket":
                 new_node_idname = "SvMatrixGenNodeMK2"
             elif self.bl_idname == "VerticesSocket":
@@ -164,6 +190,9 @@ class SvSocketCommon:
         return ""
 
     def draw(self, context, layout, node, text):
+        # if not self.initialized:
+        #     self.init()
+
         if self.is_linked:  # linked INPUT or OUTPUT
             info_text = text + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
