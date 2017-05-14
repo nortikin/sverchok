@@ -79,7 +79,7 @@ root_modules = [
 
 core_modules = [
     "monad_properties",
-    "handlers", "update_system", "upgrade_nodes", "upgrade_group", "monad",
+    "handlers", "update_system", "upgrade_nodes", "upgrade_group", "monad", "node_defaults"
 ]
 
 utils_modules = [
@@ -157,6 +157,7 @@ if reload_event:
 
 import bpy
 from sverchok.utils import ascii_print
+from sverchok.core import node_defaults
 
 
 def register():
@@ -169,10 +170,12 @@ def register():
     print("** version: ", bl_info['version']," **")
     print("** Have a nice day with sverchok  **\n")
     ascii_print.logo()
+    node_defaults.register_defaults()
 
     if reload_event:
         data_structure.RELOAD_EVENT = True
         print("Sverchok is reloaded, press update")
+
 
 
 def unregister():
