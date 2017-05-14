@@ -61,23 +61,22 @@ def get_function(func, node):
     the dict being built.
     """
 
+    if func in node_default_functions:
+        return node_default_functions[func]
+
     filename, functionname = func.split('.')
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     extra_path = ["node_defaults", filename + '.py']
     path_to_function = os.path.join(datafiles, *extra_path)
 
-    if func in node_default_functions:
+    if os.path.exists(path_to_function):
+        # print('--- first time getting function path for ', node.bl_idname)
+        spec = getutil.spec_from_file_location(func, path_to_function)
+        macro_module = getutil.module_from_spec(spec)
+        spec.loader.exec_module(macro_module)
+        node_default_functions[func] = getattr(macro_module, functionname)
         return node_default_functions[func]
-
-    else:
-        if os.path.exists(path_to_function):
-            # print('--- first time getting function path for ', node.bl_idname)
-            spec = getutil.spec_from_file_location(func, path_to_function)
-            macro_module = getutil.module_from_spec(spec)
-            spec.loader.exec_module(macro_module)
-            node_default_functions[func] = getattr(macro_module, functionname)
-            return node_default_functions[func]
 
 
 def set_defaults_if_defined(node):
