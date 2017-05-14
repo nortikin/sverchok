@@ -51,14 +51,16 @@ def get_dict():
 
 def get_function(func, node):
     """
-    this function takes func and decomposes it into filename  (minus .py ) and functionname
-    it will then look at ../datafiles/node_defaults/filename.py for a function called functionname
-    assuming it is found, it will add the func (filename.functionnme) to " node_default_functions ".
+    this function takes the variable passed as <func> (which is "filename.functionname") 
+    and looks at ../datafiles/node_defaults/filename.py for a function called functionname.
 
-    - each func lookup should only be needed once per session,
-    - repeats will be taken from " node_default_functions " dict
+    assuming it is found, it will add the callable function reference to the 
+    node_default_functions dict, (node_default_function[<func>] = function_reference)
 
+    each func lookup should only be needed once per session, repeats will be taken directly from
+    the dict being built.
     """
+
     filename, functionname = func.split('.')
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
