@@ -50,7 +50,7 @@ def parse_socket(socket, rounding, element_index, view_by_element, props):
     # okay, here we should be more clever and extract part of the list
     # to avoid the amount of time it take to format it.
     
-    content_str = pprint.pformat(data, width=str_width)
+    content_str = pprint.pformat(data, width=str_width, depth=props.depth, compact=props.compact)
     content_array = content_str.split('\n')
 
     if len(content_array) > 20:
