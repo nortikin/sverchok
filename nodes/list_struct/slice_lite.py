@@ -108,7 +108,13 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
                 out_data = [list_split(sublist, num_slices) for sublist in data]
         else:
             slice_data = self.inputs[1].sv_get()
-            out_data = list_slices(self, data, slice_data)
+
+            # connected, and the same num slices for all input data
+            if len(slice_data) == 1 and len(slice_data[0]) == 1:
+                num_slices = slice_data[0][0]
+                out_data = [list_split(sublist, num_slices) for sublist in data]
+            else:
+                out_data = list_slices(self, data, slice_data)
 
         self.outputs[0].sv_set(out_data)
 
