@@ -30,8 +30,8 @@ from sverchok.utils.snlite_importhelper import (
     UNPARSABLE, set_autocolor, parse_sockets, are_matched,
     get_rgb_curve, set_rgb_curve
 )
-from sverchok.utils.snlite_utils import vectorize
-
+from sverchok.utils.snlite_utils import vectorize, ddir
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -69,6 +69,17 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvScriptNodeLiteCustomCallBack(bpy.types.Operator):
+
+    bl_idname = "node.scriptlite_custom_callback"
+    bl_label = "custom SNLite callback"
+    cb_name = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        context.node.custom_callback(context, self)
+        return {'FINISHED'}
+
+
 class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_import"
@@ -88,6 +99,36 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
+
+    def custom_enum_func(self, context):
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            enum_list = ND['sockets']['custom_enum']
+            if enum_list:
+                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
+
+        return [("A", "A", '', 0), ("B", "B", '', 1)]
+
+
+    def custom_callback(self, context, operator):
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            ND['sockets']['callbacks'][operator.cb_name](self, context)
+
+
+    def make_operator(self, new_func_name, force=False):
+        ND = self.node_dict.get(hash(self))               
+        if ND:                                            
+            callbacks = ND['sockets']['callbacks']        
+            if not (new_func_name in callbacks) or force:
+                # here node refers to an ast node (a syntax tree node), not a node tree node
+                ast_node = self.get_node_from_function_name(new_func_name)
+                slice_begin, slice_end = ast_node.body[0].lineno-1, ast_node.body[-1].lineno
+                code = '\n'.join(self.script_str.split('\n')[slice_begin-1:slice_end+1])
+
+                exec(code, locals(), locals())
+                callbacks[new_func_name] = locals()[new_func_name]
+
 
     script_name = StringProperty()
     script_str = StringProperty()
@@ -112,11 +153,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         default="To Node",
         update=updateNode
     )
-
+    
     inject_params = BoolProperty()
     injected_state = BoolProperty(default=False)
     user_filename = StringProperty(update=updateNode)
     n_id = StringProperty(default='')
+
+    custom_enum = bpy.props.EnumProperty(
+        items=custom_enum_func, description="custom enum", update=updateNode
+    )
 
     def draw_label(self):
         if self.script_name:
@@ -326,8 +371,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def process_script(self):
         __local__dict__ = self.make_new_locals()
         locals().update(__local__dict__)
-        locals().update({'vectorize': vectorize})
-        locals().update({'bpy': bpy})
+        locals().update({
+            'vectorize': vectorize,
+            'bpy': bpy,
+            'ddir': ddir, 
+            'bmesh_from_pydata': bmesh_from_pydata,
+            'pydata_from_bmesh': pydata_from_bmesh
+        })
 
         for output in self.outputs:
             locals().update({output.name: []})
@@ -463,6 +513,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
 classes = [
+    SvScriptNodeLiteCustomCallBack,
     SvScriptNodeLiteTextImport,
     SvScriptNodeLitePyMenu,
     SvScriptNodeLiteCallBack,
@@ -476,4 +527,3 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(name) for name in classes]
- 

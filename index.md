@@ -50,7 +50,7 @@
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
-    SvKDTreeNode
+    SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvMeshFilterNode
     SvEdgeAnglesNode
@@ -288,6 +288,7 @@
     SvParticlesNode
     SvParticlesMK2Node
     SvJoinTrianglesNode
+    SvListSliceLiteNode
     SvCacheNode
     SvUVtextureNode
     SvSeparateMeshNodeMK2

@@ -37,7 +37,7 @@ def adjust_list(in_list, x, y):
     return [[old_x + x, old_y + y] for (old_x, old_y) in in_list]
 
 
-def parse_socket(socket, rounding, element_index, view_by_element):
+def parse_socket(socket, rounding, element_index, view_by_element, props):
 
     data = socket.sv_get(deepcopy=False)
     num_data_items = len(data)
@@ -45,12 +45,12 @@ def parse_socket(socket, rounding, element_index, view_by_element):
         if element_index < num_data_items:
             data = data[element_index]
 
-    str_width = 60
+    str_width = props.line_width
 
     # okay, here we should be more clever and extract part of the list
     # to avoid the amount of time it take to format it.
     
-    content_str = pprint.pformat(data, width=str_width)
+    content_str = pprint.pformat(data, width=str_width, depth=props.depth, compact=props.compact)
     content_array = content_str.split('\n')
 
     if len(content_array) > 20:
