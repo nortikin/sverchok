@@ -69,8 +69,26 @@ def unpack_monad(nodes, node_ref):
         cls_ref = monad.update_cls()
         node = nodes.new(cls_ref.bl_idname)
 
-        # cls_dict = params.get('cls_dict')
-        # node.input_template = cls_dict['input_template']
+        # -- addition 1 --------- setting correct properties on sockets.
+        cls_dict = params.get('cls_dict')
+        input_template = cls_dict['input_template']
+        for idx, (sock_name, sock_type, sock_props) in enumerate(input_template):
+            socket_reference = node.inputs[idx]
+            if sock_props:
+                for prop, val in sock_props.items():
+                    setattr(socket_reference, prop, val)
+
+        # -- addition 2 --------- force push param values 
+        # -- (this step is skipped by apply_core_props because this node has a cls_dict)
+        for prop_data in ('float_props', 'int_props'):
+            data_list = socket_prop_data.get(prop_data)
+            if not data_list:
+                continue
+
+            for k, v in data_list.items():
+                setattr(node, k, params[k])
+
+
         # node.output_template = cls_dict['output_template']
 
         return node

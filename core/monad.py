@@ -16,21 +16,20 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import pprint
 import random
 from itertools import chain
 
 import bpy
-from bpy.props import (StringProperty, FloatProperty,
-                       IntProperty, BoolProperty,
-                       CollectionProperty)
-
 from bpy.types import Node, NodeTree
-
+from bpy.props import (
+    StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
+
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
@@ -87,6 +86,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     float_props = CollectionProperty(type=SvFloatPropertySettingsGroup)
     int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
 
+    def get_current_as_default(self, prop_dict, node, prop_name):
+        prop_dict['default'] = getattr(node, prop_name)
+        # if not prop_dict['name']:
+        #     prop_dict['name'] = node.name + '|' + prop_name
+
+
     def add_prop_from(self, socket):
         """
         Add a property if possible
@@ -98,19 +103,27 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         if other.prop_name:
             prop_name = other.prop_name
             prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
+
+
             if prop_func.__name__ == "FloatProperty":
+                self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.float_props.add()
             elif prop_func.__name__ == "IntProperty":
+                self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
             elif prop_func.__name__ == "FloatVectorProperty":
                 return None # for now etc
             else: # no way to handle it
                 return None
 
-            prop_settings.prop_name = generate_name(prop_name, cls_dict)
+            # print('dict')
+            # pprint.pprint(prop_dict)
+            new_name = generate_name(prop_name, cls_dict)
+            prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
-            socket.prop_name = prop_settings.prop_name
-            return prop_settings.prop_name
+            socket.prop_name = new_name
+            return new_name
+
         elif hasattr(other, "prop_type"):
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
@@ -118,10 +131,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_settings = self.int_props.add()
             else:
                 return None
-            prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            
+            new_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            prop_settings.prop_name = new_name 
             prop_settings.set_settings({"name": other.name})
-            socket.prop_name = prop_settings.prop_name
-            return prop_settings.prop_name
+            socket.prop_name = new_name
+            return new_name
 
         return None
 
@@ -242,9 +257,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls_dict = {}
 
         if not self.cls_bl_idname:
+            
             # the monad cls_bl_idname needs to be unique and cannot change
-            cls_name = "SvGroupNode{}_{}".format(make_valid_identifier(self.name),
-                                                 id(self) ^ random.randint(0, 4294967296))
+            monad_base_name = make_valid_identifier(self.name)
+            monad_itentifier = id(self) ^ random.randint(0, 4294967296)
+
+            cls_name = "SvGroupNode{}_{}".format(monad_base_name, monad_itentifier)
             # set the unique name for the class, depending on context this might fail
             # then we cannot do the setup of the class properly so abandon
             try:
@@ -329,14 +347,13 @@ class SvGroupNodeExp:
     """
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    vectorize = BoolProperty(name="Vectorize",
-                             description="Vectorize using monad",
-                             default=False,
-                             update=updateNode)
-    split = BoolProperty(name="Split",
-                         description="Split inputs into lenght 1",
-                         default=False,
-                         update=updateNode)
+    vectorize = BoolProperty(
+        name="Vectorize", description="Vectorize using monad",
+        default=False, update=updateNode)
+
+    split = BoolProperty(
+        name="Split", description="Split inputs into lenght 1",
+        default=False, update=updateNode)
 
     # fun experiment
     #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
