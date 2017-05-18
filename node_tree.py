@@ -479,7 +479,7 @@ class SverchCustomTreeNode:
         ng.unfreeze()
 
         if not ng.limited_init:
-            print('applying default for', self.name)
+            # print('applying default for', self.name)
             set_defaults_if_defined(self)
 
 

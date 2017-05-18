@@ -75,6 +75,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     element_index = IntProperty(default=0, update=updateNode)
     rounding = IntProperty(min=1, max=5, default=3, update=updateNode)
     line_width = IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
+    compact = BoolProperty(default=False, update=updateNode)
+    depth = IntProperty(default=5, min=0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Data')
@@ -99,8 +101,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.selected_mode == 'text-based':
 
             row.prop(self, "text_color", text='')
-            layout.prop(self, "rounding")
-            layout.prop(self, "line_width")
+            row1 = layout.row(align=True)
+            row1.prop(self, "rounding")
+            row1.prop(self, "compact", toggle=True)
+            row2 = layout.row(align=True)
+            row2.prop(self, "line_width")
+            row2.prop(self, "depth")
             # layout.prop(self, "socket_name")
             layout.label('input has {0} elements'.format(self.num_elements))
             layout.prop(self, 'view_by_element', toggle=True)
@@ -139,6 +145,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             if self.selected_mode == 'text-based':
                 props = lambda: None
                 props.line_width = self.line_width
+                props.compact = self.compact
+                props.depth = self.depth or None
 
                 processed_data = nvBGL.parse_socket(
                     inputs[0],
