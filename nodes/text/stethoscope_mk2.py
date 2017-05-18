@@ -74,6 +74,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     num_elements = IntProperty(default=0)
     element_index = IntProperty(default=0, update=updateNode)
     rounding = IntProperty(min=1, max=5, default=3, update=updateNode)
+    line_width = IntProperty(default=60, min=20, update=updateNode, name='Line Width (chars)')
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Data')
@@ -99,6 +100,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
             row.prop(self, "text_color", text='')
             layout.prop(self, "rounding")
+            layout.prop(self, "line_width")
             # layout.prop(self, "socket_name")
             layout.label('input has {0} elements'.format(self.num_elements))
             layout.prop(self, 'view_by_element', toggle=True)
@@ -133,12 +135,17 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             data = inputs[0].sv_get(deepcopy=False)
             self.num_elements = len(data)
 
+
             if self.selected_mode == 'text-based':
+                props = lambda: None
+                props.line_width = self.line_width
+
                 processed_data = nvBGL.parse_socket(
                     inputs[0],
                     self.rounding,
                     self.element_index,
-                    self.view_by_element
+                    self.view_by_element,
+                    props
                 )
             else:
                 #                # implement another nvBGL parses for gfx
