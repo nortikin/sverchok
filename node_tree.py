@@ -315,6 +315,7 @@ class SvNodeTreeCommon(object):
     '''
 
     has_changed = BoolProperty(default=False)
+    limited_init = BoolProperty(default=False)
 
     def build_update_list(self):
         build_update_list(self)
@@ -382,17 +383,16 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         #   node.disable()
 
     sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show = BoolProperty(name="Show", default=True, description='Show this layout',
-                           update=turn_off_ng)
+    sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
     sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
-    # get update list for debug info, tuple (fulllist,dictofpartiallists)
 
     def update(self):
         '''
         Tags tree for update for handle
+        get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
         self.has_changed = True
 
@@ -478,7 +478,9 @@ class SverchCustomTreeNode:
         self.set_color()
         ng.unfreeze()
 
-        set_defaults_if_defined(self)
+        if not ng.limited_init:
+            print('applying default for', self.name)
+            set_defaults_if_defined(self)
 
 
     def process_node(self, context):
