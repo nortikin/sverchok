@@ -38,7 +38,7 @@ def list_split(sublist, num_slices):
 
 def list_slices(node, data, slice_sizes):
 
-    # firs auto extend where possible
+    # first auto extend where possible
     # ......
 
     # work
