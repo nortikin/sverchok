@@ -193,11 +193,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
+    def wrapped_updateNode_(self, context):
+        self.activate = False
 
     n_id = StringProperty(default='')
     to_image_viewer = BoolProperty(
         name='Pass', description='Transfer pixels to image viewer',
-        default=False, update=updateNode)
+        default=False, update=wrapped_updateNode_)
 
     activate = BoolProperty(
         name='Show', description='Activate texture drawing',
@@ -208,11 +210,11 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         default="S", update=wrapped_update)
 
     width_custom_tex = IntProperty(
-        min=0, max=1024, default=206, name='Width Tex',
+        min=1, max=1024, default=206, name='Width Tex',
         description="set the custom texture size", update=updateNode)
 
     height_custom_tex = IntProperty(
-        min=0, max=1024, default=124, name='Height Tex',
+        min=1, max=1024, default=124, name='Height Tex',
         description="set the custom texture size", update=updateNode)
 
     bitmap_format = EnumProperty(
@@ -286,7 +288,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
         self.total_size = self.calculate_total_size()
         self.make_data_correct_length(data)
-        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, data)
+        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size))
         return texture
 
     def draw_buttons(self, context, layout):
@@ -294,7 +296,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         c.label(text="Set texture display:")
         row = c.row()
         row.prop(self, "selected_mode", expand=True)
-        
+
         nrow = c.row()
         nrow.prop(self, 'activate')
         nrow.prop(self, 'to_image_viewer')
@@ -354,7 +356,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not self.inputs['Float'].is_linked:
             return
-        
+
         n_id = node_id(self)
         self.delete_texture()
         nvBGL2.callback_disable(n_id)
@@ -364,12 +366,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         height = 0
 
         if self.to_image_viewer:
+
             mode = self.color_mode
-            self.activate = False
             pixels = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
             width, height = self.texture_width_height
+            resized_np_array = np.resize(pixels, self.calculate_total_size())
+            transfer_to_image(resized_np_array, self.texture_name, width, height, mode)
 
-            transfer_to_image(pixels, self.texture_name, width, height, mode)
 
         if self.activate:
             texture = self.get_buffer()
