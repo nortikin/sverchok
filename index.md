@@ -288,6 +288,7 @@
     SvParticlesNode
     SvParticlesMK2Node
     SvJoinTrianglesNode
+    SvListSliceLiteNode
     SvCacheNode
     SvUVtextureNode
     SvSeparateMeshNodeMK2
