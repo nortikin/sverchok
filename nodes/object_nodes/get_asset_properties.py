@@ -24,6 +24,13 @@ from sverchok.data_structure import (updateNode, enum_item as e)
 # class SvGenericCallbackWithParams() mixin  <- refresh
 
 
+def frame_from_available(idx, layer):
+    keys = {}
+    for frame in layer.frames:
+        keys[frame.frame_number] = frame.strokes
+    return keys
+
+
 class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     ''' Get Asset Props '''
     bl_idname = 'SvGetAssetProperties'
@@ -48,7 +55,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             self.frame_collection_name.add().name = str(idx) + ' | ' + str(f.frame_number)
 
         # updateNode(self, context)
-        if self.gp_frame_mode_options == 'active_frame':
+        if self.gp_selected_frame_mode == 'active frame':
             if len(self.inputs) == 0:
                 self.inputs.new("StringsSocket", 'frame#')
         else:
@@ -178,22 +185,25 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
                 if self.gp_selected_frame_mode == 'active frame':
                     if len(self.inputs) > 0 and self.inputs[0].is_linked:
-                        
-                        """
-                        def frame_from_available(idx, layer):
-                            keys = {}
-                            for frame in layer.frames:
-                                keys[frame.frame_number] = frame.strokes
-                            return keys
-                       
+
+                        # this is totally not clever.
                         frame_number = self.inputs[0].sv_get()[0][0]
-                        
-
-                        """
-                        strokes = GP_and_layer.active_frame.strokes
-
+                        key_dict = frame_from_available(frame_number, GP_and_layer)
+                        keys = list(sorted(key_dict.keys()))
+                        key = keys[-1]
+                        for k in keys[::-1]:
+                            if k > frame_number:
+                                continue
+                            else:
+                                key = k
+                                break
+                        strokes = key_dict[key]
                     else:
                         strokes = GP_and_layer.active_frame.strokes
+
+                    if not strokes:
+                        return
+
                     if self.gp_pass_points:
                         output_socket.sv_set([[p.co[:] for p in s.points] for s in strokes])
                     else:
