@@ -118,6 +118,14 @@ class SvCustomGroupInterface(Panel):
         for i, s in enumerate(out_node.inputs):
             draw_socket_row(column2, s, i)
 
+      
+        if len(monad.instances) == 1:
+            origin_node = monad.instances[0]
+            layout.separator()
+            layout.label('Monad UI:')
+            box = layout.column().box()
+            origin_node.draw_buttons(None, box)
+
 
 
 def register():
