@@ -355,8 +355,10 @@ class SvGroupNodeExp:
         name="Split", description="Split inputs into lenght 1",
         default=False, update=updateNode)
 
-    # fun experiment
-    #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
+    loop_me = BoolProperty(default=False, update=updateNode)
+    max_loops = IntProperty(name='loop n times', min=0, max=4, update=updateNode)
+
+
     def draw_label(self):
         return self.monad.name
 
@@ -391,8 +393,12 @@ class SvGroupNodeExp:
         c = layout.column()
         c.prop(self, "vectorize", expand=True)
         row = c.row()
-        row.prop(self, "split", expand=True)# = self.vectorize
+        row.prop(self, "loop_me", toggle=True)
+        row.prop(self, "max_loops")
+        row = c.row()
         row.active = self.vectorize
+        row.prop(self, "split", expand=True)# = self.vectorize
+        
 
         monad = self.monad
         if monad:
@@ -408,6 +414,9 @@ class SvGroupNodeExp:
             return
         if self.vectorize:
             self.process_vectorize()
+            return
+        elif self.loop_me:
+            self.process_looped(self.max_loops)
             return
 
         monad = self.monad
@@ -459,6 +468,47 @@ class SvGroupNodeExp:
         for idx, socket in enumerate(self.outputs):
             if socket.is_linked:
                 socket.sv_set(data_out[idx])
+
+
+    # ----------- loop (iterate 2)
+
+    def do_process(self, sockets_data_in):
+
+        monad = self.monad
+        in_node = monad.input_node
+        out_node = monad.output_node
+
+        for index, data in enumerate(sockets_data_in):
+            in_node.outputs[index].sv_set(data)        
+
+        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        do_update(ul, monad.nodes)
+
+        # set output sockets correctly
+        socket_data_out = []
+        for index, socket in enumerate(self.outputs):
+            if socket.is_linked:
+                data = out_node.inputs[index].sv_get(deepcopy=False)
+                socket_data_out.append(data)
+
+        return socket_data_out
+
+
+    def apply_output(self, socket_data):
+        for idx, data in enumerate(socket_data):
+            self.outputs[idx].sv_set(data)
+
+
+    def process_looped(self, iterations_remaining):
+        sockets_in = [i.sv_get() for i in self.inputs]
+
+        monad = self.monad
+        in_node = monad.input_node
+        out_node = monad.output_node
+
+        for iteration in range(iterations_remaining):
+            sockets_in = self.do_process(sockets_in)
+        self.apply_output(sockets_in)
 
 
     def load(self):
