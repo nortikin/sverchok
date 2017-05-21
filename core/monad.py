@@ -391,20 +391,23 @@ class SvGroupNodeExp:
 
     def draw_buttons(self, context, layout):
 
-        c = layout.column()
-        c.prop(self, "vectorize", expand=True)
-        c.active = not self.loop_me
-        c1 = layout.column()
-        row = c1.row()
-        row.prop(self, "loop_me", toggle=True)
-        row.prop(self, "max_loops")
-        row = c1.row()
-        row.active = self.vectorize
-        row.prop(self, "split", expand=True)
+        split = layout.column().split()
+        cA = split.column()
+        cB = split.column()
+        cA.active = not self.loop_me
+        cA.prop(self, "vectorize", toggle=True)
+        cB.active = self.vectorize
+        cB.prop(self, "split", toggle=True)
+        
+        c2 = layout.column()
+        row = c2.row(align=True)
+        row.prop(self, "loop_me", text='Loop', toggle=True)
+        row.prop(self, "max_loops", text='N')
 
         monad = self.monad
         if monad:
-            c1.prop(monad, "name", text='name')
+            c3 = layout.column()
+            c3.prop(monad, "name", text='name')
 
             d = layout.column()
             d.active = bool(monad)
