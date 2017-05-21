@@ -411,8 +411,9 @@ class SvGroupNodeExp:
 
             d = layout.column()
             d.active = bool(monad)
-            f = d.operator('node.sv_group_edit', text='edit!')
-            f.group_name = monad.name
+            if context:
+                f = d.operator('node.sv_group_edit', text='edit!')
+                f.group_name = monad.name
 
     def process(self):
         if not self.monad:
