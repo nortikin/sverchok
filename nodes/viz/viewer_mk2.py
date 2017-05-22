@@ -161,7 +161,7 @@ class SvObjBakeMK2(bpy.types.Operator):
 
 
 class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
-    ''' ViewerNode2 '''
+    ''' vd View Geometry /// ViewerNode2 '''
     bl_idname = 'ViewerNode2'
     bl_label = 'Viewer Draw'
     bl_icon = 'RETOPO'

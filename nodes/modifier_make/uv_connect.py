@@ -24,41 +24,33 @@ from sverchok.data_structure import (updateNode, fullList, multi_socket, levelsO
 
 
 class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' UV Connect node '''
+    ''' uv Edges/Surfaces '''
     bl_idname = 'LineConnectNodeMK2'
     bl_label = 'UV Connection'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    JoinLevel = IntProperty(name='JoinLevel', description='Choose connect level of data (see help)',
-                            default=1, min=1, max=2,
-                            update=updateNode)
-    polsORedges = [('Pols', 'Pols', 'Pols'), ('Edges', 'Edges', 'Edges')]
-    polygons = EnumProperty(name='polsORedges',
-                             items=polsORedges,
-                             options={'ANIMATABLE'}, update=updateNode)
-    direction = [('U_dir', 'U_dir', 'u direction'), ('V_dir', 'V_dir', 'v direction')]
-    dir_check = EnumProperty(name='direction',
-                             items=direction,
-                             options={'ANIMATABLE'}, update=updateNode)
-    # as cyclic too have to have U cyclic and V cyclic flags - two flags
-    cicl_check_U = BoolProperty(name='cycleU', description='cycle U',
-                              default=False,
-                              update=updateNode)
-    cicl_check_V = BoolProperty(name='cycleV', description='cycle V',
-                              default=False,
-                              update=updateNode)
-    cup_U = BoolProperty(name='cup U', description='cup U',
-                              default=False,
-                              update=updateNode)
-    cup_V = BoolProperty(name='cup V', description='cup V',
-                              default=False,
-                              update=updateNode)
-    slice_check = BoolProperty(name='slice', description='slice polygon',
-                               default=True,
-                               update=updateNode)
-
     base_name = 'vertices '
     multi_socket_type = 'VerticesSocket'
+
+    direction = [('U_dir', 'U_dir', 'u direction'), ('V_dir', 'V_dir', 'v direction')]
+    polsORedges = [('Pols', 'Pols', 'Pols'), ('Edges', 'Edges', 'Edges')]
+
+    JoinLevel = IntProperty(
+        name='JoinLevel', description='Choose connect level of data (see help)',
+        default=1, min=1, max=2, update=updateNode)
+
+    polygons = EnumProperty(
+        name='polsORedges', items=polsORedges, options={'ANIMATABLE'}, update=updateNode)
+    
+    dir_check = EnumProperty(
+        name='direction', items=direction, options={'ANIMATABLE'}, update=updateNode)
+
+    # as cyclic too have to have U cyclic and V cyclic flags - two flags
+    cicl_check_U = BoolProperty(name='cycleU', description='cycle U', default=False, update=updateNode)
+    cicl_check_V = BoolProperty(name='cycleV', description='cycle V', default=False, update=updateNode)
+    cup_U = BoolProperty(name='cup U', description='cup U', default=False, update=updateNode)
+    cup_V = BoolProperty(name='cup V', description='cup V', default=False, update=updateNode)
+    slice_check = BoolProperty(name='slice', description='slice polygon', default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
