@@ -341,6 +341,22 @@ def split_list(data, size=1):
 def unwrap(data):
     return list(chain.from_iterable(data))
 
+def uget(self, origin):
+    return self[origin]
+
+def uset(self, value, origin):
+    MAX = abs(getattr(self, 'loops_max'))
+    MIN = 0
+
+    if MIN <= value <= MAX:
+        self[origin] = value
+    elif value > MAX:
+        self[origin] = MAX
+    else:
+        self[origin] = MIN
+    return None
+
+
 class SvGroupNodeExp:
     """
     Base class for all monad instances
@@ -356,8 +372,12 @@ class SvGroupNodeExp:
         default=False, update=updateNode)
 
     loop_me = BoolProperty(default=False, update=updateNode)
-    max_loops = IntProperty(name='loop n times', min=0, max=4, update=updateNode)
-
+    loops_max = IntProperty(default=5, description='maximum')
+    loops = IntProperty(
+        name='loop n times', default=0, 
+        get=lambda s: uget(s, 'loops'),
+        set=lambda s, val: uset(s, val, 'loops'),
+        update=updateNode)
 
     def draw_label(self):
         return self.monad.name
@@ -370,6 +390,7 @@ class SvGroupNodeExp:
         return None # or raise LookupError or something, anyway big FAIL
 
     def sv_init(self, context):
+        self['loops_max'] = 0
         self.use_custom_color = True
         self.color = MONAD_COLOR
 
@@ -388,6 +409,7 @@ class SvGroupNodeExp:
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'loops_max')
 
     def draw_buttons(self, context, layout):
 
@@ -402,7 +424,7 @@ class SvGroupNodeExp:
         c2 = layout.column()
         row = c2.row(align=True)
         row.prop(self, "loop_me", text='Loop', toggle=True)
-        row.prop(self, "max_loops", text='N')
+        row.prop(self, "loops", text='N')
 
         monad = self.monad
         if monad:
@@ -414,6 +436,8 @@ class SvGroupNodeExp:
             if context:
                 f = d.operator('node.sv_group_edit', text='edit!')
                 f.group_name = monad.name
+            else:
+                layout.prop(self, 'loops_max')
 
     def process(self):
         if not self.monad:
@@ -422,7 +446,7 @@ class SvGroupNodeExp:
             self.process_vectorize()
             return
         elif self.loop_me:
-            self.process_looped(self.max_loops)
+            self.process_looped(self.loops)
             return
 
         monad = self.monad
