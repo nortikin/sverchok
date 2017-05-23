@@ -391,7 +391,7 @@ class SvGroupNodeExp:
         return None # or raise LookupError or something, anyway big FAIL
 
     def sv_init(self, context):
-        self['loops_max'] = 0
+        self['loops'] = 0
         self.use_custom_color = True
         self.color = MONAD_COLOR
 
