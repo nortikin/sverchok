@@ -77,7 +77,8 @@ class PathParser(object):
         'A': 'arc_to_absolute',
         'a': 'arc_to_relative',
         'X': 'close_now',
-        '#': 'comment'
+        '#': 'comment',
+        'x': 'close_this_path'
     }
 
     def __init__(self, properties, segments, idx):
@@ -86,6 +87,7 @@ class PathParser(object):
         self.filename = properties.filename
         self.extended_parsing = properties.extended_parsing
         self.state_idx = 0
+        self.path_start_index = 0
         self.previous_command = "START"
         self.section_type = None
         self.close_section = ""
@@ -131,12 +133,20 @@ class PathParser(object):
         for line in lines:
             self.determine_section_type(line)
 
+            if self.section_type in {'move_to_absolute', 'move_to_relative'}:
+                self.path_start_index = len(final_verts)
+
             if self.section_type in (None, 'comment'):
                 continue
 
             if self.section_type == 'close_now':
                 self.close_path(final_verts, final_edges)
                 break
+
+            if self.section_type == 'close_this_path':
+                terminator = [len(final_verts)-1, self.path_start_index]
+                final_edges.append(terminator)
+                continue
 
             self.quickread_and_strip(line)
 
