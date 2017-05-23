@@ -374,7 +374,8 @@ class SvGroupNodeExp:
     loop_me = BoolProperty(default=False, update=updateNode)
     loops_max = IntProperty(default=5, description='maximum')
     loops = IntProperty(
-        name='loop n times', default=0, 
+        name='loop n times', default=0,
+        description='change max value in sidebar with variable named loops_max',
         get=lambda s: uget(s, 'loops'),
         set=lambda s, val: uset(s, val, 'loops'),
         update=updateNode)
