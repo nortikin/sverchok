@@ -224,6 +224,8 @@ class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Loop Idx")
         self.outputs.new('StringsSocket', "Loop Total")
 
+        self.use_custom_color = True
+        self.color = monad_def.MONAD_COLOR
         if self.id_data.bl_idname == "SverchCustomTreeType":
             self.color = (0.9, 0, 0)
 
@@ -233,7 +235,8 @@ class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
         try:
             idx = monad["current_index"]
             total = monad["current_total"]
-        except:
+        except Exception as err:
+            print(repr(err))
             idx, total = 0 , 0
             print("couldn't find monad info")
 
