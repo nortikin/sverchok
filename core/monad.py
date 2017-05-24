@@ -512,6 +512,7 @@ class SvGroupNodeExp:
         for index, data in enumerate(sockets_data_in):
             in_node.outputs[index].sv_set(data)        
 
+
         ul = make_tree_from_nodes([out_node.name], monad, down=False)
         do_update(ul, monad.nodes)
 
@@ -534,10 +535,18 @@ class SvGroupNodeExp:
         sockets_in = [i.sv_get() for i in self.inputs]
 
         monad = self.monad
+        monad['current_total'] = iterations_remaining
+        monad['current_index'] = 0
+
         in_node = monad.input_node
         out_node = monad.output_node
 
         for iteration in range(iterations_remaining):
+            if 'Monad Info' in monad.nodes:
+                # info_node = monad.nodes['Monad Info']
+                # info_node.outputs[0].sv_set([[iteration]])
+                monad["current_index"] = iteration
+
             sockets_in = self.do_process(sockets_in)
         self.apply_output(sockets_in)
 
