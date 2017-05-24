@@ -121,7 +121,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "active frame"])]
     gp_selected_frame_mode = bpy.props.EnumProperty(
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
-        default="active frame", update=frame_updateNode
+        default="pick frame", update=frame_updateNode
     )
     gp_frame_pick = bpy.props.StringProperty(update=frame_updateNode)
     gp_pass_points = bpy.props.BoolProperty(default=True, update=updateNode)
