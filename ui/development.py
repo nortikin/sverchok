@@ -67,6 +67,7 @@ def node_show_branch(self, context):
         layout = self.layout
         layout.label("GIT: {}".format(BRANCH))
 
+
 class SvCopyIDName(bpy.types.Operator):
 
     bl_idname = "node.copy_bl_idname"
@@ -151,6 +152,7 @@ def idname_draw(self, context):
     row.operator('node.view_node_help', text='offline').kind = 'offline'
 
 
+
 def register():
     get_branch()
     if BRANCH:
@@ -165,5 +167,6 @@ def unregister():
     if BRANCH:
         bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
+
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
