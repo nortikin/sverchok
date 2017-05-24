@@ -30,6 +30,36 @@ def frame_from_available(idx, layer):
         keys[frame.frame_number] = frame.strokes
     return keys
 
+def frame_from_available2(current_frame, layer):
+    scene = bpy.context.scene
+    rng = [scene.frame_start, scene.frame_end]
+    inp = [frame.frame_number for frame in layer.frames]
+    inp_to_index = {val: idx for idx, val in enumerate(inp)}
+
+    # this can be cached if inp and rng unchanged. there are several redundancies here
+    # but i don't care
+
+    remaps = []  # you fill this
+    last_valid = None
+    for i in range(rng[0], rng[1]+1):
+        if i < inp[0]:
+            last_valid = inp[0]
+        elif i in set(inp):
+            last_valid = i
+        elif i >= inp[-1]:
+            last_valid = inp[-1]
+        else:
+            for j in range(len(inp)-1):
+                begin, end = inp[j], inp[j+1]
+                if begin < i < end:
+                    last_valid = begin
+                    
+        remaps.append(last_valid)
+
+    mdict = {idx: remaps[idx-1] for idx in range(1, len(remaps)+1)}
+    tval = mdict.get(current_frame, 0)
+    return inp_to_index.get(tval, 0)
+
 
 class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     ''' Get Asset Props '''
@@ -186,18 +216,9 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
                 if self.gp_selected_frame_mode == 'active frame':
                     if len(self.inputs) > 0 and self.inputs[0].is_linked:
 
-                        # this is totally not clever.
                         frame_number = self.inputs[0].sv_get()[0][0]
-                        key_dict = frame_from_available(frame_number, GP_and_layer)
-                        keys = list(sorted(key_dict.keys()))
-                        key = keys[-1]
-                        for k in keys[::-1]:
-                            if k > frame_number:
-                                continue
-                            else:
-                                key = k
-                                break
-                        strokes = key_dict[key]
+                        key = frame_from_available2(frame_number, GP_and_layer)
+                        strokes = GP_and_layer.frames[key].strokes
                     else:
                         strokes = GP_and_layer.active_frame.strokes
 
