@@ -186,7 +186,3 @@ class DefaultMacros():
             made_nodes[7]
             links.new(made_nodes[6].outputs[0], made_nodes[7].inputs[0])
             links.new(made_nodes[6].outputs[1], made_nodes[7].inputs[1])
-
-
-      
-
