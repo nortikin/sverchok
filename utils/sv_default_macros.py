@@ -40,8 +40,14 @@ macros = {
     "> sn petal": {
         'display_name': "load snlite w/ petalsine",
         'file':'macro', 
-        'ident': ['verbose_macro_handler', 'sn petal']}        
+        'ident': ['verbose_macro_handler', 'sn petal']},
+    "> monad info": {
+        'display_name': "output current idx / total",
+        'file':'macro', 
+        'ident': ['verbose_macro_handler', 'monad info']}        
 }
+
+
 
 sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
@@ -109,3 +115,8 @@ class DefaultMacros():
             txt = bpy.data.texts.load(fullpath)
             snlite.script_name = os.path.basename(txt.name)
             snlite.load()
+        elif term == 'monad info':
+            x, y = context.space_data.cursor_location[:]
+            monad_info = nodes.new('SvMonadInfoNode')
+            monad_info.location = x, y
+
