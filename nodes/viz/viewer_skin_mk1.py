@@ -41,12 +41,10 @@ def process_mesh_into_features(skin_vertices, edge_keys, assume_unique=True):
         # but I think all it does it set the last vertex as the root.
         obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
 
-    disjoint elements each need at 1 vertex set to root
-
+    disjoint elements each need 1 vertex set to root
     """
 
     # need a set of sorted keys
-
     if not assume_unique:
         try:
             edge_keys = set(edge_keys)
@@ -57,7 +55,6 @@ def process_mesh_into_features(skin_vertices, edge_keys, assume_unique=True):
         edge_keys = set(edge_keys)
 
     # iterate and accumulate
-    
     ndA = defaultdict(set)
     for key in edge_keys:
         lowest, highest = key
