@@ -66,7 +66,7 @@ def process_mesh_into_features(skin_vertices, edge_keys, assume_unique=True):
     for k, v in ndC.items():
         ndB[v].add(k)
 
-    # in heavily brancing input, there will be a lot of redundant use_root pushing.. but oh well..
+    # in heavily branching input, there will be a lot of redundant use_root pushing.
     for k in sorted(ndB.keys()):
         for index in ndB[k]:
             skin_vertices[index].use_root = True
