@@ -68,10 +68,13 @@ def vsca(self, r):
 
 
 def patch_update(self, context):
-    updateNode(context.node, context)
+    try:
+        updateNode(context.node, context)
+    except:
+        ...
 
 
-class SvMExtrudeProps(bpy.types.PropertyGroup):
+class SvMExtrudeProps():
 
     off = FloatProperty(
         soft_min=0.001, soft_max=10, min=-100, max=100, default=1.0,
@@ -114,8 +117,8 @@ class SvMExtrudeProps(bpy.types.PropertyGroup):
         name="N Rot Z", description="Normal Z Rotation", update=patch_update)
 
     sca = FloatProperty(
-        min=0.01, max=10, soft_min=0.5, soft_max=1.5, default=1.0, update=patch_update,
-        name="Scale", description="Scaling of the selected faces after extrusion")
+        min=0.01, max=10, soft_min=0.5, soft_max=1.5, default=1.0,
+        name="Scale", description="Scaling of the selected faces after extrusion", update=patch_update)
 
     var1 = FloatProperty(
         soft_min=-1, soft_max=1, default=0, min=-10, max=10,
@@ -130,8 +133,8 @@ class SvMExtrudeProps(bpy.types.PropertyGroup):
         name="Scale Noise", description="Scaling noise", update=patch_update)
 
     var4 = IntProperty(
-        min=0, max=100, default=100, update=patch_update,
-        name="Probability", description="Probability, chance of extruding a face")
+        min=0, max=100, default=100,
+        name="Probability", description="Probability, chance of extruding a face", update=patch_update)
 
     num = IntProperty(
         min=1, max=500, soft_max=100, default=5,
@@ -142,20 +145,20 @@ class SvMExtrudeProps(bpy.types.PropertyGroup):
         name="Seed", description="Seed to feed random values", update=patch_update)
 
     opt1 = BoolProperty(
-        default=True, update=patch_update,
-        name="Polygon coordinates", description="Polygon coordinates, Object coordinates")
+        default=True, name="Polygon coordinates",
+        description="Polygon coordinates, Object coordinates", update=patch_update)
 
     opt2 = BoolProperty(
-        default=False, update=patch_update,
-        name="Proportional offset", description="Scale * Offset")
+        default=False, name="Proportional offset",
+        description="Scale * Offset", update=patch_update)
 
     opt3 = BoolProperty(
-        default=False, update=patch_update,
-        name="Per step rotation noise", description="Per step rotation noise, Initial rotation noise")
+        default=False, name="Per step rotation noise",
+        description="Per step rotation noise, Initial rotation noise", update=patch_update)
 
     opt4 = BoolProperty(
-        default=False, update=patch_update,
-        name="Per step scale noise", description="Per step scale noise, Initial scale noise")
+        default=False, name="Per step scale noise",
+        description="Per step scale noise, Initial scale noise", update=patch_update)
 
 
 def draw_ui(self, context, layout):
@@ -197,8 +200,8 @@ def draw_ui(self, context, layout):
 
 def perform_mextrude(self, bm, sel):
     after = []
-
     origin = Vector([0.0, 0.0, 0.0])
+
     # faces loop
     for i, of in enumerate(sel):
         nro = nrot(self, of.normal)
@@ -207,10 +210,10 @@ def perform_mextrude(self, bm, sel):
         of.normal_update()
 
         # initial rotation noise
-        if self.opt3 is False:
+        if not self.opt3:
             rot = vrot(self, i)
         # initial scale noise
-        if self.opt4 is False:
+        if not self.opt4:
             s = vsca(self, i)
 
         # extrusion loop
@@ -222,20 +225,20 @@ def perform_mextrude(self, bm, sel):
                 no = nf.normal.copy()
 
                 # face/obj coÃ¶rdinates
-                if self.opt1 is True:
+                if self.opt1:
                     ce = nf.calc_center_bounds()
                 else:
                     ce = origin
 
                 # per step rotation noise
-                if self.opt3 is True:
+                if self.opt3:
                     rot = vrot(self, i + r)
                 # per step scale noise
-                if self.opt4 is True:
+                if self.opt4:
                     s = vsca(self, i + r)
 
                 # proportional, scale * offset
-                if self.opt2 is True:
+                if self.opt2:
                     off = s * off
 
                 for v in nf.verts:
@@ -260,12 +263,8 @@ def perform_mextrude(self, bm, sel):
         v.select = False
     for e in bm.edges:
         e.select = False
-
     for f in after:
-        if f not in sel:
-            f.select = True
-        else:
-            f.select = False
+        f.select = f not in sel
 
     out_verts, _, out_faces = pydata_from_bmesh(bm)
     del bm
@@ -273,7 +272,7 @@ def perform_mextrude(self, bm, sel):
 
 
 
-class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode):
+class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
     ''' a SvMultiExtrudeAlt f '''
     bl_idname = 'SvMultiExtrudeAlt'
     bl_label = 'MultiExtrude Alt from addons'
@@ -286,7 +285,7 @@ class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'faces')
 
     def draw_buttons(self, context, layout):
-        draw_ui(self.svextrude_properties, context, layout)
+        draw_ui(self, context, layout)
 
     def process(self):
 
@@ -306,7 +305,7 @@ class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode):
                 f.select = True
                 add_sell(f)
 
-            generated_data = perform_mextrude(self.svextrude_properties, bm, sel)
+            generated_data = perform_mextrude(self, bm, sel)
             if generated_data:
                 outv, outf = generated_data
                 out_verts.append(outv)
@@ -317,13 +316,8 @@ class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvMExtrudeProps)
     bpy.utils.register_class(SvMultiExtrudeAlt)
-    SvMultiExtrudeAlt.svextrude_properties = bpy.props.PointerProperty(
-        name="svextrude_properties", type=SvMExtrudeProps) #, update=patch_update)
 
 
 def unregister():
-    del SvMultiExtrudeAlt.svextrude_properties
-    bpy.utils.unregister_class(SvMExtrudeProps)
     bpy.utils.unregister_class(SvMultiExtrudeAlt)
