@@ -294,3 +294,4 @@
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew
     SvIndexToMaskNode
+    SvMultiExtrudeAlt
