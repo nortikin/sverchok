@@ -96,7 +96,10 @@ def compile_socket(link):
     try:
         link_data = (link.from_node.name, link.from_socket.index, link.to_node.name, link.to_socket.index)
     except Exception as err:
-        print(repr(err))
+        if "'NodeSocketColor' object has no attribute 'index'" in repr(err):
+            print('adding node reroute using socketname instead if index')
+        else:
+            print(repr(err))
         link_data = (link.from_node.name, link.from_socket.name, link.to_node.name, link.to_socket.name)
 
     return link_data
@@ -180,6 +183,12 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
 
         for k, v in node.items():
+
+            if not isinstance(v, (float, int, str)):
+                print('//')
+                print(node.name, ' -> property:', k, type(v))
+                print(type(node.bl_rna.properties[k]))
+                print('\\\\')
 
             if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
                 """
