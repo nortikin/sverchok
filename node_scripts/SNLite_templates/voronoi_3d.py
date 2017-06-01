@@ -12,6 +12,9 @@ import mathutils
 from mathutils import Vector
 from collections import defaultdict
 
+from sverchok.utils.sv_bmesh_utils import bmesh_join
+
+
 locators = defaultdict(list)
 
 size = len(verts_in)
@@ -25,11 +28,11 @@ for idx, vtx in enumerate(verts_in):
     for co, index, dist in n_list:
         if index == idx:
             continue
-        pt = (((Vector(co)-Vector(vtx))/2)*shrink) + Vector(vtx)
+        pt = (((Vector(co)-Vector(vtx))/2)*shrink) + Vector(vtx)   #((.... ) * distor) + Vector(vtx)
         normal = Vector(co)-Vector(vtx)
         locators[idx].append((pt, normal))
 
-
+list_of_bmeshes = []
 for k, v in locators.items():
 
     working_geom = bmesh_from_pydata(obj_verts_in, None, obj_faces_in, normal_update=True)
@@ -46,8 +49,12 @@ for k, v in locators.items():
         fres = bmesh.ops.edgenet_prepare(working_geom, edges=surround)
         bmesh.ops.edgeloop_fill(working_geom, edges=fres['edges'])  
 
-    _v, _e, _f = pydata_from_bmesh(working_geom)
-    working_geom.free()
+    list_of_bmeshes.append(working_geom)
 
-    new_verts.append(_v)
-    new_faces.append(_f)
+bm = bmesh_join(list_of_bmeshes, normal_update=False)
+
+_v, _e, _f = pydata_from_bmesh(bm)
+
+new_verts.append(_v)
+new_faces.append(_f)
+
