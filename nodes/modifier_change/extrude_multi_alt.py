@@ -252,12 +252,12 @@ def perform_mextrude(self, bm, sel):
 
         after.append(of)
 
-    for v in bm.verts:
-        v.select = False
-    for e in bm.edges:
-        e.select = False
-    for f in after:
-        f.select = f not in sel
+   # for v in bm.verts:
+   #     v.select = False
+   # for e in bm.edges:
+   #     e.select = False
+   # for f in after:
+   #     f.select = f not in sel
 
     out_verts, _, out_faces = pydata_from_bmesh(bm)
     del bm
