@@ -186,6 +186,7 @@
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
     ---
+    SvHomogenousVectorField
     SvNoiseNodeMK2
     SvVectorFractal
     SvLacunarityNode
