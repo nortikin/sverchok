@@ -56,6 +56,7 @@
     SvEdgeAnglesNode
     SvMeshSelectNode
     SvSelectSimilarNode
+    SvPointInside
     SvProportionalEditNode
 
 ## Transforms
