@@ -31,7 +31,8 @@ def are_inside(points, bm):
     addp = rpoints.append
 
     if len(bm.verts) <= 8:
-        bmesh.ops.subdivide_edges(bm, edges=bm.edges[:], smooth=False)
+        bmesh.ops.subdivide_edges(bm, edges=bm.edges[:], cuts=6, use_grid_fill=True)
+        bm.verts.ensure_lookup_table()
 
     size = len(bm.verts)
     kd = KDTree(size)
@@ -40,7 +41,6 @@ def are_inside(points, bm):
     kd.balance()
     
     # bm.verts.ensure_lookup_table()
-    
     verts = bm.verts
     for p in points:
         co, index, _ = kd.find(p)
@@ -52,7 +52,6 @@ def are_inside(points, bm):
     return rpoints
 
 
-
 class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     ''' pin get points inside mesh '''
     bl_idname = 'SvPointInside'
@@ -60,15 +59,14 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'verts')
-        self.inputs.new('VerticesSocket', 'faces')
-        self.inputs.new('VerticesSocket', 'verts')
+        self.inputs.new('StringsSocket', 'faces')
+        self.inputs.new('VerticesSocket', 'points')
         self.outputs.new('StringsSocket', 'mask')
         self.outputs.new('VerticesSocket', 'verts')
 
     def process(self):
 
         # no vectorization yet
-
         verts_in, faces_in, points = [s.sv_get() for s in self.inputs]
         
         mask = []
@@ -81,6 +79,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
             out_verts = []
             for masked, pts_in in zip(mask, points):
                 out_verts.append([p for m, p in zip(masked, pts_in) if m])
+            self.outputs['verts'].sv_set(out_verts)
 
 
 def register():
