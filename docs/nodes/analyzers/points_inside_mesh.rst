@@ -9,3 +9,5 @@ This node takes a list of probe points, and an associated manifold boundary mesh
 A small implementation issue is the imprecise categorization when the associated boundary mesh is low poly.
 
 Warning. This is only a first implementation, likely it will be more correct after a few iterations.
+
+see https://github.com/nortikin/sverchok/pull/1703
