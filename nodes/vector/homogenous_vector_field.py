@@ -30,14 +30,14 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
     ''' hv evenly spaced vfield '''
     bl_idname = 'SvHomogenousVectorField'
-    bl_label = 'pcloud'
+    bl_label = 'Vector P Field'
 
     xdim__ = IntProperty(default=2, min=1, update=updateNode)
     ydim__ = IntProperty(default=3, min=1, update=updateNode)
     zdim__ = IntProperty(default=4, min=1, update=updateNode)
-    sizex__ = FloatProperty(default=1.0, min=1.0, update=updateNode)
-    sizey__ = FloatProperty(default=1.0, min=1.0, update=updateNode)
-    sizez__ = FloatProperty(default=1.0, min=1.0, update=updateNode)
+    sizex__ = FloatProperty(default=1.0, min=.01, update=updateNode)
+    sizey__ = FloatProperty(default=1.0, min=.01, update=updateNode)
+    sizez__ = FloatProperty(default=1.0, min=.01, update=updateNode)
     seed = IntProperty(default=0, min=0, update=updateNode)
 
     randomize_factor = FloatProperty(name='randomize', default=0.0, min=0.0, update=updateNode)

@@ -18,8 +18,9 @@
 
 import bpy
 import bmesh
-from mathutils.kdtree import KDTree
 from mathutils import Vector
+from mathutils.kdtree import KDTree
+from mathutils.bvhtree import BVHTree
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -29,26 +30,15 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 def are_inside(points, bm):
     rpoints = []
     addp = rpoints.append
-
-    if len(bm.verts) <= 8:
-        bmesh.ops.subdivide_edges(bm, edges=bm.edges[:], cuts=6, use_grid_fill=True)
-        bm.verts.ensure_lookup_table()
-
-    size = len(bm.verts)
-    kd = KDTree(size)
-    for i, xyz in enumerate(bm.verts):
-        kd.insert(xyz.co[:], i)
-    kd.balance()
-    
-    # bm.verts.ensure_lookup_table()
-    verts = bm.verts
-    for p in points:
-        co, index, _ = kd.find(p)
-        normal = verts[index].normal
-        p2 = co - Vector(p)
+    bvh = BVHTree.FromBMesh(bm, epsilon=0.0001)
+ 
+    # return points on polygons
+    for point in points:
+        fco, normal, _, _ = bvh.find_nearest(point)
+        p2 = fco - Vector(point)
         v = p2.dot(normal)
         addp(not v < 0.0)  # addp(v >= 0.0) ?
-
+    
     return rpoints
 
 
