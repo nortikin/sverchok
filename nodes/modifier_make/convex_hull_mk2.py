@@ -40,7 +40,7 @@ def make_hull(vertices, params):
     if not vertices:
         return False
 
-    verts, faces = [], []
+    verts, faces = [], [[]]
 
     # invoke the right convex hull function
     if params.hull_mode == '3D':
@@ -61,7 +61,6 @@ def make_hull(vertices, params):
             used_v_indices = set(range(len(vertices))) - set(unused_v_indices)
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
             verts = [v[:] for idx, v in enumerate(vertices) if idx in unused_v_indices]
-            faces = []
 
 
     elif params.hull_mode == '2D':
@@ -84,7 +83,7 @@ def make_hull(vertices, params):
 
         elif not params.outside and params.inside:
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
-            verts, _, faces = pydata_from_bmesh(bm)
+            verts, _, _ = pydata_from_bmesh(bm)
 
 
     bm.clear()
