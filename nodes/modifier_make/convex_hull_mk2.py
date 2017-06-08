@@ -31,15 +31,16 @@ def make_hull(vertices, params):
     if not vertices:
         return False
 
+    verts, faces = [], []
+    bm = bmesh_from_pydata(vertices, [], [])
+
     if params.hull_mode == '3D':
 
-        bm = bmesh_from_pydata(vertices, [], [])
         res = bmesh.ops.convex_hull(bm, input=bm_verts, use_existing_faces=False)
         print(res)
         verts, _, faces = pydata_from_bmesh(bm)
         bm.clear()
         bm.free()
-        return (verts, faces)
 
     elif params.hull_mode == '2D':
        
@@ -51,10 +52,13 @@ def make_hull(vertices, params):
             vertices_2d = [(v[1], v[2]) for v in vertices]
 
         GG = mathutils.geometry.convex_hull_2d(vertices_2d)
-        # unused_v_indices = set(GG) - set(range(len(vertices)))
 
-        # bmesh.ops.delete(bm, geom, context=0)
+        if params.outside and not params.inside:
+            unused_v_indices = set(GG) - set(range(len(vertices)))
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=0)
+            verts, _, faces = pydata_from_bmesh(bm)
 
+    return (verts, faces)
 
 class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' cvh 2D/3D conv.hull'''
