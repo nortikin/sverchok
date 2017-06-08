@@ -23,7 +23,7 @@ import mathutils
 from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import Vector_generate
+from sverchok.data_structure import Vector_generate, updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
 
 
@@ -45,8 +45,9 @@ def make_hull(vertices, params):
 
     # invoke the right convex hull function
     if params.hull_mode == '3D':
+        bm_verts = bm.verts[:]
         res = bmesh.ops.convex_hull(bm, input=bm_verts, use_existing_faces=False)
-        unused_v_indices = [v.index for v in res["geom_unused"] if isinstance(v, bpy.types.BMVert)]
+        unused_v_indices = [v.index for v in res["geom_unused"]]
 
     elif params.hull_mode == '2D':
         vertices_2d = get2d(params.plane, vertices)
@@ -64,11 +65,9 @@ def make_hull(vertices, params):
             if params.outside and params.hull_mode == '2D' and params.sort_edges:
                 # this means 2d convex hull, outside only and sort for something like profile.
                 #
-                #
-                #
                 ...
-
-            verts, _, faces = pydata_from_bmesh(bm)
+            else:
+                verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
             if params.hull_mode == '3D':
@@ -96,8 +95,8 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         description="track 2D plane", default="X", items=plane_choices, update=updateNode
     )
 
-    outer = BoolProperty(default=True, update=updateNode)
-    inner = BoolProperty(default=False, update=updateNode)
+    outside = BoolProperty(default=True, update=updateNode)
+    inside = BoolProperty(default=False, update=updateNode)
     sort_edges = BoolProperty(default=True, update=updateNode)
 
     def sv_init(self, context):
@@ -107,7 +106,17 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
-        pass
+        col = layout.column(align=True)
+        col.row().prop(self, 'hull_mode', expand=True)
+        
+        frow = col.row()
+        frow.enabled = (self.hull_mode == '2D')
+        frow.prop(self, 'plane', expand=True)
+
+        row = col.row(align=True)
+        row.prop(self, 'inside', toggle=True)
+        row.prop(self, 'outside', toggle=True)
+        col.row().prop(self, 'sort_edges', toggle=True)
 
     def process(self):
 
