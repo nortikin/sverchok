@@ -62,8 +62,7 @@ def make_hull(vertices, params):
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
             verts = [v[:] for idx, v in enumerate(vertices) if idx in unused_v_indices]
             faces = []
-        else:
-            return ([], [])
+
 
     elif params.hull_mode == '2D':
         vertices_2d = get2d(params.plane, vertices)
@@ -86,10 +85,6 @@ def make_hull(vertices, params):
         elif not params.outside and params.inside:
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
             verts, _, faces = pydata_from_bmesh(bm)
-
-        else:
-            return ([], [])
-
 
 
     bm.clear()
