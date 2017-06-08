@@ -23,7 +23,7 @@ import mathutils
 from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import Vector_generate, updateNode
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
 
 
@@ -74,11 +74,12 @@ def make_hull(vertices, params):
         elif not params.inside and params.outside:
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
             if params.sort_edges:
-                ...
-                verts = []
+                bm.faces.ensure_lookup_table()
                 addv = verts.append
-
-            verts, _, faces = pydata_from_bmesh(bm)
+                _ = [addv(v.co[:]) for v in bm.faces[0].verts[:]]
+                faces = [list(range(len(verts)))]
+            else:
+                verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
@@ -140,7 +141,7 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if self.inputs['Vertices'].is_linked:
 
-            verts = Vector_generate(self.inputs['Vertices'].sv_get())
+            verts = self.inputs['Vertices'].sv_get()
             verts_out = []
             polys_out = []
 
