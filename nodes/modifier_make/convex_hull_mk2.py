@@ -41,42 +41,61 @@ def make_hull(vertices, params):
         return False
 
     verts, faces = [], []
-    bm = bmesh_from_pydata(vertices, [], [])
 
     # invoke the right convex hull function
     if params.hull_mode == '3D':
-        bm_verts = bm.verts[:]
-        res = bmesh.ops.convex_hull(bm, input=bm_verts, use_existing_faces=False)
+        bm = bmesh_from_pydata(vertices, [], [])
+        res = bmesh.ops.convex_hull(bm, input=bm.verts[:], use_existing_faces=False)
         unused_v_indices = [v.index for v in res["geom_unused"]]
+
+        # filter
+        # returning inside / outside or both
+        if params.inside and params.outside:
+            verts, _, faces = pydata_from_bmesh(bm)
+
+        elif not params.inside and params.outside:
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
+            verts, _, faces = pydata_from_bmesh(bm)
+
+        elif not params.outside and params.inside:
+            used_v_indices = set(range(len(vertices))) - set(unused_v_indices)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
+            verts = [v[:] for idx, v in enumerate(vertices) if idx in unused_v_indices]
+            faces = []
+        else:
+            return ([], [])
 
     elif params.hull_mode == '2D':
         vertices_2d = get2d(params.plane, vertices)
-        GG = mathutils.geometry.convex_hull_2d(vertices_2d)
-        unused_v_indices = set(GG) - set(range(len(vertices)))
+        used_v_indices = mathutils.geometry.convex_hull_2d(vertices_2d)
+        unused_v_indices = set(range(len(vertices))) - set(used_v_indices)
 
-    # returning inside / outside or both
-    if params.inside and params.outside:
-        verts, _, faces = pydata_from_bmesh(bm)
+        bm = bmesh_from_pydata(vertices, [], [used_v_indices])
 
-    else:
-        if params.outside and not params.inside:
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=0)
+        # filter
+        # returning inside / outside or both
+        if params.inside and params.outside:
+            verts, _, faces = pydata_from_bmesh(bm)
 
-            if params.outside and params.hull_mode == '2D' and params.sort_edges:
-                # this means 2d convex hull, outside only and sort for something like profile.
-                #
+        elif not params.inside and params.outside:
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
+            if params.sort_edges:
                 ...
-            else:
-                verts, _, faces = pydata_from_bmesh(bm)
+            verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
-            if params.hull_mode == '3D':
-                verts = [v for idx, v in enumerate(vertices) if idx in unused_v_indices]
-                faces = []
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
+            verts, _, faces = pydata_from_bmesh(bm)
+
+        else:
+            return ([], [])
+
+
 
     bm.clear()
     bm.free()
     return (verts, faces)
+
 
 
 class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
