@@ -48,8 +48,6 @@ def make_hull(vertices, params):
         res = bmesh.ops.convex_hull(bm, input=bm.verts[:], use_existing_faces=False)
         unused_v_indices = [v.index for v in res["geom_unused"]]
 
-        # filter
-        # returning inside / outside or both
         if params.inside and params.outside:
             verts, _, faces = pydata_from_bmesh(bm)
 
@@ -70,8 +68,6 @@ def make_hull(vertices, params):
 
         bm = bmesh_from_pydata(vertices, [], [used_v_indices])
 
-        # filter
-        # returning inside / outside or both
         if params.inside and params.outside:
             verts, _, faces = pydata_from_bmesh(bm)
 
@@ -79,6 +75,9 @@ def make_hull(vertices, params):
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
             if params.sort_edges:
                 ...
+                verts = []
+                addv = verts.append
+
             verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
@@ -122,14 +121,20 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.row().prop(self, 'hull_mode', expand=True)
         
-        frow = col.row()
-        frow.enabled = (self.hull_mode == '2D')
-        frow.prop(self, 'plane', expand=True)
-
         row = col.row(align=True)
         row.prop(self, 'inside', toggle=True)
         row.prop(self, 'outside', toggle=True)
-        col.row().prop(self, 'sort_edges', toggle=True)
+
+        show_me = (self.hull_mode == '2D')
+        col.separator()
+
+        frow = col.row()
+        frow.enabled = show_me
+        frow.prop(self, 'plane', expand=True)
+
+        frow2 = col.row()
+        frow2.enabled = show_me
+        frow2.prop(self, 'sort_edges', text='Topo Sort', toggle=True)
 
     def process(self):
 
