@@ -134,7 +134,7 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         frow.prop(self, 'plane', expand=True)
 
         frow2 = col.row()
-        frow2.enabled = show_me
+        frow2.enabled = show_me and not self.inside
         frow2.prop(self, 'sort_edges', text='Topo Sort', toggle=True)
 
     def process(self):
