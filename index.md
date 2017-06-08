@@ -100,6 +100,7 @@
     LineConnectNodeMK2
     SvLatheNode
     SvConvexHullNode
+    SvConvexHullNodeMK2
     DelaunayTriangulation2DNode
     Voronoi2DNode
     SvWafelNode
