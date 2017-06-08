@@ -27,6 +27,15 @@ from sverchok.data_structure import Vector_generate
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
 
 
+def get2d(plane, vertices):
+    if plane == 'Z':
+        return [(v[0], v[1]) for v in vertices]
+    elif plane == 'Y':
+        return [(v[0], v[2]) for v in vertices]
+    else:
+        return [(v[1], v[2]) for v in vertices]
+
+
 def make_hull(vertices, params):
     if not vertices:
         return False
@@ -34,31 +43,42 @@ def make_hull(vertices, params):
     verts, faces = [], []
     bm = bmesh_from_pydata(vertices, [], [])
 
+    # invoke the right convex hull function
     if params.hull_mode == '3D':
-
         res = bmesh.ops.convex_hull(bm, input=bm_verts, use_existing_faces=False)
-        print(res)
-        verts, _, faces = pydata_from_bmesh(bm)
-        bm.clear()
-        bm.free()
+        unused_v_indices = [v.index for v in res["geom_unused"] if isinstance(v, bpy.types.BMVert)]
 
     elif params.hull_mode == '2D':
-       
-        if params.plane == 'Z':
-            vertices_2d = [(v[0], v[1]) for v in vertices]
-        elif params.plane == 'Y':
-            vertices_2d = [(v[0], v[2]) for v in vertices]
-        else:
-            vertices_2d = [(v[1], v[2]) for v in vertices]
-
+        vertices_2d = get2d(params.plane, vertices)
         GG = mathutils.geometry.convex_hull_2d(vertices_2d)
+        unused_v_indices = set(GG) - set(range(len(vertices)))
 
+    # returning inside / outside or both
+    if params.inside and params.outside:
+        verts, _, faces = pydata_from_bmesh(bm)
+
+    else:
         if params.outside and not params.inside:
-            unused_v_indices = set(GG) - set(range(len(vertices)))
             bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=0)
+
+            if params.outside and params.hull_mode == '2D' and params.sort_edges:
+                # this means 2d convex hull, outside only and sort for something like profile.
+                #
+                #
+                #
+                ...
+
             verts, _, faces = pydata_from_bmesh(bm)
 
+        elif not params.outside and params.inside:
+            if params.hull_mode == '3D':
+                verts = [v for idx, v in enumerate(vertices) if idx in unused_v_indices]
+                faces = []
+
+    bm.clear()
+    bm.free()
     return (verts, faces)
+
 
 class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' cvh 2D/3D conv.hull'''
@@ -78,7 +98,7 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     outer = BoolProperty(default=True, update=updateNode)
     inner = BoolProperty(default=False, update=updateNode)
-
+    sort_edges = BoolProperty(default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
