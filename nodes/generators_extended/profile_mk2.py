@@ -868,7 +868,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             knots = []
             for knot in self.SvLists['knots'].SvSubLists:
                 knots.append([knot.SvX,knot.SvY,knot.SvZ])
-            print('test',knots)
+            #print('test',knots)
             outputs[2].sv_set([knots])
         except:
             outputs[2].sv_set([])

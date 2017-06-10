@@ -41,6 +41,7 @@ JSON format:
 # To be extended?
 safe_names = dict(sin=sin, cos=cos, pi=pi, sqrt=sqrt)
 
+    
 def get_variables(string):
     root = ast.parse(string, mode='eval')
     result = {node.id for node in ast.walk(root) if isinstance(node, ast.Name)}
@@ -94,6 +95,43 @@ def evaluate(json, variables):
         result['vertices'].append(v)
     return result, groups
 
+def selected_masks_adding(node):
+    """ adding new list masks nodes if none """
+    if node.outputs[0].is_linked: return
+    loc = node.location
+
+    tree = bpy.context.space_data.edit_tree
+    links = tree.links
+
+    mo = tree.nodes.new('MaskListNode')
+    mv = tree.nodes.new('VectorMoveNode')
+    rf = tree.nodes.new('SvGenFloatRange')
+    vi = tree.nodes.new('GenVectorsNode')
+    mi = tree.nodes.new('SvMaskJoinNode')
+    vd = tree.nodes.new('ViewerNode2')
+    mo.location = loc+Vector((300,0))
+    mv.location = loc+Vector((550,0))
+    vi.location = loc+Vector((350,-225))
+    rf.location = loc+Vector((0,-225))
+    mi.location = loc+Vector((800,0))
+    vd.location = loc+Vector((1000,0))
+
+    links.new(node.outputs[0], mo.inputs[0])   #verts
+    links.new(node.outputs[3], mo.inputs[1])   #mask
+    links.new(mo.outputs[0], mi.inputs[0])   #mask
+    links.new(mo.outputs[3], mv.inputs[0])   #True out
+    links.new(vi.outputs[0], mv.inputs[1])   #vector
+    links.new(rf.outputs[0], vi.inputs[2])   #range
+    links.new(mv.outputs[0], mi.inputs[1])   #True in
+    links.new(mo.outputs[4], mi.inputs[2])   #False
+    links.new(mi.outputs[0], vd.inputs[0])   #Verts
+    links.new(node.outputs[2], vd.inputs[1])   #Faces
+    mi.Level = 2
+    mo.level = 2
+    rf.mode='FRANGE_COUNT'
+    rf.stop_=4
+    rf.count_=4
+
 class SvJsonFromMesh(bpy.types.Operator):
     "JSON from selected mesh"
     bl_idname = "node.sverchok_json_from_mesh"
@@ -104,6 +142,7 @@ class SvJsonFromMesh(bpy.types.Operator):
     treename = StringProperty(name='treename')
 
     def execute(self, context):
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         if not bpy.context.selected_objects[0].type == 'MESH':
             print("JSON from mesh: selected object is not mesh")
             self.report({'INFO'}, 'It is not a mesh selected')
@@ -113,6 +152,7 @@ class SvJsonFromMesh(bpy.types.Operator):
         mesh = object.data
         result = {}
         verts = []
+        isselected = False
         for v in mesh.vertices:
             names = set()
             for grp in v.groups:
@@ -120,12 +160,17 @@ class SvJsonFromMesh(bpy.types.Operator):
                 names.add(name)
             if v.select:
                 names.add('Selected')
+                isselected = True
             if names:
                 vertex = self.round(v) + [list(sorted(names))]
             else:
                 vertex = self.round(v)
             verts.append(vertex)
 
+        if isselected:
+            if not 'Selected' in node.inputs.keys() and not node.outputs[0].is_linked:
+                node.outputs.new('StringsSocket', 'Selected')
+                selected_masks_adding(node)
         result['vertices'] = verts
         result['edges'] = mesh.edge_keys
         result['faces'] = [list(p.vertices) for p in mesh.polygons]
@@ -274,6 +319,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             if name not in self.outputs:
                 print("Group {} not in outputs {}, add it".format(name, str(self.outputs.keys())))
                 self.outputs.new('StringsSocket', name)
+
 
     def update(self):
         '''
