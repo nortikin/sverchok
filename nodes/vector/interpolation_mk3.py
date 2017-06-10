@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import numpy as np
+import math
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, BoolProperty
@@ -138,6 +139,58 @@ def eval_linear_spline(pts, tknots, t_in):
     return out.T
 
 
+class GenerateLookup():
+
+    def __init__(self, cyclic, vlist):
+        self.lookup = {}
+        self.summed_lengths = []
+        self.indiv_lengths = []
+        self.normals = []
+        self.buckets = []
+        if cyclic:
+            vlist = vlist + [vlist[0]]
+
+        self.get_seq_len(vlist)
+        self.acquire_lookup_table()
+        self.get_buckets()
+        # for idx, (k, v) in enumerate(sorted(self.lookup.items())):
+        #     print(k, v)
+
+    def find_bucket(self, factor):
+        for bucket_min, bucket_max in zip(self.buckets[:-1], self.buckets[1:]):
+            if bucket_min <= factor < bucket_max:
+                tval = self.lookup.get(bucket_min)  # , self.lookup.get(self.buckets[-1]))
+
+                return tval
+
+        # return last bucket just in case
+        return self.lookup.get(self.buckets[-1])
+
+    def get_buckets(self):
+        self.buckets = [(clen / self.total_length) for clen in self.summed_lengths]
+    
+    def acquire_lookup_table(self):
+        for current_length, segment_normal in zip(self.summed_lengths, self.normals):
+            self.lookup[current_length / self.total_length] = segment_normal
+        
+    def get_seq_len(self, vlist):
+        add_len = self.indiv_lengths.append
+        add_normal = self.normals.append
+        add_to_sumlist = self.summed_lengths.append
+        current_length = 0.0
+        for idx in range(len(vlist)-1):
+            v = vlist[idx][0]-vlist[idx+1][0], vlist[idx][1]-vlist[idx+1][1], vlist[idx][2]-vlist[idx+1][2]
+            length = math.sqrt((v[0]*v[0]) + (v[1]*v[1]) + (v[2]*v[2]))
+            add_normal(v)
+            add_len(length)
+            add_to_sumlist(current_length)
+            current_length += length
+
+        self.total_length = sum(self.indiv_lengths)
+            
+
+
+
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Vector Interpolate'''
     bl_idname = 'SvInterpolationNodeMK3'
@@ -213,6 +266,11 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                     tknots = create_knots(pts, metric=self.knot_mode)
                     out = eval_linear_spline(pts, tknots, t_corr)
                     verts_out.append(out.tolist())
+
+                    if calc_tanget:
+                        lookup_segments = GenerateLookup(self.is_cyclic, v)
+                        tanget_out.append([lookup_segments.find_bucket(f) for f in t_corr])
+
                 else:  # SPL
                     if self.is_cyclic:
 

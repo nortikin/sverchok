@@ -92,12 +92,28 @@ def find_enumerators(node):
 
 
 def compile_socket(link):
-    return (link.from_node.name, link.from_socket.name,
-            link.to_node.name, link.to_socket.name)
+
+    try:
+        link_data = (link.from_node.name, link.from_socket.index, link.to_node.name, link.to_socket.index)
+    except Exception as err:
+        if "'NodeSocketColor' object has no attribute 'index'" in repr(err):
+            print('adding node reroute using socketname instead if index')
+        else:
+            print(repr(err))
+        link_data = (link.from_node.name, link.from_socket.name, link.to_node.name, link.to_socket.name)
+
+    return link_data
 
 
 def write_json(layout_dict, destination_path):
-    m = json.dumps(layout_dict, sort_keys=True, indent=2)
+
+
+    try:
+        m = json.dumps(layout_dict, sort_keys=True, indent=2)
+    except Exception as err:
+        print(repr(err))
+        print(layout_dict)
+
     # optional post processing step
     post_processing = False
     if post_processing:
@@ -168,7 +184,13 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         for k, v in node.items():
 
-            if k in {'n_id', 'typ', 'newsock','dynamic_strings'}:
+            if not isinstance(v, (float, int, str)):
+                print('//')
+                print(node.name, ' -> property:', k, type(v))
+                print(type(node.bl_rna.properties[k]))
+                print('\\\\')
+
+            if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
                 """
                 n_id: 
                     used to store the hash of the current Node,
@@ -177,6 +199,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                     reserved variables for changeable sockets
                 dynamic_strings:
                     reserved by exec node
+                frame_collection_name / type_collection_name both store Collection properties..avoiding for now
                 """
                 continue
 
@@ -508,14 +531,22 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     apply_post_processing(node, node_ref)
 
 
-def add_nodes(nodes_to_import, nodes, create_texts):
+def add_nodes(ng, nodes_to_import, nodes, create_texts):
     '''
-    return the dictionary that tracks which nodes got renamed due to conflicts
+    return the dictionary that tracks which nodes got renamed due to conflicts.
+    setting 'ng.limited_init' supresses any custom defaults associated with nodes in the json.
     '''
     name_remap = {}
-    for n in sorted(nodes_to_import):
-        add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
+    ng.limited_init = True
+    try:
+        for n in sorted(nodes_to_import):
+            add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
+    except Exception as err:
+        print(repr(err))
+    
+    ng.limited_init = False
     return name_remap
+
 
 
 def add_groups(groups_to_import):
@@ -591,7 +622,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         groups_to_import = nodes_json.get('groups', {})
         
         add_groups(groups_to_import)  # this return is not used yet
-        name_remap = add_nodes(nodes_to_import, nodes, create_texts)
+        name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
 
         ''' now connect them '''
 
@@ -841,7 +872,17 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         gist_filename = ng.name
         gist_description = 'to do later?'
         layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
-        gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
+
+        try:       
+            gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
+        except Exception as err:
+            if 'not JSON serializable' in repr(err):
+                print(layout_dict)
+            else:
+                print(repr(err))
+            self.report({'WARNING'}, "See terminal/Command prompt for printout of error")
+            return {'CANCELLED'}
+
         try:
             gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
             context.window_manager.clipboard = gist_url   # full destination url

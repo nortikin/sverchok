@@ -15,6 +15,7 @@ Vector
    noise_mk2
    fractal
    lerp
+   homogenous_vector_field
    vector_rewire
    vector_in
    vector_out

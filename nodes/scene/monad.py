@@ -18,6 +18,7 @@
 
 # the concrete monad classes plus common base
 import ast
+import pprint
 
 import bpy
 from bpy.types import Node
@@ -33,6 +34,16 @@ class SvSocketAquisition:
 
     socket_map = {'outputs': 'to_socket', 'inputs': 'from_socket'}
     node_kind = StringProperty()
+
+    @property
+    def get_outputs_info(self):
+        if self.node_kind == 'outputs':
+            return [{
+                    'socket_name': s.name,
+                    'socket_identifier': s.identifier,
+                    'socket_prop_name': s.prop_name
+                    } for s in self.outputs]
+
 
     def update(self):
         kind = self.node_kind
@@ -52,33 +63,36 @@ class SvSocketAquisition:
 
         if socket_list[-1].is_linked:
 
-            # first switch socket type
+            # gather socket data
             socket = socket_list[-1]
             if kind == "outputs":
                 prop_name = monad.add_prop_from(socket)
-            else:
-                prop_name = ""
-
-            cls = monad.update_cls()
-
-            if kind == "outputs":
+                cls = monad.update_cls()
                 new_name, new_type, prop_data = cls.input_template[-1]
             else:
-                new_name, new_type = cls.output_template[-1]
+                prop_name = ""
+                cls = monad.update_cls()
                 prop_data = {}
+                new_name, new_type = cls.output_template[-1]
 
+            # transform socket type from dummy to new type
             new_socket = socket.replace_socket(new_type, new_name=new_name)
             if prop_name:
                 new_socket.prop_name = prop_name
 
-            # if no 'linked_socket.prop_name' then use 'linked_socket.name'
-
-
+            # update all monad nodes (front facing)
             for instance in monad.instances:
                 sockets = getattr(instance, reverse_lookup[kind])
                 new_socket = sockets.new(new_type, new_name)
                 for name, value in prop_data.items():
-                    setattr(new_socket, name, value)
+                    if not name == 'prop_name':
+                        setattr(new_socket, name, value)
+                    else:
+                        new_socket.prop_name = prop_name
+
+            # print('------')
+            # print(prop_data)
+            # pprint.pprint(self.get_outputs_info)
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
@@ -210,6 +224,8 @@ class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Loop Idx")
         self.outputs.new('StringsSocket', "Loop Total")
 
+        self.use_custom_color = True
+        self.color = monad_def.MONAD_COLOR
         if self.id_data.bl_idname == "SverchCustomTreeType":
             self.color = (0.9, 0, 0)
 
@@ -219,7 +235,8 @@ class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
         try:
             idx = monad["current_index"]
             total = monad["current_total"]
-        except:
+        except Exception as err:
+            print(repr(err))
             idx, total = 0 , 0
             print("couldn't find monad info")
 

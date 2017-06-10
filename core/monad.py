@@ -16,21 +16,20 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import pprint
 import random
 from itertools import chain
 
 import bpy
-from bpy.props import (StringProperty, FloatProperty,
-                       IntProperty, BoolProperty,
-                       CollectionProperty)
-
 from bpy.types import Node, NodeTree
-
+from bpy.props import (
+    StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
 from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
+
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
@@ -87,6 +86,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     float_props = CollectionProperty(type=SvFloatPropertySettingsGroup)
     int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
 
+    def get_current_as_default(self, prop_dict, node, prop_name):
+        prop_dict['default'] = getattr(node, prop_name)
+        # if not prop_dict['name']:
+        #     prop_dict['name'] = node.name + '|' + prop_name
+
+
     def add_prop_from(self, socket):
         """
         Add a property if possible
@@ -98,19 +103,27 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         if other.prop_name:
             prop_name = other.prop_name
             prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
+
+
             if prop_func.__name__ == "FloatProperty":
+                self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.float_props.add()
             elif prop_func.__name__ == "IntProperty":
+                self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
             elif prop_func.__name__ == "FloatVectorProperty":
                 return None # for now etc
             else: # no way to handle it
                 return None
 
-            prop_settings.prop_name = generate_name(prop_name, cls_dict)
+            # print('dict')
+            # pprint.pprint(prop_dict)
+            new_name = generate_name(prop_name, cls_dict)
+            prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
-            socket.prop_name = prop_settings.prop_name
-            return prop_settings.prop_name
+            socket.prop_name = new_name
+            return new_name
+
         elif hasattr(other, "prop_type"):
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
@@ -118,10 +131,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_settings = self.int_props.add()
             else:
                 return None
-            prop_settings.prop_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            
+            new_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            prop_settings.prop_name = new_name 
             prop_settings.set_settings({"name": other.name})
-            socket.prop_name = prop_settings.prop_name
-            return prop_settings.prop_name
+            socket.prop_name = new_name
+            return new_name
 
         return None
 
@@ -242,9 +257,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls_dict = {}
 
         if not self.cls_bl_idname:
+            
             # the monad cls_bl_idname needs to be unique and cannot change
-            cls_name = "SvGroupNode{}_{}".format(make_valid_identifier(self.name),
-                                                 id(self) ^ random.randint(0, 4294967296))
+            monad_base_name = make_valid_identifier(self.name)
+            monad_itentifier = id(self) ^ random.randint(0, 4294967296)
+
+            cls_name = "SvGroupNode{}_{}".format(monad_base_name, monad_itentifier)
             # set the unique name for the class, depending on context this might fail
             # then we cannot do the setup of the class properly so abandon
             try:
@@ -323,23 +341,45 @@ def split_list(data, size=1):
 def unwrap(data):
     return list(chain.from_iterable(data))
 
+def uget(self, origin):
+    return self[origin]
+
+def uset(self, value, origin):
+    MAX = abs(getattr(self, 'loops_max'))
+    MIN = 0
+
+    if MIN <= value <= MAX:
+        self[origin] = value
+    elif value > MAX:
+        self[origin] = MAX
+    else:
+        self[origin] = MIN
+    return None
+
+
 class SvGroupNodeExp:
     """
     Base class for all monad instances
     """
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    vectorize = BoolProperty(name="Vectorize",
-                             description="Vectorize using monad",
-                             default=False,
-                             update=updateNode)
-    split = BoolProperty(name="Split",
-                         description="Split inputs into lenght 1",
-                         default=False,
-                         update=updateNode)
+    vectorize = BoolProperty(
+        name="Vectorize", description="Vectorize using monad",
+        default=False, update=updateNode)
 
-    # fun experiment
-    #label = StringProperty(get=_get_monad_name, set=_set_monad_name)
+    split = BoolProperty(
+        name="Split", description="Split inputs into lenght 1",
+        default=False, update=updateNode)
+
+    loop_me = BoolProperty(default=False, update=updateNode)
+    loops_max = IntProperty(default=5, description='maximum')
+    loops = IntProperty(
+        name='loop n times', default=0,
+        description='change max value in sidebar with variable named loops_max',
+        get=lambda s: uget(s, 'loops'),
+        set=lambda s, val: uset(s, val, 'loops'),
+        update=updateNode)
+
     def draw_label(self):
         return self.monad.name
 
@@ -351,6 +391,7 @@ class SvGroupNodeExp:
         return None # or raise LookupError or something, anyway big FAIL
 
     def sv_init(self, context):
+        self['loops'] = 0
         self.use_custom_color = True
         self.color = MONAD_COLOR
 
@@ -369,28 +410,44 @@ class SvGroupNodeExp:
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'loops_max')
 
     def draw_buttons(self, context, layout):
-        c = layout.column()
-        c.prop(self, "vectorize", expand=True)
-        row = c.row()
-        row.prop(self, "split", expand=True)# = self.vectorize
-        row.active = self.vectorize
+
+        split = layout.column().split()
+        cA = split.column()
+        cB = split.column()
+        cA.active = not self.loop_me
+        cA.prop(self, "vectorize", toggle=True)
+        cB.active = self.vectorize
+        cB.prop(self, "split", toggle=True)
+        
+        c2 = layout.column()
+        row = c2.row(align=True)
+        row.prop(self, "loop_me", text='Loop', toggle=True)
+        row.prop(self, "loops", text='N')
 
         monad = self.monad
         if monad:
-            c.prop(monad, "name", text='name')
+            c3 = layout.column()
+            c3.prop(monad, "name", text='name')
 
             d = layout.column()
             d.active = bool(monad)
-            f = d.operator('node.sv_group_edit', text='edit!')
-            f.group_name = monad.name
+            if context:
+                f = d.operator('node.sv_group_edit', text='edit!')
+                f.group_name = monad.name
+            else:
+                layout.prop(self, 'loops_max')
 
     def process(self):
         if not self.monad:
             return
         if self.vectorize:
             self.process_vectorize()
+            return
+        elif self.loop_me:
+            self.process_looped(self.loops)
             return
 
         monad = self.monad
@@ -442,6 +499,56 @@ class SvGroupNodeExp:
         for idx, socket in enumerate(self.outputs):
             if socket.is_linked:
                 socket.sv_set(data_out[idx])
+
+
+    # ----------- loop (iterate 2)
+
+    def do_process(self, sockets_data_in):
+
+        monad = self.monad
+        in_node = monad.input_node
+        out_node = monad.output_node
+
+        for index, data in enumerate(sockets_data_in):
+            in_node.outputs[index].sv_set(data)        
+
+
+        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        do_update(ul, monad.nodes)
+
+        # set output sockets correctly
+        socket_data_out = []
+        for index, socket in enumerate(self.outputs):
+            if socket.is_linked:
+                data = out_node.inputs[index].sv_get(deepcopy=False)
+                socket_data_out.append(data)
+
+        return socket_data_out
+
+
+    def apply_output(self, socket_data):
+        for idx, data in enumerate(socket_data):
+            self.outputs[idx].sv_set(data)
+
+
+    def process_looped(self, iterations_remaining):
+        sockets_in = [i.sv_get() for i in self.inputs]
+
+        monad = self.monad
+        monad['current_total'] = iterations_remaining
+        monad['current_index'] = 0
+
+        in_node = monad.input_node
+        out_node = monad.output_node
+
+        for iteration in range(iterations_remaining):
+            if 'Monad Info' in monad.nodes:
+                # info_node = monad.nodes['Monad Info']
+                # info_node.outputs[0].sv_set([[iteration]])
+                monad["current_index"] = iteration
+
+            sockets_in = self.do_process(sockets_in)
+        self.apply_output(sockets_in)
 
 
     def load(self):

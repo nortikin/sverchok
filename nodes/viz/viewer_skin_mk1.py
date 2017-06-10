@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import itertools
+from collections import defaultdict
 
 import bpy
 import bmesh
@@ -29,6 +30,46 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.sv_viewer_utils import (
     greek_alphabet, matrix_sanitizer, remove_non_updated_objects
 )
+
+
+def process_mesh_into_features(skin_vertices, edge_keys, assume_unique=True):
+    """
+    be under no illusion that this function is an attempt at an optimized tip/junction finder.
+    primarily it exists to test an assumption about foreach_set and obj.data.skin_verts edge keys.
+
+        # this works for a edgenet mesh (polyline) that has no disjoint elements
+        # but I think all it does it set the last vertex as the root.
+        obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
+
+    disjoint elements each need 1 vertex set to root
+    """
+
+    # need a set of sorted keys
+    if not assume_unique:
+        try:
+            edge_keys = set(edge_keys)
+        except:
+            # this will be slower..but it should catch most input
+            edge_keys = set(tuple(sorted(key)) for key in edge_keys)
+    else:
+        edge_keys = set(edge_keys)
+
+    # iterate and accumulate
+    ndA = defaultdict(set)
+    for key in edge_keys:
+        lowest, highest = key
+        ndA[lowest].add(highest)
+        ndA[highest].add(lowest)
+
+    ndB = defaultdict(set)
+    ndC = {k: len(ndA[k]) for k in sorted(ndA.keys()) if len(ndA[k]) == 1 or len(ndA[k]) >=3}
+    for k, v in ndC.items():
+        ndB[v].add(k)
+
+    # in heavily branching input, there will be a lot of redundant use_root pushing.
+    for k in sorted(ndB.keys()):
+        for index in ndB[k]:
+            skin_vertices[index].use_root = True
 
 
 def set_data_for_layer(bm, data, layer):
@@ -207,6 +248,8 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     material = StringProperty(default='', update=updateNode)
+    use_root = BoolProperty(default=True, update=updateNode)
+    use_slow_root = BoolProperty(default=False, update=updateNode)
 
 
     def sv_init(self, context):
@@ -238,6 +281,16 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
             self, 'material', bpy.data, 'materials', text='',
             icon='MATERIAL_DATA')
         r5.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
+
+
+    def draw_buttons_ext(self, context, layout):
+        k = layout.box()
+        r = k.row(align=True)
+        r.label("setting roots")
+        r = k.row(align=True)
+        r.prop(self, "use_root", text="mark all", toggle=True)
+        r.prop(self, "use_slow_root", text="mark some", toggle=True)
+
 
 
     def get_geometry_from_sockets(self):
@@ -296,9 +349,12 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
             f_r = [abs(f) for f in f_r]
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
+        if self.use_root:        
             # set all to root
             all_yes = list(itertools.repeat(True, ntimes))
             obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
+        elif self.use_slow_root:
+            process_mesh_into_features(obj.data.skin_vertices[0].data, obj.data.edge_keys)
 
         # truthy if self.material is in .materials
         if bpy.data.materials.get(self.material):
@@ -308,6 +364,10 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
     def set_corresponding_materials(self, objs):
         for obj in objs:
             obj.active_material = bpy.data.materials[self.material]
+
+    def flip_roots_or_junctions_only(self, data):
+        ...
+
 
 
 def register():

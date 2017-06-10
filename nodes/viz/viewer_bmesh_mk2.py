@@ -208,6 +208,7 @@ class SvBmeshViewOp2(bpy.types.Operator):
 
 
 class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+    """ bmv Generate Live geom """
 
     bl_idname = 'SvBmeshViewerNodeMK2'
     bl_label = 'Viewer BMesh'
@@ -308,7 +309,6 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if col:
             row = col.row(align=True)
             row.prop(self, "grouping", text="Group", toggle=True)
-            row.separator()
             row.prop(self, "merge", text="Merge", toggle=True)
 
             row = col.row(align=True)

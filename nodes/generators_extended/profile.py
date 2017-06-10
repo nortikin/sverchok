@@ -77,7 +77,8 @@ class PathParser(object):
         'A': 'arc_to_absolute',
         'a': 'arc_to_relative',
         'X': 'close_now',
-        '#': 'comment'
+        '#': 'comment',
+        'x': 'close_this_path'
     }
 
     def __init__(self, properties, segments, idx):
@@ -86,6 +87,7 @@ class PathParser(object):
         self.filename = properties.filename
         self.extended_parsing = properties.extended_parsing
         self.state_idx = 0
+        self.path_start_index = 0
         self.previous_command = "START"
         self.section_type = None
         self.close_section = ""
@@ -131,12 +133,20 @@ class PathParser(object):
         for line in lines:
             self.determine_section_type(line)
 
+            if self.section_type in {'move_to_absolute', 'move_to_relative'}:
+                self.path_start_index = len(final_verts)
+
             if self.section_type in (None, 'comment'):
                 continue
 
             if self.section_type == 'close_now':
                 self.close_path(final_verts, final_edges)
                 break
+
+            if self.section_type == 'close_this_path':
+                terminator = [len(final_verts)-1, self.path_start_index]
+                final_edges.append(terminator)
+                continue
 
             self.quickread_and_strip(line)
 
@@ -548,24 +558,22 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     current_axis = StringProperty(default='Z')
 
     selected_axis = EnumProperty(
-        items=axis_options,
-        name="Type of axis",
-        description="offers basic axis output vectors X|Y|Z",
-        default="Z",
-        update=mode_change)
+        items=axis_options, update=mode_change, name="Type of axis",
+        description="offers basic axis output vectors X|Y|Z", default="Z")
 
     profile_file = StringProperty(default="", update=updateNode)
     filename = StringProperty(default="", update=updateNode)
     posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)
     extended_parsing = BoolProperty(default=False)
-    precision = IntProperty(name = "Precision",
-                    description = "Number of decimal places used for coordinates when generating profile from selection",
-                    min=0, max=10, default=8,
-                    update=updateNode)
-    curve_points_count = IntProperty(name = "Curve points count",
-                    description = "Default number of points on curve segment",
-                    min=1, max=100, default=20,
-                    update=updateNode)
+
+    precision = IntProperty(
+        name="Precision", min=0, max=10, default=8, update=updateNode,
+        description="decimal precision of coordinates when generating profile from selection")
+
+    curve_points_count = IntProperty(
+        name="Curve points count", min=1, max=100, default=20, update=updateNode,
+        description="Default number of points on curve segment")
+
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -579,6 +587,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         # row.prop(self, "profile_file", text="")
         row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
 
+
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "extended_parsing", text="extended parsing")
@@ -586,12 +595,14 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "precision")
         layout.prop(self, "curve_points_count")
 
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "a", "a")
         self.inputs.new('StringsSocket', "b", "b")
 
         self.outputs.new('VerticesSocket', "Verts", "Verts")
         self.outputs.new('StringsSocket', "Edges", "Edges")
+
 
     def adjust_inputs(self):
         '''
@@ -608,6 +619,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 print('- or contact Dealga')
         elif not inputs[-2].is_linked:
             inputs.remove(inputs[-1])
+
 
     def update(self):
         '''
@@ -628,6 +640,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.adjust_inputs()
 
+
     def homogenize_input(self, segments, longest):
         '''
         edit segments in place, extend all to match length of longest
@@ -635,6 +648,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         for letter, letter_dict in segments.items():
             if letter_dict['length'] < longest:
                 fullList(letter_dict['data'], longest)
+
 
     def meta_get(self, s_name, fallback, level):
         '''
@@ -655,6 +669,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return fallback
 
+
     def get_input(self):
         '''
         collect all input socket data, and track the longest sequence.
@@ -674,6 +689,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
                 longest = num_datapoints
 
         return segments, longest
+
 
     def process(self):
 
@@ -721,5 +737,5 @@ def unregister():
     bpy.utils.unregister_class(SvPrifilizer)
     bpy.utils.unregister_class(SvProfileNode)
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#     register()

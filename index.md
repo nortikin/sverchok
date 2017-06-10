@@ -50,12 +50,13 @@
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
-    SvKDTreeNode
+    SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvMeshFilterNode
     SvEdgeAnglesNode
     SvMeshSelectNode
     SvSelectSimilarNode
+    SvPointInside
     SvProportionalEditNode
 
 ## Transforms
@@ -99,6 +100,7 @@
     LineConnectNodeMK2
     SvLatheNode
     SvConvexHullNode
+    SvConvexHullNodeMK2
     DelaunayTriangulation2DNode
     Voronoi2DNode
     SvWafelNode
@@ -186,6 +188,7 @@
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
     ---
+    SvHomogenousVectorField
     SvNoiseNodeMK2
     SvVectorFractal
     SvLacunarityNode
@@ -288,8 +291,10 @@
     SvParticlesNode
     SvParticlesMK2Node
     SvJoinTrianglesNode
+    SvListSliceLiteNode
     SvCacheNode
     SvUVtextureNode
     SvSeparateMeshNodeMK2
     SvBvhOverlapNodeNew
     SvIndexToMaskNode
+    SvMultiExtrudeAlt

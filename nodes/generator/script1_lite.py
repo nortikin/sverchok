@@ -69,6 +69,17 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class SvScriptNodeLiteCustomCallBack(bpy.types.Operator):
+
+    bl_idname = "node.scriptlite_custom_callback"
+    bl_label = "custom SNLite callback"
+    cb_name = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        context.node.custom_callback(context, self)
+        return {'FINISHED'}
+
+
 class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_import"
@@ -83,11 +94,41 @@ class SvScriptNodeLiteTextImport(bpy.types.Operator):
 
 
 class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
+    ''' snl SN Lite /// a lite version of SN '''
 
-    ''' Script node Lite'''
     bl_idname = 'SvScriptNodeLite'
     bl_label = 'Scripted Node Lite'
     bl_icon = 'SCRIPTPLUGINS'
+
+    def custom_enum_func(self, context):
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            enum_list = ND['sockets']['custom_enum']
+            if enum_list:
+                return [(ce, ce, '', idx) for idx, ce in enumerate(enum_list)]
+
+        return [("A", "A", '', 0), ("B", "B", '', 1)]
+
+
+    def custom_callback(self, context, operator):
+        ND = self.node_dict.get(hash(self))
+        if ND:
+            ND['sockets']['callbacks'][operator.cb_name](self, context)
+
+
+    def make_operator(self, new_func_name, force=False):
+        ND = self.node_dict.get(hash(self))               
+        if ND:                                            
+            callbacks = ND['sockets']['callbacks']        
+            if not (new_func_name in callbacks) or force:
+                # here node refers to an ast node (a syntax tree node), not a node tree node
+                ast_node = self.get_node_from_function_name(new_func_name)
+                slice_begin, slice_end = ast_node.body[0].lineno-1, ast_node.body[-1].lineno
+                code = '\n'.join(self.script_str.split('\n')[slice_begin-1:slice_end+1])
+
+                exec(code, locals(), locals())
+                callbacks[new_func_name] = locals()[new_func_name]
+
 
     script_name = StringProperty()
     script_str = StringProperty()
@@ -112,11 +153,15 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         default="To Node",
         update=updateNode
     )
-
+    
     inject_params = BoolProperty()
     injected_state = BoolProperty(default=False)
     user_filename = StringProperty(update=updateNode)
     n_id = StringProperty(default='')
+
+    custom_enum = bpy.props.EnumProperty(
+        items=custom_enum_func, description="custom enum", update=updateNode
+    )
 
     def draw_label(self):
         if self.script_name:
@@ -468,6 +513,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
 
 classes = [
+    SvScriptNodeLiteCustomCallBack,
     SvScriptNodeLiteTextImport,
     SvScriptNodeLitePyMenu,
     SvScriptNodeLiteCallBack,
@@ -481,4 +527,3 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(name) for name in classes]
- 
