@@ -470,7 +470,7 @@ def index_viewer_adding(node):
     links = tree.links
 
     vi = tree.nodes.new('IndexViewerNode')
-    vi.location = loc+Vector((400,0))
+    vi.location = loc+Vector((200,-100))
     vi.draw_bg = True
 
     links.new(node.outputs[2], vi.inputs[0])   #knots
@@ -485,9 +485,23 @@ def float_add_if_selected(node):
     links = tree.links
 
     nu = tree.nodes.new('SvNumberNode')
-    nu.location = loc+Vector((-300,0))
+    nu.location = loc+Vector((-200,-150))
 
     links.new(nu.outputs[0], node.inputs[0])   #number
+
+def viewedraw_adding(node):
+    """ adding new viewer draw node node if none """
+    if node.outputs[0].is_linked: return
+    loc = node.location
+
+    tree = bpy.context.space_data.edit_tree
+    links = tree.links
+
+    vd = tree.nodes.new('ViewerNode2')
+    vd.location = loc+Vector((200,225))
+
+    links.new(node.outputs[0], vd.inputs[0])   #verts
+    links.new(node.outputs[1], vd.inputs[1])   #edges
 
 class SvPrifilizer(bpy.types.Operator):
     """SvPrifilizer"""
@@ -598,8 +612,8 @@ class SvPrifilizer(bpy.types.Operator):
                 hr = ob_points[-1].handle_right[:]
                 hl = ob_points[0].handle_left[:]
                 # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
-                values += self.stringadd(hr,ob_points[i-1].select_right_handle)
-                values += self.stringadd(hl,ob_points[i].select_left_handle)
+                values += self.stringadd(hr,ob_points[-1].select_right_handle)
+                values += self.stringadd(hl,ob_points[0].select_left_handle)
                 values += self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
                 values += self.curve_points_count()
                 values += ' 0 '
@@ -637,6 +651,7 @@ class SvPrifilizer(bpy.types.Operator):
             #print(k[0])
         index_viewer_adding(node)
         node.extended_parsing = self.knotselected
+        viewedraw_adding(node)
         if self.knotselected:
             float_add_if_selected(node)
         #print(node.SvLists['knotsnames'].SvSubLists[0].SvName)
