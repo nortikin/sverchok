@@ -476,7 +476,18 @@ def index_viewer_adding(node):
     links.new(node.outputs[2], vi.inputs[0])   #knots
     links.new(node.outputs[3], vi.inputs[4])   #names
 
+def float_add_if_selected(node):
+    """ adding new float node if selected knots """
+    if node.inputs[0].is_linked: return
+    loc = node.location
 
+    tree = bpy.context.space_data.edit_tree
+    links = tree.links
+
+    nu = tree.nodes.new('SvNumberNode')
+    nu.location = loc+Vector((-300,0))
+
+    links.new(nu.outputs[0], node.inputs[0])   #number
 
 class SvPrifilizer(bpy.types.Operator):
     """SvPrifilizer"""
@@ -486,12 +497,17 @@ class SvPrifilizer(bpy.types.Operator):
 
     nodename = StringProperty(name='nodename')
     treename = StringProperty(name='treename')
+    knotselected = BoolProperty(description='if selected knots than use extended parsing in PN', default=False)
 
 
-
-    def stringadd(self, x):
+    def stringadd(self, x,selected=False):
         precision = bpy.data.node_groups[self.treename].nodes[self.nodename].precision
-        a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
+        if selected:
+            letter = '+a'
+            a = '('+str(round(x[0], precision))+letter+')' + ',' + '('+str(round(x[1], precision))+letter+')' + ' '
+            self.knotselected = True
+        else:
+            a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
         return a
     
     def curve_points_count(self):
@@ -544,7 +560,7 @@ class SvPrifilizer(bpy.types.Operator):
                     # initial value
                     values += 'M '
                     co = ob_points[0].co[:]
-                    values += self.stringadd(co)
+                    values += self.stringadd(co,ob_points[0].select_control_point)
                     values += '\n'
                     out_points.append(co)
                     out_names.append(['M'])
@@ -557,9 +573,9 @@ class SvPrifilizer(bpy.types.Operator):
                         hr = ob_points[i-1].handle_right[:]
                         hl = ob_points[i].handle_left[:]
                         # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
-                        values += self.stringadd(hr)
-                        values += self.stringadd(hl)
-                        values += self.stringadd(co)
+                        values += self.stringadd(hr,ob_points[i-1].select_right_handle)
+                        values += self.stringadd(hl,ob_points[i].select_left_handle)
+                        values += self.stringadd(co,ob_points[i].select_control_point)
                         values += self.curve_points_count()
                         values += ' 0 '
                         values += '\n'
@@ -568,12 +584,12 @@ class SvPrifilizer(bpy.types.Operator):
                     elif c == 'L ' and not line:
                         line = True
                         values += c
-                        values += self.stringadd(co)
+                        values += self.stringadd(co,ob_points[i].select_control_point)
                         values += '\n'
                         out_points.append(co[:])
                         out_names.append(['L'])
                     elif c == 'L ' and line:
-                        values += self.stringadd(co)
+                        values += self.stringadd(co,ob_points[i].select_control_point)
                         out_points.append(co[:])
                         out_names.append(['L'])
             if ob_points[0].handle_left_type in types:
@@ -582,9 +598,9 @@ class SvPrifilizer(bpy.types.Operator):
                 hr = ob_points[-1].handle_right[:]
                 hl = ob_points[0].handle_left[:]
                 # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
-                values += self.stringadd(hr)
-                values += self.stringadd(hl)
-                values += self.stringadd(ob_points[0].co)
+                values += self.stringadd(hr,ob_points[i-1].select_right_handle)
+                values += self.stringadd(hl,ob_points[i].select_left_handle)
+                values += self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
                 values += self.curve_points_count()
                 values += ' 0 '
                 values += '\n'
@@ -594,10 +610,13 @@ class SvPrifilizer(bpy.types.Operator):
             if not line:
                 # hacky way till be fixed x for curves not only for lines
                 values += '# hacky way till be fixed x\n# for curves not only for lines'
-                values += '\nL ' + self.stringadd(ob_points[0].co)
+                values += '\nL ' + self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
                 values += '\nx \n\n'
             else:
                 values += '\nx \n\n'
+
+        if self.knotselected:
+            values += '# expression (#+a) added because \n# you selected knots in curve'
         self.write_values(self.nodename, values)
         #print(values)
         node.filename = self.nodename
@@ -617,6 +636,9 @@ class SvPrifilizer(bpy.types.Operator):
             item.SvName = k[0]
             #print(k[0])
         index_viewer_adding(node)
+        node.extended_parsing = self.knotselected
+        if self.knotselected:
+            float_add_if_selected(node)
         #print(node.SvLists['knotsnames'].SvSubLists[0].SvName)
         return{'FINISHED'}
 
