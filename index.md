@@ -32,7 +32,7 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvProfileNode
+    SvProfileNodeMK2
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode

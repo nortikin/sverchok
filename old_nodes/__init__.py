@@ -35,6 +35,7 @@ old_bl_idnames = {
     #'Test1Node' : "test",
     #'Test2Node' : "test",
     #'ToolsNode' : "tools",
+    'SvProfileNode': "profile",
     'SvReRouteNode': "reroute",
     'VoronoiNode': "voronoi",
     'ViewerNode': "viewer",
