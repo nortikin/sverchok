@@ -27,6 +27,25 @@ from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
 
+
+class SvOB3NamesList(bpy.types.UIList):
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+        # groups = datas
+        
+        # if self.layout_type in {'DEFAULT', 'COMPACT'}:
+            
+        #     layout.prop(groups, "name", text="", emboss=False, icon_value=icon)
+        #     layout.label(text="Rawr", translate=False)
+
+        # # 'GRID' layout type should be as compact as possible (typically a single icon!).
+        # elif self.layout_type in {'GRID'}:
+        #     layout.alignment = 'CENTER'
+        #     layout.label(text="", icon_value=icon)
+
+        layout.label(item.name)
+
+
 class SvOB3Callback(bpy.types.Operator):
 
     bl_idname = "node.ob3_callback"
@@ -87,6 +106,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode)
 
     object_names = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    active_obj_index = bpy.props.IntProperty()
 
 
     def sv_init(self, context):
@@ -135,15 +155,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def draw_obj_names(self, layout):
         # display names currently being tracked, stop at the first 5..
         if self.object_names:
-            remain = len(self.object_names) - 5
 
-            for i, obj_ref in enumerate(self.object_names):
-                layout.label(obj_ref.name)
-                if i > 4 and remain > 0:
-                    postfix = ('' if remain == 1 else 's')
-                    more_items = '... {0} more item' + postfix
-                    layout.label(more_items.format(remain))
-                    break
+            layout.template_list(
+                "SvOB3NamesList", "", 
+                self, "object_names", self, "active_obj_index")
         else:
             layout.label('--None--')
 
@@ -270,7 +285,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3Callback, SvObjectsNodeMK3]
+classes = [SvOB3NamesList, SvOB3Callback, SvObjectsNodeMK3]
 
 
 def register():
