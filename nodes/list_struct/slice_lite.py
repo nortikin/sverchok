@@ -47,7 +47,7 @@ def list_slices(node, data, slice_sizes):
         index = 0
         sliced = []
         for size in sizes:
-            if (index + size) < len(sublist):
+            if (index + size) <= len(sublist):
                 sliced.append(sublist[index:index + size])
             else:
                 print(node.name, 'is being asked to slice beyond existing sublist boundary, iteration:', idx)
