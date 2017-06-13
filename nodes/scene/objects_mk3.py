@@ -218,6 +218,19 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         row = col.row(align=True)
         row.operator(callback, text="Select Objects").fn_name = 'select_objs'
+
+        # OR !!
+
+        # col = layout.column(align=True)
+        # row = col.row(align=True)
+        # row.prop(self, 'sort', text='', toggle=True, icon='SORTALPHA')  # sort alpha
+        # row.prop(self, "modifiers", text='', toggle=True, icon='MODIFIER')  # post modifier
+        # row.prop(self, "vergroups", text='', toggle=True, icon='GROUP_VERTEX') # vertex groups
+        # row.operator(callback, text="Select").fn_name = 'select_objs'
+        
+        # self.draw_obj_names(layout)
+
+
         
         self.draw_obj_names(layout)
 
