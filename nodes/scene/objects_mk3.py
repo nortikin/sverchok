@@ -27,23 +27,44 @@ from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
 
+class SvObj3DataCollection(bpy.types.PropertyGroup):
+    name = bpy.props.StringProperty()
+    icon = bpy.props.StringProperty(default="BLANK1")
+
 
 class SvOB3NamesList(bpy.types.UIList):
 
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
-        # groups = datas
+
+        layout.label(item.name, icon=item.icon)
         
-        # if self.layout_type in {'DEFAULT', 'COMPACT'}:
-            
-        #     layout.prop(groups, "name", text="", emboss=False, icon_value=icon)
-        #     layout.label(text="Rawr", translate=False)
+        # This is needed to help disambiguate the origin of this click. The receiver needs
+        # to know from which node tree and node it originated.
+        action = layout.operator("node.sv_ob3_collection_operator", icon='X', text='')
+        action.tree_name = data.id_data.name
+        action.node_name = data.name
+        action.fn_name = 'REMOVE'
+        action.idx = data.active_obj_index
 
-        # # 'GRID' layout type should be as compact as possible (typically a single icon!).
-        # elif self.layout_type in {'GRID'}:
-        #     layout.alignment = 'CENTER'
-        #     layout.label(text="", icon_value=icon)
 
-        layout.label(item.name)
+class SvOB3ItemOperator(bpy.types.Operator):
+
+    bl_idname = "node.sv_ob3_collection_operator"
+    bl_label = "bladibla"
+
+    tree_name = bpy.props.StringProperty(default='')
+    node_name = bpy.props.StringProperty(default='')
+    fn_name = bpy.props.StringProperty(default='')
+    idx = bpy.props.IntProperty()
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
+
+        if self.fn_name == 'REMOVE':
+            node.object_names.remove(self.idx)
+
+        return {'FINISHED'}
+
 
 
 class SvOB3Callback(bpy.types.Operator):
@@ -105,7 +126,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    object_names = bpy.props.CollectionProperty(type=SvObj3DataCollection)
     active_obj_index = bpy.props.IntProperty()
 
 
@@ -134,7 +155,9 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             names.sort()
 
         for name in names:
-            self.object_names.add().name = name
+            item = self.object_names.add()
+            item.name = name
+            item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
@@ -153,9 +176,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
          
 
     def draw_obj_names(self, layout):
-        # display names currently being tracked, stop at the first 5..
-        if self.object_names:
 
+        if self.object_names:
             layout.template_list(
                 "SvOB3NamesList", "", 
                 self, "object_names", self, "active_obj_index")
@@ -285,7 +307,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [SvOB3NamesList, SvOB3Callback, SvObjectsNodeMK3]
+classes = [
+    SvOB3ItemOperator, SvObj3DataCollection, 
+    SvOB3NamesList, SvOB3Callback, SvObjectsNodeMK3
+]
 
 
 def register():
