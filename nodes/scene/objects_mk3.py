@@ -63,6 +63,12 @@ class SvOB3ItemOperator(bpy.types.Operator):
         if self.fn_name == 'REMOVE':
             node.object_names.remove(self.idx)
 
+        node.process_node(None)
+
+        #
+        # if not node.object_names:
+        #     node.process()
+
         return {'FINISHED'}
 
 
