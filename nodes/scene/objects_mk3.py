@@ -65,12 +65,10 @@ class SvOB3ItemOperator(bpy.types.Operator):
 
         node.process_node(None)
 
-        #
         # if not node.object_names:
         #     node.process()
 
         return {'FINISHED'}
-
 
 
 class SvOB3Callback(bpy.types.Operator):
@@ -183,11 +181,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             Helper function used by draw_buttons, to specifically deal with drawing 
             the object bames, either as None or in a UI list.
         """
-
         if self.object_names:
-            layout.template_list(
-                "SvOB3NamesList", "", 
-                self, "object_names", self, "active_obj_index")
+            layout.template_list("SvOB3NamesList", "", self, "object_names", self, "active_obj_index")
         else:
             layout.label('--None--')
 
@@ -226,8 +221,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_sv3dpanel_ob3(self, col, little_width):
         callback = 'node.ob3_callback'
+        
         row = col.row(align=True)
         row.label(text=self.label if self.label else self.name)
+        
         colo = row.row(align=True)
         colo.scale_x = little_width * 5
         op = colo.operator(callback, text="Get")
