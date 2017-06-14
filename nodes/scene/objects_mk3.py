@@ -118,18 +118,15 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         default='', update=updateNode)
 
     modifiers = BoolProperty(
-        name='Modifiers',
-        description='Apply modifier geometry to import (original untouched)',
+        name='Modifiers', description='Apply modifier geometry to import (original untouched)',
         default=False, update=updateNode)
 
     vergroups = BoolProperty(
-        name='Vergroups',
-        description='Use vertex groups to nesty insertion',
+        name='Vergroups', description='Use vertex groups to nesty insertion',
         default=False, update=hide_show_versgroups)
 
     sort = BoolProperty(
-        name='sort by name',
-        description='sorting inserted objects by names',
+        name='sort by name', description='sorting inserted objects by names',
         default=True, update=updateNode)
 
     object_names = bpy.props.CollectionProperty(type=SvObj3DataCollection)
@@ -141,7 +138,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         new('VerticesSocket', "Vertices")
         new('StringsSocket', "Edges")
         new('StringsSocket', "Polygons")
-        new('MatrixSocket', "Matrixes")
+        new('MatrixSocket', "Matrices")
         new('SvObjectSocket', "Object")
 
 
@@ -182,6 +179,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
          
 
     def draw_obj_names(self, layout):
+        """
+            Helper function used by draw_buttons, to specifically deal with drawing 
+            the object bames, either as None or in a UI list.
+        """
 
         if self.object_names:
             layout.template_list(
@@ -189,6 +190,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 self, "object_names", self, "active_obj_index")
         else:
             layout.label('--None--')
+
 
     def draw_buttons(self, context, layout):
 
@@ -218,19 +220,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         row = col.row(align=True)
         row.operator(callback, text="Select Objects").fn_name = 'select_objs'
-
-        # OR !!
-
-        # col = layout.column(align=True)
-        # row = col.row(align=True)
-        # row.prop(self, 'sort', text='', toggle=True, icon='SORTALPHA')  # sort alpha
-        # row.prop(self, "modifiers", text='', toggle=True, icon='MODIFIER')  # post modifier
-        # row.prop(self, "vergroups", text='', toggle=True, icon='GROUP_VERTEX') # vertex groups
-        # row.operator(callback, text="Select").fn_name = 'select_objs'
-        
-        # self.draw_obj_names(layout)
-
-
         
         self.draw_obj_names(layout)
 
@@ -322,7 +311,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
 
-        outputs['Matrixes'].sv_set(mtrx_out)
+        outputs['Matrices'].sv_set(mtrx_out)
         outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
