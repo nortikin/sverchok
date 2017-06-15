@@ -44,6 +44,7 @@ old_bl_idnames = {
     'SvGetDataObjectNode': 'get_blenddata',
     'ObjectsNode': "objects",
     'ObjectsNodeMK2': "objects_mk2",
+    'SvObjectsNodeMK3': "objects_mk3_old",
     'RandomVectorNode': 'random_vector',
     'svAxisInputNode': 'axis_input',
     'SvIntersectEdgesNode': 'edges_intersect',
