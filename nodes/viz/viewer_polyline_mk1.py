@@ -280,10 +280,13 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self, 'material', bpy.data, 'materials', text='',
             icon='MATERIAL_DATA')
 
+        layout.row().prop(self, 'dimensions', expand=True)
+
         col = layout.column()
-        r1 = col.row(align=True)
-        r1.prop(self, 'depth', text='radius')
-        r1.prop(self, 'resolution', text='subdiv')
+        if self.dimensions == '3D':
+            r1 = col.row(align=True)
+            r1.prop(self, 'depth', text='radius')
+            r1.prop(self, 'resolution', text='subdiv')
         row = col.row(align=True)
         row.prop(self, 'bspline', text='bspline', toggle=True)
         row.prop(self, 'close', text='close', toggle=True)
@@ -296,6 +299,8 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'selected_mode', expand=True)
 
         col.row().prop(self, 'dimensions', expand=True)
+
+
 
 
     def draw_buttons_ext(self, context, layout):
