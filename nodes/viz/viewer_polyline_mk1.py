@@ -80,7 +80,10 @@ def live_curve(obj_index, node, verts, radii, twist):
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
     cu.dimensions = node.dimensions
-    cu.fill_mode = 'FULL'
+    if node.dimensions == '2D':
+        cu.fill_mode = 'FRONT'
+    else:
+        cu.fill_mode = 'FULL'
 
     set_bevel_object(node, cu, obj_index)
 
@@ -291,6 +294,8 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'use_smooth', text='smooth', toggle=True)
         row.separator()
         row.prop(self, 'selected_mode', expand=True)
+
+        col.row().prop(self, 'dimensions', expand=True)
 
 
     def draw_buttons_ext(self, context, layout):
