@@ -259,8 +259,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 vecplan_ = Vector_generate(vecplan)
                 for centersver, vecp, edgp in zip(vecplan,vecplan_,edgplan):
                     tubes_flag_bed_solution_i_know = False
-                    newinds1 = edgp.copy()
-                    newinds2 = edgp.copy()
+                    newinds1 = [list(e) for e in edgp]
+                    newinds2 = newinds1.copy()
                     vupperob = vecp.copy()
                     vlowerob = vecp.copy()
                     deledges1 = []
