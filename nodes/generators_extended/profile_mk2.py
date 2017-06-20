@@ -577,7 +577,7 @@ class SvPrifilizer(bpy.types.Operator):
                     values += self.stringadd(co,ob_points[0].select_control_point)
                     values += '\n'
                     out_points.append(co)
-                    out_names.append(['M'])
+                    out_names.append(['M.0'])
                     # pass if first 'M' that was used already upper
                     continue
                 else:
@@ -593,19 +593,22 @@ class SvPrifilizer(bpy.types.Operator):
                         values += self.curve_points_count()
                         values += ' 0 '
                         values += '\n'
+                        out_points.append(hr[:])
+                        out_points.append(hl[:])
                         out_points.append(co[:])
-                        out_names.append(['C'])
+                        namecur = ['C.'+str(i)]
+                        out_names.extend([['C.'+str(i)+'h1'],['C.'+str(i)+'h2'],['C.'+str(i)+'k']])
                     elif c == 'L ' and not line:
                         line = True
                         values += c
                         values += self.stringadd(co,ob_points[i].select_control_point)
                         values += '\n'
                         out_points.append(co[:])
-                        out_names.append(['L'])
+                        out_names.append(['L.'+str(i)])
                     elif c == 'L ' and line:
                         values += self.stringadd(co,ob_points[i].select_control_point)
                         out_points.append(co[:])
-                        out_names.append(['L'])
+                        out_names.append(['L.'+str(i)])
             if ob_points[0].handle_left_type in types:
                 line = False
                 values += 'C '
@@ -890,7 +893,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         try:
             names = []
             for i,knot in enumerate(self.SvLists['knotsnames'].SvSubLists):
-                names.append([knot.SvName+'.'+str(i)])           
+                names.append([knot.SvName])
             outputs[3].sv_set([names])
         except:
             outputs[3].sv_set([])
@@ -904,5 +907,5 @@ def unregister():
     bpy.utils.unregister_class(SvPrifilizer)
     bpy.utils.unregister_class(SvProfileNodeMK2)
 
-if __name__ == '__main__':
-    register()
+#if __name__ == '__main__':
+#    register()
