@@ -339,6 +339,9 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+        if not self.activate:
+            return
+
         if not (self.inputs['vertices'].is_linked):
             return
 
