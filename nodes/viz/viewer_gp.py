@@ -139,19 +139,21 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         frame = self.inputs[0]
         coordinates = self.inputs[1]
+        coloors = self.inputs[4]
         if frame.is_linked and coordinates.is_linked:
 
             strokes = frame.sv_get()
             coords = coordinates.sv_get()
             self.num_strokes = len(coords)
             set_correct_stroke_count(strokes, coords)
+            cols = coloors.sv_get()[0]
              
             cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
             fullList(cyclic_socket_value, self.num_strokes)
 
             pressures = self.get_pressures()
-            
-            for idx, (stroke, coord_set) in enumerate(zip(strokes, coords)):
+
+            for idx, (stroke, coord_set, color) in enumerate(zip(strokes, coords, cols)):
                 stroke.draw_mode = self.draw_mode
                 stroke.draw_cyclic = cyclic_socket_value[idx]
 
@@ -161,6 +163,10 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 flat_pressures = match_points_and_pressures(pressures[idx], num_points)
                 pass_pressures_to_stroke(stroke, flat_pressures)
 
+                print(color)
+                col = stroke.color.color
+                col.r, col.g, col.b = color[0:3]
+                print(col.r, col.g, col.b)
                 # color.fill_alpha
                 # color.alpha
 
@@ -176,3 +182,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvGreasePencilStrokes)
+
+#if __name__ == '__main__':
+#    register()
