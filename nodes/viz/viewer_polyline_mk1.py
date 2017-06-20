@@ -298,10 +298,6 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         row.separator()
         row.prop(self, 'selected_mode', expand=True)
 
-        col.row().prop(self, 'dimensions', expand=True)
-
-
-
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
