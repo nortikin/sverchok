@@ -79,14 +79,17 @@ def get_palette(grease_pencil, palette_name=None):
 def ensure_color_in_palette(node, palette, color, named_color=None):
 
     if not named_color:
-        named_color = 'c_' + node.name + str(color[:])
+        rounded_color = [round(i, 5) for i in color[:3]]
+        named_color = str(rounded_color)
     else:
         named_color = 'BLACK'
 
     if not named_color in palette.colors:
+
         new_color = palette.colors.new()
         new_color.color = color[:3]
         new_color.name = named_color
+        # print('made', new_color.name)
         return new_color
     else:
         return palette.colors[named_color]
