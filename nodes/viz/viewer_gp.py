@@ -76,6 +76,16 @@ def get_palette(grease_pencil, palette_name=None):
     return palette
 
 
+def remove_unused_colors(palette, strokes):
+    """
+    optional cleanup step, probably best to not have this switched on by default
+    """
+    named_colors = [stroke.colorname for stroke in strokes] + [str([0,0,0])]
+    unused_named_colors = {color.name for color in palette.colors} - set(named_colors)
+    for unused_color in unused_named_colors:
+        palette.colors.remove(palette.colors[unused_color])
+
+
 def ensure_color_in_palette(node, palette, color, named_color=None):
 
     if not named_color:
@@ -119,7 +129,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
 
-
+    auto_cleanup_colors = bpy.props.BoolProperty(default=True, update=updateNode)
 
     draw_cyclic = bpy.props.BoolProperty(default=True, update=updateNode)
     pressure = bpy.props.FloatProperty(default=2.0, min=0.1, max=8.0, update=updateNode)
@@ -148,6 +158,9 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'draw_mode', expand=True)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'auto_cleanup_colors', text='auto remove unused colors')
+    
 
     def get_pressures(self):
         pressures = self.inputs["pressure"].sv_get()
@@ -212,6 +225,9 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 except:
                     print('stroke with index', idx, 'is not generated yet.')
 
+            # color_palette_cleanup()
+
+            remove_unused_colors(PALETTE, strokes)
             self.outputs[0].sv_set(strokes)
 
 
