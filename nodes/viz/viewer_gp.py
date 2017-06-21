@@ -90,9 +90,9 @@ def ensure_color_in_palette(node, palette, color, named_color=None, fill=None):
 
     if not named_color:
         if fill:
-            rounded_color = str([round(i, 5) for i in color[:4]]) + '_' + str([round(i, 5) for i in fill[:4]])
+            rounded_color = str([round(i, 4) for i in color[:4]]) + str([round(i, 4) for i in fill[:4]])
         else:
-            rounded_color = str([round(i, 5) for i in color[:4]])
+            rounded_color = str([round(i, 4) for i in color[:4]])
         named_color = str(rounded_color)
     else:
         named_color = 'BLACK'
