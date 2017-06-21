@@ -186,7 +186,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
             for idx, (stroke, coord_set, color) in enumerate(zip(strokes, coords, cols)):
                 color_from_palette = ensure_color_in_palette(self, PALETTE, color)
-                                
+
                 stroke.draw_mode = self.draw_mode
                 stroke.draw_cyclic = cyclic_socket_value[idx]
 
@@ -199,7 +199,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 # print(color)
                 stroke.line_width = 1
                 try:
-                    stroke.color = color_from_palette
+                    stroke.colorname = color_from_palette.name
                     # strokes.new(colorname=node_specific_color)
                     # col = stroke.color.color
                     # col.r, col.g, col.b = color[:3]
