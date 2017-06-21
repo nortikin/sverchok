@@ -29,13 +29,13 @@ from sverchok.utils.context_managers import new_input
 nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
 
-def set_correct_stroke_count(strokes, coords):
+def set_correct_stroke_count(strokes, coords, BLACK):
     """ ensure that the number of strokes match the sets of coordinates """
     diff = len(strokes) - len(coords)
     if diff < 0:
         # add new strokes
         for _ in range(abs(diff)):
-            strokes.new()
+            strokes.new(colorname=BLACK.name)
     elif diff > 0:
         # remove excess strokes
         for _ in range(diff):
@@ -67,6 +67,31 @@ def match_points_and_pressures(pressure_set, num_points):
     return pressure_set
 
 
+def get_palette(grease_pencil, palette_name=None):
+    palettes = grease_pencil.palettes
+    if not palette_name in palettes:
+        palette = palettes.new(palette_name)
+    else:
+        palette = palettes.get(palette_name)
+    return palette
+
+
+def ensure_color_in_palette(node, palette, color, named_color=None):
+
+    if not named_color:
+        named_color = 'c_' + node.name + str(color[:])
+    else:
+        named_color = 'BLACK'
+
+    if not named_color in palette.colors:
+        new_color = palette.colors.new()
+        new_color.color = color[:3]
+        new_color.name = named_color
+        return new_color
+    else:
+        return palette.colors[named_color]
+
+
 class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     ''' Make GreasePencil Strokes '''
     bl_idname = 'SvGreasePencilStrokes'
@@ -90,6 +115,8 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode, name='Fill', default=(0.2, 0.6, 0.9, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
+
+
 
     draw_cyclic = bpy.props.BoolProperty(default=True, update=updateNode)
     pressure = bpy.props.FloatProperty(default=2.0, min=0.1, max=8.0, update=updateNode)
@@ -139,21 +166,27 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         frame = self.inputs[0]
         coordinates = self.inputs[1]
-        coloors = self.inputs[4]
+        colors = self.inputs["stroke color"]
         if frame.is_linked and coordinates.is_linked:
 
             strokes = frame.sv_get()
+            GP_DATA = strokes.id_data
+            PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
+            BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0])
+
             coords = coordinates.sv_get()
             self.num_strokes = len(coords)
-            set_correct_stroke_count(strokes, coords)
-            cols = coloors.sv_get()[0]
-             
+            set_correct_stroke_count(strokes, coords, BLACK)
+            cols = colors.sv_get()[0]
+
             cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
             fullList(cyclic_socket_value, self.num_strokes)
-
+            fullList(cols, self.num_strokes)
             pressures = self.get_pressures()
 
             for idx, (stroke, coord_set, color) in enumerate(zip(strokes, coords, cols)):
+                color_from_palette = ensure_color_in_palette(self, PALETTE, color)
+                                
                 stroke.draw_mode = self.draw_mode
                 stroke.draw_cyclic = cyclic_socket_value[idx]
 
@@ -163,12 +196,18 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 flat_pressures = match_points_and_pressures(pressures[idx], num_points)
                 pass_pressures_to_stroke(stroke, flat_pressures)
 
-                print(color)
-                col = stroke.color.color
-                col.r, col.g, col.b = color[0:3]
-                print(col.r, col.g, col.b)
-                # color.fill_alpha
-                # color.alpha
+                # print(color)
+                stroke.line_width = 1
+                try:
+                    stroke.color = color_from_palette
+                    # strokes.new(colorname=node_specific_color)
+                    # col = stroke.color.color
+                    # col.r, col.g, col.b = color[:3]
+    
+                    # color.fill_alpha
+                    # color.alpha
+                except:
+                    print('stroke with index', idx, 'is not generated yet.')
 
             self.outputs[0].sv_set(strokes)
 
