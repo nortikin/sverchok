@@ -75,7 +75,7 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
 
         for verts, edges, faces in zip(*meshes):
 
-            bm = bmesh_from_pydata(verts, edges, faces)
+            bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
 
             # // it's a little undocumented..
             ret = bmesh.ops.dissolve_limit(
