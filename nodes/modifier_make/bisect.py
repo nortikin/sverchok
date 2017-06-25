@@ -153,7 +153,6 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
             for idx, (obj) in enumerate(zip(verts_ob, edg_pols)):
 
-                # cut_mat = cut_mats[idx] if idx < cut_mats else cut_mats[-1]
                 cut_mat = cut_mats[idx if idx < len(cut_mats) else -1]
                 pp = cut_mat.to_translation()
                 pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
