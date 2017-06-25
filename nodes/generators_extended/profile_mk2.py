@@ -596,7 +596,7 @@ class SvPrifilizer(bpy.types.Operator):
                         out_points.append(hr[:])
                         out_points.append(hl[:])
                         out_points.append(co[:])
-                        namecur = ['C.'+str(i)]
+                        #namecur = ['C.'+str(i)]
                         out_names.extend([['C.'+str(i)+'h1'],['C.'+str(i)+'h2'],['C.'+str(i)+'k']])
                     elif c == 'L ' and not line:
                         line = True
@@ -621,6 +621,9 @@ class SvPrifilizer(bpy.types.Operator):
                 values += self.curve_points_count()
                 values += ' 0 '
                 values += '\n'
+                out_points.append(hr[:])
+                out_points.append(hl[:])
+                out_names.extend([['C.'+str(i+1)+'h1'],['C.'+str(i+1)+'h2']])
                 # preserving overlapping
                 #out_points.append(ob_points[0].co[:])
                 #out_names.append(['C'])
@@ -907,5 +910,5 @@ def unregister():
     bpy.utils.unregister_class(SvPrifilizer)
     bpy.utils.unregister_class(SvProfileNodeMK2)
 
-#if __name__ == '__main__':
-#    register()
+if __name__ == '__main__':
+    register()
