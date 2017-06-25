@@ -34,7 +34,7 @@ class SvOB3BDataCollection(bpy.types.PropertyGroup):
 
 class SvOB3BNamesList(bpy.types.UIList):
 
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
 
         layout.label(item.name, icon=item.icon)
         
@@ -44,7 +44,7 @@ class SvOB3BNamesList(bpy.types.UIList):
         action.tree_name = data.id_data.name
         action.node_name = data.name
         action.fn_name = 'REMOVE'
-        action.idx = data.active_obj_index
+        action.idx = index #data.active_obj_index
 
 
 class SvOB3BItemOperator(bpy.types.Operator):
