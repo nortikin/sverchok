@@ -27,7 +27,7 @@ from sverchok.data_structure import updateNode, Matrix_generate, Vector_generate
 
 # based on CrossSectionNode
 # but using python bmesh code for driving
-# by Linus Yng
+# by Linus Yng / edits+upgrades Dealga McArdle
 
 
 def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
@@ -50,24 +50,30 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
             bm.faces.new([bm_verts[i] for i in face])
 
     geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
-    res = bmesh.ops.bisect_plane(bm, geom=geom_in, dist=0.00001,
-                                 plane_co=pp, plane_no=pno, use_snap_center=False,
-                                 clear_outer=outer, clear_inner=inner)
-    # this needs work function with solid gemometry
+    res = bmesh.ops.bisect_plane(
+        bm, geom=geom_in, dist=0.00001,
+        plane_co=pp, plane_no=pno, use_snap_center=False,
+        clear_outer=outer, clear_inner=inner)
+
+    # this needs work function with solid geometry
     if fill:
-        fres = bmesh.ops.edgenet_prepare(bm, edges=[e for e in res['geom_cut']
-                                                    if isinstance(e, bmesh.types.BMEdge)])
+        fres = bmesh.ops.edgenet_prepare(
+            bm, edges=[e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
+        )
         bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+    
     edges = []
     faces = []
     bm.verts.index_update()
     bm.edges.index_update()
     bm.faces.index_update()
+
     for edge in bm.edges[:]:
         edges.append([v.index for v in edge.verts[:]])
     verts = [vert.co[:] for vert in bm.verts[:]]
     for face in bm.faces:
         faces.append([v.index for v in face.verts[:]])
+
     bm.clear()
     bm.free()
 
@@ -79,15 +85,22 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bisect'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    inner = BoolProperty(name='inner', description='clear inner',
-                         default=False,
-                         update=updateNode)
-    outer = BoolProperty(name='outer', description='clear outer',
-                         default=False,
-                         update=updateNode)
-    fill = BoolProperty(name='fill', description='Fill cuts',
-                        default=False,
-                        update=updateNode)
+    inner = BoolProperty(
+        name='inner', description='clear inner',
+        default=False, update=updateNode)
+
+    outer = BoolProperty(
+        name='outer', description='clear outer',
+        default=False, update=updateNode)
+
+    fill = BoolProperty(
+        name='fill', description='Fill cuts', 
+        default=False, update=updateNode)
+
+    slice_mode = BoolProperty(
+        name="Per Object", update=updateNode, default=False,
+        description="slice each object with all matrices, or match object and matrices individually"
+    )
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices')
@@ -99,9 +112,13 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'polygons')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'inner', text="Clear Inner")
-        layout.prop(self, 'outer', text="Clear Outer")
-        layout.prop(self, 'fill', text="Fill cuts")
+        row = layout.row(align=True)
+        row.prop(self, 'inner', text="Inner", toggle=True)
+        row.prop(self, 'outer', text="Outer", toggle=True)
+        row = layout.row(align=True)
+        row.prop(self, 'fill', text="Fill", toggle=True)
+        if hasattr(self, 'slice_mode'):
+            row.prop(self, 'slice_mode', toggle=True)
 
     def process(self):
 
@@ -119,16 +136,34 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
         edges_out = []
         polys_out = []
 
-        for cut_mat in cut_mats:
-            pp = cut_mat.to_translation()
-            pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
-            for obj in zip(verts_ob, edg_pols):
+        if not hasattr(self, 'slice_mode') or not self.slice_mode:
+
+            for cut_mat in cut_mats:
+                pp = cut_mat.to_translation()
+                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
+                for obj in zip(verts_ob, edg_pols):
+                    res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner, self.fill)
+                    if not res:
+                        return
+                    verts_out.append(res[0])
+                    edges_out.append(res[1])
+                    polys_out.append(res[2])
+        
+        else:
+
+            for idx, (obj) in enumerate(zip(verts_ob, edg_pols)):
+
+                cut_mat = cut_mats[idx if idx < len(cut_mats) else -1]
+                pp = cut_mat.to_translation()
+                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
+        
                 res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner, self.fill)
                 if not res:
                     return
                 verts_out.append(res[0])
                 edges_out.append(res[1])
-                polys_out.append(res[2])
+                polys_out.append(res[2])            
+
 
         self.outputs['vertices'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
