@@ -298,3 +298,4 @@
     SvBvhOverlapNodeNew
     SvIndexToMaskNode
     SvMultiExtrudeAlt
+    SvScaleNpNode
