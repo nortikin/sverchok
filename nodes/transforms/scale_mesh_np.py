@@ -57,9 +57,9 @@ class SvScaleNpNode(bpy.types.Node, SverchCustomTreeNode):
         if self.outputs[0].is_linked:
             Ve, Ce, Mu, Fa = self.inputs
             V = Ve.sv_get()
-            C = Ce.sv_get()[0]
             out = []
             if self.Mod == "Center":
+                C = Ce.sv_get()[0]
                 F = Fa.sv_get()[0]
                 V, C, F = match_long_repeat([V, C, F])
                 V, C, F = np.array(V), np.array(C), np.array(F)
