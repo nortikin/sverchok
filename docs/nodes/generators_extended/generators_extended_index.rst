@@ -13,7 +13,7 @@ Generators Extended
    hilbert_image
    hexa_grid
    image_components
-   profile
+   profile_mk2
    plane_mk2
    mesh_eval
    ring
