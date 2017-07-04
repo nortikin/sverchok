@@ -25,7 +25,7 @@ import bgl
 
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
+# from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
 
 # star imports easing_dict and all easing functions.
 from sverchok.utils.sv_easing_functions import *
@@ -51,55 +51,55 @@ palette_dict = {
 }
 
 
-def simple_grid_xy(x, y, args):
-    func = args[0]
-    back_color, grid_color, line_color = args[1]
+# def simple_grid_xy(x, y, args):
+#     func = args[0]
+#     back_color, grid_color, line_color = args[1]
 
-    def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
+#     def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
 
-        bgl.glColor4f(*color)       
-        bgl.glBegin(bgl.GL_POLYGON)
+#         bgl.glColor4f(*color)       
+#         bgl.glBegin(bgl.GL_POLYGON)
 
-        for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
-            bgl.glVertex2f(*coord)
-        bgl.glEnd()
+#         for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
+#             bgl.glVertex2f(*coord)
+#         bgl.glEnd()
 
 
-    # draw bg fill
-    draw_rect(x=x, y=y, w=140, h=140, color=back_color)
+#     # draw bg fill
+#     draw_rect(x=x, y=y, w=140, h=140, color=back_color)
 
-    # draw grid
-    bgl.glColor4f(*grid_color)
-    num_divs = 8
-    offset = 140/num_divs
-    line_parts_x = []
-    line_parts_y = []
-    for i in range(num_divs+1):
-        xpos1 = x + (i*offset)
-        ypos1 = y
-        ypos2 = y - 140
-        line_parts_x.extend([[xpos1, ypos1], [xpos1, ypos2]])
+#     # draw grid
+#     bgl.glColor4f(*grid_color)
+#     num_divs = 8
+#     offset = 140/num_divs
+#     line_parts_x = []
+#     line_parts_y = []
+#     for i in range(num_divs+1):
+#         xpos1 = x + (i*offset)
+#         ypos1 = y
+#         ypos2 = y - 140
+#         line_parts_x.extend([[xpos1, ypos1], [xpos1, ypos2]])
 
-        ypos = y - (i*offset)
-        line_parts_y.extend([[x, ypos], [x+140, ypos]])
+#         ypos = y - (i*offset)
+#         line_parts_y.extend([[x, ypos], [x+140, ypos]])
 
-    bgl.glLineWidth(0.8)
-    bgl.glBegin(bgl.GL_LINES)
-    for coord in line_parts_x + line_parts_y:
-        bgl.glVertex2f(*coord)
-    bgl.glEnd()        
+#     bgl.glLineWidth(0.8)
+#     bgl.glBegin(bgl.GL_LINES)
+#     for coord in line_parts_x + line_parts_y:
+#         bgl.glVertex2f(*coord)
+#     bgl.glEnd()        
 
-    # draw graph-line
-    bgl.glColor4f(*line_color)
-    bgl.glLineWidth(2.0)
-    bgl.glBegin(bgl.GL_LINE_STRIP)
-    num_points = 100
-    seg_diff = 1 / num_points
-    for i in range(num_points+1):
-        _px = x + ((i * seg_diff) * 140)
-        _py = y - (1 - func(i * seg_diff) * 140) - 140
-        bgl.glVertex2f(_px, _py)
-    bgl.glEnd()        
+#     # draw graph-line
+#     bgl.glColor4f(*line_color)
+#     bgl.glLineWidth(2.0)
+#     bgl.glBegin(bgl.GL_LINE_STRIP)
+#     num_points = 100
+#     seg_diff = 1 / num_points
+#     for i in range(num_points+1):
+#         _px = x + ((i * seg_diff) * 140)
+#         _py = y - (1 - func(i * seg_diff) * 140) - 140
+#         bgl.glVertex2f(_px, _py)
+#     bgl.glEnd()        
 
 
 
@@ -149,7 +149,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
 
         # end early
-        nvBGL2.callback_disable(n_id)
+        # nvBGL2.callback_disable(n_id)
 
         float_out = self.outputs['Float']
         easing_func = easing_dict.get(int(self.selected_mode))
@@ -164,22 +164,23 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             float_out.sv_set([[None]])
 
-        if self.activate:
+        # if self.activate:
 
-            palette = palette_dict.get(self.selected_theme_mode)[:]
-            x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+        #     palette = palette_dict.get(self.selected_theme_mode)[:]
+        #     x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
             
-            draw_data = {
-                'tree_name': self.id_data.name[:],
-                'mode': 'custom_function', 
-                'custom_function': simple_grid_xy,
-                'loc': (x, y),
-                'args': (easing_func, palette)
-            }
-            nvBGL2.callback_enable(n_id, draw_data)
+        #     draw_data = {
+        #         'tree_name': self.id_data.name[:],
+        #         'mode': 'custom_function', 
+        #         'custom_function': simple_grid_xy,
+        #         'loc': (x, y),
+        #         'args': (easing_func, palette)
+        #     }
+        #     nvBGL2.callback_enable(n_id, draw_data)
 
     def free(self):
-        nvBGL2.callback_disable(node_id(self))            
+        # nvBGL2.callback_disable(node_id(self))
+        ...
 
     # reset n_id on copy
     def copy(self, node):

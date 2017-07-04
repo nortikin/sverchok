@@ -7,15 +7,7 @@ from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
 
-from sverchok.ui import (
-    viewer_draw,
-    viewer_draw_mk2,
-    index_viewer_draw,
-    nodeview_bgl_viewer_draw,
-    nodeview_bgl_viewer_draw_mk2,
-    bgl_callback_3dview,
-    color_def
-)
+from sverchok.ui import color_def
 
 
 _state = {'frame': None}
@@ -83,12 +75,12 @@ def sv_clean(scene):
     """
     Cleanup callbacks, clean dicts.
     """
-    viewer_draw.callback_disable_all()
-    viewer_draw_mk2.callback_disable_all()
-    index_viewer_draw.callback_disable_all()
-    nodeview_bgl_viewer_draw.callback_disable_all()
-    nodeview_bgl_viewer_draw_mk2.callback_disable_all()
-    bgl_callback_3dview.callback_disable_all()
+    # viewer_draw.callback_disable_all()
+    # viewer_draw_mk2.callback_disable_all()
+    # index_viewer_draw.callback_disable_all()
+    # nodeview_bgl_viewer_draw.callback_disable_all()
+    # nodeview_bgl_viewer_draw_mk2.callback_disable_all()
+    # bgl_callback_3dview.callback_disable_all()
 
     data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
@@ -158,14 +150,14 @@ def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
     pre = bpy.app.handlers.frame_change_pre
 
-    scene = bpy.app.handlers.scene_update_post
+    # scene = bpy.app.handlers.scene_update_post
     # remove all
     if sv_update_handler in post:
         post.remove(sv_update_handler)
     if sv_update_handler in pre:
         pre.remove(sv_update_handler)
-    if sv_scene_handler in scene:
-        scene.remove(sv_scene_handler)
+    # if sv_scene_handler in scene:
+    #     scene.remove(sv_scene_handler)
 
     # apply the right one
     if mode == "POST":
@@ -177,7 +169,7 @@ def set_frame_change(mode):
 def register():
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
-    bpy.app.handlers.scene_update_pre.append(sv_main_handler)
+    # bpy.app.handlers.scene_update_pre.append(sv_main_handler)
     data_structure.setup_init()
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -190,5 +182,5 @@ def register():
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
-    bpy.app.handlers.scene_update_pre.remove(sv_main_handler)
+    # bpy.app.handlers.scene_update_pre.remove(sv_main_handler)
     set_frame_change(None)

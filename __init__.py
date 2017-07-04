@@ -95,7 +95,7 @@ utils_modules = [
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_zipped_blend",
     "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     #"loadscript",
-    "debug_script", "sv_update_utils", "sv_bgl_primitives"
+    "debug_script", "sv_update_utils"
 ]
 
 ui_modules = [
@@ -103,8 +103,8 @@ ui_modules = [
     "sv_panels", "nodeview_space_menu", "nodeview_keymaps",
     "monad", "sv_icons",
     # bgl modules
-    "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
-    "index_viewer_draw", "bgl_callback_3dview",
+    # "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
+    # "index_viewer_draw", "bgl_callback_3dview",
     # show git info
     "development",
 ]
