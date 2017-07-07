@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import sys
 from bpy.props import EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_cycle as mlr
@@ -108,6 +109,8 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         VertA, PolA, VertB, PolB, VertN, PolN = self.inputs
         SMode = self.selected_mode
         out = []
+        recursionlimit = sys.getrecursionlimit()
+        sys.setrecursionlimit(10000)
         if not self.nest_objs:
             for v1, p1, v2, p2 in zip(*mlr([VertA.sv_get(), PolA.sv_get(), VertB.sv_get(), PolB.sv_get()])):
                 out.append(Boolean(v1, p1, v2, p2, SMode))
@@ -123,6 +126,7 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 for i in range(2, len(vnest)):
                     First = Boolean(First[0], First[1], vnest[i], pnest[i], SMode)
                 out.append(First)
+        sys.setrecursionlimit(recursionlimit)
         OutV.sv_set([i[0] for i in out])
         if OutP.is_linked:
             OutP.sv_set([i[1] for i in out])
