@@ -32,7 +32,7 @@ yup, ydown = (0, 1, 0), (0, -1, 0)
 zup, zdown = (0, 0, 1), (0, 0, -1)
 directions = (xup, xdown, yup, ydown, zup, zdown)
 
-# may need many more directions to increase accuracy...
+# may need many more directions to increase accuracy
 
 
 def get_points_in_mesh(points, verts, faces, eps=0.0):
