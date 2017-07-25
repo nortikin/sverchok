@@ -210,10 +210,7 @@
     SvNeuroElman1LNode
 
 ## Viz
-    ViewerNode2
     SvBmeshViewerNodeMK2
-    IndexViewerNode
-    SvTextureViewerNode
     Sv3DviewPropsNode
 
 ## Text
@@ -223,7 +220,6 @@
     NoteNode
     GTextNode
     SvDebugPrintNode
-    SvStethoscopeNodeMK2
 
 ## BPY Data
     SvGetPropNode
@@ -269,7 +265,6 @@
     SvMatrixNormalNode
     SvSculptMaskNode
     SvGreasePencilStrokes
-    SvTextureViewerNodeLite
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -277,7 +272,6 @@
     SvPolylineViewerNodeMK1
     SvTypeViewerNode
     SvSkinViewerNodeMK1b
-    SvMatrixViewer
     ---
     SvBMVertsNode
     SvBMinputNode

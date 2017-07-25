@@ -139,7 +139,7 @@ def eval_linear_spline(pts, tknots, t_in):
     return out.T
 
 
-class GenerateLookup():
+class GenerateLookup(object):
 
     def __init__(self, cyclic, vlist):
         self.lookup = {}
@@ -236,14 +236,14 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'knot_mode')
 
     def process(self):
-        if 'Unit Tanget' not in self.outputs:
-            return
-        if not any((s.is_linked for s in self.outputs)):
+
+        outputs = self.outputs
+
+        if not any((s.is_linked for s in outputs)):
             return
 
-        calc_tanget = self.outputs['Tanget'].is_linked or self.outputs['Unit Tanget'].is_linked
-
-        norm_tanget = self.outputs['Unit Tanget'].is_linked
+        norm_tanget = outputs['Unit Tanget'].is_linked
+        calc_tanget = outputs['Tanget'].is_linked or norm_tanget
 
         h = self.h
 
