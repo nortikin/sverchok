@@ -16,41 +16,71 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import random
+
 import bpy
 import bmesh
 from mathutils import Vector
 from mathutils.kdtree import KDTree
 from mathutils.bvhtree import BVHTree
+from mathutils.noise import seed_set, random_unit_vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
-xup, xdown = (1, 0, 0), (-1, 0, 0)
-yup, ydown = (0, 1, 0), (0, -1, 0)
-zup, zdown = (0, 0, 1), (0, 0, -1)
-directions = (xup, xdown, yup, ydown, zup, zdown)
+def generate_random_unitvectors():
+    # may need many more directions to increase accuracy
+    # generate up to 6 directions, filter later
+    seed_set(140230)
+    return [random_unit_vector() for i in range(6)]
 
-# may need many more directions to increase accuracy
+directions = generate_random_unitvectors()
 
 
-def get_points_in_mesh(points, verts, faces, eps=0.0):
+def get_points_in_mesh(points, verts, faces, eps=0.0, num_samples=3):
     mask_inside = []
-    mask = mask_inside.append
+
     bvh = BVHTree.FromPolygons(verts, faces, all_triangles=False, epsilon=eps)
 
-    for point in points:
-        for direction in directions:
+    for direction in directions[:num_samples]:
+        samples = []
+        mask = samples.append
+        
+        for point in points:
             hit = bvh.ray_cast(point, direction)
             if hit[0]:
-                p2 = hit[0] - Vector(point)
-                v = p2.dot(hit[1])
-                if not v < 0.0:
-                    mask(True)
-                    break
-        mask(False)
-    return mask_inside
+                v = hit[1].dot(direction)
+                mask(not v < 0.0)
+            else:
+                mask(False)
+
+        mask_inside.append(samples)
+    
+    if len(mask_inside) == 1:
+        return mask_inside[0]
+    else:
+        mask_totals = []
+        oversample = mask_totals.append
+        num_points = len(points)
+
+        # exactly what the criteria should be here is not clear, if i pick one method
+        # it may work fine for one set of points and polyhedra, but not others
+        for i in range(num_points):
+            fsum = sum(mask_inside[j][i] for j in range(num_samples))
+
+            if num_samples == 2:
+                oversample(fsum >= 1)
+            if num_samples == 3:
+                oversample(fsum >= 2)
+            if num_samples == 4:
+                oversample(fsum >= 3)
+            if num_samples == 5:
+                oversample(fsum >= 4)
+            if num_samples == 6:
+                oversample(fsum >= 4)
+        return mask_totals       
 
 
 def are_inside(points, bm):
@@ -80,7 +110,8 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         description="offers different approaches to finding internal points",
         default="algo 1", update=updateNode
     )
-    epsilon_bvh = bpy.props.FloatProperty(default=0.0, min=0.0, max=1.0, description="fudge value")
+    epsilon_bvh = bpy.props.FloatProperty(update=updateNode, default=0.0, min=0.0, max=1.0, description="fudge value")
+    num_samples = bpy.props.IntProperty(min=1, max=6, default=3)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'verts')
@@ -90,10 +121,11 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'verts')
 
     def draw_buttons(self, context, layout):
-        if hasattr(self, 'selected_algo'):
-            layout.prop(self, 'selected_algo', expand=True)
-            if self.selected_algo == 'algo 2':
-                layout.prop(self, 'epsilon_bvh', text='Epsilon')
+
+        layout.prop(self, 'selected_algo', expand=True)
+        if self.selected_algo == 'algo 2':
+            layout.prop(self, 'epsilon_bvh', text='Epsilon')
+            layout.prop(self, 'num_samples', text='Samples')
 
 
     def process(self):
@@ -107,11 +139,13 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         # this is a little convoluted, but it lets us keep the node as the same version
         # while adding new features.
         for idx, (verts, faces, pts_in) in enumerate(zip(verts_in, faces_in, points)):
-            if not hasattr(self, 'selected_algo') or self.selected_algo == 'algo 1':
+            if self.selected_algo == 'algo 1':
                 bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
                 mask.append(are_inside(pts_in, bm))
             elif self.selected_algo == 'algo 2':
-                mask.append(get_points_in_mesh(pts_in, verts, faces, self.epsilon_bvh))
+                mask.append(
+                    get_points_in_mesh(pts_in, verts, faces, self.epsilon_bvh, self.num_samples)
+                )
 
         self.outputs['mask'].sv_set(mask)
         if self.outputs['verts'].is_linked:
