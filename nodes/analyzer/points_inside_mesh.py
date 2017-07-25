@@ -65,20 +65,19 @@ def get_points_in_mesh(points, verts, faces, eps=0.0, num_samples=3):
         oversample = mask_totals.append
         num_points = len(points)
 
-        # exactly what the criteria should be here is not clear, if i pick one method
-        # it may work fine for one set of points and polyhedra, but not others
+        # exactly what the criteria should be here is not clear, this seems enough.
         for i in range(num_points):
             fsum = sum(mask_inside[j][i] for j in range(num_samples))
 
             if num_samples == 2:
                 oversample(fsum >= 1)
-            if num_samples == 3:
+            elif num_samples == 3:
                 oversample(fsum >= 2)
-            if num_samples == 4:
+            elif num_samples == 4:
                 oversample(fsum >= 3)
-            if num_samples == 5:
+            elif num_samples == 5:
                 oversample(fsum >= 4)
-            if num_samples == 6:
+            elif num_samples == 6:
                 oversample(fsum >= 4)
         return mask_totals       
 
