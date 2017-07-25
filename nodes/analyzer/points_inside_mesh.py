@@ -135,8 +135,6 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         verts_in, faces_in, points = [s.sv_get() for s in self.inputs]
         mask = []
 
-        # this is a little convoluted, but it lets us keep the node as the same version
-        # while adding new features.
         for idx, (verts, faces, pts_in) in enumerate(zip(verts_in, faces_in, points)):
             if self.selected_algo == 'algo 1':
                 bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
