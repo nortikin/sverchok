@@ -23,7 +23,7 @@
     BasicSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
-    SvScriptNodeLite    
+    SvScriptNodeLite
     ImageNode
 
 ## Generators Extended
@@ -95,6 +95,7 @@
     SvExtrudeRegionNode
     SvVertMaskNode
     SvTransformSelectNode
+    SvSplitEdgesNode
 
 ## Modifier Make
     LineConnectNodeMK2
