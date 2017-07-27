@@ -27,10 +27,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-class SvEdgeSplitNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Edge Split '''
-    bl_idname = 'SvEdgeSplitNode'
-    bl_label = 'Edge Split'
+class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Split Edges '''
+    bl_idname = 'SvSplitEdgesNode'
+    bl_label = 'Split Edges'
     # sv_icon = 'SV_EDGE_SPLIT'
 
     factor = FloatProperty(
@@ -66,10 +66,6 @@ class SvEdgeSplitNode(bpy.types.Node, SverchCustomTreeNode):
         # sanitize the input
         input_f = list(map(lambda f: min(1, max(0, f)), input_f))
 
-        # print("vertList = ", vertList)
-        # print("edgeList = ", edgeList)
-        # print("factor = ", input_f)
-
         params = match_long_repeat([edgeList, input_f])
 
         offset = len(vertList)
@@ -77,14 +73,13 @@ class SvEdgeSplitNode(bpy.types.Node, SverchCustomTreeNode):
         newEdges = []
         i = 0
         for edge, f in zip(*params):
-            # print("edge=", edge, " f=", f)
             i0 = edge[0]
             i1 = edge[1]
             v0 = vertList[i0]
             v1 = vertList[i1]
 
             if self.mirror:
-                f = f/2
+                f = f / 2
 
                 vx = v0[0] * (1 - f) + v1[0] * f
                 vy = v0[1] * (1 - f) + v1[1] * f
@@ -119,11 +114,11 @@ class SvEdgeSplitNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvEdgeSplitNode)
+    bpy.utils.register_class(SvSplitEdgesNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvEdgeSplitNode)
+    bpy.utils.unregister_class(SvSplitEdgesNode)
 
 if __name__ == '__main__':
     register()
