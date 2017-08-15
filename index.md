@@ -43,6 +43,7 @@
     SvRingNode
     SvEllipseNode
     SvSmoothLines
+    SvHyperCubeNode
 
 ## Analyzers
     SvBBoxNode
