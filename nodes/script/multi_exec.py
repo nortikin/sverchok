@@ -25,6 +25,7 @@ from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
+callback_id = 'node.callback_execnodemod'
 
 lines = """\
 for i, i2 in zip(V1, V2):
@@ -45,10 +46,12 @@ class SvExecNodeDynaStringItem(bpy.types.PropertyGroup):
 
 class SvExecNodeModCallback(bpy.types.Operator):
 
-    bl_idname = "node.callback_execnodemod"
+    bl_idname = callback_id
     bl_label = "generic callback"
 
     cmd = bpy.props.StringProperty(default='')
+    idx = bpy.props.IntProperty(default=-1)
+    form = bpy.props.StringProperty(default='')
 
     def execute(self, context):
         getattr(context.node, self.cmd)(self)
@@ -67,12 +70,12 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         # add() remove() clear() move()
-        row.operator('node.callback_execnodemod', text='', icon='ZOOMIN').cmd = 'add_new_line'
-        row.operator('node.callback_execnodemod', text='', icon='ZOOMOUT').cmd = 'remove_last_line'
-        row.operator('node.callback_execnodemod', text='', icon='TRIA_UP').cmd = 'shift_up'
-        row.operator('node.callback_execnodemod', text='', icon='TRIA_DOWN').cmd = 'shift_down'
-        row.operator('node.callback_execnodemod', text='', icon='SNAP_ON').cmd = 'delete_blank'
-        row.operator('node.callback_execnodemod', text='', icon='SNAP_OFF').cmd = 'insert_blank'
+        row.operator(callback_id, text='', icon='ZOOMIN').cmd = 'add_new_line'
+        row.operator(callback_id, text='', icon='ZOOMOUT').cmd = 'remove_last_line'
+        row.operator(callback_id, text='', icon='TRIA_UP').cmd = 'shift_up'
+        row.operator(callback_id, text='', icon='TRIA_DOWN').cmd = 'shift_down'
+        row.operator(callback_id, text='', icon='SNAP_ON').cmd = 'delete_blank'
+        row.operator(callback_id, text='', icon='SNAP_OFF').cmd = 'insert_blank'
 
         if len(self.dynamic_strings) == 0:
             return
@@ -85,11 +88,24 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         else:
             col = layout.column(align=True)
             for idx, line in enumerate(self.dynamic_strings):
-                col.prop(self.dynamic_strings[idx], "line", text="")
+                row = col.row(align=True)
+                row.prop(self.dynamic_strings[idx], "line", text="")
+
+                # if UI , then 
+
+                opp = row.operator(callback_id, text='', icon='TRIA_DOWN_BAR')
+                opp.cmd = 'insert_line'
+                opp.form = 'below'
+                opp.idx = idx
+                opp2 = row.operator(callback_id, text='', icon='TRIA_UP_BAR')
+                opp2.cmd = 'insert_line'
+                opp2.form = 'above'
+                opp2.idx = idx
+
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
-        col.operator('node.callback_execnodemod', text='copy to node').cmd = 'copy_from_text'
+        col.operator(callback_id, text='copy to node').cmd = 'copy_from_text'
         col.prop_search(self, 'text', bpy.data, "texts", text="")
 
     def add_new_line(self, context):
@@ -129,6 +145,22 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     def copy_from_text(self, context):
         for i, i2 in zip(self.dynamic_strings, bpy.data.texts[self.text].lines):
             i.line = i2.body
+
+    def insert_line(self, op_props):
+
+        sds = self.dynamic_strings
+        Lines = [i.line for i in sds]
+        sds.clear()
+        for tidx, i in enumerate(Lines):
+            if op_props.form == 'below':
+                sds.add().line = i
+                if op_props.idx == tidx:
+                    sds.add().line = ""
+            else:
+                if op_props.idx == tidx:
+                    sds.add().line = ""                
+                sds.add().line = i
+
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'V1')
