@@ -21,7 +21,7 @@ Built on the core of the original ViewerDraw, this version allows all of the fol
 
 **draws using display lists**
 
-Uses OpenGL display list to cache the drawing function. This optimizes for rotating the viewport around static geometry. Changing the geometry clears the display cache, with big geometry inputs you may notice some lag on the intial draw + cache.
+Uses OpenGL display list to cache the drawing function. This optimizes for rotating the viewport around static geometry. Changing the geometry clears the display cache, with big geometry inputs you may notice some lag on the initial draw + cache.
 
 **ngons tesselation**
 
