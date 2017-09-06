@@ -33,7 +33,7 @@ When enabled ``ngons tesselation`` will draw any Ngons using a slightly more inv
 
 .. image:: https://user-images.githubusercontent.com/619340/30099972-9159fd40-92e7-11e7-9051-325011e6bec1.png
 
-If you are always working for complex ngons, have a look at configuring defaults for this node.
+If you are always working on complex ngons, have a look at configuring defaults for this node.
 
 
 Inputs
