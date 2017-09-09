@@ -138,7 +138,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
         out_faces = []
 
         objects = match_long_repeat([subdivisions_s, radius_s])
-        matrix = Matrix()
+
         for subdivisions, radius in zip(*objects):
             if subdivisions == 0:
                 # In this case we just return the icosahedron
@@ -154,8 +154,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh.new()
             bmesh.ops.create_icosphere(bm,
                     subdivisions = subdivisions,
-                    diameter = radius,
-                    matrix = matrix)
+                    diameter = radius)
             verts, edges, faces = pydata_from_bmesh(bm)
             bm.free()
 
