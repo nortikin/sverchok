@@ -27,6 +27,8 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatPro
 # global variables in tools
 import sverchok
 from sverchok.utils.sv_help import remapper
+from sverchok.utils.context_managers import sv_preferences
+
 
 BRANCH = ""
 
@@ -134,6 +136,30 @@ class SvViewHelpForNode(bpy.types.Operator):
         webbrowser.open(path2)
 
 
+class SvViewSourceForNode(bpy.types.Operator):
+
+    bl_idname = "node.sv_view_node_source"
+    bl_label = "display the source in your editor"
+    kind = StringProperty(default='external')
+    
+    def execute(self, context):
+        n = context.active_node
+        fpath = self.get_filepath_from_node(n)
+
+        with sv_preferences() as prefs:
+            app_name = prefs.external_editor
+            subprocess.call([app_name, fpath])
+            return {'FINISHED'}
+        return {'CANCELLED'}
+
+    def get_filepath_from_node(self, n):
+        """ get full filepath on disk for a given node reference """
+        sv_path = os.path.dirname(sverchok.__file__)
+        path_structure = n.__module__.split('.')[1:]  # strip sverchok
+        path_structure[-1] += '.py'
+        return os.path.join(sv_path, *path_structure)
+
+
 def idname_draw(self, context):
     if not displaying_sverchok_nodes(context):
         return
@@ -150,6 +176,11 @@ def idname_draw(self, context):
     row.operator('node.view_node_help', text='online').kind = 'online'
     row.operator('node.view_node_help', text='offline').kind = 'offline'
 
+    # view the source of the current node ( warning, some nodes rely on more than one file )
+    row = layout.row(align=True)
+    row.label('view source')
+    row.operator('node.sv_view_node_source', text='external').kind = 'external'
+
 
 def register():
     get_branch()
@@ -158,6 +189,7 @@ def register():
 
     bpy.utils.register_class(SvCopyIDName)
     bpy.utils.register_class(SvViewHelpForNode)
+    bpy.utils.register_class(SvViewSourceForNode)
     bpy.types.NODE_PT_active_node_generic.append(idname_draw)
 
 
@@ -167,3 +199,4 @@ def unregister():
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
+    bpy.utils.unregister_class(SvViewSourceForNode)

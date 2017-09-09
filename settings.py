@@ -154,6 +154,7 @@ class SverchokPreferences(AddonPreferences):
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     defaults_location = StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
+    external_editor = StringProperty(description='which external app to invoke to view sources')
 
 
     def draw(self, context):
@@ -170,6 +171,7 @@ class SverchokPreferences(AddonPreferences):
             col1.prop(self, "show_icons")
             col1.prop(self, "over_sized_buttons")
             col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
+            col1.prop(self, "external_editor", text="Ext Editor")
 
             col2 = col_split.split().column()
             col2.label(text="Frame change handler:")
