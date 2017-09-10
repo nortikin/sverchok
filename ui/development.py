@@ -148,6 +148,14 @@ class SvViewSourceForNode(bpy.types.Operator):
 
         with sv_preferences() as prefs:
             app_name = prefs.external_editor
+
+            if prefs.real_sverchok_path:
+                print(fpath)
+                _dst = os.path.dirname(sverchok.__file__)
+                _src = prefs.real_sverchok_path
+                fpath = fpath.replace(_dst, _src)
+                print(fpath)
+
             subprocess.call([app_name, fpath])
             return {'FINISHED'}
         return {'CANCELLED'}
