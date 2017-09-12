@@ -19,9 +19,7 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sin, cos, pi, sqrt, radians
-from random import random
-import time
+from math import sin, cos, pi
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -50,7 +48,7 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, sTwist, Separate):
         sin_theta = sin(theta)  # caching
         cos_theta = cos(theta)  # caching
 
-        twistAngle = 2 * pi / N2 * n1 / N1 * sTwist
+        twistAngle = da2 * n1 / N1 * sTwist
 
         loopVerts = []
         for n2 in range(N2):
@@ -229,7 +227,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
     torus_sT = IntProperty(
         name="Spin Twist",
         default=0,
-        description="Spin twist amount",
+        description="Twist the spin sections by this number of increments",
         update=updateNode)
 
     # OTHER options
