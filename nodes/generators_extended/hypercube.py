@@ -26,16 +26,66 @@ from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+import itertools
 
 # dictionary to store once the unit/untransformed hypercube verts, edges & polys
 _hypercube = {}
 
+angleTypes = [
+    ("RAD", "Radians", "", 0),
+    ("DEG", "Degrees", "", 1),
+    ("NORM", "Normalized", "", 2)]
+
+
+def flip(n, v):
+    return [(v[i]+1)%2 if i==n else v[i] for i in range(len(v))]
+
+def flipper(v):
+    links = []
+    for n in range(len(v)):
+        links.append(flip(n, v))
+    return links
+
+def edges(v):
+    return list(itertools.product([v], flipper(v)))
+
+def edgesIDs(v):
+    es = edges(v)
+    return [ [cube.index(v1), cube.index(v2)] for v1, v2 in es ]
+
+
+def create_cells():
+    cells = []
+    indices = []
+    for i in [0, 1]:
+        cell = [ [i, j, k, l] for j in [0,1] for k in [0,1] for l in [0,1] ]
+        cells.append(cell)
+        index = [ (i<<3) + (j<<2) + (k<<1) + l for j in [0,1] for k in [0,1] for l in [0,1] ]
+        indices.append(index)
+    for j in [0, 1]:
+        cell = [ [i, j, k, l] for i in [0,1] for k in [0,1] for l in [0,1] ]
+        cells.append(cell)
+        index = [ (i<<3) + (j<<2) + (k<<1) + l for i in [0,1] for k in [0,1] for l in [0,1] ]
+        indices.append(index)
+    for k in [0, 1]:
+        cell = [ [i, j, k, l] for i in [0,1] for j in [0,1] for l in [0,1] ]
+        cells.append(cell)
+        index = [ (i<<3) + (j<<2) + (k<<1) + l for i in [0,1] for j in [0,1] for l in [0,1] ]
+        indices.append(index)
+    for l in [0, 1]:
+        cell = [ [i, j, k, l] for i in [0,1] for j in [0,1] for k in [0,1] ]
+        cells.append(cell)
+        index = [ (i<<3) + (j<<2) + (k<<1) + l for i in [0,1] for j in [0,1] for k in [0,1] ]
+        indices.append(index)
+
+    return cells, indices
 
 def project(vert4D, d):
     '''
         Project a 4D vector onto 3D space.
     '''
     cx, cy, cz = [0.0, 0.0, 0.0]  # center
+    # cx, cy, cz = [0.5, 0.5, 0.5]  # center
     x, y, z, t = vert4D
     return [x + (cx - x)*t/d, y + (cy - y)*t/d, z + (cz - z)*t/d]
 
@@ -112,6 +162,8 @@ def generate_hypercube():
     if _hypercube:
         return
 
+    cube = [[i, j, k] for i in [0, 1] for j in [0, 1] for k in [0, 1]]
+
     hypercube = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1] for l in [0, 1]]
 
     # TODO: find a better (and working) way to do this
@@ -127,6 +179,7 @@ def generate_hypercube():
             faces.append(list(map(hypercube.index, [[k, l, i ^ j, j] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
 
     # center the verts around origin
+    # verts = [Vector([x, y, z, w]) for x, y, z, w in hypercube]
     verts = [Vector([2*x-1, 2*y-1, 2*z-1, 2*w-1]) for x, y, z, w in hypercube]
 
     # store hypercube's verts, edges & polys in a global dictionary
@@ -149,6 +202,10 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' HyperCube '''
     bl_idname = 'SvHyperCubeNode'
     bl_label = 'Hypercube'
+
+    angleType = EnumProperty(
+        name="Angle Type", description="Angle units",
+        default="DEG", items=angleTypes, update=updateNode)
 
     angle_a1 = FloatProperty(
         name="XY", description="Angle 1",
@@ -194,12 +251,16 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "A6").prop_name = 'angle_a6'
         self.inputs.new('StringsSocket', "D").prop_name = 'distance'
 
+        self.outputs.new('StringsSocket', "Verts4D")
         self.outputs.new('VerticesSocket', "Verts")
         self.outputs.new('StringsSocket',  "Edges")
         self.outputs.new('StringsSocket',  "Polys")
+        self.outputs.new('StringsSocket',  "Cells")
+        self.outputs.new('StringsSocket',  "Indices")
 
-    # def draw_buttons(self, context, layout):
-        # layout.prop(self, 'mirror')
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'angleType', expand=True)
+
 
     def process(self):
         # return if no outputs are connected
@@ -223,6 +284,16 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         # input_a4 = list(map(lambda f: min(1, max(0, f)), input_a4))
         # input_a5 = list(map(lambda f: min(1, max(0, f)), input_a5))
         # input_a6 = list(map(lambda f: min(1, max(0, f)), input_a6))
+        # convert everything to radians
+        if self.angleType == "DEG":
+            # print("Degree")
+            aU = pi/360
+        elif self.angleType == "RAD":
+            # print("Radians")
+            aU = 1
+        else:
+            # print("Normalized")
+            aU = pi
 
         params = match_long_repeat([input_a1, input_a2, input_a3, input_a4, input_a5, input_a6, input_d])
 
@@ -232,14 +303,26 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         edgeList = []
         polyList = []
         for a1, a2, a3, a4, a5, a6, d in zip(*params):
+            a1 *= aU
+            a2 *= aU
+            a3 *= aU
+            a4 *= aU
+            a5 *= aU
+            a6 *= aU
+            # print(a1)
             verts = transform_hypercube(verts4D, a1, a2, a3, a4, a5, a6, d)
             vertList.append(verts)
             edgeList.append(edges)
             polyList.append(polys)
 
+        cells, indices = create_cells()
+
+        self.outputs['Verts4D'].sv_set([verts4D])
         self.outputs['Verts'].sv_set(vertList)
         self.outputs['Edges'].sv_set(edgeList)
         self.outputs['Polys'].sv_set(polyList)
+        self.outputs['Cells'].sv_set(cells)
+        self.outputs['Indices'].sv_set(indices)
 
 
 def register():
