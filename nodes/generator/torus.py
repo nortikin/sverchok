@@ -27,7 +27,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-def torus_verts(R, r, N1, N2, rPhase, sPhase, Separate):
+def torus_verts(R, r, N1, N2, rPhase, sPhase, sTwist, Separate):
     '''
         R      : major radius
         r      : minor radius
@@ -35,6 +35,7 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, Separate):
         N2     : minor sections - number of spin sections around the torus tube
         rPhase : revolution phase
         sPhase : spin phase
+        sTwist : spin twist
     '''
     listVerts = []
     listNorms = []
@@ -49,10 +50,12 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, Separate):
         sin_theta = sin(theta)  # caching
         cos_theta = cos(theta)  # caching
 
+        twistAngle = 2 * pi / N2 * n1 / N1 * sTwist
+
         loopVerts = []
         for n2 in range(N2):
             a2 = n2 * da2
-            phi = a2 + sPhase  # spin angle
+            phi = a2 + sPhase + twistAngle  # spin angle + twist
             sin_phi = sin(phi)  # caching
             cos_phi = cos(phi)  # caching
 
@@ -77,10 +80,11 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, Separate):
     return listVerts, listNorms
 
 
-def torus_edges(N1, N2):
+def torus_edges(N1, N2, t):
     '''
         N1 : major sections - number of revolution sections around the torus center
         N2 : minor sections - number of spin sections around the torus tube
+        t  : spin twist - number of twists (start-end vertex shift)
     '''
     listEdges = []
 
@@ -95,15 +99,16 @@ def torus_edges(N1, N2):
         for n2 in range(N2):
             listEdges.append([N2 * n1 + n2, N2 * (n1 + 1) + n2])
     for n2 in range(N2):
-        listEdges.append([N2 * (N1 - 1) + n2, N2 * 0 + n2])
+        listEdges.append([N2 * (N1 - 1) + n2, N2 * 0 + (n2 + t) % N2])
 
     return listEdges
 
 
-def torus_polygons(N1, N2):
+def torus_polygons(N1, N2, t):
     '''
         N1 : major sections - number of revolution sections around the torus center
         N2 : minor sections - number of spin sections around the torus tube
+        t  : spin twist - number of twists (start-end vertex shift)
     '''
     listPolys = []
     for n1 in range(N1 - 1):
@@ -111,8 +116,8 @@ def torus_polygons(N1, N2):
             listPolys.append([N2 * n1 + n2, N2 * (n1 + 1) + n2, N2 * (n1 + 1) + n2 + 1, N2 * n1 + n2 + 1])
         listPolys.append([N2 * n1 + N2 - 1, N2 * (n1 + 1) + N2 - 1, N2 * (n1 + 1) + 0, N2 * n1 + 0])
     for n2 in range(N2 - 1):
-        listPolys.append([N2 * (N1 - 1) + n2, N2 * 0 + n2, N2 * 0 + n2 + 1, N2 * (N1 - 1) + n2 + 1])
-    listPolys.append([N2 * (N1 - 1) + N2 - 1, N2 * 0 + N2 - 1, N2 * 0 + 0, N2 * (N1 - 1) + 0])
+        listPolys.append([N2 * (N1 - 1) + n2, N2 * 0 + (n2 + t) % N2, N2 * 0 + (n2 + 1 + t) % N2, N2 * (N1 - 1) + n2 + 1])
+    listPolys.append([N2 * (N1 - 1) + N2 - 1, N2 * 0 + (N2 - 1 + t) % N2, N2 * 0 + (0 + t) % N2, N2 * (N1 - 1) + 0])
 
     return listPolys
 
@@ -223,6 +228,12 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         description="Phase the spin sections by this radian amount",
         update=updateNode)
 
+    torus_sT = IntProperty(
+        name="Spin Twist",
+        default=0,
+        description="Spin twist amount",
+        update=updateNode)
+
     # OTHER options
     Separate = BoolProperty(
         name='Separate',
@@ -237,6 +248,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "n2").prop_name = 'torus_n2'
         self.inputs.new('StringsSocket', "rP").prop_name = 'torus_rP'
         self.inputs.new('StringsSocket', "sP").prop_name = 'torus_sP'
+        self.inputs.new('StringsSocket', "sT").prop_name = 'torus_sT'
 
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket',  "Edges")
@@ -259,6 +271,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         input_n2 = self.inputs["n2"].sv_get()[0]  # list of number of MINOR sections
         input_rP = self.inputs["rP"].sv_get()[0]  # list of REVOLUTION phases
         input_sP = self.inputs["sP"].sv_get()[0]  # list of SPIN phases
+        input_sT = self.inputs["sT"].sv_get()[0]  # list of SPIN twists
 
         # bound check the list values
         input_RR = list(map(lambda x: max(0, x), input_RR))
@@ -277,13 +290,13 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
             input_R = input_RR
             input_r = input_rr
 
-        parameters = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rP, input_sP])
+        parameters = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rP, input_sP, input_sT])
 
         if self.outputs['Vertices'].is_linked or self.outputs['Normals'].is_linked:
             vertList = []
             normList = []
-            for R, r, n1, n2, rP, sP in zip(*parameters):
-                verts, norms = torus_verts(R, r, n1, n2, rP, sP, self.Separate)
+            for R, r, n1, n2, rP, sP, sT in zip(*parameters):
+                verts, norms = torus_verts(R, r, n1, n2, rP, sP, sT, self.Separate)
                 vertList.append(verts)
                 normList.append(norms)
             self.outputs['Vertices'].sv_set(vertList)
@@ -291,15 +304,15 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.outputs['Edges'].is_linked:
             edgeList = []
-            for R, r, n1, n2, rP, sP in zip(*parameters):
-                edges = torus_edges(n1, n2)
+            for R, r, n1, n2, rP, sP, sT in zip(*parameters):
+                edges = torus_edges(n1, n2, sT)
                 edgeList.append(edges)
             self.outputs['Edges'].sv_set(edgeList)
 
         if self.outputs['Polygons'].is_linked:
             polyList = []
-            for R, r, n1, n2, rP, sP in zip(*parameters):
-                polys = torus_polygons(n1, n2)
+            for R, r, n1, n2, rP, sP, sT in zip(*parameters):
+                polys = torus_polygons(n1, n2, sT)
                 polyList.append(polys)
             self.outputs['Polygons'].sv_set(polyList)
 
