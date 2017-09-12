@@ -100,7 +100,7 @@ utils_modules = [
 
 ui_modules = [
     "color_def", "sv_IO_panel", "sv_templates_menu",
-    "sv_panels", "nodeview_space_menu", "nodeview_keymaps",
+    "sv_panels", "nodeview_space_menu", "nodeview_usernodes_menu", "nodeview_keymaps",
     "monad", "sv_icons",
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
