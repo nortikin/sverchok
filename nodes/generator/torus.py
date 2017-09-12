@@ -217,14 +217,12 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
     torus_rP = FloatProperty(
         name="Revolution Phase",
         default=0.0,
-        min=0.0, soft_min=0.0,
         description="Phase the revolution sections by this radian amount",
         update=updateNode)
 
     torus_sP = FloatProperty(
         name="Spin Phase",
         default=0.0,
-        min=0.0, soft_min=0.0,
         description="Phase the spin sections by this radian amount",
         update=updateNode)
 
