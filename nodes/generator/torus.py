@@ -19,15 +19,13 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sin, cos, pi, sqrt, radians
-from random import random
-import time
+from math import sin, cos, pi
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 
-def torus_verts(R, r, N1, N2, rPhase, sPhase, Separate):
+def torus_verts(R, r, N1, N2, rPhase, sPhase, sTwist, Separate):
     '''
         R      : major radius
         r      : minor radius
@@ -35,38 +33,41 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, Separate):
         N2     : minor sections - number of spin sections around the torus tube
         rPhase : revolution phase
         sPhase : spin phase
+        sTwist : spin twist
     '''
     listVerts = []
     listNorms = []
 
     # angle increments (cached outside of the loop for performance)
-    da1 = 2*pi/N1
-    da2 = 2*pi/N2
+    da1 = 2 * pi / N1
+    da2 = 2 * pi / N2
 
     for n1 in range(N1):
         a1 = n1 * da1
         theta = a1 + rPhase  # revolution angle
-        sin_theta = sin(theta) # caching
-        cos_theta = cos(theta) # caching
+        sin_theta = sin(theta)  # caching
+        cos_theta = cos(theta)  # caching
+
+        twistAngle = da2 * n1 / N1 * sTwist
 
         loopVerts = []
         for n2 in range(N2):
             a2 = n2 * da2
-            phi = a2 + sPhase  # spin angle
-            sin_phi = sin(phi) # caching
-            cos_phi = cos(phi) # caching
+            phi = a2 + sPhase + twistAngle  # spin angle + twist
+            sin_phi = sin(phi)  # caching
+            cos_phi = cos(phi)  # caching
 
-            x = (R + r*cos_phi) * cos_theta
-            y = (R + r*cos_phi) * sin_theta
-            z = r*sin_phi
+            x = (R + r * cos_phi) * cos_theta
+            y = (R + r * cos_phi) * sin_theta
+            z = r * sin_phi
 
             # append vertex to loop
             loopVerts.append([x, y, z])
 
             # append normal
-            cx = R * cos_theta # torus tube center
-            cy = R * sin_theta # torus tube center
-            norm = [x-cx, y-cy, z]
+            cx = R * cos_theta  # torus tube center
+            cy = R * sin_theta  # torus tube center
+            norm = [x - cx, y - cy, z]
             listNorms.append(norm)
 
         if Separate:
@@ -77,42 +78,44 @@ def torus_verts(R, r, N1, N2, rPhase, sPhase, Separate):
     return listVerts, listNorms
 
 
-def torus_edges(N1, N2):
+def torus_edges(N1, N2, t):
     '''
         N1 : major sections - number of revolution sections around the torus center
         N2 : minor sections - number of spin sections around the torus tube
+        t  : spin twist - number of twists (start-end vertex shift)
     '''
     listEdges = []
 
     # spin loop EDGES : around the torus tube
     for n1 in range(N1):
-        for n2 in range(N2-1):
-            listEdges.append([N2*n1 + n2, N2*n1 + n2+1])
-        listEdges.append([N2*n1 + N2-1, N2*n1 + 0])
+        for n2 in range(N2 - 1):
+            listEdges.append([N2 * n1 + n2, N2 * n1 + n2 + 1])
+        listEdges.append([N2 * n1 + N2 - 1, N2 * n1 + 0])
 
     # revolution loop EDGES : around the torus center
-    for n1 in range(N1-1):
+    for n1 in range(N1 - 1):
         for n2 in range(N2):
-            listEdges.append([N2*n1 + n2, N2*(n1+1) + n2])
+            listEdges.append([N2 * n1 + n2, N2 * (n1 + 1) + n2])
     for n2 in range(N2):
-        listEdges.append([N2*(N1-1) + n2, N2*0 + n2])
+        listEdges.append([N2 * (N1 - 1) + n2, N2 * 0 + (n2 + t) % N2])
 
     return listEdges
 
 
-def torus_polygons(N1, N2):
+def torus_polygons(N1, N2, t):
     '''
         N1 : major sections - number of revolution sections around the torus center
         N2 : minor sections - number of spin sections around the torus tube
+        t  : spin twist - number of twists (start-end vertex shift)
     '''
     listPolys = []
-    for n1 in range(N1-1):
-        for n2 in range(N2-1):
-            listPolys.append([N2*n1 + n2, N2*(n1+1) + n2, N2*(n1+1) + n2+1, N2*n1 + n2+1])
-        listPolys.append([N2*n1 + N2-1, N2*(n1+1) + N2-1, N2*(n1+1) + 0, N2*n1 + 0])
-    for n2 in range(N2-1):
-        listPolys.append([N2*(N1-1) + n2, N2*0 + n2, N2*0 + n2+1, N2*(N1-1) + n2+1])
-    listPolys.append([N2*(N1-1) + N2-1, N2*0 + N2-1, N2*0 + 0, N2*(N1-1) + 0])
+    for n1 in range(N1 - 1):
+        for n2 in range(N2 - 1):
+            listPolys.append([N2 * n1 + n2, N2 * (n1 + 1) + n2, N2 * (n1 + 1) + n2 + 1, N2 * n1 + n2 + 1])
+        listPolys.append([N2 * n1 + N2 - 1, N2 * (n1 + 1) + N2 - 1, N2 * (n1 + 1) + 0, N2 * n1 + 0])
+    for n2 in range(N2 - 1):
+        listPolys.append([N2 * (N1 - 1) + n2, N2 * 0 + (n2 + t) % N2, N2 * 0 + (n2 + 1 + t) % N2, N2 * (N1 - 1) + n2 + 1])
+    listPolys.append([N2 * (N1 - 1) + N2 - 1, N2 * 0 + (N2 - 1 + t) % N2, N2 * 0 + (0 + t) % N2, N2 * (N1 - 1) + 0])
 
     return listPolys
 
@@ -137,8 +140,8 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
     # keep the equivalent radii pair in sync (eR,iR) => (R,r)
     def external_internal_radii_changed(self, context):
         if self.mode == "EXT_INT":
-            self.torus_R = (self.torus_eR + self.torus_iR)*0.5
-            self.torus_r = (self.torus_eR - self.torus_iR)*0.5
+            self.torus_R = (self.torus_eR + self.torus_iR) * 0.5
+            self.torus_r = (self.torus_eR - self.torus_iR) * 0.5
             updateNode(self, context)
 
     # keep the equivalent radii pair in sync (R,r) => (eR,iR)
@@ -153,7 +156,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         name="Torus Dimensions",
         items=(("MAJOR_MINOR", "Major/Minor",
                 "Use the Major/Minor radii for torus dimensions."),
-                ("EXT_INT", "Exterior/Interior",
+               ("EXT_INT", "Exterior/Interior",
                 "Use the Exterior/Interior radii for torus dimensions.")),
         update=update_mode)
 
@@ -212,15 +215,19 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
     torus_rP = FloatProperty(
         name="Revolution Phase",
         default=0.0,
-        min=0.0, soft_min=0.0,
         description="Phase the revolution sections by this radian amount",
         update=updateNode)
 
     torus_sP = FloatProperty(
         name="Spin Phase",
         default=0.0,
-        min=0.0, soft_min=0.0,
         description="Phase the spin sections by this radian amount",
+        update=updateNode)
+
+    torus_sT = IntProperty(
+        name="Spin Twist",
+        default=0,
+        description="Twist the spin sections by this number of increments",
         update=updateNode)
 
     # OTHER options
@@ -230,7 +237,6 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
-
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "R").prop_name = 'torus_R'
         self.inputs.new('StringsSocket', "r").prop_name = 'torus_r'
@@ -238,17 +244,16 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "n2").prop_name = 'torus_n2'
         self.inputs.new('StringsSocket', "rP").prop_name = 'torus_rP'
         self.inputs.new('StringsSocket', "sP").prop_name = 'torus_sP'
+        self.inputs.new('StringsSocket', "sT").prop_name = 'torus_sT'
 
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket',  "Edges")
         self.outputs.new('StringsSocket',  "Polygons")
         self.outputs.new('VerticesSocket', "Normals")
 
-
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")
         layout.prop(self, 'mode', expand=True)
-
 
     def process(self):
         # return if no outputs are connected
@@ -258,10 +263,11 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         # input values lists (single or multi value)
         input_RR = self.inputs["R"].sv_get()[0]  # list of MAJOR or EXTERIOR radii
         input_rr = self.inputs["r"].sv_get()[0]  # list of MINOR or INTERIOR radii
-        input_n1 = self.inputs["n1"].sv_get()[0] # list of number of MAJOR sections
-        input_n2 = self.inputs["n2"].sv_get()[0] # list of number of MINOR sections
-        input_rP = self.inputs["rP"].sv_get()[0] # list of REVOLUTION phases
-        input_sP = self.inputs["sP"].sv_get()[0] # list of SPIN phases
+        input_n1 = self.inputs["n1"].sv_get()[0]  # list of number of MAJOR sections
+        input_n2 = self.inputs["n2"].sv_get()[0]  # list of number of MINOR sections
+        input_rP = self.inputs["rP"].sv_get()[0]  # list of REVOLUTION phases
+        input_sP = self.inputs["sP"].sv_get()[0]  # list of SPIN phases
+        input_sT = self.inputs["sT"].sv_get()[0]  # list of SPIN twists
 
         # bound check the list values
         input_RR = list(map(lambda x: max(0, x), input_RR))
@@ -274,35 +280,35 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
             # convert radii from EXTERIOR/INTERIOR to MAJOR/MINOR
             # (extend radii lists to a matching length before conversion)
             input_RR, input_rr = match_long_repeat([input_RR, input_rr])
-            input_R = list(map(lambda x,y: (x+y)*0.5, input_RR, input_rr))
-            input_r = list(map(lambda x,y: (x-y)*0.5, input_RR, input_rr))
-        else: # values already given as MAJOR/MINOR radii
+            input_R = list(map(lambda x, y: (x + y) * 0.5, input_RR, input_rr))
+            input_r = list(map(lambda x, y: (x - y) * 0.5, input_RR, input_rr))
+        else:  # values already given as MAJOR/MINOR radii
             input_R = input_RR
             input_r = input_rr
 
-        parameters = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rP, input_sP])
+        parameters = match_long_repeat([input_R, input_r, input_n1, input_n2, input_rP, input_sP, input_sT])
 
         if self.outputs['Vertices'].is_linked or self.outputs['Normals'].is_linked:
-            vertList=[]
-            normList=[]
-            for R, r, n1, n2, rP, sP in zip(*parameters):
-                verts, norms = torus_verts(R, r, n1, n2, rP, sP, self.Separate)
+            vertList = []
+            normList = []
+            for R, r, n1, n2, rP, sP, sT in zip(*parameters):
+                verts, norms = torus_verts(R, r, n1, n2, rP, sP, sT, self.Separate)
                 vertList.append(verts)
                 normList.append(norms)
             self.outputs['Vertices'].sv_set(vertList)
             self.outputs['Normals'].sv_set(normList)
 
         if self.outputs['Edges'].is_linked:
-            edgeList=[]
-            for R, r, n1, n2, rP, sP in zip(*parameters):
-                edges = torus_edges(n1, n2)
+            edgeList = []
+            for R, r, n1, n2, rP, sP, sT in zip(*parameters):
+                edges = torus_edges(n1, n2, sT)
                 edgeList.append(edges)
             self.outputs['Edges'].sv_set(edgeList)
 
         if self.outputs['Polygons'].is_linked:
-            polyList=[]
-            for R, r, n1, n2, rP, sP in zip(*parameters):
-                polys = torus_polygons(n1, n2)
+            polyList = []
+            for R, r, n1, n2, rP, sP, sT in zip(*parameters):
+                polys = torus_polygons(n1, n2, sT)
                 polyList.append(polys)
             self.outputs['Polygons'].sv_set(polyList)
 
