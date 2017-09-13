@@ -104,9 +104,9 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 vers_.append(o)
                 lens.append(len(o))
 
-        # lenobjs == количество объектов
+        # lenobjs == number of sverchok objects
         lenobjs = len(vers_)
-        # lenvers == длина одного объекта
+        # lenvers == amount of elements in one object
         lenvers = max(lens)
 
         if dirn == 'U_dir':
@@ -221,16 +221,11 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         multi_socket(self, min=1)
 
     def process(self):
-        if any(s.is_linked for s in self.outputs):
-            slots = []
-            for socket in self.inputs:
-                if socket.is_linked:
-                    slots.append(socket.sv_get())
-            if len(slots) == 0:
-                return
+        if self.inputs[0].is_linked:
+            slots = [socket.sv_get() for socket in self.inputs if socket.is_linked]
             lol = levelsOflist(slots)
             if lol == 4:
-                result = self.connect(slots, self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cup_U, self.cup_V)
+                one, two = self.connect(slots, self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cup_U, self.cup_V)
             elif lol == 5:
                 one = []
                 two = []
@@ -239,15 +234,12 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                         result = self.connect([s], self.dir_check, self.cicl_check_U, self.cicl_check_V, lol, self.polygons, self.slice_check, self.cup_U, self.cup_V)
                         one.extend(result[0])
                         two.extend(result[1])
-                result = (one, two)
-            else:  # give up
+            else:
                 return
-
-
             if self.outputs['vertices'].is_linked:
-                self.outputs['vertices'].sv_set(result[0])
+                self.outputs['vertices'].sv_set(one)
             if self.outputs['data'].is_linked:
-                self.outputs['data'].sv_set(result[1])
+                self.outputs['data'].sv_set(two)
 
 
 def register():
