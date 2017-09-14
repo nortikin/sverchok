@@ -250,14 +250,14 @@ def register():
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
-    bpy.types.SverchCustomTreeType.Sv3DProps = CollectionProperty(type=Sv3dPropItem)
+    bpy.types.NodeTree.Sv3DProps = CollectionProperty(type=Sv3dPropItem)
     bpy.types.Scene.sv_new_version = BoolProperty(default=False)
 
 
 def unregister():
     # cargo cult to unregister in reverse order? I don't think this is needed.
     # maybe it was handy at some point?
-    del bpy.types.SverchCustomTreeType.Sv3DProps
+    del bpy.types.NodeTree.Sv3DProps
 
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)

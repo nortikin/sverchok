@@ -961,12 +961,12 @@ def register():
     for cls in classes:
         bpy.utils.register_class(cls)
 
-    bpy.types.SverchCustomTreeType.io_panel_properties = bpy.props.PointerProperty(
+    bpy.types.NodeTree.io_panel_properties = bpy.props.PointerProperty(
         name="io_panel_properties", type=SvIOPanelProperties)
 
 
 def unregister():
-    del bpy.types.SverchCustomTreeType.io_panel_properties
+    del bpy.types.NodeTree.io_panel_properties
 
     for cls in classes[::-1]:
         bpy.utils.unregister_class(cls)

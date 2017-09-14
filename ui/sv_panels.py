@@ -349,7 +349,7 @@ sv_tools_classes = [
 
 
 def register():
-    bpy.types.SverchCustomTreeType.SvShowIn3D = BoolProperty(
+    bpy.types.NodeTree.SvShowIn3D = BoolProperty(
         name='show in panel',
         default=True,
         description='Show properties in 3d panel or not')
@@ -368,7 +368,7 @@ def unregister():
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
 
-    del bpy.types.SverchCustomTreeType.SvShowIn3D
+    del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
 
 if __name__ == '__main__':
