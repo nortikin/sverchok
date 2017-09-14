@@ -85,7 +85,7 @@ def layout_draw_categories(layout, node_details):
             continue
 
         bl_idname = node_info[0]
-        node_ref = getattr(bpy.types, bl_idname)
+        node_ref = bpy.types.Node.bl_rna_get_subclass(bl_idname)
 
         if hasattr(node_ref, "bl_label"):
             layout_params = dict(text=node_ref.bl_label, **node_icon(node_ref))

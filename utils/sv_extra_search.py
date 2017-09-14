@@ -62,7 +62,8 @@ def ensure_short_description(description):
     return description
 
 def ensure_valid_show_string(item):
-    nodetype = getattr(bpy.types, item[0])
+    # nodetype = getattr(bpy.types, item[0])
+    nodetype = bpy.types.Node.bl_rna_get_subclass(item[0])
     loop_reverse[nodetype.bl_label] = item[0]
     description = slice_docstring(nodetype.bl_rna.description).strip()
     return nodetype.bl_label + ensure_short_description(description)
