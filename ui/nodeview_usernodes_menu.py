@@ -66,6 +66,7 @@ class NODEVIEW_MT_UserNodes_Menu(bpy.types.Menu):
 
     def draw(self, context):
 
+        add_n_grab = 'node.add_node'
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
@@ -73,7 +74,8 @@ class NODEVIEW_MT_UserNodes_Menu(bpy.types.Menu):
             node_details = [[_node[0]] for _node in catitems]
             layout.label(cat)
             layout_draw_categories(layout, node_details)
-            layout.separator()
+            # layout.operator_menu_enum(add_n_grab, property, text=cat)
+            # layout.separator()
 
 classes = [NODEVIEW_MT_UserNodes_Menu,]
 
