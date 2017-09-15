@@ -26,7 +26,7 @@ from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
 from sverchok.utils.sv_help import build_help_remap
-
+from sverchok.core.monad import get_monad_class_reference
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
@@ -133,14 +133,12 @@ def sv_group_items(context):
         if monad.bl_idname != "SverchGroupTreeType":
             continue
         # make sure class exists
-        cls_ref = getattr(bpy.types, monad.cls_bl_idname, None)
+        cls_ref = get_monad_class_reference(monad.cls_bl_idname)
 
         if cls_ref and monad.cls_bl_idname:
             yield NodeItem(monad.cls_bl_idname, monad.name)
         elif monad.cls_bl_idname:
-            yield NodeItem("SvMonadGenericNode",
-                           monad.name,
-                           {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)})
+            yield NodeItem("SvMonadGenericNode", monad.name, {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)})
 
 
 
