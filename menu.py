@@ -26,7 +26,16 @@ from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
 from sverchok.utils.sv_help import build_help_remap
-from sverchok.core.monad import get_monad_class_reference
+
+# from sverchok.core.monad import get_monad_class_reference
+# placing a duplicate here temporarily...before deciding a better place
+def get_monad_class_reference(monad_ref):
+    # formerly stuff like:
+    #   cls = getattr(bpy.types, self.cls_bl_idname, None)
+
+    # this will also return a Nonetype if the ref isn't found, and the class ref if found
+    return bpy.types.Node.bl_rna_get_subclass_py(monad_ref.bl_idname)
+
 
 class SverchNodeCategory(NodeCategory):
     @classmethod

@@ -22,8 +22,7 @@ from itertools import chain
 
 import bpy
 from bpy.types import Node, NodeTree
-from bpy.props import (
-    StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty)
+from bpy.props import StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
