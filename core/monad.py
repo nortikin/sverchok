@@ -42,6 +42,16 @@ socket_types = [
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
+
+def get_monad_class_reference(monad_ref):
+    # formerly stuff like:
+    #   cls = getattr(bpy.types, self.cls_bl_idname, None)
+
+    # this will also return a Nonetype if the ref isn't found
+    # but it won't return a class reference, it will instead return a struct... this is not a good solution yet.
+    return Node.bl_rna_get_subclass(monad_ref.bl_idname)
+
+
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
     while name and not name[0].isalpha():
@@ -97,7 +107,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         Add a property if possible
         """
         other = socket.other
-        cls = getattr(bpy.types, self.cls_bl_idname, None)
+        # cls = getattr(bpy.types, self.cls_bl_idname, None) <----- this will fail in new 2.79 builder builds! 
+        cls = get_monad_class_reference(self.cls_bl_idname)
         cls_dict = cls.__dict__ if cls else {}
 
         if other.prop_name:
