@@ -42,12 +42,12 @@ socket_types = [
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
-def get_monad_class_reference(monad_ref):
+def get_monad_class_reference(bl_idname):
     # formerly stuff like:
     #   cls = getattr(bpy.types, self.cls_bl_idname, None)
 
     # this will also return a Nonetype if the ref isn't found, and the class ref if found
-    return Node.bl_rna_get_subclass_py(monad_ref.bl_idname)
+    return Node.bl_rna_get_subclass_py(bl_idname)
 
 
 def make_valid_identifier(name):
