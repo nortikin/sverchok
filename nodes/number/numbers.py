@@ -19,6 +19,7 @@
 import bpy
 from bpy.props import FloatProperty, BoolProperty, IntProperty
 
+import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -132,9 +133,11 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 
-def register():
-    bpy.utils.register_class(SvNumberNode)
+# def register():
+#     sverchok.utils.register_node_class(SvNumberNode)
 
 
-def unregister():
-    bpy.utils.unregister_class(SvNumberNode)
+# def unregister():
+#     sverchok.utils.unregister_node_class(SvNumberNode)
+
+register, unregister = sverchok.utils.register_node_classes_factory((SvNumberNode,))
