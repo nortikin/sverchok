@@ -19,10 +19,11 @@
 import os
 import importlib.util as getutil
 import bpy
+import nodeitems_utils
 
 import sverchok
-import nodeitems_utils
 from sverchok.menu import make_node_cats
+from sverchok.utils import get_node_class_reference
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
 from nodeitems_utils import _node_categories
@@ -63,8 +64,12 @@ def ensure_short_description(description):
 
 def ensure_valid_show_string(item):
     # nodetype = getattr(bpy.types, item[0])
-    nodetype = bpy.types.Node.bl_rna_get_subclass(item[0])
-    loop_reverse[nodetype.bl_label] = item[0]
+    nodetype = get_node_class_reference(item[0])
+    try:
+        loop_reverse[nodetype.bl_label] = item[0]
+    except:
+        print('failed:', item[0])
+        print(item[0] in sverchok.utils.node_classes)
     description = slice_docstring(nodetype.bl_rna.description).strip()
     return nodetype.bl_label + ensure_short_description(description)
 

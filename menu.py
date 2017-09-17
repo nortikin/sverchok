@@ -25,16 +25,9 @@ import bpy
 from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
+import sverchok
+from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_help import build_help_remap
-
-# from sverchok.core.monad import get_monad_class_reference
-# placing a duplicate here temporarily...before deciding a better place
-def get_monad_class_reference(bl_idname):
-    # formerly stuff like:
-    #   cls = getattr(bpy.types, self.cls_bl_idname, None)
-
-    # this will also return a Nonetype if the ref isn't found, and the class ref if found
-    return bpy.types.Node.bl_rna_get_subclass_py(bl_idname)
 
 
 class SverchNodeCategory(NodeCategory):
@@ -142,7 +135,7 @@ def sv_group_items(context):
         if monad.bl_idname != "SverchGroupTreeType":
             continue
         # make sure class exists
-        cls_ref = get_monad_class_reference(monad.cls_bl_idname)
+        cls_ref = get_node_class_reference(monad.cls_bl_idname)
 
         if cls_ref and monad.cls_bl_idname:
             yield NodeItem(monad.cls_bl_idname, monad.name)
@@ -165,6 +158,7 @@ def draw_node_ops(self,layout, context):
 def make_categories():
     original_categories = make_node_cats()
 
+    print(original_categories)
     node_cats = juggle_and_join(original_categories)
 
     node_categories = []
@@ -183,6 +177,7 @@ def make_categories():
 
 
 def reload_menu():
+    sverchok.utils.auto_gather_node_classes()
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
@@ -192,6 +187,7 @@ def reload_menu():
 
 
 def register():
+    sverchok.utils.auto_gather_node_classes()
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
@@ -204,4 +200,5 @@ def register():
 
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
+        sverchok.utils.node_classes = {}
         nodeitems_utils.unregister_node_categories("SVERCHOK")

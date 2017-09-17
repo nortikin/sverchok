@@ -1,5 +1,6 @@
 # GPL3
 import bpy
+import sverchok
 
 node_classes = {}
 
@@ -52,3 +53,31 @@ def register_node_classes_factory(node_class_references, ops_class_references=No
                 unregister_node_class(cls)
 
         return register, unregister
+
+def auto_gather_node_classes():
+    items_to_drop = [
+        'automatic_collection', 'basename', 'defaultdict', 
+        'directory', 'dirname', 'nodes_dict', 'os']
+
+    def track_me(item_name):
+        return not item_name.startswith("__") or item_name in items_to_drop
+
+    def filter_module(_mod):
+        return (getattr(_mod, item) for item in dir(_mod) if track_me(item))
+    
+    for i in filter_module(sverchok.nodes):
+        for j in filter_module(i):
+            for cls in filter_module(j):
+                try:
+                    if cls.bl_rna.base.name == "Node":
+                        node_classes[cls.bl_idname] = cls
+                except:
+                    ...
+
+
+def get_node_class_reference(bl_idname):
+    # formerly stuff like:
+    #   cls = getattr(bpy.types, self.cls_bl_idname, None)
+
+    # this will also return a Nonetype if the ref isn't found, and the class ref if found
+    return node_classes.get(bl_idname)

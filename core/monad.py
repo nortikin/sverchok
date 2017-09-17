@@ -24,6 +24,8 @@ import bpy
 from bpy.types import Node, NodeTree
 from bpy.props import StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty
 
+import sverchok
+from sverchok.utils import get_node_class_reference
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
@@ -42,12 +44,6 @@ socket_types = [
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
-def get_monad_class_reference(bl_idname):
-    # formerly stuff like:
-    #   cls = getattr(bpy.types, self.cls_bl_idname, None)
-
-    # this will also return a Nonetype if the ref isn't found, and the class ref if found
-    return Node.bl_rna_get_subclass_py(bl_idname)
 
 
 def make_valid_identifier(name):
@@ -105,7 +101,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         Add a property if possible
         """
         other = socket.other
-        cls = get_monad_class_reference(self.cls_bl_idname)
+        cls = get_node_class_reference(self.cls_bl_idname)
         cls_dict = cls.__dict__ if cls else {}
 
         if other.prop_name:
@@ -292,15 +288,15 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         # done with setup
 
-        old_cls_ref = get_monad_class_reference(cls_name)
+        old_cls_ref = get_node_class_reference(cls_name)
 
         bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
 
         cls_ref = type(cls_name, bases, cls_dict)
 
         if old_cls_ref:
-            bpy.utils.unregister_class(old_cls_ref)
-        bpy.utils.register_class(cls_ref)
+            sverchok.utils.unregister_node_class(old_cls_ref)
+        sverchok.utils.register_node_class(cls_ref)
 
         return cls_ref
 
