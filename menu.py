@@ -158,9 +158,7 @@ def draw_node_ops(self,layout, context):
 def make_categories():
     original_categories = make_node_cats()
 
-    print(original_categories)
     node_cats = juggle_and_join(original_categories)
-
     node_categories = []
     node_count = 0
     for category, nodes in node_cats.items():
@@ -177,7 +175,7 @@ def make_categories():
 
 
 def reload_menu():
-    sverchok.utils.auto_gather_node_classes()
+    # sverchok.utils.auto_gather_node_classes()
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
@@ -187,7 +185,7 @@ def reload_menu():
 
 
 def register():
-    sverchok.utils.auto_gather_node_classes()
+    # sverchok.utils.auto_gather_node_classes()
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
@@ -201,4 +199,4 @@ def register():
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         sverchok.utils.node_classes = {}
-        nodeitems_utils.unregister_node_categories("SVERCHOK")
+        # nodeitems_utils.unregister_node_categories("SVERCHOK")
