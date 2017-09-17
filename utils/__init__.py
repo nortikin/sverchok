@@ -16,6 +16,11 @@ def unregister_node_class(class_ref):
 
 def register_node_classes_factory(node_class_references, ops_class_references=None):
     """
+
+    
+    !!!! Unless you are testing/developing a node, you do not need to use this. ever. !!!!
+
+
     Utility function to create register and unregister functions
     which registers and unregisters a sequence of classes
 
