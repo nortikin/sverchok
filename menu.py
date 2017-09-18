@@ -25,6 +25,8 @@ import bpy
 from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
 
+import sverchok
+from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_help import build_help_remap
 
 
@@ -126,21 +128,20 @@ def sv_group_items(context):
                         return True
         return False
 
-    if ntree.bl_idname ==  "SverchGroupTreeType":
+    if ntree.bl_idname == "SverchGroupTreeType":
         yield NodeItem("SvMonadInfoNode", "Monad Info")
 
     for monad in context.blend_data.node_groups:
         if monad.bl_idname != "SverchGroupTreeType":
             continue
         # make sure class exists
-        cls_ref = getattr(bpy.types, monad.cls_bl_idname, None)
+        cls_ref = get_node_class_reference(monad.cls_bl_idname)
 
         if cls_ref and monad.cls_bl_idname:
             yield NodeItem(monad.cls_bl_idname, monad.name)
         elif monad.cls_bl_idname:
-            yield NodeItem("SvMonadGenericNode",
-                           monad.name,
-                           {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)})
+            monad_cls_template_dict = {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)}
+            yield NodeItem("SvMonadGenericNode", monad.name, monad_cls_template_dict)
 
 
 
@@ -159,7 +160,6 @@ def make_categories():
     original_categories = make_node_cats()
 
     node_cats = juggle_and_join(original_categories)
-
     node_categories = []
     node_count = 0
     for category, nodes in node_cats.items():
