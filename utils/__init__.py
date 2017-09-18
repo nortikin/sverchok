@@ -60,19 +60,20 @@ def register_node_classes_factory(node_class_references, ops_class_references=No
         return register, unregister
 
 def auto_gather_node_classes():
-    items_to_drop = [
-        'automatic_collection', 'basename', 'defaultdict', 
-        'directory', 'dirname', 'nodes_dict', 'os']
+    """ 
+    this produces a dict with mapping from bl_idname to class reference at runtime 
+    f.ex   
+          node_classes = {SvBMeshViewerMk2: <class svechok.nodes.viz ......> , .... }
+    """
 
-    def track_me(item_name):
-        return not item_name.startswith("__") or item_name in items_to_drop
+    import inspect
 
-    def filter_module(_mod):
-        return (getattr(_mod, item) for item in dir(_mod) if track_me(item))
-    
-    for i in filter_module(sverchok.nodes):
-        for j in filter_module(i):
-            for cls in filter_module(j):
+    node_cats = inspect.getmembers(sverchok.nodes, inspect.ismodule)
+    for catname, nodecat in node_cats:
+        node_files = inspect.getmembers(nodecat, inspect.ismodule)
+        for filename, fileref in node_files:
+            classes = inspect.getmembers(fileref, inspect.isclass)
+            for clsname, cls in classes:
                 try:
                     if cls.bl_rna.base.name == "Node":
                         node_classes[cls.bl_idname] = cls
