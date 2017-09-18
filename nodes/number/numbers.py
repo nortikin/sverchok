@@ -131,4 +131,8 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[0].sv_set(self.inputs[0].sv_get())
 
 
-register, unregister = bpy.utils.register_classes_factory((SvNumberNode,))
+def register():
+    bpy.utils.register_class(SvNumberNode)
+
+def unregister():
+    bpy.utils.unregister_class(SvNumberNode)
