@@ -60,7 +60,7 @@ class SvBvhOverlapNodeNew(bpy.types.Node, SverchCustomTreeNode):
         T1 = btr(V1, P1, all_triangles = Tri, epsilon = epsi)
         T2 = btr(V2, P2, all_triangles = Tri, epsilon = epsi)
         ind1 = np.unique([i[0] for i in T1.overlap(T2)]).tolist()
-        ind2 = np.unique([i[1] for i in T1.overlap(T2)]).tolist()
+        ind2 = np.unique([i[0] for i in T2.overlap(T1)]).tolist()
         if outIndA.is_linked:
             outIndA.sv_set([ind1])
         if outIndB.is_linked:
