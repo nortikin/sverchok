@@ -52,6 +52,7 @@
     VectorNormalNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
+    SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
     SvMeshSelectNode
@@ -296,6 +297,5 @@
     SvCacheNode
     SvUVtextureNode
     SvSeparateMeshNodeMK2
-    SvBvhOverlapNodeNew
     SvIndexToMaskNode
     SvMultiExtrudeAlt
