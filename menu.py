@@ -96,7 +96,7 @@ def juggle_and_join(node_cats):
 
     # add extended gens to Gens menu
     gen_ext = node_cats.pop("Generators Extended")
-    node_cats["Generators"].extend(gen_ext)
+    node_cats["Generator"].extend(gen_ext)
 
     return node_cats
 

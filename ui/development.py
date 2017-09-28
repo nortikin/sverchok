@@ -94,6 +94,10 @@ class SvViewHelpForNode(bpy.types.Operator):
 
         string_dir = remapper.get(n.bl_idname)
         filename = n.__module__.split('.')[-1]
+        if filename in ('mask','mask_convert','mask_join'):
+            string_dir = 'list_masks'
+        elif filename in ('modifier'):
+            string_dir = 'list_mutators'
         help_url = string_dir + '/' + filename
 
         # first let's find if this is a valid doc file, by inspecting locally for the rst file.

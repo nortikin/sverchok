@@ -166,7 +166,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
-    bl_label = "Generators"
+    bl_label = "Generator"
 
     def draw(self, context):
         layout = self.layout
