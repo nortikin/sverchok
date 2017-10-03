@@ -36,8 +36,30 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     formula = StringProperty(name='formula', default='delta_location', update=updateNode)
 
+    def updateNode2(self, context):
+        self.formula = self.prop_enum
+    
+    def mode_options(self, context):
+        objs = self.inputs[0].sv_get()
+        if objs:
+            if isinstance(objs, list):
+                if isinstance(objs[0], bpy.types.Object):
+                    names = [i.identifier for i in objs[0].data.bl_rna.properties]
+                    return [("data."+name, name, "", idx) for idx, name in enumerate(names)]
+
+        # fallback
+        return [("None", "None", "", 255),]
+
+    prop_enum = bpy.props.EnumProperty(
+        items=mode_options,
+        description="offers....",
+        update=updateNode2
+    )
+
     def draw_buttons(self, context, layout):
-        layout.prop(self, "formula", text="")
+        row = layout.row()
+        row.prop(self, "formula", text="")
+        row.prop(self, "prop_enum", text="", icon="FILE")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
