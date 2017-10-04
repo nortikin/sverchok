@@ -19,13 +19,19 @@
 
 import bpy
 from mathutils import Matrix
-from bpy.props import StringProperty
+from bpy.props import StringProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 # pylint: disable=w0122
 # pylint: disable=w0123
 # pylint: disable=w0613
+
+def enumerate_props(data=None, filter_options=None):
+    for i in data:
+        if i.is_readonly:
+            continue
+        yield i.identifier
 
 
 class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -34,18 +40,24 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Object ID Set MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    formula = StringProperty(name='formula', default='delta_location', update=updateNode)
+    data_mode = BoolProperty(default=True, update=updateNode)
+    formula = StringProperty(name='formula', default='', update=updateNode)
 
     def updateNode2(self, context):
-        self.formula = self.prop_enum
+        if self.formula != self.prop_enum:
+            self.formula = self.prop_enum
     
     def mode_options(self, context):
         objs = self.inputs[0].sv_get()
         if objs:
             if isinstance(objs, list):
                 if isinstance(objs[0], bpy.types.Object):
-                    names = [i.identifier for i in objs[0].data.bl_rna.properties]
-                    return [("data."+name, name, "", idx) for idx, name in enumerate(names)]
+                    if self.data_mode:
+                        names = enumerate_props(data=objs[0].data.bl_rna.properties)
+                        return [("data."+name, name, "", idx) for idx, name in enumerate(names)]
+                    else:
+                        names = enumerate_props(data=objs[0].bl_rna.properties)
+                        return [(name, name, "", idx) for idx, name in enumerate(names)]                    
 
         # fallback
         return [("None", "None", "", 255),]
@@ -60,6 +72,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, "formula", text="")
         row.prop(self, "prop_enum", text="", icon="FILE")
+        row.prop(self, "data_mode", text="", icon="SETTINGS")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
