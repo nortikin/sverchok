@@ -234,6 +234,7 @@
     SvNodeRemoteNode
     SvGetAssetProperties
     SvSetDataObjectNodeMK2
+    SvSetDataObjectNodeMK3
     SvSortObjsNode
     SvFilterObjsNode
     SvObjectToMeshNodeMK2
