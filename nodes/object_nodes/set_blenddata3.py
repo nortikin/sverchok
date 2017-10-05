@@ -124,7 +124,7 @@ class SvSetDataObjectNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.prop(self, "selected_mode", text='')
+        row.prop(self, "selected_mode", expand=True)
         
         row = layout.row()
         if self.selected_mode == 'Auto':
