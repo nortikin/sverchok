@@ -59,6 +59,7 @@
     SvSelectSimilarNode
     SvPointInside
     SvProportionalEditNode
+    SvRaycasterLiteNode
 
 ## Transforms
     SvRotationNode
