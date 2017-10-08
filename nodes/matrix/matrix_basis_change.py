@@ -24,172 +24,128 @@ from sverchok.data_structure import (updateNode, match_long_repeat, enum_item as
 
 
 class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Construct a Matrix from Tangent, Binormal and Normal vectors '''
+    ''' Construct a Matrix from arbitrary Track and Up vectors '''
     bl_idname = 'SvMatrixBasisChangeNode'
     bl_label = 'Matrix Basis Change'
     bl_icon = 'OUTLINER_OB_EMPTY'
-
-    def update_mapping(self, context):
-        ''' Set the mapping of the third XYZ axis to its corresponding orthonormal TBN vector '''
-        v1, v2, v3 = [v for v in self.orthogonalizing_order.replace(" ", "")]
-
-        T = Vector([1, 0, 0])
-        B = Vector([0, 1, 0])
-        N = Vector([0, 0, 1])
-
-        a = {}
-        a[v1] = eval(eval("self." + v1))
-        a[v2] = eval(eval("self." + v2))
-        a[v3] = eval(eval("self." + v3))
-
-        if v3 == "X":
-            m3 = a["Y"].cross(a["Z"])
-        elif v3 == "Y":
-            m3 = a["Z"].cross(a["X"])
-        else:  # Z
-            m3 = a["X"].cross(a["Y"])
-
-        b = {"T":  T, "-T": -T, "B":  B, "-B": -B, "N": N, "-N": -N}
-        l3 = "N"
-        for label, vector in b.items():
-            if m3 == vector:
-                l3 = label
-                break
-
-        setattr(self, v3, l3)
 
     def update_order(self, context):
         if self.syncing:
             return
 
         self.syncing = True  # disable recursive update callback
-        self.update_mapping(context)
         self.syncing = False  # enable update callback
         updateNode(self, context)
 
-    OO = ["X Y Z", "X Z Y", "Y X Z", "Y Z X", "Z X Y", "Z Y X"]
+    OO = ["X Y  Z", "X Z  Y", "Y X  Z", "Y Z  X", "Z X  Y", "Z Y  X"]
     orthogonalizing_order = EnumProperty(
         name="Orthogonalizing Order",
         description="The priority order in which the XYZ vectors are orthogonalized",
         items=e(OO), default=OO[0], update=update_order)
 
     normalize = BoolProperty(
-        name="Normalize Vectors",
+        name="Normalize Vectors", description="Normalize the output X,Y,Z vectors",
         default=True, update=updateNode)
 
     origin = FloatVectorProperty(
-        name='Location', description="Origin location of the coordinate system",
+        name='Location', description="The location component of the output matrix",
         default=(0, 0, 0), update=updateNode)
 
-    tangent = FloatVectorProperty(
-        name='Tangent', description="T : Tangent direction",
+    scale = FloatVectorProperty(
+        name='Scale', description="The scale component of the output matrix",
+        default=(1, 1, 1), update=updateNode)
+
+    vA = FloatVectorProperty(
+        name='A', description="A direction",
         default=(1, 0, 0), update=updateNode)
 
-    binormal = FloatVectorProperty(
-        name='Binormal', description='B : Binormal direction',
+    vB = FloatVectorProperty(
+        name='B', description='B direction',
         default=(0, 1, 0), update=updateNode)
 
-    normal = FloatVectorProperty(
-        name='Normal', description='N : Normal direction',
-        default=(0, 0, 1), update=updateNode)
-
-    TBN = ["T", "B", "N", "-T", "-B", "-N"]
-    X = EnumProperty(name="X", items=e(TBN), default=TBN[0], update=update_order)
-    Y = EnumProperty(name="Y", items=e(TBN), default=TBN[1], update=update_order)
-    Z = EnumProperty(name="Z", items=e(TBN), default=TBN[2], update=update_order)
+    AB = ["A", "B", "-A", "-B"]
+    T = EnumProperty(name="T", items=e(AB), default=AB[0], update=update_order)
+    U = EnumProperty(name="U", items=e(AB), default=AB[1], update=update_order)
 
     syncing = BoolProperty(
         name='Syncing', description='Syncing flag', default=False)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Location").prop_name = "origin"  # V
-        self.inputs.new('VerticesSocket', "T : Tangent").prop_name = "tangent"  # T
-        self.inputs.new('VerticesSocket', "B : Binormal").prop_name = "binormal"  # B
-        self.inputs.new('VerticesSocket', "N : Normal").prop_name = "normal"  # N
+        self.width = 150
+        self.inputs.new('VerticesSocket', "Location").prop_name = "origin"  # L
+        self.inputs.new('VerticesSocket', "Scale").prop_name = "scale"  # S
+        self.inputs.new('VerticesSocket', "A").prop_name = "vA"  # A
+        self.inputs.new('VerticesSocket', "B").prop_name = "vB"  # B
         self.outputs.new('MatrixSocket', "Matrix")
         self.outputs.new('VerticesSocket', "X")
         self.outputs.new('VerticesSocket', "Y")
         self.outputs.new('VerticesSocket', "Z")
 
-    def draw_buttons1(self, context, layout):
-        layout.prop(self, "normalize")
-        box = layout.box()
-        box.prop(self, "orthogonalizing_order", "")
-        col = box.column(align=True)
-        for p in self.orthogonalizing_order:
-            row = col.row(align=True)
-            row.prop(self, p)
-        row.enabled = False
+    def split_columns(self, panel, ratios, aligns):
+        """
+        Splits the given panel into columns based on the given set of ratios.
+        e.g ratios = [1, 2, 1] or [.2, .3, .2] etc
+        Note: The sum of all ratio numbers doesn't need to be normalized
+        """
+        col2 = panel
+        cols = []
+        ns = len(ratios) - 1  # number of splits
+        for n in range(ns):
+            n1 = ratios[n]  # size of the current column
+            n2 = sum(ratios[n + 1:])  # size of all remaining columns
+            p = n1 / (n1 + n2)  # percentage split of current vs remaning columns
+            # print("n = ", n, " n1 = ", n1, " n2 = ", n2, " p = ", p)
+            split = col2.split(percentage=p, align=aligns[n])
+            col1 = split.column(align=True)
+            col2 = split.column(align=True)
+            cols.append(col1)
+        cols.append(col2)
 
-    def draw_buttons2(self, context, layout):
-        layout.prop(self, "normalize")
-        box = layout.box()
-        col = box.column(align=True)
-        col.prop(self, "orthogonalizing_order", "")
-
-        row = col.row(align=True)
-        for p in self.orthogonalizing_order.replace(" ", ""):
-            col1 = row.column(align=True)
-            col1.prop(self, p, text="")
-
-        # disable last mapping as it is generated automatically via orthogonalization
-        col1.enabled = False
-
-        row = col.row(align=True)
-        for p in self.orthogonalizing_order.replace(" ", ""):
-            col1 = row.column(align=True)
-            col1.label(p)
+        return cols
 
     def draw_buttons(self, context, layout):
-        self.draw_buttons2(context, layout)
+        layout.prop(self, "normalize")
+        row = layout.column().row()
+        cols = self.split_columns(row, [12, 7, 8], [True, True, True])
 
-    def orthogonalizeXYZ(self, X, Y, Z):  # keep X, recalculate Z form X&Y then Y
+        cols[0].prop(self, "orthogonalizing_order", "")
+        cols[1].prop(self, "T", "")
+        cols[2].prop(self, "U", "")
+
+    def orthogonalizeXYZ(self, X, Y):  # keep X, recalculate Z form X&Y then Y
         Z = X.cross(Y)
         Y = Z.cross(X)
         return X, Y, Z
 
-    def orthogonalizeXZY(self, X, Y, Z):  # keep X, recalculate Y form Z&X then Z
+    def orthogonalizeXZY(self, X, Z):  # keep X, recalculate Y form Z&X then Z
         Y = Z.cross(X)
         Z = X.cross(Y)
         return X, Y, Z
 
-    def orthogonalizeYXZ(self, X, Y, Z):  # keep Y, recalculate Z form X&Y then X
+    def orthogonalizeYXZ(self, Y, X):  # keep Y, recalculate Z form X&Y then X
         Z = X.cross(Y)
         X = Y.cross(Z)
         return X, Y, Z
 
-    def orthogonalizeYZX(self, X, Y, Z):  # keep Y, recalculate X form Y&Z then Z
+    def orthogonalizeYZX(self, Y, Z):  # keep Y, recalculate X form Y&Z then Z
         X = Y.cross(Z)
         Z = X.cross(Y)
         return X, Y, Z
 
-    def orthogonalizeZXY(self, X, Y, Z):  # keep Z, recalculate Y form Z&X then X
+    def orthogonalizeZXY(self, Z, X):  # keep Z, recalculate Y form Z&X then X
         Y = Z.cross(X)
         X = Y.cross(Z)
         return X, Y, Z
 
-    def orthogonalizeZYX(self, X, Y, Z):  # keep Z, recalculate X form Y&Z then Y
+    def orthogonalizeZYX(self, Z, Y):  # keep Z, recalculate X form Y&Z then Y
         X = Y.cross(Z)
         Y = Z.cross(X)
         return X, Y, Z
 
     def orthogonalizer(self):
-        if self.orthogonalizing_order == "X Y Z":
-            orthogonalizer = lambda X, Y, Z: self.orthogonalizeXYZ(X, Y, Z)
-        elif self.orthogonalizing_order == "X Z Y":
-            orthogonalizer = lambda X, Y, Z: self.orthogonalizeXZY(X, Y, Z)
-        elif self.orthogonalizing_order == "Y X Z":
-            orthogonalizer = lambda X, Y, Z: self.orthogonalizeYXZ(X, Y, Z)
-        elif self.orthogonalizing_order == "Y Z X":
-            orthogonalizer = lambda X, Y, Z: self.orthogonalizeYZX(X, Y, Z)
-        elif self.orthogonalizing_order == "Z X Y":
-            orthogonalizer = lambda X, Y, Z: self.orthogonalizeZXY(X, Y, Z)
-        elif self.orthogonalizing_order == "Z Y X":
-            orthogonalizer = lambda X, Y, Z: self.orthogonalizeZYX(X, Y, Z)
-        else:  # default is XYZ (fall through case)
-            orthogonalizer = lambda X, Y, Z: self.orthogonalizeXYZ(X, Y, Z)
-
-        return orthogonalizer
+        order = self.orthogonalizing_order.replace(" ", "")
+        orthogonalizer = eval("self.orthogonalize" + order)
+        return lambda T, U: orthogonalizer(T, U)
 
     def process(self):
         outputs = self.outputs
@@ -201,16 +157,16 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
         # input values lists
         inputs = self.inputs
         input_locations = inputs["Location"].sv_get()[0]
-        input_tangents = inputs["T : Tangent"].sv_get()[0]
-        input_binormals = inputs["B : Binormal"].sv_get()[0]
-        input_normals = inputs["N : Normal"].sv_get()[0]
+        input_scales = inputs["Scale"].sv_get()[0]
+        input_vAs = inputs["A"].sv_get()[0]
+        input_vBs = inputs["B"].sv_get()[0]
 
         locations = [Vector(i) for i in input_locations]
-        tangents = [Vector(i) for i in input_tangents]
-        binormals = [Vector(i) for i in input_binormals]
-        normals = [Vector(i) for i in input_normals]
+        scales = [Vector(i) for i in input_scales]
+        vAs = [Vector(i) for i in input_vAs]
+        vBs = [Vector(i) for i in input_vBs]
 
-        params = match_long_repeat([locations, tangents, binormals, normals])
+        params = match_long_repeat([locations, scales, vAs, vBs])
 
         orthogonalize = self.orthogonalizer()
 
@@ -218,12 +174,11 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
         yList = []  # ortho-normal Y vector list
         zList = []  # ortho-normal Z vector list
         matrixList = []
-        for V, T, B, N in zip(*params):
-            X = eval(self.X)  # map X to one of T, B, N or its negative
-            Y = eval(self.Y)  # map Y to one of T, B, N or its negative
-            Z = eval(self.Z)  # map Z to one of T, B, N or its negative
+        for L, S, A, B in zip(*params):
+            T = eval(self.T)  # map T to one of A, B or its negative
+            U = eval(self.U)  # map U to one of A, B or its negative
 
-            X, Y, Z = orthogonalize(X, Y, Z)
+            X, Y, Z = orthogonalize(T, U)
 
             if self.normalize:
                 X.normalize()
@@ -238,7 +193,11 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
             if outputs["Z"].is_linked:
                 zList.append([Z.x, Z.y, Z.z])
 
-            m = [[X.x, Y.x, Z.x, V.x], [X.y, Y.y, Z.y, V.y], [X.z, Y.z, Z.z, V.z], [0, 0, 0, 1]]
+            # composite matrix: M = T * R * S (Tanslation x Rotation x Scale)
+            m = [[X.x * S.x, Y.x * S.y, Z.x * S.z, L.x],
+                 [X.y * S.x, Y.y * S.y, Z.y * S.z, L.y],
+                 [X.z * S.x, Y.z * S.y, Z.z * S.z, L.z],
+                 [0, 0, 0, 1]]
 
             matrixList.append(m)
 
