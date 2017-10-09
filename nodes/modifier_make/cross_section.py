@@ -17,11 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import bmesh
 from bpy.props import BoolProperty
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, Vector_degenerate
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
 def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
@@ -115,70 +117,27 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
     x_me['Verts'] = verts
     x_me['Edges'] = edges
     bpy.data.meshes.remove(new_me)
+
     if x_me:
         if edges and FILL:
-            me = bpy.data.meshes.new('Section')
-            me.from_pydata(verts, edges, [])
 
-            # create a temp object and link it to the current scene to be able to
-            # apply rem Doubles and fill
-            tmp_ob = bpy.data.objects.new('Mesh', me)
+            bm = bmesh_from_pydata(verts, edges, [])
+            bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=0.000002)
+            fres = bmesh.ops.edgenet_prepare(bm, edges=bm.edges[:])
+            bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+        
+            bm.verts.index_update()
+            bm.edges.index_update()
+            bm.faces.index_update()
 
-            sce = bpy.context.scene
-            sce.objects.link(tmp_ob)
-
-            # do a remove doubles to cleanup the mesh, this is needed when there
-            # is one or more edges coplanar to the plane.
-            sce.objects.active = tmp_ob
-
-            bpy.ops.object.mode_set(mode="EDIT")
-            bpy.ops.mesh.select_mode(type="EDGE", action="ENABLE")
-            bpy.ops.mesh.select_all(action="SELECT")
-
-            # remove doubles:
-            bpy.ops.mesh.remove_doubles()
-
-            # one or not one polygon? here is the answer!
-            if TRI:
-                bpy.ops.mesh.edge_face_add()
-            else:
-                bpy.ops.mesh.fill()
-                bpy.ops.mesh.tris_convert_to_quads()
-
-            # recalculate outside normals:
-            bpy.ops.mesh.normals_make_consistent(inside=False)
-
-            bpy.ops.object.mode_set(mode='OBJECT')
-            pols = []
-            for p in me.polygons:
-                vs = []
-                for v in p.vertices:
-                    vs.append(v)
-                pols.append(vs)
-
-            verts = []
-            for v in me.vertices:
-                verts.append(v.co)
-
-            if not pols:
-                bpy.ops.object.mode_set(mode='EDIT')
-                bpy.ops.mesh.select_mode(type="VERT", action="ENABLE")
-                bpy.ops.mesh.select_all(action="SELECT")
-                bpy.ops.mesh.edge_face_add()
-                bpy.ops.object.mode_set(mode='OBJECT')
-
-                for p in me.polygons:
-                    vs = []
-                    for v in p.vertices:
-                        vs.append(v)
-                    pols.append(vs)
-
+            verts, edges, faces = pydata_from_bmesh(bm)
             x_me['Verts'] = verts
-            x_me['Edges'] = pols
+            x_me['Edges'] = faces # edges   --  this was outputting faces into edges when fill was ticked?
 
-            # Cleanup
-            sce.objects.unlink(tmp_ob)
-            del tmp_ob
+            bm.clear()
+            bm.free()
+
+
         return x_me
     else:
         return False
