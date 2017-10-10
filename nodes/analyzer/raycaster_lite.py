@@ -46,6 +46,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         so('VerticesSocket', 'Normal')
         so('StringsSocket', 'Index')
         so('StringsSocket', 'Distance')
+        so('StringsSocket', 'Success')
 
     @staticmethod
     def svmesh_to_bvh_lists(vsock, fsock):
@@ -54,7 +55,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         vert_sock, face_sock, start_sock, direction_sock = self.inputs
-        L, N, I, D = self.outputs
+        L, N, I, D, S = self.outputs
         RL = []
 
         st, di = C([start_sock.sv_get()[0], direction_sock.sv_get()[0]])
@@ -70,6 +71,8 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
             I.sv_set([[r[2] if r[2] != None else -1 for r in L] for L in RL])
         if D.is_linked:
             D.sv_set([[r[3] if r[3] != None else 0 for r in L] for L in RL])
+        if S.is_linked:
+            S.sv_set([[r[0] for r in L] for L in RL])    
 
     # def update_socket(self, context):
     #     self.update()
