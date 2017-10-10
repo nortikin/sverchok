@@ -71,6 +71,7 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         so('VerticesSocket', "HitP")
         so('VerticesSocket', "HitNorm")
         so('StringsSocket', "FaceINDEX")
+        # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
