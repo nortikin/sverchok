@@ -49,7 +49,7 @@ class FakeObj(object):
         if tv[0] == None:
             return [False, (0, 0, 0), (1, 0, 0), -1]
         else:
-            return [True, tv[0][:], tv[1][:], tv[2]]
+            return [True, tv[0], tv[1], tv[2]]
 
 
 
@@ -96,6 +96,12 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 outfin.append([NOB.ray_cast(i,i2) for i,i2 in zip(st,en)])
 
+            if OB.type == 'FONT':
+                del NOB
+
+
+        if S.is_linked:
+            S.sv_set([[i[0] for i in i2] for i2 in outfin])
 
         if sm2:
             if P.is_linked:
@@ -106,8 +112,7 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             if P.is_linked:
                 P.sv_set([[i[1][:] for i in i2] for i2 in outfin])
-        if S.is_linked:
-            S.sv_set([[i[0] for i in i2] for i2 in outfin])
+
         if N.is_linked:
             N.sv_set([[i[2][:] for i in i2] for i2 in outfin])
         if I.is_linked:
