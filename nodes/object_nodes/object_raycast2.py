@@ -30,17 +30,23 @@ class FakeObj(object):
     def __init__(self, OB):
         self.matrix_local = OB.matrix_local
         
-        mesh_settings = (bpy.context.scene, False, 'PREVIEW')
+        mesh_settings = (bpy.context.scene, True, 'RENDER')
         data = OB.to_mesh(*mesh_settings)
 
         vertices = [vert.co[:] for vert in data.vertices] 
         polygons = [poly.vertices[:] for poly in data.polygons]
+
         self.BVH = BVHTree.FromPolygons(vertices, polygons)
         bpy.data.meshes.remove(data)
 
 
     def ray_cast(self, a, b):
-        return self.BVH.ray_cast(a, b)
+        tv = self.BVH.ray_cast(a, b)
+        if tv[0] == None:
+            return tv
+        else:
+            # Vector location, Vector normal, int index, float distance
+            return [tv[0][:], tv[1][:], tv[2], tv[3]]
 
 
 
@@ -79,8 +85,6 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 NOB = FakeObj(OB)
             else:
                 NOB = OB
-
-            print(OB, NOB)
 
             if sm1:
                 obm = NOB.matrix_local.inverted()
