@@ -29,19 +29,11 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix Basis Change'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def update_order(self, context):
-        if self.syncing:
-            return
-
-        self.syncing = True  # disable recursive update callback
-        self.syncing = False  # enable update callback
-        updateNode(self, context)
-
     OO = ["X Y  Z", "X Z  Y", "Y X  Z", "Y Z  X", "Z X  Y", "Z Y  X"]
     orthogonalizing_order = EnumProperty(
         name="Orthogonalizing Order",
         description="The priority order in which the XYZ vectors are orthogonalized",
-        items=e(OO), default=OO[0], update=update_order)
+        items=e(OO), default=OO[0], update=updateNode)
 
     normalize = BoolProperty(
         name="Normalize Vectors", description="Normalize the output X,Y,Z vectors",
@@ -64,11 +56,8 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
         default=(0, 1, 0), update=updateNode)
 
     AB = ["A", "B", "-A", "-B"]
-    T = EnumProperty(name="T", items=e(AB), default=AB[0], update=update_order)
-    U = EnumProperty(name="U", items=e(AB), default=AB[1], update=update_order)
-
-    syncing = BoolProperty(
-        name='Syncing', description='Syncing flag', default=False)
+    T = EnumProperty(name="T", items=e(AB), default=AB[0], update=updateNode)
+    U = EnumProperty(name="U", items=e(AB), default=AB[1], update=updateNode)
 
     def sv_init(self, context):
         self.width = 150
