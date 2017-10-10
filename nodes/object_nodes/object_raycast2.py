@@ -41,12 +41,15 @@ class FakeObj(object):
 
 
     def ray_cast(self, a, b):
+        # obj.ray_cast returns  Return (result, location, normal, index
+        # bvh.ray_cast returns: Vector location, Vector normal, int index, float distance
+        #         ^--- therefor needs adjusting
+        
         tv = self.BVH.ray_cast(a, b)
         if tv[0] == None:
-            return tv
+            return [False, (0, 0, 0), (1, 0, 0), -1]
         else:
-            # Vector location, Vector normal, int index, float distance
-            return [tv[0][:], tv[1][:], tv[2], tv[3]]
+            return [True, tv[0][:], tv[1][:], tv[2]]
 
 
 
