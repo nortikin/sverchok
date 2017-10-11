@@ -18,12 +18,19 @@
 
 import bpy
 import bmesh
+import mathutils
+
 from bpy.props import BoolProperty
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, Vector_degenerate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+
+
+def normal_consistent(bm, direction):
+    flip_list = [face for face in bm.faces if not((face.normal - direction).length < 0.004)]
+    bmesh.ops.reverse_faces(bm, faces=flip_list)
 
 
 def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
@@ -126,6 +133,8 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
             fres = bmesh.ops.edgenet_prepare(bm, edges=bm.edges[:])
             bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
         
+            normal_consistent(bm, pno)
+
             bm.verts.index_update()
             bm.edges.index_update()
             bm.faces.index_update()
