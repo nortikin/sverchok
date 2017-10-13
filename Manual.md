@@ -15,7 +15,7 @@ The manual is an essential reference for new and existing users. Each node has a
   </tr>
   <tr>
     <td class="sv_table-elem">
-        <a href="http://nikitron.cc.ua/sverch/html/main.html">
+        <a href="http://sverchok.readthedocs.io/en/latest/nodes.html">
             Read Online</a></td>
     <td class="sv_table-elem"></td>
   </tr>
