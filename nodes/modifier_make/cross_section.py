@@ -131,7 +131,13 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
             bm = bmesh_from_pydata(verts, edges, [])
             bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=0.000002)
             fres = bmesh.ops.edgenet_prepare(bm, edges=bm.edges[:])
-            bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+            
+            if TRI: # == F
+                # this is a misnomer, but keeping for compatibility
+                bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
+            else:
+                # Alt+F
+                bmesh.ops.triangle_fill(bm, use_beauty=True, use_dissolve=False, edges=fres['edges'])
         
             normal_consistent(bm, pno)
 
