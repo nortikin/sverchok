@@ -161,7 +161,7 @@ class SvViewSourceForNode(bpy.types.Operator):
                 fpath = fpath.replace(_dst, _src)
                 print(fpath)
 
-            subprocess.call([app_name, fpath])
+            subprocess.Popen([app_name, fpath])
             return {'FINISHED'}
         return {'CANCELLED'}
 
