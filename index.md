@@ -267,13 +267,18 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
+    ---
     SvColorsInNode
     SvColorsOutNode
+    ---
     SvMatrixNormalNode
     SvMatrixTrackToNode
+    ---
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
+    ---
+    SvSpiralNode
 
 ## Alpha Nodes
     SvCurveViewerNode
