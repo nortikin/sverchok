@@ -42,7 +42,7 @@ from bgl import (
     #
     GL_MATRIX_MODE, GL_MODELVIEW_MATRIX, GL_MODELVIEW, GL_PROJECTION,
     glMatrixMode, glLoadMatrixf, glPushMatrix, glPopMatrix, glLoadIdentity,
-    glGenLists, glNewList, glEndList, glCallList, glFlush, GL_COMPILE, glDeleteLists,
+    glGenLists, glNewList, glEndList, glCallList, glFlush, GL_COMPILE,
     #
     GL_POINTS, GL_POINT_SIZE, GL_POINT_SMOOTH, GL_POINT_SMOOTH_HINT,
     GL_LINE, GL_LINES, GL_LINE_STRIP, GL_LINE_LOOP, GL_LINE_STIPPLE,
