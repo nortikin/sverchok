@@ -29,11 +29,11 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix Track To'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    OO = ["X Y  Z", "X Z  Y", "Y X  Z", "Y Z  X", "Z X  Y", "Z Y  X"]
-    orthogonalizing_order = EnumProperty(
-        name="Orthogonalizing Order",
-        description="The priority order in which the XYZ vectors are orthogonalized",
-        items=e(OO), default=OO[0], update=updateNode)
+    TUA = ["X Y", "X Z", "Y X", "Y Z", "Z X", "Z Y"]
+    tu_axes = EnumProperty(
+        name="Track/Up Axes",
+        description="Select which two of the XYZ axes to be the Track and Up axes",
+        items=e(TUA), default=TUA[0], update=updateNode)
 
     normalize = BoolProperty(
         name="Normalize Vectors", description="Normalize the output X,Y,Z vectors",
@@ -55,8 +55,11 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         name='B', description='B direction',
         default=(0, 1, 0), update=updateNode)
 
-    AB = ["A B", "A -B", "-A B", "-A -B", "B A", "B -A", "-B A", "-B -A"]
-    TU = EnumProperty(name="Track / Up", items=e(AB), default=AB[0], update=updateNode)
+    TUM = ["A B", "A -B", "-A B", "-A -B", "B A", "B -A", "-B A", "-B -A"]
+    tu_mapping = EnumProperty(
+        name="Track/Up Mapping",
+        description="Map the Track and Up vectors to one of the two inputs or their negatives",
+        items=e(TUM), default=TUM[0], update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Location").prop_name = "origin"  # L
@@ -91,46 +94,47 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         return cols
 
     def draw_buttons(self, context, layout):
+        row = layout.column().row()
+        cols = self.split_columns(row, [1, 1], [True, True])
+
+        cols[0].prop(self, "tu_axes", "")
+        cols[1].prop(self, "tu_mapping", "")
+
+    def draw_buttons_ext(self, context, layout):
         layout.prop(self, "normalize")
 
-        row = layout.column().row()
-        cols = self.split_columns(row, [12, 12], [True, True])
-
-        cols[0].prop(self, "orthogonalizing_order", "")
-        cols[1].prop(self, "TU", "")
-
-    def orthogonalizeXYZ(self, X, Y):  # keep X, recalculate Z form X&Y then Y
+    def orthogonalizeXY(self, X, Y):  # keep X, recalculate Z form X&Y then Y
         Z = X.cross(Y)
         Y = Z.cross(X)
         return X, Y, Z
 
-    def orthogonalizeXZY(self, X, Z):  # keep X, recalculate Y form Z&X then Z
+    def orthogonalizeXZ(self, X, Z):  # keep X, recalculate Y form Z&X then Z
         Y = Z.cross(X)
         Z = X.cross(Y)
         return X, Y, Z
 
-    def orthogonalizeYXZ(self, Y, X):  # keep Y, recalculate Z form X&Y then X
+    def orthogonalizeYX(self, Y, X):  # keep Y, recalculate Z form X&Y then X
         Z = X.cross(Y)
         X = Y.cross(Z)
         return X, Y, Z
 
-    def orthogonalizeYZX(self, Y, Z):  # keep Y, recalculate X form Y&Z then Z
+    def orthogonalizeYZ(self, Y, Z):  # keep Y, recalculate X form Y&Z then Z
         X = Y.cross(Z)
         Z = X.cross(Y)
         return X, Y, Z
 
-    def orthogonalizeZXY(self, Z, X):  # keep Z, recalculate Y form Z&X then X
+    def orthogonalizeZX(self, Z, X):  # keep Z, recalculate Y form Z&X then X
         Y = Z.cross(X)
         X = Y.cross(Z)
         return X, Y, Z
 
-    def orthogonalizeZYX(self, Z, Y):  # keep Z, recalculate X form Y&Z then Y
+    def orthogonalizeZY(self, Z, Y):  # keep Z, recalculate X form Y&Z then Y
         X = Y.cross(Z)
         Y = Z.cross(X)
         return X, Y, Z
 
     def orthogonalizer(self):
-        order = self.orthogonalizing_order.replace(" ", "")
+        order = self.tu_axes.replace(" ", "")
         orthogonalizer = eval("self.orthogonalize" + order)
         return lambda T, U: orthogonalizer(T, U)
 
@@ -157,7 +161,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
 
         orthogonalize = self.orthogonalizer()
 
-        mT, mU = self.TU.split(" ")
+        mT, mU = self.tu_mapping.split(" ")
 
         xList = []  # ortho-normal X vector list
         yList = []  # ortho-normal Y vector list
