@@ -376,8 +376,6 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
                 if propm:
                     cache_viewer_baker[matrix_ref] = dataCorrect(propm)
 
-
-
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
             config_options = self.get_options()
             callback_enable(n_id, cache_viewer_baker, config_options)
