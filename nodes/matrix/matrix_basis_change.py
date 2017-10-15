@@ -23,10 +23,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat, enum_item as e)
 
 
-class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Construct a Matrix from arbitrary Track and Up vectors '''
-    bl_idname = 'SvMatrixBasisChangeNode'
-    bl_label = 'Matrix Basis Change'
+    bl_idname = 'SvMatrixTrackToNode'
+    bl_label = 'Matrix Track To'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     OO = ["X Y  Z", "X Z  Y", "Y X  Z", "Y Z  X", "Z X  Y", "Z Y  X"]
@@ -55,12 +55,10 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
         name='B', description='B direction',
         default=(0, 1, 0), update=updateNode)
 
-    AB = ["A", "B", "-A", "-B"]
-    T = EnumProperty(name="T", items=e(AB), default=AB[0], update=updateNode)
-    U = EnumProperty(name="U", items=e(AB), default=AB[1], update=updateNode)
+    AB = ["A B", "A -B", "-A B", "-A -B", "B A", "B -A", "-B A", "-B -A"]
+    TU = EnumProperty(name="Track / Up", items=e(AB), default=AB[0], update=updateNode)
 
     def sv_init(self, context):
-        self.width = 150
         self.inputs.new('VerticesSocket', "Location").prop_name = "origin"  # L
         self.inputs.new('VerticesSocket', "Scale").prop_name = "scale"  # S
         self.inputs.new('VerticesSocket', "A").prop_name = "vA"  # A
@@ -94,12 +92,12 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "normalize")
+
         row = layout.column().row()
-        cols = self.split_columns(row, [12, 7, 8], [True, True, True])
+        cols = self.split_columns(row, [12, 12], [True, True])
 
         cols[0].prop(self, "orthogonalizing_order", "")
-        cols[1].prop(self, "T", "")
-        cols[2].prop(self, "U", "")
+        cols[1].prop(self, "TU", "")
 
     def orthogonalizeXYZ(self, X, Y):  # keep X, recalculate Z form X&Y then Y
         Z = X.cross(Y)
@@ -159,13 +157,15 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
 
         orthogonalize = self.orthogonalizer()
 
+        mT, mU = self.TU.split(" ")
+
         xList = []  # ortho-normal X vector list
         yList = []  # ortho-normal Y vector list
         zList = []  # ortho-normal Z vector list
         matrixList = []
         for L, S, A, B in zip(*params):
-            T = eval(self.T)  # map T to one of A, B or its negative
-            U = eval(self.U)  # map U to one of A, B or its negative
+            T = eval(mT)  # map T to one of A, B or its negative
+            U = eval(mU)  # map U to one of A, B or its negative
 
             X, Y, Z = orthogonalize(T, U)
 
@@ -197,8 +197,8 @@ class SvMatrixBasisChangeNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvMatrixBasisChangeNode)
+    bpy.utils.register_class(SvMatrixTrackToNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvMatrixBasisChangeNode)
+    bpy.utils.unregister_class(SvMatrixTrackToNode)
