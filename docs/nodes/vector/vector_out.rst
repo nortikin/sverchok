@@ -9,14 +9,14 @@ Outputs values/numbers from vertices.
 Inputs
 -------
 
-**Vector** - Vertex or series of vertices
+**Vector** - Vertex or series of vertices.
 
 Outputs
 -------
 
-**x** - velue or series of values
-**y** - velue or series of values
-**z** - velue or series of values
+**x** - value or series of values
+**y** - value or series of values
+**z** - value or series of values
 
 Examples
 --------
