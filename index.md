@@ -270,6 +270,7 @@
     SvColorsInNode
     SvColorsOutNode
     SvMatrixNormalNode
+    SvMatrixTrackToNode
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
