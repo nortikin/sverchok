@@ -4,4 +4,4 @@ Matrix Input
 Functionality
 -------------
 
-Inputs one matrix wit fixed values.
+Inputs one matrix with fixed values.
