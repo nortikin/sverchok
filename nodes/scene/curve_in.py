@@ -86,23 +86,32 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         new_o_put("VerticesSocket", "edges")
         new_o_put("VerticesSocket", "faces")
         new_o_put("VerticesSocket", "radii")
+        new_o_put("VerticesSocket", "matrices")
 
     def draw_buttons(self, context, layout):
         ...
 
     def get_objects(self):
-        ...
+        _in = self.inputs[0]
+        if _in.is_linked:
+            objects = _in.sv_get()
+        else:
+            ...
+            ...# [bpy.data.objects[obj.name] or obj in self.selected_objects]
+            ...
+            objects = []
+
+        filtered_objects = [obj for obj in objects if obj.type == 'CURVE']
+        if len(filtered_objects) < len(objects):
+            print('one object in selection is not a curve, remove it and try again')
+            return []
+
+        return filtered_objects
+
 
     def process(self):
-        _in = self.inputs[0]
         _out = self.outputs
-
-        objects = _in[0].sv_get() if _in.is_linked else self.get_objects()
-
-        for obj in objects:
-
-            if not obj.type == 'CURVE':
-                return
+        objects = self.get_objects()
 
         for obj in objects:
 
