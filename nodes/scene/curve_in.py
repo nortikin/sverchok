@@ -96,10 +96,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         if _in.is_linked:
             objects = _in.sv_get()
         else:
-            ...
-            ...# [bpy.data.objects[obj.name] or obj in self.selected_objects]
-            ...
-            objects = []
+            objects = [bpy.data.objects[obj.name] or obj in self.selected_objects]
 
         filtered_objects = [obj for obj in objects if obj.type == 'CURVE']
         if len(filtered_objects) < len(objects):
@@ -113,20 +110,22 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         _out = self.outputs
         objects = self.get_objects()
 
+        edges_out, verts_out, faces_out, radii_out, mtrx_out = [], [], [], [], []
+
         for obj in objects:
 
-            m = obj.matrix_world
-            mtrx.append(m[:])
-            # spline = bpy.data.curves[0].splines[0]
-            # points = get_points_bezier(spline)
+            mtrx_out.append(obj.matrix_world[:])
 
             for spline in obj.data.splines:
-                verts, edges = get_points(spline, clean=True)
-                edgs_out.append(edges)
-                vers_out.append(verts)
-                mtrx_out.append(obj.matrix_world[:])
-
+                if spline.type == 'BEZIER':
+                    verts, edges = get_points_bezier(spline, clean=True)
+                    edges_out.append(edges)
+                    verts_out.append(verts)
+                    # faces not implemented yet
+ 
             continue
+
+        _out['matrices'].sv_set(mtrx_out)
 
 
 def register():
