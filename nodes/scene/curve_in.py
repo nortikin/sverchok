@@ -122,13 +122,11 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
             mtrx_out.append(obj.matrix_world[:])
             verts, edges, faces, radii = [], [], [], []
 
+            # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
             for spline in obj.data.splines:
-
-                # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
 
                 if spline.type == 'BEZIER':
                     verts_part, edges_part = get_points_bezier(spline, clean=True)
-
 
                 elif spline.type == 'NURBS'
                     ...
