@@ -30,7 +30,7 @@ from sverchok.data_structure import updateNode
 def offset(edgekeys, amount):
     return [[edge[0] + amount, edge[1] + amount] for edge in edgekeys]
 
-def get_points_bezier(spline, clean=True):
+def get_points_bezier(spline, clean=True, calc_radii=False):
 
     knots = spline.bezier_points
     if len(knots) < 2:
@@ -65,14 +65,19 @@ def get_points_bezier(spline, clean=True):
         old = master_point_list
         good = [v for i, v in enumerate(old[:-1]) if not old[i] == old[i + 1]]
         good.append(old[-1])
-        return good
+        master_point_list = good
 
     # makes edge keys, ensure cyclic
+    n_verts = len(master_point_list)
     Edges = [[i, i + 1] for i in range(n_verts - 1)]
     if spline.use_cyclic_u:
         Edges.append([i, 0])
 
     return master_point_list, Edges, radii
+
+
+def get_points_nurbs(spline, clean=True, calc_radii=False):
+    ...
 
 
 
@@ -129,10 +134,12 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
             for spline in obj.data.splines:
 
                 if spline.type == 'BEZIER':
-                    verts_part, edges_part, radii = get_points_bezier(spline, clean=True, calc_radii=calc_radii)
-
-                elif spline.type == 'NURBS'
-                    ...
+                    verts_part, edges_part, radii = get_points_bezier(spline, calc_radii=calc_radii)
+                elif spline.type == 'NURBS':
+                    verts_part, edges_part, radii = get_points_nurbs(spline, calc_radii=calc_radii)
+                else:
+                    # maybe later?
+                    continue
 
                 # empty means we don't offset the index
                 edges.extend(offset(edges_part, len(verts)) if verts else edges_part)
