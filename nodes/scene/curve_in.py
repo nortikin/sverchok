@@ -51,10 +51,8 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
     for i in range(segments):
         inext = (i + 1) % len(knots)
 
-        knot1 = knots[i].co
-        handle1 = knots[i].handle_right
-        handle2 = knots[inext].handle_left
-        knot2 = knots[inext].co
+        knot1, knot2 = knots[i].co, knots[inext].co
+        handle1, handle2 = knots[i].handle_right, knots[inext].handle_left
 
         bezier = knot1, handle1, handle2, knot2, r
         points = interpolate_bezier(*bezier)
@@ -69,11 +67,11 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
 
     # makes edge keys, ensure cyclic
     n_verts = len(master_point_list)
-    Edges = [[i, i + 1] for i in range(n_verts - 1)]
+    edges = [[i, i + 1] for i in range(n_verts - 1)]
     if spline.use_cyclic_u:
-        Edges.append([i, 0])
+        edges.append([i, 0])   # i = n_verts-2 ? or -1
 
-    return master_point_list, Edges, radii
+    return master_point_list, edges, radii
 
 
 def get_points_nurbs(spline, clean=True, calc_radii=False):
