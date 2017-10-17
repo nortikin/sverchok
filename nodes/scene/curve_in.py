@@ -27,6 +27,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
+def offset(edgekeys, amount):
+    return [[edge[0] + amount, edge[1] + amount] for edge in edgekeys]
+
 def get_points_bezier(spline, clean=True):
 
     knots = spline.bezier_points
@@ -114,16 +117,35 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
 
         for obj in objects:
 
+            ## collect all data we can get from the subcurve(s)
+
             mtrx_out.append(obj.matrix_world[:])
+            verts, edges, faces, radii = [], [], [], []
 
             for spline in obj.data.splines:
+
+                # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
+
                 if spline.type == 'BEZIER':
-                    verts, edges = get_points_bezier(spline, clean=True)
-                    edges_out.append(edges)
-                    verts_out.append(verts)
-                    # faces not implemented yet
+                    verts_part, edges_part = get_points_bezier(spline, clean=True)
+
+
+                elif spline.type == 'NURBS'
+                    ...
+
+                # empty means we don't offset the index
+                edges.extend(offset(edges_part, len(verts)) if verts else edges_part)
+                verts.extend(verts_part)
+                # faces.extend(faces_part)
+                # radii.extend(radii_part)
+
+            ## pass all resulting subcurve data
+
+            verts_out.append(verts)
+            edges_out.append(edges)
+            # faces_out.append(faces) 
+            # radii_out.append(radii)
  
-            continue
 
         _out['matrices'].sv_set(mtrx_out)
 
