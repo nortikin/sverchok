@@ -36,6 +36,8 @@ def get_points_bezier(spline, clean=True):
     if len(knots) < 2:
         return
 
+    radii = []
+
     # verts per segment
     r = spline.resolution_u + 1
 
@@ -70,7 +72,7 @@ def get_points_bezier(spline, clean=True):
     if spline.use_cyclic_u:
         Edges.append([i, 0])
 
-    return master_point_list, Edges
+    return master_point_list, Edges, radii
 
 
 
@@ -113,6 +115,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         _out = self.outputs
         objects = self.get_objects()
 
+        calc_radii = _out['radii'].is_linked
         edges_out, verts_out, faces_out, radii_out, mtrx_out = [], [], [], [], []
 
         for obj in objects:
@@ -126,7 +129,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
             for spline in obj.data.splines:
 
                 if spline.type == 'BEZIER':
-                    verts_part, edges_part = get_points_bezier(spline, clean=True)
+                    verts_part, edges_part, radii = get_points_bezier(spline, clean=True, calc_radii=calc_radii)
 
                 elif spline.type == 'NURBS'
                     ...
