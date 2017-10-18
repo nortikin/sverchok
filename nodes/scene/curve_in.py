@@ -31,6 +31,8 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Curve Input'
     bl_icon = 'ROOTCURVE'
 
+    object_names = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+
     def sv_init(self, context):
         new_i_put = self.inputs.new
         new_o_put = self.outputs.new
@@ -47,10 +49,12 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_objects(self):
         _in = self.inputs[0]
-        if _in.is_linked:
-            objects = _in.sv_get()
+
+        objects = _in.sv_get()
+        if _in.is_linked or objects:
+            pass
         else:
-            objects = [bpy.data.objects[obj.name] or obj in self.selected_objects]
+            objects = [bpy.data.objects[obj.name] or obj in self.object_names]
 
         filtered_objects = [obj for obj in objects if obj.type == 'CURVE']
         if len(filtered_objects) < len(objects):
