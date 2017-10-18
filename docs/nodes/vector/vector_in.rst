@@ -10,7 +10,9 @@ Inputs
 ------
 
 **x** - value or series of values
+
 **y** - value or series of values
+
 **z** - value or series of values
 
 Outputs

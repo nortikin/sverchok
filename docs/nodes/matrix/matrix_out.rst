@@ -15,8 +15,11 @@ Outputs
 -------
 
 **Location** - vector or series of vectors
+
 **Scale** - vector or series of vectors
+
 **Rotation** - vector or series of vectors
+
 **Angle** - value or series of values
 
 Examples
