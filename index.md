@@ -245,6 +245,7 @@
 ## Scene
     SvObjectsNodeMK3
     SvObjInLite
+    SvCurveInputNode
     SvObjEdit
     SvFrameInfoNodeMK2
     SvEmptyOutNode

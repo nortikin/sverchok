@@ -20,81 +20,27 @@ import bpy
 import mathutils
 
 # from bpy.props import FloatProperty, BoolProperty
-from mathutils import Vector
-from mathutils.geometry import interpolate_bezier
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
-
-def offset(edgekeys, amount):
-    return [[edge[0] + amount, edge[1] + amount] for edge in edgekeys]
-
-def get_points_bezier(spline, clean=True, calc_radii=False):
-
-    knots = spline.bezier_points
-    if len(knots) < 2:
-        return
-
-    radii = []
-
-    # verts per segment
-    r = spline.resolution_u + 1
-
-    # segments in spline
-    segments = len(knots)
-
-    if not spline.use_cyclic_u:
-        segments -= 1
-
-    master_point_list = []
-    for i in range(segments):
-        inext = (i + 1) % len(knots)
-
-        knot1, knot2 = knots[i].co, knots[inext].co
-        handle1, handle2 = knots[i].handle_right, knots[inext].handle_left
-
-        bezier = knot1, handle1, handle2, knot2, r
-        points = interpolate_bezier(*bezier)
-        master_point_list.extend(points)
-
-    # some clean up to remove consecutive doubles, this could be smarter...
-    if clean:
-        old = master_point_list
-        good = [v for i, v in enumerate(old[:-1]) if not old[i] == old[i + 1]]
-        good.append(old[-1])
-        master_point_list = good
-
-    # makes edge keys, ensure cyclic
-    n_verts = len(master_point_list)
-    edges = [[i, i + 1] for i in range(n_verts - 1)]
-    if spline.use_cyclic_u:
-        edges.append([i, 0])   # i = n_verts-2 ? or -1
-
-    return master_point_list, edges, radii
-
-
-def get_points_nurbs(spline, clean=True, calc_radii=False):
-    ...
-
+from sverchok.utils.sv_extended_curve_utils import get_points_bezier, get_points_nurbs, offset
 
 
 class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Curve data in '''
     bl_idname = 'SvCurveInputNode'
     bl_label = 'Curve Input'
-    bl_icon = 'CURVE'
+    bl_icon = 'ROOTCURVE'
 
     def sv_init(self, context):
         new_i_put = self.inputs.new
         new_o_put = self.outputs.new
 
-        new_i_put("SvObjectsSocket", "objects")
+        new_i_put("SvObjectSocket", "objects")
         new_o_put("VerticesSocket", "verts")
-        new_o_put("VerticesSocket", "edges")
-        new_o_put("VerticesSocket", "faces")
-        new_o_put("VerticesSocket", "radii")
-        new_o_put("VerticesSocket", "matrices")
+        new_o_put("StringsSocket", "edges")
+        new_o_put("StringsSocket", "faces")
+        new_o_put("StringsSocket", "radii")
+        new_o_put("MatrixSocket", "matrices")
 
     def draw_buttons(self, context, layout):
         ...
@@ -125,7 +71,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
 
             ## collect all data we can get from the subcurve(s)
 
-            mtrx_out.append(obj.matrix_world[:])
+            mtrx_out.append([list(m) for m in obj.matrix_world])
             verts, edges, faces, radii = [], [], [], []
 
             # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
@@ -134,7 +80,9 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
                 if spline.type == 'BEZIER':
                     verts_part, edges_part, radii = get_points_bezier(spline, calc_radii=calc_radii)
                 elif spline.type == 'NURBS':
-                    verts_part, edges_part, radii = get_points_nurbs(spline, calc_radii=calc_radii)
+                    curve = obj.data
+                    resolution = curve.render_resolution_u or curve.resolution_u
+                    verts_part, edges_part, radii = get_points_nurbs(spline, resolution, calc_radii=calc_radii)
                 else:
                     # maybe later?
                     continue
@@ -154,6 +102,8 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
  
 
         _out['matrices'].sv_set(mtrx_out)
+        _out['verts'].sv_set(verts_out)
+        _out['edges'].sv_set(edges_out)
 
 
 def register():
