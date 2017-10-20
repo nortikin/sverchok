@@ -24,7 +24,7 @@ import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.core.update_system import process_from_nodes
 
-objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
+objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvObjectsNodeMK3B'}
 
 
 
@@ -217,7 +217,7 @@ class Sv3DPanel(bpy.types.Panel):
                             op.tree_name = tree.name
                             op.grup_name = node.groupname
                             op.sort = node.sort
-                        elif node.bl_idname == 'SvObjectsNodeMK3':
+                        elif node.bl_idname in {'SvObjectsNodeMK3', 'SvObjectsNodeMK3B'}:
                             node.draw_sv3dpanel_ob3(col, little_width)
 
                         elif node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode"}:

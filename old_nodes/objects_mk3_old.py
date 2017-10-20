@@ -27,54 +27,10 @@ from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
 
-class SvOB3BDataCollection(bpy.types.PropertyGroup):
-    name = bpy.props.StringProperty()
-    icon = bpy.props.StringProperty(default="BLANK1")
+class SvOB3Callback(bpy.types.Operator):
 
-
-class SvOB3BNamesList(bpy.types.UIList):
-
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-
-        layout.label(item.name, icon=item.icon)
-        
-        # This is needed to help disambiguate the origin of this click. The receiver needs
-        # to know from which node tree and node it originated.
-        action = layout.operator("node.sv_ob3b_collection_operator", icon='X', text='')
-        action.tree_name = data.id_data.name
-        action.node_name = data.name
-        action.fn_name = 'REMOVE'
-        action.idx = index #data.active_obj_index
-
-
-class SvOB3BItemOperator(bpy.types.Operator):
-
-    bl_idname = "node.sv_ob3b_collection_operator"
-    bl_label = "bladibla"
-
-    tree_name = bpy.props.StringProperty(default='')
-    node_name = bpy.props.StringProperty(default='')
-    fn_name = bpy.props.StringProperty(default='')
-    idx = bpy.props.IntProperty()
-
-    def execute(self, context):
-        node = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
-
-        if self.fn_name == 'REMOVE':
-            node.object_names.remove(self.idx)
-
-        node.process_node(None)
-
-        # if not node.object_names:
-        #     node.process()
-
-        return {'FINISHED'}
-
-
-class SvOB3BCallback(bpy.types.Operator):
-
-    bl_idname = "node.ob3b_callback"
-    bl_label = "Object In mk3b callback"
+    bl_idname = "node.ob3_callback"
+    bl_label = "Object In mk3 callback"
 
     fn_name = StringProperty(default='')
     node_name = StringProperty(default='')
@@ -96,10 +52,10 @@ class SvOB3BCallback(bpy.types.Operator):
 
 
 
-class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
-    ''' ob3 Objects to pydata '''
-    bl_idname = 'SvObjectsNodeMK3B'
-    bl_label = 'Objects in mk3b'
+class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+    ''' Objects Input slot MK3'''
+    bl_idname = 'SvObjectsNodeMK3'
+    bl_label = 'Objects in mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def hide_show_versgroups(self, context):
@@ -116,19 +72,21 @@ class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
         default='', update=updateNode)
 
     modifiers = BoolProperty(
-        name='Modifiers', description='Apply modifier geometry to import (original untouched)',
+        name='Modifiers',
+        description='Apply modifier geometry to import (original untouched)',
         default=False, update=updateNode)
 
     vergroups = BoolProperty(
-        name='Vergroups', description='Use vertex groups to nesty insertion',
+        name='Vergroups',
+        description='Use vertex groups to nesty insertion',
         default=False, update=hide_show_versgroups)
 
     sort = BoolProperty(
-        name='sort by name', description='sorting inserted objects by names',
+        name='sort by name',
+        description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names = bpy.props.CollectionProperty(type=SvOB3BDataCollection)
-    active_obj_index = bpy.props.IntProperty()
+    object_names = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
 
     def sv_init(self, context):
@@ -136,7 +94,7 @@ class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
         new('VerticesSocket', "Vertices")
         new('StringsSocket', "Edges")
         new('StringsSocket', "Polygons")
-        new('MatrixSocket', "Matrices")
+        new('MatrixSocket', "Matrixes")
         new('SvObjectSocket', "Object")
 
 
@@ -156,9 +114,7 @@ class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
             names.sort()
 
         for name in names:
-            item = self.object_names.add()
-            item.name = name
-            item.icon = 'OUTLINER_OB_' + bpy.data.objects[name].type
+            self.object_names.add().name = name
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no selected objects in the scene")
@@ -177,15 +133,19 @@ class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
          
 
     def draw_obj_names(self, layout):
-        """
-            Helper function used by draw_buttons, to specifically deal with drawing 
-            the object bames, either as None or in a UI list.
-        """
+        # display names currently being tracked, stop at the first 5..
         if self.object_names:
-            layout.template_list("SvOB3BNamesList", "", self, "object_names", self, "active_obj_index")
+            remain = len(self.object_names) - 5
+
+            for i, obj_ref in enumerate(self.object_names):
+                layout.label(obj_ref.name)
+                if i > 4 and remain > 0:
+                    postfix = ('' if remain == 1 else 's')
+                    more_items = '... {0} more item' + postfix
+                    layout.label(more_items.format(remain))
+                    break
         else:
             layout.label('--None--')
-
 
     def draw_buttons(self, context, layout):
 
@@ -204,7 +164,7 @@ class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
         except:
             pass
 
-        callback = 'node.ob3b_callback'
+        callback = 'node.ob3_callback'
         row.operator(callback, text=op_text).fn_name = 'get_objects_from_scene'
 
         col = layout.column(align=True)
@@ -220,11 +180,9 @@ class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_sv3dpanel_ob3(self, col, little_width):
-        callback = 'node.ob3b_callback'
-        
+        callback = 'node.ob3_callback'
         row = col.row(align=True)
         row.label(text=self.label if self.label else self.name)
-        
         colo = row.row(align=True)
         colo.scale_x = little_width * 5
         op = colo.operator(callback, text="Get")
@@ -308,14 +266,11 @@ class SvObjectsNodeMK3B(bpy.types.Node, SverchCustomTreeNode):
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
 
-        outputs['Matrices'].sv_set(mtrx_out)
+        outputs['Matrixes'].sv_set(mtrx_out)
         outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
-classes = [
-    SvOB3BItemOperator, SvOB3BDataCollection, SvOB3BNamesList, SvOB3BCallback,
-    SvObjectsNodeMK3B
-]
+classes = [SvOB3Callback, SvObjectsNodeMK3]
 
 
 def register():
@@ -324,4 +279,3 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(c) for c in classes]
-

@@ -243,7 +243,7 @@
     SvSCNRayCastNodeMK2
 
 ## Scene
-    SvObjectsNodeMK3
+    SvObjectsNodeMK3B
     SvObjInLite
     SvObjEdit
     SvFrameInfoNodeMK2

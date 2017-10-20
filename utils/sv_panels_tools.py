@@ -196,7 +196,7 @@ class SvLayoutScanProperties(bpy.types.Operator):
             for node in tree.nodes:
                 idname = node.bl_idname
    
-                if idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3'}:
+                if idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3', 'SvObjectsNodeMK3B'}:
                     print('scans for get option ', node.label, node.name)
                     if any((s.links for s in node.outputs)):
                         templist.append([node.label, node.name, ""])

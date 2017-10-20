@@ -171,7 +171,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_enums = find_enumerators(node)
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
-        ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
+        ObjectsNode3 = (node.bl_idname in {'SvObjectsNodeMK3', 'SvObjectsNodeMK3B'})
         ObjNodeLite = (node.bl_idname == 'SvObjInLite')
         MeshEvalNode = (node.bl_idname == 'SvMeshEvalNode')
 
@@ -521,7 +521,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     if bl_idname in {'SvObjInLite', 'SvExecNodeMod', 'SvMeshEvalNode'}:
         node.storage_set_data(node_ref)
 
-    if bl_idname == 'SvObjectsNodeMK3':
+    if bl_idname in {'SvObjectsNodeMK3', 'SvObjectsNodeMK3B'}:
         for named_object in node_ref.get('object_names', []):
             node.object_names.add().name = named_object
 

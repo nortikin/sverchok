@@ -108,7 +108,7 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[3], vd_node.inputs[2])
 
         elif term == 'objs vd':
-            obj_in_node = nodes.new('SvObjectsNodeMK3')
+            obj_in_node = nodes.new('SvObjectsNodeMK3B')
             obj_in_node.get_objects_from_scene(operator)
             vd_node = nodes.new('ViewerNode2')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
