@@ -36,6 +36,8 @@ BRANCH = ""
 def get_branch():
     global BRANCH
 
+    if bpy.app.debug = True:
+        print('branch check 1 - start')
     # first use git to find branch
     try:
         res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
@@ -48,7 +50,14 @@ def get_branch():
     except: # if does not work ignore it
         BRANCH = ""
     if BRANCH:
+
+        if bpy.app.debug = True:
+            print('branch check 1 - done')        
         return
+
+
+    if bpy.app.debug = True:
+        print('branch check 2 - start')
 
     # if the above failed we can dig deeper, if this failed we concede victory.
     try:
@@ -59,6 +68,10 @@ def get_branch():
         BRANCH = branch.rstrip()
     except:
         BRANCH = ""
+
+    if bpy.app.debug = True:
+        print('branch check 2 - done')
+
 
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
