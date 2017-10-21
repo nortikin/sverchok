@@ -139,6 +139,10 @@ def make_node_list():
         if DEBUG_BLENDER:
             print("<sverchok> importing", category)
         import_modules(names, '{}.{}'.format(base_name, category), node_list)
+
+    if DEBUG_BLENDER:
+        print("<sverchok> completed make_node_list")
+
     return node_list
 
 for mods, base in mods_bases:
@@ -169,7 +173,7 @@ from sverchok.core import node_defaults
 def register():
     for m in imported_modules + node_list:
         if hasattr(m, "register"):
-            if bpy.app.debug == True:
+            if bpy.app.debug:
                 print('<sverchok> registering node', m.__name__)
             m.register()
     # this is used to access preferences, should/could be hidden

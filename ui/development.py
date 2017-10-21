@@ -36,7 +36,7 @@ BRANCH = ""
 def get_branch():
     global BRANCH
 
-    if bpy.app.debug = True:
+    if bpy.app.debug:
         print('branch check 1 - start')
     # first use git to find branch
     try:
@@ -51,12 +51,12 @@ def get_branch():
         BRANCH = ""
     if BRANCH:
 
-        if bpy.app.debug = True:
+        if bpy.app.debug:
             print('branch check 1 - done')        
         return
 
 
-    if bpy.app.debug = True:
+    if bpy.app.debug:
         print('branch check 2 - start')
 
     # if the above failed we can dig deeper, if this failed we concede victory.
@@ -69,7 +69,7 @@ def get_branch():
     except:
         BRANCH = ""
 
-    if bpy.app.debug = True:
+    if bpy.app.debug:
         print('branch check 2 - done')
 
 
