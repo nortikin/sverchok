@@ -36,19 +36,21 @@ BRANCH = ""
 def get_branch():
     global BRANCH
 
-    # first use git to find branch
-    try:
-        res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                              stdout=subprocess.PIPE,
-                              cwd=os.path.dirname(sverchok.__file__),
-                              timeout=2)
+    # this commented out code needs revisiting at some point.
 
-        branch = str(res.stdout.decode("utf-8"))
-        BRANCH = branch.rstrip()
-    except: # if does not work ignore it
-        BRANCH = ""
-    if BRANCH:
-        return
+    # first use git to find branch
+    # try:
+    #     res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+    #                           stdout=subprocess.PIPE,
+    #                           cwd=os.path.dirname(sverchok.__file__),
+    #                           timeout=2)
+
+    #     branch = str(res.stdout.decode("utf-8"))
+    #     BRANCH = branch.rstrip()
+    # except: # if does not work ignore it
+    #     BRANCH = ""
+    # if BRANCH:
+    #     return
 
     # if the above failed we can dig deeper, if this failed we concede victory.
     try:
