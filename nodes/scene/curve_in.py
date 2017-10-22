@@ -37,8 +37,8 @@ def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
         points.append(points[0])
 
     for idx in range(len(points)-1):
-        params = points[idx], points[idx+1], segments+2
-        if len(points) == 2 or (idx > (len(points)-2)):
+        params = points[idx], points[idx+1], segments+1
+        if len(points) == 2 or (idx == (len(points)-2)):
             radii.extend(list(frange_count(*params)))
         else:
             radii.extend(list(frange_count(*params))[:-1])
