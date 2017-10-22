@@ -25,19 +25,20 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_extended_curve_utils import get_points_bezier, get_points_nurbs, offset
 from sverchok.nodes.number.range_float import frange_count
 
+point_attrs = {'NURBS': 'points', 'BEZIER': 'bezier_points'}
 
 def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
-    radii = []
 
-    point_attr = {'NURBS': 'points', 'BEZIER': 'bezier_points'}.get(spline.type, 'points')
+    radii = []
+    point_attr = point_attrs.get(spline.type, 'points')
     points = [p.radius for p in getattr(spline, point_attr)]
 
     if spline.use_cyclic_u:
         points.append(points[0])
 
     for idx in range(len(points)-1):
-        params = points[idx], points[idx+1], segments+1
-        if len(points) == 2 or not (idx < (len(points)-2)):
+        params = points[idx], points[idx+1], segments+2
+        if len(points) == 2 or (idx > (len(points)-2)):
             radii.extend(list(frange_count(*params)))
         else:
             radii.extend(list(frange_count(*params))[:-1])
