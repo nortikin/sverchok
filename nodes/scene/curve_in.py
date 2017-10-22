@@ -23,6 +23,26 @@ import mathutils
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_extended_curve_utils import get_points_bezier, get_points_nurbs, offset
+from sverchok.nodes.number.range_float import frange_count
+
+
+def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
+    radii = []
+
+    point_attr = {'NURBS': 'points', 'BEZIER': 'bezier_points'}.get(spline.type, 'points')
+    points = [p.radius for p in getattr(spline, point_attr)]
+
+    if spline.use_cyclic_u:
+        points.append(points[0])
+
+    for idx in range(len(points)-1):
+        params = points[idx], points[idx+1], segments+1
+        if len(points) == 2 or not (idx < (len(points)-2)):
+            radii.extend(list(frange_count(*params)))
+        else:
+            radii.extend(list(frange_count(*params))[:-1])
+
+    return radii
 
 
 class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
@@ -77,15 +97,14 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
 
             mtrx_out.append([list(m) for m in obj.matrix_world])
             verts, edges, faces, radii = [], [], [], []
-
+            curve = obj.data
+            resolution = curve.render_resolution_u or curve.resolution_u
             # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
             for spline in obj.data.splines:
-
+                
                 if spline.type == 'BEZIER':
                     verts_part, edges_part, radii = get_points_bezier(spline, calc_radii=calc_radii)
                 elif spline.type == 'NURBS':
-                    curve = obj.data
-                    resolution = curve.render_resolution_u or curve.resolution_u
                     verts_part, edges_part, radii = get_points_nurbs(spline, resolution, calc_radii=calc_radii)
                 else:
                     # maybe later?
@@ -95,19 +114,22 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
                 edges.extend(offset(edges_part, len(verts)) if verts else edges_part)
                 verts.extend(verts_part)
                 # faces.extend(faces_part)
-                # radii.extend(radii_part)
+                if _out['radii'].is_linked:
+                    radii_part = interpolate_radii(spline, resolution, interpolation_type='LINEAR')
+                    radii.extend(radii_part)
 
             ## pass all resulting subcurve data
 
             verts_out.append(verts)
             edges_out.append(edges)
             # faces_out.append(faces) 
-            # radii_out.append(radii)
+            radii_out.append(radii)
  
 
         _out['matrices'].sv_set(mtrx_out)
         _out['verts'].sv_set(verts_out)
         _out['edges'].sv_set(edges_out)
+        _out['radii'].sv_set(radii_out)
 
 
 def register():

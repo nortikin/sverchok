@@ -16,12 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import math
 
 import bpy
-import bmesh
-import math
 import mathutils
-
+import bmesh
 from mathutils import Vector
 from mathutils.geometry import interpolate_bezier
 
