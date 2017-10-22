@@ -122,7 +122,8 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
                         coef = self.falloff(radius, rho)
                     coeffs.append(coef)
 
-            else: coeffs = [0 for _ in masks]
+            else:
+                coeffs = [0.0 for _ in masks]
 
             out_coeffs.append(coeffs)
 
