@@ -75,10 +75,15 @@ def interpolate_catmul(knots, cyclic, num_segments):
     sections = get_sections(knots, cyclic)
     theta = 1 / num_segments
 
-    for p0, p1, p2, p3 in sections:
+    for idx, (p0, p1, p2, p3) in enumerate(sections):
+
+        if cyclic or (idx < (len(section) - 1)):
+            appendix = -1
+        else:
+            appendix = 0
 
         P0, P1, P2, P3 = knots[p0], knots[p1], knots[p2], knots[p3]
-        for xt in range(num_segments+1):
+        for xt in range(num_segments + 1 + appendix):
             t = theta * xt
             t2 = t*t
             t3 = t2*t
