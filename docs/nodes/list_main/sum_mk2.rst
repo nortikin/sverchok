@@ -1,4 +1,4 @@
-List Summa
+List Sum
 ==========
 
 Functionality
@@ -9,13 +9,13 @@ This node operates the sum of all the values in the inputs, no matter the levels
 Inputs
 ------
 
-Takes any kind of data: singles values, vectors or even matrixes.
+Takes any kind of data: single values, vectors or even matrices.
 
 Outputs
 -------
 
 No matter the type of input, the output will be the sum of all the values in the input list.
-This node works in a different way of the "Sum" function in **List Math** node. See the example below to see the difference.
+This node works in a different way of the "Sum" function in the **List Math** node. See the example below to see the difference.
 
 Examples
 --------

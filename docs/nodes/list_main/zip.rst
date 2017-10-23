@@ -4,7 +4,7 @@ List Zip
 Functionality
 -------------
 
-Making pares of data to mix togather as zip function.
+Making pairs of data to mix together as zip function.
 
 x = [[[1,2],[3,4]]]
 y = [[[5,6],[7,8]]]
@@ -19,17 +19,15 @@ out level 3 =       [[[[], []], [[], []]]]
 Inputs
 ------
 
-**data** multysocket
+**data** - multisocket
 
 Properties
 ----------
 
-**level** integer to operate level of conjunction
-**unwrap** boolean to unwrap from additional level, added when zipped 
+**level** - integer to operate level of conjunction
+**unwrap** - boolean to unwrap from additional level, added when zipped
 
 Outputs
 -------
 
-**data** adaptable socket
-
-
+**data** - adaptable socket
