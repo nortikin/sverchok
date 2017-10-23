@@ -27,21 +27,88 @@ from sverchok.nodes.number.range_float import frange_count
 
 point_attrs = {'NURBS': 'points', 'BEZIER': 'bezier_points'}
 
+
+def get_sections(knots, cyclic):
+    sections = []
+    if not cyclic:
+        if len(knots) == 2:
+            sections.append((0, 0, 1, 1))
+        else:
+            for i in range(len(knots)-1):
+                if i == 0:
+                    indices = i, i, i+1, i+2
+                elif i == len(knots)-2:
+                    indices = i-1, i, i+1, i+1
+                else:
+                    indices = i-1, i, i+1, i+2
+                sections.append(indices)
+    else:
+        if len(knots) == 2:
+            sections.append((1, 0, 1, 0))
+        else:
+            last_idx = len(knots)-1
+            for i in range(len(knots)):
+                if i == 0:
+                    indices = last_idx, 0, 1, 2
+                elif i == last_idx:
+                    indices = last_idx-1, last_idx, 0, 1
+                else:
+                    indices = i-1, i, i+1, (i+2) % len(knots)
+                sections.append(indices)
+    return sections
+
+
+
+def interpolate_catmul(knots, cyclic, num_segments):
+    """
+    from https://www.mvps.org/directx/articles/catmull/
+
+    q(t) = 0.5 *( (2 * P1) +
+                (-P0 + P2) * t +
+                (2*P0 - 5*P1 + 4*P2 - P3) * t2 +
+                (-P0 + 3*P1- 3*P2 + P3) * t3)
+    """
+
+    radii = []
+    radii_add = radii.append
+
+    sections = get_sections(knots, cyclic)
+    theta = 1 / num_segments
+
+    for p0, p1, p2, p3 in sections:
+
+        P0, P1, P2, P3 = knots[p0], knots[p1], knots[p2], knots[p3]
+        for xt in range(num_segments+1):
+            t = theta * xt
+            t2 = t*t
+            t3 = t2*t
+            radt = 0.5*((2*P1)+(-P0+P2)*t+(2*P0-5*P1+4*P2-P3)*t2+(-P0+3*P1-3*P2+P3)*t3)
+            radii_add(radt)
+
+        # this doesn't yet drop last values
+
+    return radii
+
+
 def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
 
     radii = []
     point_attr = point_attrs.get(spline.type, 'points')
     points = [p.radius for p in getattr(spline, point_attr)]
 
-    if spline.use_cyclic_u:
-        points.append(points[0])
+    if interpolation_type == 'LINEAR':
+        if spline.use_cyclic_u:
+            points.append(points[0])
 
-    for idx in range(len(points)-1):
-        params = points[idx], points[idx+1], segments+1
-        if len(points) == 2 or (idx == (len(points)-2)):
-            radii.extend(list(frange_count(*params)))
-        else:
-            radii.extend(list(frange_count(*params))[:-1])
+        for idx in range(len(points)-1):
+            params = points[idx], points[idx+1], segments+1
+            if len(points) == 2 or (idx == (len(points)-2)):
+                radii.extend(list(frange_count(*params)))
+            else:
+                radii.extend(list(frange_count(*params))[:-1])
+
+    elif interpolation_type == 'CUBIC':
+        radii = interpolate_catmul(points, spline.use_cyclic_u, segments)
 
     return radii
 
