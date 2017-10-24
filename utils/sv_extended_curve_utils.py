@@ -58,7 +58,7 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
         bezier = knot1, handle1, handle2, knot2, r
         points = interpolate_bezier(*bezier)
 
-        if cyclic or (i < (segments)):
+        if cyclic or (i < segments):
             points.pop()
 
         master_point_list.extend([v[:] for v in points])
