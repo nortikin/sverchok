@@ -33,6 +33,8 @@ def offset(edgekeys, amount):
 def get_points_bezier(spline, clean=True, calc_radii=False):
 
     knots = spline.bezier_points
+    cyclic = spline.use_cyclic_u
+
     if len(knots) < 2:
         return
 
@@ -43,8 +45,7 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
 
     # segments in spline
     segments = len(knots)
-
-    if not spline.use_cyclic_u:
+    if not cyclic:
         segments -= 1
 
     master_point_list = []
@@ -56,14 +57,18 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
 
         bezier = knot1, handle1, handle2, knot2, r
         points = interpolate_bezier(*bezier)
+
+        if cyclic or (i < (segments)):
+            points.pop()
+
         master_point_list.extend([v[:] for v in points])
 
     # some clean up to remove consecutive doubles, this could be smarter...
-    if clean:
-        old = master_point_list
-        good = [v for i, v in enumerate(old[:-1]) if not old[i] == old[i + 1]]
-        good.append(old[-1])
-        master_point_list = good
+    # if clean:
+    #     old = master_point_list
+    #     good = [v for i, v in enumerate(old[:-1]) if not old[i] == old[i + 1]]
+    #     good.append(old[-1])
+    #     master_point_list = good
 
     # makes edge keys, ensure cyclic
     n_verts = len(master_point_list)

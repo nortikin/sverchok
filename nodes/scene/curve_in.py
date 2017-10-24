@@ -77,7 +77,7 @@ def interpolate_catmul(knots, cyclic, num_segments):
 
     for idx, (p0, p1, p2, p3) in enumerate(sections):
 
-        if cyclic or (idx < (len(section) - 1)):
+        if cyclic or (idx < (len(sections) - 1)):
             appendix = -1
         else:
             appendix = 0
