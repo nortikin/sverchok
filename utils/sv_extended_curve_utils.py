@@ -272,7 +272,7 @@ def get_points_nurbs(spline, resolu, calc_radii=False):
     n_verts = len(verts)
     edges = [[i, i + 1] for i in range(n_verts - 1)]
     if spline.use_cyclic_u:
-        i = n_verts-2
+        i = n_verts-1
         edges.append([i, 0])   # i = n_verts-2 ? or -1
 
     return verts, edges, radii
