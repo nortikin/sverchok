@@ -90,8 +90,6 @@ def interpolate_catmul(knots, cyclic, num_segments):
             radt = 0.5*((2*P1)+(-P0+P2)*t+(2*P0-5*P1+4*P2-P3)*t2+(-P0+3*P1-3*P2+P3)*t3)
             radii_add(radt)
 
-        # this doesn't yet drop last values
-
     return radii
 
 
@@ -101,16 +99,21 @@ def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
     point_attr = point_attrs.get(spline.type, 'points')
     points = [p.radius for p in getattr(spline, point_attr)]
 
+    cyclic = spline.use_cyclic_u
     if interpolation_type == 'LINEAR':
-        if spline.use_cyclic_u:
+        if cyclic:
             points.append(points[0])
 
         for idx in range(len(points)-1):
+            print('len(points)', len(points), 'idx', idx)
             params = points[idx], points[idx+1], segments+1
             if len(points) == 2 or (idx == (len(points)-2)):
                 radii.extend(list(frange_count(*params)))
             else:
                 radii.extend(list(frange_count(*params))[:-1])
+
+        if cyclic:
+            radii.pop()
 
     elif interpolation_type == 'CATMUL':
         radii = interpolate_catmul(points, spline.use_cyclic_u, segments)
