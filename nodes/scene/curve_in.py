@@ -55,8 +55,8 @@ def get_sections(knots, cyclic):
                 else:
                     indices = i-1, i, i+1, (i+2) % len(knots)
                 sections.append(indices)
-    return sections
 
+    return sections
 
 
 def interpolate_catmul(knots, cyclic, num_segments):
@@ -77,10 +77,7 @@ def interpolate_catmul(knots, cyclic, num_segments):
 
     for idx, (p0, p1, p2, p3) in enumerate(sections):
 
-        if cyclic or (idx < (len(sections) - 1)):
-            appendix = -1
-        else:
-            appendix = 0
+        appendix = -1 if (cyclic or (idx < (len(sections) - 1))) else 0
 
         P0, P1, P2, P3 = knots[p0], knots[p1], knots[p2], knots[p3]
         for xt in range(num_segments + 1 + appendix):
@@ -92,18 +89,27 @@ def interpolate_catmul(knots, cyclic, num_segments):
 
     return radii
 
+
 def interpolate_linear(points, cyclic, num_segments):
     
     if cyclic:
         points.append(points[0])
 
     radii = []
-    for idx in range(len(points)-1):
+    num_points = len(points)
+    single_segment = num_points == 2
+
+    for idx in range(num_points-1):
         params = points[idx], points[idx+1], num_segments+1
-        if len(points) == 2 or (idx == (len(points)-2)):
-            radii.extend(list(frange_count(*params)))
-        else:
-            radii.extend(list(frange_count(*params))[:-1])
+        rads = list(frange_count(*params))
+
+        secondlast_point_of_non_cyclic = (idx == (num_points-2))
+        keep_tail = single_segment or secondlast_point_of_non_cyclic
+
+        if not keep_tail:
+            rads.pop()
+
+        radii.extend(rads)
 
     if cyclic:
         radii.pop()
