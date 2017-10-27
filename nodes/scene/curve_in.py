@@ -112,7 +112,7 @@ def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
             else:
                 radii.extend(list(frange_count(*params))[:-1])
 
-    elif interpolation_type == 'CUBIC':
+    elif interpolation_type == 'CATMUL':
         radii = interpolate_catmul(points, spline.use_cyclic_u, segments)
 
     return radii
@@ -125,6 +125,11 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'ROOTCURVE'
 
     object_names = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    mode_options = [(k, k, '', i) for i, k in enumerate(["LINEAR", "CATMUL"])]
+    
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options, description="offers....", default="LINEAR", update=updateNode
+    )
 
     def sv_init(self, context):
         new_i_put = self.inputs.new
@@ -138,7 +143,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         new_o_put("MatrixSocket", "matrices")
 
     def draw_buttons(self, context, layout):
-        ...
+        layout.prop(self, 'selected_mode', expand=True)
 
     def get_objects(self):
         _in = self.inputs[0]
@@ -188,7 +193,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
                 verts.extend(verts_part)
                 # faces.extend(faces_part)
                 if _out['radii'].is_linked:
-                    radii_part = interpolate_radii(spline, resolution, interpolation_type='LINEAR')
+                    radii_part = interpolate_radii(spline, resolution, interpolation_type=self.selected_mode)
                     radii.extend(radii_part)
 
             ## pass all resulting subcurve data

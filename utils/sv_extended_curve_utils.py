@@ -48,6 +48,7 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
     if not cyclic:
         segments -= 1
 
+    print("segments:", segments)
     master_point_list = []
     for i in range(segments):
         inext = (i + 1) % len(knots)
@@ -58,7 +59,9 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
         bezier = knot1, handle1, handle2, knot2, r
         points = interpolate_bezier(*bezier)
 
-        if cyclic or (i < segments):
+        if segments == 1 and not cyclic:
+            pass
+        elif cyclic or (i < segments-1):
             points.pop()
 
         master_point_list.extend([v[:] for v in points])
@@ -74,6 +77,7 @@ def get_points_bezier(spline, clean=True, calc_radii=False):
     n_verts = len(master_point_list)
     edges = [[i, i + 1] for i in range(n_verts - 1)]
     if spline.use_cyclic_u:
+        i = n_verts-1
         edges.append([i, 0])   # i = n_verts-2 ? or -1
 
     return master_point_list, edges, radii
