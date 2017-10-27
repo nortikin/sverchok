@@ -92,31 +92,37 @@ def interpolate_catmul(knots, cyclic, num_segments):
 
     return radii
 
-
-def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
+def interpolate_linear(points, cyclic, num_segments):
+    
+    if cyclic:
+        points.append(points[0])
 
     radii = []
+    for idx in range(len(points)-1):
+        params = points[idx], points[idx+1], num_segments+1
+        if len(points) == 2 or (idx == (len(points)-2)):
+            radii.extend(list(frange_count(*params)))
+        else:
+            radii.extend(list(frange_count(*params))[:-1])
+
+    if cyclic:
+        radii.pop()
+
+    return radii
+
+
+def interpolate_radii(spline, segments, interpolation_type='LINEAR'):
+    """ get spline data into a format that is easily processed by interpolators"""
+
+    cyclic = spline.use_cyclic_u
     point_attr = point_attrs.get(spline.type, 'points')
     points = [p.radius for p in getattr(spline, point_attr)]
 
-    cyclic = spline.use_cyclic_u
     if interpolation_type == 'LINEAR':
-        if cyclic:
-            points.append(points[0])
-
-        for idx in range(len(points)-1):
-            print('len(points)', len(points), 'idx', idx)
-            params = points[idx], points[idx+1], segments+1
-            if len(points) == 2 or (idx == (len(points)-2)):
-                radii.extend(list(frange_count(*params)))
-            else:
-                radii.extend(list(frange_count(*params))[:-1])
-
-        if cyclic:
-            radii.pop()
+        radii = interpolate_linear(points, cyclic, segments)
 
     elif interpolation_type == 'CATMUL':
-        radii = interpolate_catmul(points, spline.use_cyclic_u, segments)
+        radii = interpolate_catmul(points, cyclic, segments)
 
     return radii
 
