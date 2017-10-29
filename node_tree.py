@@ -194,7 +194,7 @@ class SvSocketCommon:
             info_text += self.extra_info
             layout.label(info_text)
 
-        elif self.is_output:  # unlinked OUPUT
+        elif self.is_output:  # unlinked OUTPUT
             layout.label(text)
 
         else:  # unlinked INPUT
@@ -325,7 +325,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
-            raise emptyQuaternion
+            return emptyQuaternion
         else:
             return default
 
@@ -357,7 +357,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
-            raise emptyColor
+            return emptyColor
         else:
             return default
 
