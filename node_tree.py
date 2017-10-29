@@ -252,22 +252,6 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    # def draw(self, context, layout, node, text):
-    #     if self.is_linked:
-    #         draw_string = text + '. ' + SvGetSocketInfo(self)
-    #         if is_vector_to_matrix(self):
-    #             draw_string += (" (" + str(self.num_matrices) + ")")
-    #         layout.label(draw_string)
-    #     else:
-    #         if not self.is_output:
-    #             settings = [context, layout, node, self.index]
-    #             self.draw_link_new_node(settings, "SvMatrixGenNodeMK2", -200, 0)
-
-    #         layout.label(text)
-
-    # def draw_color(self, context, node):
-    #     return socket_colors[self.bl_idname]
-
 
 class VerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
@@ -303,29 +287,6 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
             return emptyVertex
         else:
             return default
-
-    # def draw(self, context, layout, node, text):
-    #     if not self.is_output and not self.is_linked:
-
-    #         if self.prop_name:
-    #             self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
-    #         elif self.use_prop:
-    #             self.draw_expander_template(context, layout, prop_origin=self)
-    #         else:
-    #             if not self.is_output:
-    #                 settings = [context, layout, node, self.index]
-    #                 self.draw_link_new_node(settings, "GenVectorsNode", -200, 0)
-
-    #             layout.label(text)
-
-    #     elif self.is_linked:
-    #         layout.label(text + '. ' + SvGetSocketInfo(self))
-
-    #     else:
-    #         layout.label(text)
-
-    # def draw_color(self, context, node):
-    #     return socket_colors[self.bl_idname]
 
 
 class SvQuaternionSocket(NodeSocket, SvSocketCommon):
@@ -368,25 +329,6 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    # def draw(self, context, layout, node, text):
-    #     if not self.is_output and not self.is_linked:
-
-    #         if self.prop_name:
-    #             self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
-    #         elif self.use_prop:
-    #             self.draw_expander_template(context, layout, prop_origin=self)
-    #         else:
-    #             layout.label(text)
-
-    #     elif self.is_linked:
-    #         layout.label(text + '. ' + SvGetSocketInfo(self))
-
-    #     else:
-    #         layout.label(text)
-
-    # def draw_color(self, context, node):
-    #     return socket_colors[self.bl_idname]
-
 
 class SvColorSocket(NodeSocket, SvSocketCommon):
     '''For color data'''
@@ -419,25 +361,6 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-    # def draw(self, context, layout, node, text):
-    #     if not self.is_output and not self.is_linked:
-
-    #         if self.prop_name:
-    #             self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
-    #         elif self.use_prop:
-    #             self.draw_expander_template(context, layout, prop_origin=self)
-    #         else:
-    #             layout.label(text)
-
-    #     elif self.is_linked:
-    #         layout.label(text + '. ' + SvGetSocketInfo(self))
-
-    #     else:
-    #         layout.label(text)
-
-    # def draw_color(self, context, node):
-    #     return socket_colors[self.bl_idname]
-
 
 class SvDummySocket(NodeSocket, SvSocketCommon):
     '''Dummy Socket for sockets awaiting assignment of type'''
@@ -457,12 +380,6 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
 
     def sv_type_conversion(self, new_self):
         self = new_self
-
-    # def draw(self, context, layout, node, text):
-    #     layout.label(text)
-
-    # def draw_color(self, context, node):
-    #     return socket_colors[self.bl_idname]
 
 
 class StringsSocket(NodeSocket, SvSocketCommon):
@@ -503,37 +420,6 @@ class StringsSocket(NodeSocket, SvSocketCommon):
             return default
         else:
             raise SvNoDataError
-
-    # def draw(self, context, layout, node, text):
-
-    #     # just handle custom draw..be it input or output.
-    #     if hasattr(self, 'custom_draw'):
-    #         if self.custom_draw and hasattr(node, self.custom_draw):
-    #             getattr(node, self.custom_draw)(self, context, layout)
-    #             return
-
-    #     if self.prop_name:
-    #         prop = node.rna_type.properties.get(self.prop_name, None)
-    #         t = prop.name if prop else text
-    #     else:
-    #         t = text
-
-    #     if not self.is_output and not self.is_linked:
-    #         if self.prop_name and not self.prop_type:
-
-    #             layout.prop(node, self.prop_name)
-
-    #         elif self.prop_type:
-    #             layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
-    #         else:
-    #             layout.label(t)
-    #     elif self.is_linked:
-    #         layout.label(t + '. ' + SvGetSocketInfo(self))
-    #     else:
-    #         layout.label(t)
-
-    # def draw_color(self, context, node):
-    #     return self.nodule_color
 
 
 class SvLinkNewNodeInput(bpy.types.Operator):
@@ -714,7 +600,7 @@ class SverchCustomTreeNode:
 
     def init(self, context):
         """
-        this function is triggered upon node creation, 
+        this function is triggered upon node creation,
         - freezes the node
         - delegates further initialization information to sv_init
         - sets node color
