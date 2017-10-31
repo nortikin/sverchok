@@ -147,7 +147,7 @@ class SvSocketCommon:
 
     @property
     def extra_info(self):
-        print("getting base extra info")
+        # print("getting base extra info")
         return ""
 
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
@@ -220,7 +220,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
     @property
     def extra_info(self):
-        print("getting matrix extra info")
+        # print("getting matrix extra info")
         info = ""
         if is_vector_to_matrix(self):
             info = (" (" + str(self.num_matrices) + ")")
