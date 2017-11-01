@@ -30,8 +30,8 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Raycaster'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    start = bpy.props.FloatVectorProperty(default=(0,0,0), size=3)
-    direction = bpy.props.FloatVectorProperty(default=(0,0,-1), size=3)
+    start = bpy.props.FloatVectorProperty(default=(0,0,0), size=3, update=updateNode)
+    direction = bpy.props.FloatVectorProperty(default=(0,0,-1), size=3, update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new
