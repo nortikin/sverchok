@@ -4,7 +4,7 @@ Spiral
 Functionality
 -------------
 
-Generates various types of spirals: Archimedean, Logarithmic, Spherical, Cornu, Ovoidal, Exo (to coin the term) and Spirangle.
+Generates various types of spirals: Archimedean, Logarithmic, Spherical, Cornu (Euler), Ovoidal, Exo (to coin the term) and Spirangle.
 
 All spirals are defined as smooth curves (given enough curve resolution per turn) except the Spirangle spiral, which is a polygonal type of spiral.
 
@@ -109,7 +109,7 @@ where a, b, c are constants.
 see: http://mathworld.wolfram.com/SphericalSpiral.html
 
 **Cornu**
-The cornu spiral is given the by the formula:
+The Cornu spiral (also known as Euler spiral) is given the by the formula:
 
   x(L) = integral(cos(s^2), 0, L)
   y(L) = integral(sin(s^2), 0, L)
