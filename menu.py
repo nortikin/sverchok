@@ -145,7 +145,7 @@ def sv_group_items(context):
 
 
 
-def draw_node_ops(self,layout, context):
+def draw_node_ops(self, layout, context):
 
     make_monad = "node.sv_monad_from_selected"
     ungroup_monad = "node.sv_monad_expand"

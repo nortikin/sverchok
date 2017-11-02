@@ -55,6 +55,10 @@ def add_keymap():
         kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', ctrl=True)
         nodeview_keymaps.append((km, kmi))
 
+        # Shift + A     | show custom menu
+        kmi = km.keymap_items.new('wm.call_menu', 'ONE', 'PRESS', ctrl=True)
+        kmi.properties.name = "NODEVIEW_MT_UserNodes_Menu"
+        nodeview_keymaps.append((km, kmi))
 
 
 def remove_keymap():
