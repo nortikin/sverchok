@@ -376,9 +376,12 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
 
-        if self.parent_to_empty:
-            for obj in objs:
+        for obj in objs:
+            if self.parent_to_empty:
                 obj.parent = bpy.data.objects[mtname]
+            elif obj.parent:
+                obj.parent = None
+
 
     def get_children(self):
         objs = [obj for obj in bpy.data.objects if obj.type == 'FONT']
