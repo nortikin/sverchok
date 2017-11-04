@@ -167,7 +167,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         if _in.is_linked or objects:
             pass
         else:
-            objects = [bpy.data.objects[obj.name] or obj in self.object_names]
+            objects = [bpy.data.objects[obj.name] for obj in self.object_names]
 
         filtered_objects = [obj for obj in objects if obj.type == 'CURVE']
         if len(filtered_objects) < len(objects):
@@ -193,7 +193,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
             curve = obj.data
             resolution = curve.render_resolution_u or curve.resolution_u
             # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
-            for spline in obj.data.splines:
+            for spline in curve.splines:
                 
                 if spline.type == 'BEZIER':
                     verts_part, edges_part, radii = get_points_bezier(spline, calc_radii=calc_radii)
