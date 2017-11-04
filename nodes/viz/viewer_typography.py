@@ -81,7 +81,10 @@ def make_text_object(node, idx, context, data):
     f.bevel_depth = node.bevel_depth
     f.bevel_resolution = node.bevel_resolution
 
-    f.align_x = node.align_x  # artifical restriction l/r/c
+    # alignment, now expanded! 
+    f.align_x = node.align_x
+    if hasattr(node, "align_y"):
+        f.align_y = node.align_y
 
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
@@ -226,25 +229,22 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bevel_depth = FloatProperty(default=0.0, update=updateNode)
     bevel_resolution = IntProperty(default=0, update=updateNode)
 
-    # orientation
-    mode_options = [
-        # having element 0 and 1 helps reduce code.
-        ("LEFT", "LEFT", "", 0),
-        ("CENTER", "CENTER", "", 1),
-        ("RIGHT", "RIGHT", "", 2)
-    ]
-
+    # orientation x | y 
+    mode_options = [(_item, _item, "", idx) for idx, _item in enumerate(['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH'])]
     align_x = bpy.props.EnumProperty(
-        items=mode_options,
-        description="left, center, right",
-        default="LEFT", update=updateNode
+        items=mode_options, description="left, center, right....", default="LEFT", update=updateNode
+    )
+
+    mode_options_y = [(_item, _item, "", idx) for idx, _item in enumerate(['TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM'])]
+    align_y = bpy.props.EnumProperty(
+        items=mode_options_y, description="top, center, bottom...", default="TOP_BASELINE", update=updateNode
     )
 
     parent_to_empty = BoolProperty(default=False, update=updateNode)
     parent_name = StringProperty()  # calling updateNode would recurse.
 
     def sv_init(self, context):
-        self['lp'] = [True] + [False] * 19
+        # self['lp'] = [True] + [False] * 19
         gai = bpy.context.scene.SvGreekAlphabet_index
         self.basemesh_name = greek_alphabet[gai]
         bpy.context.scene.SvGreekAlphabet_index += 1
@@ -302,8 +302,12 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col.label('bevel')
                 col.prop(self, 'bevel_depth')
                 col.prop(self, 'bevel_resolution')
-                col.label('align horizontal')
-                col.prop(self, 'align_x')
+
+                col.label("alignment")
+                row = col.row(align=True)
+                row.prop(self, 'align_x', text="X")
+                row.prop(self, 'align_y', text="Y")
+                col.separator()
 
             row = col.row(align=True)
             row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
