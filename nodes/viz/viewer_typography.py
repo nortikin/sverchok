@@ -232,12 +232,12 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
     # orientation x | y 
     mode_options = [(_item, _item, "", idx) for idx, _item in enumerate(['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH'])]
     align_x = bpy.props.EnumProperty(
-        items=mode_options, description="left, center, right....", default="LEFT", update=updateNode
+        items=mode_options, description="Horizontal Alignment", default="LEFT", update=updateNode
     )
 
     mode_options_y = [(_item, _item, "", idx) for idx, _item in enumerate(['TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM'])]
     align_y = bpy.props.EnumProperty(
-        items=mode_options_y, description="top, center, bottom...", default="TOP_BASELINE", update=updateNode
+        items=mode_options_y, description="Vertical Alignment", default="TOP_BASELINE", update=updateNode
     )
 
     parent_to_empty = BoolProperty(default=False, update=updateNode)
@@ -287,14 +287,15 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, 'show_options', toggle=True)
             if self.show_options:
                 col.label('position')
+                row = col.row(align=True)
+                if row:
+                    row.prop(self, 'xoffset', text='XOFF')
+                    row.prop(self, 'yoffset', text='YOFF')
                 split = col.split()
                 col1 = split.column()
-                col2 = split.column()
                 col1.prop(self, 'space_character', text='CH')
                 col1.prop(self, 'space_word', text='W')
                 col1.prop(self, 'space_line', text='L')
-                col2.prop(self, 'xoffset', text='XOFF')
-                col2.prop(self, 'yoffset', text='YOFF')
 
                 col.label('modifications')
                 col.prop(self, 'offset')
@@ -305,8 +306,8 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
                 col.label("alignment")
                 row = col.row(align=True)
-                row.prop(self, 'align_x', text="X")
-                row.prop(self, 'align_y', text="Y")
+                row.prop(self, 'align_x', text="")
+                row.prop(self, 'align_y', text="")
                 col.separator()
 
             row = col.row(align=True)
