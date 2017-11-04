@@ -187,7 +187,14 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if not isinstance(v, (float, int, str)):
                 print('//')
                 print(node.name, ' -> property:', k, type(v))
-                print(type(node.bl_rna.properties[k]))
+                if k in node.bl_rna.properties:
+                    print(type(node.bl_rna.properties[k]))
+                elif k in node:
+                    # something like node['lp']  , ID Property directly on the node instance.
+                    print(type(node[k]))
+                else:
+                    print(k, 'is not bl_rna or IDproperty.. please report this')
+
                 print('\\\\')
 
             if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
