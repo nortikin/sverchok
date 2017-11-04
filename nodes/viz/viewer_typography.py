@@ -244,6 +244,7 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
     parent_name = StringProperty()  # calling updateNode would recurse.
 
     def sv_init(self, context):
+        self['lp'] = [True] + [False] * 19
         gai = bpy.context.scene.SvGreekAlphabet_index
         self.basemesh_name = greek_alphabet[gai]
         bpy.context.scene.SvGreekAlphabet_index += 1
