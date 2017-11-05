@@ -20,7 +20,7 @@ import bpy
 from mathutils import Vector
 from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
-from sverchok.data_structure import updateNode, Vector_generate, match_long_repeat
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_recursive import sv_recursive_transformations
 
 
@@ -50,15 +50,16 @@ class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         # inputs
         vers = self.inputs['vertices'].sv_get()
-        vecs = self.inputs['vectors'].sv_get()
+        vecs = self.inputs['vectors'].sv_get(default=[[[0.0, 0.0, 0.0]]])
         mult = self.inputs['multiplier'].sv_get()
 
         if self.outputs[0].is_linked:
-            mov = sv_recursive_transformations(self.moving,vers,vecs,mult,self.separate,1)
+            mov = sv_recursive_transformations(self.moving,vers,vecs,mult,self.separate)
             self.outputs['vertices'].sv_set(mov)
 
     def moving(self, v, c, m):
-        return (Vector(v) + Vector(c)*m)[:]
+        #print('moving function test',v,c,m)
+        return [(Vector(v) + Vector(c)*m)[:]]
 
 
 def register():
@@ -66,3 +67,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvMoveNodeMK2)
+
+if __name__ == '__main__':
+    register()

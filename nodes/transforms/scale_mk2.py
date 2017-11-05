@@ -22,7 +22,8 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode
+from sverchok.utils.sv_recursive import sv_recursive_transformations
 
 
 class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -42,42 +43,25 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "vertices", "vertices")
         self.inputs.new('VerticesSocket', "centers", "centers")
-        self.inputs.new('StringsSocket', "multiplyer", "multiplyer").prop_name = "factor_"
+        self.inputs.new('StringsSocket', "multiplier", "multiplier").prop_name = "factor_"
         self.outputs.new('VerticesSocket', "vertices", "vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'separate')
 
-    def scaling(self, vertex, center, mult):
-        pt = Vector(vertex)
-        c = Vector(center)
-        return (c + mult * (pt - c))[:]
-
-    def vert_scl(self, vertex, center, mult):
-        scaled = []
-        params = match_long_repeat([center, mult])
-        for c, m in zip(*params):
-            scaled_ = []
-            for v in vertex:
-                scaled_.append(self.scaling(v, c, m))
-            if self.separate:
-                scaled.append(scaled_)
-            else:
-                scaled.extend(scaled_)
-        return scaled
-
     def process(self):
         # inputs
-        Vertices = self.inputs['vertices'].sv_get()
-        Center = self.inputs['centers'].sv_get(default=[[[0.0, 0.0, 0.0]]])
-        mult = self.inputs['multiplyer'].sv_get()
-
-        parameters = match_long_repeat([Vertices, Center, mult])
+        vers = self.inputs['vertices'].sv_get()
+        vecs = self.inputs['centers'].sv_get(default=[[[0.0, 0.0, 0.0]]])
+        mult = self.inputs['multiplier'].sv_get()
 
         # outputs
-        if self.outputs['vertices'].is_linked:
-            points = [self.vert_scl(v, c, m) for v, c, m in zip(*parameters)]
-            self.outputs['vertices'].sv_set(points)
+        if self.outputs[0].is_linked:
+            sca = sv_recursive_transformations(self.scaling,vers,vecs,mult,self.separate)
+            self.outputs['vertices'].sv_set(sca)
+
+    def scaling(self, v, c, m):
+        return [(Vector(c) + m * (Vector(v) - Vector(c)))[:]]
 
 
 def register():

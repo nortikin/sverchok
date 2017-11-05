@@ -20,23 +20,27 @@ import bpy
 from bpy.props import StringProperty
 
 import sverchok
-from sverchok.data_structure import levelsOflist, dataSpoil, match_long_repeat
+from sverchok.data_structure import levelsOflist, dataSpoil, \
+                        match_long_cycle, match_long_repeat
 
 def sv_recursive_transformations(*args):
-    ''' main function takes 5 args 
+    ''' main function takes 5 args
     function, verts1, verts2, multiplyer, separate
     resulting levels arg to recursion'''
-    print('arguments recursive',len(args))
-    f,v1,v2,m,s,lev = args
-    v1,v2,m = match_long_repeat([v1,v2,m])
-    level1 = levelsOflist(v1)
-    level2 = levelsOflist(v2)
-    level3 = levelsOflist(m)
-    lev = max(level1,level2,level3)
-    v1 = dataSpoil(v1, lev)
-    v2 = dataSpoil(v2, lev)
-    m = dataSpoil(m, lev)
-    return sv_recursive_transformations(f,v1,v2,m,s,lev)
+    # print('arguments recursive',len(args))
+    if len(args) == 5:
+        f,v1,v2,m,s = args
+        m,v1,v2 = match_long_repeat([m,v1,v2])
+        level1 = levelsOflist(v1)
+        level2 = levelsOflist(v2)
+        level3 = levelsOflist(m)
+        lev = max(level1,level2,level3)-1
+        #print('recursion-dataspoiled',m,level3)
+        v1 = dataSpoil(v1, lev)
+        v2 = dataSpoil(v2, lev)
+        m = dataSpoil(m, lev)
+        #print('recursion-dataspoiled',m,lev)
+        return sv_recursion(f,v1,v2,m,s,lev)
 
 def sv_recursion(function, verts1, verts2, multiplyer, separate, level):
     ''' recursion itself
@@ -46,17 +50,35 @@ def sv_recursion(function, verts1, verts2, multiplyer, separate, level):
     multiplyer - as named
     separate - boolean to group vertices
     level - depth of verts1,2 '''
-    if level:
-        out = []
-        outa = out.append
-        oute = out.extend
-        for v1,v2,m in zip(verts1, verts2, multiplyer):
-            v1,v2,m = match_long_repeat(v1,v2,m)
-            out_ = sv_recursion(function, v1,v2,m,separate, level)
-            if level == 1 and separate:
-                oute(out_)
-            else:
-                outa(out_)
-        return out
+    if not separate:
+        if level:
+            multiplyer,verts1,verts2 = match_long_cycle([multiplyer,verts1,verts2])
+            out = []
+            outa = out.append
+            oute = out.extend
+            for v1,v2,m in zip(verts1, verts2, multiplyer):
+                out_ = sv_recursion(function, v1,v2,m,separate, level-1)
+                if level > 1:
+                    outa(out_)
+                elif level == 1:
+                    oute(out_)
+            return out
+        else:
+            return function(verts1,verts2,multiplyer)
     else:
-        return function(verts1,verts2,multiplyer)
+        if level:
+            multiplyer,verts1,verts2 = match_long_cycle([multiplyer,verts1,verts2])
+            out = []
+            outa = out.append
+            oute = out.extend
+            if level > 1:
+                for v1,v2,m in zip(verts1, verts2, multiplyer):
+                    out_ = sv_recursion(function, v1,v2,m,separate, level-1)
+                    outa(out_)
+            elif level == 1:
+                for v2,m in zip(verts2,multiplyer):
+                    out_ = []
+                    for v1 in verts1:
+                        out_.extend(function(v1,v2,m))
+                    oute([out_])
+            return out
