@@ -250,6 +250,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
         self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('StringsSocket', 'props').hide_safe=True
 
     def draw_main_ui_elements(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
@@ -295,6 +296,9 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
 
+        # col = layout.column(align=True)        
+        # col.prop(self, )
+
         col = layout.column(align=True)
         col.prop(self, 'vertex_size', text='vertex size')
         col.prop(self, 'edge_width', text='edge width')
@@ -319,6 +323,15 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'bakebuttonshow', text='show bake button')
         layout.prop(self, 'callback_timings')
         self.draw_main_ui_elements(context, layout)
+
+
+    def get_additional_args(self):
+        if not self.inputs['props'].hide:
+            prop_socket = self.inputs['props']
+            if prop_socket.is_linked:
+                return prop_socket.sv_get()[0]
+        return None
+
 
     # reset n_id on duplicate (shift-d)
     def copy(self, node):
@@ -377,10 +390,13 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
                     cache_viewer_baker[matrix_ref] = dataCorrect(propm)
 
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
-            config_options = self.get_options()
+            
+            additional_args = self.get_additional_args()
+            config_options = self.get_options(additional_args)
+
             callback_enable(n_id, cache_viewer_baker, config_options)
 
-    def get_options(self):
+    def get_options(self, additional_args=None):
         if self.use_scene_light:
             ld = bpy.context.scene.sv_light_direction
         else:
@@ -402,6 +418,11 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             'timings': self.callback_timings,
             'light_direction': ld
         }
+
+        # merge additional args into options dict if needed
+        if additional_args and isinstance(additional_args, dict):
+            options = {**options, **additional_args}
+
         return options.copy()
 
     def free(self):
