@@ -82,6 +82,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
 
     rounded = BoolProperty(name='rounded', description='making rounded edges',
                            default = False, update=updateNode)
+    rounded_outside = BoolProperty(name='roundout', description='making rounded edges outside',
+                           default = False, update=updateNode)
 
     bindCircle = BoolProperty(name='Bind2', description='circle for leyer to bind with contras',
                            default=False, update=ext_draw_checking)
@@ -115,7 +117,10 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
+        row.prop(self, 'rounded_outside')
         row.prop(self, 'rounded')
+        row = layout.row(align=True)
+        row.label(text=' ')
         row.prop(self, 'bindCircle')
         row = layout.row(align=True)
         row.prop(self, 'do_contra')
@@ -259,8 +264,8 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 vecplan_ = Vector_generate(vecplan)
                 for centersver, vecp, edgp in zip(vecplan,vecplan_,edgplan):
                     tubes_flag_bed_solution_i_know = False
-                    newinds1 = edgp.copy()
-                    newinds2 = edgp.copy()
+                    newinds1 = [list(e) for e in edgp]
+                    newinds2 = newinds1.copy()
                     vupperob = vecp.copy()
                     vlowerob = vecp.copy()
                     deledges1 = []
@@ -333,10 +338,14 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                             nearv_2, near_2 = tree.find(two)[:2]
                             # indexes of two nearest points
                             # удалить рёбра что мешают спать заодно
-                            en_0, en_1, de1 = self.calc_indexes(edgp, near_1)
-                            deledges1.extend(de1)
-                            en_2, en_3, de2 = self.calc_indexes(edgp, near_2)
-                            deledges2.extend(de2)
+                            try:
+                                en_0, en_1, de1 = self.calc_indexes(edgp, near_1)
+                                deledges1.extend(de1)
+                                en_2, en_3, de2 = self.calc_indexes(edgp, near_2)
+                                deledges2.extend(de2)
+                            except:
+                                print('Waffel Wrong crossection node')
+                                break
                             # print(vecp, one, dirx, en_0, en_1)
                             # left-right indexes and vectors
                             # с учётом интерполяций по высоте
@@ -353,20 +362,62 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                                 '''рёбра'''
                                 # пазы формируем независимо от верх низ
 
-                                outeob1 = [[lenvep+k+8,lenvep+k],[lenvep+k+1,lenvep+k+2],
-                                          [lenvep+k+2,lenvep+k+3],[lenvep+k+3,lenvep+k+4],
-                                          [lenvep+k+4,lenvep+k+5],[lenvep+k+5,lenvep+k+6],
-                                          [lenvep+k+6,lenvep+k+7],[lenvep+k+7,lenvep+k+8],
-                                          [lenvep+k+9,lenvep+k+1]]
+                                # outeob1 = [[lenvep+k+8,lenvep+k],[lenvep+k+1,lenvep+k+2],
+                                #           [lenvep+k+2,lenvep+k+3],[lenvep+k+3,lenvep+k+4],
+                                #           [lenvep+k+4,lenvep+k+5],[lenvep+k+5,lenvep+k+6],
+                                #           [lenvep+k+6,lenvep+k+7],[lenvep+k+7,lenvep+k+8],
+                                #           [lenvep+k+9,lenvep+k+1]]
 
-                                outeob2 = [[lenvep+k,lenvep+k+1],[lenvep+k+1,lenvep+k+2],
-                                          [lenvep+k+2,lenvep+k+3],[lenvep+k+3,lenvep+k+4],
-                                          [lenvep+k+4,lenvep+k+5],[lenvep+k+5,lenvep+k+6],
-                                          [lenvep+k+6,lenvep+k+7],[lenvep+k+7,lenvep+k+8],
-                                          [lenvep+k+8,lenvep+k+9]]
+                                # outeob2 = [[lenvep+k,lenvep+k+1],[lenvep+k+1,lenvep+k+2],
+                                #           [lenvep+k+2,lenvep+k+3],[lenvep+k+3,lenvep+k+4],
+                                #           [lenvep+k+4,lenvep+k+5],[lenvep+k+5,lenvep+k+6],
+                                #           [lenvep+k+6,lenvep+k+7],[lenvep+k+7,lenvep+k+8],
+                                #           [lenvep+k+8,lenvep+k+9]]
+
+
+                                outeob1 = [[lenvep+k+8,lenvep+k]]
+                                outeob1.extend([[lenvep+k+i,lenvep+k+i+1] for i in range(1,10,1)])
+                                outeob1.append([lenvep+k+9,lenvep+k+1])
+
+                                outeob2 = [[lenvep+k+i,lenvep+k+i+1] for i in range(0,10,1)]
+
+
                                 # наполнение списков lenvep = length(vecp)
                                 newinds1.extend([[l1, lenvep+k], [lenvep+k+9, r1]])
                                 newinds2.extend([[l2, lenvep+k+9], [lenvep+k, r2]])
+                                '''Вектора'''
+                                round1 = diry*thick_3
+                                round2 = diry*thick_3*sinuso30
+                                round2_= dirx/3 + dirx*(2*sinuso60/3)
+                                round3 = diry*thick_3*sinuso60_minus
+                                round3_= dirx/3 + dirx*(2*sinuso30/3)
+                                round4 = dirx/3
+                                vupperob.extend([lz2,
+                                                 three+round1-dirx, three+round2-round2_,
+                                                 three+round3-round3_, three-round4,
+                                                 three+round4, three+round3+round3_,
+                                                 three+round2+round2_, three+round1+dirx,
+                                                 rz2])
+                                vlowerob.extend([rz1,
+                                                 three-round1-dirx, three-round2-round2_,
+                                                 three-round3-round3_, three-round4,
+                                                 three+round4, three-round3+round3_,
+                                                 three-round2+round2_, three-round1+dirx,
+                                                 lz1])
+                                k += 10
+                            elif  self.rounded_outside:
+                                '''рёбра вовнешнее'''
+                                # пазы формируем независимо от верх низ
+
+                                outeob1 = [[lenvep+k+28,lenvep+k]]
+                                outeob1.extend([[lenvep+k+i,lenvep+k+i+1] for i in range(1,30,1)])
+                                outeob1.append([lenvep+k+29,lenvep+k+1])
+
+                                outeob2 = [[lenvep+k+i,lenvep+k+i+1] for i in range(0,30,1)]
+
+                                # наполнение списков lenvep = length(vecp)
+                                newinds1.extend([[l1, lenvep+k], [lenvep+k+29, r1]])
+                                newinds2.extend([[l2, lenvep+k+29], [lenvep+k, r2]])
                                 '''Вектора'''
                                 round1 = diry*thick_3
                                 round2 = diry*thick_3*sinuso30

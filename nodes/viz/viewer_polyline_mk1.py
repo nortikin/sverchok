@@ -79,8 +79,11 @@ def live_curve(obj_index, node, verts, radii, twist):
     obj.show_wire = node.show_wire
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
-    cu.fill_mode = 'FULL'
+    cu.dimensions = node.dimensions
+    if node.dimensions == '2D':
+        cu.fill_mode = 'FRONT'
+    else:
+        cu.fill_mode = 'FULL'
 
     set_bevel_object(node, cu, obj_index)
 
@@ -198,6 +201,13 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         default="Multi", update=updateNode
     )
 
+    dimension_modes = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
+    
+    dimensions = bpy.props.EnumProperty(
+        items=dimension_modes, update=updateNode,
+        description="2D or 3D curves", default="3D"
+    )
+
     material = StringProperty(default='', update=updateNode)
 
     hide = BoolProperty(default=True)
@@ -270,10 +280,13 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self, 'material', bpy.data, 'materials', text='',
             icon='MATERIAL_DATA')
 
+        layout.row().prop(self, 'dimensions', expand=True)
+
         col = layout.column()
-        r1 = col.row(align=True)
-        r1.prop(self, 'depth', text='radius')
-        r1.prop(self, 'resolution', text='subdiv')
+        if self.dimensions == '3D':
+            r1 = col.row(align=True)
+            r1.prop(self, 'depth', text='radius')
+            r1.prop(self, 'resolution', text='subdiv')
         row = col.row(align=True)
         row.prop(self, 'bspline', text='bspline', toggle=True)
         row.prop(self, 'close', text='close', toggle=True)
@@ -322,6 +335,9 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+        if not self.activate:
+            return
+
         if not (self.inputs['vertices'].is_linked):
             return
 

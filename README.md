@@ -2,7 +2,7 @@
 
 ## Sverchok parametric tools
 
-**addon for**: [Blender](http://blender.org)  (version *2.77* and above).  
+**addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **prerequisites**: Python 3.5. and numpy, both included in recent versions of Blender  
@@ -21,8 +21,9 @@ Mesh and geometry programming consists of combining basic elements such as:
 Comes with more than 150 nodes to help create and manipulate geometry. Combining these nodes will allow you to:
 
   - do parametric constructions
-  - easily change parameters with sliders and formulas
-  - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools  
+  - easily change parameters with sliders and formulas    
+  - power nodes such as: Profile parametric, UVconnect, Generetive art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops,Bmesh props, etc   
+  - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools 
   - calculate areas, volume, and perform other geometric analysis
   - make or import CSV tables or custom formats
   - use Vector fields, create them, visualize data.
@@ -96,6 +97,7 @@ Email: sverchok-b3d@yandex.ru
 
   - делать параметрические конструкции
   - легко менять параметры слайдерами и формулами
+  - Супер-узлы: Profile parametric, UVconnect, Generetive art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops,Bmesh props, и т.д.    
   - делать сечения, выдавливания, другие изменения с гибким параметризованым и векторизованым набором узловых инструментов  
   - считать площади, объём и прочее
   - анализировать геометрию

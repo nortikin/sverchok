@@ -81,7 +81,10 @@ def make_text_object(node, idx, context, data):
     f.bevel_depth = node.bevel_depth
     f.bevel_resolution = node.bevel_resolution
 
-    f.align_x = node.align_x  # artifical restriction l/r/c
+    # alignment, now expanded! 
+    f.align_x = node.align_x
+    if hasattr(node, "align_y"):
+        f.align_y = node.align_y
 
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
@@ -226,24 +229,22 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bevel_depth = FloatProperty(default=0.0, update=updateNode)
     bevel_resolution = IntProperty(default=0, update=updateNode)
 
-    # orientation
-    mode_options = [
-        # having element 0 and 1 helps reduce code.
-        ("LEFT", "LEFT", "", 0),
-        ("CENTER", "CENTER", "", 1),
-        ("RIGHT", "RIGHT", "", 2)
-    ]
-
+    # orientation x | y 
+    mode_options = [(_item, _item, "", idx) for idx, _item in enumerate(['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH'])]
     align_x = bpy.props.EnumProperty(
-        items=mode_options,
-        description="left, center, right",
-        default="LEFT", update=updateNode
+        items=mode_options, description="Horizontal Alignment", default="LEFT", update=updateNode
+    )
+
+    mode_options_y = [(_item, _item, "", idx) for idx, _item in enumerate(['TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM'])]
+    align_y = bpy.props.EnumProperty(
+        items=mode_options_y, description="Vertical Alignment", default="TOP_BASELINE", update=updateNode
     )
 
     parent_to_empty = BoolProperty(default=False, update=updateNode)
     parent_name = StringProperty()  # calling updateNode would recurse.
 
     def sv_init(self, context):
+        # self['lp'] = [True] + [False] * 19
         gai = bpy.context.scene.SvGreekAlphabet_index
         self.basemesh_name = greek_alphabet[gai]
         bpy.context.scene.SvGreekAlphabet_index += 1
@@ -286,14 +287,15 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, 'show_options', toggle=True)
             if self.show_options:
                 col.label('position')
+                row = col.row(align=True)
+                if row:
+                    row.prop(self, 'xoffset', text='XOFF')
+                    row.prop(self, 'yoffset', text='YOFF')
                 split = col.split()
                 col1 = split.column()
-                col2 = split.column()
                 col1.prop(self, 'space_character', text='CH')
                 col1.prop(self, 'space_word', text='W')
                 col1.prop(self, 'space_line', text='L')
-                col2.prop(self, 'xoffset', text='XOFF')
-                col2.prop(self, 'yoffset', text='YOFF')
 
                 col.label('modifications')
                 col.prop(self, 'offset')
@@ -301,8 +303,12 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col.label('bevel')
                 col.prop(self, 'bevel_depth')
                 col.prop(self, 'bevel_resolution')
-                col.label('align horizontal')
-                col.prop(self, 'align_x')
+
+                col.label("alignment")
+                row = col.row(align=True)
+                row.prop(self, 'align_x', text="")
+                row.prop(self, 'align_y', text="")
+                col.separator()
 
             row = col.row(align=True)
             row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
@@ -370,9 +376,12 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if bpy.data.materials.get(self.material):
             self.set_corresponding_materials(objs)
 
-        if self.parent_to_empty:
-            for obj in objs:
+        for obj in objs:
+            if self.parent_to_empty:
                 obj.parent = bpy.data.objects[mtname]
+            elif obj.parent:
+                obj.parent = None
+
 
     def get_children(self):
         objs = [obj for obj in bpy.data.objects if obj.type == 'FONT']

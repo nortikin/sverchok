@@ -10,10 +10,11 @@ NumPy
 
 We now include NumPy code in Sverchok nodes, this means that you should have
 an up-to-date version of NumPy on your machine. Normally if you get your Blender
-precompiled NumPy will be included with Python, however this isn't always
-the case. The windows builds on blender buildbot may contain a cut down
-version of NumPy due to the licenses under which it can be spread
-in compiled form.
+from official site, precompiled NumPy will be included with Python, however this
+isn't always the case. The windows builds on blender buildbot may contain 
+a cut down version of NumPy due to the licenses under which it can be spread
+in compiled form. In any operation system if you have correct python version 
+installed stand-alone, you may have not proper version of numpy itself.
 
 If you get an error when enabling Sverchok the last lines of the error
 are important, if it mentions:

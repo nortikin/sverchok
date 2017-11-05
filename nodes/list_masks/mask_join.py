@@ -32,7 +32,8 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     level = IntProperty(name="Level",
-                        default=1, min=1)
+                        default=1, min=1,
+                        update=updateNode)
     choice = BoolProperty(name="Choice",
                           default=False,
                           update=updateNode)

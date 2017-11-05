@@ -9,7 +9,7 @@
 >
 > Failing to follow these points will break the node category parser.
 
-## Generators
+## Generator
     SvLineNodeMK2
     SvPlaneNodeMK2
     SvNGonNode
@@ -23,7 +23,7 @@
     BasicSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
-    SvScriptNodeLite    
+    SvScriptNodeLite
     ImageNode
 
 ## Generators Extended
@@ -32,7 +32,7 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvProfileNode
+    SvProfileNodeMK2
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
@@ -52,12 +52,14 @@
     VectorNormalNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
+    SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
     SvMeshSelectNode
     SvSelectSimilarNode
     SvPointInside
     SvProportionalEditNode
+    SvRaycasterLiteNode
 
 ## Transforms
     SvRotationNode
@@ -95,6 +97,7 @@
     SvExtrudeRegionNode
     SvVertMaskNode
     SvTransformSelectNode
+    SvSplitEdgesNode
 
 ## Modifier Make
     LineConnectNodeMK2
@@ -264,12 +267,18 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
+    ---
     SvColorsInNode
     SvColorsOutNode
+    ---
     SvMatrixNormalNode
+    SvMatrixTrackToNode
+    ---
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
+    ---
+    SvSpiralNode
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -295,6 +304,5 @@
     SvCacheNode
     SvUVtextureNode
     SvSeparateMeshNodeMK2
-    SvBvhOverlapNodeNew
     SvIndexToMaskNode
     SvMultiExtrudeAlt

@@ -31,6 +31,7 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'vertices')
         self.outputs.new('StringsSocket', 'data')
         self.outputs.new('MatrixSocket', 'matrix')
+        self.outputs.new('SvObjectSocket', 'object')
 
     def process(self):
         if self.inputs[0].is_linked:

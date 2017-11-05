@@ -21,23 +21,27 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sin, cos, pi, sqrt, radians, gcd
-from random import random
+from math import sin, cos, pi, sqrt, gcd
 import time
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
-DEBUG=False
-
-options_plus=True
+DEBUG = False
 
 
 ########################################################################
 ####################### Knot Definitions ###############################
 ########################################################################
-def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkIndex=0):
+def Torus_Knot(flags, settings, linkIndex=0):
     '''
+        flags =
+        compute_normals    : compute normal vectors
+        compute_tangents   : compute tangent vectors
+        normalize_normals  : normalize normal vectors
+        normalize_tangents : normalize tangent vectors
+
+        settings =
         R         : major radius of the torus
         r         : minor radius of the torus
         p         : number of REVOLUTIONS around the torus hole
@@ -51,17 +55,14 @@ def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkInde
         flipP     : flip REVOLUTION direction (P)
         flipQ     : flip SPIN direction (Q)
         N         : number of vertices in the curve (per link)
-        linkIndex : link index in a multiple link knot (when q & p are not co-primes)
+
+        linkIndex : link index in a multiple-link knot (when q & p are not co-primes)
     '''
     if DEBUG:
         start = time.time()
 
-    # use plus options only when they are enabled
-    if not options_plus:
-        u = 1
-        v = 1
-        h = 1
-        s = 1
+    compute_normals, compute_tangents, normalize_normals, normalize_tangents = flags
+    R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N = settings
 
     # scale the radii
     R = R * s
@@ -73,16 +74,12 @@ def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkInde
     # parametrized angle increment (cached outside of the loop for performance)
     # NOTE: the total angle is divided by number of decoupled links to ensure
     #       the curve does not overlap with itself when (p,q) are not co-primes
-    da = 2*pi/links/(N-1)
+    a = 2 * pi / links
+    da = a / (N - 1)
 
     # link phase : each decoupled link is phased equally around the torus center
     # NOTE: linkIndex value is in [0, links-1]
-    linkPhase = 2*pi/q * linkIndex  # = 0 when there is just ONE link
-
-    # user defined phasing
-    if not options_plus:
-        rPhase = 0
-        sPhase = 0
+    linkPhase = 2 * pi / q * linkIndex  # = 0 when there is just ONE link
 
     rPhase += linkPhase  # total revolution phase of the current link
 
@@ -92,15 +89,21 @@ def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkInde
     if flipQ:
         q *= -1
 
-    # create the list of verts, edges and norms for the current link
+    # apply multipliers
+    p *= u
+    q *= v
+
+    # create the list of verts, edges, tangs and norms for the current link
     listVerts = []
     listEdges = []
     listNorms = []
-    for n in range(N-1):
+    listTangs = []
+
+    for n in range(N - 1):
         # t = 2*pi / links * n/(N-1) with: da = 2*pi/links/(N-1) => t = n * da
         t = n * da
-        theta = p*t*u + rPhase  # revolution angle
-        phi   = q*t*v + sPhase  # spin angle
+        theta = p * t + rPhase  # revolution angle
+        phi = q * t + sPhase  # spin angle
 
         # cache values to improve performance
         sin_theta = sin(theta)
@@ -109,30 +112,61 @@ def Torus_Knot(R, r, p, q, u, v, h, s, rPhase, sPhase, flipP, flipQ, N, linkInde
         cos_phi = cos(phi)
 
         # compute vertex coordinates
-        x = (R + r*cos_phi) * cos_theta
-        y = (R + r*cos_phi) * sin_theta
-        z = r*sin_phi * h
+        x = (R + r * cos_phi) * cos_theta
+        y = (R + r * cos_phi) * sin_theta
+        z = r * sin_phi * h
 
-        # append vertex
+        # append VERTEX
         listVerts.append([x, y, z])
 
-        # append edge
-        if n != N-2:
-            listEdges.append([n, n+1])
-        else: # closing the loop
+        # append EDGE
+        if n != N - 2:
+            listEdges.append([n, n + 1])
+        else:  # closing the loop
             listEdges.append([n, 0])
 
-        # append normal
-        cx = R * cos_theta # torus tube center at theta
-        cy = R * sin_theta # torus tube center at theta
-        norm = [x-cx, y-cy, z]
-        listNorms.append(norm)
+        # append NORMAL
+        if compute_normals:
+            nx = x - R * cos_theta
+            ny = y - R * sin_theta
+            nz = z
+            if normalize_normals:
+                nn = sqrt(nx * nx + ny * ny + nz * nz)
+                if nn == 0:
+                    norm = [nx, ny, nz]
+                else:
+                    norm = [nx / nn, ny / nn, nz / nn]  # normalize the normal
+            else:
+                norm = [nx, ny, nz]
+
+            listNorms.append(norm)
+
+        # append TANGENT
+        if compute_tangents:
+            qxr, pxr, pxR = [q * r, p * r, p * R]  # cached for performance
+            tx = a * (- qxr * sin_phi * cos_theta
+                      - pxr * cos_phi * sin_theta
+                      - pxR * sin_theta)
+            ty = a * (- qxr * sin_phi * sin_theta
+                      + pxr * cos_phi * cos_theta
+                      + pxR * cos_theta)
+            tz = a * qxr * h * cos_phi
+            if normalize_tangents:
+                tn = sqrt(tx * tx + ty * ty + tz * tz)
+                if tn == 0:
+                    tang = [tx, ty, tz]
+                else:
+                    tang = [tx / tn, ty / tn, tz / tn]  # normalize the tangent
+            else:
+                tang = [tx, ty, tz]
+
+            listTangs.append(tang)
 
     if DEBUG:
         end = time.time()
         print("Torus Link Time: ", end - start)
 
-    return listVerts, listEdges, listNorms
+    return listVerts, listEdges, listNorms, listTangs
 
 
 class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
@@ -156,8 +190,8 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
     # keep the equivalent radii pair in sync (eR,iR) => (R,r)
     def external_internal_radii_changed(self, context):
         if self.mode == "EXT_INT":
-            self.torus_R = (self.torus_eR + self.torus_iR)*0.5
-            self.torus_r = (self.torus_eR - self.torus_iR)*0.5
+            self.torus_R = (self.torus_eR + self.torus_iR) * 0.5
+            self.torus_r = (self.torus_eR - self.torus_iR) * 0.5
             updateNode(self, context)
 
     # keep the equivalent radii pair in sync (R,r) => (eR,iR)
@@ -167,25 +201,16 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
             self.torus_iR = self.torus_R - self.torus_r
             updateNode(self, context)
 
-    # GENERAL options
-    options_plus = BoolProperty(
-        name="Extra Options",
-        default=False,
-        description="Show more options (the plus part)",
-        update=updateNode)
-
     # TORUS KNOT Options
     torus_p = IntProperty(
         name="p",
-        default=2,
-        min=1, soft_min=1,
+        default=2, min=1, soft_min=1,
         description="Number of REVOLUTIONs around the torus hole before closing the knot",
         update=updateNode)
 
     torus_q = IntProperty(
         name="q",
-        default=3,
-        min=1, soft_min=1,
+        default=3, min=1, soft_min=1,
         description="Number of SPINs through the torus hole before closing the knot",
         update=updateNode)
 
@@ -204,35 +229,31 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
     multiple_links = BoolProperty(
         name="Multiple Links",
         default=True,
-        description="Generate ALL links or just ONE link when q and q are not co-primes",
+        description="Generate ALL links or just ONE link when p and q are not co-primes",
         update=updateNode)
 
     torus_u = IntProperty(
         name="p multiplier",
-        default=1,
-        min=1, soft_min=1,
+        default=1, min=1, soft_min=1,
         description="p multiplier",
         update=updateNode)
 
     torus_v = IntProperty(
         name="q multiplier",
-        default=1,
-        min=1, soft_min=1,
+        default=1, min=1, soft_min=1,
         description="q multiplier",
         update=updateNode)
 
     torus_rP = FloatProperty(
         name="Revolution Phase",
         default=0.0,
-        min=0.0, soft_min=0.0,
-        description="Phase revolutions by this radian amount",
+        description="Phase the revolutions by this radian amount",
         update=updateNode)
 
     torus_sP = FloatProperty(
         name="Spin Phase",
         default=0.0,
-        min=0.0, soft_min=0.0,
-        description="Phase spins by this radian amount",
+        description="Phase the spins by this radian amount",
         update=updateNode)
 
     # TORUS DIMENSIONS options
@@ -240,74 +261,75 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
         name="Torus Dimensions",
         items=(("MAJOR_MINOR", "Major/Minor",
                 "Use the Major/Minor radii for torus dimensions."),
-                ("EXT_INT", "Exterior/Interior",
+               ("EXT_INT", "Exterior/Interior",
                 "Use the Exterior/Interior radii for torus dimensions.")),
         update=update_mode)
 
     torus_R = FloatProperty(
         name="Major Radius",
-        min=0.00, max=100.0,
-        default=1.0,
-        subtype='DISTANCE',
-        unit='LENGTH',
+        default=1.0, min=0.0, max=100.0,
+        subtype='DISTANCE', unit='LENGTH',
         description="Radius from the torus origin to the center of the cross section",
         update=major_minor_radii_changed)
 
     torus_r = FloatProperty(
         name="Minor Radius",
-        min=0.00, max=100.0,
-        default=.25,
-        subtype='DISTANCE',
-        unit='LENGTH',
+        default=.25, min=0.0, max=100.0,
+        subtype='DISTANCE', unit='LENGTH',
         description="Radius of the torus' cross section",
         update=major_minor_radii_changed)
 
     torus_iR = FloatProperty(
         name="Interior Radius",
-        min=0.00, max=100.0,
-        default=.75,
-        subtype='DISTANCE',
-        unit='LENGTH',
+        default=.75, min=0.0, max=100.0,
+        subtype='DISTANCE', unit='LENGTH',
         description="Interior radius of the torus (closest to the torus center)",
         update=external_internal_radii_changed)
 
     torus_eR = FloatProperty(
         name="Exterior Radius",
-        min=0.00, max=100.0,
-        default=1.25,
-        subtype='DISTANCE',
-        unit='LENGTH',
+        default=1.25, min=0.0, max=100.0,
+        subtype='DISTANCE', unit='LENGTH',
         description="Exterior radius of the torus (farthest from the torus center)",
         update=external_internal_radii_changed)
 
     torus_s = FloatProperty(
         name="Scale",
-        min=0.01, max=100.0,
-        default=1.00,
+        default=1.0, min=0.01, max=100.0,
         description="Scale factor to multiply the radii",
         update=updateNode)
 
     torus_h = FloatProperty(
         name="Height",
-        default=1.0,
-        min=0.0, max=100.0,
+        default=1.0, min=0.0, max=100.0,
         description="Scale along the local Z axis",
         update=updateNode)
 
     # CURVE options
     torus_res = IntProperty(
         name="Curve Resolution",
-        default=100,
-        min=3, soft_min=3,
+        default=100, min=3, soft_min=3,
         description="Number of vertices in the curve (per link)",
         update=updateNode)
 
     adaptive_resolution = BoolProperty(
         name="Adaptive Resolution",
         default=False,
-        description="Auto adjust curve resolution based on TK length",
+        description="Auto adjust the curve resolution based on TK length",
         update=updateNode)
 
+    # VECTORS options
+    normalize_normals = BoolProperty(
+        name="Normalize Normals",
+        default=True,
+        description="Normalize the normal vectors",
+        update=updateNode)
+
+    normalize_tangents = BoolProperty(
+        name="Normalize Tangents",
+        default=True,
+        description="Normalize the tangent vectors",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "R").prop_name = 'torus_R'
@@ -321,7 +343,7 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket',  "Edges")
         self.outputs.new('VerticesSocket', "Normals")
-
+        self.outputs.new('VerticesSocket', "Tangents")
 
     def draw_buttons_ext(self, context, layout):
         layout.column().label(text="Curve")
@@ -341,34 +363,38 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
         box = layout.box()
         box.prop(self, "torus_h")
         box.prop(self, "torus_s")
-
+        layout.column().label(text="Vectors")
+        box = layout.box()
+        box.prop(self, "normalize_normals")
+        box.prop(self, "normalize_tangents")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode', expand=True)
 
-
     def process(self):
+        outputs = self.outputs
         # return if no outputs are connected
-        if not any(s.is_linked for s in self.outputs):
+        if not any(s.is_linked for s in outputs):
             return
 
         # input values lists (single or multi value)
-        input_RR = self.inputs["R"].sv_get()[0]  # list of MAJOR or EXTERIOR radii
-        input_rr = self.inputs["r"].sv_get()[0]  # list of MINOR or INTERIOR radii
-        input_p  = self.inputs["p"].sv_get()[0]  # list of REVOLUTION turns
-        input_q  = self.inputs["q"].sv_get()[0]  # list of SPIN turns
-        input_n  = self.inputs["n"].sv_get()[0]  # list of curve resolutions
-        input_rP = self.inputs["rP"].sv_get()[0] # list of REVOLUTION phases
-        input_sP = self.inputs["sP"].sv_get()[0] # list of SPIN phases
+        inputs = self.inputs
+        input_RR = inputs["R"].sv_get()[0]  # list of MAJOR or EXTERIOR radii
+        input_rr = inputs["r"].sv_get()[0]  # list of MINOR or INTERIOR radii
+        input_p = inputs["p"].sv_get()[0]  # list of REVOLUTION turns
+        input_q = inputs["q"].sv_get()[0]  # list of SPIN turns
+        input_n = inputs["n"].sv_get()[0]  # list of curve resolutions
+        input_rP = inputs["rP"].sv_get()[0]  # list of REVOLUTION phases
+        input_sP = inputs["sP"].sv_get()[0]  # list of SPIN phases
 
         # convert input radii values to MAJOR/MINOR, based on selected mode
         if self.mode == 'EXT_INT':
             # convert radii from EXTERIOR/INTERIOR to MAJOR/MINOR
             # (extend radii lists to a matching length before conversion)
             input_RR, input_rr = match_long_repeat([input_RR, input_rr])
-            input_R = list(map(lambda x,y: (x+y)*0.5, input_RR, input_rr))
-            input_r = list(map(lambda x,y: (x-y)*0.5, input_RR, input_rr))
-        else: # values already given as MAJOR/MINOR radii
+            input_R = list(map(lambda x, y: (x + y) * 0.5, input_RR, input_rr))
+            input_r = list(map(lambda x, y: (x - y) * 0.5, input_RR, input_rr))
+        else:  # values already given as MAJOR/MINOR radii
             input_R = input_RR
             input_r = input_rr
 
@@ -380,39 +406,52 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
         fp = self.flip_p  # flip REVOLUTION direction (P)
         fq = self.flip_q  # flip SPIN direction (Q)
 
+        # computation flags
+        compute_normals = outputs["Normals"].is_linked
+        compute_tangents = outputs["Tangents"].is_linked
+        normalize_normals = self.normalize_normals
+        normalize_tangents = self.normalize_tangents
+        flags = [compute_normals, compute_tangents, normalize_normals, normalize_tangents]
+
         parameters = match_long_repeat([input_R, input_r, input_p, input_q, input_n, input_rP, input_sP])
 
         torusVerts = []
         torusEdges = []
         torusNorms = []
+        torusTangs = []
 
         for R, r, p, q, n, rP, sP in zip(*parameters):
 
             if self.adaptive_resolution:
                 # adjust curve resolution automatically based on (p,q,R,r) values
                 links = gcd(p, q)
-                # get an approximate length of the whole TK curve
-                maxTKLen = 2*pi*sqrt(p*p*(R+r)*(R+r) + q*q*r*r)  # upper bound approximation
-                minTKLen = 2*pi*sqrt(p*p*(R-r)*(R-r) + q*q*r*r)  # lower bound approximation
-                avgTKLen = (minTKLen + maxTKLen)/2  # average approximation
+                # get an approximate length of the whole TK curve [see URL below for details]
+                # https://math.stackexchange.com/questions/1523388/tight-approximation-of-a-torus-knot-length
+                maxTKLen = 2 * pi * sqrt(p * p * (R + r) * (R + r) + q * q * r * r)  # upper bound approximation
+                minTKLen = 2 * pi * sqrt(p * p * (R - r) * (R - r) + q * q * r * r)  # lower bound approximation
+                avgTKLen = (minTKLen + maxTKLen) / 2  # average approximation
                 if DEBUG:
                     print("Approximate average TK length = %.2f" % avgTKLen)
-                n = int(max(3, avgTKLen/links * 8))  # x N factor = control points per unit length
+                n = int(max(3, avgTKLen / links * 8))  # x N factor = control points per unit length
 
             if self.multiple_links:
-                links=gcd(p,q)
+                links = gcd(p, q)
             else:
-                links=1
+                links = 1
+
+            settings = [R, r, p, q, u, v, h, s, rP, sP, fp, fq, n]  # link settings
 
             for l in range(links):
-                verts, edges, norms = Torus_Knot(R,r,p,q,u,v,h,s,rP,sP,fp,fq,n,l)
+                verts, edges, norms, tangs = Torus_Knot(flags, settings, l)
                 torusVerts.append(verts)
                 torusEdges.append(edges)
                 torusNorms.append(norms)
+                torusTangs.append(tangs)
 
         self.outputs['Vertices'].sv_set(torusVerts)
         self.outputs['Edges'].sv_set(torusEdges)
         self.outputs['Normals'].sv_set(torusNorms)
+        self.outputs['Tangents'].sv_set(torusTangs)
 
 
 def register():

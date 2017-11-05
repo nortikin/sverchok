@@ -22,9 +22,9 @@ Just like Blender has a Circle primitive, Sverchok also has a built in Circle pr
 
 **Dynamic Polygons**
 
-In the collection of nodes we have in the Node View at the moment, the sequence used for linking up vertices to form a `polygon` is inputted manually. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this `list creation` automatic. You will probably also want to make it dynamic to add new segments automatically if the vertex count is changeable. 
+In the collection of nodes we have in the Node View at the moment, the sequence used for linking up vertices to form a `polygon` is input manually. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this `list creation` automatic. You will probably also want to make it dynamic to add new segments automatically if the vertex count is changeable. 
 
-Because this is a common task, there's a dedicated node for it called ``UV Connect`` (link) , but just like the `Circle` generator nodes we will avoid using that and for the same reason. Learning how to build these things yourself is the best way to learn Visual Programming with nodes.
+Because this is a common task, there's a dedicated node for it called ``UV Connect`` (link) , but just like the `Circle` generator nodes we will avoid using that for the same reason. Learning how to build these things yourself is the best way to learn Visual Programming with nodes.
 
 
 **Generating an index list for the polygon**
@@ -35,8 +35,8 @@ In order to make the list automatically, we should know how many vertices there 
 
 The `List Length` node lets you output the length of incoming data, it also lets you pick what level of the data you want to inspect. It's worth reading the **reference** of this node for a comprehensive tour of its capabilities.
 
-1) hook the Vector In output into the `Data` input of `List Length`
-2) hook a new Stethoscope up to the output of the the `List Length` node.
+1) hook the `Vector In` output into the `Data` input of `List Length`
+2) hook a new `Stethoscope` up to the output of the `List Length` node.
 3) notice the `Level` slider is set to 1 by default, you should see Stethoscope shows output.
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5436323/15ea171e-8465-11e4-8356-ec18ae8ea19d.png
@@ -51,18 +51,18 @@ To generate the index list for the polygon we need a node that outputs a sequent
 
 - ``Add -> Numbers -> Range Int``
 
-1) Set the mode of List Range int to `Count`.
+1) Set the mode of List Range int to `Count`
 2) Make sure `start` is 0 and `step` is 1
-3) hook the output of `List Length` into the `count` socket of Range Int.
-4) Disonnect the Formula node from the EdgPol socket
-5) Connect the output of Range Int into EdgPol instead.
-6) optionally you can connect a Stethoscope also to the output of Range Int in order to see the generated list for yourself.
+3) Hook the output of `List Length` into the `count` socket of Range Int
+4) Disconnect the Formula node from the EdgPol socket
+5) Connect the output of Range Int into EdgPol instead
+6) Optionally you can connect a Stethoscope also to the output of Range Int in order to see the generated list for yourself
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/5436483/10651094-8467-11e4-9dc3-e4ade958531a.png
 
 **Generating the set of circular verts**
 
-The 4 verts we've had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle immerge.
+The 4 verts we've had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle emerge.
 
 1) Set the `mode` of the Float series node to `Range`
 2) Set the `stop` parameter to 2.0
@@ -76,18 +76,18 @@ You can see the beginnings of a circle.
 
 **Forcing an even spread of Vertices**
 
-Above we have the step set to 0.2, this manually sets the distance but calculation this step value soon gets cumbersome. We will add nodes to do the calculation for us. Think about how you might do that.
+Above we have the step set to 0.2, this manually sets the distance but calculation of this step value soon gets cumbersome. We will add nodes to do the calculation for us. Think about how you might do that.
 
 I would want to have something like ``1 / number_vertices``, this calls for a Math node and an `Int` to represent the whole number of vertices. 
 
 - ``Add -> Numbers -> Math``
 - ``Add -> Numbers -> Int``
 
-1) set the Math node `mode` to ``/ (division)`` , and put 1.0 in the numerator
-2) connect the Int node into the bottom socket of the division Math node.
-3) adjust the integer value on the Int node to 18 for example.
-4) in the image below I've connected a Stethoscope to the output of the Math Node to see the value of this computation.
-5) Finally, hook up the output of the division Math node into the `step` socket of Float series.
+1) Set the Math node `mode` to ``/ (division)`` , and put 1.0 in the numerator
+2) Connect the Int node into the bottom socket of the division Math node
+3) Adjust the integer value on the Int node to 18 for example
+4) In the image below I've connected a Stethoscope to the output of the Math Node to see the value of this computation
+5) Finally, hook up the output of the division Math node into the `step` socket of Float series
 
 You should see something like this, if not you can by now probably figure out what to do.
 
@@ -154,7 +154,9 @@ Notice in this image I have minimized/hidden (shortcut H) a few nodes to keep th
 
 **End of lesson 02**
 
-// -- todo
+Save this .blend you’ve been working on as Sverchok_Unit_01_Lesson_02 for future tutorials or as reference if you want to look something up later if you like.
+
+You now know how to create basic shapes programmatically using Sverchok nodes. In Lesson 03 a dynamic grid will be generated, but first relax and reiterate what has been learned so far.
 
 **Addendum**
 

@@ -17,6 +17,7 @@ Analyzers
    proportional
    normal
    normals
+   bvh_overlap_polys
    points_inside_mesh
    polygons_centers
    polygons_centers_mk3

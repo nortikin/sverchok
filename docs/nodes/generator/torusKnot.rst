@@ -75,14 +75,19 @@ A set of extra parameters are available on the property panel. These parameters 
 +-------------------------+------------+------------+-----------------------------------------------+
 | **Scale**               |  Float     |  1.00      |  Scales both radii by this amount             |
 +-------------------------+------------+------------+-----------------------------------------------+
+| **Normalize Tangents**  |  Bool      |  True      |  Normalize the TANGENT vectors [2]            |
++-------------------------+------------+------------+-----------------------------------------------+
+| **Normalize Normals**   |  Bool      |  True      |  Normalize the NORMAL vectors [2]             |
++-------------------------+------------+------------+-----------------------------------------------+
 
 Notes:
 [1] Used without adaptive resolution these allow to create aliased torus knots resulting in all sorts of interesting shaped knots.
+[2] Turn off normalization to save computation whenever the output vectors do not need to be normalized.
 
 Outputs
 -------
 
-**Vertices**, **Edges** and **Normals**
+**Vertices**, **Edges**, **Tangents** and **Normals**
 All outputs will be generated when connected.
 
 

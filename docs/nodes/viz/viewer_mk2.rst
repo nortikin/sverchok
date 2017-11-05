@@ -1,8 +1,6 @@
 Viewer Draw MKII
 ================
 
-*destination after Beta: basic view*
-
 Functionality
 -------------
 
@@ -18,17 +16,25 @@ Built on the core of the original ViewerDraw, this version allows all of the fol
 - Vertex, Edges, Faces displays can be toggled.
 - Defining Normal of Brigtness Source (via N-Panel)
 - ``Faux Transparancy`` via dotted edges or checkered polygons.
-- optional forced tesselation (via N-Panel) 
+- ``ngons tesselation`` (via N-Panel) - see description below 
 - bake and bake all. (via N-Panel, show bake interface is not on by default)
 
 **draws using display lists**
 
-Uses OpenGL display list to cache the drawing function. This optimizes for rotating the viewport around static geometry. Changing the geometry clears the display cache, with big geometry inputs you may notice some lag on the intial draw + cache.
+Uses OpenGL display list to cache the drawing function. This optimizes for rotating the viewport around static geometry. Changing the geometry clears the display cache, with big geometry inputs you may notice some lag on the initial draw + cache.
 
-**forced tesselation**
+**ngons tesselation**
 
-Allows better display for concave polygons, by turning all faces with more than 4 verts into triangles. In this mode Edges will still draw
-the boundary of the original polygon and not the new tesselated polygon edges.
+By default vdmk2 drawing routine fills all polygons using the standard ``GL_POLYGON``, which uses the triangle fan approach ( `see here <https://stackoverflow.com/a/8044252/1243487>`_ )
+
+This is a fast way to draw large amounts of quads and triangles. This default (while faster) doesn't draw concave ngons correctly.
+
+When enabled ``ngons tesselation`` will draw any Ngons using a slightly more involved but appropriate algorithm. The algorithm turns all ngons into individual triangles and fills them, edge drawing will be unchanged and still circumscribe the original polygon.
+
+.. image:: https://user-images.githubusercontent.com/619340/30099972-9159fd40-92e7-11e7-9051-325011e6bec1.png
+
+If you are always working on complex ngons, have a look at configuring defaults for this node.
+
 
 Inputs
 ------

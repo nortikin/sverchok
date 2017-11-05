@@ -29,6 +29,7 @@ from mathutils.geometry import tessellate_polygon as tessellate
 
 from sverchok.data_structure import Vector_generate, Matrix_generate
 
+drawlists_3dview = {}
 callback_dict = {}
 SpaceView3D = bpy.types.SpaceView3D
 
@@ -415,10 +416,16 @@ def draw_callback_view(n_id, cached_view, options):
             data_matrix = [Matrix() for i in range(verlen+1)]
 
         if (data_vector, data_polygons, data_matrix, data_edges) == (0, 0, 0, 0):
-            #callback_disable(n_id)
             return
+
         try:
-            the_display_list = glGenLists(1)
+            existing_list = drawlists_3dview.get(n_id)
+            if existing_list:
+                the_display_list = existing_list
+            else:
+                the_display_list = glGenLists(1)
+                drawlists_3dview[n_id] = the_display_list
+
             glNewList(the_display_list, GL_COMPILE)
             draw_geometry(n_id, options, data_vector, data_polygons, data_matrix, data_edges)
         except Exception as err:
@@ -428,13 +435,13 @@ def draw_callback_view(n_id, cached_view, options):
         finally:
             glEndList()
 
-        options['genlist'] = the_display_list
-
     elif options['draw_list'] == 1:
-        the_display_list = options['genlist']
+        # this is called when all you do is rotate around the already obtained geometry
+        the_display_list = drawlists_3dview.get(n_id)
 
     if not 'error' in options:
         glCallList(the_display_list)
+        # print(the_display_list, n_id)
         glFlush()
 
     # restore to system state

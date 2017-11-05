@@ -20,6 +20,7 @@ greek_alphabet = [
 def matrix_sanitizer(matrix):
     #  reduces all values below threshold (+ or -) to 0.0, to avoid meaningless
     #  wandering floats.
+    # print(matrix)
     coord_strip = lambda c: 0.0 if (-1.6e-5 <= c <= 1.6e-5) else c
     san = lambda v: Vector((coord_strip(c) for c in v[:]))
     return Matrix([san(v) for v in matrix])
