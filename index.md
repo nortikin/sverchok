@@ -62,7 +62,7 @@
     SvRaycasterLiteNode
 
 ## Transforms
-    SvRotationNode
+    SvRotationNodeMK2
     SvScaleNodeMK2
     SvMoveNodeMK2
     SvMirrorNode

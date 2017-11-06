@@ -25,6 +25,7 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.utils.sv_recursive import sv_recursive_transformations
 
 
 def axis_rotation(vertex, center, axis, angle):
@@ -136,6 +137,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mode", expand=True)
         if self.mode == 'EULER':
             layout.prop(self, "order", text="Order:")
+        layout.prop(self, 'separate')
 
     def process(self):
         # inputs
@@ -165,6 +167,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         if self.mode == 'AXIS':
             points = [axis_rotation(v, c, d, a) for v, c, d, a in zip(*parameters)]
+            #points = sv_recursive_transformations(axis_rotation,vers,vecs,mult,self.separate)
             self.outputs['vertices'].sv_set(points)
         elif self.mode == 'EULER':
             points = [euler_rotation(v, x, y, z, o) for v, x, y, z, o in zip(*parameters)]

@@ -67,7 +67,7 @@ def sv_recursion(function, verts1, verts2, multiplyer, separate, level):
             return function(verts1,verts2,multiplyer)
     else:
         if level:
-            multiplyer,verts1,verts2 = match_long_cycle([multiplyer,verts1,verts2])
+            multiplyer,verts2 = match_long_cycle([multiplyer,verts2])
             out = []
             outa = out.append
             oute = out.extend

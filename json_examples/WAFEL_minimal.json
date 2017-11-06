@@ -1,5 +1,5 @@
 {
-  "export_version": "0.064",
+  "export_version": "0.065",
   "framed_nodes": {
     "Convex Hull": "Frame.003",
     "Cross Section": "Frame.001",
@@ -36,8 +36,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1173.320556640625,
-        -584.4636840820312
+        -1181.7078857421875,
+        -595.765869140625
       ],
       "params": {},
       "width": 140.0
@@ -53,12 +53,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -24.922882080078125,
-        -773.923583984375
+        275.8055114746094,
+        -1056.40771484375
       ],
       "params": {
         "fill_check": 1,
-        "tri": 1
+        "tri": 0
       },
       "width": 148.62173461914062
     },
@@ -73,12 +73,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -24.922882080078125,
-        -1273.923583984375
+        275.8055114746094,
+        -1556.40771484375
       ],
       "params": {
         "fill_check": 1,
-        "tri": 1
+        "tri": 0
       },
       "width": 151.08511352539062
     },
@@ -93,8 +93,8 @@
       "hide": false,
       "label": "",
       "location": [
-        304.267822265625,
-        -1038.5916748046875
+        604.9962158203125,
+        -1321.0758056640625
       ],
       "params": {
         "fill_check": 0,
@@ -113,8 +113,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1432.5455322265625,
-        -353.6039733886719
+        -1440.932861328125,
+        -445.50946044921875
       ],
       "params": {
         "count_": 5,
@@ -152,7 +152,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 387.29010009765625,
+      "height": 387.2901306152344,
       "hide": false,
       "label": "Section matrices",
       "location": [
@@ -169,7 +169,7 @@
         0.3117988109588623,
         0.6079999804496765
       ],
-      "height": 768.560546875,
+      "height": 768.076416015625,
       "hide": false,
       "label": "sections",
       "location": [
@@ -186,12 +186,12 @@
         0.9430019855499268,
         1.0
       ],
-      "height": 688.76806640625,
+      "height": 726.0247802734375,
       "hide": false,
       "label": "make wafels",
       "location": [
-        2809.515380859375,
-        277.41241455078125
+        9323.326171875,
+        437.0815124511719
       ],
       "params": {},
       "width": 397.669921875
@@ -203,7 +203,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 183.60546875,
+      "height": 183.30328369140625,
       "hide": false,
       "label": "Object_to_sect",
       "location": [
@@ -224,8 +224,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1093.6502685546875,
-        -305.35943603515625
+        -1102.03759765625,
+        -397.2649230957031
       ],
       "params": {},
       "width": 140.0
@@ -241,8 +241,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1093.6502685546875,
-        -492.3651123046875
+        -1102.03759765625,
+        -584.2706298828125
       ],
       "params": {},
       "width": 140.0
@@ -277,8 +277,8 @@
       "hide": false,
       "label": "",
       "location": [
-        304.267822265625,
-        -873.923583984375
+        604.9962158203125,
+        -1156.40771484375
       ],
       "params": {},
       "width": 140.0
@@ -294,8 +294,8 @@
       "hide": false,
       "label": "",
       "location": [
-        301.8114013671875,
-        -1353.0213623046875
+        602.539794921875,
+        -1635.5054931640625
       ],
       "params": {},
       "width": 140.0
@@ -311,8 +311,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1429.0255126953125,
-        -589.8401489257812
+        -1437.412841796875,
+        -601.142333984375
       ],
       "params": {
         "count_inner": 300
@@ -330,8 +330,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -967.3722534179688,
-        -585.6967163085938
+        -975.7595825195312,
+        -596.9989013671875
       ],
       "params": {},
       "width": 16.0
@@ -347,8 +347,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -975.1984252929688,
-        -685.6537475585938
+        -983.5857543945312,
+        -696.9559326171875
       ],
       "params": {},
       "width": 16.0
@@ -364,8 +364,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1367.2498779296875,
-        -521.821044921875
+        -1375.63720703125,
+        -613.7265625
       ],
       "params": {
         "axis_x": "0",
@@ -384,8 +384,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1208.24462890625,
-        -345.9179992675781
+        -1216.6319580078125,
+        -437.823486328125
       ],
       "params": {
         "y_": 0.0,
@@ -404,8 +404,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1216.993408203125,
-        -531.862548828125
+        -1225.3807373046875,
+        -623.76806640625
       ],
       "params": {
         "x_": 0.0,
@@ -424,8 +424,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1223.7978515625,
-        -607.6495361328125
+        -1232.1851806640625,
+        -699.5550537109375
       ],
       "params": {
         "x_": 0.009999999776482582,
@@ -445,8 +445,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1213.1051025390625,
-        -412.08062744140625
+        -1221.492431640625,
+        -503.9861145019531
       ],
       "params": {
         "x_": 1.0,
@@ -466,8 +466,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -5334.984375,
-        -727.644287109375
+        -8144.5,
+        -1005.0567016601562
       ],
       "params": {
         "activate": 1,
@@ -495,8 +495,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -5334.984375,
-        -1127.644287109375
+        -8144.5,
+        -1405.056640625
       ],
       "params": {
         "bakebuttonshow": 1,
@@ -522,8 +522,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -5532.654296875,
-        -779.5003662109375
+        -8342.169921875,
+        -1056.912841796875
       ],
       "params": {
         "bindCircle": 0,
@@ -546,8 +546,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -5531.4248046875,
-        -1131.419921875
+        -8340.9404296875,
+        -1408.832275390625
       ],
       "params": {
         "bindCircle": 0,
@@ -562,46 +562,34 @@
   },
   "update_lists": [
     [
-      "Random Vector",
-      "Random",
-      "Convex Hull",
-      "Vertices"
-    ],
-    [
       "Float Series.002",
-      "Range",
+      0,
       "Vectors in.005",
-      "Y"
+      1
     ],
     [
-      "Convex Hull",
-      "Vertices",
-      "Reroute",
-      "Input"
-    ],
-    [
-      "Float Series.002",
-      "Range",
-      "Vectors in.004",
-      "X"
-    ],
-    [
-      "Vectors in.004",
-      "Vectors",
-      "Matrix in.002",
-      "Location"
+      "Vectors in.005",
+      0,
+      "Matrix in.003",
+      0
     ],
     [
       "Vector X | Y | Z",
-      "Vector",
-      "Matrix in.002",
-      "Rotation"
+      0,
+      "Matrix in.003",
+      2
     ],
     [
-      "Vectors in.007",
-      "Vectors",
-      "Matrix in.002",
-      "Angle"
+      "Vectors in.006",
+      0,
+      "Matrix in.003",
+      3
+    ],
+    [
+      "Random Vector",
+      0,
+      "Convex Hull",
+      0
     ],
     [
       "Convex Hull",
@@ -610,6 +598,60 @@
       "Input"
     ],
     [
+      "Convex Hull",
+      "Vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Cross Section.001",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Cross Section.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix in.003",
+      0,
+      "Cross Section.001",
+      3
+    ],
+    [
+      "Cross Section.001",
+      1,
+      "Polygons 2 Edges.001",
+      0
+    ],
+    [
+      "Float Series.002",
+      0,
+      "Vectors in.004",
+      0
+    ],
+    [
+      "Vectors in.004",
+      0,
+      "Matrix in.002",
+      0
+    ],
+    [
+      "Vector X | Y | Z",
+      0,
+      "Matrix in.002",
+      2
+    ],
+    [
+      "Vectors in.007",
+      0,
+      "Matrix in.002",
+      3
+    ],
+    [
       "Reroute",
       "Output",
       "Cross Section",
@@ -623,147 +665,105 @@
     ],
     [
       "Matrix in.002",
-      "Matrix",
+      0,
       "Cross Section",
-      "cut_matrix"
-    ],
-    [
-      "Cross Section",
-      "edges",
-      "Polygons 2 Edges",
-      "pols"
-    ],
-    [
-      "Vectors in.005",
-      "Vectors",
-      "Matrix in.003",
-      "Location"
-    ],
-    [
-      "Vector X | Y | Z",
-      "Vector",
-      "Matrix in.003",
-      "Rotation"
-    ],
-    [
-      "Vectors in.006",
-      "Vectors",
-      "Matrix in.003",
-      "Angle"
+      3
     ],
     [
       "Cross Section",
-      "vertices",
+      0,
       "Cross Section.002",
-      "vertices"
+      0
     ],
     [
       "Cross Section",
-      "edges",
+      1,
       "Cross Section.002",
-      "edg_pol"
+      1
     ],
     [
       "Matrix in.003",
-      "Matrix",
+      0,
       "Cross Section.002",
-      "cut_matrix"
-    ],
-    [
-      "Cross Section.002",
-      "vertices",
-      "Wafel.003",
-      "vecLine"
-    ],
-    [
-      "Cross Section",
-      "vertices",
-      "Wafel.003",
-      "vecPlane"
-    ],
-    [
-      "Polygons 2 Edges",
-      "edgs",
-      "Wafel.003",
-      "edgPlane"
-    ],
-    [
-      "Float.001",
-      "Float",
-      "Wafel.003",
-      "thick"
-    ],
-    [
-      "Wafel.003",
-      "vert",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    [
-      "Wafel.003",
-      "edge",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Cross Section.001",
-      "vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Cross Section.001",
-      "edg_pol"
-    ],
-    [
-      "Matrix in.003",
-      "Matrix",
-      "Cross Section.001",
-      "cut_matrix"
-    ],
-    [
-      "Cross Section.001",
-      "edges",
-      "Polygons 2 Edges.001",
-      "pols"
+      3
     ],
     [
       "Cross Section.002",
-      "vertices",
+      0,
       "Wafel.004",
-      "vecLine"
+      0
     ],
     [
       "Cross Section.001",
-      "vertices",
+      0,
       "Wafel.004",
-      "vecPlane"
+      1
     ],
     [
       "Polygons 2 Edges.001",
-      "edgs",
+      0,
       "Wafel.004",
-      "edgPlane"
+      2
     ],
     [
       "Float.001",
-      "Float",
+      0,
       "Wafel.004",
-      "thick"
+      3
     ],
     [
       "Wafel.004",
-      "vert",
+      0,
       "Viewer Draw2.001",
-      "vertices"
+      0
     ],
     [
       "Wafel.004",
-      "edge",
+      1,
       "Viewer Draw2.001",
-      "edg_pol"
+      1
+    ],
+    [
+      "Cross Section",
+      1,
+      "Polygons 2 Edges",
+      0
+    ],
+    [
+      "Cross Section.002",
+      0,
+      "Wafel.003",
+      0
+    ],
+    [
+      "Cross Section",
+      0,
+      "Wafel.003",
+      1
+    ],
+    [
+      "Polygons 2 Edges",
+      0,
+      "Wafel.003",
+      2
+    ],
+    [
+      "Float.001",
+      0,
+      "Wafel.003",
+      3
+    ],
+    [
+      "Wafel.003",
+      0,
+      "Viewer Draw2",
+      0
+    ],
+    [
+      "Wafel.003",
+      1,
+      "Viewer Draw2",
+      1
     ]
   ]
 }

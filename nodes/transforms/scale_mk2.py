@@ -61,6 +61,7 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['vertices'].sv_set(sca)
 
     def scaling(self, v, c, m):
+        print(c,v,m)
         return [(Vector(c) + m * (Vector(v) - Vector(c)))[:]]
 
 

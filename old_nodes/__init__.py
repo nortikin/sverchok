@@ -63,7 +63,10 @@ old_bl_idnames = {
     'PlaneNode': 'plane',
     'SvBMOpsNode': 'BMOperators',
     'SvCSGBooleanNode': 'csg_boolean',
-    'SvKDTreeNode': 'kd_tree'
+    'SvKDTreeNode': 'kd_tree',
+    'VectorMoveNode': 'move',
+    'SvScaleNode': 'scale',
+    'SvRotationNode': 'rotation'
 }
 
 # we should add some functions to load things there
