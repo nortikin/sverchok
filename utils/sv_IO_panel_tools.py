@@ -158,20 +158,18 @@ def collect_custom_socket_properties(node, node_dict):
         storable = {}
         tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
 
-        for tracked_prop in tracked_props:
-            if hasattr(socket, tracked_prop):
-                value = getattr(socket, tracked_prop)
+        for tracked_prop_name in tracked_props:
+            if not hasattr(socket, tracked_prop_name):
+                continue
 
-                print("Processing custom property: ", tracked_prop, " value = ", value)
+            value = getattr(socket, tracked_prop_name)
 
-                storable[tracked_prop] = value
+            print("Processing custom property: ", tracked_prop_name, " value = ", value)
+            storable[tracked_prop_name] = value
 
-                if tracked_prop == 'use_prop' and value:
-                    print("prop type:", type(socket.prop))
-                    storable['prop'] = socket.prop[:]
-                    # storable['socket_prop_value'] = socket.prop[:]
-                    # storable['socket_prop_value'] = serialize_prop(socket.prop)
-                    print("supposed to store prop value")
+            if tracked_prop_name == 'use_prop' and value:
+                print("prop type:", type(socket.prop))
+                storable['prop'] = socket.prop[:]
 
         if storable:
             input_socket_storage[socket.index] = storable
@@ -509,11 +507,10 @@ def apply_socket_props(socket, info):
     print("applying socket props")
     for tracked_prop_name, tracked_prop_value in info.items():
         try:
-            print("trying to set property name/value: ", tracked_prop_name, " / ", tracked_prop_value)
-
             setattr(socket, tracked_prop_name, tracked_prop_value)
 
         except Exception as err:
+            print("trying to set property name/value: ", tracked_prop_name, " / ", tracked_prop_value)
             sys.stderr.write('ERROR: %s\n' % str(err))
             print(sys.exc_info()[-1].tb_frame.f_code)
             print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
@@ -527,7 +524,7 @@ def apply_custom_socket_props(node, node_ref):
     if socket_properties:
         for idx, info in socket_properties.items():
             try:
-                socket = node.inputs[idx]
+                socket = node.inputs[int(idx)]
                 apply_socket_props(socket, info)
             except Exception as err:
                 print(repr(err))
