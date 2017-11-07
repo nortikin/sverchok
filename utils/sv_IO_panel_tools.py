@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import json
+import sys
 import os
 import re
 import zipfile
@@ -520,27 +521,17 @@ def apply_socket_props(socket, info):
             print("the following failed |", tracked_prop_name, '<-', tracked_prop_value)
 
 
-def apply_node_props(node, node_ref):
+def apply_custom_socket_props(node, node_ref):
     print("applying node props for node: ", node.bl_idname)
     socket_properties = node_ref.get('custom_socket_props')
     if socket_properties:
         for idx, info in socket_properties.items():
-            print("\n")
-            print("idx=", idx)
-            print("info=", info)
-            print("num inputs=", len(node.inputs))
-            print("inputs type=", type(node.inputs))
-            print("inputs keys=", node.inputs.keys())
-            # socket = node.inputs[idx]
-            for key, socket in node.inputs.items():
-                print("socket: <", key, "> has index: ", socket.index)
-                # print(type(socket.index))
-                # print(type(idx))
-                if socket.index == int(idx):
-                    print("found matching socket at index:", idx)
-                    apply_socket_props(socket, info)
-                else:
-                    print("did not find matching socket for idx=", idx)
+            try:
+                socket = node.inputs[idx]
+                apply_socket_props(socket, info)
+            except Exception as err:
+                print(repr(err))
+                print('socket index:', idx, 'trying to pass:', info, 'num_sockets', len(node.inputs))
 
 
 def add_texts(node, node_ref):
@@ -603,7 +594,8 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     apply_core_props(node, node_ref)
     apply_superficial_props(node, node_ref)
     apply_post_processing(node, node_ref)
-    apply_node_props(node, node_ref)
+    apply_custom_socket_props(node, node_ref)
+
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):
     '''
