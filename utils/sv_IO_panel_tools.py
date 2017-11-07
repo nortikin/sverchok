@@ -568,8 +568,6 @@ def apply_post_processing(node, node_ref):
         socket_kinds = node_ref.get(node.node_kind)
         node.repopulate(socket_kinds)
 
-    apply_node_props(node, node_ref)
-
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     node_ref = nodes_to_import[n]
@@ -605,7 +603,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     apply_core_props(node, node_ref)
     apply_superficial_props(node, node_ref)
     apply_post_processing(node, node_ref)
-
+    apply_node_props(node, node_ref)
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):
     '''
