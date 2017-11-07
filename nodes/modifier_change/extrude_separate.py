@@ -77,6 +77,15 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         result_extruded_faces = []
         result_other_faces = []
 
+        # test!
+        vector_in = False
+        if self.inputs['Scale'].is_linked:
+            socket = self.inputs['Scale']
+            other = socket.other
+            if other.bl_idname == 'VerticesSocket':
+                print('connected a Vector Socket')
+                vector_in = True
+
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s])
 
         offset = 0
@@ -99,7 +108,12 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 rotation = face.normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
                 #rotation = autorotate(z, face.normal).inverted()
                 m = translation * rotation
-                bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=face.verts)
+                if vector_in:
+                    vec = scale
+                else:
+                    vec = (scale, scale, scale)
+                
+                bmesh.ops.scale(bm, vec=vec, space=m.inverted(), verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
 
                 new_extruded_faces.append([v.index for v in face.verts])
