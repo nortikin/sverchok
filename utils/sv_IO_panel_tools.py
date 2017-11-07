@@ -149,6 +149,41 @@ def get_superficial_props(node_dict, node):
     if node.use_custom_color:
         node_dict['use_custom_color'] = True
 
+
+def collect_custom_socket_properties(node, node_dict):
+    print("** PROCESSING custom properties for node: ", node.bl_idname)
+    input_socket_storage = { }
+    for socket in node.inputs:
+
+        # if not tracked_socket(socket): continue
+        print("Socket %d of %d" % (socket.index+1, len(node.inputs)))
+
+        storable = {}
+        tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
+
+        for tracked_prop in tracked_props:
+            if hasattr(socket, tracked_prop):
+                value = getattr(socket, tracked_prop)
+
+                print("Processing custom property: ", tracked_prop, " value = ", value)
+
+                storable[tracked_prop] = value
+
+                if tracked_prop == 'use_prop' and value:
+                    print("prop type:", type(socket.prop))
+                    storable['prop'] = socket.prop[:]
+                    # storable['socket_prop_value'] = socket.prop[:]
+                    # storable['socket_prop_value'] = serialize_prop(socket.prop)
+                    print("supposed to store prop value")
+
+        if storable:
+            input_socket_storage[socket.index] = storable
+
+    if input_socket_storage:
+        node_dict['custom_socket_props'] = input_socket_storage
+    print("**\n")    
+
+
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
@@ -263,48 +298,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
             node.storage_get_data(node_dict)
 
-        # collect socket properties
-        # inputs = node.inputs
-        # for s in inputs:
-        #     if (s.bl_label == 'Vertices') and hasattr(node, s.prop_name):
-        #         prop = s.prop_name
-        #         if prop:
-        #            node_dict['custom_socket_props'][prop] = getattr(node, prop)[:]
-
         node_dict['params'] = node_items
 
-        # collect custom socket properties
-        print("** PROCESSING custom properties for node: ", node.bl_idname)
-        input_socket_storage = { }
-        for socket in node.inputs:
-
-            # if not tracked_socket(socket): continue
-            print("Socket %d of %d" % (socket.index+1, len(node.inputs)))
-
-            storable = {}
-            tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
-
-            for tracked_prop in tracked_props:
-                if hasattr(socket, tracked_prop):
-                    value = getattr(socket, tracked_prop)
-
-                    print("Processing custom property: ", tracked_prop, " value = ", value)
-
-                    storable[tracked_prop] = value
-
-                    if tracked_prop == 'use_prop' and value:
-                        print("prop type:", type(socket.prop))
-                        storable['prop'] = socket.prop[:]
-                        # storable['socket_prop_value'] = socket.prop[:]
-                        # storable['socket_prop_value'] = serialize_prop(socket.prop)
-                        print("supposed to store prop value")
-
-            if storable:
-                input_socket_storage[socket.index] = storable
-
-        if input_socket_storage:
-            node_dict['custom_socket_props'] = input_socket_storage
-        print("**\n")
+        collect_custom_socket_properties(node, node_dict)
 
         #if node.bl_idname == 'NodeFrame':
         #    frame_props = 'shrink', 'use_custom_color', 'label_size'
