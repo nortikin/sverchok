@@ -146,7 +146,8 @@ def get_superficial_props(node_dict, node):
     node_dict['hide'] = node.hide
     node_dict['location'] = node.location[:]
     node_dict['color'] = node.color[:]
-
+    if node.use_custom_color:
+        node_dict['use_custom_color'] = True
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
