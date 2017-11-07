@@ -38,9 +38,10 @@ from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.065'
+_EXPORTER_REVISION_ = '0.07'
 
 '''
+0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
 0.063 add support for obj_in_lite obj serialization \o/ .
@@ -49,11 +50,6 @@ _EXPORTER_REVISION_ = '0.065'
 0.062 monad export properly
 0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
-
-0.056 fixing SN1 script importing upon json load, will not duplicate
-      existing .py files by the same name. This tends to be preferred, one should
-      never have two files named the same which perform different operations.
-      main fixes SN1, SN2, ProfileNode, TextInput (json-mode only verified)
 
 revisions below this are your own problem.
 
@@ -145,8 +141,8 @@ def get_superficial_props(node_dict, node):
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
     node_dict['location'] = node.location[:]
-    node_dict['color'] = node.color[:]
     if node.use_custom_color:
+        node_dict['color'] = node.color[:]
         node_dict['use_custom_color'] = True
 
 
@@ -464,14 +460,17 @@ def perform_svtextin_node_object(node, node_ref):
         print(node.name, 'seems to reuse a text block loaded by another node - skipping')
 
 
-
 def apply_superficial_props(node, node_ref):
     '''
     copies the stored values from the json onto the new node's corresponding values.
     '''
-    props = ['location', 'height', 'width', 'label', 'hide', 'color']
+    props = ['location', 'height', 'width', 'label', 'hide']
     for p in props:
         setattr(node, p, node_ref[p])
+
+    if node_ref.get('use_custom_color'):
+        node.use_custom_color = True
+        node.color = node_ref.get('color', (1, 1, 1))
 
 
 def gather_remapped_names(node, n, name_remap):
