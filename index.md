@@ -273,6 +273,7 @@
     ---
     SvMatrixNormalNode
     SvMatrixTrackToNode
+    SvMatrixMathNode
     ---
     SvSculptMaskNode
     SvGreasePencilStrokes
