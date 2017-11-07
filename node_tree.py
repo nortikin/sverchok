@@ -95,6 +95,7 @@ class SvColors(bpy.types.PropertyGroup):
 
 
 class SvSocketCommon:
+    """ Base class for all Sockets """
     use_prop = BoolProperty(default=False)
 
     use_expander = BoolProperty(default=True)
@@ -185,8 +186,8 @@ class SvSocketCommon:
             op.socket_index = self.index
             op.origin = node.name
             op.new_node_idname = new_node_idname
-            op.new_node_offsetx = -200
-            op.new_node_offsety = 0
+            op.new_node_offsetx = -200 - 40 * self.index
+            op.new_node_offsety = -30 * self.index
 
     def draw(self, context, layout, node, text):
         if self.is_linked:  # linked INPUT or OUTPUT
