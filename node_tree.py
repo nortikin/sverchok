@@ -448,10 +448,10 @@ class SvLinkNewNodeInput(bpy.types.Operator):
         nodes, links = tree.nodes, tree.links
 
         caller_node = nodes.get(self.origin)
-        mat_node = nodes.new(self.new_node_idname)
-        mat_node.location[0] = caller_node.location[0] + self.new_node_offsetx
-        mat_node.location[1] = caller_node.location[1] + self.new_node_offsety
-        links.new(mat_node.outputs[0], caller_node.inputs[self.socket_index])
+        new_node = nodes.new(self.new_node_idname)
+        new_node.location[0] = caller_node.location[0] + self.new_node_offsetx
+        new_node.location[1] = caller_node.location[1] + self.new_node_offsety
+        links.new(new_node.outputs[0], caller_node.inputs[self.socket_index])
 
         return {'FINISHED'}
 
