@@ -152,24 +152,27 @@ class SvSocketCommon:
         return ""
 
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
-        if self.use_expander and self.bl_idname != "StringsSocket":
-            split = layout.split(percentage=.2, align=True)
-            c1 = split.column(align=True)
-            c2 = split.column(align=True)
-            if self.expanded:
-                c1.prop(self, "expanded", icon='TRIA_UP', text='')
-                c1.label(text=self.name[0])
-                c2.prop(prop_origin, prop_name, text="", expand=True)
-            else:  # collapsed
-                c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
-                row = c2.row(align=True)
-                if self.bl_idname == "SvColorSocket":
-                    row.prop(prop_origin, prop_name)
-                else:
-                    row.template_component_menu(prop_origin, prop_name, name=self.name)
+
+        if self.bl_idname == "StringsSocket":
+            layout.prop(prop_origin, prop_name)
         else:
-            if self.bl_idname == "StringsSocket":
-                layout.prop(prop_origin, prop_name)
+            if self.use_expander:
+                split = layout.split(percentage=.2, align=True)
+                c1 = split.column(align=True)
+                c2 = split.column(align=True)
+
+                if self.expanded:
+                    c1.prop(self, "expanded", icon='TRIA_UP', text='')
+                    c1.label(text=self.name[0])
+                    c2.prop(prop_origin, prop_name, text="", expand=True)
+                else:
+                    c1.prop(self, "expanded", icon='TRIA_DOWN', text="")
+                    row = c2.row(align=True)
+                    if self.bl_idname == "SvColorSocket":
+                        row.prop(prop_origin, prop_name)
+                    else:
+                        row.template_component_menu(prop_origin, prop_name, name=self.name)
+
             else:
                 layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
