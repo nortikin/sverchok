@@ -174,6 +174,7 @@ class SvSocketCommon:
                 layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
     def draw_quick_link(self, context, layout, node):
+
         if self.use_quicklink:
             if self.bl_idname == "MatrixSocket":
                 new_node_idname = "SvMatrixGenNodeMK2"
@@ -190,6 +191,14 @@ class SvSocketCommon:
             op.new_node_offsety = -30 * self.index
 
     def draw(self, context, layout, node, text):
+
+        # just handle custom draw..be it input or output.
+        # hasattr may be excessive here
+        if self.bl_idname == 'StringsSocket' and hasattr(self, 'custom_draw'):
+            if self.custom_draw and hasattr(node, self.custom_draw):
+                getattr(node, self.custom_draw)(self, context, layout)
+                return
+
         if self.is_linked:  # linked INPUT or OUTPUT
             info_text = text + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
