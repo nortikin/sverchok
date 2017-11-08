@@ -21,6 +21,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, Fl
 
 from math import sin, cos, pi, sqrt, radians
 from mathutils import Vector, Matrix
+import copy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -140,14 +141,12 @@ def create_cells():
 
     return vertList, indexList, edgeList, faceList
 
-import copy
-
 def get_cells():
     cells = []
     cellIDs = []
-    cube = [[i1, i2, i3] for i1 in [0,1] for i2 in [0,1] for i3 in[0,1]]
-    for n in range(4): # 0 1 2 3 (for each dimension)
-        for b in range(2): # 0 1 (flip side)
+    cube = [[i1, i2, i3] for i1 in [0, 1] for i2 in [0, 1] for i3 in[0, 1]]
+    for n in range(4):  # 0 1 2 3 (for each dimension)
+        for b in range(2):  # 0 1 (flip side)
             cell = copy.deepcopy(cube)
             [v.insert(n, b) for v in cell]
             cells.append(cell)
