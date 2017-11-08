@@ -20,8 +20,6 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty
 
 from math import sin, cos, pi, sqrt, radians
-from random import random
-import time
 from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -49,7 +47,7 @@ def flip(n, v):
 
 def flipper(v):
     '''
-        Flips every dimension of the binary N dimensional vector between 0 and 1
+        Flips each dimension of the binary N dimensional vector between 0 and 1
         returning the list of all single flips of the given binary vector.
 
         Note: In essense this is equivalent to generating all vertices in a N
@@ -115,33 +113,47 @@ def create_cells():
     for i in [0, 1]:
         verts = [[i, j, k, l] for j in [0, 1] for k in [0, 1] for l in [0, 1]]
         vertList.append(verts)
-        indices = [(i << 3) + (j << 2) + (k << 1) + l for j in [0, 1] for k in [0, 1] for l in [0, 1]]
+        indices = [index(v) for v in verts]
         indexList.append(indices)
         edges = [edgesIDs(v) for v in verts]
         edgeList.append(edges)
     for j in [0, 1]:
         verts = [[i, j, k, l] for i in [0, 1] for k in [0, 1] for l in [0, 1]]
         vertList.append(verts)
-        indices = [(i << 3) + (j << 2) + (k << 1) + l for i in [0, 1] for k in [0, 1] for l in [0, 1]]
         indexList.append(indices)
         edges = [edgesIDs(v) for v in verts]
         edgeList.append(edges)
     for k in [0, 1]:
         verts = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for l in [0, 1]]
         vertList.append(verts)
-        indices = [(i << 3) + (j << 2) + (k << 1) + l for i in [0, 1] for j in [0, 1] for l in [0, 1]]
+        indices = [index(v) for v in verts]
         indexList.append(indices)
         edges = [edgesIDs(v) for v in verts]
         edgeList.append(edges)
     for l in [0, 1]:
         verts = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1]]
         vertList.append(verts)
-        indices = [(i << 3) + (j << 2) + (k << 1) + l for i in [0, 1] for j in [0, 1] for k in [0, 1]]
+        indices = [index(v) for v in verts]
         indexList.append(indices)
         edges = [edgesIDs(v) for v in verts]
         edgeList.append(edges)
 
     return vertList, indexList, edgeList, faceList
+
+import copy
+
+def get_cells():
+    cells = []
+    cellIDs = []
+    cube = [[i1, i2, i3] for i1 in [0,1] for i2 in [0,1] for i3 in[0,1]]
+    for n in range(4): # 0 1 2 3 (for each dimension)
+        for b in range(2): # 0 1 (flip side)
+            cell = copy.deepcopy(cube)
+            [v.insert(n, b) for v in cell]
+            cells.append(cell)
+            ids = [index(v) for v in cell]
+            cellIDs.append(ids)
+    return cells, cellIDs
 
 
 def project(vert4D, d):
@@ -242,7 +254,9 @@ def transform_hypercube(verts4D, a1, a2, a3, a4, a5, a6, d, s, t):
 
 def generate_hypercube():
     '''
-        Generate the unit Hypercube verts, edges & polys (ONCE)
+        Generate the unit Hypercube verts, edges & polys.
+
+        Note: This is generated ONCE and cached during the first invocation.
     '''
     if _hypercube:
         return
@@ -435,4 +449,7 @@ def unregister():
     select all edges along a given dimension
     hyperplane intersections (verts 0D, edges 1D, faces 2D, cells 3D)
     scale, rotate, translate cells of a hypercube (unfolding)
+    4D point, 4D line, 4D plane locations in 4D/3D space
+    4D camera/projection origin
+    edge/face/cell centroids
 '''
