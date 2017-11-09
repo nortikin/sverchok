@@ -47,11 +47,12 @@ def get_registered_nodeclasses(path, node_file):
     file_path = os.path.join(path, node_file)
     collection = []
     with open(file_path, errors='replace') as code_lines:
-        print(file_path)
         for line in code_lines:
             if line.startswith('class ') and "bpy.types.Node" in line:
                 node_class_pattern = "class (\w{4,})\(.*SverchCustomTreeNode"
                 collection.append([line, node_file])
+    if not collection:
+        print(file_path, 'did not math the class pattern')
 
     return collection
 
