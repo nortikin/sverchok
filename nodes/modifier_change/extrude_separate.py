@@ -18,13 +18,14 @@
 
 from mathutils import Matrix, Vector
 #from math import copysign
+from math import pi
 
 import bpy
 from bpy.props import IntProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 def Matrix_degenerate(ms):
@@ -76,6 +77,15 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         result_faces = []
         result_extruded_faces = []
         result_other_faces = []
+        
+        #check scale's socket input
+        vector_in = False
+        if self.inputs['Scale'].is_linked:
+            socket = self.inputs['Scale']
+            other = socket.other
+            if other.bl_idname == 'VerticesSocket':
+                print('connected a Vector Socket')
+                vector_in = True
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s])
 
@@ -93,13 +103,34 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             for face, mask, height, scale in zip(extruded_faces, masks, heights, scales):
                 if not mask:
                     continue
+                    
+                #preparing matrix
+                normal = face.normal    
+                if normal[0] == 0 and normal[1] == 0 and normal[2] >= 0: m_r = Matrix()
+                elif normal[0] == 0 and normal[1] == 0 and normal[2] < 0: m_r = Matrix.Rotation(pi,4,'X')
+                else:    
+                    z_axis = normal
+                    x_axis = (Vector((z_axis[1] * -1, z_axis[0], 0))).normalized()
+                    y_axis = (z_axis.cross(x_axis)).normalized()
+
+                    m_r = Matrix_generate([[(x_axis[0], y_axis[0], z_axis[0], 0.0),
+                                            (x_axis[1], y_axis[1], z_axis[1], 0.0),
+                                            (x_axis[2], y_axis[2], z_axis[2], 0.0),
+                                            (0.0, 0.0, 0.0, 1.0)]])[0]
+                    
                 dr = face.normal * height
                 center = face.calc_center_median()
                 translation = Matrix.Translation(center)
-                rotation = face.normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
+                #rotation = face.normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
                 #rotation = autorotate(z, face.normal).inverted()
-                m = translation * rotation
-                bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=face.verts)
+                m = (translation * m_r).inverted()
+                
+                if vector_in:
+                    vec = scale
+                else:
+                    vec = (scale, scale, scale)
+                
+                bmesh.ops.scale(bm, vec=vec, space=m, verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
 
                 new_extruded_faces.append([v.index for v in face.verts])
