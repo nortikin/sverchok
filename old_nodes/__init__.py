@@ -16,57 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-old_bl_idnames = {
-    'CentersPolsNode' : "polygons_center",
-    'LineConnectNode' : 'uvconnectmk1',
-    'ShiftNode' : 'shift',
-    'ListSortNode' : 'sort',
-    # 'ListLengthNode' : 'length',
-    'ListSumNode' : 'sum',
-    'BmeshViewerNode' : 'viewer_bmesh',
-    # 'BakeryNode' : "bakery",
-    'CircleNode' : "circle",
-    'ListItemNode' : "list_item",
-    'GenRangeNode' : "range",
-    'VectorMathNode' : "math",
-    'GenSeriesNode' : "series",
-    'SvKDTreeEdgesNode': "kd_tree_edges",
-    'SvFrameInfoNode': "frame_info",
-    #'Test1Node' : "test",
-    #'Test2Node' : "test",
-    #'ToolsNode' : "tools",
-    'SvProfileNode': "profile",
-    'SvReRouteNode': "reroute",
-    'VoronoiNode': "voronoi",
-    'ViewerNode': "viewer",
-    'SvPolylineViewerNode': 'viewer_polyline',
-    'SkinViewerNode': 'viewer_skin',
-    'SvGetDataObjectNode': 'get_blenddata',
-    'ObjectsNode': "objects",
-    'ObjectsNodeMK2': "objects_mk2",
-    'RandomVectorNode': 'random_vector',
-    'svAxisInputNode': 'axis_input',
-    'SvIntersectEdgesNode': 'edges_intersect',
-    'ViewerNode_text': "viewer_text",
-    'EvalKnievalNode': "eval_knieval",
-    'SvStethoscopeNode' :'stethoscope',
-    'FormulaNode': 'formula',
-    'SvNoiseNode': 'noise',
-    'SvPointOnMeshNode': 'closest_point_on_mesh',
-    'SvRayCastObjectNode': 'object_raycast',
-    'SvRayCastSceneNode': 'scene_raycast',
-    'SvObjectToMeshNode': 'blenddata_to_svdata',
-    'SvSetDataObjectNode': 'set_blenddata',
-    'SvVertexGroupNode': 'weights',
-    'MatrixGenNode':'matrix_in',
-    'LineNode': 'line',
-    'PlaneNode': 'plane',
-    'SvBMOpsNode': 'BMOperators',
-    'SvCSGBooleanNode': 'csg_boolean',
-    'SvKDTreeNode': 'kd_tree'
-}
-
-# we should add some functions to load things there
+import os
 import importlib
 import inspect
 import traceback
@@ -75,6 +25,45 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 imported_mods = {}
+
+
+
+old_bl_idnames = {}
+drop_dict = {
+    'BakeryNode' : "bakery",
+    'Test1Node' : "test",
+    'Test2Node' : "test",
+    'ToolsNode' : "tools"
+}
+
+
+def get_old_nodes_list(path):
+    for fp in os.listdir(path):
+        if fp.endswith(".py") and not fp.startswith('__'):
+            yield fp
+
+def get_registered_nodeclasses(path, node_file):
+    """ this inspects the node file and finds classes registered as bpy.types.Node """
+    file_path = os.path.join(path, node_file)
+    collection = []
+    with open(file_path, errors='replace') as code_lines:
+        print(file_path)
+        for line in code_lines:
+            if line.startswith('class ') and "bpy.types.Node" in line:
+                collection.append([line, node_file])
+
+    return collection
+
+
+path_name = os.path.dirname(__file__)
+for old_node_file in get_old_nodes_list(path_name):
+    items = get_registered_nodeclasses(path_name, old_node_file)
+
+    for bl_idname, file_name in items:
+        old_bl_idnames[bl_idname] = file_name
+
+print(old_bl_idnames)
+
 
 def is_old(node_info):
     '''
