@@ -28,10 +28,6 @@ from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
-def Matrix_degenerate(ms):
-    return [[ j[:] for j in M ] for M in ms]
-
-
 class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Inset like behaviour '''
     bl_idname = 'SvExtrudeSeparateNode'
