@@ -13,4 +13,4 @@ Inputs and Outputs
 Example
 -------
 
-..image:: https://cloud.githubusercontent.com/assets/1275858/24463951/98383630-14a8-11e7-8653-178335ec576b.png
+.. image:: https://cloud.githubusercontent.com/assets/1275858/24463951/98383630-14a8-11e7-8653-178335ec576b.png

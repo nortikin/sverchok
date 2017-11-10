@@ -6,13 +6,13 @@ Functionality
 
 This node is used to make general mirroring over geometry. It works directly over vertices, not with matrixes. It offers 3 different types of mirror:
 
-+=======================+=============================================================+
++-----------------------+-------------------------------------------------------------+
 |Type of Mirror         |Description                                                  |
 +=======================+=============================================================+
 |Vertex Mirror          | Based on one single point                                   |
 |Axis Mirror            | Mirror around an axis defined by two points                 |
 |Plane Mirror           | Mirror over a plane given by a matrix                       |
-+=======================+=============================================================+
++-----------------------+-------------------------------------------------------------+
 
 
 Vertex Mirror
@@ -33,12 +33,12 @@ There is two inputs:
 Parameters
 ^^^^^^^^^^
 
-Defult value for **Vert A** is equal to ``(0.0, 0.0, 0.0)``. Vertices need an input.
+Default value for **Vert A** is equal to ``(0.0, 0.0, 0.0)``. Vertices need an input.
 
 +----------------+---------------+-----------------+----------------------------------------------------+
-| Param          | Type          | Default         | Description                                        |  
+| Param          | Type          | Default         | Description                                        |
 +================+===============+=================+====================================================+
-| **Vertices**   | Vertices      | none            | vertices to mirror                                 | 
+| **Vertices**   | Vertices      | none            | vertices to mirror                                 |
 +----------------+---------------+-----------------+----------------------------------------------------+
 | **Vert A**     | Vertices      | (0.0, 0.0, 0.0) | center of the mirroring                            |
 +----------------+---------------+-----------------+----------------------------------------------------+
@@ -79,9 +79,9 @@ Parameters
 There is default values for **Vert A** and **vert B**. **Vertices** need an input.
 
 +----------------+---------------+-----------------+----------------------------------------------------+
-| Param          | Type          | Default         | Description                                        |  
+| Param          | Type          | Default         | Description                                        |
 +================+===============+=================+====================================================+
-| **Vertices**   | Vertices      | none            | vertices to mirror                                 | 
+| **Vertices**   | Vertices      | none            | vertices to mirror                                 |
 +----------------+---------------+-----------------+----------------------------------------------------+
 | **Vert A**     | Vertices      | (0.0, 0.0, 0.0) | first point to define the axis                     |
 +----------------+---------------+-----------------+----------------------------------------------------+
@@ -119,12 +119,12 @@ There is two inputs:
 Parameters
 ^^^^^^^^^^
 
-Plane has a defult value, but Vertices need an input.
+Plane has a default value, but Vertices need an input.
 
 +----------------+---------------+-----------------+----------------------------------------------------+
-| Param          | Type          | Default         | Description                                        |  
+| Param          | Type          | Default         | Description                                        |
 +================+===============+=================+====================================================+
-| **Vertices**   | Vertices      | none            | vertices to mirror                                 | 
+| **Vertices**   | Vertices      | none            | vertices to mirror                                 |
 +----------------+---------------+-----------------+----------------------------------------------------+
 | **Plane**      | Matrix        | Identity        | matrix to define the mirror plane                  |
 +----------------+---------------+-----------------+----------------------------------------------------+
