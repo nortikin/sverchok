@@ -23,48 +23,13 @@ import traceback
 
 import bpy
 
+
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
+
 imported_mods = {}
 
-
-
-old_bl_idnames = {}
-drop_dict = {
-    'BakeryNode' : "bakery",
-    'Test1Node' : "test",
-    'Test2Node' : "test",
-    'ToolsNode' : "tools"
-}
-
-
-def get_old_nodes_list(path):
-    for fp in os.listdir(path):
-        if fp.endswith(".py") and not fp.startswith('__'):
-            yield fp
-
-def get_registered_nodeclasses(path, node_file):
-    """ this inspects the node file and finds classes registered as bpy.types.Node """
-    file_path = os.path.join(path, node_file)
-    collection = []
-    with open(file_path, errors='replace') as code_lines:
-        for line in code_lines:
-            if line.startswith('class ') and "bpy.types.Node" in line:
-                node_class_pattern = "class (\w{4,})\(.*SverchCustomTreeNode"
-                collection.append([line, node_file])
-    if not collection:
-        print(file_path, 'did not math the class pattern')
-
-    return collection
-
-
-path_name = os.path.dirname(__file__)
-for old_node_file in get_old_nodes_list(path_name):
-    items = get_registered_nodeclasses(path_name, old_node_file)
-
-    for bl_idname, file_name in items:
-        old_bl_idnames[bl_idname] = file_name
-
-print(old_bl_idnames)
+old_bl_idnames = get_old_node_bl_idnames(path=os.path.dirname(__file__))
 
 
 def is_old(node_info):
