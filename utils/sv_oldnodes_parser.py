@@ -45,6 +45,6 @@ def get_old_node_bl_idnames(path):
         items = get_sv_nodeclasses(path, old_node_file)
         for bl_idname, file_name in items:
             bl_dict[bl_idname] = file_name[:-3]
-    print('old nodes dict:', len(bl_dict))
-    print(bl_dict)
+    # print('old nodes dict:', len(bl_dict))
+    # print(bl_dict)
     return bl_dict
