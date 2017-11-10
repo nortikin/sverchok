@@ -18,6 +18,7 @@
 
 from mathutils import Matrix, Vector
 #from math import copysign
+from math import pi
 
 import bpy
 from bpy.props import IntProperty, FloatProperty
@@ -76,6 +77,15 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         result_faces = []
         result_extruded_faces = []
         result_other_faces = []
+        
+        #check scale's socket input
+        vector_in = False
+        if self.inputs['Scale'].is_linked:
+            socket = self.inputs['Scale']
+            other = socket.other
+            if other.bl_idname == 'VerticesSocket':
+                print('connected a Vector Socket')
+                vector_in = True
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s])
 
@@ -93,13 +103,28 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             for face, mask, height, scale in zip(extruded_faces, masks, heights, scales):
                 if not mask:
                     continue
+                    
+                #preparing matrix
+                normal = face.normal    
+                if normal[0] == 0 and normal[1] == 0 and normal[2] >= 0: m_r = Matrix()
+                elif normal[0] == 0 and normal[1] == 0 and normal[2] < 0: m_r = Matrix.Rotation(pi,4,'X')
+                else:    
+                    z_axis = normal
+                    x_axis = (Vector((z_axis[1] * -1, z_axis[0], 0))).normalized()
+                    y_axis = (z_axis.cross(x_axis)).normalized()
+
+                    m_r = Matrix(list([*zip(x_axis[:], y_axis[:], z_axis[:])])).to_4x4()
+                    
                 dr = face.normal * height
                 center = face.calc_center_median()
                 translation = Matrix.Translation(center)
-                rotation = face.normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
+                #rotation = face.normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
                 #rotation = autorotate(z, face.normal).inverted()
-                m = translation * rotation
-                bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=face.verts)
+                m = (translation * m_r).inverted()
+                
+                vec = scale if vector_in else (scale, scale, scale)
+                
+                bmesh.ops.scale(bm, vec=vec, space=m, verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
 
                 new_extruded_faces.append([v.index for v in face.verts])
