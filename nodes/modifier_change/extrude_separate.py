@@ -25,7 +25,7 @@ from bpy.props import IntProperty, FloatProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 def Matrix_degenerate(ms):
@@ -113,10 +113,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                     x_axis = (Vector((z_axis[1] * -1, z_axis[0], 0))).normalized()
                     y_axis = (z_axis.cross(x_axis)).normalized()
 
-                    m_r = Matrix_generate([[(x_axis[0], y_axis[0], z_axis[0], 0.0),
-                                            (x_axis[1], y_axis[1], z_axis[1], 0.0),
-                                            (x_axis[2], y_axis[2], z_axis[2], 0.0),
-                                            (0.0, 0.0, 0.0, 1.0)]])[0]
+                    m_r = Matrix(list([*zip(x_axis[:], y_axis[:], z_axis[:])])).to_4x4()
                     
                 dr = face.normal * height
                 center = face.calc_center_median()
@@ -125,10 +122,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 #rotation = autorotate(z, face.normal).inverted()
                 m = (translation * m_r).inverted()
                 
-                if vector_in:
-                    vec = scale
-                else:
-                    vec = (scale, scale, scale)
+                vec = scale if vector_in else (scale, scale, scale)
                 
                 bmesh.ops.scale(bm, vec=vec, space=m, verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
