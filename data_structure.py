@@ -198,10 +198,20 @@ def dataSpoil(data, dept):
     """from standart data to initial levels: to nested lists
      container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
     """
-    if dept:
+    __doc__ = 'preparing and making spoil'
+
+    def Spoil(dat, dep):
+        __doc__ = 'making spoil'
         out = []
-        for d in data:
-            out.append([dataSpoil(d, dept-1)])
+        if dep:
+            for d in dat:
+                out.append([Spoil(d, dep-1)])
+        else:
+            out = dat
+        return out
+    lol = levelsOflist(data)
+    if dept > lol:
+        out = Spoil(data, dept-lol)
     else:
         out = data
     return out

@@ -63,8 +63,8 @@
 
 ## Transforms
     SvRotationNode
-    SvScaleNode
-    VectorMoveNode
+    SvScaleNodeMK2
+    SvMoveNodeMK2
     SvMirrorNode
     MatrixApplyNode
     SvSimpleDeformNode
