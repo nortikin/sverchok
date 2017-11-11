@@ -104,6 +104,8 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         for vertices, edges, faces, masks, heights, scales in zip(*meshes):
 
             new_extruded_faces = []
+            new_extruded_faces_append = new_extruded_faces.append
+
             fullList(heights, len(faces))
             fullList(scales, len(faces))
             fullList(masks, len(faces))
@@ -138,7 +140,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
 
                 if linked_extruded_polygons or linked_other_polygons:
-                    new_extruded_faces.append([v.index for v in face.verts])
+                    new_extruded_faces_append([v.index for v in face.verts])
 
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
             bm.free()
