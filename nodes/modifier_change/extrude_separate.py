@@ -90,6 +90,9 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         heights_s = inputs['Height'].sv_get()
         scales_s  = inputs['Scale'].sv_get()
 
+        linked_extruded_polygons = outputs['ExtrudedPolys'].is_linked
+        linked_other_polygons = outputs['OtherPolys'].is_linked
+
         result_vertices = []
         result_edges = []
         result_faces = []
@@ -134,14 +137,13 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 bmesh.ops.scale(bm, vec=vec, space=m, verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)
 
-                # ALERT, this could be optional - checking if the socket is linked first.
-                new_extruded_faces.append([v.index for v in face.verts])
+                if linked_extruded_polygons or linked_other_polygons:
+                    new_extruded_faces.append([v.index for v in face.verts])
 
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
             bm.free()
 
-            # ALERT, this could be optional - checking if the socket is linked first.
-            new_other_faces = [f for f in new_faces if f not in new_extruded_faces]
+            new_other_faces = [f for f in new_faces if f not in new_extruded_faces] if linked_other_polygons else []
 
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)
