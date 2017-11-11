@@ -27,6 +27,8 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
+vsock, toposock = 'VerticesSocket', 'StringsSocket'
+
 
 class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Inset like behaviour '''
@@ -44,18 +46,20 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('VerticesSocket', "Vertices")
-        inew('StringsSocket', 'Edges')
-        inew('StringsSocket', 'Polygons')
-        inew('StringsSocket', 'Mask')
-        inew('StringsSocket', "Height").prop_name = "height_"
-        inew('StringsSocket', "Scale").prop_name = "scale_"
         onew = self.outputs.new
-        onew('VerticesSocket', 'Vertices')
-        onew('StringsSocket', 'Edges')
-        onew('StringsSocket', 'Polygons')
-        onew('StringsSocket', 'ExtrudedPolys')
-        onew('StringsSocket', 'OtherPolys')
+        
+        inew(vsock, "Vertices")
+        inew(toposock, 'Edges')
+        inew(toposock, 'Polygons')
+        inew(toposock, 'Mask')
+        inew(toposock, "Height").prop_name = "height_"
+        inew(toposock, "Scale").prop_name = "scale_"
+        
+        onew(vsock, 'Vertices')
+        onew(toposock, 'Edges')
+        onew(toposock, 'Polygons')
+        onew(toposock, 'ExtrudedPolys')
+        onew(toposock, 'OtherPolys')
 
     @property
     def scale_socket_type(self):
@@ -74,7 +78,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not (inputs['Vertices'].is_linked and inputs['Polygons'].is_linked):
             return
-        if not any(outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'ExtrudedPolys', 'OtherPolys']):
+        if not any(socket.is_linked for socket in outputs):
             return
 
         vector_in = self.scale_socket_type
