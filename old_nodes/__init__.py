@@ -66,7 +66,6 @@ old_bl_idnames = {
     'SvKDTreeNode': 'kd_tree',
     'VectorMoveNode': 'move',
     'SvScaleNode': 'scale',
-    'SvRotationNode': 'rotation'
 }
 
 # we should add some functions to load things there
