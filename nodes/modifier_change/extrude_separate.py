@@ -105,7 +105,6 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
 
             new_extruded_faces = []
             new_extruded_faces_append = new_extruded_faces.append
-
             fullList(heights, len(faces))
             fullList(scales, len(faces))
             fullList(masks, len(faces))
@@ -166,6 +165,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvExtrudeSeparateNode)
-
-# if __name__ == '__main__':
-#     register()
