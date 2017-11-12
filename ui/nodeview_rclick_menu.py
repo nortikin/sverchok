@@ -36,15 +36,15 @@ def get_verts_edge_poly_output_sockets(node):
     for socket in node.outputs:
         socket_name = socket.name.lower()
 
-        if not got_verts and 'vert' in socket_name:
+        if not got_verts and 'ver' in socket_name:
             output_map['verts'] = socket.name
             got_verts = True
 
-        if not got_edges and 'edg' in socket_name:
+        elif not got_edges and 'edg' in socket_name:
             output_map['edges'] = socket.name
             got_edges = True
 
-        if not got_faces and 'face' in socket_name or 'poly' in socket_name:
+        elif not got_faces and ('face' in socket_name or 'pol' in socket_name):
             output_map['faces'] = socket.name
             got_faces = True
 
@@ -67,10 +67,16 @@ def add_connection(tree, bl_idname_new_node, offset):
 
         new_node = nodes.new(bl_idname_new_node)
         offset_node_location(existing_node, new_node, offset)
-        
-        if bl_idname_new_node == 'ViewerNode2':
-            outputs = existing_node.outputs
-            inputs = new_node.inputs
+
+        outputs = existing_node.outputs
+        inputs = new_node.inputs
+
+        if existing_node.bl_idname == 'ViewerNode2' and bl_idname_new_node == 'IndexViewer':
+            # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
+            ...
+            
+
+        elif bl_idname_new_node == 'ViewerNode2':
 
             if 'verts' in output_map:
                 if 'faces' in output_map:
@@ -102,6 +108,8 @@ class SvGenericDeligationOperator(bpy.types.Operator):
             add_connection(tree, bl_idname_new_node="ViewerNode2", offset=[180, 0])
         elif self.fn == 'vdmk2 + idxv':
             add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewer"], offset=[180, 0])
+        elif self.fn == '+idxv':
+            add_connection(tree, bl_idname_new_node="IndexViewer", offset=[180, 0])
 
         return {'FINISHED'}
 
@@ -121,9 +129,12 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         layout = self.layout
         tree = context.space_data.edit_tree
         nodes = tree.nodes
-
         node = valid_active_node(nodes)
-        if has_outputs(node):
+
+        if node and node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
+            layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn="+idxv"
+
+        elif has_outputs(node):
             layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn="vdmk2"
             # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
         
