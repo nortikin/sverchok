@@ -201,27 +201,36 @@ class SvLayoutScanProperties(bpy.types.Operator):
                     if any((s.links for s in node.outputs)):
                         templist.append([node.label, node.name, ""])
                 
-                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode'}:
+                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode'}:
                     if not (node.inputs and node.outputs):
                         pass
-                    if node.inputs[0].is_linked:
+                    if len(node.inputs) and node.inputs[0].is_linked:
                         pass
-                    if not node.outputs[0].is_linked and not node.to3d:
+                    # somehow to3d not works at all now...
+                    if not node.outputs[0].is_linked and node.to3d != True:
                         pass
 
                     if 'Integer' in idname:
                         templist.append([node.label, node.name, 'int_'])
                     elif 'Float' in idname:
-                        templist.append([node.label, node.name, 'float_'])                          
+                        templist.append([node.label, node.name, 'float_'])                     
+                    elif 'SvListInputNode' in idname:
+                        if node.mode == 'vector':
+                            templist.append([node.label, node.name, 'vector_list'])
+                        elif node.mode == 'int_list':
+                            templist.append([node.label, node.name, 'int_list'])
+                        elif node.mode == 'float_list':
+                            templist.append([node.label, node.name, 'float_list'])
                     else:
                         kind = node.selected_mode
                         templist.append([node.label, node.name, kind + '_'])
+
 
             templist.sort()
             templ = [[t[1], t[2]] for t in templist]
             tree.Sv3DProps.clear()
             for name, prop in templ:
-                print(name, prop)
+                print('sverchok 3d panel appended with',name, prop)
                 item = tree.Sv3DProps.add()
                 item.node_name = name
                 item.prop_name = prop

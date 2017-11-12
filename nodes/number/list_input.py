@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import (EnumProperty, FloatVectorProperty,
-                       IntProperty, IntVectorProperty)
+                       IntProperty, IntVectorProperty, BoolProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -31,6 +31,7 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     defaults = [0 for i in range(32)]
+    to3d = BoolProperty(name='to3d', description='show in 3d panel', default=True)
     int_ = IntProperty(name='int_', description='integer number',
                        default=1, min=1, max=32,
                        update=updateNode)
@@ -90,6 +91,11 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
             for i in range(self.int_):
                 col.prop(self, self.mode, index=i, text=str(i))
 
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'to3d', text='to3d')
+
+
     def process(self):
         if self.outputs[0].is_linked:
             if self.mode == 'int_list':
@@ -109,3 +115,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvListInputNode)
+
+if __name__ == '__main__':
+    register()
