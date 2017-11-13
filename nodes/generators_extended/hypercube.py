@@ -62,7 +62,7 @@ def flipper(v):
     return links
 
 
-def edges(v):
+def edges_touching(v):
     '''
         Returns the list of edges connecting the binary N dimensional vertex
         of a N dimensional Hypercube to all the adjacent N dimensional vertices
@@ -89,7 +89,7 @@ def index(v):
     return a
 
 
-def edgesIDs(v):
+def edgesIDs_touching(v):
     '''
         Return the list of all edges (as a pair of vertex indices) touching a given vertex.
 
@@ -97,7 +97,7 @@ def edgesIDs(v):
         edges(v)   = [[[1, 0, 1], [0, 0, 1]], [[1, 0, 1], [1, 1, 1]], [[1, 0, 1], [1, 0, 0]]]
         edgesID(v) = [[    5    ,     1    ], [    5    ,     7    ], [    5    ,     4    ]]
     '''
-    es = edges(v)
+    es = edges_touching(v)
     return [[index(v1), index(v2)] for v1, v2 in es]
 
 
@@ -116,30 +116,31 @@ def create_cells():
         vertList.append(verts)
         indices = [index(v) for v in verts]
         indexList.append(indices)
-        edges = [edgesIDs(v) for v in verts]
+        edges = [edgesIDs_touching(v) for v in verts]
         edgeList.append(edges)
     for j in [0, 1]:
         verts = [[i, j, k, l] for i in [0, 1] for k in [0, 1] for l in [0, 1]]
         vertList.append(verts)
         indexList.append(indices)
-        edges = [edgesIDs(v) for v in verts]
+        edges = [edgesIDs_touching(v) for v in verts]
         edgeList.append(edges)
     for k in [0, 1]:
         verts = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for l in [0, 1]]
         vertList.append(verts)
         indices = [index(v) for v in verts]
         indexList.append(indices)
-        edges = [edgesIDs(v) for v in verts]
+        edges = [edgesIDs_touching(v) for v in verts]
         edgeList.append(edges)
     for l in [0, 1]:
         verts = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1]]
         vertList.append(verts)
         indices = [index(v) for v in verts]
         indexList.append(indices)
-        edges = [edgesIDs(v) for v in verts]
+        edges = [edgesIDs_touching(v) for v in verts]
         edgeList.append(edges)
 
     return vertList, indexList, edgeList, faceList
+
 
 def get_cells():
     cells = []
@@ -160,7 +161,6 @@ def project(vert4D, d):
         Project a 4D vector onto 3D space given the projection distance.
     '''
     cx, cy, cz = [0.0, 0.0, 0.0]  # center (projection origin)
-    # cx, cy, cz = [0.5, 0.5, 0.5]  # center
     x, y, z, t = vert4D
     return [x + (cx - x) * t / d, y + (cy - y) * t / d, z + (cz - z) * t / d]
 
@@ -253,7 +253,7 @@ def transform_hypercube(verts4D, a1, a2, a3, a4, a5, a6, d, s, t):
 
 def generate_hypercube():
     '''
-        Generate the unit Hypercube verts, edges & polys.
+        Generate the unit Hypercube verts, edges, faces, cells.
 
         Note: This is generated ONCE and cached during the first invocation.
     '''
@@ -263,7 +263,7 @@ def generate_hypercube():
     hypercube = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1] for l in [0, 1]]  # 4D indices
 
     # TODO: find a better (and working) way to do this
-    edges = []
+    # edges = []
     faces = []
     for k in [0, 1]:  # tries (and fails) to create the faces with normals pointing to the outside
         for l in [0, 1]:
@@ -276,10 +276,15 @@ def generate_hypercube():
 
     verts = [Vector([x, y, z, w]) for x, y, z, w in hypercube]
 
+    e = lambda n: [[a, a | 1 << l] for a in range(2**n) for l in range(n) if ~ a & 1 << l]
+    edges = e(4)
+    cells = []
+
     # store hypercube's verts, edges & polys in a global dictionary
     _hypercube["verts"] = verts
     _hypercube["edges"] = edges
     _hypercube["faces"] = faces
+    _hypercube["cells"] = cells
 
 
 def get_hypercube():
@@ -297,42 +302,89 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvHyperCubeNode'
     bl_label = 'Hypercube'
 
+    def update_angle(self, context):
+        if self.syncing:
+            return
+        updateNode(self, context)
+
+    def update_mode(self, context):
+        print("update_mode")
+        print(self.lastAngleType)
+        print(self.angleType)
+        if self.lastAngleType == self.angleType:
+            print("same as last.. return")
+            return
+
+        if self.lastAngleType == "RAD":
+            if self.angleType == "DEG":
+                aU = 180 / pi
+            elif self.angleType == "NORM":
+                aU = 1/(2*pi)
+
+        elif self.lastAngleType == "DEG":
+            if self.angleType == "RAD":
+                aU = pi / 180
+            elif self.angleType == "NORM":
+                aU = 1/360
+
+        elif self.lastAngleType == "NORM":
+            if self.angleType == "RAD":
+                aU = 2*pi
+            elif self.angleType == "DEG":
+                aU = 360
+        self.lastAngleType = self.angleType
+
+        self.syncing = True
+        self.angle_a1 *= aU
+        self.angle_a2 *= aU
+        self.angle_a3 *= aU
+        self.angle_a4 *= aU
+        self.angle_a5 *= aU
+        self.angle_a6 *= aU
+        self.syncing = False
+
+        updateNode(self, context)
+
     angleType = EnumProperty(
         name="Angle Type", description="Angle units",
-        default="DEG", items=angleTypes, update=updateNode)
+        default="RAD", items=angleTypes, update=update_mode)
+
+    lastAngleType = EnumProperty(
+        name="Last Angle Type", description="Last angle units",
+        default="RAD", items=angleTypes)
 
     angle_a1 = FloatProperty(
         name="XY", description="Angle 1",
         default=0.0, min=0.0,
-        update=updateNode)
+        update=update_angle)
 
     angle_a2 = FloatProperty(
         name="YZ", description="Angle 2",
         default=0.0, min=0.0,
-        update=updateNode)
+        update=update_angle)
 
     angle_a3 = FloatProperty(
         name="ZX", description="Angle 3",
         default=0.0, min=0.0,
-        update=updateNode)
+        update=update_angle)
 
     angle_a4 = FloatProperty(
         name="XW", description="Angle 4",
         default=0.0, min=0.0,
-        update=updateNode)
+        update=update_angle)
 
     angle_a5 = FloatProperty(
         name="YW", description="Angle 5",
         default=0.0, min=0.0,
-        update=updateNode)
+        update=update_angle)
 
     angle_a6 = FloatProperty(
         name="ZW", description="Angle 6",
         default=0.0, min=0.0,
-        update=updateNode)
+        update=update_angle)
 
     distance = FloatProperty(
-        name="D", description="Projection Distance",
+        name="Distance", description="Projection Distance",
         default=2.0, min=0.0,
         update=updateNode)
 
@@ -347,6 +399,9 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         default=(0, 0, 0, 0),
         update=updateNode)
 
+    syncing = BoolProperty(
+        name='Syncing', description='Syncing flag', default=False)
+
     def sv_init(self, context):
         self.width = 180
         self.inputs.new('StringsSocket', "A1").prop_name = 'angle_a1'
@@ -357,7 +412,7 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "A6").prop_name = 'angle_a6'
         self.inputs.new('StringsSocket', "D").prop_name = 'distance'
         self.inputs.new('StringsSocket', "S").prop_name = 'scale'
-        self.inputs.new('VerticesSocket', "T").prop_name = 'translate'
+        self.inputs.new('VerticesSocket', "Translate").prop_name = 'translate'
 
         self.outputs.new('StringsSocket', "Verts4D")
         self.outputs.new('VerticesSocket', "Verts")
@@ -367,6 +422,7 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Cells Verts IDs")
         self.outputs.new('StringsSocket', "Cells Edges")
         self.outputs.new('StringsSocket', "Cells Faces")
+        self.outputs.new('StringsSocket', "Vert Names")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'angleType', expand=True)
@@ -387,7 +443,7 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         input_a6 = inputs["A6"].sv_get()[0]
         input_d = inputs["D"].sv_get()[0]
         input_s = inputs["S"].sv_get()[0]
-        input_t = inputs["T"].sv_get()[0]
+        input_t = inputs["Translate"].sv_get()[0]
 
         # convert everything to radians
         if self.angleType == "DEG":
@@ -431,6 +487,12 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['Cells Edges'].sv_set(edges)
         outputs['Cells Faces'].sv_set(faces)
 
+        hypercube = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1] for l in [0, 1]]  # 4D indices
+
+        names = [str(a).strip('[,]') for a in hypercube]
+        # print(names)
+        outputs['Vert Names'].sv_set([names])
+
 
 def register():
     bpy.utils.register_class(SvHyperCubeNode)
@@ -451,4 +513,24 @@ def unregister():
     4D point, 4D line, 4D plane locations in 4D/3D space
     4D camera/projection origin
     edge/face/cell centroids
+
+
+    verts in a cell k/n (n/n is the whole hypercube)
+    E(k,n) = 2^k * c(n,k)
+    for n = 4
+    cell 1/4 = 2^1 * c(1,4) = 2 * 4  = 8  : cells/cubes @ (4-1=3 -> 2^3=8 verts)
+    cell 2/4 = 2^2 * c(2,4) = 4 * 6  = 24 : faces       @ (4-2=2 -> 2^2=4 verts)
+    cell 3/4 = 2^3 * c(3,4) = 8 * 4  = 32 : edges       @ (4-3=1 -> 2^1=2 verts)
+    cell 4/4 = 2^4 * c(4,4) = 16 * 1 = 16 : vertices    @ (4-4=0 -> 2^0=1 verts)
+
+    x x x x
+    1 1
+    1   1
+    1     1
+      1 1
+      1   1
+        1 1
+
+
+
 '''
