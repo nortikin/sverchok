@@ -9,7 +9,7 @@
 body {
   padding: 0px 0px 0px 0px;
   margin: 0px 0px 0px 0px;
-  background: #DBDADB;
+  background: #051025; /*#DBDADB;*/
 }
 
 img {padding: 0; margin:0;}
@@ -59,7 +59,7 @@ div {
   color: #edfbed;
   font-family: 'PT Sans', sans-serif;
   float: left;
-  background: #82c5ed;
+  background: #36a;/*#82c5ed;*/
   height: auto;
   width: 88%;
   padding: 0;
