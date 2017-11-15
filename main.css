@@ -120,7 +120,7 @@ a:visited {
 
 .sv_table {
   color: #444;
-  background: #eee;
+  background: #c51; /*#eee;*/
   border: 1px solid #82c5ed;
   border-spacing: 0;
 }
