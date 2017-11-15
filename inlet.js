@@ -45,7 +45,8 @@ var context = {
 // ------ html generation --------
 
 var content_display = d3.select("#display")
-  .style({background: '#dbdadb'})
+  .style({background: '#051025'})
+// -- dbdadb -- color old
 
 var cmain = content_display.append("div")
   .classed("content_main", true);
