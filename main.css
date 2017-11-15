@@ -44,6 +44,7 @@ div.content_main {
 .sv_menu {
   font-family: 'PT Sans', sans-serif;
   display: inline-block;
+  background: #c51;
   float: left;
   width: 12%;
   height: 100%;
@@ -120,7 +121,7 @@ a:visited {
 
 .sv_table {
   color: #444;
-  background: #c51; /*#eee;*/
+  background: #eee;
   border: 1px solid #82c5ed;
   border-spacing: 0;
 }
