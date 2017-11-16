@@ -112,13 +112,13 @@ div {
 /* unvisited link */
 a:link {
   color: #3669C2;
-  background: #eee;
+  /* background: #eee; */
 }
 
 /* visited link */
 a:visited {
   color: #333;
-  background: #eee;
+  /* background: #eee; */
 }
 
 .sv_table {
