@@ -115,6 +115,12 @@ a:link {
   /* background: #eee; */
 }
 
+a:visited {
+  color: #111;
+  /* background: #eee; */
+}
+
+
 
 .sv_table {
   color: #444;
