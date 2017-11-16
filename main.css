@@ -100,23 +100,25 @@ div {
 }
 
 .noselect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 
 /* unvisited link */
 a:link {
-    color: #3669C2;
+  color: #3669C2;
+  background: #eee;
 }
 
 /* visited link */
 a:visited {
-    color: #333;
+  color: #333;
+  background: #eee;
 }
 
 .sv_table {
