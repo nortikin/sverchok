@@ -45,6 +45,7 @@ def flip(n, v):
     '''
     return [(v[i] + 1) % 2 if i == n else v[i] for i in range(len(v))]
 
+    return []
 
 def flipper(v):
     '''
@@ -142,7 +143,7 @@ def create_cells():
     return vertList, indexList, edgeList, faceList
 
 
-def get_cells():
+def get_cells_verts():
     cells = []
     cellIDs = []
     cube = [[i1, i2, i3] for i1 in [0, 1] for i2 in [0, 1] for i3 in[0, 1]]
@@ -155,6 +156,97 @@ def get_cells():
             cellIDs.append(ids)
     return cells, cellIDs
 
+
+def get_verts(n):
+    return [list(v) for v in list(itertools.product([0, 1], repeat=n))]
+
+
+def get_verts_IDs(n):
+    verts = get_verts(n)
+    return [index(v) for v in verts]
+
+
+def get_edges(n):
+    return [[a, a | 1 << l] for a in range(2**n) for l in range(n) if ~ a & 1 << l]
+
+
+def get_edges_IDs(n):
+    edges = get_edges(n)
+    return [[index(v1), index(v2)] for (v1, v2) in edges]
+
+
+# def get_cell_vertsx(n):
+#     verts = get_verts(n - 1)
+#     cellv = []
+#     for m in range(n):
+#         for l in [0, 1]:
+#             cell = []
+#             for v in verts:
+#                 a = copy.deepcopy(v)
+#                 a.insert(n - 1 - m, l)
+#                 cell.append(a)
+#             cellv.append(cell)
+#     return cellv
+
+
+def clear_bit(v, n):
+    '''
+        Clear the n-th bit in the binary representation of v.
+        e.g.  v = 101101, n = 3 => 100101
+    '''
+    return v & (1 << n)
+
+def set_bit(v, n):
+    '''
+        Set the n-th bit in the binary representation of v.
+        e.g.  v = 101101, n = 1 => 101111
+    '''
+    return v | (1 << n)
+
+def flip_bit(v, n):
+    '''
+        Flip the n-th bit in the binary representation of v.
+        e.g.  v = 101101, n = 3 => 100101
+    '''
+    return v ^ (1 << n)
+
+def insert_bit(v, b, n):
+    '''
+        Insert a bit (0/1) at the n-th bit in the binary representation of v
+        shifting the higher end bits by one.
+        e.g.  v = 101101, b = 0, n = 2 => 1011001
+    '''
+    return (v & ~(2**n - 1)) << 1 | b << n | v & (2**n - 1)
+
+def vinarize(v, n):
+    '''
+        Convert an integer into a list of its binary representation.
+        e.g.  v = 6, n = 7 => [0, 0, 0, 0, 1, 1, 0]
+    '''
+    return [(v & (1 << l)) >> l for l in reversed(range(n))]
+
+
+def get_cell_verts(n):
+    verts = get_verts_IDs(n - 1)
+    cellv = []
+    for m in range(n):
+        for b in [0, 1]:
+            cell = []
+            for v in verts:
+                # print("m=", m)
+                # print("b=", b)
+                # print("v=", vinarize(v, n))
+                vx = insert_bit(v, b, m)
+                # print("vx=", vinarize(vx, n))
+                # cell.append(vx)
+                cell.append(vinarize(vx, n))
+                # print("\n")
+            cellv.append(cell)
+    return cellv
+
+def get_cell_verts_IDs(n):
+    cells = get_cell_verts(n)
+    return [[index(v) for v in cell] for cell in cells]
 
 def project(vert4D, d):
     '''
@@ -278,7 +370,7 @@ def generate_hypercube():
 
     e = lambda n: [[a, a | 1 << l] for a in range(2**n) for l in range(n) if ~ a & 1 << l]
     edges = e(4)
-    cells = []
+    cells = get_cell_verts_IDs
 
     # store hypercube's verts, edges & polys in a global dictionary
     _hypercube["verts"] = verts
@@ -319,17 +411,17 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
             if self.angleType == "DEG":
                 aU = 180 / pi
             elif self.angleType == "NORM":
-                aU = 1/(2*pi)
+                aU = 1 / (2 * pi)
 
         elif self.lastAngleType == "DEG":
             if self.angleType == "RAD":
                 aU = pi / 180
             elif self.angleType == "NORM":
-                aU = 1/360
+                aU = 1 / 360
 
         elif self.lastAngleType == "NORM":
             if self.angleType == "RAD":
-                aU = 2*pi
+                aU = 2 * pi
             elif self.angleType == "DEG":
                 aU = 360
         self.lastAngleType = self.angleType
@@ -531,6 +623,59 @@ def unregister():
       1   1
         1 1
 
+    Hypercube:
+    cells
+    faces
+    edges *
+    verts *
 
+    cells:
+    faces
+    edges
+    verts
+
+    faces:
+    edges
+    verts
+
+    edges:
+    verts
+
+
+    Hypercube
+    cells
+    faces
+    edges *
+    verts *
+
+    mkdir -p hypercube/cells/faces/edges/verts
+    mkdir -p hypercube/cells/edges/verts
+    mkdir -p hypercube/cells/verts
+    mkdir -p hypercube/faces/edges/verts
+    mkdir -p hypercube/faces/verts
+    mkdir -p hypercube/edges/verts
+    mkdir -p hypercube/verts
+
+    c : component : count : index range
+
+    H : hypercube : 1 : 0
+    │
+    ├── C : cells : 8 : 0->7
+    │   ├── faces : 6 : 0->23 (F)
+    │   │   └── edges : 4 : 0->31 (E)
+    │   │       └── verts : 2 : 0->15 (V)
+    │   ├── edges : 12 : 0->31 (E)
+    │   │   └── verts : 2 : 0->15 (V)
+    │   └── verts : 8 : 0->15 (V)
+    │    
+    ├── F : faces : 24 : 0->23 (F)
+    │   ├── edges : 4 : 0->31 (E)
+    │   │   └── verts : 2 : 0->15 (V)
+    │   └── verts : 4 : 0->15 (V)
+    │     
+    ├── E : edges : 32 : 0->31 *
+    │   └── verts : 2 : 0->15 (V) *
+    │  
+    └── V : verts : 16 : 0->15 *
 
 '''
