@@ -108,7 +108,7 @@ def create_cells2():
     faceList = []
 
     indexList = get_cell_verts_IDs(4)
-    edgeList = get_cell_edges(4)
+    edgeList = get_cell_edges_IDs(4)
 
     return vertList, indexList, edgeList, faceList
 
@@ -185,20 +185,6 @@ def get_edges_IDs(n):
     return [[index(v1), index(v2)] for v1, v2 in edges]
 
 
-# def get_cell_vertsx(n):
-#     verts = get_verts(n - 1)
-#     cellv = []
-#     for m in range(n):
-#         for l in [0, 1]:
-#             cell = []
-#             for v in verts:
-#                 a = copy.deepcopy(v)
-#                 a.insert(n - 1 - m, l)
-#                 cell.append(a)
-#             cellv.append(cell)
-#     return cellv
-
-
 def clear_bit(v, n):
     '''
         Clear the n-th bit in the binary representation of v.
@@ -272,14 +258,14 @@ def get_cell_edges(n):
                 v2x = insert_bit(v2, b, m)
                 # print("vx=", vinarize(vx, n))
                 # cell.append(vx)
-                cell.append([v1x, v2x])
+                cell.append([vinarize(v1x,n), vinarize(v2x,n)])
                 # print("\n")
             celle.append(cell)
     return celle
 
-# def get_cell_edges_IDs(n):
-#     cells = get_cell_edges(n)
-#     return [[[index(v1), index(v2)] for v1, v2 in cell] for cell in cells]
+def get_cell_edges_IDs(n):
+    cells = get_cell_edges(n)
+    return [[[index(v1), index(v2)] for v1, v2 in cell] for cell in cells]
 
 
 def project(vert4D, d):
@@ -402,11 +388,17 @@ def generate_hypercube():
 
     verts = [Vector([x, y, z, w]) for x, y, z, w in hypercube]
 
-    e = lambda n: [[a, a | 1 << l] for a in range(2**n) for l in range(n) if ~ a & 1 << l]
-    edges = e(4)
-    cells = get_cell_verts_IDs
+    edges = get_edges(4)
 
-    # store hypercube's verts, edges & polys in a global dictionary
+    cells = {}
+    cells["verts"] = get_cell_verts_IDs(4)
+    cells["edges"] = get_cell_edges_IDs(4)
+    cells["vertsIDs"] = []
+    cells["faces"] = []
+
+    print("***", type(cells))
+
+    # store hypercube's verts, edges & polys, cells in a global dictionary
     _hypercube["verts"] = verts
     _hypercube["edges"] = edges
     _hypercube["faces"] = faces
@@ -420,7 +412,7 @@ def get_hypercube():
     if not _hypercube:
         generate_hypercube()
 
-    return _hypercube["verts"], _hypercube["edges"], _hypercube["faces"]
+    return _hypercube["verts"], _hypercube["edges"], _hypercube["faces"], _hypercube["cells"]
 
 
 class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -582,7 +574,7 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         params = match_long_repeat([input_a1, input_a2, input_a3, input_a4,
                                     input_a5, input_a6, input_d, input_s, input_t])
 
-        verts4D, edges, polys = get_hypercube()
+        verts4D, edges, polys, cells = get_hypercube()
 
         vertList = []
         edgeList = []
@@ -600,7 +592,11 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
             edgeList.append(edges)
             polyList.append(polys)
 
-        cells, indices, edges, faces = create_cells2()
+        # cells, indices, edges, faces = create_cells2()
+        cellVerts = cells["verts"]
+        cellVertsIDs = cells["vertsIDs"]
+        cellEdges = cells["edges"]
+        cellFaces = cells["faces"]
 
         outputs['Verts4D'].sv_set([verts4D])
 
@@ -608,10 +604,10 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['Edges'].sv_set(edgeList)
         outputs['Polys'].sv_set(polyList)
 
-        outputs['Cells Verts'].sv_set(cells)
-        outputs['Cells Verts IDs'].sv_set(indices)
-        outputs['Cells Edges'].sv_set(edges)
-        outputs['Cells Faces'].sv_set(faces)
+        outputs['Cells Verts'].sv_set(cellVerts)
+        outputs['Cells Verts IDs'].sv_set(cellVertsIDs)
+        outputs['Cells Edges'].sv_set(cellEdges)
+        outputs['Cells Faces'].sv_set(cellFaces)
 
         hypercube = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1] for l in [0, 1]]  # 4D indices
 
@@ -657,59 +653,57 @@ def unregister():
       1   1
         1 1
 
-    Hypercube:
-    cells
-    faces
-    edges *
-    verts *
-
-    cells:
-    faces
-    edges
-    verts
-
-    faces:
-    edges
-    verts
-
-    edges:
-    verts
-
-
-    Hypercube
-    cells
-    faces
-    edges *
-    verts *
-
     mkdir -p hypercube/cells/faces/edges/verts
+    mkdir -p hypercube/cells/faces/verts
     mkdir -p hypercube/cells/edges/verts
     mkdir -p hypercube/cells/verts
+
     mkdir -p hypercube/faces/edges/verts
     mkdir -p hypercube/faces/verts
+
     mkdir -p hypercube/edges/verts
+
     mkdir -p hypercube/verts
 
-    c : component : count : index range
+    C [dimension] : component : count : index range
 
-    H : hypercube : 1 : 0
+    H [4] : hypercube : 1 : 0
     │
-    ├── C : cells : 8 : 0->7
+    ├── C [3] : cells : 8 : 0->7
     │   ├── faces : 6 : 0->23 (F)
-    │   │   └── edges : 4 : 0->31 (E)
-    │   │       └── verts : 2 : 0->15 (V)
-    │   ├── edges : 12 : 0->31 (E)
-    │   │   └── verts : 2 : 0->15 (V)
-    │   └── verts : 8 : 0->15 (V)
+    │   │   ├── edges : 4 : 0->31 (E)
+    │   │   │   └── verts : 2 : 0->15 (V)
+    │   │   └── verts : 4 : 0->15 (V)
+    │   ├── edges : 12 : 0->31 (E) *
+    │   │   └── verts : 2 : 0->15 (V) *
+    │   └── verts : 8 : 0->15 (V) *
     │    
-    ├── F : faces : 24 : 0->23 (F)
+    ├── F [2] : faces : 24 : 0->23
     │   ├── edges : 4 : 0->31 (E)
     │   │   └── verts : 2 : 0->15 (V)
     │   └── verts : 4 : 0->15 (V)
     │     
-    ├── E : edges : 32 : 0->31 *
+    ├── E [1] : edges : 32 : 0->31 *
     │   └── verts : 2 : 0->15 (V) *
     │  
-    └── V : verts : 16 : 0->15 *
+    └── V [0] : verts : 16 : 0->15 *
+
+    H(1)C(4)F(2)E(3)V(2) - selection
+
+    5D Hypercube rotations (10):
+
+    XY
+    XZ
+    XW
+    XT
+
+    YZ
+    YW
+    YT
+
+    ZW
+    ZT
+
+    WT
 
 '''
