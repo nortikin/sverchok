@@ -101,6 +101,16 @@ def edgesIDs_touching(v):
     es = edges_touching(v)
     return [[index(v1), index(v2)] for v1, v2 in es]
 
+def create_cells2():
+    vertList = []
+    indexList = []
+    edgeList = []
+    faceList = []
+
+    indexList = get_cell_verts_IDs(4)
+    edgeList = get_cell_edges(4)
+
+    return vertList, indexList, edgeList, faceList
 
 def create_cells():
     '''
@@ -172,7 +182,7 @@ def get_edges(n):
 
 def get_edges_IDs(n):
     edges = get_edges(n)
-    return [[index(v1), index(v2)] for (v1, v2) in edges]
+    return [[index(v1), index(v2)] for v1, v2 in edges]
 
 
 # def get_cell_vertsx(n):
@@ -247,6 +257,30 @@ def get_cell_verts(n):
 def get_cell_verts_IDs(n):
     cells = get_cell_verts(n)
     return [[index(v) for v in cell] for cell in cells]
+
+def get_cell_edges(n):
+    edges = get_edges(n - 1)
+    celle = []
+    for m in range(n):
+        for b in [0, 1]:
+            cell = []
+            for v1, v2 in edges:
+                # print("m=", m)
+                # print("b=", b)
+                # print("v=", vinarize(v, n))
+                v1x = insert_bit(v1, b, m)
+                v2x = insert_bit(v2, b, m)
+                # print("vx=", vinarize(vx, n))
+                # cell.append(vx)
+                cell.append([v1x, v2x])
+                # print("\n")
+            celle.append(cell)
+    return celle
+
+# def get_cell_edges_IDs(n):
+#     cells = get_cell_edges(n)
+#     return [[[index(v1), index(v2)] for v1, v2 in cell] for cell in cells]
+
 
 def project(vert4D, d):
     '''
@@ -566,7 +600,7 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
             edgeList.append(edges)
             polyList.append(polys)
 
-        cells, indices, edges, faces = create_cells()
+        cells, indices, edges, faces = create_cells2()
 
         outputs['Verts4D'].sv_set([verts4D])
 
