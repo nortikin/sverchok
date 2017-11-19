@@ -217,6 +217,7 @@
     SvBmeshViewerNodeMK2
     IndexViewerNode
     SvTextureViewerNode
+    SvMetaballOutNode
     Sv3DviewPropsNode
 
 ## Text
@@ -248,7 +249,6 @@
     SvObjEdit
     SvFrameInfoNodeMK2
     SvEmptyOutNode
-    SvMetaballOutNode
     SvInstancerNode
     SvDupliInstancesMK4
 
