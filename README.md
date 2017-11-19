@@ -69,7 +69,9 @@ Authors:
 -  Ilya Protnov,  
 -  Eleanor Howick,    
 -  Walter Perdan,    
--  Marius Giurgi      
+-  Marius Giurgi,      
+-  Durman,     
+-  Ivan Prytov     
 
 Email: sverchok-b3d@yandex.ru  
 
@@ -143,7 +145,9 @@ Email: sverchok-b3d@yandex.ru
 -  Портнов Илья;  
 -  Ховик Элеонора;  
 -  Вальтер Пердан;    
--  Мариус Георгий.     
+-  Мариус Георгий     
+-  Дурман,       
+-  Портнов Иван      
 
 Email: sverchok-b3d@yandex.ru  
 
