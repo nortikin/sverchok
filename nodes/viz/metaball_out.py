@@ -184,7 +184,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         row.operator(show_hide, text='', icon=icons('hide_render')).fn_name = 'hide_render'
 
         col = layout.column(align=True)
-        col.prop(self, "meta_name", text='')
+        col.prop(self, "meta_name", text='', icon='OUTLINER_OB_META')
         col.operator(show_hide, text='Select Toggle').fn_name = 'mesh_select'
 
         layout.prop_search(
