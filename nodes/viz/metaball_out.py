@@ -54,6 +54,8 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
             description = "Meta object type",
             items = meta_types, update=updateNode)
 
+    material = StringProperty(name="Material", default='', update=updateNode)
+
     radius = FloatProperty(
         name='Radius',
         description='Metaball radius',
@@ -118,6 +120,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "meta_name")
         layout.prop(self, "meta_type")
+        layout.prop_search(
+                self, 'material', bpy.data, 'materials',
+                icon='MATERIAL_DATA')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -129,6 +134,12 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         meta = self.create_metaball()
         self.label = meta.name
 
+    def update_material(self):
+        if bpy.data.materials.get(self.material):
+            metaball_object = self.find_metaball()
+            if metaball_object:
+                metaball_object.active_material = bpy.data.materials[self.material]
+
     def process(self):
         if not self.inputs['Origins'].is_linked:
             return
@@ -137,6 +148,8 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         if not metaball_object:
             metaball_object = self.create_metaball()
             print("Created new metaball")
+
+        self.update_material()
 
         metaball_object.data.resolution = self.view_resolution
         metaball_object.data.render_resolution = self.render_resolution
@@ -166,12 +179,12 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
             element.use_negative = bool(negate)
 
         if len(items) == len(metaball_object.data.elements):
-            print('Updating existing metaball data')
+            #print('Updating existing metaball data')
 
             for (item, element) in zip(items, metaball_object.data.elements):
                 setup_element(element, item)
         else:
-            print('Recreating metaball data')
+            #print('Recreating metaball data')
             metaball_object.data.elements.clear()
 
             for item in items:
