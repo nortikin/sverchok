@@ -248,6 +248,7 @@
     SvObjEdit
     SvFrameInfoNodeMK2
     SvEmptyOutNode
+    SvMetaballOutNode
     SvInstancerNode
     SvDupliInstancesMK4
 
