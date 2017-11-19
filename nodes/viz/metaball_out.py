@@ -76,6 +76,11 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         description='Resolution for rendering',
         default=0.1, min=0.0, max=1.0, update=updateNode)
 
+    threshold = FloatProperty(
+        name='Threshold',
+        description='Influence of meta elements',
+        default=0.6, min=0.0, max=5.0, update=updateNode)
+
     def create_metaball(self):
         n_id = node_id(self)
         scene = bpy.context.scene
@@ -123,6 +128,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_search(
                 self, 'material', bpy.data, 'materials',
                 icon='MATERIAL_DATA')
+        layout.prop(self, "threshold")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -153,6 +159,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         metaball_object.data.resolution = self.view_resolution
         metaball_object.data.render_resolution = self.render_resolution
+        metaball_object.data.threshold = self.threshold
 
         self.label = metaball_object.name
 
