@@ -23,6 +23,32 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import SvGetSocketAnyType, node_id, Matrix_generate, match_long_repeat, updateNode
 
+class SvMetaballOperator(bpy.types.Operator):
+
+    bl_idname = "node.sv_callback_metaball"
+    bl_label = "Sverchok metaball general callback"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    fn_name = StringProperty(default='')
+
+    def hide_unhide(self, context, type_op):
+        node = context.node
+        metaball = node.find_metaball()
+
+        if type_op in {'hide', 'hide_render', 'hide_select'}:
+            op_value = getattr(node, type_op)
+            setattr(metaball, type_op, op_value)
+            setattr(node, type_op, not op_value)
+
+        elif type_op == 'mesh_select':
+            metaball.select = node.select_state
+            node.select_state = not node.select_state
+
+    def execute(self, context):
+        self.hide_unhide(context, self.fn_name)
+        return {'FINISHED'}
+
+
 class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
     '''Create Blender's metaball object'''
     bl_idname = 'SvMetaballOutNode'
@@ -43,6 +69,11 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         description='When enabled this will process incoming data',
         update=updateNode)
+
+    hide = BoolProperty(default=True)
+    hide_render = BoolProperty(default=True)
+    hide_select = BoolProperty(default=True)
+    select_state = BoolProperty(default=False)
 
     meta_name = StringProperty(default='SvMetaBall', name="Base name",
                                 description="Base name of metaball",
@@ -133,12 +164,32 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         view_icon = 'BLENDER' if self.activate else 'ERROR'
+        show_hide = 'node.sv_callback_metaball'
 
-        layout.prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-        layout.prop(self, "meta_name")
-        #layout.prop(self, "meta_type")
+        def icons(TYPE):
+            NAMED_ICON = {
+                'hide': 'RESTRICT_VIEW',
+                'hide_render': 'RESTRICT_RENDER',
+                'hide_select': 'RESTRICT_SELECT'}.get(TYPE)
+            if not NAMED_ICON:
+                return 'WARNING'
+            return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
+
+        row = layout.row(align=True)
+        row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
+        row.separator()
+
+        row.operator(show_hide, text='', icon=icons('hide')).fn_name = 'hide'
+        row.operator(show_hide, text='', icon=icons('hide_select')).fn_name = 'hide_select'
+        row.operator(show_hide, text='', icon=icons('hide_render')).fn_name = 'hide_render'
+
+        col = layout.column(align=True)
+        col.prop(self, "meta_name", text='')
+        col.operator(show_hide, text='Select Toggle').fn_name = 'mesh_select'
+
         layout.prop_search(
                 self, 'material', bpy.data, 'materials',
+                text='',
                 icon='MATERIAL_DATA')
         layout.prop(self, "threshold")
 
@@ -221,8 +272,10 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvMetaballOutNode)
+    bpy.utils.register_class(SvMetaballOperator)
 
 
 def unregister():
+    bpy.utils.unregister_class(SvMetaballOperator)
     bpy.utils.unregister_class(SvMetaballOutNode)
 
