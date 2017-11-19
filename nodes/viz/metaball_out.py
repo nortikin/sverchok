@@ -22,6 +22,7 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import SvGetSocketAnyType, node_id, Matrix_generate, match_long_repeat, updateNode
+from sverchok.utils.sv_viewer_utils import greek_alphabet
 
 class SvMetaballOperator(bpy.types.Operator):
 
@@ -154,7 +155,14 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
                 return obj
         return None
 
+    def get_next_name(self):
+        gai = bpy.context.scene.SvGreekAlphabet_index
+        bpy.context.scene.SvGreekAlphabet_index += 1
+        return 'Meta_' + greek_alphabet[gai]
+
     def sv_init(self, context):
+        self.meta_name = self.get_next_name()
+
         self.create_metaball()
         self.inputs.new('StringsSocket', 'Types').prop_name = "meta_type"
         self.inputs.new('MatrixSocket', 'Origins')
@@ -200,6 +208,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def copy(self, node):
         self.n_id = ''
+        self.meta_name = self.get_next_name()
         meta = self.create_metaball()
         self.label = meta.name
 
