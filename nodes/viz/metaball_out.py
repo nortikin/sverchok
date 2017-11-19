@@ -56,6 +56,8 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
             ("CUBE", "Cube", "Cube", "META_CUBE", 5)
         ]
 
+    meta_type_by_id = dict((item[4], item[0]) for item in meta_types)
+
     meta_type = EnumProperty(name='Meta type',
             description = "Meta object type",
             items = meta_types, update=updateNode)
@@ -123,6 +125,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.create_metaball()
+        self.inputs.new('StringsSocket', 'Types').prop_name = "meta_type"
         self.inputs.new('MatrixSocket', 'Origins')
         self.inputs.new('StringsSocket', "Radius").prop_name = "radius"
         self.inputs.new('StringsSocket', "Stiffness").prop_name = "stiffness"
@@ -133,7 +136,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         layout.prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
         layout.prop(self, "meta_name")
-        layout.prop(self, "meta_type")
+        #layout.prop(self, "meta_type")
         layout.prop_search(
                 self, 'material', bpy.data, 'materials',
                 icon='MATERIAL_DATA')
@@ -180,15 +183,20 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         radiuses = self.inputs['Radius'].sv_get()[0]
         stiffnesses = self.inputs['Stiffness'].sv_get()[0]
         negation = self.inputs['Negation'].sv_get(default=[[0]])[0]
+        types = self.inputs['Types'].sv_get()[0]
 
-        items = match_long_repeat([origins, radiuses, stiffnesses, negation])
+        items = match_long_repeat([origins, radiuses, stiffnesses, negation, types])
         items = list(zip(*items))
 
         def setup_element(element, item):
-            (origin, radius, stiffness, negate) = item
+            (origin, radius, stiffness, negate, meta_type) = item
             center, rotation, scale = origin.decompose()
             element.co = center[:3]
-            element.type = self.meta_type
+            if isinstance(meta_type, int):
+                if meta_type not in self.meta_type_by_id:
+                    raise Exception("`Types' input expects an integer number from 1 to 5")
+                meta_type = self.meta_type_by_id[meta_type]
+            element.type = meta_type
             element.radius = radius
             element.stiffness = stiffness
             element.rotation = rotation
