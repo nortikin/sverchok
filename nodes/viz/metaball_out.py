@@ -38,6 +38,12 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty(default='')
     metaball_ref_name = StringProperty(default='')
 
+    activate = BoolProperty(
+        name='Activate',
+        default=True,
+        description='When enabled this will process incoming data',
+        update=updateNode)
+
     meta_name = StringProperty(default='SvMetaBall', name="Base name",
                                 description="Base name of metaball",
                                 update=rename_metaball)
@@ -123,6 +129,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Negation')
 
     def draw_buttons(self, context, layout):
+        view_icon = 'BLENDER' if self.activate else 'ERROR'
+
+        layout.prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
         layout.prop(self, "meta_name")
         layout.prop(self, "meta_type")
         layout.prop_search(
@@ -147,6 +156,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
                 metaball_object.active_material = bpy.data.materials[self.material]
 
     def process(self):
+        if not self.activate:
+            return
+
         if not self.inputs['Origins'].is_linked:
             return
 
