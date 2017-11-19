@@ -568,10 +568,12 @@ class SvPrifilizer(bpy.types.Operator):
             curves = ['C ' if x in types or c in types else 'L ' for x,c in zip(curves_left,curves_right)]
             # line for if curve was before line or not
             line = False
+            curve = False
             for i,c in zip(range(len(ob_points)),curves):
                 co = ob_points[i].co
                 if not i:
                     # initial value
+                    values += '\n'
                     values += 'M '
                     co = ob_points[0].co[:]
                     values += self.stringadd(co,ob_points[0].select_control_point)
@@ -582,7 +584,8 @@ class SvPrifilizer(bpy.types.Operator):
                     continue
                 else:
                     if c == 'C ':
-                        line = False
+                        values += '\n'
+                        values += '#C.'+str(i)+'\n'
                         values += c
                         hr = ob_points[i-1].handle_right[:]
                         hl = ob_points[i].handle_left[:]
@@ -592,25 +595,33 @@ class SvPrifilizer(bpy.types.Operator):
                         values += self.stringadd(co,ob_points[i].select_control_point)
                         values += self.curve_points_count()
                         values += ' 0 '
-                        values += '\n'
+                        if curve:
+                            values += '\n'
                         out_points.append(hr[:])
                         out_points.append(hl[:])
                         out_points.append(co[:])
                         #namecur = ['C.'+str(i)]
                         out_names.extend([['C.'+str(i)+'h1'],['C.'+str(i)+'h2'],['C.'+str(i)+'k']])
+                        line = False
+                        curve = True
                     elif c == 'L ' and not line:
-                        line = True
+                        if curve:
+                            values += '\n'
+                        values += '#L.'+str(i)+'...'+'\n'
                         values += c
                         values += self.stringadd(co,ob_points[i].select_control_point)
-                        values += '\n'
                         out_points.append(co[:])
                         out_names.append(['L.'+str(i)])
+                        line = True
+                        curve = False
                     elif c == 'L ' and line:
                         values += self.stringadd(co,ob_points[i].select_control_point)
                         out_points.append(co[:])
                         out_names.append(['L.'+str(i)])
             if ob_points[0].handle_left_type in types:
                 line = False
+                values += '\n'
+                values += '#C.'+str(i+1)+'\n'
                 values += 'C '
                 hr = ob_points[-1].handle_right[:]
                 hl = ob_points[0].handle_left[:]
