@@ -16,6 +16,11 @@ Inputs
 
 This node has the following inputs:
 
+- **Types**. Type of meta elements to create. If input is not connected, the
+  value is selected from dropdown list. Values available are: Ball, Capsule,
+  Plane, Ellipsoid, Cube. Default is Ball. When the input is used, it accepts
+  integer numbers from 1 to 5, which corresponds to the meta types in the same
+  order.
 - **Origins**. This describes location, scale and rotation of metaball
   elements. Note that for different Meta element types interpretation of
   Rotation and Scale from input matrix differs. For example, for Capsule type
@@ -36,8 +41,6 @@ This node has the following parameters:
 
 - **UPD**. The node will process data only if this button is enabled.
 - **Base name**. Base part of name for Meta object to create (or update). Default is "SvMetaBall".
-- **Meta type**. Type of meta elements to create. Available are: Ball, Capsule,
-  Plane, Ellipsoid, Cube. Default is Ball.
 - **Material**. Material to be assigned to created object.
 - **Threshold**. Influence of meta elements. Default is 0.6.
 - **Resolution (viewport)**. Resolution of Meta object for viewport. Lesser value mean better resolution. Default is 0.2. This parameter can be set only in the N panel.
