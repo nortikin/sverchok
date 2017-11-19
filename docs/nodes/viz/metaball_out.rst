@@ -40,7 +40,11 @@ Parameters
 This node has the following parameters:
 
 - **UPD**. The node will process data only if this button is enabled.
-- **Base name**. Base part of name for Meta object to create (or update). Default is "SvMetaBall".
+- **Hide View** (eye icon). Toggle visibility of generated object in viewport.
+- **Hide Select** (pointer icon). Toggle ability to select for generated object.
+- **Hide Render** (render icon). Toggle renderability for generated object.
+- **Base name**. Base part of name for Meta object to create (or update). Default is "Meta_Alpha".
+- **Select Toggle**. Select / deselect generated object.
 - **Material**. Material to be assigned to created object.
 - **Threshold**. Influence of meta elements. Default is 0.6.
 - **Resolution (viewport)**. Resolution of Meta object for viewport. Lesser value mean better resolution. Default is 0.2. This parameter can be set only in the N panel.
