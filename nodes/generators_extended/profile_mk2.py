@@ -618,7 +618,7 @@ class SvPrifilizer(bpy.types.Operator):
                         values += self.stringadd(co,ob_points[i].select_control_point)
                         out_points.append(co[:])
                         out_names.append(['L.'+str(i)])
-            if ob_points[0].handle_left_type in types:
+            if ob_points[0].handle_left_type in types or ob_points[-1].handle_right_type in types:
                 line = False
                 values += '\n'
                 values += '#C.'+str(i+1)+'\n'
