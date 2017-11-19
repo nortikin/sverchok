@@ -1,0 +1,57 @@
+Metaball Out Node
+=================
+
+Functionality
+-------------
+
+This node generates Blender's Meta objects (aka metaballs) from input data. It
+creates a new Meta object or updates existing on each update of input data or
+parameters.
+
+Please refer to Blender's documentation and tutorials for more information
+about what is metaballs and how do they work.
+
+Inputs
+------
+
+This node has the following inputs:
+
+- **Origins**. This describes location, scale and rotation of metaball
+  elements. Note that for different Meta element types interpretation of
+  Rotation and Scale from input matrix differs. For example, for Capsule type
+  only X component of scale matters. This input can also accept vectors, in this
+  case they are treated as location components of matrices.
+- **Radius**. Radiuses of metaballs. Exact interpretation also depends on meta
+  element type. This can be specified as input or as a parameter.
+- **Stiffness**. Stiffness defines how much of the element to fill.  This can
+  be specified as input or as a parameter.
+- **Negation**. This input accepts a mask. Meta elements with Negation = true
+  will be considered negative. If this input is not connected, all meta
+  elements are considered positive.
+
+Parameters
+----------
+
+This node has the following parameters:
+
+- **UPD**. The node will process data only if this button is enabled.
+- **Base name**. Base part of name for Meta object to create (or update). Default is "SvMetaBall".
+- **Meta type**. Type of meta elements to create. Available are: Ball, Capsule,
+  Plane, Ellipsoid, Cube. Default is Ball.
+- **Material**. Material to be assigned to created object.
+- **Threshold**. Influence of meta elements. Default is 0.6.
+- **Resolution (viewport)**. Resolution of Meta object for viewport. Lesser value mean better resolution. Default is 0.2. This parameter can be set only in the N panel.
+- **Resolution (render)**. Resolution of Meta object for rendering. Lesser value mean better resolution. Default is 0.1. This parameter can be set only in the N panel.
+
+Outputs
+-------
+
+This node has no outputs. Instead, it creates or updates Meta objects in Blender's scene.
+
+Example of usage
+----------------
+
+Simple example:
+
+.. image:: https://user-images.githubusercontent.com/284644/32991616-802601f0-cd60-11e7-9ad8-ea5939183fbb.png
+
