@@ -60,5 +60,5 @@ Example of usage
 
 Simple example:
 
-.. image:: https://user-images.githubusercontent.com/284644/32991616-802601f0-cd60-11e7-9ad8-ea5939183fbb.png
+.. image:: https://user-images.githubusercontent.com/284644/32993860-54cdf1be-cd80-11e7-99fc-63d8f773ba70.png
 
