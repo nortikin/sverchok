@@ -47,6 +47,7 @@ def flip(n, v):
 
     return []
 
+
 def flipper(v):
     '''
         Flips each dimension of the binary N dimensional vector between 0 and 1
@@ -101,6 +102,7 @@ def edgesIDs_touching(v):
     es = edges_touching(v)
     return [[index(v1), index(v2)] for v1, v2 in es]
 
+
 def create_cells2():
     vertList = []
     indexList = []
@@ -111,6 +113,7 @@ def create_cells2():
     edgeList = get_cell_edges_IDs(4)
 
     return vertList, indexList, edgeList, faceList
+
 
 def create_cells():
     '''
@@ -192,12 +195,14 @@ def clear_bit(v, n):
     '''
     return v & (1 << n)
 
+
 def set_bit(v, n):
     '''
         Set the n-th bit in the binary representation of v.
         e.g.  v = 101101, n = 1 => 101111
     '''
     return v | (1 << n)
+
 
 def flip_bit(v, n):
     '''
@@ -206,6 +211,7 @@ def flip_bit(v, n):
     '''
     return v ^ (1 << n)
 
+
 def insert_bit(v, b, n):
     '''
         Insert a bit (0/1) at the n-th bit in the binary representation of v
@@ -213,6 +219,7 @@ def insert_bit(v, b, n):
         e.g.  v = 101101, b = 0, n = 2 => 1011001
     '''
     return (v & ~(2**n - 1)) << 1 | b << n | v & (2**n - 1)
+
 
 def vinarize(v, n):
     '''
@@ -240,9 +247,11 @@ def get_cell_verts(n):
             cellv.append(cell)
     return cellv
 
+
 def get_cell_verts_IDs(n):
     cells = get_cell_verts(n)
     return [[index(v) for v in cell] for cell in cells]
+
 
 def get_cell_edges(n):
     edges = get_edges(n - 1)
@@ -258,10 +267,11 @@ def get_cell_edges(n):
                 v2x = insert_bit(v2, b, m)
                 # print("vx=", vinarize(vx, n))
                 # cell.append(vx)
-                cell.append([vinarize(v1x,n), vinarize(v2x,n)])
+                cell.append([vinarize(v1x, n), vinarize(v2x, n)])
                 # print("\n")
             celle.append(cell)
     return celle
+
 
 def get_cell_edges_IDs(n):
     cells = get_cell_edges(n)
@@ -372,21 +382,24 @@ def generate_hypercube():
     if _hypercube:
         return
 
-    hypercube = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1] for l in [0, 1]]  # 4D indices
+    # hypercube = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1] for l in [0, 1]]  # 4D indices
+    # hypercube = [list(v) for v in itertools.product([0, 1], repeat=4)]
+    hypercube = list(itertools.product([0, 1], repeat=4))
 
     # TODO: find a better (and working) way to do this
-    # edges = []
+    edges = []
     faces = []
-    for k in [0, 1]:  # tries (and fails) to create the faces with normals pointing to the outside
-        for l in [0, 1]:
-            faces.append(list(map(hypercube.index, [[i ^ j, j, k, l] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
-            faces.append(list(map(hypercube.index, [[i ^ j, k, j, l] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
-            faces.append(list(map(hypercube.index, [[i ^ j, k, l, j] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
-            faces.append(list(map(hypercube.index, [[k, i ^ j, j, l] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
-            faces.append(list(map(hypercube.index, [[k, i ^ j, l, j] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
-            faces.append(list(map(hypercube.index, [[k, l, i ^ j, j] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
+    # for k in [0, 1]:  # tries (and fails) to create the faces with normals pointing to the outside
+    #     for l in [0, 1]:
+    #         faces.append(list(map(hypercube.index, [[i ^ j, j, k, l] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
+    #         faces.append(list(map(hypercube.index, [[i ^ j, k, j, l] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
+    #         faces.append(list(map(hypercube.index, [[i ^ j, k, l, j] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
+    #         faces.append(list(map(hypercube.index, [[k, i ^ j, j, l] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
+    #         faces.append(list(map(hypercube.index, [[k, i ^ j, l, j] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
+    #         faces.append(list(map(hypercube.index, [[k, l, i ^ j, j] for j in [k, k ^ 1] for i in [l, l ^ 1]])))
 
-    verts = [Vector([x, y, z, w]) for x, y, z, w in hypercube]
+    # verts = [Vector([x, y, z, w]) for x, y, z, w in hypercube]
+    verts = [Vector(v) for v in hypercube]
 
     edges = get_edges(4)
 
@@ -396,13 +409,15 @@ def generate_hypercube():
     cells["vertsIDs"] = []
     cells["faces"] = []
 
-    print("***", type(cells))
+    # print("***", type(cells))
+    names = [":".join(map(str, a)) for a in hypercube]
 
-    # store hypercube's verts, edges & polys, cells in a global dictionary
+    # store hypercube's verts, edges, polys & cells in a global dictionary
     _hypercube["verts"] = verts
     _hypercube["edges"] = edges
     _hypercube["faces"] = faces
     _hypercube["cells"] = cells
+    _hypercube["names"] = names
 
 
 def get_hypercube():
@@ -412,7 +427,7 @@ def get_hypercube():
     if not _hypercube:
         generate_hypercube()
 
-    return _hypercube["verts"], _hypercube["edges"], _hypercube["faces"], _hypercube["cells"]
+    return _hypercube["verts"], _hypercube["edges"], _hypercube["faces"], _hypercube["cells"], _hypercube["names"]
 
 
 class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -426,11 +441,10 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     def update_mode(self, context):
-        print("update_mode")
-        print(self.lastAngleType)
-        print(self.angleType)
+        '''
+            Update angle values when switching mode to keep the same radian values
+        '''
         if self.lastAngleType == self.angleType:
-            print("same as last.. return")
             return
 
         if self.lastAngleType == "RAD":
@@ -574,7 +588,7 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         params = match_long_repeat([input_a1, input_a2, input_a3, input_a4,
                                     input_a5, input_a6, input_d, input_s, input_t])
 
-        verts4D, edges, polys, cells = get_hypercube()
+        verts4D, edges, polys, cells, names = get_hypercube()
 
         vertList = []
         edgeList = []
@@ -586,7 +600,6 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
             a4 *= aU
             a5 *= aU
             a6 *= aU
-            # print(t)
             verts = transform_hypercube(verts4D, a1, a2, a3, a4, a5, a6, d, s, t)
             vertList.append(verts)
             edgeList.append(edges)
@@ -609,10 +622,6 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['Cells Edges'].sv_set(cellEdges)
         outputs['Cells Faces'].sv_set(cellFaces)
 
-        hypercube = [[i, j, k, l] for i in [0, 1] for j in [0, 1] for k in [0, 1] for l in [0, 1]]  # 4D indices
-
-        names = [str(a).strip('[,]') for a in hypercube]
-        # print(names)
         outputs['Vert Names'].sv_set([names])
 
 
