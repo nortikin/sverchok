@@ -58,7 +58,7 @@ def icon(display_icon):
     if get_icon_switch():
         if display_icon.startswith('SV_'):
             kws = {'icon_value': custom_icon(display_icon)}
-        else: 
+        elif display_icon != 'OUTLINER_OB_EMPTY':
             kws = {'icon': display_icon}
     return kws
 
