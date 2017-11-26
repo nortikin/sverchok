@@ -102,9 +102,18 @@ def juggle_and_join(node_cats):
 
     return node_cats
 
+# We are creating and registering node adding operators dynamically.
+# So, we have to remember them in order to unregister them when needed.
 node_add_operators = {}
 
 class SverchNodeItem(object):
+    """
+    A local replacement of nodeitems_utils.NodeItem.
+    This calls our custom operator (see make_add_operator) instead of
+    standard node.add_node. Having this replacement item class allows us to:
+    * Have icons in the T panel
+    * Have arbitrary tooltips in the T panel.
+    """
     def __init__(self, nodetype, label=None, settings=None, poll=None):
         self.nodetype = nodetype
         self._label = label
@@ -130,6 +139,11 @@ class SverchNodeItem(object):
         return get_node_idname_for_operator(self.nodetype)
 
     def make_add_operator(self):
+        """
+        Create operator class which adds specific type of node.
+        Tooltip (docstring) for that operator is copied from 
+        node class docstring.
+        """
 
         global node_add_operators
         
@@ -137,7 +151,7 @@ class SverchNodeItem(object):
             """Wrapper for node.add_node operator to add specific node"""
 
             bl_idname = "node.sv_add_" + self.get_idname()
-            bl_label = "Add node"
+            bl_label = "Add {} node".format(self.label)
             bl_options = {'REGISTER', 'UNDO'}
 
             def execute(self, context):
@@ -170,6 +184,7 @@ class SverchNodeItem(object):
             ops.value = setting[1]
 
 def get_node_idname_for_operator(nodetype):
+    """Select valid bl_idname for node to create node adding operator bl_idname."""
     rna = getattr(bpy.types, nodetype).bl_rna
     if hasattr(rna, 'bl_idname'):
         return rna.bl_idname.lower()
@@ -177,6 +192,11 @@ def get_node_idname_for_operator(nodetype):
         return rna.name.lower()
 
 def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=None):
+    """
+    Draw node adding operator button.
+    This is to be used both in Shift-A menu and in T panel.
+    """
+
     default_context = bpy.app.translations.contexts.default
 
     if label is None:
@@ -283,10 +303,12 @@ def reload_menu():
     build_help_remap(original_categories)
 
 def register_node_add_operators():
+    """Register all our custom node adding operators"""
     for idname in node_add_operators:
         bpy.utils.register_class(node_add_operators[idname])
 
 def unregister_node_add_operators():
+    """Unregister all our custom node adding operators"""
     for idname in node_add_operators:
         bpy.utils.unregister_class(node_add_operators[idname])
 
