@@ -276,10 +276,19 @@ def reload_menu():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
+        unregister_node_add_operators()
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+    register_node_add_operators()
     
     build_help_remap(original_categories)
 
+def register_node_add_operators():
+    for idname in node_add_operators:
+        bpy.utils.register_class(node_add_operators[idname])
+
+def unregister_node_add_operators():
+    for idname in node_add_operators:
+        bpy.utils.unregister_class(node_add_operators[idname])
 
 def register():
     menu, node_count, original_categories = make_categories()
@@ -295,6 +304,5 @@ def register():
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
-    for idname in node_add_operators:
-        bpy.utils.unregister_class(node_add_operators[idname])
+    unregister_node_add_operators()
 

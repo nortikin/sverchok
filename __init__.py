@@ -153,7 +153,6 @@ if reload_event:
     for node in node_list:
         importlib.reload(node)
     old_nodes.reload_old()
-    menu.reload_menu()
 
 import bpy
 from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
@@ -179,6 +178,7 @@ def register():
     auto_gather_node_classes()
     if reload_event:
         data_structure.RELOAD_EVENT = True
+        menu.reload_menu()
         print("Sverchok is reloaded, press update")
 
 
@@ -187,4 +187,5 @@ def unregister():
     node_classes.clear()
     for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
+            #print("Unregistering module: {}".format(m.__name__))
             m.unregister()
