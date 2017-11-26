@@ -163,8 +163,11 @@ from sverchok.core import node_defaults
 
 def register():
     for m in imported_modules + node_list:
-        if hasattr(m, "register"):
-            m.register()
+        if m.__name__ != "sverchok.menu":
+            if hasattr(m, "register"):
+                #print("Registering module: {}".format(m.__name__))
+                m.register()
+    menu.register()
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__

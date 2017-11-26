@@ -24,6 +24,7 @@ from collections import OrderedDict
 import bpy
 from nodeitems_utils import NodeCategory, NodeItem, NodeItemCustom
 import nodeitems_utils
+import bl_operators
 
 import sverchok
 from sverchok.utils import get_node_class_reference
@@ -100,7 +101,76 @@ def juggle_and_join(node_cats):
 
     return node_cats
 
+node_add_operators = {}
 
+class SverchNodeItem(object):
+    def __init__(self, nodetype, label=None, settings=None, poll=None):
+        self.nodetype = nodetype
+        self._label = label
+        if settings is None:
+            self.settings = {}
+        else:
+            self.settings = settings
+        self.poll = poll
+
+        self.make_add_operator()
+
+    @property
+    def label(self):
+        if self._label:
+            return self._label
+        else:
+            return self.get_node_class().bl_rna.name
+
+    def get_node_class(self):
+        return getattr(bpy.types, self.nodetype)
+
+    def get_idname(self):
+        return self.nodetype.lower()
+
+    def make_add_operator(self):
+
+        global node_add_operators
+        
+        class SverchNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
+            """Wrapper for node.add_node operator to add specific node"""
+
+            bl_idname = "node.sv_add_" + self.get_idname()
+            bl_label = "Add node"
+            bl_options = {'REGISTER', 'UNDO'}
+
+            def execute(self, context):
+                if self.properties.is_property_set("type"):
+                    self.create_node(context)
+                    return {'FINISHED'}
+                else:
+                    return {'CANCELLED'}
+
+        SverchNodeAddOperator.__name__ = self.get_node_class().__name__
+        SverchNodeAddOperator.__doc__ = self.get_node_class().__doc__
+
+        node_add_operators[self.get_idname()] = SverchNodeAddOperator
+        bpy.utils.register_class(SverchNodeAddOperator)
+
+    def get_icon(self):
+        rna = self.get_node_class().bl_rna
+        if hasattr(rna, "bl_icon"):
+            return rna.bl_icon
+        else:
+            return "RNA"
+
+    @staticmethod
+    def draw(self, layout, context):
+        default_context = bpy.app.translations.contexts.default
+
+        props = layout.operator("node.sv_add_" + self.get_idname(), icon=self.get_icon(), text=self.label, text_ctxt=default_context)
+        props.type = self.nodetype
+        props.use_transform = True
+
+        for setting in self.settings.items():
+            ops = props.settings.add()
+            ops.name = setting[0]
+            ops.value = setting[1]
 
 def sv_group_items(context):
     """
@@ -168,7 +238,7 @@ def make_categories():
             SverchNodeCategory(
                 name_big,
                 category,
-                items=[NodeItem(props[0]) for props in nodes if not props[0] == 'separator']))
+                items=[SverchNodeItem(props[0]) for props in nodes if not props[0] == 'separator']))
         node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 
@@ -198,3 +268,6 @@ def register():
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
+    for idname in node_add_operators:
+        bpy.utils.unregister_class(node_add_operators[idname])
+
