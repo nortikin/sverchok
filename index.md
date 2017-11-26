@@ -19,6 +19,7 @@
     SphereNode
     SvIcosphereNode
     SvTorusNode
+    SvSuzanneNode
     ---
     BasicSplineNode
     svBasicArcNode
