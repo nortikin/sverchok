@@ -167,6 +167,7 @@ def register():
             if hasattr(m, "register"):
                 #print("Registering module: {}".format(m.__name__))
                 m.register()
+    # We have to register menu module after all nodes are registered
     menu.register()
     # this is used to access preferences, should/could be hidden
     # in an interface

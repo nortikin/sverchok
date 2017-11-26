@@ -29,6 +29,7 @@ import bl_operators
 import sverchok
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_help import build_help_remap
+from sverchok.ui.sv_icons import node_icon, icon
 
 
 class SverchNodeCategory(NodeCategory):
@@ -161,7 +162,7 @@ class SverchNodeItem(object):
 
     @staticmethod
     def draw(self, layout, context):
-        add = draw_add_node_operator(layout, self.nodetype, label=self._label, icon=self.get_icon())
+        add = draw_add_node_operator(layout, self.nodetype, label=self._label, icon_name=self.get_icon())
 
         for setting in self.settings.items():
             ops = add.settings.add()
@@ -175,7 +176,7 @@ def get_node_idname_for_operator(nodetype):
     else:
         return rna.name.lower()
 
-def draw_add_node_operator(layout, nodetype, label=None, icon=None, params=None):
+def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=None):
     default_context = bpy.app.translations.contexts.default
 
     if label is None:
@@ -188,8 +189,8 @@ def draw_add_node_operator(layout, nodetype, label=None, icon=None, params=None)
     if params is None:
         params = dict(text=label)
     params['text_ctxt'] = default_context
-    if icon is not None:
-        params['icon'] = icon
+    if icon_name is not None:
+        params.update(**icon(icon_name))
 
     add = layout.operator("node.sv_add_" + get_node_idname_for_operator(nodetype), **params)
                             
