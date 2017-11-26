@@ -27,7 +27,7 @@ but massively condensed for sanity.
 import bpy
 
 import sverchok
-from sverchok.menu import make_node_cats
+from sverchok.menu import make_node_cats, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
 from sverchok.ui.sv_icons import custom_icon
 # from nodeitems_utils import _node_categories
@@ -74,7 +74,6 @@ def node_icon(node_ref):
 
 def layout_draw_categories(layout, node_details):
 
-    add_n_grab = 'node.add_node'
     for node_info in node_details:
 
         if node_info[0] == 'separator':
@@ -95,10 +94,7 @@ def layout_draw_categories(layout, node_details):
         else:
             continue
 
-        node_op = layout.operator(add_n_grab, **layout_params)
-        node_op.type = bl_idname
-        node_op.use_transform = True
-
+        node_op = draw_add_node_operator(layout, bl_idname, params=layout_params)
 
 # does not get registered
 class NodeViewMenuTemplate(bpy.types.Menu):

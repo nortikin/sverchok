@@ -126,7 +126,7 @@ class SverchNodeItem(object):
         return getattr(bpy.types, self.nodetype)
 
     def get_idname(self):
-        return self.nodetype.lower()
+        return get_node_idname_for_operator(self.nodetype)
 
     def make_add_operator(self):
 
@@ -161,16 +161,42 @@ class SverchNodeItem(object):
 
     @staticmethod
     def draw(self, layout, context):
-        default_context = bpy.app.translations.contexts.default
-
-        props = layout.operator("node.sv_add_" + self.get_idname(), icon=self.get_icon(), text=self.label, text_ctxt=default_context)
-        props.type = self.nodetype
-        props.use_transform = True
+        add = draw_add_node_operator(layout, self.nodetype, label=self._label, icon=self.get_icon())
 
         for setting in self.settings.items():
-            ops = props.settings.add()
+            ops = add.settings.add()
             ops.name = setting[0]
             ops.value = setting[1]
+
+def get_node_idname_for_operator(nodetype):
+    rna = getattr(bpy.types, nodetype).bl_rna
+    if hasattr(rna, 'bl_idname'):
+        return rna.bl_idname.lower()
+    else:
+        return rna.name.lower()
+
+def draw_add_node_operator(layout, nodetype, label=None, icon=None, params=None):
+    default_context = bpy.app.translations.contexts.default
+
+    if label is None:
+        rna = getattr(bpy.types, nodetype).bl_rna
+        if hasattr(rna, 'bl_label'):
+            label = rna.bl_label
+        else:
+            label = rna.name
+
+    if params is None:
+        params = dict(text=label)
+    params['text_ctxt'] = default_context
+    if icon is not None:
+        params['icon'] = icon
+
+    add = layout.operator("node.sv_add_" + get_node_idname_for_operator(nodetype), **params)
+                            
+    add.type = nodetype
+    add.use_transform = True
+
+    return add
 
 def sv_group_items(context):
     """
