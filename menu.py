@@ -176,7 +176,7 @@ class SverchNodeItem(object):
 
     @staticmethod
     def draw(self, layout, context):
-        add = draw_add_node_operator(layout, self.nodetype, label=self._label, icon_name=self.get_icon())
+        add = draw_add_node_operator(layout, self.nodetype, label=self._label)
 
         for setting in self.settings.items():
             ops = add.settings.add()
@@ -198,19 +198,21 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
     """
 
     default_context = bpy.app.translations.contexts.default
+    node_rna = getattr(bpy.types, nodetype).bl_rna
 
     if label is None:
-        rna = getattr(bpy.types, nodetype).bl_rna
-        if hasattr(rna, 'bl_label'):
-            label = rna.bl_label
+        if hasattr(node_rna, 'bl_label'):
+            label = node_rna.bl_label
         else:
-            label = rna.name
+            label = node_rna.name
 
     if params is None:
         params = dict(text=label)
     params['text_ctxt'] = default_context
     if icon_name is not None:
         params.update(**icon(icon_name))
+    else:
+        params.update(**node_icon(node_rna))
 
     add = layout.operator("node.sv_add_" + get_node_idname_for_operator(nodetype), **params)
                             
