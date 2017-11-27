@@ -45,7 +45,7 @@ Install Sverchok as you would any blender addon.
 -  _Upgrade Sverchok on fly_   
    Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
    Press `Update Sverchok` button.   
-   And at the end press `F8` button to reload addons. In next Blender, run panel will appear with a new version number.   
+   At the end press F8 to reload add-ons. In NodeView the new version number will appear in the N-panel.   
 
 ### Troubleshooting Installation Errors
 
