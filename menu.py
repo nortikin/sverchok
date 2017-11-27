@@ -162,8 +162,13 @@ class SverchNodeItem(object):
                 operator.create_node(context)
                 return {'FINISHED'}
 
-        SverchNodeAddOperator.__name__ = self.get_node_class().__name__
-        SverchNodeAddOperator.__doc__ = self.get_node_class().__doc__
+        node_class = self.get_node_class()
+        SverchNodeAddOperator.__name__ = node_class.__name__
+
+        if hasattr(node_class, "get_tooltip"):
+            SverchNodeAddOperator.__doc__ = node_class.get_tooltip()
+        else:
+            SverchNodeAddOperator.__doc__ = node_class.__doc__
 
         node_add_operators[self.get_idname()] = SverchNodeAddOperator
         bpy.utils.register_class(SverchNodeAddOperator)
