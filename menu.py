@@ -154,12 +154,13 @@ class SverchNodeItem(object):
             bl_label = "Add {} node".format(self.label)
             bl_options = {'REGISTER', 'UNDO'}
 
-            def execute(self, context):
-                if self.properties.is_property_set("type"):
-                    self.create_node(context)
-                    return {'FINISHED'}
-                else:
-                    return {'CANCELLED'}
+            def execute(operator, context):
+                # please not be confused: "operator" here references to
+                # SverchNodeAddOperator instance, and "self" references to
+                # SverchNodeItem instance.
+                operator.type = self.nodetype
+                operator.create_node(context)
+                return {'FINISHED'}
 
         SverchNodeAddOperator.__name__ = self.get_node_class().__name__
         SverchNodeAddOperator.__doc__ = self.get_node_class().__doc__
