@@ -19,6 +19,7 @@
 
 import time
 import math
+import email
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
@@ -59,6 +60,71 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
+class SvDocstring(object):
+    """
+    A class that incapsulates parsing of Sverchok's nodes docstrings.
+    As a standard, RFC822-style syntax is to be used. The docstring should
+    start with headers:
+
+            Brief: This should be very short (two or three words, not much more) to be used in Ctrl-Space search menu.
+            Tooltip: Longer description to be present as a tooltip in UI.
+
+            More detailed description with technical information or historical notes goes after empty line.
+            This is not shown anywhere in the UI.
+
+    Other headers can possibly be introduced later. Unknown headers are just ignored.
+    For compatibility reasons, the old docstring syntax is also supported:
+
+            Brief description /// Longer description
+
+    If we can't parse Brief and Tooltip from docstring, then:
+    * The whole docstring will be used as tooltip
+    * The node will not have shorthand for search.
+    """
+
+    def __init__(self, docstring):
+        self.docstring = docstring
+        if docstring:
+            self.message = email.message_from_string(docstring)
+        else:
+            self.message = {}
+
+    def get(self, header, default=None):
+        """Obtain any header from docstring."""
+        return self.message.get(header, default)
+
+    def __getitem__(self, header):
+        return self.message[header]
+
+    def get_shorthand(self, fallback=True):
+        """
+        Get shorthand to be used in search menu.
+        If fallback == True, then whole docstring
+        will be returned for case when we can't 
+        find valid shorthand specification.
+        """
+
+        if 'Brief' in self.message:
+            return self.message['Brief']
+        elif '///' in self.docstring:
+            return self.docstring.strip().split('///')[0]
+        elif fallback:
+            return self.docstring
+        else:
+            return None
+    
+    def has_shorthand(self):
+        return self.get_shorthand() is not None
+
+    def get_tooltip(self):
+        """Get tooltip"""
+
+        if 'Tooltip' in self.message:
+            return self.message['Tooltip']
+        elif '///' in self.docstring:
+            return self.docstring.strip().split('///')[1]
+        else:
+            return self.docstring
 
 # this property group is only used by the old viewer draw
 class SvColors(bpy.types.PropertyGroup):
@@ -456,6 +522,16 @@ class SverchCustomTreeNode:
         if hasattr(self, "output_descriptors"):
             for descriptor in self.output_descriptors:
                 descriptor.create(self)
+
+    @classmethod
+    def get_tooltip(cls):
+        """
+        This method is to be overriden in specific node class if node author
+        does not like for some reason that tooltip is extracted from node's
+        docstring.
+        """
+
+        return "Standard: {}".format(cls.__doc__)
 
     def sv_init(self, context):
         self.create_sockets()
