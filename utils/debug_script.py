@@ -19,3 +19,6 @@ class TestOp(bpy.types.Operator):
 
 def register():
     bpy.utils.register_class(TestOp)
+
+def unregister():
+    bpy.utils.unregister_class(TestOp)

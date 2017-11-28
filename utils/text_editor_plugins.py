@@ -391,6 +391,8 @@ def add_keymap():
 
 def remove_keymap():
 
+    print('clearing text editor keymaps')
+
     for km, kmi in addon_keymaps:
         km.keymap_items.remove(kmi)
     addon_keymaps.clear()
@@ -405,7 +407,7 @@ def register():
 
 
 def unregister():
-    remove_keymap()
+    # remove_keymap()
     bpy.utils.unregister_class(SvVarnamesToSockets)
     bpy.utils.unregister_class(SvLangConverter)
     bpy.utils.unregister_class(BasicTextMenu)
