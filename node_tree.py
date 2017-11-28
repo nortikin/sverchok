@@ -67,7 +67,7 @@ class SvDocstring(object):
     As a standard, RFC822-style syntax is to be used. The docstring should
     start with headers:
 
-            Brief: This should be very short (two or three words, not much more) to be used in Ctrl-Space search menu.
+            Triggers: This should be very short (two or three words, not much more) to be used in Ctrl-Space search menu.
             Tooltip: Longer description to be present as a tooltip in UI.
 
             More detailed description with technical information or historical notes goes after empty line.
@@ -76,9 +76,9 @@ class SvDocstring(object):
     Other headers can possibly be introduced later. Unknown headers are just ignored.
     For compatibility reasons, the old docstring syntax is also supported:
 
-            Brief description /// Longer description
+            Triggers description /// Longer description
 
-    If we can't parse Brief and Tooltip from docstring, then:
+    If we can't parse Triggers and Tooltip from docstring, then:
     * The whole docstring will be used as tooltip
     * The node will not have shorthand for search.
     """
@@ -136,8 +136,8 @@ class SvDocstring(object):
         find valid shorthand specification.
         """
 
-        if 'Brief' in self.message:
-            return self.message['Brief']
+        if 'Triggers' in self.message:
+            return self.message['Triggers']
         elif not self.docstring:
             return ""
         elif '///' in self.docstring:
