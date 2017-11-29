@@ -9,30 +9,45 @@ This Node sort the sequence of index according to python sort, with different cr
 Inputs
 ------
 
-Inputs are vertices lists(vectors, tuple) and polygons/edges as integer lists,
-and optional inputs(Vector, matrix and user data)
+**Vertices** - vertices lists (vectors, tuple)
+
+**PolyEdge** - polygons/edges as integer lists
+
+Optional inputs
+^^^^^^^^^^^^^^^
+
+**Base point** - vector
+
+**Mat** - matrix
+
+**Index Data** -
+
 
 Parameters
 ----------
 
-+--------------+---------------+-------------+----------------------------------------------------+
-| Param        | Type          | Default     | Description                                        |
-+==============+===============+=============+====================================================+
-| **Vertices** | Vector        |             | vertices from nodes generators or lists (in, out)  |
-+--------------+---------------+-------------+----------------------------------------------------+
-| **PolyEdge** | Int           |             | index of polgons or edges     (in, out)            |
-+--------------+---------------+-------------+----------------------------------------------------+
-| **Sortmode** | XYZ, Dist,    | XYZ         | will sort the index according to different criteria|
-|              | Axis, User    |             |                                                    |
-+--------------+---------------+-------------+----------------------------------------------------+
-| **Item order** | Int         |             | output the index sequence                          |
-+--------------+---------------+-------------+----------------------------------------------------+
++----------------+---------------+-------------+----------------------------------------------------+
+| Param          | Type          | Default     | Description                                        |
++================+===============+=============+====================================================+
+| **Vertices**   | Vector        |             | vertices from nodes generators or lists (in, out)  |
++----------------+---------------+-------------+----------------------------------------------------+
+| **PolyEdge**   | Int           |             | index of polygons or edges     (in, out)           |
++----------------+---------------+-------------+----------------------------------------------------+
+| **Sortmode**   | XYZ, Dist,    | XYZ         | will sort the index according to different criteria|
+|                | Axis, User    |             |                                                    |
++----------------+---------------+-------------+----------------------------------------------------+
+| **Item order** | Int           |             | output the index sequence                          |
++----------------+---------------+-------------+----------------------------------------------------+
+
 
 Outputs
 -------
 
-The node will output the Vertices as list of Vectors(tuples), Polys/edges as int
-and the sorted list of Vertices.
+**Vertices** - list of Vectors (tuples)
+
+**PolyEdge** - polygons/edges as integer value of index of polygons/edges
+
+**Item order** - sorted list of vertices
 
 Example of usage
 ----------------

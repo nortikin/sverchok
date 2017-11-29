@@ -1,9 +1,10 @@
 List Split
 ==========
+
 Functionality
 -------------
 
-Split list into chuncks. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It shoudld accepts any type of data native to Sverchok.
+Split list into chunks. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It should accepts any type of data native to Sverchok.
 
 Inputs
 ------
@@ -11,9 +12,9 @@ Inputs
 +--------------+---------------------------------------------------+
 | Input        | Description                                       |
 +==============+===================================================+
-| Data         | The data - can be anything                        | 
+| Data         | The data - can be anything                        |
 +--------------+---------------------------------------------------+
-| Split size   | Size of individual chuncks                        |
+| Split size   | Size of individual chunks                         |
 +--------------+---------------------------------------------------+
 
 Parameters
@@ -26,8 +27,9 @@ It is essentially how many chained element look-ups you do on a list. If ``SomeL
 
 **unwrap**
 
-Unrwap the list if possible, this generally what you want.
+Unwrap the list if possible, this generally what you want.
 [[1, 2, 3, 4]] size 2.
+
 +--------+-------------------+
 | Unwrap | Result            |
 +========+===================+
@@ -38,14 +40,14 @@ Unrwap the list if possible, this generally what you want.
 
 **Split size**
 
-Size of output chuncks.
+Size of output chunks.
 
 Outputs
 -------
 
 **Split**
 
-The list split on the selected level into chuncks, the last chunck will be what is left over.    
+The list split on the selected level into chunks, the last chunk will be what is left over.
 
 Examples
 --------
