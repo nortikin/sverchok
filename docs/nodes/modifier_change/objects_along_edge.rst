@@ -1,16 +1,29 @@
 Duplicate along Edge
 ====================
 
-*destination after Beta: Modifier Change*
-
 Functionality
 -------------
 
-This node creates an array of copies of one (donor) mesh and aligns it along given recipient segment (edge). Count of objects in array can be specified by user or detected automatically, based on size of donor mesh and length of recipient edge. Donor mesh can be scaled automatically to fill all length of recipient edge.
+This node creates an array of copies of one (donor) mesh and aligns it along
+given recipient segment (edge). Count of objects in array can be specified by
+user or detected automatically, based on size of donor mesh and length of
+recipient edge. Donor mesh can be scaled automatically to fill all length of
+recipient edge.
 
 Donor objects are rotated so that specified axis of object is aligned to recipient edge.
 
-This node also can output transformation matrices, which should be applied to donor object to be aligned along recipient edge. By default, this node already applies that matrices to donor object; but you can turn this off, and apply matrices to donor object in another node, or apply them to different objects.
+It is in general not a trivial task to rotate a 3D object along a vector,
+because there are always 2 other axes of object and it is not clear where
+should they be directed to. So, this node supports 3 different algorithms of
+object rotation calculation. In many simple cases, all these algorithms will
+give exactly the same result. But in more complex setups, or in some corner
+cases, results can be very different. So, just try all algorithms and see which
+one fits you better.
+
+This node also can output transformation matrices, which should be applied to
+donor object to be aligned along recipient edge. By default, this node already
+applies that matrices to donor object; but you can turn this off, and apply
+matrices to donor object in another node, or apply them to different objects.
 
 Inputs
 ------
@@ -50,6 +63,20 @@ This node has the following parameters:
 | **Orientation**  | X or Y or Z    | X           | Which axis of donor object should be aligned to direction of the |
 |                  |                |             | recipient edge.                                                  |
 +------------------+----------------+-------------+------------------------------------------------------------------+
+| **Algorithm**    | Householder    | Householder | * Householder: calculate rotation by using Householder's         |
+|                  |                |             |   reflection matrix (see Wikipedia_ article).                    |
+|                  | or Tracking    |             | * Tracking: use the same algorithm as in Blender's "TrackTo"     |
+|                  |                |             |   kinematic constraint. This algorithm gives you a bit more      |
+|                  |                |             |   flexibility comparing to other, by allowing to select the Up   |
+|                  |                |             |   axis.                                                          |
+|                  | or Rotation    |             | * Rotation difference: calculate rotation as rotation difference |
+|                  | Difference     |             |   between two vertices.                                          |
++------------------+----------------+-------------+------------------------------------------------------------------+
+| **Up axis**      | X or Y or Z    | Z           | Axis of donor object that should point up in result. This        |
+|                  |                |             | parameter is available only when Tracking algorithm is selected. |
+|                  |                |             | Value of this parameter must differ from **Orientation**         |
+|                  |                |             | parameter, otherwise you will get an error.                      |
++------------------+----------------+-------------+------------------------------------------------------------------+
 | **Input mode**   | Edges or Fixed | Edges       | * Edges: recipient edges will be determined as all edges from    |
 |                  |                |             |   the ``EdgesR`` input between vertices from ``VerticesR``       |
 |                  |                |             |   input.                                                         |
@@ -72,6 +99,8 @@ This node has the following parameters:
 |                  |                |             | from both sides. Default value of zero means fill whole length   |
 |                  |                |             | available. Maximum value 0.49 means use only central 1% of edge. |
 +------------------+----------------+-------------+------------------------------------------------------------------+
+
+.. _Wikipedia: https://en.wikipedia.org/wiki/QR_decomposition#Using_Householder_reflections
 
 Outputs
 -------
