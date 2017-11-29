@@ -19,6 +19,7 @@
     SphereNode
     SvIcosphereNode
     SvTorusNode
+    SvSuzanneNode
     ---
     BasicSplineNode
     svBasicArcNode
@@ -63,8 +64,8 @@
 
 ## Transforms
     SvRotationNode
-    SvScaleNode
-    VectorMoveNode
+    SvScaleNodeMK2
+    SvMoveNodeMK2
     SvMirrorNode
     MatrixApplyNode
     SvSimpleDeformNode
@@ -216,6 +217,7 @@
     ViewerNode2
     SvBmeshViewerNodeMK2
     IndexViewerNode
+    SvMetaballOutNode
     SvTextureViewerNode
     Sv3DviewPropsNode
 

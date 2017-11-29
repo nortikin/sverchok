@@ -132,7 +132,7 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
             bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=0.000002)
             fres = bmesh.ops.edgenet_prepare(bm, edges=bm.edges[:])
             
-            if TRI:
+            if not TRI:
                 # Alt + F
                 bmesh.ops.triangle_fill(bm, use_beauty=True, use_dissolve=False, edges=fres['edges'])
             else:
@@ -239,3 +239,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(CrossSectionNode)
+
+if __name__ == '__main__':
+    register()

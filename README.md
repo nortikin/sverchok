@@ -22,11 +22,11 @@ Comes with more than 150 nodes to help create and manipulate geometry. Combining
 
   - do parametric constructions
   - easily change parameters with sliders and formulas    
-  - power nodes such as: Profile parametric, UVconnect, Generetive art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops,Bmesh props, etc   
+  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.
   - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools 
   - calculate areas, volume, and perform other geometric analysis
   - make or import CSV tables or custom formats
-  - use Vector fields, create them, visualize data.
+  - use Vector fields, create them, visualize data
   - even code your own custom nodes in python with Scripted node
   - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline
   - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes
@@ -45,13 +45,13 @@ Install Sverchok as you would any blender addon.
 -  _Upgrade Sverchok on fly_   
    Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
    Press `Update Sverchok` button.   
-   And at the end press `F8` button to reload addons. In next blender run in panel will appear new version number.   
+   At the end press F8 to reload add-ons. In NodeView the new version number will appear in the N-panel.   
 
 ### Troubleshooting Installation Errors
 
 If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
 
-During install from preferences, if an error is raised - close and run blender again and activate sverchok.  
+During install from preferences, if an error is raised - close and run Blender again and activate sverchok.  
 
 In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
 
@@ -69,7 +69,9 @@ Authors:
 -  Ilya Protnov,  
 -  Eleanor Howick,    
 -  Walter Perdan,    
--  Marius Giurgi      
+-  Marius Giurgi,      
+-  Durman,     
+-  Ivan Prytov     
 
 Email: sverchok-b3d@yandex.ru  
 
@@ -80,7 +82,7 @@ Email: sverchok-b3d@yandex.ru
 **дополнение к**: [Blender](http://blender.org)  (версия *2.77* и выше).  
 **текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**требования**: Python 3.5,  numpy, они оба присутствуют в Blender  
+**требования**: Python 3.5, numpy, они оба присутствуют в Blender  
 
 
   
@@ -143,7 +145,9 @@ Email: sverchok-b3d@yandex.ru
 -  Портнов Илья;  
 -  Ховик Элеонора;  
 -  Вальтер Пердан;    
--  Мариус Георгий.     
+-  Мариус Георгий     
+-  Дурман,       
+-  Портнов Иван      
 
 Email: sverchok-b3d@yandex.ru  
 
