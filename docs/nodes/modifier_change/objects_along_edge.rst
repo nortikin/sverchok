@@ -87,9 +87,10 @@ This node has the following parameters:
 | **Scale all      | Bool           | False       | If False, then donor object  will be scaled only along axis      |
 | axes**           |                |             | is aligned with recipient edge direction. If True, objects will  |
 |                  |                |             | be scaled along all axes (by the same factor).                   |
+|                  |                |             | This parameter is available only in the N panel.                 |
 +------------------+----------------+-------------+------------------------------------------------------------------+
 | **Apply          | Bool           | True        | Whether to apply calculated matrices to created objects.         |
-| matrces**        |                |             |                                                                  |
+| matrces**        |                |             | This parameter is available only in the N panel.                 |
 +------------------+----------------+-------------+------------------------------------------------------------------+
 | **Count**        | Int            | 3           | Number of objects in array. This parameter can be determined     |
 |                  |                |             | from the corresponding input. It is used only in "Count" scaling |
