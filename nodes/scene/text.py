@@ -406,11 +406,11 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
                     # sys.stderr.write('ERROR: %s\n' % error)
                     if "could not convert string to float" in error:
                         if self.force_input:
-                            print(row[j])
+                            # print(row[j])
                             csv_data[name].append(row[j])
+                    else:
+                        print('unhandled error:', error)
                     pass
-
-        print(csv_data)
 
         if csv_data:
             # check for actual data otherwise fail.
