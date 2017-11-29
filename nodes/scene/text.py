@@ -20,6 +20,7 @@
 # pylint: disable=c0326
 
 import io
+import sys
 import csv
 import collections
 import ast
@@ -401,9 +402,12 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
                     csv_data[name].append(n)
                 # except (ValueError, IndexError):
                 except Exception as err:
-                    if self.force_input:
-                        print(row[j])
-                        csv_data[name].append(row[j])
+                    error = str(err)
+                    # sys.stderr.write('ERROR: %s\n' % error)
+                    if "could not convert string to float" in error:
+                        if self.force_input:
+                            print(row[j])
+                            csv_data[name].append(row[j])
                     pass
 
         print(csv_data)
