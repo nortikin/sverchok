@@ -7,19 +7,22 @@ Analyzers
 
    area
    bbox
+   bvh_nearest
+   bvh_overlap_polys
+   bvh_raycast
    distance_pp
    edge_angles
-   kd_tree
+   image_components
    kd_tree_edges_mk2
+   kd_tree
    mesh_filter
    mesh_select
    select_similar
    proportional
    normal
    normals
-   bvh_overlap_polys
    points_inside_mesh
    polygons_centers
    polygons_centers_mk3
-   raycast
+   raycaster_lite
    volume

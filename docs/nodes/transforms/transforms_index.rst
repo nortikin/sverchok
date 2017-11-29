@@ -7,7 +7,7 @@ Transforms
 
    apply
    mirror
-   move
-   rotation
-   scale
+   move_mk2
+   rotation_mk2
+   scale_mk2
    deform

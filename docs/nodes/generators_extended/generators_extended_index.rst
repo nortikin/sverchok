@@ -6,6 +6,7 @@ Generators Extended
    :maxdepth: 2
 
    box_rounded
+   edge_split
    icosphere
    generative_art
    hilbert
@@ -20,3 +21,4 @@ Generators Extended
    script3
    scripted_intro
    script_mk2
+   spiral

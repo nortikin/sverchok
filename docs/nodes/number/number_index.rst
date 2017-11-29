@@ -5,6 +5,7 @@ Number
 .. toctree::
    :maxdepth: 2
 
+   easing
    exponential
    fibonacci
    float
@@ -14,6 +15,7 @@ Number
    list_input
    mix_numbers
    random
+   random_num_gen
    range_float
    range_int
    range_map
