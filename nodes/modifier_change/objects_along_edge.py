@@ -274,6 +274,9 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         if self.algorithm == 'track':
             layout.prop(self, "up_axis")
         layout.prop(self, "input_mode", expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         if not self.scale_off:
             layout.prop(self, "scale_all")
         layout.prop(self, "apply_matrices")
