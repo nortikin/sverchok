@@ -256,6 +256,7 @@
 ## Objects
     SvVertexGroupNodeMK2
     SvVertexColorNodeMK2
+    SvVertexColorNodeMK3
 
 ## Layout
     WifiInNode
