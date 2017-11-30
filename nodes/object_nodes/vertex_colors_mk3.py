@@ -28,7 +28,7 @@ from sverchok.data_structure import (updateNode, repeat_last, fullList)
 # pylint: disable=E1101
 # pylint: disable=W0613
 
-# modified (kosvo2, zeffii) 2017 end november. When Blender changed VertexColor map to rgb+a
+# modified (kosvor, zeffii) 2017 end november. When Blender changed VertexColor map to rgb+a
 
 
 def set_vertices(loop_count, obj, index_socket, indices, input_colors, colors):
