@@ -17,5 +17,7 @@ class TestOp(bpy.types.Operator):
         return {"FINISHED"}
 
 
-def register():
-    bpy.utils.register_class(TestOp)
+# def register():
+#    bpy.utils.register_class(TestOp)
+
+# test
