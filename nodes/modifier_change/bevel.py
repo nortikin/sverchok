@@ -42,7 +42,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Bevel vertices, edges and faces'''
     bl_idname = 'SvBevelNode'
     bl_label = 'Bevel'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_BEVEL'
 
     offset_ = FloatProperty(
         name='Amount',
