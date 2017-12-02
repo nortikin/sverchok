@@ -334,7 +334,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             ng = nodes.id_data
             update_error_nodes(ng, node_name, err)
             traceback.print_tb(err.__traceback__)
-            print("Node {0} had exception {1}".format(node_name, err))
+            print("Node {0} had exception: {1}".format(node_name, err))
             return None
     graphs.append(graph)
     if data_structure.DEBUG_MODE:
