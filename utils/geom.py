@@ -673,6 +673,71 @@ class GenerateLookup():
 
         self.total_length = sum(self.indiv_lengths)
             
+def householder(u):
+    '''
+    Calculate Householder reflection matrix.
+
+    u: mathutils.Vector or tuple of 3 floats.
+    returns mathutils.Matrix.
+    '''
+    x,y,z = u[0], u[1], u[2]
+    m = Matrix([[x*x, x*y, x*z, 0], [x*y, y*y, y*z, 0], [x*z, y*z, z*z, 0], [0,0,0,0]])
+    h = Matrix() - 2*m
+    return h
+
+def autorotate_householder(e1, xx):
+    '''
+    A matrix of transformation which will transform xx vector into e1,
+    calculated via Householder matrix.
+    See http://en.wikipedia.org/wiki/QR_decomposition
+
+    e1, xx: mathutils.Vector.
+    returns mathutils.Matrix.
+    '''
+
+    sign = -1
+    alpha = xx.length * sign
+    u = xx - alpha*e1
+    v = u.normalized()
+    q = householder(v)
+    return q
+
+def autorotate_track(e1, xx, up):
+    '''
+    A matrix of transformation which will transform xx vector into e1,
+    calculated via Blender's to_track_quat method.
+
+    e1: string, one of "X", "Y", "Z"
+    xx: mathutils.Vector.
+    up: string, one of "X", "Y", "Z".
+    returns mathutils.Matrix.
+    '''
+    rotation = xx.to_track_quat(e1, up)
+    return rotation.to_matrix().to_4x4()
+
+def autorotate_diff(e1, xx):
+    '''
+    A matrix of transformation which will transform xx vector into e1,
+    calculated via Blender's rotation_difference method.
+
+    e1, xx: mathutils.Vector.
+    returns mathutils.Matrix.
+    '''
+    return xx.rotation_difference(e1).to_matrix().to_4x4()
+
+def diameter(vertices, axis):
+    """
+    Calculate diameter of set of vertices along specified axis.
+    
+    vertices: list of mathutils.Vector or of 3-tuples of floats.
+    axis: 0, 1 or 2.
+    returns float.
+    """
+    xs = [vertex[axis] for vertex in vertices]
+    M = max(xs)
+    m = min(xs)
+    return (M-m)
+
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
