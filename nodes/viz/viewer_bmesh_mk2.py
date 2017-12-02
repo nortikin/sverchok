@@ -212,7 +212,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvBmeshViewerNodeMK2'
     bl_label = 'Viewer BMesh'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'OUTLINER_OB_MESH'
 
     # hints found at ba.org/forum/showthread.php?290106
     # - this will not allow objects on multiple layers, yet.

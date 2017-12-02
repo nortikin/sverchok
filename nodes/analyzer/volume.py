@@ -27,7 +27,7 @@ class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Volume '''
     bl_idname = 'SvVolumeNode'
     bl_label = 'Volume'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SNAP_VOLUME'
 
     def draw_buttons(self, context, layout):
         pass

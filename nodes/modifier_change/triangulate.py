@@ -29,7 +29,7 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Triangulate mesh '''
     bl_idname = 'SvTriangulateNode'
     bl_label = 'Triangulate mesh'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_TRIANGULATE'
 
     quad_modes = [
         ("0", "Beauty", "Split the quads in nice triangles, slower method", 1),

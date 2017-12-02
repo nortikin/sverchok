@@ -63,7 +63,7 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
     '''Soldifies geometry'''
     bl_idname = 'SvSolidifyNode'
     bl_label = 'Solidify'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_SOLIDIFY'
 
     thickness = FloatProperty(
         name='Thickness', description='Shell thickness',

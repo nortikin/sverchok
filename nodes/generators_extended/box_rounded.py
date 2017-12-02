@@ -344,7 +344,7 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Box rounded'''
     bl_idname = 'SvBoxRoundedNode'
     bl_label = 'Rounded Box'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MESH_CAPSULE'
 
     radius = FloatProperty(
         name='radius', description='fillet radius',

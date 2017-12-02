@@ -48,7 +48,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Simple deformation node'''
     bl_idname = 'SvSimpleDeformNode'
     bl_label = 'Simple deformation'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_SIMPLEDEFORM'
 
     modes = [
             ("Twist", "Twist", "", 0),
