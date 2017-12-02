@@ -30,15 +30,23 @@ Inputs
 
 This node has the following inputs:
 
-- **Vertices**. Vertices of the donor mesh. The node will produce nothing if this input is not connected.
+- **Vertices**. Vertices of the donor mesh. The node will produce nothing if
+  this input is not connected.
 - **Edges**. Edges of the donor mesh.
 - **Polygons**. Faces of the donor mesh.
-- **Vertex1**. First vertex of recipient edge. This input is used only when "Fixed" input mode is used (see description of ``Input mode`` parameter below).
-- **Vertex2**. Second vertex of recipient edge. This input is used only when "Fixed" input mode is used.
-- **VerticesR**. Vertices of the recipient mesh. This input is used only when "Edges" input mode is used.
-- **EdgesR**. Edges of the recipient mesh. These edges will be actually used as recipient edges.  This input is used only when "Edges" input mode is used.
-- **Count**. Number of objects in array. This input is used only in "Count" scaling mode (see description of ``Scale mode`` parameter below).
-- **Padding**. Portion of the recipient edge length that should be left empty from both sides. Default value of zero means fill whole available length.
+- **Vertex1**. First vertex of recipient edge. This input is used only when
+  "Fixed" input mode is used (see description of ``Input mode`` parameter
+  below).
+- **Vertex2**. Second vertex of recipient edge. This input is used only when
+  "Fixed" input mode is used.
+- **VerticesR**. Vertices of the recipient mesh. This input is used only when
+  "Edges" input mode is used.
+- **EdgesR**. Edges of the recipient mesh. These edges will be actually used as
+  recipient edges.  This input is used only when "Edges" input mode is used.
+- **Count**. Number of objects in array. This input is used only in "Count"
+  scaling mode (see description of ``Scale mode`` parameter below).
+- **Padding**. Portion of the recipient edge length that should be left empty
+  from both sides. Default value of zero means fill whole available length.
 
 Parameters
 ----------
@@ -111,7 +119,9 @@ This node has the following outputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
-- **Matrices**. Matrices that should be applied to created objects to align them along recipient edge. By default, this node already applies these matrices, so you do not need to do it second time.
+- **Matrices**. Matrices that should be applied to created objects to align
+  them along recipient edge. By default, this node already applies these
+  matrices, so you do not need to do it second time.
 
 This node will output something only when ``Vertices`` or ``Matrices`` output is connected.
 
@@ -120,11 +130,19 @@ Examples of usage
 
 Cylinders duplicated along the segment between two specified points:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5741079/bcfcd4e2-9c2a-11e4-9f89-95ba59be8bd9.png
+.. image:: https://user-images.githubusercontent.com/284644/33512207-00a41ef2-d74d-11e7-9ce2-e8f21b6342c8.png
 
-Spheres duplicated along the edges of Box:
+Suzannes duplicated along the edges of Box:
 
-.. image:: https://cloud.githubusercontent.com/assets/284644/5741080/bd30e0ac-9c2a-11e4-95f3-aa075ef3d7eb.png
+.. image:: https://user-images.githubusercontent.com/284644/33512211-066ab80a-d74d-11e7-9907-3c2cf7c4894e.png
+
+Complex object duplicated along circle, with Householder algorithm:
+
+.. image:: https://user-images.githubusercontent.com/284644/33388133-e9a1c4b4-d550-11e7-9df2-e5c7899d6ca1.png
+
+The same setup, but with Tracking algorithm:
+
+.. image:: https://user-images.githubusercontent.com/284644/33388143-f1740dbe-d550-11e7-8d05-82cc8fa95934.png
 
 You can also find more examples and some discussion `in the development thread <https://github.com/portnov/sverchok/issues/6>`_.
 
