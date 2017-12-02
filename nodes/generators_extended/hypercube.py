@@ -30,11 +30,6 @@ import itertools
 # dictionary to store once the unit/untransformed hypercube verts, edges & polys
 _hypercube = {}
 
-angleTypes = [
-    ("RAD", "Rad", "", 0),   # expects input as radian values
-    ("DEG", "Deg", "", 1),   # expects input as degree values
-    ("NORM", "Norm", "", 2)]  # expects input as 0-1 values
-
 
 def flip(n, v):
     '''
@@ -278,101 +273,6 @@ def get_cell_edges_IDs(n):
     return [[[index(v1), index(v2)] for v1, v2 in cell] for cell in cells]
 
 
-def project(vert4D, d):
-    '''
-        Project a 4D vector onto 3D space given the projection distance.
-    '''
-    cx, cy, cz = [0.0, 0.0, 0.0]  # center (projection origin)
-    x, y, z, t = vert4D
-    return [x + (cx - x) * t / d, y + (cy - y) * t / d, z + (cz - z) * t / d]
-
-
-def project_hypercube(verts4D, d):
-    '''
-        Project the Hypercube 4D verts onto 3D space given the projection distance.
-    '''
-    verts3D = [project(verts4D[i], d) for i in range(len(verts4D))]
-    return verts3D
-
-
-def rotation4D(a1=0, a2=0, a3=0, a4=0, a5=0, a6=0):
-    '''
-        Return the 4D Rotation matrix given the 6 rotation angles.
-    '''
-    rotXY = Matrix(((cos(a1), sin(a1), 0, 0),
-                    (-sin(a1), cos(a1), 0, 0),
-                    (0, 0, 1, 0),
-                    (0, 0, 0, 1)))
-
-    rotYZ = Matrix(((1, 0, 0, 0),
-                    (0, cos(a2), sin(a2), 0),
-                    (0, -sin(a2), cos(a2), 0),
-                    (0, 0, 0, 1)))
-
-    rotZX = Matrix(((cos(a3), 0, -sin(a3), 0),
-                    (0, 1, 0, 0),
-                    (sin(a3), 0, cos(a3), 0),
-                    (0, 0, 0, 1)))
-
-    rotXW = Matrix(((cos(a4), 0, 0, sin(a4)),
-                    (0, 1, 0, 0),
-                    (0, 0, 1, 0),
-                    (-sin(a4), 0, 0, cos(a4))))
-
-    rotYW = Matrix(((1, 0, 0, 0),
-                    (0, cos(a5), 0, -sin(a5)),
-                    (0, 0, 1, 0),
-                    (0, sin(a5), 0, cos(a5))))
-
-    rotZW = Matrix(((1, 0, 0, 0),
-                    (0, 1, 0, 0),
-                    (0, 0, cos(a6), -sin(a6)),
-                    (0, 0, sin(a6), cos(a6))))
-
-    rotation = rotXY * rotYZ * rotZX * rotXW * rotYW * rotZW
-
-    return rotation
-
-
-def rotate_hypercube(verts4D, a1, a2, a3, a4, a5, a6):
-    '''
-        Rotate the Hypercube 4D verts by the given rotation angles.
-    '''
-    rotation = rotation4D(a1, a2, a3, a4, a5, a6)  # 4D rotation matrix
-    verts4D = [rotation * v for v in verts4D]
-    return verts4D
-
-
-def translate_hypercube(verts4D, t):
-    '''
-        Translate the Hypercube 4D vertices by the given 4D vector
-    '''
-    newVerts4D = [v + t for v in verts4D]
-    return newVerts4D
-
-
-def scale_hypercube(verts4D, s):
-    '''
-        Scale the Hypercube 4D vertices by the given scale factor
-    '''
-    newVerts4D = [v * s for v in verts4D]
-    return newVerts4D
-
-
-def transform_hypercube(verts4D, a1, a2, a3, a4, a5, a6, d, s, t):
-    '''
-        Transform the Hypercube 4D verts (4D TRS + 4D -> 3D projection).
-    '''
-    t = Vector(list(t))
-    center = Vector([-0.5, -0.5, -0.5, -0.5])
-    newVerts4D = translate_hypercube(verts4D, center)
-    newVerts4D = scale_hypercube(newVerts4D, s)
-    newVerts4D = rotate_hypercube(newVerts4D, a1, a2, a3, a4, a5, a6)
-    newVerts4D = translate_hypercube(newVerts4D, t)
-    verts3D = project_hypercube(newVerts4D, d)
-    return verts3D
-
-
 def generate_hypercube():
     '''
         Generate the unit Hypercube verts, edges, faces, cells.
@@ -435,130 +335,17 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvHyperCubeNode'
     bl_label = 'Hypercube'
 
-    def update_angle(self, context):
-        if self.syncing:
-            return
-        updateNode(self, context)
-
-    def update_mode(self, context):
-        '''
-            Update angle values when switching mode to keep the same radian values
-        '''
-        if self.lastAngleType == self.angleType:
-            return
-
-        if self.lastAngleType == "RAD":
-            if self.angleType == "DEG":
-                aU = 180 / pi
-            elif self.angleType == "NORM":
-                aU = 1 / (2 * pi)
-
-        elif self.lastAngleType == "DEG":
-            if self.angleType == "RAD":
-                aU = pi / 180
-            elif self.angleType == "NORM":
-                aU = 1 / 360
-
-        elif self.lastAngleType == "NORM":
-            if self.angleType == "RAD":
-                aU = 2 * pi
-            elif self.angleType == "DEG":
-                aU = 360
-        self.lastAngleType = self.angleType
-
-        self.syncing = True
-        self.angle_a1 *= aU
-        self.angle_a2 *= aU
-        self.angle_a3 *= aU
-        self.angle_a4 *= aU
-        self.angle_a5 *= aU
-        self.angle_a6 *= aU
-        self.syncing = False
-
-        updateNode(self, context)
-
-    angleType = EnumProperty(
-        name="Angle Type", description="Angle units",
-        default="RAD", items=angleTypes, update=update_mode)
-
-    lastAngleType = EnumProperty(
-        name="Last Angle Type", description="Last angle units",
-        default="RAD", items=angleTypes)
-
-    angle_a1 = FloatProperty(
-        name="XY", description="Angle 1",
-        default=0.0, min=0.0,
-        update=update_angle)
-
-    angle_a2 = FloatProperty(
-        name="YZ", description="Angle 2",
-        default=0.0, min=0.0,
-        update=update_angle)
-
-    angle_a3 = FloatProperty(
-        name="ZX", description="Angle 3",
-        default=0.0, min=0.0,
-        update=update_angle)
-
-    angle_a4 = FloatProperty(
-        name="XW", description="Angle 4",
-        default=0.0, min=0.0,
-        update=update_angle)
-
-    angle_a5 = FloatProperty(
-        name="YW", description="Angle 5",
-        default=0.0, min=0.0,
-        update=update_angle)
-
-    angle_a6 = FloatProperty(
-        name="ZW", description="Angle 6",
-        default=0.0, min=0.0,
-        update=update_angle)
-
-    distance = FloatProperty(
-        name="Distance", description="Projection Distance",
-        default=2.0, min=0.0,
-        update=updateNode)
-
-    scale = FloatProperty(
-        name="Scale", description="Scale Hypercube sides",
-        default=1.0, min=0.0,
-        update=updateNode)
-
-    translate = FloatVectorProperty(
-        size=4,
-        name="Translate", description="Translate Hypercube in 4D space",
-        default=(0, 0, 0, 0),
-        update=updateNode)
-
-    syncing = BoolProperty(
-        name='Syncing', description='Syncing flag', default=False)
-
     def sv_init(self, context):
-        self.width = 180
-        self.inputs.new('StringsSocket', "A1").prop_name = 'angle_a1'
-        self.inputs.new('StringsSocket', "A2").prop_name = 'angle_a2'
-        self.inputs.new('StringsSocket', "A3").prop_name = 'angle_a3'
-        self.inputs.new('StringsSocket', "A4").prop_name = 'angle_a4'
-        self.inputs.new('StringsSocket', "A5").prop_name = 'angle_a5'
-        self.inputs.new('StringsSocket', "A6").prop_name = 'angle_a6'
-        self.inputs.new('StringsSocket', "D").prop_name = 'distance'
-        self.inputs.new('StringsSocket', "S").prop_name = 'scale'
-        self.inputs.new('VerticesSocket', "Translate").prop_name = 'translate'
-
-        self.outputs.new('StringsSocket', "Verts4D")
-        self.outputs.new('VerticesSocket', "V4D")
         self.outputs.new('VerticesSocket', "Verts")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polys")
+
         self.outputs.new('StringsSocket', "Cells Verts")
         self.outputs.new('StringsSocket', "Cells Verts IDs")
         self.outputs.new('StringsSocket', "Cells Edges")
         self.outputs.new('StringsSocket', "Cells Faces")
         self.outputs.new('StringsSocket', "Vert Names")
 
-    def draw_buttons(self, context, layout):
-        layout.prop(self, 'angleType', expand=True)
 
     def process(self):
         # return if no outputs are connected
@@ -568,43 +355,30 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
 
         # input values lists
         inputs = self.inputs
-        input_a1 = inputs["A1"].sv_get()[0]
-        input_a2 = inputs["A2"].sv_get()[0]
-        input_a3 = inputs["A3"].sv_get()[0]
-        input_a4 = inputs["A4"].sv_get()[0]
-        input_a5 = inputs["A5"].sv_get()[0]
-        input_a6 = inputs["A6"].sv_get()[0]
-        input_d = inputs["D"].sv_get()[0]
-        input_s = inputs["S"].sv_get()[0]
-        input_t = inputs["Translate"].sv_get()[0]
 
-        # convert everything to radians
-        if self.angleType == "DEG":
-            aU = pi / 180
-        elif self.angleType == "RAD":
-            aU = 1
-        else:
-            aU = 2 * pi
-
-        params = match_long_repeat([input_a1, input_a2, input_a3, input_a4,
-                                    input_a5, input_a6, input_d, input_s, input_t])
+        # params = match_long_repeat([input_a1, input_a2, input_a3, input_a4,
+        #                             input_a5, input_a6, input_d, input_s, input_t])
 
         verts4D, edges, polys, cells, names = get_hypercube()
+        verts = [list(v) for v in verts4D]
 
         vertList = []
         edgeList = []
         polyList = []
-        for a1, a2, a3, a4, a5, a6, d, s, t in zip(*params):
-            a1 *= aU
-            a2 *= aU
-            a3 *= aU
-            a4 *= aU
-            a5 *= aU
-            a6 *= aU
-            verts = transform_hypercube(verts4D, a1, a2, a3, a4, a5, a6, d, s, t)
-            vertList.append(verts)
-            edgeList.append(edges)
-            polyList.append(polys)
+        # for a1, a2, a3, a4, a5, a6, d, s, t in zip(*params):
+        #     a1 *= aU
+        #     a2 *= aU
+        #     a3 *= aU
+        #     a4 *= aU
+        #     a5 *= aU
+        #     a6 *= aU
+        #     verts = transform_hypercube(verts4D, a1, a2, a3, a4, a5, a6, d, s, t)
+        #     vertList.append(verts)
+        #     edgeList.append(edges)
+        #     polyList.append(polys)
+        vertList.append(verts)
+        edgeList.append(edges)
+        polyList.append(polys)
 
         # cells, indices, edges, faces = create_cells2()
         cellVerts = cells["verts"]
@@ -612,11 +386,6 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         cellEdges = cells["edges"]
         cellFaces = cells["faces"]
 
-        outputs['Verts4D'].sv_set([verts4D])
-
-        v4d = [list(v) for v in verts4D]
-        # print(v4d)
-        outputs['V4D'].sv_set([v4d])
 
         outputs['Verts'].sv_set(vertList)
         outputs['Edges'].sv_set(edgeList)
