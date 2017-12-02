@@ -464,6 +464,17 @@ class Spline(object):
 
         return tknots
 
+    def length(self, t_in):
+        """
+        t_in: np.array with values in [0,1]
+        """
+        t_in = t_in.copy()
+        t_in.sort()
+        points_on_spline = self.eval(t_in)
+        t = points_on_spline[:-1] - points_on_spline[1:]
+        norms = np.linalg.norm(t, axis=1)
+        return norms.sum()
+
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
         """
