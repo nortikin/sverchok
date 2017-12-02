@@ -140,7 +140,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
-            raise SvNoDataError
+            raise SvNoDataError(self)
         else:
             return default
 
@@ -191,7 +191,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
-            raise SvNoDataError
+            raise SvNoDataError(self)
         else:
             return default
 
@@ -275,7 +275,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         elif default is not sentinel:
             return default
         else:
-            raise SvNoDataError
+            raise SvNoDataError(self)
 
     def draw(self, context, layout, node, text):
 

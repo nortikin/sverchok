@@ -103,12 +103,36 @@ def SvGetSocket(socket, deepcopy=True):
         else:
             if data_structure.DEBUG_MODE:
                 print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
-            raise SvNoDataError
+            raise SvNoDataError(socket)
     # not linked
-    raise SvNoDataError
+    raise SvNoDataError(socket)
 
 class SvNoDataError(LookupError):
-    pass
+    def __init__(self, socket=None, node=None):
+        if node is None and socket is not None:
+            node = socket.node
+        self.node = node
+        self.socket = socket
+
+        super(LookupError, self).__init__(self.get_message())
+
+    def get_message(self):
+        if not self.node and not self.socket:
+            return "SvNoDataError"
+        else:
+            return "No data passed into socket `{}'".format(self.socket.name)
+    
+    def __repr__(self):
+        return self.get_message()
+    
+    def __str__(self):
+        return repr(self)
+
+    def __unicode__(self):
+        return repr(self)
+    
+    def __format__(self, spec):
+        return repr(self)
 
 def reset_socket_cache(ng):
     """
