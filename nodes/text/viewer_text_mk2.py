@@ -39,7 +39,7 @@ class SverchokViewer(bpy.types.Operator):
         # vertices socket
         out_verts = 'None \n'
         if inputs['vertices'].is_linked:
-            if isinstance(inputs['vertices'].other, bpy.types.VerticesSocket):
+            if inputs['vertices'].other.bl_idname == 'VerticesSocket':
                 evaverti = inputs['vertices'].sv_get()
 
                 deptl = levelsOflist(evaverti)
@@ -73,7 +73,7 @@ class SverchokViewer(bpy.types.Operator):
         # matrix socket
         out_matrix = 'None \n'
         if inputs['matrix'].is_linked:
-            if isinstance(inputs['matrix'].other, bpy.types.MatrixSocket):
+            if inputs['matrix'].other.bl_idname == 'MatrixSocket':
                 eva = inputs['matrix'].sv_get()
 
                 deptl = levelsOflist(eva)
@@ -88,7 +88,7 @@ class SverchokViewer(bpy.types.Operator):
         # object socket
         out_object = 'None \n'
         if inputs['object'].is_linked:
-            if isinstance(inputs['object'].other, bpy.types.SvObjectSocket):
+            if inputs['object'].other.bl_idname == 'SvObjectSocket':
                 eva = inputs['object'].sv_get()
 
                 deptl = levelsOflist(eva)
