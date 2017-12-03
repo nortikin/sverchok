@@ -76,7 +76,7 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         - is hnd_edges socket created, means all sockets exist.
         - is anything connected to the Verts socket?
         '''
-        if not (('hnd Edges' in outputs) and (outputs['Verts'].links)):
+        if not (('hnd Edges' in outputs) and (outputs['Verts'].is_linked)):
             return
 
         '''
@@ -92,36 +92,25 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         handle_names = ['knot_1', 'ctrl_1', 'ctrl_2', 'knot_2']
 
-        if not all([inputs[p].links for p in handle_names]):
-            return
-
         # assume they all match, reduce cycles used for checking.
         handle_sockets = (inputs[handle_names[i]] for i in range(4))
         handle_data = []
         for socket in handle_sockets:
-            v = []
-            if isinstance(socket.links[0].from_socket, VerticesSocket):
-                v = socket.sv_get(deepcopy=False)[0]
+            v = socket.sv_get(deepcopy=False)[0]
             handle_data.append(v)
 
         knots_1, ctrls_1, ctrls_2, knots_2 = handle_data
         if not (len(knots_1) == len(ctrls_1) == len(ctrls_2) == len(knots_2)):
-            return
+            raise Exception("Number of items in all knots and control inputs must match exactly. You probably want to use ListMatch node.")
 
         # get vert_nums, or pad till matching quantity
         nv = []
-        nv_links = inputs['num_verts'].links
-        if nv_links:
-            if isinstance(nv_links[0].from_socket, StringsSocket):
-                nv = inputs['num_verts'].sv_get(deepcopy=False)[0]
+        nv = inputs['num_verts'].sv_get(deepcopy=False)[0]
 
-            if nv and (len(nv) < len(knots_1)):
-                pad_num = len(knots_1) - len(nv)
-                for i in range(pad_num):
-                    nv.append(nv[-1])
-        else:
-            for i in range(len(knots_1)):
-                nv.append(self.num_verts)
+        if nv and (len(nv) < len(knots_1)):
+            pad_num = len(knots_1) - len(nv)
+            for i in range(pad_num):
+                nv.append(nv[-1])
 
         # iterate over them
         verts_out = []

@@ -32,7 +32,7 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
     '''Select vertices, edges, faces by geometric criteria'''
     bl_idname = 'SvMeshSelectNode'
     bl_label = 'Select mesh elements by location'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'UV_SYNC_SELECT'
 
     modes = [
             ("BySide", "By side", "Select specified side of mesh", 0),

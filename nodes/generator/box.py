@@ -26,7 +26,11 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Box '''
+    """
+    Triggers: Box
+    Tooltip: Generate a Box primitive.
+    """
+
     bl_idname = 'SvBoxNode'
     bl_label = 'Box'
     bl_icon = 'MESH_CUBE'
@@ -143,3 +147,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBoxNode)
+

@@ -236,6 +236,20 @@ class Sv3DPanel(bpy.types.Panel):
                             colo.prop(node, min_name, text='', slider=True, emboss=False)
                             colo.prop(node, max_name, text='', slider=True, emboss=False)
 
+                        elif node.bl_idname in {"SvListInputNode"}:
+                            if node.mode == 'vector':
+                                colum_list = col.column(align=True)
+                                for i in range(self.v_int):
+                                    row = colum_list.row(align=True)
+                                    for j in range(3):
+                                        row.prop(node, 'vector_list', index=i*3+j, text='XYZ'[j]+tex)
+                            else:
+                                colum_list = col.column(align=True)
+                                for i in range(node.int_):
+                                    row = colum_list.row(align=True)
+                                    row.prop(node, node.mode, index=i, text=str(i)+tex)
+                                    row.scale_x = little_width * 2.5
+
 
 
 class SverchokToolsMenu(bpy.types.Panel):

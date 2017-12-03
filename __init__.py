@@ -84,9 +84,9 @@ core_modules = [
 
 utils_modules = [
     # non UI tools
-    "cad_module", "cad_module_class", "sv_bmesh_utils", "sv_viewer_utils",
+    "cad_module", "cad_module_class", "sv_bmesh_utils", "sv_viewer_utils", 
     "sv_curve_utils", "sv_extended_curve_utils",
-    "voronoi", "sv_script", "sv_itertools", "script_importhelper",
+    "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions",
     "snlite_utils", "snlite_importhelper", "context_managers",
     # UI text editor ui
@@ -101,7 +101,7 @@ utils_modules = [
 
 ui_modules = [
     "color_def", "sv_IO_panel", "sv_templates_menu",
-    "sv_panels", "nodeview_space_menu", "nodeview_keymaps",
+    "sv_panels", "nodeview_rclick_menu", "nodeview_space_menu", "nodeview_keymaps",
     "monad", "sv_icons",
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
@@ -154,7 +154,6 @@ if reload_event:
     for node in node_list:
         importlib.reload(node)
     old_nodes.reload_old()
-    menu.reload_menu()
 
 import bpy
 from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
@@ -164,8 +163,10 @@ from sverchok.core import node_defaults
 
 def register():
     for m in imported_modules + node_list:
-        if hasattr(m, "register"):
-            m.register()
+        if m.__name__ != "sverchok.menu":
+            if hasattr(m, "register"):
+                #print("Registering module: {}".format(m.__name__))
+                m.register()
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
@@ -174,8 +175,11 @@ def register():
     ascii_print.logo()
     node_defaults.register_defaults()
     auto_gather_node_classes()
+    # We have to register menu module after all nodes are registered
+    menu.register()
     if reload_event:
         data_structure.RELOAD_EVENT = True
+        menu.reload_menu()
         print("Sverchok is reloaded, press update")
 
 
@@ -184,4 +188,5 @@ def unregister():
     node_classes.clear()
     for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
+            #print("Unregistering module: {}".format(m.__name__))
             m.unregister()

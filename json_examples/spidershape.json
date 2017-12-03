@@ -1,17 +1,19 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.065",
   "framed_nodes": {
     "Delete Loose": "Frame.001",
     "Float Series": "Frame.001",
     "Float Series.001": "Frame.001",
+    "NGon": "Frame.002",
     "Offset Node": "Frame.002",
     "Pipe tube Node": "Frame",
     "Polygons 2 Edges": "Frame",
     "Randomize Vertices": "Frame.002",
-    "Scale": "Frame.001",
+    "Scale.001": "Frame.001",
     "Skin Viewer Draw": "Frame.002",
     "UV Connect": "Frame.001",
     "Vectors in": "Frame.001",
+    "Vectors in.001": "Frame",
     "Viewer Draw2": "Frame.001",
     "Viewer Draw2.001": "Frame"
   },
@@ -28,8 +30,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -28.553237915039062,
-        419.25146484375
+        -62.23982620239258,
+        917.0562133789062
       ],
       "params": {},
       "width": 140.0
@@ -45,8 +47,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -421.59906005859375,
-        237.2158660888672
+        -455.28564453125,
+        735.0206298828125
       ],
       "params": {
         "mode": "FRANGE_COUNT",
@@ -66,8 +68,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -47.87931823730469,
-        145.23046875
+        -81.56590270996094,
+        643.0352172851562
       ],
       "params": {
         "mode": "FRANGE_COUNT",
@@ -83,7 +85,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 403.62255859375,
+      "height": 433.62255859375,
       "hide": false,
       "label": "tubes",
       "location": [
@@ -100,7 +102,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 523.9999389648438,
+      "height": 526.8046875,
       "hide": false,
       "label": "inner",
       "location": [
@@ -108,7 +110,7 @@
         -497.80474853515625
       ],
       "params": {},
-      "width": 1527.997802734375
+      "width": 1527.9976806640625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
@@ -117,15 +119,15 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 528.0948486328125,
+      "height": 523.3972778320312,
       "hide": false,
       "label": "outer",
       "location": [
-        71.95600128173828,
-        145.89927673339844
+        -701.3402099609375,
+        257.10101318359375
       ],
       "params": {},
-      "width": 723.83154296875
+      "width": 1083.03076171875
     },
     "NGon": {
       "bl_idname": "SvNGonNode",
@@ -138,8 +140,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -650.8619995117188,
-        363.25933837890625
+        -933.9733276367188,
+        209.9669647216797
       ],
       "params": {
         "rad_": 7.809999942779541,
@@ -161,8 +163,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -282.8179931640625,
-        180.4645538330078
+        -354.77398681640625,
+        34.565277099609375
       ],
       "params": {
         "nsides": 1,
@@ -183,7 +185,7 @@
       "label": "",
       "location": [
         1466.856689453125,
-        220.53826904296875
+        160.53826904296875
       ],
       "params": {
         "close": 1,
@@ -204,7 +206,7 @@
       "label": "",
       "location": [
         1244.6368408203125,
-        64.27951049804688
+        4.279510498046875
       ],
       "params": {},
       "width": 140.0
@@ -220,16 +222,16 @@
       "hide": false,
       "label": "",
       "location": [
-        -502.8179931640625,
-        108.90162658691406
+        -574.7739868164062,
+        -36.997650146484375
       ],
       "params": {
         "random_z_": 1.313999891281128
       },
       "width": 140.0
     },
-    "Scale": {
-      "bl_idname": "SvScaleNode",
+    "Scale.001": {
+      "bl_idname": "SvScaleNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -239,11 +241,11 @@
       "hide": false,
       "label": "",
       "location": [
-        240.7054901123047,
-        353.06475830078125
+        249.69064331054688,
+        861.0472412109375
       ],
       "params": {
-        "Separate": 1
+        "separate": 1
       },
       "width": 140.0
     },
@@ -258,11 +260,11 @@
       "hide": false,
       "label": "",
       "location": [
-        21.013565063476562,
-        414.195556640625
+        -50.94243621826172,
+        268.2962646484375
       ],
       "params": {
-        "general_radius": 0.16449999809265137,
+        "basemesh_name": "Zeta",
         "live_updates": 1
       },
       "width": 140.0
@@ -278,8 +280,8 @@
       "hide": false,
       "label": "",
       "location": [
-        604.9419555664062,
-        445.1912841796875
+        571.25537109375,
+        942.9960327148438
       ],
       "params": {
         "cicl_check_U": 0,
@@ -301,8 +303,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -184.58718872070312,
-        222.66757202148438
+        -218.27377319335938,
+        720.4722900390625
       ],
       "params": {},
       "width": 100.0
@@ -318,8 +320,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1261.1663818359375,
-        -6.560211181640625
+        1295.70849609375,
+        241.40560913085938
       ],
       "params": {
         "x_": 0.10000000149011612,
@@ -339,8 +341,8 @@
       "hide": false,
       "label": "",
       "location": [
-        906.3987426757812,
-        467.8046875
+        872.712158203125,
+        965.6094360351562
       ],
       "params": {
         "activate": 1,
@@ -363,7 +365,7 @@
       "label": "",
       "location": [
         1675.477294921875,
-        337.62255859375
+        277.62255859375
       ],
       "params": {
         "activate": 1,
@@ -383,123 +385,123 @@
   "update_lists": [
     [
       "NGon",
-      "Vertices",
+      0,
       "Randomize Vertices",
-      "Vertices"
-    ],
-    [
-      "Randomize Vertices",
-      "Vertices",
-      "Offset Node",
-      "Vers"
-    ],
-    [
-      "NGon",
-      "Polygons",
-      "Offset Node",
-      "Pols"
-    ],
-    [
-      "Offset Node",
-      "Vers",
-      "Skin Viewer Draw",
-      "vertices"
-    ],
-    [
-      "Offset Node",
-      "Edgs",
-      "Skin Viewer Draw",
-      "edges"
+      0
     ],
     [
       "Float Series",
-      "Range",
+      0,
       "Vectors in",
-      "Z"
+      2
+    ],
+    [
+      "Randomize Vertices",
+      0,
+      "Offset Node",
+      0
+    ],
+    [
+      "NGon",
+      2,
+      "Offset Node",
+      1
     ],
     [
       "Offset Node",
-      "Vers",
+      0,
       "Delete Loose",
-      "Vertices"
+      0
     ],
     [
       "Offset Node",
-      "InPols",
+      3,
       "Delete Loose",
-      "PolyEdge"
+      1
     ],
     [
       "Delete Loose",
-      "Vertices",
-      "Scale",
-      "Vertices"
+      0,
+      "Scale.001",
+      0
     ],
     [
       "Vectors in",
-      "Vectors",
-      "Scale",
-      "Center"
+      0,
+      "Scale.001",
+      1
     ],
     [
       "Float Series.001",
-      "Range",
-      "Scale",
-      "Factor"
+      0,
+      "Scale.001",
+      2
     ],
     [
-      "Scale",
-      "Vertices",
+      "Scale.001",
+      0,
       "UV Connect",
-      "vertices"
-    ],
-    [
-      "UV Connect",
-      "vertices",
-      "Viewer Draw2",
-      "vertices"
+      0
     ],
     [
       "UV Connect",
-      "data",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    [
-      "UV Connect",
-      "data",
+      1,
       "Polygons 2 Edges",
-      "pols"
+      0
     ],
     [
       "UV Connect",
-      "vertices",
+      0,
+      "Viewer Draw2",
+      0
+    ],
+    [
+      "UV Connect",
+      1,
+      "Viewer Draw2",
+      1
+    ],
+    [
+      "Offset Node",
+      0,
+      "Skin Viewer Draw",
+      0
+    ],
+    [
+      "Offset Node",
+      1,
+      "Skin Viewer Draw",
+      1
+    ],
+    [
+      "UV Connect",
+      0,
       "Pipe tube Node",
-      "Vers"
+      0
     ],
     [
       "Polygons 2 Edges",
-      "edgs",
+      0,
       "Pipe tube Node",
-      "Edgs"
+      1
     ],
     [
       "Vectors in.001",
-      "Vectors",
+      0,
       "Pipe tube Node",
-      "Size"
+      2
     ],
     [
       "Pipe tube Node",
-      "Vers",
+      0,
       "Viewer Draw2.001",
-      "vertices"
+      0
     ],
     [
       "Pipe tube Node",
-      "Pols",
+      1,
       "Viewer Draw2.001",
-      "edg_pol"
+      1
     ]
   ]
 }

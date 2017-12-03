@@ -100,7 +100,7 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
             sverchok_bakery_cache[self.name] = []
 
     def makeobjects(self, vers, edg_pol, mats):
-        # fht = предохранитель от перебора рёбер и полигонов.
+
         fht = []
         if len(edg_pol[0][0]) == 2:
             pols = []
@@ -130,7 +130,6 @@ class BakeryNode(bpy.types.Node, SverchCustomTreeNode):
         names = ['Sv_' + self.name + str(i) for i, t in enumerate(mats)]
         #print('bakery'+str(names)+str(cache))
 
-        # delete previous objects удаляет предыдущие объекты, если есть, если надо.
         bpy.ops.object.select_all(action='DESELECT')
         for i, obj in enumerate(bpy.context.scene.objects):
             nam = 'Sv_' + self.name
