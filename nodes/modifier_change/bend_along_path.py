@@ -106,6 +106,11 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         description = "Invert spline direction - not from lesser coordinate values to greater, but vice versa",
         default = False,
         update=updateNode)
+    
+    is_cyclic = BoolProperty(name = "Cyclic",
+        description = "Whether the spline is cyclic",
+        default = False,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -124,13 +129,14 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons(context, layout)
         layout.prop(self, "scale_all")
         layout.prop(self, 'flip')
+        layout.prop(self, 'is_cyclic')
         layout.prop(self, 'metric')
 
     def build_spline(self, path):
         if self.mode == 'LIN':
-            spline = LinearSpline(path, metric = self.metric, is_cyclic = False)
+            spline = LinearSpline(path, metric = self.metric, is_cyclic = self.is_cyclic)
         else:  # SPL
-            spline = CubicSpline(path, metric = self.metric, is_cyclic = False)
+            spline = CubicSpline(path, metric = self.metric, is_cyclic = self.is_cyclic)
         return spline
 
     def get_matrix(self, tangent, scale):
@@ -187,7 +193,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
             if object_size > 0.00001:
                 t_values = (t_values - m) / object_size
             else:
-                raise Exception("Size of provided object along axis {} is too small".format(self.orient_axis))
+                raise Exception("Size of provided object along axis {} is too small".format(self.orient_axis_))
 
             if self.flip:
                 t_values = 1.0 - t_values
