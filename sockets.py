@@ -22,7 +22,7 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket
 
 
-from sverchok.core.socket_data import SvGetSocket, SvGetSocketInfo
+from sverchok.core.socket_data import SvGetSocket, SvGetSocketInfo, SvNoDataError
 from sverchok.node_tree import SvSocketCommon, process_from_socket, sentinel
 
 
