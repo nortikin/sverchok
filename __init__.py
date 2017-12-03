@@ -166,8 +166,6 @@ def register():
             if hasattr(m, "register"):
                 #print("Registering module: {}".format(m.__name__))
                 m.register()
-    # We have to register menu module after all nodes are registered
-    menu.register()
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
@@ -176,6 +174,8 @@ def register():
     ascii_print.logo()
     node_defaults.register_defaults()
     auto_gather_node_classes()
+    # We have to register menu module after all nodes are registered
+    menu.register()
     if reload_event:
         data_structure.RELOAD_EVENT = True
         menu.reload_menu()
