@@ -133,7 +133,7 @@ class SverchNodeItem(object):
             return self.get_node_class().bl_rna.name
 
     def get_node_class(self):
-        return getattr(bpy.types, self.nodetype)
+        return get_node_class_reference(self.nodetype)
 
     def get_idname(self):
         return get_node_idname_for_operator(self.nodetype)
@@ -191,9 +191,13 @@ class SverchNodeItem(object):
 
 def get_node_idname_for_operator(nodetype):
     """Select valid bl_idname for node to create node adding operator bl_idname."""
-    rna = getattr(bpy.types, nodetype).bl_rna
+    rna = get_node_class_reference(nodetype)
+    if not rna:
+        raise Exception("Can't find registered node {}".format(nodetype))
     if hasattr(rna, 'bl_idname'):
         return rna.bl_idname.lower()
+    elif nodetype == "NodeReroute":
+        return "node_reroute"
     else:
         return rna.name.lower()
 
@@ -204,11 +208,13 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
     """
 
     default_context = bpy.app.translations.contexts.default
-    node_rna = getattr(bpy.types, nodetype).bl_rna
+    node_rna = get_node_class_reference(nodetype)
 
     if label is None:
         if hasattr(node_rna, 'bl_label'):
             label = node_rna.bl_label
+        elif nodetype == "NodeReroute":
+            label = "Reroute"
         else:
             label = node_rna.name
 
