@@ -208,7 +208,7 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
     """
 
     default_context = bpy.app.translations.contexts.default
-    node_rna = get_node_class_reference(nodetype)
+    node_rna = get_node_class_reference(nodetype).bl_rna
 
     if label is None:
         if hasattr(node_rna, 'bl_label'):
