@@ -111,7 +111,6 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('VerticesSocket', "Path")
         self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('MatrixSocket', 'Matrices')
 
     def draw_buttons(self, context, layout):
         layout.label("Orientation:")
@@ -177,7 +176,6 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
 
         result_vertices = []
         result_spline = []
-        result_matrices = []
 
         for vertices, path in zip(*objects):
             # Scale orientation coordinate of input vertices to [0, 1] range
@@ -202,7 +200,6 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
             spline_tangents = [Vector(v) for v in spline.tangent(t_values).tolist()]
 
             new_vertices = []
-            new_matrices = []
             for src_vertex, spline_vertex, spline_tangent in zip(vertices, spline_vertices, spline_tangents):
                 # Scaling and rotation matrix
                 matrix = self.get_matrix(spline_tangent, scale)
@@ -212,13 +209,10 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
                 # Scale and rotate the projection, then move it towards spline vertex
                 new_vertex = matrix * Vector(src_vertex_projection) + spline_vertex
                 new_vertices.append(new_vertex)
-                new_matrices.append(matrix)
 
             result_vertices.append(new_vertices)
-            result_matrices.append(new_matrices)
 
         self.outputs['Vertices'].sv_set(Vector_degenerate(result_vertices))
-        self.outputs['Matrices'].sv_set(Matrix_degenerate(result_matrices))
 
 def register():
     bpy.utils.register_class(SvBendAlongPathNode)
