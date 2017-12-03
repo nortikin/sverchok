@@ -55,7 +55,7 @@ class SverchokViewer(bpy.types.Operator):
         out_edgpol = 'None \n'
         edpotype = '\n\ndata \n'
         if inputs['edg_pol'].is_linked:
-            if isinstance(inputs['edg_pol'].other, bpy.types.StringsSocket):
+            if inputs['edg_pol'].other.bl_idname == 'StringsSocket':
                 evaline_str = inputs['edg_pol'].sv_get()
 
                 if evaline_str:
