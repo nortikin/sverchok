@@ -161,7 +161,12 @@ class SvObjBakeMK2(bpy.types.Operator):
 
 
 class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
-    ''' vd View Geometry /// ViewerNode2 '''
+    """
+    Triggers: vd View Geometry
+    Tooltip: Viewer Node (Mk2) to view geometry and matrices
+     in the viewport
+    """
+
     bl_idname = 'ViewerNode2'
     bl_label = 'Viewer Draw'
     bl_icon = 'RETOPO'

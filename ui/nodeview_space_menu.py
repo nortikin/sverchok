@@ -26,55 +26,19 @@ but massively condensed for sanity.
 
 import bpy
 
-import sverchok
-from sverchok.menu import make_node_cats
+from sverchok.menu import make_node_cats, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
-from sverchok.ui.sv_icons import custom_icon
+from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch
 # from nodeitems_utils import _node_categories
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 node_cats = make_node_cats()
-addon_name = sverchok.__name__
-menu_prefs = {}
+#menu_prefs = {}
 
 # _items_to_remove = {}
 
-def get_icon_switch():
-    addon = bpy.context.user_preferences.addons.get(addon_name)
-
-    if addon and hasattr(addon, "preferences"):
-        return addon.preferences.show_icons
-
-
-def icon(display_icon):
-    '''returns empty dict if show_icons is False, else the icon passed'''
-    kws = {}
-    if menu_prefs.get('show_icons'):
-        if display_icon.startswith('SV_'):
-            kws = {'icon_value': custom_icon(display_icon)}
-        else: 
-            kws = {'icon': display_icon}
-    return kws
-
-
-def node_icon(node_ref):
-    '''returns empty dict if show_icons is False, else the icon passed'''
-    if not menu_prefs.get('show_icons'):
-        return {}
-    else:
-        if hasattr(node_ref, 'sv_icon'):
-            iconID = custom_icon(node_ref.sv_icon)
-            return {'icon_value': iconID} if iconID else {}
-        elif hasattr(node_ref, 'bl_icon') and node_ref.bl_icon != 'OUTLINER_OB_EMPTY':
-            iconID = node_ref.bl_icon
-            return {'icon': iconID} if iconID else {}
-        else:
-            return {}
-
-
 def layout_draw_categories(layout, node_details):
 
-    add_n_grab = 'node.add_node'
     for node_info in node_details:
 
         if node_info[0] == 'separator':
@@ -95,10 +59,7 @@ def layout_draw_categories(layout, node_details):
         else:
             continue
 
-        node_op = layout.operator(add_n_grab, **layout_params)
-        node_op.type = bl_idname
-        node_op.use_transform = True
-
+        node_op = draw_add_node_operator(layout, bl_idname, params=layout_params)
 
 # does not get registered
 class NodeViewMenuTemplate(bpy.types.Menu):
@@ -122,7 +83,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
     def poll(cls, context):
         tree_type = context.space_data.tree_type
         if tree_type in sv_tree_types:
-            menu_prefs['show_icons'] = get_icon_switch()
+            #menu_prefs['show_icons'] = get_icon_switch()
             # print('showing', menu_prefs['show_icons'])
             return True
 
