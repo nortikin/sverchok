@@ -622,7 +622,7 @@ class LinearSpline(Spline):
             tknots = self.tknots
 
         lookup_segments = GenerateLookup(self.is_cyclic, self.pts.tolist())
-        return [lookup_segments.find_bucket(f) for f in t_in]
+        return np.array([lookup_segments.find_bucket(f) for f in t_in])
 
 class GenerateLookup():
 
