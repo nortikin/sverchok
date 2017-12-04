@@ -29,6 +29,7 @@ only for speed, never for aesthetics or line count or cleverness.
 import math
 import numpy as np
 from functools import wraps
+import time
 
 import bpy
 import bmesh
@@ -464,6 +465,11 @@ class Spline(object):
 
         return tknots
 
+    def __init__(self):
+        # Caches
+        # t -> vertex
+        self._single_eval_cache = {}
+
     def length(self, t_in):
         """
         t_in: np.array with values in [0,1]
@@ -481,8 +487,14 @@ class Spline(object):
         t: float in [0,1].
         Returns vector in Sverchok format (tuple of floats).
         """
-        result = self.eval(np.array([t]))
-        return tuple(result[0])
+        result = self._single_eval_cache.get(t, None)
+        if result is not None:
+            return result
+        else:
+            result = self.eval(np.array([t]))
+            result = tuple(result[0])
+            self._single_eval_cache[t] = result
+            return result
 
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
@@ -495,6 +507,8 @@ class CubicSpline(Spline):
 
         creates a cubic spline thorugh the locations given in vertices
         """
+
+        super().__init__()
 
         if is_cyclic:
 
@@ -661,8 +675,13 @@ class Spline2D(object):
 
         self._v_splines = [v_spline_constructor(verts, metric=metric) for verts in vertices]
 
+        # Caches
         # v -> Spline
         self._u_splines = {}
+        # (u,v) -> vertex
+        self._eval_cache = {}
+        # (u,v) -> normal
+        self._normal_cache = {}
 
     def get_u_spline(self, v, vertices):
         spline = self._u_splines.get(v, None)
@@ -674,20 +693,32 @@ class Spline2D(object):
             return spline
 
     def eval(self, u, v):
-        spline_vertices = [spline.eval_at_point(v) for spline in self._v_splines]
-        u_spline = self.get_u_spline(v, spline_vertices)
-        return u_spline.eval_at_point(u)
+        result = self._eval_cache.get((u,v), None)
+        if result is not None:
+            return result
+        else:
+            spline_vertices = [spline.eval_at_point(v) for spline in self._v_splines]
+            u_spline = self.get_u_spline(v, spline_vertices)
+            result = u_spline.eval_at_point(u)
+            self._eval_cache[(u,v)] = result
+            return result
 
     def normal(self, u, v, h=0.001):
-        point = np.array(self.eval(u, v))
-        point_u = np.array(self.eval(u+h, v))
-        point_v = np.array(self.eval(u, v+h))
-        du = (point_u - point)/h
-        dv = (point_v - point)/h
-        n = np.cross(du, dv)
-        n = n / np.linalg.norm(n)
-        #print("DU: {}, DV: {}, N: {}".format(du, dv, n))
-        return tuple(n)
+        result = self._normal_cache.get((u,v), None)
+        if result is not None:
+            return result
+        else:
+            point = np.array(self.eval(u, v))
+            point_u = np.array(self.eval(u+h, v))
+            point_v = np.array(self.eval(u, v+h))
+            du = (point_u - point)/h
+            dv = (point_v - point)/h
+            n = np.cross(du, dv)
+            n = n / np.linalg.norm(n)
+            #print("DU: {}, DV: {}, N: {}".format(du, dv, n))
+            result = tuple(n)
+            self._normal_cache[(u,v)] = result
+            return result
 
 class GenerateLookup():
 
