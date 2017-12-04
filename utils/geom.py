@@ -664,19 +664,30 @@ class Spline2D(object):
         # v -> Spline
         self._u_splines = {}
 
-    def get_u_spline(self, u, vertices):
-        spline = self._u_splines.get(u, None)
+    def get_u_spline(self, v, vertices):
+        spline = self._u_splines.get(v, None)
         if spline is not None:
             return spline
         else:
             spline = self.u_spline_constructor(vertices, metric=self.metric)
-            self._u_splines[u] = spline
+            self._u_splines[v] = spline
             return spline
 
     def eval(self, u, v):
         spline_vertices = [spline.eval_at_point(v) for spline in self._v_splines]
-        u_spline = self.get_u_spline(u, spline_vertices)
+        u_spline = self.get_u_spline(v, spline_vertices)
         return u_spline.eval_at_point(u)
+
+    def normal(self, u, v, h=0.001):
+        point = np.array(self.eval(u, v))
+        point_u = np.array(self.eval(u+h, v))
+        point_v = np.array(self.eval(u, v+h))
+        du = (point_u - point)/h
+        dv = (point_v - point)/h
+        n = np.cross(du, dv)
+        n = n / np.linalg.norm(n)
+        #print("DU: {}, DV: {}, N: {}".format(du, dv, n))
+        return tuple(n)
 
 class GenerateLookup():
 
