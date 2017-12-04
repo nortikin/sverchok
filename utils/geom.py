@@ -474,6 +474,15 @@ class Spline(object):
         t = points_on_spline[:-1] - points_on_spline[1:]
         norms = np.linalg.norm(t, axis=1)
         return norms.sum()
+    
+    def eval_at_point(self, t):
+        """
+        Evaluate spline at single point.
+        t: float in [0,1].
+        Returns vector in Sverchok format (tuple of floats).
+        """
+        result = self.eval(np.array([t]))
+        return tuple(result[0])
 
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
@@ -634,6 +643,40 @@ class LinearSpline(Spline):
 
         lookup_segments = GenerateLookup(self.is_cyclic, self.pts.tolist())
         return np.array([lookup_segments.find_bucket(f) for f in t_in])
+
+class Spline2D(object):
+    def __init__(self, vertices, u_spline_constructor = CubicSpline, v_spline_constructor = None, metric = "DISTANCE"):
+        """
+        vertices: Vertices in Sverchok format, i.e. list of list of 3-tuples.
+        u_spline_constructor: constructor of Spline objects.
+        v_spline_constructor: constructor of Spline objects. Defaults to u_spline_constructor.
+        metric: string, one of "DISTANCE", "MANHATTAN", "POINTS", "CHEBYSHEV".
+        """
+        self.vertices = np.array(vertices)
+        if v_spline_constructor is None:
+            v_spline_constructor = u_spline_constructor
+        self.u_spline_constructor = u_spline_constructor
+        self.v_spline_constructor = v_spline_constructor
+        self.metric = metric
+
+        self._v_splines = [v_spline_constructor(verts, metric=metric) for verts in vertices]
+
+        # v -> Spline
+        self._u_splines = {}
+
+    def get_u_spline(self, u, vertices):
+        spline = self._u_splines.get(u, None)
+        if spline is not None:
+            return spline
+        else:
+            spline = self.u_spline_constructor(vertices, metric=self.metric)
+            self._u_splines[u] = spline
+            return spline
+
+    def eval(self, u, v):
+        spline_vertices = [spline.eval_at_point(v) for spline in self._v_splines]
+        u_spline = self.get_u_spline(u, spline_vertices)
+        return u_spline.eval_at_point(u)
 
 class GenerateLookup():
 
