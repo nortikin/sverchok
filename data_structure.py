@@ -239,6 +239,66 @@ def levelsOflist(lst):
         return level
     return 0
 
+def get_data_nesting_level(data, data_types=(float, int)):
+    """
+    data: number, or list of numbers, or list of lists, etc.
+    data_types: list or tuple of types.
+
+    Detect nesting level of actual data.
+    "Actual" data is detected by belonging to one of data_types.
+    This method searches only for first instance of "actual data",
+    so it does not support cases when different elements of source
+    list have different nesting.
+    Returns integer.
+    Raises an exception if at some point it encounters element
+    which is not a tuple, list, or one of data_types.
+    
+    get_data_nesting_level(1) == 0
+    get_data_nesting_level([]) == 1
+    get_data_nesting_level([1]) == 1
+    get_data_nesting_level([[(1,2,3)]]) == 3
+    """
+
+    def helper(data, recursion_depth):
+        """ Needed only for better error reporting. """
+        if type(data) in data_types:
+            return 0
+        elif type(data) in (list, tuple):
+            if len(data) == 0:
+                return 1
+            else:
+                return helper(data[0], recursion_depth+1) + 1
+        elif data is None:
+            raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
+        else:
+            raise TypeError("get_data_nesting_level: unexpected type `{}' of element `{}' at nesting level {}".format(type(data), data, recursion_depth))
+
+    return helper(data, 0)
+
+def ensure_nesting_level(data, target_level, data_types=(float, int)):
+    """
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: data nesting level required for further processing.
+    data_types: list or tuple of types.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    Raises an exception, if data already has too high nesting level.
+
+    ensure_nesting_level(17, 0) == 17
+    ensure_nesting_level(17, 1) == [17]
+    ensure_nesting_level([17], 1) == [17]
+    ensure_nesting_level([17], 2) == [[17]]
+    ensure_nesting_level([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_nesting_level([[[17]]], 1) => exception
+    """
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level > target_level:
+        raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result
 
 #####################################################
 ################### matrix magic ####################
