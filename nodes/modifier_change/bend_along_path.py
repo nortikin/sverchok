@@ -24,7 +24,7 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, levelsOflist
+from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, ensure_nesting_level
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 from sverchok.utils.geom import LinearSpline, CubicSpline
 
@@ -178,10 +178,9 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Vertices'].is_linked:
             return
 
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
+        vertices_s = self.inputs['Vertices'].sv_get()
         paths = self.inputs['Path'].sv_get()
-        if type(paths) is list and type(paths[0]) in (tuple, list) and type(paths[0][0]) in (float, int):
-            paths = [paths]
+        paths = ensure_nesting_level(paths, 3)
 
         objects = match_long_repeat([vertices_s, paths])
 

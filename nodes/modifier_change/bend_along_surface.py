@@ -24,7 +24,7 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, levelsOflist
+from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, ensure_nesting_level
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 from sverchok.utils.geom import LinearSpline, CubicSpline, Spline2D
 
@@ -178,8 +178,9 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         vertices_s = self.inputs['Vertices'].sv_get()
+        vertices_s = ensure_nesting_level(vertices_s, 4)
         surfaces = self.inputs['Surface'].sv_get()
-        surfaces = [surfaces]
+        surfaces = ensure_nesting_level(surfaces, 4)
 
         objects = match_long_repeat([vertices_s, surfaces])
 
