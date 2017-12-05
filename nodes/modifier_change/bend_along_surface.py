@@ -35,10 +35,13 @@ all_axes = [
     ]
 
 class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Bend mesh along surface'''
+    '''
+    Triggers: Bend Surface
+    Tooltip: Bend mesh along surface
+    '''
     bl_idname = 'SvBendAlongSurfaceNode'
     bl_label = 'Bend object along surface'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SURFACE_NSURFACE'
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
