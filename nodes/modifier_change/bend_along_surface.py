@@ -68,6 +68,11 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         default = "Z",
         items = axes, update=updateNode)
 
+    normal_precision = FloatProperty(name='Normal precision',
+        description = "Step for normals calculation. Lesser values correspond to better precision.",
+        default = 0.001, min=0.000001, max=0.1, precision=8,
+        update=updateNode)
+
     def get_axis_idx(self, letter):
         return 'XYZ'.index(letter)
 
@@ -95,6 +100,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, 'metric')
+        layout.prop(self, 'normal_precision')
 
     def build_spline(self, surface):
         if self.mode == 'LIN':
@@ -172,7 +178,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 for ((u, v), src_vertex) in zip(uv_row, vertices_row):
                     #print("UV: ({}, {}), SRC: {}".format(u, v, src_vertex))
                     spline_vertex = np.array(spline.eval(u, v))
-                    spline_normal = np.array(spline.normal(u, v))
+                    spline_normal = np.array(spline.normal(u, v, h=self.normal_precision))
                     #print("Spline: M {}, N {}".format(spline_vertex, spline_normal))
                     # Coordinate of source vertex corresponding to orientation axis
                     z = src_vertex[self.orient_axis]
