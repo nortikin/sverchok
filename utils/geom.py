@@ -460,7 +460,7 @@ class Spline(object):
             tknots = np.linspace(0, 1, len(pts))
         elif metric == "CHEBYSHEV":
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
-            tmp = np.insert(tmp, 0, 0).cumsum()
+            tknots = np.insert(tknots, 0, 0).cumsum()
             tknots = tknots / tknots[-1]
 
         return tknots
