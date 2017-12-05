@@ -24,7 +24,7 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, ensure_nesting_level
+from sverchok.data_structure import updateNode, match_long_repeat, ensure_nesting_level, transpose_list
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 from sverchok.utils.geom import LinearSpline, CubicSpline, Spline2D
 
@@ -103,6 +103,11 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         description = "Flip the surface orientation",
         default = False,
         update=updateNode)
+
+    transpose = BoolProperty(name = "Swap U/V",
+        description = "Swap U and V directions in surface definition",
+        default = False,
+        update=updateNode)
     
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -120,10 +125,10 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "is_cycle_u", toggle=True)
         row.prop(self, "is_cycle_v", toggle=True)
 
-
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, 'flip')
+        layout.prop(self, 'transpose')
         layout.prop(self, 'metric')
         layout.prop(self, 'normal_precision')
 
@@ -191,6 +196,8 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         result_vertices = []
 
         for vertices, surface in zip(*objects):
+            if self.transpose:
+                surface = transpose_list(surface)
             #print("Surface: {} of {} of {}".format(type(surface), type(surface[0]), type(surface[0][0])))
             spline = self.build_spline(surface)
             # uv_coords will be list of lists of 2-tuples of floats
