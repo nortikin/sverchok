@@ -40,10 +40,13 @@ def Matrix_degenerate(ms):
     return [[ to_tuple(j[:]) for j in M ] for M in ms]
 
 class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Bend mesh along path'''
+    '''
+    Triggers: Bend Path
+    Tooltip: Bend mesh along path (1-D spline)
+    '''
     bl_idname = 'SvBendAlongPathNode'
     bl_label = 'Bend object along path'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'CURVE_NCURVE'
 
     algorithms = [
             ("householder", "Householder", "Use Householder reflection matrix", 1),
@@ -121,15 +124,17 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label("Orientation:")
         layout.prop(self, "orient_axis_", expand=True)
         layout.prop(self, "mode")
+
+        col = layout.column(align=True)
+        col.prop(self, "scale_all", toggle=True)
+        col.prop(self, 'is_cyclic', toggle=True)
         layout.prop(self, "algorithm")
         if self.algorithm == 'track':
             layout.prop(self, "up_axis")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, "scale_all")
         layout.prop(self, 'flip')
-        layout.prop(self, 'is_cyclic')
         layout.prop(self, 'metric')
 
     def build_spline(self, path):
