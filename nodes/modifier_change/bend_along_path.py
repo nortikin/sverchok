@@ -115,6 +115,11 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update=updateNode)
 
+    tangent_precision = FloatProperty(name='Tangent precision',
+        description = "Step for tangents calculation. Lesser values correspond to better precision.",
+        default = 0.001, min=0.000001, max=0.1, precision=8,
+        update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('VerticesSocket', "Path")
@@ -136,6 +141,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons(context, layout)
         layout.prop(self, 'flip')
         layout.prop(self, 'metric')
+        layout.prop(self, 'tangent_precision')
 
     def build_spline(self, path):
         if self.mode == 'LIN':
@@ -207,7 +213,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
             # These are points lying on the spline
             # (a projection of object to spline)
             spline_vertices = [Vector(v) for v in spline.eval(t_values).tolist()]
-            spline_tangents = [Vector(v) for v in spline.tangent(t_values).tolist()]
+            spline_tangents = [Vector(v) for v in spline.tangent(t_values, h=self.tangent_precision).tolist()]
 
             new_vertices = []
             for src_vertex, spline_vertex, spline_tangent in zip(vertices, spline_vertices, spline_tangents):
