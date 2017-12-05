@@ -99,6 +99,11 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update=updateNode)
 
+    flip = BoolProperty(name = "Flip surface",
+        description = "Flip the surface orientation",
+        default = False,
+        update=updateNode)
+    
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('VerticesSocket', "Surface")
@@ -118,6 +123,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        layout.prop(self, 'flip')
         layout.prop(self, 'metric')
         layout.prop(self, 'normal_precision')
 
@@ -164,7 +170,6 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         result = [[((vertex[u_index] - min_u)/size_u, (vertex[v_index] - min_v)/size_v) for vertex in col] for col in vertices]
 
         return size_u, size_v, result
-        
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -194,6 +199,8 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 scale_z = sqrt(scale_u * scale_v)
             else:
                 scale_z = 1.0
+            if self.flip:
+                scale_z = - scale_z
             new_vertices = []
             for uv_row, vertices_row in zip(uv_coords,vertices):
                 new_row = []
