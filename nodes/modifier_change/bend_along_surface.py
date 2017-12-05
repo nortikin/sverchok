@@ -167,6 +167,10 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         size_u = max_u - min_u
         size_v = max_v - min_v
 
+        if size_u < 0.00001:
+            raise Exception("Object has too small size in U direction")
+        if size_v < 0.00001:
+            raise Exception("Object has too small size in V direction")
         result = [[((vertex[u_index] - min_u)/size_u, (vertex[v_index] - min_v)/size_v) for vertex in col] for col in vertices]
 
         return size_u, size_v, result
