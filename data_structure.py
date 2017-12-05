@@ -300,11 +300,11 @@ def ensure_nesting_level(data, target_level, data_types=(float, int)):
         result = [result]
     return result
 
-def transpose(lst):
+def transpose_list(lst):
     """
     Transpose a list of lists.
 
-    transpose([[1,2], [3,4]]) == [[1,3], [2, 4]]
+    transpose_list([[1,2], [3,4]]) == [[1,3], [2, 4]]
     """
     return list(map(list, zip(*lst)))
 

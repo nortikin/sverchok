@@ -661,6 +661,16 @@ class LinearSpline(Spline):
         return np.array([lookup_segments.find_bucket(f) for f in t_in])
 
 class Spline2D(object):
+    """
+    2D Spline (surface).
+    Composed by putting 1D splines along V direction, and then interpolating
+    across them (in U direction) by using another series of 1D splines.
+    U and V splines can both be either linear or cubic.
+    The spline can optionally be cyclic in U and/or V directions
+    (so it can form a cylindrical or thoroidal surface).
+    This is implemented partly in pure python, partly in numpy, so the performance
+    is not very good. The performance is not very bad either, because of caching.
+    """
     def __init__(self, vertices,
             u_spline_constructor = CubicSpline, v_spline_constructor = None,
             metric = "DISTANCE",
@@ -693,6 +703,7 @@ class Spline2D(object):
         self._normal_cache = {}
 
     def get_u_spline(self, v, vertices):
+        """Get a spline along U direction for specified value of V coordinate"""
         spline = self._u_splines.get(v, None)
         if spline is not None:
             return spline
@@ -702,6 +713,13 @@ class Spline2D(object):
             return spline
 
     def eval(self, u, v):
+        """
+        u, v: floats in [0, 1].
+        Returns 3-tuple of floats.
+
+        Evaluate the spline at single point.
+        """
+
         result = self._eval_cache.get((u,v), None)
         if result is not None:
             return result
@@ -713,6 +731,14 @@ class Spline2D(object):
             return result
 
     def normal(self, u, v, h=0.001):
+        """
+        u, v: floats in [0,1].
+        h: step for numeric differentials calculation.
+        Returns 3-tuple of floats.
+
+        Get the normal vector for spline at specific point.
+        """
+
         result = self._normal_cache.get((u,v), None)
         if result is not None:
             return result
