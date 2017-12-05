@@ -27,7 +27,9 @@ Inputs
 This node has the following inputs:
 
 - **Vertices**. Vertices of object to be bent.
-- **Path**. Vertices of path along which the object should be bent.
+- **Path**. Vertices of path along which the object should be bent. For most
+  cases, you will not want to provide a lot of points into this input; 3 to 10
+  vertices can describe very wide range of useful curves.
 
 Parameters
 ----------
