@@ -86,6 +86,16 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
+    is_cycle_u = BoolProperty(name="Cycle U",
+        description = "Whether the spline is cyclic in U direction",
+        default = False,
+        update=updateNode)
+
+    is_cycle_v = BoolProperty(name="Cycle V",
+        description = "Whether the spline is cyclic in V direction",
+        default = False,
+        update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('VerticesSocket', "Surface")
@@ -95,7 +105,13 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label("Orientation:")
         layout.prop(self, "orient_axis_", expand=True)
         layout.prop(self, "mode")
-        layout.prop(self, "autoscale")
+
+        col = layout.column(align=True)
+        col.prop(self, "autoscale", toggle=True)
+        row = col.row(align=True)
+        row.prop(self, "is_cycle_u", toggle=True)
+        row.prop(self, "is_cycle_v", toggle=True)
+
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -107,7 +123,10 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             constructor = LinearSpline
         else:
             constructor = CubicSpline
-        spline = Spline2D(surface, u_spline_constructor=constructor, metric=self.metric)
+        spline = Spline2D(surface, u_spline_constructor=constructor,
+                    is_cyclic_u = self.is_cycle_u,
+                    is_cyclic_v = self.is_cycle_v,
+                    metric=self.metric)
         return spline
     
     def get_other_axes(self):
@@ -115,7 +134,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         if self.orient_axis_ == 'X':
             u_index, v_index = 1,2
         elif self.orient_axis_ == 'Y':
-            u_index, v_index = 0,2
+            u_index, v_index = 2,0
         else:
             u_index, v_index = 0,1
         return u_index, v_index

@@ -622,6 +622,8 @@ class LinearSpline(Spline):
         creates a cubic spline thorugh the locations given in vertices
         """
 
+        super().__init__()
+
         if is_cyclic:
             pts = np.array(vertices + [vertices[0]])
         else:
@@ -659,11 +661,16 @@ class LinearSpline(Spline):
         return np.array([lookup_segments.find_bucket(f) for f in t_in])
 
 class Spline2D(object):
-    def __init__(self, vertices, u_spline_constructor = CubicSpline, v_spline_constructor = None, metric = "DISTANCE"):
+    def __init__(self, vertices,
+            u_spline_constructor = CubicSpline, v_spline_constructor = None,
+            metric = "DISTANCE",
+            is_cyclic_u = False, is_cyclic_v = False):
         """
         vertices: Vertices in Sverchok format, i.e. list of list of 3-tuples.
         u_spline_constructor: constructor of Spline objects.
         v_spline_constructor: constructor of Spline objects. Defaults to u_spline_constructor.
+        is_cyclic_u: whether the spline is cyclic in the U direction
+        is_cyclic_v: whether the spline is cyclic in the V direction
         metric: string, one of "DISTANCE", "MANHATTAN", "POINTS", "CHEBYSHEV".
         """
         self.vertices = np.array(vertices)
@@ -672,8 +679,10 @@ class Spline2D(object):
         self.u_spline_constructor = u_spline_constructor
         self.v_spline_constructor = v_spline_constructor
         self.metric = metric
+        self.is_cyclic_u = is_cyclic_u
+        self.is_cyclic_v = is_cyclic_v
 
-        self._v_splines = [v_spline_constructor(verts, metric=metric) for verts in vertices]
+        self._v_splines = [v_spline_constructor(verts, is_cyclic=is_cyclic_v, metric=metric) for verts in vertices]
 
         # Caches
         # v -> Spline
@@ -688,7 +697,7 @@ class Spline2D(object):
         if spline is not None:
             return spline
         else:
-            spline = self.u_spline_constructor(vertices, metric=self.metric)
+            spline = self.u_spline_constructor(vertices, is_cyclic=self.is_cyclic_u, metric=self.metric)
             self._u_splines[v] = spline
             return spline
 
