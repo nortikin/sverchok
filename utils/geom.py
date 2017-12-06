@@ -533,7 +533,7 @@ class CubicSpline(Spline):
 
         n = len(locs)
         if n < 2:
-            return
+            raise Exception("Cubic spline can't be build from less than 3 vertices")
 
         # a = locs
         h = tknots[1:] - tknots[:-1]
