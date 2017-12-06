@@ -140,6 +140,8 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['Edgs'].sv_set(out[1])
         outputs['Pols'].sv_set(out[2])
 
+        self.debug("hello from the box")
+
 
 def register():
     bpy.utils.register_class(SvBoxNode)
