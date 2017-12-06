@@ -82,4 +82,11 @@ This node has one output: **Vertices**.
 Examples of usage
 -----------------
 
+Cylinder bent along curve made from NGon:
+
+.. image:: https://user-images.githubusercontent.com/284644/33626075-6a94d0e2-da1b-11e7-83bb-fc859eda2cdc.png
+
+Hexagonal grid bent along similar curve (the curve itself is drawn in red):
+
+.. image:: https://user-images.githubusercontent.com/284644/33674756-3d0fa234-dad2-11e7-9e04-a043b94cb377.png
 

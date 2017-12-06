@@ -72,4 +72,15 @@ This node has one output: **Vertices**.
 Examples of usage
 -----------------
 
+Bend simple plane and Suzanne along surface, which is defined by 16 Empty objects (Objects In Mk3 is used):
+
+.. image:: https://user-images.githubusercontent.com/284644/33626211-b59ac09c-da1b-11e7-88e3-ccbd3c530267.png
+
+Hex grid bent along similar surface:
+
+.. image:: https://user-images.githubusercontent.com/284644/33626542-b5ac9ac8-da1c-11e7-808b-858149e55ed0.png
+
+Hex grid along toroidal surface, which is defined by 16 Empty objects as well:
+
+.. image:: https://user-images.githubusercontent.com/284644/33627132-64f6a45a-da1e-11e7-8a72-09754362af63.png
 
