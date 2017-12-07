@@ -27,8 +27,10 @@ This node has the following inputs:
 - **Vertices**. Vertices of object to be bent.
 - **Surface**. Vertices of the surface along which the object should be bent.
   Please note that this input expects a list of lists of vertices for each
-  object. Each list of vertices should describe a curve along one direction on
-  the surface (for example, U).
+  object (sort of grid). Each list of vertices should describe a curve along
+  one direction on the surface (for example, U). Usually you do not want to
+  pass a lot of data into this input; 3x3 to 10x10 grids allow very wide range
+  of useful surfaces.
 
 Parameters
 ----------
