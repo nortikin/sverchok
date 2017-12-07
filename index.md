@@ -96,6 +96,8 @@
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
     SvVertMaskNode
     SvTransformSelectNode
     SvSplitEdgesNode
