@@ -24,7 +24,7 @@ from mathutils import Vector
 
 from sverchok import data_structure
 from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
-from sverchok.utils import logging
+from sverchok.utils.logging import getLogger
 import sverchok
 
 import traceback
@@ -34,8 +34,6 @@ graphs = []
 
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
-
-logger = logging.getLogger()
 
 def update_error_colors(self, context):
     global no_data_color
@@ -85,7 +83,7 @@ def make_dep_dict(node_tree, down=False):
     for name, var_name in wifi_out_nodes:
         other = wifi_dict.get(var_name)
         if not other:
-            logger.warning("Unsatisifed Wifi dependency: node, %s var,%s", name, var_name)
+            getLogger().warning("Unsatisifed Wifi dependency: node, %s var,%s", name, var_name)
             return collections.defaultdict(set)
         if down:
             deps[other].add(name)
@@ -133,7 +131,7 @@ def make_update_list(node_tree, node_set=None, dependencies=None):
                 node_dependencies = False
                 break
         if len(tree_stack) > node_count:
-            logger.error("Invalid node tree!")
+            getLogger().error("Invalid node tree!")
             return []
         # if all dependencies are in out
         if node_dependencies:
@@ -200,7 +198,7 @@ def make_tree_from_nodes(node_names, tree, down=True):
     ng = tree
     nodes = ng.nodes
     if not node_names:
-        logger.warning("No nodes!")
+        getLogger().warning("No nodes!")
         return make_update_list(ng)
 
     out_set = set(node_names)
@@ -265,7 +263,7 @@ def do_update_heat_map(node_list, nodes):
         cold = Vector(addon.preferences.heat_map_cold)
         hot = addon.preferences.heat_map_hot
     else:
-        logger.error("Cannot find preferences")
+        getLogger().error("Cannot find preferences")
         cold = Vector((1, 1, 1))
         hot = (.8, 0, 0)
     for name, t in zip(node_list, times):
@@ -326,7 +324,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             delta = time.perf_counter() - start
             total_time += delta
             if data_structure.DEBUG_MODE:
-                logger.debug("Processed  %s in: %.4f", node_name, delta)
+                getLogger().debug("Processed  %s in: %.4f", node_name, delta)
             timings.append(delta)
             graph.append({"name" : node_name,
                            "bl_idname": node.bl_idname,
@@ -337,11 +335,11 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             ng = nodes.id_data
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
-            logger.exception("Node %s had exception: %s", node_name, err)
+            getLogger().exception("Node %s had exception: %s", node_name, err)
             return None
     graphs.append(graph)
     if data_structure.DEBUG_MODE:
-        logger.debug("Node set updated in: %.4f seconds", total_time)
+        getLogger().debug("Node set updated in: %.4f seconds", total_time)
     return timings
 
 

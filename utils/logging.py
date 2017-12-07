@@ -1,6 +1,7 @@
 
 import bpy
 
+import inspect
 import logging
 import logging.handlers
 
@@ -71,11 +72,12 @@ error = logging.error
 exception = logging.exception
 
 def getLogger(name=None):
-    if name is not None:
-        ensure_initialized()
-        return logging.getLogger(name)
-    else:
-        return logging.getLogger()
+    if name is None:
+        frame = inspect.stack()[1]
+        module = inspect.getmodule(frame[0])
+        name = module.__name__
+    ensure_initialized()
+    return logging.getLogger(name)
 
 def setLevel(level):
     if type(level) != int:
