@@ -7,7 +7,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProper
 from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
-from sverchok.utils import sv_panels_tools
+from sverchok.utils import sv_panels_tools, logging
 from sverchok.ui import color_def
 
 
@@ -157,6 +157,37 @@ class SverchokPreferences(AddonPreferences):
     external_editor = StringProperty(description='which external app to invoke to view sources')
     real_sverchok_path = StringProperty(description='use with symlinked to get correct src->dst')
 
+    # Logging settings
+
+    def update_log_level(self, context):
+        logging.info("Setting log level to %s", self.log_level)
+        logging.setLevel(self.log_level)
+    
+    log_levels = [
+            ("DEBUG", "Debug", "Debug output", 0),
+            ("INFO", "Information", "Informational output", 1),
+            ("WARNING", "Warnings", "Show only warnings and errors", 2),
+            ("ERROR", "Errors", "Show errors only", 3)
+        ]
+
+    log_level = EnumProperty(name = "Logging level",
+            description = "Minimum events severity level to output. All more severe messages will be logged as well.",
+            items = log_levels,
+            update = update_log_level,
+            default = "INFO")
+
+    log_to_buffer = BoolProperty(name = "Log to text buffer",
+            description = "Enable log output to internal Blender's text buffer",
+            default = True)
+    log_to_buffer_clean = BoolProperty(name = "Clear buffer at startup",
+            description = "Clear text buffer at each Blender startup",
+            default = False)
+    log_to_file = BoolProperty(name = "Log to file",
+            description = "Enable log output to external file",
+            default = False)
+
+    log_buffer_name = StringProperty(name = "Buffer name", default = "sverchok.log")
+    log_file_name = StringProperty(name = "File path", default = "sverchok.log")
 
     def draw(self, context):
 
@@ -184,6 +215,21 @@ class SverchokPreferences(AddonPreferences):
             col2box.label(text="Debug:")
             col2box.prop(self, "show_debug")
             col2box.prop(self, "heat_map")
+
+            log_box = col2.box()
+            log_box.label(text="Logging:")
+            log_box.prop(self, "log_level")
+
+            buff_row = log_box.row()
+            buff_row.prop(self, "log_to_buffer")
+            if self.log_to_buffer:
+                buff_row.prop(self, "log_buffer_name")
+                log_box.prop(self, "log_to_buffer_clean")
+
+            file_row = log_box.row()
+            file_row.prop(self, "log_to_file")
+            if self.log_to_file:
+                file_row.prop(self, "log_file_name")
 
         if self.selected_tab == "Node Defaults":
 
