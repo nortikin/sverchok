@@ -546,20 +546,23 @@ class SverchCustomTreeNode:
         ng = self.id_data
         update_error_nodes(ng, self.name, err)
 
-    def get_logger(self):
+    def getLogger(self):
         return sverchok.utils.logging.getLogger(self.__class__.__name__)
 
     def debug(self, msg, *args, **kwargs):
-        self.get_logger().debug(msg, *args, **kwargs)
+        self.getLogger().debug(msg, *args, **kwargs)
 
     def info(self, msg, *args, **kwargs):
-        self.get_logger().info(msg, *args, **kwargs)
+        self.getLogger().info(msg, *args, **kwargs)
 
     def warning(self, msg, *args, **kwargs):
-        self.get_logger().warning(msg, *args, **kwargs)
+        self.getLogger().warning(msg, *args, **kwargs)
 
     def error(self, msg, *args, **kwargs):
-        self.get_logger().error(msg, *args, **kwargs)
+        self.getLogger().error(msg, *args, **kwargs)
+
+    def exception(self, msg, *args, **kwargs):
+        self.getLogger().exception(msg, *args, **kwargs)
 
     def set_color(self):
         color = color_def.get_color(self.bl_idname)
