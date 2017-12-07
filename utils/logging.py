@@ -26,8 +26,12 @@ def ensure_initialized():
     global internal_buffer_initialized
     global initialized
 
-    if not internal_buffer_initialized:
-        with sv_preferences() as prefs:
+    with sv_preferences() as prefs:
+        if not prefs:
+            logging.error("Can't obtain logging preferences, it's too early")
+            return
+
+        if not internal_buffer_initialized:
             if prefs.log_to_buffer:
                 buffer = get_log_buffer(prefs.log_buffer_name)
                 if buffer is not None:
@@ -41,8 +45,7 @@ def ensure_initialized():
             else:
                 internal_buffer_initialized = True
 
-    if not initialized:
-        with sv_preferences() as prefs:
+        if not initialized:
             if prefs.log_to_file:
                 handler = logging.handlers.RotatingFileHandler(prefs.log_file_name, 
                             maxBytes = 10*1024*1024,
@@ -52,12 +55,12 @@ def ensure_initialized():
 
             setLevel(prefs.log_level)
 
-        logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, bl_info['version'])
-        logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s",
-                prefs.log_level,
-                ("no" if not prefs.log_to_buffer else prefs.log_buffer_name),
-                ("no" if not prefs.log_to_file else prefs.log_file_name) )
-        initialized = True
+            logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, bl_info['version'])
+            logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s",
+                    prefs.log_level,
+                    ("no" if not prefs.log_to_buffer else prefs.log_buffer_name),
+                    ("no" if not prefs.log_to_file else prefs.log_file_name) )
+            initialized = True
 
 # Convinience functions
 
@@ -68,8 +71,11 @@ error = logging.error
 exception = logging.exception
 
 def getLogger(name=None):
-    ensure_initialized()
-    return logging.getLogger(name)
+    if name is not None:
+        ensure_initialized()
+        return logging.getLogger(name)
+    else:
+        return logging.getLogger()
 
 def setLevel(level):
     if type(level) != int:
