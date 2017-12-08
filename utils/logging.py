@@ -8,12 +8,18 @@ import logging.handlers
 from sverchok.ui.development import get_version_string
 from sverchok.utils.context_managers import sv_preferences
 
+# Hardcoded for now
 log_format = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 
+# Whether logging to internal blender's text buffer is initialized
 internal_buffer_initialized = False
+# Whether logging is initialized
 initialized = False
 
 def get_log_buffer(log_buffer_name):
+    """
+    Get internal blender text buffer for logging.
+    """
     try:
         if log_buffer_name in bpy.data.texts:
             return bpy.data.texts[log_buffer_name]
@@ -23,7 +29,12 @@ def get_log_buffer(log_buffer_name):
         logging.debug("Can't initialize logging to internal buffer: get_log_buffer is called too early: {}".format(e))
         return None
 
-def ensure_initialized():
+def try_initialize():
+    """
+    Try to initialize logging subsystem.
+    Does nothing if everything is already initialized.
+    Prints an error if it is called too early.
+    """
     global internal_buffer_initialized
     global initialized
 
@@ -66,16 +77,21 @@ def ensure_initialized():
 # Convinience functions
 
 def with_module_logger(method_name):
+    """
+    Returns a method of Logger class instance.
+    Logger name is obtained from caller module name.
+    """
     def wrapper(*args, **kwargs):
         frame = inspect.stack()[1]
         module = inspect.getmodule(frame[0])
         name = module.__name__
-        ensure_initialized()
+        try_initialize()
         logger = logging.getLogger(name)
         method = getattr(logger, method_name)
         return method(*args, **kwargs)
 
     wrapper.__name__ = method_name
+    wrapper.__doc__ = "Call `{}' method on a Logger. Logger name is obtained from caller module name.".format(method_name)
 
     return wrapper
 
@@ -86,14 +102,21 @@ error = with_module_logger("error")
 exception = with_module_logger("exception")
 
 def getLogger(name=None):
+    """
+    Get Logger instance.
+    If name is None, then logger name is obtained from caller module name.
+    """
     if name is None:
         frame = inspect.stack()[1]
         module = inspect.getmodule(frame[0])
         name = module.__name__
-    ensure_initialized()
+    try_initialize()
     return logging.getLogger(name)
 
 def setLevel(level):
+    """
+    Set logging level for all handlers.
+    """
     if type(level) != int:
         level = getattr(logging, level)
 
