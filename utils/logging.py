@@ -65,11 +65,25 @@ def ensure_initialized():
 
 # Convinience functions
 
-debug = logging.debug
-info = logging.info
-warning = logging.warning
-error = logging.error
-exception = logging.exception
+def with_module_logger(method_name):
+    def wrapper(*args, **kwargs):
+        frame = inspect.stack()[1]
+        module = inspect.getmodule(frame[0])
+        name = module.__name__
+        ensure_initialized()
+        logger = logging.getLogger(name)
+        method = getattr(logger, method_name)
+        return method(*args, **kwargs)
+
+    wrapper.__name__ = method_name
+
+    return wrapper
+
+debug = with_module_logger("debug")
+info = with_module_logger("info")
+warning = with_module_logger("warning")
+error = with_module_logger("error")
+exception = with_module_logger("exception")
 
 def getLogger(name=None):
     if name is None:
