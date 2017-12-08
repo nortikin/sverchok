@@ -132,11 +132,14 @@ def setLevel(level):
     if type(level) != int:
         level = getattr(logging, level)
 
+    logging.getLogger().setLevel(level)
     for handler in logging.getLogger().handlers:
         handler.setLevel(level)
 
 def register():
-    logging.basicConfig(level=logging.DEBUG, format=log_format)
+    with sv_preferences() as prefs:
+        level = getattr(logging, prefs.log_level)
+        logging.basicConfig(level=level, format=log_format)
     logging.captureWarnings(True)
     info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
 
