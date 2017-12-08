@@ -56,8 +56,9 @@ def try_initialize():
 
                     for area in bpy.context.screen.areas:
                         if area.type == 'TEXT_EDITOR':
-                            area.spaces[0].text = buffer
-                            break
+                            if area.spaces[0].text is None:
+                                area.spaces[0].text = buffer
+                                break
                     internal_buffer_initialized = True
             else:
                 internal_buffer_initialized = True
