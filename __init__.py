@@ -184,7 +184,13 @@ def register():
 
 
 def unregister():
+
+    import sverchok
+    sverchok.ui.nodeview_keymaps.remove_keymap()
+    sverchok.utils.text_editor_plugins.remove_keymap()
+
     node_classes.clear()
+
     for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
             #print("Unregistering module: {}".format(m.__name__))

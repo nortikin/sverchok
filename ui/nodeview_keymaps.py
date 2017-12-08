@@ -63,6 +63,8 @@ def add_keymap():
 
 def remove_keymap():
 
+    print('clearing nodeview keymaps')
+
     for km, kmi in nodeview_keymaps:
         try:
             km.keymap_items.remove(kmi)
@@ -79,4 +81,5 @@ def register():
     add_keymap()
 
 def unregister():
-    remove_keymap()
+    # remove_keymap()
+    pass
