@@ -70,7 +70,7 @@ socket_colors = {
     "SvQuaternionSocket": (0.9, 0.4, 0.7, 1.0),
     "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
     "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
-    "DummySocket": (0.8, 0.8, 0.8, 0.3),
+    "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
     "ObjectSocket": (0.69, 0.74, 0.73, 1.0),
     "TextSocket": (0.68, 0.85, 0.90, 1),
 }
@@ -362,7 +362,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 
             return SvGetSocket(self, deepcopy)
         elif default is sentinel:
-            return identityMatrix
+            raise SvNoDataError(self)
         else:
             return default
 
