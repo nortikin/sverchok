@@ -158,8 +158,17 @@ if reload_event:
 import bpy
 from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
 from sverchok.core import node_defaults
+from sverchok.ui.development import get_branch, get_hash
 
-
+def get_version_string():
+    version = ".".join(map(str, bl_info['version']))
+    branch = get_branch()
+    if branch:
+        version += ", branch " + branch
+        hash = get_hash()
+        if hash:
+            version += ", commit " + hash
+    return version
 
 def register():
     for m in imported_modules + node_list:
@@ -170,7 +179,7 @@ def register():
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
-    print("** version: ", bl_info['version']," **")
+    print("** version: ", get_version_string()," **")
     print("** Have a nice day with sverchok  **\n")
     ascii_print.logo()
     node_defaults.register_defaults()
