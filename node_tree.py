@@ -505,7 +505,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
     prop_type = StringProperty(default='')
     prop_index = IntProperty()
-    nodule_color = FloatVectorProperty(default=(0.6, 1.0, 0.6, 1.0), size=4)
+    nodule_color = FloatVectorProperty(default=socket_colors["StringsSocket"], size=4)
 
     custom_draw = StringProperty()
 
@@ -534,6 +534,9 @@ class StringsSocket(NodeSocket, SvSocketCommon):
             return default
         else:
             raise SvNoDataError(self)
+
+    def draw_color(self, context, node):
+        return self.nodule_color
 
 
 class SvLinkNewNodeInput(bpy.types.Operator):
