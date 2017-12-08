@@ -86,6 +86,7 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
+
 class SvDocstring(object):
     """
     A class that incapsulates parsing of Sverchok's nodes docstrings.
@@ -157,7 +158,7 @@ class SvDocstring(object):
         """
         Get shorthand to be used in search menu.
         If fallback == True, then whole docstring
-        will be returned for case when we can't 
+        will be returned for case when we can't
         find valid shorthand specification.
         """
 
@@ -171,7 +172,7 @@ class SvDocstring(object):
             return self.docstring
         else:
             return None
-    
+
     def has_shorthand(self):
         return self.get_shorthand() is not None
 
@@ -188,6 +189,8 @@ class SvDocstring(object):
             return self.docstring.strip()
 
 # this property group is only used by the old viewer draw
+
+
 class SvColors(bpy.types.PropertyGroup):
     """ Class for colors CollectionProperty """
     color = FloatVectorProperty(
@@ -326,6 +329,7 @@ class SvSocketCommon:
 
     def draw_color(self, context, node):
         return socket_colors[self.bl_idname]
+
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
@@ -641,7 +645,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process = BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors = StringProperty(default="")
 
-
     def update(self):
         '''
         Tags tree for update for handle
@@ -763,7 +766,7 @@ class SverchCustomTreeNode:
         """
 
         return cls.get_docstring().get_tooltip()
-    
+
     @classmethod
     def get_shorthand(cls):
         """
@@ -801,7 +804,6 @@ class SverchCustomTreeNode:
             # print('applying default for', self.name)
             set_defaults_if_defined(self)
 
-
     def process_node(self, context):
         '''
         Doesn't work as intended, inherited functions can't be used for bpy.props
@@ -837,7 +839,6 @@ classes = [
 def register():
     for cls in classes:
         bpy.utils.register_class(cls)
-
 
 
 def unregister():

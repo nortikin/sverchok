@@ -30,6 +30,7 @@ def cross_test_socket(self, A, B):
     get_type = {'v': 'VerticesSocket', 'm': 'MatrixSocket', 'q': "SvQuaternionSocket"}
     return other.bl_idname == get_type[A] and self.bl_idname == get_type[B]
 
+
 def is_vector_to_matrix(self):
     return cross_test_socket(self, 'v', 'm')
 

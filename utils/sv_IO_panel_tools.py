@@ -104,7 +104,6 @@ def compile_socket(link):
 
 def write_json(layout_dict, destination_path):
 
-
     try:
         m = json.dumps(layout_dict, sort_keys=True, indent=2)
     except Exception as err:
@@ -149,11 +148,11 @@ def get_superficial_props(node_dict, node):
 
 def collect_custom_socket_properties(node, node_dict):
     print("** PROCESSING custom properties for node: ", node.bl_idname)
-    input_socket_storage = { }
+    input_socket_storage = {}
     for socket in node.inputs:
 
         # if not tracked_socket(socket): continue
-        print("Socket %d of %d" % (socket.index+1, len(node.inputs)))
+        print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
 
         storable = {}
         tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
@@ -176,7 +175,7 @@ def collect_custom_socket_properties(node, node_dict):
 
     if input_socket_storage:
         node_dict['custom_socket_props'] = input_socket_storage
-    print("**\n")    
+    print("**\n")
 
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
@@ -297,10 +296,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         collect_custom_socket_properties(node, node_dict)
 
-        #if node.bl_idname == 'NodeFrame':
+        # if node.bl_idname == 'NodeFrame':
         #    frame_props = 'shrink', 'use_custom_color', 'label_size'
         #    node_dict['params'].update({fpv: getattr(node, fpv) for fpv in frame_props})
-
 
         if IsMonadInstanceNode:
             node_dict['bl_idname'] = 'SvMonadGenericNode'
@@ -514,7 +512,7 @@ def apply_socket_props(socket, info):
             sys.stderr.write('ERROR: %s\n' % str(err))
             print(sys.exc_info()[-1].tb_frame.f_code)
             print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
-            print('while setting node socket:', node.name,'|', socket.index)
+            print('while setting node socket:', node.name, '|', socket.index)
             print("the following failed |", tracked_prop_name, '<-', tracked_prop_value)
 
 
@@ -611,7 +609,6 @@ def add_nodes(ng, nodes_to_import, nodes, create_texts):
     return name_remap
 
 
-
 def add_groups(groups_to_import):
     '''
     return the dictionary that tracks which groups got renamed due to conflicts
@@ -666,7 +663,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             print(failed_connections)
         else:
             print('no failed connections! awesome.')
-
 
     def generate_layout(fullpath, nodes_json):
         '''cummulative function '''
@@ -876,7 +872,6 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             self.report({'ERROR'}, 'unspecified error, check your internet connection')
 
         return
-
 
     def obtain_json(self, gist_id):
 
