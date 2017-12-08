@@ -53,6 +53,11 @@ def try_initialize():
                     handler = logging.StreamHandler(buffer)
                     handler.setFormatter(logging.Formatter(log_format))
                     logging.getLogger().addHandler(handler)
+
+                    for area in bpy.context.screen.areas:
+                        if area.type == 'TEXT_EDITOR':
+                            area.spaces[0].text = buffer
+                            break
                     internal_buffer_initialized = True
             else:
                 internal_buffer_initialized = True
