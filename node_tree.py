@@ -547,7 +547,15 @@ class SverchCustomTreeNode:
         update_error_nodes(ng, self.name, err)
 
     def getLogger(self):
-        return sverchok.utils.logging.getLogger(self.__class__.__name__)
+        if hasattr(self, "draw_label"):
+            name = self.draw_label()
+        else:
+            name = self.label
+        if not name:
+            name = self.bl_label
+        if not name:
+            name = self.__class__.__name__
+        return sverchok.utils.logging.getLogger(name)
 
     def debug(self, msg, *args, **kwargs):
         self.getLogger().debug(msg, *args, **kwargs)
