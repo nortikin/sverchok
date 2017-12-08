@@ -75,12 +75,6 @@ socket_colors = {
     "TextSocket": (0.68, 0.85, 0.90, 1),
 }
 
-# default values returned when no input is connected to socket
-identityMatrix = [[tuple(v) for v in Matrix()]]
-emptyVertex = [[(0, 0, 0)]]
-emptyColor = [[(0, 0, 0, 1)]]
-emptyQuaternion = [[(1, 0, 0, 0)]]
-
 
 def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
@@ -404,7 +398,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
-            return emptyVertex
+            raise SvNoDataError(self)
         else:
             return default
 
@@ -445,7 +439,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
-            return emptyQuaternion
+            raise SvNoDataError(self)
         else:
             return default
 
@@ -477,7 +471,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
-            return emptyColor
+            raise SvNoDataError(self)
         else:
             return default
 
