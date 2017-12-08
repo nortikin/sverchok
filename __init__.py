@@ -158,17 +158,7 @@ if reload_event:
 import bpy
 from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
 from sverchok.core import node_defaults
-from sverchok.ui.development import get_branch, get_hash
-
-def get_version_string():
-    version = ".".join(map(str, bl_info['version']))
-    branch = get_branch()
-    if branch:
-        version += ", branch " + branch
-        hash = get_hash()
-        if hash:
-            version += ", commit " + hash
-    return version
+from sverchok.ui.development import get_version_string
 
 def register():
     for m in imported_modules + node_list:

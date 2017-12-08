@@ -76,6 +76,16 @@ def get_hash():
     else:
         return None
 
+def get_version_string():
+    version = ".".join(map(str, sverchok.bl_info['version']))
+    branch = get_branch()
+    if branch:
+        version += ", branch " + branch
+        hash = get_hash()
+        if hash:
+            version += ", commit " + hash
+    return version
+
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
 

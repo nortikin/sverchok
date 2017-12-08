@@ -5,7 +5,7 @@ import inspect
 import logging
 import logging.handlers
 
-from sverchok import bl_info
+from sverchok.ui.development import get_version_string
 from sverchok.utils.context_managers import sv_preferences
 
 log_format = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
@@ -56,7 +56,7 @@ def ensure_initialized():
 
             setLevel(prefs.log_level)
 
-            logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, bl_info['version'])
+            logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, get_version_string())
             logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s",
                     prefs.log_level,
                     ("no" if not prefs.log_to_buffer else prefs.log_buffer_name),
