@@ -102,6 +102,7 @@ def setLevel(level):
 
 def register():
     logging.basicConfig(level=logging.DEBUG, format=log_format)
+    logging.captureWarnings(True)
 
 def unregister():
     logging.shutdown()
