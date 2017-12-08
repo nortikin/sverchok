@@ -36,7 +36,7 @@ def get_verts_edge_poly_output_sockets(node):
     for socket in node.outputs:
         socket_name = socket.name.lower()
 
-        if not got_verts and 'ver' in socket_name:
+        if not got_verts and 've' in socket_name:
             output_map['verts'] = socket.name
             got_verts = True
 
