@@ -749,7 +749,9 @@ class Spline2D(object):
             du = (point_u - point)/h
             dv = (point_v - point)/h
             n = np.cross(du, dv)
-            n = n / np.linalg.norm(n)
+            norm = np.linalg.norm(n)
+            if norm != 0:
+                n = n / norm
             #print("DU: {}, DV: {}, N: {}".format(du, dv, n))
             result = tuple(n)
             self._normal_cache[(u,v)] = result
