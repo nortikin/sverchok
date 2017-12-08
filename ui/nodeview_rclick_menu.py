@@ -36,7 +36,7 @@ def get_verts_edge_poly_output_sockets(node):
     for socket in node.outputs:
         socket_name = socket.name.lower()
 
-        if not got_verts and 'ver' in socket_name:
+        if not got_verts and 've' in socket_name:
             output_map['verts'] = socket.name
             got_verts = True
 
@@ -74,7 +74,10 @@ def add_connection(tree, bl_idname_new_node, offset):
         if existing_node.bl_idname == 'ViewerNode2' and bl_idname_new_node == 'IndexViewer':
             # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
             ...
-            
+        elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
+            # we can't determin thru cursor location which socket was nearest the rightclick
+            # maybe in the future.. or if someone does know :)
+            links.new(outputs[0], inputs[0])
 
         elif bl_idname_new_node == 'ViewerNode2':
 
@@ -110,6 +113,8 @@ class SvGenericDeligationOperator(bpy.types.Operator):
             add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewer"], offset=[180, 0])
         elif self.fn == '+idxv':
             add_connection(tree, bl_idname_new_node="IndexViewer", offset=[180, 0])
+        elif self.fn == 'stethoscope':
+            add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[180, 0])
 
         return {'FINISHED'}
 
@@ -132,14 +137,18 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         node = valid_active_node(nodes)
 
         if node and node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
-            layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn="+idxv"
+            layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
 
         elif has_outputs(node):
-            layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn="vdmk2"
+            layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
             # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
         
         else:
             layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
+
+        if node and len(node.outputs):
+            layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
+
 
 
 def register():
