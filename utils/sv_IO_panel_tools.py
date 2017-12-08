@@ -151,7 +151,6 @@ def collect_custom_socket_properties(node, node_dict):
     input_socket_storage = {}
     for socket in node.inputs:
 
-        # if not tracked_socket(socket): continue
         print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
 
         storable = {}
@@ -162,6 +161,10 @@ def collect_custom_socket_properties(node, node_dict):
                 continue
 
             value = getattr(socket, tracked_prop_name)
+            defaultValue = socket.bl_rna.properties[tracked_prop_name].default
+            # property value same as default ? => don't store it
+            if value == defaultValue:
+                continue
 
             print("Processing custom property: ", tracked_prop_name, " value = ", value)
             storable[tracked_prop_name] = value
