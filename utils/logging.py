@@ -138,6 +138,7 @@ def setLevel(level):
 def register():
     logging.basicConfig(level=logging.DEBUG, format=log_format)
     logging.captureWarnings(True)
+    info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
 
 def unregister():
     logging.shutdown()
