@@ -55,6 +55,7 @@ from sverchok.core.socket_conversions import (
 from sverchok.core.node_defaults import set_defaults_if_defined
 
 from sverchok.ui import color_def
+import sverchok.utils.logging
 
 
 def process_from_socket(self, context):
@@ -544,6 +545,32 @@ class SverchCustomTreeNode:
         """
         ng = self.id_data
         update_error_nodes(ng, self.name, err)
+
+    def getLogger(self):
+        if hasattr(self, "draw_label"):
+            name = self.draw_label()
+        else:
+            name = self.label
+        if not name:
+            name = self.bl_label
+        if not name:
+            name = self.__class__.__name__
+        return sverchok.utils.logging.getLogger(name)
+
+    def debug(self, msg, *args, **kwargs):
+        self.getLogger().debug(msg, *args, **kwargs)
+
+    def info(self, msg, *args, **kwargs):
+        self.getLogger().info(msg, *args, **kwargs)
+
+    def warning(self, msg, *args, **kwargs):
+        self.getLogger().warning(msg, *args, **kwargs)
+
+    def error(self, msg, *args, **kwargs):
+        self.getLogger().error(msg, *args, **kwargs)
+
+    def exception(self, msg, *args, **kwargs):
+        self.getLogger().exception(msg, *args, **kwargs)
 
     def set_color(self):
         color = color_def.get_color(self.bl_idname)

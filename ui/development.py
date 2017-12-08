@@ -62,6 +62,30 @@ def get_branch():
     except:
         BRANCH = ""
 
+    return BRANCH
+
+def get_hash():
+    get_branch()
+    if BRANCH:
+        path = os.path.join(os.path.dirname(sverchok.__file__), '.git', 'refs', 'heads', BRANCH)
+        if os.path.exists(path):
+            with open(path) as hashfile:
+                return hashfile.readlines()[0].strip()[:8]
+        else:
+            return None
+    else:
+        return None
+
+def get_version_string():
+    version = ".".join(map(str, sverchok.bl_info['version']))
+    branch = get_branch()
+    if branch:
+        version += ", branch " + branch
+        hash = get_hash()
+        if hash:
+            version += ", commit " + hash
+    return version
+
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
 

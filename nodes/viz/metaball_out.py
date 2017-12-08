@@ -229,7 +229,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         metaball_object = self.find_metaball()
         if not metaball_object:
             metaball_object = self.create_metaball()
-            print("Created new metaball")
+            self.debug("Created new metaball")
 
         self.update_material()
 
@@ -267,12 +267,12 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
             element.use_negative = bool(negate)
 
         if len(items) == len(metaball_object.data.elements):
-            #print('Updating existing metaball data')
+            #self.debug('Updating existing metaball data')
 
             for (item, element) in zip(items, metaball_object.data.elements):
                 setup_element(element, item)
         else:
-            #print('Recreating metaball data')
+            #self.debug('Recreating metaball data')
             metaball_object.data.elements.clear()
 
             for item in items:

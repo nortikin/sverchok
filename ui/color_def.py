@@ -21,6 +21,7 @@ import bpy
 from bpy.props import StringProperty
 
 from sverchok.menu import make_node_cats
+from sverchok.utils.logging import debug
 import sverchok
 
 colors_cache = {}
@@ -70,7 +71,7 @@ def color_callback(self, context):
 def sv_colors_definition():
     addon_name = sverchok.__name__
     addon = bpy.context.user_preferences.addons.get(addon_name)
-    print("got addon")
+    debug("got addon")
     if addon:
         prefs = addon.preferences
         sv_node_colors = {
@@ -101,7 +102,7 @@ def get_color(bl_id):
     Get color for bl_id
     """
     if not colors_cache:
-        print("building color cache")
+        debug("building color cache")
         rebuild_color_cache()
     return colors_cache.get(bl_id)
 

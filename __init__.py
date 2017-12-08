@@ -88,6 +88,7 @@ utils_modules = [
     "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions",
     "snlite_utils", "snlite_importhelper", "context_managers",
+    "logging",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
@@ -157,8 +158,7 @@ if reload_event:
 import bpy
 from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
 from sverchok.core import node_defaults
-
-
+from sverchok.ui.development import get_version_string
 
 def register():
     for m in imported_modules + node_list:
@@ -169,7 +169,7 @@ def register():
     # this is used to access preferences, should/could be hidden
     # in an interface
     data_structure.SVERCHOK_NAME = __name__
-    print("** version: ", bl_info['version']," **")
+    print("** version: ", get_version_string()," **")
     print("** Have a nice day with sverchok  **\n")
     ascii_print.logo()
     node_defaults.register_defaults()
