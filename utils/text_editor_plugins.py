@@ -20,6 +20,8 @@ import re
 
 import bpy
 
+from sverchok.utils.logging import debug, info, error
+
 sv_error_message = '''\
 ______________Sverchok Script Generator Node rules_______________
 
@@ -48,7 +50,7 @@ def converted(test_str):
 
     r = re.compile('(?P<name>\w+)=(?P<defval>.*?|\[\])[,\)]')
     k = [m.groupdict() for m in r.finditer(test_str)]
-    # print(k)
+    # debug(k)
 
     # convert dict
     socket_mapping = {
@@ -241,12 +243,12 @@ class SvVarnamesToSockets(bpy.types.Operator):
         copied_text = bpy.data.window_managers[0].clipboard
         if "def sv_main(" not in copied_text:
             self.report({'INFO'}, "ERROR - LOOK CONSOLE")
-            print(sv_error_message)
+            error(sv_error_message)
             return {'CANCELLED'}
         answer = converted(copied_text)
 
         if answer:
-            print(answer)
+            info(answer)
             bpy.data.window_managers[0].clipboard = answer
             bpy.ops.text.move(type='LINE_BEGIN')
             bpy.ops.text.move(type='NEXT_LINE')
@@ -368,7 +370,7 @@ def add_keymap():
     kc = wm.keyconfigs.addon
 
     if not kc:
-        print('no keyconfig path found. that\'s ok')
+        debug('no keyconfig path found. that\'s ok')
         return
 
     km = kc.keymaps.new(name='Text', space_type='TEXT_EDITOR')
@@ -386,7 +388,7 @@ def add_keymap():
         new_shortcut.properties.name = 'TEXT_MT_svplug_menu'
         addon_keymaps.append((km, new_shortcut))
 
-        print('added keyboard items to Text Editor.')
+        debug('added keyboard items to Text Editor.')
 
 
 def remove_keymap():
