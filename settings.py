@@ -187,7 +187,7 @@ class SverchokPreferences(AddonPreferences):
             default = False)
 
     log_buffer_name = StringProperty(name = "Buffer name", default = "sverchok.log")
-    log_file_name = StringProperty(name = "File path", default = "sverchok.log")
+    log_file_name = StringProperty(name = "File path", default = os.path.join(datafiles, "sverchok.log"))
 
     def draw(self, context):
 
