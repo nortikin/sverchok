@@ -547,6 +547,7 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Translate").prop_name = 'translate'
 
         self.outputs.new('StringsSocket', "Verts4D")
+        self.outputs.new('VerticesSocket', "V4D")
         self.outputs.new('VerticesSocket', "Verts")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polys")
@@ -612,6 +613,10 @@ class SvHyperCubeNode(bpy.types.Node, SverchCustomTreeNode):
         cellFaces = cells["faces"]
 
         outputs['Verts4D'].sv_set([verts4D])
+
+        v4d = [list(v) for v in verts4D]
+        # print(v4d)
+        outputs['V4D'].sv_set([v4d])
 
         outputs['Verts'].sv_set(vertList)
         outputs['Edges'].sv_set(edgeList)
