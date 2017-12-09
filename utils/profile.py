@@ -105,6 +105,10 @@ def dump_stats():
     Dump profiling statistics to the log.
     """
     profile = get_global_profile()
+    if not profile.getstats():
+        info("There are no profiling results yet")
+        return
+
     stream = StringIO()
     stats = pstats.Stats(profile, stream=stream).sort_stats('tottime')
     stats.print_stats()
