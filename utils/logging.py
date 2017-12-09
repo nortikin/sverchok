@@ -13,6 +13,8 @@ log_format = "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 
 # Whether logging to internal blender's text buffer is initialized
 internal_buffer_initialized = False
+# Whether logging to external text file is initialized
+file_initialized = False
 # Whether logging is initialized
 initialized = False
 
@@ -26,7 +28,7 @@ def get_log_buffer(log_buffer_name):
         else:
             return bpy.data.texts.new(name=log_buffer_name)
     except AttributeError as e:
-        logging.debug("Can't initialize logging to internal buffer: get_log_buffer is called too early: {}".format(e))
+        #logging.debug("Can't initialize logging to internal buffer: get_log_buffer is called too early: {}".format(e))
         return None
 
 def try_initialize():
@@ -36,6 +38,7 @@ def try_initialize():
     Prints an error if it is called too early.
     """
     global internal_buffer_initialized
+    global file_initialized
     global initialized
 
     with sv_preferences() as prefs:
@@ -63,7 +66,7 @@ def try_initialize():
             else:
                 internal_buffer_initialized = True
 
-        if not initialized:
+        if not file_initialized:
             if prefs.log_to_file:
                 handler = logging.handlers.RotatingFileHandler(prefs.log_file_name, 
                             maxBytes = 10*1024*1024,
@@ -71,6 +74,9 @@ def try_initialize():
                 handler.setFormatter(logging.Formatter(log_format))
                 logging.getLogger().addHandler(handler)
 
+            file_initialized = True
+
+        if internal_buffer_initialized and file_initialized and not initialized:
             setLevel(prefs.log_level)
 
             logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, get_version_string())
@@ -126,12 +132,16 @@ def setLevel(level):
     if type(level) != int:
         level = getattr(logging, level)
 
+    logging.getLogger().setLevel(level)
     for handler in logging.getLogger().handlers:
         handler.setLevel(level)
 
 def register():
-    logging.basicConfig(level=logging.DEBUG, format=log_format)
+    with sv_preferences() as prefs:
+        level = getattr(logging, prefs.log_level)
+        logging.basicConfig(level=level, format=log_format)
     logging.captureWarnings(True)
+    info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
 
 def unregister():
     logging.shutdown()
