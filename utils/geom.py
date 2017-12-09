@@ -653,7 +653,7 @@ class LinearSpline(Spline):
             out[i] = np.interp(t_in, tknots, ptsT[i])
         return out.T
 
-    def tangent(self, t_in, tknots = None):
+    def tangent(self, t_in, tknots = None, h = None):
         if tknots is None:
             tknots = self.tknots
 
