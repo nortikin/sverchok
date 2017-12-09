@@ -31,6 +31,51 @@ def get_log_buffer(log_buffer_name):
         #logging.debug("Can't initialize logging to internal buffer: get_log_buffer is called too early: {}".format(e))
         return None
 
+class TextBufferHandler(logging.Handler):
+    """
+    A handler class which writes logging records, appropriately formatted,
+    to Blender's internal text buffer.
+    """
+
+    terminator = '\n'
+
+    def __init__(self, name):
+        """
+        Initialize the handler.
+        """
+        super().__init__()
+        self.buffer_name = name
+
+    def emit(self, record):
+        """
+        Emit a record.
+        If a formatter is specified, it is used to format the record.
+        The record is then written to the buffer with a trailing newline.  If
+        exception information is present, it is formatted using
+        traceback.print_exception and appended to the stream.  If the stream
+        has an 'encoding' attribute, it is used to determine how to do the
+        output to the stream.
+        """
+        try:
+            msg = self.format(record)
+            stream = get_log_buffer(self.buffer_name)
+            if not stream:
+                print("Can't obtain buffer")
+                return
+            stream.write(msg)
+            stream.write(self.terminator)
+            self.flush()
+        except Exception:
+            self.handleError(record)
+
+    def __repr__(self):
+        level = getLevelName(self.level)
+        name = getattr(self.stream, 'name', '')
+        if name:
+            name += ' '
+        return '<%s %s(%s)>' % (self.__class__.__name__, name, level)
+
+
 def try_initialize():
     """
     Try to initialize logging subsystem.
@@ -53,7 +98,7 @@ def try_initialize():
                     if prefs.log_to_buffer_clean:
                         buffer.clear()
                         logging.debug("Internal text buffer cleared")
-                    handler = logging.StreamHandler(buffer)
+                    handler = TextBufferHandler(prefs.log_buffer_name)
                     handler.setFormatter(logging.Formatter(log_format))
                     logging.getLogger().addHandler(handler)
 
