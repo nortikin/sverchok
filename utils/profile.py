@@ -21,6 +21,7 @@ import pstats
 from io import StringIO
 
 import bpy
+from bpy.props import BoolProperty, EnumProperty
 
 from sverchok.utils.logging import info
 from sverchok.utils.context_managers import sv_preferences
@@ -110,7 +111,7 @@ def profile(function = None, section = "MANUAL"):
     else:
         return profiling_decorator
 
-def dump_stats():
+def dump_stats(sort = "tottime", strip_dirs = False):
     """
     Dump profiling statistics to the log.
     """
@@ -120,7 +121,10 @@ def dump_stats():
         return
 
     stream = StringIO()
-    stats = pstats.Stats(profile, stream=stream).sort_stats('tottime')
+    stats = pstats.Stats(profile, stream=stream)
+    if strip_dirs:
+        stats.strip_dirs()
+    stats = stats.sort_stats(sort)
     stats.print_stats()
     info("Profiling results:\n" + stream.getvalue())
     info("---------------------------")
@@ -145,9 +149,29 @@ class SvProfileDump(bpy.types.Operator):
     bl_label = "Dump profiling statistics"
     bl_options = {'INTERNAL'}
 
+    sort_methods = [
+            ("tottime", "Internal time", "Internal time (excluding time made in calls to sub-functions)", 0),
+            ("cumtime", "Cumulative time", "Cumulative time (including sub-functions)", 1),
+            ("calls", "Calls count", "Count of calls of function", 2),
+            ("nfl", "Name, file, line", "Function name, file name, line number", 3)
+        ]
+
+    sort = EnumProperty(name = "Sort by",
+            description = "How to sort dumped statistics",
+            items = sort_methods,
+            default = "tottime")
+
+    strip_dirs = BoolProperty(name = "Strip directories",
+            description = "Strip directory path part of file name in the output",
+            default = True)
+
     def execute(self, context):
-        dump_stats()
+        dump_stats(sort = self.sort, strip_dirs = self.strip_dirs)
         return {'FINISHED'}
+    
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
 
 classes = [SvProfilingToggle, SvProfileDump]
 
