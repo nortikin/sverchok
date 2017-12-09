@@ -52,6 +52,13 @@ def is_profiling_enabled(section):
     with sv_preferences() as prefs:
         return prefs.profile_mode == section
 
+def is_profiling_enabled_in_settings():
+    """
+    Check if profiling is not set to NONE in addon preferences.
+    """
+    with sv_preferences() as prefs:
+        return prefs.profile_mode != "NONE"
+
 def profile(function = None, section = "MANUAL"):
     """
     Decorator for profiling the specific methods.
@@ -70,10 +77,13 @@ def profile(function = None, section = "MANUAL"):
     The second form is equivalent to the first with section = "MANUAL".
     Profiling section is a named set of methods which should be profiled.
     Supported values of section are listed in SverchokPreferences.profiling_sections.
-    The @profile(section) decorator does profile the method only if
-    profiling for specified section is enabled in settings (profile_mode option),
-    and profiling is currently active.
+
+    The @profile(section) decorator does profile the method only if all following
+    conditions are met:
+    * profiling for specified section is enabled in settings (profile_mode option),
+    * profiling is currently active.
     """
+
     def profiling_decorator(func):
         def wrapper(*args, **kwargs):
             if is_profiling_enabled(section):
