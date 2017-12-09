@@ -147,11 +147,11 @@ def get_superficial_props(node_dict, node):
 
 
 def collect_custom_socket_properties(node, node_dict):
-    print("** PROCESSING custom properties for node: ", node.bl_idname)
+    # print("** PROCESSING custom properties for node: ", node.bl_idname)
     input_socket_storage = {}
     for socket in node.inputs:
 
-        print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
+        # print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
 
         storable = {}
         tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
@@ -166,11 +166,11 @@ def collect_custom_socket_properties(node, node_dict):
             if value == defaultValue:
                 continue
 
-            print("Processing custom property: ", tracked_prop_name, " value = ", value)
+            # print("Processing custom property: ", tracked_prop_name, " value = ", value)
             storable[tracked_prop_name] = value
 
             if tracked_prop_name == 'use_prop' and value:
-                print("prop type:", type(socket.prop))
+                # print("prop type:", type(socket.prop))
                 storable['prop'] = socket.prop[:]
 
         if storable:
@@ -178,7 +178,7 @@ def collect_custom_socket_properties(node, node_dict):
 
     if input_socket_storage:
         node_dict['custom_socket_props'] = input_socket_storage
-    print("**\n")
+    # print("**\n")
 
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
