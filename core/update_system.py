@@ -25,6 +25,7 @@ from mathutils import Vector
 from sverchok import data_structure
 from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
 from sverchok.utils.logging import debug, info, warning, error, exception
+from sverchok.utils.profile import profile
 import sverchok
 
 import traceback
@@ -303,6 +304,7 @@ def reset_error_nodes(ng):
         del ng["error nodes"]
 
 
+@profile(section="UPDATE")
 def do_update_general(node_list, nodes, procesed_nodes=set()):
     """
     General update function for node set

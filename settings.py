@@ -73,6 +73,18 @@ class SverchokPreferences(AddonPreferences):
         size=3, min=0.0, max=1.0,
         default=(1, 1, 1), subtype='COLOR')
 
+    # Profiling settings
+    profiling_sections = [
+        ("NONE", "Disable", "Disable profiling", 0),
+        ("MANUAL", "Marked methods only", "Profile only methods that are marked with @profile decorator", 1),
+        ("UPDATE", "Node tree update", "Profile whole node tree update process", 2)
+    ]
+
+    profile_mode = EnumProperty(name = "Profiling mode",
+            items = profiling_sections,
+            default = "NONE",
+            description = "Performance profiling mode")
+
     #  theme settings
 
     sv_theme = EnumProperty(
@@ -213,6 +225,7 @@ class SverchokPreferences(AddonPreferences):
 
             col2box = col2.box()
             col2box.label(text="Debug:")
+            col2box.prop(self, "profile_mode")
             col2box.prop(self, "show_debug")
             col2box.prop(self, "heat_map")
 

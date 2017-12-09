@@ -23,6 +23,7 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty
 import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.core.update_system import process_from_nodes
+from sverchok.utils import profile
 
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
@@ -273,6 +274,16 @@ class SverchokToolsMenu(bpy.types.Panel):
         layout = self.layout
         # layout.scale_y=1.1
         layout.active = True
+
+        addon = context.user_preferences.addons.get(sverchok.__name__)
+        if addon.preferences.profile_mode != "NONE":
+            profile_row = layout.row(align=True)
+            if profile.is_currently_enabled:
+                profile_row.operator("node.sverchok_profile_toggle", text="Stop profiling")
+            else:
+                profile_row.operator("node.sverchok_profile_toggle", text="Start profiling")
+            profile_row.operator("node.sverchok_profile_dump", text="Dump data")
+
         row = layout.row(align=True)
         col = row.column(align=True)
         col.scale_y = 3.0
