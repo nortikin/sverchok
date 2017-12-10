@@ -6,7 +6,13 @@ out verts_out v
 out edges_out s
 """
 
-# authority: https://github.com/Durman
+
+''' Copyright (c) 2017 Durman <https://github.com/Durman>
+  * 
+  * SPDX-License-Identifier: GPL3
+  * License-Filename: LICENSE
+'''
+
 
 from mathutils import Vector, Matrix
 from math import radians, pi, sin
