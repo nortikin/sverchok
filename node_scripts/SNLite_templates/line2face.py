@@ -7,10 +7,10 @@ out edges_out s
 """
 
 
-''' Copyright (c) 2017 Durman <https://github.com/Durman>
-  * 
-  * SPDX-License-Identifier: GPL3
-  * License-Filename: LICENSE
+''' 
+Copyright (c) 2017 Durman <https://github.com/Durman>
+SPDX-License-Identifier: GPL3
+License-Filename: LICENSE
 '''
 
 
