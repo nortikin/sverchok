@@ -72,8 +72,9 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             row1b = box.row()
             row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
 
-            ziprow = box.row()
-            ziprow.operator('node.blend_to_zip')
+            ziprow = box.row(align=True)
+            ziprow.operator('node.blend_to_archive', text='archive blend as .zip').archive_ext = 'zip'
+            ziprow.operator('node.blend_to_archive', text='.gz').archive_ext = 'gz'
 
         else:
             ''' import '''

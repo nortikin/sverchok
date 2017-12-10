@@ -904,29 +904,54 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             return {'FINISHED'}
 
 
-class SvBlendToZip(bpy.types.Operator):
+def propose_archive_filepath(blendpath, extension='zip'):
+    """ disect existing filepath, add timestamp """
+    blendname = os.path.basename(blendpath)
+    blenddir = os.path.dirname(blendpath)
+    blendbasename = blendname.split('.')[0]
+    raw_time_stamp = strftime("%Y_%m_%d_%H_%M", gmtime())
+    archivename = blendbasename + '_' + raw_time_stamp + '.' + extension
 
-    bl_idname = "node.blend_to_zip"
-    bl_label = "Save Blend as Zip"
+    return os.path.join(blenddir, archivename), blendname
+
+
+class SvBlendToArchive(bpy.types.Operator):
+
+    bl_idname = "node.blend_to_archive"
+    bl_label = "Archive .blend"
+
+    archive_ext = bpy.props.StringProperty(default='zip')
 
     def execute(self, context):
 
-        raw_time_stamp = strftime("%Y_%m_%d_%H_%M", gmtime())
-
         blendpath = bpy.data.filepath
-        blendname = os.path.basename(bpy.data.filepath)
-        blendbasename = blendname.split('.')[0]
-        zipname = blendbasename + '_' + raw_time_stamp + '.zip'
-        blendzippath = os.path.join(os.path.dirname(blendpath), zipname)
-        with zipfile.ZipFile(blendzippath, 'w', zipfile.ZIP_DEFLATED) as myzip:
-            myzip.write(blendpath, blendname)
-            context.window_manager.clipboard = blendzippath
-            print('saved: ', blendzippath)
 
-        return {'FINISHED'}
+        if not blendpath:
+            msg = 'you must save the .blend first before we can compress it'
+            self.report({'INFO'}, msg)
+            return {'CANCELLED'}
 
+        blend_archive_path, blendname = propose_archive_filepath(blendpath, extension=self.archive_ext)
+        context.window_manager.clipboard = blend_archive_path
 
+        if self.archive_ext == 'zip':
+            with zipfile.ZipFile(blend_archive_path, 'w', zipfile.ZIP_DEFLATED) as myzip:
+                myzip.write(blendpath, blendname)
+            print('saved: ', blend_archive_path)
+            return {'FINISHED'}
 
+        elif self.archive_ext == 'gz':
+
+            import gzip
+            import shutil
+            
+            with open(blendpath, 'rb') as f_in:
+                with gzip.open(blend_archive_path, 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+            print('saved: ', blend_archive_path)
+            return {'FINISHED'}
+
+        return {'CANCELLED'}
 
 
 class SvIOPanelProperties(bpy.types.PropertyGroup):
@@ -959,7 +984,7 @@ classes = [
     SvNodeTreeImporter,
     SvNodeTreeImporterSilent,
     SvNodeTreeImportFromGist,
-    SvBlendToZip
+    SvBlendToArchive
 ]
 
 
