@@ -916,11 +916,18 @@ def propose_archive_filepath(blendpath, extension='zip'):
 
 
 class SvBlendToArchive(bpy.types.Operator):
+    """ Archive this blend file as zip or gz """
 
     bl_idname = "node.blend_to_archive"
     bl_label = "Archive .blend"
 
     archive_ext = bpy.props.StringProperty(default='zip')
+    
+
+    def complete_msg(self, blend_archive_path):
+        msg = 'saved current .blend as archive at ' + blend_archive_path
+        self.report({'INFO'}, msg)
+        print(msg)
 
     def execute(self, context):
 
@@ -937,18 +944,18 @@ class SvBlendToArchive(bpy.types.Operator):
         if self.archive_ext == 'zip':
             with zipfile.ZipFile(blend_archive_path, 'w', zipfile.ZIP_DEFLATED) as myzip:
                 myzip.write(blendpath, blendname)
-            print('saved: ', blend_archive_path)
+            self.complete_msg(blend_archive_path)
             return {'FINISHED'}
 
         elif self.archive_ext == 'gz':
 
             import gzip
             import shutil
-            
+
             with open(blendpath, 'rb') as f_in:
                 with gzip.open(blend_archive_path, 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
-            print('saved: ', blend_archive_path)
+            self.complete_msg(blend_archive_path)
             return {'FINISHED'}
 
         return {'CANCELLED'}
