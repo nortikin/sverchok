@@ -24,6 +24,14 @@ from zipfile import ZipFile
 import bpy
 import tempfile
 
+"""
+to the reader: when we run 'bpy.ops.wm.open_mainfile( )' there's a considerations
+ - the current .blend can be discarded (and up to the user to already save it)
+ - the end of the operator that was executed to call 'bpy.ops.wm.open_main_file( )'
+   is never reached, and it is irrelevant whether we return {`FINISHED`}.
+
+"""
+
 def handle_zip(self, wm, to_path, file):
     try:
         err = 0
@@ -105,7 +113,7 @@ class SvLoadArchivedBlendURL(bpy.types.Operator):
         elif file_and_ext.endswith('.zip'):
             return handle_zip(self, wm, to_path, file)
         else:
-            # maybe if the url ends in .blend we can just load it anyway.
+            # maybe if the url ends in .blend we could load it anyway.
             self.report({'ERROR'}, "url is not a .gz or .zip... ending operator")
             wm.progress_end()
             return {'CANCELLED'}            
@@ -113,24 +121,8 @@ class SvLoadArchivedBlendURL(bpy.types.Operator):
         return {'FINISHED'}
 
 
-# class SvLoadArchivedBlendDialog(bpy.types.Operator):
-#     bl_idname = "node.sv_load_archived_blend_dialog"
-#     bl_label = "Load Archived .blend (Sverchok Dialog)"
-
-#     def draw(self, context):
-#         row = self.layout.row()
-#         row.label(context.window_manager.clipboard or "No url in clipboard")
-
-#     def execute(self, context):
-#         return bpy.ops.node.sv_load_archived_blend_url(download_url=context.window_manager.clipboard)
- 
-#     def invoke(self, context, event):
-#         return context.window_manager.invoke_props_dialog(self)
-
-
 classes = [
     SvLoadArchivedBlendURL,
-    # SvLoadArchivedBlendDialog   # this dialog is more trouble than it's worth
 ]
 
 
