@@ -5,6 +5,9 @@ in shift s d=1.0 n=2
 out verts_out v
 out edges_out s
 """
+
+# authority: https://github.com/Durman
+
 from mathutils import Vector, Matrix
 from math import radians, pi, sin
 from mathutils.geometry import normal
