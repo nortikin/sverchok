@@ -5,6 +5,7 @@ import inspect
 import logging
 import logging.handlers
 
+import sverchok
 from sverchok.ui.development import get_version_string
 from sverchok.utils.context_managers import sv_preferences
 
@@ -85,6 +86,9 @@ def try_initialize():
     global internal_buffer_initialized
     global file_initialized
     global initialized
+
+    if sverchok.reload_event:
+        return
 
     with sv_preferences() as prefs:
         if not prefs:
