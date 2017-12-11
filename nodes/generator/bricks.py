@@ -426,7 +426,12 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             # With cycling, it may appear that we enumerated the same vertex index
             # in one face twice.
             if self.cycle_u or self.cycle_v:
-                faces = [list(collections.OrderedDict.fromkeys(face)) for face in faces]
+                filtered_faces = []
+                for face in faces:
+                    new_face = list(collections.OrderedDict.fromkeys(face))
+                    if len(new_face) > 2:
+                        filtered_faces.append(new_face)
+                faces = filtered_faces
 
             result_vertices.append(vertices)
             result_edges.append(edges)
