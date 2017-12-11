@@ -86,7 +86,13 @@ def unpack_monad(nodes, node_ref):
                 continue
 
             for k, v in data_list.items():
-                setattr(node, k, params[k])
+                if hasattr(node, k):
+                    if k in params:
+                        setattr(node, k, params[k])
+                    # else:
+                    #    print(k, 'not in', params)
+                #else:
+                #    print('node name:', node, node.name, 'has no property called', k, 'yet..')
 
 
         # node.output_template = cls_dict['output_template']
