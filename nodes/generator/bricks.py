@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import random
-import itertools
+import collections
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
@@ -422,6 +422,11 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                             faces.append(face)
                         face = [face_vertices[-1].index, face_vertices[0].index, center.index]
                         faces.append(face)
+
+            # With cycling, it may appear that we enumerated the same vertex index
+            # in one face twice.
+            if self.cycle_u or self.cycle_v:
+                faces = [list(collections.OrderedDict.fromkeys(face)) for face in faces]
 
             result_vertices.append(vertices)
             result_edges.append(edges)
