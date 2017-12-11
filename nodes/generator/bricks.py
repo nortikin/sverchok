@@ -223,17 +223,22 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             ("centers", "Centers", "Connect each edge with face center", 2)
         ]
 
+    def available_face_modes(self, context):
+        result = self.faces_modes[:]
+        if self.cycle_u or self.cycle_v:
+            del result[-1]
+        return result
+
     faces_mode = EnumProperty(name="Faces",
             description="Faces triangularization mode",
-            items=faces_modes,
-            default="flat",
+            items = available_face_modes,
             update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "faces_mode", expand=True)
         row = layout.row(align=True)
         row.prop(self, "cycle_u", toggle=True)
         row.prop(self, "cycle_v", toggle=True)
+        layout.prop(self, "faces_mode")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "DU").prop_name = 'du_'
