@@ -116,6 +116,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
             elif prop_func.__name__ == "FloatVectorProperty":
+                print('floatvec prop ignored (normal behaviour since day one)')
+                print('-- prop_func:', prop_func)
+                print('-- prop_dict:', prop_dict)
                 return None # for now etc
             else: # no way to handle it
                 return None
