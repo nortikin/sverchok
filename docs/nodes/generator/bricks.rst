@@ -1,13 +1,17 @@
 Bricks Grid
 ===========
 
-*destination after Beta: Generators*
-
 Functionality
 -------------
 
-This node generates bricks-like grid, i.e. a grid each row of which is shifted with relation to another. It is also possible to specify toothing, so it will be like engaged bricks.
-All parameters of bricks can be randomized with separate control over randomization of each parameter.
+This node generates bricks-like grid, i.e. a grid each row of which is shifted
+with relation to another. It is also possible to specify toothing, so it will
+be like engaged bricks.
+All parameters of bricks can be randomized with separate control over
+randomization of each parameter.
+
+Optionally the grid may be cyclic in one or two directions. This can be useful
+if you are going to map the grid onto some sort of cyclic or toroidal surface.
 
 
 Inputs & Parameters
@@ -19,6 +23,18 @@ All inputs are vectorized and they will accept single or multiple values.
 +-----------------+---------------+-------------+-------------------------------------------------------------+
 | Param           | Type          | Default     | Description                                                 |
 +=================+===============+=============+=============================================================+
+| **Cycle U**     | Boolean       | False       | Make the grid cyclic in U direction, i.e. the direction of  |
+|                 |               |             | brick rows. This makes sense only if you are going to map   |
+|                 |               |             | the grid on to some sort of cyclic surface (e.g. cylinder). |
+|                 |               |             | **Note**: after such mapping, you may want to use "Remove   |
+|                 |               |             | doubles" node.                                              |
++-----------------+---------------+-------------+-------------------------------------------------------------+
+| **Cycle V**     | Boolean       | False       | Make the grid cyclic in V direction, i.e. the direction of  |
+|                 |               |             | brick columns. This makes sense only if you are going to map|
+|                 |               |             | the grid on to some sort of cyclic surface (e.g. cylinder). |
+|                 |               |             | **Note**: after such mapping, you may want to use "Remove   |
+|                 |               |             | doubles" node.                                              |
++-----------------+---------------+-------------+-------------------------------------------------------------+
 | **Faces mode**  | Flat or       | Flat        | What kind of polygons to generate:                          |
 |                 |               |             |                                                             |
 |                 | Stitch or     |             | * Flat - generate one polygon (n-gon, in general) for each  |
@@ -26,7 +42,9 @@ All inputs are vectorized and they will accept single or multiple values.
 |                 | Center        |             | * Stitch - split each brick into several triangles, with    |
 |                 |               |             |   edges going across brick.                                 |
 |                 |               |             | * Center - split each brick into triangles by adding new    |
-|                 |               |             |   vertex in the center of the brick.                        |
+|                 |               |             |   vertex in the center of the brick. This mode is not       |
+|                 |               |             |   available if *any* of **Cycle U**, **Cycle V**            |
+|                 |               |             |   parameters is checked.                                    |
 +-----------------+---------------+-------------+-------------------------------------------------------------+
 | **Unit width**  | Float         | 2.0         | Width of one unit (brick).                                  |
 +-----------------+---------------+-------------+-------------------------------------------------------------+
