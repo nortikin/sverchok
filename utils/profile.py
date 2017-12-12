@@ -165,8 +165,16 @@ class SvProfileDump(bpy.types.Operator):
             description = "Strip directory path part of file name in the output",
             default = True)
 
+    clear_profile = BoolProperty(name = "Reset statistics",
+            description = "Reset gathered statistics. If set, then next `Start profile' will gather new statistics. Otherwise, it will continue to update existing statistics.",
+            default = False)
+
     def execute(self, context):
+        global _global_profile
         dump_stats(sort = self.sort, strip_dirs = self.strip_dirs)
+        if self.clear_profile:
+            _global_profile = None
+            info("Profiling statistics data cleared.")
         return {'FINISHED'}
     
     def invoke(self, context, event):
