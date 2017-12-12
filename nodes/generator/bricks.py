@@ -257,6 +257,77 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Polygons")
         self.outputs.new('VerticesSocket', "Centers")
 
+    def build_lines(self, vs, toothing, toothing_r, sizeu, du, rdu, shift):
+        ulines = [set() for v in vs]
+        vedges = [[] for i in range(len(vs)-1)]
+        for i,v in enumerate(vs[:-1]):
+            if i%2 == 0:
+                u = 0.0
+            else:
+                u = shift * du
+            j = 0
+            while u <= sizeu:
+                t1 = toothing*random.uniform(1.0-toothing_r, 1.0)
+                t2 = toothing*random.uniform(1.0-toothing_r, 1.0)
+                vt1 = Vertex(u, v+t1)
+                vt2 = Vertex(u, vs[i+1]-t2)
+                ulines[i].add(vt1)
+                ulines[i+1].add(vt2)
+                edge = VEdge(vt1, vt2)
+                vedges[i].append(edge)
+                u += du
+                u += random.uniform(-rdu, rdu)
+                j += 1
+
+        if self.cycle_v:
+            # Merge lists of vertices in first and last ULine
+            def update(uline1, uline2):
+                for vertex in uline1:
+                    other_vertex = None
+                    for o in uline2:
+                        if o.u == vertex.u and o.v != vertex.v:
+                            other_vertex = o
+
+                    if other_vertex is not None:
+                        if vertex.replacement is None:
+                            uline2.remove(other_vertex)
+                            other_vertex.replacement = vertex
+                    else:
+                        uline2.add(vertex)
+
+            update(ulines[0], ulines[-1])
+            update(ulines[-1], ulines[0])
+            if len(ulines[0]) == 0:
+                del ulines[0]
+            if len(ulines[-1]) == 0:
+                del ulines[-1]
+
+        ulines = [(ULine(line)) for line in ulines]
+
+        if self.cycle_u:
+            # Make each ULine cyclic
+            for uline in ulines:
+                last = uline[-1]
+                last.replacement = uline[0]
+                uline.remove_by_index(-1)
+
+        return ulines, vedges
+    
+    def build_vertices(self, ulines):
+        vertex_idx = 0
+        vertices = collections.OrderedDict()
+        for line in ulines:
+            for vt in line:
+                if vt.replacement is not None:
+                    continue
+                new_vertex = (vt.u, vt.v, 0.0)
+                if new_vertex in vertices:
+                    continue
+                vt.index = vertex_idx
+                vertex_idx += 1
+                vertices[new_vertex] = 1
+        return list(vertices.keys())
+
     def process(self):
         if not (self.outputs['Vertices'].is_linked or self.outputs['Centers'].is_linked):
             return
@@ -290,72 +361,10 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                 vs.append(v + random.uniform(-rdv, rdv))
                 v += dv
 
-            ulines = [set() for v in vs]
-            vedges = [[] for i in range(len(vs)-1)]
-            for i,v in enumerate(vs[:-1]):
-                if i%2 == 0:
-                    u = 0.0
-                else:
-                    u = shift * du
-                j = 0
-                while u <= sizeu:
-                    t1 = toothing*random.uniform(1.0-toothing_r, 1.0)
-                    t2 = toothing*random.uniform(1.0-toothing_r, 1.0)
-                    vt1 = Vertex(u, v+t1)
-                    vt2 = Vertex(u, vs[i+1]-t2)
-                    ulines[i].add(vt1)
-                    ulines[i+1].add(vt2)
-                    edge = VEdge(vt1, vt2)
-                    vedges[i].append(edge)
-                    u += du
-                    u += random.uniform(-rdu, rdu)
-                    j += 1
-
-            if self.cycle_v:
-                # Merge lists of vertices in first and last ULine
-                def update(uline1, uline2):
-                    for vertex in uline1:
-                        other_vertex = None
-                        for o in uline2:
-                            if o.u == vertex.u and o.v != vertex.v:
-                                other_vertex = o
-
-                        if other_vertex is not None:
-                            if vertex.replacement is None:
-                                uline2.remove(other_vertex)
-                                other_vertex.replacement = vertex
-                        else:
-                            uline2.add(vertex)
-
-                update(ulines[0], ulines[-1])
-                update(ulines[-1], ulines[0])
-                if len(ulines[0]) == 0:
-                    del ulines[0]
-                if len(ulines[-1]) == 0:
-                    del ulines[-1]
-
-            ulines = [(ULine(line)) for line in ulines]
-
-            if self.cycle_u:
-                # Make each ULine cyclic
-                for uline in ulines:
-                    last = uline[-1]
-                    last.replacement = uline[0]
-                    uline.remove_by_index(-1)
+            ulines, vedges = self.build_lines(vs, toothing, toothing_r, sizeu, du, rdu, shift)
 
             # Assign indicies to vertices
-            vertex_idx = 0
-            vertices = []
-            for line in ulines:
-                for vt in line:
-                    if vt.replacement is not None:
-                        continue
-                    new_vertex = (vt.u, vt.v, 0.0)
-                    if new_vertex in vertices:
-                        continue
-                    vt.index = vertex_idx
-                    vertex_idx += 1
-                    vertices.append(new_vertex)
+            vertices = self.build_vertices(ulines)
 
             edges = []
             for line in ulines:
