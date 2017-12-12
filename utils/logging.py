@@ -2,6 +2,7 @@
 import bpy
 
 import inspect
+import traceback
 import logging
 import logging.handlers
 
@@ -92,7 +93,7 @@ def try_initialize():
 
     with sv_preferences() as prefs:
         if not prefs:
-            logging.error("Can't obtain logging preferences, it's too early")
+            logging.error("Can't obtain logging preferences, it's too early. Stack:\n%s", "".join(traceback.format_stack()))
             return
 
         if not internal_buffer_initialized:

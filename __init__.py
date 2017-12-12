@@ -88,7 +88,7 @@ utils_modules = [
     "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions",
     "snlite_utils", "snlite_importhelper", "context_managers",
-    "logging",
+    "profile", "logging", 
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
