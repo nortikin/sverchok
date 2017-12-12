@@ -131,36 +131,88 @@ class ULine(object):
         del self.list[idx]
         del self.coords[idx]
 
-    def get_by_u(self, u):
-        for vertex in self.list:
-            if vertex.u == u:
-                return vertex
-        return None
+    def search_index(self, u):
+        return self.bin_search_1(0, len(self.list)-1, u)
+
+    def bin_search_1(self, i_min, i_max, u):
+        list = self.list
+
+        if u < list[i_min].u:
+            return i_min, False
+        if i_max >= len(list):
+            raise Exception("bin_search_1: {} is not in list of length {}".format(i_max, len(list)))
+        if u > list[i_max].u:
+            return None
+
+        if i_min == i_max:
+            if list[i_min].u == u:
+                return i_min, True
+            else:
+                return i_min, False
+        else:
+            i = (i_min + i_max) // 2
+            item = list[i].u
+            if item == u:
+                return i, True
+            elif item < u:
+                return self.bin_search_1(i+1, i_max, u)
+            else:
+                return self.bin_search_1(i_min, i, u)
+
+    def bin_search_2(self, i_min, i_max, a, b):
+        list = self.list
+
+        i = (i_min + i_max) // 2
+        item = list[i].u
+        if a > item:
+            return self.bin_search_2(i+1, i_max, a, b)
+        elif b < item:
+            return self.bin_search_2(i_min, i, a, b)
+        else:
+            i1, precise1 = self.bin_search_1(i_min, i, a)
+            i2, precise2 = self.bin_search_1(i, i_max, b)
+            if precise1:
+                i1 += 1
+            return self.list[i1 : i2]
+
+    def search_range(self, a, b):
+        return self.bin_search_2(0, len(self.list)-1, a, b)
+
+    def search_range_u(self, a, b):
+        return [v.u for v in self.search_range(a, b)]
+
+    def get_greater(self, u):
+        i, precise = self.search_index(u)
+        if not precise:
+            return self.list[i:]
+        else:
+            return self.list[(i+1):]
+
+    def get_less(self, u):
+        i, precise = self.search_index(u)
+        return self.list[:i]
+
+    def get_greater_u(self, u):
+        return [v.u for v in self.get_greater(u)]
+    
+    def get_less_u(self, u):
+        return [v.u for v in self.get_less(u)]
 
     def select_index(self, v1, v2):
-        if v2 < v1:
-            return list(reversed([v.index for v in self.list if v.u < v2.u or v.u > v1.u]))
-        else:
-            return [v.index for v in self.list if v.u > v1.u and v.u < v2.u]
+        return [v.index for v in self.select_v(v1, v2)]
 
     def select_v(self, v1, v2):
         if v2 < v1:
-            return list(reversed([v for v in self.list if v.u < v2.u or v.u > v1.u]))
+            return self.get_less(v2.u) + self.get_greater(v1.u)
         else:
-            return [v for v in self.list if v.u > v1.u and v.u < v2.u]
-
+            return self.search_range(v1.u, v2.u)
+            #return [v for v in self.list if v.u > v1.u and v.u < v2.u]
 
 def get_center(vertices):
     n = float(len(vertices))
     cu = sum([v.u for v in vertices]) / n
     cv = sum([v.v for v in vertices]) / n
     return Vertex(cu, cv)
-
-def select_index(line, v1, v2):
-    return [v.index for v in line if v.u > v1.u and v.u < v2.u]
-
-def select_v(line, v1, v2):
-    return [v for v in line if v.u > v1.u and v.u < v2.u]
 
 class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -468,4 +520,31 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvBricksNode)
 
+def test():
+    us = [1, 2, 7, 12, 16, 28, 32]
+    uline = ULine([Vertex(u, 0) for u in us])
+    assert uline.search_index(1) == (0, True)
+    assert uline.search_index(2) == (1, True)
+    assert uline.search_index(32) == (6, True)
+    assert uline.search_index(7) == (2, True)
+    assert uline.search_index(16) == (4, True)
+    assert uline.search_index(3) == (2, False)
+    assert uline.search_index(27) == (5, False)
+    assert uline.search_index(28) == (5, True)
+    assert uline.search_index(0) == (0, False)
+
+    assert uline.get_greater_u(28) == [32]
+    assert uline.get_greater_u(27) == [28, 32]
+    assert uline.get_greater_u(0) == us
+
+    assert uline.get_less_u(2) == [1]
+    assert uline.get_less_u(3) == [1,2]
+
+    assert uline.search_range_u(2,7) == []
+    assert uline.search_range_u(1,7) == [2]
+    assert uline.search_range_u(1,2) == []
+    assert uline.search_range_u(1,8) == [2, 7]
+    assert uline.search_range_u(1,13) == [2,7,12]
+    assert uline.search_range_u(3,11) == [7]
+    assert uline.search_range_u(0,2) == [1]
 
