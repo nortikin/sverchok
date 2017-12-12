@@ -135,6 +135,10 @@ class ULine(object):
         return self.bin_search_1(0, len(self.list)-1, u)
 
     def bin_search_1(self, i_min, i_max, u):
+        """
+        Binary search for vertice with specified U value.
+        Returns tuple (index, precise), where precise == True when list[index].u == u, otherwise list[index].u > u.
+        """
         list = self.list
 
         if u < list[i_min].u:
@@ -142,7 +146,7 @@ class ULine(object):
         if i_max >= len(list):
             raise Exception("bin_search_1: {} is not in list of length {}".format(i_max, len(list)))
         if u > list[i_max].u:
-            return None
+            return (i_max+1), False
 
         if i_min == i_max:
             if list[i_min].u == u:
@@ -160,6 +164,10 @@ class ULine(object):
                 return self.bin_search_1(i_min, i, u)
 
     def bin_search_2(self, i_min, i_max, a, b):
+        """
+        Binary search for vertices with U coordinate in [a;b].
+        Returns list of vertices.
+        """
         list = self.list
 
         i = (i_min + i_max) // 2
@@ -206,7 +214,6 @@ class ULine(object):
             return self.get_less(v2.u) + self.get_greater(v1.u)
         else:
             return self.search_range(v1.u, v2.u)
-            #return [v for v in self.list if v.u > v1.u and v.u < v2.u]
 
 def get_center(vertices):
     n = float(len(vertices))
