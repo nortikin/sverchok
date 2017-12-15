@@ -302,6 +302,11 @@ class SvSocketCommon:
                 getattr(node, self.custom_draw)(self, context, layout)
                 return
 
+        if self.bl_idname == 'StringsSocket' and node.bl_idname in {'SvScriptNodeLite'}:
+            if not self.is_output and not self.is_linked:
+                layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
+                return
+
         if self.is_linked:  # linked INPUT or OUTPUT
             info_text = text + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
