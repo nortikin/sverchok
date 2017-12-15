@@ -277,12 +277,16 @@ class SverchokToolsMenu(bpy.types.Panel):
 
         addon = context.user_preferences.addons.get(sverchok.__name__)
         if addon.preferences.profile_mode != "NONE":
-            profile_row = layout.row(align=True)
+            profile_col = layout.column(align=True)
             if profile.is_currently_enabled:
-                profile_row.operator("node.sverchok_profile_toggle", text="Stop profiling")
+                profile_col.operator("node.sverchok_profile_toggle", text="Stop profiling", icon="CANCEL")
             else:
-                profile_row.operator("node.sverchok_profile_toggle", text="Start profiling")
-            profile_row.operator("node.sverchok_profile_dump", text="Dump data")
+                profile_col.operator("node.sverchok_profile_toggle", text="Start profiling", icon="TIME")
+            if profile.have_gathered_stats():
+                row = profile_col.row(align=True)
+                row.operator("node.sverchok_profile_dump", text="Dump data", icon="TEXT")
+                row.operator("node.sverchok_profile_save", text="Save data", icon="SAVE_AS")
+                profile_col.operator("node.sverchok_profile_reset", text="Reset data", icon="X")
 
         row = layout.row(align=True)
         col = row.column(align=True)

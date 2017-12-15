@@ -23,7 +23,7 @@ from io import StringIO
 import bpy
 from bpy.props import BoolProperty, EnumProperty
 
-from sverchok.utils.logging import info
+from sverchok.utils.logging import info, debug
 from sverchok.utils.context_managers import sv_preferences
 
 # Global cProfile.Profile singleton
@@ -129,6 +129,28 @@ def dump_stats(sort = "tottime", strip_dirs = False):
     info("Profiling results:\n" + stream.getvalue())
     info("---------------------------")
 
+def save_stats(path):
+    """
+    Dump profiling statistics to file in cProfile's binary format.
+    Such file can be parsed, for example, by gprof2dot utility.
+    """
+    profile = get_global_profile()
+    if not profile.getstats():
+        info("There are no profiling results yet")
+        return
+    stats = pstats.Stats(profile)
+    stats.dump_stats(path)
+    info("Profiling statistics saved to %s.", path)
+
+def have_gathered_stats():
+    global _global_profile
+    if _global_profile is None:
+        return False
+    if _global_profile.getstats():
+        return True
+    else:
+        return False
+
 class SvProfilingToggle(bpy.types.Operator):
     """Toggle profiling on/off"""
     bl_idname = "node.sverchok_profile_toggle"
@@ -146,7 +168,7 @@ class SvProfilingToggle(bpy.types.Operator):
 class SvProfileDump(bpy.types.Operator):
     """Dump profiling statistics to log"""
     bl_idname = "node.sverchok_profile_dump"
-    bl_label = "Dump profiling statistics"
+    bl_label = "Dump profiling statistics to log"
     bl_options = {'INTERNAL'}
 
     sort_methods = [
@@ -165,23 +187,43 @@ class SvProfileDump(bpy.types.Operator):
             description = "Strip directory path part of file name in the output",
             default = True)
 
-    clear_profile = BoolProperty(name = "Reset statistics",
-            description = "Reset gathered statistics. If set, then next `Start profile' will gather new statistics. Otherwise, it will continue to update existing statistics.",
-            default = False)
-
     def execute(self, context):
-        global _global_profile
         dump_stats(sort = self.sort, strip_dirs = self.strip_dirs)
-        if self.clear_profile:
-            _global_profile = None
-            info("Profiling statistics data cleared.")
         return {'FINISHED'}
     
     def invoke(self, context, event):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
 
-classes = [SvProfilingToggle, SvProfileDump]
+class SvProfileSave(bpy.types.Operator):
+    """Dump profiling statistics to binary file"""
+    bl_idname = "node.sverchok_profile_save"
+    bl_label = "Dump profiling statistics to binary file"
+    bl_options = {'INTERNAL'}
+
+    filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+
+    def execute(self, context):
+        save_stats(self.filepath)
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        context.window_manager.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+class SvProfileReset(bpy.types.Operator):
+    """Reset profiling statistics"""
+    bl_idname = "node.sverchok_profile_reset"
+    bl_label = "Reset profiling statistics"
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        global _global_profile
+        _global_profile = None
+        info("Profiling statistics data cleared.")
+        return {'FINISHED'}
+    
+classes = [SvProfilingToggle, SvProfileDump, SvProfileSave, SvProfileReset]
 
 def register():
     for class_name in classes:
