@@ -8,7 +8,7 @@ Thanks for taking the time to read this document, we gladly accept code/doc cont
 Pull Requests
 =============
 
-A pull request (PR) is what you might consider a "formal suggested edit" to Sverchok. You do this either via the online Git tools provided by GitHub / or via GIT. Newcomers to git should probably user the online GitHub mechanisms for doing small edits. See GitHub's guide to PRs.
+A pull request (PR) is what you might consider a "formal suggested edit" to Sverchok. You do this either via the online Git tools provided by GitHub / or via GIT. Newcomers to git should probably user the online GitHub mechanisms for doing small edits. See GitHub's guide to PRs ( https://help.github.com/articles/about-pull-requests/ ).
 
 We accept one-liner PRs, but might also reject them and instead add the same (or similar) code modifications to our own frequent PR streaks. We'll then add a comment in the commit to acknowledge your input.
 
@@ -18,7 +18,7 @@ Informal code suggestions
 
 If you don't want to go through a git / github interface you can suggest an edit using the issue tracker. Open a new issue, state succintly in the title what the edit hopes to achieve. In the issue you can use Markdown to show us which code you're talking about and what changes you'd like to make. 
 
-You can copy / paste a permalink into the issue to show the immediate area of the code you're interested int. And below it write the following "differential". 
+You can copy / paste a permalink ( https://github.com/blog/2415-introducing-embedded-code-snippets ) into the issue to show the immediate area of the code you're interested in. And below it write the following "differential". 
 
 In the following file: sverchok/nodes/scene/frame_info.py on line 122
 
