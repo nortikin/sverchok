@@ -24,7 +24,8 @@ Inputs
 
 This node has the following inputs:
 
-- **Vertices**. Vertices of object to be bent.
+- **Vertices**. Vertices of object to be bent. This node can consume either
+  list of vertices, or list of lists of vertices.
 - **Surface**. Vertices of the surface along which the object should be bent.
   Please note that this input expects a list of lists of vertices for each
   object (sort of grid). Each list of vertices should describe a curve along
@@ -51,6 +52,10 @@ This node has the following parameters:
   is false.
 - **Cycle V**. Whether the surface is cyclic in the V direction. Default value
   is false.
+- **Grouped**. If checked, then the node expects list of lists of vertices at
+  **Vertices** input. If not checked, then node expects list of vertices at
+  **Vertices** input. Nesting level of output is always corresponding to input.
+  Default is checked.
 - **Flip surface**. If checked, then the surface normal will be flipped, so the
   object will be flipped upside down with relation to the surface. Unchecked by
   default. This parameter is available only in the N panel.
