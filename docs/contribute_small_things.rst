@@ -2,13 +2,13 @@
 Contributing small things
 *************************
 
-Thanks for taking the time to read this document, we gladly accept code/doc contributions. For whatever reason you want to change or add code to Sverchok, that's cool. We will always consider the proposed changes in light of our understanding of Sverchok as a whole. Sverchok's code base is large and in a few places challenging to comprehend. If we don't think it's appropriate to accept your suggestion we'll defend our position. Usually we can come to some compromise that makes sense for sverchok, yet also satisfies the amicable contributor.
+Thanks for taking the time to read this document, we gladly accept code/doc contributions. For whatever reason you want to change or add code to sverchok, that's cool. We will always consider the proposed changes in light of our understanding of sverchok as a whole. Sverchok's code base is large and in a few places challenging to comprehend. If we don't think it's appropriate to accept your suggestion we'll defend our position. Usually we can come to some compromise that makes sense for sverchok, yet also satisfies the amicable contributor.
 
 
 Pull Requests
 =============
 
-A pull request (PR) is what you might consider a "formal suggested edit" to Sverchok. You do this either via the online Git tools provided by GitHub / or via GIT. Newcomers to git should probably user the online GitHub mechanisms for doing small edits. See GitHub's guide to PRs ( https://help.github.com/articles/about-pull-requests/ ).
+A pull request (PR) is what you might consider a "formally suggested edit" to sverchok. You do this either via the online Git tools provided by GitHub / or via GIT. Newcomers to git should probably use the online GitHub mechanisms for doing small edits. See GitHub's guide to PRs ( https://help.github.com/articles/about-pull-requests/ ).
 
 We accept one-liner PRs, but might also reject them and instead add the same (or similar) code modifications to our own frequent PR streaks. We'll then add a comment in the commit to acknowledge your input.
 
@@ -54,5 +54,5 @@ Everything. We tend to be more lenient/rapid if your code proposal fixes a real 
 General guidelines
 ==================
 
-The document you should be reading to get a sense of how we'd like contributed code to look and behave is [here].
+The document you should be reading to get a sense of how we'd like contributed code to look and behave is here ( contribute.rst ).
 
