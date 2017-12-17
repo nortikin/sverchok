@@ -24,8 +24,18 @@ In the following file: sverchok/nodes/scene/frame_info.py on line 122
 
 .. code-block :: diff
 
+   ```diff
    - print(some_variable)
    + # print(some_variable)
+   ```
+
+and it will display like 
+
+.. code-block :: diff
+
+   - print(some_variable)
+   + # print(some_variable)
+
 
 This would indicate that you came across a runaway print statement and would like us to remove it with a comment for now.
 
