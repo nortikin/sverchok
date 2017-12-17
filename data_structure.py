@@ -309,6 +309,37 @@ def transpose_list(lst):
     """
     return list(map(list, zip(*lst)))
 
+def describe_data_shape(data):
+    """
+    Describe shape of data in human-readable form.
+    Returns string.
+    Can be used for debugging or for displaying information to user.
+    Note: this method inspects only first element of each list/tuple,
+    expecting they are all homogenous (that is usually true in Sverchok).
+
+    describe_data_shape(None) == 'Level 0: NoneType'
+    describe_data_shape(1) == 'Level 0: int'
+    describe_data_shape([]) == 'Level 1: list [0]'
+    describe_data_shape([1]) == 'Level 1: list [1] of int'
+    describe_data_shape([[(1,2,3)]]) == 'Level 3: list [1] of list [1] of tuple [3] of int'
+    """
+    def helper(data):
+        if not isinstance(data, (list, tuple)):
+            return 0, type(data).__name__
+        else:
+            result = type(data).__name__
+            result += " [{}]".format(len(data))
+            if len(data) > 0:
+                child = data[0]
+                child_nesting, child_result = helper(child)
+                result += " of " + child_result
+            else:
+                child_nesting = 0
+            return (child_nesting + 1), result
+
+    nesting, result = helper(data)
+    return "Level {}: {}".format(nesting, result)
+
 #####################################################
 ################### matrix magic ####################
 #####################################################
