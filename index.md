@@ -274,8 +274,8 @@
     SvFormulaShapeNode
     SvHeavyTriangulateNode
     ---
-    SvColorsInNode
-    SvColorsOutNode
+    SvColorsInNodeMK1
+    SvColorsOutNodeMK1
     ---
     SvMatrixNormalNode
     SvMatrixTrackToNode
