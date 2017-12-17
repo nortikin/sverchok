@@ -31,14 +31,7 @@ class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Data shape"
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def update_text(self, context):
-        # recursion protection, should be solved with better structure
-        if not self.inputs[0].links:
-            updateNode(self, context)
-
-    text = StringProperty(name='Text',
-                          default = "",
-                          update=update_text)
+    text = StringProperty(name='Text')
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data")
