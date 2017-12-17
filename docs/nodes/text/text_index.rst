@@ -9,6 +9,7 @@ Text
    gtext
    note
    stethoscope
+   shape
    text_in
    text_out
    viewer_text_mk2
