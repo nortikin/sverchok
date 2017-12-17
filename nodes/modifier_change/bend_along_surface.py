@@ -83,6 +83,11 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=updateNode)
 
+    grouped = BoolProperty(name = "Grouped",
+        description = "If enabled, then the node expects list of lists of vertices, instead of list of vertices. Output has corresponding shape.",
+        default = True,
+        update=updateNode)
+
     is_cycle_u = BoolProperty(name="Cycle U",
         description = "Whether the spline is cyclic in U direction",
         default = False,
@@ -118,6 +123,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "is_cycle_u", toggle=True)
         row.prop(self, "is_cycle_v", toggle=True)
+        col.prop(self, "grouped", toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -194,7 +200,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 surface = transpose_list(surface)
             #print("Surface: {} of {} of {}".format(type(surface), type(surface[0]), type(surface[0][0])))
             spline = self.build_spline(surface)
-            # uv_coords will be list of lists of 2-tuples of floats
+            # uv_coords will be list[m] of lists[n] of 2-tuples of floats
             # number of "rows" and "columns" in uv_coords will match so of vertices.
             src_size_u, src_size_v, uv_coords = self.get_uv(vertices)
             if self.autoscale:
@@ -222,6 +228,8 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 new_vertices.append(new_row)
             result_vertices.append(new_vertices)
 
+        if not self.grouped:
+            result_vertices = result_vertices[0]
         self.outputs['Vertices'].sv_set(result_vertices)
 
 def register():
