@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import json
+import sys
 import os
 import re
 import zipfile
@@ -38,9 +39,10 @@ from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.065'
+_EXPORTER_REVISION_ = '0.07'
 
 '''
+0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
 0.063 add support for obj_in_lite obj serialization \o/ .
@@ -49,11 +51,6 @@ _EXPORTER_REVISION_ = '0.065'
 0.062 monad export properly
 0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
-
-0.056 fixing SN1 script importing upon json load, will not duplicate
-      existing .py files by the same name. This tends to be preferred, one should
-      never have two files named the same which perform different operations.
-      main fixes SN1, SN2, ProfileNode, TextInput (json-mode only verified)
 
 revisions below this are your own problem.
 
@@ -107,7 +104,6 @@ def compile_socket(link):
 
 def write_json(layout_dict, destination_path):
 
-
     try:
         m = json.dumps(layout_dict, sort_keys=True, indent=2)
     except Exception as err:
@@ -145,7 +141,44 @@ def get_superficial_props(node_dict, node):
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
     node_dict['location'] = node.location[:]
-    node_dict['color'] = node.color[:]
+    if node.use_custom_color:
+        node_dict['color'] = node.color[:]
+        node_dict['use_custom_color'] = True
+
+
+def collect_custom_socket_properties(node, node_dict):
+    # print("** PROCESSING custom properties for node: ", node.bl_idname)
+    input_socket_storage = {}
+    for socket in node.inputs:
+
+        # print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
+
+        storable = {}
+        tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
+
+        for tracked_prop_name in tracked_props:
+            if not hasattr(socket, tracked_prop_name):
+                continue
+
+            value = getattr(socket, tracked_prop_name)
+            defaultValue = socket.bl_rna.properties[tracked_prop_name].default
+            # property value same as default ? => don't store it
+            if value == defaultValue:
+                continue
+
+            # print("Processing custom property: ", tracked_prop_name, " value = ", value)
+            storable[tracked_prop_name] = value
+
+            if tracked_prop_name == 'use_prop' and value:
+                # print("prop type:", type(socket.prop))
+                storable['prop'] = socket.prop[:]
+
+        if storable:
+            input_socket_storage[socket.index] = storable
+
+    if input_socket_storage:
+        node_dict['custom_socket_props'] = input_socket_storage
+    # print("**\n")
 
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
@@ -199,7 +232,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
             if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
                 """
-                n_id: 
+                n_id:
                     used to store the hash of the current Node,
                     this is created along with the Node anyway. skip.
                 typ, newsock:
@@ -262,21 +295,14 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
             node.storage_get_data(node_dict)
 
-        # collect socket properties
-        # inputs = node.inputs
-        # for s in inputs:
-        #     if (s.bl_label == 'Vertices') and hasattr(node, s.prop_name):
-        #         prop = s.prop_name
-        #         if prop:
-        #            node_dict['custom_socket_props'][prop] = getattr(node, prop)[:]
-
         node_dict['params'] = node_items
 
-        #if node.bl_idname == 'NodeFrame':
+        collect_custom_socket_properties(node, node_dict)
+
+        # if node.bl_idname == 'NodeFrame':
         #    frame_props = 'shrink', 'use_custom_color', 'label_size'
         #    node_dict['params'].update({fpv: getattr(node, fpv) for fpv in frame_props})
 
-        
         if IsMonadInstanceNode:
             node_dict['bl_idname'] = 'SvMonadGenericNode'
         else:
@@ -370,7 +396,7 @@ def perform_scripted_node_inject(node, node_ref):
                 new_text = texts.new(script_name)
                 new_text.from_string(script_content)
                 script_name = new_text.name
-                print('SN text named replaced with', script_name)        
+                print('SN text named replaced with', script_name)
 
         node.script_name = script_name
         node.script_str = script_content
@@ -399,7 +425,7 @@ def perform_svtextin_node_object(node, node_ref):
     as it's a beta service, old IO json may not be compatible - in this interest
     of neat code we assume it finds everything.
     '''
-    texts = bpy.data.texts    
+    texts = bpy.data.texts
     params = node_ref.get('params')
     current_text = params['current_text']
 
@@ -434,14 +460,17 @@ def perform_svtextin_node_object(node, node_ref):
         print(node.name, 'seems to reuse a text block loaded by another node - skipping')
 
 
-
 def apply_superficial_props(node, node_ref):
     '''
     copies the stored values from the json onto the new node's corresponding values.
     '''
-    props = ['location', 'height', 'width', 'label', 'hide', 'color']
+    props = ['location', 'height', 'width', 'label', 'hide']
     for p in props:
         setattr(node, p, node_ref[p])
+
+    if node_ref.get('use_custom_color'):
+        node.use_custom_color = True
+        node.color = node_ref.get('color', (1, 1, 1))
 
 
 def gather_remapped_names(node, n, name_remap):
@@ -474,6 +503,33 @@ def apply_core_props(node, node_ref):
                 print("going to convert a list of ints to a list of bools and assign that instead")
                 setattr(node, p, [bool(i) for i in val])
 
+
+def apply_socket_props(socket, info):
+    print("applying socket props")
+    for tracked_prop_name, tracked_prop_value in info.items():
+        try:
+            setattr(socket, tracked_prop_name, tracked_prop_value)
+
+        except Exception as err:
+            print("trying to set property name/value: ", tracked_prop_name, " / ", tracked_prop_value)
+            sys.stderr.write('ERROR: %s\n' % str(err))
+            print(sys.exc_info()[-1].tb_frame.f_code)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+            print('while setting node socket:', node.name, '|', socket.index)
+            print("the following failed |", tracked_prop_name, '<-', tracked_prop_value)
+
+
+def apply_custom_socket_props(node, node_ref):
+    print("applying node props for node: ", node.bl_idname)
+    socket_properties = node_ref.get('custom_socket_props')
+    if socket_properties:
+        for idx, info in socket_properties.items():
+            try:
+                socket = node.inputs[int(idx)]
+                apply_socket_props(socket, info)
+            except Exception as err:
+                print(repr(err))
+                print('socket index:', idx, 'trying to pass:', info, 'num_sockets', len(node.inputs))
 
 
 def add_texts(node, node_ref):
@@ -524,7 +580,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
 
     if create_texts:
         add_texts(node, node_ref)
-    
+
     if bl_idname in {'SvObjInLite', 'SvExecNodeMod', 'SvMeshEvalNode'}:
         node.storage_set_data(node_ref)
 
@@ -536,6 +592,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     apply_core_props(node, node_ref)
     apply_superficial_props(node, node_ref)
     apply_post_processing(node, node_ref)
+    apply_custom_socket_props(node, node_ref)
 
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):
@@ -550,10 +607,9 @@ def add_nodes(ng, nodes_to_import, nodes, create_texts):
             add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     except Exception as err:
         print(repr(err))
-    
+
     ng.limited_init = False
     return name_remap
-
 
 
 def add_groups(groups_to_import):
@@ -595,7 +651,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     def make_links(update_lists, name_remap):
         print_update_lists(update_lists)
-    
+
         failed_connections = []
         for link in update_lists:
             try:
@@ -611,10 +667,9 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         else:
             print('no failed connections! awesome.')
 
-
     def generate_layout(fullpath, nodes_json):
-        '''cummulative function ''' 
-        
+        '''cummulative function '''
+
         # it may be necessary to store monads as dicts instead of string/json
         # this will handle both scenarios
         if isinstance(nodes_json, str):
@@ -627,7 +682,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         update_lists = nodes_json['update_lists']
         nodes_to_import = nodes_json['nodes']
         groups_to_import = nodes_json.get('groups', {})
-        
+
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
 
@@ -810,7 +865,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         try:
             content_at_url = urlopen(url)
             found_json = content_at_url.read().decode()
-            return found_json        
+            return found_json
         except urllib.error.HTTPError as err:
             if err.code == 404:
                 self.report({'ERROR'}, 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source')
@@ -820,7 +875,6 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             self.report({'ERROR'}, 'unspecified error, check your internet connection')
 
         return
-
 
     def obtain_json(self, gist_id):
 
@@ -880,7 +934,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         gist_description = 'to do later?'
         layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
 
-        try:       
+        try:
             gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
         except Exception as err:
             if 'not JSON serializable' in repr(err):
