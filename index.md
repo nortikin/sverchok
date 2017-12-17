@@ -228,6 +228,7 @@
     SvTextInNode
     SvTextOutNode
     NoteNode
+    SvDataShapeNode
     GTextNode
     SvDebugPrintNode
     SvStethoscopeNodeMK2
