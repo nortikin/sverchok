@@ -5,7 +5,7 @@ Contribute
 Our workflow:
 =============
 
-1. Freedom to code, only try to follow pep8, and avoid abuse.
+1. You have the freedom to code how you like, but follow pep8 and use the style of existing nodes. Pep8 using PyLint if your editor has it, search our codebase for "pylint ignore", because there are rules we routinely and consciously ignore. But.. the vast majority of pep8 is solid gold, and part of the path for us to accept your code.
 
 2. Agile software development - look http://en.wikipedia.org/wiki/Agile_software_development here.
 
@@ -13,7 +13,7 @@ Our workflow:
 
 4. Before you spend a lot of time making something, we recommend you tell us about it beforehand in the Issue Tracker. Sometimes the thing you want to make already exists, or we have plans for it already with placeholder code.
 
-5. Brainstorming and finding solutions. We are mostly new in python and programming, we are artists.
+5. Brainstorm and discuss solutions. We use the issue tracker a lot and will give our honest opinion and interpretations of new code. We are artists and technical people trying to solve complicated and interesting issues using code and Blender.
 
 What not to do:
 ===============
