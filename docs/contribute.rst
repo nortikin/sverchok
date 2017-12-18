@@ -13,20 +13,25 @@ Our workflow:
 
 4. Before you spend a lot of time making something, we recommend you tell us about it beforehand in the Issue Tracker. Sometimes the thing you want to make already exists, or we have plans for it already with placeholder code.
 
-5. Brainstorm and discuss solutions. We use the issue tracker a lot and will give our honest opinion and interpretations of new code. We are artists and technical people trying to solve complicated and interesting issues using code and Blender.
+5. Brainstorm and discuss solutions. We use the issue tracker a lot and will give our honest opinion and interpretations of new code. We are artists and technical people trying to solve complicated and interesting issues using code and Blender. We care about optimal code but also accept working and novel solutions.
+
+6. Test your code, Test your proposed changes. 
 
 What not to do:
 ===============
 
-Doing these things will break old layouts and or create very ugly code in the node.
+Doing these things will break old layouts or have other unintended consequences.
 
 1. Change .bl_idname of a node
 
 2. Remove or rename sockets
 
-3. Adding new socket without updating upgrade.py
+3. Adding new socket inbetween existing sockets without updating upgrade.py. We prefer that you add sockets behind the last existing socket for either `self.inputs` or `self.outputs`.
 
-4. 'current_mode' names of properties are reserved for nodes, not use for anything else
+4. the node property 'current_mode' should be considered a reserved keyword, don't use it.
+
+5. There are other reserved property names see the bpy.types.Node baseclass in Blender docs and Sverchok's custom node mixin class.
+
 
 
 Helpful hints
