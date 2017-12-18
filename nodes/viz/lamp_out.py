@@ -20,7 +20,7 @@ from math import radians
 import bpy
 from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty, IntProperty, FloatVectorProperty
-from sverchok.data_structure import node_id, Matrix_generate, updateNode, match_long_repeat
+from sverchok.data_structure import node_id, Matrix_generate, updateNode, match_long_repeat, get_data_nesting_level
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
@@ -208,7 +208,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
     def make_lamp(self, index, object):
         origin, size, size_x, size_y, strength, spot_size, spot_blend, color = object
 
-        if isinstance(color, (list, tuple)):
+        if get_data_nesting_level(color) == 3:
             color = color[0]
         if isinstance(size, (list, tuple)):
             size = size[0]
