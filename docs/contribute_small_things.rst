@@ -32,7 +32,8 @@ And below it write the following "differential".
        + # print(some_variable)
        ```
 
-    this node prints very often, and seems to slow down Blender because of it. I'm not certain but I don't think this printout it essential and suggest you drop it.
+    this node prints very often, and seems to slow down Blender because of it. 
+    I'm not certain but I don't think this printout it essential and suggest you drop it.
 
 
 using the backticks and the diff (language type) it will display the proposed change in code with syntax highlighting like this:
