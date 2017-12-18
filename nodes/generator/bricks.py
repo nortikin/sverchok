@@ -385,7 +385,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
                 vt.index = vertex_idx
                 vertex_idx += 1
                 vertices[new_vertex] = 1
-        return list(vertices.keys())
+        return vertex_idx, list(vertices.keys())
 
     def process(self):
         if not (self.outputs['Vertices'].is_linked or self.outputs['Centers'].is_linked):
@@ -423,7 +423,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             ulines, vedges = self.build_lines(vs, toothing, toothing_r, sizeu, du, rdu, shift)
 
             # Assign indicies to vertices
-            vertices = self.build_vertices(ulines)
+            vertex_idx, vertices = self.build_vertices(ulines)
 
             edges = []
             for line in ulines:
