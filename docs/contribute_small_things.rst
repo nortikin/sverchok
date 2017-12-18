@@ -62,4 +62,3 @@ General guidelines
 ==================
 
 The document you should be reading to get a sense of how we'd like contributed code to look and behave is here ( contribute.rst ).
-
