@@ -2,7 +2,9 @@
 Contributing small things
 *************************
 
-Thanks for taking the time to read this document, we gladly accept code/doc contributions. For whatever reason you want to change or add code to sverchok, that's cool. We will always consider the proposed changes in light of our understanding of sverchok as a whole. Sverchok's code base is large and in a few places challenging to comprehend. If we don't think it's appropriate to accept your suggestion we'll defend our position. Usually we can come to some compromise that makes sense for sverchok, yet also satisfies the amicable contributor.
+If you're reading this because you would like to change or add code to sverchok, that's cool. If not, you can skip this document now.
+
+Thanks for taking the time to read on, we gladly accept contributions to our code and documentation. We will always consider the proposed changes in light of our understanding of sverchok as a whole. Sverchok's code base is large and in a few places challenging to comprehend. If we don't think it's appropriate to accept your suggestion we'll defend our position. Usually we can come to some compromise that makes sense for sverchok, yet also satisfies the amicable contributor.
 
 
 Pull Requests
@@ -16,20 +18,24 @@ We accept one-liner PRs, but might also reject them and instead add the same (or
 Informal code suggestions
 =========================
 
-If you don't want to go through a git / github interface you can suggest an edit using the issue tracker. Open a new issue, state succintly in the title what the edit hopes to achieve. In the issue you can use Markdown to show us which code you're talking about and what changes you'd like to make. 
+If you don't want to go through the git / github interface you can suggest an edit using the issue tracker. Open a new issue, state succintly in the title what the edit hopes to achieve. In the issue you can use Markdown to show us which file and section of code you're talking about and what changes you think would be beneficial. You can copy / paste a permalink ( https://github.com/blog/2415-introducing-embedded-code-snippets ) into the issue for this purpose.
 
-You can copy / paste a permalink ( https://github.com/blog/2415-introducing-embedded-code-snippets ) into the issue to show the immediate area of the code you're interested in. And below it write the following "differential". 
-
-In the following file: sverchok/nodes/scene/frame_info.py on line 122
+And below it write the following "differential". 
 
 .. code-block :: none
 
-   ```diff
-   - print(some_variable)
-   + # print(some_variable)
-   ```
+    In the following file: sverchok/nodes/scene/frame_info.py on line 122
 
-and it will display like 
+
+       ```diff
+       - print(some_variable)
+       + # print(some_variable)
+       ```
+
+
+and it will display like :
+
+In the following file: sverchok/nodes/scene/frame_info.py on line 122
 
 .. code-block :: diff
 
