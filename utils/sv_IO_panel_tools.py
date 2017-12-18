@@ -674,7 +674,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         if isinstance(nodes_json, str):
             nodes_json = json.loads(nodes_json)
             debug('==== loading monad ====')
-        print(('#' * 12) + nodes_json['export_version'])
+        info(('#' * 12) + nodes_json['export_version'])
 
         ''' create all nodes and groups '''
 
