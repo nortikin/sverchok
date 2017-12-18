@@ -12,7 +12,7 @@ Pull Requests
 
 A pull request (PR) is what you might consider a "formally suggested edit" to sverchok. You do this either via the online Git tools provided by GitHub / or via GIT. Newcomers to git should probably use the online GitHub mechanisms for doing small edits. See GitHub's guide to PRs ( https://help.github.com/articles/about-pull-requests/ ).
 
-We accept one-liner PRs, but might also reject them and instead add the same (or similar) code modifications to our own frequent PR streaks. We'll then add a comment in the commit to acknowledge your input.
+We accept one-liner PRs, but might also reject them and instead add the same (or similar) code modifications to our own frequent PR streaks. We'll usually add a comment in the commit to acknowledge your input.
 
 
 Informal code suggestions
