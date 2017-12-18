@@ -20,7 +20,7 @@ from math import radians
 import bpy
 from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty, IntProperty, FloatVectorProperty
-from sverchok.data_structure import node_id, Matrix_generate, updateNode, match_long_repeat, get_data_nesting_level
+from sverchok.data_structure import node_id, Matrix_generate, updateNode, match_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
@@ -175,9 +175,8 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         i = self.inputs.new('StringsSocket', 'Strength')
         i.prop_name = 'strength'
 
-        color_socket = self.inputs.new('StringsSocket', "Color")
+        color_socket = self.inputs.new('SvColorSocket', "Color")
         color_socket.prop_name = 'light_color'
-        color_socket.nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
         self.outputs.new('SvObjectSocket', 'Objects')
 
@@ -208,7 +207,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
     def make_lamp(self, index, object):
         origin, size, size_x, size_y, strength, spot_size, spot_blend, color = object
 
-        if get_data_nesting_level(color) == 3:
+        if get_data_nesting_level(color) == 2:
             color = color[0]
         if isinstance(size, (list, tuple)):
             size = size[0]
@@ -288,6 +287,8 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         spot_blends = self.inputs['Spot Blend'].sv_get()
         strengths = self.inputs['Strength'].sv_get()
         colors = self.inputs['Color'].sv_get()
+        if get_data_nesting_level(colors) == 3:
+            colors = colors[0]
 
         objects = match_long_repeat([origins, sizes_sq, sizes_x, sizes_y, strengths, spot_sizes, spot_blends, colors])
 
