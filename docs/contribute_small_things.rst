@@ -32,10 +32,10 @@ And below it write the following "differential".
        + # print(some_variable)
        ```
 
+    this node prints very often, and seems to slow down Blender because of it. I'm not certain but I don't think this printout it essential and suggest you drop it.
 
-and it will display like :
 
-In the following file: sverchok/nodes/scene/frame_info.py on line 122
+using the backticks and the diff (language type) it will display the proposed change in code with syntax highlighting like this:
 
 .. code-block :: diff
 
@@ -43,7 +43,7 @@ In the following file: sverchok/nodes/scene/frame_info.py on line 122
    + # print(some_variable)
 
 
-This would indicate that you came across a runaway print statement and would like us to remove it with a comment for now.
+This way you show what code you're talking about, what you propose to change, and why. Great. We love clear issues.
 
 
 Non one-liners
