@@ -17,21 +17,21 @@ Our workflow:
 
 6. Test your code, Test your proposed changes. 
 
+
 What not to do:
 ===============
 
 Doing these things will break old layouts or have other unintended consequences.
 
-1. Change .bl_idname of a node
+1. Change ``bl_idname`` of a node
 
 2. Remove or rename sockets
 
-3. Adding new socket inbetween existing sockets without updating upgrade.py. We prefer that you add sockets behind the last existing socket for either `self.inputs` or `self.outputs`.
+3. Adding new socket inbetween existing sockets without updating upgrade.py. We prefer that you add sockets behind the last existing socket for either ``self.inputs`` or ``self.outputs``.
 
-4. the node property 'current_mode' should be considered a reserved keyword, don't use it.
+4. the node property ``current_mode`` should be considered a reserved keyword, don't use it.
 
 5. There are other reserved property names see the bpy.types.Node baseclass in Blender docs and Sverchok's custom node mixin class.
-
 
 
 Helpful hints
@@ -50,20 +50,18 @@ To create a node:
 
 1. Make a scripted node to test the idea.
 
-2. Show your node to us in an issue or silently create branch or fork of master in github. If it
-   is huge complex job we can make you collaborator. 
+2. Show your node to us in an issue or create branch or fork of master in github. If it
+   is a huge complex job we can make you collaborator. 
 
-3. Copy an existing node that is similar.
+3. Copy an existing node that is similar, as a basis to start from.
 
-4. Change class name, class id, class description, class registration in your file
+4. Change class name, class bl_idname, docstring, and class registration section in your file (at the bottom)
 
-5. Add node id in menu.py in an approritate category.
+5. Add node's ``bl_idname`` to menu.py in an appropriate category.
 
-6. Add file to category that you need
+6. Add file to matching category: ``..sverchok/nodes/whatever_existing_category/your_file.py``
 
-7. Add in ``nodes/__init__.py`` filename
-
-8. Tell us to merge branches/forks
+7. Make a pull request.
 
 
 SOME RULES:
@@ -71,8 +69,7 @@ SOME RULES:
 
 1. All classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors.
 
-2. node_tree.py contains base classes of node tree and,
-   maybe you need to create collection property or new socket (for
+2. node_tree.py contains base classes of node tree and, maybe you need to create collection property or new socket (for
    new type of socket tell us first), you make it here.
 
 3. data_structure.py has magic of:
