@@ -271,6 +271,8 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
             if self.emission_node_name and self.emission_node_name in lamp.node_tree.nodes:
                 node = lamp.node_tree.nodes[self.emission_node_name]
                 node.inputs['Strength'].default_value = strength
+                if len(color) != 4:
+                    raise Exception("Color data must contain 4 floats (RGBA), not {}".format(len(color)))
                 node.inputs['Color'].default_value = color
 
     def process(self):
