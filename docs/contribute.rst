@@ -9,9 +9,9 @@ Our workflow:
 
 2. Agile software development - look http://en.wikipedia.org/wiki/Agile_software_development here.
 
-3. Ideas from other addons to implement to sverchok. It is big deal.
+3. Implementing ideas from other add-ons is fine, if you have the appropriate licenses (GPL), written consent or rights. We don't accept unattributed code you didn't write.
 
-4. If you making something it is better to say in issues before.
+4. Before you spend a lot of time making something, we recommend you tell us about it beforehand in the Issue Tracker. Sometimes the thing you want to make already exists, or we have plans for it already with placeholder code.
 
 5. Brainstorming and finding solutions. We are mostly new in python and programming, we are artists.
 
