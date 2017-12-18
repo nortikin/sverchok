@@ -63,6 +63,7 @@ from sverchok.core.node_defaults import set_defaults_if_defined
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.ui import color_def
 import sverchok.utils.logging
+from sverchok.utils.logging import debug
 
 socket_colors = {
     "StringsSocket": (0.6, 1.0, 0.6, 1.0),
@@ -824,7 +825,7 @@ class SverchCustomTreeNode:
                 a = time.perf_counter()
                 process_from_node(self)
                 b = time.perf_counter()
-                print("Partial update from node", self.name, "in", round(b - a, 4))
+                debug("Partial update from node %s in %s", self.name, round(b - a, 4))
             else:
                 process_from_node(self)
         elif self.id_data.bl_idname == "SverchGroupTreeType":

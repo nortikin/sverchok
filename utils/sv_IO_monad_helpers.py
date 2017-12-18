@@ -19,6 +19,8 @@
 import bpy
 import json
 
+from sverchok.utils.logging import error
+
 def pack_monad(node, node_items, groups_dict, create_dict_of_tree):
     """
     we can not rely on .items() to be present for various reasons, so we must gather
@@ -99,4 +101,4 @@ def unpack_monad(nodes, node_ref):
 
         return node
     else:
-        print('no parameters found! .json might be broken')                
+        error('no parameters found! .json might be broken')                
