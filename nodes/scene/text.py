@@ -56,7 +56,6 @@ def new_output_socket(node, name, _type):
 # OLD TODO,
 # load and dump to/from external file
 # update stability, do not disconnect unless something changed
-#
 
 class SvTextInOp(bpy.types.Operator):
     """ Load text data """
