@@ -104,12 +104,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty(default='')
     force_input = BoolProperty()
 
-    def avail_texts(self, context):
-        return [(t.name, t.name, "") for t in bpy.data.texts]
-
-    text = EnumProperty(
-        items=avail_texts, name="Texts",
-        description="Choose text to load", update=updateNode)
+    text = StringProperty(default='', update=updateNode)
 
     text_modes = [
         ("CSV", "Csv", "Csv data", "", 1),
@@ -119,6 +114,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     textmode = EnumProperty(items=text_modes, default='CSV', update=updateNode, )
 
     # name of loaded text, to support reloading
+    # NOTE: spandril.
     current_text = StringProperty(default="")
 
     # external file
@@ -193,7 +189,9 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
                 row.operator('node.sverchok_text_callback', text='R E L O A D').fn_name = 'reload'
             col.operator('node.sverchok_text_callback', text='R E S E T').fn_name = 'reset'
         else:
-            col.prop(self, "text", "Select Text")
+            # col.prop(self, "text", "Select Text")  # <-- old enum.
+            col.prop_search(self, "text", bpy.data, 'text', text="Text")
+
             #    layout.prop(self,"file","File") external file, TODO
             row = col.row(align=True)
             row.prop(self, 'textmode', 'textmode', expand=True)
@@ -442,6 +440,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         if n_id in self.list_data:
             del self.list_data[n_id]
 
+        # f = bpy.data.texts[self.text or self.current_text].as_string()
         f = bpy.data.texts[self.text].as_string()
 
         try:
@@ -451,7 +450,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
             print(sys.exc_info()[-1].tb_frame.f_code)
             pass
 
-        if isinstance(data, list):
+        if isinstance(data, (list, tuple)):
             self.list_data[n_id] = data
             self.use_custom_color = True
             self.color = READY_COLOR
