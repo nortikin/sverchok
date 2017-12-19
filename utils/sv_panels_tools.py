@@ -203,13 +203,15 @@ class SvLayoutScanProperties(bpy.types.Operator):
                         templist.append([node.label, node.name, ""])
                 
                 elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode', 'SvColorInputNode'}:
-                    if not (node.inputs and node.outputs):
-                        pass
+                    if not node.outputs:
+                        debug("Node %s does not have outputs", node.name)
+                        continue
                     if len(node.inputs) and node.inputs[0].is_linked:
-                        pass
-                    # somehow to3d not works at all now...
-                    if not node.outputs[0].is_linked and node.to3d != True:
-                        pass
+                        debug("Node %s: first input is linked", node.name)
+                        continue
+                    if (not node.outputs[0].is_linked) or (node.to3d != True):
+                        debug("Node %s: first output is not linked or to3d == False", node.name)
+                        continue
 
                     if 'Integer' in idname:
                         templist.append([node.label, node.name, 'int_'])
