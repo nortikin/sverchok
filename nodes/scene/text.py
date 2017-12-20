@@ -57,6 +57,9 @@ def clear_stored_data(node, n_id):
     node.list_data.pop(n_id, None)
     node.json_data.pop(n_id, None)    
 
+dummyvalue = "sv_dummy_bad123456"
+def avail_texts(self, context):
+    return [(t.name, t.name, "") for t in bpy.data.texts] + [(dummyvalue, dummyvalue, "")]
 
 # OLD TODO,
 # load and dump to/from external file
@@ -116,11 +119,11 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         ("SV", "Sverchok", "Python data", "", 2),
         ("JSON", "JSON", "Sverchok JSON", 3)]
 
-    textmode = EnumProperty(items=text_modes, default='CSV', update=updateNode, )
+    textmode = EnumProperty(items=text_modes, default='CSV', update=updateNode)
 
     # name of loaded text, to support reloading
     # NOTE: spandril.
-    current_text = StringProperty(default="")
+    current_text = StringProperty(default="")   
 
     # external file
     file = StringProperty(subtype='FILE_PATH')
@@ -195,7 +198,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
             col.operator('node.sverchok_text_callback', text='R E S E T').fn_name = 'reset'
         else:
             # col.prop(self, "text", "Select Text")  # <-- old enum.
-            col.prop_search(self, "text", bpy.data, 'texts') #, text="Text")
+            col.prop_search(self, "text", bpy.data, 'texts', text='') #, text="Text")
 
             #    layout.prop(self,"file","File") external file, TODO
             row = col.row(align=True)
@@ -429,7 +432,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         self.load_sv_data()
 
         if n_id in self.list_data:
-            new_output_socket(self, name_dict[typ], self.socket_type)
+            new_output_socket(self, name_dict[self.socket_type], self.socket_type)
 
     def reload_sv(self):
         self.load_sv_data()
@@ -568,11 +571,6 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Text out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def avail_texts(self, context):
-        texts = bpy.data.texts
-        items = [(t.name, t.name, "") for t in texts]
-        return items
-
     def change_mode(self, context):
         self.inputs.clear()
 
@@ -585,8 +583,8 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'SV':
             self.inputs.new('StringsSocket', 'Data', 'Data')
 
-    text = EnumProperty(
-        items=avail_texts, name="Texts", description="Choose text to load", update=updateNode)
+    text = EnumProperty(items=avail_texts, name="Texts", description="Choose text to load", update=updateNode)
+    current_text = StringProperty()
 
     text_modes = [
         ("CSV",         "Csv",          "Csv data",           1),
@@ -627,7 +625,8 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.prop(self, 'autodump', "auto dump", toggle=True)
         row = col.row(align=True)
-        row.prop(self, 'text', "Select text")
+        # row.prop(self, 'text', "Select text")
+        row.prop_search(self, "current_text", bpy.data, 'texts', text='')
 
         #layout.label("Select output format")
         row = col.row(align=True)
@@ -660,7 +659,13 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
     # does not do anything with data until dump is executed
 
     def process(self):
-        if self.text_mode == 'CSV' or self.text_mode == 'JSON':
+
+        if self.text and self.text != "sv_dummy_bad123456":
+            self.current_text = self.text
+            # this is now only used to set the text to this dumm variable. this avoids needing mk2.
+            self.text = "sv_dummy_bad123456"
+
+        if self.text_mode in {'CSV', 'JSON'}:
             multi_socket(self, min=1)
         elif self.text_mode == 'SV':
             pass  # only one input, do nothing
@@ -674,8 +679,8 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
         if len(out) == 0:
             return False
         if not self.append:
-            bpy.data.texts[self.text].clear()
-        bpy.data.texts[self.text].write(out)
+            bpy.data.texts[self.current_text].clear()
+        bpy.data.texts[self.current_text].write(out)
         self.color = READY_COLOR
         return True
 
