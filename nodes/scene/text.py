@@ -40,9 +40,9 @@ from sverchok.data_structure import node_id, multi_socket, updateNode
 FAIL_COLOR = (0.85, 0.85, 0.8)
 READY_COLOR = (0.5, 0.7, 1)
 
+name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
 map_to_short = {'VerticesSocket': 'v', 'StringsSocket': 's', 'MatrixSocket': 'm'}
 map_from_short = {'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket'}
-
 
 def get_socket_type(node, inputsocketname):
     socket_type = node.inputs[inputsocketname].links[0].from_socket.bl_idname
@@ -428,9 +428,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         self.load_sv_data()
 
         if n_id in self.list_data:
-            name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
-            typ = self.socket_type
-            new_output_socket(self, name_dict[typ], typ)
+            new_output_socket(self, name_dict[typ], self.socket_type)
 
     def reload_sv(self):
         self.load_sv_data()
@@ -701,7 +699,6 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         elif self.text_mode == 'JSON':
             data_out = {}
-            name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
 
             for socket in self.inputs:
                 if socket.is_linked:
