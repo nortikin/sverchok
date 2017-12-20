@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-# from mathutils import Vector, Matrix
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
@@ -33,33 +32,24 @@ class SvPlaneFit(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Vertex Cloud")
         self.outputs.new('VerticesSocket', "Plane Center")
         self.outputs.new('VerticesSocket', "Plane Normal")
-       # self.outputs.new('MatrixSocket', "Plane Matrix")
 
     def process(self):
         Inloc = self.inputs[0]
         if not Inloc.is_linked:
             return
-        Loc, Norm = self.outputs   # Loc, Norm, Mat = self.outputs
-        Locl, Norl = [], []   # Locl, Norl, Matl = [], [], []
+        Loc, Norm = self.outputs
+        Locl, Norl = [], []
         for VList in Inloc.sv_get():
             points = np.array(VList)
-            ctr = points.mean(axis=0)
-            x = points - ctr
-            M = np.cov(x.T)
-            eigenvalues, eigenvectors = np.linalg.eig(M)
-            normal = eigenvectors[:, eigenvalues.argmin()]
+            pmean = points.mean(axis=0)
             if Loc.is_linked:
-                Locl.append(ctr.tolist())
+                Locl.append(pmean.tolist())
             if Norm.is_linked:
-                Norl.append(normal.tolist())
-          #  if Mat.is_linked:
-          #      nor = Vector(normal)
-          #      n = nor.to_track_quat('Z', 'Y')
-          #      m = Matrix.Translation(ctr) * n.to_matrix().to_4x4()
-          #      Matl.append([i[:] for i in m])
-        Loc.sv_set(Locl)
-        Norm.sv_set(Norl)
-       # Mat.sv_set(Matl)
+                x = points - pmean
+                eigenvalues, eigenvectors = np.linalg.eig(np.cov(x.T))
+                Norl.append(eigenvectors[:, eigenvalues.argmin()].tolist())
+        Loc.sv_set([Locl])
+        Norm.sv_set([Norl])
 
 
 def register():
