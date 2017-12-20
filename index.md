@@ -313,3 +313,4 @@
     SvSeparateMeshNodeMK2
     SvIndexToMaskNode
     SvMultiExtrudeAlt
+    SvOffsetLineNode
