@@ -190,7 +190,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
             col.operator('node.sverchok_text_callback', text='R E S E T').fn_name = 'reset'
         else:
             # col.prop(self, "text", "Select Text")  # <-- old enum.
-            col.prop_search(self, "text", bpy.data, 'text', text="Text")
+            col.prop_search(self, "text", bpy.data, 'texts') #, text="Text")
 
             #    layout.prop(self,"file","File") external file, TODO
             row = col.row(align=True)
@@ -254,6 +254,8 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.current_text:
             return
+        if self.current_text and not self.text:
+            self.text = self.current_text
 
         if self.textmode == 'CSV':
             self.update_csv()
