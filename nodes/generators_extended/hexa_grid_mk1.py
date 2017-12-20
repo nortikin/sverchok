@@ -53,13 +53,13 @@ def generate_grid(center, layout, settings):
         Y = range(1, X + 1)
         O = range(X)
         C = [(level - 1) * 2 / 3, 0.0]
-    elif layout == "HEXAGON": # pattern Y(3) : 3 4 5 4 3
+    elif layout == "HEXAGON":  # pattern Y(3) : 3 4 5 4 3
         _, _, level = settings
         X = 2 * level - 1
         Y = [X - abs(level - 1 - l) for l in range(X)]
         O = [level - 1 - abs(level - 1 - l) for l in range(X)]
         C = [level - 1, (level - 1) / 2]
-    elif layout == "DIAMOND": # pattern  Y(3) : 1 2 3 2 1
+    elif layout == "DIAMOND":  # pattern  Y(3) : 1 2 3 2 1
         _, _, level = settings
         X = 2 * level - 1
         Y = [level - abs(level - 1 - l) for l in range(X)]
@@ -80,13 +80,13 @@ def generate_grid(center, layout, settings):
     angle = radians(a)
     cosa = cos(angle)
     sina = sin(angle)
-    rGrid = [(x*cosa-y*sina, x*sina+y*cosa, 0.0) for x,y,_ in grid]
+    rGrid = [(x * cosa - y * sina, x * sina + y * cosa, 0.0) for x, y, _ in grid]
 
     return rGrid
 
 
-def generate_tiles(radius, angle, join, gridList):
-    verts, edges, polys = circle(radius, radians(30-angle), 6, None, 'pydata')
+def generate_tiles(radius, angle, separate, gridList):
+    verts, edges, polys = circle(radius, radians(30 - angle), 6, None, 'pydata')
 
     vertGridList, edgeGridList, polyGridList = [[], [], []]
     for grid in gridList:
@@ -98,7 +98,7 @@ def generate_tiles(radius, angle, join, gridList):
             addEdge(edges)
             addPoly(polys)
 
-        if join:
+        if not separate:
             vertList, edgeList, polyList = mesh_join(vertList, edgeList, polyList)
 
         vertGridList.append(vertList)
@@ -109,7 +109,6 @@ def generate_tiles(radius, angle, join, gridList):
 
 
 class SvHexaGridNodeMK1(bpy.types.Node, SverchCustomTreeNode):
-
     ''' Hexa Grid MK1 '''
     bl_idname = 'SvHexaGridNodeMK1'
     bl_label = 'Hexa Grid MK1'
@@ -126,43 +125,35 @@ class SvHexaGridNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     level = IntProperty(
         name="Level", description="Number of levels in non rectangular layouts",
-        default=3, min=1, soft_min=1,
-        update=updateNode)
+        default=3, min=1, update=updateNode)
 
     numx = IntProperty(
         name="NumX", description="Number of points along X",
-        default=7, min=1, soft_min=1,
-        update=updateNode)
+        default=7, min=1, update=updateNode)
 
     numy = IntProperty(
         name="NumY", description="Number of points along Y",
-        default=6, min=1, soft_min=1,
-        update=updateNode)
+        default=6, min=1, update=updateNode)
 
     radius = FloatProperty(
         name="Radius", description="Radius of the grid tile",
-        default=1.0, min=0.0, soft_min=0.0,
-        update=updateNode)
+        default=1.0, min=0.0, update=updateNode)
 
     angle = FloatProperty(
         name="Angle", description="Angle to rotate the grid and tiles",
-        default=0.0, min=0.0, soft_min=0.0,
-        update=updateNode)
+        default=0.0, update=updateNode)
 
     scale = FloatProperty(
         name="Scale", description="Scale of the polygon tile",
-        default=1.0, min=0.0, soft_min=0.0,
-        update=updateNode)
+        default=1.0, min=0.0, update=updateNode)
 
     center = BoolProperty(
         name="Center", description="Center grid around origin",
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
-    join = BoolProperty(
-        name="Join", description="Join meshes into one",
-        default=False,
-        update=updateNode)
+    separate = BoolProperty(
+        name="Separate", description="Separate tiles",
+        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.width = 170
@@ -202,8 +193,8 @@ class SvHexaGridNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'gridLayout', expand=False)
         row = layout.row(align=True)
-        row.prop(self, 'join')
-        row.prop(self, 'center')
+        row.prop(self, 'separate', toggle=True)
+        row.prop(self, 'center', toggle=True)
 
     def process(self):
         # return if no outputs are connected
@@ -245,7 +236,7 @@ class SvHexaGridNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         vertList, edgeList, polyList = [[], [], []]
         for r, a, s, grid in zip(*params):
-            verts, edges, polys = generate_tiles(r * s, a, self.join, [grid])
+            verts, edges, polys = generate_tiles(r * s, a, self.separate, [grid])
             vertList.extend(verts)
             edgeList.extend(edges)
             polyList.extend(polys)
@@ -261,6 +252,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvHexaGridNodeMK1)
-
-if __name__ == '__main__':
-    register()
