@@ -660,9 +660,12 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
+        # self.text is no longer used, in order to preserve compatibility i (zeffii) have
+        # added a new variable to store the name of the current text, and upon the first
+        # update of a .blend / json sverchok will switch to using current_text instead.
         if self.text and self.text != "sv_dummy_bad123456":
             self.current_text = self.text
-            # this is now only used to set the text to this dumm variable. this avoids needing mk2.
+            # this is now only used to set the text to this dummy variable. this avoids needing mk2.
             self.text = "sv_dummy_bad123456"
 
         if self.text_mode in {'CSV', 'JSON'}:
