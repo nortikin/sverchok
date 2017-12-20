@@ -52,6 +52,11 @@ def new_output_socket(node, name, _type):
     bl_idname = map_from_short.get(_type, 'StringsSocket')
     node.outputs.new(bl_idname, name)
 
+def clear_stored_data(node, n_id):
+    node.csv_data.pop(n_id, None)
+    node.list_data.pop(n_id, None)
+    node.json_data.pop(n_id, None)    
+
 
 # OLD TODO,
 # load and dump to/from external file
@@ -227,9 +232,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     # free potentially lots of data
     def free(self):
         n_id = node_id(self)
-        self.csv_data.pop(n_id, None)
-        self.list_data.pop(n_id, None)
-        self.json_data.pop(n_id, None)
+        clear_stored_data(self, n_id)
 
     def reload(self):
         # reload should ONLY be called from operator on ui change
@@ -268,9 +271,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         self.outputs.clear()
         self.current_text = ''
-        self.csv_data.pop(n_id, None)
-        self.list_data.pop(n_id, None)
-        self.json_data.pop(n_id, None)
+        clear_stored_data(self, n_id)
 
     def load(self):
         if self.textmode == 'CSV':
@@ -739,5 +740,5 @@ def unregister():
     bpy.utils.unregister_class(SvTextInNode)
     bpy.utils.unregister_class(SvTextOutNode)
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#    register()
