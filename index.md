@@ -39,7 +39,6 @@
     SvImageComponentsNode
     SvScriptNode
     SvTorusKnotNode
-    SvHexaGridNode
     SvHexaGridNodeMK1
     SvRingNode
 
