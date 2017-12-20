@@ -88,7 +88,7 @@ class SvSocketAquisition:
                     if not name == 'prop_name':
                         setattr(new_socket, name, value)
                     else:
-                        new_socket.prop_name = prop_name
+                        new_socket.prop_name = prop_name or ''
 
             # print('------')
             # print(prop_data)

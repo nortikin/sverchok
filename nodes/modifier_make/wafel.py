@@ -338,10 +338,14 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                             nearv_2, near_2 = tree.find(two)[:2]
                             # indexes of two nearest points
                             # удалить рёбра что мешают спать заодно
-                            en_0, en_1, de1 = self.calc_indexes(edgp, near_1)
-                            deledges1.extend(de1)
-                            en_2, en_3, de2 = self.calc_indexes(edgp, near_2)
-                            deledges2.extend(de2)
+                            try:
+                                en_0, en_1, de1 = self.calc_indexes(edgp, near_1)
+                                deledges1.extend(de1)
+                                en_2, en_3, de2 = self.calc_indexes(edgp, near_2)
+                                deledges2.extend(de2)
+                            except:
+                                print('Waffel Wrong crossection node')
+                                break
                             # print(vecp, one, dirx, en_0, en_1)
                             # left-right indexes and vectors
                             # с учётом интерполяций по высоте

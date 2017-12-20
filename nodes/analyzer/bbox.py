@@ -29,7 +29,7 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
     '''Bounding box'''
     bl_idname = 'SvBBoxNode'
     bl_label = 'Bounding box'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'BBOX'
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')

@@ -19,6 +19,7 @@ Generators
    script1_lite
    sphere
    icosphere
+   suzanne
    torus
    torusKnot
    formula_shape

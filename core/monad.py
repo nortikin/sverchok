@@ -26,6 +26,7 @@ from bpy.props import StringProperty, FloatProperty, IntProperty, BoolProperty, 
 
 import sverchok
 from sverchok.utils import get_node_class_reference
+from sverchok.utils.logging import info, error
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
@@ -116,6 +117,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
             elif prop_func.__name__ == "FloatVectorProperty":
+                info("FloatVectorProperty ignored (normal behaviour since day one). prop_func: %s, prop_dict: %s.", prop_func, prop_dict)
                 return None # for now etc
             else: # no way to handle it
                 return None
@@ -255,7 +257,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         """
 
         if not all((self.input_node, self.output_node)):
-            print("Monad {} not setup correctly".format(self.name))
+            error("Monad %s not set up correctly", self.name)
             return None
 
         cls_dict = {}

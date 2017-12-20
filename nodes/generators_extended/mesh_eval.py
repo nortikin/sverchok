@@ -85,9 +85,9 @@ def evaluate(json, variables):
             if isinstance(c, str):
                 try:
                     val = safe_eval(c, variables)
-                    #print("EVAL: {} with {} => {}".format(c, variables, val))
+                    #self.debug("EVAL: {} with {} => {}".format(c, variables, val))
                 except NameError as e:
-                    print(e)
+                    self.exception(e)
                     val = 0.0
             else:
                 val = c
@@ -104,7 +104,7 @@ def selected_masks_adding(node):
     links = tree.links
 
     mo = tree.nodes.new('MaskListNode')
-    mv = tree.nodes.new('VectorMoveNode')
+    mv = tree.nodes.new('SvMoveNodeMK2')
     rf = tree.nodes.new('SvGenFloatRange')
     vi = tree.nodes.new('GenVectorsNode')
     mi = tree.nodes.new('SvMaskJoinNode')
@@ -144,7 +144,7 @@ class SvJsonFromMesh(bpy.types.Operator):
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         if not bpy.context.selected_objects[0].type == 'MESH':
-            print("JSON from mesh: selected object is not mesh")
+            self.info("JSON from mesh: selected object is not mesh")
             self.report({'INFO'}, 'It is not a mesh selected')
             return
 
@@ -297,15 +297,15 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
 
     def adjust_sockets(self):
         variables = self.get_variables()
-        #print("adjust_sockets:" + str(variables))
-        #print("inputs:" + str(self.inputs.keys()))
+        #self.debug("adjust_sockets:" + str(variables))
+        #self.debug("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
             if key not in variables:
-                print("Input {} not in variables {}, remove it".format(key, str(variables)))
+                self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
                 self.inputs.remove(self.inputs[key])
         for v in variables:
             if v not in self.inputs:
-                print("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
+                self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
                 self.inputs.new('StringsSocket', v)
 
         groups = self.get_group_names()
@@ -313,11 +313,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             if key in ['Vertices', 'Edges', 'Faces']:
                 continue
             if key not in groups:
-                print("Output {} not in groups {}, remove it".format(key, str(groups)))
+                self.debug("Output {} not in groups {}, remove it".format(key, str(groups)))
                 self.outputs.remove(self.outputs[key])
         for name in sorted(groups):
             if name not in self.outputs:
-                print("Group {} not in outputs {}, add it".format(name, str(self.outputs.keys())))
+                self.debug("Group {} not in outputs {}, add it".format(name, str(self.outputs.keys())))
                 self.outputs.new('StringsSocket', name)
 
 
@@ -351,11 +351,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 value = defaults.get(var, 1.0)
                 if isinstance(value, str):
-                    #print("Eval: {} = {}, {}".format(var, value, default_results))
+                    #self.debug("Eval: {} = {}, {}".format(var, value, default_results))
                     value = safe_eval(value, default_results)
                     default_results[var] = value
                 result[var] = [value]
-            #print("get_input: {} => {}".format(var, result[var]))
+            #self.debug("get_input: {} => {}".format(var, result[var]))
         return result
 
     def groups_to_masks(self, groups, size):
@@ -420,7 +420,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             text = bpy.data.texts[self.filename].as_string()
             storage['geom'] = text
         else:
-            print("Unknown filename: {}".format(self.filename))
+            self.warning("Unknown filename: {}".format(self.filename))
 
 
 def register():

@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.065",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -20,26 +20,6 @@
       "params": {},
       "width": 140.0
     },
-    "Axis Input": {
-      "bl_idname": "svAxisInputNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": true,
-      "label": "Y",
-      "location": [
-        10.887542724609375,
-        148.33407592773438
-      ],
-      "params": {
-        "current_axis": "Y",
-        "selected_axis": "Y"
-      },
-      "width": 100.0
-    },
     "Float": {
       "bl_idname": "FloatNode",
       "color": [
@@ -51,8 +31,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -349.0549011230469,
-        305.682373046875
+        -611.575439453125,
+        340.2852783203125
       ],
       "params": {
         "float_": -2.8999996185302734
@@ -70,8 +50,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -349.0606384277344,
-        227.36221313476562
+        -611.5811767578125,
+        261.9651184082031
       ],
       "params": {
         "float_": -11.029999732971191
@@ -89,8 +69,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -347.8851318359375,
-        149.04205322265625
+        -610.4056396484375,
+        183.64495849609375
       ],
       "params": {
         "float_": -13.309999465942383
@@ -108,8 +88,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -350.2242736816406,
-        73.05982971191406
+        -612.7447509765625,
+        107.66273498535156
       ],
       "params": {
         "float_": -6.979999542236328
@@ -127,8 +107,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -351.3942565917969,
-        -2.9224071502685547
+        -613.914794921875,
+        31.68049430847168
       ],
       "params": {
         "float_": -6.5
@@ -146,8 +126,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -353.7342224121094,
-        -76.56672668457031
+        -616.2547607421875,
+        -41.96382522583008
       ],
       "params": {
         "float_": 0.6700001955032349
@@ -165,8 +145,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -352.56402587890625,
-        -168.91436767578125
+        -615.0845336914062,
+        -134.31146240234375
       ],
       "params": {
         "float_": -11.899999618530273
@@ -184,8 +164,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -352.5642395019531,
-        -242.5586700439453
+        -615.084716796875,
+        -207.9557647705078
       ],
       "params": {
         "float_": 12.790000915527344
@@ -203,8 +183,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -353.7352600097656,
-        -315.0340576171875
+        -616.2557373046875,
+        -280.43115234375
       ],
       "params": {
         "float_": -0.8600001931190491
@@ -222,8 +202,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -354.9037780761719,
-        -392.18524169921875
+        -617.42431640625,
+        -357.58233642578125
       ],
       "params": {
         "float_": 5.289999961853027
@@ -241,8 +221,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -353.7348327636719,
-        -466.99853515625
+        -616.25537109375,
+        -432.3956298828125
       ],
       "params": {
         "float_": 0.0
@@ -260,8 +240,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -353.7344055175781,
-        -538.304931640625
+        -616.2548828125,
+        -503.7020263671875
       ],
       "params": {
         "float_": 2.3999998569488525
@@ -279,8 +259,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1.9805679321289062,
-        86.3792724609375
+        -47.03376770019531,
+        69.18597412109375
       ],
       "params": {
         "float_": -17.09000587463379
@@ -306,19 +286,19 @@
       },
       "width": 140.0
     },
-    "Frame Info": {
-      "bl_idname": "SvFrameInfoNode",
+    "Frame info": {
+      "bl_idname": "SvFrameInfoNodeMK2",
       "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
+        0.904932975769043,
+        1.0,
+        0.883421003818512
       ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -160.05677795410156,
-        -220.8954315185547
+        -225.56858825683594,
+        -246.8809814453125
       ],
       "params": {},
       "width": 140.0
@@ -354,8 +334,8 @@
       "hide": true,
       "label": "",
       "location": [
-        457.5118103027344,
-        174.0511016845703
+        567.9996337890625,
+        250.34652709960938
       ],
       "params": {
         "JoinLevel": 1,
@@ -364,36 +344,36 @@
       },
       "width": 138.83123779296875
     },
-    "Matrix in": {
-      "bl_idname": "MatrixGenNode",
+    "Matrix in.002": {
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
         0.6079999804496765
       ],
       "height": 100.0,
-      "hide": true,
+      "hide": false,
       "label": "",
       "location": [
-        138.3250274658203,
-        127.29276275634766
+        124.9376449584961,
+        368.76513671875
       ],
       "params": {},
       "width": 140.0
     },
-    "Matrix in.001": {
-      "bl_idname": "MatrixGenNode",
+    "Matrix in.003": {
+      "bl_idname": "SvMatrixGenNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
         0.6079999804496765
       ],
       "height": 100.0,
-      "hide": true,
+      "hide": false,
       "label": "",
       "location": [
-        1152.0389404296875,
-        74.51402282714844
+        1419.578369140625,
+        77.13043212890625
       ],
       "params": {},
       "width": 140.0
@@ -415,8 +395,8 @@
       "params": {},
       "width": 140.0
     },
-    "ProfileNode": {
-      "bl_idname": "SvProfileNode",
+    "Profile Parametric": {
+      "bl_idname": "SvProfileNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -426,13 +406,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -167.02223205566406,
-        295.1617736816406
+        -254.4011688232422,
+        301.156982421875
       ],
       "params": {
         "filename": "Untitled"
       },
-      "path_file": "M 0,0\nC a,b c,d e,f 10 0\nC g,h i,j k,l 10 0\n",
       "width": 140.0
     },
     "UV Connect": {
@@ -450,7 +429,6 @@
         172.8821563720703
       ],
       "params": {
-        "cicl_check": 1,
         "dir_check": "U_dir",
         "polygons": "Pols",
         "slice_check": 1
@@ -476,28 +454,8 @@
       },
       "width": 140.0
     },
-    "Vector Math": {
-      "bl_idname": "VectorMathNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": true,
-      "label": "COMPONENT-WISE",
-      "location": [
-        325.4521179199219,
-        122.61698913574219
-      ],
-      "params": {
-        "items_": "COMPONENT-WISE",
-        "scalar_output_socket": 0
-      },
-      "width": 140.0
-    },
-    "Vector Math.001": {
-      "bl_idname": "VectorMathNode",
+    "Vector Math.002": {
+      "bl_idname": "SvVectorMathNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -505,16 +463,55 @@
       ],
       "height": 100.0,
       "hide": false,
-      "label": "SCALAR",
+      "label": "",
       "location": [
-        1059.967041015625,
-        -34.207794189453125
+        298.9150390625,
+        109.23635864257812
       ],
       "params": {
-        "items_": "SCALAR",
-        "scalar_output_socket": 0
+        "current_op": "COMPONENT-WISE"
       },
       "width": 140.0
+    },
+    "Vector Math.003": {
+      "bl_idname": "SvVectorMathNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1263.0469970703125,
+        -55.15971374511719
+      ],
+      "params": {
+        "current_op": "SCALAR"
+      },
+      "width": 140.0
+    },
+    "Vector X/Y/Z": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -51.2587890625,
+        182.5716094970703
+      ],
+      "params": {
+        "axis_x": "0",
+        "axis_y": "1",
+        "axis_z": "0"
+      },
+      "width": 100.0
     },
     "Vectors in": {
       "bl_idname": "GenVectorsNode",
@@ -548,8 +545,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1251.8304443359375,
-        337.24652099609375
+        1658.124267578125,
+        313.1869201660156
       ],
       "params": {
         "display_edges": 0,
@@ -684,244 +681,244 @@
   },
   "update_lists": [
     [
-      "Frame Info",
-      "Current Frame",
-      "function.004",
-      "X"
-    ],
-    [
-      "Frame Info",
-      "End Frame",
-      "function.004",
-      "Y"
-    ],
-    [
-      "Hilbert3d",
-      "Vertices",
-      "Vector Interpolation",
-      "Vertices"
-    ],
-    [
-      "function.004",
-      "float",
-      "Vector Interpolation",
-      "Interval"
-    ],
-    [
-      "Frame Info",
-      "End Frame",
-      "function.003",
-      "X"
-    ],
-    [
-      "Frame Info",
-      "Start Frame",
-      "function.003",
-      "Y"
-    ],
-    [
-      "Frame Info",
-      "Current Frame",
-      "function.001",
-      "X"
-    ],
-    [
-      "function.003",
-      "float",
-      "function.001",
-      "Y"
-    ],
-    [
-      "function.001",
-      "float",
-      "function.005",
-      "X"
-    ],
-    [
-      "function.005",
-      "float",
-      "function",
-      "X"
-    ],
-    [
-      "function",
-      "float",
-      "function.002",
-      "X"
-    ],
-    [
-      "function.002",
-      "float",
-      "Float.012",
-      "Float"
-    ],
-    [
       "Float",
-      "Float",
-      "ProfileNode",
-      "a"
+      0,
+      "Profile Parametric",
+      0
     ],
     [
       "Float.001",
-      "Float",
-      "ProfileNode",
-      "b"
+      0,
+      "Profile Parametric",
+      1
     ],
     [
       "Float.002",
-      "Float",
-      "ProfileNode",
-      "c"
+      0,
+      "Profile Parametric",
+      2
     ],
     [
       "Float.003",
-      "Float",
-      "ProfileNode",
-      "d"
+      0,
+      "Profile Parametric",
+      3
     ],
     [
       "Float.004",
-      "Float",
-      "ProfileNode",
-      "e"
+      0,
+      "Profile Parametric",
+      4
     ],
     [
       "Float.005",
-      "Float",
-      "ProfileNode",
-      "f"
+      0,
+      "Profile Parametric",
+      5
     ],
     [
       "Float.006",
-      "Float",
-      "ProfileNode",
-      "g"
+      0,
+      "Profile Parametric",
+      6
     ],
     [
       "Float.007",
-      "Float",
-      "ProfileNode",
-      "h"
+      0,
+      "Profile Parametric",
+      7
     ],
     [
       "Float.008",
-      "Float",
-      "ProfileNode",
-      "i"
+      0,
+      "Profile Parametric",
+      8
     ],
     [
       "Float.009",
-      "Float",
-      "ProfileNode",
-      "j"
+      0,
+      "Profile Parametric",
+      9
     ],
     [
       "Float.010",
-      "Float",
-      "ProfileNode",
-      "k"
+      0,
+      "Profile Parametric",
+      10
     ],
     [
-      "Axis Input",
-      "Vectors",
-      "Matrix in",
-      "Rotation"
+      "Frame info",
+      2,
+      "function.003",
+      0
+    ],
+    [
+      "Frame info",
+      1,
+      "function.003",
+      1
+    ],
+    [
+      "Frame info",
+      0,
+      "function.001",
+      0
+    ],
+    [
+      "function.003",
+      0,
+      "function.001",
+      1
+    ],
+    [
+      "function.001",
+      0,
+      "function.005",
+      0
+    ],
+    [
+      "function.005",
+      0,
+      "function",
+      0
+    ],
+    [
+      "function",
+      0,
+      "function.002",
+      0
+    ],
+    [
+      "function.002",
+      0,
+      "Float.012",
+      0
+    ],
+    [
+      "Vector X/Y/Z",
+      0,
+      "Matrix in.002",
+      2
     ],
     [
       "Float.012",
-      "Float",
-      "Matrix in",
-      "Angle"
+      0,
+      "Matrix in.002",
+      3
     ],
     [
-      "ProfileNode",
-      "Verts",
+      "Profile Parametric",
+      0,
       "Apply matrix for vectors",
-      "Vectors"
+      0
     ],
     [
-      "Matrix in",
-      "Matrix",
+      "Matrix in.002",
+      0,
       "Apply matrix for vectors",
-      "Matrixes"
+      1
     ],
     [
       "Apply matrix for vectors",
-      "Vectors",
-      "Vector Math",
-      "U"
+      0,
+      "Vector Math.002",
+      0
     ],
     [
       "Vectors in",
-      "Vectors",
-      "Vector Math",
-      "V"
+      0,
+      "Vector Math.002",
+      1
     ],
     [
-      "Apply matrix for vectors",
-      "Vectors",
-      "List Join",
-      "data"
+      "Frame info",
+      0,
+      "function.004",
+      0
     ],
     [
-      "Vector Math",
-      "W",
-      "List Join",
-      "data 1"
+      "Frame info",
+      2,
+      "function.004",
+      1
     ],
     [
-      "List Join",
-      "data",
-      "UV Connect",
-      "vertices"
+      "Hilbert3d",
+      0,
+      "Vector Interpolation",
+      0
     ],
     [
-      "UV Connect",
-      "vertices",
-      "Mesh Join",
-      "Vertices"
-    ],
-    [
-      "UV Connect",
-      "data",
-      "Mesh Join",
-      "PolyEdge"
+      "function.004",
+      0,
+      "Vector Interpolation",
+      1
     ],
     [
       "Vector Interpolation",
-      "Vertices",
-      "Vector Math.001",
-      "U"
+      0,
+      "Vector Math.003",
+      0
     ],
     [
       "Float.013",
-      "Float",
-      "Vector Math.001",
-      "S"
+      0,
+      "Vector Math.003",
+      1
     ],
     [
-      "Vector Math.001",
-      "W",
-      "Matrix in.001",
-      "Location"
+      "Vector Math.003",
+      0,
+      "Matrix in.003",
+      0
+    ],
+    [
+      "Apply matrix for vectors",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Vector Math.002",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "List Join",
+      0,
+      "UV Connect",
+      0
+    ],
+    [
+      "UV Connect",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "UV Connect",
+      1,
+      "Mesh Join",
+      1
     ],
     [
       "Mesh Join",
-      "Vertices",
+      0,
       "Viewer Draw2",
-      "vertices"
+      0
     ],
     [
       "Mesh Join",
-      "PolyEdge",
+      1,
       "Viewer Draw2",
-      "edg_pol"
+      1
     ],
     [
-      "Matrix in.001",
-      "Matrix",
+      "Matrix in.003",
+      0,
       "Viewer Draw2",
-      "matrix"
+      2
     ]
   ]
 }

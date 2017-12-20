@@ -19,6 +19,7 @@
     SphereNode
     SvIcosphereNode
     SvTorusNode
+    SvSuzanneNode
     ---
     BasicSplineNode
     svBasicArcNode
@@ -38,7 +39,7 @@
     SvImageComponentsNode
     SvScriptNode
     SvTorusKnotNode
-    SvHexaGridNode
+    SvHexaGridNodeMK1
     SvRingNode
 
 ## Analyzers
@@ -63,8 +64,8 @@
 
 ## Transforms
     SvRotationNode
-    SvScaleNode
-    VectorMoveNode
+    SvScaleNodeMK2
+    SvMoveNodeMK2
     SvMirrorNode
     MatrixApplyNode
     SvSimpleDeformNode
@@ -95,6 +96,8 @@
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
     SvVertMaskNode
     SvTransformSelectNode
     SvSplitEdgesNode
@@ -216,6 +219,7 @@
     ViewerNode2
     SvBmeshViewerNodeMK2
     IndexViewerNode
+    SvMetaballOutNode
     SvTextureViewerNode
     Sv3DviewPropsNode
 
@@ -224,6 +228,7 @@
     SvTextInNode
     SvTextOutNode
     NoteNode
+    SvDataShapeNode
     GTextNode
     SvDebugPrintNode
     SvStethoscopeNodeMK2
@@ -254,6 +259,7 @@
 ## Objects
     SvVertexGroupNodeMK2
     SvVertexColorNodeMK2
+    SvVertexColorNodeMK3
 
 ## Layout
     WifiInNode
@@ -267,13 +273,19 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
-    SvColorsInNode
-    SvColorsOutNode
+    ---
+    SvColorsInNodeMK1
+    SvColorsOutNodeMK1
+    ---
     SvMatrixNormalNode
     SvMatrixTrackToNode
+    SvMatrixMathNode
+    ---
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
+    ---
+    SvSpiralNode
 
 ## Alpha Nodes
     SvCurveViewerNode

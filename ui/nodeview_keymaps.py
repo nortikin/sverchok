@@ -51,10 +51,14 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
 
-        # ctrl + Spacebar     | enter extra search operator
+        # ctrl + Space  | enter extra search operator
         kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', ctrl=True)
         nodeview_keymaps.append((km, kmi))
 
+        # Right Click   | show custom menu
+        kmi = km.keymap_items.new('wm.call_menu', 'RIGHTMOUSE', 'CLICK')
+        kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"
+        nodeview_keymaps.append((km, kmi))
 
 
 def remove_keymap():

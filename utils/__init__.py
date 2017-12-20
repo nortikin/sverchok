@@ -85,5 +85,7 @@ def get_node_class_reference(bl_idname):
     # formerly stuff like:
     #   cls = getattr(bpy.types, self.cls_bl_idname, None)
 
+    if bl_idname == "NodeReroute":
+        return getattr(bpy.types, bl_idname)
     # this will also return a Nonetype if the ref isn't found, and the class ref if found
     return node_classes.get(bl_idname)

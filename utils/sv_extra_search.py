@@ -23,6 +23,7 @@ import nodeitems_utils
 
 import sverchok
 from sverchok.menu import make_node_cats
+from sverchok.node_tree import SvDocstring
 from sverchok.utils import get_node_class_reference
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_default_macros import macros, DefaultMacros
@@ -47,11 +48,7 @@ def format_macro_item(k, v):
     return '< ' + k.replace('_', ' ') + " | " + slice_docstring(v)
 
 def slice_docstring(desc):
-    if not desc:
-        return ''
-    if '///' in desc:
-        desc = desc.strip().split('///')[0]
-    return desc
+    return SvDocstring(desc).get_shorthand()
 
 def ensure_short_description(description):
     '''  the font is not fixed width, it makes litle sense to calculate chars '''
@@ -66,13 +63,13 @@ def ensure_valid_show_string(item):
     # nodetype = getattr(bpy.types, item[0])
     nodetype = get_node_class_reference(item[0])
     loop_reverse[nodetype.bl_label] = item[0]
-    description = slice_docstring(nodetype.bl_rna.description).strip()
+    description = nodetype.bl_rna.get_shorthand()
     return nodetype.bl_label + ensure_short_description(description)
 
 def function_iterator(module_file):
     for name in ddir(module_file):
         obj = getattr(module_file, name)
-        if callable(obj) and obj.__doc__ and '///' in obj.__doc__:
+        if callable(obj) and SvDocstring(obj.__doc__).has_shorthand():
             yield name, obj.__doc__
 
 def get_main_macro_module(fullpath):

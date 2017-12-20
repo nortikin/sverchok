@@ -1,5 +1,5 @@
 {
-  "export_version": "0.064",
+  "export_version": "0.065",
   "framed_nodes": {
     "Extrude Edges": "Frame.001",
     "Matrix in.001": "Frame.001",
@@ -28,8 +28,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1053.1533203125,
-        -1769.9918212890625
+        -1336.33935546875,
+        -2123.820556640625
       ],
       "params": {},
       "width": 140.0
@@ -161,12 +161,12 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 706.47509765625,
+      "height": 706.0550537109375,
       "hide": false,
       "label": "\u0412\u0430\u0440\u0438\u0430\u043d\u0442 \u044d\u043a\u0441\u0442\u0440\u0443\u0434\u0430 2",
       "location": [
-        283.18609619140625,
-        353.8287048339844
+        1726.93994140625,
+        2135.2373046875
       ],
       "params": {},
       "width": 1697.931640625
@@ -182,8 +182,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1098.018798828125,
-        -2121.176513671875
+        -1381.204833984375,
+        -2475.005126953125
       ],
       "params": {},
       "width": 140.0
@@ -199,8 +199,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -651.9757080078125,
-        -2071.96533203125
+        -935.1618041992188,
+        -2425.7939453125
       ],
       "params": {
         "matrix": [
@@ -224,8 +224,8 @@
       },
       "width": 300.0
     },
-    "ProfileNode": {
-      "bl_idname": "SvProfileNode",
+    "Profile Parametric": {
+      "bl_idname": "SvProfileNodeMK2",
       "color": [
         0.6079999804496765,
         0.6079999804496765,
@@ -235,13 +235,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -550.698486328125,
-        -335.7137756347656
+        -580.0276489257812,
+        -336.1799621582031
       ],
       "params": {
-        "filename": "Untitled.001"
+        "filename": "Untitled"
       },
-      "path_file": "M 0,0\nL 8,0 7,4 0,3\nX",
       "width": 140.0
     },
     "Recalc Normals": {
@@ -255,8 +254,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -861.3209838867188,
-        -1785.31201171875
+        -1144.507080078125,
+        -2139.140625
       ],
       "params": {},
       "width": 140.0
@@ -272,8 +271,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -727.4274291992188,
-        -1764.886474609375
+        -1010.613525390625,
+        -2118.715087890625
       ],
       "params": {},
       "width": 140.0
@@ -289,8 +288,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -527.869384765625,
-        -1742.8594970703125
+        -811.0554809570312,
+        -2096.688232421875
       ],
       "params": {
         "thickness": 0.05000000074505806
@@ -308,8 +307,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -260.744384765625,
-        -1953.6890869140625
+        -543.9304809570312,
+        -2307.517822265625
       ],
       "params": {
         "thickness": -0.25
@@ -327,8 +326,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -4.61865234375,
-        -2125.1845703125
+        -287.80474853515625,
+        -2479.01318359375
       ],
       "params": {
         "thickness": 0.10000000149011612
@@ -350,6 +349,7 @@
         -308.8594970703125
       ],
       "params": {
+        "cicl_check_U": 1,
         "polygons": "Edges"
       },
       "width": 140.0
@@ -365,8 +365,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1243.6353759765625,
-        -2129.9541015625
+        -1526.821533203125,
+        -2483.78271484375
       ],
       "params": {},
       "width": 100.0
@@ -382,8 +382,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -154.248046875,
-        -1653.353515625
+        -437.43414306640625,
+        -2007.1822509765625
       ],
       "params": {
         "activate": 1,
@@ -410,8 +410,8 @@
       "hide": false,
       "label": "",
       "location": [
-        50.0240478515625,
-        -1798.10205078125
+        -233.16204833984375,
+        -2151.9306640625
       ],
       "params": {
         "activate": 1,
@@ -438,8 +438,8 @@
       "hide": false,
       "label": "",
       "location": [
-        254.29620361328125,
-        -1950.717529296875
+        -28.889892578125,
+        -2304.546142578125
       ],
       "params": {
         "activate": 1,
@@ -477,184 +477,184 @@
   },
   "update_lists": [
     [
-      "ProfileNode",
-      "Verts",
-      "UV Connect",
-      "vertices"
+      "Float",
+      0,
+      "function",
+      0
     ],
     [
       "Float.004",
-      "Float",
+      0,
       "Vectors in",
-      "Z"
+      2
     ],
     [
       "Vectors in",
-      "Vectors",
+      0,
       "Matrix in.001",
-      "Location"
+      0
+    ],
+    [
+      "Profile Parametric",
+      0,
+      "UV Connect",
+      0
     ],
     [
       "UV Connect",
-      "vertices",
+      0,
       "Extrude Edges",
-      "Vertices"
+      0
     ],
     [
       "UV Connect",
-      "data",
+      1,
       "Extrude Edges",
-      "Edg_Pol"
+      1
     ],
     [
       "Matrix in.001",
-      "Matrix",
+      0,
       "Extrude Edges",
-      "Matrices"
+      2
     ],
     [
       "Extrude Edges",
-      "Vertices",
+      0,
       "Recalc Normals",
-      "Vertices"
+      0
     ],
     [
       "Extrude Edges",
-      "NewFaces",
+      5,
       "Recalc Normals",
-      "Polygons"
-    ],
-    [
-      "Float",
-      "Float",
-      "function",
-      "X"
+      2
     ],
     [
       "function",
-      "float",
+      0,
       "Solidify",
-      "thickness"
+      0
     ],
     [
       "Recalc Normals",
-      "Vertices",
+      0,
       "Solidify",
-      "vertices"
+      1
     ],
     [
       "Recalc Normals",
-      "Polygons",
+      2,
       "Solidify",
-      "polygons"
+      2
     ],
     [
       "Float.001",
-      "Float",
+      0,
       "Solidify.001",
-      "thickness"
+      0
     ],
     [
       "Solidify",
-      "vertices",
+      0,
       "Solidify.001",
-      "vertices"
+      1
     ],
     [
       "Solidify",
-      "newpols",
+      3,
       "Solidify.001",
-      "polygons"
+      2
     ],
     [
       "Float.002",
-      "Float",
+      0,
       "Solidify.002",
-      "thickness"
+      0
     ],
     [
       "Solidify.001",
-      "vertices",
+      0,
       "Solidify.002",
-      "vertices"
+      1
     ],
     [
       "Solidify.001",
-      "newpols",
+      3,
       "Solidify.002",
-      "polygons"
+      2
+    ],
+    [
+      "Solidify.001",
+      0,
+      "Viewer Draw2.002",
+      0
+    ],
+    [
+      "Solidify.001",
+      2,
+      "Viewer Draw2.002",
+      1
+    ],
+    [
+      "Matrix value input.001",
+      0,
+      "Viewer Draw2.002",
+      2
+    ],
+    [
+      "Solidify.002",
+      0,
+      "Viewer Draw2.003",
+      0
+    ],
+    [
+      "Solidify.002",
+      2,
+      "Viewer Draw2.003",
+      1
+    ],
+    [
+      "Matrix value input.001",
+      0,
+      "Viewer Draw2.003",
+      2
     ],
     [
       "Float.003",
-      "Float",
+      0,
       "Solidify.003",
-      "thickness"
+      0
     ],
     [
       "Solidify.002",
-      "vertices",
+      0,
       "Solidify.003",
-      "vertices"
+      1
     ],
     [
       "Solidify.002",
-      "newpols",
+      3,
       "Solidify.003",
-      "polygons"
+      2
     ],
     [
       "Solidify.003",
-      "vertices",
+      0,
       "Viewer Draw2.004",
-      "vertices"
+      0
     ],
     [
       "Solidify.003",
-      "polygons",
+      2,
       "Viewer Draw2.004",
-      "edg_pol"
+      1
     ],
     [
       "Matrix value input.001",
-      "Matrix",
+      0,
       "Viewer Draw2.004",
-      "matrix"
-    ],
-    [
-      "Solidify.001",
-      "vertices",
-      "Viewer Draw2.002",
-      "vertices"
-    ],
-    [
-      "Solidify.001",
-      "polygons",
-      "Viewer Draw2.002",
-      "edg_pol"
-    ],
-    [
-      "Matrix value input.001",
-      "Matrix",
-      "Viewer Draw2.002",
-      "matrix"
-    ],
-    [
-      "Solidify.002",
-      "vertices",
-      "Viewer Draw2.003",
-      "vertices"
-    ],
-    [
-      "Solidify.002",
-      "polygons",
-      "Viewer Draw2.003",
-      "edg_pol"
-    ],
-    [
-      "Matrix value input.001",
-      "Matrix",
-      "Viewer Draw2.003",
-      "matrix"
+      2
     ]
   ]
 }

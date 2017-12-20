@@ -22,6 +22,7 @@ import time
 import ast
 import bpy
 from mathutils import Vector, Matrix
+import numpy as np
 
 DEBUG_MODE = False
 HEAT_MAP = False
@@ -198,10 +199,20 @@ def dataSpoil(data, dept):
     """from standart data to initial levels: to nested lists
      container( objects( lists( nested_lists( floats, ), ), ), ) это невозможно!
     """
-    if dept:
+    __doc__ = 'preparing and making spoil'
+
+    def Spoil(dat, dep):
+        __doc__ = 'making spoil'
         out = []
-        for d in data:
-            out.append([dataSpoil(d, dept-1)])
+        if dep:
+            for d in dat:
+                out.append([Spoil(d, dep-1)])
+        else:
+            out = dat
+        return out
+    lol = levelsOflist(data)
+    if dept > lol:
+        out = Spoil(data, dept-lol)
     else:
         out = data
     return out
@@ -229,6 +240,105 @@ def levelsOflist(lst):
         return level
     return 0
 
+def get_data_nesting_level(data, data_types=(float, int, np.float64)):
+    """
+    data: number, or list of numbers, or list of lists, etc.
+    data_types: list or tuple of types.
+
+    Detect nesting level of actual data.
+    "Actual" data is detected by belonging to one of data_types.
+    This method searches only for first instance of "actual data",
+    so it does not support cases when different elements of source
+    list have different nesting.
+    Returns integer.
+    Raises an exception if at some point it encounters element
+    which is not a tuple, list, or one of data_types.
+    
+    get_data_nesting_level(1) == 0
+    get_data_nesting_level([]) == 1
+    get_data_nesting_level([1]) == 1
+    get_data_nesting_level([[(1,2,3)]]) == 3
+    """
+
+    def helper(data, recursion_depth):
+        """ Needed only for better error reporting. """
+        if type(data) in data_types:
+            return 0
+        elif type(data) in (list, tuple):
+            if len(data) == 0:
+                return 1
+            else:
+                return helper(data[0], recursion_depth+1) + 1
+        elif data is None:
+            raise TypeError("get_data_nesting_level: encountered None at nesting level {}".format(recursion_depth))
+        else:
+            raise TypeError("get_data_nesting_level: unexpected type `{}' of element `{}' at nesting level {}".format(type(data), data, recursion_depth))
+
+    return helper(data, 0)
+
+def ensure_nesting_level(data, target_level, data_types=(float, int, np.float64)):
+    """
+    data: number, or list of numbers, or list of lists, etc.
+    target_level: data nesting level required for further processing.
+    data_types: list or tuple of types.
+
+    Wraps data in so many [] as required to achieve target nesting level.
+    Raises an exception, if data already has too high nesting level.
+
+    ensure_nesting_level(17, 0) == 17
+    ensure_nesting_level(17, 1) == [17]
+    ensure_nesting_level([17], 1) == [17]
+    ensure_nesting_level([17], 2) == [[17]]
+    ensure_nesting_level([(1,2,3)], 3) == [[(1,2,3)]]
+    ensure_nesting_level([[[17]]], 1) => exception
+    """
+
+    current_level = get_data_nesting_level(data, data_types)
+    if current_level > target_level:
+        raise TypeError("ensure_nesting_level: input data already has nesting level of {}. Required level was {}.".format(current_level, target_level))
+    result = data
+    for i in range(target_level - current_level):
+        result = [result]
+    return result
+
+def transpose_list(lst):
+    """
+    Transpose a list of lists.
+
+    transpose_list([[1,2], [3,4]]) == [[1,3], [2, 4]]
+    """
+    return list(map(list, zip(*lst)))
+
+def describe_data_shape(data):
+    """
+    Describe shape of data in human-readable form.
+    Returns string.
+    Can be used for debugging or for displaying information to user.
+    Note: this method inspects only first element of each list/tuple,
+    expecting they are all homogenous (that is usually true in Sverchok).
+
+    describe_data_shape(None) == 'Level 0: NoneType'
+    describe_data_shape(1) == 'Level 0: int'
+    describe_data_shape([]) == 'Level 1: list [0]'
+    describe_data_shape([1]) == 'Level 1: list [1] of int'
+    describe_data_shape([[(1,2,3)]]) == 'Level 3: list [1] of list [1] of tuple [3] of int'
+    """
+    def helper(data):
+        if not isinstance(data, (list, tuple)):
+            return 0, type(data).__name__
+        else:
+            result = type(data).__name__
+            result += " [{}]".format(len(data))
+            if len(data) > 0:
+                child = data[0]
+                child_nesting, child_result = helper(child)
+                result += " of " + child_result
+            else:
+                child_nesting = 0
+            return (child_nesting + 1), result
+
+    nesting, result = helper(data)
+    return "Level {}: {}".format(nesting, result)
 
 #####################################################
 ################### matrix magic ####################

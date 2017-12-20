@@ -36,19 +36,21 @@ BRANCH = ""
 def get_branch():
     global BRANCH
 
-    # first use git to find branch
-    try:
-        res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-                              stdout=subprocess.PIPE,
-                              cwd=os.path.dirname(sverchok.__file__),
-                              timeout=2)
+    # this commented out code needs revisiting at some point.
 
-        branch = str(res.stdout.decode("utf-8"))
-        BRANCH = branch.rstrip()
-    except: # if does not work ignore it
-        BRANCH = ""
-    if BRANCH:
-        return
+    # first use git to find branch
+    # try:
+    #     res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+    #                           stdout=subprocess.PIPE,
+    #                           cwd=os.path.dirname(sverchok.__file__),
+    #                           timeout=2)
+
+    #     branch = str(res.stdout.decode("utf-8"))
+    #     BRANCH = branch.rstrip()
+    # except: # if does not work ignore it
+    #     BRANCH = ""
+    # if BRANCH:
+    #     return
 
     # if the above failed we can dig deeper, if this failed we concede victory.
     try:
@@ -59,6 +61,30 @@ def get_branch():
         BRANCH = branch.rstrip()
     except:
         BRANCH = ""
+
+    return BRANCH
+
+def get_hash():
+    get_branch()
+    if BRANCH:
+        path = os.path.join(os.path.dirname(sverchok.__file__), '.git', 'refs', 'heads', BRANCH)
+        if os.path.exists(path):
+            with open(path) as hashfile:
+                return hashfile.readlines()[0].strip()[:8]
+        else:
+            return None
+    else:
+        return None
+
+def get_version_string():
+    version = ".".join(map(str, sverchok.bl_info['version']))
+    branch = get_branch()
+    if branch:
+        version += ", branch " + branch
+        hash = get_hash()
+        if hash:
+            version += ", commit " + hash
+    return version
 
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}

@@ -30,8 +30,8 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Raycaster'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    start = bpy.props.FloatVectorProperty(default=(0,0,0), size=3)
-    direction = bpy.props.FloatVectorProperty(default=(0,0,-1), size=3)
+    start = bpy.props.FloatVectorProperty(default=(0,0,0), size=3, update=updateNode)
+    direction = bpy.props.FloatVectorProperty(default=(0,0,-1), size=3, update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new
@@ -64,15 +64,15 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
             RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st, di)])
 
         if L.is_linked:
-            L.sv_set([[r[0][:] if r[0] != None else (0, 0, 0) for r in L] for L in RL])
+            L.sv_set([[r[0][:] if r[0] else (0, 0, 0) for r in L] for L in RL])
         if N.is_linked:
-            N.sv_set([[r[1][:] if r[1] != None else (0, 0, 0) for r in L] for L in RL])
+            N.sv_set([[r[1][:] if r[1] else (0, 0, 0) for r in L] for L in RL])
         if I.is_linked:
-            I.sv_set([[r[2] if r[2] != None else -1 for r in L] for L in RL])
+            I.sv_set([[r[2] if r[2] else -1 for r in L] for L in RL])
         if D.is_linked:
-            D.sv_set([[r[3] if r[3] != None else 0 for r in L] for L in RL])
+            D.sv_set([[r[3] if r[3] else 0 for r in L] for L in RL])
         if S.is_linked:
-            S.sv_set([[r[0] for r in L] for L in RL])    
+            S.sv_set([[r[2] != None for r in L] for L in RL])    
 
     # def update_socket(self, context):
     #     self.update()
