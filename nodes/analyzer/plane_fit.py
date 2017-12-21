@@ -32,24 +32,35 @@ class SvPlaneFit(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Vertex Cloud")
         self.outputs.new('VerticesSocket', "Plane Center")
         self.outputs.new('VerticesSocket', "Plane Normal")
+        self.outputs.new('VerticesSocket', "Plane NormalsXYZ")
 
     def process(self):
         Inloc = self.inputs[0]
         if not Inloc.is_linked:
             return
-        Loc, Norm = self.outputs
-        Locl, Norl = [], []
+        Loc, NormSingle, NormAll = self.outputs
+        Locl, Nors, Norl = [], [], []
+
         for VList in Inloc.sv_get():
             points = np.array(VList)
             pmean = points.mean(axis=0)
+
             if Loc.is_linked:
                 Locl.append(pmean.tolist())
-            if Norm.is_linked:
+
+            if NormSingle.is_linked:
                 x = points - pmean
                 eigenvalues, eigenvectors = np.linalg.eig(np.cov(x.T))
-                Norl.append(eigenvectors[:, eigenvalues.argmin()].tolist())
+                Nors.append(eigenvectors[:, eigenvalues.argmin()].tolist())
+
+            if NormAll.is_linked:
+                x = points - pmean
+                eigenvalues, eigenvectors = np.linalg.eig(np.cov(x.T))
+                Norl.append(eigenvectors.tolist())
+
         Loc.sv_set([Locl])
-        Norm.sv_set([Norl])
+        NormSingle.sv_set([Nors])
+        NormAll.sv_set(Norl)
 
 
 def register():
