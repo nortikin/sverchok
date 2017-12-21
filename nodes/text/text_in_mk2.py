@@ -121,7 +121,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     csv_custom_decimalmark = StringProperty(default=',', name="Custom")
 
     # Sverchok list options
-    # choose which socket to interpretate data as
+    # choose which socket to interpret data as
     socket_type = EnumProperty(items=socket_types, default='s')
 
     #interesting but dangerous, TODO
@@ -140,7 +140,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         over_sized_buttons = addon.preferences.over_sized_buttons
 
         col = layout.column(align=True)
-        col.prop(self, 'autoreload', toggle=True)# reload() not work properly somehow 2016.10.07
+        col.prop(self, 'autoreload', toggle=True)  # reload() not work properly somehow 2016.10.07 | really? 2017.12.21
         if self.current_text:
             col.label(text="File: {0} loaded".format(self.current_text))
             row = col.row(align=True)
