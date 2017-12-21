@@ -41,11 +41,66 @@ from sverchok.utils.sv_text_io_common import (
 )
 
 
+def get_csv_data(node):
+    data_out = []
+    for socket in node.inputs:
+        if socket.is_linked:
+            tmp = socket.sv_get(deepcopy=False)
+
+            # flatten list
+            if tmp:
+                data_out.extend(list(itertools.chain.from_iterable([tmp])))
+
+    csv_str = io.StringIO()
+    writer = csv.writer(csv_str, dialect=node.csv_dialect)
+    for row in zip(*data_out):
+        writer.writerow(row)
+
+    return csv_str.getvalue()    
+
+
+def get_json_data(node):
+    data_out = {}
+
+    for socket in node.inputs:
+        if socket.is_linked:
+            tmp = socket.sv_get(deepcopy=False)
+            if tmp:
+                link = socket.links[0]
+                tmp_name = link.from_node.name + ':' + link.from_socket.name
+                name = tmp_name
+                j = 1
+                while name in data_out:
+                    name = tmp_name + str(j)
+                    j += 1
+
+                data_out[name] = (get_socket_type(node, socket.name), tmp)
+
+    if node.json_mode == 'pretty':
+        out = json.dumps(data_out, indent=4)
+    else:
+        out = json.dumps(data_out, separators=(',', ':'))
+
+    return out
+
+
+def get_sv_data(node):
+    out = []
+    if node.inputs['Data'].links:
+        data = node.inputs['Data'].sv_get(deepcopy=False)
+        if node.sv_mode == 'pretty':
+            out = pprint.pformat(data)
+        else:
+            out = str(data)
+
+    return out
+
+
 class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Text Output Node '''
     bl_idname = 'SvTextOutNodeMK2'
     bl_label = 'Text out+'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'COPYDOWN'
 
     sv_modes = [
         ('compact',     'Compact',      'Using str()',        1),
@@ -144,50 +199,11 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         out = ""
         if self.text_mode == 'CSV':
-            data_out = []
-            for socket in self.inputs:
-                if socket.is_linked:
-
-                    tmp = socket.sv_get(deepcopy=False)
-                    if tmp:
-                        # flatten list
-                        data_out.extend(list(itertools.chain.from_iterable([tmp])))
-
-            csv_str = io.StringIO()
-            writer = csv.writer(csv_str, dialect=self.csv_dialect)
-            for row in zip(*data_out):
-                writer.writerow(row)
-
-            out = csv_str.getvalue()
-
+            out = get_csv_data(node=self)
         elif self.text_mode == 'JSON':
-            data_out = {}
-
-            for socket in self.inputs:
-                if socket.is_linked:
-                    tmp = socket.sv_get(deepcopy=False)
-                    if tmp:
-                        tmp_name = socket.links[0].from_node.name+':'+socket.links[0].from_socket.name
-                        name = tmp_name
-                        j = 1
-                        while name in data_out:
-                            name = tmp_name+str(j)
-                            j += 1
-
-                        data_out[name] = (get_socket_type(self, socket.name), tmp)
-
-            if self.json_mode == 'pretty':
-                out = json.dumps(data_out, indent=4)
-            else:
-                out = json.dumps(data_out, separators=(',', ':'))
-
+            out = get_json_data(node=self)
         elif self.text_mode == 'SV':
-            if self.inputs['Data'].links:
-                data = self.inputs['Data'].sv_get(deepcopy=False)
-                if self.sv_mode == 'pretty':
-                    out = pprint.pformat(data)
-                else:  # compact
-                    out = str(data)
+            out = get_sv_data(node=self)
         return out
 
 

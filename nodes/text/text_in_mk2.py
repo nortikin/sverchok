@@ -63,7 +63,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Text Input '''
     bl_idname = 'SvTextInNodeMK2'
     bl_label = 'Text in+'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'PASTEDOWN'
 
     csv_data = {}
     list_data = {}
@@ -128,7 +128,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     autoreload = BoolProperty(default=False, description="Reload text file on every update", name='auto reload')
 
     # to have one socket output
-    one_sock = BoolProperty(name='one_sock', default=False)
+    one_sock = BoolProperty(name='one socket', default=False)
 
     def draw_buttons_ext(self, context, layout):
         if self.textmode == 'CSV':
