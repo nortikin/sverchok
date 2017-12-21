@@ -52,6 +52,7 @@ class SvPlaneFit(bpy.types.Node, SverchCustomTreeNode):
                 x = points - pmean
                 eigenvalues, eigenvectors = np.linalg.eig(np.cov(x.T))
                 Nors.append(eigenvectors[:, eigenvalues.argmin()].tolist())
+                # mathutils.geometry.normal() ?
 
             if NormAll.is_linked:
                 x = points - pmean
