@@ -73,7 +73,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty(default='')
     force_input = BoolProperty()
 
-    textmode = EnumProperty(items=text_modes, default='CSV', update=updateNode, )
+    textmode = EnumProperty(items=text_modes, default='CSV', update=updateNode, name='textmode')
 
     # name of loaded text, to support reloading
     text = StringProperty(default="")
@@ -154,8 +154,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             col.prop_search(self, 'text', bpy.data, 'texts', text="Read")
 
             row = col.row(align=True)
-            row.prop(self, 'textmode', 'textmode', expand=True)
-            col.prop(self, 'one_sock', 'one_sock')
+            row.prop(self, 'textmode', expand=True)
+            col.prop(self, 'one_sock')
             if self.textmode == 'CSV':
                 col.prop(self, 'csv_header')
                 col.prop(self, 'csv_dialect')
@@ -182,11 +182,18 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         self.n_id = ''
 
-    # free potentially lots of data
     def free(self):
+        # free potentially lots of data
         n_id = node_id(self)
         pop_all_data(self, n_id)
 
+    def reset(self):
+        n_id = node_id(self)
+        self.outputs.clear()
+        self.current_text = ''
+        pop_all_data(self, n_id)
+
+    
     def reload(self):
         # reload should ONLY be called from operator on ui change
         if self.textmode == 'CSV':
@@ -199,14 +206,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # if we turn on reload on update we need a safety check for this to work.
         updateNode(self, None)
 
-    def process(self):  # dispatch based on mode
 
-        # startup safety net
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except Exception as e:
-            print(self.name, "cannot run during startup, press update.")
-            return
+    def process(self):  # dispatch based on mode
 
         if not self.current_text:
             return
@@ -218,11 +219,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.textmode == 'JSON':
             self.update_json()
 
-    def reset(self):
-        n_id = node_id(self)
-        self.outputs.clear()
-        self.current_text = ''
-        pop_all_data(self, n_id)
 
     def load(self):
         if self.textmode == 'CSV':
