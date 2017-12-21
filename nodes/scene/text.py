@@ -40,9 +40,9 @@ from sverchok.data_structure import node_id, multi_socket, updateNode
 FAIL_COLOR = (0.85, 0.85, 0.8)
 READY_COLOR = (0.5, 0.7, 1)
 
+name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
 map_to_short = {'VerticesSocket': 'v', 'StringsSocket': 's', 'MatrixSocket': 'm'}
 map_from_short = {'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket'}
-
 
 def get_socket_type(node, inputsocketname):
     socket_type = node.inputs[inputsocketname].links[0].from_socket.bl_idname
@@ -52,11 +52,18 @@ def new_output_socket(node, name, _type):
     bl_idname = map_from_short.get(_type, 'StringsSocket')
     node.outputs.new(bl_idname, name)
 
+def clear_stored_data(node, n_id):
+    node.csv_data.pop(n_id, None)
+    node.list_data.pop(n_id, None)
+    node.json_data.pop(n_id, None)    
+
+dummyvalue = "sv_dummy_bad123456"
+def avail_texts(self, context):
+    return [(t.name, t.name, "") for t in bpy.data.texts] + [(dummyvalue, dummyvalue, "")]
 
 # OLD TODO,
 # load and dump to/from external file
 # update stability, do not disconnect unless something changed
-#
 
 class SvTextInOp(bpy.types.Operator):
     """ Load text data """
@@ -105,22 +112,18 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     n_id = StringProperty(default='')
     force_input = BoolProperty()
 
-    def avail_texts(self, context):
-        return [(t.name, t.name, "") for t in bpy.data.texts]
-
-    text = EnumProperty(
-        items=avail_texts, name="Texts",
-        description="Choose text to load", update=updateNode)
+    text = StringProperty(default='', update=updateNode)
 
     text_modes = [
         ("CSV", "Csv", "Csv data", "", 1),
         ("SV", "Sverchok", "Python data", "", 2),
         ("JSON", "JSON", "Sverchok JSON", 3)]
 
-    textmode = EnumProperty(items=text_modes, default='CSV', update=updateNode, )
+    textmode = EnumProperty(items=text_modes, default='CSV', update=updateNode)
 
     # name of loaded text, to support reloading
-    current_text = StringProperty(default="")
+    # NOTE: spandril.
+    current_text = StringProperty(default="")   
 
     # external file
     file = StringProperty(subtype='FILE_PATH')
@@ -194,7 +197,9 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
                 row.operator('node.sverchok_text_callback', text='R E L O A D').fn_name = 'reload'
             col.operator('node.sverchok_text_callback', text='R E S E T').fn_name = 'reset'
         else:
-            col.prop(self, "text", "Select Text")
+            # col.prop(self, "text", "Select Text")  # <-- old enum.
+            col.prop_search(self, "text", bpy.data, 'texts', text='') #, text="Text")
+
             #    layout.prop(self,"file","File") external file, TODO
             row = col.row(align=True)
             row.prop(self, 'textmode', 'textmode', expand=True)
@@ -230,9 +235,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
     # free potentially lots of data
     def free(self):
         n_id = node_id(self)
-        self.csv_data.pop(n_id, None)
-        self.list_data.pop(n_id, None)
-        self.json_data.pop(n_id, None)
+        clear_stored_data(self, n_id)
 
     def reload(self):
         # reload should ONLY be called from operator on ui change
@@ -257,6 +260,8 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.current_text:
             return
+        if self.current_text and not self.text:
+            self.text = self.current_text
 
         if self.textmode == 'CSV':
             self.update_csv()
@@ -269,9 +274,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         self.outputs.clear()
         self.current_text = ''
-        self.csv_data.pop(n_id, None)
-        self.list_data.pop(n_id, None)
-        self.json_data.pop(n_id, None)
+        clear_stored_data(self, n_id)
 
     def load(self):
         if self.textmode == 'CSV':
@@ -429,9 +432,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         self.load_sv_data()
 
         if n_id in self.list_data:
-            name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
-            typ = self.socket_type
-            new_output_socket(self, name_dict[typ], typ)
+            new_output_socket(self, name_dict[self.socket_type], self.socket_type)
 
     def reload_sv(self):
         self.load_sv_data()
@@ -443,6 +444,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
         if n_id in self.list_data:
             del self.list_data[n_id]
 
+        # f = bpy.data.texts[self.text or self.current_text].as_string()
         f = bpy.data.texts[self.text].as_string()
 
         try:
@@ -452,7 +454,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
             print(sys.exc_info()[-1].tb_frame.f_code)
             pass
 
-        if isinstance(data, list):
+        if isinstance(data, (list, tuple)):
             self.list_data[n_id] = data
             self.use_custom_color = True
             self.color = READY_COLOR
@@ -569,11 +571,6 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Text out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    def avail_texts(self, context):
-        texts = bpy.data.texts
-        items = [(t.name, t.name, "") for t in texts]
-        return items
-
     def change_mode(self, context):
         self.inputs.clear()
 
@@ -586,8 +583,8 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'SV':
             self.inputs.new('StringsSocket', 'Data', 'Data')
 
-    text = EnumProperty(
-        items=avail_texts, name="Texts", description="Choose text to load", update=updateNode)
+    text = EnumProperty(items=avail_texts, name="Texts", description="Choose text to load", update=updateNode)
+    current_text = StringProperty()
 
     text_modes = [
         ("CSV",         "Csv",          "Csv data",           1),
@@ -628,7 +625,8 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.prop(self, 'autodump', "auto dump", toggle=True)
         row = col.row(align=True)
-        row.prop(self, 'text', "Select text")
+        # row.prop(self, 'text', "Select text")
+        row.prop_search(self, "current_text", bpy.data, 'texts', text='')
 
         #layout.label("Select output format")
         row = col.row(align=True)
@@ -661,7 +659,16 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
     # does not do anything with data until dump is executed
 
     def process(self):
-        if self.text_mode == 'CSV' or self.text_mode == 'JSON':
+
+        # self.text is no longer used, in order to preserve compatibility i (zeffii) have
+        # added a new variable to store the name of the current text, and upon the first
+        # update of a .blend / json sverchok will switch to using current_text instead.
+        if self.text and self.text != "sv_dummy_bad123456":
+            self.current_text = self.text
+            # this is now only used to set the text to this dummy variable. this avoids needing mk2.
+            self.text = "sv_dummy_bad123456"
+
+        if self.text_mode in {'CSV', 'JSON'}:
             multi_socket(self, min=1)
         elif self.text_mode == 'SV':
             pass  # only one input, do nothing
@@ -675,8 +682,8 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
         if len(out) == 0:
             return False
         if not self.append:
-            bpy.data.texts[self.text].clear()
-        bpy.data.texts[self.text].write(out)
+            bpy.data.texts[self.current_text].clear()
+        bpy.data.texts[self.current_text].write(out)
         self.color = READY_COLOR
         return True
 
@@ -701,7 +708,6 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         elif self.text_mode == 'JSON':
             data_out = {}
-            name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
 
             for socket in self.inputs:
                 if socket.is_linked:
@@ -742,5 +748,5 @@ def unregister():
     bpy.utils.unregister_class(SvTextInNode)
     bpy.utils.unregister_class(SvTextOutNode)
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#    register()
