@@ -74,16 +74,16 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     text = StringProperty()
 
-    text_mode = EnumProperty(items=text_modes, default='CSV', update=change_mode)
-    csv_dialect = EnumProperty(items=csv_dialects, default='excel')
-    sv_mode = EnumProperty(items=sv_modes, default='compact')
-    json_mode = EnumProperty(items=json_modes, default='pretty')
+    text_mode = EnumProperty(items=text_modes, default='CSV', update=change_mode, name="Text format")
+    csv_dialect = EnumProperty(items=csv_dialects, default='excel', name="Dialect")
+    sv_mode = EnumProperty(items=sv_modes, default='compact', name="Format")
+    json_mode = EnumProperty(items=json_modes, default='pretty', name="Format")
 
     append = BoolProperty(default=False, description="Append to output file")
     base_name = StringProperty(name='base_name', default='Col ')
     multi_socket_type = StringProperty(name='multi_socket_type', default='StringsSocket')
 
-    autodump = BoolProperty(default=False, description="autodump")
+    autodump = BoolProperty(default=False, description="autodump", name="auto dump")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Col 0', 'Col 0')
@@ -94,24 +94,24 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         over_sized_buttons = addon.preferences.over_sized_buttons
 
         col = layout.column(align=True)
-        col.prop(self, 'autodump', "auto dump", toggle=True)
+        col.prop(self, 'autodump', toggle=True)
         row = col.row(align=True)
         row.prop_search(self, 'text', bpy.data, 'texts', text="Output to")
 
         row = col.row(align=True)
-        row.prop(self, 'text_mode', "Text format", expand=True)
+        row.prop(self, 'text_mode', expand=True)
 
         row = col.row(align=True)
         if self.text_mode == 'CSV':
-            row.prop(self, 'csv_dialect', "Dialect")
+            row.prop(self, 'csv_dialect')
         elif self.text_mode == 'SV':
-            row.prop(self, 'sv_mode', "Format", expand=True)
+            row.prop(self, 'sv_mode', expand=True)
         elif self.text_mode == 'JSON':
-            row.prop(self, 'json_mode', "Format", expand=True)
+            row.prop(self, 'json_mode', expand=True)
 
-        col2 = col.column(align=True)
-        row = col2.row(align=True)
         if not self.autodump:
+            col2 = col.column(align=True)
+            row = col2.row(align=True)
             row.scale_y = 4.0 if over_sized_buttons else 1
             row.operator(TEXT_IO_CALLBACK, text='D U M P').fn_name = 'dump'
             col2.prop(self, 'append', "Append")

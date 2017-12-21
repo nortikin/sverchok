@@ -45,7 +45,7 @@ def new_output_socket(node, name, _type):
 
 
 class SvTextIOMK2Op(bpy.types.Operator):
-    """ Load text data """
+    """ generic callback for TEXT IO nodes """
     bl_idname = "node.sverchok_textio_mk2_callback"
     bl_label = "text IO operator cb"
     bl_options = {'REGISTER', 'UNDO'}
