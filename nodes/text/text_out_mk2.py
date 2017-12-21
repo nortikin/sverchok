@@ -97,7 +97,10 @@ def get_sv_data(node):
 
 
 class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Text Output Node '''
+    """
+    Triggers: Text Out to datablock
+    Tooltip: Quickly write data from NodeView to text datablock
+    """
     bl_idname = 'SvTextOutNodeMK2'
     bl_label = 'Text out+'
     bl_icon = 'COPYDOWN'

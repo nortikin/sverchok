@@ -60,7 +60,11 @@ def pop_all_data(node, n_id):
 
 
 class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Text Input '''
+    """
+    Triggers: Text in from datablock
+    Tooltip: Quickly load text from datablock into NodeView
+    """
+
     bl_idname = 'SvTextInNodeMK2'
     bl_label = 'Text in+'
     bl_icon = 'PASTEDOWN'
