@@ -96,7 +96,8 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         col.prop(self, 'autodump', toggle=True)
         row = col.row(align=True)
-        row.prop_search(self, 'text', bpy.data, 'texts', text="Output to")
+        row.prop_search(self, 'text', bpy.data, 'texts', text="Write")
+        row.operator("text.new", icon="ZOOMIN", text='')
 
         row = col.row(align=True)
         row.prop(self, 'text_mode', expand=True)

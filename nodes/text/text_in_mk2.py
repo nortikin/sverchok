@@ -151,7 +151,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             col.operator(TEXT_IO_CALLBACK, text='R E S E T').fn_name = 'reset'
 
         else:
-            col.prop_search(self, 'text', bpy.data, 'texts', text="read from")
+            col.prop_search(self, 'text', bpy.data, 'texts', text="Read")
 
             row = col.row(align=True)
             row.prop(self, 'textmode', 'textmode', expand=True)
