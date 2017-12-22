@@ -213,8 +213,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
-        TextInput = (node.bl_idname == 'SvTextInNode')
+        
         SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
+        TextInput = (node.bl_idname == 'SvTextInNode')
+        # TextIO_MK2
 
         for k, v in node.items():
 
