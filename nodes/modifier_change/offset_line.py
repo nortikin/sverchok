@@ -47,11 +47,6 @@ def offset_edges(verts_in, edges_in, shift):
         neighbours[edg[0]].append(edg)
         neighbours[edg[1]].append(edg)
 
-    #Convert to from 0 to 2pi angle
-    def calc_angle(p1,p2):
-        angle = p1.angle_signed(p2)
-        return angle + 2 * pi if angle < 0 else angle
-
     #Sorting neighbours by hour hand
     for i, p_neighbs in enumerate(neighbours):
         if len(p_neighbs) != 1:
