@@ -192,8 +192,7 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
         if not (self.inputs['Vers'].is_linked or self.inputs['Edgs'].is_linked):
             return        
         
-        if not (self.outputs['Vers'].is_linked or self.outputs['Faces'].is_linked
-              or self.outputs['OuterEdges'].is_linked or self.outputs['VersMask'].is_linked):
+        if not any(socket.is_linked for socket in self.outputs):
             return
 
         verts_in = self.inputs['Vers'].sv_get()
