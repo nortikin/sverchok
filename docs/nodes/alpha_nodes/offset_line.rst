@@ -11,15 +11,15 @@ Inputs
 
 This node has the following inputs:
 
-- **Vers** - vertices of objects - work only with first object yet.
-- **Edgs** - polygons of objects - the same.
-- **offset** - offset values - single value.
+- **Vers** - vertices of objects.
+- **Edgs** - polygons of objects.
+- **offset** - offset values - available single value per object.
 
 Parameters
 ----------
 
 All parameters can be given by the node or an external input.
-``offset`` only one value at the moment.
+``offset`` only one value per object.
 
 +-----------------+---------------+-------------+-------------------------------------------------------------+
 | Param           | Type          | Default     | Description                                                 |
@@ -48,8 +48,10 @@ Using of outer edges:
 
 .. image:: https://user-images.githubusercontent.com/28003269/34199326-dadbf508-e586-11e7-9542-7b7ff4a9521f.png
 
-Using of vertices mask with ``transform select`` node.
+Using of vertices mask with ``transform select`` node:
 
 .. image:: https://user-images.githubusercontent.com/28003269/34199698-125ed63e-e588-11e7-9e34-83c5eb33cde9.png
 
+Different values for each object:
 
+.. image:: https://user-images.githubusercontent.com/28003269/34286982-97be32ea-e6fd-11e7-9e52-5bbc78b36027.png
