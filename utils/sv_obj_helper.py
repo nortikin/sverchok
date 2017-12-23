@@ -32,9 +32,9 @@ CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 def get_random_init_v2(node):
     objects = bpy.data.objects
 
-    with_underscore = lambda obj: '_' in obj.name and obj.type == node.data_kind
+    with_underscore = lambda obj: '_' in obj.name # and obj.type == node.data_kind
     names_with_underscores = list(filter(with_underscore, objects))
-    print(names_with_underscores)
+
     set_of_names_pre_underscores = set([n.name.split('_')[0] for n in names_with_underscores])
     if '' in set_of_names_pre_underscores:
         set_of_names_pre_underscores.remove('')
@@ -181,6 +181,15 @@ class SvObjHelper():
 
     parent_to_empty = BoolProperty(default=False, update=updateNode)
     parent_name = StringProperty()  # calling updateNode would recurse.    
+
+    def sv_init_helper_basedata_name(self):
+        """ 
+        this is to be used in sv_init, at the top
+        """
+        gai = bpy.context.scene.SvGreekAlphabet_index
+        self.basemesh_name = greek_alphabet[gai]
+        bpy.context.scene.SvGreekAlphabet_index += 1
+        self.use_custom_color = True        
 
 
     def icons(self, TYPE):
