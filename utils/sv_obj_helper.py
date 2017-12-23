@@ -182,8 +182,6 @@ class SvObjHelper():
     parent_to_empty = BoolProperty(default=False, update=updateNode)
     parent_name = StringProperty()  # calling updateNode would recurse.    
 
-    def __init__(self):
-        ...
 
     def icons(self, TYPE):
         NAMED_ICON = {
