@@ -49,7 +49,7 @@ def get_obj_curve(obj_index, node):
     obj = objects.get(curve_name)
     if not obj:
         obj = objects.new(curve_name, cu)
-        obj['basename'] = node.basedata_name
+        obj['basedata_name'] = node.basedata_name
         obj['idx'] = obj_index
         scene.objects.link(obj)
 
