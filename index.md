@@ -291,6 +291,7 @@
     SvCurveViewerNode
     SvCurveViewerNodeAlt
     SvPolylineViewerNodeMK1
+    SvPolylineViewerNodeMK2
     SvTypeViewerNode
     SvSkinViewerNodeMK1b
     SvMatrixViewer

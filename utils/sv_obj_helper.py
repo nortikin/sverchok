@@ -29,10 +29,10 @@ from sverchok.utils.sv_viewer_utils import (
 common_ops = ['object_hide', 'object_hide_select', 'object_hide_render']
 CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 
-def get_random_init_v2(node):
+def get_random_init_v2():
     objects = bpy.data.objects
 
-    with_underscore = lambda obj: '_' in obj.name # and obj.type == node.data_kind
+    with_underscore = lambda obj: '_' in obj.name
     names_with_underscores = list(filter(with_underscore, objects))
 
     set_of_names_pre_underscores = set([n.name.split('_')[0] for n in names_with_underscores])
@@ -77,7 +77,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
             setattr(n, type_op, not getattr(n, type_op))
 
         elif type_op == 'random_basedata_name':   # random_data_name  ?
-            n.basedata_name = get_random_init()
+            n.basedata_name = get_random_init_v2()
 
         elif type_op == 'add_material':
             if hasattr(n, type_op):
@@ -195,8 +195,8 @@ class SvObjHelper():
     def icons(self, TYPE):
         NAMED_ICON = {
             'object_hide': 'RESTRICT_VIEW',
-            'object_hide_select': 'RESTRICT_RENDER',
-            'object_hide_render': 'RESTRICT_SELECT'}.get(TYPE)
+            'object_hide_render': 'RESTRICT_RENDER',
+            'object_hide_select': 'RESTRICT_SELECT'}.get(TYPE)
         if not NAMED_ICON:
             return 'WARNING'
         return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
@@ -226,7 +226,7 @@ class SvObjHelper():
             row.scale_y = 1
             row.prop_search(
                 self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
-            row.operator(CALLBACK_OP, text='+Material').fn_name = 'add_material'
+            row.operator(CALLBACK_OP, text='', icon="ZOOMIN").fn_name = 'add_material'
 
     def draw_ext_object_buttons(self, context, layout):
         layout.separator()
@@ -266,7 +266,7 @@ class SvObjHelper():
 
 
     def copy(self, other):
-        self.basedata_name = get_random_init_v2(self)
+        self.basedata_name = get_random_init_v2()
 
 
 def register():
