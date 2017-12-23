@@ -32,6 +32,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVectorRewire'
     bl_label = 'Vector Rewire'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_REWIRE'
 
     selected_mode_from = EnumProperty(
         items=mode_options,
