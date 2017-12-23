@@ -26,6 +26,7 @@ from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, natural_plus_one, greek_alphabet)
 
 
+common_ops = ['object_hide', 'object_hide_select', 'object_hide_render']
 CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 
 def get_random_init_v2(node):
@@ -199,11 +200,10 @@ class SvObjHelper():
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
+        row.column().prop(self, "activate", text="LIVE", toggle=True, icon=view_icon)
 
-        row.operator(CALLBACK_OP, text='', icon=self.icons('object_hide')).fn_name = 'object_hide'
-        row.operator(CALLBACK_OP, text='', icon=self.icons('object_hide_select')).fn_name = 'object_hide_select'
-        row.operator(CALLBACK_OP, text='', icon=self.icons('object_hide_render')).fn_name = 'object_hide_render'
+        for op_name in common_ops: 
+            row.operator(CALLBACK_OP, text='', icon=self.icons(op_name)).fn_name = op_name
 
         col = layout.column(align=True)
         if col:
