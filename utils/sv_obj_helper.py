@@ -160,7 +160,7 @@ class SvObjHelper():
 
     basedata_name = StringProperty(
         default='Alpha',
-        description="which base name the object an data will use",
+        description="which base name the object and data will use",
         update=updateNode
     )    
 
