@@ -86,7 +86,7 @@ utils_modules = [
     # non UI tools
     "cad_module", "cad_module_class", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",
     "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
-    "csg_core", "csg_geom", "geom", "sv_easing_functions",
+    "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common",
     "snlite_utils", "snlite_importhelper", "context_managers",
     "profile", "logging", 
     # UI text editor ui
