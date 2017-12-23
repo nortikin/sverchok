@@ -220,12 +220,6 @@ class SvObjHelper():
             row.prop_search(
                 self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
 
-        col = layout.column(align=True)
-        if col:
-            row = col.row(align=True)
-            row.prop(self, 'show_wire', text='wire', toggle=True)
-            row.prop(self, 'use_smooth', text='smooth', toggle=True)        
-
     def draw_ext_object_buttons(self, context, layout):
         layout.separator()
         row = layout.row(align=True)
