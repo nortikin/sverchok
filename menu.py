@@ -158,6 +158,7 @@ class SverchNodeItem(object):
                 # please not be confused: "operator" here references to
                 # SverchNodeAddOperator instance, and "self" references to
                 # SverchNodeItem instance.
+                operator.use_transform = True
                 operator.type = self.nodetype
                 operator.create_node(context)
                 return {'FINISHED'}
