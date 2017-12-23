@@ -69,7 +69,6 @@ class SvObjectsHelperCallback(bpy.types.Operator):
 
         n = context.node
         objs = n.get_children()
-        print(objs)
 
         if type_op in {'object_hide', 'object_hide_render', 'object_hide_select'}:
             for obj in objs:
