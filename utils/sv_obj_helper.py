@@ -18,7 +18,7 @@
 
 
 import bpy
-from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
+from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty, BoolVectorProperty)
 
 from sverchok.data_structure import updateNode
 
@@ -41,7 +41,9 @@ class SvObjectsHelperCallback(bpy.types.Operator):
     fn_name = StringProperty(default='')
     data_kind = StringProperty(default='CURVE')
 
-    def dispatch(self, context, type_op):
+    def execute(self, context):
+        type_op = self.fn_name
+
         n = context.node
         objs = n.get_children()
 
@@ -64,8 +66,6 @@ class SvObjectsHelperCallback(bpy.types.Operator):
                 mat.use_nodes = True
                 n.material = mat.name
 
-    def execute(self, context):
-        self.dispatch(context, self.fn_name)
         return {'FINISHED'}
 
 
@@ -107,6 +107,21 @@ class SvObjHelper():
             if obj.name not in group.objects:
                 group.objects.link(obj)
 
+    def ensure_parent(self):
+        if self.parent_to_empty:
+            self.parent_name = 'Empty_' + self.basedata_name
+            scene = bpy.context.scene
+            if not self.parent_name in bpy.data.objects:
+                empty = bpy.data.objects.new(self.parent_name, None)
+                scene.objects.link(empty)
+                scene.update()        
+
+    def to_parent(self, objs):
+        for obj in objs:
+            if self.parent_to_empty:
+                obj.parent = bpy.data.objects[self.parent_name]
+            elif obj.parent:
+                obj.parent = None        
 
     layer_choice = BoolVectorProperty(
         subtype='LAYER', size=20, name="Layer Choice",
@@ -140,6 +155,9 @@ class SvObjHelper():
 
     show_wire = BoolProperty(update=updateNode)
     use_smooth = BoolProperty(default=True, update=updateNode)
+
+    parent_to_empty = BoolProperty(default=False, update=updateNode)
+    parent_name = StringProperty()  # calling updateNode would recurse.    
 
     def __init__(self):
         ...
