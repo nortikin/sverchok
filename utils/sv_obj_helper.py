@@ -24,42 +24,45 @@ from sverchok.data_structure import updateNode
 
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer,
-    remove_non_updated_objects,
-    get_children,
     natural_plus_one,
     get_random_init,
     greek_alphabet)
 
 
-soh = 'node.sv_callback_svobjects_helper'
+CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 
 
 class SvObjectsHelperCallback(bpy.types.Operator):
 
-    bl_idname = soh
+    bl_idname = CALLBACK_OP
     bl_label = "Sverchok objects helper"
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
-    kind = StringProperty(default='CURVE')
+    data_kind = StringProperty(default='CURVE')
 
     def dispatch(self, context, type_op):
         n = context.node
-        objs = get_children(n, self.kind)  
+        objs = n.get_children()
 
         if type_op in {'object_hide', 'object_hide_render', 'object_hide_select', 'object_select'}:
             for obj in objs:
-                setattr(obj, type_op, getattr(n, type_op))  # needs to cut off "object_"
+                stripped_op_name = type_op.replace("object_", '')
+                setattr(obj, stripped_op_name, getattr(n, type_op))
             setattr(n, type_op, not getattr(n, type_op))
 
         elif type_op == 'random_basedata_name':   # random_data_name  ?
             n.basedata_name = get_random_init()
 
         elif type_op == 'add_material':
-            mat = bpy.data.materials.new('sv_material')
-            mat.use_nodes = True
-            n.material = mat.name
-            # print(mat.name)  info(mat.name)
+            if hasattr(n, type_op):
+                # some nodes will define their own add_material..
+                getattr(n, type_op)()
+            else:
+                # this is the simplest automatic material generator.
+                mat = bpy.data.materials.new('sv_material')
+                mat.use_nodes = True
+                n.material = mat.name
 
     def execute(self, context):
         self.dispatch(context, self.fn_name)
@@ -68,9 +71,39 @@ class SvObjectsHelperCallback(bpy.types.Operator):
 
 class SvObjHelper():
 
+    # hints found at ba.org/forum/showthread.php?290106
+    # - this will not allow objects on multiple layers, yet.
+    def g(self):
+        self['lp'] = self.get('lp', [False] * 20)
+        return self['lp']
+
+    def s(self, value):
+        val = []
+        for b in zip(self['lp'], value):
+            val.append(b[0] != b[1])
+        self['lp'] = val
+
+    def layer_updateNode(self, context):
+        '''will update in place without geometry updates'''
+        for obj in self.get_children():
+            obj.layers = self.layer_choice[:]
+
+    def get_children(self):
+        # criteria: basedata_name must be in object.keys and the value must be self.basedata_name
+        objects = bpy.data.objects
+        objs = [obj for obj in objects if obj.type == self.data_kind]
+        return [o for o in objs if o.get('basedata_name') == self.basedata_name]
+
+
+    layer_choice = BoolVectorProperty(
+        subtype='LAYER', size=20, name="Layer Choice",
+        update=layer_updateNode,
+        description="This sets which layer objects are placed on",
+        get=g, set=s)
+
     activate = BoolProperty(
         name='Show',
-        description='When enabled this will process incoming data',
+        description="When enabled this will process incoming data",
         default=True,
         update=updateNode)
 
@@ -79,6 +112,9 @@ class SvObjHelper():
         description="which base name the object an data will use",
         update=updateNode
     )    
+
+    # most importantly, what kind of base data are we making?
+    data_kind = StringProperty(default='MESH')
 
     # to be used if the node has no material input.
     material = StringProperty(default='', update=updateNode)
@@ -95,6 +131,15 @@ class SvObjHelper():
     def __init__(self):
         ...
 
+    def icons(self, TYPE):
+        NAMED_ICON = {
+            'object_hide': 'RESTRICT_VIEW',
+            'object_hide_select': 'RESTRICT_RENDER',
+            'object_hide_render': 'RESTRICT_SELECT'}.get(TYPE)
+        if not NAMED_ICON:
+            return 'WARNING'
+        return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
+
 
     def draw_object_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
@@ -103,25 +148,24 @@ class SvObjHelper():
         row = col.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
 
-        row.operator(soh, text='', icon=self.icons('v')).fn_name = 'object_hide'
-        row.operator(soh, text='', icon=self.icons('s')).fn_name = 'object_hide_select'
-        row.operator(soh, text='', icon=self.icons('r')).fn_name = 'object_hide_render'
+        row.operator(CALLBACK_OP, text='', icon=self.icons('object_hide')).fn_name = 'object_hide'
+        row.operator(CALLBACK_OP, text='', icon=self.icons('object_hide_select')).fn_name = 'object_hide_select'
+        row.operator(CALLBACK_OP, text='', icon=self.icons('object_hide_render')).fn_name = 'object_hide_render'
 
         col = layout.column(align=True)
         if col:
             row = col.row(align=True)
             row.scale_y = 1
-            row.prop(self, "basedata_name", text="", icon='OUTLINER_OB_MESH')
+            row.prop(self, "basedata_name", text="", icon=self.bl_icon)
 
             row = col.row(align=True)
             row.scale_y = 2
-            row.operator(soh, text='Select / Deselect').fn_name = 'object_select'
+            row.operator(CALLBACK_OP, text='Select / Deselect').fn_name = 'object_select'
             row = col.row(align=True)
             row.scale_y = 1
 
             row.prop_search(
-                self, 'material', bpy.data, 'materials', text='',
-                icon='MATERIAL_DATA')
+                self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
 
         col = layout.column(align=True)
         if col:
@@ -132,16 +176,42 @@ class SvObjHelper():
     def draw_ext_object_buttons(self, context, layout):
         layout.separator()
         row = layout.row(align=True)
-        row.operator(soh, text='Rnd Name').fn_name = 'random_basedata_name'
-        row.operator(soh, text='+Material').fn_name = 'add_material'        
+        row.operator(CALLBACK_OP, text='Rnd Name').fn_name = 'random_basedata_name'
+        row.operator(CALLBACK_OP, text='+Material').fn_name = 'add_material'        
+
+    def set_corresponding_materials(self):
+        if bpy.data.materials.get(self.material):
+            for obj in self.get_children():
+                obj.active_material = bpy.data.materials[self.material]
+
+    def remove_non_updated_objects(self, obj_index):
+        objs = self.get_children()
+        obj_names = [obj.name for obj in objs if obj['idx'] > obj_index]
+        if not obj_names:
+            return
+
+        if self.data_kind == 'MESH':
+            kinds = bpy.data.meshes
+        elif self.data_kind == 'CURVE':
+            kinds = bpy.data.curves
+
+        objects = bpy.data.objects
+        scene = bpy.context.scene
+
+        # remove excess objects
+        for object_name in obj_names:
+            obj = objects[object_name]
+            obj.hide_select = False
+            scene.objects.unlink(obj)
+            objects.remove(obj, do_unlink=True)
+
+        # delete associated meshes
+        for object_name in obj_names:
+            kinds.remove(kinds[object_name])        
+
 
     def copy(self, other):
         self.basedata_name = get_random_init()
-
-    def set_corresponding_materials(self, kind='MESH'):
-        if bpy.data.materials.get(self.material):
-            for obj in get_children(self, kind):
-                obj.active_material = bpy.data.materials[self.material]
 
 
 def register():
