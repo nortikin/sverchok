@@ -47,13 +47,13 @@ class SvObjectsHelperCallback(bpy.types.Operator):
         n = context.node
         objs = get_children(n, self.kind)  
 
-        if type_op in {'hide', 'hide_render', 'hide_select', 'select'}:
+        if type_op in {'object_hide', 'object_hide_render', 'object_hide_select', 'object_select'}:
             for obj in objs:
-                setattr(obj, type_op, getattr(n, type_op))
+                setattr(obj, type_op, getattr(n, type_op))  # needs to cut off "object_"
             setattr(n, type_op, not getattr(n, type_op))
 
-        elif type_op == 'random_mesh_name':   # random_data_name  ?
-            n.basemesh_name = get_random_init()
+        elif type_op == 'random_basedata_name':   # random_data_name  ?
+            n.basedata_name = get_random_init()
 
         elif type_op == 'add_material':
             mat = bpy.data.materials.new('sv_material')
@@ -74,9 +74,9 @@ class SvObjHelper():
         default=True,
         update=updateNode)
 
-    basemesh_name = StringProperty(
+    basedata_name = StringProperty(
         default='Alpha',
-        description="which base name the object will use",
+        description="which base name the object an data will use",
         update=updateNode
     )    
 
@@ -84,10 +84,10 @@ class SvObjHelper():
     material = StringProperty(default='', update=updateNode)
 
     # to be used as standard toggles for object attributes of same name
-    hide = BoolProperty(default=True)
-    hide_render = BoolProperty(default=True)
-    select = BoolProperty(default=True)
-    hide_select = BoolProperty(default=False)    
+    object_hide = BoolProperty(default=True)
+    object_hide_render = BoolProperty(default=True)
+    object_select = BoolProperty(default=True)
+    object_hide_select = BoolProperty(default=False)    
 
     show_wire = BoolProperty(update=updateNode)
     use_smooth = BoolProperty(default=True, update=updateNode)
@@ -103,19 +103,19 @@ class SvObjHelper():
         row = col.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
 
-        row.operator(soh, text='', icon=self.icons('v')).fn_name = 'hide'
-        row.operator(soh, text='', icon=self.icons('s')).fn_name = 'hide_select'
-        row.operator(soh, text='', icon=self.icons('r')).fn_name = 'hide_render'
+        row.operator(soh, text='', icon=self.icons('v')).fn_name = 'object_hide'
+        row.operator(soh, text='', icon=self.icons('s')).fn_name = 'object_hide_select'
+        row.operator(soh, text='', icon=self.icons('r')).fn_name = 'object_hide_render'
 
         col = layout.column(align=True)
         if col:
             row = col.row(align=True)
             row.scale_y = 1
-            row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
+            row.prop(self, "basedata_name", text="", icon='OUTLINER_OB_MESH')
 
             row = col.row(align=True)
             row.scale_y = 2
-            row.operator(soh, text='Select / Deselect').fn_name = 'select'
+            row.operator(soh, text='Select / Deselect').fn_name = 'object_select'
             row = col.row(align=True)
             row.scale_y = 1
 
@@ -132,11 +132,11 @@ class SvObjHelper():
     def draw_ext_object_buttons(self, context, layout):
         layout.separator()
         row = layout.row(align=True)
-        row.operator(soh, text='Rnd Name').fn_name = 'random_mesh_name'
+        row.operator(soh, text='Rnd Name').fn_name = 'random_basedata_name'
         row.operator(soh, text='+Material').fn_name = 'add_material'        
 
     def copy(self, other):
-        self.basemesh_name = get_random_init()
+        self.basedata_name = get_random_init()
 
     def set_corresponding_materials(self, kind='MESH'):
         if bpy.data.materials.get(self.material):
