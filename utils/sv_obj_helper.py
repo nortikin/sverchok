@@ -214,11 +214,12 @@ class SvObjHelper():
             row = col.row(align=True)
             row.scale_y = 2
             row.operator(CALLBACK_OP, text='Select / Deselect').fn_name = 'object_select'
+
             row = col.row(align=True)
             row.scale_y = 1
-
             row.prop_search(
                 self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+            row.operator(CALLBACK_OP, text='+Material').fn_name = 'add_material'
 
     def draw_ext_object_buttons(self, context, layout):
         layout.separator()
