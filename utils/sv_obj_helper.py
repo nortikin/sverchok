@@ -70,11 +70,16 @@ class SvObjectsHelperCallback(bpy.types.Operator):
         n = context.node
         objs = n.get_children()
 
-        if type_op in {'object_hide', 'object_hide_render', 'object_hide_select', 'object_select'}:
+        if type_op in {'object_hide', 'object_hide_render', 'object_hide_select'}:
             for obj in objs:
                 stripped_op_name = type_op.replace("object_", '')
                 setattr(obj, stripped_op_name, getattr(n, type_op))
             setattr(n, type_op, not getattr(n, type_op))
+
+        elif type_op == "object_select":
+            for obj in objs:
+                obj.select = n.object_select
+            n.object_select = not n.object_select
 
         elif type_op == 'random_basedata_name':   # random_data_name  ?
             n.basedata_name = get_random_init_v2()
@@ -173,8 +178,9 @@ class SvObjHelper():
     # to be used as standard toggles for object attributes of same name
     object_hide = BoolProperty(default=True)
     object_hide_render = BoolProperty(default=True)
+    object_hide_select = BoolProperty(default=False)
+
     object_select = BoolProperty(default=True)
-    object_hide_select = BoolProperty(default=False)    
 
     show_wire = BoolProperty(update=updateNode)
     use_smooth = BoolProperty(default=True, update=updateNode)
