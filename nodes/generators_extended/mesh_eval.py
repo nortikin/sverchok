@@ -144,7 +144,7 @@ class SvJsonFromMesh(bpy.types.Operator):
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         if not bpy.context.selected_objects[0].type == 'MESH':
-            self.info("JSON from mesh: selected object is not mesh")
+            node.info("JSON from mesh: selected object is not mesh")
             self.report({'INFO'}, 'It is not a mesh selected')
             return
 
@@ -170,7 +170,8 @@ class SvJsonFromMesh(bpy.types.Operator):
         if isselected:
             if not 'Selected' in node.inputs.keys() and not node.outputs[0].is_linked:
                 node.outputs.new('StringsSocket', 'Selected')
-                selected_masks_adding(node)
+                if node.sample_tree:
+                    selected_masks_adding(node)
         result['vertices'] = verts
         result['edges'] = mesh.edge_keys
         result['faces'] = [list(p.vertices) for p in mesh.polygons]
@@ -212,6 +213,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
                     min=0, max=10, default=8,
                     update=updateNode)
 
+    sample_tree = BoolProperty(name = "Example tree",
+                    description = "Create example nodes when generating JSON from selection",
+                    default = False,
+                    update=updateNode)
+
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
@@ -224,6 +230,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, "precision")
+        layout.prop(self, "sample_tree")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "a")
