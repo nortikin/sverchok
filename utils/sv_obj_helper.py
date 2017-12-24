@@ -207,8 +207,7 @@ class SvObjHelper():
             return 'WARNING'
         return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
 
-
-    def draw_object_buttons(self, context, layout):
+    def draw_live_and_outliner(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
 
         col = layout.column(align=True)
@@ -217,6 +216,8 @@ class SvObjHelper():
 
         for op_name in common_ops: 
             row.operator(CALLBACK_OP, text='', icon=self.icons(op_name)).fn_name = op_name
+
+    def draw_object_buttons(self, context, layout):
 
         col = layout.column(align=True)
         if col:

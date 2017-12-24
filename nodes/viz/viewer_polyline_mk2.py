@@ -50,6 +50,7 @@ def get_obj_curve(obj_index, node):
     if not obj:
         obj = objects.new(curve_name, cu)
         obj['basedata_name'] = node.basedata_name
+        obj['madeby'] = node.name
         obj['idx'] = obj_index
         scene.objects.link(obj)
 
@@ -177,7 +178,6 @@ class SvPolylineViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     data_kind = StringProperty(default='CURVE')
 
     def sv_init(self, context):
-        # self.data_kind = "CURVE"
         self.sv_init_helper_basedata_name()
 
         self.inputs.new('VerticesSocket', 'vertices')
@@ -190,6 +190,7 @@ class SvPolylineViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
 
     def draw_buttons(self, context, layout):
 
+        self.draw_live_and_outliner(context, layout)
         self.draw_object_buttons(context, layout)
 
         layout.row().prop(self, 'curve_dimensions', expand=True)
