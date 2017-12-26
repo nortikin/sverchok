@@ -71,9 +71,17 @@ def add_connection(tree, bl_idname_new_node, offset):
         outputs = existing_node.outputs
         inputs = new_node.inputs
 
-        if existing_node.bl_idname == 'ViewerNode2' and bl_idname_new_node == 'IndexViewer':
+        if existing_node.bl_idname == 'ViewerNode2' and bl_idname_new_node == 'IndexViewerNode':
             # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
-            ...
+            new_node.draw_bg = True
+
+            # get vertices     <=== existing_node.inputs[0]
+            #     edge or pols <=== existing_node.inputs[1]
+            # (ve)     -> indexv.verts
+            # (edg)    -> indexv.edges
+            # (edg|pol)-> indexv.faces
+            pass
+
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
             # we can't determin thru cursor location which socket was nearest the rightclick
             # maybe in the future.. or if someone does know :)
@@ -110,9 +118,9 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         if self.fn == 'vdmk2':
             add_connection(tree, bl_idname_new_node="ViewerNode2", offset=[180, 0])
         elif self.fn == 'vdmk2 + idxv':
-            add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewer"], offset=[180, 0])
+            add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewerNode"], offset=[180, 0])
         elif self.fn == '+idxv':
-            add_connection(tree, bl_idname_new_node="IndexViewer", offset=[180, 0])
+            add_connection(tree, bl_idname_new_node="IndexViewerNode", offset=[180, 0])
         elif self.fn == 'stethoscope':
             add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[180, 0])
 
