@@ -143,9 +143,11 @@ class SvViewHelpForNode(bpy.types.Operator):
         help_url = help_url.replace(' ', '_')
         if self.kind == 'online':
             destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
-        else:
+        elif self.kind == 'offline':
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
             destination = r'file:///' + basepath + help_url + '.rst'
+        elif self.kind == 'github':
+            destination = 'https://github.com/nortikin/sverchok/blob/master/docs/nodes/' + help_url + '.rst'
 
         webbrowser.open(destination)
         return {'FINISHED'}
@@ -214,6 +216,7 @@ def idname_draw(self, context):
     row.label('help')
     row.operator('node.view_node_help', text='online').kind = 'online'
     row.operator('node.view_node_help', text='offline').kind = 'offline'
+    row.operator('node.view_node_help', text='', icon='GHOST').kind = 'github'
 
     # view the source of the current node ( warning, some nodes rely on more than one file )
     row = layout.row(align=True)
