@@ -3,6 +3,11 @@ import bpy
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
 
+def connect_idx_viewer(tree, existing_node, new_node):
+    links = tree.links
+    links.new(existing_node.inputs[0].other, new_node.inputs[0])
+
+
 def valid_active_node(nodes):
     if nodes:
         # a previously active node can remain active even when no nodes are selected.
@@ -72,15 +77,9 @@ def add_connection(tree, bl_idname_new_node, offset):
         inputs = new_node.inputs
 
         if existing_node.bl_idname == 'ViewerNode2' and bl_idname_new_node == 'IndexViewerNode':
-            # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
             new_node.draw_bg = True
-
-            # get vertices     <=== existing_node.inputs[0]
-            #     edge or pols <=== existing_node.inputs[1]
-            # (ve)     -> indexv.verts
-            # (edg)    -> indexv.edges
-            # (edg|pol)-> indexv.faces
-            pass
+            # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
+            connect_idx_viewer(tree, existing_node, new_node)
 
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
             # we can't determin thru cursor location which socket was nearest the rightclick
