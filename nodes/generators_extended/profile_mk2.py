@@ -40,11 +40,9 @@ class SvSublistGroup(bpy.types.PropertyGroup):
     SvY = bpy.props.FloatProperty()
     SvZ = bpy.props.FloatProperty()
     SvName = bpy.props.StringProperty()
-bpy.utils.register_class(SvSublistGroup)
 
 class SvListGroup(bpy.types.PropertyGroup):
     SvSubLists = bpy.props.CollectionProperty(type=SvSublistGroup)    
-bpy.utils.register_class(SvListGroup)
     
         
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
@@ -710,7 +708,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvProfileNodeMK2'
     bl_label = 'Profile Parametric'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SYNTAX_ON'
 
 
     SvLists = bpy.props.CollectionProperty(type=SvListGroup)
@@ -725,11 +723,9 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     x = BoolProperty(default=True)
     y = BoolProperty(default=True)
-    axis_options = [
-        ("X", "X", "", 0),
-        ("Y", "Y", "", 1),
-        ("Z", "Z", "", 2)
-    ]
+
+    axis_options = [("X", "X", "", 0), ("Y", "Y", "", 1), ("Z", "Z", "", 2)]
+
     current_axis = StringProperty(default='Z')
 
     knotsnames = StringProperty(name='knotsnames', default='')
@@ -925,14 +921,16 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except:
             outputs[3].sv_set([])
 
+
+classes = SvSublistGroup, SvListGroup, SvProfileNodeMK2, SvPrifilizer
+
 def register():
-    bpy.utils.register_class(SvProfileNodeMK2)
-    bpy.utils.register_class(SvPrifilizer)
+    _ = [bpy.utils.register_class(cls) for cls in classes]
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPrifilizer)
-    bpy.utils.unregister_class(SvProfileNodeMK2)
+    _ = [bpy.utils.register_class(cls) for cls in reversed(classes)]
 
-if __name__ == '__main__':
-    register()
+
+# if __name__ == '__main__':
+#     register()
