@@ -21,7 +21,7 @@ from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 
 from mathutils import Matrix, Vector
 
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.geom import multiply_vectors
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
@@ -30,7 +30,6 @@ from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, remove_non_updated_objects, get_children,
     natural_plus_one, get_random_init, greek_alphabet)
 
-from sverchok.utils.sv_obj_helper import SvObjHelper, CALLBACK_OP, get_random_init_v2
 
 
 def get_obj_curve(obj_index, node):
