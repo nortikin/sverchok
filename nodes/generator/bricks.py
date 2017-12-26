@@ -229,6 +229,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBricksNode'
     bl_label = 'Bricks grid'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_BRICKS'
 
     du_ = FloatProperty(name='Unit width', description='One brick width',
             default=2.0, min=0.0,

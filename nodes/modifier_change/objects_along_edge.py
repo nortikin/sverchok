@@ -41,6 +41,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDuplicateAlongEdgeNode'
     bl_label = 'Duplicate objects along edge'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DUPLICATE'
 
     count_modes = [
             ("count", "Count", "Specify number of donor objects per edge", 1),

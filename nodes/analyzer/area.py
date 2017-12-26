@@ -85,6 +85,7 @@ class AreaNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'AreaNode'
     bl_label = 'Area'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_AREA'
 
     per_face = BoolProperty(name='per_face',
                             default=True,

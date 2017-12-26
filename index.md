@@ -225,8 +225,8 @@
 
 ## Text
     ViewerNodeTextMK2
-    SvTextInNode
-    SvTextOutNode
+    SvTextInNodeMK2
+    SvTextOutNodeMK2
     NoteNode
     SvDataShapeNode
     GTextNode
@@ -313,3 +313,4 @@
     SvSeparateMeshNodeMK2
     SvIndexToMaskNode
     SvMultiExtrudeAlt
+    SvOffsetLineNode
