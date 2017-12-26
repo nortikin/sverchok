@@ -25,6 +25,7 @@ from string import ascii_lowercase
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
+from bpy.utils import register_class, unregister_class
 from mathutils import Vector
 from mathutils.geometry import interpolate_bezier
 
@@ -926,11 +927,11 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 classes = SvSublistGroup, SvListGroup, SvProfileNodeMK2, SvPrifilizer
 
 def register():
-    _ = [bpy.utils.register_class(cls) for cls in classes]
+    _ = [register_class(cls) for cls in classes]
 
 
 def unregister():
-    _ = [bpy.utils.register_class(cls) for cls in reversed(classes)]
+    _ = [unregister_class(cls) for cls in reversed(classes)]
 
 
 # if __name__ == '__main__':
