@@ -1,9 +1,10 @@
 import bpy
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
-
+supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
 
 def connect_idx_viewer(tree, existing_node, new_node):
+    # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
     links = tree.links
     links.new(existing_node.inputs[0].other, new_node.inputs[0])
 
@@ -76,9 +77,8 @@ def add_connection(tree, bl_idname_new_node, offset):
         outputs = existing_node.outputs
         inputs = new_node.inputs
 
-        if existing_node.bl_idname == 'ViewerNode2' and bl_idname_new_node == 'IndexViewerNode':
+        if existing_node.bl_idname in supported_mesh_viewers and bl_idname_new_node == 'IndexViewerNode':
             new_node.draw_bg = True
-            # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
             connect_idx_viewer(tree, existing_node, new_node)
 
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
