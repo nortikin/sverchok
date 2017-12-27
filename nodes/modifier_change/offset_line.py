@@ -176,8 +176,8 @@ def offset_edges(verts_in, edges_in, shift_in):
         
         faces_out.extend(new_edges)
 
-    verts_out = [(v.x, v.y, z_co[idx]) for idx,v in enumerate(verts_out)]
-    return(verts_out, faces_out, outer_edges, vers_mask)
+    verts_out = [(v.x, v.y, z) for v, z in zip(verts_out, z_co)]
+    return verts_out, faces_out, outer_edges, vers_mask
 
 class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
     """
