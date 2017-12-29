@@ -205,7 +205,7 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if not any(socket.is_linked for socket in self.inputs):
+        if not all(socket.is_linked for socket in self.inputs[:2]):
             return        
         
         if not any(socket.is_linked for socket in self.outputs):
