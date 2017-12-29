@@ -437,13 +437,32 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.current_text = ''
             return
 
-        for item, data in json_data.items():
-            if len(data) == 2 and data[0] in {'v', 's', 'm'}:
-                new_output_socket(self, item, data[0])
-            else:
-                self.use_custom_color = True
-                self.color = FAIL_COLOR
-                return
+        # if you can still read this I have been out of time to refactor.
+
+        socket_order = json_data.get('socket_order')
+        if socket_order:
+            # this is necessary to avoid arbitrary socket assignment upon import
+            # not all gists/iojsons will have this key, hence the test. but it is
+            # important, and will let you define the order manually by editing the file
+            # if you have to.
+            for named_socket in socket_order:
+                data = json_data.get(named_socket)
+                if len(data) == 2 and data[0] in {'v', 's', 'm'}:
+                    new_output_socket(self, named_socket, data[0])
+                else:
+                    self.use_custom_color = True
+                    self.color = FAIL_COLOR
+                    return
+        else:
+            for named_socket, data in json_data.items():
+                if len(data) == 2 and data[0] in {'v', 's', 'm'}:
+                    new_output_socket(self, named_socket, data[0])
+                else:
+                    self.use_custom_color = True
+                    self.color = FAIL_COLOR
+                    return
+
+
 
     def reload_json(self):
         n_id = node_id(self)
