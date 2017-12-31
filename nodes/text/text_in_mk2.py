@@ -437,13 +437,26 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.current_text = ''
             return
 
-        for item, data in json_data.items():
+        socket_order = json_data.get('socket_order')
+        if socket_order:
+            # avoid arbitrary socket assignment order
+            def iterate_socket_order():
+                for named_socket in socket_order:
+                    data = json_data.get(named_socket)
+                    yield named_socket, data
+
+            socket_iterator = iterate_socket_order()
+        else:
+            socket_iterator = json_data.items()
+
+        for named_socket, data in socket_iterator:
             if len(data) == 2 and data[0] in {'v', 's', 'm'}:
-                new_output_socket(self, item, data[0])
+                new_output_socket(self, named_socket, data[0])
             else:
                 self.use_custom_color = True
                 self.color = FAIL_COLOR
                 return
+
 
     def reload_json(self):
         n_id = node_id(self)

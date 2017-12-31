@@ -213,8 +213,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
-        TextInput = (node.bl_idname == 'SvTextInNode')
+        
         SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
+        TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
 
         for k, v in node.items():
 
@@ -538,7 +539,7 @@ def add_texts(node, node_ref):
     elif node.bl_idname == 'SvProfileNode':
         perform_profile_node_inject(node, node_ref)
 
-    elif node.bl_idname == 'SvTextInNode':
+    elif (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'}):
         perform_svtextin_node_object(node, node_ref)
 
 
@@ -546,7 +547,7 @@ def apply_post_processing(node, node_ref):
     '''
     Nodes that require post processing to work properly
     '''
-    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode', 'SvTextInNode'}:
+    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode', 'SvTextInNode', 'SvTextInNodeMK2'}:
         node.load()
     elif node.bl_idname in {'SvGroupNode'}:
         node.load()
