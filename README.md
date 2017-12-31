@@ -5,7 +5,7 @@
 **addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: Python 3.5. and numpy, both included in recent versions of Blender  
+**prerequisites**: Python 3.6, and `numpy` and `requests`, both included in recent versions of Blender (precompiled binaries are convenient for this)  
 **manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
