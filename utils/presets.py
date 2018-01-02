@@ -18,13 +18,16 @@
 
 import os
 from os.path import join
+import shutil
 from glob import glob
 
 import bpy
 from bpy.props import StringProperty, BoolProperty
 
 from sverchok.utils.sv_IO_panel_tools import write_json, create_dict_of_tree, import_tree
-from sverchok.utils.logging import debug, info, error
+from sverchok.utils.logging import debug, info, error, exception
+from sverchok.utils import sv_gist_tools
+from sverchok.utils import sv_IO_panel_tools
 
 def get_presets_directory():
     presets = join(bpy.utils.user_resource('DATAFILES', path='sverchok/presets', create=True))
@@ -176,6 +179,190 @@ class SvDeletePreset(bpy.types.Operator):
         wm = context.window_manager
         return wm.invoke_confirm(self, event)
 
+class SvPresetToGist(bpy.types.Operator):
+    """
+    Export preset to Gist
+    """
+
+    bl_idname = "node.sv_preset_to_gist"
+    bl_label = "Export preset to Gist"
+    bl_options = {'INTERNAL'}
+
+    preset_name = StringProperty(name = "Preset name",
+            description = "Preset name")
+
+    def execute(self, context):
+        if not self.preset_name:
+            msg = "Preset name is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        path = get_preset_path(self.preset_name)
+
+        gist_filename = self.preset_name + ".json"
+        gist_description = self.preset_name
+        with open(path, 'rb') as jsonfile:
+            gist_body = jsonfile.read().decode('utf8')
+
+        try:
+            gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
+            context.window_manager.clipboard = gist_url   # full destination url
+            info(gist_url)
+            self.report({'WARNING'}, "Copied gist URL to clipboad")
+            sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
+        except Exception as err:
+            exception(err)
+            self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
+            return {'CANCELLED'}
+        finally:
+            return {'FINISHED'}
+
+class SvPresetToFile(bpy.types.Operator):
+    """
+    Export preset to outer file
+    """
+
+    bl_idname = "node.sv_preset_to_file"
+    bl_label = "Export preset to file"
+    bl_options = {'INTERNAL'}
+
+    preset_name = StringProperty(name = "Preset name",
+            description = "Preset name")
+
+    filepath = StringProperty(
+        name="File Path",
+        description="Path where preset should be saved to",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    filter_glob = StringProperty(
+        default="*.json",
+        options={'HIDDEN'})
+
+    def execute(self, context):
+        if not self.preset_name:
+            msg = "Preset name is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        if not self.filepath:
+            msg = "Target file path is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        existing_path = get_preset_path(self.preset_name)
+        shutil.copy(existing_path, self.filepath)
+        msg = "Saved `{}' as `{}'".format(self.preset_name, self.filepath)
+        info(msg)
+        self.report({'INFO'}, msg)
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+class SvPresetFromFile(bpy.types.Operator):
+    """
+    Import preset from JSON file
+    """
+
+    bl_idname = "node.sv_preset_from_file"
+    bl_label = "Import preset from file"
+    bl_options = {'INTERNAL'}
+
+    preset_name = StringProperty(name = "Preset name",
+            description = "Preset name")
+
+    filepath = StringProperty(
+        name="File Path",
+        description="Path where preset should be saved to",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    filter_glob = StringProperty(
+        default="*.json",
+        options={'HIDDEN'})
+
+    def execute(self, context):
+        if not self.preset_name:
+            msg = "Preset name is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        if not self.filepath:
+            msg = "Source file path is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        target_path = get_preset_path(self.preset_name)
+        shutil.copy(self.filepath, target_path)
+        msg = "Imported `{}' as `{}'".format(self.filepath, self.preset_name)
+        info(msg)
+        self.report({'INFO'}, msg)
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
+class SvPresetFromGist(bpy.types.Operator):
+    """
+    Import preset from Gist
+    """
+
+    bl_idname = "node.sv_preset_from_gist"
+    bl_label = "Import preset from Gist"
+    bl_options = {'INTERNAL'}
+
+    gist_id = StringProperty(name = "Gist ID",
+            description = "Gist identifier (or full URL)")
+
+    preset_name = StringProperty(name = "Preset name",
+            description = "Preset name")
+
+    def execute(self, context):
+        if not self.preset_name:
+            msg = "Preset name is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        if not self.gist_id:
+            msg = "Gist ID is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        gist_data = sv_IO_panel_tools.load_json_from_gist(self.gist_id, self)
+        target_path = get_preset_path(self.preset_name)
+        if os.path.exists(target_path):
+            msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.preset_name)
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+        
+        with open(target_path, 'wb') as jsonfile:
+            gist_data = json.dumps(gist_data, sort_keys=True, indent=2).encode('utf8')
+            jsonfile.write(gist_data)
+
+        msg = "Imported `{}' as `{}'".format(self.gist_id, self.preset_name)
+        info(msg)
+        self.report({'INFO'}, msg)
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        self.gist_id = context.window_manager.clipboard
+        return wm.invoke_props_dialog(self)
+
 class SvUserPresetsPanel(bpy.types.Panel):
     bl_idname = "SvUserPresetsPanel"
     bl_label = "Presets"
@@ -206,6 +393,10 @@ class SvUserPresetsPanel(bpy.types.Panel):
             layout.separator()
 
         if panel_props.manage_mode:
+            col = layout.column(align=True)
+            col.operator("node.sv_preset_from_gist", icon='URL')
+            col.operator("node.sv_preset_from_file", icon='IMPORT')
+
             layout.label("Manage presets:")
             for path in presets:
                 name = os.path.basename(path)
@@ -214,7 +405,13 @@ class SvUserPresetsPanel(bpy.types.Panel):
                 row = layout.row(align=True)
                 row.label(text=name)
 
-                rename = row.operator('node.sv_preset_rename', text="Rename")
+                gist = row.operator('node.sv_preset_to_gist', text="", icon='URL')
+                gist.preset_name = name
+
+                export = row.operator('node.sv_preset_to_file', text="", icon="EXPORT")
+                export.preset_name = name
+
+                rename = row.operator('node.sv_preset_rename', text="", icon="GREASEPENCIL")
                 rename.old_name = name
 
                 delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
@@ -230,11 +427,21 @@ class SvUserPresetsPanel(bpy.types.Panel):
                 op.filepath = path
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
-    manage_mode = BoolProperty(name = "Manage",
+    manage_mode = BoolProperty(name = "Manage Presets",
             description = "Presets management mode",
             default = False)
 
-classes = [SvSaveSelected, SvUserPresetsPanelProps, SvRenamePreset, SvDeletePreset, SvUserPresetsPanel]
+classes = [
+        SvSaveSelected,
+        SvUserPresetsPanelProps,
+        SvPresetFromFile,
+        SvPresetFromGist,
+        SvRenamePreset,
+        SvDeletePreset,
+        SvPresetToGist,
+        SvPresetToFile,
+        SvUserPresetsPanel
+    ]
 
 def register():
     for clazz in classes:
