@@ -928,11 +928,13 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
     bl_idname = "node.tree_export_to_gist"
     bl_label = "sv NodeTree Gist Export Operator"
 
+    selected_only = BoolProperty(name = "Selected only", default=False)
+
     def execute(self, context):
         ng = context.space_data.node_tree
         gist_filename = ng.name
         gist_description = 'to do later?'
-        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
+        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
 
         try:
             gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
@@ -1036,6 +1038,12 @@ class SvIOPanelProperties(bpy.types.PropertyGroup):
         items=[("Import", "Import", "", 0), ("Export", "Export", "", 1)],
         description="display import or export",
         default="Export"
+    )
+
+    export_selected_only = BoolProperty(
+        name = "Selected Only",
+        description = "Export selected nodes only",
+        default = False
     )
 
 classes = [
