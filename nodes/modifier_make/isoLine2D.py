@@ -288,7 +288,7 @@ def removeDoubles(verts_in,edges_in,distance):
 
     return verts_out,edges_out
     
-def sortVerticesByConexions(verts_in,edges_in):
+def sortVerticesByConnexions(verts_in,edges_in):
     vertsOut = []
     edgesOut = []
     edgeLegth = len(edges_in)
@@ -671,7 +671,7 @@ class SvIsoLinesNode(bpy.types.Node, SverchCustomTreeNode):
                         edges_out=maskEdges(edges_out,maskEd)
 
                         
-                    verts_outFX,edges_outFX = sortVerticesByConexions(verts_out, edges_out)
+                    verts_outFX,edges_outFX = sortVerticesByConnexions(verts_out, edges_out)
                                               
                         
                     vertices_outX.append(verts_outFX)
