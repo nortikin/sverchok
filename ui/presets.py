@@ -226,7 +226,7 @@ class SvPresetProps(bpy.types.Operator):
     """
 
     bl_idname = "node.sv_preset_props"
-    bl_label = "Rename"
+    bl_label = "Preset properties"
     bl_options = {'INTERNAL'}
 
     old_name = StringProperty(name = "Old name",
