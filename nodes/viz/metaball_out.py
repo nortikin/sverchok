@@ -23,62 +23,15 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import SvGetSocketAnyType, node_id, Matrix_generate, match_long_repeat, updateNode
 from sverchok.utils.sv_viewer_utils import greek_alphabet
+from sverchok.utils.sv_obj_helper import SvObjHelper
 
-class SvMetaballOperator(bpy.types.Operator):
-
-    bl_idname = "node.sv_callback_metaball"
-    bl_label = "Sverchok metaball general callback"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    fn_name = StringProperty(default='')
-
-    def hide_unhide(self, context, type_op):
-        node = context.node
-        metaball = node.find_metaball()
-
-        if type_op in {'hide', 'hide_render', 'hide_select'}:
-            op_value = getattr(node, type_op)
-            setattr(metaball, type_op, op_value)
-            setattr(node, type_op, not op_value)
-
-        elif type_op == 'mesh_select':
-            metaball.select = node.select_state
-            node.select_state = not node.select_state
-
-    def execute(self, context):
-        self.hide_unhide(context, self.fn_name)
-        return {'FINISHED'}
-
-
-class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
+class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     '''Create Blender's metaball object'''
     bl_idname = 'SvMetaballOutNode'
     bl_label = 'Metaball'
     bl_icon = 'META_BALL'
 
-    def rename_metaball(self, context):
-        meta = self.find_metaball()
-        if meta:
-            meta.name = self.metaball_ref_name
-            self.label = meta.name
-
-    n_id = StringProperty(default='')
-    metaball_ref_name = StringProperty(default='')
-
-    activate = BoolProperty(
-        name='Activate',
-        default=True,
-        description='When enabled this will process incoming data',
-        update=updateNode)
-
-    hide = BoolProperty(default=True)
-    hide_render = BoolProperty(default=True)
-    hide_select = BoolProperty(default=True)
-    select_state = BoolProperty(default=False)
-
-    meta_name = StringProperty(default='SvMetaBall', name="Base name",
-                                description="Base name of metaball",
-                                update=rename_metaball)
+    data_kind = StringProperty(default='META')
 
     meta_types = [
             ("BALL", "Ball", "Ball", "META_BALL", 1),
@@ -93,8 +46,6 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
     meta_type = EnumProperty(name='Meta type',
             description = "Meta object type",
             items = meta_types, update=updateNode)
-
-    material = StringProperty(name="Material", default='', update=updateNode)
 
     radius = FloatProperty(
         name='Radius',
@@ -121,49 +72,30 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         description='Influence of meta elements',
         default=0.6, min=0.0, max=5.0, update=updateNode)
 
+    def get_metaball_name(self, idx):
+        if idx == 1:
+            return self.basedata_name
+        else:
+            return self.basedata_name + '.' + str("%04d" % idx)
+
     def create_metaball(self):
-        n_id = node_id(self)
         scene = bpy.context.scene
         objects = bpy.data.objects
-        metaball_data = bpy.data.metaballs.new("MetaBall")
-        metaball_object = bpy.data.objects.new(self.meta_name, metaball_data)
-        scene.objects.link(metaball_object)
-        scene.update()
-
-        metaball_object["SVERCHOK_REF"] = n_id
-        self.metaball_ref_name = metaball_object.name
+        object_name = self.get_metaball_name(1)
+        metaball_data = bpy.data.metaballs.new(object_name)
+        metaball_object = self.get_or_create_object(object_name, 1, metaball_data)
 
         return metaball_object
 
     def find_metaball(self):
-        n_id = node_id(self)
-
-        def check_metaball(obj):
-            """ Check that it is the correct metaball """
-            if obj.type == 'META':
-                return "SVERCHOK_REF" in obj and obj["SVERCHOK_REF"] == n_id
-            return False
-
-        objects = bpy.data.objects
-        if self.metaball_ref_name in objects:
-            obj = objects[self.metaball_ref_name]
-            if check_metaball(obj):
-                return obj
-        for obj in objects:
-            if check_metaball(obj):
-                self.metaball_ref_name = obj.name
-                return obj
-        return None
-
-    def get_next_name(self):
-        gai = bpy.context.scene.SvGreekAlphabet_index
-        bpy.context.scene.SvGreekAlphabet_index += 1
-        return 'Meta_' + greek_alphabet[gai]
+        children = self.get_children()
+        if children:
+            return children[0]
+        else:
+            return None
 
     def sv_init(self, context):
-        self.meta_name = self.get_next_name()
 
-        self.create_metaball()
         self.inputs.new('StringsSocket', 'Types').prop_name = "meta_type"
         self.inputs.new('MatrixSocket', 'Origins')
         self.inputs.new('StringsSocket', "Radius").prop_name = "radius"
@@ -172,46 +104,15 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', "Objects")
 
     def draw_buttons(self, context, layout):
-        view_icon = 'BLENDER' if self.activate else 'ERROR'
-        show_hide = 'node.sv_callback_metaball'
-
-        def icons(TYPE):
-            NAMED_ICON = {
-                'hide': 'RESTRICT_VIEW',
-                'hide_render': 'RESTRICT_RENDER',
-                'hide_select': 'RESTRICT_SELECT'}.get(TYPE)
-            if not NAMED_ICON:
-                return 'WARNING'
-            return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
-
-        row = layout.row(align=True)
-        row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-        row.separator()
-
-        row.operator(show_hide, text='', icon=icons('hide')).fn_name = 'hide'
-        row.operator(show_hide, text='', icon=icons('hide_select')).fn_name = 'hide_select'
-        row.operator(show_hide, text='', icon=icons('hide_render')).fn_name = 'hide_render'
-
-        col = layout.column(align=True)
-        col.prop(self, "meta_name", text='', icon='OUTLINER_OB_META')
-        col.operator(show_hide, text='Select Toggle').fn_name = 'mesh_select'
-
-        layout.prop_search(
-                self, 'material', bpy.data, 'materials',
-                text='',
-                icon='MATERIAL_DATA')
+        self.draw_live_and_outliner(context, layout)
+        self.draw_object_buttons(context, layout)
         layout.prop(self, "threshold")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        self.draw_ext_object_buttons(context, layout)
         layout.prop(self, "view_resolution")
         layout.prop(self, "render_resolution")
-
-    def copy(self, node):
-        self.n_id = ''
-        self.meta_name = self.get_next_name()
-        meta = self.create_metaball()
-        self.label = meta.name
 
     def update_material(self):
         if bpy.data.materials.get(self.material):
@@ -230,8 +131,6 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         if not metaball_object:
             metaball_object = self.create_metaball()
             self.debug("Created new metaball")
-
-        self.update_material()
 
         metaball_object.data.resolution = self.view_resolution
         metaball_object.data.render_resolution = self.render_resolution
@@ -278,6 +177,8 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
             for item in items:
                 element = metaball_object.data.elements.new()
                 setup_element(element, item)
+        
+        self.set_corresponding_materials()
 
         if 'Objects' in self.outputs:
             self.outputs['Objects'].sv_set([metaball_object])
@@ -285,10 +186,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvMetaballOutNode)
-    bpy.utils.register_class(SvMetaballOperator)
-
 
 def unregister():
-    bpy.utils.unregister_class(SvMetaballOperator)
     bpy.utils.unregister_class(SvMetaballOutNode)
 

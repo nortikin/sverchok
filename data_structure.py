@@ -240,7 +240,7 @@ def levelsOflist(lst):
         return level
     return 0
 
-def get_data_nesting_level(data, data_types=(float, int, np.float64)):
+def get_data_nesting_level(data, data_types=(float, int, np.float64, str)):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -276,7 +276,7 @@ def get_data_nesting_level(data, data_types=(float, int, np.float64)):
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=(float, int, np.float64)):
+def ensure_nesting_level(data, target_level, data_types=(float, int, np.float64, str)):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.

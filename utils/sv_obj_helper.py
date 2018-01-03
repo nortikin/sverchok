@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import random
 
 import bpy
 from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty, BoolVectorProperty)
@@ -272,6 +273,22 @@ class SvObjHelper():
         for object_name in obj_names:
             kinds.remove(kinds[object_name])        
 
+    def get_or_create_object(self, object_name, obj_index, data):
+        """
+        Return existing Object or create new one.
+        """
+        objects = bpy.data.objects
+        scene = bpy.context.scene
+        # if object reference exists, pick it up else make a new one
+        obj = objects.get(object_name)
+        if not obj:
+            obj = objects.new(object_name, data)
+            obj['basedata_name'] = self.basedata_name
+            obj['madeby'] = self.name
+            obj['idx'] = obj_index
+            scene.objects.link(obj)
+        return obj
+
     def get_obj_curve(self, obj_index):
         curves = bpy.data.curves
         objects = bpy.data.objects
@@ -283,15 +300,7 @@ class SvObjHelper():
         cu = curves.get(curve_name)
         if not cu:
             cu = curves.new(name=curve_name, type='CURVE')
-
-        # if object reference exists, pick it up else make a new one
-        obj = objects.get(curve_name)
-        if not obj:
-            obj = objects.new(curve_name, cu)
-            obj['basedata_name'] = self.basedata_name
-            obj['madeby'] = self.name
-            obj['idx'] = obj_index
-            scene.objects.link(obj)
+        obj = self.get_or_create_object(curve_name, obj_index, cu)
 
         # break down existing splines entirely.
         if cu.splines:
