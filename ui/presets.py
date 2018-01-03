@@ -20,6 +20,7 @@ import os
 from os.path import join
 import shutil
 from glob import glob
+import json
 
 import bpy
 from bpy.props import StringProperty, BoolProperty
@@ -43,12 +44,26 @@ def get_preset_paths():
     presets = get_presets_directory()
     return list(sorted(glob(join(presets, "*.json"))))
 
+class SvMetaInfo(object):
+    def __init__(self, json):
+        self.json = json
+
+    def __getattr__(self, name):
+        if name not in self.json:
+            raise NameError(name)
+        else:
+            return self.json[name]
+
+    def __setattr__(self, name, value):
+        self.json[name] = value
+
 class SvPreset(object):
     def __init__(self, name=None, path=None):
         if name is None and path is None:
             raise Exception("Either name or path must be specified when initializing SvPreset")
         self._name = name
         self._path = path
+        self._data = None
 
     def get_name(self):
         if self._name is not None:
@@ -80,6 +95,37 @@ class SvPreset(object):
         self._path = new_path
 
     path = property(get_path, set_path)
+
+    @property
+    def data(self):
+        if self._data is not None:
+            return self._data
+        else:
+            with open(self.path, 'rb') as jsonfile:
+                data = jsonfile.read().decode('utf8')
+                data = json.loads(data)
+                self._data = data
+                return self._data
+
+    @property
+    def meta(self):
+        data = self.data
+        if 'metainfo' in data:
+            return data['metainfo']
+        else:
+            meta = dict()
+            data['metainfo'] = meta
+            return meta
+
+    def save(self):
+        if self._data is None:
+            debug("Preset `%s': no data was loaded, nothing to save.", self.name)
+            return
+
+        data = json.dumps(self.data, sort_keys=True, indent=2).encode('utf8')
+        with open(self.path, 'wb') as jsonfile:
+            jsonfile.write(data)
+        info("Saved preset `%s'", self.name)
 
     def draw_operator(self, layout, id_tree):
         op = layout.operator("node.tree_importer_silent", text=self.name)
@@ -145,24 +191,37 @@ class SvSaveSelected(bpy.types.Operator):
         wm = context.window_manager
         return wm.invoke_props_dialog(self)
 
-class SvRenamePreset(bpy.types.Operator):
+class SvPresetProps(bpy.types.Operator):
     """
     Change the name of preset
     """
 
-    bl_idname = "node.sv_preset_rename"
+    bl_idname = "node.sv_preset_props"
     bl_label = "Rename"
     bl_options = {'INTERNAL'}
 
     old_name = StringProperty(name = "Old name",
             description = "Preset name")
 
-    new_name = StringProperty(name = "New name",
+    new_name = StringProperty(name = "Name",
             description = "New preset name")
+
+    description = StringProperty(name = "Description",
+            description = "Preset description")
+
+    author = StringProperty(name = "Author",
+            description = "Preset author name")
+
+    license = StringProperty(name = "License",
+            description = "Preset license (short name)",
+            default = "CC-BY-SA")
 
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "new_name")
+        layout.prop(self, "description")
+        layout.prop(self, "author")
+        layout.prop(self, "license")
 
     def execute(self, context):
         if not self.old_name:
@@ -177,24 +236,35 @@ class SvRenamePreset(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        old_path = get_preset_path(self.old_name)
-        new_path = get_preset_path(self.new_name)
+        preset = SvPreset(name = self.old_name)
+        preset.meta['description'] = self.description
+        preset.meta['author'] = self.author
+        preset.meta['license'] = self.license
+        preset.save()
 
-        if os.path.exists(new_path):
-            msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.new_name)
-            error(msg)
-            self.report({'ERROR'}, msg)
-            return {'CANCELLED'}
-        
-        os.rename(old_path, new_path)
-        info("Renamed `%s' to `%s'", old_path, new_path)
-        self.report({'INFO'}, "Renamed `{}' to `{}'".format(self.old_name, self.new_name))
+        if self.new_name != self.old_name:
+            old_path = get_preset_path(self.old_name)
+            new_path = get_preset_path(self.new_name)
+
+            if os.path.exists(new_path):
+                msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.new_name)
+                error(msg)
+                self.report({'ERROR'}, msg)
+                return {'CANCELLED'}
+            
+            os.rename(old_path, new_path)
+            info("Renamed `%s' to `%s'", old_path, new_path)
+            self.report({'INFO'}, "Renamed `{}' to `{}'".format(self.old_name, self.new_name))
 
         return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
         self.new_name = self.old_name
+        preset = SvPreset(name=self.old_name)
+        self.description = preset.meta.get('description', "")
+        self.author = preset.meta.get('author', "")
+        self.license = preset.meta.get('license', "CC-BY-SA")
         return wm.invoke_props_dialog(self)
 
 class SvDeletePreset(bpy.types.Operator):
@@ -472,7 +542,7 @@ class SvUserPresetsPanel(bpy.types.Panel):
                 export = row.operator('node.sv_preset_to_file', text="", icon="EXPORT")
                 export.preset_name = name
 
-                rename = row.operator('node.sv_preset_rename', text="", icon="GREASEPENCIL")
+                rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
                 rename.old_name = name
 
                 delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
@@ -492,7 +562,7 @@ classes = [
         SvUserPresetsPanelProps,
         SvPresetFromFile,
         SvPresetFromGist,
-        SvRenamePreset,
+        SvPresetProps,
         SvDeletePreset,
         SvPresetToGist,
         SvPresetToFile,
