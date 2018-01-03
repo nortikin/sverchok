@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import json
+import sys
 import os
 import re
 import zipfile
@@ -34,13 +35,15 @@ from bpy.props import StringProperty, BoolProperty
 from sverchok import old_nodes
 from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
+from sverchok.utils.logging import debug, info, warning, error, exception
 
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 
-_EXPORTER_REVISION_ = '0.065'
+_EXPORTER_REVISION_ = '0.07'
 
 '''
+0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
 0.063 add support for obj_in_lite obj serialization \o/ .
@@ -49,11 +52,6 @@ _EXPORTER_REVISION_ = '0.065'
 0.062 monad export properly
 0.061 codeshuffle 76f04f9
 0.060 understands sockets with props <o/
-
-0.056 fixing SN1 script importing upon json load, will not duplicate
-      existing .py files by the same name. This tends to be preferred, one should
-      never have two files named the same which perform different operations.
-      main fixes SN1, SN2, ProfileNode, TextInput (json-mode only verified)
 
 revisions below this are your own problem.
 
@@ -75,10 +73,10 @@ def get_file_obj_from_zip(fullpath):
                 break
 
         if not exported_name:
-            print('zip contains no files ending with .json')
+            error('zip contains no files ending with .json')
             return
 
-        print(exported_name, '<')
+        debug(exported_name + ' <')
         fp = jfile.open(exported_name, 'r')
         m = fp.read().decode()
         return json.loads(m)
@@ -97,9 +95,9 @@ def compile_socket(link):
         link_data = (link.from_node.name, link.from_socket.index, link.to_node.name, link.to_socket.index)
     except Exception as err:
         if "'NodeSocketColor' object has no attribute 'index'" in repr(err):
-            print('adding node reroute using socketname instead if index')
+            debug('adding node reroute using socketname instead if index')
         else:
-            print(repr(err))
+            error(repr(err))
         link_data = (link.from_node.name, link.from_socket.name, link.to_node.name, link.to_socket.name)
 
     return link_data
@@ -107,12 +105,11 @@ def compile_socket(link):
 
 def write_json(layout_dict, destination_path):
 
-
     try:
         m = json.dumps(layout_dict, sort_keys=True, indent=2)
     except Exception as err:
-        print(repr(err))
-        print(layout_dict)
+        error(repr(err))
+        info(layout_dict)
 
     # optional post processing step
     post_processing = False
@@ -145,7 +142,44 @@ def get_superficial_props(node_dict, node):
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
     node_dict['location'] = node.location[:]
-    node_dict['color'] = node.color[:]
+    if node.use_custom_color:
+        node_dict['color'] = node.color[:]
+        node_dict['use_custom_color'] = True
+
+
+def collect_custom_socket_properties(node, node_dict):
+    # print("** PROCESSING custom properties for node: ", node.bl_idname)
+    input_socket_storage = {}
+    for socket in node.inputs:
+
+        # print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
+
+        storable = {}
+        tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
+
+        for tracked_prop_name in tracked_props:
+            if not hasattr(socket, tracked_prop_name):
+                continue
+
+            value = getattr(socket, tracked_prop_name)
+            defaultValue = socket.bl_rna.properties[tracked_prop_name].default
+            # property value same as default ? => don't store it
+            if value == defaultValue:
+                continue
+
+            # print("Processing custom property: ", tracked_prop_name, " value = ", value)
+            storable[tracked_prop_name] = value
+
+            if tracked_prop_name == 'use_prop' and value:
+                # print("prop type:", type(socket.prop))
+                storable['prop'] = socket.prop[:]
+
+        if storable:
+            input_socket_storage[socket.index] = storable
+
+    if input_socket_storage:
+        node_dict['custom_socket_props'] = input_socket_storage
+    # print("**\n")
 
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
@@ -179,27 +213,28 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
-        TextInput = (node.bl_idname == 'SvTextInNode')
+        
         SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
+        TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
 
         for k, v in node.items():
 
             if not isinstance(v, (float, int, str)):
-                print('//')
-                print(node.name, ' -> property:', k, type(v))
+                debug('//')
+                debug("%s -> property: %s: %s", node.name, k, type(v))
                 if k in node.bl_rna.properties:
-                    print(type(node.bl_rna.properties[k]))
+                    debug(type(node.bl_rna.properties[k]))
                 elif k in node:
                     # something like node['lp']  , ID Property directly on the node instance.
-                    print(type(node[k]))
+                    debug(type(node[k]))
                 else:
-                    print(k, 'is not bl_rna or IDproperty.. please report this')
+                    error('%s is not bl_rna or IDproperty.. please report this', k)
 
-                print('\\\\')
+                debug('\\\\')
 
             if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
                 """
-                n_id: 
+                n_id:
                     used to store the hash of the current Node,
                     this is created along with the Node anyway. skip.
                 typ, newsock:
@@ -262,21 +297,14 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
             node.storage_get_data(node_dict)
 
-        # collect socket properties
-        # inputs = node.inputs
-        # for s in inputs:
-        #     if (s.bl_label == 'Vertices') and hasattr(node, s.prop_name):
-        #         prop = s.prop_name
-        #         if prop:
-        #            node_dict['custom_socket_props'][prop] = getattr(node, prop)[:]
-
         node_dict['params'] = node_items
 
-        #if node.bl_idname == 'NodeFrame':
+        collect_custom_socket_properties(node, node_dict)
+
+        # if node.bl_idname == 'NodeFrame':
         #    frame_props = 'shrink', 'use_custom_color', 'label_size'
         #    node_dict['params'].update({fpv: getattr(node, fpv) for fpv in frame_props})
 
-        
         if IsMonadInstanceNode:
             node_dict['bl_idname'] = 'SvMonadGenericNode'
         else:
@@ -330,9 +358,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                     links_out.append(compile_socket(link))
         layout_dict['update_lists'] = links_out
     except Exception as err:
-        print(traceback.format_exc())
-        print('no update lists found or other error!')
-        print(' - trigger an update and retry')
+        exception(err)
+        error('no update lists found or other error!')
+        error(' - trigger an update and retry')
         return
 
     layout_dict['export_version'] = _EXPORTER_REVISION_
@@ -364,13 +392,13 @@ def perform_scripted_node_inject(node, node_ref):
         elif script_name and (script_name in texts):
             # This was added to fix existing texts with the same name but no / different content.
             if texts[script_name].as_string() == script_content:
-                print('SN skipping text named', script_name, '- their content are the same')
+                debug("SN skipping text named `%s' - their content are the same", script_name)
             else:
-                print('SN text named', script_name, 'already found in current, but content differs')
+                info("SN text named `%s' already found in current, but content differs", script_name)
                 new_text = texts.new(script_name)
                 new_text.from_string(script_content)
                 script_name = new_text.name
-                print('SN text named replaced with', script_name)        
+                info('SN text named replaced with %s', script_name)
 
         node.script_name = script_name
         node.script_str = script_content
@@ -399,7 +427,7 @@ def perform_svtextin_node_object(node, node_ref):
     as it's a beta service, old IO json may not be compatible - in this interest
     of neat code we assume it finds everything.
     '''
-    texts = bpy.data.texts    
+    texts = bpy.data.texts
     params = node_ref.get('params')
     current_text = params['current_text']
 
@@ -411,7 +439,7 @@ def perform_svtextin_node_object(node, node_ref):
     node.textmode = textmode
 
     if not current_text:
-        print(node.name, "doesn't store a current_text in params")
+        info("`%s' doesn't store a current_text in params", node.name)
 
     elif not current_text in texts:
         new_text = texts.new(current_text)
@@ -419,7 +447,7 @@ def perform_svtextin_node_object(node, node_ref):
 
         if node.textmode == 'JSON':
             if isinstance(text_line_entry, str):
-                print('loading old text json content / backward compatibility mode')
+                debug('loading old text json content / backward compatibility mode')
                 pass
 
             elif isinstance(text_line_entry, dict):
@@ -431,17 +459,20 @@ def perform_svtextin_node_object(node, node_ref):
         # reaches here if  (current_text) and (current_text in texts)
         # can probably skip this..
         # texts[current_text].from_string(node_ref['text_lines'])
-        print(node.name, 'seems to reuse a text block loaded by another node - skipping')
-
+        debug('%s seems to reuse a text block loaded by another node - skipping', node.name)
 
 
 def apply_superficial_props(node, node_ref):
     '''
     copies the stored values from the json onto the new node's corresponding values.
     '''
-    props = ['location', 'height', 'width', 'label', 'hide', 'color']
+    props = ['location', 'height', 'width', 'label', 'hide']
     for p in props:
         setattr(node, p, node_ref[p])
+
+    if node_ref.get('use_custom_color'):
+        node.use_custom_color = True
+        node.color = node_ref.get('color', (1, 1, 1))
 
 
 def gather_remapped_names(node, n, name_remap):
@@ -466,14 +497,39 @@ def apply_core_props(node, node_ref):
         try:
             setattr(node, p, val)
         except Exception as e:
+            # FIXME: this is ugly, need to find better approach
             error_message = repr(e)  # for reasons
-            print(error_message)
+            error(error_message)
             msg = 'failed to assign value to the node'
-            print(node.name, p, val, msg)
+            debug("`%s': %s = %s: %s", node.name, p, val, msg)
             if "val: expected sequence items of type boolean, not int" in error_message:
-                print("going to convert a list of ints to a list of bools and assign that instead")
+                debug("going to convert a list of ints to a list of bools and assign that instead")
                 setattr(node, p, [bool(i) for i in val])
 
+
+def apply_socket_props(socket, info):
+    debug("applying socket props")
+    for tracked_prop_name, tracked_prop_value in info.items():
+        try:
+            setattr(socket, tracked_prop_name, tracked_prop_value)
+
+        except Exception as err:
+            error("Error while setting node socket: %s | %s", node.name, socket.index)
+            error("the following failed | %s <- %s", tracked_prop_name, tracked_prop_value)
+            exception(err)
+
+
+def apply_custom_socket_props(node, node_ref):
+    debug("applying node props for node: %s", node.bl_idname)
+    socket_properties = node_ref.get('custom_socket_props')
+    if socket_properties:
+        for idx, info in socket_properties.items():
+            try:
+                socket = node.inputs[int(idx)]
+                apply_socket_props(socket, info)
+            except Exception as err:
+                error("socket index: %s, trying to pass: %s, num_sockets: %s", idx, info, len(node.inputs))
+                exception(err)
 
 
 def add_texts(node, node_ref):
@@ -483,7 +539,7 @@ def add_texts(node, node_ref):
     elif node.bl_idname == 'SvProfileNode':
         perform_profile_node_inject(node, node_ref)
 
-    elif node.bl_idname == 'SvTextInNode':
+    elif (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'}):
         perform_svtextin_node_object(node, node_ref)
 
 
@@ -491,7 +547,7 @@ def apply_post_processing(node, node_ref):
     '''
     Nodes that require post processing to work properly
     '''
-    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode', 'SvTextInNode'}:
+    if node.bl_idname in {'SvGroupInputsNode', 'SvGroupOutputsNode', 'SvTextInNode', 'SvTextInNodeMK2'}:
         node.load()
     elif node.bl_idname in {'SvGroupNode'}:
         node.load()
@@ -518,13 +574,13 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             node = nodes.new(bl_idname)
 
     except Exception as err:
-        print(traceback.format_exc())
-        print(bl_idname, 'not currently registered, skipping')
+        exception(err)
+        error('%s not currently registered, skipping', bl_idname)
         return
 
     if create_texts:
         add_texts(node, node_ref)
-    
+
     if bl_idname in {'SvObjInLite', 'SvExecNodeMod', 'SvMeshEvalNode'}:
         node.storage_set_data(node_ref)
 
@@ -536,6 +592,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     apply_core_props(node, node_ref)
     apply_superficial_props(node, node_ref)
     apply_post_processing(node, node_ref)
+    apply_custom_socket_props(node, node_ref)
 
 
 def add_nodes(ng, nodes_to_import, nodes, create_texts):
@@ -549,11 +606,10 @@ def add_nodes(ng, nodes_to_import, nodes, create_texts):
         for n in sorted(nodes_to_import):
             add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     except Exception as err:
-        print(repr(err))
-    
+        exception(err)
+
     ng.limited_init = False
     return name_remap
-
 
 
 def add_groups(groups_to_import):
@@ -570,9 +626,9 @@ def add_groups(groups_to_import):
 
 
 def print_update_lists(update_lists):
-    print('update lists:')
+    debug('update lists:')
     for ulist in update_lists:
-        print(ulist)
+        debug(ulist)
 
 
 def place_frames(ng, nodes_json, name_remap):
@@ -595,39 +651,38 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
 
     def make_links(update_lists, name_remap):
         print_update_lists(update_lists)
-    
+
         failed_connections = []
         for link in update_lists:
             try:
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
             except Exception as err:
-                print(traceback.format_exc())
+                exception(err)
                 failed_connections.append(link)
                 continue
 
         if failed_connections:
-            print('failed total {0}'.format(len(failed_connections)))
-            print(failed_connections)
+            error("failed total: %s", len(failed_connections))
+            error(failed_connections)
         else:
-            print('no failed connections! awesome.')
-
+            debug('no failed connections! awesome.')
 
     def generate_layout(fullpath, nodes_json):
-        '''cummulative function ''' 
-        
+        '''cummulative function '''
+
         # it may be necessary to store monads as dicts instead of string/json
         # this will handle both scenarios
         if isinstance(nodes_json, str):
             nodes_json = json.loads(nodes_json)
-            print('==== loading monad ====')
-        print('#' * 12, nodes_json['export_version'])
+            debug('==== loading monad ====')
+        info(('#' * 12) + nodes_json['export_version'])
 
         ''' create all nodes and groups '''
 
         update_lists = nodes_json['update_lists']
         nodes_to_import = nodes_json['nodes']
         groups_to_import = nodes_json.get('groups', {})
-        
+
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
 
@@ -694,13 +749,13 @@ class SvNodeTreeExporter(bpy.types.Operator):
         if not layout_dict:
             msg = 'no update list found - didn\'t export'
             self.report({"WARNING"}, msg)
-            print(msg)
+            warning(msg)
             return {'CANCELLED'}
 
         write_json(layout_dict, destination_path)
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
-        print(msg)
+        info(msg)
 
         if self.compress:
             comp_mode = zipfile.ZIP_DEFLATED
@@ -717,7 +772,7 @@ class SvNodeTreeExporter(bpy.types.Operator):
 
             with zipfile.ZipFile(fullpath, 'w', compression=comp_mode) as myzip:
                 myzip.write(destination_path, arcname=base)
-                print('wrote:', final_archivename)
+                info('wrote:', final_archivename)
 
         return {'FINISHED'}
 
@@ -810,7 +865,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         try:
             content_at_url = urlopen(url)
             found_json = content_at_url.read().decode()
-            return found_json        
+            return found_json
         except urllib.error.HTTPError as err:
             if err.code == 404:
                 self.report({'ERROR'}, 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source')
@@ -820,7 +875,6 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
             self.report({'ERROR'}, 'unspecified error, check your internet connection')
 
         return
-
 
     def obtain_json(self, gist_id):
 
@@ -880,20 +934,20 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         gist_description = 'to do later?'
         layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
 
-        try:       
+        try:
             gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
         except Exception as err:
             if 'not JSON serializable' in repr(err):
-                print(layout_dict)
+                error(layout_dict)
             else:
-                print(repr(err))
+                exception(err)
             self.report({'WARNING'}, "See terminal/Command prompt for printout of error")
             return {'CANCELLED'}
 
         try:
             gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
             context.window_manager.clipboard = gist_url   # full destination url
-            print(gist_url)
+            info(gist_url)
             self.report({'WARNING'}, "Copied gistURL to clipboad")
 
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
@@ -904,29 +958,61 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             return {'FINISHED'}
 
 
-class SvBlendToZip(bpy.types.Operator):
+def propose_archive_filepath(blendpath, extension='zip'):
+    """ disect existing filepath, add timestamp """
+    blendname = os.path.basename(blendpath)
+    blenddir = os.path.dirname(blendpath)
+    blendbasename = blendname.split('.')[0]
+    raw_time_stamp = strftime("%Y_%m_%d_%H_%M", gmtime())
+    archivename = blendbasename + '_' + raw_time_stamp + '.' + extension
 
-    bl_idname = "node.blend_to_zip"
-    bl_label = "Save Blend as Zip"
+    return os.path.join(blenddir, archivename), blendname
+
+
+class SvBlendToArchive(bpy.types.Operator):
+    """ Archive this blend file as zip or gz """
+
+    bl_idname = "node.blend_to_archive"
+    bl_label = "Archive .blend"
+
+    archive_ext = bpy.props.StringProperty(default='zip')
+    
+
+    def complete_msg(self, blend_archive_path):
+        msg = 'saved current .blend as archive at ' + blend_archive_path
+        self.report({'INFO'}, msg)
+        info(msg)
 
     def execute(self, context):
 
-        raw_time_stamp = strftime("%Y_%m_%d_%H_%M", gmtime())
-
         blendpath = bpy.data.filepath
-        blendname = os.path.basename(bpy.data.filepath)
-        blendbasename = blendname.split('.')[0]
-        zipname = blendbasename + '_' + raw_time_stamp + '.zip'
-        blendzippath = os.path.join(os.path.dirname(blendpath), zipname)
-        with zipfile.ZipFile(blendzippath, 'w', zipfile.ZIP_DEFLATED) as myzip:
-            myzip.write(blendpath, blendname)
-            context.window_manager.clipboard = blendzippath
-            print('saved: ', blendzippath)
 
-        return {'FINISHED'}
+        if not blendpath:
+            msg = 'you must save the .blend first before we can compress it'
+            self.report({'INFO'}, msg)
+            return {'CANCELLED'}
 
+        blend_archive_path, blendname = propose_archive_filepath(blendpath, extension=self.archive_ext)
+        context.window_manager.clipboard = blend_archive_path
 
+        if self.archive_ext == 'zip':
+            with zipfile.ZipFile(blend_archive_path, 'w', zipfile.ZIP_DEFLATED) as myzip:
+                myzip.write(blendpath, blendname)
+            self.complete_msg(blend_archive_path)
+            return {'FINISHED'}
 
+        elif self.archive_ext == 'gz':
+
+            import gzip
+            import shutil
+
+            with open(blendpath, 'rb') as f_in:
+                with gzip.open(blend_archive_path, 'wb') as f_out:
+                    shutil.copyfileobj(f_in, f_out)
+            self.complete_msg(blend_archive_path)
+            return {'FINISHED'}
+
+        return {'CANCELLED'}
 
 
 class SvIOPanelProperties(bpy.types.PropertyGroup):
@@ -959,7 +1045,7 @@ classes = [
     SvNodeTreeImporter,
     SvNodeTreeImporterSilent,
     SvNodeTreeImportFromGist,
-    SvBlendToZip
+    SvBlendToArchive
 ]
 
 

@@ -25,35 +25,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
-
-def householder(u):
-    ''' Householder reflection matrix '''
-    x,y,z = u[0], u[1], u[2]
-    m = Matrix([[x*x, x*y, x*z, 0], [x*y, y*y, y*z, 0], [x*z, y*z, z*z, 0], [0,0,0,0]])
-    h = Matrix() - 2*m
-    return h
-
-def autorotate(e1, xx):
-    ''' A matrix of transformation which will transform xx vector into e1. 
-    See http://en.wikipedia.org/wiki/QR_decomposition '''
-
-    def get_sign():
-        for x in e1:
-            if x != 0.0:
-                return -copysign(1, x)
-        return 1
-
-    alpha = xx.length * get_sign()
-    u = xx - alpha*e1
-    v = u.normalized()
-    q = householder(v)
-    return q
-
-def diameter(vertices, axis):
-    xs = [vertex[axis] for vertex in vertices]
-    M = max(xs)
-    m = min(xs)
-    return (M-m)
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 
 all_axes = [
         Vector((1.0, 0.0, 0.0)),
@@ -69,6 +41,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDuplicateAlongEdgeNode'
     bl_label = 'Duplicate objects along edge'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DUPLICATE'
 
     count_modes = [
             ("count", "Count", "Specify number of donor objects per edge", 1),
@@ -107,6 +80,17 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         default = "count",
         items = count_modes, update=count_mode_change)
 
+    algorithms = [
+            ("householder", "Householder", "Use Householder reflection matrix", 1),
+            ("track", "Tracking", "Use quaternion-based tracking", 2),
+            ("diff", "Rotation difference", "Use rotational difference calculation", 3)
+        ]
+
+    algorithm = EnumProperty(name = "Algorithm",
+        description = "Rotation calculation algorithm",
+        default = "householder",
+        items = algorithms, update=updateNode)
+
     axes = [
             ("X", "X", "X axis", 1),
             ("Y", "Y", "Y axis", 2),
@@ -121,10 +105,18 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         default = "X",
         items = axes, update=orient_axis_change)
 
-    def get_axis_idx(self):
-        return 'XYZ'.index(self.orient_axis_)
+    up_axis = EnumProperty(name = "Up axis",
+        description = "Which axis of donor objects should look up",
+        default = 'Z',
+        items = axes, update=updateNode)
 
-    orient_axis = property(get_axis_idx)
+    def get_axis_idx(self, letter):
+        return 'XYZ'.index(letter)
+
+    def get_orient_axis_idx(self):
+        return self.get_axis_idx(self.orient_axis_)
+
+    orient_axis = property(get_orient_axis_idx)
 
     count_ = IntProperty(name='Count',
         description='Number of copies',
@@ -203,11 +195,23 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 scale = Matrix.Scale(x_scale, 4)
             else:
                 scale = Matrix.Scale(x_scale, 4, x)
-        rot = autorotate(x, direction).inverted()
-        #rot = direction.rotation_difference(x).to_matrix().to_4x4()
 
-        # Since Householder transformation is reflection, we need to reflect things back
-        flip = Matrix([[-1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+        need_flip = False
+        if self.algorithm == 'householder':
+            rot = autorotate_householder(x, direction).inverted()
+            # Since Householder transformation is reflection, we need to reflect things back
+            need_flip = True
+        elif self.algorithm == 'track':
+            rot = autorotate_track(self.orient_axis_, direction, self.up_axis)
+        elif self.algorithm == 'diff':
+            rot = autorotate_diff(x, direction).inverted()
+        else:
+            raise Exception("Unsupported algorithm")
+
+        if need_flip:
+            flip = Matrix([[-1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]])
+        else:
+            flip = Matrix.Identity(4)
         if scale is None:
             matrices = [Matrix.Translation(o)*rot*flip for o in origins]
         else:
@@ -238,9 +242,15 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         self.input_mode_change(context)
   
     def draw_buttons(self, context, layout):
-        layout.prop(self, "count_mode", expand=True)
+        layout.prop(self, "count_mode")
         layout.prop(self, "orient_axis_", expand=True)
+        layout.prop(self, "algorithm")
+        if self.algorithm == 'track':
+            layout.prop(self, "up_axis")
         layout.prop(self, "input_mode", expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         if not self.scale_off:
             layout.prop(self, "scale_all")
         layout.prop(self, "apply_matrices")

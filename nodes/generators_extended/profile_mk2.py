@@ -25,6 +25,7 @@ from string import ascii_lowercase
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
+from bpy.utils import register_class, unregister_class
 from mathutils import Vector
 from mathutils.geometry import interpolate_bezier
 
@@ -40,11 +41,9 @@ class SvSublistGroup(bpy.types.PropertyGroup):
     SvY = bpy.props.FloatProperty()
     SvZ = bpy.props.FloatProperty()
     SvName = bpy.props.StringProperty()
-bpy.utils.register_class(SvSublistGroup)
 
 class SvListGroup(bpy.types.PropertyGroup):
     SvSubLists = bpy.props.CollectionProperty(type=SvSublistGroup)    
-bpy.utils.register_class(SvListGroup)
     
         
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
@@ -503,6 +502,7 @@ def viewedraw_adding(node):
     links.new(node.outputs[0], vd.inputs[0])   #verts
     links.new(node.outputs[1], vd.inputs[1])   #edges
 
+
 class SvPrifilizer(bpy.types.Operator):
     """SvPrifilizer"""
     bl_idname = "node.sverchok_profilizer"
@@ -512,13 +512,18 @@ class SvPrifilizer(bpy.types.Operator):
     nodename = StringProperty(name='nodename')
     treename = StringProperty(name='treename')
     knotselected = BoolProperty(description='if selected knots than use extended parsing in PN', default=False)
+    x = BoolProperty(default=True)
+    y = BoolProperty(default=True)
 
 
     def stringadd(self, x,selected=False):
         precision = bpy.data.node_groups[self.treename].nodes[self.nodename].precision
         if selected:
-            letter = '+a'
-            a = '('+str(round(x[0], precision))+letter+')' + ',' + '('+str(round(x[1], precision))+letter+')' + ' '
+            if self.x: letterx = '+a'
+            else: letterx = ''
+            if self.y: lettery = '+a'
+            else: lettery = ''
+            a = '('+str(round(x[0], precision))+letterx+')' + ',' + '('+str(round(x[1], precision))+lettery+')' + ' '
             self.knotselected = True
         else:
             a = str(round(x[0], precision)) + ',' + str(round(x[1], precision)) + ' '
@@ -568,10 +573,12 @@ class SvPrifilizer(bpy.types.Operator):
             curves = ['C ' if x in types or c in types else 'L ' for x,c in zip(curves_left,curves_right)]
             # line for if curve was before line or not
             line = False
+            curve = False
             for i,c in zip(range(len(ob_points)),curves):
                 co = ob_points[i].co
                 if not i:
                     # initial value
+                    values += '\n'
                     values += 'M '
                     co = ob_points[0].co[:]
                     values += self.stringadd(co,ob_points[0].select_control_point)
@@ -580,37 +587,46 @@ class SvPrifilizer(bpy.types.Operator):
                     out_names.append(['M.0'])
                     # pass if first 'M' that was used already upper
                     continue
-                else:
-                    if c == 'C ':
-                        line = False
-                        values += c
-                        hr = ob_points[i-1].handle_right[:]
-                        hl = ob_points[i].handle_left[:]
-                        # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
-                        values += self.stringadd(hr,ob_points[i-1].select_right_handle)
-                        values += self.stringadd(hl,ob_points[i].select_left_handle)
-                        values += self.stringadd(co,ob_points[i].select_control_point)
-                        values += self.curve_points_count()
-                        values += ' 0 '
+                elif c == 'C ':
+                    values += '\n'
+                    values += '#C.'+str(i)+'\n'
+                    values += c
+                    hr = ob_points[i-1].handle_right[:]
+                    hl = ob_points[i].handle_left[:]
+                    # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
+                    values += self.stringadd(hr,ob_points[i-1].select_right_handle)
+                    values += self.stringadd(hl,ob_points[i].select_left_handle)
+                    values += self.stringadd(co,ob_points[i].select_control_point)
+                    values += self.curve_points_count()
+                    values += ' 0 '
+                    if curve:
                         values += '\n'
-                        out_points.append(hr[:])
-                        out_points.append(hl[:])
-                        out_points.append(co[:])
-                        #namecur = ['C.'+str(i)]
-                        out_names.extend([['C.'+str(i)+'h1'],['C.'+str(i)+'h2'],['C.'+str(i)+'k']])
-                    elif c == 'L ' and not line:
-                        line = True
-                        values += c
-                        values += self.stringadd(co,ob_points[i].select_control_point)
+                    out_points.append(hr[:])
+                    out_points.append(hl[:])
+                    out_points.append(co[:])
+                    #namecur = ['C.'+str(i)]
+                    out_names.extend([['C.'+str(i)+'h1'],['C.'+str(i)+'h2'],['C.'+str(i)+'k']])
+                    line = False
+                    curve = True
+                elif c == 'L ' and not line:
+                    if curve:
                         values += '\n'
-                        out_points.append(co[:])
-                        out_names.append(['L.'+str(i)])
-                    elif c == 'L ' and line:
-                        values += self.stringadd(co,ob_points[i].select_control_point)
-                        out_points.append(co[:])
-                        out_names.append(['L.'+str(i)])
-            if ob_points[0].handle_left_type in types:
+                    values += '#L.'+str(i)+'...'+'\n'
+                    values += c
+                    values += self.stringadd(co,ob_points[i].select_control_point)
+                    out_points.append(co[:])
+                    out_names.append(['L.'+str(i)])
+                    line = True
+                    curve = False
+                elif c == 'L ' and line:
+                    values += self.stringadd(co,ob_points[i].select_control_point)
+                    out_points.append(co[:])
+                    out_names.append(['L.'+str(i)])
+
+            if ob_points[0].handle_left_type in types or ob_points[-1].handle_right_type in types:
                 line = False
+                values += '\n'
+                values += '#C.'+str(i+1)+'\n'
                 values += 'C '
                 hr = ob_points[-1].handle_right[:]
                 hl = ob_points[0].handle_left[:]
@@ -681,7 +697,8 @@ class SvPrifilizer(bpy.types.Operator):
 
 class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''
-    svg-like 2d profiles ///
+    Triggers: svg-like 2d profiles
+    Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax
 
     SvProfileNode generates one or more profiles / elevation segments using;
     assignments, variables, and a string descriptor similar to SVG.
@@ -693,7 +710,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvProfileNodeMK2'
     bl_label = 'Profile Parametric'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SYNTAX_ON'
 
 
     SvLists = bpy.props.CollectionProperty(type=SvListGroup)
@@ -706,11 +723,11 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.current_axis = self.selected_axis
             updateNode(self, context)
 
-    axis_options = [
-        ("X", "X", "", 0),
-        ("Y", "Y", "", 1),
-        ("Z", "Z", "", 2)
-    ]
+    x = BoolProperty(default=True)
+    y = BoolProperty(default=True)
+
+    axis_options = [("X", "X", "", 0), ("Y", "Y", "", 1), ("Z", "Z", "", 2)]
+
     current_axis = StringProperty(default='Z')
 
     knotsnames = StringProperty(name='knotsnames', default='')
@@ -738,6 +755,8 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         do_text = row.operator('node.sverchok_profilizer', text='from selection')
         do_text.nodename = self.name
         do_text.treename = self.id_data.name
+        do_text.x = self.x
+        do_text.y = self.y
         row = col.row()
         row.prop(self, 'selected_axis', expand=True)
         row = col.row(align=True)
@@ -751,6 +770,9 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.label("Profile Generator settings")
         layout.prop(self, "precision")
         layout.prop(self, "curve_points_count")
+        row = layout.row(align=True)
+        row.prop(self, "x",text='x-affect', expand=True)
+        row.prop(self, "y",text='y-affect', expand=True)
 
 
     def sv_init(self, context):
@@ -901,14 +923,16 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except:
             outputs[3].sv_set([])
 
+
+classes = SvSublistGroup, SvListGroup, SvProfileNodeMK2, SvPrifilizer
+
 def register():
-    bpy.utils.register_class(SvProfileNodeMK2)
-    bpy.utils.register_class(SvPrifilizer)
+    _ = [register_class(cls) for cls in classes]
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPrifilizer)
-    bpy.utils.unregister_class(SvProfileNodeMK2)
+    _ = [unregister_class(cls) for cls in reversed(classes)]
 
-if __name__ == '__main__':
-    register()
+
+# if __name__ == '__main__':
+#     register()

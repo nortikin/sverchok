@@ -31,6 +31,7 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'DistancePPNode'
     bl_label = 'Distance'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DISTANCE'
 
     Cross_dist = BoolProperty(name='Cross_dist', description='DANGEROUS! If crossover dimension calculation, be sure',
                               default=False)

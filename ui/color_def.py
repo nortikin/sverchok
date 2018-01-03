@@ -21,6 +21,7 @@ import bpy
 from bpy.props import StringProperty
 
 from sverchok.menu import make_node_cats
+from sverchok.utils.logging import debug
 import sverchok
 
 colors_cache = {}
@@ -34,7 +35,7 @@ default_theme = {
     "Text": (0.5, 0.5, 1),
     "Scene": (0, 0.5, 0.2),
     "Layout": (0.674, 0.242, 0.363),
-    "Generators": (0, 0.5, 0.5),
+    "Generator": (0, 0.5, 0.5),
 }
 
 nipon_blossom = {
@@ -42,7 +43,7 @@ nipon_blossom = {
     "Text": (1.000000, 0.899344, 0.974251),
     "Scene": (0.904933, 1.000000, 0.883421),
     "Layout": (0.602957, 0.674000, 0.564277),
-    "Generators": (0.92, 0.92, 0.92),
+    "Generator": (0.92, 0.92, 0.92),
 }
 
 
@@ -56,7 +57,7 @@ def color_callback(self, context):
         ("Text", "color_tex"),
         ("Scene", "color_sce"),
         ("Layout", "color_lay"),
-        ("Generators", "color_gen"),
+        ("Generator", "color_gen"),
     ]
     # stop theme from auto updating and do one call instead of many
     auto_apply_theme = self.auto_apply_theme
@@ -70,7 +71,7 @@ def color_callback(self, context):
 def sv_colors_definition():
     addon_name = sverchok.__name__
     addon = bpy.context.user_preferences.addons.get(addon_name)
-    print("got addon")
+    debug("got addon")
     if addon:
         prefs = addon.preferences
         sv_node_colors = {
@@ -78,7 +79,7 @@ def sv_colors_definition():
             "Text": prefs.color_tex,
             "Scene": prefs.color_sce,
             "Layout": prefs.color_lay,
-            "Generators": prefs.color_gen,
+            "Generator": prefs.color_gen,
             }
     else:
         sv_node_colors = default_theme
@@ -101,7 +102,7 @@ def get_color(bl_id):
     Get color for bl_id
     """
     if not colors_cache:
-        print("building color cache")
+        debug("building color cache")
         rebuild_color_cache()
     return colors_cache.get(bl_id)
 

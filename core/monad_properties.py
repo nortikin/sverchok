@@ -191,10 +191,10 @@ classes = [
     SvIntPropertySettingsGroup
 ]
 
-# no register function?
 
-for class_name in classes:
-    bpy.utils.register_class(class_name)
+def register():
+    for class_name in classes:
+        bpy.utils.register_class(class_name)
 
 
 def unregister():

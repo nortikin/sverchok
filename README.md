@@ -5,7 +5,7 @@
 **addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: Python 3.5. and numpy, both included in recent versions of Blender  
+**prerequisites**: Python 3.6, and `numpy` and `requests`, both included in recent versions of Blender (precompiled binaries are convenient for this)  
 **manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
@@ -22,11 +22,11 @@ Comes with more than 150 nodes to help create and manipulate geometry. Combining
 
   - do parametric constructions
   - easily change parameters with sliders and formulas    
-  - power nodes such as: Profile parametric, UVconnect, Generetive art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops,Bmesh props, etc   
+  - power nodes such as: Profile parametric, UVconnect, Generative art, Mesh expression, Proportion edit, Wafel, Adaptive Poligons (tissue vectorized), Adaptive edges, ExecNodeMod, Vector Interpolation series of nodes, List manipulators, CSG Boolean, Bmesh ops, Bmesh props, etc.
   - do cross sections, extrusions, other modifications with hight level flexible parametrised and vectorised node tools 
   - calculate areas, volume, and perform other geometric analysis
   - make or import CSV tables or custom formats
-  - use Vector fields, create them, visualize data.
+  - use Vector fields, create them, visualize data
   - even code your own custom nodes in python with Scripted node
   - make your own 'addons' on node layouts and utilise them with Sverchok 3dview panel in your everyday pipeline
   - access to Blender Python API (bpy) with special _Set_ and _Get_ nodes
@@ -38,20 +38,22 @@ Comes with more than 150 nodes to help create and manipulate geometry. Combining
 Install Sverchok as you would any blender addon.  
   
 -  _Installation from Preferences_  
-   Download Sverchok archive (zip) from github   
+   Download Sverchok [archive (zip) from github](https://github.com/nortikin/sverchok/archive/master.zip)   
    User Preferences > Addons > install from file >  choose zip-archive > activate flag beside Sverchok  
    Enable permanently in the startup.blend using `Ctrl + U` and `Save User Settings` from the Addons menu.  
 
 -  _Upgrade Sverchok on fly_   
    Use button `Check for new version` in sverchok panel in node editor (press `N` for panel).    
    Press `Update Sverchok` button.   
-   And at the end press `F8` button to reload addons. In next blender run in panel will appear new version number.   
+   At the end press F8 to reload add-ons. In NodeView the new version number will appear in the N-panel.   
 
 ### Troubleshooting Installation Errors
 
 If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
 
-During install from preferences, if an error is raised - close and run blender again and activate sverchok.  
+If you are installing from a release found [here](https://github.com/nortikin/sverchok/releases), these files contain folders that have the dots mentioned in the previous point. These versioned release zips are not meant for installing from, but rather can be used to try older versions of Sverchok when you are using older .blend files and older Blender versions. Don't use these release zips if you are installing sverchok for the first time.
+
+During install from preferences, if an error is raised - close and run Blender again and activate sverchok.  
 
 In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
 
@@ -69,7 +71,9 @@ Authors:
 -  Ilya Protnov,  
 -  Eleanor Howick,    
 -  Walter Perdan,    
--  Marius Giurgi      
+-  Marius Giurgi,      
+-  Durman,     
+-  Ivan Prytov     
 
 Email: sverchok-b3d@yandex.ru  
 
@@ -80,7 +84,7 @@ Email: sverchok-b3d@yandex.ru
 **дополнение к**: [Blender](http://blender.org)  (версия *2.77* и выше).  
 **текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**требования**: Python 3.5,  numpy, они оба присутствуют в Blender  
+**требования**: Python 3.5, numpy, они оба присутствуют в Blender  
 
 
   
@@ -143,7 +147,9 @@ Email: sverchok-b3d@yandex.ru
 -  Портнов Илья;  
 -  Ховик Элеонора;  
 -  Вальтер Пердан;    
--  Мариус Георгий.     
+-  Мариус Георгий     
+-  Дурман,       
+-  Портнов Иван      
 
 Email: sverchok-b3d@yandex.ru  
 

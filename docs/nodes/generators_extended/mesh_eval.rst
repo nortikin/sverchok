@@ -84,6 +84,10 @@ This node has the following parameters:
 - **Precision**. Number of decimal places used for points coordinates when
   generating mesh definition by **from selection** operator. Default value is
   8. This parameter is only available in the N panel.
+- **Example tree**. If checked, then an example set of nodes (demonstrating
+  possible usage of Mesh Expression) will be created automatically when you
+  press **from selection**. By default this is not checked. This parameter is
+  only available in the N panel.
 
 Operators
 ---------

@@ -22,7 +22,7 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProp
 from bpy.types import NodeTree, NodeSocket
 
 
-from sverchok.core.socket_data import SvGetSocket, SvGetSocketInfo
+from sverchok.core.socket_data import SvGetSocket, SvGetSocketInfo, SvNoDataError
 from sverchok.node_tree import SvSocketCommon, process_from_socket, sentinel
 
 
@@ -96,10 +96,10 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
         elif self.object_ref:
             obj_ref = bpy.data.objects.get(self.object_ref)
             if not obj_ref:
-                raise SvNoDataError
+                raise SvNoDataError(self)
             return [obj_ref]
         elif default is sentinel:
-            raise SvNoDataError
+            raise SvNoDataError(self)
         else:
             return default
 
@@ -124,7 +124,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
         elif self.text:
             return [self.text]
         elif default is sentinel:
-            raise SvNoDataError
+            raise SvNoDataError(self)
         else:
             return default
 

@@ -37,7 +37,7 @@ class SvHeavyTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Triangulate mesh (Heavy)'''
     bl_idname = 'SvHeavyTriangulateNode'
     bl_label = 'Triangulate mesh (heavy)'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_TRIANGULATE'
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")

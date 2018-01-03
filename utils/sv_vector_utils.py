@@ -18,11 +18,13 @@
 
 import bisect
 import numpy as np
+import math
 
 # spline function modifed from
 # from looptools 4.5.2 done by Bart Crouch
 
 
+# kept as it is used in older nodes
 # calculates natural cubic splines through all given knots
 def cubic_spline(locs, tknots):
     knots = list(range(len(locs)))
@@ -73,6 +75,7 @@ def cubic_spline(locs, tknots):
     return splines
 
 
+# kept as it is used in older nodes
 def eval_spline(splines, tknots, t_in):
     out = []
     for t in t_in:
@@ -89,7 +92,7 @@ def eval_spline(splines, tknots, t_in):
         out.append(pt)
     return out
 
-
+# not used currently
 def sv_interpolate(v, t_in, mode='SPL'):
     '''
     input
@@ -114,3 +117,4 @@ def sv_interpolate(v, t_in, mode='SPL'):
     else:  # SPL
         spl = cubic_spline(v, t)
         return eval_spline(spl, t, t_corr)
+
