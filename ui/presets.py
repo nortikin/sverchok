@@ -21,6 +21,7 @@ from os.path import join
 import shutil
 from glob import glob
 import json
+from urllib.parse import quote_plus
 
 import bpy
 from bpy.props import StringProperty, BoolProperty
@@ -44,18 +45,12 @@ def get_preset_paths():
     presets = get_presets_directory()
     return list(sorted(glob(join(presets, "*.json"))))
 
-class SvMetaInfo(object):
-    def __init__(self, json):
-        self.json = json
+def get_preset_idname_for_operator(name):
+    return quote_plus(name).replace('+', '_').replace('%', '_').lower()
 
-    def __getattr__(self, name):
-        if name not in self.json:
-            raise NameError(name)
-        else:
-            return self.json[name]
-
-    def __setattr__(self, name, value):
-        self.json[name] = value
+# We are creating and registering preset adding operators dynamically.
+# So, we have to remember them in order to unregister them when needed.
+preset_add_operators = {}
 
 class SvPreset(object):
     def __init__(self, name=None, path=None):
@@ -127,10 +122,43 @@ class SvPreset(object):
             jsonfile.write(data)
         info("Saved preset `%s'", self.name)
 
+    def make_add_operator(self):
+        """
+        Create operator class which adds specific preset nodes to current node tree.
+        Tooltip (docstring) for that operator is copied from metainfo/description field.
+        """
+
+        global preset_add_operators
+
+        if self.name not in preset_add_operators:
+
+            class SverchPresetAddOperator(bpy.types.Operator):
+                bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name)
+                bl_label = "Add {} preset".format(self.name)
+                bl_options = {'REGISTER', 'UNDO'}
+
+                def execute(operator, context):
+                    # please not be confused: "operator" here references to
+                    # SverchPresetAddOperator instance, and "self" references to
+                    # SvPreset instance.  
+                    ntree = context.space_data.node_tree
+                    id_tree = ntree.name
+                    ng = bpy.data.node_groups[id_tree]
+
+                    # Deselect everything, so as a result only imported nodes
+                    # will be selected
+                    bpy.ops.node.select_all(action='DESELECT')
+                    import_tree(ng, self.path)
+                    return {'FINISHED'}
+
+            SverchPresetAddOperator.__name__ = self.name
+            SverchPresetAddOperator.__doc__ = self.meta.get("description", self.name)
+
+            preset_add_operators[self.name] = SverchPresetAddOperator
+            bpy.utils.register_class(SverchPresetAddOperator)
+
     def draw_operator(self, layout, id_tree):
-        op = layout.operator("node.tree_importer_silent", text=self.name)
-        op.id_tree = id_tree
-        op.filepath = self.path
+        op = layout.operator("node.sv_preset_"+get_preset_idname_for_operator(self.name), text=self.name)
 
 def get_presets():
     result = []
@@ -573,6 +601,9 @@ def register():
     for clazz in classes:
         bpy.utils.register_class(clazz)
 
+    for preset in get_presets():
+        preset.make_add_operator()
+
     bpy.types.NodeTree.preset_panel_properties = bpy.props.PointerProperty(
         name="preset_panel_properties", type=SvUserPresetsPanelProps)
 
@@ -581,4 +612,7 @@ def unregister():
 
     for clazz in reversed(classes):
         bpy.utils.unregister_class(clazz)
+
+    for name in preset_add_operators:
+        bpy.utils.unregister_class(preset_add_operators[name])
 
