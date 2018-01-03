@@ -807,6 +807,9 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
 
+        # Deselect everything, so as a result only imported nodes
+        # will be selected
+        bpy.ops.node.select_all(action='DESELECT')
         import_tree(ng, self.filepath)
         context.space_data.node_tree = ng
         return {'FINISHED'}
