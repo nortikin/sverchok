@@ -96,11 +96,14 @@ class SvPreset(object):
         if self._data is not None:
             return self._data
         else:
-            with open(self.path, 'rb') as jsonfile:
-                data = jsonfile.read().decode('utf8')
-                data = json.loads(data)
-                self._data = data
-                return self._data
+            if os.path.exists(self.path):
+                with open(self.path, 'rb') as jsonfile:
+                    data = jsonfile.read().decode('utf8')
+                    data = json.loads(data)
+                    self._data = data
+                    return self._data
+            else:
+                return dict()
 
     @property
     def meta(self):
@@ -204,7 +207,9 @@ class SvSaveSelected(bpy.types.Operator):
             return {'CANCELLED'}
 
         layout_dict = create_dict_of_tree(ng, selected=True)
-        destination_path = get_preset_path(self.preset_name)
+        preset = SvPreset(name=self.preset_name)
+        preset.make_add_operator()
+        destination_path = preset.path
         write_json(layout_dict, destination_path)
         msg = 'exported to: ' + destination_path
         self.report({"INFO"}, msg)
