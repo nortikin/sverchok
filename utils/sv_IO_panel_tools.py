@@ -861,7 +861,7 @@ def load_json_from_gist(gist_id, operator=None):
     gist_id: gist ID. Passing full URL is also supported.
     operator: optional instance of bpy.types.Operator. Used for errors reporting.
 
-    Rerturns JSON dictionary.
+    Returns JSON dictionary.
     """
 
     def read_n_decode(url):
