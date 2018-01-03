@@ -32,7 +32,7 @@ from sverchok.data_structure import (repeat_last, Matrix_generate, Vector_genera
 def distK(v1, v2):
     return sum((i[0]-i[1])**2 for i in zip(v1, v2))
 
-def sortVerticesByConexions(verts_in,edges_in):
+def sortVerticesByConnexions(verts_in,edges_in):
     vertsOut = []
     edgesOut = []
     index = []
@@ -276,7 +276,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
                     if len(p[0])>2:
                         pols = p
                         p=pols_edges(p,True)
-                    vN, pN, iN = sortVerticesByConexions(v,p)
+                    vN, pN, iN = sortVerticesByConnexions(v,p)
                     if len(pols)>0:
                         newPols=[]
                         for pol in pols[0]:
