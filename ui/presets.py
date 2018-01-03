@@ -43,6 +43,55 @@ def get_preset_paths():
     presets = get_presets_directory()
     return list(sorted(glob(join(presets, "*.json"))))
 
+class SvPreset(object):
+    def __init__(self, name=None, path=None):
+        if name is None and path is None:
+            raise Exception("Either name or path must be specified when initializing SvPreset")
+        self._name = name
+        self._path = path
+
+    def get_name(self):
+        if self._name is not None:
+            return self._name
+        else:
+            name = os.path.basename(self._path)
+            name,_ = os.path.splitext(name)
+            self._name = name
+            return name
+
+    def set_name(self, new_name):
+        self._name = new_name
+        self._path = get_preset_path(new_name)
+
+    name = property(get_name, set_name)
+
+    def get_path(self):
+        if self._path is not None:
+            return self._path
+        else:
+            path = get_preset_path(self._name)
+            self._path = path
+            return path
+
+    def set_path(self, new_path):
+        name = os.path.basename(new_path)
+        name,_ = os.path.splitext(name)
+        self._name = name
+        self._path = new_path
+
+    path = property(get_path, set_path)
+
+    def draw_operator(self, layout, id_tree):
+        op = layout.operator("node.tree_importer_silent", text=self.name)
+        op.id_tree = id_tree
+        op.filepath = self.path
+
+def get_presets():
+    result = []
+    for path in get_preset_paths():
+        result.append(SvPreset(path=path))
+    return result
+
 class SvSaveSelected(bpy.types.Operator):
     """
     Save selected nodes as a preset
@@ -363,6 +412,19 @@ class SvPresetFromGist(bpy.types.Operator):
         self.gist_id = context.window_manager.clipboard
         return wm.invoke_props_dialog(self)
 
+def draw_presets_ops(layout, id_tree=None, presets=None, context=None):
+    if presets is None:
+        presets = get_presets()
+
+    if id_tree is None:
+        if context is None:
+            raise Exception("Either id_tree or context must be provided for draw_presets_ops()")
+        ntree = context.space_data.node_tree
+        id_tree = ntree.name
+
+    for preset in presets:
+        preset.draw_operator(layout, id_tree)
+
 class SvUserPresetsPanel(bpy.types.Panel):
     bl_idname = "SvUserPresetsPanel"
     bl_label = "Presets"
@@ -387,7 +449,7 @@ class SvUserPresetsPanel(bpy.types.Panel):
             layout.operator('node.sv_save_selected', text="Save Preset", icon='SAVE_PREFS').id_tree = ntree.name
             layout.separator()
 
-        presets = get_preset_paths()
+        presets = get_presets()
         if len(presets):
             layout.prop(panel_props, 'manage_mode', toggle=True)
             layout.separator()
@@ -398,9 +460,8 @@ class SvUserPresetsPanel(bpy.types.Panel):
             col.operator("node.sv_preset_from_file", icon='IMPORT')
 
             layout.label("Manage presets:")
-            for path in presets:
-                name = os.path.basename(path)
-                name,_ = os.path.splitext(name)
+            for preset in presets:
+                name = preset.name
 
                 row = layout.row(align=True)
                 row.label(text=name)
@@ -419,12 +480,7 @@ class SvUserPresetsPanel(bpy.types.Panel):
 
         else:
             layout.label("Use preset:")
-            for path in presets:
-                name = os.path.basename(path)
-                name,_ = os.path.splitext(name)
-                op = layout.operator("node.tree_importer_silent", text=name)
-                op.id_tree = ntree.name
-                op.filepath = path
+            draw_presets_ops(layout, ntree.name, presets)
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode = BoolProperty(name = "Manage Presets",
