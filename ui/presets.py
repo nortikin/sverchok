@@ -120,6 +120,7 @@ class SvPreset(object):
         data = json.dumps(self.data, sort_keys=True, indent=2).encode('utf8')
         with open(self.path, 'wb') as jsonfile:
             jsonfile.write(data)
+
         info("Saved preset `%s'", self.name)
 
     def make_add_operator(self):
@@ -281,8 +282,13 @@ class SvPresetProps(bpy.types.Operator):
                 return {'CANCELLED'}
             
             os.rename(old_path, new_path)
+            preset.name = self.new_name
             info("Renamed `%s' to `%s'", old_path, new_path)
             self.report({'INFO'}, "Renamed `{}' to `{}'".format(self.old_name, self.new_name))
+
+        bpy.utils.unregister_class(preset_add_operators[self.old_name])
+        del preset_add_operators[self.old_name]
+        preset.make_add_operator()
 
         return {'FINISHED'}
 
