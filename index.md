@@ -314,3 +314,5 @@
     SvIndexToMaskNode
     SvMultiExtrudeAlt
     SvOffsetLineNode
+    SvIsoLinesNode
+    
