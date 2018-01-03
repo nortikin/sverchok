@@ -480,25 +480,16 @@ class SvIsoLinesNode(bpy.types.Node, SverchCustomTreeNode):
                     difAng+=2*pi
                 angSide = ang[3]
                 offAng=3*pi/2;
-                # if ang[4]%3 == 2:
-                        # offAng=pi/2
-                # difAngSide= (angSide+pi/2-ang[1] -(lastAngSide+pi/2-lastAng))
-                # difAngSide= (angSide+pi/2-ang[1] -(lastAngSide+pi/2-lastAng))
-                # angTan = ang[5]+lastAngTan
-                # print(ang[5]+lastAngTan)
-                if ((ang[2]!=lastIndex)): # and angTan > 2*pi :
-                    # print(difAngSide, angSide ,lastAngSide,ang[2],lastIndex,ang[1],lastAng)
-                    # print(difAngSide,angSide,lastAngSide,ang[2],lastIndex)
+
+                if ((ang[2]!=lastIndex)): 
+
                     vert=int((degrees(difAng))/theta)+1
                     for i in range(vert):
                         angL=lastAng+difAng/vert*i
                         listVertX.append(x+Radius*cos(angL))
                         listVertY.append(y+Radius*sin(angL))
                         listVertZ.append(z)
-                # else:
-                    # listVertX.append(x+Radius*cos((lastAng+difAng/2)))
-                    # listVertY.append(y+Radius*sin((lastAng+difAng/2)))
-                    # listVertZ.append(z)
+
                     
                 lastIndex=ang[2]
                 lastAng=ang[1]
@@ -534,7 +525,7 @@ class SvIsoLinesNode(bpy.types.Node, SverchCustomTreeNode):
         
             for i in range(vert):
                 localAngle = (radians(theta*i) + vAngle + 4*pi) % (2*pi)
-                # if d==0:
+
                 listVertX.append(x + Radius*cos(localAngle))
                 listVertY.append(y + Radius*sin(localAngle)) 
                 listVertZ.append(z)
@@ -638,7 +629,7 @@ class SvIsoLinesNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
 
                     perimeterNumber = len(Radius)
-                    actualRadius=[] #[Radius[i%len(Radius)] for i in range(vLen)]
+                    actualRadius=[] 
                     for i in range(perimeterNumber):
                             actualRadius.append([Radius[i%len(Radius)] for j in range(vLen)])
                     
