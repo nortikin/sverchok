@@ -141,6 +141,13 @@ class SvPreset(object):
                 bl_label = "Add {} preset".format(self.name)
                 bl_options = {'REGISTER', 'UNDO'}
 
+                @classmethod
+                def poll(cls, context):
+                    try:
+                        return context.space_data.node_tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
+                    except:
+                        return False
+
                 def execute(operator, context):
                     # please not be confused: "operator" here references to
                     # SverchPresetAddOperator instance, and "self" references to
