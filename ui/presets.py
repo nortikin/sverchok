@@ -227,7 +227,7 @@ class SvSaveSelected(bpy.types.Operator):
 
 class SvPresetProps(bpy.types.Operator):
     """
-    Change the name of preset
+    Edit preset properties
     """
 
     bl_idname = "node.sv_preset_props"
