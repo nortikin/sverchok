@@ -290,6 +290,7 @@
 ## Alpha Nodes
     SvCurveViewerNode
     SvCurveViewerNodeAlt
+    SvCurveViewerNodeMK2
     SvPolylineViewerNodeMK1
     SvPolylineViewerNodeMK2
     SvBmeshViewerNodeMK3

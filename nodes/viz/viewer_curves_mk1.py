@@ -21,7 +21,7 @@ import itertools
 import bpy
 from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 
-from mathutils import Matrix, Vector
+from mathutils import Vector
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
@@ -31,6 +31,13 @@ from sverchok.data_structure import (
     updateNode)
 
 from sverchok.utils.sv_viewer_utils import matrix_sanitizer
+from sverchok.utils.sv_obj_helper import SvObjHelper
+
+
+"""
+in 2D mode fill_mode must exist out of :   ('NONE', 'BACK', 'FRONT', 'BOTH')
+
+"""
 
 
 # -- DUPLICATES --
@@ -56,7 +63,7 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
 
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
+    cu.dimensions = node.curve_dimensions
     cu.fill_mode = 'FULL'
 
     # rebuild!
@@ -90,11 +97,11 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
 
 # -- MERGE --
 def make_merged_live_curve(node, obj_index, verts, edges, matrices):
-    cu = node.get_obj_curve(obj_index)
+    obj, cu = node.get_obj_curve(obj_index)
 
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
+    cu.dimensions = node.curve_dimensions
     cu.fill_mode = 'FULL'
 
     for matrix in matrices:
@@ -115,11 +122,11 @@ def make_merged_live_curve(node, obj_index, verts, edges, matrices):
 # -- UNIQUE --
 def live_curve(obj_index, verts, edges, matrix, node):
 
-    cu = node.get_obj_curve(obj_index)
+    obj, cu = node.get_obj_curve(obj_index)
 
     cu.bevel_depth = node.depth
     cu.bevel_resolution = node.resolution
-    cu.dimensions = '3D'
+    cu.dimensions = node.curve_dimensions
     cu.fill_mode = 'FULL'
 
     # and rebuild
@@ -140,7 +147,7 @@ def make_curve_geometry(node, context, obj_index, verts, *topology):
     
     sv_object = live_curve(obj_index, verts, edges, matrix, node)
     sv_object.hide_select = False
-    self.push_custom_matrix_if_present(sv_object, matrix)
+    node.push_custom_matrix_if_present(sv_object, matrix)
 
 
 class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
@@ -164,6 +171,14 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         description="merge or use duplicates",
         default="Unique",
         update=updateNode
+    )
+
+
+    dimension_modes = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
+    
+    curve_dimensions = bpy.props.EnumProperty(
+        items=dimension_modes, update=updateNode,
+        description="2D or 3D curves", default="3D"
     )
 
     data_kind = StringProperty(default='CURVE')
@@ -190,6 +205,7 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         self.draw_object_buttons(context, layout)
 
+        layout.row().prop(self, 'curve_dimensions', expand=True)
         col = layout.column()
         col.prop(self, 'depth', text='depth radius')
         col.prop(self, 'resolution', text='surface resolution')
@@ -246,6 +262,10 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             return j
 
     def process(self):
+
+        if not self.activate:
+            return
+
         if not (self.inputs['vertices'].is_linked and self.inputs['edges'].is_linked):
             # possible remove any potential existing geometry here too
             return
