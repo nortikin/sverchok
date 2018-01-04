@@ -559,33 +559,37 @@ class SvUserPresetsPanel(bpy.types.Panel):
             layout.separator()
 
         presets = get_presets()
-        if len(presets):
-            layout.prop(panel_props, 'manage_mode', toggle=True)
-            layout.separator()
+        layout.prop(panel_props, 'manage_mode', toggle=True)
+        layout.separator()
 
         if panel_props.manage_mode:
             col = layout.column(align=True)
             col.operator("node.sv_preset_from_gist", icon='URL')
             col.operator("node.sv_preset_from_file", icon='IMPORT')
 
-            layout.label("Manage presets:")
-            for preset in presets:
-                name = preset.name
+            if len(presets):
+                layout.label("Manage presets:")
+                for preset in presets:
+                    name = preset.name
 
-                row = layout.row(align=True)
-                row.label(text=name)
+                    row = layout.row(align=True)
+                    row.label(text=name)
 
-                gist = row.operator('node.sv_preset_to_gist', text="", icon='URL')
-                gist.preset_name = name
+                    gist = row.operator('node.sv_preset_to_gist', text="", icon='URL')
+                    gist.preset_name = name
 
-                export = row.operator('node.sv_preset_to_file', text="", icon="EXPORT")
-                export.preset_name = name
+                    export = row.operator('node.sv_preset_to_file', text="", icon="EXPORT")
+                    export.preset_name = name
 
-                rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
-                rename.old_name = name
+                    rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
+                    rename.old_name = name
 
-                delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
-                delete.preset_name = name
+                    delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
+                    delete.preset_name = name
+            else:
+                layout.label("You do not have any presets.")
+                layout.label("You can import some presets")
+                layout.label("from Gist or from file.")
 
         else:
             if len(presets):
@@ -593,7 +597,8 @@ class SvUserPresetsPanel(bpy.types.Panel):
                 draw_presets_ops(layout, ntree.name, presets)
             else:
                 layout.label("You do not have any presets.")
-                layout.label("Use `Save Preset' button.")
+                layout.label("Select some nodes and")
+                layout.label("Use the `Save Preset' button.")
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode = BoolProperty(name = "Manage Presets",
