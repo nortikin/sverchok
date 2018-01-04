@@ -16,6 +16,7 @@ Contents:
    induction
    nodes
    contribute
+   contribute_small_things
    panels
 
 
