@@ -271,7 +271,6 @@ class SvObjHelper():
         for object_name in obj_names:
             kinds.remove(kinds[object_name])        
 
-
     def get_obj_curve(self, obj_index):
         curves = bpy.data.curves
         objects = bpy.data.objects
@@ -298,6 +297,14 @@ class SvObjHelper():
             cu.splines.clear()
 
         return obj, cu
+
+
+    def push_custom_matrix_if_present(self, sv_object, matrix):
+        if matrix:
+            matrix = matrix_sanitizer(matrix)
+            sv_object.matrix_local = matrix
+        else:
+            sv_object.matrix_local = Matrix.Identity(4)    
 
 
     def copy(self, other):
