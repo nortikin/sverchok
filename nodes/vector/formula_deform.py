@@ -38,9 +38,11 @@ class SvFormulaDeformNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Verts')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "ModeX", text="X")
-        layout.prop(self, "ModeY", text="Y")
-        layout.prop(self, "ModeZ", text="Z")
+        for element in 'XYZ':
+            row = layout.row()
+            split = row.split(percentage=0.15)
+            split.label(element)
+            split.split().prop(self, "Mode"+element, text='')
 
     def process(self):
         Io = self.inputs[0]
@@ -48,9 +50,9 @@ class SvFormulaDeformNode(bpy.types.Node, SverchCustomTreeNode):
         if Oo.is_linked:
             out = []
             V = Io.sv_get()
-            Value = "[("+self.ModeX+","+self.ModeY+","+self.ModeZ+") for (x, y, z),t in zip(i, T)]"
-            for i in V:
-                T = range(len(i))
+            Value = "[("+self.ModeX+","+self.ModeY+","+self.ModeZ+") for (x, y, z),i in zip(L, I)]"
+            for L in V:
+                I = range(len(L))
                 out.append(eval(Value))
             Oo.sv_set(out)
 
