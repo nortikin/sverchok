@@ -19,7 +19,6 @@
 from operator import itemgetter
 
 import bpy
-import time
 from bpy.props import EnumProperty
 from mathutils import Matrix, Vector
 from mathutils.geometry import intersect_point_line
