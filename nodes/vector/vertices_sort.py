@@ -19,6 +19,7 @@
 from operator import itemgetter
 
 import bpy
+import time
 from bpy.props import EnumProperty
 from mathutils import Matrix, Vector
 from mathutils.geometry import intersect_point_line
@@ -32,26 +33,30 @@ from sverchok.data_structure import (repeat_last, Matrix_generate, Vector_genera
 def distK(v1, v2):
     return sum((i[0]-i[1])**2 for i in zip(v1, v2))
 
-def sortVerticesByConnexions(verts_in,edges_in):
+
+def sortVerticesByConnexions(verts_in, edges_in):
     vertsOut = []
     edgesOut = []
     index = []
     edgeLegth = len(edges_in)
     edgesIndex = [j for j in range(edgeLegth)]
+    edges0 = [j[0] for j in edges_in]
+    edges1 = [j[1] for j in edges_in]
     edIndex = 0
     orSide = 0
-    edgesCopy = list(zip(edgesIndex,edges_in))
-    edgesCopy.pop(0)
+    edgesCopy = [edges0,edges1, edgesIndex]
 
-    
+    for co in edgesCopy:
+        co.pop(0)
+
     for j in range(edgeLegth):
         e = edges_in[edIndex]
         ed = []
         if orSide == 1:
-            e=[e[1], e[0]]
-        
+            e = [e[1], e[0]]
+
         for side in e:
-            if  verts_in[side] in  vertsOut:
+            if verts_in[side] in vertsOut:
                 ed.append(vertsOut.index(verts_in[side]))
             else:
                 vertsOut.append(verts_in[side])
@@ -59,38 +64,40 @@ def sortVerticesByConnexions(verts_in,edges_in):
                 index.append(side)
 
         edgesOut.append(ed)
-        
+
         edIndexOld = edIndex
         vIndex = e[1]
-
-        for k in range(len(edgesCopy)):
-            
-            if vIndex == edgesCopy[k][1][0] :
-                edIndex=edgesCopy[k][0]
-                edgesCopy.pop(k)
-                orSide =0
-                break
-            elif vIndex== edgesCopy[k][1][1] :
-                    edIndex=edgesCopy[k][0]
-                    edgesCopy.pop(k)
-                    orSide =1
-                    break
-        if edIndex == edIndexOld and len(edgesCopy) > 0:
-            edIndex = edgesCopy[0][0]
-
+        if vIndex in edgesCopy[0]:
+            k = edgesCopy[0].index(vIndex)
+            edIndex = edgesCopy[2][k]
             orSide = 0
-            edgesCopy.pop(0)
             
-    ##add unconnected vertices        
+            for co in edgesCopy:
+                co.pop(k) 
+
+        elif vIndex in edgesCopy[1]:
+            k = edgesCopy[1].index(vIndex)
+            edIndex = edgesCopy[2][k]
+            orSide = 1
+            for co in edgesCopy:
+                co.pop(k) 
+        
+        if edIndex == edIndexOld and len(edgesCopy[0]) > 0:
+            edIndex = edgesCopy[2][0]
+            orSide = 0
+            for co in edgesCopy:
+                co.pop(0) 
+
+    # add unconnected vertices
     if len(vertsOut) != len(verts_in):
-        for verts, i  in zip(verts_in,range(len(verts_in))):
-             if  verts not in  vertsOut:
+        for verts, i in zip(verts_in, range(len(verts_in))):
+            if verts not in vertsOut:
                 vertsOut.append(verts)
                 index.append(i)
-                    
+
     return vertsOut, edgesOut, index
     
-##function taken from poligons_to_edges.py
+# function taken from poligons_to_edges.py
 def pols_edges(obj, unique_edges=False):
     out = []
     for faces in obj:
@@ -105,6 +112,7 @@ def pols_edges(obj, unique_edges=False):
                 out_edges.append(edge)
         out.append(out_edges)
     return out
+
 
 class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector sort'''
@@ -143,11 +151,11 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
              ("CONNEX", "Connect", "Sort by connections",   4),
              ("USER",   "User", "User defined", 10)]
 
-    mode = EnumProperty(default='XYZ', items=modes,name='Mode',  description='Sort Mode',
+    mode = EnumProperty(default='XYZ', items=modes,
+                        name='Mode', description='Sort Mode',
                         update=mode_change)
 
     def draw_buttons(self, context, layout):
-        # layout.label("Sort mode:")
         layout.prop(self, "mode", expand=False)
         if self.mode == "XYZ":
             pass
@@ -161,7 +169,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Item order')
 
     def process(self):
-
+        
         verts = self.inputs['Vertices'].sv_get()
 
         if self.inputs['PolyEdge'].is_linked:
@@ -275,12 +283,12 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
                     pols = []
                     if len(p[0])>2:
                         pols = p
-                        p=pols_edges(p,True)
-                    vN, pN, iN = sortVerticesByConnexions(v,p)
-                    if len(pols)>0:
-                        newPols=[]
+                        p = pols_edges(p, True)
+                    vN, pN, iN = sortVerticesByConnexions(v, p)
+                    if len(pols) > 0:
+                        newPols = []
                         for pol in pols[0]:
-                            newPol=[]
+                            newPol = []
                             for i in pol:
                                 newPol.append(iN.index(i))
                             newPols.append(newPol)
