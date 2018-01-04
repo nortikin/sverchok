@@ -168,7 +168,6 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Item order')
 
     def process(self):
-        
         verts = self.inputs['Vertices'].sv_get()
 
         if self.inputs['PolyEdge'].is_linked:
