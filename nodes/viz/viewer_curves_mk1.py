@@ -19,11 +19,7 @@
 import itertools
 
 import bpy
-from bpy.props import (
-    BoolProperty,
-    StringProperty,
-    FloatProperty,
-    IntProperty)
+from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 
 from mathutils import Matrix, Vector
 
@@ -34,11 +30,7 @@ from sverchok.data_structure import (
     fullList,
     updateNode)
 
-from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer,
-    natural_plus_one,
-    get_random_init,
-    greek_alphabet)
+from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 
 
 # -- DUPLICATES --
@@ -157,8 +149,8 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     Tooltip: Advanced 2d/3d curve outputting into scene
     """
 
-    bl_idname = 'SvCurveViewerNode'
-    bl_label = 'Curve Viewer'
+    bl_idname = 'SvCurveViewerNodeMK2'
+    bl_label = 'Curve Viewer mk2'
     bl_icon = 'MOD_CURVE'
 
     mode_options = [
@@ -205,6 +197,31 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         self.draw_ext_object_buttons(context, layout)
+
+    def remove_cloner_curve(self):
+        # opportunity to remove the .cloner.
+        if self.mode == 'Duplicate':
+            curve_name = self.basedata_name + '.cloner.' + str("%04d" % obj_index)
+            cu = bpy.data.curves.get(curve_name)
+            if cu:
+                bpy.data.curves.remove(cu) 
+
+    def output_dupe_or_merged_geometry(self, TYPE, mverts, *mrest):
+        '''
+        this should probably be shared in the main process function but
+        for prototyping convenience and logistics i will keep this separate
+        for the time-being. Upon further consideration, i might suggest keeping this
+        entirely separate to keep function length shorter.
+        '''
+        verts = mverts[0]
+        edges = mrest[0][0]
+        matrices = mrest[1]
+
+        # object index = 0 because these modes will output only one object.
+        if TYPE == 'Merge':
+            make_merged_live_curve(self, 0, verts, edges, matrices)
+        elif TYPE == 'Duplicate':
+            make_duplicates_live_curve(self, 0, verts, edges, matrices)
 
     def get_geometry_from_sockets(self):
 
@@ -279,79 +296,10 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.set_corresponding_materials(objs)
         self.remove_cloner_curve()
 
-    def remove_cloner_curve(self):
-        # opportunity to remove the .cloner.
-        if self.mode == 'Duplicate':
-            curve_name = self.basedata_name + '.cloner.' + str("%04d" % obj_index)
-            cu = bpy.data.curves.get(curve_name)
-            if cu:
-                bpy.data.curves.remove(cu) 
-
-    def output_dupe_or_merged_geometry(self, TYPE, mverts, *mrest):
-        '''
-        this should probably be shared in the main process function but
-        for prototyping convenience and logistics i will keep this separate
-        for the time-being. Upon further consideration, i might suggest keeping this
-        entirely separate to keep function length shorter.
-        '''
-        verts = mverts[0]
-        edges = mrest[0][0]
-        matrices = mrest[1]
-
-        # object index = 0 because these modes will output only one object.
-        if TYPE == 'Merge':
-            make_merged_live_curve(self, 0, verts, edges, matrices)
-        elif TYPE == 'Duplicate':
-            make_duplicates_live_curve(self, 0, verts, edges, matrices)
-
-    # def get_children(self):
-    #     objects = bpy.data.objects
-    #     objs = [obj for obj in objects if obj.type == 'CURVE']
-    #     return [o for o in objs if o.name.startswith(self.basemesh_name + "_")]
-
-    # def remove_non_updated_objects(self, obj_index):
-    #     objs = self.get_children()
-    #     # print('found', [o.name for o in objs])
-
-    #     objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
-    #     # print('want to remove:', objs)
-
-    #     if not objs:
-    #         return
-
-    #     curves = bpy.data.curves
-    #     objects = bpy.data.objects
-    #     scene = bpy.context.scene
-
-    #     # remove excess objects
-    #     for object_name in objs:
-    #         obj = objects[object_name]
-    #         obj.hide_select = False
-    #         scene.objects.unlink(obj)
-    #         objects.remove(obj)
-
-    #     # delete associated meshes
-    #     if (self.selected_mode == 'Duplicate'):
-    #         objs = self.get_children()
-    #         objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > 0]
-    #         # in Duplicate mode it's necessary to remove existing curves above index 0.
-    #         # A previous mode may have generated such curves.
-
-    #         for object_name in objs:
-    #             if curves.get(object_name):
-    #                 curves.remove(curves[object_name])
-    #     else:
-    #         for object_name in objs:
-    #             curves.remove(curves[object_name])
-
-
-
 
 def register():
-    bpy.utils.register_class(SvCurveViewerNode)
-    bpy.utils.register_class(SvCurveViewOp)
+    bpy.utils.register_class(SvCurveViewerNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvCurveViewerNode)
-    bpy.utils.unregister_class(SvCurveViewOp)
+    bpy.utils.unregister_class(SvCurveViewerNodeMK2)
