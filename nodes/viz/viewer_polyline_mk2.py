@@ -31,35 +31,6 @@ from sverchok.utils.sv_viewer_utils import (
     natural_plus_one, get_random_init, greek_alphabet)
 
 
-
-def get_obj_curve(obj_index, node):
-    curves = bpy.data.curves
-    objects = bpy.data.objects
-    scene = bpy.context.scene
-
-    curve_name = node.basedata_name + '.' + str("%04d" % obj_index)
-
-    # if curve data exists, pick it up else make new curve
-    cu = curves.get(curve_name)
-    if not cu:
-        cu = curves.new(name=curve_name, type='CURVE')
-
-    # if object reference exists, pick it up else make a new one
-    obj = objects.get(curve_name)
-    if not obj:
-        obj = objects.new(curve_name, cu)
-        obj['basedata_name'] = node.basedata_name
-        obj['madeby'] = node.name
-        obj['idx'] = obj_index
-        scene.objects.link(obj)
-
-    # break down existing splines entirely.
-    if cu.splines:
-        cu.splines.clear()
-
-    return obj, cu
-
-
 def set_bevel_object(node, cu, obj_index):
     # use bevel object if provided
     bevel_objs = node.inputs['bevel object'].sv_get(default=[])
@@ -76,7 +47,7 @@ def set_bevel_object(node, cu, obj_index):
 # -- POLYLINE --
 def live_curve(obj_index, node, verts, radii, twist):
 
-    obj, cu = get_obj_curve(obj_index, node)
+    obj, cu = node.get_obj_curve(obj_index)
 
     obj.show_wire = node.show_wire
     cu.bevel_depth = node.depth

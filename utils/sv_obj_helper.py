@@ -272,6 +272,34 @@ class SvObjHelper():
             kinds.remove(kinds[object_name])        
 
 
+    def get_obj_curve(self, obj_index):
+        curves = bpy.data.curves
+        objects = bpy.data.objects
+        scene = bpy.context.scene
+
+        curve_name = self.basedata_name + '.' + str("%04d" % obj_index)
+
+        # if curve data exists, pick it up else make new curve
+        cu = curves.get(curve_name)
+        if not cu:
+            cu = curves.new(name=curve_name, type='CURVE')
+
+        # if object reference exists, pick it up else make a new one
+        obj = objects.get(curve_name)
+        if not obj:
+            obj = objects.new(curve_name, cu)
+            obj['basedata_name'] = self.basedata_name
+            obj['madeby'] = self.name
+            obj['idx'] = obj_index
+            scene.objects.link(obj)
+
+        # break down existing splines entirely.
+        if cu.splines:
+            cu.splines.clear()
+
+        return obj, cu
+
+
     def copy(self, other):
         self.basedata_name = get_random_init_v2()
 
