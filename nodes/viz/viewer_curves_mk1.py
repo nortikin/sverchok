@@ -34,10 +34,19 @@ from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 from sverchok.utils.sv_obj_helper import SvObjHelper
 
 
-"""
-in 2D mode fill_mode must exist out of :   ('NONE', 'BACK', 'FRONT', 'BOTH')
+def tuple_to_enumdata(*iterable):
+    return [(k, k, '', i) for i, k in enumerate(iterable)]
 
-"""
+dimension_modes = tuple_to_enumdata("3D", "2D")
+fill_modes_2d = tuple_to_enumdata('NONE', 'BACK', 'FRONT', 'BOTH')
+fill_modes_3d = tuple_to_enumdata('HALF', 'FRONT', 'BACK', 'FULL')
+mode_options = tuple_to_enumdata("Merge", "Duplicate", "Unique")
+
+def set_curve_props(node, cu):
+    cu.bevel_depth = node.depth
+    cu.bevel_resolution = node.resolution
+    cu.dimensions = node.curve_dimensions
+    cu.fill_mode = node.set_fill_mode()
 
 
 # -- DUPLICATES --
@@ -61,11 +70,8 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
     if cu.splines:
         cu.splines.clear()
 
-    cu.bevel_depth = node.depth
-    cu.bevel_resolution = node.resolution
-    cu.dimensions = node.curve_dimensions
-    cu.fill_mode = 'FULL'
-
+    set_curve_props(node, cu)
+    
     # rebuild!
     for edge in edges:
         v0, v1 = verts[edge[0]], verts[edge[1]]
@@ -80,9 +86,10 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
     # assign the same curve to all Objects.
     for obj_index, matrix in enumerate(matrices):
         m = matrix_sanitizer(matrix)
-        obj_name= node.basedata_name + '.' + str("%04d" % obj_index)
-        
+
         # get object to clone the Curve data into.
+        obj_name = node.basedata_name + '.' + str("%04d" % obj_index)
+
         obj = objects.get(obj_name)
         if not obj:
             obj = objects.new(obj_name, cu)
@@ -97,13 +104,10 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
 
 # -- MERGE --
 def make_merged_live_curve(node, obj_index, verts, edges, matrices):
+
     obj, cu = node.get_obj_curve(obj_index)
-
-    cu.bevel_depth = node.depth
-    cu.bevel_resolution = node.resolution
-    cu.dimensions = node.curve_dimensions
-    cu.fill_mode = 'FULL'
-
+    set_curve_props(node, cu)
+    
     for matrix in matrices:
         m = matrix_sanitizer(matrix)
 
@@ -123,11 +127,7 @@ def make_merged_live_curve(node, obj_index, verts, edges, matrices):
 def live_curve(obj_index, verts, edges, matrix, node):
 
     obj, cu = node.get_obj_curve(obj_index)
-
-    cu.bevel_depth = node.depth
-    cu.bevel_resolution = node.resolution
-    cu.dimensions = node.curve_dimensions
-    cu.fill_mode = 'FULL'
+    set_curve_props(node, cu)
 
     # and rebuild
     for edge in edges:
@@ -160,26 +160,23 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_label = 'Curve Viewer mk2'
     bl_icon = 'MOD_CURVE'
 
-    mode_options = [
-        ("Merge", "Merge", "", 0),
-        ("Duplicate", "Duplicate", "", 1),
-        ("Unique", "Unique", "", 2)
-    ]
-
     selected_mode = bpy.props.EnumProperty(
         items=mode_options,
         description="merge or use duplicates",
         default="Unique",
-        update=updateNode
-    )
-
-
-    dimension_modes = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
+        update=updateNode)
     
     curve_dimensions = bpy.props.EnumProperty(
         items=dimension_modes, update=updateNode,
-        description="2D or 3D curves", default="3D"
-    )
+        description="2D or 3D curves", default="3D")
+
+    fill_2D = bpy.props.EnumProperty(
+        items=fill_modes_2d, description="offers fill more for 2d Curve data",
+        default=fill_modes_2d[2][0], update=updateNode)
+
+    fill_3D = bpy.props.EnumProperty(
+        items=fill_modes_3d, description="offers fill more for 3d Curve data",
+        default=fill_modes_3d[3][0], update=updateNode)
 
     data_kind = StringProperty(default='CURVE')
     grouping = BoolProperty(default=False)
@@ -206,17 +203,24 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.draw_object_buttons(context, layout)
 
         layout.row().prop(self, 'curve_dimensions', expand=True)
-        col = layout.column()
+        col = layout.column(align=True)
         col.prop(self, 'depth', text='depth radius')
         col.prop(self, 'resolution', text='surface resolution')
+        
+        col.separator()
+        row = col.row()
+        row.prop(self, 'fill_' + self.curve_dimensions, expand=True)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         self.draw_ext_object_buttons(context, layout)
 
+    def set_fill_mode(self):
+        return self.fill_3D if self.curve_dimensions == '3D' else self.fill_2D 
+
     def remove_cloner_curve(self):
         # opportunity to remove the .cloner.
-        if self.mode == 'Duplicate':
+        if self.selected_mode == 'Duplicate':
             curve_name = self.basedata_name + '.cloner.' + str("%04d" % obj_index)
             cu = bpy.data.curves.get(curve_name)
             if cu:
@@ -313,7 +317,7 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         if self.grouping:
             self.to_group(objs)
 
-        self.set_corresponding_materials(objs)
+        self.set_corresponding_materials()
         self.remove_cloner_curve()
 
 

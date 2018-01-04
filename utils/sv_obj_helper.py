@@ -20,8 +20,9 @@
 import bpy
 from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty, BoolVectorProperty)
 
-from sverchok.data_structure import updateNode
+from mathutils import Matrix
 
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, natural_plus_one, greek_alphabet)
 
