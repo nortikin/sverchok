@@ -15,7 +15,7 @@ Contents:
    geometry
    induction
    nodes
-   contribute
+   contributing
    contribute_small_things
    panels
 
