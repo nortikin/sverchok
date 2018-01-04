@@ -29,18 +29,18 @@ class SvFormulaDeformNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Deform by formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    ModeX = StringProperty(name='formula', default='x', update=updateNode)
-    ModeY = StringProperty(name='formula', default='y', update=updateNode)
-    ModeZ = StringProperty(name='formula', default='z', update=updateNode)
+    ModeX = StringProperty(name='formulaX', default='x', update=updateNode)
+    ModeY = StringProperty(name='formulaY', default='y', update=updateNode)
+    ModeZ = StringProperty(name='formulaZ', default='z', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts')
         self.outputs.new('VerticesSocket', 'Verts')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "ModeX", text="X=")
-        layout.prop(self, "ModeY", text="Y=")
-        layout.prop(self, "ModeZ", text="Z=")
+        layout.prop(self, "ModeX", text="X")
+        layout.prop(self, "ModeY", text="Y")
+        layout.prop(self, "ModeZ", text="Z")
 
     def process(self):
         Io = self.inputs[0]
