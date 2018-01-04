@@ -807,6 +807,9 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
         else:
             ng = bpy.data.node_groups[self.id_tree]
 
+        # Deselect everything, so as a result only imported nodes
+        # will be selected
+        bpy.ops.node.select_all(action='DESELECT')
         import_tree(ng, self.filepath)
         context.space_data.node_tree = ng
         return {'FINISHED'}
@@ -851,6 +854,56 @@ class SvNodeTreeImporter(bpy.types.Operator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
+def load_json_from_gist(gist_id, operator=None):
+    """
+    Load JSON data from Gist by gist ID.
+
+    gist_id: gist ID. Passing full URL is also supported.
+    operator: optional instance of bpy.types.Operator. Used for errors reporting.
+
+    Returns JSON dictionary.
+    """
+
+    def read_n_decode(url):
+        try:
+            content_at_url = urlopen(url)
+            found_json = content_at_url.read().decode()
+            return found_json
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
+                message = 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source'
+                error(message)
+                if operator:
+                    operator.report({'ERROR'}, message)
+            else:
+                message = 'url error:' + str(err.code)
+                error(message)
+                if operator:
+                    operator.report({'ERROR'}, message)
+        except Exception as err:
+            exception(err)
+            if operator:
+                operator.report({'ERROR'}, 'unspecified error, check your internet connection')
+
+        return
+
+    # if it still has the full gist path, trim down to ID
+    if '/' in gist_id:
+        gist_id = gist_id.split('/')[-1]
+
+    gist_id = str(gist_id)
+    url = 'https://api.github.com/gists/' + gist_id
+    found_json = read_n_decode(url)
+    if not found_json:
+        return
+
+    wfile = json.JSONDecoder()
+    wjson = wfile.decode(found_json)
+
+    # 'files' may contain several names, we pick the first (index=0)
+    file_name = list(wjson['files'].keys())[0]
+    nodes_str = wjson['files'][file_name]['content']
+    return json.loads(nodes_str)
 
 class SvNodeTreeImportFromGist(bpy.types.Operator):
 
@@ -860,45 +913,6 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
     id_tree = StringProperty()
     new_nodetree_name = StringProperty()
     gist_id = StringProperty()
-
-    def read_n_decode(self, url):
-        try:
-            content_at_url = urlopen(url)
-            found_json = content_at_url.read().decode()
-            return found_json
-        except urllib.error.HTTPError as err:
-            if err.code == 404:
-                self.report({'ERROR'}, 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source')
-            else:
-                self.report({'ERROR'}, 'url error:' + str(err.code))
-        except:
-            self.report({'ERROR'}, 'unspecified error, check your internet connection')
-
-        return
-
-    def obtain_json(self, gist_id):
-
-        # if it still has the full gist path, trim down to ID
-        if '/' in gist_id:
-            gist_id = gist_id.split('/')[-1]
-
-        def get_file(gist_id):
-
-            gist_id = str(gist_id)
-            url = 'https://api.github.com/gists/' + gist_id
-            found_json = self.read_n_decode(url)
-            if not found_json:
-                return
-
-            wfile = json.JSONDecoder()
-            wjson = wfile.decode(found_json)
-
-            # 'files' may contain several names, we pick the first (index=0)
-            file_name = list(wjson['files'].keys())[0]
-            nodes_str = wjson['files'][file_name]['content']
-            return json.loads(nodes_str)
-
-        return get_file(gist_id)
 
     def execute(self, context):
         if not self.id_tree:
@@ -913,7 +927,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         if self.gist_id == 'clipboard':
             self.gist_id = context.window_manager.clipboard
 
-        nodes_json = self.obtain_json(self.gist_id.strip())
+        nodes_json = load_json_from_gist(self.gist_id.strip(), self)
         if not nodes_json:
             return {'CANCELLED'}
 
@@ -928,11 +942,13 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
     bl_idname = "node.tree_export_to_gist"
     bl_label = "sv NodeTree Gist Export Operator"
 
+    selected_only = BoolProperty(name = "Selected only", default=False)
+
     def execute(self, context):
         ng = context.space_data.node_tree
         gist_filename = ng.name
         gist_description = 'to do later?'
-        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=False)
+        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
 
         try:
             gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
@@ -1036,6 +1052,12 @@ class SvIOPanelProperties(bpy.types.PropertyGroup):
         items=[("Import", "Import", "", 0), ("Export", "Export", "", 1)],
         description="display import or export",
         default="Export"
+    )
+
+    export_selected_only = BoolProperty(
+        name = "Selected Only",
+        description = "Export selected nodes only",
+        default = False
     )
 
 classes = [
