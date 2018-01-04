@@ -216,7 +216,7 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.draw_ext_object_buttons(context, layout)
 
     def set_fill_mode(self):
-        return self.fill_3D if self.curve_dimensions == '3D' else self.fill_2D 
+        return getattr(self, "fill_" + self.curve_dimensions) 
 
     def remove_cloner_curve(self):
         # opportunity to remove the .cloner.
