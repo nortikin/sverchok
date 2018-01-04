@@ -588,8 +588,12 @@ class SvUserPresetsPanel(bpy.types.Panel):
                 delete.preset_name = name
 
         else:
-            layout.label("Use preset:")
-            draw_presets_ops(layout, ntree.name, presets)
+            if len(presets):
+                layout.label("Use preset:")
+                draw_presets_ops(layout, ntree.name, presets)
+            else:
+                layout.label("You do not have any presets.")
+                layout.label("Use `Save Preset' button.")
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode = BoolProperty(name = "Manage Presets",
