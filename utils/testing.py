@@ -3,9 +3,10 @@ import bpy
 from os.path import dirname, basename, join
 import unittest
 import json
+from io import StringIO
 
 import sverchok
-from sverchok.utils.logging import debug
+from sverchok.utils.logging import debug, info
 from sverchok.utils.context_managers import sv_preferences
 
 def generate_node_definition(node):
@@ -123,8 +124,11 @@ def run_all_tests():
     sv_init = sverchok.__file__
     start_dir = join(dirname(sv_init), "tests")
     suite = loader.discover(start_dir = start_dir, pattern = "*_tests.py")
-    runner = unittest.TextTestRunner(verbosity=2)
-    return runner.run(suite)
+    buffer = StringIO()
+    runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
+    result = runner.run(suite)
+    info("Test cases result:\n%s", buffer.getvalue())
+    return result
 
 class SverchokTestCase(unittest.TestCase):
     """
