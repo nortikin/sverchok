@@ -923,7 +923,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def storage_set_data(self, storage):
-        # strings_json = storage['string_storage']
+        # strings_json = storage['profile_sublist_storage']
         # lines_list = json.loads(strings_json)['lines']
         # self.id_data.freeze(hard=True)
         # self.dynamic_strings.clear()
@@ -934,28 +934,25 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ...
 
     def storage_get_data(self, node_dict):
+        local_storage = {'knots': [], 'knotsnames': []}
+
         """
-        #print([out_points], [out_names])
-        # sharing data to node:
-        node.SvLists.clear()
-        node.SvSubLists.clear()
         node.SvLists.add().name = 'knots'
         for k in out_points:
             item = node.SvLists['knots'].SvSubLists.add()
             item.SvX, item.SvY, item.SvZ = k
-        #lll = node.SvLists['knots'].SvSubLists[0]
-        #print(lll.SvX,lll.SvY,lll.SvZ)
+
         node.SvLists.add().name = 'knotsnames'
         for k in out_names:
             item = node.SvLists['knotsnames'].SvSubLists.add()
             item.SvName = k[0]
         """
-                
-        # local_storage = {'lines': []}
+
         # for item in self.dynamic_strings:
         #     local_storage['lines'].append(item.line)
-        # node_dict['string_storage'] = json.dumps(local_storage)
-        ...
+        
+        node_dict['profile_sublist_storage'] = json.dumps(local_storage)
+
 
 
 classes = SvSublistGroup, SvListGroup, SvProfileNodeMK2, SvPrifilizer
