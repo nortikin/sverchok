@@ -5,7 +5,7 @@ import json
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree
 
-class ExportSingleSimpleNode(SimpleExportTest):
+class ExportSingleSimpleNode(SverchokTestCase):
 
     def test_box_export(self):
         node = create_node("SvBoxNode", self.tree.name)

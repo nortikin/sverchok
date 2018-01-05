@@ -8,9 +8,12 @@ import sverchok
 from sverchok.utils.logging import debug
 from sverchok.utils.context_managers import sv_preferences
 
-#test_modules = ["box1"]
-
 def generate_node_definition(node):
+    """
+    Generate code that programmatically creates specified node.
+    This works only for simple cases.
+    """
+
     result = """
 tree = get_or_create_node_tree()
 node = create_node("{}", tree.name)
@@ -22,6 +25,9 @@ node = create_node("{}", tree.name)
     return result
 
 def get_node_editor_context():
+    """
+    Prepare context override for bpy operators that need context.
+    """
     win      = bpy.context.window
     scr      = win.screen
     areas  = [area for area in scr.areas if area.type == 'NODE_EDITOR']
@@ -37,12 +43,18 @@ def get_node_editor_context():
     return context
 
 def create_node_tree(name=None):
+    """
+    Create new Sverchok node tree in the scene.
+    """
     if name is None:
         name = "TestingTree"
     debug("Creating tree: %s", name)
     return bpy.data.node_groups.new(name=name, type="SverchCustomTreeType")
 
 def get_or_create_node_tree(name=None):
+    """
+    Create new Sverchok node tree or reuse existing one.
+    """
     if name is None:
         name = "TestingTree"
     if name in bpy.data.node_groups:
@@ -52,6 +64,9 @@ def get_or_create_node_tree(name=None):
         return create_node_tree(name)
 
 def remove_node_tree(name=None):
+    """
+    Remove existing Sverchok node tree.
+    """
     if name is None:
         name = "TestingTree"
     if name in bpy.data.node_groups:
@@ -65,17 +80,27 @@ def remove_node_tree(name=None):
         bpy.data.node_groups.remove(tree)
 
 def create_node(node_type, tree_name=None):
+    """
+    Create Sverchok node by it's bl_idname.
+    """
     if tree_name is None:
         tree_name = "TestingTree"
     debug("Creating node of type %s", node_type)
     return bpy.data.node_groups[tree_name].nodes.new(type=node_type)
 
 def get_node(node_name, tree_name=None):
+    """
+    Return existing node.
+    """
     if tree_name is None:
         tree_name = "TestingTree"
     return bpy.data.node_groups[tree_name].nodes[node_name]
 
 def nodes_are_equal(actual, reference):
+    """
+    Assert that two nodes have the same settings.
+    This works only for simple nodes.
+    """
     if actual.bl_idname != reference.bl_idname:
         raise AssertionError("Actual node {} has bl_idname `{}', but reference has `{}'".format(actual, actual.bl_idname, reference.bl_idname))
     for k, v in actual.items():
@@ -89,14 +114,25 @@ def nodes_are_equal(actual, reference):
             raise AssertionError("Property `{}' is present in reference node, but is not present in actual node {}".format(k, actual))
 
 def run_all_tests():
+    """
+    Run all existing test cases.
+    Test cases are looked up under tests/ directory.
+    """
+
     loader = unittest.TestLoader()
     sv_init = sverchok.__file__
     start_dir = join(dirname(sv_init), "tests")
-    suite = loader.discover(start_dir = start_dir)
+    suite = loader.discover(start_dir = start_dir, pattern = "*_tests.py")
     runner = unittest.TextTestRunner(verbosity=2)
     return runner.run(suite)
 
-class SimpleExportTest(unittest.TestCase):
+class SverchokTestCase(unittest.TestCase):
+    """
+    Base class for Sverchok testcases.
+    At setup, it creates new node tree (it becomes available as self.tree).
+    At teardown, it removes created node tree.
+    """
+
     def setUp(self):
         self.tree = get_or_create_node_tree()
 
@@ -104,9 +140,16 @@ class SimpleExportTest(unittest.TestCase):
         remove_node_tree()
 
     def serialize_json(self, data):
+        """
+        Serialize JSON object in standard format.
+        """
         return json.dumps(data, sort_keys=True, indent=2)
 
     def assert_json_equals(self, actual_json, expected_json):
+        """
+        Assert that two JSON objects are equal.
+        Comparasion is done by serializing both objects.
+        """
         actual_data = self.serialize_json(actual_json)
         expected_data = self.serialize_json(expected_json)
         self.assertEquals(actual_data, expected_data)
@@ -186,6 +229,7 @@ if __name__ == "__main__":
         register()
         result = run_all_tests()
         if not result.wasSuccessful():
+            # We have to raise an exception for Blender to exit with specified exit code.
             raise Exception("Some tests failed")
         sys.exit(0)
     except Exception as e:
