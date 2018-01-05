@@ -239,8 +239,6 @@ def maskByDistance(verts, parameters, modulo, edges, maskT):
     return mask
 
 
-##function taken from vertices_mask.py
-    
 def maskVertices(verts, edges, mask):
     # function taken from vertices_mask.py
     verts_outF = []
@@ -277,18 +275,20 @@ def CalcMidPoints(verts, edges):
     return midPoints
 
 
-def maskEdges(edges,mask):
-    edges_out=[]
-    for m, ed in zip(mask,edges):
-        if m==True:
+def maskEdges(edges, mask):
+    edges_out = []
+    for m, ed in zip(mask, edges):
+        if m == True:
                 edges_out.append(ed)
-    return edges_out    
-    
-def distanceEdges(v1,v2,p):
+    return edges_out
+
+
+def distanceEdges(v1, v2, p):
     a = abs((v2[1]-v1[1]) * p[0] - (v2[0]-v1[0]) * p[1] + (v2[0]*v1[1]) - (v2[1]*v1[0]))
-    b = pow(pow(v2[1]-v1[1],2) + pow(v2[0]-v1[0], 2), 0.5)
+    b = pow(pow(v2[1]-v1[1], 2) + pow(v2[0]-v1[0], 2), 0.5)
     return a / b
-    
+
+
 def removeDoubles(verts_in, edges_in, distance):
     bm = bmesh_from_pydata(verts_in[0], edges_in[0], [])
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=distance)
@@ -301,14 +301,14 @@ def removeDoubles(verts_in, edges_in, distance):
 def sortVerticesByConnexions(verts_in, edges_in):
     vertsOut = []
     edgesOut = []
-    
+
     edgeLegth = len(edges_in)
     edgesIndex = [j for j in range(edgeLegth)]
     edges0 = [j[0] for j in edges_in]
     edges1 = [j[1] for j in edges_in]
     edIndex = 0
     orSide = 0
-    edgesCopy = [edges0,edges1, edgesIndex]
+    edgesCopy = [edges0, edges1, edgesIndex]
 
     for co in edgesCopy:
         co.pop(0)
@@ -325,7 +325,6 @@ def sortVerticesByConnexions(verts_in, edges_in):
             else:
                 vertsOut.append(verts_in[side])
                 ed.append(vertsOut.index(verts_in[side]))
-                
 
         edgesOut.append(ed)
 
@@ -335,71 +334,28 @@ def sortVerticesByConnexions(verts_in, edges_in):
             k = edgesCopy[0].index(vIndex)
             edIndex = edgesCopy[2][k]
             orSide = 0
-            
+
             for co in edgesCopy:
-                co.pop(k) 
+                co.pop(k)
 
         elif vIndex in edgesCopy[1]:
             k = edgesCopy[1].index(vIndex)
             edIndex = edgesCopy[2][k]
             orSide = 1
             for co in edgesCopy:
-                co.pop(k) 
-        
+                co.pop(k)
+
         if edIndex == edIndexOld and len(edgesCopy[0]) > 0:
             edIndex = edgesCopy[2][0]
             orSide = 0
             for co in edgesCopy:
-                co.pop(0) 
+                co.pop(0)
 
     # add unconnected vertices
     if len(vertsOut) != len(verts_in):
         for verts, i in zip(verts_in, range(len(verts_in))):
             if verts not in vertsOut:
                 vertsOut.append(verts)
-                
-
-    return vertsOut, edgesOut
-
-
-def sortVerticesByConexions2(verts_in, edges_in):
-    vertsOut = []
-    edgesOut = []
-    edgeLegth = len(edges_in)
-    edgesIndex = [j for j in range(edgeLegth)]
-    edIndex = 0
-    orSide = 0
-    edgesCopy = list(zip(edgesIndex, edges_in))
-    edgesCopy.pop(0)
-    for j in range(edgeLegth):
-        e = edges_in[edIndex]
-        ed = []
-        if orSide == 1:
-            e = [e[1], e[0]]
-        for side in e:
-            if verts_in[side] in vertsOut:
-                ed.append(vertsOut.index(verts_in[side]))
-            else:
-                vertsOut.append(verts_in[side])
-                ed.append(vertsOut.index(verts_in[side]))
-        edgesOut.append(ed)
-        edIndexOld = edIndex
-        vIndex = e[1]
-        for k in range(len(edgesCopy)):
-            if vIndex == edgesCopy[k][1][0]:
-                edIndex = edgesCopy[k][0]
-                edgesCopy.pop(k)
-                orSide = 0
-                break
-            elif vIndex == edgesCopy[k][1][1]:
-                    edIndex = edgesCopy[k][0]
-                    edgesCopy.pop(k)
-                    orSide = 1
-                    break
-        if edIndex == edIndexOld and len(edgesCopy) > 0:
-            edIndex = edgesCopy[0][0]
-            orSide = 0
-            edgesCopy.pop(0)
 
     return vertsOut, edgesOut
 
@@ -428,12 +384,10 @@ def buildNet(verts_in, edges_in, vLen, Radius):
         net[s1].append((an2 + 0.5*pi) % (2*pi))
         net[s1].append((an2 + 0.5*pi - beta) % (2*pi))
         net[s1].append((an2 + 1.5*pi + beta) % (2*pi))
-    
+
     return net
 
 
-
-    
 def listMatcher(a, listMatch):
     if listMatch == "Long Cycle":
         return match_long_cycle(a)
@@ -456,7 +410,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
                              items=listMatchItems, default="Long Cycle",
                              update=updateNode)
 
-    rm_doubles = FloatProperty(name='R. Doubles', 
+    rm_doubles = FloatProperty(name='R. Doubles',
                                description="Remove Doubles Distance",
                                min=0.0, default=0.0001,
                                step=0.1, update=updateNode)
