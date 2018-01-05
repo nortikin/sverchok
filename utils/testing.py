@@ -80,6 +80,15 @@ def remove_node_tree(name=None):
         tree = bpy.data.node_groups[name]
         bpy.data.node_groups.remove(tree)
 
+def link_node_tree(reference_blend_path, tree_name=None):
+    """
+    Link node tree from specified .blend file.
+    """
+    if tree_name is None:
+        tree_name = "TestingTree"
+    with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
+        data_dst.node_groups = [tree_name]
+
 def create_node(node_type, tree_name=None):
     """
     Create Sverchok node by it's bl_idname.
@@ -114,6 +123,14 @@ def nodes_are_equal(actual, reference):
         if k not in actual:
             raise AssertionError("Property `{}' is present in reference node, but is not present in actual node {}".format(k, actual))
 
+def get_tests_path():
+    """
+    Return path to all test cases (tests/ directory).
+    """
+    sv_init = sverchok.__file__
+    tests_dir = join(dirname(sv_init), "tests")
+    return tests_dir
+
 def run_all_tests():
     """
     Run all existing test cases.
@@ -121,8 +138,7 @@ def run_all_tests():
     """
 
     loader = unittest.TestLoader()
-    sv_init = sverchok.__file__
-    start_dir = join(dirname(sv_init), "tests")
+    start_dir = get_tests_path()
     suite = loader.discover(start_dir = start_dir, pattern = "*_tests.py")
     buffer = StringIO()
     runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
@@ -132,16 +148,8 @@ def run_all_tests():
 
 class SverchokTestCase(unittest.TestCase):
     """
-    Base class for Sverchok testcases.
-    At setup, it creates new node tree (it becomes available as self.tree).
-    At teardown, it removes created node tree.
+    Base class for Sverchok test cases.
     """
-
-    def setUp(self):
-        self.tree = get_or_create_node_tree()
-
-    def tearDown(self):
-        remove_node_tree()
 
     def serialize_json(self, data):
         """
@@ -157,6 +165,36 @@ class SverchokTestCase(unittest.TestCase):
         actual_data = self.serialize_json(actual_json)
         expected_data = self.serialize_json(expected_json)
         self.assertEquals(actual_data, expected_data)
+
+class EmptyTreeTestCase(SverchokTestCase):
+    """
+    Base class for test cases, that work on empty node tree.
+    At setup, it creates new node tree (it becomes available as self.tree).
+    At teardown, it removes created node tree.
+    """
+
+    def setUp(self):
+        self.tree = get_or_create_node_tree()
+
+    def tearDown(self):
+        remove_node_tree()
+
+class ReferenceTreeTestCase(SverchokTestCase):
+
+    reference_file_name = None
+    reference_tree_name = None
+
+    def setUp(self):
+        if self.reference_file_name is None:
+            raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
+        if self.reference_tree_name is None:
+            self.reference_tree_name = "TestingTree"
+        path = join(get_tests_path(), "references", self.reference_file_name)
+        link_node_tree(path)
+        self.tree = get_or_create_node_tree()
+
+    def tearDown(self):
+        remove_node_tree()
 
 class SvRunTests(bpy.types.Operator):
     """
