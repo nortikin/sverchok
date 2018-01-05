@@ -33,6 +33,15 @@ from sverchok.data_structure import (
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.nodes.modifier_change.edges_intersect_mk2 import (
+    order_points,
+    remove_permutations_that_share_a_vertex,
+    get_valid_permutations,
+    can_skip,
+    get_intersection_dictionary,
+    update_mesh,
+    unselect_nonintersecting)
+
 
 modeItems = [
     ("Constant", "Constant", ""),
@@ -41,108 +50,6 @@ modeItems = [
 listMatchItems = [
     ("Long Repeat", "Long Repeat", ""),
     ("Long Cycle", "Long Cycle", "")]
-
-def order_points(edge, point_list):
-    ''' order these edges from distance to v1, then
-    sandwich the sorted list with v1, v2 '''
-    v1, v2 = edge
-    dist = lambda co: (v1-co).length
-    point_list = sorted(point_list, key=dist)
-    return [v1] + point_list + [v2]
-
-
-def remove_permutations_that_share_a_vertex(cm, bm, permutations):
-    ''' Get useful Permutations '''
-
-    final_permutations = []
-    for edges in permutations:
-        raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
-        if cm.duplicates(raw_vert_indices):
-            continue
-
-        # reaches this point if they do not share.
-        final_permutations.append(edges)
-
-    return final_permutations
-
-
-def get_valid_permutations(cm, bm, edge_indices):
-    raw_permutations = itertools.permutations(edge_indices, 2)
-    permutations = [r for r in raw_permutations if r[0] < r[1]]
-    return remove_permutations_that_share_a_vertex(cm, bm, permutations)
-
-
-def can_skip(cm, closest_points, vert_vectors):
-    '''this checks if the intersection lies on both edges, returns True
-    when criteria are not met, and thus this point can be skipped'''
-    if not closest_points:
-        return True
-    if not isinstance(closest_points[0].x, float):
-        return True
-    if cm.num_edges_point_lies_on(closest_points[0], vert_vectors) < 2:
-        return True
-
-    # if this distance is larger than than VTX_PRECISION, we can skip it.
-    cpa, cpb = closest_points
-    return (cpa-cpb).length > cm.VTX_PRECISION
-
-
-def get_intersection_dictionary(cm, bm, edge_indices):
-
-    bm.verts.ensure_lookup_table()
-    bm.edges.ensure_lookup_table()
-
-    permutations = get_valid_permutations(cm, bm, edge_indices)
-
-    k = defaultdict(list)
-    d = defaultdict(list)
-
-    for edges in permutations:
-        raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
-        vert_vectors = cm.vectors_from_indices(bm, raw_vert_indices)
-
-        points = LineIntersect(*vert_vectors)
-
-        # some can be skipped.    (NaN, None, not on both edges)
-        if can_skip(cm, points, vert_vectors):
-            continue
-
-        # reaches this point only when an intersection happens on both edges.
-        [k[edge].append(points[0]) for edge in edges]
-
-    # k will contain a dict of edge indices and points found on those edges.
-    for edge_idx, unordered_points in k.items():
-        tv1, tv2 = bm.edges[edge_idx].verts
-        v1 = bm.verts[tv1.index].co
-        v2 = bm.verts[tv2.index].co
-        ordered_points = order_points((v1, v2), unordered_points)
-        d[edge_idx].extend(ordered_points)
-
-    return d
-
-
-def update_mesh(bm, d):
-    ''' Make new geometry '''
-
-    oe = bm.edges
-    ov = bm.verts
-
-    for old_edge, point_list in d.items():
-        num_edges_to_add = len(point_list)-1
-        for i in range(num_edges_to_add):
-            a = ov.new(point_list[i])
-            b = ov.new(point_list[i+1])
-            oe.new((a, b))
-            bm.normal_update()
-
-
-def unselect_nonintersecting(bm, d_edges, edge_indices):
-    # print(d_edges, edge_indices)
-    if len(edge_indices) > len(d_edges):
-        reserved_edges = set(edge_indices) - set(d_edges)
-        for edge in reserved_edges:
-            bm.edges[edge].select = False
-        # print("unselected {}, non intersecting edges".format(reserved_edges))
 
 
 def intersectEdges(verts, edges, epsi):
@@ -189,7 +96,7 @@ def ptInTriang(p_test, p0, p1, p2):
         return (  (s_p <= 0) and (t_p <= 0) and (s_p + t_p) >= D  )
 
 
-def maskByDistance(verts, parameters, modulo, edges, maskT):
+def maskByDistance(verts, parameters, modulo, edges, maskT, factor):
 
     mask = []
     for i in range(len(verts)):
@@ -203,6 +110,7 @@ def maskByDistance(verts, parameters, modulo, edges, maskT):
             dN = pow(pow(vfx, 2) + pow(vfy, 2), 0.5)
             verticesNum = parameters[1][j]
             dLim = parameters[2][j]*abs(cos(pi/verticesNum))- maskT
+            dLim *=factor
             if dN < dLim:
                 d = 1
                 break
@@ -217,6 +125,8 @@ def maskByDistance(verts, parameters, modulo, edges, maskT):
 
                 dLim1 = r1 * abs(cos(0.5 * pi / parameters[1][ed[0]]))- maskT
                 dLim2 = r2 * abs(cos(0.5 * pi / parameters[1][ed[1]]))- maskT
+                dLim1 *=factor
+                dLim2 *=factor
 
                 netOff = netOffCount[ed[0]]
                 netOffCount[ed[0]] += 3
@@ -637,6 +547,10 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
                     parameters = [data[0:vLen] for data in parameters]
 
                     points = [self.make_verts(vi, v, r, n) for vi, v, r, n in zip(*parameters)]
+                    totalPoints = 0
+                    for p in points:
+                        totalPoints += len(p)
+
                     parameters.append(points)
 
                     edg = [self.make_edges(v, n, len(p)) for vi, v, r, n, p in zip(*parameters)]
@@ -648,15 +562,15 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                     verts_out, _, edges_out = mesh_join(points, [], edg)
 
-                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
-                    checker = [[e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
+                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT, 0.9)
+                    checker = [ [e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
                     checker = list(set([element for tupl in checker for element in tupl]))
-                    smartMask = [i in checker for i in range(len(verts_out))]
+                    smartMask = [i in checker or i > totalPoints for i in range(len(verts_out))]
                     verts_out, edges_out = maskVertices(verts_out, edges_out, smartMask)
 
                     verts_out, edges_out = intersectEdges(verts_out, edges_out, self.epsilon)
 
-                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
+                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT, 1)
 
                     verts_out, edges_out = maskVertices(verts_out, edges_out, mask)
 
@@ -664,7 +578,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                     if inputs['Edges_in'].is_linked:
                         midPoints = CalcMidPoints(verts_out, edges_out)
-                        maskEd = maskByDistance(midPoints, parameters, vLen, edges_in, self.maskT)
+                        maskEd = maskByDistance(midPoints, parameters, vLen, edges_in, self.maskT, 1)
                         edges_out = maskEdges(edges_out, maskEd)
 
                     verts_outFX, edges_outFX = sortVerticesByConnexions(verts_out, edges_out)
