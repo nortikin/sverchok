@@ -34,3 +34,12 @@ class MeshExprExportTest(ReferenceTreeTestCase):
         export_result = create_dict_of_tree(self.tree)
         self.assert_json_equals_file(export_result, "mesh.json")
 
+class MonadExportTest(ReferenceTreeTestCase):
+
+    reference_file_name = "monad_1_ref.blend.gz"
+
+    def test_monad_export(self):
+        export_result = create_dict_of_tree(self.tree)
+        #self.store_reference_json("monad_1.json", export_result)
+        self.assert_json_equals_file(export_result, "monad_1.json")
+
