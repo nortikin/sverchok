@@ -24,12 +24,12 @@ from mathutils import Vector
 import bpy
 import bmesh
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     fullList, match_long_repeat,
     dataCorrect, repeat_last,
     updateNode, match_long_cycle)
+from sverchok.utils.modules.geom_utils import ptInTriang
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
@@ -77,26 +77,7 @@ def intersectEdges(verts, edges, epsi):
     return verts_out, edges_out
 
 
-def ptInTriang(p_test, p0, p1, p2):
-    # Function taken from Ramiro R.C https://stackoverflow.com/a/46409704
-    dX = p_test[0] - p0[0]
-    dY = p_test[1] - p0[1]
-    dX20 = p2[0] - p0[0]
-    dY20 = p2[1] - p0[1]
-    dX10 = p1[0] - p0[0]
-    dY10 = p1[1] - p0[1]
-
-    s_p = (dY20*dX) - (dX20*dY)
-    t_p = (dX10*dY) - (dY10*dX)
-    D = (dX10*dY20) - (dY10*dX20)
-
-    if D > 0:
-        return (  (s_p >= 0) and (t_p >= 0) and (s_p + t_p) <= D  )
-    else:
-        return (  (s_p <= 0) and (t_p <= 0) and (s_p + t_p) >= D  )
-
-
-def maskByDistance(verts, parameters, modulo, edges, maskT, factor):
+def maskByDistance(verts, parameters, modulo, edges, maskT):
 
     mask = []
     for i in range(len(verts)):
@@ -110,7 +91,7 @@ def maskByDistance(verts, parameters, modulo, edges, maskT, factor):
             dN = pow(pow(vfx, 2) + pow(vfy, 2), 0.5)
             verticesNum = parameters[1][j]
             dLim = parameters[2][j]*abs(cos(pi/verticesNum))- maskT
-            dLim *=factor
+
             if dN < dLim:
                 d = 1
                 break
@@ -125,8 +106,6 @@ def maskByDistance(verts, parameters, modulo, edges, maskT, factor):
 
                 dLim1 = r1 * abs(cos(0.5 * pi / parameters[1][ed[0]]))- maskT
                 dLim2 = r2 * abs(cos(0.5 * pi / parameters[1][ed[1]]))- maskT
-                dLim1 *=factor
-                dLim2 *=factor
 
                 netOff = netOffCount[ed[0]]
                 netOffCount[ed[0]] += 3
@@ -141,10 +120,8 @@ def maskByDistance(verts, parameters, modulo, edges, maskT, factor):
                 if A or B:
                     d = 1
                     break
-        if d > 0:
-            mask.append(0)
-        else:
-            mask.append(1)
+
+        mask.append(0 if d > 0 else 1)
 
     return mask
 
@@ -189,7 +166,7 @@ def maskEdges(edges, mask):
     edges_out = []
     for m, ed in zip(mask, edges):
         if m:
-                edges_out.append(ed)
+            edges_out.append(ed)
     return edges_out
 
 
@@ -386,60 +363,28 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         theta = 360/Vertices
         vert = Vertices
         if connex > 1:
-            netC = []
+            netAll = []
             for j in range(0, len(net)):
-                netP = []
                 ind = j % 3
                 if ind != 0:
-                    netP.append(net[j])
-                    angSide = net[3*int(j/3)] - pi/2
-                    offAng = pi/2
-                    if ind == 2:
-                        offAng = pi/2
                     beta = net[j]
-                    angTan = (angSide+offAng-beta)
-                    if angTan < 0:
-                        angTan += 2 * pi
-                    netP.append(beta)
-                    netP.append(int(j/3))
-                    netP.append(angSide)
-                    netP.append(j)
-                    netP.append(angTan)
-                    netC.append(netP)
-            netC.sort()
-            lastAng = netC[-1][1]
-            lastIndex = netC[-1][2]
-            lastAngSide = netC[-1][3]
-            lastAngTan = netC[0][5]
-            for k in range(len(netC)):
-                ang = netC[k]
-                difAng = (ang[1]-lastAng)
-                if lastAng > ang[1]:
-                    difAng += 2 * pi
-                angSide = ang[3]
-                offAng = 3*pi/2
+                    netAll.append(beta)
 
-                if ((ang[2] != lastIndex)):
-                    vert = int((degrees(difAng)) / theta) + 1
-                    for i in range(vert):
-                        angL = lastAng + difAng / vert * i
-                        listVertX.append(x+Radius*cos(angL))
-                        listVertY.append(y+Radius*sin(angL))
-                        listVertZ.append(z)
+            newAngs = [radians(theta * i) for i in range(vert)]
+            newAngs = sorted(newAngs + netAll)
 
-                lastIndex = ang[2]
-                lastAng = ang[1]
-                lastAngSide = ang[3]
-                lastAngTan = ang[5]
-                listVertX.append(x + Radius * cos(ang[0]))
-                listVertY.append(y + Radius * sin(ang[0]))
+            for angL in newAngs:
+                listVertX.append(x + Radius*cos(angL))
+                listVertY.append(y + Radius*sin(angL))
                 listVertZ.append(z)
+
         elif connex == 1:
             beta = (net[1] - net[2])
-            if beta < 0:
+            if beta <= 0:
                 beta = (net[1] - net[2] + 2*pi)
             vAngle += net[0] - net[1] - pi
             vert = int((degrees(beta)) / theta) + 1
+
             for i in range(vert):
                 localAngle = (radians(theta*i) + vAngle + 4*pi) % (2*pi)
                 listVertX.append(x + Radius * cos(localAngle))
@@ -485,7 +430,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
     def make_edges(self, Vertices, net, pointsL):
         listEdg = [(i, i + 1) for i in range(pointsL - 1)]
-        if len(net) == 0:
+        if len(net) != 1:
             listEdg.append((pointsL-1, 0))
         return listEdg
 
@@ -498,33 +443,15 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         inputs, outputs = self.inputs, self.outputs
 
         # inputs
-
-        if inputs['Verts_in'].is_linked:
-
-            VertsAll = inputs['Verts_in'].sv_get(deepcopy=False)
-        else:
-            VertsAll = [[(0.0, 0.0, 0.0)]]
-
-        if inputs['Radius'].is_linked:
-
-            RadiusAll = inputs['Radius'].sv_get(deepcopy=False)
-        else:
-            RadiusAll = [[self.rad_]]
-
-        if inputs['Nº Vertices'].is_linked:
-            VerticesAll = inputs['Nº Vertices'].sv_get(deepcopy=False)
-            VerticesAll = [list(map(lambda x: max(2, int(x)), Vertices)) for Vertices in VerticesAll]
-        else:
-            VerticesAll = [[self.vert_]]
-
-        if inputs['Edges_in'].is_linked:
-            edgesAll = inputs['Edges_in'].sv_get(deepcopy=False)
-        else:
-            edgesAll = [[]]
+        vertsAll = inputs['Verts_in'].sv_get(deepcopy=False, default=[[(0.0, 0.0, 0.0)]])
+        radiusAll = inputs['Radius'].sv_get(deepcopy=False, default=[[self.rad_]])
+        verticesAll = inputs['Nº Vertices'].sv_get(deepcopy=False, default=[[self.vert_]])
+        verticesAll = [list(map(lambda x: max(2, int(x)), Vertices)) for Vertices in verticesAll]
+        edgesAll = inputs['Edges_in'].sv_get(deepcopy=False, default=[[]])
 
         # outputs
         if outputs['Vertices'].is_linked:
-            family = listMatcher([VertsAll, RadiusAll, VerticesAll, edgesAll], self.listMatch)
+            family = listMatcher([vertsAll, radiusAll, verticesAll, edgesAll], self.listMatch)
             vertices_outX = []
             edges_outX = []
             for verts_in, Radius, Vertices, edges_in in zip(*family):
@@ -562,15 +489,15 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                     verts_out, _, edges_out = mesh_join(points, [], edg)
 
-                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT, 0.8)
+                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
                     checker = [ [e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
                     checker = list(set([element for tupl in checker for element in tupl]))
-                    smartMask = [i in checker or i > totalPoints for i in range(len(verts_out))]
+                    smartMask = [i in checker or i >= totalPoints for i in range(len(verts_out))]
                     verts_out, edges_out = maskVertices(verts_out, edges_out, smartMask)
 
                     verts_out, edges_out = intersectEdges(verts_out, edges_out, self.epsilon)
 
-                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT, 1)
+                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
 
                     verts_out, edges_out = maskVertices(verts_out, edges_out, mask)
 
@@ -578,7 +505,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                     if inputs['Edges_in'].is_linked:
                         midPoints = CalcMidPoints(verts_out, edges_out)
-                        maskEd = maskByDistance(midPoints, parameters, vLen, edges_in, self.maskT, 1)
+                        maskEd = maskByDistance(midPoints, parameters, vLen, edges_in, self.maskT)
                         edges_out = maskEdges(edges_out, maskEd)
 
                     verts_outFX, edges_outFX = sortVerticesByConnexions(verts_out, edges_out)
