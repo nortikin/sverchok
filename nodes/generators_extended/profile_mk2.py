@@ -712,10 +712,8 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Profile Parametric'
     bl_icon = 'SYNTAX_ON'
 
-
     SvLists = bpy.props.CollectionProperty(type=SvListGroup)
     SvSubLists = bpy.props.CollectionProperty(type=SvSublistGroup)
-
 
     def mode_change(self, context):
         if not (self.selected_axis == self.current_axis):
@@ -936,6 +934,23 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ...
 
     def storage_get_data(self, node_dict):
+        """
+        #print([out_points], [out_names])
+        # sharing data to node:
+        node.SvLists.clear()
+        node.SvSubLists.clear()
+        node.SvLists.add().name = 'knots'
+        for k in out_points:
+            item = node.SvLists['knots'].SvSubLists.add()
+            item.SvX, item.SvY, item.SvZ = k
+        #lll = node.SvLists['knots'].SvSubLists[0]
+        #print(lll.SvX,lll.SvY,lll.SvZ)
+        node.SvLists.add().name = 'knotsnames'
+        for k in out_names:
+            item = node.SvLists['knotsnames'].SvSubLists.add()
+            item.SvName = k[0]
+        """
+                
         # local_storage = {'lines': []}
         # for item in self.dynamic_strings:
         #     local_storage['lines'].append(item.line)

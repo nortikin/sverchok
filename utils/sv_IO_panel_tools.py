@@ -232,7 +232,11 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                 debug('\\\\')
 
-            # ADD 'SvLists', 'SvSubLists' (from profile_mk2)
+            # heavy handed skipping for testing.
+            if node.bl_idname == 'SvProfileNodeMK2':
+                if k in {'SvLists', 'SvSubLists'}:
+                    continue
+
             if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
                 """
                 n_id:
