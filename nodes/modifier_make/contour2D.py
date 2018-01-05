@@ -562,7 +562,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                     verts_out, _, edges_out = mesh_join(points, [], edg)
 
-                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT, 0.9)
+                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT, 0.8)
                     checker = [ [e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
                     checker = list(set([element for tupl in checker for element in tupl]))
                     smartMask = [i in checker or i > totalPoints for i in range(len(verts_out))]
