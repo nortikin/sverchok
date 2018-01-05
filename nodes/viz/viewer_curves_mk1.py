@@ -297,7 +297,9 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             # possible remove any potential existing geometry here too
             return
 
-        # perhaps if any of mverts is [] this should already fail.
+        # maybe if edges is not linked that the vertices can be assumed to be
+        # sequential and auto generated.. maybe... maybe.
+
         mverts, *mrest = self.get_geometry_from_sockets()
 
         mode = self.selected_mode
