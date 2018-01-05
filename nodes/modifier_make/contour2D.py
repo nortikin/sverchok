@@ -29,7 +29,7 @@ from sverchok.data_structure import (
     fullList, match_long_repeat,
     dataCorrect, repeat_last,
     updateNode, match_long_cycle)
-from sverchok.utils.modules.geom_utils import ptInTriang
+from sverchok.utils.modules.geom_utils import pt_in_triangle
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
@@ -114,8 +114,8 @@ def maskByDistance(verts, parameters, modulo, edges, maskT):
                 vL1b = [v1[0] + dLim1 * cos(beta[2+netOff]), v1[1] + dLim1 * sin(beta[2+netOff]), v1[2]]
                 vL2a = [v2[0] + dLim2 * cos(beta[1+netOff]), v2[1] + dLim2 * sin(beta[1+netOff]), v2[2]]
                 vL2b = [v2[0] + dLim2 * cos(beta[2+netOff]), v2[1] + dLim2 * sin(beta[2+netOff]), v2[2]]
-                A = ptInTriang(v, vL2a, vL1a, vL1b)
-                B = ptInTriang(v, vL2a, vL1b, vL2b)
+                A = pt_in_triangle(v, vL2a, vL1a, vL1b)
+                B = pt_in_triangle(v, vL2a, vL1b, vL2b)
 
                 if A or B:
                     d = 1
