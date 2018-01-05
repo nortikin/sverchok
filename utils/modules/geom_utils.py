@@ -74,3 +74,22 @@ def mean(verts):
 
 def is_reasonably_opposite(n, normal_one):
     return dot_v3v3(normalized(n), normalized(normal_one)) < 0.0
+
+
+def ptInTriang(p_test, p0, p1, p2):
+    # Function taken from Ramiro R.C https://stackoverflow.com/a/46409704
+    dX = p_test[0] - p0[0]
+    dY = p_test[1] - p0[1]
+    dX20 = p2[0] - p0[0]
+    dY20 = p2[1] - p0[1]
+    dX10 = p1[0] - p0[0]
+    dY10 = p1[1] - p0[1]
+
+    s_p = (dY20*dX) - (dX20*dY)
+    t_p = (dX10*dY) - (dY10*dX)
+    D = (dX10*dY20) - (dY10*dX20)
+
+    if D > 0:
+        return (  (s_p >= 0) and (t_p >= 0) and (s_p + t_p) <= D  )
+    else:
+        return (  (s_p <= 0) and (t_p <= 0) and (s_p + t_p) >= D  )
