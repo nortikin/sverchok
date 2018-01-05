@@ -8,6 +8,7 @@ from io import StringIO
 import sverchok
 from sverchok.utils.logging import debug, info
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.sv_IO_panel_tools import import_tree
 
 def generate_node_definition(node):
     """
@@ -114,23 +115,6 @@ def get_node(node_name, tree_name=None):
         tree_name = "TestingTree"
     return bpy.data.node_groups[tree_name].nodes[node_name]
 
-def nodes_are_equal(actual, reference):
-    """
-    Assert that two nodes have the same settings.
-    This works only for simple nodes.
-    """
-    if actual.bl_idname != reference.bl_idname:
-        raise AssertionError("Actual node {} has bl_idname `{}', but reference has `{}'".format(actual, actual.bl_idname, reference.bl_idname))
-    for k, v in actual.items():
-        if k not in reference:
-            raise AssertionError("Property `{}' is present is actual node {}, but is not present in reference".format(k, actual))
-        if v != reference[k]:
-            raise AssertionError("Property `{}' has value `{}' in actual node {}, but in reference it has value `{}'".format(k, actual, reference[k]))
-
-    for k in reference.keys():
-        if k not in actual:
-            raise AssertionError("Property `{}' is present in reference node, but is not present in actual node {}".format(k, actual))
-
 def get_tests_path():
     """
     Return path to all test cases (tests/ directory).
@@ -193,6 +177,38 @@ class SverchokTestCase(unittest.TestCase):
             data = f.read().decode('utf8')
             expected_result = json.loads(data)
             self.assert_json_equals(actual_json, expected_result)
+
+    def assert_nodes_are_equal(self, actual, reference):
+        """
+        Assert that two nodes have the same settings.
+        This works only for simple nodes.
+        """
+        if actual.bl_idname != reference.bl_idname:
+            raise AssertionError("Actual node {} has bl_idname `{}', but reference has `{}'".format(actual, actual.bl_idname, reference.bl_idname))
+        for k, v in actual.items():
+            if k not in reference:
+                raise AssertionError("Property `{}' is present is actual node {}, but is not present in reference".format(k, actual))
+            if v != reference[k]:
+                raise AssertionError("Property `{}' has value `{}' in actual node {}, but in reference it has value `{}'".format(k, v, actual, reference[k]))
+
+        for k in reference.keys():
+            if k not in actual:
+                raise AssertionError("Property `{}' is present in reference node, but is not present in actual node {}".format(k, actual))
+
+    def assert_node_equals_file(self, actual_node, reference_node_name, reference_file_name, imported_tree_name=None):
+        """
+        Assert that actual_node equals to node named reference_node_name imported from file reference_file_name.
+        This works only for simple nodes.
+        """
+        if imported_tree_name is None:
+            imported_tree_name = "ImportedTree"
+
+        try:
+            new_tree = get_or_create_node_tree(imported_tree_name)
+            import_tree(new_tree, self.get_reference_file_path(reference_file_name))
+            self.assert_nodes_are_equal(actual_node, get_node(reference_node_name, imported_tree_name))
+        finally:
+            remove_node_tree(imported_tree_name)
 
 class EmptyTreeTestCase(SverchokTestCase):
     """
