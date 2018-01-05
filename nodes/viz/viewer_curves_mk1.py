@@ -130,14 +130,37 @@ def live_curve(obj_index, verts, edges, matrix, node):
     set_curve_props(node, cu)
 
     # and rebuild
-    for edge in edges:
-        v0, v1 = verts[edge[0]], verts[edge[1]]
-        full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
 
-        # each spline has a default first coordinate but we need two.
-        segment = cu.splines.new('POLY')
-        segment.points.add(1)
-        segment.points.foreach_set('co', full_flat)
+    if node.curve_dimensions == '3D':
+
+        for edge in edges:
+            v0, v1 = verts[edge[0]], verts[edge[1]]
+            full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
+
+            # each spline has a default first coordinate but we need two.
+            segment = cu.splines.new('POLY')
+            segment.points.add(1)
+            segment.points.foreach_set('co', full_flat)
+    else:
+
+        for v_obj, e_obj in zip(verts, edges):
+            segment = cu.splines.new('POLY')
+            #v1, v2, v3 = v_obj[e_obj[0][0]]
+            #points = [v1, v2, v3, 0.0]
+            points = []
+            prev = []
+            if len(v_obj) == len(e_obj):
+                e_obj.pop(-1)
+            e_obj.sort()
+            segment.points.add(len(e_obj))
+            for edge in e_obj:
+                for e in edge:
+                    if e not in prev:
+                        prev.append(e)
+                        v1 = v_obj[e]
+                        points.extend([v1[0], v1[1], v1[2], 0.0])
+            segment.points.foreach_set('co', points)
+            segment.use_cyclic_u = True        
 
     return obj
 
@@ -301,15 +324,23 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 if mrest[idx]:
                     fullList(mrest[idx], maxlen)
 
-            for obj_index, Verts in enumerate(mverts):
-                if not Verts:
-                    continue
+            if self.curve_dimensions == '3D':
 
-                data = get_edges_matrices(obj_index)
-                make_curve_geometry(self, bpy.context, obj_index, Verts, *data)
+                for obj_index, Verts in enumerate(mverts):
+                    if not Verts:
+                        continue
 
-            # we must be explicit
-            obj_index = len(mverts) - 1
+                    data = get_edges_matrices(obj_index)
+                    make_curve_geometry(self, bpy.context, obj_index, Verts, *data)
+
+                # we must be explicit
+                obj_index = len(mverts) - 1
+
+            else:
+                obj_index = 0
+                make_curve_geometry(self, bpy.context, obj_index, mverts, *mrest)
+
+
 
         self.remove_non_updated_objects(obj_index)
         objs = self.get_children()
