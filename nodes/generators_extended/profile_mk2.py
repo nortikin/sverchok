@@ -923,28 +923,26 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def storage_set_data(self, storage):
+        
+        self.id_data.freeze(hard=True)
+        self.SvLists.clear()
+
         strings_json = storage['profile_sublist_storage']
         
-        """
-        node.SvLists.add().name = 'knots'
+        out_points = json.loads(strings_json)['knots']
+        self.SvLists.add().name = 'knots'
         for k in out_points:
-            item = node.SvLists['knots'].SvSubLists.add()
+            item = self.SvLists['knots'].SvSubLists.add()
             item.SvX, item.SvY, item.SvZ = k
 
-        node.SvLists.add().name = 'knotsnames'
+        out_names = json.loads(strings_json)['knotsnames']
+        self.SvLists.add().name = 'knotsnames'
         for k in out_names:
-            item = node.SvLists['knotsnames'].SvSubLists.add()
-            item.SvName = k[0]
-        """
+            item = self.SvLists['knotsnames'].SvSubLists.add()
+            item.SvName = k
 
-        # lines_list = json.loads(strings_json)['lines']
-        # self.id_data.freeze(hard=True)
-        # self.dynamic_strings.clear()
-        # for line in lines_list:
-        #     self.dynamic_strings.add().line = line
+        self.id_data.unfreeze(hard=True)
 
-        # self.id_data.unfreeze(hard=True)
-        ...
 
     def storage_get_data(self, node_dict):
         local_storage = {'knots': [], 'knotsnames': []}
@@ -952,8 +950,8 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for knot in self.SvLists['knots']:
             local_storage['knots'].append([knot.SvX, knot.SvY, knot.SvZ])
 
-        for outnames in self.SvLists['knotsnames']:
-            local_storage['knotsnames'].append(outnames.SvName)
+        for outname in self.SvLists['knotsnames']:
+            local_storage['knotsnames'].append(outname.SvName)
         
         node_dict['profile_sublist_storage'] = json.dumps(local_storage)
 
