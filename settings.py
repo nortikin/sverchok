@@ -201,6 +201,9 @@ class SverchokPreferences(AddonPreferences):
     log_to_file = BoolProperty(name = "Log to file",
             description = "Enable log output to external file",
             default = False)
+    log_to_console = BoolProperty(name = "Log to console",
+            description = "Enable log output to console / terminal / standard output.",
+            default = True)
 
     log_buffer_name = StringProperty(name = "Buffer name", default = "sverchok.log")
     log_file_name = StringProperty(name = "File path", default = os.path.join(datafiles, "sverchok.log"))
@@ -248,6 +251,8 @@ class SverchokPreferences(AddonPreferences):
             file_row.prop(self, "log_to_file")
             if self.log_to_file:
                 file_row.prop(self, "log_file_name")
+
+            log_box.prop(self, "log_to_console")
 
         if self.selected_tab == "Node Defaults":
 
