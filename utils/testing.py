@@ -89,6 +89,14 @@ def link_node_tree(reference_blend_path, tree_name=None):
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
         data_dst.node_groups = [tree_name]
 
+def link_text_block(reference_blend_path, block_name):
+    """
+    Link text block from specified .blend file.
+    """
+
+    with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
+        data_dst.texts = [block_name]
+
 def create_node(node_type, tree_name=None):
     """
     Create Sverchok node by it's bl_idname.
@@ -184,12 +192,17 @@ class ReferenceTreeTestCase(SverchokTestCase):
     reference_file_name = None
     reference_tree_name = None
 
+    def get_reference_file_path(self, file_name=None):
+        if file_name is None:
+            file_name = self.reference_file_name
+        return join(get_tests_path(), "references", file_name)
+
     def setUp(self):
         if self.reference_file_name is None:
             raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
         if self.reference_tree_name is None:
             self.reference_tree_name = "TestingTree"
-        path = join(get_tests_path(), "references", self.reference_file_name)
+        path = self.get_reference_file_path()
         link_node_tree(path)
         self.tree = get_or_create_node_tree()
 
