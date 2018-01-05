@@ -418,13 +418,13 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         description="Remove Doubles Distance",
         min=0.0, default=0.0001,
         step=0.1, update=updateNode)
-    
+
     epsilon = FloatProperty(
         name='Int. Tolerance',
         description="Intersection tolerance",
         min=1.0e-5, default=1.0e-5,
         step=0.02, update=updateNode)
-    
+
     maskT = FloatProperty(
         name='Mask tolerance',
         description="Mask tolerance",
@@ -647,6 +647,12 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
                         edg.append(edge_Side_out)
 
                     verts_out, _, edges_out = mesh_join(points, [], edg)
+
+                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
+                    checker = [[e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
+                    checker = list(set([element for tupl in checker for element in tupl]))
+                    smartMask = [i in checker for i in range(len(verts_out))]
+                    verts_out, edges_out = maskVertices(verts_out, edges_out, smartMask)
 
                     verts_out, edges_out = intersectEdges(verts_out, edges_out, self.epsilon)
 
