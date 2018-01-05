@@ -11,12 +11,7 @@ class ScriptUvExportTest(ReferenceTreeTestCase):
 
     def test_script_uv_export(self):
         export_result = create_dict_of_tree(self.tree)
-
-        with open(self.get_reference_file_path("script_uv.json"), 'rb') as f:
-            data = f.read().decode('utf8')
-            expected_result = json.loads(data)
-
-            self.assert_json_equals(export_result, expected_result)
+        self.assert_json_equals_file(export_result, "script_uv.json")
 
 class ProfileExportTest(ReferenceTreeTestCase):
 
@@ -24,11 +19,7 @@ class ProfileExportTest(ReferenceTreeTestCase):
 
     def test_profile_export(self):
         export_result = create_dict_of_tree(self.tree)
-        with open(self.get_reference_file_path("profile.json"), 'rb') as f:
-            data = f.read().decode('utf8')
-            expected_result = json.loads(data)
-
-            self.assert_json_equals(export_result, expected_result)
+        self.assert_json_equals_file(export_result, "profile.json")
 
 class MeshExprExportTest(ReferenceTreeTestCase):
 
@@ -41,11 +32,5 @@ class MeshExprExportTest(ReferenceTreeTestCase):
 
     def test_mesh_expr_export(self):
         export_result = create_dict_of_tree(self.tree)
-
-        # JSON of Mesh Expression is too fancy to write it here inline
-        with open(self.get_reference_file_path("mesh.json"), 'rb') as f:
-            data = f.read().decode('utf8')
-            expected_result = json.loads(data)
-
-            self.assert_json_equals(export_result, expected_result)
+        self.assert_json_equals_file(export_result, "mesh.json")
 

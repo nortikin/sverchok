@@ -213,6 +213,15 @@ class ReferenceTreeTestCase(SverchokTestCase):
     def link_text_block(self, block_name):
         link_text_block(self.get_reference_file_path(), block_name)
 
+    def assert_json_equals_file(self, actual_json, expected_json_file_name):
+        """
+        Assert that actual_json equals to JSON stored in expected_json_file_name.
+        """
+        with open(self.get_reference_file_path(expected_json_file_name), 'rb') as f:
+            data = f.read().decode('utf8')
+            expected_result = json.loads(data)
+            self.assert_json_equals(actual_json, expected_result)
+
     def setUp(self):
         if self.reference_file_name is None:
             raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
