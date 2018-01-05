@@ -4,6 +4,7 @@ from os.path import dirname, basename, join
 import unittest
 import json
 from io import StringIO
+import logging
 
 import sverchok
 from sverchok.utils.logging import debug, info
@@ -129,14 +130,19 @@ def run_all_tests():
     Test cases are looked up under tests/ directory.
     """
 
-    loader = unittest.TestLoader()
-    start_dir = get_tests_path()
-    suite = loader.discover(start_dir = start_dir, pattern = "*_tests.py")
-    buffer = StringIO()
-    runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
-    result = runner.run(suite)
-    info("Test cases result:\n%s", buffer.getvalue())
-    return result
+    tests_path = get_tests_path()
+    log_handler = logging.FileHandler(join(tests_path, "sverchok_tests.log"), mode='w')
+    logging.getLogger().addHandler(log_handler)
+    try:
+        loader = unittest.TestLoader()
+        suite = loader.discover(start_dir = tests_path, pattern = "*_tests.py")
+        buffer = StringIO()
+        runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
+        result = runner.run(suite)
+        info("Test cases result:\n%s", buffer.getvalue())
+        return result
+    finally:
+        logging.getLogger().removeHandler(log_handler)
 
 class SverchokTestCase(unittest.TestCase):
     """
