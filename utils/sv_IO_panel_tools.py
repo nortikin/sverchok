@@ -585,7 +585,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     if create_texts:
         add_texts(node, node_ref)
 
-    if bl_idname in {'SvObjInLite', 'SvExecNodeMod', 'SvMeshEvalNode'}:
+    if hasattr(node, 'storage_set_data'):
         node.storage_set_data(node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':
