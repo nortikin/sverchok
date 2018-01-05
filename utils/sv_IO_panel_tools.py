@@ -232,6 +232,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                 debug('\\\\')
 
+            # ADD 'SvLists', 'SvSubLists' (from profile_mk2)
             if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
                 """
                 n_id:
@@ -293,8 +294,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
-        # if hasattr(node, "storage_get_data"):
-        if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
+        if hasattr(node, "storage_get_data"):
             node.storage_get_data(node_dict)
 
         node_dict['params'] = node_items
