@@ -19,16 +19,10 @@
 import bpy
 from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 
-from mathutils import Matrix, Vector
-
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.geom import multiply_vectors
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
-
-from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer, remove_non_updated_objects, get_children,
-    natural_plus_one, get_random_init, greek_alphabet)
 
 
 def set_bevel_object(node, cu, obj_index):
@@ -106,13 +100,7 @@ def live_curve(obj_index, node, verts, radii, twist):
 def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     sv_object = live_curve(obj_index, node, verts, radii, twist)
     sv_object.hide_select = False
-
-    if matrix:
-        matrix = matrix_sanitizer(matrix)
-        sv_object.matrix_local = matrix
-    else:
-        sv_object.matrix_local = Matrix.Identity(4)
-
+    node.push_custom_matrix_if_present(sv_object, matrix)
     return sv_object
 
 
