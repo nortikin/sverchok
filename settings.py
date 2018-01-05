@@ -85,6 +85,10 @@ class SverchokPreferences(AddonPreferences):
             default = "NONE",
             description = "Performance profiling mode")
 
+    developer_mode = BoolProperty(name = "Developer mode",
+            description = "Show some additional panels or features useful for Sverchok developers only",
+            default = False)
+
     #  theme settings
 
     sv_theme = EnumProperty(
@@ -228,6 +232,7 @@ class SverchokPreferences(AddonPreferences):
             col2box.prop(self, "profile_mode")
             col2box.prop(self, "show_debug")
             col2box.prop(self, "heat_map")
+            col2box.prop(self, "developer_mode")
 
             log_box = col2.box()
             log_box.label(text="Logging:")
