@@ -173,6 +173,9 @@ class SverchokTestCase(unittest.TestCase):
             data = json.dumps(json_data).encode('utf8')
             f.write(data)
 
+    def get_reference_file_path(self, file_name):
+        return join(get_tests_path(), "references", file_name)
+
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.
@@ -181,6 +184,15 @@ class SverchokTestCase(unittest.TestCase):
         actual_data = self.serialize_json(actual_json)
         expected_data = self.serialize_json(expected_json)
         self.assertEquals(actual_data, expected_data)
+
+    def assert_json_equals_file(self, actual_json, expected_json_file_name):
+        """
+        Assert that actual_json equals to JSON stored in expected_json_file_name.
+        """
+        with open(self.get_reference_file_path(expected_json_file_name), 'rb') as f:
+            data = f.read().decode('utf8')
+            expected_result = json.loads(data)
+            self.assert_json_equals(actual_json, expected_result)
 
 class EmptyTreeTestCase(SverchokTestCase):
     """
@@ -212,15 +224,6 @@ class ReferenceTreeTestCase(SverchokTestCase):
 
     def link_text_block(self, block_name):
         link_text_block(self.get_reference_file_path(), block_name)
-
-    def assert_json_equals_file(self, actual_json, expected_json_file_name):
-        """
-        Assert that actual_json equals to JSON stored in expected_json_file_name.
-        """
-        with open(self.get_reference_file_path(expected_json_file_name), 'rb') as f:
-            data = f.read().decode('utf8')
-            expected_result = json.loads(data)
-            self.assert_json_equals(actual_json, expected_result)
 
     def setUp(self):
         if self.reference_file_name is None:
