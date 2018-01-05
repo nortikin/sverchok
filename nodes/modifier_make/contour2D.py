@@ -278,7 +278,7 @@ def CalcMidPoints(verts, edges):
 def maskEdges(edges, mask):
     edges_out = []
     for m, ed in zip(mask, edges):
-        if m == True:
+        if m:
                 edges_out.append(ed)
     return edges_out
 
@@ -401,33 +401,43 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Contour 2D'
     bl_icon = 'MESH_CIRCLE'
 
-    modeI = EnumProperty(name="modeI",
-                         description="Constant or weigted distance when multiple radius are given",
-                         items=modeItems, default="Constant",
-                         update=updateNode)
-    listMatch = EnumProperty(name="listMatch",
-                             description="Behaviour on diffent list lengths",
-                             items=listMatchItems, default="Long Cycle",
-                             update=updateNode)
+    modeI = EnumProperty(
+        name="modeI",
+        description="Constant or weigted distance when multiple radius are given",
+        items=modeItems, default="Constant",
+        update=updateNode)
 
-    rm_doubles = FloatProperty(name='R. Doubles',
-                               description="Remove Doubles Distance",
-                               min=0.0, default=0.0001,
-                               step=0.1, update=updateNode)
-    epsilon = FloatProperty(name='Int. Tolerance',
-                            description="Intersection tolerance",
-                            min=1.0e-5, default=1.0e-5,
-                            step=0.02, update=updateNode)
-    maskT = FloatProperty(name='Mask tolerance',
-                          description="Mask tolerance",
-                          min=-1.0, default=1.0e-5,
-                          step=0.02, update=updateNode)
-    rad_ = FloatProperty(name='Distance', description='Contour distance',
-                         default=1.0, min=1.0e-5,
-                         update=updateNode)
-    vert_ = IntProperty(name='N Vertices', description='Nº of Vertices per input vector',
-                        default=24, min=4,
-                        update=updateNode)
+    listMatch = EnumProperty(
+        name="listMatch",
+        description="Behaviour on diffent list lengths",
+        items=listMatchItems, default="Long Cycle",
+        update=updateNode)
+
+    rm_doubles = FloatProperty(
+        name='R. Doubles',
+        description="Remove Doubles Distance",
+        min=0.0, default=0.0001,
+        step=0.1, update=updateNode)
+    
+    epsilon = FloatProperty(
+        name='Int. Tolerance',
+        description="Intersection tolerance",
+        min=1.0e-5, default=1.0e-5,
+        step=0.02, update=updateNode)
+    
+    maskT = FloatProperty(
+        name='Mask tolerance',
+        description="Mask tolerance",
+        min=-1.0, default=1.0e-5,
+        step=0.02, update=updateNode)
+
+    rad_ = FloatProperty(
+        name='Distance', description='Contour distance',
+        default=1.0, min=1.0e-5, update=updateNode)
+
+    vert_ = IntProperty(
+        name='N Vertices', description='Nº of Vertices per input vector',
+        default=24, min=4, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
