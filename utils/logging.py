@@ -138,10 +138,11 @@ def try_initialize():
                     logging.getLogger().removeHandler(consoleHandler)
 
             logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, get_version_string())
-            logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s",
+            logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s, log to console: %s",
                     prefs.log_level,
                     ("no" if not prefs.log_to_buffer else prefs.log_buffer_name),
-                    ("no" if not prefs.log_to_file else prefs.log_file_name) )
+                    ("no" if not prefs.log_to_file else prefs.log_file_name),
+                    ("yes" if prefs.log_to_console else "no"))
             initialized = True
 
 # Convinience functions
