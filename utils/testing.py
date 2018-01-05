@@ -165,6 +165,14 @@ class SverchokTestCase(unittest.TestCase):
         """
         return json.dumps(data, sort_keys=True, indent=2)
 
+    def store_reference_json(self, file_name, json_data):
+        """
+        Store JSON data for further reference.
+        """
+        with open(self.get_reference_file_path(file_name), 'wb') as f:
+            data = json.dumps(json_data).encode('utf8')
+            f.write(data)
+
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.
@@ -197,14 +205,21 @@ class ReferenceTreeTestCase(SverchokTestCase):
             file_name = self.reference_file_name
         return join(get_tests_path(), "references", file_name)
 
+    def link_node_tree(self):
+        path = self.get_reference_file_path()
+        link_node_tree(path)
+        return get_or_create_node_tree()
+
+    def link_text_block(self, block_name):
+        link_text_block(self.get_reference_file_path(), block_name)
+
     def setUp(self):
         if self.reference_file_name is None:
             raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
         if self.reference_tree_name is None:
             self.reference_tree_name = "TestingTree"
-        path = self.get_reference_file_path()
-        link_node_tree(path)
-        self.tree = get_or_create_node_tree()
+        
+        self.tree = self.link_node_tree()
 
     def tearDown(self):
         remove_node_tree()

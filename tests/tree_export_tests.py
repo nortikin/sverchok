@@ -11,7 +11,7 @@ class ScriptUvExportTest(ReferenceTreeTestCase):
 
     def test_script_uv_export(self):
         export_result = create_dict_of_tree(self.tree)
-        print(json.dumps(export_result))
+        self.store_reference_json("script_uv.json", export_result)
 
 class ProfileExportTest(ReferenceTreeTestCase):
 
@@ -19,7 +19,7 @@ class ProfileExportTest(ReferenceTreeTestCase):
 
     def test_profile_export(self):
         export_result = create_dict_of_tree(self.tree)
-        print(json.dumps(export_result))
+        self.store_reference_json("profile.json", export_result)
 
 class MeshExprExportTest(ReferenceTreeTestCase):
 
@@ -27,7 +27,7 @@ class MeshExprExportTest(ReferenceTreeTestCase):
 
     def setUp(self):
         # We have to load text block as well
-        link_text_block(self.get_reference_file_path(), "Mesh Expression")
+        self.link_text_block("Mesh Expression")
         super().setUp()
 
     def test_mesh_expr_export(self):
