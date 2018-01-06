@@ -30,7 +30,8 @@ from os.path import basename, dirname
 from itertools import chain
 
 import bpy
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, PointerProperty
+from bpy.utils import register_class, unregister_class
 
 from sverchok import old_nodes
 from sverchok.utils import sv_gist_tools
@@ -39,10 +40,12 @@ from sverchok.utils.logging import debug, info, warning, error, exception
 
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
+PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.07'
+_EXPORTER_REVISION_ = '0.072'
 
 '''
+0.072 new route for node.storage_get/set_data. no change to json format
 0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
@@ -50,8 +53,6 @@ _EXPORTER_REVISION_ = '0.07'
 0.062 (no revision change) - fixes import of sn texts that are present already in .blend
 0.062 (no revision change) - looks in multiple places for textmode param.
 0.062 monad export properly
-0.061 codeshuffle 76f04f9
-0.060 understands sockets with props <o/
 
 revisions below this are your own problem.
 
@@ -206,15 +207,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
-        ObjNodeLite = (node.bl_idname == 'SvObjInLite')
-        MeshEvalNode = (node.bl_idname == 'SvMeshEvalNode')
-
-        ScriptNodeLite = (node.bl_idname == 'SvScriptNodeLite')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         
-        SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
         TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
 
         for k, v in node.items():
@@ -231,6 +227,11 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                     error('%s is not bl_rna or IDproperty.. please report this', k)
 
                 debug('\\\\')
+
+            # heavy handed skipping for testing.
+            if node.bl_idname == 'SvProfileNodeMK2':
+                if k in {'SvLists', 'SvSubLists'}:
+                    continue
 
             if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
                 """
@@ -267,7 +268,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 else:
                     node_dict['text_lines'] = texts[node.text].as_string()
 
-            if ProfileParamNode and (k == "filename"):
+            if node.bl_idname in PROFILE_NODES and (k == "filename"):
                 '''add file content to dict'''
                 node_dict['path_file'] = texts[node.filename].as_string()
 
@@ -293,8 +294,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
-        # if hasattr(node, "storage_get_data"):
-        if any([ScriptNodeLite, ObjNodeLite, SvExecNodeMod, MeshEvalNode]):
+        if hasattr(node, "storage_get_data"):
             node.storage_get_data(node_dict)
 
         node_dict['params'] = node_items
@@ -409,7 +409,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.load()
     elif node.bl_idname == 'SvScriptNodeLite':
         node.load()
-        node.storage_set_data(node_ref)
+        # node.storage_set_data(node_ref)
     else:
         node.files_popup = node.avail_templates(None)[0][0]
         node.load()
@@ -536,7 +536,7 @@ def add_texts(node, node_ref):
     if node.bl_idname in SCRIPTED_NODES:
         perform_scripted_node_inject(node, node_ref)
 
-    elif node.bl_idname == 'SvProfileNode':
+    elif node.bl_idname in PROFILE_NODES:
         perform_profile_node_inject(node, node_ref)
 
     elif (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'}):
@@ -581,7 +581,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     if create_texts:
         add_texts(node, node_ref)
 
-    if bl_idname in {'SvObjInLite', 'SvExecNodeMod', 'SvMeshEvalNode'}:
+    if hasattr(node, 'storage_set_data'):
         node.storage_set_data(node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':
@@ -1072,19 +1072,13 @@ classes = [
 
 
 def register():
-
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-    bpy.types.NodeTree.io_panel_properties = bpy.props.PointerProperty(
-        name="io_panel_properties", type=SvIOPanelProperties)
+    _ = [register_class(cls) for cls in classes]
+    bpy.types.NodeTree.io_panel_properties = PointerProperty(name="io_panel_properties", type=SvIOPanelProperties)
 
 
 def unregister():
     del bpy.types.NodeTree.io_panel_properties
-
-    for cls in classes[::-1]:
-        bpy.utils.unregister_class(cls)
+    _ = [unregister_class(cls) for cls in classes[::-1]]
 
 
 # if __name__ == '__main__':
