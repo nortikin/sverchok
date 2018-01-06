@@ -13,6 +13,8 @@ install:
   - rm blender-2.79-linux-glibc219-x86_64.tar.bz2
   - cd ..
   - ln -s ${PWD} ${PWD}/installation/blender/2.79/scripts/addons/sverchok
+  - mkdir -p ~/.config/blender/2.79/config/
+  - ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/2.79/config/
 
 env:
   - BLENDER=${PWD}/installation/blender/blender 
