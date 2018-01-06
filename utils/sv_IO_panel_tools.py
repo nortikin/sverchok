@@ -220,8 +220,10 @@ def collect_storage_data_if_present(node, node_dict):
     if hasattr(node, "storage_get_data"):
         node.storage_get_data(node_dict)
 
-def handle_text_input_node(node, node_dict):
-    if not (node.bl_idname in TEXT_INPUT_NODES):
+
+def needs_text_input_handling(node, k, node_dict):
+
+    if not k == 'current_text' and not node.bl_idname in TEXT_INPUT_NODES:
         return
 
     texts = bpy.data.texts
@@ -236,7 +238,9 @@ def handle_text_input_node(node, node_dict):
         node_dict['text_lines'] = {}
         node_dict['text_lines']['stored_as_json'] = json_as_dict
     else:
-        node_dict['text_lines'] = texts[node.text].as_string()    
+        node_dict['text_lines'] = texts[node.text].as_string()
+
+    return True
 
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
@@ -264,8 +268,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         
-        TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
-
         for k, v in node.items():
 
             if not isinstance(v, (float, int, str)):
@@ -287,10 +289,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if has_state_switch_protection(node, k):
                 continue
 
-            if k == 'current_text':
-                handle_text_input_node(node, node_dict)
-                if node.bl_idname in TEXT_INPUT_NODES:
-                    continue
+            if needs_text_input_handling(node, k, node_dict):
+                continue
 
             if node.bl_idname in PROFILE_NODES and (k == "filename"):
                 node_dict['path_file'] = texts[node.filename].as_string()
