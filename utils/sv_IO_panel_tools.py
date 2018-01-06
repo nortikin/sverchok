@@ -268,7 +268,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 else:
                     node_dict['text_lines'] = texts[node.text].as_string()
 
-            if ProfileParamNode and (k == "filename"):
+            if node.bl_idname in PROFILE_NODES and (k == "filename"):
                 '''add file content to dict'''
                 node_dict['path_file'] = texts[node.filename].as_string()
 

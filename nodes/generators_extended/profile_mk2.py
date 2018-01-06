@@ -16,12 +16,14 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-''' by Dealga McArdle | 2014 '''
+''' by Dealga McArdle | 2014 + modifications by Nikita '''
 
 import re
+import json
+from string import ascii_lowercase
+
 import parser
 from ast import literal_eval
-from string import ascii_lowercase
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
@@ -947,10 +949,10 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def storage_get_data(self, node_dict):
         local_storage = {'knots': [], 'knotsnames': []}
 
-        for knot in self.SvLists['knots']:
+        for knot in self.SvLists['knots'].SvSubLists:
             local_storage['knots'].append([knot.SvX, knot.SvY, knot.SvZ])
 
-        for outname in self.SvLists['knotsnames']:
+        for outname in self.SvLists['knotsnames'].SvSubLists:
             local_storage['knotsnames'].append(outname.SvName)
         
         node_dict['profile_sublist_storage'] = json.dumps(local_storage)
