@@ -101,8 +101,9 @@ def remove_node_tree(name=None):
         win      = bpy.context.window
         scr      = win.screen
         areas  = [area for area in scr.areas if area.type == 'NODE_EDITOR']
-        space = areas[0].spaces[0]
-        space.node_tree = None
+        if len(areas):
+            space = areas[0].spaces[0]
+            space.node_tree = None
         debug("Removing tree: %s", name)
         tree = bpy.data.node_groups[name]
         bpy.data.node_groups.remove(tree)
