@@ -53,8 +53,6 @@ _EXPORTER_REVISION_ = '0.072'
 0.062 (no revision change) - fixes import of sn texts that are present already in .blend
 0.062 (no revision change) - looks in multiple places for textmode param.
 0.062 monad export properly
-0.061 codeshuffle 76f04f9
-0.060 understands sockets with props <o/
 
 revisions below this are your own problem.
 
