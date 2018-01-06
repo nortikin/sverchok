@@ -14,7 +14,10 @@ install:
   - cd ..
   - ln -s ${PWD} ${PWD}/installation/blender/2.79/scripts/addons/sverchok
 
+env:
+  - BLENDER=${PWD}/installation/blender/blender 
+
 # Actually run all tests.
 script:
-  - bash BLENDER=${PWD}/installation/blender/blender ./run_tests.sh
+  - bash ./run_tests.sh
 
