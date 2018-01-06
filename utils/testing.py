@@ -241,6 +241,25 @@ class SverchokTestCase(unittest.TestCase):
         actual_value = getattr(node, property_name)
         self.assertEqual(actual_value, expected_value)
 
+    def assert_nodes_linked(self, tree_name, node1_name, node1_output_name, node2_name, node2_input_name):
+        """
+        Assert that certain output of node1 is linked to certain input of node2.
+        """
+        node1 = get_node(node1_name, tree_name)
+        node2 = get_node(node2_name, tree_name)
+
+        if node1_output_name not in node1.outputs:
+            raise AssertionError("Node `{}' does not have output named `{}'".format(node1_name, node1_output_name))
+        if node2_input_name not in node2.inputs:
+            raise AssertionError("Node `{}' does not have input named `{}'".format(node2_name, node2_input_name))
+
+        if not node1.outputs[node1_output_name].is_linked:
+            raise AssertionError("Output `{}' of node `{}' is not linked to anything", node1_output_name, node1_name)
+        if not node2.inputs[node2_input_name].is_linked:
+            raise AssertionError("Input `{}' of node `{}' is not linked to anything", node2_input_name, node2_name)
+
+        self.assertEquals(node1.outputs[node1_output_name].other, node2.inputs[node2_input_name])
+
     def assert_nodes_are_equal(self, actual, reference):
         """
         Assert that two nodes have the same settings.
