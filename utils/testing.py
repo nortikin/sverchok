@@ -318,6 +318,17 @@ class SverchokTestCase(unittest.TestCase):
 
         compare([])
 
+    def subtest_assert_equals(self, value1, value2, message=None):
+        """
+        The same as assertEquals(), but within subtest.
+        Use this to do several assertions per test method,
+        for case test execution not to be stopped at
+        the first failure.
+        """
+
+        with self.subTest():
+            self.assertEquals(value1, value2, message)
+
 
 class EmptyTreeTestCase(SverchokTestCase):
     """
