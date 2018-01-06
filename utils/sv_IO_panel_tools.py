@@ -42,9 +42,10 @@ from sverchok.utils.logging import debug, info, warning, error, exception
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.07'
+_EXPORTER_REVISION_ = '0.072'
 
 '''
+0.072 new route for node.storage_get/set_data. no change to json format
 0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
