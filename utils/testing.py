@@ -12,6 +12,10 @@ from sverchok.utils.logging import debug, info
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_IO_panel_tools import import_tree
 
+##########################################
+# Utility methods
+##########################################
+
 def generate_node_definition(node):
     """
     Generate code that programmatically creates specified node.
@@ -153,6 +157,10 @@ def run_all_tests():
     finally:
         logging.getLogger().removeHandler(log_handler)
 
+##############################################
+# Base test case classes
+##############################################
+
 class SverchokTestCase(unittest.TestCase):
     """
     Base class for Sverchok test cases.
@@ -282,6 +290,10 @@ class ReferenceTreeTestCase(SverchokTestCase):
 
     def tearDown(self):
         remove_node_tree()
+
+######################################################
+# UI operator and panel classes
+######################################################
 
 class SvRunTests(bpy.types.Operator):
     """
