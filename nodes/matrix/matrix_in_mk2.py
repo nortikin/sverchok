@@ -62,6 +62,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         loc = Vector_generate(L.sv_get())
         scale = Vector_generate(S.sv_get())
         rot = Vector_generate(R.sv_get())
+        self.debug("Rot: %s", rot)
         rotA, angle = [[]], [[0.0]]
         # ability to add vector & vector difference instead of only rotation values
         if A.is_linked:

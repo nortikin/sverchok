@@ -21,8 +21,7 @@ from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import SvGetSocketAnyType, node_id, Matrix_generate, match_long_repeat, updateNode
-from sverchok.utils.sv_viewer_utils import greek_alphabet
+from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNode, get_data_nesting_level, ensure_nesting_level, describe_data_shape
 from sverchok.utils.sv_obj_helper import SvObjHelper
 
 class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
@@ -73,26 +72,30 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         default=0.6, min=0.0, max=5.0, update=updateNode)
 
     def get_metaball_name(self, idx):
+        # Metaball names magic:
+        # If you name metaball object like "Alpha.001",
+        # it will be considered as being in the same "meta group"
+        # as other metaball objects named "Alpha", "Alpha.002" 
+        # and so on. But! if there is no object named "Alpha"
+        # (without index) in the scene, then objects named 
+        # "Alpha.001" (with index) will not be displayed correctly.
+        # So, we have to name first object without index,
+        # and all other with index.
         if idx == 1:
             return self.basedata_name
         else:
-            return self.basedata_name + '.' + str("%04d" % idx)
+            return self.basedata_name + '.' + str("%04d" % (idx-1))
 
-    def create_metaball(self):
-        scene = bpy.context.scene
-        objects = bpy.data.objects
-        object_name = self.get_metaball_name(1)
+    def create_metaball(self, index):
+        object_name = self.get_metaball_name(index)
         metaball_data = bpy.data.metaballs.new(object_name)
-        metaball_object = self.get_or_create_object(object_name, 1, metaball_data)
+        metaball_object = self.create_object(object_name, index, metaball_data)
 
         return metaball_object
 
-    def find_metaball(self):
-        children = self.get_children()
-        if children:
-            return children[0]
-        else:
-            return None
+    def find_metaball(self, index):
+        name = self.get_metaball_name(index)
+        return bpy.data.objects.get(name)
 
     def sv_init(self, context):
 
@@ -114,39 +117,12 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         layout.prop(self, "view_resolution")
         layout.prop(self, "render_resolution")
 
-    def update_material(self):
-        if bpy.data.materials.get(self.material):
-            metaball_object = self.find_metaball()
-            if metaball_object:
-                metaball_object.active_material = bpy.data.materials[self.material]
-
     def process(self):
         if not self.activate:
             return
 
         if not self.inputs['Origins'].is_linked:
             return
-
-        metaball_object = self.find_metaball()
-        if not metaball_object:
-            metaball_object = self.create_metaball()
-            self.debug("Created new metaball")
-
-        metaball_object.data.resolution = self.view_resolution
-        metaball_object.data.render_resolution = self.render_resolution
-        metaball_object.data.threshold = self.threshold
-
-        self.label = metaball_object.name
-
-        origins = self.inputs['Origins'].sv_get()
-        origins = Matrix_generate(origins)
-        radiuses = self.inputs['Radius'].sv_get()[0]
-        stiffnesses = self.inputs['Stiffness'].sv_get()[0]
-        negation = self.inputs['Negation'].sv_get(default=[[0]])[0]
-        types = self.inputs['Types'].sv_get()[0]
-
-        items = match_long_repeat([origins, radiuses, stiffnesses, negation, types])
-        items = list(zip(*items))
 
         def setup_element(element, item):
             (origin, radius, stiffness, negate, meta_type) = item
@@ -165,24 +141,75 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             element.size_z = scale[2]
             element.use_negative = bool(negate)
 
-        if len(items) == len(metaball_object.data.elements):
-            #self.debug('Updating existing metaball data')
+        origins = self.inputs['Origins'].sv_get()
+        radiuses = self.inputs['Radius'].sv_get()
+        stiffnesses = self.inputs['Stiffness'].sv_get()
+        negation = self.inputs['Negation'].sv_get(default=[[0]])
+        types = self.inputs['Types'].sv_get()
 
-            for (item, element) in zip(items, metaball_object.data.elements):
-                setup_element(element, item)
+        level = get_data_nesting_level(origins)
+        if level == 4:
+            # We have list of lists of matrices.
+            # Create a meta object per each list of matrices.
+            self.debug("Will create META object for each list of input matrices")
+            origins = Matrix_generate(origins)
+            radiuses = radiuses[0]
+            stiffnesses = stiffnesses[0]
+            negation = negation[0]
+            types = types[0]
+        elif level == 3:
+            # We have list of matrices.
+            # Create single meta object.
+            #origins = [Matrix_generate(origin) for origin in origins]
+            self.debug("Will create single META object")
+            self.debug(describe_data_shape(origins))
+            origins = [Matrix_generate(origins)]
         else:
-            #self.debug('Recreating metaball data')
-            metaball_object.data.elements.clear()
+            raise Exception("`Origins' input of Metaball node requires data nesting level 3 or 4, not {}".format(level))
 
-            for item in items:
-                element = metaball_object.data.elements.new()
-                setup_element(element, item)
+        inputs = match_long_repeat([origins, radiuses, stiffnesses, negation, types])
+        object_index = 0
+        for m_origins, m_radiuses, m_stiffnesses, m_negation, m_types in zip(*inputs):
+            object_index += 1
+
+            metaball_object = self.find_metaball(object_index)
+            if not metaball_object:
+                metaball_object = self.create_metaball(object_index)
+                self.debug("Created new metaball #%s", object_index)
+
+            metaball_object.data.resolution = self.view_resolution
+            metaball_object.data.render_resolution = self.render_resolution
+            metaball_object.data.threshold = self.threshold
+
+            if isinstance(m_origins, Matrix):
+                m_origins = [m_origins]
+            m_radiuses    = ensure_nesting_level(m_radiuses, 1)
+            m_stiffnesses = ensure_nesting_level(m_stiffnesses, 1)
+            m_negation    = ensure_nesting_level(m_negation, 1)
+            m_types       = ensure_nesting_level(m_types, 1)
+
+            items = match_long_repeat([m_origins, m_radiuses, m_stiffnesses, m_negation, m_types])
+            items = list(zip(*items))
+
+            if len(items) == len(metaball_object.data.elements):
+                #self.debug('Updating existing metaball data')
+
+                for (item, element) in zip(items, metaball_object.data.elements):
+                    setup_element(element, item)
+            else:
+                self.debug('Recreating metaball #%s data', object_index)
+                metaball_object.data.elements.clear()
+
+                for item in items:
+                    element = metaball_object.data.elements.new()
+                    setup_element(element, item)
         
+        self.remove_non_updated_objects(object_index)
         self.set_corresponding_materials()
+        objects = self.get_children()
 
         if 'Objects' in self.outputs:
-            self.outputs['Objects'].sv_set([metaball_object])
-
+            self.outputs['Objects'].sv_set(objects)
 
 def register():
     bpy.utils.register_class(SvMetaballOutNode)
