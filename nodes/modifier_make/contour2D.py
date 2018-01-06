@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 import itertools
 
-from math import sin, cos, pi, degrees, radians, atan2, asin
+from math import sin, cos, pi, degrees, radians, atan2, asin, ceil
 from mathutils import Vector
 
 import bpy
@@ -234,6 +234,7 @@ def build_net(verts_in, edges_in, vLen, Radius):
 
 
 def list_matcher(a, listMatch):
+
     if listMatch == "Long Cycle":
         return match_long_cycle(a)
     else:
@@ -420,10 +421,14 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
             edges_in = [i for i in edges_in if i[0] < vLen and i[1] < vLen]
 
             if self.modeI == "Weighted":
-                perimeter_number = int(len(Radius) / vLen + 0.5)
+                perimeter_number = ceil(len(Radius) / vLen)
+                print(perimeter_number)
                 actualRadius = []
                 for i in range(perimeter_number):
-                    actualRadius.append([Radius[min((i*vLen + j), len(Radius) - 1)] for j in range(vLen)])
+                    if self.listMatch == "Long Repeat":
+                        actualRadius.append([Radius[min((i*vLen + j), len(Radius) - 1)] for j in range(vLen)])
+                    else:
+                        actualRadius.append([Radius[(i*vLen + j) % len(Radius) ] for j in range(vLen)])
 
             else:
                 perimeter_number = len(Radius)
