@@ -333,7 +333,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         default=24, min=4, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
+        self.inputs.new('StringsSocket', "Distance").prop_name = 'rad_'
         self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'vert_'
         self.inputs.new('VerticesSocket', "Verts_in")
         self.inputs.new('StringsSocket', "Edges_in")
@@ -448,7 +448,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         vertsAll = inputs['Verts_in'].sv_get(deepcopy=False, default=[[(0.0, 0.0, 0.0)]])
 
-        radiusAll = inputs['Radius'].sv_get(deepcopy=False, default=[[abs(self.rad_)]])
+        radiusAll = inputs['Distance'].sv_get(deepcopy=False, default=[[abs(self.rad_)]])
         radiusAll = [list(map(lambda x: abs(x), radius)) for radius in radiusAll]
 
         verticesAll = inputs['Nº Vertices'].sv_get(deepcopy=False, default=[[self.vert_]])
