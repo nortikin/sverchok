@@ -41,6 +41,7 @@ from sverchok.utils.logging import debug, info, warning, error, exception
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
+TEXT_INPUT_NODES = {'SvTextInNode', 'SvTextInNodeMK2'}
 
 _EXPORTER_REVISION_ = '0.072'
 
@@ -138,6 +139,12 @@ def has_state_switch_protection(node, k):
 
 
 def is_unserializable_data(node, k):
+    """
+    add the props here that you want to skip because:
+      -  they're generated in the node upon creation anyway
+      -  or are unserielizable CollectionProperty (by simple casting )
+
+    """
 
     if node.bl_idname == 'SvProfileNodeMK2' and k in {'SvLists', 'SvSubLists'}:
         return True
@@ -213,6 +220,23 @@ def collect_storage_data_if_present(node, node_dict):
     if hasattr(node, "storage_get_data"):
         node.storage_get_data(node_dict)
 
+def handle_text_input_node(node, node_dict):
+    if not (node.bl_idname in TEXT_INPUT_NODES):
+        return
+
+    texts = bpy.data.texts
+
+    node_dict['current_text'] = node.text
+    node_dict['textmode'] = node.textmode
+    
+    if node.textmode == 'JSON':
+        # add the json as full member to the tree :)
+        text_str = texts[node.text].as_string()
+        json_as_dict = json.loads(text_str)
+        node_dict['text_lines'] = {}
+        node_dict['text_lines']['stored_as_json'] = json_as_dict
+    else:
+        node_dict['text_lines'] = texts[node.text].as_string()    
 
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
@@ -237,9 +261,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_items = {}
         node_enums = find_enumerators(node)
 
-        ObjectsNode = (node.bl_idname == 'ObjectsNode')
-        ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
-        ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         
@@ -266,20 +287,12 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             if has_state_switch_protection(node, k):
                 continue
 
-            if TextInput and (k == 'current_text'):
-                node_dict['current_text'] = node.text
-                node_dict['textmode'] = node.textmode
-                if node.textmode == 'JSON':
-                    # add the json as full member to the tree :)
-                    text_str = texts[node.text].as_string()
-                    json_as_dict = json.loads(text_str)
-                    node_dict['text_lines'] = {}
-                    node_dict['text_lines']['stored_as_json'] = json_as_dict
-                else:
-                    node_dict['text_lines'] = texts[node.text].as_string()
+            if k == 'current_text':
+                handle_text_input_node(node, node_dict)
+                if node.bl_idname in TEXT_INPUT_NODES:
+                    continue
 
             if node.bl_idname in PROFILE_NODES and (k == "filename"):
-                '''add file content to dict'''
                 node_dict['path_file'] = texts[node.filename].as_string()
 
             if IsGroupNode and (k == "group_name"):
