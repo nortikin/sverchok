@@ -44,7 +44,7 @@ listMatchItems = [
     ("Long Cycle", "Long Cycle", "")]
 
 
-def mask_by_distance(verts, parameters, modulo, edges, maskT):
+def mask_by_distance(verts, parameters, modulo, edges, maskT, min_dist):
 
     mask = []
     for i in range(len(verts)):
@@ -53,7 +53,7 @@ def mask_by_distance(verts, parameters, modulo, edges, maskT):
         vVec = Vector(v)
         for j in range(modulo):
             rad = parameters[2][j]
-            if rad < 1.0e-5:
+            if rad < min_dist:
                 continue
             vo = parameters[0][j]
             vfx = v[0]-vo[0]
@@ -73,7 +73,7 @@ def mask_by_distance(verts, parameters, modulo, edges, maskT):
                 v2 = parameters[0][ed[1]]
                 r1 = parameters[2][ed[0]]
                 r2 = parameters[2][ed[1]]
-                if v1 == v and r1  < 1.0e-5 or v2 == v and r2  < 1.0e-5:
+                if v1 == v and r1 < min_dist or v2 == v and r2 < min_dist or r1 < min_dist and r2 < min_dist :
                     continue
                 beta = parameters[3][ed[0]]
 
@@ -147,8 +147,8 @@ def sort_verts_by_connexions(verts_in, edges_in):
     vertsOut = []
     edgesOut = []
 
-    edgeLegth = len(edges_in)
-    edgesIndex = [j for j in range(edgeLegth)]
+    edges_length = len(edges_in)
+    edgesIndex = [j for j in range(edges_length)]
     edges0 = [j[0] for j in edges_in]
     edges1 = [j[1] for j in edges_in]
     edIndex = 0
@@ -158,7 +158,7 @@ def sort_verts_by_connexions(verts_in, edges_in):
     for co in edgesCopy:
         co.pop(0)
 
-    for j in range(edgeLegth):
+    for j in range(edges_length):
         e = edges_in[edIndex]
         ed = []
         if orSide == 1:
@@ -420,7 +420,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
             edges_in = [i for i in edges_in if i[0] < vLen and i[1] < vLen]
 
             if self.modeI == "Weighted":
-                perimeter_number = int(len(Radius) / vLen) + 1
+                perimeter_number = int(len(Radius) / vLen + 0.5)
                 actualRadius = []
                 for i in range(perimeter_number):
                     actualRadius.append([Radius[min((i*vLen + j), len(Radius) - 1)] for j in range(vLen)])
@@ -450,7 +450,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                 verts_out, _, edges_out = mesh_join(points, [], edg)
 
-                mask = mask_by_distance(verts_out, parameters, vLen, edges_in, self.maskT)
+                mask = mask_by_distance(verts_out, parameters, vLen, edges_in, self.maskT, self.epsilon)
                 checker = [ [e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
                 checker = list(set([element for tupl in checker for element in tupl]))
                 smartMask = [i in checker or i >= totalPoints for i in range(len(verts_out))]
@@ -458,7 +458,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                 verts_out, edges_out = intersect_edges(verts_out, edges_out, self.epsilon)
 
-                mask = mask_by_distance(verts_out, parameters, vLen, edges_in, self.maskT)
+                mask = mask_by_distance(verts_out, parameters, vLen, edges_in, self.maskT, self.epsilon)
 
                 verts_out, edges_out = mask_vertices(verts_out, edges_out, mask)
 
@@ -466,12 +466,12 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                 if inputs['Edges_in'].is_linked:
                     mid_points = calculate_mid_points(verts_out, edges_out)
-                    maskEd = mask_by_distance(mid_points, parameters, vLen, edges_in, self.maskT)
+                    maskEd = mask_by_distance(mid_points, parameters, vLen, edges_in, self.maskT, self.epsilon)
                     edges_out = mask_edges(edges_out, maskEd)
 
-                verts_outFX, edges_outFX = sort_verts_by_connexions(verts_out, edges_out)
-                vertices_outX.append(verts_outFX)
-                edges_outX.append(edges_outFX)
+                verts_out, edges_out = sort_verts_by_connexions(verts_out, edges_out)
+                vertices_outX.append(verts_out)
+                edges_outX.append(edges_out)
 
         outputs['Vertices'].sv_set(vertices_outX)
 
