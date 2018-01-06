@@ -142,7 +142,7 @@ def is_unserializable_data(node, k):
     """
     add the props here that you want to skip because:
       -  they're generated in the node upon creation anyway
-      -  or are unserielizable CollectionProperty (by simple casting )
+      -  or are unserializable CollectionProperty (by simple casting )
 
     """
 
