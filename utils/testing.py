@@ -113,6 +113,8 @@ def link_node_tree(reference_blend_path, tree_name=None):
     """
     if tree_name is None:
         tree_name = "TestingTree"
+    if tree_name in bpy.data.node_groups:
+        raise Exception("Tree named `{}' already exists in current scene".format(tree_name))
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
         data_dst.node_groups = [tree_name]
 
@@ -294,10 +296,12 @@ class ReferenceTreeTestCase(SverchokTestCase):
             file_name = self.reference_file_name
         return join(get_tests_path(), "references", file_name)
 
-    def link_node_tree(self):
+    def link_node_tree(self, tree_name=None):
+        if tree_name is None:
+            tree_name = self.reference_tree_name
         path = self.get_reference_file_path()
-        link_node_tree(path)
-        return get_or_create_node_tree()
+        link_node_tree(path, tree_name)
+        return get_node_tree(tree_name)
 
     def link_text_block(self, block_name):
         link_text_block(self.get_reference_file_path(), block_name)
