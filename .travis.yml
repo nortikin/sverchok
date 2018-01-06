@@ -1,11 +1,6 @@
 language: bash
 sudo: enabled
 
-addons:
-  apt:
-    packages:
-      - blender
-
 install:
   - |
     if [ ! -f installation/blender/blender ]
@@ -27,7 +22,7 @@ install:
     ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/2.79/config/
 
 env:
-  - BLENDER=${PWD}/installation/blender/blender 
+  - BLENDER=${PWD}/installation/blender/blender-softwaregl
 
 # Actually run all tests.
 script:
