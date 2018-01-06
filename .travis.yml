@@ -5,6 +5,7 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y blender
 
+# Actually run all tests.
 script:
   - bash ./run_tests.sh
 
