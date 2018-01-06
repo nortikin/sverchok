@@ -77,7 +77,7 @@ def can_skip(cm, closest_points, vert_vectors):
 
 
 def get_intersection_dictionary(cm, bm, edge_indices):
-    
+
     bm.verts.ensure_lookup_table()
     bm.edges.ensure_lookup_table()
 
@@ -134,6 +134,41 @@ def unselect_nonintersecting(bm, d_edges, edge_indices):
         # print("unselected {}, non intersecting edges".format(reserved_edges))
 
 
+def intersect_edges(verts, edges, epsi):
+    bm = bmesh_from_pydata(verts, edges, [])
+
+    edge_indices = [e.index for e in bm.edges]
+    trim_indices = len(edge_indices)
+    for edge in bm.edges:
+        edge.select = True
+
+    cm = CAD_ops(epsilon=epsi)
+    d = get_intersection_dictionary(cm, bm, edge_indices)
+    unselect_nonintersecting(bm, d.keys(), edge_indices)
+    # store non_intersecting edge sequencer
+    add_back = [[i.index for i in edge.verts] for edge in bm.edges if not edge.select]
+
+    update_mesh(bm, d)
+    verts_out = [v.co.to_tuple() for v in bm.verts]
+    edges_out = [[j.index for j in i.verts] for i in bm.edges]
+
+    # optional correction, remove originals, add back those that are not intersecting.
+    edges_out = edges_out[trim_indices:]
+    edges_out.extend(add_back)
+    bm.free()
+
+    return verts_out, edges_out
+
+
+def remove_doubles_with_edges(verts_in, edges_in, distance):
+    bm = bmesh_from_pydata(verts_in, edges_in, [])
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=distance)
+    verts_out = [v.co.to_tuple() for v in bm.verts]
+    edges_out = [[j.index for j in i.verts] for i in bm.edges]
+
+    return verts_out, edges_out
+
+
 class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvIntersectEdgesNodeMK2'
@@ -173,36 +208,11 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except (IndexError, KeyError) as e:
             return
 
-        bm = bmesh_from_pydata(verts_in, edges_in, [])
-
-        edge_indices = [e.index for e in bm.edges]
-        trim_indices = len(edge_indices)
-        for edge in bm.edges:
-            edge.select = True
-
-        cm = CAD_ops(epsilon=self.epsilon)
-
-        d = get_intersection_dictionary(cm, bm, edge_indices)
-        unselect_nonintersecting(bm, d.keys(), edge_indices)
-
-        # store non_intersecting edge sequencer
-        add_back = [[i.index for i in edge.verts] for edge in bm.edges if not edge.select]
-
-        update_mesh(bm, d)
-        verts_out = [v.co.to_tuple() for v in bm.verts]
-        edges_out = [[j.index for j in i.verts] for i in bm.edges]
-
-        # optional correction, remove originals, add back those that are not intersecting.
-        edges_out = edges_out[trim_indices:]
-        edges_out.extend(add_back)
-        bm.free()
+        verts_out, edges_out = intersect_edges(verts_in, edges_in, self.epsilon)
 
         # post processing step to remove doubles
         if self.rm_switch:
-            bm = bmesh_from_pydata(verts_out, edges=edges_out)
-            bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=self.rm_doubles)
-            verts_out = [v.co.to_tuple() for v in bm.verts]
-            edges_out = [[j.index for j in i.verts] for i in bm.edges]
+            verts_out, edges_out = remove_doubles_with_edges(verts_out, edges_out, self.rm_doubles)
 
         outputs['Verts_out'].sv_set([verts_out])
         outputs['Edges_out'].sv_set([edges_out])
