@@ -79,6 +79,18 @@ def get_or_create_node_tree(name=None):
     else:
         return create_node_tree(name)
 
+def get_node_tree(name=None):
+    """
+    Return existing node tree, or raise an exception if there is no such.
+    """
+    if name is None:
+        name = "TestingTree"
+    if name in bpy.data.node_groups:
+        debug("Using existing tree: %s", name)
+        return bpy.data.node_groups[name]
+    else:
+        raise Exception("There is no node tree named `{}'".format(name))
+
 def remove_node_tree(name=None):
     """
     Remove existing Sverchok node tree.
@@ -127,6 +139,8 @@ def get_node(node_name, tree_name=None):
     """
     if tree_name is None:
         tree_name = "TestingTree"
+    if tree_name not in bpy.data.node_groups:
+        raise Exception("There is no node tree named `{}'".format(tree_name))
     return bpy.data.node_groups[tree_name].nodes[node_name]
 
 def get_tests_path():
@@ -216,6 +230,14 @@ class SverchokTestCase(unittest.TestCase):
             data = f.read().decode('utf8')
             expected_result = json.loads(data)
             self.assert_json_equals(actual_json, expected_result)
+
+    def assert_node_property_equals(self, tree_name, node_name, property_name, expected_value):
+        """
+        Assert that named property of the node equals to specified value.
+        """
+        node = get_node(node_name, tree_name)
+        actual_value = getattr(node, property_name)
+        self.assertEqual(actual_value, expected_value)
 
     def assert_nodes_are_equal(self, actual, reference):
         """

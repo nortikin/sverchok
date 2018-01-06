@@ -28,3 +28,12 @@ class MeshExprImportTest(ReferenceTreeTestCase):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             import_tree(new_tree, self.get_reference_file_path("mesh.json"))
 
+class MonadImportTest(ReferenceTreeTestCase):
+
+    reference_file_name = "monad_1_ref.blend.gz"
+
+    def test_monad_import(self):
+        with self.temporary_node_tree("ImportedTree") as new_tree:
+            import_tree(new_tree, self.get_reference_file_path("monad_1.json"))
+            self.assert_node_property_equals("ImportedTree", "Monad", "amplitude", 0.6199999451637268)
+
