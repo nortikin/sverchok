@@ -137,6 +137,33 @@ def has_state_switch_protection(node, k):
         return node.bl_idname in {'VectorMathNode'}
 
 
+def is_unserializable_data(node, k):
+
+    if node.bl_idname == 'SvProfileNodeMK2' and k in {'SvLists', 'SvSubLists'}:
+        return True
+
+    if node.bl_idname == 'SvObjectsNodeMK3' and (k == 'object_names'):
+        return True
+
+    if node.bl_idname == 'ObjectsNode' and (k == "objects_local"):
+        # this silences the import error when items not found, by not storing it.
+        return True
+
+    if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
+        """
+        n_id:
+            used to store the hash of the current Node,
+            this is created along with the Node anyway. skip.
+        typ, newsock:
+            reserved variables for changeable sockets
+        dynamic_strings:
+            reserved by exec node
+        frame_collection_name / type_collection_name both store Collection properties..avoiding for now
+        """
+        return True
+
+
+
 def get_superficial_props(node_dict, node):
     node_dict['height'] = node.height
     node_dict['width'] = node.width
@@ -233,32 +260,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                 debug('\\\\')
 
-            # heavy handed skipping for testing.
-            if node.bl_idname == 'SvProfileNodeMK2':
-                if k in {'SvLists', 'SvSubLists'}:
-                    continue
-
-            if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
-                """
-                n_id:
-                    used to store the hash of the current Node,
-                    this is created along with the Node anyway. skip.
-                typ, newsock:
-                    reserved variables for changeable sockets
-                dynamic_strings:
-                    reserved by exec node
-                frame_collection_name / type_collection_name both store Collection properties..avoiding for now
-                """
+            if is_unserializable_data(node, k):
                 continue
 
             if has_state_switch_protection(node, k):
-                continue
-
-            if ObjectsNode and (k == "objects_local"):
-                # this silences the import error when items not found.
-                continue
-            elif ObjectsNode3 and (k == 'object_names'):
-                node_dict['object_names'] = [o.name for o in node.object_names]
                 continue
 
             if TextInput and (k == 'current_text'):
@@ -299,7 +304,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
-        collect_storage_data_if_present(node, node_dict)
+        collect_storage_data_if_present(node, node_dict)  # // uses storage_get_data
 
         node_dict['params'] = node_items
 
