@@ -270,6 +270,11 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         outputs['Object'].sv_set([data_objects.get(o.name) for o in self.object_names])
 
 
+    def storage_set_data(self, node_ref):
+        for named_object in node_ref.get('object_names', []):
+            self.object_names.add().name = named_object        
+
+
 classes = [SvOB3Callback, SvObjectsNodeMK3]
 
 

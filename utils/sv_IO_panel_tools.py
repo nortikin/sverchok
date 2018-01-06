@@ -586,10 +586,6 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
 
     restore_storage_data_if_present(node, node_ref)
 
-    if bl_idname == 'SvObjectsNodeMK3':
-        for named_object in node_ref.get('object_names', []):
-            node.object_names.add().name = named_object
-
     gather_remapped_names(node, n, name_remap)
     apply_core_props(node, node_ref)
     apply_superficial_props(node, node_ref)
