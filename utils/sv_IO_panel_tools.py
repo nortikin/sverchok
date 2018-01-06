@@ -30,7 +30,8 @@ from os.path import basename, dirname
 from itertools import chain
 
 import bpy
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, PointerProperty
+from bpy.utils import register_class, unregister_class
 
 from sverchok import old_nodes
 from sverchok.utils import sv_gist_tools
@@ -207,15 +208,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         ObjectsNode = (node.bl_idname == 'ObjectsNode')
         ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
-        ObjNodeLite = (node.bl_idname == 'SvObjInLite')
-        MeshEvalNode = (node.bl_idname == 'SvMeshEvalNode')
-
-        ScriptNodeLite = (node.bl_idname == 'SvScriptNodeLite')
         ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         
-        SvExecNodeMod = (node.bl_idname == 'SvExecNodeMod')
         TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
 
         for k, v in node.items():
@@ -414,7 +410,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.load()
     elif node.bl_idname == 'SvScriptNodeLite':
         node.load()
-        node.storage_set_data(node_ref)
+        # node.storage_set_data(node_ref)
     else:
         node.files_popup = node.avail_templates(None)[0][0]
         node.load()
@@ -587,7 +583,6 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         add_texts(node, node_ref)
 
     if hasattr(node, 'storage_set_data'):
-        # but todo: must skip snlite
         node.storage_set_data(node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':
@@ -1078,19 +1073,13 @@ classes = [
 
 
 def register():
-
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-    bpy.types.NodeTree.io_panel_properties = bpy.props.PointerProperty(
-        name="io_panel_properties", type=SvIOPanelProperties)
+    _ = [register_class(cls) for cls in classes]
+    bpy.types.NodeTree.io_panel_properties = PointerProperty(name="io_panel_properties", type=SvIOPanelProperties)
 
 
 def unregister():
     del bpy.types.NodeTree.io_panel_properties
-
-    for cls in classes[::-1]:
-        bpy.utils.unregister_class(cls)
+    _ = [unregister_class(cls) for cls in classes[::-1]]
 
 
 # if __name__ == '__main__':
