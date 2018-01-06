@@ -39,6 +39,7 @@ from sverchok.utils.logging import debug, info, warning, error, exception
 
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
+PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
 _EXPORTER_REVISION_ = '0.07'
 
@@ -540,7 +541,7 @@ def add_texts(node, node_ref):
     if node.bl_idname in SCRIPTED_NODES:
         perform_scripted_node_inject(node, node_ref)
 
-    elif node.bl_idname == 'SvProfileNode':
+    elif node.bl_idname in PROFILE_NODES:
         perform_profile_node_inject(node, node_ref)
 
     elif (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'}):
@@ -586,6 +587,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         add_texts(node, node_ref)
 
     if hasattr(node, 'storage_set_data'):
+        # but todo: must skip snlite
         node.storage_set_data(node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':
