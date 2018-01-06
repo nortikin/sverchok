@@ -1,0 +1,9 @@
+language: bash
+sudo: enabled
+
+before_script:
+  - sudo apt-get install blender
+
+script:
+  - bash ./run_tests.sh
+
