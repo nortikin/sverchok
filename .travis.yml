@@ -6,12 +6,16 @@ before_install:
   - sudo apt-get install -y blender
 
 install:
-  - mkdir installation && cd installation
-  - wget https://www.blend4web.com/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2
-  - tar xf blender-2.79-linux-glibc219-x86_64.tar.bz2
-  - mv blender-2.79-linux-glibc219-x86_64 blender
-  - rm blender-2.79-linux-glibc219-x86_64.tar.bz2
-  - cd ..
+  - |
+    if [ ! -d installation/blender ]
+    then 
+        mkdir installation && cd installation
+        wget https://www.blend4web.com/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2
+        tar xf blender-2.79-linux-glibc219-x86_64.tar.bz2
+        mv blender-2.79-linux-glibc219-x86_64 blender
+        rm blender-2.79-linux-glibc219-x86_64.tar.bz2
+        cd ..
+    fi
   - ln -s ${PWD} ${PWD}/installation/blender/2.79/scripts/addons/sverchok
   - mkdir -p ~/.config/blender/2.79/config/
   - ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/2.79/config/
@@ -22,4 +26,8 @@ env:
 # Actually run all tests.
 script:
   - bash ./run_tests.sh
+
+cache:
+  directories:
+    - ${PWD}/installation/blender
 
