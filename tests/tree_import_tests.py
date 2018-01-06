@@ -1,4 +1,5 @@
 
+import unittest
 import json
 
 from sverchok.utils.testing import *
@@ -22,6 +23,7 @@ class ScriptUvImportTest(ReferenceTreeTestCase):
             self.assert_node_property_equals("ImportedTree", "UV Connection", "polygons", 'Edges')
             self.assert_node_property_equals("ImportedTree", "UV Connection", "dir_check", 'U_dir')
 
+@unittest.skip("Waiting for #2012 to be fixed")
 class ProfileImportTest(ReferenceTreeTestCase):
 
     reference_file_name = "profile_ref.blend.gz"

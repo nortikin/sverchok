@@ -13,6 +13,7 @@ class ScriptUvExportTest(ReferenceTreeTestCase):
         export_result = create_dict_of_tree(self.tree)
         self.assert_json_equals_file(export_result, "script_uv.json")
 
+@unittest.skip("Waiting for #2012 to be fixed")
 class ProfileExportTest(ReferenceTreeTestCase):
 
     reference_file_name = "profile_ref.blend.gz"
