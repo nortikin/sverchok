@@ -17,9 +17,15 @@ class ProfileExportTest(ReferenceTreeTestCase):
 
     reference_file_name = "profile_ref.blend.gz"
 
+    def setUp(self):
+        # We have to load text block as well
+        self.link_text_block("Profile.txt")
+        super().setUp()
+
     def test_profile_export(self):
         export_result = create_dict_of_tree(self.tree)
-        self.assert_json_equals_file(export_result, "profile.json")
+        self.store_reference_json("profile.json", export_result)
+        #self.assert_json_equals_file(export_result, "profile.json")
 
 class MeshExprExportTest(ReferenceTreeTestCase):
 

@@ -6,4 +6,4 @@
         "torus_n1": 33, "torus_n2": 17, "torus_sT": 1, "mode": "MAJOR_MINOR",
         "Separate": 0, "torus_rP": 0.029999999329447746}, "label": "",
         "use_custom_color": true, "bl_idname": "SvTorusNode"}},
-        "export_version": "0.07"}
+        "export_version": "0.072"}
