@@ -20,6 +20,7 @@ class ProfileExportTest(ReferenceTreeTestCase):
     def setUp(self):
         # We have to load text block as well
         self.link_text_block("Profile.txt")
+        self.maxDiff = None
         super().setUp()
 
     def test_profile_export(self):

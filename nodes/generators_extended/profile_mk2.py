@@ -955,7 +955,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for outname in self.SvLists['knotsnames'].SvSubLists:
             local_storage['knotsnames'].append(outname.SvName)
         
-        node_dict['profile_sublist_storage'] = json.dumps(local_storage)
+        node_dict['profile_sublist_storage'] = json.dumps(local_storage, sort_keys=True)
 
 
 
