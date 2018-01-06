@@ -292,6 +292,32 @@ class SverchokTestCase(unittest.TestCase):
         finally:
             remove_node_tree(imported_tree_name)
 
+    def assert_numpy_arrays_equal(self, arr1, arr2, precision=None):
+        if arr1.shape != arr2.shape:
+            raise AssertionError("Shape of 1st array {} != shape of 2nd array {}".format(arr1.shape, arr2.shape))
+        shape = list(arr1.shape)
+
+        def compare(prev_indicies):
+            step = len(prev_indicies) 
+            if step == arr1.ndim:
+                ind = tuple(prev_indicies)
+                if precision is None:
+                    a1 = arr1[ind]
+                    a2 = arr2[ind]
+                else:
+                    a1 = round(arr1[ind], precision)
+                    a2 = round(arr2[ind], precision)
+
+                self.assertEqual(a1, a2, "Array 1 [{}] != Array 2 [{}]".format(ind, ind))
+            else:
+                for idx in range(shape[step]):
+                    new_indicies = prev_indicies[:]
+                    new_indicies.append(idx)
+                    compare(new_indicies)
+
+        compare([])
+
+
 class EmptyTreeTestCase(SverchokTestCase):
     """
     Base class for test cases, that work on empty node tree.
