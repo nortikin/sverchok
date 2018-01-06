@@ -5,6 +5,7 @@ import unittest
 import json
 from io import StringIO
 import logging
+from contextlib import contextmanager
 
 import sverchok
 from sverchok.utils.logging import debug, info
@@ -45,12 +46,20 @@ def get_node_editor_context():
                 }
     return context
 
-def create_node_tree(name=None):
+def create_node_tree(name=None, must_not_exist=True):
     """
     Create new Sverchok node tree in the scene.
+    If must_not_exist == True (default), then it is checked that
+    the tree with such name did not exist before. If it exists,
+    an exception is raised.
+    If must_not_exist == False, then new tree will be created anyway,
+    but it can be created with another name (standard Blender's renaming).
     """
     if name is None:
         name = "TestingTree"
+    if must_not_exist:
+        if name in bpy.data.node_groups:
+            raise Exception("Will not create tree `{}': it already exists".format(name))
     debug("Creating tree: %s", name)
     return bpy.data.node_groups.new(name=name, type="SverchCustomTreeType")
 
@@ -148,6 +157,22 @@ class SverchokTestCase(unittest.TestCase):
     """
     Base class for Sverchok test cases.
     """
+
+    @contextmanager
+    def temporary_node_tree(self, new_tree_name):
+        """
+        Context manager for dealing with new temporary node tree.
+        The tree is created on entering context and removed when
+        exiting context. Example of usage:
+
+        with self.temporary_node_tree("TempTree") as tmp:
+            do_something(tree)
+        """
+        new_tree = create_node_tree(new_tree_name)
+        try:
+            yield new_tree
+        finally:
+            remove_node_tree(new_tree_name)
 
     def serialize_json(self, data):
         """
