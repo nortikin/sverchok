@@ -182,6 +182,11 @@ def collect_custom_socket_properties(node, node_dict):
         node_dict['custom_socket_props'] = input_socket_storage
     # print("**\n")
 
+def collect_storage_data_if_present(node, node_dict):
+    if hasattr(node, "storage_get_data"):
+        node.storage_get_data(node_dict)
+
+
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
@@ -294,8 +299,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
-        if hasattr(node, "storage_get_data"):
-            node.storage_get_data(node_dict)
+        collect_storage_data_if_present(node, node_dict)
 
         node_dict['params'] = node_items
 
@@ -320,11 +324,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
     layout_dict['nodes'] = nodes_dict
     layout_dict['groups'] = groups_dict
-
-    # ''' get connections '''
-    # links = (compile_socket(l) for l in ng.links)
-    # connections_dict = {idx: link for idx, link in enumerate(links)}
-    # layout_dict['connections'] = connections_dict
 
     ''' get framed nodes '''
     framed_nodes = {}
@@ -406,13 +405,13 @@ def perform_scripted_node_inject(node, node_ref):
     if node.bl_idname == 'SvScriptNode':
         node.user_name = "templates"               # best would be in the node.
         node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-        node.load()
     elif node.bl_idname == 'SvScriptNodeLite':
-        node.load()
-        # node.storage_set_data(node_ref)
+        pass
     else:
         node.files_popup = node.avail_templates(None)[0][0]
-        node.load()
+
+    # all scripted nodes call load()
+    node.load()
 
 
 def perform_profile_node_inject(node, node_ref):
@@ -448,7 +447,6 @@ def perform_svtextin_node_object(node, node_ref):
         if node.textmode == 'JSON':
             if isinstance(text_line_entry, str):
                 debug('loading old text json content / backward compatibility mode')
-                pass
 
             elif isinstance(text_line_entry, dict):
                 text_line_entry = json.dumps(text_line_entry['stored_as_json'])
@@ -473,6 +471,11 @@ def apply_superficial_props(node, node_ref):
     if node_ref.get('use_custom_color'):
         node.use_custom_color = True
         node.color = node_ref.get('color', (1, 1, 1))
+
+
+def restore_storage_data_if_present(node, node_ref):
+    if hasattr(node, 'storage_set_data'):
+        node.storage_set_data(node_ref)    
 
 
 def gather_remapped_names(node, n, name_remap):
@@ -581,8 +584,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     if create_texts:
         add_texts(node, node_ref)
 
-    if hasattr(node, 'storage_set_data'):
-        node.storage_set_data(node_ref)
+    restore_storage_data_if_present(node, node_ref)
 
     if bl_idname == 'SvObjectsNodeMK3':
         for named_object in node_ref.get('object_names', []):
