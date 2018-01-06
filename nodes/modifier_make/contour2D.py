@@ -85,12 +85,16 @@ def maskByDistance(verts, parameters, modulo, edges, maskT):
         v = verts[i]
         vVec = Vector(v)
         for j in range(modulo):
+            rad = parameters[2][j]
+            if rad < 1.0e-5:
+                continue
             vo = parameters[0][j]
             vfx = v[0]-vo[0]
             vfy = v[1]-vo[1]
             dN = pow(pow(vfx, 2) + pow(vfy, 2), 0.5)
             verticesNum = parameters[1][j]
-            dLim = parameters[2][j]*abs(cos(pi/verticesNum))- maskT
+
+            dLim = (rad * abs(cos(pi/verticesNum))) * (1- maskT)
 
             if dN < dLim:
                 d = 1
@@ -102,10 +106,12 @@ def maskByDistance(verts, parameters, modulo, edges, maskT):
                 v2 = parameters[0][ed[1]]
                 r1 = parameters[2][ed[0]]
                 r2 = parameters[2][ed[1]]
+                if v1 == v and r1  < 1.0e-5 or v2 == v and r2  < 1.0e-5:
+                    continue
                 beta = parameters[3][ed[0]]
 
-                dLim1 = r1 * abs(cos(0.5 * pi / parameters[1][ed[0]]))- maskT
-                dLim2 = r2 * abs(cos(0.5 * pi / parameters[1][ed[1]]))- maskT
+                dLim1 = (r1 * abs(cos(0.5 * pi / parameters[1][ed[0]]))) * (1- maskT)
+                dLim2 = (r2 * abs(cos(0.5 * pi / parameters[1][ed[1]]))) * (1- maskT)
 
                 netOff = netOffCount[ed[0]]
                 netOffCount[ed[0]] += 3
@@ -337,7 +343,6 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "modeI", expand=True)
-        r = layout.row(align=True)
         layout.prop(self, 'rm_doubles')
 
     def draw_buttons_ext(self, context, layout):
@@ -355,6 +360,8 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         y = verts_in[1]
         z = verts_in[2]
         vAngle = 0
+
+
         connex = len(net)/3
         if connex > 0:
             for i in range(0, int(len(net)), 3):
@@ -370,7 +377,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
                     beta = net[j]
                     netAll.append(beta)
 
-            newAngs = [radians(theta * i) for i in range(vert)]
+            newAngs = [(radians(theta * i) + vAngle) % (2*pi) for i in range(vert)]
             newAngs = sorted(newAngs + netAll)
 
             for angL in newAngs:
@@ -379,6 +386,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
                 listVertZ.append(z)
 
         elif connex == 1:
+
             beta = (net[1] - net[2])
             if beta <= 0:
                 beta = (net[1] - net[2] + 2*pi)
@@ -434,88 +442,89 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
             listEdg.append((pointsL-1, 0))
         return listEdg
 
-    def make_faces(self, Vertices):
-        listPlg = list(range(Vertices))
-
-        return [listPlg]
-
     def process(self):
         inputs, outputs = self.inputs, self.outputs
 
         # inputs
         vertsAll = inputs['Verts_in'].sv_get(deepcopy=False, default=[[(0.0, 0.0, 0.0)]])
-        radiusAll = inputs['Radius'].sv_get(deepcopy=False, default=[[self.rad_]])
+
+        radiusAll = inputs['Radius'].sv_get(deepcopy=False, default=[[abs(self.rad_)]])
+        radiusAll = [list(map(lambda x: abs(x), radius)) for radius in radiusAll]
+
         verticesAll = inputs['Nº Vertices'].sv_get(deepcopy=False, default=[[self.vert_]])
         verticesAll = [list(map(lambda x: max(2, int(x)), Vertices)) for Vertices in verticesAll]
+
         edgesAll = inputs['Edges_in'].sv_get(deepcopy=False, default=[[]])
 
         # outputs
-        if outputs['Vertices'].is_linked:
-            family = listMatcher([vertsAll, radiusAll, verticesAll, edgesAll], self.listMatch)
-            vertices_outX = []
-            edges_outX = []
-            for verts_in, Radius, Vertices, edges_in in zip(*family):
-                vLen = len(verts_in)
-                edges_in = [i for i in edges_in if i[0] < vLen and i[1] < vLen]
+        if not outputs['Vertices'].is_linked:
+            return
 
-                if self.modeI == "Weighted":
-                    perimeterNumber = 1
-                    actualRadius = [Radius for i in range(vLen)]
-                else:
-                    perimeterNumber = len(Radius)
-                    actualRadius = []
-                    for i in range(perimeterNumber):
-                            actualRadius.append([Radius[i % len(Radius)] for j in range(vLen)])
+        family = listMatcher([vertsAll, radiusAll, verticesAll, edgesAll], self.listMatch)
+        vertices_outX = []
+        edges_outX = []
+        for verts_in, Radius, Vertices, edges_in in zip(*family):
+            vLen = len(verts_in)
+            edges_in = [i for i in edges_in if i[0] < vLen and i[1] < vLen]
 
+            if self.modeI == "Weighted":
+                perimeterNumber = int(len(Radius) / vLen) + 1
+                actualRadius = []
                 for i in range(perimeterNumber):
+                    actualRadius.append([Radius[min((i*vLen + j), len(Radius) - 1)] for j in range(vLen)])
 
-                    net = buildNet(verts_in, edges_in, vLen, actualRadius[i])
-                    parameters = listMatcher([verts_in, Vertices, actualRadius[i], net], self.listMatch)
-                    parameters = [data[0:vLen] for data in parameters]
+            else:
+                perimeterNumber = len(Radius)
+                actualRadius = []
+                for i in range(perimeterNumber):
+                    actualRadius.append([Radius[i % len(Radius)] for j in range(vLen)])
 
-                    points = [self.make_verts(vi, v, r, n) for vi, v, r, n in zip(*parameters)]
-                    totalPoints = 0
-                    for p in points:
-                        totalPoints += len(p)
+            for i in range(perimeterNumber):
 
-                    parameters.append(points)
+                net = buildNet(verts_in, edges_in, vLen, actualRadius[i])
+                parameters = listMatcher([verts_in, Vertices, actualRadius[i], net], self.listMatch)
+                parameters = [data[0:vLen] for data in parameters]
 
-                    edg = [self.make_edges(v, n, len(p)) for vi, v, r, n, p in zip(*parameters)]
+                points = [self.make_verts(vi, v, r, n) for vi, v, r, n in zip(*parameters)]
+                totalPoints = sum(len(p) for p in points)
+                parameters.append(points)
 
-                    if inputs['Edges_in'].is_linked:
-                        verts_Sides_out, edge_Side_out = self.sideEdges(parameters[0], edges_in, parameters[2], parameters[3])
-                        points.append(verts_Sides_out)
-                        edg.append(edge_Side_out)
+                edg = [self.make_edges(v, n, len(p)) for vi, v, r, n, p in zip(*parameters)]
 
-                    verts_out, _, edges_out = mesh_join(points, [], edg)
+                if inputs['Edges_in'].is_linked:
+                    verts_Sides_out, edge_Side_out = self.sideEdges(parameters[0], edges_in, parameters[2], parameters[3])
+                    points.append(verts_Sides_out)
+                    edg.append(edge_Side_out)
 
-                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
-                    checker = [ [e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
-                    checker = list(set([element for tupl in checker for element in tupl]))
-                    smartMask = [i in checker or i >= totalPoints for i in range(len(verts_out))]
-                    verts_out, edges_out = maskVertices(verts_out, edges_out, smartMask)
+                verts_out, _, edges_out = mesh_join(points, [], edg)
 
-                    verts_out, edges_out = intersectEdges(verts_out, edges_out, self.epsilon)
+                mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
+                checker = [ [e[0], e[1]] for e in edges_out if (mask[e[0]] != mask[e[1]]) or (mask[e[0]] and mask[e[1]])]
+                checker = list(set([element for tupl in checker for element in tupl]))
+                smartMask = [i in checker or i >= totalPoints for i in range(len(verts_out))]
+                verts_out, edges_out = maskVertices(verts_out, edges_out, smartMask)
 
-                    mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
+                verts_out, edges_out = intersectEdges(verts_out, edges_out, self.epsilon)
 
-                    verts_out, edges_out = maskVertices(verts_out, edges_out, mask)
+                mask = maskByDistance(verts_out, parameters, vLen, edges_in, self.maskT)
 
-                    verts_out, edges_out = removeDoubles([verts_out], [edges_out], self.rm_doubles)
+                verts_out, edges_out = maskVertices(verts_out, edges_out, mask)
 
-                    if inputs['Edges_in'].is_linked:
-                        midPoints = CalcMidPoints(verts_out, edges_out)
-                        maskEd = maskByDistance(midPoints, parameters, vLen, edges_in, self.maskT)
-                        edges_out = maskEdges(edges_out, maskEd)
+                verts_out, edges_out = removeDoubles([verts_out], [edges_out], self.rm_doubles)
 
-                    verts_outFX, edges_outFX = sortVerticesByConnexions(verts_out, edges_out)
-                    vertices_outX.append(verts_outFX)
-                    edges_outX.append(edges_outFX)
+                if inputs['Edges_in'].is_linked:
+                    midPoints = CalcMidPoints(verts_out, edges_out)
+                    maskEd = maskByDistance(midPoints, parameters, vLen, edges_in, self.maskT)
+                    edges_out = maskEdges(edges_out, maskEd)
 
-            outputs['Vertices'].sv_set(vertices_outX)
+                verts_outFX, edges_outFX = sortVerticesByConnexions(verts_out, edges_out)
+                vertices_outX.append(verts_outFX)
+                edges_outX.append(edges_outFX)
 
-            if outputs['Edges'].is_linked:
-                outputs['Edges'].sv_set(edges_outX)
+        outputs['Vertices'].sv_set(vertices_outX)
+
+        if outputs['Edges'].is_linked:
+            outputs['Edges'].sv_set(edges_outX)
 
 
 def register():
