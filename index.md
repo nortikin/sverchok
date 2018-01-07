@@ -273,6 +273,7 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
+    SvFormulaDeformNode
     ---
     SvColorsInNodeMK1
     SvColorsOutNodeMK1
