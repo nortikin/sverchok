@@ -22,3 +22,4 @@ resulted vertices to X,Y,Z elements of which was applied expression.
 
 Example of usage
 ----------------
+.. image:: https://user-images.githubusercontent.com/22656834/34645578-6feb7138-f373-11e7-87e7-54d4307c9b0a.png
