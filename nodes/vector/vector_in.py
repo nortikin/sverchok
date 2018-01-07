@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import FloatProperty, BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode, fullList, fullList_deep_copy
 from sverchok.utils.sv_itertools import sv_zip_longest
 
 class SvVectorFromCursor(bpy.types.Operator):
@@ -55,6 +55,8 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     z_ = FloatProperty(name='Z', description='Z',
                        default=0.0, precision=3,
                        update=updateNode)
+    
+    object_mode = BoolProperty(name='object mode', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x_'
@@ -68,6 +70,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
             get_cursor = layout.operator('node.sverchok_vector_from_cursor', text='3D Cursor')
             get_cursor.nodename = self.name
             get_cursor.treename = self.id_data.name
+        layout.row().prop(self, 'object_mode')
 
     def process(self):
         if not self.outputs['Vectors'].is_linked:
@@ -78,9 +81,16 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         Z_ = inputs['Z'].sv_get()
         series_vec = []
         max_obj = max(map(len, (X_, Y_, Z_)))
-        fullList(X_, max_obj)
-        fullList(Y_, max_obj)
-        fullList(Z_, max_obj)
+        
+        if self.object_mode:
+            fullList_deep_copy(X_, max_obj)
+            fullList_deep_copy(Y_, max_obj)
+            fullList_deep_copy(Z_, max_obj)
+        else:
+            fullList(X_, max_obj)
+            fullList(Y_, max_obj)
+            fullList(Z_, max_obj)
+            
         for i in range(max_obj):
 
             max_v = max(map(len, (X_[i], Y_[i], Z_[i])))
