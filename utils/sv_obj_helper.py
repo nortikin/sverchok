@@ -56,6 +56,24 @@ def get_random_init_v2():
     return n + str(plus_one)
 
 
+def tracked_operator(node, layout_element, fn_name='', text='', icon=None):
+    """
+    this is a wrapper around the layout.operator(CALLBACK_OP....), it allows
+    us to track the nodetree and nodename origins of the callback. 
+
+    // Without treename and nodename it's not possible to tell where the button press comes from
+    // and now you can just press the button, without first making a node selected or active.
+
+    """
+    operator_props = dict(text=text)
+    if icon:
+        operator_props['icon'] = icon
+
+    button = layout_element.operator(CALLBACK_OP, **operator_props)
+    button.fn_name = fn_name
+    button.node_name = node.name
+    button.tree_name = node.id_data.name    
+
 
 class SvObjectsHelperCallback(bpy.types.Operator):
 
@@ -66,10 +84,19 @@ class SvObjectsHelperCallback(bpy.types.Operator):
     fn_name = StringProperty(default='')
     data_kind = StringProperty(default='CURVE')
 
+    # The imformation of "which node this button was pressed on"
+    # is not communicated unless you do it explicitely.
+    tree_name = StringProperty(default='')
+    node_name = StringProperty(default='')
+
     def execute(self, context):
         type_op = self.fn_name
 
-        n = context.node
+        if self.tree_name and self.node_name:
+            n = bpy.data.node_groups[self.tree_name].nodes[self.node_name]
+        else:
+            n = context.node
+
         objs = n.get_children()
 
         if type_op in {'object_hide', 'object_hide_render', 'object_hide_select'}:
@@ -217,7 +244,7 @@ class SvObjHelper():
         row.column().prop(self, "activate", text="LIVE", toggle=True, icon=view_icon)
 
         for op_name in common_ops: 
-            row.operator(CALLBACK_OP, text='', icon=self.icons(op_name)).fn_name = op_name
+            tracked_operator(self, row, fn_name=op_name, icon=self.icons(op_name))
 
     def draw_object_buttons(self, context, layout):
 
@@ -229,19 +256,18 @@ class SvObjHelper():
 
             row = col.row(align=True)
             row.scale_y = 2
-            row.operator(CALLBACK_OP, text='Select / Deselect').fn_name = 'object_select'
+            tracked_operator(self, row, fn_name='object_select', text='Select / Deselect')
 
             row = col.row(align=True)
             row.scale_y = 1
-            row.prop_search(
-                self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
-            row.operator(CALLBACK_OP, text='', icon="ZOOMIN").fn_name = 'add_material'
+            row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+            tracked_operator(self, row, fn_name='add_material', icon="ZOOMIN")
 
     def draw_ext_object_buttons(self, context, layout):
         layout.separator()
         row = layout.row(align=True)
-        row.operator(CALLBACK_OP, text='Rnd Name').fn_name = 'random_basedata_name'
-        row.operator(CALLBACK_OP, text='+Material').fn_name = 'add_material'        
+        tracked_operator(self, row, fn_name='random_basedata_name', text='Rnd Name')
+        tracked_operator(self, row, fn_name='add_material', text='+Material', icon="ZOOMIN")
 
     def set_corresponding_materials(self):
         if bpy.data.materials.get(self.material):
