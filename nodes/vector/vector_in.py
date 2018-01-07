@@ -82,7 +82,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         series_vec = []
         max_obj = max(map(len, (X_, Y_, Z_)))
         
-        fillList_main = fullList_deep_copy if self.object_mode else fullList
+        fullList_main = fullList_deep_copy if self.object_mode else fullList
         fullList_main(X_, max_obj)
         fullList_main(Y_, max_obj)
         fullList_main(Z_, max_obj)
