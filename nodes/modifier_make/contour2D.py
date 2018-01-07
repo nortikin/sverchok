@@ -31,7 +31,7 @@ from sverchok.data_structure import (
 from sverchok.utils.modules.geom_utils import pt_in_triangle
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.nodes.modifier_change.edges_intersect_mk2 import (
-    remove_doubles_with_edges,
+    remove_doubles_from_edgenet,
     intersect_edges)
 
 
@@ -467,7 +467,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
                 verts_out, edges_out = mask_vertices(verts_out, edges_out, mask)
 
-                verts_out, edges_out = remove_doubles_with_edges(verts_out, edges_out, self.rm_doubles)
+                verts_out, edges_out = remove_doubles_from_edgenet(verts_out, edges_out, self.rm_doubles)
 
                 if inputs['Edges_in'].is_linked:
                     mid_points = calculate_mid_points(verts_out, edges_out)
