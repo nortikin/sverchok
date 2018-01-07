@@ -160,7 +160,7 @@ def intersect_edges(verts, edges, epsi):
     return verts_out, edges_out
 
 
-def remove_doubles_with_edges(verts_in, edges_in, distance):
+def remove_doubles_from_edgenet(verts_in, edges_in, distance):
     bm = bmesh_from_pydata(verts_in, edges_in, [])
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=distance)
     verts_out = [v.co.to_tuple() for v in bm.verts]
