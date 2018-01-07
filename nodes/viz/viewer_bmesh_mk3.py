@@ -279,7 +279,7 @@ class SvBmeshViewerNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 data = get_edges_faces_matrices(obj_index)
                 make_bmesh_geometry(self, obj_index, bpy.context, Verts, *data)
 
-        last_index = len(mverts) - 1
+        last_index = (len(mverts) - 1) if not self.merge else 0
         self.remove_non_updated_objects(last_index)
 
         objs = self.get_children()
