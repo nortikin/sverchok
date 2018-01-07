@@ -104,7 +104,7 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     scene = context.scene
     meshes = bpy.data.meshes
     objects = bpy.data.objects
-    name = node.basedata_name + "_" + str(obj_index)
+    name = node.basedata_name + '.' + str("%04d" % obj_index)
 
     if name in objects:
         sv_object = objects[name]
