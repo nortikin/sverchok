@@ -448,10 +448,10 @@ class PathParser(object):
         return temp_edges
 
 
-class SvPrifilizer(bpy.types.Operator):
-    """SvPrifilizer"""
-    bl_idname = "node.sverchok_profilizer"
-    bl_label = "SvPrifilizer"
+class SvPrifilizerMK0(bpy.types.Operator):
+    """SvPrifilizer MK0"""
+    bl_idname = "node.sverchok_profilizer_mk0"
+    bl_label = "SvPrifilizer Mk0"
     bl_options = {'REGISTER', 'UNDO'}
 
     nodename = StringProperty(name='nodename')
@@ -635,7 +635,7 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row()
-        do_text = row.operator('node.sverchok_profilizer', text='from selection')
+        do_text = row.operator('node.sverchok_profilizer_mk0', text='from selection')
         do_text.nodename = self.name
         do_text.treename = self.id_data.name
         row = col.row()
@@ -787,11 +787,11 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvProfileNode)
-    bpy.utils.register_class(SvPrifilizer)
+    bpy.utils.register_class(SvPrifilizerMK0)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPrifilizer)
+    bpy.utils.unregister_class(SvPrifilizerMK0)
     bpy.utils.unregister_class(SvProfileNode)
 
 if __name__ == '__main__':

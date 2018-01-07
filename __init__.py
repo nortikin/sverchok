@@ -88,7 +88,7 @@ utils_modules = [
     "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common",
     "snlite_utils", "snlite_importhelper", "context_managers",
-    "profile", "logging", 
+    "profile", "logging", "testing",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
@@ -102,7 +102,7 @@ utils_modules = [
 ui_modules = [
     "color_def", "sv_IO_panel", "sv_templates_menu",
     "sv_panels", "nodeview_rclick_menu", "nodeview_space_menu", "nodeview_keymaps",
-    "monad", "sv_icons",
+    "monad", "sv_icons", "presets",
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
     "index_viewer_draw", "bgl_callback_3dview",

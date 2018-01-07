@@ -1,0 +1,34 @@
+language: bash
+sudo: enabled
+
+install:
+  - |
+    if [ ! -f installation/blender/blender ]
+    then 
+        mkdir -p installation
+        cd installation
+        wget https://www.blend4web.com/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2
+        tar xf blender-2.79-linux-glibc219-x86_64.tar.bz2
+        if [ -d blender ]
+        then rm -rf blender
+        fi
+        mv blender-2.79-linux-glibc219-x86_64 blender
+        rm blender-2.79-linux-glibc219-x86_64.tar.bz2
+        echo "Current directory after downloading blender: $(pwd)"
+        cd ..
+    fi
+    ln -s ${PWD} ${PWD}/installation/blender/2.79/scripts/addons/sverchok
+    mkdir -p ~/.config/blender/2.79/config/
+    ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/2.79/config/
+
+env:
+  - BLENDER=${PWD}/installation/blender/blender-softwaregl
+
+# Actually run all tests.
+script:
+  - bash ./run_tests.sh
+
+cache:
+  directories:
+    - ${PWD}/installation
+

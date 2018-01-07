@@ -62,6 +62,7 @@ def get_csv_data(node):
 def get_json_data(node):
     data_out = {}
 
+    socket_order = []
     for socket in node.inputs:
         if socket.is_linked:
             tmp = socket.sv_get(deepcopy=False)
@@ -75,6 +76,9 @@ def get_json_data(node):
                     j += 1
 
                 data_out[name] = (get_socket_type(node, socket.name), tmp)
+                socket_order.append(name)
+
+    data_out['socket_order'] = socket_order
 
     if node.json_mode == 'pretty':
         out = json.dumps(data_out, indent=4)

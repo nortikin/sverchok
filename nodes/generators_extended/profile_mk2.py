@@ -16,15 +16,18 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-''' by Dealga McArdle | 2014 '''
+''' by Dealga McArdle | 2014 + modifications by Nikita '''
 
 import re
+import json
+from string import ascii_lowercase
+
 import parser
 from ast import literal_eval
-from string import ascii_lowercase
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
+from bpy.utils import register_class, unregister_class
 from mathutils import Vector
 from mathutils.geometry import interpolate_bezier
 
@@ -40,11 +43,9 @@ class SvSublistGroup(bpy.types.PropertyGroup):
     SvY = bpy.props.FloatProperty()
     SvZ = bpy.props.FloatProperty()
     SvName = bpy.props.StringProperty()
-bpy.utils.register_class(SvSublistGroup)
 
 class SvListGroup(bpy.types.PropertyGroup):
     SvSubLists = bpy.props.CollectionProperty(type=SvSublistGroup)    
-bpy.utils.register_class(SvListGroup)
     
         
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
@@ -698,7 +699,8 @@ class SvPrifilizer(bpy.types.Operator):
 
 class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''
-    svg-like 2d profiles ///
+    Triggers: svg-like 2d profiles
+    Tooltip: Generate multiple parameteric 2d profiles using SVG like syntax
 
     SvProfileNode generates one or more profiles / elevation segments using;
     assignments, variables, and a string descriptor similar to SVG.
@@ -710,12 +712,10 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvProfileNodeMK2'
     bl_label = 'Profile Parametric'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-
+    bl_icon = 'SYNTAX_ON'
 
     SvLists = bpy.props.CollectionProperty(type=SvListGroup)
     SvSubLists = bpy.props.CollectionProperty(type=SvSublistGroup)
-
 
     def mode_change(self, context):
         if not (self.selected_axis == self.current_axis):
@@ -725,11 +725,9 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     x = BoolProperty(default=True)
     y = BoolProperty(default=True)
-    axis_options = [
-        ("X", "X", "", 0),
-        ("Y", "Y", "", 1),
-        ("Z", "Z", "", 2)
-    ]
+
+    axis_options = [("X", "X", "", 0), ("Y", "Y", "", 1), ("Z", "Z", "", 2)]
+
     current_axis = StringProperty(default='Z')
 
     knotsnames = StringProperty(name='knotsnames', default='')
@@ -925,14 +923,51 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except:
             outputs[3].sv_set([])
 
+
+    def storage_set_data(self, storage):
+        
+        self.id_data.freeze(hard=True)
+        self.SvLists.clear()
+
+        strings_json = storage['profile_sublist_storage']
+        
+        out_points = json.loads(strings_json)['knots']
+        self.SvLists.add().name = 'knots'
+        for k in out_points:
+            item = self.SvLists['knots'].SvSubLists.add()
+            item.SvX, item.SvY, item.SvZ = k
+
+        out_names = json.loads(strings_json)['knotsnames']
+        self.SvLists.add().name = 'knotsnames'
+        for k in out_names:
+            item = self.SvLists['knotsnames'].SvSubLists.add()
+            item.SvName = k
+
+        self.id_data.unfreeze(hard=True)
+
+
+    def storage_get_data(self, node_dict):
+        local_storage = {'knots': [], 'knotsnames': []}
+
+        for knot in self.SvLists['knots'].SvSubLists:
+            local_storage['knots'].append([knot.SvX, knot.SvY, knot.SvZ])
+
+        for outname in self.SvLists['knotsnames'].SvSubLists:
+            local_storage['knotsnames'].append(outname.SvName)
+        
+        node_dict['profile_sublist_storage'] = json.dumps(local_storage, sort_keys=True)
+
+
+
+classes = SvSublistGroup, SvListGroup, SvProfileNodeMK2, SvPrifilizer
+
 def register():
-    bpy.utils.register_class(SvProfileNodeMK2)
-    bpy.utils.register_class(SvPrifilizer)
+    _ = [register_class(cls) for cls in classes]
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPrifilizer)
-    bpy.utils.unregister_class(SvProfileNodeMK2)
+    _ = [unregister_class(cls) for cls in reversed(classes)]
 
-if __name__ == '__main__':
-    register()
+
+# if __name__ == '__main__':
+#     register()

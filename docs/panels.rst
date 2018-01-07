@@ -61,6 +61,97 @@ Check for updates
 **Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds a new version.
 
 
+Tools Panel
+===========
+
+Blender's node editor, as well as other types of editor, has a Tools panel (on the left side), which is toggled by pressing the *T* key.
+Sverchok uses it to present all nodes available, organized in categories. Each category has a special tab for it.
+
+.. image:: https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png
+  :alt: t-panel.png
+
+You can add node to the tree by clicking corresponding button in the *T* panel.
+
+Presets Panel
+=============
+
+This is a second tab under the *T* panel. This is how it looks by default:
+
+.. image:: https://user-images.githubusercontent.com/284644/34566374-19623d6e-f180-11e7-840a-ec5bb8972e64.png
+  :alt: empty-presets.png
+
+Introduction to Presets
+-----------------------
+
+Preset is a named set of stored settings of one of several nodes. You can:
+
+* Save settings of one or several selected nodes (links between nodes are saved
+  too) under specific name.
+* Use saved preset in another node tree later.
+* Import and export presets as `.json` files.
+* Share presets with other users via gist.github.com service, or import presets
+  made by other users.
+
+Presets are saved as `.json` files under Blender configuration directory, in `datafiles/sverchok/presets`.
+
+It can be good idea to store as a preset (and maybe share) the following things:
+
+* One node with a lot of settings, if you think this is "good" settings and you
+  are going to use the same settings many times.
+* Scripted node, or "Mesh Expression" node, or one of other nodes that use
+  Blender's text blocks as settings. Such nodes are stored together with
+  corresponding text.
+* Group (monad) node. It is saved with all contents.
+* Several linked nodes, that do some completed thing, for later usage "as-is".
+* Several linked nodes, that are "sort of going to be needed in this
+  combination often", so that later you can start with this preset and add some
+  nodes to it or tweak it somehow.
+
+Panel Buttons
+-------------
+
+The Presets panel has the following buttons:
+
+* **Save Preset**. This button is only shown when there are some nodes selected
+  in the tree. When you press this button, it asks you for the name under which
+  this preset should be known. You need to enter some descriptive name and
+  press Ok. After that, the preset will become available in the lower part of
+  the panel.
+* **Manage Presets**. This is a toggle button. It switches you between "presets
+  usage mode" (which is the default, when button is not pressed) and "presets
+  management mode" (when the button is pressed).
+
+Contents of lower part of the panel depend on whether the **Manage Presets** button is pressed.
+
+When management mode is disabled, there is a button shown for each preset that you already have:
+
+.. image:: https://user-images.githubusercontent.com/284644/34495416-df370a76-f016-11e7-98e7-97c01969fe74.png
+
+By pressing such button, you add nodes saved in corresponding preset into
+current tree. New nodes are automatically selected, so that you can move them
+to another part of the node view.
+
+When management mode is enabled, there are more buttons:
+
+.. image:: https://user-images.githubusercontent.com/284644/34495429-f1b9a6d6-f016-11e7-9d2c-ffd6432c27db.png
+
+* **Import preset from Gist**. You will be asked for Gist ID or full URL of the
+  gist, and preset name. If you have gist URL in the clibpoard, it will be
+  pasted automatically.
+* **Import preset from file**. File browser will appear to allow you to select
+  a `.json` file to import. In the left bottom part of this file browser, there
+  is mandatory text field asking you to enter preset name.
+
+The following buttons (in this order) are shown for each preset you have:
+
+* **Export preset to Gist**. Preset will be exported to gist service. Gist URL will be automatically copied into clipboard.
+* **Export preset to outer file**. File browser will appear asking you to select where to save the preset.
+* **Edit preset properties**. A dialog will appear allowing you to change the following properties of preset: Name, Description, Author, License. The Description attribute will be used as a tooltip for preset button. 
+
+  .. image:: https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png
+
+* **Delete preset**. You will be asked for confirmation.
+
 3D Panel
 ========
 

@@ -195,7 +195,10 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         out = []
         extend = out.extend
         append = out.append
-        exec('\n'.join([j.line for j in self.dynamic_strings]))
+
+        # locals() is needed for generic module imports.
+        exec('\n'.join([j.line for j in self.dynamic_strings]), locals())
+
         self.outputs[0].sv_set(out)
 
     def storage_set_data(self, storage):
