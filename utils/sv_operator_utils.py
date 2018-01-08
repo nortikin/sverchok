@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-
+from bpy.props import StringProperty
 
 class SvGenericCallbackOldOp(bpy.types.Operator):
     """ 
@@ -27,7 +27,7 @@ class SvGenericCallbackOldOp(bpy.types.Operator):
     bl_label = "Sverchok text input"
     bl_options = {'REGISTER', 'UNDO'}
 
-    fn_name = bpy.props.StringProperty(name='function name')
+    fn_name = StringProperty(name='function name')
 
     # this information is not communicated unless you trigger it from a node
     # in the case the operator button appears on a 3dview panel, it will need to pass these too.
