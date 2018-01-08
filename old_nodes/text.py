@@ -53,33 +53,6 @@ def new_output_socket(node, name, _type):
     node.outputs.new(bl_idname, name)
 
 
-# OLD TODO,
-# load and dump to/from external file
-# update stability, do not disconnect unless something changed
-#
-
-class SvTextInOp(bpy.types.Operator):
-    """ Load text data """
-    bl_idname = "node.sverchok_text_callback"
-    bl_label = "Sverchok text input"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    fn_name = StringProperty(name='tree name')
-
-    def execute(self, context):
-        n = context.node
-        fn_name = self.fn_name
-
-        f = getattr(n, fn_name, None)
-        if not f:
-            msg = "{0} has no function named '{1}'".format(n.name, fn_name)
-            self.report({"WARNING"}, msg)
-            return {'CANCELLED'}
-        f()
-
-        return {'FINISHED'}
-
-
 # call structure
 # op load->load->load-mode->get_data
 # op reset-> reset. remove outputs, any data. as new
@@ -732,15 +705,13 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvTextInOp)
     bpy.utils.register_class(SvTextInNode)
     bpy.utils.register_class(SvTextOutNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTextInOp)
     bpy.utils.unregister_class(SvTextInNode)
     bpy.utils.unregister_class(SvTextOutNode)
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#     register()
