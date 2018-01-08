@@ -60,6 +60,7 @@ from sverchok.core.socket_conversions import (
 
 from sverchok.core.node_defaults import set_defaults_if_defined
 
+from sverchok.utils import get_node_class_reference
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.ui import color_def
 import sverchok.utils.logging
@@ -786,6 +787,20 @@ class SverchCustomTreeNode:
 
         return cls.get_docstring().get_shorthand()
 
+    def node_replacement_menu(self, context, layout):
+        if hasattr(self, "replacement_nodes"):
+            for bl_idname, inputs_mapping, outputs_mapping in self.replacement_nodes:
+                node_class = get_node_class_reference(bl_idname)
+                text = "Replace with {}".format(node_class.bl_label)
+                op = layout.operator("node.sv_replace_node", text=text)
+                op.old_node_name = self.name
+                op.new_bl_idname = bl_idname
+                set_inputs_mapping(op, inputs_mapping)
+                set_outputs_mapping(op, outputs_mapping)
+
+    def rclick_menu(self, context, layout):
+        self.node_replacement_menu(context, layout)
+
     def sv_init(self, context):
         self.create_sockets()
 
@@ -835,11 +850,103 @@ class SverchCustomTreeNode:
         else:
             pass
 
+class SvSocketReplacement(bpy.types.PropertyGroup):
+    old_name = bpy.props.StringProperty(name="Name of socket in the old node")
+    new_name = bpy.props.StringProperty(name="Name of socket in the new node")
+
+def set_inputs_mapping(self, mapping):
+    self.inputs_mapping.clear()
+    if mapping:
+        for old, new in mapping.items():
+            item = self.inputs_mapping.add()
+            item.old_name = old
+            item.new_name = new
+
+def set_outputs_mapping(self, mapping):
+    self.outputs_mapping.clear()
+    if mapping:
+        for old, new in mapping.items():
+            item = self.outputs_mapping.add()
+            item.old_name = old
+            item.new_name = new
+
+class SvReplaceNode(bpy.types.Operator):
+    bl_idname = "node.sv_replace_node"
+    bl_label = "Replace selected node with another"
+    bl_options = {'INTERNAL'}
+
+    old_node_name = bpy.props.StringProperty(name="Old node name")
+    new_bl_idname = bpy.props.StringProperty(name="New node bl_idname")
+    inputs_mapping = bpy.props.CollectionProperty(name="Input sockets names mapping",
+            type = SvSocketReplacement)
+    outputs_mapping = bpy.props.CollectionProperty(name="Output sockets names mapping",
+            type = SvSocketReplacement)
+
+    def get_new_input_name(self, old_name):
+        for item in self.inputs_mapping:
+            if item.old_name == old_name:
+                return item.new_name
+        return old_name
+
+    def get_new_output_name(self, old_name):
+        for item in self.outputs_mapping:
+            if item.old_name == old_name:
+                return item.new_name
+        return old_name
+
+    def execute(self, context):
+        if not self.old_node_name:
+            self.report({'ERROR'}, "Old node name is not provided")
+            return {'CANCELLED'}
+
+        if not self.new_bl_idname:
+            self.report({'ERROR'}, "New node bl_idname is not provided")
+            return {'CANCELLED'}
+
+        tree = context.space_data.edit_tree
+
+        old_node = tree.nodes[self.old_node_name]
+        new_node = tree.nodes.new(self.new_bl_idname)
+        ui_props = ['location', 'height', 'width', 'label', 'hide']
+        for prop_name in ui_props:
+            setattr(new_node, prop_name, getattr(old_node, prop_name))
+        for prop_name, prop_value in old_node.items():
+            new_node[prop_name] = old_node[prop_name]
+
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = self.get_new_input_name(old_link.to_socket.name)
+            if new_target_socket_name in new_node.inputs:
+                new_target_socket = new_node.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
+            else:
+                debug("New node %s has no input named %s, skipping", new_node.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            new_source_socket_name = self.get_new_output_name(old_link.from_socket.name)
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in new_node.outputs:
+                new_source_socket = new_node.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                debug("New node %s has no output named %s, skipping", new_node.name, new_source_socket_name)
+
+        tree.nodes.remove(old_node)
+
+        return {'FINISHED'}
+
 classes = [
     SvColors, SverchCustomTree,
     VerticesSocket, MatrixSocket, StringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket,
     SvLinkNewNodeInput,
+    SvSocketReplacement, SvReplaceNode,
 ]
 
 
