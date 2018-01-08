@@ -788,6 +788,22 @@ class SverchCustomTreeNode:
         return cls.get_docstring().get_shorthand()
 
     def node_replacement_menu(self, context, layout):
+        """
+        Draw menu items with node replacement operators.
+        This is called from `rclick_menu()' method by default.
+        Items are defined by `replacement_nodes' class property.
+        Expected format is
+
+            replacement_nodes = [
+                (new_node_bl_idname, inputs_mapping_dict, outputs_mapping_dict)
+            ]
+
+        where new_node_bl_idname is bl_idname of replacement node class,
+        inputs_mapping_dict is a dictionary mapping names of inputs of this node
+        to names of inputs to new node, and outputs_mapping_dict is a dictionary
+        mapping names of outputs of this node to names of outputs of new node.
+        inputs_mapping_dict and outputs_mapping_dict can be None.
+        """
         if hasattr(self, "replacement_nodes"):
             for bl_idname, inputs_mapping, outputs_mapping in self.replacement_nodes:
                 node_class = get_node_class_reference(bl_idname)
@@ -799,9 +815,20 @@ class SverchCustomTreeNode:
                 set_outputs_mapping(op, outputs_mapping)
 
     def rclick_menu(self, context, layout):
+        """
+        Override this method to add specific items into
+        node's right-click menu.
+        Default implementation calls `node_replacement_menu'.
+        """
         self.node_replacement_menu(context, layout)
 
     def migrate_from(self, old_node):
+        """
+        This method is called by node replacement operator.
+        Override it to correctly copy settings from old_node
+        to this (new) node.
+        Default implementation does nothing.
+        """
         pass
 
     def sv_init(self, context):
@@ -854,26 +881,40 @@ class SverchCustomTreeNode:
             pass
 
 class SvSocketReplacement(bpy.types.PropertyGroup):
+    """
+    Utility class for mapping old socket name to new socket name.
+    """
     old_name = bpy.props.StringProperty(name="Name of socket in the old node")
     new_name = bpy.props.StringProperty(name="Name of socket in the new node")
 
-def set_inputs_mapping(self, mapping):
-    self.inputs_mapping.clear()
+def set_inputs_mapping(operator, mapping):
+    operator.inputs_mapping.clear()
     if mapping:
         for old, new in mapping.items():
-            item = self.inputs_mapping.add()
+            item = operator.inputs_mapping.add()
             item.old_name = old
             item.new_name = new
 
-def set_outputs_mapping(self, mapping):
-    self.outputs_mapping.clear()
+def set_outputs_mapping(operator, mapping):
+    operator.outputs_mapping.clear()
     if mapping:
         for old, new in mapping.items():
-            item = self.outputs_mapping.add()
+            item = operator.outputs_mapping.add()
             item.old_name = old
             item.new_name = new
 
 class SvReplaceNode(bpy.types.Operator):
+    """
+    Replace selected node with another node.
+
+    This operator removes old node and creates a new node.
+    It tries to preserve all links and properties that old
+    node had. For cases when new node has other names of 
+    inputs and/or outputs, it is possible to define mapping.
+    In the end, this operator calls `migrate_from' method
+    of the new node, so the new node can copy it's settings
+    from correct places of old node.
+    """
     bl_idname = "node.sv_replace_node"
     bl_label = "Replace selected node with another"
     bl_options = {'INTERNAL'}
@@ -910,12 +951,15 @@ class SvReplaceNode(bpy.types.Operator):
 
         old_node = tree.nodes[self.old_node_name]
         new_node = tree.nodes.new(self.new_bl_idname)
+        # Copy UI properties
         ui_props = ['location', 'height', 'width', 'label', 'hide']
         for prop_name in ui_props:
             setattr(new_node, prop_name, getattr(old_node, prop_name))
+        # Copy ID properties
         for prop_name, prop_value in old_node.items():
             new_node[prop_name] = old_node[prop_name]
 
+        # Copy incoming / outgoing links
         old_in_links = [link for link in tree.links if link.to_node == old_node]
         old_out_links = [link for link in tree.links if link.from_node == old_node]
 
@@ -941,6 +985,7 @@ class SvReplaceNode(bpy.types.Operator):
                 debug("New node %s has no output named %s, skipping", new_node.name, new_source_socket_name)
 
         if hasattr(new_node, "migrate_from"):
+            # Allow new node to copy what generic code could not.
             new_node.migrate_from(old_node)
 
         tree.nodes.remove(old_node)
