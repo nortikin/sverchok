@@ -801,6 +801,9 @@ class SverchCustomTreeNode:
     def rclick_menu(self, context, layout):
         self.node_replacement_menu(context, layout)
 
+    def migrate_from(self, old_node):
+        pass
+
     def sv_init(self, context):
         self.create_sockets()
 
@@ -936,6 +939,9 @@ class SvReplaceNode(bpy.types.Operator):
                 new_link = tree.links.new(new_source_socket, old_target_socket)
             else:
                 debug("New node %s has no output named %s, skipping", new_node.name, new_source_socket_name)
+
+        if hasattr(new_node, "migrate_from"):
+            new_node.migrate_from(old_node)
 
         tree.nodes.remove(old_node)
 
