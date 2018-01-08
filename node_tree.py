@@ -49,14 +49,9 @@ from sverchok.core.update_system import (
     get_update_lists, update_error_nodes)
 
 from sverchok.core.socket_conversions import (
-    get_matrices_from_locs,
-    get_locs_from_matrices,
-    get_matrices_from_quaternions,
-    get_quaternions_from_matrices,
-    is_matrix_to_quaternion,
-    is_quaternion_to_matrix,
-    is_vector_to_matrix,
-    is_matrix_to_vector)
+    DefaultImplicitConversionPolicy,
+    is_vector_to_matrix
+    )
 
 from sverchok.core.node_defaults import set_defaults_if_defined
 
@@ -334,6 +329,16 @@ class SvSocketCommon:
     def draw_color(self, context, node):
         return socket_colors[self.bl_idname]
 
+    def needs_data_conversion(self):
+        if not self.is_linked:
+            return False
+        return self.other.bl_idname != self.bl_idname
+
+    def convert_data(self, source_data, implicit_conversions=DefaultImplicitConversionPolicy):
+        if not self.needs_data_conversion():
+            return source_data
+        else:
+            return implicit_conversions.convert(self, source_data)
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
@@ -354,23 +359,12 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     def get_prop_data(self):
         return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
         self.num_matrices = 0
         if self.is_linked and not self.is_output:
+            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
 
-            if is_vector_to_matrix(self):
-                # this means we're going to get a flat list of the incoming
-                # locations and convert those into matrices proper.
-                out = get_matrices_from_locs(SvGetSocket(self, deepcopy=True))
-                self.num_matrices = len(out)
-                return out
-
-            if is_quaternion_to_matrix(self):
-                out = get_matrices_from_quaternions(SvGetSocket(self, deepcopy=True))
-                self.num_matrices = len(out)
-                return out
-
-            return SvGetSocket(self, deepcopy)
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
@@ -395,13 +389,10 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
         if self.is_linked and not self.is_output:
-            if is_matrix_to_vector(self):
-                out = get_locs_from_matrices(SvGetSocket(self, deepcopy=True))
-                return out
-
-            return SvGetSocket(self, deepcopy)
+            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
 
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)[:]]]
@@ -431,18 +422,10 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
         if self.is_linked and not self.is_output:
-
-            if is_matrix_to_quaternion(self):
-                out = get_quaternions_from_matrices(SvGetSocket(self, deepcopy=True))
-                return out
-
-            # if is_vector_to_quaternion(self):
-            #     out = vector_to_quaternion(SvGetSocket(self, deepcopy=True))
-            #     return out
-
-            return SvGetSocket(self, deepcopy)
+            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
 
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)[:]]]
@@ -472,9 +455,9 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
         if self.is_linked and not self.is_output:
-            return SvGetSocket(self, deepcopy)
+            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
 
         if self.prop_name:
             return [[getattr(self.node, self.prop_name)[:]]]
@@ -528,9 +511,11 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+#         debug("Node %s, socket %s, is_linked: %s, is_output: %s",
+#                 self.node.name, self.name, self.is_linked, self.is_output)
         if self.is_linked and not self.is_output:
-            return SvGetSocket(self, deepcopy)
+            return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.prop_name:
             # to deal with subtype ANGLE, this solution should be considered temporary...
             _, prop_dict = getattr(self.node.rna_type, self.prop_name, (None, {}))
