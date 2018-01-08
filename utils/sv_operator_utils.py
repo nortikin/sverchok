@@ -29,7 +29,7 @@ class SvGenericCallbackOldOp(bpy.types.Operator):
 
     fn_name = bpy.props.StringProperty(name='function name')
 
-    # The imformation is not communicated unless you do it explicitely trigger it from a node
+    # this information is not communicated unless you trigger it from a node
     # in the case the operator button appears on a 3dview panel, it will need to pass these too.
     tree_name = StringProperty(default='')
     node_name = StringProperty(default='')
