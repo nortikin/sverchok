@@ -5,7 +5,9 @@ Functionality
 -------------
 
 available variables: **x**, **y**, **z** for access to initial (xyz) coordinates.
-And **i** for access to index of current vertex to be evaluated.
+And **i** for access to index of current vertex to be evaluated. It is also possible
+to get index of current object list evaluated as **I** variable.
+So **i** for index of vertex, and **I** for index of object.
 Internally imported everything from Python **math** module.
 Blender Py API also accessible (like **bpy.context.scene.frame_current**)
 
