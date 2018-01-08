@@ -82,7 +82,6 @@ class SvObjectsHelperCallback(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     fn_name = StringProperty(default='')
-    data_kind = StringProperty(default='CURVE')
 
     # The imformation of "which node this button was pressed on"
     # is not communicated unless you do it explicitely.
