@@ -1,6 +1,7 @@
 ## Addressed problem description
 
-Please describe what problem does this PR solve. If it was already was disussed in an issue, it is enough to give a link as #number.
+Please describe what problem does this PR solve. If it was already was discussed in an issue, it is enough to give a link as #number.
+If this adds a new feature (a new node, for example), please state why (for what cases) do you think it is needed.
 
 ## Solution description
 
