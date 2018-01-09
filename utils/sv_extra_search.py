@@ -23,7 +23,6 @@ import nodeitems_utils
 
 import sverchok
 from sverchok.menu import make_node_cats
-from sverchok.node_tree import SvDocstring
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.docstring import SvDocstring
 from sverchok.ui.sv_icons import custom_icon
