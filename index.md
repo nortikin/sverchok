@@ -160,6 +160,7 @@
     SvScalarMathNodeMK2
     Formula2Node
     SvExecNodeMod
+    SvExecNodeModMK2
     ---
     GenListRangeIntNode
     SvGenFloatRange
