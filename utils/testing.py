@@ -1,5 +1,6 @@
 
 import bpy
+import os
 from os.path import dirname, basename, join
 import unittest
 import json
@@ -373,6 +374,68 @@ class ReferenceTreeTestCase(SverchokTestCase):
 
     def tearDown(self):
         remove_node_tree()
+
+######################################################
+# Test running conditionals
+######################################################
+
+def is_pull_request():
+    """
+    Return True if we are running a build for pull-request check on Travis CI.
+    """
+    pull_request = os.environ.get("TRAVIS_PULL_REQUEST", None)
+    return (pull_request is not None and pull_request != "false")
+
+def is_integration_server():
+    """
+    Return True if we a running inside an integration server (Travis CI) build.
+    """
+    ci = os.environ.get("CI", None)
+    return (ci == "true")
+
+def get_ci_branch():
+    """
+    If we are running inside an integration server build, return
+    the name of git branch which we are checking.
+    Otherwise, return None.
+    """
+    branch = os.environ.get("TRAVIS_BRANCH", None)
+    print("Branch:", branch)
+    return branch
+
+def make_skip_decorator(condition, message):
+    def decorator(func):
+        if condition():
+            return unittest.skip(message)(func)
+        else:
+            return func
+
+    return decorator
+
+# Here go decorators used to mark test to be executed only in certain conditions.
+# Example usage:
+#       
+#       @manual_only
+#       def test_something(self):
+#           # This test will not be running on Travis CI, only in manual mode.
+#
+
+pull_requests_only = make_skip_decorator(is_pull_request, "Applies only to PR builds")
+skip_pull_requests = make_skip_decorator(lambda: not is_pull_request(), "Does not apply to PR builds")
+manual_only = make_skip_decorator(lambda: not is_integration_server(), "Applies for manual builds only")
+
+def branches_only(*branches):
+    """
+    This test should be only executed for specified branches:
+
+        @branches_only("master")
+        def test_something(self):
+            ...
+
+    Please note that this applies only for Travis CI builds,
+    in manual mode this test will be ran anyway.
+    """
+    return make_skip_decorator(lambda: get_ci_branch() not in branches, "Does not apply to this branch")
 
 ######################################################
 # UI operator and panel classes
