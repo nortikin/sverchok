@@ -197,7 +197,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         append = out.append
 
         # locals() is needed for generic module imports.
-        exec('\n'.join([j.line for j in self.dynamic_strings]), globals().update(locals()))
+        exec('\n'.join([j.line for j in self.dynamic_strings]), globals(), locals())
 
         self.outputs[0].sv_set(out)
 
