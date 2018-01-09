@@ -20,7 +20,6 @@
 import sys
 import time
 import math
-import email
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
@@ -62,6 +61,7 @@ from sverchok.core.node_defaults import set_defaults_if_defined
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.docstring import SvDocstring
 from sverchok.ui import color_def
 import sverchok.utils.logging
 from sverchok.utils.logging import debug
@@ -82,107 +82,6 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
-
-class SvDocstring(object):
-    """
-    A class that incapsulates parsing of Sverchok's nodes docstrings.
-    As a standard, RFC822-style syntax is to be used. The docstring should
-    start with headers:
-
-            Triggers: This should be very short (two or three words, not much more) to be used in Ctrl-Space search menu.
-            Tooltip: Longer description to be present as a tooltip in UI.
-
-            More detailed description with technical information or historical notes goes after empty line.
-            This is not shown anywhere in the UI.
-
-    Other headers can possibly be introduced later. Unknown headers are just ignored.
-    For compatibility reasons, the old docstring syntax is also supported:
-
-            Triggers description /// Longer description
-
-    If we can't parse Triggers and Tooltip from docstring, then:
-    * The whole docstring will be used as tooltip
-    * The node will not have shorthand for search.
-    """
-
-    def __init__(self, docstring):
-        self.docstring = docstring
-        if docstring:
-            self.message = email.message_from_string(SvDocstring.trim(docstring))
-        else:
-            self.message = {}
-
-    @staticmethod
-    def trim(docstring):
-        """
-        Trim docstring indentation and extra spaces.
-        This is just copy-pasted from PEP-0257.
-        """
-
-        if not docstring:
-            return ''
-        # Convert tabs to spaces (following the normal Python rules)
-        # and split into a list of lines:
-        lines = docstring.expandtabs().splitlines()
-        # Determine minimum indentation (first line doesn't count):
-        indent = sys.maxsize
-        for line in lines[1:]:
-            stripped = line.lstrip()
-            if stripped:
-                indent = min(indent, len(line) - len(stripped))
-        # Remove indentation (first line is special):
-        trimmed = [lines[0].strip()]
-        if indent < sys.maxsize:
-            for line in lines[1:]:
-                trimmed.append(line[indent:].rstrip())
-        # Strip off trailing and leading blank lines:
-        while trimmed and not trimmed[-1]:
-            trimmed.pop()
-        while trimmed and not trimmed[0]:
-            trimmed.pop(0)
-        # Return a single string:
-        return '\n'.join(trimmed)
-
-    def get(self, header, default=None):
-        """Obtain any header from docstring."""
-        return self.message.get(header, default)
-
-    def __getitem__(self, header):
-        return self.message[header]
-
-    def get_shorthand(self, fallback=True):
-        """
-        Get shorthand to be used in search menu.
-        If fallback == True, then whole docstring
-        will be returned for case when we can't
-        find valid shorthand specification.
-        """
-
-        if 'Triggers' in self.message:
-            return self.message['Triggers']
-        elif not self.docstring:
-            return ""
-        elif '///' in self.docstring:
-            return self.docstring.strip().split('///')[0]
-        elif fallback:
-            return self.docstring
-        else:
-            return None
-
-    def has_shorthand(self):
-        return self.get_shorthand() is not None
-
-    def get_tooltip(self):
-        """Get tooltip"""
-
-        if 'Tooltip' in self.message:
-            return self.message['Tooltip'].strip()
-        elif not self.docstring:
-            return ""
-        elif '///' in self.docstring:
-            return self.docstring.strip().split('///')[1].strip()
-        else:
-            return self.docstring.strip()
 
 # this property group is only used by the old viewer draw
 
