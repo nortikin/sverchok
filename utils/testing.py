@@ -345,6 +345,17 @@ class EmptyTreeTestCase(SverchokTestCase):
         remove_node_tree()
 
 class ReferenceTreeTestCase(SverchokTestCase):
+    """
+    Base class for test cases, that require existing node tree
+    for their work.
+    At setup, this class links a node tree from specified .blend
+    file into current scene. Name of .blend (or better .blend.gz)
+    file must be specified in `reference_file_name` property
+    of inherited class. Name of linked tree can be specified
+    in `reference_tree_name' property, by default it is "TestingTree".
+    The linked node tree is available as `self.tree'.
+    At teardown, this class removes that tree from scene.
+    """
 
     reference_file_name = None
     reference_tree_name = None
