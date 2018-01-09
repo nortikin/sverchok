@@ -19,6 +19,8 @@
 
 import bpy
 
+from sverchok.utils.logging import debug, info
+
 class SvSocketReplacement(bpy.types.PropertyGroup):
     """
     Utility class for mapping old socket name to new socket name.
@@ -126,6 +128,12 @@ class SvReplaceNode(bpy.types.Operator):
         if hasattr(new_node, "migrate_from"):
             # Allow new node to copy what generic code could not.
             new_node.migrate_from(old_node)
+
+        msg = "Node `{}' ({}) has been replaced with new node `{}' ({})".format(
+                old_node.name, old_node.bl_idname,
+                new_node.name, new_node.bl_idname)
+        info(msg)
+        self.report({'INFO'}, msg)
 
         tree.nodes.remove(old_node)
 
