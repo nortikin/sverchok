@@ -136,6 +136,24 @@ class SvNoDataError(LookupError):
     def __format__(self, spec):
         return repr(self)
 
+def get_output_socket_data(node, output_socket_name):
+    """
+    Get data that the node has written to the output socket.
+    Raises SvNoDataError if it hasn't written any.
+    """
+
+    global socket_data_cache
+
+    tree_name = node.id_data.name
+    socket = node.outputs[output_socket_name]
+    socket_id = socket.socket_id
+    if tree_name not in socket_data_cache:
+        raise SvNoDataError()
+    if socket_id in socket_data_cache[tree_name]:
+        return socket_data_cache[tree_name][socket_id]
+    else:
+        raise SvNoDataError(socket)
+
 def reset_socket_cache(ng):
     """
     Reset socket cache either for node group.
