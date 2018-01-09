@@ -1,5 +1,6 @@
 
 import bpy
+import os
 from os.path import dirname, basename, join
 import unittest
 import json
@@ -8,6 +9,7 @@ import logging
 from contextlib import contextmanager
 
 import sverchok
+from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
 from sverchok.utils.logging import debug, info
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_IO_panel_tools import import_tree
@@ -344,6 +346,17 @@ class EmptyTreeTestCase(SverchokTestCase):
         remove_node_tree()
 
 class ReferenceTreeTestCase(SverchokTestCase):
+    """
+    Base class for test cases, that require existing node tree
+    for their work.
+    At setup, this class links a node tree from specified .blend
+    file into current scene. Name of .blend (or better .blend.gz)
+    file must be specified in `reference_file_name` property
+    of inherited class. Name of linked tree can be specified
+    in `reference_tree_name' property, by default it is "TestingTree".
+    The linked node tree is available as `self.tree'.
+    At teardown, this class removes that tree from scene.
+    """
 
     reference_file_name = None
     reference_tree_name = None
@@ -373,6 +386,122 @@ class ReferenceTreeTestCase(SverchokTestCase):
 
     def tearDown(self):
         remove_node_tree()
+
+class NodeProcessTestCase(EmptyTreeTestCase):
+    """
+    Base class for test cases that test process() function
+    of one single node.
+    At setup, this class creates an empty node tree and one
+    node in it. bl_idname of tested node must be specified in
+    `node_bl_idname' property of child test case class.
+    Optionally, some simple nodes can be created (by default
+    a Note node) and connected to some outputs of tested node.
+    This is useful for nodes that return from process() if they
+    see that nothing is linked to outputs.
+
+    In actual test_xxx() method, the test case should call
+    self.node.process(), and after that examine output of the
+    node by either self.get_output_data() or self.assert_output_data_equals().
+
+    At teardown, the whole tested node tree is deleted.
+    """
+
+    node_bl_idname = None
+    connect_output_sockets = None
+    output_node_bl_idname = "NoteNode"
+
+    def get_output_data(self, output_name):
+        """
+        Return data that tested node has written to named output socket.
+        Returns None if it hasn't written any data.
+        """
+        try:
+            return get_output_socket_data(self.node, output_name)
+        except SvNoDataError:
+            return None
+    
+    def assert_output_data_equals(self, output_name, expected_data, message=None):
+        """
+        Assert that tested node has written expected_data to
+        output socket output_name.
+        """
+        data = self.get_output_data(output_name)
+        self.assertEquals(data, expected_data, message)
+
+    def setUp(self):
+        super().setUp()
+
+        if self.node_bl_idname is None:
+            raise Exception("NodeProcessTestCase subclass must have `node_bl_idname' set")
+
+        self.node = create_node(self.node_bl_idname)
+
+        if self.connect_output_sockets and self.output_node_bl_idname:
+            for output_name in self.connect_output_sockets:
+                out_node = create_node(self.output_node_bl_idname)
+                self.tree.links.new(self.node.outputs[output_name], out_node.inputs[0])
+
+######################################################
+# Test running conditionals
+######################################################
+
+def is_pull_request():
+    """
+    Return True if we are running a build for pull-request check on Travis CI.
+    """
+    pull_request = os.environ.get("TRAVIS_PULL_REQUEST", None)
+    return (pull_request is not None and pull_request != "false")
+
+def is_integration_server():
+    """
+    Return True if we a running inside an integration server (Travis CI) build.
+    """
+    ci = os.environ.get("CI", None)
+    return (ci == "true")
+
+def get_ci_branch():
+    """
+    If we are running inside an integration server build, return
+    the name of git branch which we are checking.
+    Otherwise, return None.
+    """
+    branch = os.environ.get("TRAVIS_BRANCH", None)
+    print("Branch:", branch)
+    return branch
+
+def make_skip_decorator(condition, message):
+    def decorator(func):
+        if condition():
+            return unittest.skip(message)(func)
+        else:
+            return func
+
+    return decorator
+
+# Here go decorators used to mark test to be executed only in certain conditions.
+# Example usage:
+#       
+#       @manual_only
+#       def test_something(self):
+#           # This test will not be running on Travis CI, only in manual mode.
+#
+
+pull_requests_only = make_skip_decorator(is_pull_request, "Applies only to PR builds")
+skip_pull_requests = make_skip_decorator(lambda: not is_pull_request(), "Does not apply to PR builds")
+manual_only = make_skip_decorator(lambda: not is_integration_server(), "Applies for manual builds only")
+
+def branches_only(*branches):
+    """
+    This test should be only executed for specified branches:
+
+        @branches_only("master")
+        def test_something(self):
+            ...
+
+    Please note that this applies only for Travis CI builds,
+    in manual mode this test will be ran anyway.
+    """
+    return make_skip_decorator(lambda: get_ci_branch() not in branches, "Does not apply to this branch")
 
 ######################################################
 # UI operator and panel classes
