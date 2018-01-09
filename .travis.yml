@@ -1,6 +1,10 @@
 language: bash
 sudo: enabled
 
+branches:
+  only:
+    master
+
 install:
   - |
     if [ ! -f installation/blender/blender ]
