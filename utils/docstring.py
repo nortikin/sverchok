@@ -18,8 +18,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import sys
-import time
-import math
 import email
 
 class SvDocstring(object):
