@@ -48,13 +48,9 @@ class SvFormulaDeformNode(bpy.types.Node, SverchCustomTreeNode):
         Io = self.inputs[0]
         Oo = self.outputs[0]
         if Oo.is_linked:
-            out = []
             V = Io.sv_get()
             IndObj = range(len(V))
-            Value = "[("+self.ModeX+","+self.ModeY+","+self.ModeZ+") for (x, y, z),i in zip(L,range(len(L)))]"
-            for L,I in zip(V,IndObj):
-                out.append(eval(Value, globals().update(locals())))
-            Oo.sv_set(out)
+            exec("Oo.sv_set([[("+self.ModeX+","+self.ModeY+","+self.ModeZ+") for (x, y, z),i in zip(L,range(len(L)))] for L,I in zip(V,IndObj)])")
 
     def update_socket(self, context):
         self.update()
