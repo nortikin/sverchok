@@ -56,7 +56,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
                        default=0.0, precision=3,
                        update=updateNode)
     
-    object_mode = BoolProperty(name='object mode', update=updateNode)
+    advanced_mode = BoolProperty(name='deep copy', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x_'
@@ -70,8 +70,10 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
             get_cursor = layout.operator('node.sverchok_vector_from_cursor', text='3D Cursor')
             get_cursor.nodename = self.name
             get_cursor.treename = self.id_data.name
-        layout.row().prop(self, 'object_mode')
 
+    def draw_buttons_ext(self, context, layout):
+        layout.row().prop(self, 'advanced_mode')
+            
     def process(self):
         if not self.outputs['Vectors'].is_linked:
             return
@@ -82,7 +84,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         series_vec = []
         max_obj = max(map(len, (X_, Y_, Z_)))
         
-        fullList_main = fullList_deep_copy if self.object_mode else fullList
+        fullList_main = fullList_deep_copy if self.advanced_mode else fullList
         fullList_main(X_, max_obj)
         fullList_main(Y_, max_obj)
         fullList_main(Z_, max_obj)
