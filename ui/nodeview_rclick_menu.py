@@ -125,9 +125,6 @@ class SvGenericDeligationOperator(bpy.types.Operator):
 
         return {'FINISHED'}
 
-
-
-
 class SvNodeviewRClickMenu(bpy.types.Menu):
     bl_label = "Right click menu for Sverchok"
     bl_idname = "NODEVIEW_MT_sv_rclick_menu"
@@ -143,12 +140,16 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         nodes = tree.nodes
         node = valid_active_node(nodes)
 
-        if node and node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
-            layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
+        if node:
+            if node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
+                layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
+            else:
+                if hasattr(node, "rclick_menu"):
+                    node.rclick_menu(context, layout)
 
-        elif has_outputs(node):
-            layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
-            # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
+                if has_outputs(node):
+                    layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
+                    # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
         
         else:
             layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
@@ -166,3 +167,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvNodeviewRClickMenu)
     bpy.utils.unregister_class(SvGenericDeligationOperator)
+
