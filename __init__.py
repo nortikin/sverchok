@@ -92,7 +92,7 @@ utils_modules = [
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
-    "sv_IO_monad_helpers",
+    "sv_IO_monad_helpers", "sv_operator_utils",
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
     "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     #"loadscript",
@@ -102,7 +102,7 @@ utils_modules = [
 ui_modules = [
     "color_def", "sv_IO_panel", "sv_templates_menu",
     "sv_panels", "nodeview_rclick_menu", "nodeview_space_menu", "nodeview_keymaps",
-    "monad", "sv_icons", "presets",
+    "monad", "sv_icons", "presets", "nodes_replacement",
     # bgl modules
     "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
     "index_viewer_draw", "bgl_callback_3dview",

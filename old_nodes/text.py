@@ -43,6 +43,7 @@ READY_COLOR = (0.5, 0.7, 1)
 map_to_short = {'VerticesSocket': 'v', 'StringsSocket': 's', 'MatrixSocket': 'm'}
 map_from_short = {'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket'}
 
+OLD_OP = "node.sverchok_generic_callback_old"
 
 def get_socket_type(node, inputsocketname):
     socket_type = node.inputs[inputsocketname].links[0].from_socket.bl_idname
@@ -51,33 +52,6 @@ def get_socket_type(node, inputsocketname):
 def new_output_socket(node, name, _type):
     bl_idname = map_from_short.get(_type, 'StringsSocket')
     node.outputs.new(bl_idname, name)
-
-
-# OLD TODO,
-# load and dump to/from external file
-# update stability, do not disconnect unless something changed
-#
-
-class SvTextInOp(bpy.types.Operator):
-    """ Load text data """
-    bl_idname = "node.sverchok_text_callback"
-    bl_label = "Sverchok text input"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    fn_name = StringProperty(name='tree name')
-
-    def execute(self, context):
-        n = context.node
-        fn_name = self.fn_name
-
-        f = getattr(n, fn_name, None)
-        if not f:
-            msg = "{0} has no function named '{1}'".format(n.name, fn_name)
-            self.report({"WARNING"}, msg)
-            return {'CANCELLED'}
-        f()
-
-        return {'FINISHED'}
 
 
 # call structure
@@ -191,8 +165,8 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
                     row.scale_y = 4.0
                 else:
                     row.scale_y = 1
-                row.operator('node.sverchok_text_callback', text='R E L O A D').fn_name = 'reload'
-            col.operator('node.sverchok_text_callback', text='R E S E T').fn_name = 'reset'
+                row.operator(OLD_OP, text='R E L O A D').fn_name = 'reload'
+            col.operator(OLD_OP, text='R E S E T').fn_name = 'reset'
         else:
             col.prop(self, "text", "Select Text")
             #    layout.prop(self,"file","File") external file, TODO
@@ -222,7 +196,7 @@ class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
 
             if self.textmode == 'JSON':  # self documenting format
                 pass
-            col.operator('node.sverchok_text_callback', text='Load').fn_name = 'load'
+            col.operator(OLD_OP, text='Load').fn_name = 'load'
 
     def copy(self, node):
         self.n_id = ''
@@ -651,7 +625,7 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
                 row.scale_y = 4.0
             else:
                 row.scale_y = 1
-            row.operator('node.sverchok_text_callback', text='D U M P').fn_name = 'dump'
+            row.operator(OLD_OP, text='D U M P').fn_name = 'dump'
             col2.prop(self, 'append', "Append")
 
     def update_socket(self, context):
@@ -732,15 +706,10 @@ class SvTextOutNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvTextInOp)
     bpy.utils.register_class(SvTextInNode)
     bpy.utils.register_class(SvTextOutNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTextInOp)
     bpy.utils.unregister_class(SvTextInNode)
     bpy.utils.unregister_class(SvTextOutNode)
-
-if __name__ == '__main__':
-    register()

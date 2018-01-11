@@ -22,6 +22,8 @@ from bpy.props import StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
+OLD_OP = "node.sverchok_generic_callback_old"
+
 # Warning, changing this node without modifying the update system might break functionlaity
 # bl_idname and var_name is used by the update system
 
@@ -64,7 +66,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.clear()
 
     def draw_buttons(self, context, layout):
-        op_name = 'node.sverchok_text_callback'
+        op_name = OLD_OP
         if self.var_name:
             row = layout.row()
             row.label(text="Var:")
