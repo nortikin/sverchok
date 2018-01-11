@@ -251,6 +251,7 @@ class SvSkinViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             self.unit_generator(idx, geometry)
 
         self.remove_non_updated_objects(catch_idx)
+        self.set_corresponding_materials()
 
 
     def unit_generator(self, idx, geometry):
@@ -281,8 +282,6 @@ class SvSkinViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
         elif self.use_slow_root:
             process_mesh_into_features(obj.data.skin_vertices[0].data, obj.data.edge_keys)
-
-        self.set_corresponding_materials()
 
 
     def flip_roots_or_junctions_only(self, data):
