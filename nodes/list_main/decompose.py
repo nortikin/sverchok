@@ -80,6 +80,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         other = get_other_socket(self.inputs[0])
         if not other:
             return
+        self.set_implicit_conversions("data[0]", 'LenientImplicitConversionPolicy')
         self.multi_socket_type = other.bl_idname
         multi_socket(self, min=1, start=0, breck=True, out_count=self.count)
         outputsocketname = [name.name for name in self.outputs]

@@ -348,7 +348,6 @@ class SverchokTestCase(unittest.TestCase):
 
         def compare(prev_indicies, item1, item2):
             step = len(prev_indicies)
-            debug("P: %s", prev_indicies)
             index = prev_indicies[-1]
             if step == level1:
                 do_assert(item1[index], item2[index], prev_indicies)

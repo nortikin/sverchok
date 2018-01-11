@@ -149,6 +149,19 @@ class NoImplicitConversionPolicy(object):
     def convert(cls, socket, source_data):
         raise ImplicitConversionProhibited(socket)
 
+class LenientImplicitConversionPolicy(object):
+    """
+    Lenient implicit conversion policy.
+    Does not actually convert anything, but passes any
+    type of data as-is.
+    To be used for sockets that do not care about the
+    nature of data they process (such as most List processing
+    nodes).
+    """
+    @classmethod
+    def convert(cls, socket, source_data):
+        return source_data
+
 class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
     """
     Default implicit conversion policy.

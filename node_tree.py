@@ -334,11 +334,13 @@ class SvSocketCommon:
             return False
         return self.other.bl_idname != self.bl_idname
 
-    def convert_data(self, source_data, implicit_conversions=DefaultImplicitConversionPolicy):
+    def convert_data(self, source_data, implicit_conversions=None):
         if not self.needs_data_conversion():
             return source_data
         else:
-            return implicit_conversions.convert(self, source_data)
+            policy = self.node.get_implicit_conversions(self.name, implicit_conversions)
+            self.node.debug("Trying to convert data for input socket %s by %s", self.name, policy)
+            return policy.convert(self, source_data)
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
@@ -359,7 +361,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     def get_prop_data(self):
         return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         self.num_matrices = 0
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
@@ -389,7 +391,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
@@ -422,7 +424,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
@@ -455,7 +457,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
 
@@ -511,7 +513,7 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         else:
             return {}
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
 #         debug("Node %s, socket %s, is_linked: %s, is_output: %s",
 #                 self.node.name, self.name, self.is_linked, self.is_output)
         if self.is_linked and not self.is_output:
@@ -672,6 +674,8 @@ class SverchCustomTreeNode:
     # A cache for get_docstring() method
     _docstring = None
 
+    _implicit_conversion_policy = dict()
+
     @classmethod
     def poll(cls, ntree):
         return ntree.bl_idname in ['SverchCustomTreeType', 'SverchGroupTreeType']
@@ -716,6 +720,27 @@ class SverchCustomTreeNode:
 
     def exception(self, msg, *args, **kwargs):
         self.getLogger().exception(msg, *args, **kwargs)
+
+    def set_implicit_conversions(self, input_socket_name, policy):
+        """
+        Set implicit conversion policy to be used by default for specified input socket.
+        This policy will be used by default by subsequent .sv_get() calls to this socket.
+        Policy can be passed as direct reference to the class, or as a class name.
+        """
+        if isinstance(policy, str):
+            policy = getattr(sverchok.core.socket_conversions, policy)
+        #self.debug("Set default conversion policy for socket %s to %s", input_socket_name, policy)
+        self._implicit_conversion_policy[input_socket_name] = policy
+
+    def get_implicit_conversions(self, input_socket_name, override=None):
+        """
+        Return implicit conversion policy that was set as default for specified socket
+        by set_implicit_conversions() call.
+        If override is specified, then it is returned in all cases.
+        """
+        if override is not None:
+            return override
+        return self._implicit_conversion_policy.get(input_socket_name, DefaultImplicitConversionPolicy)
 
     def set_color(self):
         color = color_def.get_color(self.bl_idname)

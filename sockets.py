@@ -30,7 +30,7 @@ class SvSocketStandard(SvSocketCommon):
     def get_prop_data(self):
         return {"default_value" , default_value}
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         else:
@@ -90,7 +90,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     def draw_color(self, context, node):
         return (0.69,  0.74,  0.73, 1.0)
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.object_ref:
@@ -118,7 +118,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
     def draw_color(self, context, node):
         return (0.68,  0.85,  0.90, 1)
 
-    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=DefaultImplicitConversionPolicy):
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.text:

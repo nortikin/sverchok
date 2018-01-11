@@ -569,6 +569,7 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     arguments: node, name of socket to follow, list of socket to change
     '''
     in_socket = node.inputs[inputsocketname]
+    node.set_implicit_conversions(inputsocketname, 'LenientImplicitConversionPolicy')
     ng = node.id_data
     if in_socket.links:
         in_other = get_other_socket(in_socket)
@@ -684,6 +685,7 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
 
     if min < 1:
         min = 1
+    #node.set_implicit_conversions(node.base_name, 'LenientImplicitConversionPolicy')
     if out_count is None:
         if not node.inputs:
             return
@@ -694,6 +696,7 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
             else:
                 name = node.base_name + str(length)
             node.inputs.new(node.multi_socket_type, name)
+            node.set_implicit_conversions(name, 'LenientImplicitConversionPolicy')
         else:
             while len(node.inputs) > min and not node.inputs[-2].links:
                 node.inputs.remove(node.inputs[-1])
