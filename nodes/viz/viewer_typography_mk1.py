@@ -30,10 +30,11 @@ from bpy.props import (
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
+from sverchok.utils.sv_obj_helper import SvObjHelper
 
 
-def enum_from_list(item_list):
-    return [(item, item, "", idx) for idx, item in enumerate(*item_list)]
+def enum_from_list(*item_list):
+    return [(item, item, "", idx) for idx, item in enumerate(item_list)]
 
 mode_options_x = enum_from_list('LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH')
 mode_options_y = enum_from_list('TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM')
@@ -123,12 +124,13 @@ class SvFontFileImporterOpMK1(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
+class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     bl_idname = 'SvTypeViewerNodeMK1'
     bl_label = 'Typography Viewer mk1'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    grouping = BoolProperty(default=False)
     data_kind = StringProperty(name='data kind', default='FONT')
 
     show_options = BoolProperty(default=0)
@@ -158,7 +160,7 @@ class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     align_y = bpy.props.EnumProperty(
         items=mode_options_y, description="Vertical Alignment", default="TOP_BASELINE", update=updateNode
     )
-
+    
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
@@ -207,7 +209,7 @@ class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         shf = 'node.sv_fontfile_importer_mk1'
 
         self.draw_buttons(context, layout)
-        self.draw_ext_object_buttons(context, layout):
+        self.draw_ext_object_buttons(context, layout)
 
         col = layout.column(align=True)
         row = col.row(align=True)
