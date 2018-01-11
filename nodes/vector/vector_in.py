@@ -73,6 +73,9 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.row().prop(self, 'advanced_mode')
+        
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "advanced_mode", text="use deep copy")
             
     def process(self):
         if not self.outputs['Vectors'].is_linked:
