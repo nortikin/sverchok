@@ -192,29 +192,30 @@ class SvObjHelper():
         update=updateNode)
 
     basedata_name = StringProperty(
+        name='basedata name',
         default='Alpha',
         description="which base name the object and data will use",
         update=updateNode
     )    
 
     # most importantly, what kind of base data are we making?
-    data_kind = StringProperty(default='MESH')
+    data_kind = StringProperty(name='data kind', default='MESH')
 
     # to be used if the node has no material input.
-    material = StringProperty(default='', update=updateNode)
+    material = StringProperty(name='material', default='', update=updateNode)
 
     # to be used as standard toggles for object attributes of same name
-    object_hide = BoolProperty(default=True)
-    object_hide_render = BoolProperty(default=True)
-    object_hide_select = BoolProperty(default=False)
+    object_hide = BoolProperty(name='object hide', default=True)
+    object_hide_render = BoolProperty(name='object hide render', default=True)
+    object_hide_select = BoolProperty(name='object hide select', default=False)
 
-    object_select = BoolProperty(default=True)
+    object_select = BoolProperty(name='object select', default=True)
 
-    show_wire = BoolProperty(update=updateNode)
-    use_smooth = BoolProperty(default=True, update=updateNode)
+    show_wire = BoolProperty(name='show wire', update=updateNode)
+    use_smooth = BoolProperty(name='use smooth', default=True, update=updateNode)
 
-    parent_to_empty = BoolProperty(default=False, update=updateNode)
-    parent_name = StringProperty()  # calling updateNode would recurse.    
+    parent_to_empty = BoolProperty(name='parent to empty', default=False, update=updateNode)
+    parent_name = StringProperty(name='parent name')  # calling updateNode would recurse.    
 
     def sv_init_helper_basedata_name(self):
         """ 
