@@ -18,6 +18,7 @@
 
 import random
 
+import bmesh
 import bpy
 from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty, BoolVectorProperty)
 
@@ -186,7 +187,7 @@ class SvObjHelper():
         get=g, set=s)
 
     activate = BoolProperty(
-        name='Show',
+        name='activate',
         description="When enabled this will process incoming data",
         default=True,
         update=updateNode)
@@ -333,6 +334,13 @@ class SvObjHelper():
             cu.splines.clear()
 
         return obj, cu
+
+
+    def clear_current_mesh(self, data):
+        bm = bmesh.new()
+        bm.to_mesh(data)
+        bm.free()
+        data.update()
 
 
     def push_custom_matrix_if_present(self, sv_object, matrix):
