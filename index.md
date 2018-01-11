@@ -295,6 +295,7 @@
     SvPolylineViewerNodeMK2
     SvBmeshViewerNodeMK3
     SvTypeViewerNode
+    SvTypeViewerNodeMK1
     SvSkinViewerNodeMK2
     SvMatrixViewer
     ---
