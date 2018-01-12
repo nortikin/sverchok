@@ -21,15 +21,15 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
-class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Subdivide'''
+class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
+    '''Subdivide Fast'''
 
-    bl_idname = 'SvSubdivideNode'
-    bl_label = 'Subdivide'
+    bl_idname = 'SvSubdivideLiteNode'
+    bl_label = 'Subdivide lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     falloff_types = [
@@ -233,8 +233,8 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvSubdivideNode)
+    bpy.utils.register_class(SvSubdivideLiteNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvSubdivideNode)
+    bpy.utils.unregister_class(SvSubdivideLiteNode)
