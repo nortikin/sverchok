@@ -545,7 +545,7 @@ class SvDumpNodeDef(bpy.types.Operator):
 
 class SvTestingPanel(bpy.types.Panel):
     bl_idname = "SvTestingPanel"
-    bl_label = "Testing"
+    bl_label = "SV Testing"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
