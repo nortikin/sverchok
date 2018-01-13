@@ -471,6 +471,9 @@ class SvLinkNewNodeInput(bpy.types.Operator):
         new_node.location[1] = caller_node.location[1] + self.new_node_offsety
         links.new(new_node.outputs[0], caller_node.inputs[self.socket_index])
 
+        if caller_node.parent:
+            new_node.parent = caller_node.parent 
+
         return {'FINISHED'}
 
 
