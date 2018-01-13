@@ -317,20 +317,25 @@ class SvObjHelper():
         for object_name in obj_names:
             kinds.remove(kinds[object_name])        
 
+    def create_object(self, object_name, obj_index, data):
+        """
+        Create a new object and link it into scene.
+        """
+        obj = bpy.data.objects.new(object_name, data)
+        obj['basedata_name'] = self.basedata_name
+        obj['madeby'] = self.name
+        obj['idx'] = obj_index
+        bpy.context.scene.objects.link(obj)
+        return obj
+
     def get_or_create_object(self, object_name, obj_index, data):
         """
         Return existing Object or create new one.
+        : if object reference exists, pick it up else make a new one
         """
-        objects = bpy.data.objects
-        scene = bpy.context.scene
-        # if object reference exists, pick it up else make a new one
-        obj = objects.get(object_name)
+        obj = bpy.data.objects.get(object_name)
         if not obj:
-            obj = objects.new(object_name, data)
-            obj['basedata_name'] = self.basedata_name
-            obj['madeby'] = self.name
-            obj['idx'] = obj_index
-            scene.objects.link(obj)
+            obj = self.create_object(object_name, obj_index, data)
         return obj
 
     def get_obj_curve(self, obj_index):

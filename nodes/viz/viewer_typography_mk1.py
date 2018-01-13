@@ -59,7 +59,7 @@ def font_set_props(f, node, txt):
     f.align_x = node.align_x
     f.align_y = node.align_y
 
-def get_obj_and_fontcurve(name):
+def get_obj_and_fontcurve(context, name):
     scene = context.scene
     curves = bpy.data.curves
     objects = bpy.data.objects
@@ -84,7 +84,7 @@ def make_text_object(node, idx, context, data):
     txt, matrix = data
     name = node.basedata_name + '.' + str("%04d" % idx)
 
-    sv_object, f = get_obj_and_fontcurve(name)
+    sv_object, f = get_obj_and_fontcurve(context, name)
     font_set_props(f, node, txt)
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
