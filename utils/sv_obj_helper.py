@@ -42,11 +42,8 @@ def enum_from_list_idx(*item_list):
     produces:  [('TOP_BASELINE', 'TOP_BASELINE', '', 0), ('TOP', 'TOP', '', 7)]
 
     """
-    results = []
-    for item in item_list:
-        idx, item_name = item.split(':')
-        results.append((item_name, item_name, "", int(idx)))
-    return results
+    return [(n, n, "", int(i)) for i, n in [item.split(':') for item in item_list]]
+
 
 
 common_ops = ['object_hide', 'object_hide_select', 'object_hide_render']
