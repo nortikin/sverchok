@@ -176,6 +176,8 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
             return cls.quaternions_to_matrices(socket, source_data)
         elif is_matrix_to_quaternion(socket):
             return cls.matrices_to_quaternions(socket, source_data)
+        elif socket.bl_idname == 'StringsSocket':
+            return source_data
         else:
             super().convert(socket, source_data)
 

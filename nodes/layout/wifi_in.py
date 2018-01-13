@@ -58,7 +58,6 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
                 s.name = "{0}[{1}]".format(self.var_name, i)
         else: #create first socket
             self.inputs.new('StringsSocket', self.var_name+"[0]")
-            self.set_implicit_conversions(self.var_name+"[0]", 'LenientImplicitConversionPolicy')
         
     var_name = StringProperty(name='var_name', update=change_var_name)
 

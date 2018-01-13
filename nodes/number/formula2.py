@@ -60,7 +60,6 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # inputs
         multi_socket(self, min=2, start=-1, breck=True)
-        self.set_implicit_conversions("n[0]", 'LenientImplicitConversionPolicy')
 
         if self.inputs['X'].links:
             inputsocketname = 'X'

@@ -61,7 +61,6 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         inputsocketname = 'Data True'
         outputsocketname = ['Data']
         changable_sockets(self, inputsocketname, outputsocketname)
-        self.set_implicit_conversions('Data False', 'LenientImplicitConversionPolicy')
 
     def process(self):
         if all(s.is_linked for s in self.inputs[1:]):
