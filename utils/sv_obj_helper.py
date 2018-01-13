@@ -30,7 +30,23 @@ from sverchok.utils.sv_viewer_utils import (
 
 
 def enum_from_list(*item_list):
+    """
+    usage:   var = enum_from_list('TOP_BASELINE', 'TOP')
+    produces:  [('TOP_BASELINE', 'TOP_BASELINE', '', 0), ('TOP', 'TOP', '', 1)]
+    """    
     return [(item, item, "", idx) for idx, item in enumerate(item_list)]
+
+def enum_from_list_idx(*item_list):
+    """
+    usage:   var = enum_from_list_idx('0:TOP_BASELINE', '7:TOP')
+    produces:  [('TOP_BASELINE', 'TOP_BASELINE', '', 0), ('TOP', 'TOP', '', 7)]
+
+    """
+    results = []
+    for item in item_list:
+        idx, item_name = item.split(':')
+        results.append((item_name, item_name, "", int(idx)))
+    return results
 
 
 common_ops = ['object_hide', 'object_hide_select', 'object_hide_render']
