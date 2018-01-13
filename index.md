@@ -217,11 +217,16 @@
 
 ## Viz
     ViewerNode2
-    SvBmeshViewerNodeMK2
     IndexViewerNode
     SvMetaballOutNode
     SvTextureViewerNode
     Sv3DviewPropsNode
+    ---
+    SvCurveViewerNodeMK2
+    SvPolylineViewerNodeMK2
+    SvBmeshViewerNodeMK3
+    SvTypeViewerNodeMK1
+    SvSkinViewerNodeMK2
 
 ## Text
     ViewerNodeTextMK2
@@ -288,15 +293,6 @@
     SvSpiralNode
 
 ## Alpha Nodes
-    SvCurveViewerNode
-    SvCurveViewerNodeAlt
-    SvCurveViewerNodeMK2
-    SvPolylineViewerNodeMK1
-    SvPolylineViewerNodeMK2
-    SvBmeshViewerNodeMK3
-    SvTypeViewerNode
-    SvTypeViewerNodeMK1
-    SvSkinViewerNodeMK2
     SvMatrixViewer
     ---
     SvBMVertsNode
