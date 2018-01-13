@@ -39,33 +39,27 @@ def enum_from_list(*item_list):
 mode_options_x = enum_from_list('LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH')
 mode_options_y = enum_from_list('TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM')
 
+def get_font(node):
+    fonts = bpy.data.fonts
+    default = fonts.get('Bfont')
+    return fonts.get(node.fontname, default)
 
 def font_set_props(f, node, txt):
 
     f.body = txt
     f.size = node.fsize
+    f.font = get_font(node)
 
-    # misc
-    default = bpy.data.fonts.get('Bfont')
-    f.font = bpy.data.fonts.get(node.fontname, default)
-
-    # space
     f.space_character = node.space_character
     f.space_word = node.space_word
     f.space_line = node.space_line
-
     f.offset_x = node.xoffset
     f.offset_y = node.yoffset
-
-    # modifications
     f.offset = node.offset
     f.extrude = node.extrude
-
-    # bevel
     f.bevel_depth = node.bevel_depth
     f.bevel_resolution = node.bevel_resolution
 
-    # alignment, now expanded! 
     f.align_x = node.align_x
     f.align_y = node.align_y
 
