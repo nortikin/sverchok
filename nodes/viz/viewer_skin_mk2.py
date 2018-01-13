@@ -162,7 +162,7 @@ class SvSkinViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     bl_idname = 'SvSkinViewerNodeMK2'
     bl_label = 'Skin Mesher mk2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_SKIN'
 
     general_radius_x = FloatProperty(
         name='general_radius_x',
