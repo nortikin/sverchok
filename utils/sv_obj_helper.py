@@ -29,6 +29,10 @@ from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, natural_plus_one, greek_alphabet)
 
 
+def enum_from_list(*item_list):
+    return [(item, item, "", idx) for idx, item in enumerate(item_list)]
+
+
 common_ops = ['object_hide', 'object_hide_select', 'object_hide_render']
 CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 

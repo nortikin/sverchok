@@ -30,11 +30,7 @@ from bpy.props import (
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
-from sverchok.utils.sv_obj_helper import SvObjHelper
-
-
-def enum_from_list(*item_list):
-    return [(item, item, "", idx) for idx, item in enumerate(item_list)]
+from sverchok.utils.sv_obj_helper import SvObjHelper, enum_from_list
 
 mode_options_x = enum_from_list('LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH')
 mode_options_y = enum_from_list('TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM')
@@ -63,14 +59,10 @@ def font_set_props(f, node, txt):
     f.align_x = node.align_x
     f.align_y = node.align_y
 
-
-def make_text_object(node, idx, context, data):
+def get_obj_and_fontcurve(name):
     scene = context.scene
     curves = bpy.data.curves
     objects = bpy.data.objects
-
-    txt, matrix = data
-    name = node.basedata_name + '.' + str("%04d" % idx)
 
     # CURVES
     if not name in curves:
@@ -85,13 +77,19 @@ def make_text_object(node, idx, context, data):
         sv_object = objects.new(name, f)
         scene.objects.link(sv_object)
 
-    font_set_props(f, node, txt)
+    return sv_object, f
 
+
+def make_text_object(node, idx, context, data):
+    txt, matrix = data
+    name = node.basedata_name + '.' + str("%04d" % idx)
+
+    sv_object, f = get_obj_and_fontcurve(name)
+    font_set_props(f, node, txt)
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
     sv_object['basedata_name'] = node.basemesh_name
     sv_object.hide_select = False
-
     node.push_custom_matrix_if_present(sv_object, matrix)
 
 
@@ -148,12 +146,12 @@ class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     # orientation x | y 
     align_x = bpy.props.EnumProperty(
-        items=mode_options_x, description="Horizontal Alignment", default="LEFT", update=updateNode
-    )
+        items=mode_options_x, description="Horizontal Alignment",
+        default="LEFT", update=updateNode)
 
     align_y = bpy.props.EnumProperty(
-        items=mode_options_y, description="Vertical Alignment", default="TOP_BASELINE", update=updateNode
-    )
+        items=mode_options_y, description="Vertical Alignment",
+        default="TOP_BASELINE", update=updateNode)
     
 
     def sv_init(self, context):
@@ -233,7 +231,7 @@ class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             mtname = 'Empty_' + self.basemesh_name
             self.parent_name = mtname
             scene = bpy.context.scene
-            if not (mtname in bpy.data.objects):
+            if not mtname in bpy.data.objects:
                 empty = bpy.data.objects.new(mtname, None)
                 scene.objects.link(empty)
                 scene.update()
@@ -272,4 +270,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvFontFileImporterOpMK1)
     bpy.utils.unregister_class(SvTypeViewerNodeMK1)
-
