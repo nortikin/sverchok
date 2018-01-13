@@ -48,14 +48,14 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             ("3", "Straight Cut", "", 3)
         ]
 
-  #  def update_mode(self, context):
-  #      self.outputs['NewVertices'].hide_safe = not self.show_new
-  #      self.outputs['NewEdges'].hide_safe = not self.show_new
-  #      self.outputs['NewFaces'].hide_safe = not self.show_new
-  #      self.outputs['OldVertices'].hide_safe = not self.show_old
-  #      self.outputs['OldEdges'].hide_safe = not self.show_old
-  #      self.outputs['OldFaces'].hide_safe = not self.show_old
-  #      updateNode(self, context)
+    def update_mode(self, context):
+        self.outputs['NewVertices'].hide_safe = not self.show_new
+        self.outputs['NewEdges'].hide_safe = not self.show_new
+        self.outputs['NewFaces'].hide_safe = not self.show_new
+        self.outputs['OldVertices'].hide_safe = not self.show_old
+        self.outputs['OldEdges'].hide_safe = not self.show_old
+        self.outputs['OldFaces'].hide_safe = not self.show_old
+        updateNode(self, context)
 
     falloff_type= EnumProperty(name = "Falloff",
             items= falloff_types,
@@ -101,14 +101,14 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             description= "maintain even offset when smoothing",
             default= False,
             update=updateNode)
-   # show_new = BoolProperty(name= "Show New",
-   #         description= "Show outputs with new geometry",
-   #         default= False,
-   #         update=update_mode)
-   # show_old = BoolProperty(name= "Show Old",
-   #         description= "Show outputs with old geometry",
-   #         default= False,
-   #         update=update_mode)
+    show_new = BoolProperty(name= "Show New",
+            description= "Show outputs with new geometry",
+            default= False,
+            update=update_mode)
+    show_old = BoolProperty(name= "Show Old",
+            description= "Show outputs with old geometry",
+            default= False,
+            update=update_mode)
     show_options = BoolProperty(name = "Show Options",
             description= "Show options on the node",
             default= False,
@@ -116,9 +116,9 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_common(self, context, layout):
         col = layout.column(align=True)
-      #  row = col.row(align=True)
-      #  row.prop(self, "show_old", toggle=True)
-      #  row.prop(self, "show_new", toggle=True)
+        row = col.row(align=True)
+        row.prop(self, "show_old", toggle=True)
+        row.prop(self, "show_new", toggle=True)
         col.prop(self, "show_options", toggle=True)
 
     def draw_options(self, context, layout):
@@ -156,40 +156,37 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         son('VerticesSocket', 'Vertices')
         son('StringsSocket', 'Edges')
         son('StringsSocket', 'Faces')
-     #   son('VerticesSocket', 'NewVertices')
-     #   son('StringsSocket', 'NewEdges')
-     #   son('StringsSocket', 'NewFaces')
-     #   son('VerticesSocket', 'OldVertices')
-     #   son('StringsSocket', 'OldEdges')
-     #   son('StringsSocket', 'OldFaces')
-     #   self.update_mode(context)
+        son('VerticesSocket', 'NewVertices')
+        son('StringsSocket', 'NewEdges')
+        son('StringsSocket', 'NewFaces')
+        son('VerticesSocket', 'OldVertices')
+        son('StringsSocket', 'OldEdges')
+        son('StringsSocket', 'OldFaces')
+        self.update_mode(context)
 
-  #  def get_result_pydata(self, geom):
-  #      new_verts = [v for v in geom if isinstance(v, bmesh.types.BMVert)]
-  #      new_edges = [e for e in geom if isinstance(e, bmesh.types.BMEdge)]
-  #      new_faces = [f for f in geom if isinstance(f, bmesh.types.BMFace)]
-  #      new_verts = [tuple(v.co) for v in new_verts]
-  #      new_edges = [[v.index for v in edge.verts] for edge in new_edges]
-  #      new_faces = [[v.index for v in face.verts] for face in new_faces]
-  #      return new_verts, new_edges, new_faces
+    def get_result_pydata(self, geom):
+        new_verts = [tuple(v.co) for v in geom if isinstance(v, bmesh.types.BMVert)]
+        new_edges = [[v.index for v in e.verts] for e in geom if isinstance(e, bmesh.types.BMEdge)]
+        new_faces = [[v.index for v in f.verts] for f in geom if isinstance(f, bmesh.types.BMFace)]
+        return new_verts, new_edges, new_faces
 
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
         InVert, InEdge, InFace, InEdInd = self.inputs
-        OutVert, OutEdg, OutFace = self.outputs    # OutVert, OutEdg, OutFace, ONVert, ONEdg, ONFace, OOVert, OOEdg, OOFace = self.outputs
+        OutVert, OutEdg, OutFace, ONVert, ONEdg, ONFace, OOVert, OOEdg, OOFace = self.outputs
         vertices_s = InVert.sv_get()
         edges_s = InEdge.sv_get(default=[[]])
         faces_s = InFace.sv_get(default=[[]])
         result_vertices = []
         result_edges = []
         result_faces = []
-     #   r_inner_vertices = []
-     #   r_inner_edges = []
-     #   r_inner_faces = []
-     #   r_split_vertices = []
-     #   r_split_edges = []
-     #   r_split_faces = []
+        r_inner_vertices = []
+        r_inner_edges = []
+        r_inner_faces = []
+        r_split_vertices = []
+        r_split_edges = []
+        r_split_faces = []
         bmlist= [bmesh_from_pydata(v, e, f, normal_update=True) for v,e,f in zip(vertices_s,edges_s,faces_s)]
         if InEdInd.is_linked:
             useedges = [np.array(bm.edges[:])[masks] for bm, masks in zip(bmlist, InEdInd.sv_get())]
@@ -210,26 +207,26 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             result_vertices.append(new_verts)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
-      #      if self.show_new:
-      #          inner_verts, inner_edges, inner_faces = self.get_result_pydata(geom['geom_inner'])
-      #          r_inner_vertices.append(inner_verts)
-      #          r_inner_edges.append(inner_edges)
-      #          r_inner_faces.append(inner_faces)
-      #      if self.show_old:
-      #          split_verts, split_edges, split_faces = self.get_result_pydata(geom['geom_split'])
-      #          r_split_vertices.append(split_verts)
-      #          r_split_edges.append(split_edges)
-      #          r_split_faces.append(split_faces)
+            if self.show_new:
+                inner_verts, inner_edges, inner_faces = self.get_result_pydata(geom['geom_inner'])
+                r_inner_vertices.append(inner_verts)
+                r_inner_edges.append(inner_edges)
+                r_inner_faces.append(inner_faces)
+            if self.show_old:
+                split_verts, split_edges, split_faces = self.get_result_pydata(geom['geom_split'])
+                r_split_vertices.append(split_verts)
+                r_split_edges.append(split_edges)
+                r_split_faces.append(split_faces)
             bm.free()
         OutVert.sv_set(result_vertices)
         OutEdg.sv_set(result_edges)
         OutFace.sv_set(result_faces)
-      #  ONVert.sv_set(r_inner_vertices)
-      #  ONEdg.sv_set(r_inner_edges)
-      #  ONFace.sv_set(r_inner_faces)
-      #  OOVert.sv_set(r_split_vertices)
-      #  OOEdg.sv_set(r_split_edges)
-      #  OOFace.sv_set(r_split_faces)
+        ONVert.sv_set(r_inner_vertices)
+        ONEdg.sv_set(r_inner_edges)
+        ONFace.sv_set(r_inner_faces)
+        OOVert.sv_set(r_split_vertices)
+        OOEdg.sv_set(r_split_edges)
+        OOFace.sv_set(r_split_faces)
 
 
 def register():
