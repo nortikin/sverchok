@@ -98,7 +98,6 @@ class SocketConversionTests(EmptyTreeTestCase):
                 # so that there will be some data at input
                 # of tested node.
                 ngon.process()
-                node.update() # "in real life" this is automatically called by Blender anyway
                 try:
                     for input_name in tested_nodes[bl_idname]:
                         with self.subTest(input_name = input_name):
