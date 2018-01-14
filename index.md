@@ -224,7 +224,7 @@
     Sv3DviewPropsNode
 
 ## Text
-    ViewerNodeTextMK2
+    ViewerNodeTextMK3
     SvTextInNodeMK2
     SvTextOutNodeMK2
     NoteNode
