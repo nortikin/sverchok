@@ -25,7 +25,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProp
 from mathutils import Vector
 
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.utils.sn_node_utils import scaled_dpi
+from sverchok.utils.sv_node_utils import scaled_dpi
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL
