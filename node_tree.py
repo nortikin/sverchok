@@ -81,18 +81,6 @@ def process_from_socket(self, context):
     self.node.process_node(context)
 
 
-# this property group is only used by the old viewer draw
-
-
-class SvColors(bpy.types.PropertyGroup):
-    """ Class for colors CollectionProperty """
-    color = FloatVectorProperty(
-        name="svcolor", description="sverchok color",
-        default=(0.055, 0.312, 0.5), min=0, max=1,
-        step=1, precision=3, subtype='COLOR_GAMMA', size=3,
-        update=updateNode)
-
-
 class SvSocketCommon:
     """ Base class for all Sockets """
     use_prop = BoolProperty(default=False)
@@ -799,7 +787,7 @@ class SverchCustomTreeNode:
             pass
 
 classes = [
-    SvColors, SverchCustomTree,
+    SverchCustomTree,
     VerticesSocket, MatrixSocket, StringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket,
     SvLinkNewNodeInput,
