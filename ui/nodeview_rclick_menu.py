@@ -1,4 +1,16 @@
+ """
+  * This file is part of project Sverchok. It's copyrighted by the contributors
+  * recorded in the version control history of the file, available from
+  * its original location https://github.com/nortikin/sverchok/commit/master
+  * 
+  * SPDX-License-Identifier: GPL3
+  * License-Filename: LICENSE
+"""
+
+
 import bpy
+from sverchok.utils.sv_node_utils import frame_adjust
+
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
@@ -73,6 +85,7 @@ def add_connection(tree, bl_idname_new_node, offset):
 
         new_node = nodes.new(bl_idname_new_node)
         offset_node_location(existing_node, new_node, offset)
+        frame_adjust(existing_node, new_node)
 
         outputs = existing_node.outputs
         inputs = new_node.inputs
