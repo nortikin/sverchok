@@ -55,12 +55,14 @@ from sverchok.core.socket_conversions import (
 from sverchok.core.node_defaults import set_defaults_if_defined
 
 from sverchok.utils import get_node_class_reference
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.docstring import SvDocstring
-from sverchok.ui import color_def
-from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 import sverchok.utils.logging
 from sverchok.utils.logging import debug
+
+from sverchok.ui import color_def
+from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 
 socket_colors = {
     "StringsSocket": (0.6, 1.0, 0.6, 1.0),
@@ -435,16 +437,6 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 
     def draw_color(self, context, node):
         return self.nodule_color
-
-
-def recursive_framed_location_finder(node, loc_xy):
-    locx, locy = loc_xy
-    if node.parent:
-        locx += node.parent.location.x
-        locy += node.parent.location.y
-        return recursive_framed_location_finder(node.parent, (locx, locy))
-    else:
-        return locx, locy
 
 
 class SvLinkNewNodeInput(bpy.types.Operator):
