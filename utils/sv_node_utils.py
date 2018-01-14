@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import bpy
 
 def recursive_framed_location_finder(node, loc_xy):
     locx, locy = loc_xy
@@ -23,3 +23,8 @@ def frame_adjust(caller_node, new_node):
         loc_xy = new_node.location[:]
         locx, locy = recursive_framed_location_finder(new_node, loc_xy)
         new_node.location = locx, locy
+
+
+def scaled_dpi():
+    ps = bpy.context.user_preferences.system
+    return ps.dpi * ps.pixel_size / 72
