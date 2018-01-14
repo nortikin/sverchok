@@ -7,6 +7,7 @@ import json
 from io import StringIO
 import logging
 from contextlib import contextmanager
+import ast
 
 import sverchok
 from sverchok.data_structure import get_data_nesting_level
@@ -219,6 +220,16 @@ class SverchokTestCase(unittest.TestCase):
     def get_reference_file_path(self, file_name):
         return join(get_tests_path(), "references", file_name)
 
+    def load_reference_sverchok_data(self, file_name):
+        """
+        Load reference data in Sverchok format
+        (plain Python syntax of nested lists).
+        Returns: Sverchok data (nested lists).
+        """
+        with open(self.get_reference_file_path(file_name), 'r') as f:
+            data = f.read()
+            return ast.literal_eval(data)
+
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.
@@ -350,18 +361,29 @@ class SverchokTestCase(unittest.TestCase):
             step = len(prev_indicies)
             index = prev_indicies[-1]
             if step == level1:
+                if index >= len(item1):
+                    raise AssertionError("At {}: index {} >= length of Item 1: {}".format(prev_indicies, index, item1))
+                if index >= len(item2):
+                    raise AssertionError("At {}: index {} >= length of Item 2: {}".format(prev_indicies, index, item2))
                 do_assert(item1[index], item2[index], prev_indicies)
             else:
                 l1 = len(item1)
                 l2 = len(item2)
                 self.assertEquals(l1, l2, "Size of data 1 at level {} != size of data 2".format(step))
-                for next_idx in range(l1):
+                for next_idx in range(len(item1[index])):
                     new_indicies = prev_indicies[:]
                     new_indicies.append(next_idx)
                     compare(new_indicies, item1[index], item2[index])
 
         for idx in range(len(data1)):
             compare([idx], data1, data2)
+
+    def assert_sverchok_data_equals_file(self, data, expected_data_file_name, precision=None):
+        expected_data = self.load_reference_sverchok_data(expected_data_file_name)
+        #info("Data: %s", data)
+        #info("Expected data: %s", expected_data)
+        self.assert_sverchok_data_equal(data, expected_data, precision=precision)
+        #self.assertEquals(data, expected_data)
 
     def subtest_assert_equals(self, value1, value2, message=None):
         """
@@ -470,6 +492,16 @@ class NodeProcessTestCase(EmptyTreeTestCase):
         """
         data = self.get_output_data(output_name)
         self.assertEquals(data, expected_data, message)
+
+    def assert_output_data_equals_file(self, output_name, expected_data_file_name, message=None):
+        """
+        Assert that tested node has written expected data to
+        output socket output_name.
+        Expected data is stored in reference file expected_data_file_name.
+        """
+        data = self.get_output_data(output_name)
+        expected_data = self.load_reference_sverchok_data(expected_data_file_name)
+        self.assert_sverchok_data_equal(data, expected_data, message)
 
     def setUp(self):
         super().setUp()
