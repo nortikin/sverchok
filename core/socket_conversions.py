@@ -127,3 +127,79 @@ def get_locs_from_matrices(data):
 
     get_all(data)
     return locations
+
+class ImplicitConversionProhibited(Exception):
+    def __init__(self, socket):
+        super().__init__()
+        self.socket = socket
+        self.node = socket.node
+        self.from_socket_type = socket.other.bl_idname
+        self.to_socket_type = socket.bl_idname
+        self.message = "Implicit conversion from socket type {} to socket type {} is not supported for socket {} of node {}. Please use explicit conversion nodes.".format(self.from_socket_type, self.to_socket_type, socket.name, socket.node.name)
+
+    def __str__(self):
+        return self.message
+
+class NoImplicitConversionPolicy(object):
+    """
+    Base (empty) implicit conversion policy.
+    This prohibits any implicit conversions.
+    """
+    @classmethod
+    def convert(cls, socket, source_data):
+        raise ImplicitConversionProhibited(socket)
+
+class LenientImplicitConversionPolicy(object):
+    """
+    Lenient implicit conversion policy.
+    Does not actually convert anything, but passes any
+    type of data as-is.
+    To be used for sockets that do not care about the
+    nature of data they process (such as most List processing
+    nodes).
+    """
+    @classmethod
+    def convert(cls, socket, source_data):
+        return source_data
+
+class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
+    """
+    Default implicit conversion policy.
+    """
+    @classmethod
+    def convert(cls, socket, source_data):
+        if is_vector_to_matrix(socket):
+            return cls.vectors_to_matrices(socket, source_data)
+        elif is_matrix_to_vector(socket):
+            return cls.matrices_to_vectors(socket, source_data)
+        elif is_quaternion_to_matrix(socket):
+            return cls.quaternions_to_matrices(socket, source_data)
+        elif is_matrix_to_quaternion(socket):
+            return cls.matrices_to_quaternions(socket, source_data)
+        elif socket.bl_idname == 'StringsSocket':
+            return source_data
+        else:
+            super().convert(socket, source_data)
+
+    @classmethod
+    def vectors_to_matrices(cls, socket, source_data):
+        # this means we're going to get a flat list of the incoming
+        # locations and convert those into matrices proper.
+        out = get_matrices_from_locs(source_data)
+        socket.num_matrices = len(out)
+        return out
+    
+    @classmethod
+    def matrices_to_vectors(cls, socket, source_data):
+        return get_locs_from_matrices(source_data)
+
+    @classmethod
+    def quaternions_to_matrices(cls, socket, source_data):
+        out = get_matrices_from_quaternions(source_data)
+        socket.num_matrices = len(out)
+        return out
+
+    @classmethod
+    def matrices_to_quaternions(cls, socket, source_data):
+        return get_quaternions_from_matrices(source_data)
+

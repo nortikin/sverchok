@@ -9,6 +9,7 @@ import logging
 from contextlib import contextmanager
 
 import sverchok
+from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
 from sverchok.utils.logging import debug, info
 from sverchok.utils.context_managers import sv_preferences
@@ -296,6 +297,10 @@ class SverchokTestCase(unittest.TestCase):
             remove_node_tree(imported_tree_name)
 
     def assert_numpy_arrays_equal(self, arr1, arr2, precision=None):
+        """
+        Assert that two numpy arrays are equal.
+        Floating-point numbers are compared with specified precision.
+        """
         if arr1.shape != arr2.shape:
             raise AssertionError("Shape of 1st array {} != shape of 2nd array {}".format(arr1.shape, arr2.shape))
         shape = list(arr1.shape)
@@ -319,6 +324,44 @@ class SverchokTestCase(unittest.TestCase):
                     compare(new_indicies)
 
         compare([])
+
+    def assert_sverchok_data_equal(self, data1, data2, precision=None):
+        """
+        Assert that two arrays of Sverchok data (nested tuples or lists)
+        are equal.
+        Floating-point numbers are compared with specified precision.
+        """
+        level1 = get_data_nesting_level(data1)
+        level2 = get_data_nesting_level(data2)
+        if level1 != level2:
+            raise AssertionError("Nesting level of 1st data {} != nesting level of 2nd data {}".format(level1, level2))
+        
+        def do_assert(d1, d2, idxs):
+            if precision is not None:
+                d1 = round(d1, precision)
+                d2 = round(d2, precision)
+            self.assertEqual(d1, d2, "Data 1 [{}] != Data 2 [{}]".format(idxs, idxs))
+
+        if level1 == 0:
+            do_assert(data1, data2, [])
+            return
+
+        def compare(prev_indicies, item1, item2):
+            step = len(prev_indicies)
+            index = prev_indicies[-1]
+            if step == level1:
+                do_assert(item1[index], item2[index], prev_indicies)
+            else:
+                l1 = len(item1)
+                l2 = len(item2)
+                self.assertEquals(l1, l2, "Size of data 1 at level {} != size of data 2".format(step))
+                for next_idx in range(l1):
+                    new_indicies = prev_indicies[:]
+                    new_indicies.append(next_idx)
+                    compare(new_indicies, item1[index], item2[index])
+
+        for idx in range(len(data1)):
+            compare([idx], data1, data2)
 
     def subtest_assert_equals(self, value1, value2, message=None):
         """
