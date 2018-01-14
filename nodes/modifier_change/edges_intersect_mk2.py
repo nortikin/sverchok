@@ -87,8 +87,24 @@ def get_intersection_dictionary(cm, bm, edge_indices):
     d = defaultdict(list)
 
     for edges in permutations:
-        raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
-        vert_vectors = cm.vectors_from_indices(bm, raw_vert_indices)
+        vert_vectors = cm.vectors_from_edges_tuple(bm, edges)
+        v1, v2, v3, v4 = vert_vectors
+
+        # Edges obviously can not intersect if their bounding
+        # boxes do not intersect
+        if (max(v1.x, v2.x) < min(v3.x, v4.x) or
+            max(v1.y, v2.y) < min(v3.y, v4.y) or
+            max(v1.z, v2.z) < min(v3.z, v4.z)):
+                continue
+        if (max(v3.x, v4.x) < min(v1.x, v2.x) or
+            max(v3.y, v4.y) < min(v1.y, v2.y) or
+            max(v3.z, v4.z) < min(v1.z, v2.z)):
+                continue
+
+        # Edges can not intersect if they do not lie in
+        # the same plane
+        if not cm.is_coplanar(vert_vectors):
+            continue
 
         points = LineIntersect(*vert_vectors)
 
