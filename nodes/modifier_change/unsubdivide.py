@@ -17,15 +17,16 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import numpy as np
 from bpy.props import IntProperty
-import bmesh.ops
+from bmesh.ops import unsubdivide
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.data_structure import updateNode, match_long_repeat as mlr
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata as bfp, pydata_from_bmesh as pfb
 
 
 class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Unsubivide vertices if possible '''
+    ''' Unsubdivide vertices if possible '''
     bl_idname = 'SvUnsubdivideNode'
     bl_label = 'Unsubdivide'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -36,6 +37,7 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'Verts')
         self.inputs.new('StringsSocket', 'Edges')
         self.inputs.new('StringsSocket', 'Polys')
+        self.inputs.new('StringsSocket', 'Verts Index')
         self.outputs.new('VerticesSocket', 'Verts')
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polys')
@@ -44,27 +46,27 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "iteration")
 
     def process(self):
-        Ve, Ed, Fa = self.inputs
+        V, E, F, ind = self.inputs
         Ov, Oe, Op = self.outputs
         if Ov.is_linked:
-            verts = Ve.sv_get()
-            edges = Ed.sv_get([[]])
-            faces = Fa.sv_get([[]])
-            meshes = match_long_repeat([verts, edges, faces])
-            r_verts = []
-            r_edges = []
-            r_faces = []
-            for verts, edges, faces in zip(*meshes):
-                bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
-                bmesh.ops.unsubdivide(bm, verts=bm.verts, iterations=self.iteration)
-                new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
+            r_v = []
+            r_e = []
+            r_f = []
+            bmlist = [bfp(v, e, f, normal_update=True) for v, e, f in zip(*mlr([V.sv_get(), E.sv_get([[]]), F.sv_get([[]])]))]
+            if ind.is_linked:
+                usev = [np.array(bm.verts[:])[ind] for bm, ind in zip(bmlist, ind.sv_get())]
+            else:
+                usev = [bm.verts for bm in bmlist]
+            for bm, usind in zip(bmlist, usev):
+                unsubdivide(bm, verts=usind, iterations=self.iteration)
+                new_verts, new_edges, new_faces = pfb(bm)
                 bm.free()
-                r_verts.append(new_verts)
-                r_edges.append(new_edges)
-                r_faces.append(new_faces)
-            Ov.sv_set(r_verts)
-            Oe.sv_set(r_edges)
-            Op.sv_set(r_faces)
+                r_v.append(new_verts)
+                r_e.append(new_edges)
+                r_f.append(new_faces)
+            Ov.sv_set(r_v)
+            Oe.sv_set(r_e)
+            Op.sv_set(r_f)
 
 
 def register():
