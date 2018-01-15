@@ -68,6 +68,8 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Sphere'
     bl_icon = 'MESH_UVSPHERE'
 
+    replacement_nodes = [('SvIcosphereNode', None, dict(Polygons='Faces'))]
+
     rad_ = FloatProperty(name='Radius', description='Radius',
                          default=1.0,
                          options={'ANIMATABLE'}, update=updateNode)
