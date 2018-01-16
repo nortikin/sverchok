@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import levelsOflist, changable_sockets, multi_socket, updateNode
@@ -32,6 +32,7 @@ class SverchokViewerMK1(bpy.types.Operator):
 
     nodename = StringProperty(name='nodename')
     treename = StringProperty(name='treename')
+    lines = IntProperty(name='lines', description='lines count for operate on',default=1000)
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
@@ -41,25 +42,28 @@ class SverchokViewerMK1(bpy.types.Operator):
         outs  = ''
         for insert in inputs:
             if insert.is_linked:
-
+                label = insert.other.node.label
+                if label:
+                    label = '; node ' + label.upper()
+                name = insert.name.upper()
                 # vertices socket
                 if insert.other.bl_idname == 'VerticesSocket':
-                    itype = '\n\nFrom ' + insert.name + ' type "Vertices": \n'
+                    itype = '\n\nSocket ' + name + label + '; type VERTICES: \n'
 
                 # edges/faces socket
                 elif insert.other.bl_idname == 'StringsSocket':
-                    itype = '\n\nFrom ' + insert.name + ' type "Edges/Polygons": \n'
+                    itype = '\n\nSocket ' + name + label + '; type EDGES/POLYGONS: \n'
 
                 # matrix socket
                 elif insert.other.bl_idname == 'MatrixSocket':
-                    itype = '\n\nFrom ' + insert.name + ' type "Matrixes": \n'
+                    itype = '\n\nSocket ' + name + label + '; type MATRICES: \n'
 
                 # object socket
                 elif insert.other.bl_idname == 'SvObjectSocket':
-                    itype = '\n\nFrom ' + insert.name + ' type "Objects": \n'
+                    itype = '\n\nSocket ' + name + label + '; type OBJECTS: \n'
                 # else
                 else:
-                    itype = '\n\nFrom ' + insert.name + ' type "Data": \n'
+                    itype = '\n\nSocket ' + name + label + '; type DATA: \n'
 
                 eva = insert.sv_get()
                 deptl = levelsOflist(eva)
@@ -131,6 +135,7 @@ class SverchokViewerMK1(bpy.types.Operator):
         else:
             for k, val in enumerate(data):
                 output += ('\n' + str(val))
+                if k >= self.lines-1: break
         return cache + output
 
     def readFORviewer_sockets_data_small(self, data, dept, le):
@@ -151,13 +156,22 @@ class SverchokViewerMK1(bpy.types.Operator):
 
 
 class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
-    ''' Viewer Node text MK3 '''
+    """
+    Triggers: Viewer Node text MK3
+    Tooltip: Inspecting data from sockets in terms 
+    of levels and structure by types
+    multisocket lets you insert many outputs
+    """
     bl_idname = 'ViewerNodeTextMK3'
     bl_label = 'Viewer text mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     autoupdate = BoolProperty(name='update', default=False)
     frame = BoolProperty(name='frame', default=True)
+    lines = IntProperty(name='lines', description='lines count for operate on', default=1000, \
+                        min=1, max=2000)
+
+    # multi sockets veriables
     newsock = BoolProperty(name='newsock', default=False)
     base_name = 'data'
     multi_socket_type = 'StringsSocket'
@@ -165,12 +179,18 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'data0', 'data0')
 
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row()
+        row.prop(self,'lines',text='lines')
+
     def draw_buttons(self, context, layout):
         row = layout.row()
         row.scale_y = 4.0
         do_text = row.operator('node.sverchok_viewer_buttonmk1', text='V I E W')
         do_text.nodename = self.name
         do_text.treename = self.id_data.name
+        do_text.lines = self.lines
+        
         col = layout.column(align=True)
         col.prop(self, "autoupdate", text="autoupdate")
         col.prop(self, "frame", text="frame")
@@ -189,7 +209,7 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
         if not self.autoupdate:
             pass
         else:
-            bpy.ops.node.sverchok_viewer_buttonmk1(nodename=self.name, treename=self.id_data.name)
+            bpy.ops.node.sverchok_viewer_buttonmk1(nodename=self.name, treename=self.id_data.name, lines=self.lines)
 
 
 
