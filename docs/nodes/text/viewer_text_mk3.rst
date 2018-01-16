@@ -37,6 +37,12 @@ Parameters & Features
 **autoapdate** flag for auto update inputs representation.
 **frame** make frame in layout.
 
+Extended parameters
+-------------------
+
+**lines** count of lines per last level that will be shown in text. maximum 2000, minimum 1 line. For example, count of vertices per object or integers per list.
+
+
 Examples of usage
 -----------------
 .. image:: https://user-images.githubusercontent.com/5783432/34916387-c8f7bf4a-f948-11e7-84df-b1a9eb50e2d5.png
