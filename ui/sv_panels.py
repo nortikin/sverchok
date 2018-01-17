@@ -19,14 +19,12 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty
 
-
 import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.core.update_system import process_from_nodes
 from sverchok.utils import profile
 
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
-
 
 
 class SverchokUpdateObjectIn(bpy.types.Operator):
@@ -370,7 +368,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         layout.separator()
         
         sv_prefs = addon.preferences
-        layout.row().prop(sv_prefs, 'show_alternative_branch_box')
+        layout.row().prop(sv_prefs, 'show_alternative_branch_box', toggle=True)
         if sv_prefs.show_alternative_branch_box:
             branch_box = layout.box()
             branch_box.row().operator('node.sv_populate_branch_list')
@@ -415,5 +413,5 @@ def unregister():
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#     register()

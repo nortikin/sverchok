@@ -147,10 +147,9 @@ class SverchokUpdateAddon(bpy.types.Operator):
     bl_options = {'REGISTER'}
 
     def get_cross_branch(self):
-        cross_branch = None
         with sv_preferences() as prefs:
-            if prefs.alternative_branch:
-                return prefs.alternative_branch
+            if prefs.selected_branch:
+                return prefs.selected_branch
 
     def execute(self, context):
 
@@ -162,10 +161,10 @@ class SverchokUpdateAddon(bpy.types.Operator):
         wm.progress_begin(0, 100)
         wm.progress_update(20)
 
-        cross_update = self.get_cross_branch()
+        selected_branch = self.get_cross_branch()
 
         try:
-            branch_name = 'master' if not cross_update else cross_update
+            branch_name = 'master' if not selected_branch else selected_branch
             zipname = '{0}.zip'.format(branch_name)
             url = 'https://github.com/nortikin/sverchok/archive/' + zipname
             to_path = os.path.normpath(os.path.join(os.curdir, zipname))
@@ -193,9 +192,11 @@ class SverchokUpdateAddon(bpy.types.Operator):
             os.remove(file[0])
             return {'CANCELLED'}
 
-        # write to both sv_sha_download and sv_shafile.sv
-        write_latest_sha_to_local(sha_value=latest_local_sha(), filename='sv_sha_downloaded.sv')
-        write_latest_sha_to_local(sha_value=latest_local_sha())
+        if not selected_branch:
+            # if user is not using a branch we do not track this sha stuff.
+            # write to both sv_sha_download and sv_shafile.sv
+            write_latest_sha_to_local(sha_value=latest_local_sha(), filename='sv_sha_downloaded.sv')
+            write_latest_sha_to_local(sha_value=latest_local_sha())
         return {'FINISHED'}
 
 
