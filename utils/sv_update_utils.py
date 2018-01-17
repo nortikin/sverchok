@@ -25,6 +25,9 @@ from zipfile import ZipFile
 import bpy
 import sverchok
 
+from sverchok.utils.context_managers import sv_preferences
+
+
 # pylint: disable=w0141
 
 def sv_get_local_path():
@@ -143,6 +146,12 @@ class SverchokUpdateAddon(bpy.types.Operator):
     bl_label = "Sverchok update addon"
     bl_options = {'REGISTER'}
 
+    def get_cross_branch(self):
+        cross_branch = None
+        with sv_preferences() as prefs:
+            if prefs.alternative_branch:
+                return prefs.alternative_branch
+
     def execute(self, context):
 
         os.curdir = bl_addons_path
@@ -153,8 +162,10 @@ class SverchokUpdateAddon(bpy.types.Operator):
         wm.progress_begin(0, 100)
         wm.progress_update(20)
 
+        cross_update = self.get_cross_branch()
+
         try:
-            branch_name = 'master'
+            branch_name = 'master' if not cross_update else cross_update
             zipname = '{0}.zip'.format(branch_name)
             url = 'https://github.com/nortikin/sverchok/archive/' + zipname
             to_path = os.path.normpath(os.path.join(os.curdir, zipname))

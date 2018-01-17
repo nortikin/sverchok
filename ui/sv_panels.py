@@ -367,6 +367,21 @@ class SverchokToolsMenu(bpy.types.Panel):
             layout.row().operator(sha_update, text='Check for updates')
 
         layout.row().operator('node.sv_show_latest_commits')
+        layout.separator()
+        
+        sv_prefs = addon.preferences
+        layout.row().prop(sv_prefs, 'show_alternative_branch_box')
+        if sv_prefs.show_alternative_branch_box:
+            branch_box = layout.box()
+            branch_box.row().operator('node.sv_populate_branch_list')
+
+            if not sv_prefs.branch_list:
+                return
+
+            branch_box.row().prop_search(sv_prefs, 'branch_list', sv_prefs, 'selected_branch')
+            if sv_prefs.selected_branch:
+                branch_box.row().operator('node.sv_pick_alternative_branch')
+            
 
 
 sv_tools_classes = [
