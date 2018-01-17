@@ -8,7 +8,7 @@
 import bpy
 from sverchok.utils.context_managers import sv_preferences
 
-
+# pylint: disable=w0702
 
 def add_named(prop_collection, name):
     prop_collection.add().name = name.strip()
