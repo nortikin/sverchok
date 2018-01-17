@@ -2,7 +2,9 @@ import os
 
 import bpy
 from bpy.types import AddonPreferences
-from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
+from bpy.props import (
+    BoolProperty, FloatVectorProperty, EnumProperty, CollectionProperty,
+    IntProperty, FloatProperty, StringProperty)
 
 from sverchok import data_structure
 from sverchok.core import handlers
@@ -88,6 +90,12 @@ class SverchokPreferences(AddonPreferences):
     developer_mode = BoolProperty(name = "Developer mode",
             description = "Show some additional panels or features useful for Sverchok developers only",
             default = False)
+
+    #  branch testing props
+
+    show_alternative_branch_box = BoolProperty(name='Show Branch Options')
+    selected_branch = StringProperty(name="Selected Branch")
+    branch_list = CollectionProperty(name="branch list", type=bpy.types.PropertyGroup)
 
     #  theme settings
 
