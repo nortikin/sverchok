@@ -2,7 +2,9 @@ import os
 
 import bpy
 from bpy.types import AddonPreferences
-from bpy.props import BoolProperty, FloatVectorProperty, EnumProperty, IntProperty, FloatProperty, StringProperty
+from bpy.props import (
+    BoolProperty, FloatVectorProperty, EnumProperty, CollectionProperty,
+    IntProperty, FloatProperty, StringProperty)
 
 from sverchok import data_structure
 from sverchok.core import handlers
@@ -80,14 +82,22 @@ class SverchokPreferences(AddonPreferences):
         ("UPDATE", "Node tree update", "Profile whole node tree update process", 2)
     ]
 
-    profile_mode = EnumProperty(name = "Profiling mode",
-            items = profiling_sections,
-            default = "NONE",
-            description = "Performance profiling mode")
+    profile_mode = EnumProperty(
+        name="Profiling mode",
+        items=profiling_sections,
+        default="NONE",
+        description="Performance profiling mode")
 
-    developer_mode = BoolProperty(name = "Developer mode",
-            description = "Show some additional panels or features useful for Sverchok developers only",
-            default = False)
+    developer_mode = BoolProperty(
+        name="Developer mode",
+        description="Show some additional panels or features useful for Sverchok developers only",
+        default=False)
+
+    #  branch testing props
+
+    show_alternative_branch_box = BoolProperty(name='Show Branch Options')
+    selected_branch = StringProperty(name="Selected Branch")
+    branch_list = CollectionProperty(name="branch list", type=bpy.types.PropertyGroup)
 
     #  theme settings
 
@@ -180,33 +190,41 @@ class SverchokPreferences(AddonPreferences):
         logging.setLevel(self.log_level)
     
     log_levels = [
-            ("DEBUG", "Debug", "Debug output", 0),
-            ("INFO", "Information", "Informational output", 1),
-            ("WARNING", "Warnings", "Show only warnings and errors", 2),
-            ("ERROR", "Errors", "Show errors only", 3)
-        ]
+        ("DEBUG", "Debug", "Debug output", 0),
+        ("INFO", "Information", "Informational output", 1),
+        ("WARNING", "Warnings", "Show only warnings and errors", 2),
+        ("ERROR", "Errors", "Show errors only", 3)
+    ]
 
-    log_level = EnumProperty(name = "Logging level",
-            description = "Minimum events severity level to output. All more severe messages will be logged as well.",
-            items = log_levels,
-            update = update_log_level,
-            default = "INFO")
+    log_level = EnumProperty(
+        name="Logging level",
+        description="Minimum events severity level to output. All more severe messages will be logged as well.",
+        items=log_levels,
+        update=update_log_level,
+        default="INFO")
 
-    log_to_buffer = BoolProperty(name = "Log to text buffer",
-            description = "Enable log output to internal Blender's text buffer",
-            default = True)
-    log_to_buffer_clean = BoolProperty(name = "Clear buffer at startup",
-            description = "Clear text buffer at each Blender startup",
-            default = False)
-    log_to_file = BoolProperty(name = "Log to file",
-            description = "Enable log output to external file",
-            default = False)
-    log_to_console = BoolProperty(name = "Log to console",
-            description = "Enable log output to console / terminal / standard output.",
-            default = True)
+    log_to_buffer = BoolProperty(
+        name="Log to text buffer",
+        description="Enable log output to internal Blender's text buffer",
+        default=True)
 
-    log_buffer_name = StringProperty(name = "Buffer name", default = "sverchok.log")
-    log_file_name = StringProperty(name = "File path", default = os.path.join(datafiles, "sverchok.log"))
+    log_to_buffer_clean = BoolProperty(
+        name="Clear buffer at startup",
+        description="Clear text buffer at each Blender startup",
+        default=False)
+
+    log_to_file = BoolProperty(
+        name="Log to file",
+        description="Enable log output to external file",
+        default=False)
+
+    log_to_console = BoolProperty(
+        name="Log to console",
+        description="Enable log output to console / terminal / standard output.",
+        default=True)
+
+    log_buffer_name = StringProperty(name="Buffer name", default="sverchok.log")
+    log_file_name = StringProperty(name="File path", default=os.path.join(datafiles, "sverchok.log"))
 
     def draw(self, context):
 
@@ -263,7 +281,7 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col = box_sub1.column(align=True)
             box_sub1_col.label('stethoscope mk2 settings')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
-            box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
+            # box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
 
             col3 = row_sub1.split().column()
             col3.label('Location of custom defaults')
@@ -338,5 +356,5 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SverchokPreferences)
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#     register()

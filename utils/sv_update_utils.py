@@ -25,6 +25,9 @@ from zipfile import ZipFile
 import bpy
 import sverchok
 
+from sverchok.utils.context_managers import sv_preferences
+
+
 # pylint: disable=w0141
 
 def sv_get_local_path():
@@ -143,6 +146,11 @@ class SverchokUpdateAddon(bpy.types.Operator):
     bl_label = "Sverchok update addon"
     bl_options = {'REGISTER'}
 
+    def get_cross_branch(self):
+        with sv_preferences() as prefs:
+            if prefs.selected_branch:
+                return prefs.selected_branch
+
     def execute(self, context):
 
         os.curdir = bl_addons_path
@@ -153,8 +161,10 @@ class SverchokUpdateAddon(bpy.types.Operator):
         wm.progress_begin(0, 100)
         wm.progress_update(20)
 
+        selected_branch = self.get_cross_branch()
+
         try:
-            branch_name = 'master'
+            branch_name = 'master' if not selected_branch else selected_branch
             zipname = '{0}.zip'.format(branch_name)
             url = 'https://github.com/nortikin/sverchok/archive/' + zipname
             to_path = os.path.normpath(os.path.join(os.curdir, zipname))
@@ -172,7 +182,8 @@ class SverchokUpdateAddon(bpy.types.Operator):
             err = 1
             os.remove(file[0])
             err = 2
-            bpy.context.scene.sv_new_version = False
+            if not selected_branch:
+                bpy.context.scene.sv_new_version = False
             wm.progress_update(100)
             wm.progress_end()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button, maybe restart Blender")
@@ -182,9 +193,11 @@ class SverchokUpdateAddon(bpy.types.Operator):
             os.remove(file[0])
             return {'CANCELLED'}
 
-        # write to both sv_sha_download and sv_shafile.sv
-        write_latest_sha_to_local(sha_value=latest_local_sha(), filename='sv_sha_downloaded.sv')
-        write_latest_sha_to_local(sha_value=latest_local_sha())
+        if not selected_branch:
+            # if user is not using a branch we do not track this sha stuff.
+            # write to both sv_sha_download and sv_shafile.sv
+            write_latest_sha_to_local(sha_value=latest_local_sha(), filename='sv_sha_downloaded.sv')
+            write_latest_sha_to_local(sha_value=latest_local_sha())
         return {'FINISHED'}
 
 
