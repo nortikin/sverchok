@@ -19,14 +19,13 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty
 
-
 import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.core.update_system import process_from_nodes
 from sverchok.utils import profile
+from sverchok.ui.sv_icons import custom_icon
 
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
-
 
 
 class SverchokUpdateObjectIn(bpy.types.Operator):
@@ -367,6 +366,23 @@ class SverchokToolsMenu(bpy.types.Panel):
             layout.row().operator(sha_update, text='Check for updates')
 
         layout.row().operator('node.sv_show_latest_commits')
+        layout.separator()
+        
+        sv_prefs = addon.preferences
+        layout.row().prop(sv_prefs, 'show_alternative_branch_box', toggle=True, icon_value=custom_icon("SV_GIT_MINI"))
+        if sv_prefs.show_alternative_branch_box:
+            branch_box = layout.box()
+            branch_box.row().operator('node.sv_populate_branch_list')
+
+            if not sv_prefs.branch_list:
+                return
+
+            branch_box.row().prop_search(sv_prefs, 'selected_branch', sv_prefs, 'branch_list')
+            if sv_prefs.selected_branch:
+                branch_box.row().operator('node.sv_pick_alternative_branch')
+        
+            layout.row().operator('node.sv_pick_alternative_branch',text='Revert To Master').fn_name='PANIC'
+            
 
 
 sv_tools_classes = [
@@ -400,5 +416,5 @@ def unregister():
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#     register()

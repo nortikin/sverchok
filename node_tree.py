@@ -405,8 +405,9 @@ class StringsSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-#         debug("Node %s, socket %s, is_linked: %s, is_output: %s",
-#                 self.node.name, self.name, self.is_linked, self.is_output)
+        # debug("Node %s, socket %s, is_linked: %s, is_output: %s",
+        #         self.node.name, self.name, self.is_linked, self.is_output)
+
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.prop_name:
