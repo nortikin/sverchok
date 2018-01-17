@@ -128,6 +128,7 @@
 
 ## List Mutators
     SvListModifierNode
+    SvFixEmptieObjectsNode
 
 ## List Main
     ListJoinNode
