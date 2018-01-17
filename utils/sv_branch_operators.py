@@ -30,7 +30,7 @@ def get_branch_list_online(self):
 
     except Exception as err:
 
-        logging.info("get_branch_error:\n " + err)
+        logging.info("get_branch_list_online <-- error:\n " + err)
         named_branches = []
         self.report({'ERROR'}, "branch list not populated")
 
