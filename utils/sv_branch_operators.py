@@ -13,15 +13,20 @@ from sverchok.utils.context_managers import sv_preferences
 def add_named(prop_collection, name):
     prop_collection.add().name = name.strip()
 
-def get_branch_list_online():
-    import requests
+def get_branch_list_online(self):
+    try:
+        import requests
 
-    comment_url = "https://api.github.com/repos/nortikin/sverchok/issues/2053#issuecomment-1"
-    r = requests.get(comment_url)
+        comment_url = "https://api.github.com/repos/nortikin/sverchok/issues/2053#issuecomment-1"
+        r = requests.get(comment_url)
 
-    string_to_parse = r.json().get('body')
-    string_to_parse = string_to_parse.replace('- ', '')
-    named_branches = string_to_parse.split('\r\n')
+        string_to_parse = r.json().get('body')
+        string_to_parse = string_to_parse.replace('- ', '')
+        named_branches = string_to_parse.split('\r\n')
+    except:
+        named_branches = []
+        self.report({'ERROR'}, "branch list not populated")
+
     return named_branches
 
 
@@ -34,11 +39,11 @@ class SvBranchOpPopulateBranchList(bpy.types.Operator):
 
         with sv_preferences() as prefs:
             prefs.branch_list.clear()
+            prefs.selected_branch = ""
 
-            _ = [add_named(prefs.branch_list, n) for n in get_branch_list_online()]
+            _ = [add_named(prefs.branch_list, n) for n in get_branch_list_online(self)]
 
             if not prefs.branch_list:
-                self.report({'ERROR'}, "branch list not populated")
                 return {'CANCELLED'}
 
         return {'FINISHED'}
@@ -48,7 +53,15 @@ class SvBranchOpPickAlternativeBranch(bpy.types.Operator):
     bl_idname = "node.sv_pick_alternative_branch"
     bl_label = "Switch to selected branch"
 
+    fn_name = bpy.props.StringProperty()
+
     def execute(self, context):
+        
+        if self.fn_name == 'PANIC':
+            with sv_preferences() as prefs:
+                prefs.branch_list.clear()
+                prefs.selected_branch = ""
+
         bpy.node.sverchok_update_addon()
         return {'FINISHED'}
 

@@ -379,6 +379,8 @@ class SverchokToolsMenu(bpy.types.Panel):
             branch_box.row().prop_search(sv_prefs, 'selected_branch', sv_prefs, 'branch_list')
             if sv_prefs.selected_branch:
                 branch_box.row().operator('node.sv_pick_alternative_branch')
+        
+            layout.row().operator('node.sv_pick_alternative_branch',text='Revert To Master').fn_name='PANIC'
             
 
 
