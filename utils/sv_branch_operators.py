@@ -49,7 +49,7 @@ class SvBranchOpPickAlternativeBranch(bpy.types.Operator):
     bl_label = "Switch to selected branch"
 
     def execute(self, context):
-        
+        bpy.node.sverchok_update_addon()
         return {'FINISHED'}
 
 

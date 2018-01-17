@@ -182,7 +182,8 @@ class SverchokUpdateAddon(bpy.types.Operator):
             err = 1
             os.remove(file[0])
             err = 2
-            bpy.context.scene.sv_new_version = False
+            if not selected_branch:
+                bpy.context.scene.sv_new_version = False
             wm.progress_update(100)
             wm.progress_end()
             self.report({'INFO'}, "Unzipped, reload addons with F8 button, maybe restart Blender")
