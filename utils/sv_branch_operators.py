@@ -7,6 +7,7 @@
 
 import bpy
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils import logging
 
 # pylint: disable=w0702
 
@@ -14,6 +15,9 @@ def add_named(prop_collection, name):
     prop_collection.add().name = name.strip()
 
 def get_branch_list_online(self):
+    """
+    This function returns the branch names as found on issue 2053, as a list.
+    """
     try:
         import requests
 
@@ -23,7 +27,10 @@ def get_branch_list_online(self):
         string_to_parse = r.json().get('body')
         string_to_parse = string_to_parse.replace('- ', '')
         named_branches = string_to_parse.split('\r\n')
-    except:
+
+    except Exception as err:
+
+        logging.info("get_branch_error:\n " + err)
         named_branches = []
         self.report({'ERROR'}, "branch list not populated")
 
