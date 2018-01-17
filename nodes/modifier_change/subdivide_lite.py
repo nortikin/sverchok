@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
-import bmesh.ops
+from bmesh.ops import subdivide_edges
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -113,6 +113,10 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             description= "Show options on the node",
             default= False,
             update=updateNode)
+    sel_mode = BoolProperty(name = "select",
+            description= "Select edges by index when True. Select by mask when False",
+            default= False,
+            update=updateNode)
 
     def draw_common(self, context, layout):
         col = layout.column(align=True)
@@ -120,6 +124,7 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "show_old", toggle=True)
         row.prop(self, "show_new", toggle=True)
         col.prop(self, "show_options", toggle=True)
+        col.prop(self, "sel_mode", toggle=True)
 
     def draw_options(self, context, layout):
         col = layout.column(align=True)
@@ -189,11 +194,14 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         r_split_faces = []
         bmlist= [bmesh_from_pydata(v, e, f, normal_update=True) for v,e,f in zip(vertices_s,edges_s,faces_s)]
         if InEdInd.is_linked:
-            useedges = [np.array(bm.edges[:])[masks] for bm, masks in zip(bmlist, InEdInd.sv_get())]
+            if self.sel_mode:
+                useedges = [np.array(bm.edges[:])[idxs] for bm, idxs in zip(bmlist, InEdInd.sv_get())]
+            else:
+                useedges = [np.extract(mask, bm.edges[:]) for bm, mask in zip(bmlist, InEdInd.sv_get())]
         else:
             useedges = [bm.edges for bm in bmlist]
         for bm,ind in zip(bmlist,useedges):
-            geom = bmesh.ops.subdivide_edges(bm, edges= ind,
+            geom = subdivide_edges(bm, edges= ind,
                     smooth= self.smooth,
                     smooth_falloff= int(self.falloff_type),
                     fractal= self.fractal, along_normal= self.along_normal,
