@@ -23,6 +23,7 @@ import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.core.update_system import process_from_nodes
 from sverchok.utils import profile
+from sverchok.ui.sv_icons import custom_icon
 
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
@@ -368,7 +369,7 @@ class SverchokToolsMenu(bpy.types.Panel):
         layout.separator()
         
         sv_prefs = addon.preferences
-        layout.row().prop(sv_prefs, 'show_alternative_branch_box', toggle=True)
+        layout.row().prop(sv_prefs, 'show_alternative_branch_box', toggle=True, icon_value=custom_icon("SV_GIT_MINI"))
         if sv_prefs.show_alternative_branch_box:
             branch_box = layout.box()
             branch_box.row().operator('node.sv_populate_branch_list')
