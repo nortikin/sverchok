@@ -376,7 +376,7 @@ class SverchokToolsMenu(bpy.types.Panel):
             if not sv_prefs.branch_list:
                 return
 
-            branch_box.row().prop_search(sv_prefs, 'branch_list', sv_prefs, 'selected_branch')
+            branch_box.row().prop_search(sv_prefs, 'selected_branch', sv_prefs, 'branch_list')
             if sv_prefs.selected_branch:
                 branch_box.row().operator('node.sv_pick_alternative_branch')
             
