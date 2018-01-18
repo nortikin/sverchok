@@ -28,6 +28,9 @@ def interp_v3_v3v3(a, b, t=0.5):
 def length(v):
     return math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
 
+def length_v2(v):
+    return math.sqrt((v[0] * v[0]) + (v[1] * v[1]))
+
 def normalize(v):
     l = math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
     return [v[0]/l, v[1]/l, v[2]/l]
@@ -48,7 +51,7 @@ def isect_line_plane(l1, l2, plane_co, plane_no):
 
     if abs(dot) > 1.0e-5:
         f = -(plane_no[0]*h[0] + plane_no[1]*h[1] + plane_no[2]*h[2]) / dot
-        return l1[0]+u[0]*f, l1[1]+u[1]*f, l1[2]+u[2]*f        
+        return l1[0]+u[0]*f, l1[1]+u[1]*f, l1[2]+u[2]*f
     else:
         # parallel to plane
         return False
@@ -68,7 +71,7 @@ def mean(verts):
         vx += v[0]
         vy += v[1]
         vz += v[2]
-    numverts = len(verts) 
+    numverts = len(verts)
     return vx/numverts, vy/numverts, vz/numverts
 
 
