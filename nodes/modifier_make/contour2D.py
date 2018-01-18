@@ -390,7 +390,7 @@ def create_valid_vert_edges(x, y, z, new_angs, intersecctions, net, connex):
 
     for ang_local, r, inter in new_angs:
         out_side = on_valid_angle_inter(ang_local, intersecctions)
-        if outside and connex > 1:
+        if out_side and connex > 1:
             out_side = on_valid_angle_connex(ang_local, net, connex)
 
         if out_side:
