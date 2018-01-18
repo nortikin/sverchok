@@ -1,5 +1,5 @@
 Contour 2D
-======
+==========
 
 
 Functionality
@@ -81,7 +81,7 @@ _ When you input different objects independent contours will be created:
 .. image:: https://user-images.githubusercontent.com/10011941/34644864-46463d24-f33f-11e7-80c1-bb0718d9966b.png
   
 
-_ With the intersection mode on "Circular" the intersection points will be placed  as if we where using perfect circles. 
+_ With the intersection mode on "Circular" the intersection points will be placed as if we were using perfect circles. 
 This will change the edges angles, but the distance between the intersection point and the original points will be maintained.
 On "Poligonal" the edges angles are preserved but the distance to original vertex will depend on the number of vertices.
 
@@ -107,7 +107,7 @@ Notes
 
 _ This implementation can get very slow when working with hundreds of inputs and different distances, handle it with patience.
 
-_ If the node does not create a closed contour try increasing the vertices number or rising the mask tolerace slowly 
+_ If the node does not create a closed contour try increasing the vertices number or rising the mask tolerance slowly 
 
 _ This is the pull request where this node was added https://github.com/nortikin/sverchok/pull/2001
 
