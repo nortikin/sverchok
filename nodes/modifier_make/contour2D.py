@@ -46,8 +46,9 @@ intersec_mode_items = [
     ("Poligonal", "Poligonal", "Intersecction dependent from num. of vertices (Faster)", 1)]
 
 
-def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask_t, min_dist):
+def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask_t):
     d = 0
+    min_dist = 2.0e-5
     for j in range(modulo):
         rad = or_radius[j]
         if rad < min_dist:
@@ -74,8 +75,9 @@ def check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask
     return d
 
 
-def check_dist_to_edges(v, or_verts, or_radius, edges, sides_space, min_dist):
+def check_dist_to_edges(v, or_verts, or_radius, edges, sides_space):
     d = 0
+    min_dist = 2.0e-5
     for ed, s in zip(edges, sides_space):
         v1 = or_verts[ed[0]]
         v2 = or_verts[ed[1]]
@@ -117,7 +119,7 @@ def sides_space_limits(or_verts, or_radius, net, edges, mask_t, modulo):
     return sides_space
 
 
-def mask_by_distance(verts, parameters, modulo, edges, mask_t, min_dist):
+def mask_by_distance(verts, parameters, modulo, edges, mask_t):
     or_verts = parameters[0]
     or_radius = parameters[2]
     or_vert_num = parameters[1]
@@ -129,9 +131,9 @@ def mask_by_distance(verts, parameters, modulo, edges, mask_t, min_dist):
 
     for i in range(len(verts)):
         v = verts[i]
-        d = check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask_t, min_dist)
+        d = check_dist_to_verts(v, or_verts, or_radius, net, poli_ang_list, modulo, mask_t)
         if d == 0:
-            d = check_dist_to_edges(v, or_verts, or_radius, edges, sides_space, min_dist)
+            d = check_dist_to_edges(v, or_verts, or_radius, edges, sides_space)
 
         mask.append(0 if d > 0 else 1)
 
@@ -267,7 +269,7 @@ def side_edges_angles(net2, verts_in, edges_in, radius):
 
 
 def cross_indices(n, edges_in):
-    """create crossed indices and subtract existing edges"""
+    '''create crossed indices and subtract existing edges'''
     index = []
     for i in range(n-1):
         for j in range(i+1, n):
@@ -388,8 +390,8 @@ def create_valid_vert_edges(x, y, z, new_angs, intersecctions, net, connex):
 
     for ang_local, r, inter in new_angs:
         out_side = on_valid_angle_inter(ang_local, intersecctions)
-        if connex > 1:
-            out_side = out_side and on_valid_angle_connex(ang_local, net, connex)
+        if outside and connex > 1:
+            out_side = on_valid_angle_connex(ang_local, net, connex)
 
         if out_side:
             if last_is_inter and inter:
@@ -434,7 +436,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
     list_match = EnumProperty(
         name="list_match",
         description="Behaviour on diffent list lengths",
-        items=list_match_Items, default="Long Cycle",
+        items=list_match_Items, default="Long Repeat",
         update=updateNode)
 
     rm_doubles = FloatProperty(
@@ -442,12 +444,6 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         description="Remove Doubles Distance",
         min=0.0, default=0.0001,
         step=0.1, update=updateNode)
-
-    epsilon = FloatProperty(
-        name='Int. Tolerance',
-        description="Intersection tolerance",
-        min=1.0e-5, default=1.0e-5,
-        step=0.02, update=updateNode)
 
     mask_t = FloatProperty(
         name='Mask tolerance',
@@ -485,23 +481,24 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "modeI", expand=True)
         layout.prop(self, 'rm_doubles')
-        layout.prop(self, 'epsilon')
         layout.prop(self, 'mask_t')
-        layout.prop(self, "list_match", expand=True)
         layout.prop(self, "intersecction_handle", expand=True)
+        layout.prop(self, "list_match", expand=True)
+
 
     def build_net(self, verts_in, edges_in, v_len, radius, poligonal_inter):
-        """calculate radial intersections and connexion angles"""
+        '''calculate radial intersections and connexion angles and orientations'''
         net2 = []
         for j in range(v_len):
             connect2 = [[], [], [], []]
             net2.append(connect2)
 
         # calculate side_edges angles
-        side_edges_angles(net2, verts_in, edges_in, radius)
+        if edges_in:
+            side_edges_angles(net2, verts_in, edges_in, radius)
         # calculate orientation
         orientation_angle(net2)
-        if not poligonal_inter:
+        if not poligonal_inter and v_len > 1:
             # calculate circular intersections
             ciruclar_intersections(net2, verts_in, edges_in, v_len, radius)
 
@@ -611,7 +608,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
     def mask_edges_by_mid_points(self, verts_out, edges_out, parameters, v_len, edges_in):
         mid_points = calculate_mid_points(verts_out, edges_out)
-        mask_edg = mask_by_distance(mid_points, parameters, v_len, edges_in, self.mask_t, self.epsilon)
+        mask_edg = mask_by_distance(mid_points, parameters, v_len, edges_in, self.mask_t)
         return mask_edges(edges_out, mask_edg)
 
     def get_perimeter_and_radius(self, params):
@@ -661,9 +658,9 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
             verts_out, edges_out = intersect_edges_2d(verts_out, edges_out)
 
-            verts_out, edges_out = remove_doubles_from_edgenet(verts_out, edges_out, self.rm_doubles)
-
             edges_out = self.mask_edges_by_mid_points(verts_out, edges_out, parameters, v_len, edges_in)
+
+            verts_out, edges_out = remove_doubles_from_edgenet(verts_out, edges_out, self.rm_doubles)
 
             verts_out, edges_out = sort_verts_by_connexions(verts_out, edges_out)
 
@@ -675,6 +672,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         inputs, outputs = self.inputs, self.outputs
         if not outputs['Vertices'].is_linked:
             return
+
 
         output_lists = [[], []]
 
