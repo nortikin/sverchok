@@ -110,3 +110,4 @@ _ This implementation can get very slow when working with hundreds of inputs and
 _ If the node does not create a closed contour try increasing the vertices number or rising the mask tolerace slowly 
 
 _ This is the pull request where this node was added https://github.com/nortikin/sverchok/pull/2001
+
