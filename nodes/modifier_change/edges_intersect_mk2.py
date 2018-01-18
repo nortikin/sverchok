@@ -18,18 +18,23 @@
 
 import itertools
 from collections import defaultdict
-
 import bpy
 import bmesh
-from mathutils.geometry import intersect_line_line as LineIntersect
-
+from mathutils import Vector
+from mathutils.geometry import (
+    intersect_line_line,
+    intersect_line_line_2d)
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
-''' helpers '''
+modeItems = [
+    ("2D", "2D", "", 0),
+    ("3D", "3D", "", 1)]
 
+
+''' helpers '''
 
 def order_points(edge, point_list):
     ''' order these edges from distance to v1, then
@@ -90,7 +95,7 @@ def get_intersection_dictionary(cm, bm, edge_indices):
         raw_vert_indices = cm.vertex_indices_from_edges_tuple(bm, edges)
         vert_vectors = cm.vectors_from_indices(bm, raw_vert_indices)
 
-        points = LineIntersect(*vert_vectors)
+        points = intersect_line_line(*vert_vectors)
 
         # some can be skipped.    (NaN, None, not on both edges)
         if can_skip(cm, points, vert_vectors):
@@ -160,6 +165,56 @@ def intersect_edges(verts, edges, epsi):
     return verts_out, edges_out
 
 
+def edges_from_ed_inter(ed_inter):
+    '''create edges from intersecctions'''
+    edges_out = []
+    for e in ed_inter:
+        e_s = sorted(e)
+        for i in range(1, len(e_s)):
+            edges_out.append((e_s[i-1][1], e_s[i][1]))
+    return edges_out
+
+
+def intersect_edges_2d(verts, edges):
+    '''iterate through edges and find intersecctions'''
+    verts_in = [Vector(v) for v in verts]
+    ed_lengths = [(verts_in[e[1]] - verts_in[e[0]]).length for e in edges]
+    verts_out = verts
+    edges_out = []
+    ed_inter = [[] for e in edges]
+    for e, d, i in zip(edges, ed_lengths, range(len(edges))):
+
+        ed_inter[i].append([0.0, e[0]])
+        ed_inter[i].append([1.0, e[1]])
+        v1 = verts_in[e[0]]
+        v2 = verts_in[e[1]]
+        if d == 0:
+            continue
+
+        for e2, d2, j in zip(edges, ed_lengths, range(len(edges))):
+
+            if i <= j or d2 == 0:
+                continue
+            if (e2[0] in e) or (e2[1] in e):
+                continue
+
+            v3 = verts_in[e2[0]]
+            v4 = verts_in[e2[1]]
+            vx = intersect_line_line_2d(v1, v2, v3, v4)
+            if vx:
+                d_to_1 = (vx - v1.to_2d()).length
+                d_to_2 = (vx - v3.to_2d()).length
+
+                new_id = len(verts_out)
+                ed_inter[i].append([d_to_1 / d, new_id])
+                ed_inter[j].append([d_to_2 / d2, new_id])
+                verts_out.append((vx.x, vx.y, v1.z))
+
+    edges_out = edges_from_ed_inter(ed_inter)
+
+    return verts_out, edges_out
+
+
 def remove_doubles_from_edgenet(verts_in, edges_in, distance):
     bm = bmesh_from_pydata(verts_in, edges_in, [])
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=distance)
@@ -175,6 +230,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Intersect Edges MK2'
     sv_icon = 'SV_XALL'
 
+    mode = bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)
     rm_switch = bpy.props.BoolProperty(update=updateNode)
     rm_doubles = bpy.props.FloatProperty(min=0.0, default=0.0001, step=0.1, update=updateNode)
     epsilon = bpy.props.FloatProperty(min=1.0e-5, default=1.0e-5, step=0.02, update=updateNode)
@@ -187,6 +243,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Edges_out')
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "mode", expand=True)
         r = layout.row(align=True)
         r1 = r.split(0.32)
         r1.prop(self, 'rm_switch', text='doubles', toggle=True)
@@ -208,7 +265,10 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except (IndexError, KeyError) as e:
             return
 
-        verts_out, edges_out = intersect_edges(verts_in, edges_in, self.epsilon)
+        if self.mode == "3D":
+            verts_out, edges_out = intersect_edges(verts_in, edges_in, self.epsilon)
+        else:
+            verts_out, edges_out = intersect_edges_2d(verts_in, edges_in)
 
         # post processing step to remove doubles
         if self.rm_switch:
