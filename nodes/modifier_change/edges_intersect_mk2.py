@@ -21,9 +21,11 @@ from collections import defaultdict
 import bpy
 import bmesh
 from mathutils import Vector
+
 from mathutils.geometry import (
     intersect_line_line,
     intersect_line_line_2d)
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.cad_module_class import CAD_ops
@@ -35,6 +37,7 @@ modeItems = [
 
 
 ''' helpers '''
+
 
 def order_points(edge, point_list):
     ''' order these edges from distance to v1, then
@@ -272,7 +275,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         # post processing step to remove doubles
         if self.rm_switch:
-            verts_out, edges_out = remove_doubles_with_edges(verts_out, edges_out, self.rm_doubles)
+            verts_out, edges_out = remove_doubles_from_edgenet(verts_out, edges_out, self.rm_doubles)
 
         outputs['Verts_out'].sv_set([verts_out])
         outputs['Edges_out'].sv_set([edges_out])
