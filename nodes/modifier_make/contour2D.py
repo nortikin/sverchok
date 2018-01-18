@@ -42,7 +42,7 @@ list_match_Items = [
     ("Long Cycle", "Long Cycle", "Cycle through the shorter lists until match the longest list", 1)]
 
 intersec_mode_items = [
-    ("Circular", "Circular", "Intersecction based on distance (Slower)(Faster)", 0),
+    ("Circular", "Circular", "Intersecction based on distance (Slower)", 0),
     ("Poligonal", "Poligonal", "Intersecction dependent from num. of vertices (Faster)", 1)]
 
 
