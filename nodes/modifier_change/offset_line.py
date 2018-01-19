@@ -25,6 +25,7 @@ from mathutils.geometry import normal
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.core.sv_custom_exceptions import SvNotFullyConnected
 
 TWO_PI = 2 * pi
 
@@ -206,7 +207,7 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
 
         if not all(socket.is_linked for socket in self.inputs[:2]):
-            return        
+            raise SvNotFullyConnected(self, sockets=["Vers", "Edgs"])
         
         if not any(socket.is_linked for socket in self.outputs):
             return
