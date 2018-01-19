@@ -41,6 +41,7 @@ from sverchok.utils.logging import debug, info, warning, error, exception
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
+TEXT_INPUT_NODES = {'SvTextInNode', 'SvTextInNodeMK2'}
 
 _EXPORTER_REVISION_ = '0.072'
 
@@ -137,6 +138,39 @@ def has_state_switch_protection(node, k):
         return node.bl_idname in {'VectorMathNode'}
 
 
+def is_unserializable_data(node, k):
+    """
+    add the props here that you want to skip because:
+      -  they're generated in the node upon creation anyway
+      -  or are unserializable CollectionProperty (by simple casting )
+
+    """
+
+    if node.bl_idname == 'SvProfileNodeMK2' and k in {'SvLists', 'SvSubLists'}:
+        return True
+
+    if node.bl_idname == 'SvObjectsNodeMK3' and (k == 'object_names'):
+        return True
+
+    if node.bl_idname == 'ObjectsNode' and (k == "objects_local"):
+        # this silences the import error when items not found, by not storing it.
+        return True
+
+    if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
+        """
+        n_id:
+            used to store the hash of the current Node,
+            this is created along with the Node anyway. skip.
+        typ, newsock:
+            reserved variables for changeable sockets
+        dynamic_strings:
+            reserved by exec node
+        frame_collection_name / type_collection_name both store Collection properties..avoiding for now
+        """
+        return True
+
+
+
 def get_superficial_props(node_dict, node):
     node_dict['height'] = node.height
     node_dict['width'] = node.width
@@ -182,6 +216,32 @@ def collect_custom_socket_properties(node, node_dict):
         node_dict['custom_socket_props'] = input_socket_storage
     # print("**\n")
 
+def collect_storage_data_if_present(node, node_dict):
+    if hasattr(node, "storage_get_data"):
+        node.storage_get_data(node_dict)
+
+
+def needs_text_input_handling(node, k, node_dict):
+
+    if not k == 'current_text' and not node.bl_idname in TEXT_INPUT_NODES:
+        return
+
+    texts = bpy.data.texts
+
+    node_dict['current_text'] = node.text
+    node_dict['textmode'] = node.textmode
+    
+    if node.textmode == 'JSON':
+        # add the json as full member to the tree :)
+        text_str = texts[node.text].as_string()
+        json_as_dict = json.loads(text_str)
+        node_dict['text_lines'] = {}
+        node_dict['text_lines']['stored_as_json'] = json_as_dict
+    else:
+        node_dict['text_lines'] = texts[node.text].as_string()
+
+    return True
+
 
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
@@ -205,14 +265,9 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_items = {}
         node_enums = find_enumerators(node)
 
-        ObjectsNode = (node.bl_idname == 'ObjectsNode')
-        ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
-        ProfileParamNode = (node.bl_idname == 'SvProfileNode')
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
         
-        TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
-
         for k, v in node.items():
 
             if not isinstance(v, (float, int, str)):
@@ -228,48 +283,16 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
                 debug('\\\\')
 
-            # heavy handed skipping for testing.
-            if node.bl_idname == 'SvProfileNodeMK2':
-                if k in {'SvLists', 'SvSubLists'}:
-                    continue
-
-            if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
-                """
-                n_id:
-                    used to store the hash of the current Node,
-                    this is created along with the Node anyway. skip.
-                typ, newsock:
-                    reserved variables for changeable sockets
-                dynamic_strings:
-                    reserved by exec node
-                frame_collection_name / type_collection_name both store Collection properties..avoiding for now
-                """
+            if is_unserializable_data(node, k):
                 continue
 
             if has_state_switch_protection(node, k):
                 continue
 
-            if ObjectsNode and (k == "objects_local"):
-                # this silences the import error when items not found.
+            if needs_text_input_handling(node, k, node_dict):
                 continue
-            elif ObjectsNode3 and (k == 'object_names'):
-                node_dict['object_names'] = [o.name for o in node.object_names]
-                continue
-
-            if TextInput and (k == 'current_text'):
-                node_dict['current_text'] = node.text
-                node_dict['textmode'] = node.textmode
-                if node.textmode == 'JSON':
-                    # add the json as full member to the tree :)
-                    text_str = texts[node.text].as_string()
-                    json_as_dict = json.loads(text_str)
-                    node_dict['text_lines'] = {}
-                    node_dict['text_lines']['stored_as_json'] = json_as_dict
-                else:
-                    node_dict['text_lines'] = texts[node.text].as_string()
 
             if node.bl_idname in PROFILE_NODES and (k == "filename"):
-                '''add file content to dict'''
                 node_dict['path_file'] = texts[node.filename].as_string()
 
             if IsGroupNode and (k == "group_name"):
@@ -294,8 +317,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
-        if hasattr(node, "storage_get_data"):
-            node.storage_get_data(node_dict)
+        collect_storage_data_if_present(node, node_dict)  # // uses storage_get_data
 
         node_dict['params'] = node_items
 
@@ -320,11 +342,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
     layout_dict['nodes'] = nodes_dict
     layout_dict['groups'] = groups_dict
-
-    # ''' get connections '''
-    # links = (compile_socket(l) for l in ng.links)
-    # connections_dict = {idx: link for idx, link in enumerate(links)}
-    # layout_dict['connections'] = connections_dict
 
     ''' get framed nodes '''
     framed_nodes = {}
@@ -406,13 +423,13 @@ def perform_scripted_node_inject(node, node_ref):
     if node.bl_idname == 'SvScriptNode':
         node.user_name = "templates"               # best would be in the node.
         node.files_popup = "sv_lang_template.sn"   # import to reset easy fix
-        node.load()
     elif node.bl_idname == 'SvScriptNodeLite':
-        node.load()
-        # node.storage_set_data(node_ref)
+        pass
     else:
         node.files_popup = node.avail_templates(None)[0][0]
-        node.load()
+
+    # all scripted nodes call load()
+    node.load()
 
 
 def perform_profile_node_inject(node, node_ref):
@@ -448,7 +465,6 @@ def perform_svtextin_node_object(node, node_ref):
         if node.textmode == 'JSON':
             if isinstance(text_line_entry, str):
                 debug('loading old text json content / backward compatibility mode')
-                pass
 
             elif isinstance(text_line_entry, dict):
                 text_line_entry = json.dumps(text_line_entry['stored_as_json'])
@@ -473,6 +489,11 @@ def apply_superficial_props(node, node_ref):
     if node_ref.get('use_custom_color'):
         node.use_custom_color = True
         node.color = node_ref.get('color', (1, 1, 1))
+
+
+def restore_storage_data_if_present(node, node_ref):
+    if hasattr(node, 'storage_set_data'):
+        node.storage_set_data(node_ref)    
 
 
 def gather_remapped_names(node, n, name_remap):
@@ -581,12 +602,7 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     if create_texts:
         add_texts(node, node_ref)
 
-    if hasattr(node, 'storage_set_data'):
-        node.storage_set_data(node_ref)
-
-    if bl_idname == 'SvObjectsNodeMK3':
-        for named_object in node_ref.get('object_names', []):
-            node.object_names.add().name = named_object
+    restore_storage_data_if_present(node, node_ref)
 
     gather_remapped_names(node, n, name_remap)
     apply_core_props(node, node_ref)
