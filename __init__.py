@@ -70,28 +70,17 @@ import importlib
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
-from sverchok.core import root_modules, core_modules, sv_registration_utils
-from sverchok.core import make_node_list, handle_reload_event
-from sverchok.core import import_settings, import_all_modules
+from sverchok.core import sv_registration_utils, init_architecture, make_node_list
+from sverchok.core import reload_event, handle_reload_event
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
-# modules and pkg path, nodes are done separately.
-imported_modules = []
-mods_bases = [
-    (root_modules, "sverchok"),
-    (core_modules, "sverchok.core"),
-    (utils_modules, "sverchok.utils"),
-    (ui_modules, "sverchok.ui")
-]
 
-import_settings(imported_modules, __name__)
-import_all_modules(imported_modules, mods_bases)
-
+imported_modules = init_architecture(__name__, utils_modules, ui_modules)
 node_list = make_node_list(nodes)
-reload_event = bool("bpy" in locals())
 
-if reload_event:
+if bool("bpy" in locals()):
+    reload_event = True
     node_list = handle_reload_event(nodes, imported_modules, old_nodes) 
 
 
@@ -113,7 +102,6 @@ def register():
     if reload_event:
         data_structure.RELOAD_EVENT = True
         menu.reload_menu()
-
 
 def unregister():
     node_classes.clear()
