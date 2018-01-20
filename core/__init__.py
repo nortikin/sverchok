@@ -1,3 +1,5 @@
+import importlib
+
 root_modules = [
     "menu", "node_tree", "data_structure", "core",
     "utils", "ui", "nodes", "old_nodes", "sockets",
@@ -31,7 +33,7 @@ sv_registration_utils.register_all = sv_register_modules
 sv_registration_utils.unregister_all = sv_unregister_modules
 
 
-def reload_all(importlib, imported_modules, node_list, old_nodes):
+def reload_all(imported_modules, node_list, old_nodes):
     # reload base modules
     _ = [importlib.reload(im) for im in imported_modules]
 

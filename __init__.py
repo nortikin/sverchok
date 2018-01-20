@@ -108,7 +108,7 @@ reload_event = bool("bpy" in locals())
 
 if reload_event:
     node_list = make_node_list()
-    reload_all(importlib, imported_modules, node_list, old_nodes)
+    reload_all(imported_modules, node_list, old_nodes)
 
 
 import bpy
