@@ -67,3 +67,9 @@ def import_modules(modules, base, im_list):
 def import_all_modules(imported_modules, mods_bases):
     for mods, base in mods_bases:
         import_modules(mods, base, imported_modules)
+
+
+def handle_reload_event(nodes, imported_modules, old_nodes):
+    node_list = make_node_list(nodes)
+    reload_all(imported_modules, node_list, old_nodes)
+    return node_list
