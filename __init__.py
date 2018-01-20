@@ -62,6 +62,9 @@ bl_info = {
 import sys
 import importlib
 
+# pylint: disable=E0602
+# pylint: disable=C0413
+# pylint: disable=C0412
 
 # make sverchok the root module name, (if sverchok dir not named exactly "sverchok") 
 if __name__ != "sverchok":
