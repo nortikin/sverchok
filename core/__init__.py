@@ -73,3 +73,20 @@ def handle_reload_event(nodes, imported_modules, old_nodes):
     node_list = make_node_list(nodes)
     reload_all(imported_modules, node_list, old_nodes)
     return node_list
+
+
+def init_architecture(sv_name, utils_modules, ui_modules):
+
+    imported_modules = []
+    mods_bases = [
+        (root_modules, "sverchok"),
+        (core_modules, "sverchok.core"),
+        (utils_modules, "sverchok.utils"),
+        (ui_modules, "sverchok.ui")
+    ]
+
+    import_settings(imported_modules, sv_name)
+    import_all_modules(imported_modules, mods_bases)
+    return imported_modules
+
+reload_event = False
