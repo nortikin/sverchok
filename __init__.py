@@ -64,7 +64,6 @@ import importlib
 
 
 # monkey patch the sverchok name, I am sure there is a better way to do this.
-
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
