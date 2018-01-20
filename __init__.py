@@ -67,7 +67,7 @@ import importlib
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
-from sverchok.core import root_modules, core_modules, sv_registration_utils
+from sverchok.core import root_modules, core_modules, sv_registration_utils, reload_all
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
@@ -107,14 +107,8 @@ node_list = make_node_list()
 reload_event = bool("bpy" in locals())
 
 if reload_event:
-    # reload base modules
-    _ = [importlib.reload(im) for im in imported_modules]
-
-    # reload nodes
     node_list = make_node_list()
-    _ = [importlib.reload(node) for node in node_list]
-
-    old_nodes.reload_old()
+    reload_all(importlib, imported_modules, node_list, old_nodes)
 
 
 import bpy
