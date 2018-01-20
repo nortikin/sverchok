@@ -141,51 +141,50 @@ for mods, base in mods_bases:
     import_modules(mods, base, imported_modules)
 
 node_list = make_node_list()
-
 reload_event = bool("bpy" in locals())
 
 if reload_event:
     import nodeitems_utils
-    #  reload the base modules
-    #  then reload nodes after the node module as been reloaded
+
+    # reload base modules
     for im in imported_modules:
         importlib.reload(im)
+
+    # reload nodes
     node_list = make_node_list()
     for node in node_list:
         importlib.reload(node)
     old_nodes.reload_old()
 
+
 import bpy
 from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
 from sverchok.core import node_defaults
-from sverchok.ui.development import get_version_string
+# from sverchok.ui.development import get_version_string
 
 def register():
     for m in imported_modules + node_list:
         if m.__name__ != "sverchok.menu":
             if hasattr(m, "register"):
-                #print("Registering module: {}".format(m.__name__))
+                # print("Registering module: {}".format(m.__name__))
                 m.register()
-    # this is used to access preferences, should/could be hidden
-    # in an interface
+
     data_structure.SVERCHOK_NAME = __name__
-    print("** version: ", get_version_string()," **")
-    print("** Have a nice day with sverchok  **\n")
-    ascii_print.logo()
+    ascii_print.show_welcome()
     node_defaults.register_defaults()
     auto_gather_node_classes()
+
     # We have to register menu module after all nodes are registered
     menu.register()
+
     if reload_event:
         data_structure.RELOAD_EVENT = True
         menu.reload_menu()
-        print("Sverchok is reloaded, press update")
-
 
 
 def unregister():
     node_classes.clear()
     for m in reversed(imported_modules + node_list):
         if hasattr(m, "unregister"):
-            #print("Unregistering module: {}".format(m.__name__))
+            # print("Unregistering module: {}".format(m.__name__))
             m.unregister()
