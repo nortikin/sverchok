@@ -91,6 +91,10 @@ def get_node_class_reference(bl_idname):
     return node_classes.get(bl_idname)
 
 
+def clear_node_classes():
+    node_classes.clear()
+
+
 utils_modules = [
     # non UI tools
     "cad_module", "cad_module_class", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",

@@ -79,16 +79,19 @@ from sverchok.ui import ui_modules
 imported_modules = init_architecture(__name__, utils_modules, ui_modules)
 node_list = make_node_list(nodes)
 
-if bool("bpy" in locals()):
+if "bpy" in locals():
     reload_event = True
     node_list = handle_reload_event(nodes, imported_modules, old_nodes) 
 
 
 import bpy
-from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
-from sverchok.core import node_defaults
+
 
 def register():
+
+    from sverchok.core import node_defaults
+    from sverchok.utils import ascii_print, auto_gather_node_classes
+    
     sv_registration_utils.register_all(imported_modules + node_list)
 
     data_structure.SVERCHOK_NAME = __name__
@@ -103,6 +106,10 @@ def register():
         data_structure.RELOAD_EVENT = True
         menu.reload_menu()
 
+
 def unregister():
-    node_classes.clear()
+
+    from sverchok.utils import clear_node_classes
+
+    clear_node_classes()
     sv_registration_utils.unregister_all(imported_modules + node_list)

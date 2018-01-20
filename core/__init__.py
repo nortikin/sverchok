@@ -74,6 +74,7 @@ def handle_reload_event(nodes, imported_modules, old_nodes):
     reload_all(imported_modules, node_list, old_nodes)
     return node_list
 
+
 def init_architecture(sv_name, utils_modules, ui_modules):
 
     imported_modules = []
