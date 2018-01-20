@@ -72,10 +72,12 @@ from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
 # modules and pkg path, nodes are done separately.
-mods_bases = [(root_modules, "sverchok"),
-              (core_modules, "sverchok.core"),
-              (utils_modules, "sverchok.utils"),
-              (ui_modules, "sverchok.ui")]
+mods_bases = [
+    (root_modules, "sverchok"),
+    (core_modules, "sverchok.core"),
+    (utils_modules, "sverchok.utils"),
+    (ui_modules, "sverchok.ui")
+]
 
 # "settings" treated separately incase the sverchok dir not named "sverchok"
 settings = importlib.import_module(".settings", __name__)
@@ -105,8 +107,6 @@ node_list = make_node_list()
 reload_event = bool("bpy" in locals())
 
 if reload_event:
-    import nodeitems_utils
-
     # reload base modules
     _ = [importlib.reload(im) for im in imported_modules]
 
