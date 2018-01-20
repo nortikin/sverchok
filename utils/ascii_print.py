@@ -21,4 +21,4 @@ def logo():
 def show_welcome():
     print("** version: ", get_version_string()," **")
     print("** Have a nice day with sverchok  **\n")
-    logo()    
+    logo()
