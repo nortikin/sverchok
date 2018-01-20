@@ -601,6 +601,8 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Profile Parametric'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    replacement_nodes = [('SvProfileNodeMK2', None, None)]
+
     def mode_change(self, context):
         if not (self.selected_axis == self.current_axis):
             self.label = self.selected_axis

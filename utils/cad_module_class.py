@@ -84,6 +84,25 @@ class CAD_ops():
         line = self.line_from_edge_intersect(edge1, edge2)
         return (line[0]-line[1]).length < self.VTX_PRECISION
 
+    def is_coplanar(self, points):
+        """
+        points: list of 4 mathutils.Vectors
+        returns: True if all 4 points lie on the same plane
+        """
+        # Simple case: all points are in XOY plane
+        if all([abs(p[2]) < self.VTX_PRECISION for p in points]):
+            return True
+
+        # More complex general case
+        # Test if triple vector product of these three vectors
+        # is zero
+        v1 = points[1] - points[0]
+        v2 = points[2] - points[0]
+        v3 = points[3] - points[0]
+
+        cross = v1.cross(v2)
+        dot = cross.dot(v3)
+        return abs(dot) < self.VTX_PRECISION
 
     def closest_idx(self, pt, e):
         '''
@@ -136,9 +155,21 @@ class CAD_ops():
         > edge_tuple:   contains two edge indices.
         < returns the vertex indices of edge_tuple
         '''
-        k = lambda v, w: bm.edges[edge_tuple[v]].verts[w].index
-        return [k(i >> 1, i % 2) for i in range(4)]
+        e1, e2 = edge_tuple
+        bm_e1, bm_e2 = bm.edges[e1], bm.edges[e2]
+        return [bm_e1.verts[0].index, bm_e1.verts[1].index,
+                bm_e2.verts[0].index, bm_e2.verts[1].index]
 
+    def vectors_from_edges_tuple(self, bm, edge_tuple):
+        '''
+        > bm:           is a bmesh representation
+        > edge_tuple:   contains two edge indices.
+        < returns the vertex coordinates of edge_tuple
+        '''
+        e1, e2 = edge_tuple
+        bm_e1, bm_e2 = bm.edges[e1], bm.edges[e2]
+        return [bm_e1.verts[0].co, bm_e1.verts[1].co,
+                bm_e2.verts[0].co, bm_e2.verts[1].co]
 
     def num_edges_point_lies_on(self, pt, edges):
         ''' returns the number of edges that a point lies on. '''

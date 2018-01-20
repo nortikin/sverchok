@@ -31,7 +31,6 @@ from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 
-
 class SverchNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
@@ -275,8 +274,6 @@ def sv_group_items(context):
             monad_cls_template_dict = {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)}
             yield NodeItem("SvMonadGenericNode", monad.name, monad_cls_template_dict)
 
-
-
 def draw_node_ops(self,layout, context):
 
     make_monad = "node.sv_monad_from_selected"
@@ -316,6 +313,7 @@ def reload_menu():
     register_node_add_operators()
     
     build_help_remap(original_categories)
+    print("Reload complete, press update")
 
 def register_node_add_operators():
     """Register all our custom node adding operators"""

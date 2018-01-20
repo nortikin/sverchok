@@ -282,6 +282,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
                     if len(p[0])>2:
                         pols = [p[:]]
                         p = pols_edges([p], True)[0]
+
                     vN, pN, iN = sortVerticesByConnexions(v, p)
                     if len(pols) > 0:
                         newPols = []

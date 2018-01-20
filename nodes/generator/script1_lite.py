@@ -490,6 +490,11 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def storage_get_data(self, node_dict):
 
+        # this check and function call is needed to allow loading node trees directly
+        # from a .blend in order to export them via create_dict_of_tree
+        if not self.node_dict or not self.node_dict.get(hash(self)):
+            self.make_new_locals()
+
         storage = self.node_dict[hash(self)]['sockets']
 
         ui_info = storage['snlite_ui']

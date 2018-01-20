@@ -1,4 +1,14 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+
 import bpy
+from sverchok.utils.sv_node_utils import frame_adjust
+
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
@@ -73,6 +83,7 @@ def add_connection(tree, bl_idname_new_node, offset):
 
         new_node = nodes.new(bl_idname_new_node)
         offset_node_location(existing_node, new_node, offset)
+        frame_adjust(existing_node, new_node)
 
         outputs = existing_node.outputs
         inputs = new_node.inputs
@@ -125,9 +136,6 @@ class SvGenericDeligationOperator(bpy.types.Operator):
 
         return {'FINISHED'}
 
-
-
-
 class SvNodeviewRClickMenu(bpy.types.Menu):
     bl_label = "Right click menu for Sverchok"
     bl_idname = "NODEVIEW_MT_sv_rclick_menu"
@@ -143,13 +151,17 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         nodes = tree.nodes
         node = valid_active_node(nodes)
 
-        if node and node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
-            layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
+        if node:
+            if node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
+                layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
+            else:
+                if has_outputs(node):
+                    layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
+                    # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
 
-        elif has_outputs(node):
-            layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
-            # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
-        
+            if hasattr(node, "rclick_menu"):
+                node.rclick_menu(context, layout)
+
         else:
             layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
 
@@ -166,3 +178,4 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvNodeviewRClickMenu)
     bpy.utils.unregister_class(SvGenericDeligationOperator)
+

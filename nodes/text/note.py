@@ -24,8 +24,9 @@ from bpy.props import StringProperty, IntProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 
-
+OLD_OP = "node.sverchok_generic_callback_old"
 TEXT_WIDTH = 6
+
 
 def format_text(text, width):
     out = []
@@ -41,19 +42,20 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Note'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    text_cache = {}
+    n_id = StringProperty(default='')
+    
     def update_text(self, context):
         self.format_text()
         # recursion protection, should be solved with better structure
         if not self.inputs[0].links:
             updateNode(self, context)
 
-    text = StringProperty(name='text',
-                          default='your text here',
-                          update=update_text)
-    text_cache = {}
-    n_id = StringProperty(default='')
-    show_text = BoolProperty(default=False, name="Show text",
-                             description="Show text box in node")
+    text = StringProperty(
+        name='text', default='your text here', update=update_text)
+    
+    show_text = BoolProperty(
+        default=False, name="Show text", description="Show text box in node")
 
     def format_text(self):
         n_id = node_id(self)
@@ -96,13 +98,14 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         draw_lines(col, text_lines)
 
     def draw_buttons_ext(self, context, layout):
+
         layout.prop(self, "text")
         layout.prop(self, "show_text", toggle=True)
         layout.prop(self.outputs[0], "hide", toggle=True, text="Output socket")
         layout.prop(self.inputs[0], "hide", toggle=True, text="Input socket")
-        op = layout.operator("node.sverchok_text_callback", text="From clipboard")
+        op = layout.operator(OLD_OP, text="From clipboard")
         op.fn_name = "from_clipboard"
-        op = layout.operator("node.sverchok_text_callback", text="To text editor")
+        op = layout.operator(OLD_OP, text="To text editor")
         op.fn_name = "to_text"
 
     def to_text(self):

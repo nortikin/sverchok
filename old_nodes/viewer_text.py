@@ -164,6 +164,8 @@ class ViewerNode_text(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer text'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    replacement_nodes = [('ViewerNodeTextMK2', None, None)]
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
         self.inputs.new('StringsSocket', 'edg_pol', 'edg_pol')
