@@ -67,7 +67,7 @@ import importlib
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
-from sverchok.core import root_modules, core_modules, sv_module_utils
+from sverchok.core import root_modules, core_modules, sv_registration_utils
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
@@ -122,8 +122,7 @@ from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
 from sverchok.core import node_defaults
 
 def register():
-    for m in imported_modules + node_list:
-        sv_module_utils.register(m)
+    sv_registration_utils.register_all(imported_modules + node_list)
 
     data_structure.SVERCHOK_NAME = __name__
     ascii_print.show_welcome()
@@ -140,5 +139,4 @@ def register():
 
 def unregister():
     node_classes.clear()
-    for m in reversed(imported_modules + node_list):
-        sv_module_utils.unregister(m)
+    sv_registration_utils.unregister_all(imported_modules + node_list)
