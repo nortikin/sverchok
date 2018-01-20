@@ -63,7 +63,7 @@ import sys
 import importlib
 
 
-# make sverchok the base module name, (if sverchok dir not named exactly "sverchok") 
+# make sverchok the root module name, (if sverchok dir not named exactly "sverchok") 
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
@@ -108,13 +108,12 @@ if reload_event:
     import nodeitems_utils
 
     # reload base modules
-    for im in imported_modules:
-        importlib.reload(im)
+    _ = [importlib.reload(im) for im in imported_modules]
 
     # reload nodes
     node_list = make_node_list()
-    for node in node_list:
-        importlib.reload(node)
+    _ = [importlib.reload(node) for node in node_list]
+
     old_nodes.reload_old()
 
 
