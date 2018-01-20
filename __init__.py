@@ -68,11 +68,13 @@ if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
 from sverchok.core import root_modules, core_modules, sv_registration_utils
-from sverchok.core import reload_all, import_modules
+from sverchok.core import reload_all, make_node_list
+from sverchok.core import import_settings, import_all_modules
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
 # modules and pkg path, nodes are done separately.
+imported_modules = []
 mods_bases = [
     (root_modules, "sverchok"),
     (core_modules, "sverchok.core"),
@@ -80,28 +82,14 @@ mods_bases = [
     (ui_modules, "sverchok.ui")
 ]
 
-# "settings" treated separately incase the sverchok dir not named "sverchok"
-settings = importlib.import_module(".settings", __name__)
-imported_modules = []
-imported_modules.append(settings)
+import_settings(imported_modules, __name__)
+import_all_modules(imported_modules, mods_bases)
 
-# parse the nodes/__init__.py dictionary and load all nodes
-def make_node_list():
-    node_list = []
-    base_name = "sverchok.nodes"
-    for category, names in nodes.nodes_dict.items():
-        importlib.import_module('.{}'.format(category), base_name)
-        import_modules(names, '{}.{}'.format(base_name, category), node_list)
-    return node_list
-
-for mods, base in mods_bases:
-    import_modules(mods, base, imported_modules)
-
-node_list = make_node_list()
+node_list = make_node_list(nodes)
 reload_event = bool("bpy" in locals())
 
 if reload_event:
-    node_list = make_node_list()
+    node_list = make_node_list(nodes)
     reload_all(imported_modules, node_list, old_nodes)
 
 
