@@ -313,6 +313,7 @@ def reload_menu():
     register_node_add_operators()
     
     build_help_remap(original_categories)
+    print("Reload complete, press update")
 
 def register_node_add_operators():
     """Register all our custom node adding operators"""
