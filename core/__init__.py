@@ -8,5 +8,3 @@ core_modules = [
     "handlers", "update_system", "upgrade_nodes", "upgrade_group",
     "monad", "node_defaults"
 ]
-
-imported_modules = []

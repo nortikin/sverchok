@@ -68,7 +68,7 @@ import importlib
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
-from sverchok.core import root_modules, core_modules, imported_modules
+from sverchok.core import root_modules, core_modules
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
@@ -81,6 +81,7 @@ mods_bases = [(root_modules, "sverchok"),
 # settings have to be treated separately incase the folder name
 # is something other than "sverchok"  (ie: "sverchok-master")
 settings = importlib.import_module(".settings", __name__)
+imported_modules = []
 imported_modules.append(settings)
 
 
@@ -126,11 +127,10 @@ from sverchok.core import node_defaults
 
 def register():
     for m in imported_modules + node_list:
-        if m.__name__ == "sverchok.menu":
-            continue
-        if hasattr(m, "register"):
-            # print("Registering module: {}".format(m.__name__))
-            m.register()
+        if m.__name__ != "sverchok.menu":
+            if hasattr(m, "register"):
+                # print("Registering module: {}".format(m.__name__))
+                m.register()
 
     data_structure.SVERCHOK_NAME = __name__
     ascii_print.show_welcome()
