@@ -41,3 +41,8 @@ def reload_all(imported_modules, node_list, old_nodes):
     _ = [importlib.reload(node) for node in node_list]
 
     old_nodes.reload_old()
+
+def import_modules(modules, base, im_list):
+    for m in modules:
+        im = importlib.import_module('.{}'.format(m), base)
+        im_list.append(im)

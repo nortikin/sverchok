@@ -67,7 +67,8 @@ import importlib
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
-from sverchok.core import root_modules, core_modules, sv_registration_utils, reload_all
+from sverchok.core import root_modules, core_modules, sv_registration_utils
+from sverchok.core import reload_all, import_modules
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
@@ -83,13 +84,6 @@ mods_bases = [
 settings = importlib.import_module(".settings", __name__)
 imported_modules = []
 imported_modules.append(settings)
-
-
-def import_modules(modules, base, im_list):
-    for m in modules:
-        im = importlib.import_module('.{}'.format(m), base)
-        im_list.append(im)
-
 
 # parse the nodes/__init__.py dictionary and load all nodes
 def make_node_list():
