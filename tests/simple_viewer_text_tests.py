@@ -1,22 +1,23 @@
 
+from sverchok.core.socket_conversions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info
 
-# Some "smoke tests" for simple generator nodes.
-# These test cases exist mostly in demonstration purposes,
-# I hardly think anyone is going to break them "just that easy".
-# Failure of these tests can also indicate that something
-# is badly broken in general node processing mechanism.
+class SocketConversionTests(EmptyTreeTestCase):
+    
+    def test_vertices_to_matrices(self):
+        """
+        Test that cyl -> viewer text works.
+        """
 
-class ViewerTextNodeTest(NodeProcessTestCase):
-    node_bl_idname = "ViewerNodeTextMK3"
+        cyl = create_node("CylinderNode")
+        cyl.Separate = True
+        viewer_text = create_node("ViewerNodeTextMK3")
 
-    def test_box(self):
-        # It is not in general necessary to set properties of the node
-        # to their default values.
-        # However you may consider setting them, to exclude influence of
-        # node_defaults mechanism.
-        self.node.inputs[0] = [[[1,2,3,4],[2,3,4,5]],[[3,4,5,6],[4,5,6,7]]]
-        
-        # This one is necessary
-        self.node.process()
+        # Connect NGon node to MatrixApply node
+        self.tree.links.new(cyl.outputs['Vertices'], viewer_text.inputs[0])
+
+        # Trigger processing of NGon node
+        cyl.process()
+        # Read what ViewerText node sees
+        data = viewer_text.inputs[0].sv_get()

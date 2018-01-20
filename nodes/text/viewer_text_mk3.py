@@ -37,7 +37,11 @@ class SverchokViewerMK1(bpy.types.Operator):
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         inputs = node.inputs
+        self.prep_text(context,node,inputs)
+        return {'FINISHED'}
 
+    def prep_text(self,context,node,inputs):
+        'main preparation function for text'
         # outputs
         outs  = ''
         for insert in inputs:
@@ -52,7 +56,7 @@ class SverchokViewerMK1(bpy.types.Operator):
 
                 # edges/faces socket
                 elif insert.other.bl_idname == 'StringsSocket':
-                    itype = '\n\nSocket ' + name + label + '; type EDGES/POLYGONS: \n'
+                    itype = '\n\nSocket ' + name + label + '; type EDGES/POLYGONS/OTHERS: \n'
 
                 # matrix socket
                 elif insert.other.bl_idname == 'MatrixSocket':
@@ -75,7 +79,6 @@ class SverchokViewerMK1(bpy.types.Operator):
                     a = 'None'
                 outs += itype+str(a)+'\n'
         self.do_text(outs,node)
-        return {'FINISHED'}
 
     def makeframe(self, nTree):
         '''
@@ -110,12 +113,12 @@ class SverchokViewerMK1(bpy.types.Operator):
         if not 'Sverchok_viewer' in bpy.data.texts:
             bpy.data.texts.new('Sverchok_viewer')
 
-        podpis = '\n'*2 \
+        footer = '\n'*2 \
                 + '**************************************************' + '\n' \
                 + '                     The End                      '
         for_file = 'node name: ' + self.nodename \
                     + outs \
-                    + podpis
+                    + footer
         bpy.data.texts['Sverchok_viewer'].clear()
         bpy.data.texts['Sverchok_viewer'].write(for_file)
         if node.frame:
