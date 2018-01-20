@@ -23,7 +23,8 @@ Parameters
 | **PolyEdge** | Int           |             | index of polgons or edges     (in, out)            |
 +--------------+---------------+-------------+----------------------------------------------------+
 | **Sortmode** | XYZ, Dist,    | XYZ         | will sort the index according to different criteria|
-|              | Axis, User    |             |                                                    |
+|              | Axis, Connect,|             |                                                    |
+|              | User          |             |                                                    |
 +--------------+---------------+-------------+----------------------------------------------------+
 | **Item order** | Int         |             | output the index sequence                          |
 +--------------+---------------+-------------+----------------------------------------------------+
@@ -40,5 +41,14 @@ Example of usage
 Example with an Hilbert 3d node and polyline viewer with Vector sort set to Dist:
 
 .. image:: https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png
+
+The *Connect* mode it is meant to work with paths. Sorting the vertices along the edges.
+Example used to sort the vertices after the *Mesh Filter* node
+
+.. image:: https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png
+
+Example after *Subdivide* node to prepare vertices for *Vector Evaluation* node and/or *UV Connection* node
+
+.. image:: https://user-images.githubusercontent.com/10011941/35187937-6352b0c0-fe2d-11e7-864c-a3893f94f6dc.png
 
 link to pull request: https://github.com/nortikin/sverchok/pull/88
