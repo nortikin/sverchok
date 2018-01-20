@@ -27,6 +27,11 @@ class DataStructureTests(SverchokTestCase):
         data = [[1], [2], [3]]
         fullList(data, 7)
         self.assertEquals(data, [[1], [2], [3], [3], [3], [3], [3]])
+        
+    def test_full_list_deep_copy(self):
+        data = [[3], [2], [1]]
+        fullList_deep_copy(data, 7)
+        self.assertEquals(data, [[3], [2], [1], [1], [1], [1], [1]])    
 
     def test_get_data_nesting_level_1(self):
         self.subtest_assert_equals(get_data_nesting_level(1), 0)
