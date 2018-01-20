@@ -68,7 +68,7 @@ if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
 from sverchok.core import root_modules, core_modules, sv_registration_utils
-from sverchok.core import reload_all, make_node_list, handle_reload_event
+from sverchok.core import make_node_list, handle_reload_event
 from sverchok.core import import_settings, import_all_modules
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
