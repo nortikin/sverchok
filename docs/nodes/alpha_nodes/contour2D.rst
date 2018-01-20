@@ -102,3 +102,4 @@ Notes
 - If the node does not create a closed contour try increasing the vertices number or rising the mask tolerance slowly 
 
 - This is the pull request where this node was added https://github.com/nortikin/sverchok/pull/2001
+
