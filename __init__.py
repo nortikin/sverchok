@@ -63,7 +63,7 @@ import sys
 import importlib
 
 
-# monkey patch the sverchok name, I am sure there is a better way to do this.
+# make sverchok the base module name, (if sverchok dir not named exactly "sverchok") 
 if __name__ != "sverchok":
     sys.modules["sverchok"] = sys.modules[__name__]
 
@@ -77,8 +77,7 @@ mods_bases = [(root_modules, "sverchok"),
               (utils_modules, "sverchok.utils"),
               (ui_modules, "sverchok.ui")]
 
-# settings have to be treated separately incase the folder name
-# is something other than "sverchok"  (ie: "sverchok-master")
+# "settings" treated separately incase the sverchok dir not named "sverchok"
 settings = importlib.import_module(".settings", __name__)
 imported_modules = []
 imported_modules.append(settings)
@@ -122,7 +121,6 @@ if reload_event:
 import bpy
 from sverchok.utils import ascii_print, auto_gather_node_classes, node_classes
 from sverchok.core import node_defaults
-# from sverchok.ui.development import get_version_string
 
 def register():
     for m in imported_modules + node_list:
