@@ -210,8 +210,8 @@ def can_skip_property(node, k):
         # this supresses this k, in favour of hitting node.storage_get_data later
         return True
 
-    elif node.bl_idname in PROFILE_NODES and (k == "filename"):
-        return True
+    # elif node.bl_idname in PROFILE_NODES and (k == "filename"):
+    #     return True
 
     elif node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'} and (k == 'current_text'):
         return True
