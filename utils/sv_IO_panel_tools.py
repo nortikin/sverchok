@@ -261,7 +261,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_items = {}
         node_enums = find_enumerators(node)
 
-        IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
 
         for k, v in node.items():
