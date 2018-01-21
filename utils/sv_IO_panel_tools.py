@@ -238,6 +238,12 @@ def handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree):
             groups_dict[v] = group_json
 
 
+def handle_enum_property(node, k, v, node_items, node_enums):
+    if k in node_enums:
+        v = getattr(node, k)
+        node_items[k] = v
+
+
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
@@ -282,9 +288,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             else:
                 node_items[k] = v[:]
 
-            if k in node_enums:
-                v = getattr(node, k)
-                node_items[k] = v
+            handle_enum_property(node, k, v, node_items, node_enums)
+
 
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
