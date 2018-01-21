@@ -12,7 +12,7 @@ import ast
 import sverchok
 from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
-from sverchok.utils.logging import debug, info
+from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_IO_panel_tools import import_tree
 
@@ -645,16 +645,22 @@ classes = [SvRunTests, SvDumpNodeDef, SvTestingPanel]
 
 def register():
     for clazz in classes:
-        bpy.utils.register_class(clazz)
+        try:
+            bpy.utils.register_class(clazz)
+        except Exception as e:
+            exception("Cant register class %s: %s", clazz, e)
 
 def unregister():
     for clazz in reversed(classes):
-        bpy.utils.unregister_class(clazz)
+        try:
+            bpy.utils.unregister_class(clazz)
+        except Exception as e:
+            exception("Cant unregister class %s: %s", clazz, e)
 
 if __name__ == "__main__":
     import sys
     try:
-        register()
+        #register()
         result = run_all_tests()
         if not result.wasSuccessful():
             # We have to raise an exception for Blender to exit with specified exit code.

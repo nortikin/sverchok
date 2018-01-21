@@ -12,6 +12,8 @@ class InitTests(SverchokTestCase):
         import sverchok.core
 
     def test_disable_enable(self):
+        info("Disabling Sverchok")
         addon_utils.disable("sverchok")
+        info("Enabling Sverchok")
         addon_utils.enable("sverchok")
 
