@@ -440,7 +440,7 @@ def process_tree(ng=None):
 
     if data_structure.RELOAD_EVENT:
         reload_sverchok()
-        return
+        #return
     if not ng:
         for ng in sverchok_trees():
             process_tree(ng)
