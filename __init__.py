@@ -85,31 +85,21 @@ if "bpy" in locals():
 
 
 import bpy
+import sverchok
 
 
 def register():
-
-    from sverchok.core import node_defaults
-    from sverchok.utils import ascii_print, auto_gather_node_classes
-    
     sv_registration_utils.register_all(imported_modules + node_list)
+    sverchok.core.init_bookkeeping(__name__)
 
-    data_structure.SVERCHOK_NAME = __name__
-    ascii_print.show_welcome()
-    node_defaults.register_defaults()
-    auto_gather_node_classes()
-
-    # register menu module after all nodes are registered
     menu.register()
-
     if reload_event:
         data_structure.RELOAD_EVENT = True
         menu.reload_menu()
 
 
 def unregister():
-
-    from sverchok.utils import clear_node_classes
-
-    clear_node_classes()
+    sverchok.utils.clear_node_classes()
     sv_registration_utils.unregister_all(imported_modules + node_list)
+
+# EOF
