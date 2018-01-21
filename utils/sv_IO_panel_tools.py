@@ -213,6 +213,9 @@ def can_skip_property(node, k):
     elif node.bl_idname in PROFILE_NODES and (k == "filename"):
         return True
 
+    elif node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'} and (k == 'current_text'):
+        return True
+
 
 def display_introspection_info(node, k, v):
     if not isinstance(v, (float, int, str)):
@@ -253,7 +256,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_enums = find_enumerators(node)
 
         IsGroupNode = (node.bl_idname == 'SvGroupNode')
-        TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
 
         for k, v in node.items():
@@ -265,18 +267,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             elif has_state_switch_protection(node, k):
                 continue
             
-            if TextInput and (k == 'current_text'):
-                node_dict['current_text'] = node.text
-                node_dict['textmode'] = node.textmode
-                if node.textmode == 'JSON':
-                    # add the json as full member to the tree :)
-                    text_str = texts[node.text].as_string()
-                    json_as_dict = json.loads(text_str)
-                    node_dict['text_lines'] = {}
-                    node_dict['text_lines']['stored_as_json'] = json_as_dict
-                else:
-                    node_dict['text_lines'] = texts[node.text].as_string()
-
             if IsGroupNode and (k == "group_name"):
                 if v not in groups_dict:
                     group_ng = bpy.data.node_groups[v]
