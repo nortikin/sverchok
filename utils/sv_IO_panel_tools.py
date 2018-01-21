@@ -148,6 +148,16 @@ def get_superficial_props(node_dict, node):
         node_dict['use_custom_color'] = True
 
 
+def handle_old_groupnode(node, groups_dict, k, v):
+    if (node.bl_idname == 'SvGroupNode') and (k == "group_name"):
+        if v not in groups_dict:
+            group_ng = bpy.data.node_groups[v]
+            group_dict = create_dict_of_tree(group_ng)
+            group_json = json.dumps(group_dict)
+            groups_dict[v] = group_json
+
+
+
 def collect_custom_socket_properties(node, node_dict):
     # print("** PROCESSING custom properties for node: ", node.bl_idname)
     input_socket_storage = {}
@@ -251,8 +261,6 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_dict = {}
         node_items = {}
         node_enums = find_enumerators(node)
-
-        IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
 
         for k, v in node.items():
@@ -264,12 +272,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             elif has_state_switch_protection(node, k):
                 continue
             
-            if IsGroupNode and (k == "group_name"):
-                if v not in groups_dict:
-                    group_ng = bpy.data.node_groups[v]
-                    group_dict = create_dict_of_tree(group_ng)
-                    group_json = json.dumps(group_dict)
-                    groups_dict[v] = group_json
+            handle_old_groupnode(node, groups_dict, k, v)
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
