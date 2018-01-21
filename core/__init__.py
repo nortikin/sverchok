@@ -1,4 +1,7 @@
 import importlib
+import sverchok
+
+reload_event = False
 
 root_modules = [
     "menu", "node_tree", "data_structure", "core",
@@ -52,16 +55,22 @@ def make_node_list(nodes):
     return node_list
 
 
-def import_settings(imported_modules, sv_dir_name):
-    # "settings" treated separately incase the sverchok dir not named "sverchok"
-    settings = importlib.import_module(".settings", sv_dir_name)
-    imported_modules.append(settings)
-
-
 def import_modules(modules, base, im_list):
     for m in modules:
         im = importlib.import_module('.{}'.format(m), base)
         im_list.append(im)
+
+
+def handle_reload_event(nodes, imported_modules, old_nodes):
+    node_list = make_node_list(nodes)
+    reload_all(imported_modules, node_list, old_nodes)
+    return node_list
+
+
+def import_settings(imported_modules, sv_dir_name):
+    # "settings" treated separately incase the sverchok dir not named "sverchok"
+    settings = importlib.import_module(".settings", sv_dir_name)
+    imported_modules.append(settings)
 
 
 def import_all_modules(imported_modules, mods_bases):
@@ -69,7 +78,27 @@ def import_all_modules(imported_modules, mods_bases):
         import_modules(mods, base, imported_modules)
 
 
-def handle_reload_event(nodes, imported_modules, old_nodes):
-    node_list = make_node_list(nodes)
-    reload_all(imported_modules, node_list, old_nodes)
-    return node_list
+def init_architecture(sv_name, utils_modules, ui_modules):
+
+    imported_modules = []
+    mods_bases = [
+        (root_modules, "sverchok"),
+        (core_modules, "sverchok.core"),
+        (utils_modules, "sverchok.utils"),
+        (ui_modules, "sverchok.ui")
+    ]
+
+    import_settings(imported_modules, sv_name)
+    import_all_modules(imported_modules, mods_bases)
+    return imported_modules
+
+
+def init_bookkeeping(sv_name):
+
+    from sverchok.core import node_defaults
+    from sverchok.utils import ascii_print, auto_gather_node_classes
+
+    sverchok.data_structure.SVERCHOK_NAME = sv_name
+    ascii_print.show_welcome()
+    node_defaults.register_defaults()
+    auto_gather_node_classes()    
