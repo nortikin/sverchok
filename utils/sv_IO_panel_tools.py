@@ -229,6 +229,15 @@ def display_introspection_info(node, k, v):
         debug('\\\\')
 
 
+def handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree):
+    if node.bl_idname == 'SvGroupNode' and (k == "group_name"):
+        if v not in groups_dict:
+            group_ng = bpy.data.node_groups[v]
+            group_dict = create_dict_of_tree(group_ng)
+            group_json = json.dumps(group_dict)
+            groups_dict[v] = group_json
+
+
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
@@ -263,13 +272,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                 continue
             elif has_state_switch_protection(node, k):
                 continue
-            
-            if IsGroupNode and (k == "group_name"):
-                if v not in groups_dict:
-                    group_ng = bpy.data.node_groups[v]
-                    group_dict = create_dict_of_tree(group_ng)
-                    group_json = json.dumps(group_dict)
-                    groups_dict[v] = group_json
+
+            handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree)            
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
