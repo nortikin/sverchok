@@ -8,12 +8,14 @@ from sverchok.utils.logging import debug, info
 class InitTests(SverchokTestCase):
 
     def test_core_exists(self):
-        bpy.ops.script.reload()
-        import sverchok.core
+        with self.assert_logs_no_errors():
+            bpy.ops.script.reload()
+            import sverchok.core
 
     def test_disable_enable(self):
-        info("Disabling Sverchok")
-        addon_utils.disable("sverchok")
-        info("Enabling Sverchok")
-        addon_utils.enable("sverchok")
+        with self.assert_logs_no_errors():
+            info("Disabling Sverchok")
+            addon_utils.disable("sverchok")
+            info("Enabling Sverchok")
+            addon_utils.enable("sverchok")
 
