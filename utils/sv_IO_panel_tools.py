@@ -183,19 +183,81 @@ def collect_custom_socket_properties(node, node_dict):
     # print("**\n")
 
 
+def can_skip_property(node, k):
+    """
+    n_id:
+        used to store the hash of the current Node,
+        this is created along with the Node anyway. skip.
+    typ, newsock:
+        reserved variables for changeable sockets
+    dynamic_strings:
+        reserved by exec node
+    frame_collection_name / type_collection_name both store Collection properties..avoiding for now
+    """
+
+    if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
+        return True
+
+    elif node.bl_idname == 'SvProfileNodeMK2' and k in {'SvLists', 'SvSubLists'}:
+        # these are CollectionProperties, populated later.
+        return True
+
+    elif node.bl_idname == 'ObjectsNode' and (k == "objects_local"):
+        # this silences the import error when items not found.
+        return True
+
+    elif node.bl_idname == 'SvObjectsNodeMK3' and (k == 'object_names'):
+        # this supresses this k, in favour of hitting node.storage_get_data later
+        return True
+
+    elif node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'} and (k == 'current_text'):
+        return True
+
+
+def display_introspection_info(node, k, v):
+    if not isinstance(v, (float, int, str)):
+        debug('//')
+        debug("%s -> property: %s: %s", node.name, k, type(v))
+        if k in node.bl_rna.properties:
+            debug(type(node.bl_rna.properties[k]))
+        elif k in node:
+            # something like node['lp']  , ID Property directly on the node instance.
+            debug(type(node[k]))
+        else:
+            error('%s is not bl_rna or IDproperty.. please report this', k)
+
+        debug('\\\\')
+
+
+def handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree):
+    if node.bl_idname == 'SvGroupNode' and (k == "group_name"):
+        if v not in groups_dict:
+            group_ng = bpy.data.node_groups[v]
+            group_dict = create_dict_of_tree(group_ng)
+            group_json = json.dumps(group_dict)
+            groups_dict[v] = group_json
+
+
+def handle_enum_property(node, k, v, node_items, node_enums):
+    if k in node_enums:
+        v = getattr(node, k)
+        node_items[k] = v
+
+
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
     groups_dict = {}
     texts = bpy.data.texts
+
     if not skip_set:
         skip_set = {'Sv3DviewPropsNode'}
 
     if selected:
         nodes = list(filter(lambda n: n.select, nodes))
 
-    ''' get nodes and params '''
+    # get nodes and params
     for node in nodes:
 
         if node.bl_idname in skip_set:
@@ -205,79 +267,18 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_items = {}
         node_enums = find_enumerators(node)
 
-        ObjectsNode = (node.bl_idname == 'ObjectsNode')
-        ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
-        ProfileParamNode = (node.bl_idname == 'SvProfileNode')
-        IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
-        
-        TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
 
         for k, v in node.items():
 
-            if not isinstance(v, (float, int, str)):
-                debug('//')
-                debug("%s -> property: %s: %s", node.name, k, type(v))
-                if k in node.bl_rna.properties:
-                    debug(type(node.bl_rna.properties[k]))
-                elif k in node:
-                    # something like node['lp']  , ID Property directly on the node instance.
-                    debug(type(node[k]))
-                else:
-                    error('%s is not bl_rna or IDproperty.. please report this', k)
+            display_introspection_info(node, k, v)
 
-                debug('\\\\')
-
-            # heavy handed skipping for testing.
-            if node.bl_idname == 'SvProfileNodeMK2':
-                if k in {'SvLists', 'SvSubLists'}:
-                    continue
-
-            if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
-                """
-                n_id:
-                    used to store the hash of the current Node,
-                    this is created along with the Node anyway. skip.
-                typ, newsock:
-                    reserved variables for changeable sockets
-                dynamic_strings:
-                    reserved by exec node
-                frame_collection_name / type_collection_name both store Collection properties..avoiding for now
-                """
+            if can_skip_property(node, k):
+                continue
+            elif has_state_switch_protection(node, k):
                 continue
 
-            if has_state_switch_protection(node, k):
-                continue
-
-            if ObjectsNode and (k == "objects_local"):
-                # this silences the import error when items not found.
-                continue
-            elif ObjectsNode3 and (k == 'object_names'):
-                node_dict['object_names'] = [o.name for o in node.object_names]
-                continue
-
-            if TextInput and (k == 'current_text'):
-                node_dict['current_text'] = node.text
-                node_dict['textmode'] = node.textmode
-                if node.textmode == 'JSON':
-                    # add the json as full member to the tree :)
-                    text_str = texts[node.text].as_string()
-                    json_as_dict = json.loads(text_str)
-                    node_dict['text_lines'] = {}
-                    node_dict['text_lines']['stored_as_json'] = json_as_dict
-                else:
-                    node_dict['text_lines'] = texts[node.text].as_string()
-
-            if node.bl_idname in PROFILE_NODES and (k == "filename"):
-                '''add file content to dict'''
-                node_dict['path_file'] = texts[node.filename].as_string()
-
-            if IsGroupNode and (k == "group_name"):
-                if v not in groups_dict:
-                    group_ng = bpy.data.node_groups[v]
-                    group_dict = create_dict_of_tree(group_ng)
-                    group_json = json.dumps(group_dict)
-                    groups_dict[v] = group_json
+            handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree)            
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -287,9 +288,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             else:
                 node_items[k] = v[:]
 
-            if k in node_enums:
-                v = getattr(node, k)
-                node_items[k] = v
+            handle_enum_property(node, k, v, node_items, node_enums)
+
 
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)

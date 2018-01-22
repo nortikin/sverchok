@@ -956,6 +956,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             local_storage['knotsnames'].append(outname.SvName)
         
         node_dict['profile_sublist_storage'] = json.dumps(local_storage, sort_keys=True)
+        node_dict['path_file'] = bpy.data.texts[self.filename].as_string()
 
 
 

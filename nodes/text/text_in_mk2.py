@@ -39,7 +39,8 @@ from sverchok.utils.sv_text_io_common import (
     get_socket_type,
     new_output_socket,
     name_dict,
-    text_modes
+    text_modes,
+    CommonTextMixinIO
 )
 
 
@@ -59,7 +60,7 @@ def pop_all_data(node, n_id):
     node.json_data.pop(n_id, None)
 
 
-class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     """
     Triggers: Text in from datablock
     Tooltip: Quickly load text from datablock into NodeView

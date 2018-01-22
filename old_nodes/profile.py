@@ -786,6 +786,9 @@ class SvProfileNode(bpy.types.Node, SverchCustomTreeNode):
             if outputs['Edges'].is_linked:
                 outputs['Edges'].sv_set(full_result_edges)
 
+    def storage_get_data(self, node_dict):
+        node_dict['path_file'] = bpy.data.texts[self.filename].as_string()
+
 
 def register():
     bpy.utils.register_class(SvProfileNode)
