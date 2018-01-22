@@ -84,7 +84,7 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     ''' Vertex Colors '''
     bl_idname = 'SvVertexColorNodeMK3'
     bl_label = 'Vertex color mk3'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'COLOR'
 
     modes = [
         ("vertices", "Vert", "Vcol - color per vertex", 1),
@@ -122,10 +122,9 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         inew = self.inputs.new
         inew('SvObjectSocket', 'Object')
         inew('StringsSocket', "Index")
-        inew('SvColorSocket', "Color")
-        # color_socket = inew('StringsSocket', "Color")
-        # color_socket.prop_name = 'unit_color'
-        # color_socket.nodule_color = (0.899, 0.8052, 0.0, 1.0)
+        color_socket = inew('SvColorSocket', "Color")
+        color_socket.prop_name = 'unit_color'
+
 
     def get_vertex_color_layer(self, obj):
         vcols = obj.data.vertex_colors

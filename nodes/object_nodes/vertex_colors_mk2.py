@@ -31,7 +31,7 @@ class SvVertexColorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Vertex Colors '''
     bl_idname = 'SvVertexColorNodeMK2'
     bl_label = 'Vertex color MK2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'COLOR'
 
     vertex_color = StringProperty(default='SvCol', update=updateNode)
     clear = BoolProperty(name='clear c', default=True, update=updateNode)
