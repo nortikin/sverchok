@@ -122,9 +122,10 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         inew = self.inputs.new
         inew('SvObjectSocket', 'Object')
         inew('StringsSocket', "Index")
-        color_socket = inew('StringsSocket', "Color")
-        color_socket.prop_name = 'unit_color'
-        color_socket.nodule_color = (0.899, 0.8052, 0.0, 1.0)
+        inew('SvColorSocket', "Color")
+        # color_socket = inew('StringsSocket', "Color")
+        # color_socket.prop_name = 'unit_color'
+        # color_socket.nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
     def get_vertex_color_layer(self, obj):
         vcols = obj.data.vertex_colors
@@ -135,13 +136,19 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         return vertex_color or vcols.new(name=self.vertex_color)
 
     def process(self):
-        objects = self.inputs["Object"].sv_get()
+
         color_socket = self.inputs["Color"]
         index_socket = self.inputs["Index"]
+
+        # self upgrade, shall only be called once if encountered.
+        if color_socket.bl_idname == 'StringsSocket':
+            color_socket.replace_socket('SvColorSocket')
+
+        objects = self.inputs["Object"].sv_get()
         color_data = color_socket.sv_get(deepcopy=False, default=[None])
         index_data = index_socket.sv_get(deepcopy=False, default=[None])
-        for obj, input_colors, indices in zip(objects, repeat_last(color_data), repeat_last(index_data)):
 
+        for obj, input_colors, indices in zip(objects, repeat_last(color_data), repeat_last(index_data)):
             if not input_colors:
                 continue
 
