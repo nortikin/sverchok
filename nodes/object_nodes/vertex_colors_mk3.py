@@ -20,7 +20,7 @@ import collections
 import numpy as np
 
 import bpy
-from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty, IntProperty
+from bpy.props import StringProperty, EnumProperty, BoolProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, repeat_last, fullList)
@@ -110,11 +110,11 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name='', default=(.3, .3, .2, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
-    vcol_size = bpy.props.EnumProperty(
+    vcol_size = EnumProperty(
         items=vcol_options,
         name='Num Color Components',
         description="3 = rgb, 4 = rgba.  older versions of Blender only support 3 components",
-        default="3", update=updateNode)
+        default="RGBA", update=updateNode)
 
 
     def draw_buttons(self, context, layout):
