@@ -53,10 +53,9 @@ bl_info = {
     "description": "Parametric node-based geometry programming",
     "warning": "",
     "wiki_url": "http://nikitron.cc.ua/sverch/html/main.html",
-    "tracker_url": (
-        "http://www.blenderartists.org/forum/showthread.php?272679"
-        "-Addon-WIP-Sverchok-parametric-tool-for-architects"),
-    "category": "Node"}
+    "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679",
+    "category": "Node"
+}
 
 
 import sys
