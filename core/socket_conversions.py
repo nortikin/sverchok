@@ -187,7 +187,7 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
         Return collection of bl_idnames of socket classes
         that are allowed to consume arbitrary data type.
         """
-        return ['StringsSocket', 'SvObjectSocket']
+        return ['StringsSocket', 'SvObjectSocket', 'SvColorSocket']
 
     @classmethod
     def vectors_to_matrices(cls, socket, source_data):
