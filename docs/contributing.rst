@@ -15,7 +15,7 @@ Our workflow:
 
 5. Brainstorm and discuss solutions. We use the issue tracker a lot and will give our honest opinion and interpretations of new code. We are artists and technical people trying to solve complicated and interesting issues using code and Blender. We care about optimal code but also accept working and novel solutions.
 
-6. Test your code, Test your proposed changes. 
+6. Test your code, Test your proposed changes. Write automated tests for your code whenever it makes sense. Please refer to `this document <testing.html>`_ for details.
 
 
 What not to do:
