@@ -83,7 +83,11 @@ def set_loops(loop_count, obj, index_socket, indices, input_colors, colors):
 
 
 class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
-    ''' Vertex Colors '''
+    '''
+    Triggers: vcol vertex colors
+    Tooltip: Set the vertex colors of the named Layer
+    '''
+
     bl_idname = 'SvVertexColorNodeMK3'
     bl_label = 'Vertex color mk3'
     bl_icon = 'COLOR'
