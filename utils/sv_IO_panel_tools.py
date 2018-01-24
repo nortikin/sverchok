@@ -798,13 +798,20 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
 
     def execute(self, context):
 
+        # print(self.id_tree, self.filepath)
+
         # if triggered from a non-initialized tree, we first make a tree
         if self.id_tree == '____make_new____':
             ng_params = {
                 'name': basename(self.filepath),
                 'type': 'SverchCustomTreeType'}
             ng = bpy.data.node_groups.new(**ng_params)
+
+            # pass this tree to the active nodeview
+            context.space_data.node_tree = ng
+
         else:
+
             ng = bpy.data.node_groups[self.id_tree]
 
         # Deselect everything, so as a result only imported nodes
