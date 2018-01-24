@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -31,14 +32,17 @@ class SvFixEmptieObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "data")
         self.outputs.new('StringsSocket', "san data")
         self.outputs.new('StringsSocket', "mask")
+        self.outputs.new('StringsSocket', "numpy mask")
 
     def process(self):
-        sd, m = self.outputs
+        sd, m, nm = self.outputs
         D = self.inputs[0].sv_get()
         if sd.is_linked:
             sd.sv_set([d for d in D if d])
         if m.is_linked:
             m.sv_set([bool(d) for d in D])
+        if nm.is_linked:
+            nm.sv_set(np.ma.make_mask(D, copy=False, shrink=False))
 
 
 def register():
