@@ -199,7 +199,12 @@ class SvSocketCommon:
                     return
 
         if self.is_linked:  # linked INPUT or OUTPUT
-            info_text = text + '. ' + SvGetSocketInfo(self)
+            t = text
+            if not self.is_output:
+                if self.prop_name:
+                    prop = node.rna_type.properties.get(self.prop_name, None) 
+                    t = prop.name if prop else text
+            info_text = t + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
             layout.label(info_text)
 
