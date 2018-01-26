@@ -22,10 +22,10 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-class SvFixEmptieObjectsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' filter out None or emptie object level items '''
-    bl_idname = 'SvFixEmptieObjectsNode'
-    bl_label = 'fix emptie objects'
+class SvFixEmptyObjectsNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' filter out None bpy objects or empty sverchok object level lists '''
+    bl_idname = 'SvFixEmptyObjectsNode'
+    bl_label = 'fix empty objects'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
@@ -46,8 +46,8 @@ class SvFixEmptieObjectsNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvFixEmptieObjectsNode)
+    bpy.utils.register_class(SvFixEmptyObjectsNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvFixEmptieObjectsNode)
+    bpy.utils.unregister_class(SvFixEmptyObjectsNode)
