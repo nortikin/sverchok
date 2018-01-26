@@ -224,7 +224,7 @@
     Sv3DviewPropsNode
 
 ## Text
-    ViewerNodeTextMK2
+    ViewerNodeTextMK3
     SvTextInNodeMK2
     SvTextOutNodeMK2
     NoteNode
@@ -258,7 +258,6 @@
 
 ## Objects
     SvVertexGroupNodeMK2
-    SvVertexColorNodeMK2
     SvVertexColorNodeMK3
 
 ## Layout
@@ -315,3 +314,4 @@
     SvIndexToMaskNode
     SvMultiExtrudeAlt
     SvOffsetLineNode
+    SvContourNode

@@ -59,3 +59,10 @@ class MonadExportTest(ReferenceTreeTestCase):
         remove_node_tree("PulledCube")
         super().tearDown()
 
+class ViewerTextExportTest(ReferenceTreeTestCase):
+
+    reference_file_name = "viewer_text_2018_01_20_12_10.gz"
+
+    def test_textview_expr_export(self):
+        export_result = create_dict_of_tree(self.tree)
+        self.assert_json_equals_file(export_result, "viewer_text.blend.json")

@@ -159,7 +159,9 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 #                # implement another nvBGL parses for gfx
                 processed_data = data
 
-            _x, _y = (self.location + Vector((self.width + 20, 0)))
+            # adjust the location of the printed bgl text, depending on hidden state
+            node_width = (self.width_hidden + 30.0) if self.hide else self.width
+            _x, _y = (self.location + Vector((node_width + 20, 0)))
             location = adjust_location(_x, _y, location_theta)
 
             draw_data = {

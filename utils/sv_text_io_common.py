@@ -17,8 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # pylint: disable=c0326
+# pylint: disable=e1101
+
 
 import bpy
+import json
 
 # status colors
 FAIL_COLOR = (0.85, 0.85, 0.8)
@@ -44,6 +47,23 @@ def new_output_socket(node, name, _type):
     node.outputs.new(bl_idname, name)
 
 
+class CommonTextMixinIO(object):
+
+    def storage_get_data(self, node_dict):
+        texts = bpy.data.texts
+
+        node_dict['current_text'] = self.text
+        node_dict['textmode'] = self.textmode
+        if self.textmode == 'JSON':
+            # add the json as full member to the tree :)
+            text_str = texts[self.text].as_string()
+            json_as_dict = json.loads(text_str)
+            node_dict['text_lines'] = {}
+            node_dict['text_lines']['stored_as_json'] = json_as_dict
+        else:
+            node_dict['text_lines'] = texts[self.text].as_string()
+
+
 class SvTextIOMK2Op(bpy.types.Operator):
     """ generic callback for TEXT IO nodes """
     bl_idname = "node.sverchok_textio_mk2_callback"
@@ -66,6 +86,7 @@ class SvTextIOMK2Op(bpy.types.Operator):
         return {'FINISHED'}
 
 TEXT_IO_CALLBACK = SvTextIOMK2Op.bl_idname
+
 
 
 def register():

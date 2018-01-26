@@ -21,7 +21,10 @@ Outputs
 Operators
 ---------
 
-This node has one button: **3D Cursor**. This button is available only when no of inputs are connected. When pressed, this button assigns current location of Blender's 3D Cursor to X, Y, Z parameters.
+This node has two buttons: 
+
+- **3D Cursor**. This button is available only when no of inputs are connected. When pressed, this button assigns current location of Blender's 3D Cursor to X, Y, Z parameters.
+- **Object mode**. This button do the generation of points for several objects correctly.
 
 Examples
 --------
@@ -31,3 +34,8 @@ Examples
    
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4905359/0a56565a-644f-11e4-91b3-24ac4d78cb11.png
   :alt: generating line
+
+.. image:: https://user-images.githubusercontent.com/28003269/34647574-202304d2-f39f-11e7-8113-87047546b81e.gif
+  :alt: object mode
+  
+Gist: https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed

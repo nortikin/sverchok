@@ -35,6 +35,7 @@ from bpy.props import BoolProperty, EnumProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import node_id, multi_socket, updateNode
+from sverchok.utils.sv_text_io_common import CommonTextMixinIO
 
 # status colors
 FAIL_COLOR = (0.85, 0.85, 0.8)
@@ -65,7 +66,7 @@ def new_output_socket(node, name, _type):
 # Test for one case and the others
 
 
-class SvTextInNode(bpy.types.Node, SverchCustomTreeNode):
+class SvTextInNode(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     ''' Text Input '''
     bl_idname = 'SvTextInNode'
     bl_label = 'Text in'
