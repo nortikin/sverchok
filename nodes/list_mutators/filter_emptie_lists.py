@@ -42,7 +42,7 @@ class SvFixEmptieObjectsNode(bpy.types.Node, SverchCustomTreeNode):
         if m.is_linked:
             m.sv_set([bool(d) for d in D])
         if nm.is_linked:
-            nm.sv_set(np.ma.make_mask(D, copy=False, shrink=False))
+            nm.sv_set(np.ma.make_mask(D, copy=False, shrink=False).tolist())
 
 
 def register():
