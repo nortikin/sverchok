@@ -160,6 +160,7 @@ class SvPreset(object):
                     # will be selected
                     bpy.ops.node.select_all(action='DESELECT')
                     import_tree(ng, self.path)
+                    bpy.ops.transform.translate('INVOKE_DEFAULT')
                     return {'FINISHED'}
 
             SverchPresetAddOperator.__name__ = self.name
