@@ -53,7 +53,15 @@ If you are installing from a release zip, please be aware that if it contains a 
 
 If you are installing from a release found [here](https://github.com/nortikin/sverchok/releases), these files contain folders that have the dots mentioned in the previous point. These versioned release zips are not meant for installing from, but rather can be used to try older versions of Sverchok when you are using older .blend files and older Blender versions. Don't use these release zips if you are installing sverchok for the first time.
 
-During install from preferences, if an error is raised - close and run Blender again and activate sverchok.  
+##### Errors during "install" or "enable" in preferences
+
+if an error is raised like:
+
+> `NameError: name 'nodes' is not defined`
+
+then exit Blender and restart Blender. This time also activate Sverchok by checking the tickbox, but give it as long as it needs to initialize the add-on. It's a complicated Add-on and might take up to 10 seconds to enable (depends on how fast your machine is and how much ram you have).
+
+##### Other reasons for failing:
 
 In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
 
