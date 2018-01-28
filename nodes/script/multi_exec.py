@@ -152,8 +152,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         slines = bpy.data.texts[self.text].lines
         self.dynamic_strings.clear()
         for line in slines:
-            ds_line = self.dynamic_strings.add()
-            ds_line.line = line.body
+            self.dynamic_strings.add().line = line.body
 
     def copy_node_text_to_clipboard(self, context):
         lines = [d.line for d in self.dynamic_strings]
@@ -168,8 +167,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
 
         self.dynamic_strings.clear()
         for line in lines:
-            ds_line = self.dynamic_strings.add()
-            ds_line.line = line
+            self.dynamic_strings.add().line = line
 
     def insert_line(self, op_props):
 
