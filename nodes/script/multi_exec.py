@@ -54,7 +54,12 @@ class SvExecNodeModCallback(bpy.types.Operator):
     form = bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        getattr(context.node, self.cmd)(self)
+        try:
+            getattr(context.node, self.cmd)(self)
+        except:
+            # else we have to pass nodetree/nodename 
+            if context.active_node:
+                getattr(context.active_node, self.cmd)(self)
         return {'FINISHED'}
 
 
@@ -108,8 +113,18 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         col.operator(callback_id, text='copy to node').cmd = 'copy_from_text'
         col.prop_search(self, 'text', bpy.data, "texts", text="")
 
-        row = layout.row()
-        col.operator(callback_id, text='cc code to clipboard').cmd = 'copy_node_text_to_clipboard'
+        col.label('Code')
+        col.operator(callback_id, text='cc to clipboard').cmd = 'copy_node_text_to_clipboard'
+        col.operator(callback_id, text='cc from clipboard').cmd = 'copy_node_text_from_clipboard'
+
+
+    def rclick_menu(self, context, layout):
+        layout.label('Code CC')
+        layout.operator(callback_id, text='to clipboard', icon='COPYDOWN').cmd = 'copy_node_text_to_clipboard'
+        layout.operator(callback_id, text='from clipboard', icon='PASTEDOWN').cmd = 'copy_node_text_from_clipboard'
+
+        # self.node_replacement_menu(context, layout)
+
 
     def add_new_line(self, context):
         self.dynamic_strings.add().line = ""
@@ -148,11 +163,9 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     def copy_from_text(self, context):
         """ make sure self.dynamic_strings has enough strings to do this """
         slines = bpy.data.texts[self.text].lines
-        while len(self.dynamic_strings) < len(slines):
-            self.dynamic_strings.add()
-
-        for i, i2 in zip(self.dynamic_strings, slines):
-            i.line = i2.body
+        self.dynamic_strings.clear()
+        for line in slines:
+            self.dynamic_strings.add().line = line.body
 
     def copy_node_text_to_clipboard(self, context):
         lines = [d.line for d in self.dynamic_strings]
@@ -160,6 +173,14 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
             return
         str_lines = "\n".join(lines)
         bpy.context.window_manager.clipboard = str_lines
+
+    def copy_node_text_from_clipboard(self, context):
+        lines = bpy.context.window_manager.clipboard
+        lines = lines.splitlines()
+
+        self.dynamic_strings.clear()
+        for line in lines:
+            self.dynamic_strings.add().line = line
 
     def insert_line(self, op_props):
 
