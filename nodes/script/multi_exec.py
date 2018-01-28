@@ -151,11 +151,9 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
         """ make sure self.dynamic_strings has enough strings to do this """
         slines = bpy.data.texts[self.text].lines
         self.dynamic_strings.clear()
-        while len(self.dynamic_strings) < len(slines):
-            self.dynamic_strings.add()
-
-        for i, i2 in zip(self.dynamic_strings, slines):
-            i.line = i2.body
+        for line in slines:
+            ds_line = self.dynamic_strings.add()
+            ds_line.line = line.body
 
     def copy_node_text_to_clipboard(self, context):
         lines = [d.line for d in self.dynamic_strings]
@@ -166,7 +164,7 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
 
     def copy_node_text_from_clipboard(self, context):
         lines = bpy.context.window_manager.clipboard
-        lines = lines.split('\n')  # will this catch everything?
+        lines = lines.splitlines()
 
         self.dynamic_strings.clear()
         for line in lines:
