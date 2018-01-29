@@ -663,7 +663,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             debug('no failed connections! awesome.')
 
     def generate_layout(fullpath, nodes_json):
-        '''cummulative function '''
 
         # it may be necessary to store monads as dicts instead of string/json
         # this will handle both scenarios
@@ -672,8 +671,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             debug('==== loading monad ====')
         info(('#' * 12) + nodes_json['export_version'])
 
-        # ''' create all nodes and groups '''
-
+        # create all nodes and groups '''
         update_lists = nodes_json['update_lists']
         nodes_to_import = nodes_json['nodes']
         groups_to_import = nodes_json.get('groups', {})
@@ -681,23 +679,19 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
 
-        # ''' now connect them '''
-
-        # prevent unnecessary updates
+        # now connect them / prevent unnecessary updates
         ng.freeze(hard=True)
         make_links(update_lists, name_remap)
 
-        # ''' set frame parents '''
-
+        # set frame parents '''
         place_frames(ng, nodes_json, name_remap)
 
-        # ''' clean up '''
-
+        # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
         ng.update()
 
-    # ''' ---- read files (.json or .zip) or straight json data----- '''
+    # ---- read files (.json or .zip) or straight json data -----
 
     if fullpath.endswith('.zip'):
         nodes_json = get_file_obj_from_zip(fullpath)

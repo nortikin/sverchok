@@ -6,17 +6,21 @@
 # License-Filename: LICENSE
 
 import zipfile
+import json
 import os
 from os.path import basename, dirname
-import json
 
 import bpy
 from bpy.utils import register_class, unregister_class
-from bpy.props import StringProperty, BoolProperty, PointerProperty, EnumProperty
+from bpy.props import StringProperty, BoolProperty
 
 from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_IO_panel_tools import (
-     create_dict_of_tree, write_json, import_tree, load_json_from_gist, propose_archive_filepath)
+    propose_archive_filepath,
+    create_dict_of_tree,
+    load_json_from_gist,
+    import_tree,
+    write_json)
 
 from sverchok.utils.logging import debug, info, warning, error, exception
 
