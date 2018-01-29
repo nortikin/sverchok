@@ -302,6 +302,5 @@ def register():
     _ = [register_class(cls) for cls in classes]
 
 
-
 def unregister():
     _ = [unregister_class(cls) for cls in classes[::-1]]
