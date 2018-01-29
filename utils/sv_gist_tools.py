@@ -90,3 +90,55 @@ def write_or_append_datafiles(gist_url, layout_name):
     with open(fullpath, 'a') as ofile:
         raw_time_stamp = strftime("%Y_%m_%d_%H_%M", gmtime())
         ofile.write(gist_url + ', ' + layout_name + ', ' + raw_time_stamp + ', no_sha\n')
+
+
+def load_json_from_gist(gist_id, operator=None):
+    """
+    Load JSON data from Gist by gist ID.
+
+    gist_id: gist ID. Passing full URL is also supported.
+    operator: optional instance of bpy.types.Operator. Used for errors reporting.
+
+    Returns JSON dictionary.
+    """
+
+    def read_n_decode(url):
+        try:
+            content_at_url = urlopen(url)
+            found_json = content_at_url.read().decode()
+            return found_json
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
+                message = 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source'
+                error(message)
+                if operator:
+                    operator.report({'ERROR'}, message)
+            else:
+                message = 'url error:' + str(err.code)
+                error(message)
+                if operator:
+                    operator.report({'ERROR'}, message)
+        except Exception as err:
+            exception(err)
+            if operator:
+                operator.report({'ERROR'}, 'unspecified error, check your internet connection')
+
+        return
+
+    # if it still has the full gist path, trim down to ID
+    if '/' in gist_id:
+        gist_id = gist_id.split('/')[-1]
+
+    gist_id = str(gist_id)
+    url = 'https://api.github.com/gists/' + gist_id
+    found_json = read_n_decode(url)
+    if not found_json:
+        return
+
+    wfile = json.JSONDecoder()
+    wjson = wfile.decode(found_json)
+
+    # 'files' may contain several names, we pick the first (index=0)
+    file_name = list(wjson['files'].keys())[0]
+    nodes_str = wjson['files'][file_name]['content']
+    return json.loads(nodes_str)

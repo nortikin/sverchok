@@ -16,17 +16,11 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import json
-import sys
-import os
-import re
 import zipfile
-import traceback
-from time import gmtime, strftime
-import urllib
-from urllib.request import urlopen
-
+import json
+import os
 from os.path import basename, dirname
+from time import gmtime, strftime
 from itertools import chain
 
 import bpy
@@ -34,7 +28,7 @@ from bpy.props import StringProperty, BoolProperty, PointerProperty
 from bpy.utils import register_class, unregister_class
 
 from sverchok import old_nodes
-from sverchok.utils import sv_gist_tools
+from sverchok.utils import sv_gist_tools, sv_node_utils
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
 
@@ -83,27 +77,6 @@ def get_file_obj_from_zip(fullpath):
         return json.loads(m)
 
 
-def find_enumerators(node):
-    ignored_enums = ['bl_icon', 'bl_static_type', 'type']
-    node_props = node.bl_rna.properties[:]
-    f = filter(lambda p: isinstance(p, bpy.types.EnumProperty), node_props)
-    return [p.identifier for p in f if not (p.identifier in ignored_enums)]
-
-
-def compile_socket(link):
-
-    try:
-        link_data = (link.from_node.name, link.from_socket.index, link.to_node.name, link.to_socket.index)
-    except Exception as err:
-        if "'NodeSocketColor' object has no attribute 'index'" in repr(err):
-            debug('adding node reroute using socketname instead if index')
-        else:
-            error(repr(err))
-        link_data = (link.from_node.name, link.from_socket.name, link.to_node.name, link.to_socket.name)
-
-    return link_data
-
-
 def write_json(layout_dict, destination_path):
 
     try:
@@ -114,9 +87,9 @@ def write_json(layout_dict, destination_path):
 
     # optional post processing step
     post_processing = False
-    if post_processing:
-        flatten = lambda match: r' {}'.format(match.group(1), m)
-        m = re.sub(r'\s\s+(\d+)', flatten, m)
+    # if post_processing:
+    #     flatten = lambda match: r' {}'.format(match.group(1), m)
+    #     m = re.sub(r'\s\s+(\d+)', flatten, m)
 
     with open(destination_path, 'w') as node_tree:
         node_tree.writelines(m)
@@ -148,39 +121,6 @@ def get_superficial_props(node_dict, node):
         node_dict['use_custom_color'] = True
 
 
-def collect_custom_socket_properties(node, node_dict):
-    # print("** PROCESSING custom properties for node: ", node.bl_idname)
-    input_socket_storage = {}
-    for socket in node.inputs:
-
-        # print("Socket %d of %d" % (socket.index + 1, len(node.inputs)))
-
-        storable = {}
-        tracked_props = 'use_expander', 'use_quicklink', 'expanded', 'use_prop'
-
-        for tracked_prop_name in tracked_props:
-            if not hasattr(socket, tracked_prop_name):
-                continue
-
-            value = getattr(socket, tracked_prop_name)
-            defaultValue = socket.bl_rna.properties[tracked_prop_name].default
-            # property value same as default ? => don't store it
-            if value == defaultValue:
-                continue
-
-            # print("Processing custom property: ", tracked_prop_name, " value = ", value)
-            storable[tracked_prop_name] = value
-
-            if tracked_prop_name == 'use_prop' and value:
-                # print("prop type:", type(socket.prop))
-                storable['prop'] = socket.prop[:]
-
-        if storable:
-            input_socket_storage[socket.index] = storable
-
-    if input_socket_storage:
-        node_dict['custom_socket_props'] = input_socket_storage
-    # print("**\n")
 
 
 def can_skip_property(node, k):
@@ -265,7 +205,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         node_dict = {}
         node_items = {}
-        node_enums = find_enumerators(node)
+        node_enums = sv_node_utils.find_enumerators(node)
 
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
 
@@ -299,7 +239,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
         node_dict['params'] = node_items
 
-        collect_custom_socket_properties(node, node_dict)
+        sv_node_utils.collect_custom_socket_properties(node, node_dict)
 
         # if node.bl_idname == 'NodeFrame':
         #    frame_props = 'shrink', 'use_custom_color', 'label_size'
@@ -322,7 +262,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
     layout_dict['groups'] = groups_dict
 
     # ''' get connections '''
-    # links = (compile_socket(l) for l in ng.links)
+    # links = (sv_node_utils.compile_socket(l) for l in ng.links)
     # connections_dict = {idx: link for idx, link in enumerate(links)}
     # layout_dict['connections'] = connections_dict
 
@@ -355,7 +295,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
                     link = socket.links[0]
                     if selected and not link.from_node.select:
                         continue
-                    links_out.append(compile_socket(link))
+                    links_out.append(sv_node_utils.compile_socket(link))
         layout_dict['update_lists'] = links_out
     except Exception as err:
         exception(err)
@@ -861,56 +801,7 @@ class SvNodeTreeImporter(bpy.types.Operator):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-def load_json_from_gist(gist_id, operator=None):
-    """
-    Load JSON data from Gist by gist ID.
 
-    gist_id: gist ID. Passing full URL is also supported.
-    operator: optional instance of bpy.types.Operator. Used for errors reporting.
-
-    Returns JSON dictionary.
-    """
-
-    def read_n_decode(url):
-        try:
-            content_at_url = urlopen(url)
-            found_json = content_at_url.read().decode()
-            return found_json
-        except urllib.error.HTTPError as err:
-            if err.code == 404:
-                message = 'url: ' + str(url) + ' doesn\'t appear to be a valid url, copy it again from your source'
-                error(message)
-                if operator:
-                    operator.report({'ERROR'}, message)
-            else:
-                message = 'url error:' + str(err.code)
-                error(message)
-                if operator:
-                    operator.report({'ERROR'}, message)
-        except Exception as err:
-            exception(err)
-            if operator:
-                operator.report({'ERROR'}, 'unspecified error, check your internet connection')
-
-        return
-
-    # if it still has the full gist path, trim down to ID
-    if '/' in gist_id:
-        gist_id = gist_id.split('/')[-1]
-
-    gist_id = str(gist_id)
-    url = 'https://api.github.com/gists/' + gist_id
-    found_json = read_n_decode(url)
-    if not found_json:
-        return
-
-    wfile = json.JSONDecoder()
-    wjson = wfile.decode(found_json)
-
-    # 'files' may contain several names, we pick the first (index=0)
-    file_name = list(wjson['files'].keys())[0]
-    nodes_str = wjson['files'][file_name]['content']
-    return json.loads(nodes_str)
 
 class SvNodeTreeImportFromGist(bpy.types.Operator):
 
@@ -934,7 +825,7 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
         if self.gist_id == 'clipboard':
             self.gist_id = context.window_manager.clipboard
 
-        nodes_json = load_json_from_gist(self.gist_id.strip(), self)
+        nodes_json = sv_gist_tools.load_json_from_gist(self.gist_id.strip(), self)
         if not nodes_json:
             return {'CANCELLED'}
 

@@ -505,7 +505,7 @@ class SvPresetFromGist(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        gist_data = sv_IO_panel_tools.load_json_from_gist(self.gist_id, self)
+        gist_data = sv_gist_tools.load_json_from_gist(self.gist_id, self)
         target_path = get_preset_path(self.preset_name)
         if os.path.exists(target_path):
             msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.preset_name)
