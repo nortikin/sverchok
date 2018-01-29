@@ -31,7 +31,7 @@ def find_enumerators(node):
     ignored_enums = ['bl_icon', 'bl_static_type', 'type']
     node_props = node.bl_rna.properties[:]
     f = filter(lambda p: isinstance(p, bpy.types.EnumProperty), node_props)
-    return [p.identifier for p in f if not (p.identifier in ignored_enums)]
+    return [p.identifier for p in f if not p.identifier in ignored_enums]
 
 
 def compile_socket(link):
