@@ -1,4 +1,10 @@
-# GPL3
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 import bpy
 import sverchok
 
@@ -16,7 +22,6 @@ def unregister_node_class(class_ref):
 
 def register_node_classes_factory(node_class_references, ops_class_references=None):
     """
-
     
     !!!! Unless you are testing/developing a node, you do not need to use this. ever. !!!!
 
@@ -105,7 +110,7 @@ utils_modules = [
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
-    "sv_IO_monad_helpers", "sv_operator_utils",
+    "sv_iodict_builder", "sv_IO_monad_helpers", "sv_operator_utils",
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
     "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     #"loadscript",
