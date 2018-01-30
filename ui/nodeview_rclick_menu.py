@@ -168,6 +168,16 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         if node and len(node.outputs):
             layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
+        if node and node.bl_idname == 'NodeFrame':
+            # give options for Frame nodes..
+            col = layout.column(align=True)
+            col.prop(node, 'label', text='', icon='NODE')
+            col.prop(node, 'use_custom_color')
+            if node.use_custom_color:
+                col.prop(node, 'color', text='')
+            col.prop(node, 'label_size', slider=True)
+            col.prop(node, 'shrink')
+
 
 
 def register():
