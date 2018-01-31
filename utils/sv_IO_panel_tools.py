@@ -693,7 +693,9 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
+        
         ng.update()
+        ng.update_tag()
 
     # ---- read files (.json or .zip) or straight json data -----
 
