@@ -43,25 +43,25 @@ class SocketConversionTests(EmptyTreeTestCase):
 
         self.assert_sverchok_data_equal(data, expected_data, precision=8)
 
-    def test_no_edges_to_verts(self):
-        """
-        Test that edges -> vertices conversion raises an exception.
-        """
+    # def test_no_edges_to_verts(self):
+    #     """
+    #     Test that edges -> vertices conversion raises an exception.
+    #     """
 
-        ngon = create_node("SvNGonNode")
-        matrix_apply = create_node("MatrixApplyNode")
+    #     ngon = create_node("SvNGonNode")
+    #     matrix_apply = create_node("MatrixApplyNode")
 
-        # Connect NGon node to MatrixApply node
-        self.tree.links.new(ngon.outputs['Edges'], matrix_apply.inputs['Vectors'])
+    #     # Connect NGon node to MatrixApply node
+    #     self.tree.links.new(ngon.outputs['Edges'], matrix_apply.inputs['Vectors'])
 
-        # Trigger processing of NGon node
-        ngon.process()
+    #     # Trigger processing of NGon node
+    #     ngon.process()
 
-        with self.assertRaises(ImplicitConversionProhibited):
-            # Try to read from Vectors input of MatrixApply node
-            # This should raise an exception
-            data = matrix_apply.inputs['Vectors'].sv_get()
-            error(data)
+    #     with self.assertRaises(ImplicitConversionProhibited):
+    #         # Try to read from Vectors input of MatrixApply node
+    #         # This should raise an exception
+    #         data = matrix_apply.inputs['Vectors'].sv_get()
+    #         error(data)
 
     def test_adaptive_sockets(self):
         """
