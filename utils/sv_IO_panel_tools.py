@@ -29,6 +29,7 @@ from itertools import chain
 import bpy
 
 from sverchok import old_nodes
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
 
@@ -41,6 +42,7 @@ PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 _EXPORTER_REVISION_ = '0.072'
 
 IO_REVISION_HISTORY = r"""
+0.072 export now stores the absolute node location (incase framed-n)
 0.072 new route for node.storage_get/set_data. no change to json format
 0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
@@ -138,7 +140,10 @@ def get_superficial_props(node_dict, node):
     node_dict['width'] = node.width
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
-    node_dict['location'] = node.location[:]
+
+    _x, _y = recursive_framed_location_finder(node, node.location[:])
+    node_dict['location'] = _x, _y
+
     if node.use_custom_color:
         node_dict['color'] = node.color[:]
         node_dict['use_custom_color'] = True
@@ -689,7 +694,9 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
+        
         ng.update()
+        ng.update_tag()
 
     # ---- read files (.json or .zip) or straight json data -----
 
