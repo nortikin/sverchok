@@ -29,6 +29,7 @@ from itertools import chain
 import bpy
 
 from sverchok import old_nodes
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
 
@@ -138,7 +139,10 @@ def get_superficial_props(node_dict, node):
     node_dict['width'] = node.width
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
-    node_dict['location'] = node.location[:]
+
+    _x, _y = recursive_framed_location_finder(node, node.location[:])
+    node_dict['location'] = _x, _y
+
     if node.use_custom_color:
         node_dict['color'] = node.color[:]
         node_dict['use_custom_color'] = True
