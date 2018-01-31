@@ -42,6 +42,7 @@ PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 _EXPORTER_REVISION_ = '0.072'
 
 IO_REVISION_HISTORY = r"""
+0.072 export now stores the absolute node location (incase framed-n)
 0.072 new route for node.storage_get/set_data. no change to json format
 0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
