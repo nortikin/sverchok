@@ -85,6 +85,8 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'IcoSphere'
     bl_icon = 'MESH_ICOSPHERE'
 
+    replacement_nodes = [('SphereNode', None, dict(Faces='Polygons'))]
+
     def set_subdivisions(self, value):
         # print(value, self.subdivisions_max)
         if value > self.subdivisions_max:

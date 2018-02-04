@@ -62,6 +62,30 @@ def get_branch():
     except:
         BRANCH = ""
 
+    return BRANCH
+
+def get_hash():
+    get_branch()
+    if BRANCH:
+        path = os.path.join(os.path.dirname(sverchok.__file__), '.git', 'refs', 'heads', BRANCH)
+        if os.path.exists(path):
+            with open(path) as hashfile:
+                return hashfile.readlines()[0].strip()[:8]
+        else:
+            return None
+    else:
+        return None
+
+def get_version_string():
+    version = ".".join(map(str, sverchok.bl_info['version']))
+    branch = get_branch()
+    if branch:
+        version += ", branch " + branch
+        hash = get_hash()
+        if hash:
+            version += ", commit " + hash
+    return version
+
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
 
@@ -119,9 +143,11 @@ class SvViewHelpForNode(bpy.types.Operator):
         help_url = help_url.replace(' ', '_')
         if self.kind == 'online':
             destination = 'http://nikitron.cc.ua/sverch/html/nodes/' + help_url + '.html'
-        else:
+        elif self.kind == 'offline':
             basepath = os.path.dirname(sverchok.__file__) + '/docs/nodes/'
             destination = r'file:///' + basepath + help_url + '.rst'
+        elif self.kind == 'github':
+            destination = 'https://github.com/nortikin/sverchok/blob/master/docs/nodes/' + help_url + '.rst'
 
         webbrowser.open(destination)
         return {'FINISHED'}
@@ -190,6 +216,7 @@ def idname_draw(self, context):
     row.label('help')
     row.operator('node.view_node_help', text='online').kind = 'online'
     row.operator('node.view_node_help', text='offline').kind = 'offline'
+    row.operator('node.view_node_help', text='', icon='GHOST').kind = 'github'
 
     # view the source of the current node ( warning, some nodes rely on more than one file )
     row = layout.row(align=True)

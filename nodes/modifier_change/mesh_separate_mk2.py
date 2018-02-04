@@ -96,7 +96,7 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 verts_out.append(ve)
                 poly_edge_out.append(pe)
                 vert_index.append([0 for i in range(len(ve))])
-                poly_edge_index.append([0 for face in ep])
+                poly_edge_index.append([0 for face in pe])
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Poly Egde'].sv_set(poly_edge_out)

@@ -61,6 +61,8 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         if type_display == 'Export':
             ''' export '''
 
+            box.prop(io_props, 'export_selected_only', toggle=True)
+
             col = box.column(align=False)
             row1 = col.row(align=True)
             row1.scale_y = 1.4
@@ -70,10 +72,13 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             imp.compress = io_props.compress_output
 
             row1b = box.row()
-            row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
+            exp = row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
+            exp.selected_only = io_props.export_selected_only
 
-            ziprow = box.row()
-            ziprow.operator('node.blend_to_zip')
+            ziprow = box.row(align=True)
+            ziprow.label('Archive .blend as')
+            ziprow.operator('node.blend_to_archive', text='.zip').archive_ext = 'zip'
+            ziprow.operator('node.blend_to_archive', text='.gz').archive_ext = 'gz'
 
         else:
             ''' import '''

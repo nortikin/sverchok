@@ -31,7 +31,6 @@ from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 
-
 class SverchNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
@@ -96,6 +95,9 @@ def juggle_and_join(node_cats):
         node_refs = node_cats.pop(ltype)
         node_cats["List Main"].extend(node_refs)
 
+    objects_cat = node_cats.pop('Objects')
+    node_cats['BPY Data'].extend(objects_cat)
+
     # add extended gens to Gens menu
     gen_ext = node_cats.pop("Generators Extended")
     node_cats["Generator"].extend(gen_ext)
@@ -158,6 +160,7 @@ class SverchNodeItem(object):
                 # please not be confused: "operator" here references to
                 # SverchNodeAddOperator instance, and "self" references to
                 # SverchNodeItem instance.
+                operator.use_transform = True
                 operator.type = self.nodetype
                 operator.create_node(context)
                 return {'FINISHED'}
@@ -274,8 +277,6 @@ def sv_group_items(context):
             monad_cls_template_dict = {"cls_bl_idname": "str('{}')".format(monad.cls_bl_idname)}
             yield NodeItem("SvMonadGenericNode", monad.name, monad_cls_template_dict)
 
-
-
 def draw_node_ops(self,layout, context):
 
     make_monad = "node.sv_monad_from_selected"
@@ -315,6 +316,7 @@ def reload_menu():
     register_node_add_operators()
     
     build_help_remap(original_categories)
+    print("Reload complete, press update")
 
 def register_node_add_operators():
     """Register all our custom node adding operators"""

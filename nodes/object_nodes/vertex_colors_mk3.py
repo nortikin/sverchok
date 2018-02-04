@@ -30,6 +30,8 @@ from sverchok.data_structure import (updateNode, repeat_last, fullList)
 
 # modified (kosvor, zeffii) 2017 end november. When Blender changed VertexColor map to rgb+a
 
+vcol_options = [(k, k, '', i) for i, k in enumerate(["RGB", "RGBA"])]
+
 
 def set_vertices(loop_count, obj, index_socket, indices, input_colors, colors):
     vertex_index = np.zeros(loop_count, dtype=int)
@@ -81,10 +83,14 @@ def set_loops(loop_count, obj, index_socket, indices, input_colors, colors):
 
 
 class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
-    ''' Vertex Colors '''
+    '''
+    Triggers: vcol vertex colors
+    Tooltip: Set the vertex colors of the named Layer
+    '''
+
     bl_idname = 'SvVertexColorNodeMK3'
     bl_label = 'Vertex color mk3'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'COLOR'
 
     modes = [
         ("vertices", "Vert", "Vcol - color per vertex", 1),
@@ -108,6 +114,13 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name='', default=(.3, .3, .2, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
+    vcol_size = EnumProperty(
+        items=vcol_options,
+        name='Num Color Components',
+        description="3 = rgb, 4 = rgba.  older versions of Blender only support 3 components",
+        default="RGBA", update=updateNode)
+
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'use_active')
         layout.prop(self, 'vertex_color')
@@ -117,14 +130,15 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "clear", text="clear unindexed")
         row.prop(self, "clear_c", text="")
+        layout.prop(self, "vcol_size", expand=True)
 
     def sv_init(self, context):
         inew = self.inputs.new
         inew('SvObjectSocket', 'Object')
         inew('StringsSocket', "Index")
-        color_socket = inew('StringsSocket', "Color")
+        color_socket = inew('SvColorSocket', "Color")
         color_socket.prop_name = 'unit_color'
-        color_socket.nodule_color = (0.899, 0.8052, 0.0, 1.0)
+
 
     def get_vertex_color_layer(self, obj):
         vcols = obj.data.vertex_colors
@@ -135,13 +149,21 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         return vertex_color or vcols.new(name=self.vertex_color)
 
     def process(self):
-        objects = self.inputs["Object"].sv_get()
+
         color_socket = self.inputs["Color"]
         index_socket = self.inputs["Index"]
+
+        # self upgrade, shall only be called once if encountered.
+        if color_socket.bl_idname == 'StringsSocket':
+            color_socket.replace_socket('SvColorSocket')
+
+        objects = self.inputs["Object"].sv_get()
         color_data = color_socket.sv_get(deepcopy=False, default=[None])
         index_data = index_socket.sv_get(deepcopy=False, default=[None])
-        for obj, input_colors, indices in zip(objects, repeat_last(color_data), repeat_last(index_data)):
 
+        num_components = int(len(self.vcol_size))
+
+        for obj, input_colors, indices in zip(objects, repeat_last(color_data), repeat_last(index_data)):
             if not input_colors:
                 continue
 
@@ -149,17 +171,17 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             loop_count = len(loops)
 
             vertex_color = self.get_vertex_color_layer(obj)
-            colors = np.empty(loop_count * 4, dtype=np.float32)
+            colors = np.empty(loop_count * num_components, dtype=np.float32)
 
             # we have index and colors, set colors of incoming index
             # first get all colors so we can write to them
             if self.clear:
-                colors.shape = (loop_count, 4)
-                colors[:] = self.clear_c
+                colors.shape = (loop_count, num_components)
+                colors[:] = self.clear_c[:num_components]
             elif index_socket.is_linked:
                 vertex_color.data.foreach_get("color", colors)
 
-            colors.shape = (loop_count, 4)
+            colors.shape = (loop_count, num_components)
             standard_params = obj, index_socket, indices, input_colors, colors
 
             if self.mode == "vertices":
@@ -170,7 +192,7 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 set_loops(loop_count, *standard_params)
 
             # write out data
-            colors.shape = (loop_count * 4,)
+            colors.shape = (loop_count * num_components,)
             vertex_color.data.foreach_set("color", colors)
             obj.data.update()
 

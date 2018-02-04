@@ -89,3 +89,25 @@ def get_node_class_reference(bl_idname):
         return getattr(bpy.types, bl_idname)
     # this will also return a Nonetype if the ref isn't found, and the class ref if found
     return node_classes.get(bl_idname)
+
+
+def clear_node_classes():
+    node_classes.clear()
+
+
+utils_modules = [
+    # non UI tools
+    "cad_module", "cad_module_class", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",
+    "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
+    "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common",
+    "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils",
+    "profile", "logging", "testing",
+    # UI text editor ui
+    "text_editor_submenu", "text_editor_plugins",
+    # UI operators and tools
+    "sv_IO_monad_helpers", "sv_operator_utils", "sv_IO_panel_properties", "sv_IO_panel_operators",
+    "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
+    "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
+    #"loadscript",
+    "debug_script", "sv_update_utils", "sv_bgl_primitives"
+]

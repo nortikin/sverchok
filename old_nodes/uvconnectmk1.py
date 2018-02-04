@@ -30,6 +30,8 @@ class LineConnectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'UV Connect'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    replacement_nodes = [('LineConnectNodeMK2', None, None)]
+
     JoinLevel = IntProperty(name='JoinLevel', description='Choose connect level of data (see help)',
                             default=1, min=1, max=2,
                             update=updateNode)

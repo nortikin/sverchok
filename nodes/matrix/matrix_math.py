@@ -20,22 +20,26 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from mathutils import Matrix
-import re
+from functools import reduce
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, StringsSocket
-from sverchok.data_structure import (updateNode, fullList, match_long_repeat,
+from sverchok.data_structure import (updateNode, match_long_repeat,
                                      Matrix_listing, Matrix_generate)
 
 operationItems = [
     ("MULTIPLY", "Multiply", "Multiply two matrices", 0),
     ("INVERT", "Invert", "Invert matrix", 1),
-    ("FILTER", "Filter", "Filter matrix components", 2)
+    ("FILTER", "Filter", "Filter matrix components", 2),
+    ("BASIS", "Basis", "Extract Basis vectors", 3)
 ]
 
 prePostItems = [
     ("PRE", "Pre", "Calculate A op B", 0),
     ("POST", "Post", "Calculate B op A", 1)
 ]
+
+id_mat = Matrix_listing([Matrix.Identity(4)])
+ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
 
 class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
@@ -52,34 +56,27 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
     prePost = EnumProperty(
         name='Pre Post',
         description='Order of operations PRE = A op B vs POST = B op A)',
-        items=prePostItems,
-        default="PRE",
-        update=updateNode)
+        items=prePostItems, default="PRE", update=updateNode)
 
     operation = EnumProperty(
         name="Operation",
         description="Operation to apply on the given matrices",
-        items=operationItems,
-        default="MULTIPLY",
-        update=update_operation)
+        items=operationItems, default="MULTIPLY", update=update_operation)
 
     filter_t = BoolProperty(
         name="Filter Translation",
         description="Filter out the translation component of the matrix",
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
 
     filter_r = BoolProperty(
         name="Filter Rotation",
         description="Filter out the rotation component of the matrix",
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
 
     filter_s = BoolProperty(
         name="Filter Scale",
         description="Filter out the scale component of the matrix",
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', "A", "A")
@@ -87,22 +84,38 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('MatrixSocket', "C", "C")
 
+        self.outputs.new('VerticesSocket', "X", "X")
+        self.outputs.new('VerticesSocket', "Y", "Y")
+        self.outputs.new('VerticesSocket', "Z", "Z")
+
         self.operation = "MULTIPLY"
 
     def update_sockets(self):
+        # update inputs
         inputs = self.inputs
+        if self.operation in {"MULTIPLY"}:  # multiple input operations
+            if len(inputs) < 2:  # at least two matrix inputs are available
+                if not "B" in inputs:
+                    inputs.new("MatrixSocket", "B")
+        else:  # single input operations (remove all inputs except the first one)
+            ss = [s for s in inputs]
+            for s in ss:
+                if s != inputs["A"]:
+                    inputs.remove(s)
 
-        if self.operation == "MULTIPLY":
-            # two matrix inputs available
-            if not "B" in inputs:
-                inputs.new("MatrixSocket", "B")
-        else:
-            # one matrix input available
-            if "B" in inputs:
-                inputs.remove(inputs["B"])
+        # update outputs
+        outputs = self.outputs
+        if self.operation == "BASIS":
+            for name in list("XYZ"):
+                if name not in outputs:
+                    outputs.new("VerticesSocket", name)
+        else:  # remove basis output sockets for all other operations
+            for name in list("XYZ"):
+                if name in outputs:
+                    outputs.remove(outputs[name])
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "operation", text = "")
+        layout.prop(self, "operation", text="")
         if self.operation == "MULTIPLY":
             layout.prop(self, "prePost", expand=True)
         elif self.operation == "FILTER":
@@ -136,45 +149,87 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         return m
 
+    def operation_basis(self, a):
+        T, R, S = a.decompose()
+
+        rot = R.to_matrix().to_4x4()
+        Rx = (rot[0][0], rot[1][0], rot[2][0])
+        Ry = (rot[0][1], rot[1][1], rot[2][1])
+        Rz = (rot[0][2], rot[1][2], rot[2][2])
+
+        return Rx, Ry, Rz
+
     def get_operation(self):
         if self.operation == "MULTIPLY":
-            return lambda a, b: a * b
+            return lambda l: reduce((lambda a, b: a * b), l)
         elif self.operation == "FILTER":
             return self.operation_filter
         elif self.operation == "INVERT":
             return lambda a: a.inverted()
+        elif self.operation == "BASIS":
+            return self.operation_basis
+
+    def update(self):
+        # sigle input operation ? => no need to update sockets
+        if self.operation not in {"MULTIPLY"}:
+            return
+
+        # multiple input operation ? => add an empty last socket
+        inputs = self.inputs
+        if inputs[-1].links:
+            name = ABC[len(inputs)]  # pick the next letter A to Z
+            inputs.new("MatrixSocket", name)
+        else:  # last input disconnected ? => remove all but last unconnected extra inputs
+            while len(inputs) > 2 and not inputs[-2].links:
+                inputs.remove(inputs[-1])
 
     def process(self):
         outputs = self.outputs
-        if not outputs['C'].is_linked:
+        if not any(s.is_linked for s in outputs):
             return
 
-        inputs = self.inputs
-        id_mat = Matrix_listing([Matrix.Identity(4)])
-        A = Matrix_generate(inputs['A'].sv_get(default=id_mat))
-
-        if self.operation in  { "MULTIPLY" }:
-            # two matrix inputs available
-            B = Matrix_generate(inputs['B'].sv_get(default=id_mat))
-
-            if self.prePost == "PRE":
-                parameters = match_long_repeat([A, B])
-            else:
-                parameters = match_long_repeat([B, A])
-        else:
-            # one matrix input available
-            parameters = [A]
+        I = []  # collect the inputs from the connected sockets
+        for s in filter(lambda s: s.is_linked, self.inputs):
+            I.append([Matrix(m) for m in s.sv_get(default=id_mat)])
 
         operation = self.get_operation()
 
-        matrixList = []
-        for params in zip(*parameters):
-            c = operation(*params)
-            matrixList.append(c)
+        if self.operation in {"MULTIPLY"}:  # multiple input operations
+            if self.prePost == "PRE":  # A op B : keep input order
+                parameters = match_long_repeat(I)
+            else:  # B op A : reverse input order
+                parameters = match_long_repeat(I[::-1])
 
-        matrices = Matrix_listing(matrixList)
+            matrixList = [operation(params) for params in zip(*parameters)]
 
-        outputs['C'].sv_set(matrices)
+            matrices = Matrix_listing(matrixList)
+            outputs['C'].sv_set(matrices)
+
+        else:  # single input operations
+            parameters = I[0]
+            print("parameters=", parameters)
+
+            if self.operation == "BASIS":
+                xList = []
+                yList = []
+                zList = []
+                for a in parameters:
+                    Rx, Ry, Rz = operation(a)
+                    xList.append(Rx)
+                    yList.append(Ry)
+                    zList.append(Rz)
+                outputs['X'].sv_set(xList)
+                outputs['Y'].sv_set(yList)
+                outputs['Z'].sv_set(zList)
+
+                matrices = Matrix_listing(parameters)
+                outputs['C'].sv_set(matrices)
+
+            else:  # INVERSE / FILTER
+                matrixList = [operation(a) for a in parameters]
+
+                matrices = Matrix_listing(matrixList)
+                outputs['C'].sv_set(matrices)
 
 
 def register():

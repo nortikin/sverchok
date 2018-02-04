@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok import data_structure
+from sverchok.utils.logging import warning, info
 
 #####################################
 # socket data cache                 #
@@ -71,9 +72,9 @@ def SvSetSocket(socket, out):
     global socket_data_cache
     if data_structure.DEBUG_MODE:
         if not socket.is_output:
-            print("Warning, {} setting input socket: {}".format(socket.node.name, socket.name))
+            warning("{} setting input socket: {}".format(socket.node.name, socket.name))
         if not socket.is_linked:
-            print("Warning: {} setting unconncted socket: {}".format(socket.node.name, socket.name))
+            warning("{} setting unconncted socket: {}".format(socket.node.name, socket.name))
     s_id = socket.socket_id
     s_ng = socket.id_data.name
     if s_ng not in socket_data_cache:
@@ -102,7 +103,8 @@ def SvGetSocket(socket, deepcopy=True):
                 return out
         else:
             if data_structure.DEBUG_MODE:
-                print("cache miss:", socket.node.name, "->", socket.name, "from:", other.node.name, "->", other.name)
+                debug("cache miss: %s -> %s from: %s -> %s",
+                        socket.node.name, socket.name, other.node.name, other.name)
             raise SvNoDataError(socket)
     # not linked
     raise SvNoDataError(socket)
@@ -133,6 +135,25 @@ class SvNoDataError(LookupError):
     
     def __format__(self, spec):
         return repr(self)
+
+def get_output_socket_data(node, output_socket_name):
+    """
+    This method is intended to usage in internal tests mainly.
+    Get data that the node has written to the output socket.
+    Raises SvNoDataError if it hasn't written any.
+    """
+
+    global socket_data_cache
+
+    tree_name = node.id_data.name
+    socket = node.outputs[output_socket_name]
+    socket_id = socket.socket_id
+    if tree_name not in socket_data_cache:
+        raise SvNoDataError()
+    if socket_id in socket_data_cache[tree_name]:
+        return socket_data_cache[tree_name][socket_id]
+    else:
+        raise SvNoDataError(socket)
 
 def reset_socket_cache(ng):
     """

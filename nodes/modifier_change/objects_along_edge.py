@@ -25,34 +25,7 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
-
-def householder(u):
-    ''' Householder reflection matrix '''
-    x,y,z = u[0], u[1], u[2]
-    m = Matrix([[x*x, x*y, x*z, 0], [x*y, y*y, y*z, 0], [x*z, y*z, z*z, 0], [0,0,0,0]])
-    h = Matrix() - 2*m
-    return h
-
-def autorotate_householder(e1, xx):
-    ''' A matrix of transformation which will transform xx vector into e1. 
-    See http://en.wikipedia.org/wiki/QR_decomposition '''
-
-    sign = -1
-    alpha = xx.length * sign
-    u = xx - alpha*e1
-    v = u.normalized()
-    q = householder(v)
-    return q
-
-def autorotate_track(e1, xx, up):
-    rotation = xx.to_track_quat(e1, up)
-    return rotation.to_matrix().to_4x4()
-
-def diameter(vertices, axis):
-    xs = [vertex[axis] for vertex in vertices]
-    M = max(xs)
-    m = min(xs)
-    return (M-m)
+from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 
 all_axes = [
         Vector((1.0, 0.0, 0.0)),
@@ -68,6 +41,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDuplicateAlongEdgeNode'
     bl_label = 'Duplicate objects along edge'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DUPLICATE'
 
     count_modes = [
             ("count", "Count", "Specify number of donor objects per edge", 1),
@@ -230,7 +204,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.algorithm == 'track':
             rot = autorotate_track(self.orient_axis_, direction, self.up_axis)
         elif self.algorithm == 'diff':
-            rot = direction.rotation_difference(x).to_matrix().to_4x4().inverted()
+            rot = autorotate_diff(x, direction).inverted()
         else:
             raise Exception("Unsupported algorithm")
 

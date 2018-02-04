@@ -29,6 +29,7 @@ only for speed, never for aesthetics or line count or cleverness.
 import math
 import numpy as np
 from functools import wraps
+import time
 
 import bpy
 import bmesh
@@ -459,10 +460,41 @@ class Spline(object):
             tknots = np.linspace(0, 1, len(pts))
         elif metric == "CHEBYSHEV":
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
-            tmp = np.insert(tmp, 0, 0).cumsum()
+            tknots = np.insert(tknots, 0, 0).cumsum()
             tknots = tknots / tknots[-1]
 
         return tknots
+
+    def __init__(self):
+        # Caches
+        # t -> vertex
+        self._single_eval_cache = {}
+
+    def length(self, t_in):
+        """
+        t_in: np.array with values in [0,1]
+        """
+        t_in = t_in.copy()
+        t_in.sort()
+        points_on_spline = self.eval(t_in)
+        t = points_on_spline[:-1] - points_on_spline[1:]
+        norms = np.linalg.norm(t, axis=1)
+        return norms.sum()
+    
+    def eval_at_point(self, t):
+        """
+        Evaluate spline at single point.
+        t: float in [0,1].
+        Returns vector in Sverchok format (tuple of floats).
+        """
+        result = self._single_eval_cache.get(t, None)
+        if result is not None:
+            return result
+        else:
+            result = self.eval(np.array([t]))
+            result = tuple(result[0])
+            self._single_eval_cache[t] = result
+            return result
 
 class CubicSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
@@ -475,6 +507,8 @@ class CubicSpline(Spline):
 
         creates a cubic spline thorugh the locations given in vertices
         """
+
+        super().__init__()
 
         if is_cyclic:
 
@@ -499,7 +533,7 @@ class CubicSpline(Spline):
 
         n = len(locs)
         if n < 2:
-            return
+            raise Exception("Cubic spline can't be build from less than 3 vertices")
 
         # a = locs
         h = tknots[1:] - tknots[:-1]
@@ -588,6 +622,8 @@ class LinearSpline(Spline):
         creates a cubic spline thorugh the locations given in vertices
         """
 
+        super().__init__()
+
         if is_cyclic:
             pts = np.array(vertices + [vertices[0]])
         else:
@@ -617,12 +653,109 @@ class LinearSpline(Spline):
             out[i] = np.interp(t_in, tknots, ptsT[i])
         return out.T
 
-    def tangent(self, t_in, tknots = None):
+    def tangent(self, t_in, tknots = None, h = None):
         if tknots is None:
             tknots = self.tknots
 
         lookup_segments = GenerateLookup(self.is_cyclic, self.pts.tolist())
         return np.array([lookup_segments.find_bucket(f) for f in t_in])
+
+class Spline2D(object):
+    """
+    2D Spline (surface).
+    Composed by putting 1D splines along V direction, and then interpolating
+    across them (in U direction) by using another series of 1D splines.
+    U and V splines can both be either linear or cubic.
+    The spline can optionally be cyclic in U and/or V directions
+    (so it can form a cylindrical or thoroidal surface).
+    This is implemented partly in pure python, partly in numpy, so the performance
+    is not very good. The performance is not very bad either, because of caching.
+    """
+    def __init__(self, vertices,
+            u_spline_constructor = CubicSpline, v_spline_constructor = None,
+            metric = "DISTANCE",
+            is_cyclic_u = False, is_cyclic_v = False):
+        """
+        vertices: Vertices in Sverchok format, i.e. list of list of 3-tuples.
+        u_spline_constructor: constructor of Spline objects.
+        v_spline_constructor: constructor of Spline objects. Defaults to u_spline_constructor.
+        is_cyclic_u: whether the spline is cyclic in the U direction
+        is_cyclic_v: whether the spline is cyclic in the V direction
+        metric: string, one of "DISTANCE", "MANHATTAN", "POINTS", "CHEBYSHEV".
+        """
+        self.vertices = np.array(vertices)
+        if v_spline_constructor is None:
+            v_spline_constructor = u_spline_constructor
+        self.u_spline_constructor = u_spline_constructor
+        self.v_spline_constructor = v_spline_constructor
+        self.metric = metric
+        self.is_cyclic_u = is_cyclic_u
+        self.is_cyclic_v = is_cyclic_v
+
+        self._v_splines = [v_spline_constructor(verts, is_cyclic=is_cyclic_v, metric=metric) for verts in vertices]
+
+        # Caches
+        # v -> Spline
+        self._u_splines = {}
+        # (u,v) -> vertex
+        self._eval_cache = {}
+        # (u,v) -> normal
+        self._normal_cache = {}
+
+    def get_u_spline(self, v, vertices):
+        """Get a spline along U direction for specified value of V coordinate"""
+        spline = self._u_splines.get(v, None)
+        if spline is not None:
+            return spline
+        else:
+            spline = self.u_spline_constructor(vertices, is_cyclic=self.is_cyclic_u, metric=self.metric)
+            self._u_splines[v] = spline
+            return spline
+
+    def eval(self, u, v):
+        """
+        u, v: floats in [0, 1].
+        Returns 3-tuple of floats.
+
+        Evaluate the spline at single point.
+        """
+
+        result = self._eval_cache.get((u,v), None)
+        if result is not None:
+            return result
+        else:
+            spline_vertices = [spline.eval_at_point(v) for spline in self._v_splines]
+            u_spline = self.get_u_spline(v, spline_vertices)
+            result = u_spline.eval_at_point(u)
+            self._eval_cache[(u,v)] = result
+            return result
+
+    def normal(self, u, v, h=0.001):
+        """
+        u, v: floats in [0,1].
+        h: step for numeric differentials calculation.
+        Returns 3-tuple of floats.
+
+        Get the normal vector for spline at specific point.
+        """
+
+        result = self._normal_cache.get((u,v), None)
+        if result is not None:
+            return result
+        else:
+            point = np.array(self.eval(u, v))
+            point_u = np.array(self.eval(u+h, v))
+            point_v = np.array(self.eval(u, v+h))
+            du = (point_u - point)/h
+            dv = (point_v - point)/h
+            n = np.cross(du, dv)
+            norm = np.linalg.norm(n)
+            if norm != 0:
+                n = n / norm
+            #print("DU: {}, DV: {}, N: {}".format(du, dv, n))
+            result = tuple(n)
+            self._normal_cache[(u,v)] = result
+            return result
 
 class GenerateLookup():
 
@@ -673,6 +806,71 @@ class GenerateLookup():
 
         self.total_length = sum(self.indiv_lengths)
             
+def householder(u):
+    '''
+    Calculate Householder reflection matrix.
+
+    u: mathutils.Vector or tuple of 3 floats.
+    returns mathutils.Matrix.
+    '''
+    x,y,z = u[0], u[1], u[2]
+    m = Matrix([[x*x, x*y, x*z, 0], [x*y, y*y, y*z, 0], [x*z, y*z, z*z, 0], [0,0,0,0]])
+    h = Matrix() - 2*m
+    return h
+
+def autorotate_householder(e1, xx):
+    '''
+    A matrix of transformation which will transform xx vector into e1,
+    calculated via Householder matrix.
+    See http://en.wikipedia.org/wiki/QR_decomposition
+
+    e1, xx: mathutils.Vector.
+    returns mathutils.Matrix.
+    '''
+
+    sign = -1
+    alpha = xx.length * sign
+    u = xx - alpha*e1
+    v = u.normalized()
+    q = householder(v)
+    return q
+
+def autorotate_track(e1, xx, up):
+    '''
+    A matrix of transformation which will transform xx vector into e1,
+    calculated via Blender's to_track_quat method.
+
+    e1: string, one of "X", "Y", "Z"
+    xx: mathutils.Vector.
+    up: string, one of "X", "Y", "Z".
+    returns mathutils.Matrix.
+    '''
+    rotation = xx.to_track_quat(e1, up)
+    return rotation.to_matrix().to_4x4()
+
+def autorotate_diff(e1, xx):
+    '''
+    A matrix of transformation which will transform xx vector into e1,
+    calculated via Blender's rotation_difference method.
+
+    e1, xx: mathutils.Vector.
+    returns mathutils.Matrix.
+    '''
+    return xx.rotation_difference(e1).to_matrix().to_4x4()
+
+def diameter(vertices, axis):
+    """
+    Calculate diameter of set of vertices along specified axis.
+    
+    vertices: list of mathutils.Vector or of 3-tuples of floats.
+    axis: 0, 1 or 2.
+    returns float.
+    """
+    xs = [vertex[axis] for vertex in vertices]
+    M = max(xs)
+    m = min(xs)
+    return (M-m)
+
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
