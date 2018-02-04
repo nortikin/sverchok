@@ -637,8 +637,18 @@ def place_frames(ng, nodes_json, name_remap):
     for node_name, parent in framed_nodes.items():
         ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
 
+def center_nodes(nodes_json_dict, target_center=None):
+    if target_center is None:
+        target_center = [0,0]
+    n = len(nodes_json_dict)
+    locations = [node['location'] for node in nodes_json_dict.values()]
+    location_sum = [sum(x) for x in zip(*locations)]
+    average_location = [x / float(n) for x in location_sum]
+    for key in nodes_json_dict:
+        node = nodes_json_dict[key]
+        node['location'] = [x - x0 + x1 for x, x0, x1 in zip(node['location'], average_location, target_center)]
 
-def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
+def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None):
 
     nodes = ng.nodes
     ng.use_fake_user = True
@@ -679,6 +689,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
         # create all nodes and groups '''
         update_lists = nodes_json['update_lists']
         nodes_to_import = nodes_json['nodes']
+        if center is not None:
+            center_nodes(nodes_to_import, center)
         groups_to_import = nodes_json.get('groups', {})
 
         add_groups(groups_to_import)  # this return is not used yet

@@ -141,6 +141,9 @@ class SvPreset(object):
                 bl_label = "Add {} preset".format(self.name)
                 bl_options = {'REGISTER', 'UNDO'}
 
+                cursor_x = bpy.props.IntProperty()
+                cursor_y = bpy.props.IntProperty()
+
                 @classmethod
                 def poll(cls, context):
                     try:
@@ -159,9 +162,14 @@ class SvPreset(object):
                     # Deselect everything, so as a result only imported nodes
                     # will be selected
                     bpy.ops.node.select_all(action='DESELECT')
-                    import_tree(ng, self.path)
+                    import_tree(ng, self.path, center = [0,0])
                     bpy.ops.transform.translate('INVOKE_DEFAULT')
                     return {'FINISHED'}
+
+                def invoke(self, context, event):
+                    self.cursor_x = event.mouse_region_x
+                    self.cursor_y = event.mouse_region_y
+                    return self.execute(context)
 
             SverchPresetAddOperator.__name__ = self.name
             SverchPresetAddOperator.__doc__ = self.meta.get("description", self.name)
