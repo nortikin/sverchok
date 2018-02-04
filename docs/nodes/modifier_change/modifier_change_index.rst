@@ -9,7 +9,7 @@ Modifier Change
    subdivide
    smooth
    delete_loose
-   edges_intersect
+   edges_intersect_mk2
    extrude_edges
    extrude_edges_old
    extrude_separate
@@ -19,6 +19,8 @@ Modifier Change
    mesh_join
    mesh_separate
    objects_along_edge
+   bend_along_path
+   bend_along_surface
    offset
    polygons_boom
    polygons_to_edges

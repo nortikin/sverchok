@@ -6,7 +6,6 @@ Scene
    :maxdepth: 2
 
    dupli_instances
-   frame_info
    frame_info_mk2
    getsetprop
    objects_mk3

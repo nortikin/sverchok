@@ -25,6 +25,8 @@ from sverchok.data_structure import (levelsOflist, multi_socket, changable_socke
 
 from sverchok.core import update_system
 
+OLD_OP = "node.sverchok_generic_callback_old"
+
 class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List devided to multiple sockets in some level '''
     bl_idname = 'SvListDecomposeNode'
@@ -55,19 +57,19 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         self.multi_socket_type = other.bl_idname
         multi_socket(self, min=1, start=0, breck=True, out_count=self.count)
 
-    level = IntProperty(name='level',
-                        default=1, min=1, update=updateNode)
+    level = IntProperty(
+        name='level', default=1, min=1, update=updateNode)
 
-    count = IntProperty(name='Count',
-                    default=1, min=1, max=16, update=set_count)
+    count = IntProperty(
+        name='Count', default=1, min=1, max=16, update=set_count)
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.prop(self, 'level')
         row = col.row()
         row.prop(self, 'count')
-        op = row.operator("node.sverchok_text_callback",text="Auto set")
-        op.fn_name="auto_count"
+        op = row.operator(OLD_OP, text="Auto set")
+        op.fn_name = "auto_count"
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "data")
@@ -111,5 +113,5 @@ def unregister():
     bpy.utils.unregister_class(SvListDecomposeNode)
 
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#    register()

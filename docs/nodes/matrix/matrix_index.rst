@@ -10,6 +10,8 @@ Matrix
    euler
    input
    interpolation
-   matrix_in
+   matrix_in_mk2
    matrix_out
+   matrix_math
+   matrix_track_to
    shear

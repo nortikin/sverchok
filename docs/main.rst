@@ -14,9 +14,11 @@ Contents:
    installation
    geometry
    induction
-   nodes
-   contribute
    panels
+   nodes
+   contributing
+   contribute_small_things
+   testing
 
 
 Indices and tables

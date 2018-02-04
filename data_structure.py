@@ -20,6 +20,7 @@ from math import radians
 import itertools
 import time
 import ast
+import copy
 import bpy
 from mathutils import Vector, Matrix
 import numpy as np
@@ -156,6 +157,13 @@ def fullList(l, count):
         l.extend([l[-1] for a in range(d)])
     return
 
+def fullList_deep_copy(l, count):
+    """the same that full list function but 
+    it have correct work with objects such as lists."""
+    d = count - len(l) 
+    if d > 0: 
+        l.extend([copy.deepcopy(l[-1]) for _ in range(d)]) 
+    return
 
 def sv_zip(*iterables):
     """zip('ABCD', 'xy') --> Ax By

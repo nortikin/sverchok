@@ -28,6 +28,8 @@ class VectorMoveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Move'
     bl_icon = 'MAN_TRANS'
 
+    replacement_nodes = [('SvMoveNodeMK2', None, None)]
+
     mult_ = FloatProperty(name='multiplier',
                           default=1.0,
                           options={'ANIMATABLE'}, update=updateNode)

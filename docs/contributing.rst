@@ -5,28 +5,33 @@ Contribute
 Our workflow:
 =============
 
-1. Freedom to code, only try to follow pep8, and avoid abuse.
+1. You have the freedom to code how you like, but follow pep8 and use the style of existing nodes. Pep8 using PyLint if your editor has it, search our codebase for "pylint ignore", because there are rules we routinely and consciously ignore. But.. the vast majority of pep8 is solid gold, and part of the path for us to accept your code.
 
 2. Agile software development - look http://en.wikipedia.org/wiki/Agile_software_development here.
 
-3. Ideas from other addons to implement to sverchok. It is big deal.
+3. Implementing ideas from other add-ons is fine, if you have the appropriate licenses (GPL), written consent or rights. We don't accept unattributed code you didn't write.
 
-4. If you making something it is better to say in issues before.
+4. Before you spend a lot of time making something, we recommend you tell us about it beforehand in the Issue Tracker. Sometimes the thing you want to make already exists, or we have plans for it already with placeholder code.
 
-5. Brainstorming and finding solutions. We are mostly new in python and programming, we are artists.
+5. Brainstorm and discuss solutions. We use the issue tracker a lot and will give our honest opinion and interpretations of new code. We are artists and technical people trying to solve complicated and interesting issues using code and Blender. We care about optimal code but also accept working and novel solutions.
+
+6. Test your code, Test your proposed changes. Write automated tests for your code whenever it makes sense. Please refer to `this document <testing.html>`_ for details.
+
 
 What not to do:
 ===============
 
-Doing these things will break old layouts and or create very ugly code in the node.
+Doing these things will break old layouts or have other unintended consequences.
 
-1. Change .bl_idname of a node
+1. Change ``bl_idname`` of a node
 
 2. Remove or rename sockets
 
-3. Adding new socket without updating upgrade.py
+3. Adding new socket inbetween existing sockets without updating upgrade.py. We prefer that you add sockets behind the last existing socket for either ``self.inputs`` or ``self.outputs``.
 
-4. 'current_mode' names of properties are reserved for nodes, not use for anything else
+4. the node property ``current_mode`` should be considered a reserved keyword, don't use it.
+
+5. There are other reserved property names see the bpy.types.Node baseclass in Blender docs and Sverchok's custom node mixin class.
 
 
 Helpful hints
@@ -45,20 +50,18 @@ To create a node:
 
 1. Make a scripted node to test the idea.
 
-2. Show your node to us in an issue or silently create branch or fork of master in github. If it
-   is huge complex job we can make you collaborator. 
+2. Show your node to us in an issue or create branch or fork of master in github. If it
+   is a huge complex job we can make you collaborator. 
 
-3. Copy an existing node that is similar.
+3. Copy an existing node that is similar, as a basis to start from.
 
-4. Change class name, class id, class description, class registration in your file
+4. Change class name, class bl_idname, docstring, and class registration section in your file (at the bottom)
 
-5. Add node id in menu.py in an approritate category.
+5. Add node's ``bl_idname`` to menu.py in an appropriate category.
 
-6. Add file to category that you need
+6. Add file to matching category: ``..sverchok/nodes/whatever_existing_category/your_file.py``
 
-7. Add in ``nodes/__init__.py`` filename
-
-8. Tell us to merge branches/forks
+7. Make a pull request.
 
 
 SOME RULES:
@@ -66,8 +69,7 @@ SOME RULES:
 
 1. All classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors.
 
-2. node_tree.py contains base classes of node tree and,
-   maybe you need to create collection property or new socket (for
+2. node_tree.py contains base classes of node tree and, maybe you need to create collection property or new socket (for
    new type of socket tell us first), you make it here.
 
 3. data_structure.py has magic of:

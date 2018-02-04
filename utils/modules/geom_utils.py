@@ -28,6 +28,9 @@ def interp_v3_v3v3(a, b, t=0.5):
 def length(v):
     return math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
 
+def length_v2(v):
+    return math.sqrt((v[0] * v[0]) + (v[1] * v[1]))
+
 def normalize(v):
     l = math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
     return [v[0]/l, v[1]/l, v[2]/l]
@@ -48,7 +51,7 @@ def isect_line_plane(l1, l2, plane_co, plane_no):
 
     if abs(dot) > 1.0e-5:
         f = -(plane_no[0]*h[0] + plane_no[1]*h[1] + plane_no[2]*h[2]) / dot
-        return l1[0]+u[0]*f, l1[1]+u[1]*f, l1[2]+u[2]*f        
+        return l1[0]+u[0]*f, l1[1]+u[1]*f, l1[2]+u[2]*f
     else:
         # parallel to plane
         return False
@@ -68,9 +71,28 @@ def mean(verts):
         vx += v[0]
         vy += v[1]
         vz += v[2]
-    numverts = len(verts) 
+    numverts = len(verts)
     return vx/numverts, vy/numverts, vz/numverts
 
 
 def is_reasonably_opposite(n, normal_one):
     return dot_v3v3(normalized(n), normalized(normal_one)) < 0.0
+
+
+def pt_in_triangle(p_test, p0, p1, p2):
+    # Function taken from Ramiro R.C https://stackoverflow.com/a/46409704
+    dX = p_test[0] - p0[0]
+    dY = p_test[1] - p0[1]
+    dX20 = p2[0] - p0[0]
+    dY20 = p2[1] - p0[1]
+    dX10 = p1[0] - p0[0]
+    dY10 = p1[1] - p0[1]
+
+    s_p = (dY20*dX) - (dX20*dY)
+    t_p = (dX10*dY) - (dY10*dX)
+    D = (dX10*dY20) - (dY10*dX20)
+
+    if D > 0:
+        return (  (s_p >= 0) and (t_p >= 0) and (s_p + t_p) <= D  )
+    else:
+        return (  (s_p <= 0) and (t_p <= 0) and (s_p + t_p) >= D  )

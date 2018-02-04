@@ -44,6 +44,11 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         name="Scale", description="Extruded faces scale",
         default=1.0, min=0.0, update=updateNode)
 
+    replacement_nodes = [
+            ('SvInsetSpecial',
+                dict(Vertices='vertices', Polygons='polygons'),
+                dict(Vertices='vertices', Polygons='polygons'))]
+
     def sv_init(self, context):
         inew = self.inputs.new
         onew = self.outputs.new

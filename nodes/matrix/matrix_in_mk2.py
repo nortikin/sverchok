@@ -53,6 +53,12 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         s = self.inputs.new('StringsSocket', "Angle")
         s.prop_name = 'a_'
         self.outputs.new('MatrixSocket', "Matrix")
+    
+    def migrate_from(self, old_node):
+        if old_node.bl_idname == 'MatrixGenNode':
+            self.l_ = old_node.inputs['Location'].prop
+            self.s_ = old_node.inputs['Scale'].prop
+            self.r_ = old_node.inputs['Rotation'].prop
 
     def process(self):
         L,S,R,A = self.inputs

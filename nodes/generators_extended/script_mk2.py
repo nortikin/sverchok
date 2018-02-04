@@ -39,6 +39,7 @@ from sverchok.utils import script_importhelper
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode , node_id
 
+OLD_OP = "node.sverchok_generic_callback_old"
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
 
@@ -290,7 +291,7 @@ class SvScriptNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             script = self.script
             row = col.row()
             row.operator("node.sverchok_load_script2", text='Reload').fn_name = 'load'
-            row.operator("node.sverchok_text_callback", text='Clear').fn_name = 'clear'
+            row.operator(OLD_OP, text='Clear').fn_name = 'clear'
             if hasattr(script, "draw_buttons"):
                 script.draw_buttons(context, layout)
     

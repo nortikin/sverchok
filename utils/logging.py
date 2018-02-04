@@ -128,12 +128,21 @@ def try_initialize():
 
         if internal_buffer_initialized and file_initialized and not initialized:
             setLevel(prefs.log_level)
+            if not prefs.log_to_console:
+                # Remove console output handler.
+                # The trick is we have to remove it *after* other handlers
+                # have been initialized, otherwise it will be re-enabled automatically.
+                global consoleHandler
+                if consoleHandler is not None:
+                    logging.debug("Log output to console is disabled. Further messages will be available only in text buffer and file (if configured).")
+                    logging.getLogger().removeHandler(consoleHandler)
 
             logging.info("Initializing Sverchok logging. Blender version %s, Sverchok version %s", bpy.app.version_string, get_version_string())
-            logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s",
+            logging.debug("Current log level: %s, log to text buffer: %s, log to file: %s, log to console: %s",
                     prefs.log_level,
                     ("no" if not prefs.log_to_buffer else prefs.log_buffer_name),
-                    ("no" if not prefs.log_to_file else prefs.log_file_name) )
+                    ("no" if not prefs.log_to_file else prefs.log_file_name),
+                    ("yes" if prefs.log_to_console else "no"))
             initialized = True
 
 # Convinience functions
@@ -186,10 +195,17 @@ def setLevel(level):
     for handler in logging.getLogger().handlers:
         handler.setLevel(level)
 
+consoleHandler = None
+
 def register():
+    global consoleHandler
+
     with sv_preferences() as prefs:
         level = getattr(logging, prefs.log_level)
         logging.basicConfig(level=level, format=log_format)
+        # Remember the first handler. We may need it in future
+        # to remove from list.
+        consoleHandler = logging.getLogger().handlers[0]
     logging.captureWarnings(True)
     info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
 

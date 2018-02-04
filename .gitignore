@@ -1,6 +1,9 @@
 #Blender's cache folder
 __pycache__
 
+#Blender's backup files
+*.blend1
+*.blend.gz1
 
 *.py[cod]
 
@@ -30,6 +33,7 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
+tests/sverchok_tests.log
 
 # Translations
 *.mo
@@ -62,5 +66,8 @@ nodes/generator/meta_balls.py
 # IDE
 .idea
 .DS_Store
+
+# vim swap files
+*.swp
 
 local_test.py
