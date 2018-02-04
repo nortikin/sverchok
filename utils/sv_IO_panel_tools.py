@@ -638,6 +638,13 @@ def place_frames(ng, nodes_json, name_remap):
         ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
 
 def center_nodes(nodes_json_dict, target_center=None):
+    """
+    Adjust location attributes of nodes, so that average
+    location will be equal to target_center.
+
+    nodes_json_dict: json dictionary of nodes
+    target_center: 2-tuple (or 2-list) of floats, defaults to (0,0).
+    """
     if target_center is None:
         target_center = [0,0]
     n = len(nodes_json_dict)
