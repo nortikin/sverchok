@@ -57,100 +57,86 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['OldFaces'].hide_safe = not self.show_old
         updateNode(self, context)
 
-    falloff_type= EnumProperty(name = "Falloff",
-            items= falloff_types,
-            default= "4",
+    falloff_type = EnumProperty(name="Falloff",
+            items=falloff_types,
+            default="4",
             update=updateNode)
-    corner_type= EnumProperty(name= "Corner Cut Type",
-            items= corner_types,
-            default= "0",
+    corner_type = EnumProperty(name="Corner Cut Type",
+            items=corner_types,
+            default="0",
             update=updateNode)
-    cuts= IntProperty(name= "Number of Cuts",
-            description= "Specifies the number of cuts per edge to make",
+    cuts = IntProperty(name="Number of Cuts",
+            description="Specifies the number of cuts per edge to make",
             min=1, default=1,
             update=updateNode)
-    smooth= FloatProperty(name= "Smooth",
-            description= "Displaces subdivisions to maintain approximate curvature",
+    smooth = FloatProperty(name="Smooth",
+            description="Displaces subdivisions to maintain approximate curvature",
             min=0.0, max=1.0, default=0.0,
             update=updateNode)
-    fractal= FloatProperty(name= "Fractal",
-            description= "Displaces the vertices in random directions after the mesh is subdivided",
+    fractal = FloatProperty(name="Fractal",
+            description="Displaces the vertices in random directions after the mesh is subdivided",
             min=0.0, max=1.0, default=0.0,
             update=updateNode)
-    along_normal= FloatProperty(name= "Along normal",
-            description= "Causes the vertices to move along the their normals, instead of random directions",
+    along_normal = FloatProperty(name="Along normal",
+            description="Causes the vertices to move along the their normals, instead of random directions",
             min=0.0, max=1.0, default=0.0,
             update=updateNode)
-    seed= IntProperty(name= "Seed",
-            description= "Random seed",
-            default= 0,
+    seed = IntProperty(name="Seed",
+            description="Random seed",
+            default=0,
             update=updateNode)
-    grid_fill= BoolProperty(name= "Grid fill",
-            description= "fill in fully-selected faces with a grid",
-            default= True,
+    grid_fill = BoolProperty(name="Grid fill",
+            description="fill in fully-selected faces with a grid",
+            default=True,
             update=updateNode)
-    single_edge= BoolProperty(name= "Single edge",
-            description= "tessellate the case of one edge selected in a quad or triangle",
-            default= False,
+    single_edge = BoolProperty(name="Single edge",
+            description="tessellate the case of one edge selected in a quad or triangle",
+            default=False,
             update=updateNode)
-    only_quads= BoolProperty(name= "Only Quads",
-            description= "only subdivide quads (for loopcut)",
-            default= False,
+    only_quads = BoolProperty(name="Only Quads",
+            description="only subdivide quads (for loopcut)",
+            default=False,
             update=updateNode)
-    smooth_even = BoolProperty(name= "Even smooth",
-            description= "maintain even offset when smoothing",
-            default= False,
+    smooth_even = BoolProperty(name="Even smooth",
+            description="maintain even offset when smoothing",
+            default=False,
             update=updateNode)
-    show_new = BoolProperty(name= "Show New",
-            description= "Show outputs with new geometry",
-            default= False,
+    show_new = BoolProperty(name="Show New",
+            description="Show outputs with new geometry",
+            default=False,
             update=update_mode)
-    show_old = BoolProperty(name= "Show Old",
-            description= "Show outputs with old geometry",
-            default= False,
+    show_old = BoolProperty(name="Show Old",
+            description="Show outputs with old geometry",
+            default=False,
             update=update_mode)
-    show_options = BoolProperty(name = "Show Options",
-            description= "Show options on the node",
-            default= False,
+    show_options = BoolProperty(name="Show Options",
+            description="Show options on the node",
+            default=False,
             update=updateNode)
-    sel_mode = BoolProperty(name = "select",
-            description= "Select edges by index when True. Select by mask when False",
-            default= False,
+    sel_mode = BoolProperty(name="select",
+            description="Select edges by index when True. Select by mask when False",
+            default=False,
             update=updateNode)
-
-    def draw_common(self, context, layout):
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, "show_old", toggle=True)
-        row.prop(self, "show_new", toggle=True)
-        col.prop(self, "show_options", toggle=True)
-        col.prop(self, "sel_mode", toggle=True)
-
-    def draw_options(self, context, layout):
-        col = layout.column(align=True)
-        col.prop(self, "falloff_type")
-        col.prop(self, "corner_type")
-        row = layout.row(align=True)
-        col = row.column(align=True)
-        col.prop(self, "grid_fill", toggle=True)
-        col.prop(self, "single_edge", toggle=True)
-        col = row.column(align=True)
-        col.prop(self, "only_quads", toggle=True)
-        col.prop(self, "smooth_even", toggle=True)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "cuts", text="cuts")
-        layout.prop(self, "smooth", text="smooth")
-        layout.prop(self, "fractal", text="fractal")
-        layout.prop(self, "along_normal", text="along_normal")
-        layout.prop(self, "seed", text="seed")
-        self.draw_common(context, layout)
+        layout.prop(self, "show_options", toggle=True)
         if self.show_options:
-            self.draw_options(context, layout)
-
-    def draw_buttons_ext(self, context, layout):
-        self.draw_common(context, layout)
-        self.draw_options(context, layout)
+            col = layout.column(align=True)
+            row = col.row(align=True)
+            col.prop(self, "cuts", text="cuts")
+            col.prop(self, "smooth", text="smooth")
+            col.prop(self, "fractal", text="fractal")
+            col.prop(self, "along_normal", text="along_normal")
+            col.prop(self, "seed", text="seed")
+            row.prop(self, "show_old", toggle=True)
+            row.prop(self, "show_new", toggle=True)
+            col.prop(self, "sel_mode", toggle=True)
+            col.prop(self, "falloff_type")
+            col.prop(self, "corner_type")
+            col.prop(self, "grid_fill", toggle=True)
+            col.prop(self, "single_edge", toggle=True)
+            col.prop(self, "only_quads", toggle=True)
+            col.prop(self, "smooth_even", toggle=True)
 
     def sv_init(self, context):
         sin, son = self.inputs.new, self.outputs.new
@@ -183,15 +169,7 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         vertices_s = InVert.sv_get()
         edges_s = InEdge.sv_get(default=[[]])
         faces_s = InFace.sv_get(default=[[]])
-        result_vertices = []
-        result_edges = []
-        result_faces = []
-        r_inner_vertices = []
-        r_inner_edges = []
-        r_inner_faces = []
-        r_split_vertices = []
-        r_split_edges = []
-        r_split_faces = []
+        rev, ree, ref, riv, rie, rif, rsv, rse, rsf = [],[],[],[],[],[],[],[],[]
         bmlist= [bmesh_from_pydata(v, e, f, normal_update=True) for v,e,f in zip(vertices_s,edges_s,faces_s)]
         if InEdInd.is_linked:
             if self.sel_mode:
@@ -212,29 +190,29 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
                     use_only_quads= self.only_quads,
                     use_smooth_even= self.smooth_even)
             new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
-            result_vertices.append(new_verts)
-            result_edges.append(new_edges)
-            result_faces.append(new_faces)
+            rev.append(new_verts)
+            ree.append(new_edges)
+            ref.append(new_faces)
             if self.show_new:
                 inner_verts, inner_edges, inner_faces = self.get_result_pydata(geom['geom_inner'])
-                r_inner_vertices.append(inner_verts)
-                r_inner_edges.append(inner_edges)
-                r_inner_faces.append(inner_faces)
+                riv.append(inner_verts)
+                rie.append(inner_edges)
+                rif.append(inner_faces)
             if self.show_old:
                 split_verts, split_edges, split_faces = self.get_result_pydata(geom['geom_split'])
-                r_split_vertices.append(split_verts)
-                r_split_edges.append(split_edges)
-                r_split_faces.append(split_faces)
+                rsv.append(split_verts)
+                rse.append(split_edges)
+                rsf.append(split_faces)
             bm.free()
-        OutVert.sv_set(result_vertices)
-        OutEdg.sv_set(result_edges)
-        OutFace.sv_set(result_faces)
-        ONVert.sv_set(r_inner_vertices)
-        ONEdg.sv_set(r_inner_edges)
-        ONFace.sv_set(r_inner_faces)
-        OOVert.sv_set(r_split_vertices)
-        OOEdg.sv_set(r_split_edges)
-        OOFace.sv_set(r_split_faces)
+        OutVert.sv_set(rev)
+        OutEdg.sv_set(ree)
+        OutFace.sv_set(ref)
+        ONVert.sv_set(riv)
+        ONEdg.sv_set(rie)
+        ONFace.sv_set(rif)
+        OOVert.sv_set(rsv)
+        OOEdg.sv_set(rse)
+        OOFace.sv_set(rsf)
 
 
 def register():
