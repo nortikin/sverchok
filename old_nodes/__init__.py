@@ -108,6 +108,7 @@ def register_old(bl_id):
     if bl_id in old_bl_idnames:
         mod = importlib.import_module(".{}".format(old_bl_idnames[bl_id]), __name__)
         res = inspect.getmembers(mod)
+        # print('mod/res:', mod, res)
         for name, cls in res:
             if inspect.isclass(cls):
                 if issubclass(cls, bpy.types.Node) and cls.bl_idname == bl_id:
@@ -115,10 +116,13 @@ def register_old(bl_id):
                         try:
                             mod.register()
                         except:
+                            print('failed mod register')
                             traceback.print_exc()
                         imported_mods[bl_id] = mod
                         return mod
-                    
+                    else:
+                        return imported_mods[bl_id]
+
     print("Cannot find {} among old nodes".format(bl_id))
     return None
 
