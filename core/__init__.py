@@ -68,7 +68,7 @@ def handle_reload_event(nodes, imported_modules, old_nodes):
 
     try:
         from sverchok.old_nodes import old_bl_idnames
-        debug('debug info --- old_bl_idnames:', len(old_bl_idnames))
+        debug('Known old_bl_idnames after reload: %s', len(old_bl_idnames))
     except Exception as err:
         exception(err)
 
