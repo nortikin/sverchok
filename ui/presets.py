@@ -126,6 +126,24 @@ class SvPreset(object):
 
         info("Saved preset `%s'", self.name)
 
+    @staticmethod
+    def get_target_location(node_tree):
+        """
+        Calculate average location of selected nodes in the tree,
+        or all nodes if there are no nodes selected.
+        """
+        selection = [node for node in node_tree.nodes if node.select]
+        if not len(selection):
+            debug("No selection, using all nodes")
+            selection = node_tree.nodes[:]
+        n = len(selection)
+        if not n:
+            return [0,0]
+        locations = [node.location for node in selection]
+        location_sum = [sum(x) for x in zip(*locations)]
+        average_location = [x / float(n) for x in location_sum]
+        return average_location
+
     def make_add_operator(self):
         """
         Create operator class which adds specific preset nodes to current node tree.
@@ -140,6 +158,9 @@ class SvPreset(object):
                 bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name)
                 bl_label = "Add {} preset".format(self.name)
                 bl_options = {'REGISTER', 'UNDO'}
+
+                cursor_x = bpy.props.IntProperty()
+                cursor_y = bpy.props.IntProperty()
 
                 @classmethod
                 def poll(cls, context):
@@ -156,11 +177,18 @@ class SvPreset(object):
                     id_tree = ntree.name
                     ng = bpy.data.node_groups[id_tree]
 
+                    center = SvPreset.get_target_location(ng)
                     # Deselect everything, so as a result only imported nodes
                     # will be selected
                     bpy.ops.node.select_all(action='DESELECT')
-                    import_tree(ng, self.path)
+                    import_tree(ng, self.path, center = center)
+                    bpy.ops.transform.translate('INVOKE_DEFAULT')
                     return {'FINISHED'}
+
+                def invoke(self, context, event):
+                    self.cursor_x = event.mouse_region_x
+                    self.cursor_y = event.mouse_region_y
+                    return self.execute(context)
 
             SverchPresetAddOperator.__name__ = self.name
             SverchPresetAddOperator.__doc__ = self.meta.get("description", self.name)
