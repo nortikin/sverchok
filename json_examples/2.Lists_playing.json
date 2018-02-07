@@ -1,15 +1,10 @@
 {
-  "export_version": "0.064",
+  "export_version": "0.072",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
     "Float Series": {
       "bl_idname": "SvGenFloatRange",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -22,11 +17,6 @@
     },
     "Float Series.001": {
       "bl_idname": "SvGenFloatRange",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -42,11 +32,6 @@
     },
     "Formula2.001": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -61,11 +46,6 @@
     },
     "Integer": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -78,11 +58,6 @@
     },
     "Integer.001": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -97,11 +72,6 @@
     },
     "Integer.002": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -116,11 +86,6 @@
     },
     "Integer.003": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -135,11 +100,6 @@
     },
     "List First Last": {
       "bl_idname": "ListFLNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -152,11 +112,6 @@
     },
     "List Flip Node": {
       "bl_idname": "ListFlipNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -169,11 +124,6 @@
     },
     "List Join": {
       "bl_idname": "ListJoinNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -186,11 +136,6 @@
     },
     "List Length": {
       "bl_idname": "ListLengthNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -205,11 +150,6 @@
     },
     "List Match": {
       "bl_idname": "ListMatchNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -222,11 +162,6 @@
     },
     "List Reverse": {
       "bl_idname": "ListReverseNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -239,11 +174,6 @@
     },
     "List Shift": {
       "bl_idname": "ShiftNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -256,11 +186,6 @@
     },
     "List Shuffle": {
       "bl_idname": "ListShuffleNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -273,11 +198,6 @@
     },
     "List Slice": {
       "bl_idname": "ListSliceNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -290,11 +210,6 @@
     },
     "List Sort": {
       "bl_idname": "ListSortNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -309,11 +224,6 @@
     },
     "List Zip": {
       "bl_idname": "ZipNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -326,11 +236,6 @@
     },
     "List function ": {
       "bl_idname": "ListFuncNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -343,11 +248,6 @@
     },
     "List item": {
       "bl_idname": "ListItem2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -360,11 +260,6 @@
     },
     "List summa": {
       "bl_idname": "ListSumNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -377,11 +272,6 @@
     },
     "MaskList": {
       "bl_idname": "MaskListNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -396,11 +286,6 @@
     },
     "Reroute": {
       "bl_idname": "NodeReroute",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -411,8 +296,8 @@
       "params": {},
       "width": 16.0
     },
-    "Viewer text mk2": {
-      "bl_idname": "ViewerNodeTextMK2",
+    "Viewer text mk3": {
+      "bl_idname": "ViewerNodeTextMK3",
       "color": [
         0.5,
         0.5,
@@ -422,12 +307,14 @@
       "hide": false,
       "label": "",
       "location": [
-        87.84307861328125,
-        -572.5147705078125
+        103.44938659667969,
+        -549.9486694335938
       ],
       "params": {
-        "autoupdate": 0
+        "autoupdate": 0,
+        "frame": 0
       },
+      "use_custom_color": true,
       "width": 140.0
     }
   },
@@ -441,25 +328,43 @@
     [
       "Reroute",
       "Output",
-      "List Reverse",
+      "List Shift",
+      "data"
+    ],
+    [
+      "Integer",
+      0,
+      "List Shift",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Zip",
       "data"
     ],
     [
       "Reroute",
       "Output",
-      "List item",
+      "List Zip",
+      "data 1"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List function ",
       "Data"
     ],
     [
-      "Integer.003",
-      "Integer",
-      "List item",
-      "Item"
+      "Reroute",
+      "Output",
+      "List Length",
+      "Data"
     ],
     [
+      "Reroute",
+      "Output",
       "List Reverse",
-      "data",
-      "List Sort",
       "data"
     ],
     [
@@ -471,8 +376,68 @@
     [
       "Reroute",
       "Output",
-      "List Length",
+      "List item",
       "Data"
+    ],
+    [
+      "Integer.003",
+      0,
+      "List item",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Match",
+      "Data 0"
+    ],
+    [
+      "Float Series.001",
+      0,
+      "List Match",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Join",
+      "data"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Join",
+      "data 1"
+    ],
+    [
+      "List Reverse",
+      0,
+      "List Sort",
+      0
+    ],
+    [
+      "List Reverse",
+      0,
+      "Viewer text mk3",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "MaskList",
+      "data"
+    ],
+    [
+      "Formula2.001",
+      0,
+      "MaskList",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Shuffle",
+      "data"
     ],
     [
       "Reroute",
@@ -488,98 +453,20 @@
     ],
     [
       "Integer.001",
-      "Integer",
+      0,
       "List Slice",
-      "Start"
+      1
     ],
     [
       "Integer.002",
-      "Integer",
+      0,
       "List Slice",
-      "Stop"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "MaskList",
-      "data"
-    ],
-    [
-      "Formula2.001",
-      "Result",
-      "MaskList",
-      "mask"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Shuffle",
-      "data"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Match",
-      "Data 0"
-    ],
-    [
-      "Float Series.001",
-      "Range",
-      "List Match",
-      "Data 1"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Zip",
-      "data"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Zip",
-      "data 1"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Join",
-      "data"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Join",
-      "data 1"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Shift",
-      "data"
-    ],
-    [
-      "Integer",
-      "Integer",
-      "List Shift",
-      "shift"
+      2
     ],
     [
       "Reroute",
       "Output",
       "List summa",
-      "Data"
-    ],
-    [
-      "List Reverse",
-      "data",
-      "Viewer text mk2",
-      "edg_pol"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List function ",
       "Data"
     ]
   ]
