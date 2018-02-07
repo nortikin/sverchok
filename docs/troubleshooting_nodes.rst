@@ -2,6 +2,9 @@ Troubleshooting Nodes
 =====================
 
  Because Sverchok is *visual programming* we'll use the same terminology as regular programming to talk about errors/bugs, Sverchok is really a Python library with a node interface.
+ 
+For users
+---------
 
 **Errors / Error state**
 
