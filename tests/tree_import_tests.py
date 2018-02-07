@@ -5,6 +5,7 @@ from os.path import join, dirname, basename
 from glob import glob
 
 import sverchok
+from sverchok.old_nodes import is_old
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import import_tree
 
@@ -63,5 +64,8 @@ class ExamplesImportTest(SverchokTestCase):
                 with self.temporary_node_tree("ImportedTree") as new_tree:
                     with self.assert_logs_no_errors():
                         import_tree(new_tree, path)
+                    for node in new_tree.nodes:
+                        if is_old(node):
+                            self.fail("This example contains deprecated node `{}' ({}). Please upgrade the example file.".format(node.name, node.bl_idname))
 
 
