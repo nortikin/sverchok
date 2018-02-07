@@ -11,6 +11,7 @@ from contextlib import contextmanager
 import ast
 
 import sverchok
+from sverchok.old_nodes import is_old
 from sverchok.data_structure import get_data_nesting_level
 from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
 from sverchok.utils.logging import debug, info, exception
@@ -675,6 +676,27 @@ class SvDumpNodeDef(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SvListOldNodes(bpy.types.Operator):
+    """
+    Print names and bl_idnames of all
+    deprecated nodes (old_nodes) in the current
+    node tree.
+    """
+
+    bl_idname = "node.sv_testing_list_old_nodes"
+    bl_label = "List old nodes"
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        ntree = context.space_data.node_tree
+
+        for node in ntree.nodes:
+            if is_old(node):
+                info("Deprecated node: `%s' (%s)", node.name, node.bl_idname)
+
+        self.report({'INFO'}, "See logs")
+        return {'FINISHED'}
+
 class SvTestingPanel(bpy.types.Panel):
     bl_idname = "SvTestingPanel"
     bl_label = "SV Testing"
@@ -696,9 +718,10 @@ class SvTestingPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.operator("node.sv_testing_run_all_tests")
+        layout.operator("node.sv_testing_list_old_nodes")
         layout.operator("node.sv_testing_dump_node_def")
 
-classes = [SvRunTests, SvDumpNodeDef, SvTestingPanel]
+classes = [SvRunTests, SvDumpNodeDef, SvListOldNodes, SvTestingPanel]
 
 def register():
     for clazz in classes:
