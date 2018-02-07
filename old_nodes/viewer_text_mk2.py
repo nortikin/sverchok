@@ -205,6 +205,10 @@ class ViewerNodeTextMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer text mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    replacement_nodes = [
+            ("ViewerNodeTextMK3", None, None)
+        ]
+
     autoupdate = BoolProperty(name='update', default=False)
 
     def sv_init(self, context):
