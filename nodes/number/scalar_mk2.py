@@ -74,7 +74,7 @@ func_dict = {
     "FMOD":        (82,  fmod,                            ('ss s'), "Fmod"),
     "MODULO":      (83,  lambda x, y: (x % y),            ('ss s'), "modulo"),
     "MEAN":        (84,  lambda x, y: 0.5*(x + y),        ('ss s'), "mean"),
-    "GCD":         (85,  lambda x, y: gcd(x,y),           ('ss s'), "gcd"),
+    "GCD":         (85,  gcd,                             ('ss s'), "gcd"),
     "-------------CONST" : "#---------------------------------------------------#",
     "PI":          (90,  lambda x: pi * x,                 ('s s'), "pi * x"),
     "TAU":         (100, lambda x: pi * 2 * x,             ('s s'), "tau * x"),
