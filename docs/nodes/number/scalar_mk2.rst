@@ -4,8 +4,8 @@ Math_mk2
 Functionality
 -------------
 
-This node can transform incoming values by a sselected function (trigonometric,
-or other mathematical function, and also provide some useful math costant )
+This node can transform incoming values by a selected function (trigonometric,
+or other mathematical function, and also provide some useful math costant)
 
 Inputs & Parameters
 -------------------
@@ -31,7 +31,7 @@ Inputs & Parameters
 |               | +, -, * , /, //,       |
 |               | x-1, x+1, x * 2,       |
 |               | x/2, x ** 2, **,       |
-|               | min, max.              |
+|               | min, max, mean, gcd    |
 +---------------+------------------------+
 | constants     | pi, e, phi, tau.       |
 +---------------+------------------------+
