@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from math import *
+from fractions import gcd
 from itertools import zip_longest
 
 import bpy
@@ -72,6 +73,8 @@ func_dict = {
     "ROUND-N":     (81,  lambda x, y: round(x, int(y)),   ('ss s'), "Round N",),
     "FMOD":        (82,  fmod,                            ('ss s'), "Fmod"),
     "MODULO":      (83,  lambda x, y: (x % y),            ('ss s'), "modulo"),
+    "MEAN":        (84,  lambda x, y: 0.5*(x + y),        ('ss s'), "mean"),
+    "GCD":         (85,  gcd,                             ('ss s'), "gcd"),
     "-------------CONST" : "#---------------------------------------------------#",
     "PI":          (90,  lambda x: pi * x,                 ('s s'), "pi * x"),
     "TAU":         (100, lambda x: pi * 2 * x,             ('s s'), "tau * x"),
@@ -126,7 +129,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     yi_ = IntProperty(default=1, name='y', update=updateNode)
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["Float", "Int"])]
-    
+
     input_mode_one = EnumProperty(
         items=mode_options, description="offers int / float selection for socket 1",
         default="Float", update=lambda s, c: property_change(s, c, 'input_mode_one'))
