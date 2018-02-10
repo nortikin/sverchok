@@ -1,5 +1,6 @@
 import importlib
 import sverchok
+from sverchok.utils.logging import debug, exception
 
 reload_event = False
 
@@ -64,6 +65,13 @@ def import_modules(modules, base, im_list):
 def handle_reload_event(nodes, imported_modules, old_nodes):
     node_list = make_node_list(nodes)
     reload_all(imported_modules, node_list, old_nodes)
+
+    try:
+        from sverchok.old_nodes import old_bl_idnames
+        debug('Known old_bl_idnames after reload: %s', len(old_bl_idnames))
+    except Exception as err:
+        exception(err)
+
     return node_list
 
 

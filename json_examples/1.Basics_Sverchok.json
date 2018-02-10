@@ -1,5 +1,5 @@
 {
-  "export_version": "0.064",
+  "export_version": "0.072",
   "framed_nodes": {
     "Centers polygons": "polygons centers",
     "Float": "Frame.001",
@@ -30,41 +30,30 @@
     "Matrix Deform": "Frame.004",
     "Matrix in": "Frame.004",
     "Matrix in.002": "Frame.002",
-    "Objects in mk3": "objects in",
-    "Vectors Move": "Frame.001"
+    "Objects in mk3": "objects in"
   },
   "groups": {},
   "nodes": {
     "Centers polygons": {
       "bl_idname": "CentersPolsNodeMK2",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         -625.2713623046875,
-        -1003.1517944335938
+        -1003.15185546875
       ],
       "params": {},
       "width": 140.0
     },
     "Float": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -821.4600219726562,
-        -751.896728515625
+        -821.4600296020508,
+        -751.8967437744141
       ],
       "params": {
         "float_": 1.0
@@ -73,11 +62,6 @@
     },
     "Float.002": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -92,34 +76,24 @@
     },
     "Float.003": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -833.0219116210938,
-        -1374.3118896484375
+        -833.0219345092773,
+        -1374.3118438720703
       ],
       "params": {},
       "width": 140.0
     },
     "Float.004": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -821.4600219726562,
-        -870.1661376953125
+        -821.4600296020508,
+        -870.1661529541016
       ],
       "params": {
         "float_": 2.0
@@ -128,17 +102,12 @@
     },
     "Float.005": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -835.8328247070312,
-        -1263.099365234375
+        -835.8328475952148,
+        -1263.0993194580078
       ],
       "params": {
         "float_": 10.0
@@ -147,17 +116,12 @@
     },
     "Float.006": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -836.2839965820312,
-        -1498.406494140625
+        -836.2840194702148,
+        -1498.4064483642578
       ],
       "params": {
         "float_": 2.0
@@ -166,11 +130,6 @@
     },
     "Float.007": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -185,11 +144,6 @@
     },
     "Float.008": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -204,11 +158,6 @@
     },
     "Float.009": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -223,11 +172,6 @@
     },
     "Float.010": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -242,17 +186,12 @@
     },
     "Float.012": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -865.4517211914062,
-        -471.41998291015625
+        -865.4517192840576,
+        -471.4199676513672
       ],
       "params": {
         "float_": 1.0
@@ -261,11 +200,6 @@
     },
     "Float2int.001": {
       "bl_idname": "Float2IntNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -278,11 +212,6 @@
     },
     "Formula2": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -295,12 +224,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.2783493399620056,
-        0.12860873341560364
-      ],
-      "height": 328.03778076171875,
+      "height": 328.74725341796875,
       "hide": false,
       "label": "Vector generator",
       "location": [
@@ -308,16 +232,11 @@
         111.21052551269531
       ],
       "params": {},
-      "width": 454.56292724609375
+      "width": 455.0428771972656
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.26603463292121887,
-        0.6079999804496765,
-        0.22690044343471527
-      ],
-      "height": 458.8155517578125,
+      "height": 459.1524658203125,
       "hide": false,
       "label": "Vector gen and move",
       "location": [
@@ -325,16 +244,11 @@
         92.62309265136719
       ],
       "params": {},
-      "width": 722.2969970703125
+      "width": 456.115478515625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.3157099485397339,
-        0.33368611335754395,
-        0.6079999804496765
-      ],
-      "height": 537.9420166015625,
+      "height": 548.5908203125,
       "hide": false,
       "label": "Matrix Generate",
       "location": [
@@ -342,16 +256,11 @@
         84.67289733886719
       ],
       "params": {},
-      "width": 707.6273193359375
+      "width": 960.5755004882812
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.05780215188860893,
-        0.05780215188860893,
-        0.05780215188860893
-      ],
-      "height": 293.43310546875,
+      "height": 293.8212890625,
       "hide": false,
       "label": "Integers and floats",
       "location": [
@@ -359,16 +268,11 @@
         -42.9481201171875
       ],
       "params": {},
-      "width": 674.1514892578125
+      "width": 674.6315307617188
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.17635172605514526,
-        0.055563509464263916,
-        0.19017910957336426
-      ],
-      "height": 751.85888671875,
+      "height": 752.4951171875,
       "hide": false,
       "label": "Matrix deform",
       "location": [
@@ -376,15 +280,10 @@
         48.964111328125
       ],
       "params": {},
-      "width": 769.701904296875
+      "width": 770.181884765625
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 1885.6119384765625,
       "hide": false,
       "label": "",
@@ -413,6 +312,7 @@
         "text": "Here are basics of Sverchok",
         "text_scale": 150
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "GText.001": {
@@ -433,6 +333,7 @@
         "text": "prepared by Niitron",
         "text_scale": 100
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "GText.002": {
@@ -453,15 +354,11 @@
         "text": "Start investigate with viewers\nOnly three types of slots now\n1.Verts\n2.Faces/edges\n3.Matrixes\n\nlook right on panel, --->\nsverchok panel,\nuse layouts buttons there also.\nUse lock/unlock view\nUse check for new sverch versions\nand upgrade if there is one\nAlso use property popup there\nto manage node's hidden properties\n\nlook in 3D sverchok panel ^\n                       |\nUse scan for props to find \nfloats and integers and use\nthis as custom addon.\nCall your floats/ints/object_in\nwith node name for convenience.",
         "text_scale": 72
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Gen Vectors": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -474,96 +371,66 @@
     },
     "Gen Vectors.001": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -613.353759765625,
-        -369.66357421875
+        -613.3537578582764,
+        -369.66355895996094
       ],
       "params": {},
       "width": 140.0
     },
     "Gen Vectors.002": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -585.2348022460938,
-        -1096.3363037109375
+        -585.2348251342773,
+        -1096.3362579345703
       ],
       "params": {},
       "width": 140.0
     },
     "Gen Vectors.003": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Moving Vector",
       "location": [
-        -565.8245239257812,
-        -851.2113647460938
+        -565.8245315551758,
+        -851.2113800048828
       ],
       "params": {},
       "width": 140.0
     },
     "Gen Vectors.004": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Original Vector",
       "location": [
-        -565.8245239257812,
-        -582.615234375
+        -565.8245315551758,
+        -582.6152496337891
       ],
       "params": {},
       "width": 140.0
     },
     "Gen Vectors.005": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -585.2348022460938,
-        -1364.6512451171875
+        -585.2348251342773,
+        -1364.6511993408203
       ],
       "params": {},
       "width": 140.0
     },
     "Gen Vectors.006": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -576,11 +443,6 @@
     },
     "Gen Vectors.007": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -593,11 +455,6 @@
     },
     "Integer": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -612,17 +469,12 @@
     },
     "List Range Int": {
       "bl_idname": "GenListRangeIntNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -865.9566040039062,
-        -1089.7308349609375
+        -865.9566268920898,
+        -1089.7307891845703
       ],
       "params": {
         "step_": 2,
@@ -632,17 +484,12 @@
     },
     "List Range Int.001": {
       "bl_idname": "GenListRangeIntNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -813.9855346679688,
-        -573.8075561523438
+        -813.9855422973633,
+        -573.8075714111328
       ],
       "params": {
         "stop_": 10
@@ -651,28 +498,18 @@
     },
     "List Range Int.002": {
       "bl_idname": "GenListRangeIntNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -867.9166870117188,
-        -273.1727294921875
+        -867.9166851043701,
+        -273.17271423339844
       ],
       "params": {},
       "width": 140.0
     },
     "Matrix Deform": {
       "bl_idname": "MatrixDeformNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -685,11 +522,6 @@
     },
     "Matrix in": {
       "bl_idname": "SvMatrixGenNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -702,17 +534,24 @@
     },
     "Matrix in.002": {
       "bl_idname": "SvMatrixGenNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -358.3293151855469,
-        -1259.421142578125
+        -105.86109924316406,
+        -1079.5691680908203
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -213.4413299560547,
+        -670.0296630859375
       ],
       "params": {},
       "width": 140.0
@@ -734,6 +573,7 @@
       "params": {
         "text": "To check if you doing right - use text viewer, draw viewer, bakery, viewer INDX nodes"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.001": {
@@ -753,6 +593,7 @@
       "params": {
         "text": "To activate viewer draw - check Show flag"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.002": {
@@ -772,6 +613,7 @@
       "params": {
         "text": "Try different flags, play with it"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.003": {
@@ -791,6 +633,7 @@
       "params": {
         "text": "Move your vectors by other vector"
       },
+      "use_custom_color": true,
       "width": 313.38446044921875
     },
     "Note.004": {
@@ -810,6 +653,7 @@
       "params": {
         "text": "Matrix respond of Scale, Rotation, Location. Matrix - is Object, that have no Mesh data. To make many objects use many matrices, generated with many vecors, created with many series or ranges"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.005": {
@@ -829,6 +673,7 @@
       "params": {
         "text": "First - you operate with floats and integers, operate with them to create vectors, lines etc. This is force of sverchok - low level of data, but height level of programming with nodes. You programming something but not have to know python/C#"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.006": {
@@ -849,6 +694,7 @@
         "show_text": 0,
         "text": "Investigate by selecting object in scene, press G E T button and check data by text viewer and draw viewer. Join one color sockets, if you join green to blue - it will not show right"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.007": {
@@ -868,6 +714,7 @@
       "params": {
         "text": "Every socet has own data, orange - is vertices"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.008": {
@@ -887,6 +734,7 @@
       "params": {
         "text": "Green - is edges and other data (any other)"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.009": {
@@ -906,6 +754,7 @@
       "params": {
         "text": "Blue - is Matrix - location, Rotation and scale data (look video manual on site if interested)"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.010": {
@@ -925,6 +774,7 @@
       "params": {
         "text": "Matrices define objects"
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Note.011": {
@@ -944,6 +794,7 @@
       "params": {
         "text": "Not all nodes working well, but we are trying to improve behavior."
       },
+      "use_custom_color": true,
       "width": 320.0
     },
     "Objects in mk3": {
@@ -958,16 +809,17 @@
       "label": "",
       "location": [
         -414.3315124511719,
-        -579.17626953125
+        -579.1762084960938
       ],
       "object_names": [
         "Cube"
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Text Input": {
-      "bl_idname": "SvTextInNode",
+    "Text in+": {
+      "bl_idname": "SvTextInNodeMK2",
       "color": [
         0.5,
         0.5,
@@ -978,11 +830,10 @@
       "hide": false,
       "label": "",
       "location": [
-        -1104.5804443359375,
-        270.3350830078125
+        -1117.0098876953125,
+        241.87811279296875
       ],
       "params": {
-        "current_text": "Cube",
         "text": "Cube",
         "textmode": "JSON"
       },
@@ -1081,23 +932,7 @@
         }
       },
       "textmode": "JSON",
-      "width": 140.0
-    },
-    "Vectors Move": {
-      "bl_idname": "VectorMoveNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -299.1630554199219,
-        -715.874267578125
-      ],
-      "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2": {
@@ -1117,6 +952,7 @@
       "params": {
         "activate": 0
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2.001": {
@@ -1136,6 +972,7 @@
       "params": {
         "activate": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2.002": {
@@ -1155,6 +992,7 @@
       "params": {
         "activate": 0
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2.003": {
@@ -1174,6 +1012,7 @@
       "params": {
         "activate": 0
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2.004": {
@@ -1193,10 +1032,11 @@
       "params": {
         "activate": 0
       },
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Viewer text mk2": {
-      "bl_idname": "ViewerNodeTextMK2",
+    "Viewer text mk3": {
+      "bl_idname": "ViewerNodeTextMK3",
       "color": [
         0.5,
         0.5,
@@ -1209,17 +1049,15 @@
         5.503603935241699,
         -1303.1085205078125
       ],
-      "params": {},
+      "params": {
+        "frame": 0
+      },
+      "use_custom_color": true,
       "width": 140.0
     },
     "objects in": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.3756703734397888,
-        0.19107769429683685
-      ],
-      "height": 313.11431884765625,
+      "height": 309.7838134765625,
       "hide": false,
       "label": "Objects in",
       "location": [
@@ -1227,16 +1065,11 @@
         736.2905883789062
       ],
       "params": {},
-      "width": 200.0
+      "width": 200.48001098632812
     },
     "polygons centers": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.3756703734397888,
-        0.19107769429683685
-      ],
-      "height": 246.75054931640625,
+      "height": 243.88818359375,
       "hide": false,
       "label": "Polygons centers",
       "location": [
@@ -1244,231 +1077,231 @@
         1076.90234375
       ],
       "params": {},
-      "width": 200.0
+      "width": 200.48001098632812
     }
   },
   "update_lists": [
     [
-      "Float.002",
-      "Float",
-      "Gen Vectors",
-      "Z"
+      "List Range Int",
+      0,
+      "Gen Vectors.002",
+      0
     ],
     [
-      "Float.008",
-      "Float",
-      "Gen Vectors.006",
-      "X"
+      "Float.005",
+      0,
+      "Gen Vectors.002",
+      1
     ],
     [
-      "Float.008",
-      "Float",
-      "Gen Vectors.006",
-      "Y"
-    ],
-    [
-      "Float.008",
-      "Float",
-      "Gen Vectors.006",
-      "Z"
-    ],
-    [
-      "Float.009",
-      "Float",
-      "Gen Vectors.007",
-      "Z"
-    ],
-    [
-      "Matrix in",
-      "Matrix",
-      "Matrix Deform",
-      "Original"
-    ],
-    [
-      "Gen Vectors",
-      "Vectors",
-      "Matrix Deform",
-      "Location"
-    ],
-    [
-      "Gen Vectors.006",
-      "Vectors",
-      "Matrix Deform",
-      "Scale"
-    ],
-    [
-      "Gen Vectors.007",
-      "Vectors",
-      "Matrix Deform",
-      "Rotation"
-    ],
-    [
-      "Float.010",
-      "Float",
-      "Matrix Deform",
-      "Angle"
-    ],
-    [
-      "Matrix Deform",
-      "Matrix",
-      "Viewer Draw2.004",
-      "matrix"
-    ],
-    [
-      "Float",
-      "Float",
-      "Gen Vectors.003",
-      "X"
-    ],
-    [
-      "Float.004",
-      "Float",
-      "Gen Vectors.003",
-      "Y"
-    ],
-    [
-      "List Range Int.001",
-      "Range",
-      "Gen Vectors.004",
-      "X"
-    ],
-    [
-      "List Range Int.001",
-      "Range",
-      "Gen Vectors.004",
-      "Y"
-    ],
-    [
-      "Float",
-      "Float",
-      "Gen Vectors.004",
-      "Z"
-    ],
-    [
-      "Gen Vectors.004",
-      "Vectors",
-      "Vectors Move",
-      "vertices"
-    ],
-    [
-      "Gen Vectors.003",
-      "Vectors",
-      "Vectors Move",
-      "vectors"
-    ],
-    [
-      "Vectors Move",
-      "vertices",
-      "Viewer Draw2.002",
-      "vertices"
-    ],
-    [
-      "Centers polygons",
-      "Centers",
-      "Viewer Draw2",
-      "matrix"
-    ],
-    [
-      "Float.007",
-      "Float",
-      "Float2int.001",
-      "float"
-    ],
-    [
-      "Float2int.001",
-      "int",
-      "Formula2",
-      "X"
-    ],
-    [
-      "Integer",
-      "Integer",
-      "Formula2",
-      "n[0]"
-    ],
-    [
-      "Formula2",
-      "Result",
-      "Viewer text mk2",
-      "edg_pol"
+      "Float.005",
+      0,
+      "Gen Vectors.002",
+      2
     ],
     [
       "Float.006",
-      "Float",
+      0,
       "Gen Vectors.005",
-      "X"
+      0
     ],
     [
       "Float.003",
-      "Float",
+      0,
       "Gen Vectors.005",
-      "Y"
+      1
     ],
     [
       "Float.006",
-      "Float",
+      0,
       "Gen Vectors.005",
-      "Z"
-    ],
-    [
-      "List Range Int",
-      "Range",
-      "Gen Vectors.002",
-      "X"
-    ],
-    [
-      "Float.005",
-      "Float",
-      "Gen Vectors.002",
-      "Y"
-    ],
-    [
-      "Float.005",
-      "Float",
-      "Gen Vectors.002",
-      "Z"
+      2
     ],
     [
       "Gen Vectors.002",
-      "Vectors",
+      0,
       "Matrix in.002",
-      "Location"
+      0
     ],
     [
       "Gen Vectors.005",
-      "Vectors",
+      0,
       "Matrix in.002",
-      "Scale"
+      1
     ],
     [
       "Matrix in.002",
-      "Matrix",
+      0,
       "Viewer Draw2.003",
-      "matrix"
+      2
+    ],
+    [
+      "Float",
+      0,
+      "Gen Vectors.003",
+      0
+    ],
+    [
+      "Float.004",
+      0,
+      "Gen Vectors.003",
+      1
+    ],
+    [
+      "List Range Int.001",
+      0,
+      "Gen Vectors.004",
+      0
+    ],
+    [
+      "List Range Int.001",
+      0,
+      "Gen Vectors.004",
+      1
+    ],
+    [
+      "Float",
+      0,
+      "Gen Vectors.004",
+      2
+    ],
+    [
+      "Gen Vectors.004",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Gen Vectors.003",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "Move",
+      0,
+      "Viewer Draw2.002",
+      0
+    ],
+    [
+      "Float.002",
+      0,
+      "Gen Vectors",
+      2
+    ],
+    [
+      "Float.008",
+      0,
+      "Gen Vectors.006",
+      0
+    ],
+    [
+      "Float.008",
+      0,
+      "Gen Vectors.006",
+      1
+    ],
+    [
+      "Float.008",
+      0,
+      "Gen Vectors.006",
+      2
+    ],
+    [
+      "Float.009",
+      0,
+      "Gen Vectors.007",
+      2
+    ],
+    [
+      "Matrix in",
+      0,
+      "Matrix Deform",
+      0
+    ],
+    [
+      "Gen Vectors",
+      0,
+      "Matrix Deform",
+      1
+    ],
+    [
+      "Gen Vectors.006",
+      0,
+      "Matrix Deform",
+      2
+    ],
+    [
+      "Gen Vectors.007",
+      0,
+      "Matrix Deform",
+      3
+    ],
+    [
+      "Float.010",
+      0,
+      "Matrix Deform",
+      4
+    ],
+    [
+      "Matrix Deform",
+      0,
+      "Viewer Draw2.004",
+      2
     ],
     [
       "List Range Int.002",
-      "Range",
+      0,
       "Gen Vectors.001",
-      "X"
+      0
     ],
     [
       "Float.012",
-      "Float",
+      0,
       "Gen Vectors.001",
-      "Y"
+      1
     ],
     [
       "Float.012",
-      "Float",
+      0,
       "Gen Vectors.001",
-      "Z"
+      2
     ],
     [
       "Gen Vectors.001",
-      "Vectors",
+      0,
       "Viewer Draw2.001",
-      "vertices"
+      0
+    ],
+    [
+      "Float.007",
+      0,
+      "Float2int.001",
+      0
+    ],
+    [
+      "Float2int.001",
+      0,
+      "Formula2",
+      0
+    ],
+    [
+      "Integer",
+      0,
+      "Formula2",
+      1
+    ],
+    [
+      "Formula2",
+      0,
+      "Viewer text mk3",
+      0
+    ],
+    [
+      "Centers polygons",
+      3,
+      "Viewer Draw2",
+      2
     ]
   ]
 }

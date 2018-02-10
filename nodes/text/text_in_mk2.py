@@ -448,7 +448,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
 
             socket_iterator = iterate_socket_order()
         else:
-            socket_iterator = json_data.items()
+            socket_iterator = sorted(json_data.items())
 
         for named_socket, data in socket_iterator:
             if len(data) == 2 and data[0] in {'v', 's', 'm'}:

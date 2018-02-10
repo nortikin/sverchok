@@ -1,15 +1,10 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.072",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
     "Bevel": {
       "bl_idname": "SvBevelNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -25,11 +20,6 @@
     },
     "Bricks": {
       "bl_idname": "SvBricksNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -46,11 +36,6 @@
     },
     "Calc Normals": {
       "bl_idname": "GetNormalsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -63,11 +48,6 @@
     },
     "Extrude Separate": {
       "bl_idname": "SvExtrudeSeparateNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -83,17 +63,12 @@
     },
     "Float": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -690.4656982421875,
-        112.96148681640625
+        -884.6953125,
+        189.20986938476562
       ],
       "params": {
         "float_": 3.93999981880188
@@ -102,17 +77,12 @@
     },
     "Float.001": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -689.5211181640625,
-        9.925483703613281
+        -896.4454956054688,
+        110.3191909790039
       ],
       "params": {
         "float_": 2.859999895095825
@@ -121,17 +91,12 @@
     },
     "Float.002": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -694.243896484375,
-        -77.98596954345703
+        -899.8988037109375,
+        19.866130828857422
       ],
       "params": {
         "float_": 0.6699999570846558
@@ -140,17 +105,12 @@
     },
     "Float.003": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -698.9666748046875,
-        -177.2408447265625
+        -907.1605224609375,
+        -52.701812744140625
       ],
       "params": {
         "float_": 0.6100000143051147
@@ -159,62 +119,42 @@
     },
     "Float.004": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -700.8557739257812,
-        -269.87872314453125
+        -901.4327392578125,
+        -136.44403076171875
       ],
       "params": {},
       "width": 140.0
     },
     "Float.005": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -705.5785522460938,
-        -357.7901611328125
+        -888.3828735351562,
+        -219.27224731445312
       ],
       "params": {},
       "width": 140.0
     },
     "Float.006": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -708.4122314453125,
-        -439.0846252441406
+        -911.5282592773438,
+        -301.8375244140625
       ],
       "params": {},
       "width": 140.0
     },
     "Map Range": {
       "bl_idname": "SvMapRangeNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -229,72 +169,8 @@
       },
       "width": 140.0
     },
-    "ProfileNode": {
-      "bl_idname": "SvProfileNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -422.2137145996094,
-        193.31068420410156
-      ],
-      "params": {
-        "filename": "Untitled"
-      },
-      "path_file": "L -a,b -d,b -d,(b-c) d,(b-c) d,b a,b a,g\nA g,g 0 1 0 a,-g 8\nL a,-b f,-b f,(-b-e) -f,(-b-e) -f,-b -a,-b\nX",
-      "width": 140.0
-    },
-    "UV Connect": {
-      "bl_idname": "LineConnectNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        186.0283966064453,
-        465.7212829589844
-      ],
-      "params": {
-        "cicl_check": 1,
-        "dir_check": "V_dir",
-        "polygons": "Pols",
-        "slice_check": 0
-      },
-      "width": 140.0
-    },
-    "Vector Interpolation": {
-      "bl_idname": "SvInterpolationNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        194.9788818359375,
-        237.77928161621094
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Vectors Move": {
-      "bl_idname": "VectorMoveNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -305,13 +181,8 @@
       "params": {},
       "width": 140.0
     },
-    "Vectors Move.001": {
-      "bl_idname": "VectorMoveNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -324,13 +195,64 @@
       },
       "width": 140.0
     },
+    "Profile Parametric": {
+      "bl_idname": "SvProfileNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -534.1836547851562,
+        220.19125366210938
+      ],
+      "params": {
+        "filename": "Untitled"
+      },
+      "path_file": "L -a,b -d,b -d,(b-c) d,(b-c) d,b a,b a,g\nA g,g 0 1 0 a,-g 8\nL a,-b f,-b f,(-b-e) -f,(-b-e) -f,-b -a,-b\nX",
+      "profile_sublist_storage": "{\"knots\": [], \"knotsnames\": []}",
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -207.08241271972656,
+        169.35899353027344
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "UV Connect": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        186.0283966064453,
+        465.7212829589844
+      ],
+      "params": {
+        "dir_check": "V_dir",
+        "polygons": "Pols",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector Interpolation": {
+      "bl_idname": "SvInterpolationNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        194.9788818359375,
+        237.77928161621094
+      ],
+      "params": {},
+      "width": 140.0
+    },
     "Vectors in": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -343,11 +265,6 @@
     },
     "Vectors in.001": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -362,11 +279,6 @@
     },
     "Vectors out": {
       "bl_idname": "VectorsOutNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -379,11 +291,6 @@
     },
     "Vectors out.001": {
       "bl_idname": "VectorsOutNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -415,6 +322,7 @@
         "display_verts": 0,
         "shading": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2.001": {
@@ -442,195 +350,202 @@
         ],
         "shading": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     }
   },
   "update_lists": [
     [
       "Float",
-      "Float",
-      "ProfileNode",
-      "a"
+      0,
+      "Profile Parametric",
+      0
     ],
     [
       "Float.001",
-      "Float",
-      "ProfileNode",
-      "b"
+      0,
+      "Profile Parametric",
+      1
     ],
     [
       "Float.002",
-      "Float",
-      "ProfileNode",
-      "c"
+      0,
+      "Profile Parametric",
+      2
     ],
     [
       "Float.003",
-      "Float",
-      "ProfileNode",
-      "d"
+      0,
+      "Profile Parametric",
+      3
     ],
     [
       "Float.004",
-      "Float",
-      "ProfileNode",
-      "e"
+      0,
+      "Profile Parametric",
+      4
     ],
     [
       "Float.005",
-      "Float",
-      "ProfileNode",
-      "f"
+      0,
+      "Profile Parametric",
+      5
     ],
     [
       "Float.006",
-      "Float",
-      "ProfileNode",
-      "g"
+      0,
+      "Profile Parametric",
+      6
     ],
     [
-      "ProfileNode",
+      "Profile Parametric",
       "Verts",
-      "Vectors Move",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Bricks",
+      0,
+      "Vectors out",
+      0
+    ],
+    [
+      "Vectors out",
+      0,
+      "Map Range",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Vector Interpolation",
+      "Vertices"
+    ],
+    [
+      "Map Range",
+      0,
+      "Vector Interpolation",
+      1
+    ],
+    [
+      "Vector Interpolation",
+      0,
+      "Vectors out.001",
+      0
+    ],
+    [
+      "Vectors out.001",
+      0,
+      "Vectors in",
+      0
+    ],
+    [
+      "Vectors out.001",
+      1,
+      "Vectors in",
+      1
+    ],
+    [
+      "Vectors out",
+      1,
+      "Vectors in",
+      2
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Move",
       "vertices"
     ],
     [
       "Vectors in.001",
-      "Vectors",
-      "Vectors Move",
-      "vectors"
+      0,
+      "Move",
+      1
     ],
     [
-      "Vectors Move",
-      "vertices",
+      "Move",
+      0,
       "UV Connect",
-      "vertices"
+      0
     ],
     [
-      "ProfileNode",
-      "Verts",
+      "Reroute",
+      "Output",
       "UV Connect",
       "vertices 1"
     ],
     [
       "UV Connect",
-      "vertices",
+      0,
       "Calc Normals",
-      "Vertices"
+      0
     ],
     [
       "UV Connect",
-      "data",
+      1,
       "Calc Normals",
-      "Polygons"
+      2
     ],
     [
       "UV Connect",
-      "vertices",
-      "Vectors Move.001",
-      "vertices"
+      0,
+      "Move.001",
+      0
     ],
     [
       "Calc Normals",
-      "VertexNormals",
-      "Vectors Move.001",
-      "vectors"
+      1,
+      "Move.001",
+      1
     ],
     [
-      "Vectors Move.001",
-      "vertices",
+      "Move.001",
+      0,
       "Viewer Draw2.001",
-      "vertices"
+      0
     ],
     [
       "UV Connect",
-      "data",
+      1,
       "Viewer Draw2.001",
-      "edg_pol"
+      1
+    ],
+    [
+      "Vectors in",
+      0,
+      "Extrude Separate",
+      0
     ],
     [
       "Bricks",
-      "Vertices",
-      "Vectors out",
-      "Vectors"
-    ],
-    [
-      "Vectors out",
-      "X",
-      "Map Range",
-      "Value"
-    ],
-    [
-      "ProfileNode",
-      "Verts",
-      "Vector Interpolation",
-      "Vertices"
-    ],
-    [
-      "Map Range",
-      "Value",
-      "Vector Interpolation",
-      "Interval"
-    ],
-    [
-      "Vector Interpolation",
-      "Vertices",
-      "Vectors out.001",
-      "Vectors"
-    ],
-    [
-      "Vectors out.001",
-      "X",
-      "Vectors in",
-      "X"
-    ],
-    [
-      "Vectors out.001",
-      "Y",
-      "Vectors in",
-      "Y"
-    ],
-    [
-      "Vectors out",
-      "Y",
-      "Vectors in",
-      "Z"
-    ],
-    [
-      "Vectors in",
-      "Vectors",
+      2,
       "Extrude Separate",
-      "Vertices"
-    ],
-    [
-      "Bricks",
-      "Polygons",
-      "Extrude Separate",
-      "Polygons"
+      2
     ],
     [
       "Extrude Separate",
-      "Vertices",
+      0,
       "Bevel",
-      "Vertices"
+      0
     ],
     [
       "Extrude Separate",
-      "OtherPolys",
+      4,
       "Bevel",
-      "Polygons"
+      2
     ],
     [
       "Bevel",
-      "Vertices",
+      0,
       "Viewer Draw2",
-      "vertices"
+      0
     ],
     [
       "Bevel",
-      "Polygons",
+      2,
       "Viewer Draw2",
-      "edg_pol"
+      1
     ]
   ]
 }

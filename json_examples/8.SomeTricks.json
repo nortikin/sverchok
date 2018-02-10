@@ -1,15 +1,10 @@
 {
-  "export_version": "0.064",
+  "export_version": "0.072",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
     "Float": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "z",
@@ -24,11 +19,6 @@
     },
     "Float.001": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "y",
@@ -43,11 +33,6 @@
     },
     "Float.002": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "x",
@@ -63,9 +48,9 @@
     "Random Vector MK2": {
       "bl_idname": "RandomVectorNodeMK2",
       "color": [
-        0.9200000166893005,
-        0.9200000166893005,
-        0.9200000166893005
+        0.0,
+        0.5,
+        0.5
       ],
       "height": 100.0,
       "hide": false,
@@ -78,15 +63,11 @@
         "count_inner": 214,
         "seed": 5
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Vector Math.001": {
       "bl_idname": "SvVectorMathNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -99,11 +80,6 @@
     },
     "Vectors in": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -129,6 +105,7 @@
         510.3867492675781
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2.001": {
@@ -146,14 +123,15 @@
         301.5809326171875
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Viewer text mk2": {
-      "bl_idname": "ViewerNodeTextMK2",
+    "Viewer text mk3": {
+      "bl_idname": "ViewerNodeTextMK3",
       "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
+        0.5,
+        0.5,
+        1.0
       ],
       "height": 100.0,
       "hide": false,
@@ -163,15 +141,11 @@
         456.3681945800781
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
     "Voronoi": {
       "bl_idname": "Voronoi2DNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -188,63 +162,63 @@
   "update_lists": [
     [
       "Float.002",
-      "Float",
+      0,
       "Vectors in",
-      "X"
+      0
     ],
     [
       "Float.001",
-      "Float",
+      0,
       "Vectors in",
-      "Y"
+      1
     ],
     [
       "Float",
-      "Float",
+      0,
       "Vectors in",
-      "Z"
+      2
     ],
     [
       "Random Vector MK2",
-      "Random",
+      0,
       "Vector Math.001",
-      "A"
+      0
     ],
     [
       "Vectors in",
-      "Vectors",
+      0,
       "Vector Math.001",
-      "B"
-    ],
-    [
-      "Vector Math.001",
-      "Out",
-      "Voronoi",
-      "Vertices"
-    ],
-    [
-      "Voronoi",
-      "Vertices",
-      "Viewer Draw2.001",
-      "vertices"
-    ],
-    [
-      "Voronoi",
-      "Edges",
-      "Viewer Draw2.001",
-      "edg_pol"
+      1
     ],
     [
       "Vector Math.001",
-      "Out",
+      0,
+      "Voronoi",
+      0
+    ],
+    [
+      "Random Vector MK2",
+      0,
+      "Viewer text mk3",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
       "Viewer Draw2",
-      "vertices"
+      0
     ],
     [
-      "Random Vector MK2",
-      "Random",
-      "Viewer text mk2",
-      "vertices"
+      "Voronoi",
+      0,
+      "Viewer Draw2.001",
+      0
+    ],
+    [
+      "Voronoi",
+      1,
+      "Viewer Draw2.001",
+      1
     ]
   ]
 }

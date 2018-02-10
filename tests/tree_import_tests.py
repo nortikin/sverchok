@@ -1,7 +1,11 @@
 
 import unittest
 import json
+from os.path import join, dirname, basename
+from glob import glob
 
+import sverchok
+from sverchok.old_nodes import is_old
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import import_tree
 
@@ -47,4 +51,21 @@ class MonadImportTest(ReferenceTreeTestCase):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             import_tree(new_tree, self.get_reference_file_path("monad_1.json"))
             self.assert_node_property_equals("ImportedTree", "Monad", "amplitude", 0.6199999451637268)
+
+class ExamplesImportTest(SverchokTestCase):
+    def test_import_examples(self):
+        sv_init = sverchok.__file__
+        examples_dir = join(dirname(sv_init), "json_examples")
+
+        for path in glob(join(examples_dir, "*.json")):
+            name = basename(path)
+            with self.subTest(file=name):
+                info("Importing: %s", name)
+                with self.temporary_node_tree("ImportedTree") as new_tree:
+                    with self.assert_logs_no_errors():
+                        import_tree(new_tree, path)
+                    for node in new_tree.nodes:
+                        if is_old(node):
+                            self.fail("This example contains deprecated node `{}' ({}). Please upgrade the example file.".format(node.name, node.bl_idname))
+
 

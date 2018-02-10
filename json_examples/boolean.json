@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.072",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -18,29 +18,11 @@
         427.49603271484375
       ],
       "params": {
-        "lp": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
+        "activate": 1,
+        "basemesh_name": "Alpha",
+        "hide": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Box": {
@@ -58,21 +40,17 @@
         427.3623352050781
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
-    "CSG BooleanNode": {
-      "bl_idname": "SvCSGBooleanNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
+    "CSG Boolean 2": {
+      "bl_idname": "SvCSGBooleanNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        122.53494262695312,
-        413.0456237792969
+        131.27313232421875,
+        365.8262939453125
       ],
       "params": {},
       "width": 140.0
@@ -94,45 +72,46 @@
       "params": {
         "rad_": 0.75
       },
+      "use_custom_color": true,
       "width": 140.0
     }
   },
   "update_lists": [
     [
       "Box",
-      "Vers",
-      "CSG BooleanNode",
-      "Verts A"
+      0,
+      "CSG Boolean 2",
+      0
     ],
     [
       "Box",
-      "Pols",
-      "CSG BooleanNode",
-      "Polys A"
+      2,
+      "CSG Boolean 2",
+      1
     ],
     [
       "Sphere",
-      "Vertices",
-      "CSG BooleanNode",
-      "Verts B"
+      0,
+      "CSG Boolean 2",
+      2
     ],
     [
       "Sphere",
-      "Polygons",
-      "CSG BooleanNode",
-      "Polys B"
+      2,
+      "CSG Boolean 2",
+      3
     ],
     [
-      "CSG BooleanNode",
-      "Vertices",
+      "CSG Boolean 2",
+      0,
       "Bmesh Viewer Draw 2",
-      "vertices"
+      0
     ],
     [
-      "CSG BooleanNode",
-      "Polygons",
+      "CSG Boolean 2",
+      1,
       "Bmesh Viewer Draw 2",
-      "faces"
+      2
     ]
   ]
 }

@@ -1,14 +1,14 @@
 {
-  "export_version": "0.062",
+  "export_version": "0.072",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
     "Circle": {
       "bl_idname": "SvCircleNode",
       "color": [
-        0.9200000166893005,
-        0.9200000166893005,
-        0.9200000166893005
+        0.0,
+        0.5,
+        0.5
       ],
       "height": 100.0,
       "hide": false,
@@ -18,14 +18,15 @@
         -183.6182403564453
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
     "Circle.001": {
       "bl_idname": "SvCircleNode",
       "color": [
-        0.9200000166893005,
-        0.9200000166893005,
-        0.9200000166893005
+        0.0,
+        0.5,
+        0.5
       ],
       "height": 100.0,
       "hide": false,
@@ -37,14 +38,15 @@
       "params": {
         "rad_": 0.05000000074505806
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Circle.002": {
       "bl_idname": "SvCircleNode",
       "color": [
-        0.9200000166893005,
-        0.9200000166893005,
-        0.9200000166893005
+        0.0,
+        0.5,
+        0.5
       ],
       "height": 100.0,
       "hide": false,
@@ -56,15 +58,11 @@
       "params": {
         "rad_": 0.800000011920929
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Float": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -79,11 +77,6 @@
     },
     "Formula": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -99,9 +92,9 @@
     "Frame info": {
       "bl_idname": "SvFrameInfoNodeMK2",
       "color": [
-        0.904932975769043,
-        1.0,
-        0.883421003818512
+        0.0,
+        0.5,
+        0.20000000298023224
       ],
       "height": 100.0,
       "hide": false,
@@ -111,15 +104,11 @@
         -620.9059448242188
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
     "Int": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -134,11 +123,6 @@
     },
     "Int.001": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -153,11 +137,6 @@
     },
     "List Flip": {
       "bl_idname": "ListFlipNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -172,11 +151,6 @@
     },
     "List Flip.001": {
       "bl_idname": "ListFlipNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -191,11 +165,6 @@
     },
     "List Join": {
       "bl_idname": "ListJoinNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -210,11 +179,6 @@
     },
     "Math": {
       "bl_idname": "ScalarMathNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -230,11 +194,6 @@
     },
     "Math.001": {
       "bl_idname": "ScalarMathNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -250,11 +209,6 @@
     },
     "Math.002": {
       "bl_idname": "ScalarMathNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -268,13 +222,8 @@
       },
       "width": 140.0
     },
-    "Move": {
-      "bl_idname": "VectorMoveNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -287,11 +236,6 @@
     },
     "Range Float.001": {
       "bl_idname": "SvGenFloatRange",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -308,11 +252,6 @@
     },
     "Rotation": {
       "bl_idname": "SvRotationNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -328,9 +267,9 @@
     "Stethoscope": {
       "bl_idname": "SvStethoscopeNodeMK2",
       "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
+        0.5,
+        0.5,
+        1.0
       ],
       "height": 100.0,
       "hide": false,
@@ -340,21 +279,18 @@
         -904.3133544921875
       ],
       "params": {
+        "num_elements": 1,
         "text_color": [
           0.949999988079071,
           0.949999988079071,
           0.949999988079071
         ]
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "UV Connection": {
       "bl_idname": "LineConnectNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -372,9 +308,9 @@
     "Viewer Draw.001": {
       "bl_idname": "ViewerNode2",
       "color": [
-        0.6284880042076111,
-        0.931007981300354,
-        1.0
+        1.0,
+        0.30000001192092896,
+        0.0
       ],
       "height": 100.0,
       "hide": false,
@@ -387,14 +323,15 @@
         "activate": 1,
         "edge_width": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Viewer text mk2": {
-      "bl_idname": "ViewerNodeTextMK2",
+    "Viewer text mk3": {
+      "bl_idname": "ViewerNodeTextMK3",
       "color": [
-        1.0,
-        0.8993440270423889,
-        0.9742509722709656
+        0.5,
+        0.5,
+        1.0
       ],
       "height": 100.0,
       "hide": false,
@@ -404,159 +341,160 @@
         -225.65383911132812
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     }
   },
   "update_lists": [
     [
       "Int",
-      "Integer",
+      0,
       "Circle.001",
-      "N\u00ba Vertices"
+      1
+    ],
+    [
+      "Int",
+      0,
+      "Circle",
+      1
     ],
     [
       "Frame info",
-      "Current Frame",
+      0,
       "Math",
-      "X"
+      0
     ],
     [
       "Int.001",
-      "Integer",
+      0,
       "Math",
-      "Y"
+      1
     ],
     [
       "Math",
-      "float",
+      0,
       "Math.001",
-      "X"
+      0
     ],
     [
       "Math.001",
-      "float",
+      0,
       "Math.002",
-      "X"
+      0
     ],
     [
       "Math.002",
-      "float",
+      0,
       "Range Float.001",
-      "Step"
+      1
     ],
     [
       "Int",
-      "Integer",
+      0,
       "Range Float.001",
-      "Stop"
+      2
     ],
     [
       "Range Float.001",
-      "Range",
+      0,
       "Formula",
-      "X"
+      0
     ],
     [
       "Frame info",
-      "Current Frame",
+      0,
       "Formula",
-      "n[0]"
+      1
     ],
     [
       "Float",
-      "Float",
+      0,
       "Formula",
-      "n[1]"
+      2
     ],
     [
       "Circle.001",
-      "Vertices",
+      0,
       "Rotation",
-      "Vertices"
+      0
     ],
     [
       "Formula",
-      "Result",
+      0,
       "Rotation",
-      "Angle"
-    ],
-    [
-      "Int",
-      "Integer",
-      "Circle.002",
-      "N\u00ba Vertices"
-    ],
-    [
-      "Circle.002",
-      "Vertices",
-      "List Flip",
-      "data"
+      3
     ],
     [
       "Rotation",
-      "Vertices",
+      0,
       "List Flip.001",
-      "data"
-    ],
-    [
-      "List Flip.001",
-      "data",
-      "Move",
-      "vertices"
-    ],
-    [
-      "List Flip",
-      "data",
-      "Move",
-      "vectors"
-    ],
-    [
-      "Move",
-      "vertices",
-      "List Join",
-      "data"
+      0
     ],
     [
       "Int",
-      "Integer",
-      "Circle",
-      "N\u00ba Vertices"
+      0,
+      "Circle.002",
+      1
+    ],
+    [
+      "Circle.002",
+      0,
+      "List Flip",
+      0
+    ],
+    [
+      "List Flip.001",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "List Flip",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "Move.001",
+      0,
+      "List Join",
+      0
     ],
     [
       "Circle",
-      "Vertices",
+      0,
       "UV Connection",
-      "vertices"
+      0
     ],
     [
       "List Join",
-      "data",
+      0,
       "UV Connection",
-      "vertices 1"
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw.001",
+      1
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer text mk3",
+      0
     ],
     [
       "Math.001",
-      "float",
+      0,
       "Stethoscope",
-      "Data"
-    ],
-    [
-      "UV Connection",
-      "vertices",
-      "Viewer Draw.001",
-      "vertices"
-    ],
-    [
-      "UV Connection",
-      "data",
-      "Viewer Draw.001",
-      "edg_pol"
-    ],
-    [
-      "UV Connection",
-      "data",
-      "Viewer text mk2",
-      "edg_pol"
+      0
     ]
   ]
 }
