@@ -636,6 +636,36 @@ def branches_only(*branches):
     """
     return make_skip_decorator(lambda: get_ci_branch() not in branches, "Does not apply to this branch")
 
+def batch_only(func):
+    """
+    Decorator for tests that are to be executed in batch mode only
+    (i.e. when tests are run from command line, either locally or in CI
+    environment). Usage:
+
+        @batch_only
+        def test_something(self):
+            ...
+    """
+    if bpy.app.background:
+        return func
+    else:
+        return unittest.skip("This test is intended for batch mode only")(func)
+
+def interactive_only(func):
+    """
+    Decorator for tests that are to be executed in interactive mode only
+    (i.e. when tests are run from Blender's UI with "Run all tests" button).
+    Usage:
+
+        @interactive_only
+        def test_something(self):
+            ...
+    """
+    if not bpy.app.background:
+        return func
+    else:
+        return unittest.skip("This test is intended for interactive mode only")(func)
+
 ######################################################
 # UI operator and panel classes
 ######################################################

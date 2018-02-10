@@ -28,7 +28,7 @@ class SverchokViewerMK1(bpy.types.Operator):
     """Sverchok viewerMK1"""
     bl_idname = "node.sverchok_viewer_buttonmk1"
     bl_label = "Sverchok viewer.mk1"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'INTERNAL', 'UNDO'}
 
     nodename = StringProperty(name='nodename')
     treename = StringProperty(name='treename')
