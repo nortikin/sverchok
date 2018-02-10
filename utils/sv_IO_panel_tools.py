@@ -429,7 +429,9 @@ def perform_svtextin_node_object(node, node_ref):
     '''
     texts = bpy.data.texts
     params = node_ref.get('params')
-    current_text = params['current_text']
+
+    # original textin used 'current_text', textin+ uses 'text'
+    current_text = params.get('current_text', params.get('text'))
 
     # it's not clear from the exporter code why textmode parameter isn't stored
     # in params.. for now this lets us look in both places. ugly but whatever.
@@ -448,7 +450,6 @@ def perform_svtextin_node_object(node, node_ref):
         if node.textmode == 'JSON':
             if isinstance(text_line_entry, str):
                 debug('loading old text json content / backward compatibility mode')
-                pass
 
             elif isinstance(text_line_entry, dict):
                 text_line_entry = json.dumps(text_line_entry['stored_as_json'])
