@@ -1,5 +1,5 @@
 {
-  "export_version": "0.054",
+  "export_version": "0.072",
   "framed_nodes": {
     "Frame": "Frame.001",
     "Frame.001": "Frame.002",
@@ -13,9 +13,8 @@
     "Matrix value input.001": "Frame.002",
     "Mirror": "Frame",
     "Rotation": "Frame",
-    "Scale": "Frame",
+    "Scale.001": "Frame",
     "UV Connect.001": "Frame.002",
-    "Vectors Move": "Frame",
     "Vectors in": "Frame",
     "Viewer Draw2": "Frame.002",
     "Viewer Draw2.001": "Frame.002"
@@ -40,9 +39,10 @@
         "activate": 0,
         "autosmooth": 0,
         "basemesh_name": "Gamma",
-        "material": "",
-        "state_view": 0
+        "hide": 0,
+        "material": ""
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Bmesh Viewer Draw.002": {
@@ -63,18 +63,14 @@
         "activate": 0,
         "autosmooth": 0,
         "basemesh_name": "Pi",
-        "material": "",
-        "state_view": 0
+        "hide": 0,
+        "material": ""
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Float.002": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "radius 1",
@@ -91,11 +87,6 @@
     },
     "Float.003": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "radius 3",
@@ -112,12 +103,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 372.01220703125,
+      "height": 352.98553466796875,
       "hide": false,
       "label": "",
       "location": [
@@ -125,16 +111,11 @@
         0.0
       ],
       "params": {},
-      "width": 727.0463256835938
+      "width": 533.8425903320312
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 638.069580078125,
+      "height": 638.349609375,
       "hide": false,
       "label": "",
       "location": [
@@ -142,16 +123,11 @@
         16.730270385742188
       ],
       "params": {},
-      "width": 1122.544189453125
+      "width": 1123.0240478515625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 943.8309936523438,
+      "height": 961.081298828125,
       "hide": false,
       "label": "",
       "location": [
@@ -159,15 +135,10 @@
         -16.730270385742188
       ],
       "params": {},
-      "width": 2765.3193359375
+      "width": 2765.79931640625
     },
     "Integer": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "U",
@@ -184,11 +155,6 @@
     },
     "Integer.001": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "V",
@@ -205,11 +171,6 @@
     },
     "List Del Levels": {
       "bl_idname": "ListLevelsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -224,16 +185,11 @@
     },
     "List Input": {
       "bl_idname": "SvListInputNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1847.6661376953125,
+        -1847.6661071777344,
         -222.5832977294922
       ],
       "params": {
@@ -277,16 +233,11 @@
     },
     "List Input.001": {
       "bl_idname": "SvListInputNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1850.7283935546875,
+        -1850.7283630371094,
         61.56128692626953
       ],
       "params": {
@@ -330,11 +281,6 @@
     },
     "List Join": {
       "bl_idname": "ListJoinNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -351,11 +297,6 @@
     },
     "List Reverse.001": {
       "bl_idname": "ListReverseNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -370,16 +311,11 @@
     },
     "Mask Join": {
       "bl_idname": "SvMaskJoinNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1242.20361328125,
+        -1242.2035827636719,
         13.283477783203125
       ],
       "params": {
@@ -390,11 +326,6 @@
     },
     "Mask Join.001": {
       "bl_idname": "SvMaskJoinNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -410,17 +341,12 @@
     },
     "MaskList.002": {
       "bl_idname": "MaskListNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -1001.2658081054688,
-        -276.1016845703125
+        -1001.2657775878906,
+        -276.10166931152344
       ],
       "params": {
         "Level": 3
@@ -429,17 +355,12 @@
     },
     "Matrix value input": {
       "bl_idname": "SvMatrixValueIn",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": true,
       "label": "",
       "location": [
-        570.318115234375,
-        -337.3858642578125
+        570.3181457519531,
+        -337.38584899902344
       ],
       "params": {
         "matrix": [
@@ -465,16 +386,11 @@
     },
     "Matrix value input.001": {
       "bl_idname": "SvMatrixValueIn",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": true,
       "label": "",
       "location": [
-        574.8404541015625,
+        574.8404846191406,
         -119.54557800292969
       ],
       "params": {
@@ -501,11 +417,6 @@
     },
     "Mirror": {
       "bl_idname": "SvMirrorNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -516,13 +427,20 @@
       "params": {},
       "width": 140.0
     },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -438.3122863769531,
+        -475.28985595703125
+      ],
+      "params": {},
+      "width": 140.0
+    },
     "Rotation": {
       "bl_idname": "SvRotationNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -535,19 +453,14 @@
       },
       "width": 140.0
     },
-    "Scale": {
-      "bl_idname": "SvScaleNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
+    "Scale.001": {
+      "bl_idname": "SvScaleNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -241.03265380859375,
-        -466.98779296875
+        -627.7181396484375,
+        -636.6118774414062
       ],
       "params": {},
       "width": 140.0
@@ -572,6 +485,7 @@
         "V_": 13,
         "rad_": 2.0
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Sphere.002": {
@@ -594,15 +508,11 @@
         "V_": 13,
         "rad_": 1.746999979019165
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "UV Connect": {
       "bl_idname": "LineConnectNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -611,7 +521,6 @@
         525.2625122070312
       ],
       "params": {
-        "cicl_check": 1,
         "dir_check": "V_dir",
         "polygons": "Pols",
         "slice_check": 0
@@ -620,11 +529,6 @@
     },
     "UV Connect.001": {
       "bl_idname": "LineConnectNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -633,37 +537,14 @@
         -155.29856872558594
       ],
       "params": {
-        "cicl_check": 1,
         "dir_check": "V_dir",
         "polygons": "Pols",
         "slice_check": 0
       },
       "width": 140.0
     },
-    "Vectors Move": {
-      "bl_idname": "VectorMoveNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -438.312255859375,
-        -475.2898864746094
-      ],
-      "params": {},
-      "width": 140.0
-    },
     "Vectors in": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -685,7 +566,7 @@
       "hide": false,
       "label": "",
       "location": [
-        714.5908203125,
+        714.5908508300781,
         32.26695251464844
       ],
       "params": {
@@ -708,6 +589,7 @@
         ],
         "vertex_size": 2.5
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2.001": {
@@ -721,7 +603,7 @@
       "hide": false,
       "label": "",
       "location": [
-        703.4578857421875,
+        703.4579162597656,
         -167.256591796875
       ],
       "params": {
@@ -737,189 +619,190 @@
         "shading": 0,
         "transparant": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     }
   },
   "update_lists": [
     [
       "Float.002",
-      "Float",
+      0,
       "Sphere.002",
-      "Radius"
+      0
     ],
     [
       "Integer",
-      "Integer",
+      0,
       "Sphere.002",
-      "U"
+      1
     ],
     [
       "Integer.001",
-      "Integer",
+      0,
       "Sphere.002",
-      "V"
+      2
     ],
     [
       "Float.003",
-      "Float",
+      0,
       "Sphere.001",
-      "Radius"
+      0
     ],
     [
       "Integer",
-      "Integer",
+      0,
       "Sphere.001",
-      "U"
+      1
     ],
     [
       "Integer.001",
-      "Integer",
+      0,
       "Sphere.001",
-      "V"
+      2
     ],
     [
       "List Input.001",
-      "List",
+      0,
       "Mask Join",
-      "Mask"
+      0
     ],
     [
       "Sphere.001",
-      "Vertices",
+      0,
       "Mask Join",
-      "Data True"
+      1
     ],
     [
       "Sphere.002",
-      "Vertices",
+      0,
       "Mask Join",
-      "Data False"
+      2
     ],
     [
       "Mask Join",
-      "Data",
+      0,
       "MaskList.002",
-      "data"
+      0
     ],
     [
       "List Input",
-      "List",
+      0,
       "MaskList.002",
-      "mask"
+      1
     ],
     [
       "List Input",
-      "List",
+      0,
       "Mask Join.001",
-      "Mask"
+      0
     ],
     [
       "MaskList.002",
-      "dataTrue",
+      3,
       "Mask Join.001",
-      "Data True"
+      1
     ],
     [
       "MaskList.002",
-      "dataFalse",
+      4,
       "Mask Join.001",
-      "Data False"
+      2
     ],
     [
       "Mask Join.001",
-      "Data",
+      0,
       "UV Connect.001",
-      "vertices"
-    ],
-    [
-      "UV Connect.001",
-      "data",
-      "List Reverse.001",
-      "data"
-    ],
-    [
-      "Sphere.002",
-      "Vertices",
-      "List Join",
-      "data"
-    ],
-    [
-      "Sphere.001",
-      "Vertices",
-      "List Join",
-      "data 1"
-    ],
-    [
-      "List Join",
-      "data",
-      "List Del Levels",
-      "data"
-    ],
-    [
-      "List Del Levels",
-      "data",
-      "UV Connect",
-      "vertices"
-    ],
-    [
-      "UV Connect",
-      "vertices",
-      "Bmesh Viewer Draw.002",
-      "vertices"
-    ],
-    [
-      "UV Connect",
-      "data",
-      "Bmesh Viewer Draw.002",
-      "faces"
+      0
     ],
     [
       "UV Connect.001",
-      "vertices",
-      "Viewer Draw2",
-      "vertices"
-    ],
-    [
-      "UV Connect.001",
-      "data",
-      "Viewer Draw2",
-      "edg_pol"
-    ],
-    [
-      "Matrix value input.001",
-      "Matrix",
-      "Viewer Draw2",
-      "matrix"
-    ],
-    [
-      "UV Connect.001",
-      "vertices",
+      0,
       "Viewer Draw2.001",
-      "vertices"
+      0
     ],
     [
       "UV Connect.001",
-      "data",
+      1,
       "Viewer Draw2.001",
-      "edg_pol"
+      1
     ],
     [
       "Matrix value input",
-      "Matrix",
+      0,
       "Viewer Draw2.001",
-      "matrix"
+      2
+    ],
+    [
+      "Sphere.002",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Sphere.001",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "List Join",
+      0,
+      "List Del Levels",
+      0
+    ],
+    [
+      "UV Connect.001",
+      0,
+      "Viewer Draw2",
+      0
+    ],
+    [
+      "UV Connect.001",
+      1,
+      "Viewer Draw2",
+      1
+    ],
+    [
+      "Matrix value input.001",
+      0,
+      "Viewer Draw2",
+      2
+    ],
+    [
+      "List Del Levels",
+      0,
+      "UV Connect",
+      0
     ],
     [
       "UV Connect",
-      "vertices",
+      0,
       "Bmesh Viewer Draw.001",
-      "vertices"
+      0
     ],
     [
       "UV Connect",
-      "data",
+      1,
       "Bmesh Viewer Draw.001",
-      "faces"
+      2
+    ],
+    [
+      "UV Connect",
+      0,
+      "Bmesh Viewer Draw.002",
+      0
+    ],
+    [
+      "UV Connect",
+      1,
+      "Bmesh Viewer Draw.002",
+      2
+    ],
+    [
+      "UV Connect.001",
+      1,
+      "List Reverse.001",
+      0
     ]
   ]
 }
