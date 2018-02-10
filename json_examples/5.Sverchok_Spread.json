@@ -1,20 +1,16 @@
 {
-  "export_version": "0.064",
+  "export_version": "0.072",
   "framed_nodes": {
+    "Frame.002": "Frame.003",
     "Objects in mk3": "Frame.002",
-    "Text Input": "Frame",
-    "Text Input.001": "Frame.001",
-    "Text Input.002": "Frame.002"
+    "Text in+": "Frame.003",
+    "Text in+.001": "Frame.001",
+    "Text in+.002": "Frame"
   },
   "groups": {},
   "nodes": {
     "Centers polygons": {
       "bl_idname": "CentersPolsNodeMK2",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -29,11 +25,6 @@
     },
     "Distances": {
       "bl_idname": "DistancePPNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -48,11 +39,6 @@
     },
     "Float": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "min",
@@ -67,11 +53,6 @@
     },
     "Float.002": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "scale-z",
@@ -86,11 +67,6 @@
     },
     "Float.003": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "size-wave",
@@ -105,11 +81,6 @@
     },
     "Formula2": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -124,11 +95,6 @@
     },
     "Formula2.001": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -143,85 +109,72 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 217.02667236328125,
+      "height": 218.2957305908203,
       "hide": false,
       "label": "PLANE-RECIPIENT",
       "location": [
-        -46.17701721191406,
-        51.116703033447266
+        -683.7733154296875,
+        118.53141021728516
       ],
       "params": {},
-      "width": 200.0
+      "width": 200.47998046875
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 195.44229125976562,
+      "height": 196.5176544189453,
       "hide": false,
       "label": "EMPTY",
       "location": [
-        0.0,
-        60.0
+        -426.0611267089844,
+        441.5426330566406
       ],
       "params": {},
-      "width": 200.0
+      "width": 200.47999572753906
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 339.066650390625,
+      "height": 314.70281982421875,
       "hide": false,
       "label": "DONOR",
       "location": [
-        102.56875610351562,
-        126.43482971191406
+        193.17991638183594,
+        212.5642852783203
       ],
       "params": {},
-      "width": 394.8135986328125
+      "width": 200.47998046875
     },
-    "Gen Vectors": {
-      "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 100.0,
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "height": 379.25634765625,
       "hide": false,
       "label": "",
       "location": [
-        1146.851806640625,
-        502.6890563964844
+        90.61116027832031,
+        146.12945556640625
+      ],
+      "params": {},
+      "width": 455.45751953125
+    },
+    "Gen Vectors": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1155.912841796875,
+        328.16357421875
       ],
       "params": {},
       "width": 140.0
     },
     "Matrix Deform": {
       "bl_idname": "MatrixDeformNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1425.29443359375,
-        399.8927917480469
+        1524.9666748046875,
+        291.0976867675781
       ],
       "params": {},
       "width": 140.0
@@ -229,25 +182,27 @@
     "Objects in mk3": {
       "bl_idname": "SvObjectsNodeMK3",
       "color": [
-        0.904932975769043,
-        1.0,
-        0.883421003818512
+        0.0,
+        0.5,
+        0.20000000298023224
       ],
       "height": 100.0,
       "hide": false,
       "label": "donor",
       "location": [
-        1266.0848388671875,
-        612.5733032226562
+        1356.696029663086,
+        698.7027740478516
       ],
+      "object_names": [],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Text Input": {
-      "bl_idname": "SvTextInNode",
+    "Text in+": {
+      "bl_idname": "SvTextInNodeMK2",
       "color": [
         0.5,
-        0.5,
+        0.699999988079071,
         1.0
       ],
       "current_text": "Cube",
@@ -255,11 +210,10 @@
       "hide": false,
       "label": "",
       "location": [
-        -640.0516967773438,
-        47.909969329833984
+        1581.4335479736328,
+        733.016357421875
       ],
       "params": {
-        "current_text": "Cube",
         "text": "Cube",
         "textmode": "JSON"
       },
@@ -358,13 +312,14 @@
         }
       },
       "textmode": "JSON",
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Text Input.001": {
-      "bl_idname": "SvTextInNode",
+    "Text in+.001": {
+      "bl_idname": "SvTextInNodeMK2",
       "color": [
         0.5,
-        0.5,
+        0.699999988079071,
         1.0
       ],
       "current_text": "Empty",
@@ -372,12 +327,10 @@
       "hide": false,
       "label": "",
       "location": [
-        -292.76300048828125,
-        321.4422912597656
+        -346.0946960449219,
+        418.2776794433594
       ],
       "params": {
-        "autoreload": 0,
-        "current_text": "Empty",
         "text": "Empty",
         "textmode": "JSON"
       },
@@ -417,13 +370,14 @@
         }
       },
       "textmode": "JSON",
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Text Input.002": {
-      "bl_idname": "SvTextInNode",
+    "Text in+.002": {
+      "bl_idname": "SvTextInNodeMK2",
       "color": [
         0.5,
-        0.5,
+        0.699999988079071,
         1.0
       ],
       "current_text": "Cube",
@@ -431,11 +385,10 @@
       "hide": false,
       "label": "",
       "location": [
-        1460.8984375,
-        638.6318359375
+        -620.0119018554688,
+        77.17573547363281
       ],
       "params": {
-        "current_text": "Cube",
         "text": "Cube",
         "textmode": "JSON"
       },
@@ -534,6 +487,7 @@
         }
       },
       "textmode": "JSON",
+      "use_custom_color": true,
       "width": 140.0
     },
     "Viewer Draw2": {
@@ -547,125 +501,126 @@
       "hide": false,
       "label": "",
       "location": [
-        1823.101806640625,
-        745.9893188476562
+        1886.5296630859375,
+        573.7304077148438
       ],
       "params": {
         "activate": 1,
         "display_verts": 0,
         "shading": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     }
   },
   "update_lists": [
     [
-      "Text Input",
-      "Objects input.004:Vertices",
+      "Text in+.002",
+      1,
       "Centers polygons",
-      "Vertices"
+      0
     ],
     [
-      "Text Input",
-      "Objects input.004:Polygons",
+      "Text in+.002",
+      0,
       "Centers polygons",
-      "Polygons"
+      1
     ],
     [
-      "Text Input.001",
-      "Objects input.002:Matrixes",
+      "Text in+.001",
+      0,
       "Distances",
-      "matrix1"
+      1
     ],
     [
       "Centers polygons",
-      "Centers",
+      3,
       "Distances",
-      "matrix2"
+      3
     ],
     [
       "Distances",
-      "distances",
+      0,
       "Formula2",
-      "X"
+      0
     ],
     [
       "Float.003",
-      "Float",
+      0,
       "Formula2",
-      "n[0]"
+      1
     ],
     [
       "Formula2",
-      "Result",
+      0,
       "Formula2.001",
-      "X"
+      0
     ],
     [
       "Float",
-      "Float",
+      0,
       "Formula2.001",
-      "n[0]"
+      1
     ],
     [
       "Formula2.001",
-      "Result",
+      0,
       "Gen Vectors",
-      "X"
+      0
     ],
     [
       "Formula2.001",
-      "Result",
+      0,
       "Gen Vectors",
-      "Y"
+      1
     ],
     [
       "Float.002",
-      "Float",
+      0,
       "Gen Vectors",
-      "Z"
+      2
     ],
     [
       "Centers polygons",
-      "Centers",
+      3,
       "Matrix Deform",
-      "Original"
+      0
     ],
     [
       "Gen Vectors",
-      "Vectors",
+      0,
       "Matrix Deform",
-      "Scale"
+      2
     ],
     [
       "Centers polygons",
-      "Normals",
+      0,
       "Matrix Deform",
-      "Rotation"
+      3
     ],
     [
       "Formula2",
-      "Result",
+      0,
       "Matrix Deform",
-      "Angle"
+      4
     ],
     [
-      "Text Input.002",
-      "Objects input.004:Vertices",
+      "Text in+",
+      1,
       "Viewer Draw2",
-      "vertices"
+      0
     ],
     [
-      "Text Input.002",
-      "Objects input.004:Polygons",
+      "Text in+",
+      0,
       "Viewer Draw2",
-      "edg_pol"
+      1
     ],
     [
       "Matrix Deform",
-      "Matrix",
+      0,
       "Viewer Draw2",
-      "matrix"
+      2
     ]
   ]
 }
