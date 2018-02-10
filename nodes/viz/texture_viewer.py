@@ -285,10 +285,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return width * height * factor_buffer_dict.get(self.color_mode)
 
     def get_buffer(self):
-        data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+        data = self.inputs['Float'].sv_get(deepcopy=False)
         self.total_size = self.calculate_total_size()
         self.make_data_correct_length(data)
-        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size))
+        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size).tolist())
         return texture
 
     def draw_buttons(self, context, layout):
