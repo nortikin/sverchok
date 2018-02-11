@@ -242,6 +242,13 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         return {'CANCELLED'}
 
 
+def show_selected_in_OSfilebrowsesr(file_path):
+    if os.name == 'nt':
+        import subprocess
+        subprocess.Popen(r'explorer /select,"{}"'.format(file_path))
+
+
+
 class SvBlendToArchive(bpy.types.Operator):
     """ Archive this blend file as zip or gz """
 
@@ -272,6 +279,7 @@ class SvBlendToArchive(bpy.types.Operator):
             with zipfile.ZipFile(blend_archive_path, 'w', zipfile.ZIP_DEFLATED) as myzip:
                 myzip.write(blendpath, blendname)
             self.complete_msg(blend_archive_path)
+            show_selected_in_OSfilebrowsesr(file_path=blend_archive_path)
             return {'FINISHED'}
 
         elif self.archive_ext == 'gz':
@@ -283,6 +291,7 @@ class SvBlendToArchive(bpy.types.Operator):
                 with gzip.open(blend_archive_path, 'wb') as f_out:
                     shutil.copyfileobj(f_in, f_out)
             self.complete_msg(blend_archive_path)
+            show_selected_in_OSfilebrowsesr(file_path=blend_archive_path)
             return {'FINISHED'}
 
         return {'CANCELLED'}
