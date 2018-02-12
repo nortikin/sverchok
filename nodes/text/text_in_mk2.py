@@ -29,7 +29,7 @@ import ast
 import sverchok
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty, StringProperty
+from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import node_id, multi_socket, updateNode
@@ -42,6 +42,30 @@ from sverchok.utils.sv_text_io_common import (
     text_modes,
     CommonTextMixinIO
 )
+
+
+class SvTextInFileImporterOp(bpy.types.Operator):
+
+    bl_idname = "node.sv_textin_file_importer"
+    bl_label = "File Importer"
+
+    filepath = StringProperty(
+        name="File Path",
+        description="Filepath used for importing the file",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    def execute(self, context):
+        n = self.node
+        t = bpy.data.texts.load(self.filepath)
+        n.text = t.name
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        self.node = context.node
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+
 
 
 # call structure
@@ -125,6 +149,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     csv_decimalmark = EnumProperty(items=csv_decimalmarks, default='LOCALE', name="Decimalmark")
     csv_custom_decimalmark = StringProperty(default=',', name="Custom")
 
+    csv_skip_header_lines = IntProperty(default=0, name='skip n lines', description='some csv need n skips', min=0)
+
     # Sverchok list options
     # choose which socket to interpret data as
     socket_type = EnumProperty(items=socket_types, default='s')
@@ -138,6 +164,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     def draw_buttons_ext(self, context, layout):
         if self.textmode == 'CSV':
             layout.prop(self, 'force_input')
+            layout.prop(self, 'csv_skip_header_lines', text='Skip n header lines')
 
     def draw_buttons(self, context, layout):
 
@@ -156,14 +183,20 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
             col.operator(TEXT_IO_CALLBACK, text='R E S E T').fn_name = 'reset'
 
         else:
-            col.prop_search(self, 'text', bpy.data, 'texts', text="Read")
+            row = col.row(align=True)
+            row.prop_search(self, 'text', bpy.data, 'texts', text="Read")
+            row.operator("node.sv_textin_file_importer", text='', icon='FILESEL')
 
             row = col.row(align=True)
             row.prop(self, 'textmode', expand=True)
             col.prop(self, 'one_sock')
             if self.textmode == 'CSV':
-                col.prop(self, 'csv_header')
-                col.prop(self, 'csv_dialect')
+                
+                row = col.row(align=True)
+                row.prop(self, 'csv_header', toggle=True)
+                row.prop(self, 'csv_skip_header_lines', text='Skip n')
+                row.prop(self, 'csv_dialect', text='')
+
                 if self.csv_dialect == 'user':
                     col.label(text="Delimiter")
                     row = col.row(align=True)
@@ -293,6 +326,9 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
 
         f = io.StringIO(bpy.data.texts[self.text].as_string())
 
+        if self.csv_skip_header_lines:
+            ...
+
         # setup CSV options
 
         if self.csv_dialect == 'user':
@@ -320,6 +356,12 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
                 get_number = lambda s: float(s.replace(self.csv_custom_decimalmark, '.'))
         else:  # . default
             get_number = float
+
+        # some csv contain a number of must-skip lines, these csv break the csv standard. but we still
+        # want to be able to read them :)
+        if self.csv_skip_header_lines:
+            for nskips in range(self.csv_skip_header_lines):
+                next(reader)
 
         # load data
         for i, row in enumerate(reader):
@@ -513,8 +555,10 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
 
 
 def register():
+    bpy.utils.register_class(SvTextInFileImporterOp)
     bpy.utils.register_class(SvTextInNodeMK2)
 
 
 def unregister():
     bpy.utils.unregister_class(SvTextInNodeMK2)
+    bpy.utils.unregister_class(SvTextInFileImporterOp)
