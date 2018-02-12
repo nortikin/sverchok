@@ -44,9 +44,9 @@ from sverchok.utils.sv_text_io_common import (
 )
 
 
-class SvTextFileImporterOp(bpy.types.Operator):
+class SvTextInFileImporterOp(bpy.types.Operator):
 
-    bl_idname = "node.sv_textfile_importer"
+    bl_idname = "node.sv_textin_file_importer"
     bl_label = "File Importer"
 
     filepath = StringProperty(
@@ -185,7 +185,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         else:
             row = col.row(align=True)
             row.prop_search(self, 'text', bpy.data, 'texts', text="Read")
-            row.operator("node.sv_textfile_importer", text='', icon='FILESEL')
+            row.operator("node.sv_textin_file_importer", text='', icon='FILESEL')
 
             row = col.row(align=True)
             row.prop(self, 'textmode', expand=True)
@@ -555,10 +555,10 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
 
 
 def register():
-    bpy.utils.register_class(SvTextFileImporterOp)
+    bpy.utils.register_class(SvTextInFileImporterOp)
     bpy.utils.register_class(SvTextInNodeMK2)
 
 
 def unregister():
     bpy.utils.unregister_class(SvTextInNodeMK2)
-    bpy.utils.unregister_class(SvTextFileImporterOp)
+    bpy.utils.unregister_class(SvTextInFileImporterOp)
