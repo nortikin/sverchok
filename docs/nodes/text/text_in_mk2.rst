@@ -14,7 +14,7 @@ Properties
 +=========================+===================+========================================================+
 | Select                  |  Select text from blender text editor (or import and select)               |
 +-------------------------+-------------------+--------------------------------------------------------+
-| Select input format     |  Property to choose between csv, plain sverchok and json                   |
+| Format                  |  Property to choose between csv, plain sverchok and json                   |
 |                         |  data format                                                               | 
 +-------------------------+-------------------+--------------------------------------------------------+
 |                         |  **CSV**          | - **Header fields** : to use headers from file         |
