@@ -10,6 +10,6 @@ Text
    note
    stethoscope
    shape
-   text_in
+   text_in_mk2
    text_out
    viewer_text_mk2

@@ -9,14 +9,18 @@ Import data from text editor in formats csv, json or plain sverchok text.
 Properties
 ----------
 
-**Select** - Select text from blender text editor
+**Select** - Select text from blender text editor (or import and select)
 **Select input format** - Property to choose between csv, plain sverchok and json data format
   **csv**:
     **Header fields** - to use headers from file
     **Dialect** - to choose dialect of imported table
+    **Skip N Lines** - to skip a number of introduction lines in a non standard CSV
   **Sverchok**:
     **Data type** - output data socket as selected type
 **Load** - Load data from text in blend file
+
+the N-panel has a "force input" mode for CSV to automatically try to do the right thing when the CSV is
+a mixed bad of strings with quotes and numbers. Try this is the file won't load correctly. (else let us know in the issue tracker)
 
 Outputs
 -------
