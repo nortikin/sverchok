@@ -94,6 +94,11 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
     time_offset = bpy.props.StringProperty(default="01/01/2018", description="for graphing purposes you might need to subtract a start date", name='offset')
     make_reference = bpy.props.BoolProperty(name="Make Reference in Texts", update=show_short_reference)
 
+    calc_subordinal = bpy.props.BoolProperty(
+        name="Subordinal", 
+        description="produces the ordinal with a subordinal - useful for timeseries with sub day precision"
+    )
+
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "times")
         self.inputs.new("StringsSocket", "time offset").prop_name="time_offset"
@@ -101,9 +106,16 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "date_pattern", text="", icon="SORTTIME")
+        layout.prop(self, "calc_subordinal", toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "make_reference")
+
+    def sub_ordinal(self, value):
+        stamp = datetime.datetime.strptime(value, self.date_pattern)
+        seconds_in_day = 24*60*60
+        f = (stamp.hour * 60 * 60) + (stamp.minute * 60) + stamp.second
+        return f / seconds_in_day
 
     def process(self):
 
@@ -128,6 +140,8 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
             for value in V:
                 t = datetime.datetime.strptime(value, self.date_pattern).toordinal()
                 m = t - ordinal_offset
+                if self.calc_subordinal:
+                    m = m + self.sub_ordinal(value)
                 VC.append(m)
             VC_main.append(VC)
 
