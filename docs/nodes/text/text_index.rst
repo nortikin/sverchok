@@ -6,6 +6,7 @@ Text
    :maxdepth: 2
 
    debug_print
+   datetime_strings
    gtext
    note
    stethoscope
