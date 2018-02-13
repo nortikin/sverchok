@@ -46,7 +46,7 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("StringsSocket", "times")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "date_pattern", text="Format", icon="SQRTTIME")
+        layout.prop(self, "date_pattern", text="", icon="SORTTIME")
 
     def process(self):
 
