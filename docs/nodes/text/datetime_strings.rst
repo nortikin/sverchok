@@ -10,9 +10,9 @@ If you intend to use this node it is important that you absorb the documentation
 Features:
 --------
 
-- *Ordinal* is an integer representing a day, this is the kind of precision that might be more useful if you are working on the scale of months, years or decades.
+- *Ordinal* is an integer representing a day, this is the kind of precision that is useful if you are working on the scale of months, years or decades.
 
-- *Subordinal* is a little bit more precise and gives you the ratio (using seconds) of how far into the day it is. This date information needs hours/minutes/seconds to be provided. Useful for timescales or days or weeks or hours..
+- *Subordinal* is a little bit more precise and gives you the ratio (using seconds) of how far into the day it is. This date information needs hours/minutes/seconds to be provided. Useful for timescales of hours, days or weeks..
 
 Not yet implemented are *Micro-ordinal*, which would take milliseconds into account. Such date information would be useful for plotting sub second timeseries... or multi-second, (but not so handy for multi-minute timeseries, generally)
 
