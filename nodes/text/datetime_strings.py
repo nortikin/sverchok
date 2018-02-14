@@ -74,6 +74,7 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
 
     date_pattern = bpy.props.StringProperty(default="%m/%d/%Y", description="date formatting information", name="Date Time String Formatter")
     time_offset = bpy.props.StringProperty(default="01/01/2018", description="for graphing purposes you might need to subtract a start date", name='offset')
+    time_ = bpy.props.StringProperty(default="02/01/2018", description="for graphing purposes you might need to subtract a start date", name='offset')
     make_reference = bpy.props.BoolProperty(name="Make Reference in Texts", update=show_short_reference)
 
     calc_subordinal = bpy.props.BoolProperty(
@@ -82,7 +83,7 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
     )
 
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "times")
+        self.inputs.new("StringsSocket", "times").prop_name='time_'
         self.inputs.new("StringsSocket", "time offset").prop_name="time_offset"
         self.outputs.new("StringsSocket", "times")
 
@@ -136,3 +137,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvDatetimeStrings)
+
+if __name__ == '__main__':
+    register()
