@@ -8,6 +8,7 @@
 import datetime
 
 import bpy
+from bpy.props import StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -72,14 +73,16 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
         texts[doc_name].from_string(reference_table)
 
 
-    date_pattern = bpy.props.StringProperty(default="%m/%d/%Y", description="date formatting information", name="Date Time String Formatter")
-    time_offset = bpy.props.StringProperty(default="01/01/2018", description="for graphing purposes you might need to subtract a start date", name='offset')
-    make_reference = bpy.props.BoolProperty(name="Make Reference in Texts", update=show_short_reference)
+    date_pattern = StringProperty(default="%m/%d/%Y", description="date formatting information", name="Date Time String Formatter")
+    time_offset = StringProperty(default="01/01/2018", description="for graphing purposes you might need to subtract a start date", name='offset')
+    make_reference = BoolProperty(name="Make Reference in Texts", update=show_short_reference)
 
-    calc_subordinal = bpy.props.BoolProperty(
+    calc_subordinal = BoolProperty(
         name="Subordinal", 
         description="produces the ordinal with a subordinal - useful for timeseries with sub day precision"
     )
+
+    float_to_int = BoolProperty(name="Float to Int")
 
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "times")
@@ -92,6 +95,7 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "make_reference")
+        layout.prop(self, "float_to_int")
 
     def sub_ordinal(self, value):
         stamp = datetime.datetime.strptime(value, self.date_pattern)
@@ -120,6 +124,7 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
             VC = []
             ordinal_offset = datetime.datetime.strptime(offset[0], self.date_pattern).toordinal()
             for value in V:
+                value = value if not self.float_to_int else str(int(value))
                 t = datetime.datetime.strptime(value, self.date_pattern).toordinal()
                 m = t - ordinal_offset
                 if self.calc_subordinal:
