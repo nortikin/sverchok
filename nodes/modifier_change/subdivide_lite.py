@@ -160,12 +160,6 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         son('StringsSocket',  'OldFaces')
         self.update_mode(context)
 
-    def get_result_pydata(self, geom):
-        new_verts = [tuple(v.co) for v in geom if isinstance(v, bmesh.types.BMVert)]
-        new_edges = [[v.index for v in e.verts] for e in geom if isinstance(e, bmesh.types.BMEdge)]
-        new_faces = [[v.index for v in f.verts] for f in geom if isinstance(f, bmesh.types.BMFace)]
-        return new_verts, new_edges, new_faces
-
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
@@ -201,15 +195,15 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             ree.append(new_edges)
             ref.append(new_faces)
             if self.show_new:
-                inner_verts, inner_edges, inner_faces = self.get_result_pydata(geom['geom_inner'])
-                riv.append(inner_verts)
-                rie.append(inner_edges)
-                rif.append(inner_faces)
+                geo1 = geom['geom_inner']
+                riv.append([tuple(v.co) for v in geo1 if isinstance(v, bmesh.types.BMVert)])
+                rie.append([[v.index for v in e.verts] for e in geo1 if isinstance(e, bmesh.types.BMEdge)])
+                rif.append([[v.index for v in f.verts] for f in geo1 if isinstance(f, bmesh.types.BMFace)])
             if self.show_old:
-                split_verts, split_edges, split_faces = self.get_result_pydata(geom['geom_split'])
-                rsv.append(split_verts)
-                rse.append(split_edges)
-                rsf.append(split_faces)
+                geo2 = geom['geom_split']
+                rsv.append([tuple(v.co) for v in geo2 if isinstance(v, bmesh.types.BMVert)])
+                rse.append([[v.index for v in e.verts] for e in geo2 if isinstance(e, bmesh.types.BMEdge)])
+                rsf.append([[v.index for v in f.verts] for f in geo2 if isinstance(f, bmesh.types.BMFace)])
             bm.free()
         OutVert.sv_set(rev)
         OutEdg.sv_set(ree)
