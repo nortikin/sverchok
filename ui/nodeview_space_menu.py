@@ -51,6 +51,11 @@ def layout_draw_categories(layout, node_details):
             continue
 
         bl_idname = node_info[0]
+
+        # this is a node bl_idname that can be registered but shift+A can drop it from showing.
+        if bl_idname == 'ScalarMathNode':
+            continue
+
         node_ref = get_node_class_reference(bl_idname)
 
         if hasattr(node_ref, "bl_label"):
