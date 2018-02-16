@@ -149,7 +149,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             label.append(x_label)
 
         if num_inputs == 2:
-            y = self.y_ if self.input_mode_one == 'Float' else self.yi_
+            y = self.y_ if self.input_mode_two == 'Float' else self.yi_
             y_label = 'Y' if self.inputs[1].is_linked else str(round(y, 3))
             label.extend([', ', y_label])
 
