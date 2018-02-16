@@ -63,3 +63,4 @@ This node has the following outputs:
 
 Examples of usage
 -----------------
+.. image:: https://user-images.githubusercontent.com/22656834/36314797-ba6d502e-1357-11e8-9ce1-1e856f7e056f.png
