@@ -18,6 +18,7 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
+import bmesh
 from bmesh.ops import subdivide_edges
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
@@ -46,6 +47,11 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             ("1", "Path", "", 1),
             ("2", "Fan", "", 2),
             ("3", "Straight Cut", "", 3)
+        ]
+
+    Sel_modes = [
+            ("mask", "by mask", "", 0),
+            ("index", "by index", "", 1)
         ]
 
     def update_mode(self, context):
@@ -113,9 +119,9 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             description="Show options on the node",
             default=False,
             update=updateNode)
-    sel_mode = BoolProperty(name="select",
-            description="Select edges by index when True. Select by mask when False",
-            default=False,
+    sel_mode = EnumProperty(name="Select Edges",
+            items=Sel_modes,
+            default="mask",
             update=updateNode)
 
     def draw_buttons(self, context, layout):
@@ -130,7 +136,7 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, "seed", text="seed")
             row.prop(self, "show_old", toggle=True)
             row.prop(self, "show_new", toggle=True)
-            col.prop(self, "sel_mode", toggle=True)
+            col.prop(self, "sel_mode")
             col.prop(self, "falloff_type")
             col.prop(self, "corner_type")
             col.prop(self, "grid_fill", toggle=True)
@@ -140,19 +146,18 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         sin, son = self.inputs.new, self.outputs.new
-        sin('VerticesSocket', "Vertices", "Vertices")
-        sin('StringsSocket', 'Edges', 'Edges')
-        sin('StringsSocket', 'Faces', 'Faces')
-        sin('StringsSocket', 'EdgeIndex')
+        sin('VerticesSocket', 'Vertices')
+        sin('StringsSocket',  'edg_pol')
+        sin('StringsSocket',  'Selection')
         son('VerticesSocket', 'Vertices')
-        son('StringsSocket', 'Edges')
-        son('StringsSocket', 'Faces')
+        son('StringsSocket',  'Edges')
+        son('StringsSocket',  'Faces')
         son('VerticesSocket', 'NewVertices')
-        son('StringsSocket', 'NewEdges')
-        son('StringsSocket', 'NewFaces')
+        son('StringsSocket',  'NewEdges')
+        son('StringsSocket',  'NewFaces')
         son('VerticesSocket', 'OldVertices')
-        son('StringsSocket', 'OldEdges')
-        son('StringsSocket', 'OldFaces')
+        son('StringsSocket',  'OldEdges')
+        son('StringsSocket',  'OldFaces')
         self.update_mode(context)
 
     def get_result_pydata(self, geom):
@@ -164,31 +169,33 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
-        InVert, InEdge, InFace, InEdInd = self.inputs
+        InVert, InEdge, InEdSel = self.inputs
         OutVert, OutEdg, OutFace, ONVert, ONEdg, ONFace, OOVert, OOEdg, OOFace = self.outputs
         vertices_s = InVert.sv_get()
-        edges_s = InEdge.sv_get(default=[[]])
-        faces_s = InFace.sv_get(default=[[]])
+        topo = InEdge.sv_get()
+        if len(topo[0][0]) == 2:
+            bmlist= [bmesh_from_pydata(v, e, [], normal_update=True) for v,e in zip(vertices_s,topo)]
+        else:
+            bmlist= [bmesh_from_pydata(v, [], e, normal_update=True) for v,e in zip(vertices_s,topo)]
         rev, ree, ref, riv, rie, rif, rsv, rse, rsf = [],[],[],[],[],[],[],[],[]
-        bmlist= [bmesh_from_pydata(v, e, f, normal_update=True) for v,e,f in zip(vertices_s,edges_s,faces_s)]
-        if InEdInd.is_linked:
-            if self.sel_mode:
-                useedges = [np.array(bm.edges[:])[idxs] for bm, idxs in zip(bmlist, InEdInd.sv_get())]
-            else:
-                useedges = [np.extract(mask, bm.edges[:]) for bm, mask in zip(bmlist, InEdInd.sv_get())]
+        if InEdSel.is_linked:
+            if self.sel_mode == "index":
+                useedges = [np.array(bm.edges[:])[idxs] for bm, idxs in zip(bmlist, InEdSel.sv_get())]
+            elif self.sel_mode == "mask":
+                useedges = [np.extract(mask, bm.edges[:]) for bm, mask in zip(bmlist, InEdSel.sv_get())]
         else:
             useedges = [bm.edges for bm in bmlist]
         for bm,ind in zip(bmlist,useedges):
-            geom = subdivide_edges(bm, edges= ind,
-                    smooth= self.smooth,
-                    smooth_falloff= int(self.falloff_type),
-                    fractal= self.fractal, along_normal= self.along_normal,
-                    cuts= self.cuts, seed= self.seed,
-                    quad_corner_type= int(self.corner_type),
-                    use_grid_fill= self.grid_fill,
-                    use_single_edge= self.single_edge,
-                    use_only_quads= self.only_quads,
-                    use_smooth_even= self.smooth_even)
+            geom = subdivide_edges(bm, edges=ind,
+                    smooth=self.smooth,
+                    smooth_falloff=int(self.falloff_type),
+                    fractal=self.fractal, along_normal=self.along_normal,
+                    cuts=self.cuts, seed=self.seed,
+                    quad_corner_type=int(self.corner_type),
+                    use_grid_fill=self.grid_fill,
+                    use_single_edge=self.single_edge,
+                    use_only_quads=self.only_quads,
+                    use_smooth_even=self.smooth_even)
             new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
             rev.append(new_verts)
             ree.append(new_edges)
