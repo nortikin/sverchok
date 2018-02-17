@@ -103,10 +103,10 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 s = s[:(num - 1)]  # shorten if needed
                 fullList(s, num - 1)  # extend if needed
                 stepList.append([S * self.size / sum(s) for S in s] if self.normalize else s)
-            for s in stepList:
-                r1,r2 = make_line(s, c, d)
-                res1.append(r1)
-                res2.append(r2)
+        for s in stepList:
+            r1,r2 = make_line(s, c, d)
+            res1.append(r1)
+            res2.append(r2)
         if self.outputs['Vertices'].is_linked:
             self.outputs['Vertices'].sv_set(res1)
         if self.outputs['Edges'].is_linked:
