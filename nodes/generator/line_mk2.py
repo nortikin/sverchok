@@ -18,7 +18,6 @@
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
@@ -33,16 +32,13 @@ def make_line(steps, center, direction):
     elif direction == "Z":
         v = lambda l: (0.0, 0.0, l)
 
-    c = - sum(steps) / 2 if center else 0
     verts = []
     addVert = verts.append
-    x = c
+    x = -sum(steps) / 2 if center else 0
     for s in [0.0] + steps:
         x = x + s
         addVert(v(x))
-
     edges = [[i, i + 1] for i in range(len(steps))]
-
     return verts, edges
 
 
@@ -79,7 +75,6 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Num").prop_name = 'num'
         self.inputs.new('StringsSocket', "Step").prop_name = 'step'
-
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
 
@@ -95,35 +90,27 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "size")
 
     def process(self):
-        # return if no outputs are connected
         if not any(s.is_linked for s in self.outputs):
             return
-
         input_num = self.inputs["Num"].sv_get()
         input_step = self.inputs["Step"].sv_get()
-
-        params = match_long_repeat([input_num, input_step])
-
-        stepList = []
-        for n, s in zip(*params):
-            num = max(2, n[0])  # sanitize the input
-            # adjust the step list based on number of verts and steps
-            steps = s[:(num - 1)]  # shorten if needed
-            fullList(steps, num - 1)  # extend if needed
-            if self.normalize:
-                size = self.size / sum(steps)
-                steps = [s * size for s in steps]
-            stepList.append(steps)
-
         c, d = self.center, self.direction
-        verts, edges = [ve for ve in zip(*[make_line(s, c, d) for s in stepList])]
-
-        # outputs
+        stepList = []
+        res1,res2 = [],[]
+        for n, s in zip(*match_long_repeat([input_num, input_step])):
+            for num in n:
+                num = max(2,num)
+                s = s[:(num - 1)]  # shorten if needed
+                fullList(s, num - 1)  # extend if needed
+                stepList.append([S * self.size / sum(s) for S in s] if self.normalize else s)
+        for s in stepList:
+            r1,r2 = make_line(s, c, d)
+            res1.append(r1)
+            res2.append(r2)
         if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(verts)
-
+            self.outputs['Vertices'].sv_set(res1)
         if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(edges)
+            self.outputs['Edges'].sv_set(res2)
 
 
 def register():
