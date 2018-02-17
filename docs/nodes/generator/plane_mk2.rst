@@ -65,3 +65,5 @@ If **Separate** is True, the output is totally different. The grid disappear (no
 
 Example of usage
 ----------------
+
+.. image:: https://user-images.githubusercontent.com/22656834/36344518-6e3f47ca-143d-11e8-8473-f070872db91b.png
