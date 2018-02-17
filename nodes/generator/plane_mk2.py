@@ -31,9 +31,9 @@ def make_plane(stepsx, stepsy, center, direction, separate):
         v = lambda l, k: (0.0, l, k)
     elif direction == "ZX":
         v = lambda l, k: (k, 0.0, l)
-    cx = - sum(stepsx) / 2 if center else 0
+    cx = -sum(stepsx) / 2 if center else 0
     verts = []
-    y = sum(stepsy) / 2 if center else 0
+    y = -sum(stepsy) / 2 if center else 0
     for sy in [0.0] + stepsy:
         y = y + sy
         x = cx
