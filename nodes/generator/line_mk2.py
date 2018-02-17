@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, match_long_repeat, second_as_first_cycle as safc
+from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
 directionItems = [("X", "X", ""), ("Y", "Y", ""), ("Z", "Z", "")]
 
@@ -102,7 +102,6 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 num = max(2,num)
                 s = s[:(num - 1)]  # shorten if needed
                 fullList(s, num - 1)  # extend if needed
-            # s = safc(n, s)
                 stepList.append([S * self.size / sum(s) for S in s] if self.normalize else s)
             for s in stepList:
                 r1,r2 = make_line(s, c, d)
