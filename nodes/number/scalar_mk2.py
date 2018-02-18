@@ -140,7 +140,21 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_label(self):
-        return self.current_op
+        num_inputs = len(self.inputs)
+        label = [self.current_op]
+
+        if num_inputs > 0:
+            x = self.x_ if self.input_mode_one == 'Float' else self.xi_
+            x_label = 'X' if self.inputs[0].is_linked else str(round(x, 3))
+            label.append(x_label)
+
+        if num_inputs == 2:
+            y = self.y_ if self.input_mode_two == 'Float' else self.yi_
+            y_label = 'Y' if self.inputs[1].is_linked else str(round(y, 3))
+            label.extend([', ', y_label])
+
+        return " ".join(label)
+
 
 
     def draw_buttons(self, ctx, layout):
