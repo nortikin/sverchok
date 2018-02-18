@@ -318,3 +318,4 @@
     SvMultiExtrudeAlt
     SvOffsetLineNode
     SvContourNode
+    SvOBJInsolationNode
