@@ -150,6 +150,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     csv_custom_decimalmark = StringProperty(default=',', name="Custom")
 
     csv_skip_header_lines = IntProperty(default=0, name='skip n lines', description='some csv need n skips', min=0)
+    csv_extended_mode = BoolProperty(name='extended mode')
 
     # Sverchok list options
     # choose which socket to interpret data as
@@ -165,6 +166,8 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         if self.textmode == 'CSV':
             layout.prop(self, 'force_input')
             layout.prop(self, 'csv_skip_header_lines', text='Skip n header lines')
+            layout.label("extra mode")
+            layout.prop(self, "csv_extended_mode", toggle=True)
 
     def draw_buttons(self, context, layout):
 
@@ -316,6 +319,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
                 name = 'one_sock'
                 self.outputs.new('StringsSocket', name, name)
 
+
     def load_csv_data(self):
         n_id = node_id(self)
 
@@ -325,9 +329,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
             del self.csv_data[n_id]
 
         f = io.StringIO(bpy.data.texts[self.text].as_string())
-
-        if self.csv_skip_header_lines:
-            ...
 
         # setup CSV options
 
@@ -350,7 +351,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         if self.csv_decimalmark == ',':
             get_number = lambda s: float(s.replace(',', '.'))
         elif self.csv_decimalmark == 'LOCALE':
-            get_number = lambda s: locale.atof(s)
+            get_number = locale.atof
         elif self.csv_decimalmark == 'CUSTOM':
             if self.csv_custom_decimalmark:
                 get_number = lambda s: float(s.replace(self.csv_custom_decimalmark, '.'))
@@ -360,14 +361,13 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         # some csv contain a number of must-skip lines, these csv break the csv standard. but we still
         # want to be able to read them :)
         if self.csv_skip_header_lines:
-            for nskips in range(self.csv_skip_header_lines):
+            for _ in range(self.csv_skip_header_lines):
                 next(reader)
 
         # load data
         for i, row in enumerate(reader):
 
             if i == 0:  # setup names
-
                 if self.csv_header:
                     for name in row:
                         tmp = name
@@ -382,18 +382,21 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
                         csv_data["Col "+str(j)] = []
 
             for j, name in enumerate(csv_data):
-                try:
-                    n = get_number(row[j])
-                    csv_data[name].append(n)
-                except Exception as err:
-                    error = str(err)
+                if not self.csv_extended_mode:
+                    try:
+                        n = get_number(row[j])
+                        csv_data[name].append(n)
+                    except Exception as err:
+                        error = str(err)
 
-                    if "could not convert string to float" in error:
-                        if self.force_input:
-                            csv_data[name].append(row[j])
-                    else:
-                        print('unhandled error:', error)
-                    pass
+                        if "could not convert string to float" in error:
+                            if self.force_input:
+                                csv_data[name].append(row[j])
+                        else:
+                            print('unhandled error:', error)
+
+                else:
+                    csv_data[name].append(row[j])
 
         if csv_data:
             if not csv_data[list(csv_data.keys())[0]]:
