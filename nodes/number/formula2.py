@@ -174,6 +174,10 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         ''' enlarge minor n[i] list to size of x list '''
         lst.extend([lst[-1] for i in range(equal)])
 
+    def draw_label(self):
+        if self.hide:
+            return self.formula
+        return self.bl_label
 
 
 def register():
