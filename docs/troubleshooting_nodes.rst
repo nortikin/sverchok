@@ -36,12 +36,15 @@ A variety of reasons can cause exceptions, sometimes you have to solve a sequenc
  
 For most "unwanted" situations we can find what their cause is. We have quite a few ways to see the state of the output or input of a node.
 
+- start blender from a console, and keep it visisble as you work. When a node turns red it will print data into the console/cmd view. Read the error. Contemplate what it means.
+
 - Stethoscope node:  Hook up this node to a stream of data that you want to probe. The node will display the incoming data directly in the NodeView. You might see immediately that there's something up with the data. You might see a single set of brackets, or your data has many more brackets than you expect. You might see that the data is not in the form you expect (extra nesting perhaps). For better info about stethoscope, see the docs that accompany this node.
 
 - Debug Print node:  This node is also one you hookup to the socket data you are interested in seeing. The node however will print the data into the console/cmd window. This node allows you to connect multiple sockets (it will auto generate new input sockets). This lets you see a few sockets' data at a glance. This node is definitely more raw and you are advised to be aware of the amount of data you are passing. Don't give it thousands of vertices.
 
  - some tips if you use either `Debug Print` and `Stethoscope nodes`:
     - if you can't understand a problem, you need to try to reproduce the problem with as little geometry as possible. Dial all the sliders down to minimal values while the problem is still evident, then start debugging.
+    - (you might have to) disconnect the error node, and "listen" to the data that was going into that node
     - switch off the nodes when you don't need them. 
 
 - Debug timings mode: Sometimes you need to know which node is taking the longest to process it's dataload. We have a heatmap mode that gives us a quick way to pinpoint the nodes where sverchok spends more time calculating.
