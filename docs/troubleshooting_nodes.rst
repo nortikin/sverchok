@@ -40,7 +40,7 @@ For most "unwanted" situations we can find what their cause is. We have quite a 
 
 - Debug Print node:  This node is also one you hookup to the socket data you are interested in seeing. The node however will print the data into the console/cmd window. This node allows you to connect multiple sockets (it will auto generate new input sockets). This lets you see a few sockets' data at a glance. This node is definitely more raw and you are advised to be aware of the amount of data you are passing. Don't give it thousands of vertices.
 
- - Debug Print and Stethoscope nodes: there are guidelines that are useful to follow when using both nodes.
+ - some tips if you use either `Debug Print` and `Stethoscope nodes`:
     - if you can't understand a problem, you need to try to reproduce the problem with as little geometry as possible. Dial all the sliders down to minimal values while the problem is still evident, then start debugging.
     - switch off the nodes when you don't need them. 
 
