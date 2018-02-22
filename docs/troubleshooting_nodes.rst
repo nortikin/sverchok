@@ -14,11 +14,11 @@ Nodes that enter the error state do so because the internal algorithms of the no
 
 **Exceptions**
 
-A variety of reasons can cause exceptions, sometimes you have to solve a sequence of errors. Usually it leads you to understanding the data being sent through the node tree better. This is seriously as good thing, mostly for your productivity.
+A variety of reasons can cause exceptions, sometimes you have to solve a sequence of errors. Usually it leads you to understanding the data being sent through the node tree better. This is seriously a good thing, mostly for your productivity. We have tools to help you see the data coming out or going in to a node.
 
 **Causes**
 
-- A node can receives input that it doesn't expect, before starting to process the data. Some nodes will throw an exception as early as possible.
+- A node can receive input that it doesn't expect, before starting to process the data. Some nodes will throw an exception as early as possible.
 
 - A node's internal algorithm arrives at a point in processing the incoming data where the data being used to perform a calculation doesn't make sense.
 
@@ -30,8 +30,20 @@ A variety of reasons can cause exceptions, sometimes you have to solve a sequenc
         - trying to add a list/iterable to a numer
         - many many more. If you're a programmer you can imagine this list is long and not worth being exhausted.
  
-- Nodes that interact directly with Blender objects can be doing so incorrectly.
+- Nodes that interact directly with Blender objects can be doing so incorrectly. Usually this is forgiving, but sometimes you will cause Blender to close to the desktop.
  
 **Ways to solve these issues, or at least understand them**
  
-We have quite a few ways to see the state of the output of a node
+For most "unwanted" situations we can find what their cause is. We have quite a few ways to see the state of the output or input of a node.
+
+- Stethoscope node:  Hook up this node to a stream of data that you want to probe. The node will display the incoming data directly in the NodeView. You might see immediately that there's something up with the data. You might see a single set of brackets, or your data has many more brackets than you expect. You might see that the data is not in the form you expect (extra nesting perhaps). For better info about stethoscope, see the docs that accompany this node.
+
+- Debug Print node:  This node is also one you hookup to the socket data you are interested in seeing. The node however will print the data into the console/cmd window. This node allows you to connect multiple sockets (it will auto generate new input sockets). This lets you see a few sockets' data at a glance. This node is definitely more raw and you are advised to be aware of the amount of data you are passing. Don't give it thousands of vertices.
+
+ - Debug Print and Stethoscope nodes: there are guidelines that are useful to follow when using both nodes.
+    - if you can't understand a problem, you need to try to reproduce the problem with as little geometry as possible. Dial all the sliders down to minimal values while the problem is still evident, then start debugging.
+    - switch off the nodes when you don't need them. 
+
+- Debug timings mode: Sometimes you need to know which node is taking the longest to process it's dataload. We have a heatmap mode that gives us a quick way to pinpoint the nodes where sverchok spends more time calculating.
+
+
