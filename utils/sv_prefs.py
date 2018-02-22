@@ -22,3 +22,15 @@ def set_vals(**kwargs):
             except Exception as err:
                 print(err)
                 print('failed prefs.{0}={1}'.format(key, val))
+
+
+# usage of get_val, set_vals
+#
+# from sverchok.utils.sv_prefs import get_val, set_vals
+#
+# ...
+# 
+#     m = get_val("some_property")
+#
+#     set_vals(some_property=somevalue, some_property2=somevalue2)
+#
