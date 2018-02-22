@@ -40,9 +40,9 @@ For most "unwanted" situations we can find what their cause is. We have quite a 
 
 - Stethoscope node:  Hook up this node to a stream of data that you want to probe. The node will display the incoming data directly in the NodeView. You might see immediately that there's something up with the data. You might see a single set of brackets, or your data has many more brackets than you expect. You might see that the data is not in the form you expect (extra nesting perhaps). For better info about stethoscope, see the docs that accompany this node.
 
-- Viewer Text node: When sthetoscope see only first lines of code you can look deeper in digits. Or if you lazy to count data level's nestedness you can look at Viewer Text, bush button and look at Frame or in text file `Sverchok Viewer`. 
+- Viewer Text node: When sthetoscope sees only the first lines of data, it's possible to see the raw data. To help you quickly see the level of nestedness of your data you can use the Viewer Text, push the view button and look at the `Frame` or in text file `Sverchok Viewer`. 
 
-- Data shape: As Viewer Text it see levels, but not in terms of user cases. when we utilize data we know that first list is just container, than going `objects` and than data in digits or lists. Here we have plain explanation.
+- Data shape: As Viewer Text it sees levels, but not in terms of user cases. When we utilize data we know that the first list is just a container, inside are the `objects` and then data in digits or lists. Here we have a plain explanation.
 
 - Debug Print node:  This node is also one you hookup to the socket data you are interested in seeing. The node however will print the data into the console/cmd window. This node allows you to connect multiple sockets (it will auto generate new input sockets). This lets you see a few sockets' data at a glance. This node is definitely more raw and you are advised to be aware of the amount of data you are passing. Don't give it thousands of vertices.
 
