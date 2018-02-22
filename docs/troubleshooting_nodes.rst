@@ -40,7 +40,11 @@ For most "unwanted" situations we can find what their cause is. We have quite a 
 
 - Stethoscope node:  Hook up this node to a stream of data that you want to probe. The node will display the incoming data directly in the NodeView. You might see immediately that there's something up with the data. You might see a single set of brackets, or your data has many more brackets than you expect. You might see that the data is not in the form you expect (extra nesting perhaps). For better info about stethoscope, see the docs that accompany this node.
 
-- Debug Print node:  This node is also one you hookup to the socket data you are interested in seeing. The node however will print the data into the console/cmd window. This node allows you to connect multiple sockets (it will auto generate new input sockets). This lets you see a few sockets' data at a glance. This node is definitely more raw and you are advised to be aware of the amount of data you are passideg. Don't give it thousands of vertices.
+- Viewer Text node: When sthetoscope see only first lines of code you can look deeper in digits. Or if you lazy to count data level's nestedness you can look at Viewer Text, bush button and look at Frame or in text file `Sverchok Viewer`. 
+
+- Data shape: As Viewer Text it see levels, but not in terms of user cases. when we utilize data we know that first list is just container, than going `objects` and than data in digits or lists. Here we have plain explanation.
+
+- Debug Print node:  This node is also one you hookup to the socket data you are interested in seeing. The node however will print the data into the console/cmd window. This node allows you to connect multiple sockets (it will auto generate new input sockets). This lets you see a few sockets' data at a glance. This node is definitely more raw and you are advised to be aware of the amount of data you are passing. Don't give it thousands of vertices.
 
  - some tips if you use either `Debug Print` and `Stethoscope nodes`:
     - if you can't understand a problem, you need to try to reproduce the problem with as little geometry as possible. Dial all the sliders down to minimal values while the problem is still evident, then start debugging.
