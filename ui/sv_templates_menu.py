@@ -23,12 +23,12 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 
 sv_path = os.path.dirname(sv_get_local_path()[0])
 
-# Node Templates Menu
+# Node Examples Menu
 class SV_MT_layouts_templates(bpy.types.Menu):
     bl_idname = 'SV_MT_layouts_templates'
     bl_space_type = 'NODE_EDITOR'
-    bl_label = "Templates"
-    bl_description = "List of Sverchok Templates"
+    bl_label = "Examples"
+    bl_description = "List of Sverchok Examples"
 
 
     def avail_templates():
