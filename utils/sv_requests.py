@@ -23,6 +23,6 @@ def get(url):
         return wfile.decode(found_json)        
 
     processed = lambda: None
-    processed.json = get_json()
+    processed.json = get_json
     return processed
 
