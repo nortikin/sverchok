@@ -279,6 +279,7 @@
     SvSubdivideLiteNode
     ---
     SvColorsInNodeMK1
+    SvColorInputNode
     SvColorsOutNodeMK1
     ---
     SvMatrixNormalNode
