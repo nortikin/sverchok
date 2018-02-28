@@ -169,7 +169,8 @@ class SverchokUpdateAddon(bpy.types.Operator):
 
             to_path = os.path.normpath(os.path.join(os.curdir, zipname))
 
-            print('obtaining: [{0}]\nsending to path: [{1}]'.format(url, to_path))
+            print('> obtaining: [{0}]\n> sending to path: [{1}]'.format(url, to_path))
+            return {'CANCELLED'}
 
             file = urllib.request.urlretrieve(url, to_path)
             wm.progress_update(50)
