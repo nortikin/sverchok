@@ -609,7 +609,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
     def mask_edges_by_mid_points(self, verts_out, edges_out, parameters, v_len, edges_in):
         mid_points = calculate_mid_points(verts_out, edges_out)
-        mask_edg = mask_by_distance(mid_points, parameters, v_len, edges_in, abs(self.mask_t))
+        mask_edg = mask_by_distance(mid_points, parameters, v_len, edges_in, self.mask_t)
         return mask_edges(edges_out, mask_edg)
 
     def get_perimeter_and_radius(self, params):
@@ -657,7 +657,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
             verts_out, _, edges_out = mesh_join(points, [], edg)
 
-            verts_out, edges_out = intersect_edges_2d(verts_out, edges_out, self.mask_t)
+            verts_out, edges_out = intersect_edges_2d(verts_out, edges_out, abs(self.mask_t))
 
             edges_out = self.mask_edges_by_mid_points(verts_out, edges_out, parameters, v_len, edges_in)
 
