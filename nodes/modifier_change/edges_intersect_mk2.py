@@ -186,17 +186,20 @@ def intersect_edges_3d(verts_in, edges_in, s_epsilon):
 
 
 def edges_from_ed_inter(ed_inter):
-    '''create edges from intersecctions library'''
+    '''create edges from intersections library'''
     edges_out = []
     for e in ed_inter:
         # sort by first element of tuple (distances)
         e_s = sorted(e)
+        e_s = [e for i,e in enumerate(e_s) if e[1]!= e_s[i-1][1]] 
         for i in range(1, len(e_s)):
-            edges_out.append((e_s[i-1][1], e_s[i][1]))
+            # if e_s[i-1][1] != e_s[i][1]:
+            if(e_s[i-1][1], e_s[i][1])not in edges_out:
+                edges_out.append((e_s[i-1][1], e_s[i][1]))
     return edges_out
 
 
-def intersect_edges_2d(verts, edges):
+def intersect_edges_2d(verts, edges, epsilon):
     '''Iterate through edges  and expose them to intersect_line_line_2d'''
     verts_in = [Vector(v) for v in verts]
     ed_lengths = [(verts_in[e[1]] - verts_in[e[0]]).length for e in edges]
@@ -227,10 +230,24 @@ def intersect_edges_2d(verts, edges):
                 d_to_2 = (vx - v3.to_2d()).length
 
                 new_id = len(verts_out)
+                if ((vx.x, vx.y, v1.z)) in verts_out:
+                    new_id = verts_out.index((vx.x, vx.y, v1.z))
+                else:
+                    if d_to_1 < epsilon:
+                        new_id = e[0]
+                    elif d_to_1 > d - epsilon:
+                        new_id = e[1]
+                    elif d_to_2 < epsilon:
+                        new_id = e2[0]
+                    elif d_to_2 > d2 - epsilon:
+                        new_id = e2[1]
+                    if new_id == len(verts_out):
+                        verts_out.append((vx.x, vx.y, v1.z))
+                
                 # first item stores distance to origin, second the vertex id
                 ed_inter[i].append([d_to_1, new_id])
                 ed_inter[j].append([d_to_2, new_id])
-                verts_out.append((vx.x, vx.y, v1.z))
+
 
     edges_out = edges_from_ed_inter(ed_inter)
 
@@ -290,7 +307,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == "3D":
             verts_out, edges_out = intersect_edges_3d(verts_in, edges_in, self.epsilon)
         else:
-            verts_out, edges_out = intersect_edges_2d(verts_in, edges_in)
+            verts_out, edges_out = intersect_edges_2d(verts_in, edges_in, self.epsilon)
 
         # post processing step to remove doubles
         if self.rm_switch:

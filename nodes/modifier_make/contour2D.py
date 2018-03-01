@@ -288,56 +288,57 @@ def ciruclar_intersections(net2, verts, edges_in, v_len, radius):
 
     np_rad = np.array(radius)
     np_verts = np.array(verts)
-    indexes = np.array(cross_indices(v_len, edges_in))
+    indexes = np.array(cross_indices(v_len, edges_in), dtype=np.int16)
+    if len(indexes) > 0:
+        p_rads = np_rad[indexes]
+        pairs = np_verts[indexes, :]
+        dif_v = pairs[:, 0, :] - pairs[:, 1, :]
+        sum_rad = p_rads[:, 0] + p_rads[:, 1]
+        dif_rad = abs(p_rads[:, 0] - p_rads[:, 1])
+        dist = np.linalg.norm(dif_v, axis=1)
 
-    p_rads = np_rad[indexes]
-    pairs = np_verts[indexes, :]
-    dif_v = pairs[:, 0, :] - pairs[:, 1, :]
-    sum_rad = p_rads[:, 0] + p_rads[:, 1]
-    dif_rad = abs(p_rads[:, 0] - p_rads[:, 1])
-    dist = np.linalg.norm(dif_v, axis=1)
+        mask = sum_rad > dist
+        mask *= dif_rad < dist
+        mask *= 0 < dist
 
-    mask = sum_rad > dist
-    mask *= dif_rad < dist
-    mask *= 0 < dist
+        p_rads = p_rads[mask, :]
+        index_inter = indexes[mask]
 
-    p_rads = p_rads[mask, :]
-    index_inter = indexes[mask]
+        dist_v = dist[mask]
+        vec = dif_v[mask]
+        rad = p_rads[:, 0]
+        rad2 = p_rads[:, 1]
+        ang_base = (np.arctan2(vec[:, 1], vec[:, 0]) + 2*pi) % (2*pi)
 
-    dist_v = dist[mask]
-    vec = dif_v[mask]
-    rad = p_rads[:, 0]
-    rad2 = p_rads[:, 1]
-    ang_base = (np.arctan2(vec[:, 1], vec[:, 0]) + 2*pi) % (2*pi)
+        a = rad*rad - rad2*rad2 + dist_v*dist_v
+        a /= 2*dist_v
+        h = np.sqrt(rad*rad - a*a)
+        ang = np.arcsin(h / rad)
 
-    a = rad*rad - rad2*rad2 + dist_v*dist_v
-    a /= 2*dist_v
-    h = np.sqrt(rad*rad - a*a)
-    ang = np.arcsin(h / rad)
+        a2 = rad2*rad2 - rad*rad + dist_v*dist_v
+        a2 /= 2*dist_v
+        h2 = np.sqrt(rad2*rad2 - a2*a2)
+        ang2 = np.arcsin(h2 / rad2)
 
-    a2 = rad2*rad2 - rad*rad + dist_v*dist_v
-    a2 /= 2*dist_v
-    h2 = np.sqrt(rad2*rad2 - a2*a2)
-    ang2 = np.arcsin(h2 / rad2)
+        p1 = ang_base - ang - pi
+        p1b = ang_base + ang - pi
+        p2 = ang_base - ang2
+        p2b = ang_base + ang2
 
-    p1 = ang_base - ang - pi
-    p1b = ang_base + ang - pi
-    p2 = ang_base - ang2
-    p2b = ang_base + ang2
-
-    p1 = p1.tolist()
-    p1b = p1b.tolist()
-    p2 = p2.tolist()
-    p2b = p2b.tolist()
-    index_inter = index_inter.tolist()
-    p_rads = p_rads.tolist()
-    for e, an1, an1b, an2, an2b, r in zip(index_inter, p1, p1b, p2, p2b, p_rads):
-        e0 = e[0]
-        e1 = e[1]
-        net2[e0][2].append([normal_angle(an1), r[0], 1])
-        net2[e0][2].append([normal_angle(an1b), r[0], 1])
-        net2[e1][2].append([normal_angle(an2), r[1], 1])
-        net2[e1][2].append([normal_angle(an2b), r[1], 1])
+        p1 = p1.tolist()
+        p1b = p1b.tolist()
+        p2 = p2.tolist()
+        p2b = p2b.tolist()
+        index_inter = index_inter.tolist()
+        p_rads = p_rads.tolist()
+        for e, an1, an1b, an2, an2b, r in zip(index_inter, p1, p1b, p2, p2b, p_rads):
+            e0 = e[0]
+            e1 = e[1]
+            net2[e0][2].append([normal_angle(an1), r[0], 1])
+            net2[e0][2].append([normal_angle(an1b), r[0], 1])
+            net2[e1][2].append([normal_angle(an2), r[1], 1])
+            net2[e1][2].append([normal_angle(an2b), r[1], 1])
+        
     return net2
 
 
@@ -608,7 +609,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
     def mask_edges_by_mid_points(self, verts_out, edges_out, parameters, v_len, edges_in):
         mid_points = calculate_mid_points(verts_out, edges_out)
-        mask_edg = mask_by_distance(mid_points, parameters, v_len, edges_in, self.mask_t)
+        mask_edg = mask_by_distance(mid_points, parameters, v_len, edges_in, abs(self.mask_t))
         return mask_edges(edges_out, mask_edg)
 
     def get_perimeter_and_radius(self, params):
@@ -656,7 +657,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
 
             verts_out, _, edges_out = mesh_join(points, [], edg)
 
-            verts_out, edges_out = intersect_edges_2d(verts_out, edges_out)
+            verts_out, edges_out = intersect_edges_2d(verts_out, edges_out, self.mask_t)
 
             edges_out = self.mask_edges_by_mid_points(verts_out, edges_out, parameters, v_len, edges_in)
 
