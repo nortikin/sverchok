@@ -43,7 +43,7 @@ def uset(self, value, origin):
 
 
 class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Float '''
+    ''' Integer  / Float '''
     bl_idname = 'SvNumberNode'
     bl_label = 'A Number'
     bl_icon = 'OUTLINER_OB_EMPTY'
