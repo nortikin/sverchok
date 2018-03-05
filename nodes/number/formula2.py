@@ -37,7 +37,7 @@ from sverchok.data_structure import (
 
 
 class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
-    ''' Formula2 '''
+    ''' Custom formula '''
     bl_idname = 'Formula2Node'
     bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'

@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode
 
 # documentation/blender_python_api_2_70_release/mathutils.kdtree.html
 class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-
+    '''Create Edges by distance'''
     bl_idname = 'SvKDTreeEdgesNodeMK2'
     bl_label = 'KDT Closest Edges MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'

@@ -45,7 +45,7 @@ def map_linear(src_min, src_max, new_min, new_max, value):
     return new_min + scale * (value - src_min)
 
 class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Simple deformation node'''
+    ''' Twist, Bend, Taper'''
     bl_idname = 'SvSimpleDeformNode'
     bl_label = 'Simple deformation'
     bl_icon = 'MOD_SIMPLEDEFORM'
