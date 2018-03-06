@@ -320,3 +320,5 @@
     SvMultiExtrudeAlt
     SvOffsetLineNode
     SvContourNode
+    SvPlanarEdgenetToPolygons
+    
