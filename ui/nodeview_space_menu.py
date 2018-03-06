@@ -29,6 +29,7 @@ import bpy
 from sverchok.menu import make_node_cats, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch
+from sverchok.ui import presets
 # from nodeitems_utils import _node_categories
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -50,6 +51,11 @@ def layout_draw_categories(layout, node_details):
             continue
 
         bl_idname = node_info[0]
+
+        # this is a node bl_idname that can be registered but shift+A can drop it from showing.
+        if bl_idname == 'ScalarMathNode':
+            continue
+
         node_ref = get_node_class_reference(bl_idname)
 
         if hasattr(node_ref, "bl_label"):
@@ -124,6 +130,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddAlphas", **icon("SV_ALPHA"))
         layout.separator() 
         layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
+        layout.menu("NODEVIEW_MT_AddPresetOps", icon="SETTINGS")
 
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
@@ -154,12 +161,19 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout_draw_categories(self.layout, node_cats["List Masks"])
         layout_draw_categories(self.layout, node_cats["List Mutators"])
 
+class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
+    bl_label = "Presets"
+
+    def draw(self, context):
+        layout = self.layout
+        presets.draw_presets_ops(layout, context=context)
 
 classes = [
     NODEVIEW_MT_Dynamic_Menu,
     NODEVIEW_MT_AddListOps,
     NODEVIEW_MT_AddModifiers,
     NODEVIEW_MT_AddGenerators,
+    NODEVIEW_MT_AddPresetOps,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),

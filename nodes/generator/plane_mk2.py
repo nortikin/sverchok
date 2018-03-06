@@ -18,7 +18,6 @@
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
 
@@ -32,11 +31,9 @@ def make_plane(stepsx, stepsy, center, direction, separate):
         v = lambda l, k: (0.0, l, k)
     elif direction == "ZX":
         v = lambda l, k: (k, 0.0, l)
-
-    cx = - sum(stepsx) / 2 if center else 0
-    cy = - sum(stepsy) / 2 if center else 0
+    cx = -sum(stepsx) / 2 if center else 0
     verts = []
-    y = cy
+    y = -sum(stepsy) / 2 if center else 0
     for sy in [0.0] + stepsy:
         y = y + sy
         x = cx
@@ -44,12 +41,10 @@ def make_plane(stepsx, stepsy, center, direction, separate):
         for sx in [0.0] + stepsx:
             x = x + sx
             vertList.append(v(x, y))
-
         if separate:
             verts.append(vertList)
         else:
             verts.extend(vertList)
-
     edges = []
     nx = len(stepsx) + 1  # number of vertices along X
     ny = len(stepsy) + 1  # number of vertices along Y
@@ -60,13 +55,11 @@ def make_plane(stepsx, stepsy, center, direction, separate):
         ey = [[i + j * nx, i + (j + 1) * nx] for i in range(nx) for j in range(ny - 1)]
         edges.extend(ex)  # edges along X
         edges.extend(ey)  # edges along Y
-
     if separate:
-        polys = [] # why this? can we separte polygons instead ?
+        polys = []  # why this? can we separate polygons instead ?
     else:
         polys = [[i + j * nx, i + j * nx + 1, i + (j + 1) * nx + 1, i + (j + 1) * nx]
                  for i in range(nx - 1) for j in range(ny - 1)]
-
     return verts, edges, polys
 
 
@@ -82,7 +75,6 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def update_size(self, context, sizeID):
         if self.syncing:
             return
-
         if self.linkSizes:
             self.syncing = True
             if sizeID == "X":  # updating X => sync Y
@@ -90,7 +82,6 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             else:  # updating Y => sync X
                 self.sizex = self.sizey * self.sizeRatio
             self.syncing = False
-
         updateNode(self, context)
 
     def update_sizex(self, context):
@@ -154,7 +145,6 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Num Y").prop_name = 'numy'
         self.inputs.new('StringsSocket', "Step X").prop_name = 'stepx'
         self.inputs.new('StringsSocket', "Step Y").prop_name = 'stepy'
-
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
@@ -177,45 +167,39 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.prop(self, "sizey")
 
     def process(self):
-        # return if no outputs are connected
         if not any(s.is_linked for s in self.outputs):
             return
-
         inputs = self.inputs
         outputs = self.outputs
-
         input_numx = inputs["Num X"].sv_get()
         input_numy = inputs["Num Y"].sv_get()
         input_stepx = inputs["Step X"].sv_get()
         input_stepy = inputs["Step Y"].sv_get()
-
         params = match_long_repeat([input_numx, input_numy, input_stepx, input_stepy])
-
-        stepListx, stepListy = [[], []]
-        for nx, ny, sx, sy in zip(*params):
-            numx, numy = [max(2, nx[0]), max(2, ny[0])]  # sanitize the input
-            # adjust the step list based on number of verts and steps
-            stepsx, stepsy = [sx[:(numx - 1)], sy[:(numy - 1)]]  # shorten if needed
-            fullList(stepsx, numx - 1)  # extend if needed
-            fullList(stepsy, numy - 1)  # extend if needed
-            if self.normalize:
-                sizex, sizey = [self.sizex / sum(stepsx), self.sizey / sum(stepsy)]
-                stepsx = [sx * sizex for sx in stepsx]
-                stepsy = [sy * sizey for sy in stepsy]
-            stepListx.append(stepsx)
-            stepListy.append(stepsy)
-
+        verts, edges, polys, stex, stey = [],[],[],[],[]
         c, d, s = self.center, self.direction, self.separate
-        planes = [make_plane(sx, sy, c, d, s) for sx, sy in zip(stepListx, stepListy)]
-        verts, edges, polys = [vep for vep in zip(*planes)]
-
-        # outputs
+        for nx, ny, sx, sy in zip(*params):
+            for nxn, nyn in zip(nx,ny):
+                numx, numy = [max(2, nxn), max(2, nyn)]  # sanitize the input
+                stepsx, stepsy = [sx[:(numx - 1)], sy[:(numy - 1)]]  # shorten if needed
+                fullList(stepsx, numx - 1)  # extend if needed
+                fullList(stepsy, numy - 1)
+                if self.normalize:
+                    sizex, sizey = [self.sizex / sum(stepsx), self.sizey / sum(stepsy)]
+                    stex.append([sx * sizex for sx in stepsx])
+                    stey.append([sy * sizey for sy in stepsy])
+                else:
+                    stex.append(stepsx)
+                    stey.append(stepsy)
+        for sx, sy in zip(stex, stey):
+            V,E,P = make_plane(sx, sy, c, d, s)
+            verts.append(V)
+            edges.append(E)
+            polys.append(P)
         if outputs['Vertices'].is_linked:
             outputs['Vertices'].sv_set(verts)
-
         if outputs['Edges'].is_linked:
             outputs['Edges'].sv_set(edges)
-
         if outputs['Polygons'].is_linked:
             outputs['Polygons'].sv_set(polys)
 

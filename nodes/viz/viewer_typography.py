@@ -162,7 +162,7 @@ class SvTypeViewOp2(bpy.types.Operator):
 
 
 class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
-
+    '''Create Text Obj'''
     bl_idname = 'SvTypeViewerNode'
     bl_label = 'Typography Viewer'
     bl_icon = 'OUTLINER_OB_EMPTY'

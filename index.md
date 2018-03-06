@@ -41,6 +41,7 @@
     SvTorusKnotNode
     SvHexaGridNodeMK1
     SvRingNode
+    SvEllipseNode
 
 ## Analyzers
     SvBBoxNode
@@ -128,6 +129,8 @@
 
 ## List Mutators
     SvListModifierNode
+    SvFixEmptyObjectsNode
+    SvDatetimeStrings
 
 ## List Main
     ListJoinNode
@@ -224,7 +227,7 @@
     Sv3DviewPropsNode
 
 ## Text
-    ViewerNodeTextMK2
+    ViewerNodeTextMK3
     SvTextInNodeMK2
     SvTextOutNodeMK2
     NoteNode
@@ -258,7 +261,6 @@
 
 ## Objects
     SvVertexGroupNodeMK2
-    SvVertexColorNodeMK2
     SvVertexColorNodeMK3
 
 ## Layout
@@ -273,8 +275,11 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
+    SvFormulaDeformNode
+    SvSubdivideLiteNode
     ---
     SvColorsInNodeMK1
+    SvColorInputNode
     SvColorsOutNodeMK1
     ---
     SvMatrixNormalNode
@@ -314,3 +319,4 @@
     SvIndexToMaskNode
     SvMultiExtrudeAlt
     SvOffsetLineNode
+    SvContourNode

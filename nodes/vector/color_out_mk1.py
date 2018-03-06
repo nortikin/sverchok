@@ -21,7 +21,7 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty, FloatVectorProperty
 from mathutils import Color
 
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, dataCorrect
 from sverchok.utils.sv_itertools import sv_zip_longest
 

@@ -85,7 +85,7 @@ class SvInstancerOp(bpy.types.Operator):
 
 
 class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
-
+    '''Copy by mesh data'''
     bl_idname = 'SvInstancerNode'
     bl_label = 'Mesh instancer'
     bl_icon = 'OUTLINER_OB_EMPTY'

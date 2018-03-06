@@ -177,7 +177,7 @@ class SvPolylineViewOpMK1(bpy.types.Operator):
 
 # should inherit from bmeshviewer, many of these methods are largely identical.
 class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
-
+    '''cv 2D/3D Polyline'''
     bl_idname = 'SvPolylineViewerNodeMK1'
     bl_label = 'Polyline Viewer MK1'
     bl_icon = 'MOD_CURVE'

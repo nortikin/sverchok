@@ -269,15 +269,15 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             width, height = size_tex, size_tex
         return width, height
 
-    def make_data_correct_length(self, data):
-        self.total_size = self.calculate_total_size()
-        if len(data) < self.total_size:
-            default_value = 0
-            new_data = [default_value for j in range(self.total_size)]
-            new_data[:len(data)] = data[:]
-            data = new_data
-        elif len(data) > self.total_size:
-            data = data[:self.total_size]
+   # def make_data_correct_length(self, data):
+   #     self.total_size = self.calculate_total_size()
+   #     if len(data) < self.total_size:
+   #         default_value = 0
+   #         new_data = [default_value for j in range(self.total_size)]
+   #         new_data[:len(data)] = data[:]
+   #         data = new_data
+   #     elif len(data) > self.total_size:
+   #         data = data[:self.total_size]
 
     def calculate_total_size(self):
         ''' buffer need adequate size multiplying '''
@@ -285,10 +285,10 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return width * height * factor_buffer_dict.get(self.color_mode)
 
     def get_buffer(self):
-        data = np.array(self.inputs['Float'].sv_get(deepcopy=False)).flatten()
+        data = self.inputs['Float'].sv_get(deepcopy=False)
         self.total_size = self.calculate_total_size()
-        self.make_data_correct_length(data)
-        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size))
+      #  self.make_data_correct_length(data)
+        texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size).tolist())
         return texture
 
     def draw_buttons(self, context, layout):

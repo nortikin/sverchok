@@ -237,6 +237,11 @@ class Sv3DPanel(bpy.types.Panel):
                             colo.prop(node, min_name, text='', slider=True, emboss=False)
                             colo.prop(node, max_name, text='', slider=True, emboss=False)
 
+                        elif node.bl_idname in {'SvColorInputNode'}:
+                            col.label(tex)
+                            col.template_color_picker(node, ver, value_slider=True)
+                            col.prop(node, ver, text='')
+
                         elif node.bl_idname in {"SvListInputNode"}:
                             if node.mode == 'vector':
                                 colum_list = col.column(align=True)

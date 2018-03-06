@@ -25,6 +25,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProp
 from mathutils import Vector
 
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL
@@ -159,7 +160,14 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 #                # implement another nvBGL parses for gfx
                 processed_data = data
 
-            _x, _y = (self.location + Vector((self.width + 20, 0)))
+            node_width = (self.width_hidden + 30.0) if self.hide else self.width
+
+            # adjust proposed text location in case node is framed.
+            # take into consideration the hidden state
+            _x, _y = recursive_framed_location_finder(self, self.location[:])
+            _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
+
+            # this alters location based on DPI/Scale settings.
             location = adjust_location(_x, _y, location_theta)
 
             draw_data = {

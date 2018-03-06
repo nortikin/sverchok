@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import requests
 import os
 import urllib
 import urllib.request
@@ -24,6 +23,7 @@ from zipfile import ZipFile
 
 import bpy
 import sverchok
+from sverchok.utils import sv_requests as requests
 
 # pylint: disable=w0141
 
@@ -137,6 +137,12 @@ class SverchokCheckForUpgradesSHA(bpy.types.Operator):
         return {'FINISHED'}
 
 
+def get_archive_path():
+    from sverchok.utils.context_managers import sv_preferences
+    with sv_preferences() as prefs:
+        return prefs.dload_archive_path, prefs.dload_archive_name
+
+
 class SverchokUpdateAddon(bpy.types.Operator):
     """ Update Sverchok addon. After completion press F8 to reload addons or restart Blender """
     bl_idname = "node.sverchok_update_addon"
@@ -153,15 +159,24 @@ class SverchokUpdateAddon(bpy.types.Operator):
         wm.progress_begin(0, 100)
         wm.progress_update(20)
 
+        dload_archive_path, dload_archive_name = get_archive_path()
+
         try:
-            branch_name = 'master'
+            branch_name = dload_archive_name or 'master'
+            branch_origin = dload_archive_path or 'https://github.com/nortikin/sverchok/archive/'
             zipname = '{0}.zip'.format(branch_name)
-            url = 'https://github.com/nortikin/sverchok/archive/' + zipname
+            url = branch_origin + zipname
+
             to_path = os.path.normpath(os.path.join(os.curdir, zipname))
+
+            print('> obtaining: [{0}]\n> sending to path: [{1}]'.format(url, to_path))
+            # return {'CANCELLED'}
+
             file = urllib.request.urlretrieve(url, to_path)
             wm.progress_update(50)
-        except:
+        except Exception as err:
             self.report({'ERROR'}, "Cannot get archive from Internet")
+            print(err)
             wm.progress_end()
             return {'CANCELLED'}
         

@@ -21,13 +21,14 @@ from math import *
 from itertools import zip_longest
 
 import bpy
-from bpy.props import (EnumProperty, FloatProperty,
-                       IntProperty, BoolVectorProperty)
+from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
-from sverchok.data_structure import (updateNode, match_long_repeat)
-from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
+from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.utils.sv_itertools import recurse_fx, recurse_fxy
 
+# pylint: disable=c0326
+# pylint: disable=w0108
 
 class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ScalarMathNode '''
@@ -145,7 +146,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
         'PHI':      1.61803398875,
     }
 
-    int_prop ={
+    int_prop = {
         'ROUND-N':  ("x","i_y"),
         }
 
@@ -212,6 +213,7 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "items_", "Functions:")
 
+
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "items_", "Functions:")
         layout.label(text="Change property type")
@@ -221,9 +223,11 @@ class ScalarMathNode(bpy.types.Node, SverchCustomTreeNode):
             t = "To float" if self.prop_types[i] else "To int"
             row.prop(self, "prop_types", index=i, text=t, toggle=True)
 
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x'
         self.outputs.new('StringsSocket', "float")
+
 
     def draw_label(self):
         nrInputs = len(self.inputs)

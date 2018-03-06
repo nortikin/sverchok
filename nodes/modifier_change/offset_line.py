@@ -24,7 +24,8 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import normal
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.core.sv_custom_exceptions import SvNotFullyConnected
 
 TWO_PI = 2 * pi
 
@@ -33,14 +34,21 @@ def calc_angle(p1,p2):
     angle = p1.angle_signed(p2)
     return angle + TWO_PI if angle < 0 else angle
 
-def offset_edges(verts_in, edges_in, shift):
+def offset_edges(verts_in, edges_in, shift_in):
     # take an input mesh (verts + edges ) and an offset property and generate the resulting geometry
 
     verts_out = []
     faces_out = []
     
+    verts_z = verts_in[:]
     verts_in = [Vector(v).to_2d() for v in verts_in]
 
+    diff_shift = len(verts_in) - len(shift_in)
+    if diff_shift >= 0:
+        shift_in.extend([shift_in[-1] for _ in range(diff_shift)])
+    else:
+        shift_in = shift_in[:diff_shift]
+    
     #Searching neighbours for each point
     neighbours = [[] for _ in verts_in]
     for edg in edges_in:
@@ -61,17 +69,17 @@ def offset_edges(verts_in, edges_in, shift):
             sorted_.sort()
             neighbours[i] = [e[1] for e in sorted_]
             
-    shift_end_points = shift/sin(radians(45))
-    def get_end_points(item_point):
+    def get_end_points(item_point, shift):
         second_item = list(set(neighbours[item_point][0]) - set([item_point]))[0]
         vert_edg = verts_in[item_point] - verts_in[second_item]
         mat_r1 = Matrix.Rotation(radians(-45),2,'X')
         mat_r2 = Matrix.Rotation(radians(45),2,'X')
+        shift_end_points = shift/sin(radians(45))
         vert_new1 = (vert_edg * mat_r1).normalized() * shift_end_points + verts_in[item_point]
         vert_new2 = (vert_edg * mat_r2).normalized() * shift_end_points + verts_in[item_point]
         return [vert_new1,vert_new2]
 
-    def get_middle_points(item_point):
+    def get_middle_points(item_point, shift):
         points = []
         for i in range(len(neighbours[item_point])):
             current_edges = (neighbours[item_point][i:] + neighbours[item_point][:i])[:2]
@@ -86,16 +94,23 @@ def offset_edges(verts_in, edges_in, shift):
 
     #Seting points
     findex_new_points = [0]
-    for i in range(len(verts_in)):
+    for i,sh in enumerate(shift_in):
+        #avoid zero offset
+        if not sh:
+            sh = 0.001
+        
         if len(neighbours[i]) == 1:
-            verts_out.extend(get_end_points(i))
+            verts_out.extend(get_end_points(i,sh))
             findex_new_points.append(findex_new_points[-1] + 2)
         else:
-            p = get_middle_points(i)
+            p = get_middle_points(i,sh)
             verts_out.extend(p)
             findex_new_points.append(findex_new_points[-1] + len(p))
         
-    findex_new_points = findex_new_points[:-1]
+    # Preparing Z coordinate
+    z_co = []
+    for c,(i1,i2) in enumerate(zip(findex_new_points[:-1], findex_new_points[1:])):
+        z_co.extend([verts_z[c][2] for _ in range(i2-i1)])
         
     #Creating faces and mark outer edges and central points
     outer_edges = []
@@ -125,12 +140,14 @@ def offset_edges(verts_in, edges_in, shift):
 
         if position_old_points[edg[0]] == 0:
             verts_out.append(verts_in[edg[0]])
+            z_co.append(verts_z[edg[0]][2]) 
             vers_mask.append(1)
             current_index += 1
             position_old_points[edg[0]] = current_index
     
         if position_old_points[edg[1]] == 0:
             verts_out.append(verts_in[edg[1]])
+            z_co.append(verts_z[edg[1]][2])
             vers_mask.append(1)
             current_index += 1
             position_old_points[edg[1]] = current_index
@@ -160,8 +177,8 @@ def offset_edges(verts_in, edges_in, shift):
         
         faces_out.extend(new_edges)
 
-    verts_out = [i.to_3d()[:] for i in verts_out]
-    return(verts_out, faces_out, outer_edges, vers_mask)
+    verts_out = [(v.x, v.y, z) for v, z in zip(verts_out, z_co)]
+    return verts_out, faces_out, outer_edges, vers_mask
 
 class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -189,27 +206,22 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if not (self.inputs['Vers'].is_linked or self.inputs['Edgs'].is_linked):
-            return        
+        if not all(socket.is_linked for socket in self.inputs[:2]):
+            raise SvNotFullyConnected(self, sockets=["Vers", "Edgs"])
         
         if not any(socket.is_linked for socket in self.outputs):
             return
 
         verts_in = self.inputs['Vers'].sv_get()
         edges_in = self.inputs['Edgs'].sv_get()
-        shifter = self.inputs['Offset'].sv_get()[0]
+        shifter = self.inputs['Offset'].sv_get()
         
         # verts_out, faces_out, outer_edges, vers_mask
         out_geometry = [[], [], [], []]
         
-        diff_shift = len(verts_in) - len(shifter)
-        if diff_shift > 0:
-            shifter.extend([shifter[-1] for _ in range(diff_shift)])
+        shifter = match_long_repeat([verts_in, shifter])[1]
         
         for verts,edges,shift in zip(verts_in, edges_in, shifter):
-            # avoid zero offset
-            if not shift:
-                continue
             geometry = offset_edges(verts, edges, shift)
             _ = [out_geometry[idx].append(data) for idx, data in enumerate(geometry)]
         

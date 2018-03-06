@@ -29,7 +29,7 @@ from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 
 
 class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' LogicNode '''
+    '''And, Or, If, <, >..'''
     bl_idname = 'SvLogicNode'
     bl_label = 'Logic functions'
     bl_icon = 'LOGIC'

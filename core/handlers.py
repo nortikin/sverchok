@@ -45,7 +45,7 @@ def sv_update_handler(scene):
             # print('sv_update_handler')
             ng.process_ani()
         except Exception as e:
-            print('Failed to update:', name, str(e))
+            print('Failed to update:', str(e)) #name,
 
     scene.update()
 

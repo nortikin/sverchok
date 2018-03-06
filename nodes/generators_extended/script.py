@@ -271,7 +271,7 @@ class SvScriptNode(bpy.types.Node, SverchCustomTreeNode):
     def load_py(self):
         node_functor = None
         try:
-            exec(self.script_str)
+            exec(self.script_str, globals(), locals())
             f = vars()
             node_functor = f.get('sv_main')
 

@@ -1,5 +1,5 @@
 {
-  "export_version": "0.055",
+  "export_version": "0.072",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -18,6 +18,7 @@
         389.68511962890625
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 140.0
     },
     "GText": {
@@ -38,6 +39,7 @@
         "text": "node name: Viewer text\n\nvertices: \n(1) object(s)\n=0=   (5)\n(1.0, 0.0, 0)\n(0.30901699437494745, 0.9510565162951535, 0)\n(-0.8090169943749473, 0.5877852522924732, 0)\n(-0.8090169943749476, -0.587785252292473, 0)\n(0.30901699437494723, -0.9510565162951536, 0)\n\ndata \nNone \n\n\nmatrixes: \nNone \n\n\n**************************************************\n                     The End       ",
         "text_scale": 20
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "NGon": {
@@ -55,6 +57,7 @@
         499.05792236328125
       ],
       "params": {},
+      "use_custom_color": true,
       "width": 132.1433868408203
     },
     "Note": {
@@ -74,7 +77,20 @@
       "params": {
         "text": "[[(1.0, 0.0, 0), (0.30901699437494745, 0.9510565162951535, 0), (-0.8090169943749473, 0.5877852522924732, 0), (-0.8090169943749476, -0.587785252292473, 0), (0.30901699437494723, -0.9510565162951536, 0)]]"
       },
+      "use_custom_color": true,
       "width": 320.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        275.9555969238281,
+        253.5862274169922
+      ],
+      "params": {},
+      "width": 16.0
     },
     "Sv Stethoscope Node": {
       "bl_idname": "SvStethoscopeNodeMK2",
@@ -91,16 +107,18 @@
         473.3372802734375
       ],
       "params": {
+        "num_elements": 1,
         "text_color": [
           1.0,
           1.0,
           1.0
         ]
       },
+      "use_custom_color": true,
       "width": 140.0
     },
-    "Viewer text": {
-      "bl_idname": "ViewerNodeTextMK2",
+    "Viewer text mk3": {
+      "bl_idname": "ViewerNodeTextMK3",
       "color": [
         0.5,
         0.5,
@@ -113,34 +131,43 @@
         327.9092712402344,
         388.4029235839844
       ],
-      "params": {},
+      "params": {
+        "frame": 0
+      },
+      "use_custom_color": true,
       "width": 140.0
     }
   },
   "update_lists": [
     [
       "NGon",
-      "Vertices",
-      "Debug print",
-      "Data 0"
-    ],
-    [
-      "NGon",
-      "Vertices",
-      "Note",
-      "Text In"
-    ],
-    [
-      "NGon",
-      "Vertices",
-      "Viewer text",
-      "vertices"
-    ],
-    [
-      "NGon",
-      "Vertices",
+      0,
       "Sv Stethoscope Node",
-      "Data"
+      0
+    ],
+    [
+      "NGon",
+      0,
+      "Debug print",
+      0
+    ],
+    [
+      "NGon",
+      "Vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer text mk3",
+      "data0"
+    ],
+    [
+      "NGon",
+      0,
+      "Note",
+      0
     ]
   ]
 }

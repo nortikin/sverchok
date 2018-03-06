@@ -48,8 +48,6 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
             poly = dataCorrect(poly)
             self.inputs['Mask'].sv_get(default=[[1, 0]])
 
-            has_true_out = True
-            has_false_out = False
             verts_out = []
             poly_edge_out = []
 
@@ -63,14 +61,13 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
                 vert_index = [i for i, m in enumerate(current_mask) if m]
                 if len(vert_index) < len(ve):
                     index_set = set(vert_index)
-                    if has_true_out:
-                        vert_dict = {j: i for i, j in enumerate(vert_index)}
-                        new_vert = [ve[i] for i in vert_index]
-                        is_ss = index_set.issuperset
-                        new_pe = [[vert_dict[n] for n in fe]
-                                  for fe in pe if is_ss(fe)]
-                        verts_out.append(new_vert)
-                        poly_edge_out.append(new_pe)
+                    vert_dict = {j: i for i, j in enumerate(vert_index)}
+                    new_vert = [ve[i] for i in vert_index]
+                    is_ss = index_set.issuperset
+                    new_pe = [[vert_dict[n] for n in fe]
+                              for fe in pe if is_ss(fe)]
+                    verts_out.append(new_vert)
+                    poly_edge_out.append(new_pe)
 
                 else:  # no reprocessing needed
                     verts_out.append(ve)

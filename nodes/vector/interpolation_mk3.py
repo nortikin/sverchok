@@ -26,7 +26,7 @@ from sverchok.data_structure import updateNode, dataCorrect, repeat_last
 from sverchok.utils.geom import LinearSpline, CubicSpline
 
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector Interpolate'''
+    '''Advanced Vect. Interpolation'''
     bl_idname = 'SvInterpolationNodeMK3'
     bl_label = 'Vector Interpolation mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'

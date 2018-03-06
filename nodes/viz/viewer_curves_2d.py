@@ -251,7 +251,7 @@ class SvCurveViewOp2D(bpy.types.Operator):
 
 # should inherit from bmeshviewer, many of these methods are largely identical.
 class SvCurveViewerNode2D(bpy.types.Node, SverchCustomTreeNode):
-
+    '''cv Create 2D Curve'''
     bl_idname = 'SvCurveViewerNodeAlt'
     bl_label = 'Curve Viewer 2D'
     bl_icon = 'MOD_CURVE'

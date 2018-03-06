@@ -7,3 +7,5 @@ Beta Nodes
 
    set_dataobject
    Mask_from_Index
+   spiralNode
+

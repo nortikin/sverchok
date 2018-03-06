@@ -199,6 +199,7 @@ class SvJsonFromMesh(bpy.types.Operator):
         bpy.data.texts[text].write(values)
 
 class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
+    '''Parametric mesh JSON'''
     bl_idname = 'SvMeshEvalNode'
     bl_label = 'Mesh Expression'
     bl_icon = 'OUTLINER_OB_EMPTY'

@@ -1,5 +1,5 @@
 {
-  "export_version": "0.054",
+  "export_version": "0.072",
   "framed_nodes": {
     "Circle": "Frame.001",
     "Float": "Frame.001",
@@ -21,9 +21,7 @@
     "List Split.001": "Frame.002",
     "Mirror": "Frame.004",
     "Rotation": "Frame.003",
-    "Scale": "Frame",
     "UV Connect": "Frame.005",
-    "Vectors Move": "Frame.002",
     "Vectors in": "Frame.002",
     "Vectors in.001": "Frame",
     "Vectors in.002": "Frame.003",
@@ -46,26 +44,22 @@
       "label": "",
       "location": [
         -299.0321960449219,
-        346.066162109375
+        346.0661497116089
       ],
       "params": {
         "degr_": 6.2831854820251465
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Float": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Rot",
       "location": [
         -544.1439208984375,
-        -376.2559814453125
+        -376.2559938430786
       ],
       "params": {
         "float_": -360.0,
@@ -76,17 +70,12 @@
     },
     "Float Series.001": {
       "bl_idname": "SvGenFloatRange",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         -299.4980773925781,
-        116.56524658203125
+        116.5652494430542
       ],
       "params": {
         "count_": 20,
@@ -99,17 +88,12 @@
     },
     "Float Series.002": {
       "bl_idname": "SvGenFloatRange",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         -296.3454284667969,
-        -59.17215347290039
+        -59.17215442657471
       ],
       "params": {
         "count_": 20,
@@ -122,17 +106,12 @@
     },
     "Float.001": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "end",
       "location": [
         -538.8607177734375,
-        55.54840087890625
+        55.5484037399292
       ],
       "params": {
         "float_": 1.0,
@@ -143,17 +122,12 @@
     },
     "Float.002": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "start",
       "location": [
         -540.9625244140625,
-        135.5247039794922
+        135.52470684051514
       ],
       "params": {
         "float_": 0.0,
@@ -164,17 +138,12 @@
     },
     "Float.003": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Move",
       "location": [
         -544.4132080078125,
-        -125.28935241699219
+        -125.28934955596924
       ],
       "params": {
         "float_": 0.0,
@@ -185,17 +154,12 @@
     },
     "Float.004": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Mirror start",
       "location": [
         -543.230224609375,
-        -218.4421844482422
+        -218.44218158721924
       ],
       "params": {
         "float_": 0.0,
@@ -206,17 +170,12 @@
     },
     "Float.005": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Mirror end",
       "location": [
         -543.230224609375,
-        -299.21484375
+        -299.2148561477661
       ],
       "params": {
         "float_": 0.0,
@@ -227,17 +186,12 @@
     },
     "Float.006": {
       "bl_idname": "FloatNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Scale",
       "location": [
         -540.9625244140625,
-        215.50100708007812
+        215.50100994110107
       ],
       "params": {
         "float_": 0.10000000149011612,
@@ -248,17 +202,12 @@
     },
     "Formula2": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         755.7206420898438,
-        -163.47410583496094
+        -163.47409057617188
       ],
       "params": {
         "formula": "x*n[0]"
@@ -267,16 +216,11 @@
     },
     "Formula2.001": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        577.3059692382812,
+        577.305908203125,
         205.3704833984375
       ],
       "params": {
@@ -286,16 +230,11 @@
     },
     "Formula2.002": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1323.8828125,
+        1323.8828735351562,
         132.13796997070312
       ],
       "params": {
@@ -305,11 +244,6 @@
     },
     "Formula2.003": {
       "bl_idname": "Formula2Node",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -324,12 +258,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 335.246337890625,
+      "height": 328.90167236328125,
       "hide": false,
       "label": "Scale",
       "location": [
@@ -337,16 +266,11 @@
         117.04667663574219
       ],
       "params": {},
-      "width": 377.2887268066406
+      "width": 200.48001098632812
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 851.8513793945312,
+      "height": 851.9862060546875,
       "hide": false,
       "label": "Generators",
       "location": [
@@ -354,16 +278,11 @@
         -9.214795112609863
       ],
       "params": {},
-      "width": 448.8205871582031
+      "width": 449.3005676269531
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 452.8125,
+      "height": 455.8841552734375,
       "hide": false,
       "label": "Move",
       "location": [
@@ -371,16 +290,11 @@
         -143.0716552734375
       ],
       "params": {},
-      "width": 708.8328857421875
+      "width": 518.0328369140625
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 350.4176940917969,
+      "height": 348.2433166503906,
       "hide": false,
       "label": "Rotation",
       "location": [
@@ -388,16 +302,11 @@
         361.9344177246094
       ],
       "params": {},
-      "width": 657.2076416015625
+      "width": 657.6876831054688
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 355.79034423828125,
+      "height": 356.18365478515625,
       "hide": false,
       "label": "Mirror",
       "location": [
@@ -405,16 +314,11 @@
         0.566680908203125
       ],
       "params": {},
-      "width": 368.618408203125
+      "width": 369.09820556640625
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
-      "height": 257.2445068359375,
+      "height": 288.9595642089844,
       "hide": false,
       "label": "Polygonization",
       "location": [
@@ -422,21 +326,16 @@
         17.004959106445312
       ],
       "params": {},
-      "width": 454.70751953125
+      "width": 455.1875
     },
     "Integer": {
       "bl_idname": "IntegerNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "Divisions",
       "location": [
         -545.166015625,
-        -27.58484649658203
+        -27.584847450256348
       ],
       "params": {
         "int_": 46,
@@ -447,11 +346,6 @@
     },
     "List Del Levels": {
       "bl_idname": "ListLevelsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -466,17 +360,12 @@
     },
     "List Reverse": {
       "bl_idname": "ListReverseNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         467.6544494628906,
-        -173.07252502441406
+        -173.07254028320312
       ],
       "params": {
         "level": 1
@@ -485,16 +374,11 @@
     },
     "List Split.001": {
       "bl_idname": "SvListSplitNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        883.5868530273438,
+        883.5869140625,
         338.81195068359375
       ],
       "params": {
@@ -506,88 +390,18 @@
     },
     "Mirror": {
       "bl_idname": "SvMirrorNode",
-      "color": [
-        1.0,
-        0.9113979935646057,
-        0.0003859999997075647
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1492.5010986328125,
+        1492.5010375976562,
         283.2236633300781
       ],
       "params": {},
       "width": 140.0
     },
-    "Rotation": {
-      "bl_idname": "SvRotationNode",
-      "color": [
-        1.0,
-        0.9113979935646057,
-        0.0003859999997075647
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        924.8621215820312,
-        -17.516735076904297
-      ],
-      "params": {
-        "angle_": 3.1181640625
-      },
-      "width": 140.0
-    },
-    "Scale": {
-      "bl_idname": "SvScaleNode",
-      "color": [
-        1.0,
-        0.9113982915878296,
-        0.00038623559521511197
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        207.77162170410156,
-        166.19967651367188
-      ],
-      "params": {
-        "Separate": 1
-      },
-      "width": 140.0
-    },
-    "UV Connect": {
-      "bl_idname": "LineConnectNodeMK2",
-      "color": [
-        0.6079999804496765,
-        0.2392331063747406,
-        0.5655299425125122
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1865.317138671875,
-        279.2806091308594
-      ],
-      "params": {
-        "cicl_check": 1,
-        "dir_check": "V_dir",
-        "polygons": "Pols",
-        "slice_check": 0
-      },
-      "width": 163.5291748046875
-    },
-    "Vectors Move": {
-      "bl_idname": "VectorMoveNode",
-      "color": [
-        1.0,
-        0.9113979935646057,
-        0.0003859999997075647
-      ],
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -595,21 +409,65 @@
         1074.866943359375,
         311.45166015625
       ],
-      "params": {},
+      "params": {
+        "separate": 0
+      },
       "width": 140.0
     },
-    "Vectors in": {
-      "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
+    "Rotation": {
+      "bl_idname": "SvRotationNode",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        743.0127563476562,
+        924.8621215820312,
+        -17.5167236328125
+      ],
+      "params": {
+        "angle_": 3.1181640625
+      },
+      "width": 140.0
+    },
+    "Scale.001": {
+      "bl_idname": "SvScaleNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        207.7716064453125,
+        166.19967651367188
+      ],
+      "params": {
+        "Separate": 1,
+        "separate": 1
+      },
+      "width": 140.0
+    },
+    "UV Connect": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1865.317138671875,
+        279.2805938720703
+      ],
+      "params": {
+        "cicl_check_U": 0,
+        "cicl_check_V": 1,
+        "dir_check": "V_dir",
+        "polygons": "Pols",
+        "slice_check": 0
+      },
+      "width": 163.5291748046875
+    },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        743.0126953125,
         338.81195068359375
       ],
       "params": {},
@@ -617,11 +475,6 @@
     },
     "Vectors in.001": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -634,33 +487,23 @@
     },
     "Vectors in.002": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         638.280517578125,
-        -150.6229705810547
+        -150.62295532226562
       ],
       "params": {},
       "width": 100.0
     },
     "Vectors in.003": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1324.406005859375,
+        1324.4060668945312,
         256.46728515625
       ],
       "params": {},
@@ -668,17 +511,12 @@
     },
     "Vectors in.004": {
       "bl_idname": "GenVectorsNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         645.4522094726562,
-        -19.34955596923828
+        -19.34954833984375
       ],
       "params": {},
       "width": 100.0
@@ -695,7 +533,7 @@
       "label": "",
       "location": [
         2120.024658203125,
-        282.23956298828125
+        282.2395782470703
       ],
       "params": {
         "display_edges": 1,
@@ -703,15 +541,11 @@
         "shading": 1,
         "transparant": 0
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "function": {
       "bl_idname": "ScalarMathNode",
-      "color": [
-        0.6079999804496765,
-        0.6079999804496765,
-        0.6079999804496765
-      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -726,231 +560,225 @@
   "update_lists": [
     [
       "Float.002",
-      "Float",
+      0,
       "Float Series.001",
-      "Start"
+      0
     ],
     [
       "Float.001",
-      "Float",
+      0,
       "Float Series.001",
-      "Step"
+      1
     ],
     [
       "Integer",
-      "Integer",
+      0,
       "Float Series.001",
-      "Stop"
+      2
     ],
     [
       "Float Series.001",
-      "Range",
-      "List Reverse",
-      "data"
-    ],
-    [
-      "List Reverse",
-      "data",
-      "Vectors in.002",
-      "Y"
-    ],
-    [
-      "Float Series.001",
-      "Range",
+      0,
       "Formula2.001",
-      "X"
+      0
     ],
     [
       "Float.003",
-      "Float",
+      0,
       "Formula2.001",
-      "n[0]"
-    ],
-    [
-      "Formula2.001",
-      "Result",
-      "function",
-      "X"
+      1
     ],
     [
       "Float.004",
-      "Float",
+      0,
       "Float Series.002",
-      "Start"
+      0
     ],
     [
       "Float.005",
-      "Float",
+      0,
       "Float Series.002",
-      "Step"
+      1
     ],
     [
       "Integer",
-      "Integer",
+      0,
       "Float Series.002",
-      "Stop"
+      2
     ],
     [
       "Float Series.001",
-      "Range",
+      0,
       "Formula2.002",
-      "X"
+      0
     ],
     [
       "Float Series.002",
-      "Range",
+      0,
       "Formula2.002",
-      "n[0]"
+      1
     ],
     [
       "Formula2.002",
-      "Result",
+      0,
       "Vectors in.003",
-      "X"
+      0
     ],
     [
       "Float Series.001",
-      "Range",
+      0,
       "Vectors in.003",
-      "Z"
+      2
+    ],
+    [
+      "Formula2.001",
+      0,
+      "function",
+      0
     ],
     [
       "function",
-      "float",
+      0,
       "Vectors in",
-      "Y"
+      1
+    ],
+    [
+      "Vectors in",
+      0,
+      "List Split.001",
+      0
     ],
     [
       "Float Series.001",
-      "Range",
+      0,
       "Formula2.003",
-      "X"
+      0
     ],
     [
       "Float.006",
-      "Float",
+      0,
       "Formula2.003",
-      "n[0]"
+      1
     ],
     [
       "Formula2.003",
-      "Result",
+      0,
       "Vectors in.001",
-      "Z"
+      2
     ],
     [
       "Circle",
-      "Vertices",
-      "Scale",
-      "Vertices"
+      0,
+      "Scale.001",
+      0
     ],
     [
       "Vectors in.001",
-      "Vectors",
-      "Scale",
-      "Center"
+      0,
+      "Scale.001",
+      1
     ],
     [
-      "Float Series.001",
-      "Range",
-      "Scale",
-      "Factor"
-    ],
-    [
-      "Scale",
-      "Vertices",
+      "Scale.001",
+      0,
       "List Del Levels",
-      "data"
-    ],
-    [
-      "Float Series.001",
-      "Range",
-      "Formula2",
-      "X"
-    ],
-    [
-      "Float",
-      "Float",
-      "Formula2",
-      "n[0]"
-    ],
-    [
-      "Vectors in",
-      "Vectors",
-      "List Split.001",
-      "Data"
+      0
     ],
     [
       "List Del Levels",
-      "data",
-      "Vectors Move",
-      "vertices"
+      0,
+      "Move",
+      0
     ],
     [
       "List Split.001",
-      "Split",
-      "Vectors Move",
-      "vectors"
+      0,
+      "Move",
+      1
     ],
     [
       "Float Series.001",
-      "Range",
-      "Vectors in.004",
-      "Z"
+      0,
+      "Formula2",
+      0
     ],
     [
-      "Vectors Move",
-      "vertices",
+      "Float",
+      0,
+      "Formula2",
+      1
+    ],
+    [
+      "Float Series.001",
+      0,
+      "List Reverse",
+      0
+    ],
+    [
+      "List Reverse",
+      0,
+      "Vectors in.002",
+      1
+    ],
+    [
+      "Float Series.001",
+      0,
+      "Vectors in.004",
+      2
+    ],
+    [
+      "Move",
+      0,
       "Rotation",
-      "Vertices"
+      0
     ],
     [
       "Vectors in.004",
-      "Vectors",
+      0,
       "Rotation",
-      "Center"
+      1
     ],
     [
       "Vectors in.002",
-      "Vectors",
+      0,
       "Rotation",
-      "Axis"
+      2
     ],
     [
       "Formula2",
-      "Result",
+      0,
       "Rotation",
-      "Angle"
+      3
     ],
     [
       "Rotation",
-      "Vertices",
+      0,
       "Mirror",
-      "Vertices"
+      0
     ],
     [
       "Vectors in.003",
-      "Vectors",
+      0,
       "Mirror",
-      "Vert A"
+      1
     ],
     [
       "Mirror",
-      "Vertices",
+      0,
       "UV Connect",
-      "vertices"
+      0
     ],
     [
       "UV Connect",
-      "vertices",
+      0,
       "Viewer Draw2",
-      "vertices"
+      0
     ],
     [
       "UV Connect",
-      "data",
+      1,
       "Viewer Draw2",
-      "edg_pol"
+      1
     ]
   ]
 }

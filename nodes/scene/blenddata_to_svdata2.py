@@ -24,6 +24,7 @@ from sverchok.data_structure import (updateNode)
 
 
 class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+    '''Get Object Data'''
     bl_idname = 'SvObjectToMeshNodeMK2'
     bl_label = 'Object ID Out MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'

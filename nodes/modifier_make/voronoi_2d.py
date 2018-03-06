@@ -25,7 +25,7 @@ from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayT
 
 
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Voronoi 2d line '''
+    ''' vr Voronoi 2d line '''
     bl_idname = 'Voronoi2DNode'
     bl_label = 'Voronoi 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -109,7 +109,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
 
 # computeDelaunayTriangulation
 class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' DelaunayTriangulation '''
+    '''dea Verts. Triangulation '''
     bl_idname = 'DelaunayTriangulation2DNode'
     bl_label = 'Delaunay 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
