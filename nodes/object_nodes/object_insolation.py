@@ -22,7 +22,7 @@ import numpy as np
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat, match_cross)
 from sverchok.utils.logging import debug, info, error
@@ -62,33 +62,47 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     mode = BoolProperty(name='input mode', default=False, update=updateNode)
-    mode2 = BoolProperty(name='output mode', default=False, update=updateNode)
+    #mode2 = BoolProperty(name='output mode', default=False, update=updateNode)
+    sort_critical = IntProperty(name='sort_critical', default=12, min=1,max=24, update=updateNode)
     separate = BoolProperty(name='separate the', default=False, update=updateNode)
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
-        si('SvObjectSocket', 'Objects')
-        si('VerticesSocket', 'origin').use_prop = True
-        si('VerticesSocket', 'direction').use_prop = True
-        so('StringsSocket',  "hours")
-        so('VerticesSocket', "HitP")
-        so('VerticesSocket', "HitNorm")
+        #si('StringsSocket', 'Date')
+        si('SvObjectSocket', 'Predator')
+        si('SvObjectSocket', 'Victim')
+        si('VerticesSocket', 'SunRays').use_prop = True
+        #so('SvColorSocket',  "Color")
+        so('VerticesSocket', "Centers")
+        #so('VerticesSocket', "HitP")
+        so('StringsSocket',  "Hours")
         # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self,    "mode",   text="In Mode")
-        row.prop(self,    "mode2",   text="Out Mode")
-        row = layout.row(align=True)
+        row.prop(self,    "sort_critical",text="Limit")
+        #row.prop(self,    "mode2",   text="Out Mode")
 
     def process(self):
-        o,s,e = self.inputs
-        S,P,N = self.outputs
-        outfin,OutLoc_,obj,sm1,sm2 = [],[],o.sv_get(),self.mode,self.mode2
-        lenor = len(s.sv_get()[0])
+        o,r,e = self.inputs
+        #dd,o,r,e = self.inputs
+        N,H = self.outputs
+        #S,H,P,N = self.outputs
+        outfin,OutLoc_,obj,rec,sm1,sc = [],[],o.sv_get(),r.sv_get()[0],self.mode,self.sort_critical
+        #lenor = len(s.sv_get()[0])
         lendir = len(e.sv_get()[0])
         leno = len(obj)
-        st, en = match_cross([s.sv_get()[0], e.sv_get()[0]]) # 1,1,1,2,2,2 + 4,5,6,4,5,6
+        #st, en = match_cross([s.sv_get()[0], e.sv_get()[0]]) # 1,1,1,2,2,2 + 4,5,6,4,5,6
+        st = []
+        for i in rec.data.polygons:
+            st.append(i.center[:])
+            #(np.array(st_).sum(axis=1)/len(i.vertices)).tolist())
+            #(np.array([[rec.data.vertices[k].co[:] for k in i.vertices]/len(i.vertices) for i in rec.data.polygons]).sum(axis=1)).tolist()
+        if N.is_linked:
+            N.sv_set([st])
+        lenor = len(st)
+        st, en = match_cross([st, e.sv_get()[0]]) # 1,1,1,2,2,2 + 4,5,6,4,5,6
 
         for OB in obj:
             if OB.type == 'FONT':
@@ -104,14 +118,55 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
 
             if OB.type == 'FONT':
                 del NOB
-        print(outfin)
+        self.debug(outfin)
 
-        if S.is_linked:
-            OutS_ = np.array([[i[0] for i in i2] for i2 in outfin]).reshape([leno,lenor,lendir])
-            OutS = 1-OutS_.sum(axis=2)/lendir
+        OutS_ = np.array([[i[0] for i in i2] for i2 in outfin]).reshape([leno,lenor,lendir])
+        def colset(rec,OutS_):
+            OutS_ = 1-OutS_.sum(axis=2)/lendir
+            OutS = np.array([[[i,i,i] for i in k] for k in OutS_.tolist()]).reshape([leno,lenor,3]).tolist()
+            if not 'SvInsol' in rec.data.vertex_colors:
+                rec.data.vertex_colors.new(name='SvInsol')
+            colors = rec.data.vertex_colors['SvInsol'].data
+            for i, pol in enumerate(rec.data.polygons):
+                self.debug(pol.loop_indices,OutS[0][i])
+                for co in pol.loop_indices:
+                    colors[co].color = OutS[0][i]
+        colset(rec,OutS_)
+        def matset(rec):
+            if len(rec.material_slots):
+                trem = rec.material_slots[0].material.node_tree
+                matnodes = trem.nodes
+                if not 'Attribute' in matnodes:
+                    att = matnodes.new('ShaderNodeAttribute')
+                else:
+                    att = matnodes['Attribute']
+                if not 'Diffuse BSDF' in matnodes:
+                    dif = matnodes.new('ShaderNodeBsdfDiffuse')
+                else:
+                    dif = matnodes['Diffuse BSDF']
+                att.attribute_name = 'SvInsol'
+                trem.links.new(dif.inputs[0],att.outputs[0])
+        matset(rec)
+        if H.is_linked:
+            OutH = []
+            for k in OutS_.sum(axis=2).tolist():
+                OutH_ = []
+                for i in k:
+                    li = lendir-i
+                    if li < sc+1:
+                        OutH_.append([str(li)])
+                    else:
+                        OutH_.append([''])
+                OutH.append(OutH_)
+            #OutH = [[[str(lendir-i)] for i in k] for k in OutS_.sum(axis=2).tolist()]
+            H.sv_set(OutH)
+        '''if S.is_linked:
+            OutS = np.array([[[i,i,0,1.0] for i in k] for k in OutS_.tolist()]).reshape([leno,lenor,4]).tolist()
+            #OutS = 1-OutS_.sum(axis=2)/lendir
+            #OutS = np.array([[[[i,i,0,1.0] for t in range(4)] for i in k] for k in OutS_.tolist()]).reshape([leno,lenor*4,4]).tolist() #.reshape([leno,lenor*4,4]).tolist()
             #OutS = [round(1-sum([OutS_[0][k*u] for u in range(lendir)])/lendir, 1) for k in range(lenor)]
-            S.sv_set(OutS.round(1).tolist())
-
+            S.sv_set(OutS)'''
+        ''' # colors works wrong
         if sm2:
             if P.is_linked:
                 for i,i2 in zip(obj,outfin):
@@ -128,13 +183,16 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
                 OutLoc = OutLoc_[0,:,0]
                 #OutLoc = [[OutLoc_[0][k*u] for u in range(lendir)] for k in range(lenor)]
                 P.sv_set([OutLoc.tolist()])
+        '''
 
+        ''' # N solved upper easily
         if N.is_linked:
             OutN_ = np.array([[i[2][:] for i in i2] for i2 in outfin]).reshape([leno,lenor,lendir,3])
             #OutN_ = [[i[2][:] for i in i2] for i2 in outfin]
             OutN = OutN_[0,:,0]
             #OutN = [[OutN_[0][k*u] for u in range(lendir)] for k in range(lenor)]
             N.sv_set([OutN.tolist()])
+        '''
 
 
     def update_socket(self, context):
