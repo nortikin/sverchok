@@ -627,33 +627,34 @@ class SvPrifilizer(bpy.types.Operator):
                     out_points.append(co[:])
                     out_names.append(['L.'+str(i)])
 
-            if ob_points[0].handle_left_type in types or ob_points[-1].handle_right_type in types:
-                line = False
-                values += '\n'
-                values += '#C.'+str(i+1)+'\n'
-                values += 'C '
-                hr = ob_points[-1].handle_right[:]
-                hl = ob_points[0].handle_left[:]
-                # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
-                values += self.stringadd(hr,ob_points[-1].select_right_handle)
-                values += self.stringadd(hl,ob_points[0].select_left_handle)
-                values += self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
-                values += self.curve_points_count()
-                values += ' 0 '
-                values += '\n'
-                out_points.append(hr[:])
-                out_points.append(hl[:])
-                out_names.extend([['C.'+str(i+1)+'h1'],['C.'+str(i+1)+'h2']])
-                # preserving overlapping
-                #out_points.append(ob_points[0].co[:])
-                #out_names.append(['C'])
-            if clo and not line:
-                # hacky way till be fixed x for curves not only for lines
-                values += '# hacky way till be fixed x\n# for curves not only for lines'
-                values += '\nL ' + self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
-                values += '\nx \n\n'
-            elif clo:
-                values += '\nx \n\n'
+            if clo:
+                if ob_points[0].handle_left_type in types or ob_points[-1].handle_right_type in types:
+                    line = False
+                    values += '\n'
+                    values += '#C.'+str(i+1)+'\n'
+                    values += 'C '
+                    hr = ob_points[-1].handle_right[:]
+                    hl = ob_points[0].handle_left[:]
+                    # hr[0]hr[1]hl[0]hl[1]co[0]co[1] 20 0
+                    values += self.stringadd(hr,ob_points[-1].select_right_handle)
+                    values += self.stringadd(hl,ob_points[0].select_left_handle)
+                    values += self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
+                    values += self.curve_points_count()
+                    values += ' 0 '
+                    values += '\n'
+                    out_points.append(hr[:])
+                    out_points.append(hl[:])
+                    out_names.extend([['C.'+str(i+1)+'h1'],['C.'+str(i+1)+'h2']])
+                    # preserving overlapping
+                    #out_points.append(ob_points[0].co[:])
+                    #out_names.append(['C'])
+                if not line:
+                    # hacky way till be fixed x for curves not only for lines
+                    values += '# hacky way till be fixed x\n# for curves not only for lines'
+                    values += '\nL ' + self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
+                    values += '\nx \n\n'
+                else:
+                    values += '\nx \n\n'
 
         if self.knotselected:
             values += '# expression (#+a) added because \n# you selected knots in curve'
