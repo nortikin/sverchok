@@ -62,6 +62,7 @@
     SvPointInside
     SvProportionalEditNode
     SvRaycasterLiteNode
+    SvOBJInsolationNode
 
 ## Transforms
     SvRotationNode
@@ -319,4 +320,3 @@
     SvMultiExtrudeAlt
     SvOffsetLineNode
     SvContourNode
-    SvOBJInsolationNode

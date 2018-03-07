@@ -1,0 +1,489 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {
+    "Circle": "Frame.003",
+    "List Match": "Frame.003",
+    "Reroute": "Frame.002",
+    "Reroute.002": "Frame.002",
+    "Reroute.008": "Frame.002",
+    "Rotation": "Frame.003",
+    "Rotation.001": "Frame.003",
+    "UV Connection": "Frame.003",
+    "Vector X/Y/Z": "Frame.003",
+    "Vector X/Y/Z.001": "Frame.003",
+    "Vector in": "Frame.003",
+    "Viewer Draw": "Frame.003"
+  },
+  "groups": {},
+  "nodes": {
+    "Circle": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.9200000166893005,
+        0.9200000166893005,
+        0.9200000166893005
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -100.0648193359375,
+        -284.91448974609375
+      ],
+      "params": {
+        "degr_": 2.094395160675049,
+        "mode_": 0,
+        "rad_": 5.0,
+        "vert_": 12
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.32549017667770386,
+        0.34117645025253296,
+        0.34509801864624023
+      ],
+      "height": 1500.0,
+      "hide": false,
+      "label": "Sverchok_viewer",
+      "location": [
+        2601.399169921875,
+        119.2489242553711
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 800.0
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 186.91839599609375,
+      "hide": false,
+      "label": "data to insol",
+      "location": [
+        289.2660217285156,
+        647.1701049804688
+      ],
+      "params": {},
+      "width": 140.32843017578125
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "height": 400.14434814453125,
+      "hide": false,
+      "label": "rays",
+      "location": [
+        407.508056640625,
+        -619.734375
+      ],
+      "params": {},
+      "width": 896.2562255859375
+    },
+    "List Match": {
+      "bl_idname": "ListMatchNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        461.21144104003906,
+        -474.6988220214844
+      ],
+      "params": {
+        "level": 2
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        1.0,
+        0.8993440270423889,
+        0.9742509722709656
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -122.04351806640625,
+        198.80079650878906
+      ],
+      "params": {
+        "show_text": 0,
+        "text": "Nikitron 2018 - insolation test"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Object ID Insolation": {
+      "bl_idname": "SvOBJInsolationNode",
+      "custom_socket_props": {
+        "2": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        834.3430786132812,
+        40.188499450683594
+      ],
+      "params": {
+        "mode": 0,
+        "sort_critical": 2
+      },
+      "width": 140.0
+    },
+    "Objects in mk3": {
+      "bl_idname": "SvObjectsNodeMK3",
+      "color": [
+        0.904932975769043,
+        1.0,
+        0.883421003818512
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        247.8347625732422,
+        24.671173095703125
+      ],
+      "object_names": [
+        "victim"
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Objects in mk3.001": {
+      "bl_idname": "SvObjectsNodeMK3",
+      "color": [
+        0.904932975769043,
+        1.0,
+        0.883421003818512
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        449.2581787109375,
+        197.5847930908203
+      ],
+      "object_names": [
+        "predator"
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "predator",
+      "location": [
+        718.5639038085938,
+        -2.692626953125
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.002": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "sun rays",
+      "location": [
+        718.5639038085938,
+        -79.7427978515625
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.008": {
+      "bl_idname": "NodeReroute",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "victim",
+      "location": [
+        718.5639038085938,
+        -39.425048828125
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 16.0
+    },
+    "Rotation": {
+      "bl_idname": "SvRotationNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        97.11041259765625,
+        -309.1545715332031
+      ],
+      "params": {
+        "angle_": 30.0
+      },
+      "width": 140.0
+    },
+    "Rotation.001": {
+      "bl_idname": "SvRotationNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        282.40882110595703,
+        -306.5486145019531
+      ],
+      "params": {
+        "angle_": 30.0
+      },
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        459.2382049560547,
+        -531.6445922851562
+      ],
+      "params": {
+        "dir_check": "V_dir",
+        "polygons": "Edges"
+      },
+      "width": 140.0
+    },
+    "Vector X/Y/Z": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -108.330078125,
+        -481.68023681640625
+      ],
+      "params": {
+        "axis_x": "0",
+        "axis_y": "0"
+      },
+      "width": 144.7608642578125
+    },
+    "Vector X/Y/Z.001": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        92.76101684570312,
+        -488.68377685546875
+      ],
+      "params": {
+        "axis_x": "1",
+        "axis_y": "0",
+        "axis_z": "0"
+      },
+      "width": 144.7608642578125
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        300.18038177490234,
+        -485.6902160644531
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        587.5731658935547,
+        -306.4921875
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 1,
+        "display_faces": 0,
+        "display_verts": 0,
+        "edge_colors": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "edge_width": 3,
+        "use_scene_light": 1,
+        "vertex_colors": [
+          0.0,
+          0.03242534026503563,
+          0.30779656767845154
+        ],
+        "vertex_size": 3.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Index": {
+      "bl_idname": "IndexViewerNode",
+      "color": [
+        0.6284880042076111,
+        0.931007981300354,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        838.7593994140625,
+        -114.1307373046875
+      ],
+      "params": {
+        "activate": 1,
+        "bakebuttonshow": 0,
+        "draw_bg": 0,
+        "numid_verts_col": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Circle",
+      0,
+      "Rotation",
+      0
+    ],
+    [
+      "Vector X/Y/Z",
+      0,
+      "Rotation",
+      2
+    ],
+    [
+      "Rotation",
+      0,
+      "Rotation.001",
+      0
+    ],
+    [
+      "Vector X/Y/Z.001",
+      0,
+      "Rotation.001",
+      2
+    ],
+    [
+      "Rotation.001",
+      "Vertices",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Objects in mk3",
+      "Object",
+      "Reroute.008",
+      "Input"
+    ],
+    [
+      "Objects in mk3.001",
+      "Object",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Object ID Insolation",
+      "Predator"
+    ],
+    [
+      "Reroute.008",
+      "Output",
+      "Object ID Insolation",
+      "Victim"
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Object ID Insolation",
+      "SunRays"
+    ],
+    [
+      "Object ID Insolation",
+      0,
+      "Viewer Index",
+      0
+    ],
+    [
+      "Object ID Insolation",
+      1,
+      "Viewer Index",
+      4
+    ],
+    [
+      "Rotation.001",
+      0,
+      "List Match",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "List Match",
+      1
+    ],
+    [
+      "List Match",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "List Match",
+      1,
+      "UV Connection",
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw",
+      1
+    ]
+  ]
+}
