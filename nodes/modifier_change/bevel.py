@@ -39,7 +39,10 @@ def get_bevel_edges(bm, bevel_edges):
 
 
 class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Bevel vertices, edges and faces'''
+    """ 
+    Triggers: Bevel, Round, Smooth 
+    Tooltip: Bevel vertices, edges and faces. Create rounded corners.
+    """ 
     bl_idname = 'SvBevelNode'
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
@@ -108,10 +111,16 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
             Profiles.sv_get()[0]
         ]
 
-
+    def vertexMode(self):
+        if not self.inputs[2].is_linked and self.inputs[1].is_linked:
+            return True
+        else:
+            return self.vertexOnly
+        
+        
     def process(self):
 
-        if not (self.inputs[0].is_linked and self.inputs[2].is_linked):
+        if not (self.inputs[0].is_linked and (self.inputs[2].is_linked or self.inputs[1].is_linked )):
             return
         if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewPolys']):
             return
@@ -119,6 +128,9 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         out, result_bevel_faces = [], []
 
         meshes = match_long_repeat(self.get_socket_data())
+        
+        vertexOnly = self.vertexMode()
+        
         for vertices, edges, faces, bevel_edges, offset, segments, profile in zip(*meshes):
             bm = bmesh_from_pydata(vertices, edges, faces)
             b_edges = get_bevel_edges(bm, bevel_edges)
@@ -127,7 +139,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
             bevel_faces = bmesh.ops.bevel(
                 bm, geom=geom, offset=offset,
                 offset_type=int(self.offsetType), segments=segments,
-                profile=profile, vertex_only=self.vertexOnly, material=-1)['faces']
+                profile=profile, vertex_only=vertexOnly, material=-1)['faces']
 
             new_bevel_faces = [[v.index for v in face.verts] for face in bevel_faces]
             out.append(pydata_from_bmesh(bm))
