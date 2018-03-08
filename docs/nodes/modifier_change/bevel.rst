@@ -1,8 +1,6 @@
 Bevel
 =====
 
-*destination after Beta: Modifier Change*
-
 Functionality
 -------------
 
@@ -48,7 +46,7 @@ This node has the following parameters:
 | **Segments**     | Int           | 1           | Number of segments in bevel. This parameter can    |
 |                  |               |             | also be specified via corresponding input.         |
 +------------------+---------------+-------------+----------------------------------------------------+
-| **Profile**      | Float         | 0.5         | Profile shape - a float nubmer from 0 to 1;        |
+| **Profile**      | Float         | 0.5         | Profile shape - a float number from 0 to 1;        |
 |                  |               |             | default value of 0.5 means round shape.  This      |
 |                  |               |             | parameter can also be specified via corresponding  |
 |                  |               |             | input.                                             |
