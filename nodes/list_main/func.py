@@ -74,7 +74,7 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     out = self.count(data, self.level, func)
 
-                self.outputs['Function'].sv_set(out)
+                self.outputs['Function'].sv_set([out])
 
     def count(self, data, level, func):
         out = []
