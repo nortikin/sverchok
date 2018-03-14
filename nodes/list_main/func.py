@@ -28,7 +28,10 @@ def acc(l):
     return list(accumulate(l))
 
 class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List function '''
+    '''
+    Triggers: List functions
+    Tooltip: Operations with list, sum, average, min, max
+    '''    '''  '''
     bl_idname = 'ListFuncNode'
     bl_label = 'List Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
