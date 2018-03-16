@@ -56,7 +56,6 @@ class SV_MT_layouts_templates(bpy.types.Menu):
             layout.menu(cls.__name__)
 
 
-
 def node_templates_pulldown(self, context):
     if context.space_data.tree_type == 'SverchCustomTreeType':
         layout = self.layout
@@ -64,8 +63,6 @@ def node_templates_pulldown(self, context):
         row.scale_x = 1.3
         row.menu("SV_MT_layouts_templates", icon="RNA")
 
-
-# from sverchok.ui import sv_panels
 
 classes = menu_classes + [SV_MT_layouts_templates]
 
