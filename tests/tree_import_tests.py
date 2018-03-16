@@ -3,6 +3,7 @@ import unittest
 import json
 from os.path import join, dirname, basename
 from glob import glob
+from pathlib import Path
 
 import sverchok
 from sverchok.old_nodes import is_old
@@ -65,7 +66,9 @@ class ExamplesImportTest(SverchokTestCase):
                 continue
 
             info("Opening Dir named: %s", cat)
-            for path in examples_paths.get(cat):
+
+            examples_set = Path(examples_paths.get(cat))
+            for path in examples_set.iterdir():
 
                 # assuming these are all jsons for now.
                 name = basename(path)
