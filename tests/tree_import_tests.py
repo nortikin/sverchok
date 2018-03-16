@@ -65,8 +65,9 @@ class ExamplesImportTest(SverchokTestCase):
                 continue
 
             info("Opening Dir named: %s", cat)
+            for path in examples_paths.get(cat):
 
-            for path in glob(join(examples_dir, "*.json")):
+                # assuming these are all jsons for now.
                 name = basename(path)
                 with self.subTest(file=name):
                     info("Importing: %s", name)
