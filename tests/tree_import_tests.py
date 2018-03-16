@@ -68,7 +68,10 @@ class ExamplesImportTest(SverchokTestCase):
             info("Opening Dir named: %s", cat)
 
             examples_set = Path(examples_paths.get(cat))
-            for path in examples_set.iterdir():
+            for listed_path in examples_set.iterdir():
+
+                # cast from Path class to dumb string.
+                path = str(listed_path)
 
                 # assuming these are all jsons for now.
                 name = basename(path)
