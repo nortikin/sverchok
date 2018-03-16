@@ -22,14 +22,14 @@ def draw_item(self, context, item):
 
 # quick class factory.
 def make_class(bl_label):
-    bl_idname = "SvPyMenu" + bl_label
+    bl_idname = "SV_MT_PyMenu_" + bl_label
     draw_func = lambda s, c: draw_item(s, c, bl_label)
     return type(bl_idname, (bpy.types.Menu,), {'bl_label': bl_label, 'draw': draw_func, 'bl_idname': bl_idname})
 
 menu_classes = []
 for catname in examples_paths:
-    locals()['SvPyMenu'+ catname] = make_class(catname) 
-    menu_classes.append(locals()['SvPyMenu'+ catname])
+    locals()['SV_MT_PyMenu_'+ catname] = make_class(catname) 
+    menu_classes.append(locals()['SV_MT_PyMenu_'+ catname])
 
 
 
