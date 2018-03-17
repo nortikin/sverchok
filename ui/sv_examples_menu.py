@@ -64,7 +64,7 @@ def node_examples_pulldown(self, context):
         row.menu("SV_MT_layouts_examples", icon="RNA")
 
 
-classes = menu_classes + [SV_MT_layouts_templates]
+classes = menu_classes + [SV_MT_layouts_examples]
 
 def register():
     _ = [bpy.utils.register_class(cls) for cls in classes]
