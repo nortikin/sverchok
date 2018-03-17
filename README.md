@@ -1,5 +1,3 @@
-## Badges
-
 [![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
 
 # English
