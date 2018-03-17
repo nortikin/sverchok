@@ -271,6 +271,7 @@
 
 ## Network
     UdpClientNode
+    SvFFTClientNode
 
 ## Beta Nodes
     SvFormulaShapeNode
