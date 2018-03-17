@@ -19,7 +19,7 @@
 from itertools import accumulate
 
 import bpy
-from bpy.props import EnumProperty, IntProperty
+from bpy.props import EnumProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -49,12 +49,17 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     level = IntProperty(name='level_to_count',
                         default=1, min=0,
                         update=updateNode)
+    wrap = BoolProperty(name='wrap', description='extra level add', 
+                        default=False,update=updateNode)
 #    typ = bpy.props.StringProperty(name='typ', default='')
 #    newsock = bpy.props.BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
         layout.prop(self, "func_", "Functions:")
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "wrap", text="wrap")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data", "Data")
@@ -77,7 +82,7 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     out = self.count(data, self.level, func)
 
-                self.outputs['Function'].sv_set([out])
+                self.outputs['Function'].sv_set([out] if self.wrap else out)
 
     def count(self, data, level, func):
         out = []
