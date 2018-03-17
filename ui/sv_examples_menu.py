@@ -34,8 +34,8 @@ for catname in examples_paths:
 
 
 # Node Examples Menu
-class SV_MT_layouts_templates(bpy.types.Menu):
-    bl_idname = 'SV_MT_layouts_templates'
+class SV_MT_layouts_examples(bpy.types.Menu):
+    bl_idname = 'SV_MT_layouts_examples'
     bl_space_type = 'NODE_EDITOR'
     bl_label = "Examples"
     bl_description = "List of Sverchok Examples"
@@ -56,23 +56,23 @@ class SV_MT_layouts_templates(bpy.types.Menu):
             layout.menu(cls.__name__)
 
 
-def node_templates_pulldown(self, context):
+def node_examples_pulldown(self, context):
     if context.space_data.tree_type == 'SverchCustomTreeType':
         layout = self.layout
         row = layout.row(align=True)
         row.scale_x = 1.3
-        row.menu("SV_MT_layouts_templates", icon="RNA")
+        row.menu("SV_MT_layouts_examples", icon="RNA")
 
 
 classes = menu_classes + [SV_MT_layouts_templates]
 
 def register():
     _ = [bpy.utils.register_class(cls) for cls in classes]
-    bpy.types.NODE_HT_header.append(node_templates_pulldown)
+    bpy.types.NODE_HT_header.append(node_examples_pulldown)
 
 
 def unregister():
-    bpy.types.NODE_HT_header.remove(node_templates_pulldown)
+    bpy.types.NODE_HT_header.remove(node_examples_pulldown)
     _ = [bpy.utils.unregister_class(cls) for cls in reversed(classes)]
 
 
