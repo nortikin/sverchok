@@ -19,7 +19,7 @@
 
 import bpy
 import numpy as np
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
@@ -30,18 +30,26 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Select Object Vertices'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    formula = StringProperty(name='formula', default='v == 0', update=updateNode)
+    formula = StringProperty(name='formula', default='val == 0', update=updateNode)
     deselect_all = BoolProperty(name='deselect', default=False, update=updateNode)
+
+    modes = [
+        ("vertices", "Vert", "", 1),
+        ("polygons", "Face", "", 2),
+        ("edges", "Edge", "", 3)]
+
+    mode = EnumProperty(items=modes, default='vertices', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "deselect_all", text="clear selection")
+        layout.prop(self, "mode", expand=True)
         if self.inputs[4].is_linked:
             layout.prop(self, "formula", text="")
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
-        self.inputs.new('StringsSocket', 'vert_index')
-        self.inputs.new('StringsSocket', 'vert_mask')
+        self.inputs.new('StringsSocket', 'element_index')
+        self.inputs.new('StringsSocket', 'element_mask')
         self.inputs.new('StringsSocket', 'edges_polys')
         self.inputs.new('StringsSocket', 'floattoboolexpr')
         self.outputs.new('StringsSocket', 'selected_indx')
@@ -50,9 +58,10 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         O, Vind, Vmask, edpo, FtoB = self.inputs
-        Osi, Osmas, OObj = self.outputs
+        Osvi, Osvmas, OObj = self.outputs
         Prop = self.formula
         objsl = O.sv_get()
+        elements = [getattr(ob.data, self.mode) for ob in O.sv_get()]
         if self.deselect_all:
             for ob in objsl:    # unfortunately we cant just deselect verts
                 for p in ob.data.polygons:
@@ -61,32 +70,28 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
                     e.select = False
                 for v in ob.data.vertices:
                     v.select = False
-            #   ob.data.update()
         if Vind.is_linked:
             INDL = Vind.sv_get()
-            for obj, ind in zip(objsl, INDL):
-                omv = obj.data.vertices
+            for omv, ind in zip(elements, INDL):
                 for i in ind:
                     omv[i].select = True
         if Vmask.is_linked:
             masL = Vmask.sv_get()
-            for obj, ma in zip(objsl, masL):
-                obj.data.vertices.foreach_set('select', safc(obj.data.vertices[:], ma))
+            for obel, ma in zip(elements, masL):
+                obel.foreach_set('select', safc(obel[:], ma))
         if edpo.is_linked:
             topol = edpo.sv_get()
-            for obj, ind in zip(objsl, topol):
-                omv = obj.data.vertices
+            for omv, ind in zip(elements, topol):
                 for i in np.unique(ind):
                     omv[i].select = True
         if FtoB.is_linked:
-            str = "for v, vert in zip(floats, omv):\n    vert.select="+self.formula
-            for obj, floats in zip(objsl, FtoB.sv_get()):
-                omv = obj.data.vertices
+            str = "for val, elem in zip(floats, omv):\n    elem.select="+self.formula
+            for omv, floats in zip(elements, FtoB.sv_get()):
                 exec(str)
-        if Osi.is_linked:
-            Osi.sv_set([[v.index for v in ob.data.vertices if v.select] for ob in objsl])
-        if Osmas.is_linked:
-            Osmas.sv_set([[v.select for v in ob.data.vertices] for ob in objsl])
+        if Osvi.is_linked:
+            Osvi.sv_set([[v.index for v in elem if v.select] for elem in elements])
+        if Osvmas.is_linked:
+            Osvmas.sv_set([[v.select for v in elem] for elem in elements])
         if OObj.is_linked:
             OObj.sv_set(objsl)
 
