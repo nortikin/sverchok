@@ -61,7 +61,7 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
         Osvi, Osvmas, OObj = self.outputs
         Prop = self.formula
         objsl = O.sv_get()
-        elements = [getattr(ob.data, self.mode) for ob in O.sv_get()]
+        elements = [getattr(ob.data, self.mode) for ob in objsl]
         if self.deselect_all:
             for ob in objsl:    # unfortunately we cant just deselect verts
                 for p in ob.data.polygons:
@@ -71,13 +71,11 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
                 for v in ob.data.vertices:
                     v.select = False
         if Vind.is_linked:
-            INDL = Vind.sv_get()
-            for omv, ind in zip(elements, INDL):
+            for omv, ind in zip(elements, Vind.sv_get()):
                 for i in ind:
                     omv[i].select = True
         if Vmask.is_linked:
-            masL = Vmask.sv_get()
-            for obel, ma in zip(elements, masL):
+            for obel, ma in zip(elements, Vmask.sv_get()):
                 obel.foreach_set('select', safc(obel[:], ma))
         if edpo.is_linked:
             for obj, ind in zip(objsl, edpo.sv_get()):
