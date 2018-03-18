@@ -80,8 +80,8 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
             for obel, ma in zip(elements, masL):
                 obel.foreach_set('select', safc(obel[:], ma))
         if edpo.is_linked:
-            topol = edpo.sv_get()
-            for omv, ind in zip(elements, topol):
+            for obj, ind in zip(objsl, edpo.sv_get()):
+                omv = obj.data.vertices
                 for i in np.unique(ind):
                     omv[i].select = True
         if FtoB.is_linked:
