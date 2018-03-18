@@ -79,11 +79,10 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
                 for i in np.unique(ind):
                     omv[i].select = True
         if FtoB.is_linked:
-            floatL = FtoB.sv_get()
-            for obj, floats in zip(objsl, floatL):
+            str = "for v, vert in zip(floats, omv):\n    vert.select="+self.formula
+            for obj, floats in zip(objsl, FtoB.sv_get()):
                 omv = obj.data.vertices
-                for v, vert in zip(floats, omv):
-                    vert.select = eval(self.formula)
+                exec(str)
         if Osi.is_linked:
             Osi.sv_set([[v.index for v in ob.data.vertices if v.select] for ob in objsl])
         if Osmas.is_linked:
