@@ -289,6 +289,7 @@
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
+    SvSelectMeshVerts
     ---
     SvSpiralNode
 
