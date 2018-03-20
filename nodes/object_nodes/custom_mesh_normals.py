@@ -54,7 +54,7 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
                     obm.normals_split_custom_set_from_vertices(norml)
             else:   # per loop
                 for obm, norml in zip(objml, Vnorm.sv_get()):
-                    obm.data.normals_split_custom_set(norml)
+                    obm.normals_split_custom_set(norml)
 
 
 def register():
