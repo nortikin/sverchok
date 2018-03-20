@@ -41,7 +41,7 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
-        self.inputs.new('StringsSocket', 'element_normal')
+        self.inputs.new('VerticesSocket', 'custom_normal')
 
     def process(self):
         O, Vnorm = self.inputs
