@@ -33,7 +33,7 @@ import numpy as np
 
 import bpy
 from bpy.types import Operator
-from bpy.props import BoolProperty
+from bpy.props import BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 
@@ -52,7 +52,11 @@ class SpectrumAnalyzer:
     spec_y = 0
     data = []
 
-    def __init__(self):
+    def __init__(self, **kwargs):
+
+        for k, v in kwargs.items():
+            setattr(self, k, v)
+
         self.pa = pyaudio.PyAudio()
         self.open_dataframe()
 
@@ -101,7 +105,20 @@ class SvFFTCallback(Operator):
 
         if type_op == 'on':
             n.active = True
-            wik = SpectrumAnalyzer()
+            """
+            defaults::
+
+            CHANNELS = 1
+            RATE = 16000
+            CHUNK = 512
+            N = 512
+            """
+            if n:
+                props = dict(CHANNELS=n.channels, RATE=n.rate, CHUNK=n.chunk, N=n.frame_size)
+            else:
+                props = dict(CHANNELS=1, RATE=16000, CHUNK=512, N=512)
+
+            wik = SpectrumAnalyzer(props)
             n.node_dict[hash(n)] = {'FFT': wik}
             wik.open_dataframe()
         elif type_op == 'off':
@@ -121,9 +138,22 @@ class SvFFTClientNode(bpy.types.Node, SverchCustomTreeNode):
     active = BoolProperty(default=False, name='Active')
     node_dict = {}
 
+    show_details = BoolProperty(name="Show details")
+    channels = IntProperty(default=1, min=1, max=2)
+    rate = IntProperty(default=16000, min=2000, max=48000)
+    chunk = IntProperty(default=512, min=12)
+    frame_size = IntProperty(default=512, min=12)
+
     def draw_buttons(self, context, layout):
         state = 'on' if not self.active else 'off'
         layout.operator('node.fft_callback', text=state).fn_name = state
+
+        layout.prop(self, "show_details")
+        layout.separator()
+        layout.prop(self, "channels")
+        layout.prop(self, "rate")
+        layout.prop(self, "chunk")
+        layout.prop(self, "frame_size")
 
     def sv_init(self, context):
         print('PyAudio imported?', import_success['status'])
