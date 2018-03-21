@@ -118,7 +118,7 @@ class SvFFTCallback(Operator):
             else:
                 props = dict(CHANNELS=1, RATE=16000, CHUNK=512, N=512)
 
-            wik = SpectrumAnalyzer(props)
+            wik = SpectrumAnalyzer(**props)
             n.node_dict[hash(n)] = {'FFT': wik}
             wik.open_dataframe()
         elif type_op == 'off':
@@ -147,13 +147,15 @@ class SvFFTClientNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         state = 'on' if not self.active else 'off'
         layout.operator('node.fft_callback', text=state).fn_name = state
-
-        layout.prop(self, "show_details")
-        layout.separator()
-        layout.prop(self, "channels")
-        layout.prop(self, "rate")
-        layout.prop(self, "chunk")
-        layout.prop(self, "frame_size")
+        
+        icon_to_show = "DOWNARROW_HLT" if self.show_details else "RIGHTARROW"
+        layout.prop(self, "show_details", toggle=True, icon=icon_to_show)
+        if self.show_details:
+            col = layout.column(align=True)
+            col.prop(self, "channels")
+            col.prop(self, "rate")
+            col.prop(self, "chunk")
+            col.prop(self, "frame_size")
 
     def sv_init(self, context):
         print('PyAudio imported?', import_success['status'])
