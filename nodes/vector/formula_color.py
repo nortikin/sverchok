@@ -20,7 +20,7 @@ import bpy
 from math import *
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
+from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
 class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
@@ -54,10 +54,10 @@ class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
             if Io2.is_linked:
                 fin = []
                 V2 = Io2.sv_get()
-                for Enum,ValL in zip(enumerate(V), V2):
+                for Enum,Val2L in zip(enumerate(V), V2):
                     I,L = Enum
                     Pfin = []
-                    for Enum2, col2 in zip(enumerate(L), ValL):
+                    for Enum2, col2 in zip(enumerate(L), safc(L, Val2L)):
                         i, (r, g, b, a) = Enum2
                         (R, G, B, A) = col2  # color from second socket
                         Pfin.append(eval("{n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA}".format(n=self)))
