@@ -290,6 +290,7 @@
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
     SvSelectMeshVerts
+    SvSetCustomMeshNormals
     ---
     SvSpiralNode
 
