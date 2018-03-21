@@ -62,7 +62,7 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             color = self.color_data[:3]
 
-        self.outputs['Color'].sv_set([color])
+        self.outputs['Color'].sv_set([[color]])
 
 def register():
     bpy.utils.register_class(SvColorInputNode)
