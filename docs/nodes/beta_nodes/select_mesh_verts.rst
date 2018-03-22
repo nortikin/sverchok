@@ -22,7 +22,7 @@ Parameters
 
 This node has the following parameters:
 
-- **Clear selections**. Deselect all verts before doing anything. If selected vertices formed edge or face shape, then Blender consider it as if edge or face element was selected. So you must have this checkbox activated in most cases when you want to use input selection sockets, but always keep it deactivated if you want to use output selection sockets.
+- **Clear selections**. Deselect all verts, edges and faces before doing anything. If selected vertices formed edge or face shape, then Blender consider it as if edge or face element was selected. So you must have this checkbox activated in most cases when you want to use input selection sockets, but always keep it deactivated if you want to use output selection sockets.
 - **Elements Mode**. Chose out of **Verts**, **Polygons** or **Edges** as elements to be selected.
 - **expression text-box**. Visible only when **floattoboolexpr** socket is connected.
 
