@@ -20,7 +20,6 @@ from math import pi
 import bpy
 import bmesh
 from bmesh.ops import transform, extrude_discrete_faces
-from bpy.props import IntProperty, FloatProperty
 from mathutils import Matrix, Vector
 import numpy as np
 from sverchok.node_tree import SverchCustomTreeNode
@@ -60,7 +59,6 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
         IVerts, IFaces, IMask, Imatr = self.inputs
         vertices_s = IVerts.sv_get()
         faces_s = IFaces.sv_get()
-        matrices = [Imatr.sv_get()]
         linked_extruded_polygons = outputs['ExtrudedPolys'].is_linked
         linked_other_polygons = outputs['OtherPolys'].is_linked
         result_vertices = []
@@ -69,12 +67,12 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
         result_extruded_faces = []
         result_other_faces = []
         bmlist = [bmesh_from_pydata(verts, [], faces) for verts, faces in zip(vertices_s, faces_s)]
-        fullList(matrices, len(bmlist))
+        trans = [Matrix(mat) for mat in Imatr.sv_get()]
         if IMask.is_linked:
             flist = [np.extract(mask, bm.faces[:]) for bm, mask in zip(bmlist, IMask.sv_get())]
         else:
             flist = [bm.faces for bm in bmlist]
-        for bm, selfaces, trans in zip(bmlist, flist, matrices):
+        for bm, selfaces in zip(bmlist, flist):
             extrfaces = extrude_discrete_faces(bm, faces=selfaces)['faces']
             fullList(trans, len(extrfaces))
             new_extruded_faces = []
@@ -88,7 +86,7 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
                     y_axis = z_axis.cross(x_axis).normalized()
                     m_r = Matrix(list([*zip(x_axis[:], y_axis[:], z_axis[:])])).to_4x4()
                 m = (Matrix.Translation(face.calc_center_median()) * m_r).inverted()
-                transform(bm, matrix=Matrix(ma), space=m, verts=face.verts)
+                transform(bm, matrix=ma, space=m, verts=face.verts)
                 if linked_extruded_polygons or linked_other_polygons:
                     new_extruded_faces.append([v.index for v in face.verts])
             new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
