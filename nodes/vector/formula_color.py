@@ -52,16 +52,10 @@ class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
         if Oo.is_linked:
             V = Io.sv_get()
             if Io2.is_linked:
+                str = "for Enum,Val2L in zip(enumerate(V), V2): \n    I,L = Enum \n    Pfin = [] \n    for Enum2, col2 in zip(enumerate(L), safc(L, Val2L)): \n        i, (r, g, b, a) = Enum2 \n        (R, G, B, A) = col2 \n        Pfin.append(({n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA})) \n    fin.append(Pfin)"
                 fin = []
                 V2 = Io2.sv_get()
-                for Enum,Val2L in zip(enumerate(V), V2):
-                    I,L = Enum
-                    Pfin = []
-                    for Enum2, col2 in zip(enumerate(L), safc(L, Val2L)):
-                        i, (r, g, b, a) = Enum2
-                        (R, G, B, A) = col2  # color from second socket
-                        Pfin.append(eval("{n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA}".format(n=self)))
-                    fin.append(Pfin)
+                exec(str.format(n=self))
                 Oo.sv_set(fin)
             else:
                 exec_string = "Oo.sv_set([[({n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA}) for i, (r, g, b, a) in enumerate(L)] for I, L in enumerate(V)])"
