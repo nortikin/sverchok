@@ -26,3 +26,4 @@ resulted colors to red, green, blue and alpha elements of which was applied expr
 
 Example of usage
 ----------------
+.. image:: https://user-images.githubusercontent.com/22656834/37774133-44806c24-2e01-11e8-85ba-361a18315ff9.png
