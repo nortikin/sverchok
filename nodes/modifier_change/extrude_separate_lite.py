@@ -52,9 +52,8 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
         onew('StringsSocket', 'OtherPolys')
 
     def process(self):
-        inputs = self.inputs
         outputs = self.outputs
-        if not any(socket.is_linked for socket in outputs):
+        if not outputs['Vertices'].is_linked:
             return
         IVerts, IFaces, IMask, Imatr = self.inputs
         vertices_s = IVerts.sv_get()
