@@ -64,7 +64,7 @@ class SvExecNodeModCallback(bpy.types.Operator):
 
 
 class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
-    ''' Exec Node Mod'''
+    '''Execute small script'''
     bl_idname = 'SvExecNodeMod'
     bl_label = 'Exec Node Mod'
     bl_icon = 'CONSOLE'

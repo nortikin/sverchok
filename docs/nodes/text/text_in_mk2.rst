@@ -36,8 +36,13 @@ Properties
 
 **N Panel**
 
-The *N-panel* has a "force input" mode for CSV to automatically try to do the right thing when the CSV is
+The *N-panel* has a few options too
+
+- **force input** : mode for CSV to automatically try to do the right thing when the CSV is
 a mixed bag of strings with quotes and numbers. Try this if the file won't load correctly. (else let us know in the issue tracker)
+
+- **Extended Mode** : this turns off all parsing convertors and outputs just strings for now, you must then use formula nodes to cast params manually.
+
 
 Outputs
 -------

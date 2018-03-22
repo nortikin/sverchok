@@ -37,6 +37,7 @@ def wipe_object(ob):
 
 
 class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
+    '''Copy by Dupli Faces'''
     bl_idname = 'SvDupliInstancesMK4'
     bl_label = 'Dupli instancer mk4'
     bl_icon = 'OUTLINER_OB_EMPTY'

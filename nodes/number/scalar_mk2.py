@@ -109,7 +109,7 @@ def property_change(node, context, origin):
 
 
 class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' SvScalarMathNodeMK2 '''
+    '''Scalar: Add, Sine... '''
     bl_idname = 'SvScalarMathNodeMK2'
     bl_label = 'Math MK2'
     sv_icon = 'SV_FUNCTION'

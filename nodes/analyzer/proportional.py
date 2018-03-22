@@ -46,6 +46,7 @@ def invsquare(x):
     return x*x
 
 class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Curved mask coeffs.'''
     bl_idname = 'SvProportionalEditNode'
     bl_label = 'Proportional Edit Falloff'
     bl_icon = 'PROP_ON'

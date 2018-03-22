@@ -81,6 +81,7 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
 
 
 class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
+    ''' Matrix Cuts geometry'''
     bl_idname = 'SvBisectNode'
     bl_label = 'Bisect'
     bl_icon = 'OUTLINER_OB_EMPTY'

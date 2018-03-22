@@ -276,9 +276,11 @@
     SvFormulaShapeNode
     SvHeavyTriangulateNode
     SvFormulaDeformNode
+    SvFormulaColorNode
     SvSubdivideLiteNode
     ---
     SvColorsInNodeMK1
+    SvColorInputNode
     SvColorsOutNodeMK1
     ---
     SvMatrixNormalNode
@@ -288,6 +290,8 @@
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
+    SvSelectMeshVerts
+    SvSetCustomMeshNormals
     ---
     SvSpiralNode
 
@@ -319,3 +323,5 @@
     SvMultiExtrudeAlt
     SvOffsetLineNode
     SvContourNode
+    SvPlanarEdgenetToPolygons
+    

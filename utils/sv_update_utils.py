@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import requests
 import os
 import urllib
 import urllib.request
@@ -24,6 +23,7 @@ from zipfile import ZipFile
 
 import bpy
 import sverchok
+from sverchok.utils import sv_requests as requests
 
 # pylint: disable=w0141
 
@@ -168,6 +168,10 @@ class SverchokUpdateAddon(bpy.types.Operator):
             url = branch_origin + zipname
 
             to_path = os.path.normpath(os.path.join(os.curdir, zipname))
+
+            print('> obtaining: [{0}]\n> sending to path: [{1}]'.format(url, to_path))
+            # return {'CANCELLED'}
+
             file = urllib.request.urlretrieve(url, to_path)
             wm.progress_update(50)
         except Exception as err:

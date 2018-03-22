@@ -238,7 +238,7 @@ class SvCurveViewOp(bpy.types.Operator):
 
 # should inherit from bmeshviewer, many of these methods are largely identical.
 class SvCurveViewerNode(bpy.types.Node, SverchCustomTreeNode):
-
+    '''cv Create 3D Curve'''
     bl_idname = 'SvCurveViewerNode'
     bl_label = 'Curve Viewer'
     bl_icon = 'MOD_CURVE'

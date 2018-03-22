@@ -105,6 +105,7 @@ def simple_grid_xy(x, y, args):
 
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
+    '''Curved interpolation'''
     bl_idname = 'SvEasingNode'
     bl_label = 'Easing 0..1'
 

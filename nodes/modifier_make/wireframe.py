@@ -45,7 +45,7 @@ def wireframe(vertices, faces, t, self):
 
 
 class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Wireframe'''
+    '''wf Wireframe Modif.'''
     bl_idname = 'SvWireframeNode'
     bl_label = 'Wireframe'
     bl_icon = 'MOD_WIREFRAME'

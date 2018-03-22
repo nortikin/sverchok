@@ -37,7 +37,7 @@ from sverchok.data_structure import (
 
 
 class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
-    ''' Formula2 '''
+    ''' Custom formula '''
     bl_idname = 'Formula2Node'
     bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -174,6 +174,10 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
         ''' enlarge minor n[i] list to size of x list '''
         lst.extend([lst[-1] for i in range(equal)])
 
+    def draw_label(self):
+        if self.hide:
+            return self.formula
+        return self.bl_label
 
 
 def register():
