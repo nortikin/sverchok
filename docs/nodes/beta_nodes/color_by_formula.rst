@@ -1,4 +1,4 @@
-Deform by formula
+Color by formula
 ========
 
 Functionality
