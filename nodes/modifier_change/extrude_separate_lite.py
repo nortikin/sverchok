@@ -29,9 +29,9 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
 class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Inset like behaviour but different '''
+    ''' Inset like behaviour but way different '''
     bl_idname = 'SvExtrudeSeparateLiteNode'
-    bl_label = 'Extrude Separate Faces'
+    bl_label = 'Extrude Separate Faces Lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     replacement_nodes = [
