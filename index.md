@@ -276,6 +276,7 @@
     SvFormulaShapeNode
     SvHeavyTriangulateNode
     SvFormulaDeformNode
+    SvFormulaColorNode
     SvSubdivideLiteNode
     ---
     SvColorsInNodeMK1
