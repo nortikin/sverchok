@@ -31,7 +31,7 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
-        si('StringsSocket', 'Objects')
+        si('SvObjectSocket', 'Objects')
         si('VerticesSocket', 'Vert')
         si('StringsSocket', 'Edge')
         si('StringsSocket', 'Poly')
@@ -53,15 +53,15 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
         so('StringsSocket', 'edge-is wire')
 
         so('StringsSocket', 'face-area')
-        so('StringsSocket', 'face-center bounds')
-        so('StringsSocket', 'face-center median')
-        so('StringsSocket', 'face-center median weighted')
+        so('VerticesSocket', 'face-center bounds')
+        so('VerticesSocket', 'face-center median')
+        so('VerticesSocket', 'face-center median weighted')
         so('StringsSocket', 'face-perimeter')
-        so('StringsSocket', 'face-tangent edge')
-        so('StringsSocket', 'face-tangent edge diagonal')
-        so('StringsSocket', 'face-tangent edge pair')
-        so('StringsSocket', 'face-tangent vert diagonal')
-        so('StringsSocket', 'face-normal')
+        so('VerticesSocket', 'face-tangent edge')
+        so('VerticesSocket', 'face-tangent edge diagonal')
+        so('VerticesSocket', 'face-tangent edge pair')
+        so('VerticesSocket', 'face-tangent vert diagonal')
+        so('VerticesSocket', 'face-normal')
 
         so('StringsSocket', 'bmesh_list')
 
