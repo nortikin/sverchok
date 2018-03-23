@@ -278,6 +278,7 @@
     SvFormulaDeformNode
     SvFormulaColorNode
     SvSubdivideLiteNode
+    SvExtrudeSeparateLiteNode
     ---
     SvColorsInNodeMK1
     SvColorInputNode
