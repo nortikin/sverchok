@@ -49,26 +49,26 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         Point = self.inputs[0]
-        obj = bpy.data.objects[self.object_ref]  # must be triangulated!
-        point = Point.sv_get()[0][0]
-        succ, location, norm,index = obj.closest_point_on_mesh(point)
-        found_poly = obj.data.polygons[index]
-        verticesIndices = found_poly.vertices
+        obj = bpy.data.objects[self.object_ref]  # triangulated
+        point = Point.sv_get()[0]
         ran = range(3)
-        p1, p2, p3 = [obj.data.vertices[verticesIndices[i]].co for i in ran]
-        uvMapIndices = found_poly.loop_indices
-        uvMap = obj.data.uv_layers[0]
-        uv1, uv2, uv3 = [uvMap.data[uvMapIndices[i]].uv for i in ran]
-        uv1, uv2, uv3 = uv1[:]+(0.0,), uv2[:]+(0.0,), uv3[:]+(0.0,)
-        V = barycentric_transform(location, p1, p2, p3, uv1, uv2, uv3)
         image = bpy.data.images[self.image]
         width = image.size[0]
         height = image.size[1]
         pixels = np.array(image.pixels[:]).reshape(width,height,4)
-        Vx, Vy = int(V.x*width), int(V.y*height)
-        if self.outputs[0].is_linked:
-            self.outputs[0].sv_set(pixels[Vx, Vy])
-        pixels[Vx, Vy, :] = 1  # paint white
+        for P in point:
+            succ, location, norm,index = obj.closest_point_on_mesh(P)
+            found_poly = obj.data.polygons[index]
+            verticesIndices = found_poly.vertices
+            p1, p2, p3 = [obj.data.vertices[verticesIndices[i]].co for i in ran]
+            uvMapIndices = found_poly.loop_indices
+            uvMap = obj.data.uv_layers[0]
+            uv1, uv2, uv3 = [uvMap.data[uvMapIndices[i]].uv.to_3d() for i in ran]
+            V = barycentric_transform(location, p1, p2, p3, uv1, uv2, uv3)
+            Vx, Vy = int(V.x*width), int(V.y*height)
+          #  if self.outputs[0].is_linked:
+          #      self.outputs[0].sv_set(pixels[Vx, Vy])
+            pixels[Vy, Vx, :] = 1  # paint white
         image.pixels = pixels.flatten().tolist()
 
     def update_socket(self, context):
