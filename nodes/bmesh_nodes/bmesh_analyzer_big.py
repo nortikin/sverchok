@@ -18,6 +18,7 @@
 
 import bpy
 import bmesh
+from bpy.props import BoolProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat)
@@ -28,6 +29,8 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBManalyzinNode'
     bl_label = 'BMesh Analyze In'
     bl_icon = 'OUTLINER_OB_EMPTY'
+
+    mode1 = BoolProperty(name='normal_update', default=True, update=updateNode)
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
@@ -42,7 +45,7 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
         so('StringsSocket', 'vert-is boundary')
         so('StringsSocket', 'vert-is manifold')
         so('StringsSocket', 'vert-is wire')
-        so('StringsSocket', 'vert-normal')
+        so('VerticesSocket', 'vert-normal')
 
         so('StringsSocket', 'edge-face angle signed')
         so('StringsSocket', 'edge-length')
@@ -67,6 +70,10 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.width = 230
 
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self,    "mode1",   text="Update normals")
+
     def process(self):
         bmL, V, E, P = self.inputs
         Val = bmL.sv_get() if bmL.is_linked else []
@@ -75,6 +82,10 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
             for v, e, f in zip(*match_long_repeat([V.sv_get(), E.sv_get([[]]), P.sv_get([[]])])):
                 bm = bmesh_from_pydata(v, e, f)
                 Val.append(bm)
+
+        if self.mode1:
+            for bm in Val:
+                bm.normal_update()
 
         if o1.is_linked:
             o1.sv_set([[bm.calc_volume(signed=False) for bm in Val]])
