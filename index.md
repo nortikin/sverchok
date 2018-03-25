@@ -305,7 +305,7 @@
     SvMatrixViewer
     ---
     SvBManalyzinNode
-    SvBMinputNode
+    SvBMObjinputNode
     SvBMoutputNode
     SvBMtoElementNode
     SvBMOpsNodeMK2
