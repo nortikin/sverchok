@@ -18,6 +18,7 @@
 
 import bpy
 import bmesh
+from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode)
 
@@ -28,18 +29,28 @@ class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'BMesh Obj in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    UseSKey = BoolProperty(name='with_shapekey', default=False, update=updateNode)
+    keyIND = IntProperty(name='SHKey_ind', default=0, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
         self.outputs.new('StringsSocket', 'bmesh_list')
+
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, "UseSKey", text="Use ShapeKey")
+        row.prop(self, "keyIND", text="Key Index")
 
     def process(self):
         bmL = self.outputs[0]
         if bmL.is_linked:
             Val = []
             obj = self.inputs[0].sv_get()
+            useSHP = self.UseSKey
+            SHPIND = self.keyIND
             for OB in obj:
                 bm = bmesh.new()
-                bm.from_mesh(OB.data, use_shape_key=False, shape_key_index=0)
+                bm.from_mesh(OB.data, use_shape_key=useSHP, shape_key_index=SHPIND)
                 Val.append(bm)
             bmL.sv_set(Val)
 
