@@ -34,6 +34,13 @@ class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
+        self.outputs.new('StringsSocket', 'vert-hide')
+        self.outputs.new('StringsSocket', 'edge-hide')
+        self.outputs.new('StringsSocket', 'edge-seam')
+        self.outputs.new('StringsSocket', 'edge-smooth')
+        self.outputs.new('StringsSocket', 'face-hide')
+        self.outputs.new('StringsSocket', 'face-material indx')
+        self.outputs.new('StringsSocket', 'face-smooth')
         self.outputs.new('StringsSocket', 'bmesh_list')
 
     def draw_buttons_ext(self, context, layout):
@@ -42,16 +49,30 @@ class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "keyIND", text="Key Index")
 
     def process(self):
-        bmL = self.outputs[0]
+        o1, o2, o3, o4, o5, o6, o7, bmL = self.outputs
+        Val = []
+        obj = self.inputs[0].sv_get()
+        useSHP = self.UseSKey
+        SHPIND = self.keyIND
+        for OB in obj:
+            bm = bmesh.new()
+            bm.from_mesh(OB.data, use_shape_key=useSHP, shape_key_index=SHPIND)
+            Val.append(bm)
+        if o1.is_linked:
+            o1.sv_set([[v.hide for v in bm.verts] for bm in Val])
+        if o2.is_linked:
+            o2.sv_set([[e.hide for e in bm.edges] for bm in Val])
+        if o3.is_linked:
+            o3.sv_set([[e.seam for e in bm.edges] for bm in Val])
+        if o4.is_linked:
+            o4.sv_set([[e.smooth for e in bm.edges] for bm in Val])
+        if o5.is_linked:
+            o5.sv_set([[f.hide for f in bm.faces] for bm in Val])
+        if o6.is_linked:
+            o6.sv_set([[f.material_index for f in bm.faces] for bm in Val])
+        if o7.is_linked:
+            o7.sv_set([[f.smooth for f in bm.faces] for bm in Val])
         if bmL.is_linked:
-            Val = []
-            obj = self.inputs[0].sv_get()
-            useSHP = self.UseSKey
-            SHPIND = self.keyIND
-            for OB in obj:
-                bm = bmesh.new()
-                bm.from_mesh(OB.data, use_shape_key=useSHP, shape_key_index=SHPIND)
-                Val.append(bm)
             bmL.sv_set(Val)
 
     def update_socket(self, context):
