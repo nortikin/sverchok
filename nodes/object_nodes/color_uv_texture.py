@@ -17,13 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from math import *
 from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 import numpy as np
 from bpy.props import BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat)
+from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
 class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
@@ -45,30 +44,30 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
         si('VerticesSocket', 'Point on mesh')
-        so('StringsSocket', 'color on mesh')
+        si('SvColorSocket',  'Color on UV')
 
     def process(self):
-        Point = self.inputs[0]
-        obj = bpy.data.objects[self.object_ref]  # triangulated
-        point = Point.sv_get()[0]
+        Points, Colors = self.inputs
+        obj = bpy.data.objects[self.object_ref]  # triangulate
+        bvh = BVHTree.FromObject(obj, bpy.context.scene, deform=True, render=False, cage=False, epsilon=0.0)
+        point = Points.sv_get()[0]
+        color = Colors.sv_get()[0]
         ran = range(3)
         image = bpy.data.images[self.image]
         width = image.size[0]
         height = image.size[1]
         pixels = np.array(image.pixels[:]).reshape(width,height,4)
-        for P in point:
-            succ, location, norm,index = obj.closest_point_on_mesh(P)
-            found_poly = obj.data.polygons[index]
+        for P, C in zip(point, safc(point, color)):
+            loc, norm, ind, dist = bvh.find_nearest(P)
+            found_poly = obj.data.polygons[ind]
             verticesIndices = found_poly.vertices
             p1, p2, p3 = [obj.data.vertices[verticesIndices[i]].co for i in ran]
             uvMapIndices = found_poly.loop_indices
             uvMap = obj.data.uv_layers[0]
             uv1, uv2, uv3 = [uvMap.data[uvMapIndices[i]].uv.to_3d() for i in ran]
-            V = barycentric_transform(location, p1, p2, p3, uv1, uv2, uv3)
+            V = barycentric_transform(loc, p1, p2, p3, uv1, uv2, uv3)
             Vx, Vy = int(V.x*width), int(V.y*height)
-          #  if self.outputs[0].is_linked:
-          #      self.outputs[0].sv_set(pixels[Vx, Vy])
-            pixels[Vy, Vx, :] = 1  # paint white
+            pixels[Vy, Vx, :] = C
         image.pixels = pixels.flatten().tolist()
 
     def update_socket(self, context):
