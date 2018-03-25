@@ -67,7 +67,7 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
         si('VerticesSocket', 'Point on UV')
         so('VerticesSocket', 'Point on mesh')
         so('VerticesSocket', 'UVVert')
-        so('VerticesSocket', 'UVPoly')
+        so('StringsSocket', 'UVPoly')
 
     def process(self):
         PointsUV = self.inputs[0]
