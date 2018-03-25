@@ -304,8 +304,8 @@
     SvSkinViewerNodeMK1b
     SvMatrixViewer
     ---
-    SvBMVertsNode
-    SvBMinputNode
+    SvBManalyzinNode
+    SvBMObjinputNode
     SvBMoutputNode
     SvBMtoElementNode
     SvBMOpsNodeMK2
