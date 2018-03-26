@@ -277,6 +277,8 @@
     SvHeavyTriangulateNode
     SvFormulaDeformNode
     SvFormulaColorNode
+    SvMeshUVColorNode
+    SvUVPointonMeshNode
     SvSubdivideLiteNode
     SvExtrudeSeparateLiteNode
     ---
