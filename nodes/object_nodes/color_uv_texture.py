@@ -70,7 +70,7 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
             uvMap = obj.data.uv_layers[0]
             uv1, uv2, uv3 = [uvMap.data[uvMapIndices[i]].uv.to_3d() for i in ran]
             V = barycentric_transform(loc, p1, p2, p3, uv1, uv2, uv3)
-            Vx, Vy = int(V.x*width), int(V.y*height)
+            Vx, Vy = int(V.x*(width-1)), int(V.y*(height-1))
             pixels[Vy, Vx] = C
         image.pixels = pixels.flatten().tolist()
 
