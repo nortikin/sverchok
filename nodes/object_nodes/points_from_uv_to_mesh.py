@@ -91,8 +91,8 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
                 out.append(V[:])
             Pom.sv_set([out])
         if uvV.is_linked:
-            uvV.sv_set(UVMAPV)
-            uvP.sv_set(UVMAPP)
+            uvV.sv_set([UVMAPV])
+            uvP.sv_set([UVMAPP])
 
     def update_socket(self, context):
         self.update()
