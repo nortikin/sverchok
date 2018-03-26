@@ -51,7 +51,7 @@ def UV(self, object):
 
 
 class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Find pixel on UV texture from surface'''
+    ''' Transform vectors from UV space to Object space '''
     bl_idname = 'SvUVPointonMeshNode'
     bl_label = 'Find UV Coord on Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -66,8 +66,8 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
         si, so = self.inputs.new, self.outputs.new
         si('VerticesSocket', 'Point on UV')
         so('VerticesSocket', 'Point on mesh')
-        so('VerticesSocket', 'UVVert')
-        so('StringsSocket', 'UVPoly')
+        so('VerticesSocket', 'UVMapVert')
+        so('StringsSocket', 'UVMapPoly')
 
     def process(self):
         PointsUV = self.inputs[0]
@@ -87,7 +87,7 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
                 uvMapIndices = found_poly.loop_indices
                 uvMap = obj.data.uv_layers[0]
                 uv1, uv2, uv3 = [uvMap.data[uvMapIndices[i]].uv.to_3d() for i in ran]
-                V = barycentric_transform(loc, uv1, uv2, uv3, p1, p2, p3)
+                V = barycentric_transform(Puv, uv1, uv2, uv3, p1, p2, p3)
                 out.append(V[:])
             Pom.sv_set([out])
         if uvV.is_linked:
