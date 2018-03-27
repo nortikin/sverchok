@@ -79,13 +79,13 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
             bvh = BVHTree.FromPolygons(UVMAPV, UVMAPP, all_triangles=False, epsilon=0.0)
             ran = range(3)
             out = []
+            uvMap = obj.data.uv_layers[0]
             for Puv in pointuv:
                 loc, norm, ind, dist = bvh.find_nearest(Puv)
                 found_poly = obj.data.polygons[ind]
                 verticesIndices = found_poly.vertices
                 p1, p2, p3 = [obj.data.vertices[verticesIndices[i]].co for i in ran]
                 uvMapIndices = found_poly.loop_indices
-                uvMap = obj.data.uv_layers[0]
                 uv1, uv2, uv3 = [uvMap.data[uvMapIndices[i]].uv.to_3d() for i in ran]
                 V = barycentric_transform(Puv, uv1, uv2, uv3, p1, p2, p3)
                 out.append(V[:])
