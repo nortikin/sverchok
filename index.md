@@ -279,6 +279,7 @@
     SvFormulaColorNode
     SvMeshUVColorNode
     SvUVPointonMeshNode
+    SvSampleUVColorNode
     SvSubdivideLiteNode
     SvExtrudeSeparateLiteNode
     ---
