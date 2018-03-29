@@ -114,6 +114,7 @@ utils_modules = [
 
 
 monkey_patch = True
+monkey_storage = {}
 
 def perform_add_node_mp():
     import bpy
@@ -128,7 +129,7 @@ def perform_add_node_mp():
         show_sverchok = True if ntree else False
         
         if show_sverchok and ntree.bl_idname == 'SverchCustomTreeType':
-            
+
             bpy.types.NODEVIEW_MT_Dynamic_Menu.draw(self, context)
         else:
 
@@ -140,4 +141,11 @@ def perform_add_node_mp():
             nodeitems_utils.draw_node_categories_menu(self, context)
 
 
+    monkey_storage['old_draw'] = bpy.types.NODE_MT_add.draw
     bpy.types.NODE_MT_add.draw = draw_extra
+
+
+def perform_add_node_mp_restore():
+    draw_old = monkey_storage.get('old_draw')
+    if draw_old:
+        bpy.types.NODE_MT_add.draw = draw_old
