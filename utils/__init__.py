@@ -111,3 +111,33 @@ utils_modules = [
     #"loadscript",
     "debug_script", "sv_update_utils", "sv_bgl_primitives"
 ]
+
+
+monkey_patch = True
+
+def perform_add_node_mp():
+    import bpy
+    import nodeitems_utils
+
+
+    def draw_extra(self, context):
+        """This draw function is overloaded by sverchok to revert, execute this:   """
+        layout = self.layout
+
+        ntree = context.space_data.node_tree
+        show_sverchok = True if ntree else False
+        
+        if show_sverchok and ntree.bl_idname == 'SverchCustomTreeType':
+            
+            bpy.types.NODEVIEW_MT_Dynamic_Menu.draw(self, context)
+        else:
+
+            layout.operator_context = 'INVOKE_DEFAULT'
+            props = layout.operator("node.add_search", text="Search ...")
+            props.use_transform = True
+
+            # actual node submenus are defined by draw functions from node categories
+            nodeitems_utils.draw_node_categories_menu(self, context)
+
+
+    bpy.types.NODE_MT_add.draw = draw_extra
