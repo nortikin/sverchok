@@ -63,25 +63,17 @@ class SvBVHnearNewNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'find_nearest':
             for bvh, pt in zip(self.svmesh_to_bvh_lists(vert_sock, face_sock), PT):
                 RL.append([bvh.find_nearest(P) for P in pt])
-            if L.is_linked:
-                L.sv_set([[r[0][:] for r in L] for L in RL])
-            if N.is_linked:
-                N.sv_set([[r[1][:] for r in L] for L in RL])
-            if I.is_linked:
-                I.sv_set([[r[2] for r in L] for L in RL])
-            if D.is_linked:
-                D.sv_set([[r[3] for r in L] for L in RL])
         else:  # find_nearest_range
             for bvh, pt in zip(self.svmesh_to_bvh_lists(vert_sock, face_sock), PT):
                 RL.extend([bvh.find_nearest_range(P) for P in pt])
-            if L.is_linked:
-                L.sv_set([[r[0][:] for r in L] for L in RL])
-            if N.is_linked:
-                N.sv_set([[r[1][:] for r in L] for L in RL])
-            if I.is_linked:
-                I.sv_set([[r[2] for r in L] for L in RL])
-            if D.is_linked:
-                D.sv_set([[r[3] for r in L] for L in RL])
+        if L.is_linked:
+            L.sv_set([[r[0][:] for r in L] for L in RL])
+        if N.is_linked:
+            N.sv_set([[r[1][:] for r in L] for L in RL])
+        if I.is_linked:
+            I.sv_set([[r[2] for r in L] for L in RL])
+        if D.is_linked:
+            D.sv_set([[r[3] for r in L] for L in RL])
 
 
 def register():
