@@ -282,6 +282,7 @@
     SvSampleUVColorNode
     SvSubdivideLiteNode
     SvExtrudeSeparateLiteNode
+    SvBVHnearNewNode
     ---
     SvColorsInNodeMK1
     SvColorInputNode
