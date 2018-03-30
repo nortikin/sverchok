@@ -44,7 +44,7 @@ class SvBVHnearNewNode(bpy.types.Node, SverchCustomTreeNode):
         so = self.outputs.new
         si('VerticesSocket', 'Verts')
         si('StringsSocket', 'Faces')
-        si('VerticesSocket', 'Start').use_prop = True
+        si('VerticesSocket', 'Points').use_prop = True
         so('VerticesSocket', 'Location')
         so('VerticesSocket', 'Normal')
         so('StringsSocket', 'Index')
