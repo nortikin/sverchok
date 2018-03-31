@@ -22,8 +22,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, repeat_last, updateNode)
 
 
-
-
 # ListItem2
 # Allows a list of items, with both negative and positive index and repeated values
 # Other output is not wrapped.
@@ -65,28 +63,22 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if any(s.is_linked for s in self.outputs):
-
-            if self.inputs['Data'].is_linked:
-                data = self.inputs['Data'].sv_get()
-
-                if self.inputs['Item'].is_linked:
-                    items = self.inputs['Item'].sv_get()
+        if self.inputs['Data'].is_linked:
+            OItem, OOther = self.outputs
+            data = self.inputs['Data'].sv_get()
+            items = self.inputs['Item'].sv_get([[self.item]])
+            if OItem.is_linked:
+                if self.level-1:
+                    out = self.get(data, self.level-1, items, self.get_items)
                 else:
-                    items = [[self.item]]
-
-                if self.outputs['Item'].is_linked:
-                    if self.level-1:
-                        out = self.get(data, self.level-1, items, self.get_items)
-                    else:
-                        out = self.get_items(data, items[0])
-                    self.outputs['Item'].sv_set(out)
-                if self.outputs['Other'].is_linked:
-                    if self.level-1:
-                        out = self.get(data, self.level-1, items, self.get_other)
-                    else:
-                        out = self.get_other(data, items[0])
-                    self.outputs['Other'].sv_set(out)
+                    out = self.get_items(data, items[0])
+                OItem.sv_set(out)
+            if OOther.is_linked:
+                if self.level-1:
+                    out = self.get(data, self.level-1, items, self.get_other)
+                else:
+                    out = self.get_other(data, items[0])
+                OOther.sv_set(out)
 
     def get_items(self, data, items):
         if type(data) in [list, tuple]:
