@@ -5,7 +5,8 @@ Functionality
 -------------
 
 available variables: **x**, **y**, **z** for access to initial (xyz) coordinates.
-And **i** for access to index of current vertex to be evaluated. It is also possible
+MK2 version of this node have second input socket - access its vertices using **X**, **Y** or **Z** variables.
+Use **i** for access to index of current vertex to be evaluated. It is also possible
 to get index of current object list evaluated as **I** variable.
 So **i** for index of vertex, and **I** for index of object.
 Internally imported everything from Python **math** module.
