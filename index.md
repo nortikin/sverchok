@@ -275,7 +275,7 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
-    SvFormulaDeformNode
+    SvFormulaDeformMK2Node
     SvFormulaColorNode
     SvMeshUVColorNode
     SvUVPointonMeshNode
