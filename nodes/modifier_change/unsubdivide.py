@@ -17,12 +17,13 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import bmesh
+from bmesh.ops import unsubdivide
 import numpy as np
 from bpy.props import IntProperty
-from bmesh.ops import unsubdivide
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat as mlr
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata as bfp, pydata_from_bmesh as pfb
+from sverchok.data_structure import (updateNode)
 
 
 class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
@@ -31,42 +32,49 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Unsubdivide'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    iteration = IntProperty(default=1, min=1, update=updateNode)
+    iter = IntProperty(name='itr', default=1, min=1, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts')
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('StringsSocket', 'Polys')
-        self.inputs.new('StringsSocket', 'Verts Index')
-        self.outputs.new('VerticesSocket', 'Verts')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polys')
+        si, so = self.inputs.new, self.outputs.new
+        si('StringsSocket', 'bmesh_list')
+        si('VerticesSocket', 'Vert')
+        si('StringsSocket', 'Poly')
+        si('StringsSocket', 'Verts Index')
+        so('VerticesSocket', 'Verts')
+        so('StringsSocket', 'Edges')
+        so('StringsSocket', 'Faces')
+        so('StringsSocket', 'bmesh_list')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "iteration")
+        row = layout.row(align=True)
+        row.prop(self,    "iter",   text="counter clockwise")
 
     def process(self):
-        V, E, F, ind = self.inputs
-        Ov, Oe, Op = self.outputs
-        if Ov.is_linked:
-            r_v = []
-            r_e = []
-            r_f = []
-            bmlist = [bfp(v, e, f, normal_update=True) for v, e, f in zip(*mlr([V.sv_get(), E.sv_get([[]]), F.sv_get([[]])]))]
-            if ind.is_linked:
-                usev = [np.array(bm.verts[:])[ind] for bm, ind in zip(bmlist, ind.sv_get())]
-            else:
-                usev = [bm.verts for bm in bmlist]
-            for bm, usind in zip(bmlist, usev):
-                unsubdivide(bm, verts=usind, iterations=self.iteration)
-                new_verts, new_edges, new_faces = pfb(bm)
-                bm.free()
-                r_v.append(new_verts)
-                r_e.append(new_edges)
-                r_f.append(new_faces)
-            Ov.sv_set(r_v)
-            Oe.sv_set(r_e)
-            Op.sv_set(r_f)
+        bmL, V, P, mask = self.inputs
+        Val = bmL.sv_get([])
+        out2 = []
+        o1,o2,o3,o4 = self.outputs
+        if V.is_linked:
+            for v, f in zip(V.sv_get(), P.sv_get()):
+                Val.append(bmesh_from_pydata(v, [], f))
+        itera = self.iter
+        if mask.is_linked:
+            seleg = [np.array(bm.verts[:])[ma] for bm,ma in zip(Val,mask.sv_get())]
+        else:
+            seleg = [bm.verts for bm in Val]
+        for bm,se in zip(Val, seleg):
+            unsubdivide(bm, verts=se, iterations=itera)
+        if o1.is_linked:
+            o1.sv_set([[v.co[:] for v in bm.verts]for bm in Val])
+        if o2.is_linked:
+            o2.sv_set([[[i.index for i in e.verts] for e in bm.edges]for bm in Val])
+        if o3.is_linked:
+            o3.sv_set([[[i.index for i in p.verts] for p in bm.faces]for bm in Val])
+        if o4.is_linked:
+            o4.sv_set(Val)
+
+    def update_socket(self, context):
+        self.update()
 
 
 def register():
