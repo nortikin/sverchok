@@ -23,7 +23,7 @@ import numpy as np
 from bpy.props import IntProperty
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
+from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 
 
 class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
@@ -40,29 +40,25 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         si('VerticesSocket', 'Vert')
         si('StringsSocket', 'Poly')
         si('StringsSocket', 'Verts Index')
+        si('StringsSocket', 'iteration').prop_name = 'iter'
         so('VerticesSocket', 'Verts')
         so('StringsSocket', 'Edges')
         so('StringsSocket', 'Faces')
         so('StringsSocket', 'bmesh_list')
 
-    def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self,    "iter",   text="counter clockwise")
-
     def process(self):
-        bmL, V, P, mask = self.inputs
+        bmL, V, P, mask, Iterate = self.inputs
         Val = bmL.sv_get([])
         out2 = []
         o1,o2,o3,o4 = self.outputs
         if V.is_linked:
             for v, f in zip(V.sv_get(), P.sv_get()):
                 Val.append(bmesh_from_pydata(v, [], f))
-        itera = self.iter
         if mask.is_linked:
             seleg = [np.array(bm.verts[:])[ma] for bm,ma in zip(Val,mask.sv_get())]
         else:
             seleg = [bm.verts for bm in Val]
-        for bm,se in zip(Val, seleg):
+        for bm,se,itera in zip(Val, seleg, safc(Val, Iterate.sv_get()[0])):
             unsubdivide(bm, verts=se, iterations=itera)
         if o1.is_linked:
             o1.sv_set([[v.co[:] for v in bm.verts]for bm in Val])
