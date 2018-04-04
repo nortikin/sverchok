@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from math import *
+from fractions import gcd
 from itertools import zip_longest
 
 import bpy
@@ -72,6 +73,8 @@ func_dict = {
     "ROUND-N":     (81,  lambda x, y: round(x, int(y)),   ('ss s'), "Round N",),
     "FMOD":        (82,  fmod,                            ('ss s'), "Fmod"),
     "MODULO":      (83,  lambda x, y: (x % y),            ('ss s'), "modulo"),
+    "MEAN":        (84,  lambda x, y: 0.5*(x + y),        ('ss s'), "mean"),
+    "GCD":         (85,  gcd,                             ('ss s'), "gcd"),
     "-------------CONST" : "#---------------------------------------------------#",
     "PI":          (90,  lambda x: pi * x,                 ('s s'), "pi * x"),
     "TAU":         (100, lambda x: pi * 2 * x,             ('s s'), "tau * x"),
@@ -106,7 +109,7 @@ def property_change(node, context, origin):
 
 
 class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' SvScalarMathNodeMK2 '''
+    '''Scalar: Add, Sine... '''
     bl_idname = 'SvScalarMathNodeMK2'
     bl_label = 'Math MK2'
     sv_icon = 'SV_FUNCTION'
@@ -126,7 +129,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     yi_ = IntProperty(default=1, name='y', update=updateNode)
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["Float", "Int"])]
-    
+
     input_mode_one = EnumProperty(
         items=mode_options, description="offers int / float selection for socket 1",
         default="Float", update=lambda s, c: property_change(s, c, 'input_mode_one'))
@@ -137,7 +140,21 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_label(self):
-        return self.current_op
+        num_inputs = len(self.inputs)
+        label = [self.current_op]
+
+        if num_inputs > 0:
+            x = self.x_ if self.input_mode_one == 'Float' else self.xi_
+            x_label = 'X' if self.inputs[0].is_linked else str(round(x, 3))
+            label.append(x_label)
+
+        if num_inputs == 2:
+            y = self.y_ if self.input_mode_two == 'Float' else self.yi_
+            y_label = 'Y' if self.inputs[1].is_linked else str(round(y, 3))
+            label.extend([', ', y_label])
+
+        return " ".join(label)
+
 
 
     def draw_buttons(self, ctx, layout):

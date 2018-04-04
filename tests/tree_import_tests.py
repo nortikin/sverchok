@@ -1,9 +1,15 @@
 
 import unittest
 import json
+from os.path import join, dirname, basename
+from glob import glob
+from pathlib import Path
 
+import sverchok
+from sverchok.old_nodes import is_old
 from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import import_tree
+from sverchok.utils.sv_examples_utils import examples_paths
 
 class ScriptUvImportTest(ReferenceTreeTestCase):
 
@@ -48,3 +54,36 @@ class MonadImportTest(ReferenceTreeTestCase):
             import_tree(new_tree, self.get_reference_file_path("monad_1.json"))
             self.assert_node_property_equals("ImportedTree", "Monad", "amplitude", 0.6199999451637268)
 
+
+@batch_only
+class ExamplesImportTest(SverchokTestCase):
+    def test_import_examples(self):
+
+        for cat in examples_paths:
+
+            if not examples_paths.get(cat):
+                info("Dir named: %s is empty", cat)
+                continue
+
+            info("Opening Dir named: %s", cat)
+
+            examples_set = Path(examples_paths.get(cat))
+            for listed_path in examples_set.iterdir():
+
+                # cast from Path class to dumb string.
+                path = str(listed_path)
+
+                # assuming these are all jsons for now.
+                name = basename(path)
+                with self.subTest(file=name):
+                    info("Importing: %s", name)
+                    with self.temporary_node_tree("ImportedTree") as new_tree:
+                        with self.assert_logs_no_errors():
+                            # Do not try to process imported tree,
+                            # that will just take time anyway
+                            new_tree.sv_process = False
+                            import_tree(new_tree, path)
+                        for node in new_tree.nodes:
+                            if is_old(node):
+                                error_format = "This example contains deprecated node `{}' ({}). Please upgrade the example file." 
+                                self.fail(error_format.format(node.name, node.bl_idname))

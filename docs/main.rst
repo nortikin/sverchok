@@ -18,6 +18,7 @@ Contents:
    nodes
    contributing
    contribute_small_things
+   testing
 
 
 Indices and tables

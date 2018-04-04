@@ -28,6 +28,8 @@ class MatrixGenNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    replacement_nodes = [('SvMatrixGenNodeMK2', None, None)]
+
     def sv_init(self, context):
         s = self.inputs.new('VerticesSocket', "Location")
         s.use_prop = True

@@ -16,27 +16,24 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import json
-import sys
 import os
-import re
-import zipfile
-import traceback
+from os.path import basename, dirname
 from time import gmtime, strftime
+import zipfile
+import json
+import re
 import urllib
 from urllib.request import urlopen
-
-from os.path import basename, dirname
 from itertools import chain
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, PointerProperty
-from bpy.utils import register_class, unregister_class
 
 from sverchok import old_nodes
-from sverchok.utils import sv_gist_tools
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
+
+# pylint: disable=w0621
 
 
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
@@ -44,19 +41,20 @@ PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
 _EXPORTER_REVISION_ = '0.072'
 
-'''
+IO_REVISION_HISTORY = r"""
+0.072 export now stores the absolute node location (incase framed-n)
 0.072 new route for node.storage_get/set_data. no change to json format
 0.07  add initial support for socket properties.
 0.065 general refactoring to get the monad pack/unpack into one file
 0.064 prop_types as a property is now tracked for scalarmath and logic node, this uses boolvec.
-0.063 add support for obj_in_lite obj serialization \o/ .
+0.063 add support for obj_in_lite obj serialization.
 0.062 (no revision change) - fixes import of sn texts that are present already in .blend
 0.062 (no revision change) - looks in multiple places for textmode param.
 0.062 monad export properly
 
 revisions below this are your own problem.
 
-'''
+"""
 
 
 def get_file_obj_from_zip(fullpath):
@@ -142,7 +140,10 @@ def get_superficial_props(node_dict, node):
     node_dict['width'] = node.width
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
-    node_dict['location'] = node.location[:]
+
+    _x, _y = recursive_framed_location_finder(node, node.location[:])
+    node_dict['location'] = _x, _y
+
     if node.use_custom_color:
         node_dict['color'] = node.color[:]
         node_dict['use_custom_color'] = True
@@ -183,19 +184,80 @@ def collect_custom_socket_properties(node, node_dict):
     # print("**\n")
 
 
+def can_skip_property(node, k):
+    """
+    n_id:
+        used to store the hash of the current Node,
+        this is created along with the Node anyway. skip.
+    typ, newsock:
+        reserved variables for changeable sockets
+    dynamic_strings:
+        reserved by exec node
+    frame_collection_name / type_collection_name both store Collection properties..avoiding for now
+    """
+
+    if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
+        return True
+
+    elif node.bl_idname == 'SvProfileNodeMK2' and k in {'SvLists', 'SvSubLists'}:
+        # these are CollectionProperties, populated later.
+        return True
+
+    elif node.bl_idname == 'ObjectsNode' and (k == "objects_local"):
+        # this silences the import error when items not found.
+        return True
+
+    elif node.bl_idname == 'SvObjectsNodeMK3' and (k == 'object_names'):
+        # this supresses this k, in favour of hitting node.storage_get_data later
+        return True
+
+    elif node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'} and (k == 'current_text'):
+        return True
+
+
+def display_introspection_info(node, k, v):
+    if not isinstance(v, (float, int, str)):
+        debug('//')
+        debug("%s -> property: %s: %s", node.name, k, type(v))
+        if k in node.bl_rna.properties:
+            debug(type(node.bl_rna.properties[k]))
+        elif k in node:
+            # something like node['lp']  , ID Property directly on the node instance.
+            debug(type(node[k]))
+        else:
+            error('%s is not bl_rna or IDproperty.. please report this', k)
+
+        debug('\\\\')
+
+
+def handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree):
+    if node.bl_idname == 'SvGroupNode' and (k == "group_name"):
+        if v not in groups_dict:
+            group_ng = bpy.data.node_groups[v]
+            group_dict = create_dict_of_tree(group_ng)
+            group_json = json.dumps(group_dict)
+            groups_dict[v] = group_json
+
+
+def handle_enum_property(node, k, v, node_items, node_enums):
+    if k in node_enums:
+        v = getattr(node, k)
+        node_items[k] = v
+
+
 def create_dict_of_tree(ng, skip_set={}, selected=False):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
     groups_dict = {}
-    texts = bpy.data.texts
+
     if not skip_set:
         skip_set = {'Sv3DviewPropsNode'}
 
     if selected:
         nodes = list(filter(lambda n: n.select, nodes))
 
-    ''' get nodes and params '''
+    # get nodes and params
     for node in nodes:
 
         if node.bl_idname in skip_set:
@@ -205,79 +267,18 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
         node_items = {}
         node_enums = find_enumerators(node)
 
-        ObjectsNode = (node.bl_idname == 'ObjectsNode')
-        ObjectsNode3 = (node.bl_idname == 'SvObjectsNodeMK3')
-        ProfileParamNode = (node.bl_idname == 'SvProfileNode')
-        IsGroupNode = (node.bl_idname == 'SvGroupNode')
         IsMonadInstanceNode = (node.bl_idname.startswith('SvGroupNodeMonad'))
-        
-        TextInput = (node.bl_idname in {'SvTextInNode', 'SvTextInNodeMK2'})
 
         for k, v in node.items():
 
-            if not isinstance(v, (float, int, str)):
-                debug('//')
-                debug("%s -> property: %s: %s", node.name, k, type(v))
-                if k in node.bl_rna.properties:
-                    debug(type(node.bl_rna.properties[k]))
-                elif k in node:
-                    # something like node['lp']  , ID Property directly on the node instance.
-                    debug(type(node[k]))
-                else:
-                    error('%s is not bl_rna or IDproperty.. please report this', k)
+            display_introspection_info(node, k, v)
 
-                debug('\\\\')
-
-            # heavy handed skipping for testing.
-            if node.bl_idname == 'SvProfileNodeMK2':
-                if k in {'SvLists', 'SvSubLists'}:
-                    continue
-
-            if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
-                """
-                n_id:
-                    used to store the hash of the current Node,
-                    this is created along with the Node anyway. skip.
-                typ, newsock:
-                    reserved variables for changeable sockets
-                dynamic_strings:
-                    reserved by exec node
-                frame_collection_name / type_collection_name both store Collection properties..avoiding for now
-                """
+            if can_skip_property(node, k):
+                continue
+            elif has_state_switch_protection(node, k):
                 continue
 
-            if has_state_switch_protection(node, k):
-                continue
-
-            if ObjectsNode and (k == "objects_local"):
-                # this silences the import error when items not found.
-                continue
-            elif ObjectsNode3 and (k == 'object_names'):
-                node_dict['object_names'] = [o.name for o in node.object_names]
-                continue
-
-            if TextInput and (k == 'current_text'):
-                node_dict['current_text'] = node.text
-                node_dict['textmode'] = node.textmode
-                if node.textmode == 'JSON':
-                    # add the json as full member to the tree :)
-                    text_str = texts[node.text].as_string()
-                    json_as_dict = json.loads(text_str)
-                    node_dict['text_lines'] = {}
-                    node_dict['text_lines']['stored_as_json'] = json_as_dict
-                else:
-                    node_dict['text_lines'] = texts[node.text].as_string()
-
-            if node.bl_idname in PROFILE_NODES and (k == "filename"):
-                '''add file content to dict'''
-                node_dict['path_file'] = texts[node.filename].as_string()
-
-            if IsGroupNode and (k == "group_name"):
-                if v not in groups_dict:
-                    group_ng = bpy.data.node_groups[v]
-                    group_dict = create_dict_of_tree(group_ng)
-                    group_json = json.dumps(group_dict)
-                    groups_dict[v] = group_json
+            handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree)            
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -287,9 +288,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
             else:
                 node_items[k] = v[:]
 
-            if k in node_enums:
-                v = getattr(node, k)
-                node_items[k] = v
+            handle_enum_property(node, k, v, node_items, node_enums)
+
 
         if IsMonadInstanceNode and node.monad:
             pack_monad(node, node_items, groups_dict, create_dict_of_tree)
@@ -429,7 +429,9 @@ def perform_svtextin_node_object(node, node_ref):
     '''
     texts = bpy.data.texts
     params = node_ref.get('params')
-    current_text = params['current_text']
+
+    # original textin used 'current_text', textin+ uses 'text'
+    current_text = params.get('current_text', params.get('text'))
 
     # it's not clear from the exporter code why textmode parameter isn't stored
     # in params.. for now this lets us look in both places. ugly but whatever.
@@ -448,7 +450,6 @@ def perform_svtextin_node_object(node, node_ref):
         if node.textmode == 'JSON':
             if isinstance(text_line_entry, str):
                 debug('loading old text json content / backward compatibility mode')
-                pass
 
             elif isinstance(text_line_entry, dict):
                 text_line_entry = json.dumps(text_line_entry['stored_as_json'])
@@ -637,8 +638,25 @@ def place_frames(ng, nodes_json, name_remap):
     for node_name, parent in framed_nodes.items():
         ng.nodes[finalize(node_name)].parent = ng.nodes[finalize(parent)]
 
+def center_nodes(nodes_json_dict, target_center=None):
+    """
+    Adjust location attributes of nodes, so that average
+    location will be equal to target_center.
 
-def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
+    nodes_json_dict: json dictionary of nodes
+    target_center: 2-tuple (or 2-list) of floats, defaults to (0,0).
+    """
+    if target_center is None:
+        target_center = [0,0]
+    n = len(nodes_json_dict)
+    locations = [node['location'] for node in nodes_json_dict.values()]
+    location_sum = [sum(x) for x in zip(*locations)]
+    average_location = [x / float(n) for x in location_sum]
+    for key in nodes_json_dict:
+        node = nodes_json_dict[key]
+        node['location'] = [x - x0 + x1 for x, x0, x1 in zip(node['location'], average_location, target_center)]
+
+def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None):
 
     nodes = ng.nodes
     ng.use_fake_user = True
@@ -668,7 +686,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             debug('no failed connections! awesome.')
 
     def generate_layout(fullpath, nodes_json):
-        '''cummulative function '''
 
         # it may be necessary to store monads as dicts instead of string/json
         # this will handle both scenarios
@@ -677,32 +694,31 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
             debug('==== loading monad ====')
         info(('#' * 12) + nodes_json['export_version'])
 
-        ''' create all nodes and groups '''
-
+        # create all nodes and groups '''
         update_lists = nodes_json['update_lists']
         nodes_to_import = nodes_json['nodes']
+        if center is not None:
+            center_nodes(nodes_to_import, center)
         groups_to_import = nodes_json.get('groups', {})
 
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
 
-        ''' now connect them '''
-
-        # prevent unnecessary updates
+        # now connect them / prevent unnecessary updates
         ng.freeze(hard=True)
         make_links(update_lists, name_remap)
 
-        ''' set frame parents '''
-
+        # set frame parents '''
         place_frames(ng, nodes_json, name_remap)
 
-        ''' clean up '''
-
+        # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
+        
         ng.update()
+        ng.update_tag()
 
-    ''' ---- read files (.json or .zip) or straight json data----- '''
+    # ---- read files (.json or .zip) or straight json data -----
 
     if fullpath.endswith('.zip'):
         nodes_json = get_file_obj_from_zip(fullpath)
@@ -716,143 +732,6 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True):
     elif nodes_json:
         generate_layout('', nodes_json)
 
-
-class SvNodeTreeExporter(bpy.types.Operator):
-
-    '''Export will let you pick a .json file name'''
-
-    bl_idname = "node.tree_exporter"
-    bl_label = "sv NodeTree Export Operator"
-
-    filepath = StringProperty(
-        name="File Path",
-        description="Filepath used for exporting too",
-        maxlen=1024, default="", subtype='FILE_PATH')
-
-    filter_glob = StringProperty(
-        default="*.json",
-        options={'HIDDEN'})
-
-    id_tree = StringProperty()
-    compress = BoolProperty()
-
-    def execute(self, context):
-        ng = bpy.data.node_groups[self.id_tree]
-
-        destination_path = self.filepath
-        if not destination_path.lower().endswith('.json'):
-            destination_path += '.json'
-
-        # future: should check if filepath is a folder or ends in \
-
-        layout_dict = create_dict_of_tree(ng)
-        if not layout_dict:
-            msg = 'no update list found - didn\'t export'
-            self.report({"WARNING"}, msg)
-            warning(msg)
-            return {'CANCELLED'}
-
-        write_json(layout_dict, destination_path)
-        msg = 'exported to: ' + destination_path
-        self.report({"INFO"}, msg)
-        info(msg)
-
-        if self.compress:
-            comp_mode = zipfile.ZIP_DEFLATED
-
-            # destination path = /a../b../c../somename.json
-            base = basename(destination_path)  # somename.json
-            basedir = dirname(destination_path)  # /a../b../c../
-
-            # somename.zip
-            final_archivename = base.replace('.json', '') + '.zip'
-
-            # /a../b../c../somename.zip
-            fullpath = os.path.join(basedir, final_archivename)
-
-            with zipfile.ZipFile(fullpath, 'w', compression=comp_mode) as myzip:
-                myzip.write(destination_path, arcname=base)
-                info('wrote:', final_archivename)
-
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        wm = context.window_manager
-        wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
-
-
-class SvNodeTreeImporterSilent(bpy.types.Operator):
-
-    '''Importing operation just do it!'''
-
-    bl_idname = "node.tree_importer_silent"
-    bl_label = "sv NodeTree Import Silent"
-
-    filepath = StringProperty(
-        name="File Path",
-        description="Filepath used to import from",
-        maxlen=1024, default="", subtype='FILE_PATH')
-
-    id_tree = StringProperty()
-
-    def execute(self, context):
-
-        # if triggered from a non-initialized tree, we first make a tree
-        if self.id_tree == '____make_new____':
-            ng_params = {
-                'name': basename(self.filepath),
-                'type': 'SverchCustomTreeType'}
-            ng = bpy.data.node_groups.new(**ng_params)
-        else:
-            ng = bpy.data.node_groups[self.id_tree]
-
-        # Deselect everything, so as a result only imported nodes
-        # will be selected
-        bpy.ops.node.select_all(action='DESELECT')
-        import_tree(ng, self.filepath)
-        context.space_data.node_tree = ng
-        return {'FINISHED'}
-
-
-class SvNodeTreeImporter(bpy.types.Operator):
-
-    '''Importing operation will let you pick a file to import from'''
-
-    bl_idname = "node.tree_importer"
-    bl_label = "sv NodeTree Import Operator"
-
-    filepath = StringProperty(
-        name="File Path",
-        description="Filepath used to import from",
-        maxlen=1024, default="", subtype='FILE_PATH')
-
-    filter_glob = StringProperty(
-        default="*.json",
-        options={'HIDDEN'})
-
-    id_tree = StringProperty()
-    new_nodetree_name = StringProperty()
-
-    def execute(self, context):
-        if not self.id_tree:
-            ng_name = self.new_nodetree_name
-            ng_params = {
-                'name': ng_name or 'unnamed_tree',
-                'type': 'SverchCustomTreeType'}
-            ng = bpy.data.node_groups.new(**ng_params)
-        else:
-            ng = bpy.data.node_groups[self.id_tree]
-        import_tree(ng, self.filepath)
-
-        # set new node tree to active
-        context.space_data.node_tree = ng
-        return {'FINISHED'}
-
-    def invoke(self, context, event):
-        wm = context.window_manager
-        wm.fileselect_add(self)
-        return {'RUNNING_MODAL'}
 
 def load_json_from_gist(gist_id, operator=None):
     """
@@ -905,74 +784,6 @@ def load_json_from_gist(gist_id, operator=None):
     nodes_str = wjson['files'][file_name]['content']
     return json.loads(nodes_str)
 
-class SvNodeTreeImportFromGist(bpy.types.Operator):
-
-    bl_idname = "node.tree_import_from_gist"
-    bl_label = "sv NodeTree Gist Import Operator"
-
-    id_tree = StringProperty()
-    new_nodetree_name = StringProperty()
-    gist_id = StringProperty()
-
-    def execute(self, context):
-        if not self.id_tree:
-            ng_name = self.new_nodetree_name
-            ng_params = {
-                'name': ng_name or 'unnamed_tree',
-                'type': 'SverchCustomTreeType'}
-            ng = bpy.data.node_groups.new(**ng_params)
-        else:
-            ng = bpy.data.node_groups[self.id_tree]
-
-        if self.gist_id == 'clipboard':
-            self.gist_id = context.window_manager.clipboard
-
-        nodes_json = load_json_from_gist(self.gist_id.strip(), self)
-        if not nodes_json:
-            return {'CANCELLED'}
-
-        # import tree and set new node tree to active
-        import_tree(ng, nodes_json=nodes_json)
-        context.space_data.node_tree = ng
-        return {'FINISHED'}
-
-
-class SvNodeTreeExportToGist(bpy.types.Operator):
-    """Export to anonymous gist and copy id to clipboard"""
-    bl_idname = "node.tree_export_to_gist"
-    bl_label = "sv NodeTree Gist Export Operator"
-
-    selected_only = BoolProperty(name = "Selected only", default=False)
-
-    def execute(self, context):
-        ng = context.space_data.node_tree
-        gist_filename = ng.name
-        gist_description = 'to do later?'
-        layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
-
-        try:
-            gist_body = json.dumps(layout_dict, sort_keys=True, indent=2)
-        except Exception as err:
-            if 'not JSON serializable' in repr(err):
-                error(layout_dict)
-            else:
-                exception(err)
-            self.report({'WARNING'}, "See terminal/Command prompt for printout of error")
-            return {'CANCELLED'}
-
-        try:
-            gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
-            context.window_manager.clipboard = gist_url   # full destination url
-            info(gist_url)
-            self.report({'WARNING'}, "Copied gistURL to clipboad")
-
-            sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
-
-        except:
-            self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
-        finally:
-            return {'FINISHED'}
-
 
 def propose_archive_filepath(blendpath, extension='zip'):
     """ disect existing filepath, add timestamp """
@@ -983,103 +794,3 @@ def propose_archive_filepath(blendpath, extension='zip'):
     archivename = blendbasename + '_' + raw_time_stamp + '.' + extension
 
     return os.path.join(blenddir, archivename), blendname
-
-
-class SvBlendToArchive(bpy.types.Operator):
-    """ Archive this blend file as zip or gz """
-
-    bl_idname = "node.blend_to_archive"
-    bl_label = "Archive .blend"
-
-    archive_ext = bpy.props.StringProperty(default='zip')
-    
-
-    def complete_msg(self, blend_archive_path):
-        msg = 'saved current .blend as archive at ' + blend_archive_path
-        self.report({'INFO'}, msg)
-        info(msg)
-
-    def execute(self, context):
-
-        blendpath = bpy.data.filepath
-
-        if not blendpath:
-            msg = 'you must save the .blend first before we can compress it'
-            self.report({'INFO'}, msg)
-            return {'CANCELLED'}
-
-        blend_archive_path, blendname = propose_archive_filepath(blendpath, extension=self.archive_ext)
-        context.window_manager.clipboard = blend_archive_path
-
-        if self.archive_ext == 'zip':
-            with zipfile.ZipFile(blend_archive_path, 'w', zipfile.ZIP_DEFLATED) as myzip:
-                myzip.write(blendpath, blendname)
-            self.complete_msg(blend_archive_path)
-            return {'FINISHED'}
-
-        elif self.archive_ext == 'gz':
-
-            import gzip
-            import shutil
-
-            with open(blendpath, 'rb') as f_in:
-                with gzip.open(blend_archive_path, 'wb') as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-            self.complete_msg(blend_archive_path)
-            return {'FINISHED'}
-
-        return {'CANCELLED'}
-
-
-class SvIOPanelProperties(bpy.types.PropertyGroup):
-
-    new_nodetree_name = StringProperty(
-        name='new_nodetree_name',
-        default="Imported_name",
-        description="The name to give the new NodeTree, defaults to: Imported")
-
-    compress_output = BoolProperty(
-        default=0,
-        name='compress_output',
-        description='option to also compress the json, will generate both')
-
-    gist_id = StringProperty(
-        name='new_gist_id',
-        default="Enter Gist ID here",
-        description="This gist ID will be used to obtain the RAW .json from github")
-
-    io_options_enum = bpy.props.EnumProperty(
-        items=[("Import", "Import", "", 0), ("Export", "Export", "", 1)],
-        description="display import or export",
-        default="Export"
-    )
-
-    export_selected_only = BoolProperty(
-        name = "Selected Only",
-        description = "Export selected nodes only",
-        default = False
-    )
-
-classes = [
-    SvIOPanelProperties,
-    SvNodeTreeExporter,
-    SvNodeTreeExportToGist,
-    SvNodeTreeImporter,
-    SvNodeTreeImporterSilent,
-    SvNodeTreeImportFromGist,
-    SvBlendToArchive
-]
-
-
-def register():
-    _ = [register_class(cls) for cls in classes]
-    bpy.types.NodeTree.io_panel_properties = PointerProperty(name="io_panel_properties", type=SvIOPanelProperties)
-
-
-def unregister():
-    del bpy.types.NodeTree.io_panel_properties
-    _ = [unregister_class(cls) for cls in classes[::-1]]
-
-
-# if __name__ == '__main__':
-#    register()

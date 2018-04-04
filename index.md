@@ -41,6 +41,7 @@
     SvTorusKnotNode
     SvHexaGridNodeMK1
     SvRingNode
+    SvEllipseNode
 
 ## Analyzers
     SvBBoxNode
@@ -128,6 +129,8 @@
 
 ## List Mutators
     SvListModifierNode
+    SvFixEmptyObjectsNode
+    SvDatetimeStrings
 
 ## List Main
     ListJoinNode
@@ -224,7 +227,7 @@
     Sv3DviewPropsNode
 
 ## Text
-    ViewerNodeTextMK2
+    ViewerNodeTextMK3
     SvTextInNodeMK2
     SvTextOutNodeMK2
     NoteNode
@@ -258,7 +261,6 @@
 
 ## Objects
     SvVertexGroupNodeMK2
-    SvVertexColorNodeMK2
     SvVertexColorNodeMK3
 
 ## Layout
@@ -273,9 +275,17 @@
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
-    SvFormulaDeformNode
+    SvFormulaDeformMK2Node
+    SvFormulaColorNode
+    SvMeshUVColorNode
+    SvUVPointonMeshNode
+    SvSampleUVColorNode
+    SvSubdivideLiteNode
+    SvExtrudeSeparateLiteNode
+    SvBVHnearNewNode
     ---
     SvColorsInNodeMK1
+    SvColorInputNode
     SvColorsOutNodeMK1
     ---
     SvMatrixNormalNode
@@ -285,6 +295,8 @@
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
+    SvSelectMeshVerts
+    SvSetCustomMeshNormals
     ---
     SvSpiralNode
 
@@ -296,8 +308,8 @@
     SvSkinViewerNodeMK1b
     SvMatrixViewer
     ---
-    SvBMVertsNode
-    SvBMinputNode
+    SvBManalyzinNode
+    SvBMObjinputNode
     SvBMoutputNode
     SvBMtoElementNode
     SvBMOpsNodeMK2
@@ -315,3 +327,6 @@
     SvIndexToMaskNode
     SvMultiExtrudeAlt
     SvOffsetLineNode
+    SvContourNode
+    SvPlanarEdgenetToPolygons
+    

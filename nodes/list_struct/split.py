@@ -17,10 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from itertools import chain
-
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, repeat_last, updateNode)
 
@@ -75,23 +73,21 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "Split")
 
     def update(self):
-        if 'Data' in self.inputs and self.inputs['Data'].links:
-            inputsocketname = 'Data'
-            outputsocketname = ['Split']
-            changable_sockets(self, inputsocketname, outputsocketname)
+        inputsocketname = 'Data'
+        outputsocketname = ['Split']
+        changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if 'Split' in self.outputs and self.outputs['Split'].is_linked:
-            if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = self.inputs['Data'].sv_get()
-                sizes = self.inputs['Split'].sv_get()[0]
-                if self.unwrap:
-                    out = self.get(data, self.level_unwrap, sizes)
-                elif self.level:
-                    out = self.get(data, self.level, sizes)
-                else:
-                    out = split(data, sizes[0])
-                self.outputs['Split'].sv_set(out)
+        if self.outputs['Split'].is_linked:
+            data = self.inputs['Data'].sv_get()
+            sizes = self.inputs['Split'].sv_get()[0]
+            if self.unwrap:
+                out = self.get(data, self.level_unwrap, sizes)
+            elif self.level:
+                out = self.get(data, self.level, sizes)
+            else:
+                out = split(data, sizes[0])
+            self.outputs['Split'].sv_set(out)
 
     def get(self, data, level, size):
         if not isinstance(data, (list, tuple)):

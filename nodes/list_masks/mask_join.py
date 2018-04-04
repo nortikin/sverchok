@@ -17,10 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from itertools import cycle
-
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import changable_sockets, updateNode
 
@@ -46,7 +44,6 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'Mask')
         self.inputs.new('StringsSocket', 'Data True')
         self.inputs.new('StringsSocket', 'Data False')
-
         self.outputs.new('StringsSocket', 'Data')
 
     def draw_buttons(self, context, layout):
@@ -54,26 +51,20 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'choice')
 
     def update(self):
-        if 'Data' not in self.outputs:
-            return
-        if not self.outputs['Data'].links:
-            return
         inputsocketname = 'Data True'
         outputsocketname = ['Data']
         changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if all(s.is_linked for s in self.inputs[1:]):
-            if self.inputs['Mask'].is_linked:
-                mask = self.inputs['Mask'].sv_get()
-            else:  # to match MaskList
-                mask = [[1, 0]]
+        Ouso = self.outputs[0]
+        if Ouso.is_linked:
+            mask = self.inputs['Mask'].sv_get([[1, 0]])
             data_t = self.inputs['Data True'].sv_get()
             data_f = self.inputs['Data False'].sv_get()
 
             data_out = self.get_level(mask, data_t, data_f, self.level-1)
 
-            self.outputs['Data'].sv_set(data_out)
+            Ouso.sv_set(data_out)
 
     def apply_choice_mask(self, mask, data_t, data_f):
         out = []

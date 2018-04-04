@@ -35,18 +35,13 @@ class SvBMtoElementNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'BM_faces')
 
     def process(self):
-        v, e, p = self.outputs
-        vlist = []
-        elist = []
-        plist = []
-        bml = self.inputs['bmesh_list'].sv_get()
-        for i in bml:
-            vlist.append(i.verts[:])
-            elist.append(i.edges[:])
-            plist.append(i.faces[:])
-        v.sv_set(vlist)
-        e.sv_set(elist)
-        p.sv_set(plist)
+        bmlist = self.inputs[0]
+        if bmlist.is_linked:
+            v, e, p = self.outputs
+            bml = bmlist.sv_get()
+            v.sv_set([i.verts[:] for i in bml])
+            e.sv_set([i.edges[:] for i in bml])
+            p.sv_set([i.faces[:] for i in bml])
 
     def update_socket(self, context):
         self.update()

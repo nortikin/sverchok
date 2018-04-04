@@ -1,14 +1,20 @@
 
 import bpy
+import os
 from os.path import dirname, basename, join
 import unittest
+import unittest.mock
 import json
 from io import StringIO
 import logging
 from contextlib import contextmanager
+import ast
 
 import sverchok
-from sverchok.utils.logging import debug, info
+from sverchok.old_nodes import is_old
+from sverchok.data_structure import get_data_nesting_level
+from sverchok.core.socket_data import SvNoDataError, get_output_socket_data
+from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_IO_panel_tools import import_tree
 
@@ -216,6 +222,16 @@ class SverchokTestCase(unittest.TestCase):
     def get_reference_file_path(self, file_name):
         return join(get_tests_path(), "references", file_name)
 
+    def load_reference_sverchok_data(self, file_name):
+        """
+        Load reference data in Sverchok format
+        (plain Python syntax of nested lists).
+        Returns: Sverchok data (nested lists).
+        """
+        with open(self.get_reference_file_path(file_name), 'r') as f:
+            data = f.read()
+            return ast.literal_eval(data)
+
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.
@@ -294,6 +310,10 @@ class SverchokTestCase(unittest.TestCase):
             remove_node_tree(imported_tree_name)
 
     def assert_numpy_arrays_equal(self, arr1, arr2, precision=None):
+        """
+        Assert that two numpy arrays are equal.
+        Floating-point numbers are compared with specified precision.
+        """
         if arr1.shape != arr2.shape:
             raise AssertionError("Shape of 1st array {} != shape of 2nd array {}".format(arr1.shape, arr2.shape))
         shape = list(arr1.shape)
@@ -317,6 +337,111 @@ class SverchokTestCase(unittest.TestCase):
                     compare(new_indicies)
 
         compare([])
+
+    def assert_sverchok_data_equal(self, data1, data2, precision=None):
+        """
+        Assert that two arrays of Sverchok data (nested tuples or lists)
+        are equal.
+        Floating-point numbers are compared with specified precision.
+        """
+        level1 = get_data_nesting_level(data1)
+        level2 = get_data_nesting_level(data2)
+        if level1 != level2:
+            raise AssertionError("Nesting level of 1st data {} != nesting level of 2nd data {}".format(level1, level2))
+        
+        def do_assert(d1, d2, idxs):
+            if precision is not None:
+                d1 = round(d1, precision)
+                d2 = round(d2, precision)
+            self.assertEqual(d1, d2, "Data 1 [{}] != Data 2 [{}]".format(idxs, idxs))
+
+        if level1 == 0:
+            do_assert(data1, data2, [])
+            return
+
+        def compare(prev_indicies, item1, item2):
+            step = len(prev_indicies)
+            index = prev_indicies[-1]
+            if step == level1:
+                if index >= len(item1):
+                    raise AssertionError("At {}: index {} >= length of Item 1: {}".format(prev_indicies, index, item1))
+                if index >= len(item2):
+                    raise AssertionError("At {}: index {} >= length of Item 2: {}".format(prev_indicies, index, item2))
+                do_assert(item1[index], item2[index], prev_indicies)
+            else:
+                l1 = len(item1)
+                l2 = len(item2)
+                self.assertEquals(l1, l2, "Size of data 1 at level {} != size of data 2".format(step))
+                for next_idx in range(len(item1[index])):
+                    new_indicies = prev_indicies[:]
+                    new_indicies.append(next_idx)
+                    compare(new_indicies, item1[index], item2[index])
+
+        for idx in range(len(data1)):
+            compare([idx], data1, data2)
+
+    def assert_sverchok_data_equals_file(self, data, expected_data_file_name, precision=None):
+        expected_data = self.load_reference_sverchok_data(expected_data_file_name)
+        #info("Data: %s", data)
+        #info("Expected data: %s", expected_data)
+        self.assert_sverchok_data_equal(data, expected_data, precision=precision)
+        #self.assertEquals(data, expected_data)
+    
+    @contextmanager
+    def assert_prints_stdout(self, regexp):
+        """
+        Assert that the code prints something matching regexp to stdout.
+        Usage:
+
+            with self.assert_prints_stdout("hello"):
+                print("hello world")
+
+        """
+        with unittest.mock.patch('sys.stdout', new=StringIO()) as fake_stdout:
+            yield fake_stdout
+            self.assertRegex(fake_stdout.getvalue(), regexp)
+
+    @contextmanager
+    def assert_not_prints_stdout(self, regexp):
+        """
+        Assert that the code does not print anything matching regexp to stdout.
+        Usage:
+
+            with self.assert_not_prints_stdout("hello"):
+                print("goodbye")
+
+        """
+        with unittest.mock.patch('sys.stdout', new=StringIO()) as fake_stdout:
+            yield fake_stdout
+            self.assertNotRegex(fake_stdout.getvalue(), regexp)
+
+    @contextmanager
+    def assert_logs_no_errors(self):
+        """
+        Assert that the code does not write any ERROR to the log.
+        Usage:
+
+            with self.assert_logs_no_errors():
+                info("this is just an information, not error")
+
+        """
+
+        has_errors = False
+
+        class Handler(logging.Handler):
+            def emit(self, record):
+                nonlocal has_errors
+                if record.levelno >= logging.ERROR:
+                    has_errors = True
+
+        handler = Handler()
+        logging.getLogger().addHandler(handler)
+
+        try:
+            yield handler
+            self.assertFalse(has_errors, "There were some errors logged")
+        finally:
+            logging.getLogger().handlers.remove(handler)
 
     def subtest_assert_equals(self, value1, value2, message=None):
         """
@@ -344,6 +469,17 @@ class EmptyTreeTestCase(SverchokTestCase):
         remove_node_tree()
 
 class ReferenceTreeTestCase(SverchokTestCase):
+    """
+    Base class for test cases, that require existing node tree
+    for their work.
+    At setup, this class links a node tree from specified .blend
+    file into current scene. Name of .blend (or better .blend.gz)
+    file must be specified in `reference_file_name` property
+    of inherited class. Name of linked tree can be specified
+    in `reference_tree_name' property, by default it is "TestingTree".
+    The linked node tree is available as `self.tree'.
+    At teardown, this class removes that tree from scene.
+    """
 
     reference_file_name = None
     reference_tree_name = None
@@ -373,6 +509,162 @@ class ReferenceTreeTestCase(SverchokTestCase):
 
     def tearDown(self):
         remove_node_tree()
+
+class NodeProcessTestCase(EmptyTreeTestCase):
+    """
+    Base class for test cases that test process() function
+    of one single node.
+    At setup, this class creates an empty node tree and one
+    node in it. bl_idname of tested node must be specified in
+    `node_bl_idname' property of child test case class.
+    Optionally, some simple nodes can be created (by default
+    a Note node) and connected to some outputs of tested node.
+    This is useful for nodes that return from process() if they
+    see that nothing is linked to outputs.
+
+    In actual test_xxx() method, the test case should call
+    self.node.process(), and after that examine output of the
+    node by either self.get_output_data() or self.assert_output_data_equals().
+
+    At teardown, the whole tested node tree is deleted.
+    """
+
+    node_bl_idname = None
+    connect_output_sockets = None
+    output_node_bl_idname = "NoteNode"
+
+    def get_output_data(self, output_name):
+        """
+        Return data that tested node has written to named output socket.
+        Returns None if it hasn't written any data.
+        """
+        try:
+            return get_output_socket_data(self.node, output_name)
+        except SvNoDataError:
+            return None
+    
+    def assert_output_data_equals(self, output_name, expected_data, message=None):
+        """
+        Assert that tested node has written expected_data to
+        output socket output_name.
+        """
+        data = self.get_output_data(output_name)
+        self.assertEquals(data, expected_data, message)
+
+    def assert_output_data_equals_file(self, output_name, expected_data_file_name, message=None):
+        """
+        Assert that tested node has written expected data to
+        output socket output_name.
+        Expected data is stored in reference file expected_data_file_name.
+        """
+        data = self.get_output_data(output_name)
+        expected_data = self.load_reference_sverchok_data(expected_data_file_name)
+        self.assert_sverchok_data_equal(data, expected_data, message)
+
+    def setUp(self):
+        super().setUp()
+
+        if self.node_bl_idname is None:
+            raise Exception("NodeProcessTestCase subclass must have `node_bl_idname' set")
+
+        self.node = create_node(self.node_bl_idname)
+
+        if self.connect_output_sockets and self.output_node_bl_idname:
+            for output_name in self.connect_output_sockets:
+                out_node = create_node(self.output_node_bl_idname)
+                self.tree.links.new(self.node.outputs[output_name], out_node.inputs[0])
+
+######################################################
+# Test running conditionals
+######################################################
+
+def is_pull_request():
+    """
+    Return True if we are running a build for pull-request check on Travis CI.
+    """
+    pull_request = os.environ.get("TRAVIS_PULL_REQUEST", None)
+    return (pull_request is not None and pull_request != "false")
+
+def is_integration_server():
+    """
+    Return True if we a running inside an integration server (Travis CI) build.
+    """
+    ci = os.environ.get("CI", None)
+    return (ci == "true")
+
+def get_ci_branch():
+    """
+    If we are running inside an integration server build, return
+    the name of git branch which we are checking.
+    Otherwise, return None.
+    """
+    branch = os.environ.get("TRAVIS_BRANCH", None)
+    print("Branch:", branch)
+    return branch
+
+def make_skip_decorator(condition, message):
+    def decorator(func):
+        if condition():
+            return unittest.skip(message)(func)
+        else:
+            return func
+
+    return decorator
+
+# Here go decorators used to mark test to be executed only in certain conditions.
+# Example usage:
+#       
+#       @manual_only
+#       def test_something(self):
+#           # This test will not be running on Travis CI, only in manual mode.
+#
+
+pull_requests_only = make_skip_decorator(is_pull_request, "Applies only to PR builds")
+skip_pull_requests = make_skip_decorator(lambda: not is_pull_request(), "Does not apply to PR builds")
+manual_only = make_skip_decorator(lambda: not is_integration_server(), "Applies for manual builds only")
+
+def branches_only(*branches):
+    """
+    This test should be only executed for specified branches:
+
+        @branches_only("master")
+        def test_something(self):
+            ...
+
+    Please note that this applies only for Travis CI builds,
+    in manual mode this test will be ran anyway.
+    """
+    return make_skip_decorator(lambda: get_ci_branch() not in branches, "Does not apply to this branch")
+
+def batch_only(func):
+    """
+    Decorator for tests that are to be executed in batch mode only
+    (i.e. when tests are run from command line, either locally or in CI
+    environment). Usage:
+
+        @batch_only
+        def test_something(self):
+            ...
+    """
+    if bpy.app.background:
+        return func
+    else:
+        return unittest.skip("This test is intended for batch mode only")(func)
+
+def interactive_only(func):
+    """
+    Decorator for tests that are to be executed in interactive mode only
+    (i.e. when tests are run from Blender's UI with "Run all tests" button).
+    Usage:
+
+        @interactive_only
+        def test_something(self):
+            ...
+    """
+    if not bpy.app.background:
+        return func
+    else:
+        return unittest.skip("This test is intended for interactive mode only")(func)
 
 ######################################################
 # UI operator and panel classes
@@ -414,9 +706,30 @@ class SvDumpNodeDef(bpy.types.Operator):
 
         return {'FINISHED'}
 
+class SvListOldNodes(bpy.types.Operator):
+    """
+    Print names and bl_idnames of all
+    deprecated nodes (old_nodes) in the current
+    node tree.
+    """
+
+    bl_idname = "node.sv_testing_list_old_nodes"
+    bl_label = "List old nodes"
+    bl_options = {'INTERNAL'}
+
+    def execute(self, context):
+        ntree = context.space_data.node_tree
+
+        for node in ntree.nodes:
+            if is_old(node):
+                info("Deprecated node: `%s' (%s)", node.name, node.bl_idname)
+
+        self.report({'INFO'}, "See logs")
+        return {'FINISHED'}
+
 class SvTestingPanel(bpy.types.Panel):
     bl_idname = "SvTestingPanel"
-    bl_label = "Testing"
+    bl_label = "SV Testing"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
     bl_category = 'Sverchok'
@@ -435,22 +748,29 @@ class SvTestingPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         layout.operator("node.sv_testing_run_all_tests")
+        layout.operator("node.sv_testing_list_old_nodes")
         layout.operator("node.sv_testing_dump_node_def")
 
-classes = [SvRunTests, SvDumpNodeDef, SvTestingPanel]
+classes = [SvRunTests, SvDumpNodeDef, SvListOldNodes, SvTestingPanel]
 
 def register():
     for clazz in classes:
-        bpy.utils.register_class(clazz)
+        try:
+            bpy.utils.register_class(clazz)
+        except Exception as e:
+            exception("Cant register class %s: %s", clazz, e)
 
 def unregister():
     for clazz in reversed(classes):
-        bpy.utils.unregister_class(clazz)
+        try:
+            bpy.utils.unregister_class(clazz)
+        except Exception as e:
+            exception("Cant unregister class %s: %s", clazz, e)
 
 if __name__ == "__main__":
     import sys
     try:
-        register()
+        #register()
         result = run_all_tests()
         if not result.wasSuccessful():
             # We have to raise an exception for Blender to exit with specified exit code.

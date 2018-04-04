@@ -24,7 +24,7 @@ from sverchok.data_structure import (updateNode, match_long_repeat as mlr)
 
 
 class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' KDT Closest Verts MK2 '''
+    '''Find nearest verts'''
     bl_idname = 'SvKDTreeNodeMK2'
     bl_label = 'KDT Closest Verts MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'

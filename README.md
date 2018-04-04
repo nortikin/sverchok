@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
+
 # English
 
 ## Sverchok parametric tools
@@ -5,7 +7,7 @@
 **addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
-**prerequisites**: Python 3.6, and `numpy` and `requests`, both included in recent versions of Blender (precompiled binaries are convenient for this)  
+**prerequisites**: Python 3.6, and `numpy`, both included in recent versions of Blender (precompiled binaries are convenient for this)  
 **manual**: [In English](http://nikitron.cc.ua/sverch/html/main.html) - This is an introduction to Sverchok and contains 3 lessons, and documentation on almost all nodes. If anything isn't clear (or missing) in this document please ask about it on the [Issue Tracker](https://github.com/nortikin/sverchok/issues), we want to get these lessons right and you can help us! 
 
   
@@ -53,7 +55,15 @@ If you are installing from a release zip, please be aware that if it contains a 
 
 If you are installing from a release found [here](https://github.com/nortikin/sverchok/releases), these files contain folders that have the dots mentioned in the previous point. These versioned release zips are not meant for installing from, but rather can be used to try older versions of Sverchok when you are using older .blend files and older Blender versions. Don't use these release zips if you are installing sverchok for the first time.
 
-During install from preferences, if an error is raised - close and run Blender again and activate sverchok.  
+##### Errors during "install" or "enable" in preferences
+
+if an error is raised like:
+
+> `NameError: name 'nodes' is not defined`
+
+then exit Blender and restart Blender. This time also activate Sverchok by checking the tickbox, but give it as long as it needs to initialize the add-on. It's a complicated Add-on and might take up to 10 seconds to enable (depends on how fast your machine is and how much ram you have).
+
+##### Other reasons for failing:
 
 In case Sverchok still fails to install, we've compiled a list of reasons and known resolutions [here](http://nikitron.cc.ua/sverch/html/installation.html). Please let us know if you encounter other installation issues.   
 

@@ -23,6 +23,7 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.logging import debug, info
 import sverchok
 
 
@@ -90,7 +91,7 @@ class SverchokPurgeCache(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        print(bpy.context.space_data.node_tree.name)
+        info(bpy.context.space_data.node_tree.name)
         return {'FINISHED'}
 
 
@@ -164,12 +165,12 @@ class SvClearNodesLayouts (bpy.types.Operator):
             if T.bl_rna.name in ['Shader Node Tree']:
                 continue
             if trees[T.name].users > 1 and T.use_fake_user:
-                print('Layout '+str(T.name)+' protected by fake user.')
+                info('Layout '+str(T.name)+' protected by fake user.')
             if trees[T.name].users >= 1 and self.do_clear and not T.use_fake_user:
-                print('cleaning user: '+str(T.name))
+                info('cleaning user: '+str(T.name))
                 trees[T.name].user_clear()
             if trees[T.name].users == 0:
-                print('removing layout: '+str(T.name)+' | '+str(T.bl_rna.name))
+                info('removing layout: '+str(T.name)+' | '+str(T.bl_rna.name))
                 bpy.data.node_groups.remove(T)
 
         return {'FINISHED'}
@@ -197,23 +198,27 @@ class SvLayoutScanProperties(bpy.types.Operator):
                 idname = node.bl_idname
    
                 if idname in {'ObjectsNodeMK2', 'SvObjectsNodeMK3'}:
-                    print('scans for get option ', node.label, node.name)
+                    debug('scans for get option %s %s', node.label, node.name)
                     if any((s.links for s in node.outputs)):
                         templist.append([node.label, node.name, ""])
                 
-                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode'}:
-                    if not (node.inputs and node.outputs):
-                        pass
+                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode', 'SvColorInputNode'}:
+                    if not node.outputs:
+                        debug("Node %s does not have outputs", node.name)
+                        continue
                     if len(node.inputs) and node.inputs[0].is_linked:
-                        pass
-                    # somehow to3d not works at all now...
-                    if not node.outputs[0].is_linked and node.to3d != True:
-                        pass
+                        debug("Node %s: first input is linked", node.name)
+                        continue
+                    if (not node.outputs[0].is_linked) or (node.to3d != True):
+                        debug("Node %s: first output is not linked or to3d == False", node.name)
+                        continue
 
                     if 'Integer' in idname:
                         templist.append([node.label, node.name, 'int_'])
                     elif 'Float' in idname:
                         templist.append([node.label, node.name, 'float_'])                     
+                    elif idname == 'SvColorInputNode':
+                        templist.append([node.label, node.name, 'color_data'])
                     elif 'SvListInputNode' in idname:
                         if node.mode == 'vector':
                             templist.append([node.label, node.name, 'vector_list'])
@@ -230,7 +235,7 @@ class SvLayoutScanProperties(bpy.types.Operator):
             templ = [[t[1], t[2]] for t in templist]
             tree.Sv3DProps.clear()
             for name, prop in templ:
-                print('sverchok 3d panel appended with',name, prop)
+                debug('sverchok 3d panel appended with %s %s',name, prop)
                 item = tree.Sv3DProps.add()
                 item.node_name = name
                 item.prop_name = prop

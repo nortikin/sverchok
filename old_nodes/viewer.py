@@ -17,15 +17,25 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, StringProperty
+from bpy.props import BoolProperty, StringProperty, FloatVectorProperty
 from mathutils import Matrix
 
-from sverchok.node_tree import (SverchCustomTreeNode, SvColors,
-                       StringsSocket, VerticesSocket, MatrixSocket)
-from sverchok.data_structure import (dataCorrect, node_id,
-                            Vector_generate, Matrix_generate,
-                            updateNode, SvGetSocketAnyType)
+from sverchok.node_tree import (
+    SverchCustomTreeNode, StringsSocket, VerticesSocket, MatrixSocket)
+
+from sverchok.data_structure import (
+    dataCorrect, node_id, Vector_generate, Matrix_generate, updateNode, SvGetSocketAnyType)
+
 from sverchok.ui.viewer_draw import callback_disable, callback_enable
+
+
+class SvColors(bpy.types.PropertyGroup):
+    """ Class for colors CollectionProperty """
+    color = FloatVectorProperty(
+        name="svcolor", description="sverchok color",
+        default=(0.055, 0.312, 0.5), min=0, max=1,
+        step=1, precision=3, subtype='COLOR_GAMMA', size=3,
+        update=updateNode)
 
 
 class SvObjBake(bpy.types.Operator):
@@ -261,6 +271,7 @@ class ViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bake(idname=self.name, idtree=self.id_data.name)
 
 def register():
+    bpy.utils.register_class(SvColors)
     bpy.utils.register_class(ViewerNode)
     bpy.utils.register_class(SvObjBake)
 
@@ -268,6 +279,7 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvObjBake)
     bpy.utils.unregister_class(ViewerNode)
+    bpy.utils.unregister_class(SvColors)
 
-if __name__ == '__main__':
-    register()
+# if __name__ == '__main__':
+#     register()

@@ -89,6 +89,16 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
             self.outputs[0].sv_set(result)
 
+
+    def draw_label(self):
+        """ this gives quick param display for when the node is minimzed """
+        mixing = "M" if self.mix_check else ""
+        wrapping = "W" if self.wrap_check else ""
+        level = str(self.JoinLevel)
+        fstr = " Lv={0} {1}{2}".format(level, mixing, wrapping)
+        return self.name + fstr
+
+
 def register():
     bpy.utils.register_class(ListJoinNode)
 

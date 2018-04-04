@@ -208,6 +208,12 @@ class SverchokPreferences(AddonPreferences):
     log_buffer_name = StringProperty(name = "Buffer name", default = "sverchok.log")
     log_file_name = StringProperty(name = "File path", default = os.path.join(datafiles, "sverchok.log"))
 
+
+    # updating sverchok
+    dload_archive_name = StringProperty(name="archive name", default="master")
+    dload_archive_path = StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
+
+
     def draw(self, context):
 
         layout = self.layout

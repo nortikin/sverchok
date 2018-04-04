@@ -1,5 +1,9 @@
 import os
+from sverchok.ui.development import get_version_string
 
+# pylint: disable=c0304
+# pylint: disable=c0326
+# pylint: disable=w1401
 
 def logo():
     l1 = " ______ _    _ _______  ______ _______ _     _  _____  _     _"
@@ -14,3 +18,7 @@ def logo():
     for line in lines:
         print(with_color.format(line))
 
+def show_welcome():
+    print("** version: ", get_version_string()," **")
+    print("** Have a nice day with sverchok  **\n")
+    logo()

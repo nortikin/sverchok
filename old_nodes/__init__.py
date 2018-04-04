@@ -27,6 +27,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_oldnodes_parser import get_old_node_bl_idnames
+from sverchok.utils.logging import error, exception
 
 imported_mods = {}
 
@@ -108,18 +109,23 @@ def register_old(bl_id):
     if bl_id in old_bl_idnames:
         mod = importlib.import_module(".{}".format(old_bl_idnames[bl_id]), __name__)
         res = inspect.getmembers(mod)
+        # print('mod/res:', mod, res)
         for name, cls in res:
             if inspect.isclass(cls):
                 if issubclass(cls, bpy.types.Node) and cls.bl_idname == bl_id:
                     if bl_id not in imported_mods:
                         try:
                             mod.register()
-                        except:
-                            traceback.print_exc()
+                        except Exception as err:
+                            print('failed mod register')
+                            exception(err)
+
                         imported_mods[bl_id] = mod
                         return mod
-                    
-    print("Cannot find {} among old nodes".format(bl_id))
+                    else:
+                        return imported_mods[bl_id]
+
+    error("Cannot find {} among old nodes".format(bl_id))
     return None
 
 def unregister_old(bl_id):

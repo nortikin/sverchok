@@ -18,7 +18,6 @@
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
-
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
                                      levelsOflist)
@@ -42,11 +41,10 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-
-        self.inputs.new('StringsSocket', "Data", "Data")
-        self.outputs.new('StringsSocket', "Middl", "Middl")
-        self.outputs.new('StringsSocket', "First", "First")
-        self.outputs.new('StringsSocket', "Last", "Last")
+        self.inputs.new('StringsSocket', "Data")
+        self.outputs.new('StringsSocket', "Middl")
+        self.outputs.new('StringsSocket', "First")
+        self.outputs.new('StringsSocket', "Last")
 
     def update(self):
         if self.inputs['Data'].links:
@@ -56,9 +54,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if 'First' in self.outputs and self.outputs['First'].is_linked or \
-                'Last' in self.outputs and self.outputs['Last'].is_linked or \
-                'Middl' in self.outputs and self.outputs['Middl'].is_linked:
+        if self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get(deepcopy=False)
 
             # blocking too height values of levels, reduce

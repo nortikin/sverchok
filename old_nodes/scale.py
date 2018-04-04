@@ -31,6 +31,13 @@ class SvScaleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Scale'
     bl_icon = 'MAN_SCALE'
 
+    replacement_nodes = [
+            ("SvScaleNodeMK2",
+                dict(Vertices='vertices', Center='centers', Factor='multiplyer'),
+                dict(Vertices='vertices')
+            )
+        ]
+
     factor_ = FloatProperty(name='Factor', description='scaling factor',
                             default=1.0,
                             options={'ANIMATABLE'}, update=updateNode)
