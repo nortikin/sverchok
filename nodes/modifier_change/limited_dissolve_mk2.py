@@ -40,13 +40,13 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'Verts')
         self.inputs.new('StringsSocket', 'Edges')
         self.inputs.new('StringsSocket', 'Polys')
-        self.inputs.new('StringsSocket', 'Vmask')
-        self.inputs.new('StringsSocket', 'Emask')
+        self.inputs.new('StringsSocket', 'Vert index')
+        self.inputs.new('StringsSocket', 'Edge index')
         self.inputs.new('StringsSocket', 'Angle Limit').prop_name = 'angle'
         self.outputs.new('VerticesSocket', 'Verts')
         self.outputs.new('StringsSocket', 'Edges')
         self.outputs.new('StringsSocket', 'Polys')
-        self.outputs.new('StringsSocket', 'region')
+        self.outputs.new('StringsSocket', 'bm region')
         self.outputs.new('StringsSocket', 'bmesh_list')
 
     def draw_buttons(self, context, layout):
