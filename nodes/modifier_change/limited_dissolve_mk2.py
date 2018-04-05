@@ -55,13 +55,12 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         BML, Verts, Edges, Polys, vermask, edgmask, angllim = self.inputs
-        if not (Verts.is_linked or BML.is_linked):
-            return
         o1,o2,o3,o4,o5 = self.outputs
         angle = angllim.sv_get()[0]
         ret = []
         bmlist = BML.sv_get([])
-        bmlist.extend([bmesh_from_pydata(verts, edges, faces, normal_update=True) for verts, edges, faces in zip(*mlr([Verts.sv_get(), Edges.sv_get([[]]), Polys.sv_get([[]])]))])
+        if Verts.is_linked:
+            bmlist.extend([bmesh_from_pydata(verts, edges, faces, normal_update=True) for verts, edges, faces in zip(*mlr([Verts.sv_get(), Edges.sv_get([[]]), Polys.sv_get([[]])]))])
         if vermask.is_linked:
             verm = [np.array(bm.verts[:])[ma] for bm,ma in zip(bmlist,vermask.sv_get())]
         else:
