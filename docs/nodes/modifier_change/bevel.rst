@@ -83,3 +83,7 @@ Another sort of cage:
 You can work with multiple objects:
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/18603141/322847ce-7c80-11e6-8357-6ef4673add4d.png
+
+Vertex mode and multiple radius:
+
+.. image:: https://user-images.githubusercontent.com/10011941/38384563-cb1bb8a6-390f-11e8-82cc-d2a978cb8d52.png

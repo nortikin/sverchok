@@ -41,19 +41,19 @@ def get_bevel_edges(bm, bevel_edges):
 
 def get_bevel_verts(bm, mask):
     if mask:
-        b_verts_list = list(bm.verts) 
-        b_verts = [bv for bv, m in zip(b_verts_list,mask) if m]
+        b_verts_list = list(bm.verts)
+        b_verts = [bv for bv, m in zip(b_verts_list, mask) if m]
     else:
-        b_verts = list(bm.verts) 
+        b_verts = list(bm.verts)
 
     return b_verts
 
 
 class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
-    """ 
-    Triggers: Bevel, Round, Smooth 
+    """
+    Triggers: Bevel, Round, Smooth
     Tooltip: Bevel vertices, edges and faces. Create rounded corners.
-    """ 
+    """
     bl_idname = 'SvBevelNode'
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
@@ -62,18 +62,18 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         inputs, outputs = self.inputs, self.outputs
         print(inputs[3])
         if not self.vertexOnly:
-            inputs[3].name='BevelEdges'
+            inputs[3].name = 'BevelEdges'
 
-        elif  self.vertexOnly:
-            inputs[3].name='VerticesMask'
-                 
+        elif self.vertexOnly:
+            inputs[3].name = 'VerticesMask'
+
         updateNode(self, [])
-        
+
     offset_ = FloatProperty(
         name='Amount',
         description='Amount to offset beveled edge',
         default=0.0, min=0.0, update=updateNode)
-        
+
     offset_modes = [
         ("0", "Offset", "Amount is offset of new edges from original", 1),
         ("1", "Width", "Amount is width of new face", 2),
@@ -101,7 +101,6 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         description="Only bevel edges, not edges",
         default=False, update=mode_change)
 
-
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
         si('VerticesSocket', "Vertices")
@@ -121,8 +120,6 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "vertexOnly")
         layout.prop(self, "offsetType")
 
-
-
     def get_socket_data(self):
         Vertices, Edges, Polygons, Mask, Offsets, Segments, Profiles = self.inputs
         return [
@@ -141,12 +138,12 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
             geom = list(bm.verts) + list(b_edges) + list(bm.faces)
         else:
             b_verts = get_bevel_verts(bm, mask)
-            geom = b_verts + list(bm.edges) + list(bm.faces) 
+            geom = b_verts + list(bm.edges) + list(bm.faces)
         return geom
-        
+
     def process(self):
-        
-        if not (self.inputs[0].is_linked and (self.inputs[2].is_linked or self.inputs[1].is_linked )):
+
+        if not (self.inputs[0].is_linked and (self.inputs[2].is_linked or self.inputs[1].is_linked)):
             return
         if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewPolys']):
             return
@@ -154,12 +151,12 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         out, result_bevel_faces = [], []
 
         meshes = match_long_repeat(self.get_socket_data())
-                
+
         for vertices, edges, faces, mask, offset, segments, profile in zip(*meshes):
             bm = bmesh_from_pydata(vertices, edges, faces)
-            
-            geom = self.create_geom(bm, mask);
-            
+
+            geom = self.create_geom(bm, mask)
+
             bevel_faces = bmesh.ops.bevel(
                 bm, geom=geom, offset=offset,
                 offset_type=int(self.offsetType), segments=segments,
