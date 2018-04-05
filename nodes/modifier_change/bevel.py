@@ -31,11 +31,22 @@ def get_bevel_edges(bm, bevel_edges):
         b_edges = []
         for edge in bevel_edges:
             b_edge = [e for e in bm.edges if set([v.index for v in e.verts]) == set(edge)]
-            b_edges.append(b_edge[0])
+            if b_edge:
+                b_edges.append(b_edge[0])
     else:
         b_edges = bm.edges
 
     return b_edges
+
+
+def get_bevel_verts(bm, mask):
+    if mask:
+        b_verts_list = list(bm.verts) 
+        b_verts = [bv for bv, m in zip(b_verts_list,mask) if m]
+    else:
+        b_verts = list(bm.verts) 
+
+    return b_verts
 
 
 class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
@@ -47,11 +58,22 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
 
+    def mode_change(self, context):
+        inputs, outputs = self.inputs, self.outputs
+        print(inputs[3])
+        if not self.vertexOnly:
+            inputs[3].name='BevelEdges'
+
+        elif  self.vertexOnly:
+            inputs[3].name='VerticesMask'
+                 
+        updateNode(self, [])
+        
     offset_ = FloatProperty(
         name='Amount',
         description='Amount to offset beveled edge',
         default=0.0, min=0.0, update=updateNode)
-
+        
     offset_modes = [
         ("0", "Offset", "Amount is offset of new edges from original", 1),
         ("1", "Width", "Amount is width of new face", 2),
@@ -75,9 +97,9 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.5, min=0.0, max=1.0, update=updateNode)
 
     vertexOnly = BoolProperty(
-        name="Vertex only",
+        name="Vertex mode",
         description="Only bevel edges, not edges",
-        default=False, update=updateNode)
+        default=False, update=mode_change)
 
 
     def sv_init(self, context):
@@ -86,6 +108,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         si('StringsSocket', 'Edges')
         si('StringsSocket', 'Polygons')
         si('StringsSocket', 'BevelEdges')
+
         si('StringsSocket', "Offset").prop_name = "offset_"
         si('StringsSocket', "Segments").prop_name = "segments_"
         si('StringsSocket', "Profile").prop_name = "profile_"
@@ -95,31 +118,34 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         so('StringsSocket', 'NewPolys')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "offsetType")
         layout.prop(self, "vertexOnly")
+        layout.prop(self, "offsetType")
+
 
 
     def get_socket_data(self):
-        Vertices, Edges, Polygons, BevelEdges, Offsets, Segments, Profiles = self.inputs
+        Vertices, Edges, Polygons, Mask, Offsets, Segments, Profiles = self.inputs
         return [
             Vertices.sv_get(default=[[]]),
             Edges.sv_get(default=[[]]),
             Polygons.sv_get(default=[[]]),
-            BevelEdges.sv_get(default=[[]]),
+            Mask.sv_get(default=[[]]),
             Offsets.sv_get()[0],
             Segments.sv_get()[0],
             Profiles.sv_get()[0]
         ]
 
-    def vertexMode(self):
-        if not self.inputs[2].is_linked and self.inputs[1].is_linked:
-            return True
+    def create_geom(self, bm, mask):
+        if not self.vertexOnly:
+            b_edges = get_bevel_edges(bm, mask)
+            geom = list(bm.verts) + list(b_edges) + list(bm.faces)
         else:
-            return self.vertexOnly
-        
+            b_verts = get_bevel_verts(bm, mask)
+            geom = b_verts + list(bm.edges) + list(bm.faces) 
+        return geom
         
     def process(self):
-
+        
         if not (self.inputs[0].is_linked and (self.inputs[2].is_linked or self.inputs[1].is_linked )):
             return
         if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewPolys']):
@@ -128,18 +154,16 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         out, result_bevel_faces = [], []
 
         meshes = match_long_repeat(self.get_socket_data())
-        
-        vertexOnly = self.vertexMode()
-        
-        for vertices, edges, faces, bevel_edges, offset, segments, profile in zip(*meshes):
+                
+        for vertices, edges, faces, mask, offset, segments, profile in zip(*meshes):
             bm = bmesh_from_pydata(vertices, edges, faces)
-            b_edges = get_bevel_edges(bm, bevel_edges)
-
-            geom = list(bm.verts) + list(b_edges) + list(bm.faces)
+            
+            geom = self.create_geom(bm, mask);
+            
             bevel_faces = bmesh.ops.bevel(
                 bm, geom=geom, offset=offset,
                 offset_type=int(self.offsetType), segments=segments,
-                profile=profile, vertex_only=vertexOnly, material=-1)['faces']
+                profile=profile, vertex_only=self.vertexOnly, material=-1)['faces']
 
             new_bevel_faces = [[v.index for v in face.verts] for face in bevel_faces]
             out.append(pydata_from_bmesh(bm))

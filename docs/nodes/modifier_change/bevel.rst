@@ -14,7 +14,10 @@ This node has the following inputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
-- **BevelEdges**. Edges to be beveled. If this input is not connected, then by default all edges will be beveled. This parameter is used only when ``Vertex only`` flag is not checked.
+- **BevelEdges / VerticesMask**.  Edges or vertices to be beveled. If this input is not connected, then by default all will be beveled. This parameter changes when ``Vertex mode`` flag is modified. 
+On vertex mode it will expect a list of True/False (or 0/1) values indicating the selected vertices([[0,1,0,..]]).
+Otherwise it will expect a list of Edges([[2,6],[3,4]...]).
+
 - **Amount**. Amount to offset beveled edge.
 - **Segments**. Number of segments in bevel.
 - **Profile**. Profile shape.
