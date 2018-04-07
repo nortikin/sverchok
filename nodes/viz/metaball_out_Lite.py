@@ -18,21 +18,9 @@
 
 import bpy
 from mathutils import Matrix
-from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
+from bpy.props import BoolProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_cycle as mlc, updateNode
-
-
-def Upd(self, context):
-    objects = bpy.data.objects
-    if not self.meta_name in objects:
-        scene = bpy.context.scene
-        metaball_data = bpy.data.metaballs.new("MetaBall")
-        metaball_object = objects.new(self.meta_name, metaball_data)
-        scene.objects.link(metaball_object)
-        scene.update()
-    self.label = objects[self.meta_name].name
-    updateNode(self, context)
 
 
 class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
@@ -46,8 +34,6 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         description='When enabled this will process incoming data',
         update=updateNode)
-
-    meta_name = StringProperty(default='SvMetaBall', name="Base name", update=Upd)
 
     meta_types = [
             ("BALL", "Ball(1)", "Ball", "META_BALL", 1),
@@ -87,6 +73,7 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.6, min=0.0, max=5.0, update=updateNode)
 
     def sv_init(self, context):
+        self.inputs.new('SvObjectSocket', 'Meta Object')
         self.inputs.new('StringsSocket', 'Types').prop_name = "meta_type"
         self.inputs.new('MatrixSocket', 'Origins')
         self.inputs.new('StringsSocket', "Radius").prop_name = "radius"
@@ -98,8 +85,6 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         view_icon = 'BLENDER' if self.activate else 'ERROR'
         row = layout.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-        col = layout.column(align=True)
-        col.prop(self, "meta_name", text='', icon='OUTLINER_OB_META')
         layout.prop(self, "threshold")
 
     def draw_buttons_ext(self, context, layout):
@@ -127,10 +112,10 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
             e.use_negative = bool(n)
 
     def process(self):
-        Typ, Origs, Radi, Stiff, Neg = self.inputs
+        Obj, Typ, Origs, Radi, Stiff, Neg = self.inputs
         if not (self.activate and Origs.is_linked):
             return
-        meta_objectD = bpy.data.objects[self.meta_name].data
+        meta_objectD = Obj.sv_get()[0].data
         meta_objectD.resolution = self.view_resolution
         meta_objectD.render_resolution = self.render_resolution
         meta_objectD.threshold = self.threshold
@@ -143,7 +128,7 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         origins, radiuses, stiffnesses, negation, types = mlc([origins, radiuses, stiffnesses, negation, types])
         self.setup_element(mbo, origins, radiuses, stiffnesses, negation, types)
         if self.outputs['Objects'].is_linked:
-            self.outputs['Objects'].sv_set([bpy.data.objects[self.meta_name]])
+            self.outputs['Objects'].sv_set(Obj.sv_get())
 
 
 def register():
