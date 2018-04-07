@@ -285,6 +285,7 @@
     SvBVHnearNewNode
     SvUnsubdivideNode
     SvLimitedDissolveMK2
+    SvMetaballOutLiteNode
     ---
     SvColorsInNodeMK1
     SvColorInputNode
