@@ -23,6 +23,18 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_cycle as mlc, updateNode
 
 
+def Upd(self, context):
+    objects = bpy.data.objects
+    if not self.meta_name in objects:
+        scene = bpy.context.scene
+        metaball_data = bpy.data.metaballs.new("MetaBall")
+        metaball_object = objects.new(self.meta_name, metaball_data)
+        scene.objects.link(metaball_object)
+        scene.update()
+    self.label = objects[self.meta_name].name
+    updateNode()
+
+
 class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
     '''Create Blender's metaball object Lite'''
     bl_idname = 'SvMetaballOutLiteNode'
@@ -35,7 +47,7 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         description='When enabled this will process incoming data',
         update=updateNode)
 
-    meta_name = StringProperty(default='SvMetaBall', name="Base name", update=updateNode)
+    meta_name = StringProperty(default='SvMetaBall', name="Base name", update=Upd)
 
     meta_types = [
             ("BALL", "Ball(1)", "Ball", "META_BALL", 1),
@@ -118,27 +130,20 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         Typ, Origs, Radi, Stiff, Neg = self.inputs
         if not (self.activate and Origs.is_linked):
             return
-        if not self.meta_name in bpy.data.objects:
-            scene = bpy.context.scene
-            objects = bpy.data.objects
-            metaball_data = bpy.data.metaballs.new("MetaBall")
-            metaball_object = bpy.data.objects.new(self.meta_name, metaball_data)
-            scene.objects.link(metaball_object)
-            scene.update()
-        metaball_object = bpy.data.objects[self.meta_name]
-        metaball_object.data.resolution = self.view_resolution
-        metaball_object.data.render_resolution = self.render_resolution
-        metaball_object.data.threshold = self.threshold
-        self.label = metaball_object.name
+        meta_objectD = bpy.data.objects[self.meta_name].data
+        meta_objectD.resolution = self.view_resolution
+        meta_objectD.render_resolution = self.render_resolution
+        meta_objectD.threshold = self.threshold
         origins = [Matrix(m) for m in Origs.sv_get()]
         radiuses = Radi.sv_get()[0]
         stiffnesses = Stiff.sv_get()[0]
         negation = Neg.sv_get([[0]])[0]
         types = Typ.sv_get()[0]
-        mbo = metaball_object.data.elements
+        mbo = meta_objectD.elements
         origins, radiuses, stiffnesses, negation, types = mlc([origins, radiuses, stiffnesses, negation, types])
         self.setup_element(mbo, origins, radiuses, stiffnesses, negation, types)
-        self.outputs['Objects'].sv_set([metaball_object])
+        if self.outputs['Objects'].is_linked:
+            self.outputs['Objects'].sv_set([bpy.data.objects[self.meta_name]])
 
 
 def register():
