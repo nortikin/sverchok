@@ -32,7 +32,7 @@ def Upd(self, context):
         scene.objects.link(metaball_object)
         scene.update()
     self.label = objects[self.meta_name].name
-    updateNode()
+    updateNode(self, context)
 
 
 class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
