@@ -20,7 +20,7 @@ import bpy
 from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import match_long_cycle, updateNode
+from sverchok.data_structure import match_long_cycle as mlc, updateNode
 
 
 class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
@@ -95,20 +95,24 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "view_resolution")
         layout.prop(self, "render_resolution")
 
-    def setup_element(self, element, item):
-        (origin, radius, stiffness, negate, meta_type) = item
-        center, rotation, scale = origin.decompose()
-        element.co = center
-        if isinstance(meta_type, int):
-            if meta_type not in self.meta_type_by_id:
-                raise Exception("`Types' input expects an integer number from 1 to 5")
-            meta_type = self.meta_type_by_id[meta_type]
-        element.type = meta_type
-        element.radius = radius
-        element.stiffness = stiffness
-        element.rotation = rotation
-        element.size_x, element.size_y, element.size_z = scale
-        element.use_negative = bool(negate)
+    def setup_element(self, elements, origins, radiuss, stiffnesss, negates, meta_types):
+        if len(origins) != len(elements):
+            elements.clear()
+            for i in range(len(origins)):
+                elements.new()
+        for e,o,r,s,n,mt in zip(elements, origins, radiuss, stiffnesss, negates, meta_types):
+            center, rotation, scale = o.decompose()
+            e.co = center
+            if isinstance(mt, int):
+                if mt not in self.meta_type_by_id:
+                    raise Exception("`Types' input expects an integer number from 1 to 5")
+                mt = self.meta_type_by_id[meta_type]
+            e.type = mt
+            e.radius = r
+            e.stiffness = s
+            e.rotation = rotation
+            e.size_x, e.size_y, e.size_z = scale
+            e.use_negative = bool(n)
 
     def process(self):
         Typ, Origs, Radi, Stiff, Neg = self.inputs
@@ -131,18 +135,9 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         stiffnesses = Stiff.sv_get()[0]
         negation = Neg.sv_get([[0]])[0]
         types = Typ.sv_get()[0]
-        items = match_long_cycle([origins, radiuses, stiffnesses, negation, types])
-        items = list(zip(*items))
-        if len(items) == len(metaball_object.data.elements):
-            # Updating existing metaball data
-            for (item, element) in zip(items, metaball_object.data.elements):
-                self.setup_element(element, item)
-        else:
-            # Recreating metaball data
-            metaball_object.data.elements.clear()
-            for item in items:
-                element = metaball_object.data.elements.new()
-                self.setup_element(element, item)
+        mbo = metaball_object.data.elements
+        origins, radiuses, stiffnesses, negation, types = mlc([origins, radiuses, stiffnesses, negation, types])
+        self.setup_element(mbo, origins, radiuses, stiffnesses, negation, types)
         self.outputs['Objects'].sv_set([metaball_object])
 
 
