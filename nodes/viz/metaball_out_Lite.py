@@ -86,7 +86,6 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         view_icon = 'BLENDER' if self.activate else 'ERROR'
         row = layout.row(align=True)
         row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-        row.separator()
         col = layout.column(align=True)
         col.prop(self, "meta_name", text='', icon='OUTLINER_OB_META')
         layout.prop(self, "threshold")
