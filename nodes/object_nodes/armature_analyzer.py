@@ -44,9 +44,7 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
         armat = armobj.sv_get()[0].data.bones
         if selm.is_linked:
             for b,m in zip(armat, selm.sv_get()[0]):
-                b.select = m
-                b.select_head = m
-                b.select_tail = m
+                b.select = b.select_head = b.select_tail = m
         if head.is_linked:
             head.sv_set([[bone.head_local[:] for bone in armat]])
         if Cent.is_linked:
