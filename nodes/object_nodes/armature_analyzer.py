@@ -1,0 +1,71 @@
+# ##### BEGIN GPL LICENSE BLOCK #####
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License
+#  as published by the Free Software Foundation; either version 2
+#  of the License, or (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software Foundation,
+#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+#
+# ##### END GPL LICENSE BLOCK #####
+
+import bpy
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import match_long_cycle as mlc, updateNode
+
+
+class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
+    '''Armature object props'''
+    bl_idname = 'SvArmaturePropsNode'
+    bl_label = 'Armature Props'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+
+    def sv_init(self, context):
+        self.inputs.new('SvObjectSocket', 'Armature Object')
+        self.inputs.new('StringsSocket', 'bone select mask')
+        self.outputs.new('VerticesSocket', 'Head')
+        self.outputs.new('VerticesSocket', 'Middle relative to head')
+        self.outputs.new('VerticesSocket', 'Tail')
+        self.outputs.new('VerticesSocket', 'Direction')
+        self.outputs.new('StringsSocket', 'Length')
+        self.outputs.new('MatrixSocket', "local bone matrix")
+        self.outputs.new('SvObjectSocket', "Armature Object")
+
+    def process(self):
+        armobj, selm = self.inputs
+        head, Cent, tail, Norm, len, matr, obj = self.outputs
+        armat = armobj.sv_get()[0].data.bones
+        if selm.is_linked:
+            for b,m in zip(armat, selm.sv_get()[0]):
+                b.select = m
+                b.select_head = m
+                b.select_tail = m
+        if head.is_linked:
+            head.sv_set([[bone.head_local[:] for bone in armat]])
+        if Cent.is_linked:
+            Cent.sv_set([[bone.center[:] for bone in armat]])
+        if tail.is_linked:
+            tail.sv_set([[bone.tail_local[:] for bone in armat]])
+        if Norm.is_linked:
+            Norm.sv_set([[bone.vector[:] for bone in armat]])
+        if len.is_linked:
+            len.sv_set([[bone.length for bone in armat]])
+        if matr.is_linked:
+            matr.sv_set([[i[:] for i in bone.matrix_local] for bone in armat])
+        if obj.is_linked:
+            obj.sv_set(armobj.sv_get())
+
+
+def register():
+    bpy.utils.register_class(SvArmaturePropsNode)
+
+
+def unregister():
+    bpy.utils.unregister_class(SvArmaturePropsNode)
