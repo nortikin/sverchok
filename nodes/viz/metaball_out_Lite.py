@@ -125,8 +125,7 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         negation = Neg.sv_get([[0]])[0]
         types = Typ.sv_get()[0]
         mbo = meta_objectD.elements
-        origins, radiuses, stiffnesses, negation, types = mlc([origins, radiuses, stiffnesses, negation, types])
-        self.setup_element(mbo, origins, radiuses, stiffnesses, negation, types)
+        self.setup_element(mbo, *mlc([origins, radiuses, stiffnesses, negation, types]))
         if self.outputs['Objects'].is_linked:
             self.outputs['Objects'].sv_set(Obj.sv_get())
 
