@@ -57,7 +57,10 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
         if lng.is_linked:
             lng.sv_set([[bone.length for bone in ar] for ar in armat])
         if matr.is_linked:
-            matr.sv_set([[[i[:] for i in bone.matrix_local] for bone in ar] for ar in armat])
+            if len(armat) > 1:
+                matr.sv_set([[[i[:] for i in bone.matrix_local] for bone in ar] for ar in armat])
+            else:
+                matr.sv_set([[i[:] for i in bone.matrix_local] for bone in armat[0]])
         if obj.is_linked:
             obj.sv_set(armobj.sv_get())
 
