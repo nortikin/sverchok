@@ -34,7 +34,7 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Middle relative')
         self.outputs.new('VerticesSocket', 'Tail')
         self.outputs.new('VerticesSocket', 'Direction relative')
-        self.outputs.new('StringsSocket', 'Length')
+        self.outputs.new('StringsSocket', 'Length of bone')
         self.outputs.new('MatrixSocket', "local bone matrix")
         self.outputs.new('SvObjectSocket', "Armature Object")
 
