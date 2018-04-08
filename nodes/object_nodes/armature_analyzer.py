@@ -31,9 +31,9 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvObjectSocket', 'Armature Object')
         self.inputs.new('StringsSocket', 'bone select mask')
         self.outputs.new('VerticesSocket', 'Head')
-        self.outputs.new('VerticesSocket', 'Middle relative to head')
+        self.outputs.new('VerticesSocket', 'Middle relative')
         self.outputs.new('VerticesSocket', 'Tail')
-        self.outputs.new('VerticesSocket', 'Direction')
+        self.outputs.new('VerticesSocket', 'Direction relative')
         self.outputs.new('StringsSocket', 'Length')
         self.outputs.new('MatrixSocket', "local bone matrix")
         self.outputs.new('SvObjectSocket', "Armature Object")
@@ -41,22 +41,23 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         armobj, selm = self.inputs
         head, Cent, tail, Norm, lng, matr, obj = self.outputs
-        armat = armobj.sv_get()[0].data.bones
+        armat =  [ob.data.bones for ob in armobj.sv_get()]
         if selm.is_linked:
-            for b,m in zip(armat, selm.sv_get()[0]):
-                b.select = b.select_head = b.select_tail = m
+            for ar, sm in zip(armat, selm.sv_get()):
+                for b,m in zip(ar, sm):
+                    b.select = b.select_head = b.select_tail = m
         if head.is_linked:
-            head.sv_set([[bone.head_local[:] for bone in armat]])
+            head.sv_set([[bone.head_local[:] for bone in ar] for ar in armat])
         if Cent.is_linked:
-            Cent.sv_set([[bone.center[:] for bone in armat]])
+            Cent.sv_set([[bone.center[:] for bone in ar] for ar in armat])
         if tail.is_linked:
-            tail.sv_set([[bone.tail_local[:] for bone in armat]])
+            tail.sv_set([[bone.tail_local[:] for bone in ar] for ar in armat])
         if Norm.is_linked:
-            Norm.sv_set([[bone.vector[:] for bone in armat]])
+            Norm.sv_set([[bone.vector[:] for bone in ar] for ar in armat])
         if lng.is_linked:
-            lng.sv_set([[bone.length for bone in armat]])
+            lng.sv_set([[bone.length for bone in ar] for ar in armat])
         if matr.is_linked:
-            matr.sv_set([[i[:] for i in bone.matrix_local] for bone in armat])
+            matr.sv_set([[[i[:] for i in bone.matrix_local] for bone in ar] for ar in armat])
         if obj.is_linked:
             obj.sv_set(armobj.sv_get())
 
