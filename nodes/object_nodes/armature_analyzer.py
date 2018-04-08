@@ -40,7 +40,7 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         armobj, selm = self.inputs
-        head, Cent, tail, Norm, len, matr, obj = self.outputs
+        head, Cent, tail, Norm, lng, matr, obj = self.outputs
         armat = armobj.sv_get()[0].data.bones
         if selm.is_linked:
             for b,m in zip(armat, selm.sv_get()[0]):
@@ -55,8 +55,8 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
             tail.sv_set([[bone.tail_local[:] for bone in armat]])
         if Norm.is_linked:
             Norm.sv_set([[bone.vector[:] for bone in armat]])
-        if len.is_linked:
-            len.sv_set([[bone.length for bone in armat]])
+        if lng.is_linked:
+            lng.sv_set([[bone.length for bone in armat]])
         if matr.is_linked:
             matr.sv_set([[i[:] for i in bone.matrix_local] for bone in armat])
         if obj.is_linked:
