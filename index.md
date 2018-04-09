@@ -286,6 +286,7 @@
     SvUnsubdivideNode
     SvLimitedDissolveMK2
     SvMetaballOutLiteNode
+    SvArmaturePropsNode
     ---
     SvColorsInNodeMK1
     SvColorInputNode
