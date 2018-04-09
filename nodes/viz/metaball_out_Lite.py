@@ -103,7 +103,7 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(mt, int):
                 if mt not in self.meta_type_by_id:
                     raise Exception("`Types' input expects an integer number from 1 to 5")
-                mt = self.meta_type_by_id[meta_type]
+                mt = self.meta_type_by_id[mt]
             e.type = mt
             e.radius = r
             e.stiffness = s
