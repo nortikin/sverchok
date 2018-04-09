@@ -1,4 +1,4 @@
-Armature Props
+Lattice Props
 ==========
 
 Functionality
