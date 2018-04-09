@@ -29,7 +29,6 @@ class SvLatticePropsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Lattice Object')
-        self.inputs.new('VerticesSocket', 'init points')
         self.inputs.new('VerticesSocket', 'deformed points')
         self.inputs.new('StringsSocket', 'point select mask')
         self.outputs.new('VerticesSocket', 'init points')
@@ -37,13 +36,9 @@ class SvLatticePropsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', "Lattice Object")
 
     def process(self):
-        lattobj, orp, dep, selm = self.inputs
+        lattobj, dep, selm = self.inputs
         Oorp, Odep, obj = self.outputs
         lattpois = [ob.data.points for ob in lattobj.sv_get()]
-        if orp.is_linked:
-            for la, cop in zip(lattpois, orp.sv_get()):
-                for p,c in zip(la, cop):
-                    p.co = c
         if dep.is_linked:
             for la, cop in zip(lattpois, dep.sv_get()):
                 for p,c in zip(la, cop):
