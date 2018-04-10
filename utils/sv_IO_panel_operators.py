@@ -229,6 +229,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
 
         try:
             gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
+            
             context.window_manager.clipboard = gist_url   # full destination url
             info(gist_url)
             self.report({'WARNING'}, "Copied gistURL to clipboad")
@@ -237,7 +238,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
             return {'FINISHED'}
         except Exception as err:
             info(err)
-            self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
+            self.report({'ERROR'}, "Error 222: net connection or github login failed!")
 
         return {'CANCELLED'}
 
