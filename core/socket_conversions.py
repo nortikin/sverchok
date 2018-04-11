@@ -88,17 +88,14 @@ def get_quaternions_from_matrices(data):
 
     def get_all(data):
         for mat in data:
-            if is_matrix(mat):
-                q = tuple(mat.to_quaternion())
-                collect_quaternion(q)
-            else:
-                get_all(mat)
+            q = tuple(mat.to_quaternion())
+            collect_quaternion(q)
 
     get_all(data)
     return [quaternions]
 
 
-def is_matrix(mat):
+def is_matrix(mat):  # doesnt work with Mathutils.Matrix ?
     ''' expensive function call? '''
     if not isinstance(mat, (tuple, list)) or not len(mat) == 4:
         return
