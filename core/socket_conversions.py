@@ -117,12 +117,8 @@ def get_locs_from_matrices(data):
     collect_vector = locations.append
 
     def get_all(data):
-
         for sublist in data:
-            if is_matrix(sublist):
-                collect_vector(sublist.to_translation()[:])
-            else:
-                get_all(sublist)
+            collect_vector(sublist.to_translation()[:])
 
     get_all(data)
     return locations
