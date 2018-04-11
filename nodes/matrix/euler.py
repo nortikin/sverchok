@@ -80,7 +80,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
             a_r = [radians(x) for x in angles]
             mat = Euler(a_r, self.order).to_matrix().to_4x4()
             mats.append(mat)
-        self.outputs['Matrix'].sv_set(Matrix_listing(mats))
+        self.outputs['Matrix'].sv_set(mats)
 
 
 def register():
