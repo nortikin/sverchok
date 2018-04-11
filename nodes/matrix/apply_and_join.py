@@ -54,7 +54,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
             return
         vertices = self.inputs['Vertices'].sv_get()
         matrices = self.inputs['Matrices'].sv_get()
-        matrices = Matrix_generate(matrices)
+      #  matrices = Matrix_generate(matrices)
         n = len(matrices)
         result_vertices = (vertices*n)[:n]
         outV = []
