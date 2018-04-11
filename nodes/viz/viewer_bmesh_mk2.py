@@ -89,7 +89,6 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
         sv_object.hide_select = False
 
     if matrix:
-        matrix = matrix_sanitizer(matrix)
         if node.extended_matrix:
             sv_object.data.transform(matrix)
             sv_object.matrix_local = Matrix.Identity(4)
@@ -128,7 +127,6 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
         edges, faces, matrix = topology
 
         if matrix:
-            matrix = matrix_sanitizer(matrix)
             verts = [matrix * Vector(v) for v in verts]
 
         big_verts.extend(verts)
