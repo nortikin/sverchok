@@ -240,7 +240,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         lamp_object['madeby'] = self.name
         lamp_object['basename'] = self.lamp_name
         
-        lamp_object.matrix_local = Matrix(origin)
+        lamp_object.matrix_local = origin
 
         lamp = lamp_object.data
 
