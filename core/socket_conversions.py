@@ -118,7 +118,7 @@ def get_locs_from_matrices(data):
             collect_vector(sublist.to_translation()[:])
 
     get_all(data)
-    return locations
+    return [locations]
 
 class ImplicitConversionProhibited(Exception):
     def __init__(self, socket):
