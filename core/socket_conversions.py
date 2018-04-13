@@ -58,7 +58,7 @@ def get_matrices_from_locs(data):
             if isinstance(item, (tuple, list)) and len(item) == 3 and isinstance(item[0], (float, int)):
                 # generate location matrix from location
                 x, y, z = item
-                collect_matrix([(1., .0, .0, x), (.0, 1., .0, y), (.0, .0, 1., z), (.0, .0, .0, 1.)])
+                collect_matrix(Matrix([(1., .0, .0, x), (.0, 1., .0, y), (.0, .0, 1., z), (.0, .0, .0, 1.)]))
             else:
                 get_all(item)
 
@@ -74,7 +74,7 @@ def get_matrices_from_quaternions(data):
         for item in data:
             if isinstance(item, (tuple, list)) and len(item) == 4 and isinstance(item[0], (float, int)):
                 mat = Quaternion(item).to_matrix().to_4x4()
-                collect_matrix(Matrix_listing([mat])[0])
+                collect_matrix(mat)
             else:
                 get_all(item)
 
@@ -87,19 +87,15 @@ def get_quaternions_from_matrices(data):
     collect_quaternion = quaternions.append
 
     def get_all(data):
-        for sublist in data:
-            if is_matrix(sublist):
-                mat = Matrix(sublist)
-                q = tuple(mat.to_quaternion())
-                collect_quaternion(q)
-            else:
-                get_all(sublist)
+        for mat in data:
+            q = tuple(mat.to_quaternion())
+            collect_quaternion(q)
 
     get_all(data)
     return [quaternions]
 
 
-def is_matrix(mat):
+def is_matrix(mat):  # doesnt work with Mathutils.Matrix ?
     ''' expensive function call? '''
     if not isinstance(mat, (tuple, list)) or not len(mat) == 4:
         return
@@ -118,15 +114,11 @@ def get_locs_from_matrices(data):
     collect_vector = locations.append
 
     def get_all(data):
-
         for sublist in data:
-            if is_matrix(sublist):
-                collect_vector((sublist[0][3], sublist[1][3], sublist[2][3]))
-            else:
-                get_all(sublist)
+            collect_vector(sublist.to_translation()[:])
 
     get_all(data)
-    return locations
+    return [locations]
 
 class ImplicitConversionProhibited(Exception):
     def __init__(self, socket):

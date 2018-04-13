@@ -77,8 +77,7 @@ class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
             for j in range(max_inner):
                 matrixes_.append(Matrix.Shear(self.plane_, 4, (factor1[i][j], factor2[i][j])))
 
-        matrixes = Matrix_listing(matrixes_)
-        self.outputs['Matrix'].sv_set(matrixes)
+        self.outputs['Matrix'].sv_set(matrixes_)
 
 
 def register():

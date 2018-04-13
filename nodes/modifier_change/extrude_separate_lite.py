@@ -66,7 +66,7 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
         result_extruded_faces = []
         result_other_faces = []
         bmlist = [bmesh_from_pydata(verts, [], faces) for verts, faces in zip(vertices_s, faces_s)]
-        trans = [Matrix(mat) for mat in Imatr.sv_get()]
+        trans = Imatr.sv_get()
         if IMask.is_linked:
             flist = [np.extract(mask, bm.faces[:]) for bm, mask in zip(bmlist, IMask.sv_get())]
         else:
