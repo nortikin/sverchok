@@ -124,11 +124,10 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
         masks_s = self.inputs['Mask'].sv_get(default=[[1]])
         if self.transform_mode == "Matrix":
-            matrices_s = [self.inputs['Matrices'].sv_get(default=[[]])]
+            matrices_s = [self.inputs['Matrices'].sv_get(Matrix())]
             heights_s = [0.0]
             scales_s = [1.0]
         else:
-            matrices_s = [[]]
             heights_s = self.inputs['Height'].sv_get()
             scales_s  = self.inputs['Scale'].sv_get()
 
