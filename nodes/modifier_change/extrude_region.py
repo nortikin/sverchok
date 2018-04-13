@@ -114,9 +114,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
   
     def process(self):
         # inputs
-        if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
-            return
-        if not any(output.is_linked for output in self.outputs):
+        if not self.inputs['Vertices'].is_linked:
             return
 
         vertices_s = self.inputs['Vertices'].sv_get()
@@ -128,6 +126,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             heights_s = [0.0]
             scales_s = [1.0]
         else:
+            matrices_s = [[]]
             heights_s = self.inputs['Height'].sv_get()
             scales_s  = self.inputs['Scale'].sv_get()
 
