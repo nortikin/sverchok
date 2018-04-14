@@ -73,7 +73,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
                 'Vertices': list([v.co[:] for v in obj_data.vertices]),
                 'Edges': obj_data.edge_keys,
                 'Polygons': [list(p.vertices) for p in obj_data.polygons],
-                'Matrix': [list(m) for m in obj.matrix_world]
+                'Matrix': obj.matrix_world
             }
             
             bpy.data.meshes.remove(obj_data)

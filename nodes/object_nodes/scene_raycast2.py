@@ -57,7 +57,7 @@ class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if O.is_linked:
             O.sv_set([i[4] for i in rc])
         if M.is_linked:
-            M.sv_set([[v[:] for v in i[5]] for i in rc])
+            M.sv_set([i[5] for i in rc])
 
     def update_socket(self, context):
         self.update()

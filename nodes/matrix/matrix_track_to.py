@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
-from mathutils import Vector
+from mathutils import Vector, Matrix
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat, enum_item as e)
 
@@ -192,7 +192,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
                  [X.z * S.x, Y.z * S.y, Z.z * S.z, L.z],
                  [0, 0, 0, 1]]
 
-            matrixList.append(m)
+            matrixList.append(Matrix(m))
 
         outputs["Matrix"].sv_set(matrixList)
         outputs["X"].sv_set([xList])

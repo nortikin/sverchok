@@ -76,8 +76,8 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         else:  # if no mask input, generate a 0,1,0,1 mask
             input_mask = ([1, 0] * (int((n + 1) / 2)))[:n]
 
-        matrixF = (Matrix_generate(input_matrixF))[:n]
-        matrixT = (Matrix_generate(input_matrixT))[:n]
+        matrixF = input_matrixF[:n]
+        matrixT = input_matrixT[:n]
 
         params = match_long_repeat([input_mask, input_verts, matrixT, matrixF])
 

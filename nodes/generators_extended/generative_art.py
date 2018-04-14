@@ -451,8 +451,8 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)
-        for shape in shape_names:
-            self.outputs[shape].sv_set(Matrix_listing(mat_dict[shape]))
+        for shape in shape_names:  # isnt it plain wrong? i mean why not just shape_names[-1] if need to get last one?
+            self.outputs[shape].sv_set(mat_dict[shape])
 
 
 def register():

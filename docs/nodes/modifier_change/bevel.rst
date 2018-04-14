@@ -1,8 +1,6 @@
 Bevel
 =====
 
-*destination after Beta: Modifier Change*
-
 Functionality
 -------------
 
@@ -16,7 +14,10 @@ This node has the following inputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
-- **BevelEdges**. Edges to be beveled. If this input is not connected, then by default all edges will be beveled. This parameter is used only when ``Vertex only`` flag is not checked.
+- **BevelEdges / VerticesMask**.  Edges or vertices to be beveled. If this input is not connected, then by default all will be beveled. This parameter changes when ``Vertex mode`` flag is modified. 
+On vertex mode it will expect a list of True/False (or 0/1) values indicating the selected vertices([[0,1,0,..]]).
+Otherwise it will expect a list of Edges([[2,6],[3,4]...]).
+
 - **Amount**. Amount to offset beveled edge.
 - **Segments**. Number of segments in bevel.
 - **Profile**. Profile shape.
@@ -37,7 +38,8 @@ This node has the following parameters:
 |                  | Percent       |             | * Percent - Amount is percent of adjacent edge     |
 |                  |               |             |   length.                                          |
 +------------------+---------------+-------------+----------------------------------------------------+
-| **Vertex only**  | Bool          | False       | Only bevel edges, not faces.                       |
+| **Vertex mode**  | Boolean       | False       | Bevel edges or only vertex. When activated the mask|
+|                  |               |             | will switch from 'Bevel Edges' to 'MaskVertices'   |
 +------------------+---------------+-------------+----------------------------------------------------+
 | **Amount**       | Float         | 0.0         | Amount to offset beveled edge. Exact               |
 |                  |               |             | interpretation of this parameter depends on        |
@@ -48,7 +50,7 @@ This node has the following parameters:
 | **Segments**     | Int           | 1           | Number of segments in bevel. This parameter can    |
 |                  |               |             | also be specified via corresponding input.         |
 +------------------+---------------+-------------+----------------------------------------------------+
-| **Profile**      | Float         | 0.5         | Profile shape - a float nubmer from 0 to 1;        |
+| **Profile**      | Float         | 0.5         | Profile shape - a float number from 0 to 1;        |
 |                  |               |             | default value of 0.5 means round shape.  This      |
 |                  |               |             | parameter can also be specified via corresponding  |
 |                  |               |             | input.                                             |
@@ -82,3 +84,7 @@ Another sort of cage:
 You can work with multiple objects:
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/18603141/322847ce-7c80-11e6-8357-6ef4673add4d.png
+
+Vertex mode and multiple radius:
+
+.. image:: https://user-images.githubusercontent.com/10011941/38384563-cb1bb8a6-390f-11e8-82cc-d2a978cb8d52.png

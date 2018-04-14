@@ -131,8 +131,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
         verts_ob = Vector_generate(self.inputs['vertices'].sv_get())
         edg_pols = self.inputs['edg_pol'].sv_get()
-        cut_mats_ = self.inputs['cut_matrix'].sv_get()
-        cut_mats = Matrix_generate(cut_mats_)
+        cut_mats = self.inputs['cut_matrix'].sv_get()
         verts_out = []
         edges_out = []
         polys_out = []

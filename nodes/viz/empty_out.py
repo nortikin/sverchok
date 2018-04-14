@@ -97,11 +97,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
             empty = self.create_empty()
             print("created new empty")
 
-        if self.inputs['Matrix'].is_linked:
-            mats = self.inputs['Matrix'].sv_get()
-            mat = Matrix_generate(mats)[0]
-        else:
-            mat = Matrix()
+        mat = self.inputs['Matrix'].sv_get([Matrix()])[0]
         self.label = empty.name
         empty.matrix_world = mat
         

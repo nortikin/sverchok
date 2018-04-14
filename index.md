@@ -253,8 +253,10 @@
 ## Scene
     SvObjectsNodeMK3
     SvObjInLite
+    SvCurveInputNode
     SvObjEdit
     SvFrameInfoNodeMK2
+    SvLampOutNode
     SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4

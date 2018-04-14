@@ -49,9 +49,6 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
             for j in range(i, 16, 4):
                 row.prop(self, 'matrix', text='', index=j)
 
-    def draw_buttons_ext(self, context, layout):
-        pass
-
     def process(self):
         if 'Matrix' in self.outputs and self.outputs['Matrix'].is_linked:
             m_out = Matrix_listing([self.matrix])

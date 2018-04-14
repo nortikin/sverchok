@@ -84,7 +84,6 @@ class SvObjBakeMK2(bpy.types.Operator):
         except:
             num_keys = 0
 
-        matrixes = Matrix_generate(mats)
         edgs, pols, max_vert_index, fht = [], [], [], []
 
         if num_keys >= 2:
@@ -96,7 +95,7 @@ class SvObjBakeMK2(bpy.types.Operator):
             max_vert_index.append(min(len(vers[u]), fht[u]))
 
         objects = {}
-        for i, m in enumerate(matrixes):
+        for i, m in enumerate(mats):
             k = i
             lenver = len(vers) - 1
             if i > lenver:

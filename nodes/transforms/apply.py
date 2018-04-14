@@ -40,9 +40,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
             vecs_ = self.inputs['Vectors'].sv_get(deepcopy=False)
             vecs = Vector_generate(vecs_)
 
-            mats_ = self.inputs['Matrixes'].sv_get(deepcopy=False)
-            mats = Matrix_generate(mats_)
-
+            mats = self.inputs['Matrixes'].sv_get(deepcopy=False)
             vectors_ = self.vecscorrect(vecs, mats)
             vectors = Vector_degenerate(vectors_)
             self.outputs['Vectors'].sv_set(vectors)

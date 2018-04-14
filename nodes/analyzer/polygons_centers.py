@@ -123,8 +123,7 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 q_rot1 = vecy.rotation_difference(med).to_matrix().to_4x4()
                 # loc is matrix * rot vector * rot vector
                 M = loc*q_rot1*q_rot0
-                lM = [ j[:] for j in M ]
-                mat_collect_.append(lM)
+                mat_collect_.append(M)
             mat_collect.extend(mat_collect_)
 
         
