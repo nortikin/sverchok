@@ -353,7 +353,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         mverts = get('vertices')
         medges = get('edges')
         mfaces = get('faces')
-        mmtrix = get('matrix')[1] # matrix socket returns [1, list-of-matrices] for some reason.
+        mmtrix = get('matrix')[1] # matrix socket returns [1, list-of-matrices] because of dataCorrect().
         
         return mverts, medges, mfaces, mmtrix
 
