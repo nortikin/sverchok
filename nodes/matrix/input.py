@@ -50,9 +50,8 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
                 row.prop(self, 'matrix', text='', index=j)
 
     def process(self):
-        if 'Matrix' in self.outputs and self.outputs['Matrix'].is_linked:
-            m_out = Matrix_listing([self.matrix])
-            self.outputs[0].sv_set(m_out)
+        if self.outputs['Matrix'].is_linked:
+            self.outputs[0].sv_set([self.matrix])
 
 
 def register():
