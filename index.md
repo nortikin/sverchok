@@ -284,6 +284,10 @@
     SvExtrudeSeparateLiteNode
     SvBVHnearNewNode
     SvUnsubdivideNode
+    SvLimitedDissolveMK2
+    SvMetaballOutLiteNode
+    SvArmaturePropsNode
+    SvLatticePropsNode
     ---
     SvColorsInNodeMK1
     SvColorInputNode
