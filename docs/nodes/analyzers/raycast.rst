@@ -6,7 +6,7 @@ Functionality
 
 Functionality is almost completely analogous to the two built-in blender operators 
 ``bpy.context.scene.ray_cast`` and ``object.ray_cast``. 
-Ray is casted from "start" vector to "end" vector and can hit polygons of mesh objects.
+Ray is casted from "start" vector to "end" vector and can hit polygons of input objects.
 
 see docs: 
 `bpy.types.Object.ray_cast <http://www.blender.org/documentation/blender_python_api_2_71_0/bpy.types.Object.html#bpy.types.Object.ray_cast>`_ and 
@@ -16,24 +16,13 @@ see docs:
 Input sockets
 -------------
 
-**Start** - "start" vectors
+**Verts** - Vectors of objects receiving rays
 
-**End** - "end" vectors
+**Faces** - Faces of objects receiving rays
 
-Parameters
-----------
+**Start** - Start position of raytracing
 
-+-----------------+--------------------------------------------------------------------------------------------------+
-| parameter       | description                                                                                      | 
-+=================+==================================================================================================+
-| object name     | Name of object to analize. (For **object_space** mode only)                                      |
-+-----------------+--------------------------------------------------------------------------------------------------+
-| raycast modes   | In **object_space** mode: node works like ``bpy.types.Object.ray_cast``                          |
-|                 | (origin of object- center of coordinate for Start & End).                                        | 
-|                 |                                                                                                  |
-|                 | In **world_space** mode: node works like ``bpy.types.Scene.ray_cast``.                           |
-+-----------------+--------------------------------------------------------------------------------------------------+
-
+**Direction** - Direction of raytracing
 
 Output sockets
 --------------
@@ -41,23 +30,23 @@ Output sockets
 +------------------------+----------------------------------------------------------------------------------------+
 | socket name            | description                                                                            |
 +========================+========================================================================================+
-| Hitp                   | Hit location for every raycast                                                         |
+| Location               | Hit location for every raycast                                                         |
 +------------------------+----------------------------------------------------------------------------------------+
-| Hitnorm                | Normal of hit polygon (in "object_space" mode-local coordinates,                       |
-|                        | in "world_space"- global                                                               |
+| Normal                 | Normal of hit polygon                                                                  |
 +------------------------+----------------------------------------------------------------------------------------+
-| Index/succes           | For **object_space** mode: index of hit polygon.                                       |
-|                        | For **world_space** mode: ``True`` if ray hit mesh object, otherwise ``False``.        |
+| Index                  | index of hit polygon                                                                   |
 +------------------------+----------------------------------------------------------------------------------------+
-| data object            | ``bpy.data.objects[hit object]`` or ``None`` type if ray doesn't hit a mesh object.    |
-|                        | (only in "world_space" mode)                                                           |
+| Distance               | Distance between start point and hit location                                          |
 +------------------------+----------------------------------------------------------------------------------------+
-| hit object matrix      | Matrix of hit/struck object. (only in "world_space" mode)                              |
+| Success                | ``True`` or ``False`` if ray doesn't hit any polygon.                                  |
 +------------------------+----------------------------------------------------------------------------------------+
 
 
 Usage
 -----
 
-.. image:: https://cloud.githubusercontent.com/assets/7894950/4437227/4ac2cc4a-4790-11e4-8359-040da4398213.png
-.. image:: https://cloud.githubusercontent.com/assets/7894950/4536920/7e47f270-4dd0-11e4-97fd-7d34d56229a0.png
+.. image:: https://user-images.githubusercontent.com/28003269/38853137-5a0b6e50-422d-11e8-97bc-8d5046387e25.png
+.. image:: https://user-images.githubusercontent.com/28003269/38853349-08514386-422e-11e8-8444-72101d9b0ade.png
+.. image:: https://user-images.githubusercontent.com/28003269/38853243-b2dc87a8-422d-11e8-96df-7d27735a5b67.gif
+
+`calculating shadow.blend.zip <https://github.com/nortikin/sverchok/files/1918431/calculation.of.shadows_2018_04_17_06_58.zip>`_
