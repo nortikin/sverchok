@@ -20,27 +20,27 @@ class SocketConversionTests(EmptyTreeTestCase):
         # Trigger processing of NGon node
         ngon.process()
         # Read what MatrixApply node sees
-        data = matrix_apply.inputs['Matrixes'].sv_get()
+        data =[[v[:] for v in m] for m in matrix_apply.inputs['Matrixes'].sv_get()]
 
         # It should see this list of matrices.
         expected_data = [
-                Matrix(((1.0, 0.0, 0.0, 1.0),
+                [(1.0, 0.0, 0.0, 1.0),
                  (0.0, 1.0, 0.0, 0.0),
                  (0.0, 0.0, 1.0, 0),
-                 (0.0, 0.0, 0.0, 1.0))),
-                Matrix(((1.0, 0.0, 0.0, 0.0),
+                 (0.0, 0.0, 0.0, 1.0)],
+                [(1.0, 0.0, 0.0, 0.0),
                  (0.0, 1.0, 0.0, 1.0),
                  (0.0, 0.0, 1.0, 0),
-                 (0.0, 0.0, 0.0, 1.0))),
-                Matrix(((1.0, 0.0, 0.0, -1.0),
+                 (0.0, 0.0, 0.0, 1.0)],
+                [(1.0, 0.0, 0.0, -1.0),
                  (0.0, 1.0, 0.0, 0),
                  (0.0, 0.0, 1.0, 0),
-                 (0.0, 0.0, 0.0, 1.0))),
-                Matrix(((1.0, 0.0, 0.0, 0),
+                 (0.0, 0.0, 0.0, 1.0)],
+                [(1.0, 0.0, 0.0, 0),
                  (0.0, 1.0, 0.0, -1.0),
                  (0.0, 0.0, 1.0, 0),
-                 (0.0, 0.0, 0.0, 1.0)))
-            ]
+                 (0.0, 0.0, 0.0, 1.0)]
+        ]
 
         self.assert_sverchok_data_equal(data, expected_data, precision=8)
 
