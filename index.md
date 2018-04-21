@@ -62,6 +62,7 @@
     SvPointInside
     SvProportionalEditNode
     SvRaycasterLiteNode
+    SvOBJInsolationNode
 
 ## Transforms
     SvRotationNode
