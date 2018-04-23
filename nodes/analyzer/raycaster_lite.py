@@ -59,7 +59,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
         vert_in, face_in, start_in, direction_in = C([sock.sv_get() for sock in self.inputs])
         
-        for bvh,st,di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in),start_in,direction_in]):
+        for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in]):
             st, di = C([st, di])
             RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st, di)])
 
