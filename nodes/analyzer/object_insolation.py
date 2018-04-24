@@ -133,19 +133,29 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
                     colors[co].color = OutS[0][i]
         colset(rec,OutS_)
         def matset(rec):
-            if len(rec.material_slots):
-                trem = rec.material_slots[0].material.node_tree
-                matnodes = trem.nodes
-                if not 'Attribute' in matnodes:
-                    att = matnodes.new('ShaderNodeAttribute')
-                else:
-                    att = matnodes['Attribute']
-                if not 'Diffuse BSDF' in matnodes:
-                    dif = matnodes.new('ShaderNodeBsdfDiffuse')
-                else:
-                    dif = matnodes['Diffuse BSDF']
-                att.attribute_name = 'SvInsol'
-                trem.links.new(dif.inputs[0],att.outputs[0])
+            # add new material with nodes
+            ms = rec.material_slots
+            if not 'svmat' in bpy.data.materials:
+                manew = bpy.data.materials.new('svmat')
+                manew.use_nodes = True
+            if not len(ms):
+                # append if no slots
+                rec.data.materials.append(manew)
+            if not ms[-1].material:
+                # assign if no material in slot
+                ms[-1].material = manew
+            trem = ms[-1].material.node_tree
+            matnodes = trem.nodes
+            if not 'Attribute' in matnodes:
+                att = matnodes.new('ShaderNodeAttribute')
+            else:
+                att = matnodes['Attribute']
+            if not 'Diffuse BSDF' in matnodes:
+                dif = matnodes.new('ShaderNodeBsdfDiffuse')
+            else:
+                dif = matnodes['Diffuse BSDF']
+            att.attribute_name = 'SvInsol'
+            trem.links.new(dif.inputs[0],att.outputs[0])
         matset(rec)
         if H.is_linked:
             OutH = []

@@ -2,7 +2,13 @@
   "export_version": "0.072",
   "framed_nodes": {
     "Circle": "Frame.003",
+    "Frame.002": "Frame.003",
+    "Frame.004": "Frame.003",
     "List Match": "Frame.003",
+    "Note": "Frame.003",
+    "Object ID Insolation": "Frame.004",
+    "Objects in mk3": "Frame.001",
+    "Objects in mk3.001": "Frame.001",
     "Reroute": "Frame.002",
     "Reroute.002": "Frame.002",
     "Reroute.008": "Frame.002",
@@ -12,7 +18,8 @@
     "Vector X/Y/Z": "Frame.003",
     "Vector X/Y/Z.001": "Frame.003",
     "Vector in": "Frame.003",
-    "Viewer Draw": "Frame.003"
+    "Viewer Draw": "Frame.003",
+    "Viewer Index": "Frame.003"
   },
   "groups": {},
   "nodes": {
@@ -57,21 +64,33 @@
       "use_custom_color": true,
       "width": 800.0
     },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 694.6670532226562,
+      "hide": false,
+      "label": "from scene",
+      "location": [
+        109.05883026123047,
+        66.97383880615234
+      ],
+      "params": {},
+      "width": 203.75582885742188
+    },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 186.91839599609375,
+      "height": 212.9017333984375,
       "hide": false,
       "label": "data to insol",
       "location": [
-        289.2660217285156,
-        647.1701049804688
+        79.26565551757812,
+        476.146728515625
       ],
       "params": {},
-      "width": 140.32843017578125
+      "width": 77.29409790039062
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 400.14434814453125,
+      "height": 595.2105712890625,
       "hide": false,
       "label": "rays",
       "location": [
@@ -79,7 +98,19 @@
         -619.734375
       ],
       "params": {},
-      "width": 896.2562255859375
+      "width": 1077.5419921875
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "height": 192.54067993164062,
+      "hide": false,
+      "label": "insolation",
+      "location": [
+        1.4534912109375,
+        77.4736328125
+      ],
+      "params": {},
+      "width": 200.35296630859375
     },
     "List Match": {
       "bl_idname": "ListMatchNode",
@@ -87,7 +118,7 @@
       "hide": true,
       "label": "",
       "location": [
-        461.21144104003906,
+        461.21142578125,
         -474.6988220214844
       ],
       "params": {
@@ -106,12 +137,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -122.04351806640625,
-        198.80079650878906
+        -88.3455810546875,
+        -89.8482666015625
       ],
       "params": {
         "show_text": 0,
-        "text": "Nikitron 2018 - insolation test"
+        "text": "Nikitron 2018 - insolation test. victim's every polygon calculates. predator is simply shape"
       },
       "use_custom_color": true,
       "width": 400.0
@@ -132,12 +163,12 @@
       "hide": false,
       "label": "",
       "location": [
-        834.3430786132812,
-        40.188499450683594
+        594.4342651367188,
+        -132.51815795898438
       ],
       "params": {
         "mode": 0,
-        "sort_critical": 2
+        "sort_critical": 8
       },
       "width": 140.0
     },
@@ -150,10 +181,10 @@
       ],
       "height": 100.0,
       "hide": false,
-      "label": "",
+      "label": "victim",
       "location": [
-        247.8347625732422,
-        24.671173095703125
+        -345.22498321533203,
+        -424.64835357666016
       ],
       "object_names": [
         "victim"
@@ -171,10 +202,10 @@
       ],
       "height": 100.0,
       "hide": false,
-      "label": "",
+      "label": "predator",
       "location": [
-        449.2581787109375,
-        197.5847930908203
+        -348.62784576416016,
+        -99.45061492919922
       ],
       "object_names": [
         "predator"
@@ -189,8 +220,8 @@
       "hide": false,
       "label": "predator",
       "location": [
-        718.5639038085938,
-        -2.692626953125
+        508.56353759765625,
+        -173.71600341796875
       ],
       "params": {},
       "width": 16.0
@@ -201,8 +232,8 @@
       "hide": false,
       "label": "sun rays",
       "location": [
-        718.5639038085938,
-        -79.7427978515625
+        508.56353759765625,
+        -250.76617431640625
       ],
       "params": {},
       "width": 16.0
@@ -218,8 +249,8 @@
       "hide": false,
       "label": "victim",
       "location": [
-        718.5639038085938,
-        -39.425048828125
+        508.56353759765625,
+        -210.44842529296875
       ],
       "params": {},
       "use_custom_color": true,
@@ -245,7 +276,7 @@
       "hide": false,
       "label": "",
       "location": [
-        282.40882110595703,
+        282.4088134765625,
         -306.5486145019531
       ],
       "params": {
@@ -259,7 +290,7 @@
       "hide": true,
       "label": "",
       "location": [
-        459.2382049560547,
+        459.23822021484375,
         -531.6445922851562
       ],
       "params": {
@@ -305,7 +336,7 @@
       "hide": false,
       "label": "",
       "location": [
-        300.18038177490234,
+        300.1803894042969,
         -485.6902160644531
       ],
       "params": {},
@@ -322,7 +353,7 @@
       "hide": false,
       "label": "",
       "location": [
-        587.5731658935547,
+        587.5731811523438,
         -306.4921875
       ],
       "params": {
@@ -358,8 +389,8 @@
       "hide": false,
       "label": "",
       "location": [
-        838.7593994140625,
-        -114.1307373046875
+        768.8589477539062,
+        -131.31939697265625
       ],
       "params": {
         "activate": 1,
@@ -408,6 +439,18 @@
       "Input"
     ],
     [
+      "Rotation.001",
+      0,
+      "List Match",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "List Match",
+      1
+    ],
+    [
       "Objects in mk3",
       "Object",
       "Reroute.008",
@@ -448,18 +491,6 @@
       1,
       "Viewer Index",
       4
-    ],
-    [
-      "Rotation.001",
-      0,
-      "List Match",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "List Match",
-      1
     ],
     [
       "List Match",
