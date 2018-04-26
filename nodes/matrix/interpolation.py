@@ -51,9 +51,9 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         if not self.outputs['C'].is_linked:
             return
-        id_mat = Matrix_listing([Matrix.Identity(4)])
-        A = Matrix_generate(self.inputs['A'].sv_get(default=id_mat))
-        B = Matrix_generate(self.inputs['B'].sv_get(default=id_mat))
+        id_mat = [Matrix.Identity(4)]
+        A = self.inputs['A'].sv_get(default=id_mat)
+        B = self.inputs['B'].sv_get(default=id_mat)
         factor = self.inputs['Factor'].sv_get()
 
 
@@ -70,8 +70,7 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
             for k in range(len(factor[i])):
                 matrixes_.append(A[i].lerp(B[i], factor[i][k]))
 
-        matrixes = Matrix_listing(matrixes_)
-        self.outputs['C'].sv_set(matrixes)
+        self.outputs['C'].sv_set(matrixes_)
 
 
 def register():

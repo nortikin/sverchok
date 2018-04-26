@@ -208,7 +208,6 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         edges_out = []
         for cut_mat in cut_mats:
-            cut_mat = Matrix(cut_mat)
             pp = Vector((0.0, 0.0, 0.0)) * cut_mat.transposed()
             pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
 

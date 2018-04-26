@@ -70,7 +70,6 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
     ''' With this mode you make a massive assumption about the
         constant state of geometry. Assumes the count of verts
         edges/faces stays the same, and only updates the locations
-
         node.fixed_verts is not suitable for initial object creation
         but if over time you find that the only change is going to be
         vertices, this mode can be switched to to increase efficiency
@@ -89,7 +88,6 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
         sv_object.hide_select = False
 
     if matrix:
-        matrix = matrix_sanitizer(matrix)
         if node.extended_matrix:
             sv_object.data.transform(matrix)
             sv_object.matrix_local = Matrix.Identity(4)
@@ -128,7 +126,6 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
         edges, faces, matrix = topology
 
         if matrix:
-            matrix = matrix_sanitizer(matrix)
             verts = [matrix * Vector(v) for v in verts]
 
         big_verts.extend(verts)
@@ -356,7 +353,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         mverts = get('vertices')
         medges = get('edges')
         mfaces = get('faces')
-        mmtrix = get('matrix')
+        mmtrix = get('matrix')[1] # matrix socket returns [1, list-of-matrices] because of dataCorrect().
+        
         return mverts, medges, mfaces, mmtrix
 
     def get_structure(self, stype, sindex):

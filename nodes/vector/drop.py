@@ -45,8 +45,7 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
         vecs_ = self.inputs['Vectors'].sv_get()
         vecs = Vector_generate(vecs_)
         
-        mats_ = dataCorrect(self.inputs['Matrixes'].sv_get())
-        mats = Matrix_generate(mats_)
+        mats = dataCorrect(self.inputs['Matrixes'].sv_get())
         
         vectors = self.vecscorrect(vecs, mats)
         self.outputs['Vectors'].sv_set(vectors)

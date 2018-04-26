@@ -60,9 +60,8 @@ def screen_v3dBGL_overlay(context, args):
         r, g, b = color
         bgl.glColor4f(r, g, b, alpha)
         bgl.glBegin(bgl.GL_QUADS)
-        M = Matrix(matrix)
         for x, y in [(-.5, .5), (.5 ,.5), (.5 ,-.5), (-.5 ,-.5)]:
-            vector3d = M * Vector((x, y, 0))
+            vector3d = matrix * Vector((x, y, 0))
             vector2d = loc3d2d(region, region3d, vector3d)
             bgl.glVertex2f(*vector2d)
 

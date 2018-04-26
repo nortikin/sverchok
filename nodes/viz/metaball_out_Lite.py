@@ -119,7 +119,7 @@ class SvMetaballOutLiteNode(bpy.types.Node, SverchCustomTreeNode):
         meta_objectD.resolution = self.view_resolution
         meta_objectD.render_resolution = self.render_resolution
         meta_objectD.threshold = self.threshold
-        origins = [Matrix(m) for m in Origs.sv_get()]
+        origins = Origs.sv_get()
         radiuses = Radi.sv_get()[0]
         stiffnesses = Stiff.sv_get()[0]
         negation = Neg.sv_get([[0]])[0]

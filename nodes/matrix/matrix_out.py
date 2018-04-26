@@ -40,8 +40,7 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
         L,S,R,A = self.outputs
         M = self.inputs[0]
         if M.is_linked:
-            matrixes_ = M.sv_get()
-            matrixes = Matrix_generate(matrixes_)
+            matrixes = M.sv_get()
             if L.is_linked:
                 locs = Matrix_location(matrixes, list=True)
                 L.sv_set(locs)

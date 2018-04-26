@@ -106,7 +106,7 @@ class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                       (xdir[1], ydir[1], zdir[1], cen[1]),
                       (xdir[2], ydir[2], zdir[2], cen[2]),
                       (0.0, 0.0, 0.0, 1.0)]
-                mat_collect_.append(lM)
+                mat_collect_.append(Matrix(lM))
             mat_collect.extend(mat_collect_)
 
         if not self.Separate:

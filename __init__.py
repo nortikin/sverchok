@@ -74,7 +74,6 @@ from sverchok.core import reload_event, handle_reload_event
 from sverchok.utils import utils_modules
 from sverchok.ui import ui_modules
 
-
 imported_modules = init_architecture(__name__, utils_modules, ui_modules)
 node_list = make_node_list(nodes)
 
