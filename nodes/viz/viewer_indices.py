@@ -382,7 +382,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         data_collected = []
         for socket in ['edges', 'faces', 'matrix']:
             propm = inputs[socket].sv_get(default=[])
-            input_stream = dataCorrect(propm)
+            input_stream = propm  # dataCorrect(propm) returns [1, list-of-matrices] for matrix socket.
             data_collected.append(input_stream)
 
         edges, faces, matrices = data_collected
