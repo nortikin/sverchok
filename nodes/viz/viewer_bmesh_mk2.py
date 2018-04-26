@@ -348,12 +348,12 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         def get(socket_name):
             data = self.inputs[socket_name].sv_get(default=[]) # , deepcopy=False) # can't because of fulllist.
-            return dataCorrect(data)
+            return data  # dataCorrect(data) returns [1, list-of-matrices] for matrix socket.
 
         mverts = get('vertices')
         medges = get('edges')
         mfaces = get('faces')
-        mmtrix = get('matrix')[1] # matrix socket returns [1, list-of-matrices] because of dataCorrect().
+        mmtrix = get('matrix')
         
         return mverts, medges, mfaces, mmtrix
 
