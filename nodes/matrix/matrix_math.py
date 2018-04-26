@@ -206,7 +206,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         else:  # single input operations
             parameters = I[0]
-            print("parameters=", parameters)
+          #  print("parameters=", parameters)
 
             if self.operation == "BASIS":
                 xList = []
