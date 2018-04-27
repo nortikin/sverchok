@@ -17,13 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from mathutils import Matrix, Vector
-
+from mathutils import Matrix
+import bmesh
+from bmesh.ops import transform
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    dataCorrect, Matrix_generate, updateNode,
-    Vector_generate, Vector_degenerate
-)
+from sverchok.data_structure import (updateNode)
 
 
 class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,59 +31,24 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vectors", "Vectors")
-        self.inputs.new('MatrixSocket', "Matrixes", "Matrixes")
-        self.outputs.new('VerticesSocket', "Vectors", "Vectors")
+        self.inputs.new('VerticesSocket', "Vectors")
+        self.inputs.new('MatrixSocket', "Matrixes")
+        self.outputs.new('VerticesSocket', "Vectors")
 
     def process(self):
-        # inputs
         if not self.outputs['Vectors'].is_linked:
             return
-                        
-        vecs_ = self.inputs['Vectors'].sv_get()
-        vecs = Vector_generate(vecs_)
-        
-        mats = dataCorrect(self.inputs['Matrixes'].sv_get())
-        
-        vectors = self.vecscorrect(vecs, mats)
-        self.outputs['Vectors'].sv_set(vectors)
-
-    @staticmethod
-    def vecscorrect(vecs, mats):
+        vecs = self.inputs['Vectors'].sv_get()
         out = []
-        lengthve = len(vecs)-1
-        for i, m in enumerate(mats):
-            out_ = []
-            k = i
-            if k > lengthve:
-                k = lengthve
-            vec_c = Vector((0, 0, 0))
-            for v in vecs[k]:
-                vec = v*m
-                out_.append(vec)
-                vec_c += vec
-
-            vec_c = vec_c / len(vecs[k])
-
-            v = out_[1]-out_[0]
-            w = out_[2]-out_[0]
-            A = v.y*w.z - v.z*w.y
-            B = -v.x*w.z + v.z*w.x
-            C = v.x*w.y - v.y*w.x
-            #D = -out_[0].x*A - out_[0].y*B - out_[0].z*C
-
-            norm = Vector((A, B, C)).normalized()
-            vec0 = Vector((0, 0, 1))
-
-            mat_rot_norm = vec0.rotation_difference(norm).to_matrix().to_4x4()
-            out_pre = []
-            for v in out_:
-                v_out = (v-vec_c) * mat_rot_norm
-                out_pre.append(v_out[:])
-
-            out.append(out_pre)
-
-        return out
+        mats = self.inputs['Matrixes'].sv_get([Matrix()])
+        for vertl, M in zip(vecs, mats):
+            bm = bmesh.new()
+            for v in vertl:
+                bm.verts.new(v)
+            transform(bm, matrix=M, verts=bm.verts)
+            out.append([v.co[:] for v in bm.verts])
+            bm.free()
+        self.outputs['Vectors'].sv_set(out)
 
 
 def register():
