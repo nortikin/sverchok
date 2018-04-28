@@ -45,7 +45,7 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh.new()
             for v in vertl:
                 bm.verts.new(v)
-            transform(bm, matrix=M, verts=bm.verts)
+            transform(bm, matrix=M.inverted(), verts=bm.verts)
             out.append([v.co[:] for v in bm.verts])
             bm.free()
         self.outputs['Vectors'].sv_set(out)
