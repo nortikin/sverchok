@@ -188,7 +188,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
 
             ## collect all data we can get from the subcurve(s)
 
-            mtrx_out.append([list(m) for m in obj.matrix_world])
+            mtrx_out.append(obj.matrix_world)
             verts, edges, faces, radii = [], [], [], []
             curve = obj.data
             resolution = curve.render_resolution_u or curve.resolution_u
