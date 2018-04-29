@@ -287,8 +287,9 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         spot_blends = self.inputs['Spot Blend'].sv_get()
         strengths = self.inputs['Strength'].sv_get()
         colors = self.inputs['Color'].sv_get()
-        if get_data_nesting_level(colors) == 3:
-            colors = colors[0]
+        # next is not needed
+        # if get_data_nesting_level(colors) == 3:
+            # colors = colors[0]
 
         objects = match_long_repeat([origins, sizes_sq, sizes_x, sizes_y, strengths, spot_sizes, spot_blends, colors])
 
