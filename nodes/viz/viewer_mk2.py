@@ -79,6 +79,8 @@ class SvObjBakeMK2(bpy.types.Operator):
         return fallback
 
     def makeobjects(self, vers, edg_pol, mats):
+        mats = mats[1][1]  # This, or removing dataCorrect() for matrices.
+
         try:
             num_keys = len(edg_pol[0][0])
         except:
