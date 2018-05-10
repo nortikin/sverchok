@@ -70,7 +70,7 @@ class SvObjBakeMK2(bpy.types.Operator):
 
     def dataCorrect2(self, destination, obj):
         if destination:
-            return dataCorrect(destination)
+            return destination
         return [Matrix() for v in obj]
 
     def dataCorrect3(self, destination, fallback=[]):
@@ -79,8 +79,6 @@ class SvObjBakeMK2(bpy.types.Operator):
         return fallback
 
     def makeobjects(self, vers, edg_pol, mats):
-        mats = mats[1][1]  # This, or removing dataCorrect() for matrices.
-
         try:
             num_keys = len(edg_pol[0][0])
         except:
@@ -380,7 +378,7 @@ class ViewerNode2(bpy.types.Node, SverchCustomTreeNode):
             if matrix_links:
                 propm = inputs['matrix'].sv_get(deepcopy=False, default=[])
                 if propm:
-                    cache_viewer_baker[matrix_ref] = dataCorrect(propm)
+                    cache_viewer_baker[matrix_ref] = propm
 
         if cache_viewer_baker[vertex_ref] or cache_viewer_baker[matrix_ref]:
             config_options = self.get_options()
