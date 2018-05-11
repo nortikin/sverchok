@@ -337,4 +337,5 @@
     SvOffsetLineNode
     SvContourNode
     SvPlanarEdgenetToPolygons
+    SvSwitchNodeMK2
     
