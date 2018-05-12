@@ -22,6 +22,24 @@ from bpy.props import IntProperty, EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import get_other_socket, updateNode, replace_socket, match_long_repeat
 
+SPECIAL_SOCKETS = ['MatrixSocket', 'SvObjectSocket']
+
+def get_bool(soc):
+    #convert string type to bool
+            
+    state = soc.sv_get()[0][0]
+    vars = {'True':[True], 'False':[False], 'None':[]}
+    return [vars[state]]
+
+def check_data_in(soc):
+    #puts data in nested list if necessary
+            
+    if type(soc.sv_get()[0]) == list:
+        return soc.sv_get()
+    elif get_other_socket(soc).bl_idname in SPECIAL_SOCKETS:
+        return [soc.sv_get()]
+    else:
+        print('Switch mk2 node did not expect such type of input socket')
 
 class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -98,34 +116,16 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 continue
             
             replace_socket(out_soc, new_type)
+            
+    def check_data_out(self, data, i_soc):
+        #Flatten list if necessary
+            
+        if self.flatten_list and self.outputs[i_soc].bl_idname in SPECIAL_SOCKETS:
+            return [n2 for n1 in data for n2 in n1]
+        else:
+            return data
         
     def process(self):
-        
-        def get_bool(soc):
-            #convert string type to bool
-            
-            state = soc.sv_get()[0][0]
-            vars = {'True':[True], 'False':[False], 'None':[]}
-            return [vars[state]]
-        
-        special_sockets = ['MatrixSocket', 'SvObjectSocket']
-        def check_data_in(soc):
-            #puts data in nested list if necessary
-            
-            if type(soc.sv_get()[0]) == list:
-                return soc.sv_get()
-            elif get_other_socket(soc).bl_idname in special_sockets:
-                return [soc.sv_get()]
-            else:
-                print('Switch mk2 node did not expect such type of input socket')
-                
-        def check_data_out(data,i_soc):
-            #Flatten list if necessary
-            
-            if self.flatten_list and self.outputs[i_soc].bl_idname in special_sockets:
-                return [n2 for n1 in data for n2 in n1]
-            else:
-                return data
         
         state_lists = self.inputs[0].sv_get() if self.inputs[0].is_linked else get_bool(self.inputs[0])
         count = self.socket_number
@@ -155,7 +155,7 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 else:    
                     data.append([[a, b][[1,0][bool(state)]] for state, a, b in zip(*match_long_repeat(params))])
                     
-            self.outputs[i_soc].sv_set(check_data_out(data,i_soc))
+            self.outputs[i_soc].sv_set(self.check_data_out(data,i_soc))
             
         
 def register():
