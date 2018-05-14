@@ -15,6 +15,8 @@ from mathutils import Vector
 def okok(a):
     if a:
         return a[0]
+    else:
+        return []
 verts = okok(verts)
 edges = okok(edges)
 pols = okok(pols)
