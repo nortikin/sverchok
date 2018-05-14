@@ -6,7 +6,7 @@ Functionality
 
 .. image :: https://cloud.githubusercontent.com/assets/6241382/4332088/30276d50-3fcf-11e4-8920-abaf3107025a.png
 
-Create a invisble noodle, useful for keeping layout clean for example constants that are resued in many place.
+Create an invisible noodle, useful for keeping layout clean for example constants that are reused in many places.
 
 Concept
 -------
