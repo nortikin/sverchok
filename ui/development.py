@@ -97,7 +97,7 @@ def node_show_branch(self, context):
         layout.label("GIT: {}".format(BRANCH))
 
 class SvCopyIDName(bpy.types.Operator):
-
+    ''' Copy node's ID name to clipboard to use in code '''
     bl_idname = "node.copy_bl_idname"
     bl_label = "copy bl idname to clipboard"
     # bl_options = {'REGISTER', 'UNDO'}
@@ -110,7 +110,7 @@ class SvCopyIDName(bpy.types.Operator):
 
 
 class SvViewHelpForNode(bpy.types.Operator):
-
+    """ Open docs on site, on local PC or on github """
     bl_idname = "node.view_node_help"
     bl_label = "display a browser with compiled html"
     kind = StringProperty(default='online')
@@ -170,7 +170,7 @@ class SvViewHelpForNode(bpy.types.Operator):
 
 
 class SvViewSourceForNode(bpy.types.Operator):
-
+    ''' Open source code of node in OS text editor '''
     bl_idname = "node.sv_view_node_source"
     bl_label = "display the source in your editor"
     kind = StringProperty(default='external')
@@ -209,19 +209,30 @@ def idname_draw(self, context):
     if not node:
         return
     bl_idname = node.bl_idname
-    layout.operator('node.copy_bl_idname', text=bl_idname + ' (copy)').name = bl_idname
-
+    box = layout.box()
+    col = box.column(align=True)
+    col.scale_y = 0.8
+    row = col.row(align=True)
+    colom = row.column(align=True)
+    colom.scale_x = 3
+    colom.label(bl_idname+':')
+    colom = row.column(align=True)
+    colom.operator('node.copy_bl_idname', text='COPY').name = bl_idname
+    
     # show these anyway, can fail and let us know..
-    row = layout.row(align=True)
-    row.label('help')
-    row.operator('node.view_node_help', text='online').kind = 'online'
-    row.operator('node.view_node_help', text='offline').kind = 'offline'
-    row.operator('node.view_node_help', text='', icon='GHOST').kind = 'github'
+    row = col.row(align=True)
+    row.label('HELP & DOCs:')
+    row = col.row(align=True)
+    row.operator('node.view_node_help', text='ONLINE').kind = 'online'
+    row.operator('node.view_node_help', text='OFFLINE').kind = 'offline'
+    row.operator('node.view_node_help', text='GITHUB').kind = 'github' #, icon='GHOST'
 
     # view the source of the current node ( warning, some nodes rely on more than one file )
-    row = layout.row(align=True)
-    row.label('view source')
-    row.operator('node.sv_view_node_source', text='external').kind = 'external'
+    row = col.row(align=True)
+    #row.label('view source')
+    row.label('VIEW CODE:')
+    row = col.row(align=True)
+    row.operator('node.sv_view_node_source', text='EXTERNALLY').kind = 'external'
 
 
 def register():
