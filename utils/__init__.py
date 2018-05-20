@@ -111,3 +111,34 @@ utils_modules = [
     #"loadscript",
     "debug_script", "sv_update_utils", "sv_bgl_primitives"
 ]
+
+
+monkey_patch = True
+monkey_storage = {}
+
+def perform_add_node_mp():
+    import bpy
+    import nodeitems_utils
+
+    monkey_storage['old_draw'] = bpy.types.NODE_MT_add.draw
+
+    def draw_extra(self, context):
+        """This draw function is overloaded by sverchok to revert, execute this:   """
+        layout = self.layout
+
+        ntree = context.space_data.node_tree
+        show_sverchok = True if ntree else False
+        
+        if show_sverchok and ntree.bl_idname == 'SverchCustomTreeType':
+            bpy.types.NODEVIEW_MT_Dynamic_Menu.draw(self, context)
+        else:
+            monkey_storage['old_draw'](self, context)
+
+
+    bpy.types.NODE_MT_add.draw = draw_extra
+
+
+def perform_add_node_mp_restore():
+    draw_old = monkey_storage.get('old_draw')
+    if draw_old:
+        bpy.types.NODE_MT_add.draw = draw_old

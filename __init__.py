@@ -95,6 +95,9 @@ def register():
         data_structure.RELOAD_EVENT = True
         menu.reload_menu()
 
+    if sverchok.utils.monkey_patch:
+        sverchok.utils.perform_add_node_mp()
+
 
 def unregister():
     sverchok.utils.clear_node_classes()

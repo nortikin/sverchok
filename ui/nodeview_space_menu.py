@@ -103,8 +103,9 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout = self.layout
         layout.operator_context = 'INVOKE_REGION_WIN'
 
-        if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
-            layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
+        # if self.bl_idname == 'NODEVIEW_MT_Dynamic_Menu':
+        #    layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
+        layout.operator("node.sv_extra_search", text="Search", icon='OUTLINER_DATA_FONT')
 
 
         layout.separator()
