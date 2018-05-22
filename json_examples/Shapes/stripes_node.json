@@ -1,0 +1,240 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {
+    "List First & Last": "Frame",
+    "Sphere": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 202.60049438476562,
+      "hide": false,
+      "label": "extra level of data filter",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 200.3529052734375
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 244.73834228515625,
+      "hide": false,
+      "label": "separate flag needed",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 200.3529052734375
+    },
+    "List First & Last": {
+      "bl_idname": "ListFLNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1617.6082763671875,
+        120.01226806640625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Range Float": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1414.42578125,
+        -77.80845642089844
+      ],
+      "params": {
+        "count_": 48,
+        "mode": "FRANGE_COUNT",
+        "stop_": 1.0
+      },
+      "width": 140.0
+    },
+    "Range Float.001": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1412.118408203125,
+        -218.81459045410156
+      ],
+      "params": {
+        "count_": 16,
+        "mode": "FRANGE_COUNT",
+        "stop_": 1.0
+      },
+      "width": 140.0
+    },
+    "Sphere": {
+      "bl_idname": "SphereNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1409.1754150390625,
+        136.7383270263672
+      ],
+      "params": {
+        "Separate": 1,
+        "U_": 24,
+        "V_": 24
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2048.80908203125,
+        125.01702880859375
+      ],
+      "params": {
+        "cicl_check_V": 1,
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector Stripes": {
+      "bl_idname": "SvInterpolationStripesNode",
+      "custom_socket_props": {
+        "0": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        },
+        "3": {
+          "expanded": true,
+          "prop": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "Stripes COS",
+      "location": [
+        1849.3497314453125,
+        134.64039611816406
+      ],
+      "params": {
+        "current_op": "COS",
+        "factor": 2.0,
+        "maximum": 0.8999999761581421,
+        "minimum": 0.15000000596046448,
+        "operations": "COS",
+        "scale": 3.5
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1428.18310546875,
+        -376.6665954589844
+      ],
+      "params": {
+        "x_": 1.5,
+        "z_": 1.0
+      },
+      "width": 100.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2303.739013671875,
+        195.86590576171875
+      ],
+      "params": {
+        "display_edges": 1,
+        "display_verts": 0,
+        "shading": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Sphere",
+      0,
+      "List First & Last",
+      0
+    ],
+    [
+      "List First & Last",
+      0,
+      "Vector Stripes",
+      0
+    ],
+    [
+      "Range Float",
+      0,
+      "Vector Stripes",
+      1
+    ],
+    [
+      "Range Float.001",
+      0,
+      "Vector Stripes",
+      2
+    ],
+    [
+      "Vector in",
+      0,
+      "Vector Stripes",
+      3
+    ],
+    [
+      "Vector Stripes",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw",
+      1
+    ]
+  ]
+}
