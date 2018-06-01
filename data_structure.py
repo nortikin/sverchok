@@ -197,7 +197,7 @@ def dataCorrect(data, nominal_dept=2):
     if not dept: # for empty lists
         return []
     if dept < 2:
-        return [dept, data]
+        return data #[dept, data]
     else:
         output = dataStandart(data, dept, nominal_dept)
         return output
