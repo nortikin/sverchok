@@ -100,9 +100,15 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             if node:
                 named_input = node.inputs.get(self.input_idx)
                 if named_input:
-                    # [ ] switch socket type if needed
                     data = self.inputs[0].sv_get()
-                    assign_data(named_input.value, data)
+                    if 'value' in named_input:
+                        # [ ] switch socket type if needed
+                        assign_data(named_input.value, data)
+                    elif 'value_prop' in named_input:
+                        # for audio nodes for example
+                        # https://github.com/nomelif/Audionodes
+                        named_input.value_prop = data[0][0]
+                        
 
 
 def register():
@@ -113,3 +119,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvNodeRemoteNode)
     bpy.utils.unregister_class(SvNodePickup)
+
+if __name__ == '__main__':
+    register()
