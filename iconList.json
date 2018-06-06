@@ -1,63 +1,53 @@
 {
-    "generators":
-        {
-            "line": "SV_LINE",
-            "plane": "SV_PLANE",
-            "ngon": "SV_NGON",
-            "box": "SV_BOX",
-            "circle": "SV_CIRCLE",
-            "cylinder": "SV_CYLINDER",
-            "sphere": "SV_SPHERE",
-            "torus": "SV_TORUS",
-            "torus knot": "SV_TORUS_KNOT"
-        },
-
-    "vector":
-        {
-            "vector in": "SV_VECTOR_IN",
-            "vector out": "SV_VECTOR_OUT",
-            "vector math": "SV_VECTOR_MATH",
-            "vector drop": "SV_VECTOR_DROP",
-            "vector lerp": "SV_VECTOR_LERP",
-            "vector evaluate": "SV_VECTOR_EVAL"
-        },
-
-    "transforms":
-        {
-            "rotation": "SV_ROTATION",
-            "scale": "SV_SCALE",
-            "move": "SV_MOVE",
-            "mirror": "SV_MIRROR"
-        },
-
-    "icon designer":
-    {
-        "north east": "SV_DIRECTION_NE",
-        "north west": "SV_DIRECTION_NW",
-        "south east": "SV_DIRECTION_SE",
-        "south west": "SV_DIRECTION_SW",
-        "east north": "SV_DIRECTION_EN",
-        "east south": "SV_DIRECTION_ES",
-        "west north": "SV_DIRECTION_WN",
-        "west south": "SV_DIRECTION_WS"
-    },
-
-    "hexa grid":
-    {
-        "hexagrid": "SV_HEXA_GRID",
-        "rectangle": "SV_HEXA_GRID_RECTANGLE",
-        "triangle": "SV_HEXA_GRID_TRIANGLE",
-        "diamond": "SV_HEXA_GRID_DIAMOND",
-        "hexagon": "SV_HEXA_GRID_HEXAGON"
-    },
-
-    "vortex math":
-    {
-        "digital root": "SV_DIGITAL_ROOT"
-    },
-
-    "example":
-        {
-            "node": "SV_NODE_NAME"
-        }
+  "generators": {
+    "line": "SV_LINE",
+    "plane": "SV_PLANE",
+    "ngon": "SV_NGON",
+    "box": "SV_BOX",
+    "circle": "SV_CIRCLE",
+    "cylinder": "SV_CYLINDER",
+    "sphere": "SV_SPHERE",
+    "torus": "SV_TORUS",
+    "torus knot": "SV_TORUS_KNOT",
+    "ellipse": "SV_ELLIPSE",
+    "trochoid": "SV_TROCHOID",
+    "spiral": "SV_SPIRAL"
+  },
+  "vector": {
+    "vector in": "SV_VECTOR_IN",
+    "vector out": "SV_VECTOR_OUT",
+    "vector math": "SV_VECTOR_MATH",
+    "vector drop": "SV_VECTOR_DROP",
+    "vector lerp": "SV_VECTOR_LERP",
+    "vector evaluate": "SV_VECTOR_EVAL"
+  },
+  "transforms": {
+    "rotation": "SV_ROTATION",
+    "scale": "SV_SCALE",
+    "move": "SV_MOVE",
+    "mirror": "SV_MIRROR"
+  },
+  "icon manager": {
+    "north east": "SV_DIRECTION_NE",
+    "north west": "SV_DIRECTION_NW",
+    "south east": "SV_DIRECTION_SE",
+    "south west": "SV_DIRECTION_SW",
+    "east north": "SV_DIRECTION_EN",
+    "east south": "SV_DIRECTION_ES",
+    "west north": "SV_DIRECTION_WN",
+    "west south": "SV_DIRECTION_WS"
+  },
+  "hexa grid": {
+    "hexagrid": "SV_HEXA_GRID",
+    "rectangle": "SV_HEXA_GRID_RECTANGLE",
+    "triangle": "SV_HEXA_GRID_TRIANGLE",
+    "diamond": "SV_HEXA_GRID_DIAMOND",
+    "hexagon": "SV_HEXA_GRID_HEXAGON"
+  },
+  "vortex math": {
+    "digital root": "SV_DIGITAL_ROOT"
+  },
+  "example": {
+    "node": "SV_NODE_NAME"
+  }
 }
