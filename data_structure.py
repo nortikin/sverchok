@@ -25,6 +25,8 @@ import bpy
 from mathutils import Vector, Matrix
 import numpy as np
 
+from sverchok.utils.logging import info
+
 DEBUG_MODE = False
 HEAT_MAP = False
 RELOAD_EVENT = False
@@ -579,6 +581,7 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     if not inputsocketname in node.inputs:
         # - node not initialized in sv_init yet, 
         # - or socketname incorrect
+        info("changable_socket was called on node (%s) with a socket named %s, this socket does not (yet) exist" % (node.name, inputsocketname))
         return 
 
     in_socket = node.inputs[inputsocketname]
