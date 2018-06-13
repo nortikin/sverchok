@@ -576,6 +576,11 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
     '''
+    if not inputsocketname in node.inputs:
+        # - node not initialized in sv_init yet, 
+        # - or socketname incorrect
+        return 
+
     in_socket = node.inputs[inputsocketname]
     ng = node.id_data
     if in_socket.links:
