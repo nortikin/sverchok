@@ -132,7 +132,7 @@ def get_icon_indices():
 
 def get_category_icon_names(category):
     read_icon_data()
-    return _icon_list["main"][category]["names"]
+    return _icon_list["main"]["categories"][category]["names"]
 
 
 def get_category_icon_ids(category):
@@ -174,7 +174,7 @@ def update_icon_indices(wrap, separate):
         _icon_list["main"]["indices"].extend(iconIndices)
         _icon_list["main"]["categories"][category]["indices"] = [index for index in iconIndices]
 
-        if not separate:  # group into categories? =? start next category on new line
+        if separate:  # separate categories? => start next category on new line
             x = 0
             y = y + 1
 
@@ -259,7 +259,8 @@ def get_output_socket_data(wrap, direction, grid_scale, center, separate_categor
     categoryNames = get_category_names()
     iconNames = get_icon_names()
     iconIndex = iconNames.index(current_icon)
-    cameraLocation = [iconCenters[iconIndex][0], iconCenters[iconIndex][1], 4]
+    iconLocation = iconCenters[iconIndex]
+    cameraLocation = [iconLocation[0], iconLocation[1], 4]
 
     data = OrderedDict()
     data["Category Names"] = categoryNames
@@ -274,6 +275,8 @@ def get_output_socket_data(wrap, direction, grid_scale, center, separate_categor
     data["Icon Verts"] = iconVerts
     data["Icon Polys"] = iconPolys
     data["Camera Location"] = cameraLocation
+
+    _icon_list["main"]["Current Icon Location"] = iconLocation
 
     if DEBUG:
         data["Category Indices"] = categoryIndices
@@ -291,7 +294,11 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def prev_icon(self, context):
         # print("Advancing to PREV icon")
-        iconNames = get_icon_names()
+        if self.selected_category == "All":
+            iconNames = get_icon_names()
+        else:
+            iconNames = get_category_icon_names(self.selected_category)
+
         iconIndex = iconNames.index(self.selected_icon)
         prevIconIndex = (iconIndex - 1) % len(iconNames)
         prevIconName = iconNames[prevIconIndex]
@@ -305,7 +312,11 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def next_icon(self, context):
         # print("Advancing to NEXT icon")
-        iconNames = get_icon_names()
+        if self.selected_category == "All":
+            iconNames = get_icon_names()
+        else:
+            iconNames = get_category_icon_names(self.selected_category)
+
         iconIndex = iconNames.index(self.selected_icon)
         nextIconIndex = (iconIndex + 1) % len(iconNames)
         nextIconName = iconNames[nextIconIndex]
@@ -317,9 +328,20 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
         self.selected_icon = nextIconName
         # updateNode(self, context)
 
+    def selectedCategoryItems(self, context):
+        categories = ["All"]
+        categories.extend(get_category_names())
+        categoryItems = [(k, k.title(), "", "", i) for i, k in enumerate(categories)]
+        return categoryItems
+
     def selectedIconItems(self, context):
-        iconNames = get_icon_names()
-        iconIDs = get_icon_ids()
+        if self.selected_category == "All":
+            iconNames = get_icon_names()
+            iconIDs = get_icon_ids()
+        else:
+            iconNames = get_category_icon_names(self.selected_category)
+            iconIDs = get_category_icon_ids(self.selected_category)
+
         # iconItems = [(k, k.title(), "", "", i) for i, k in enumerate(iconNames)]
         iconItems = [(k, k.title(), "", custom_icon(iconIDs[iconNames.index(k)]), i) for i, k in enumerate(iconNames)]
         return iconItems
@@ -328,21 +350,41 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
         # print(self.direction)
         updateNode(self, context)
 
-    def update_selected_icon(self, context):
-        print("Selecte icon:", self.selected_icon)
+    def update_selected_category(self, context):
+        print("Selected category:", self.selected_category)
 
-        iconNames = get_icon_names()
-        iconIDs = get_icon_ids()
+        if self.selected_category == "All":
+            iconNames = get_icon_names()
+        else:
+            iconNames = get_category_icon_names(self.selected_category)
+
+        self.selected_icon = iconNames[0]
+
+        updateNode(self, context)
+
+    def update_selected_icon(self, context):
+        print("Selected icon:", self.selected_icon)
+        print("Selected category:", self.selected_category)
+
+        if self.selected_category == "All":
+            iconNames = get_icon_names()
+            iconIDs = get_icon_ids()
+        else:
+            iconNames = get_category_icon_names(self.selected_category)
+            iconIDs = get_category_icon_ids(self.selected_category)
+
         index = iconNames.index(self.selected_icon)
         objectName = iconIDs[index]
         objects = context.scene.objects
 
-        if objectName in objects.keys():
-            # bpy.context.scene.objects.active = objects[objectName]
-            bpy.ops.object.select_all(action='DESELECT')
-            objects[objectName].select = True
+        if self.auto_select_empty:
+            if objectName in objects.keys():
+                # bpy.context.scene.objects.active = objects[objectName]
+                bpy.ops.object.select_all(action='DESELECT')
+                objects[objectName].select = True
 
         updateNode(self, context)
+
 
     def update_empties(self, context):
         # print("update empties locations")
@@ -357,6 +399,10 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
         default="EAST_NORTH", items=directionItems,
         update=update_direction)
 
+    selected_category = EnumProperty(
+        name="Selected Category", items=selectedCategoryItems,
+        update=update_selected_category)
+
     selected_icon = EnumProperty(
         name="Selected Icon", items=selectedIconItems,
         update=update_selected_icon)
@@ -369,17 +415,13 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
         name="Grid Scale", description="Spread the icon grid apart",
         default=2.0, min=1.0, update=updateNode)
 
-    center = BoolProperty(
-        name="Center", description="Center icon grid around origin",
-        default=False, update=updateNode)
-
-    show_categories = BoolProperty(
-        name="Show Categories", description="Show categories boundaries",
-        default=False, update=updateNode)
+    center_grid = BoolProperty(
+        name="Center Grid", description="Center icon grid around origin",
+        default=True, update=updateNode)
 
     separate_categories = BoolProperty(
         name="Separate Categories", description="Separate the icons into categories",
-        default=False, update=updateNode)
+        default=True, update=updateNode)
 
     category_spacing = FloatProperty(
         name="Category Spacing", description="Space between category boxes",
@@ -392,6 +434,14 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
     show_empty_names = BoolProperty(
         name="Show Empty Names", description="Show/Hide icon empty ID names",
         default=False, update=updateNode)
+
+    auto_select_empty = BoolProperty(
+        name="Auto Select Empty", description="Auto select icon empty on icon selection",
+        default=True, update=updateNode)
+
+    relocate_3d_cursor = BoolProperty(
+        name="Relocate 3D Cursor", description="Relocate 3D cursor with Icon navigation",
+        default=True, update=updateNode)
 
     def sv_init(self, context):
         self.width = 200
@@ -421,12 +471,14 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'direction', expand=False)
-        layout.prop(self, 'center')
-        layout.prop(self, 'show_categories')
+        layout.prop(self, 'center_grid')
         layout.prop(self, 'separate_categories')
-        row = layout.row(align=True)
 
+        layout.prop(self, "selected_category", text="")
+
+        row = layout.row(align=True)
         row.prop(self, "selected_icon", text="")
+
         prevIcon = row.operator('node.sv_icon_manager_navigate', text="", icon="PLAY_REVERSE")
         prevIcon.nodeName = self.name
         prevIcon.treeName = self.id_data.name
@@ -439,7 +491,6 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
 
         col = row.column()
         col.operator("render.render", text="", icon='RENDER_STILL')
-
 
     def draw_buttons_ext(self, context, layout):
         # empty settings
@@ -471,6 +522,13 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
         row = box.row()
         row.operator("render.render", text="Render", icon='RENDER_STILL')
 
+        # navigation settings
+        box = layout.box()
+        box.label("Navigation Settings")
+        col = box.column()
+        col.prop(self, "relocate_3d_cursor")
+        col.prop(self, "auto_select_empty")
+
         # box = layout.box()
         # col = box.column()
         # col.label("Selected Icon:")
@@ -497,7 +555,7 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
         data = get_output_socket_data(input_wrap,
                                       direction,
                                       input_grid_scale,
-                                      self.center,
+                                      self.center_grid,
                                       self.separate_categories,
                                       self.selected_icon)
 
@@ -513,6 +571,13 @@ class SvIconManagerNode(bpy.types.Node, SverchCustomTreeNode):
             # print('iconID=', iconID)
             if iconID in objectNames:
                 bpy.context.scene.objects[iconID].location = data["Icon Centers"][iconIndex]
+
+        # update the 3D cursor location
+        if self.relocate_3d_cursor:
+            print("relocating 3d cursor")
+            # c = get_current_icon_location()
+            c = _icon_list["main"]["Current Icon Location"]
+            bpy.context.scene.cursor_location = c
 
 
 class SverchokIMRenderIcons(bpy.types.Operator):
