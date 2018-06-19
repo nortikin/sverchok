@@ -547,8 +547,17 @@ class SvPrifilizer(bpy.types.Operator):
             print('Pofiler: NOT a curve selected')
             self.report({'INFO'}, 'It is not a curve selected for profiler')
             return {'CANCELLED'}
+
         objs = bpy.context.selected_objects
         names = str([o.name for o in objs])[1:-2]
+
+        # test for POLY type curve, we can't deal with POLY yet..
+        if objs[0].data.splines[0].type == 'POLY':
+            msg = 'Pofiler: does not support POLY curve type yet'
+            print(msg)
+            self.report({'INFO'}, msg)
+            return {'CANCELLED'}
+
         # collect paths
         op = []
         clos = []
