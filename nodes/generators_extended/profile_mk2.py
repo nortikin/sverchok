@@ -588,6 +588,7 @@ class SvPrifilizer(bpy.types.Operator):
             # line for if curve was before line or not
             line = False
             curve = False
+
             for i,c in zip(range(len(ob_points)),curves):
                 co = ob_points[i].co
                 if not i:
@@ -601,6 +602,7 @@ class SvPrifilizer(bpy.types.Operator):
                     out_names.append(['M.0'])
                     # pass if first 'M' that was used already upper
                     continue
+
                 elif c == 'C ':
                     values += '\n'
                     values += '#C.'+str(i)+'\n'
@@ -622,6 +624,7 @@ class SvPrifilizer(bpy.types.Operator):
                     out_names.extend([['C.'+str(i)+'h1'],['C.'+str(i)+'h2'],['C.'+str(i)+'k']])
                     line = False
                     curve = True
+
                 elif c == 'L ' and not line:
                     if curve:
                         values += '\n'
@@ -632,6 +635,7 @@ class SvPrifilizer(bpy.types.Operator):
                     out_names.append(['L.'+str(i)])
                     line = True
                     curve = False
+
                 elif c == 'L ' and line:
                     values += self.stringadd(co,ob_points[i].select_control_point)
                     out_points.append(co[:])
