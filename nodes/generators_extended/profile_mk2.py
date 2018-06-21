@@ -551,9 +551,10 @@ class SvPrifilizer(bpy.types.Operator):
         objs = bpy.context.selected_objects
         names = str([o.name for o in objs])[1:-2]
 
-        # test for POLY type curve, we can't deal with POLY yet..
-        if objs[0].data.splines[0].type == 'POLY':
-            msg = 'Pofiler: does not support POLY curve type yet'
+        # test for POLY or NURBS curve types, these are not yet supported
+        spline_type = objs[0].data.splines[0].type
+        if spline_type in {'POLY', 'NURBS'}:
+            msg = 'Pofiler: does not support {0} curve type yet'.format(spline_type)
             print(msg)
             self.report({'INFO'}, msg)
             return {'CANCELLED'}
