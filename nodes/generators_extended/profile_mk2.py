@@ -551,9 +551,10 @@ class SvPrifilizer(bpy.types.Operator):
         objs = bpy.context.selected_objects
         names = str([o.name for o in objs])[1:-2]
 
-        # test for POLY type curve, we can't deal with POLY yet..
-        if objs[0].data.splines[0].type == 'POLY':
-            msg = 'Pofiler: does not support POLY curve type yet'
+        # test for POLY or NURBS curve types, these are not yet supported
+        spline_type = objs[0].data.splines[0].type
+        if spline_type in {'POLY', 'NURBS'}:
+            msg = 'Pofiler: does not support {0} curve type yet'.format(spline_type)
             print(msg)
             self.report({'INFO'}, msg)
             return {'CANCELLED'}
@@ -587,6 +588,7 @@ class SvPrifilizer(bpy.types.Operator):
             # line for if curve was before line or not
             line = False
             curve = False
+
             for i,c in zip(range(len(ob_points)),curves):
                 co = ob_points[i].co
                 if not i:
@@ -600,6 +602,7 @@ class SvPrifilizer(bpy.types.Operator):
                     out_names.append(['M.0'])
                     # pass if first 'M' that was used already upper
                     continue
+
                 elif c == 'C ':
                     values += '\n'
                     values += '#C.'+str(i)+'\n'
@@ -621,6 +624,7 @@ class SvPrifilizer(bpy.types.Operator):
                     out_names.extend([['C.'+str(i)+'h1'],['C.'+str(i)+'h2'],['C.'+str(i)+'k']])
                     line = False
                     curve = True
+
                 elif c == 'L ' and not line:
                     if curve:
                         values += '\n'
@@ -631,6 +635,7 @@ class SvPrifilizer(bpy.types.Operator):
                     out_names.append(['L.'+str(i)])
                     line = True
                     curve = False
+
                 elif c == 'L ' and line:
                     values += self.stringadd(co,ob_points[i].select_control_point)
                     out_points.append(co[:])
