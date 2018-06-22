@@ -33,27 +33,23 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         r = layout.row()
 
-    def evaluate(self, frame):
+    def evaluate(self, frames):
         """ will return a double wrapped value if needed
         fcurve = actions[0].fcurve[0]
         """
-        if self.single_value:
-            some_value = [[fcurve.evaluate(frame)]]
-        else:
-            # in this mode "frame" is a misnomer and can contain any number of nested frame lists
-            some_value = [[fcurve.evaluate(f) for f in frames] for frames in frame]
 
+        some_value = [[fcurve.evaluate(f) for f in frames_list] for frames_list in frames]
         return some_value
 
     def process(self):
 
         if self.inputs[0].is_linked:
-            evaluated = self.evaluate(self.inputs[0].sv_get()[0][0])
+            evaluated = self.evaluate(self.inputs[0].sv_get())
         else:
             # fall back to current frame in scene
             try:
                 current_frame = bpy.context.scene.frame_current
-                evaluated = self.evaluate(current_frame)
+                evaluated = self.evaluate([[current_frame]])
             except:
                 ...
 
