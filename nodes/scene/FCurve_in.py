@@ -24,14 +24,31 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'F-Curve In'
     bl_icon = 'FCURVE'
 
+    fcurve_datapath = StringProperty(name="fcurve", default="", update=updateNode)
+
     def sv_init(self, context):
-        ...
+        self.inputs.new("StringsSocket", "Frame")
+        self.outputs.new("StringsSocket", "Evaluated")
 
     def draw_buttons(self, context, layout):
+        r = layout.row()
+
+    def evaluate(self, frame):
         ...
 
     def process(self):
-        ...
+
+        if self.inputs[0].is_linked:
+            evaluated = self.evaluate(self.inputs[0].sv_get()[0][0])
+        else:
+            # fall back to current frame in scene
+            try:
+                current_frame = bpy.context.scene.frame_current
+                evaluated = self.evaluate(current_frame)
+            except:
+                ...
+
+        self.outputs[0].sv_set([[evaluated]])
 
 
 def register():
