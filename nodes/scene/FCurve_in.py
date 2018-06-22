@@ -34,7 +34,16 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         r = layout.row()
 
     def evaluate(self, frame):
-        ...
+        """ will return a double wrapped value if needed
+        fcurve = actions[0].fcurve[0]
+        """
+        if self.single_value:
+            some_value = [[fcurve.evaluate(frame)]]
+        else:
+            # in this mode "frame" is a misnomer and can contain any number of nested frame lists
+            some_value = [[fcurve.evaluate(f) for f in frames] for frames in frame]
+
+        return some_value
 
     def process(self):
 
@@ -48,7 +57,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             except:
                 ...
 
-        self.outputs[0].sv_set([[evaluated]])
+        self.outputs[0].sv_set(evaluated)
 
 
 def register():
