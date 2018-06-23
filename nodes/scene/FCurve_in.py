@@ -8,7 +8,7 @@
 import bpy
 # import mathutils
 # from mathutils import Vector
-from bpy.props import IntProperty, StringProperty # FloatProperty, BoolProperty
+from bpy.props import IntProperty, StringProperty, EnumProperty  # FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -24,7 +24,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'F-Curve In'
     bl_icon = 'FCURVE'
 
-    array_index = IntProperty(default=0, min=0, max=2, name="array index", update=updateNode)
+    array_index = IntProperty(default=0, min=0, name="array index", update=updateNode)
     fcurve_datapath = StringProperty(name="fcurve", default="", update=updateNode)
     warning_msg = StringProperty(name="node warning")
     object_name = StringProperty(name="object name", update=updateNode)
@@ -35,7 +35,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
 
-        layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name', icon='OBJECT_DATA')
+        layout.prop_search(self, 'object_name', bpy.data, 'objects', text='', icon='OBJECT_DATA')
         if not self.object_name:
             return
 
@@ -44,9 +44,8 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             layout.label("{} has no action".format(self.object_name))
             return
 
-        # quick and dirty for now / # pick location x y z to use as evaluator
         r = layout.row()
-        r.prop(self, "array_index")
+        r.prop(self, "array_index", text="property index")
 
 
     def get_object_reference(self):
