@@ -8,7 +8,7 @@
 import bpy
 # import mathutils
 # from mathutils import Vector
-# from bpy.props import FloatProperty, BoolProperty
+from bpy.props import IntProperty, StringProperty # FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -24,7 +24,10 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'F-Curve In'
     bl_icon = 'FCURVE'
 
+    array_index = IntProperty(default=0, min=0, max=2, name="array index", update=updateNode)
     fcurve_datapath = StringProperty(name="fcurve", default="", update=updateNode)
+    warning_msg = StringProperty(name="node warning")
+    obj_name = StringProperty(name="object name", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "Frame")
@@ -32,16 +35,35 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         r = layout.row()
+        # pick object
+        # pick location x y z to use as evaluator
+
+    def get_object_reference(self):
+        ...
 
     def evaluate(self, frames):
-        """ will return a double wrapped value if needed
-        fcurve = actions[0].fcurve[0]
+        """
+        will return a double wrapped value if needed
         """
 
-        some_value = [[fcurve.evaluate(f) for f in frames_list] for frames_list in frames]
-        return some_value
+        obj = self.get_object_reference()
+        action = obj.animation_data.action
+        
+        if not action:
+            self.warning_msg = "object has no animation data associated"
+            return [[0]]
+
+        fcurve = action.fcurve[self.array_index]
+        return [[fcurve.evaluate(f) for f in frames_list] for frames_list in frames]
+
 
     def process(self):
+        """
+        - if no input is given then the node will use current frame in bpy.context.scene
+        - if input is given, behaviour depends on 2 things:
+            - the input is a single number (f.ex: [[x]] ) , this will generate a single value output evaluated at x
+            - the input can be multiple lists, and will evaluated multiple times (regardless of current frame number)
+        """
 
         if self.inputs[0].is_linked:
             evaluated = self.evaluate(self.inputs[0].sv_get())
