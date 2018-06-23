@@ -37,6 +37,13 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         r = layout.row()
         # pick object
         # pick location x y z to use as evaluator
+        layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name', icon='OBJECT_DATA')
+        if not self.object_name:
+            return
+
+        # layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name', icon='OBJECT_DATA')
+
+
 
     def get_object_reference(self):
         return bpy.data.objects.get(self.object_name, None)
