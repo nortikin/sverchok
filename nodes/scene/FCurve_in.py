@@ -43,7 +43,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     def evaluate(self, frames):
         """
-        will return a double wrapped value if needed
+        takes a single values or a nested list of values (frame and subframe)
         """
 
         obj = self.get_object_reference()
@@ -62,7 +62,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         - if no input is given then the node will use current frame in bpy.context.scene
         - if input is given, behaviour depends on 2 things:
             - the input is a single number (f.ex: [[x]] ) , this will generate a single value output evaluated at x
-            - the input can be multiple lists, and will evaluated multiple times (regardless of current frame number)
+            - the input can be multiple lists, and evaluate multiple times (regardless of current frame number)
         """
 
         if self.inputs[0].is_linked:
