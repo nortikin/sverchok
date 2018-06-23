@@ -261,6 +261,7 @@
     SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4
+    SvFCurveInNodeMK1
 
 ## Objects
     SvVertexGroupNodeMK2

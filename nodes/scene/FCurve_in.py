@@ -34,15 +34,19 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("StringsSocket", "Evaluated")
 
     def draw_buttons(self, context, layout):
-        r = layout.row()
-        # pick object
-        # pick location x y z to use as evaluator
+
         layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name', icon='OBJECT_DATA')
         if not self.object_name:
             return
 
-        # layout.prop_search(self, 'object_name', bpy.data, 'objects', text='name', icon='OBJECT_DATA')
+        action = bpy.data.objects[self.object_name].animation_data.action
+        if not action:
+            layout.label("{} has no action".format(self.object_name))
+            return
 
+        # quick and dirty for now / # pick location x y z to use as evaluator
+        r = layout.row()
+        r.prop(self, "array_index")
 
 
     def get_object_reference(self):
@@ -65,7 +69,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             print(self.warning_msg)
             return [[0]]
 
-        fcurve = action.fcurve[self.array_index]
+        fcurve = action.fcurves[self.array_index]
         return [[fcurve.evaluate(f) for f in frames_list] for frames_list in frames]
 
 
