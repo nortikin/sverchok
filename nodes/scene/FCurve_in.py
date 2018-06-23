@@ -27,10 +27,10 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     array_index = IntProperty(default=0, min=0, max=2, name="array index", update=updateNode)
     fcurve_datapath = StringProperty(name="fcurve", default="", update=updateNode)
     warning_msg = StringProperty(name="node warning")
-    obj_name = StringProperty(name="object name", update=updateNode)
+    object_name = StringProperty(name="object name", update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "Frame")
+        self.inputs.new("StringsSocket", "Frame")  # intentionally no propname, ask zeffii why.
         self.outputs.new("StringsSocket", "Evaluated")
 
     def draw_buttons(self, context, layout):
@@ -39,18 +39,23 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         # pick location x y z to use as evaluator
 
     def get_object_reference(self):
-        ...
+        return bpy.data.objects.get(self.object_name, None)
 
     def evaluate(self, frames):
         """
-        takes a single values or a nested list of values (frame and subframe)
+        takes a single value or a nested list of values (frame and subframe)
         """
 
         obj = self.get_object_reference()
+        if not obj:
+            self.warning_msg = "no object picked, or stored"
+            print(self.warning_msg)
+            return [[0]]
+
         action = obj.animation_data.action
-        
         if not action:
             self.warning_msg = "object has no animation data associated"
+            print(self.warning_msg)
             return [[0]]
 
         fcurve = action.fcurve[self.array_index]
