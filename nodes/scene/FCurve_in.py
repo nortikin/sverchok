@@ -24,10 +24,24 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'F-Curve In'
     bl_icon = 'FCURVE'
 
+    def wrapped_update(self, context):
+
+        if not self.new_prop_name:
+            # avoid recursion
+            return
+        else:
+            obj = bpy.data.objects[self.object_name]
+            obj[self.new_prop_name] = 1.0
+            obj.keyframe_insert(data_path='["{}"]'.format(self.new_prop_name))
+
+        self.new_prop_name = ""
+
     array_index = IntProperty(default=0, min=0, name="array index", update=updateNode)
     fcurve_datapath = StringProperty(name="fcurve", default="", update=updateNode)
     warning_msg = StringProperty(name="node warning")
     object_name = StringProperty(name="object name", update=updateNode)
+
+    new_prop_name = StringProperty(name="new prop name", update=wrapped_update)
 
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "Frame")  # intentionally no propname, ask zeffii why.
@@ -39,7 +53,13 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         if not self.object_name:
             return
 
-        action = bpy.data.objects[self.object_name].animation_data.action
+        animation_data = bpy.data.objects[self.object_name].animation_data
+        if not animation_data:
+            layout.label("no animation data, add a named prop")
+            layout.prop(self, "new_prop_name", text="custom prop")
+            return
+
+        action = animation_data.action
         if not action:
             layout.label("{} has no action".format(self.object_name))
             return
