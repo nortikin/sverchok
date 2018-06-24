@@ -11,6 +11,12 @@ import bpy
 from bpy.props import IntProperty, StringProperty, EnumProperty  # FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
+
+
+class SvFCurveMK1CB(bpy.types.Operator, SvGenericCallbackWithParams):
+    bl_idname = "node.sv_fcurvenodemk1_callback_with_params"
+    bl_label = "Callback for fcurve sampler node mk1"
 
 class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -43,13 +49,23 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     new_prop_name = StringProperty(name="new prop name", update=wrapped_update)
 
+    def add_empty(self, context):
+        empty = bpy.data.objects.new("sv_fcurve_empty", None)
+        scene = bpy.context.scene
+        scene.objects.link(empty)
+        scene.update()
+
+        self.object_name = empty.name
+
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "Frame")  # intentionally no propname, ask zeffii why.
         self.outputs.new("StringsSocket", "Evaluated")
 
     def draw_buttons(self, context, layout):
 
-        layout.prop_search(self, 'object_name', bpy.data, 'objects', text='', icon='OBJECT_DATA')
+        row = layout.row(align=True)
+        row.prop_search(self, 'object_name', bpy.data, 'objects', text='', icon='OBJECT_DATA')
+        row.operator("node.sv_fcurvenodemk1_callback_with_params", text='', icon="ZOOMIN").fn_name="add_empty"
         if not self.object_name:
             return
 
@@ -114,8 +130,10 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
+    bpy.utils.register_class(SvFCurveMK1CB)
     bpy.utils.register_class(SvFCurveInNodeMK1)
 
 
 def unregister():
     bpy.utils.unregister_class(SvFCurveInNodeMK1)
+    bpy.utils.unregister_class(SvFCurveMK1CB)
