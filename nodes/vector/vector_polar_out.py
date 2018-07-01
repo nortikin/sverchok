@@ -54,9 +54,14 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     ]
 
     def coordinate_changed(self, context):
-        if self.coordinates != self.outputs[2].name:
-            self.outputs.remove(self.outputs[2])
-            self.outputs.new('StringsSocket', self.coordinates)
+        # changing name of third output socket
+        replaceable_socket = self.outputs[2]
+        mode_name = self.coordinates
+        
+        if mode_name in ['z', 'theta']:
+            replaceable_socket.replace_socket('StringsSocket', new_name = mode_name)
+        else:
+            raise Exception ("Unexpected mode - {}".format(mode_name))
 
     coordinates = EnumProperty(items=coord_modes, default='z', update=coordinate_changed)
 
