@@ -5,7 +5,7 @@ This node give you access to the FCurves bound to scene objects.
 
 Because this is an early version of the node, the UI is a bit rough. The Blender API is a little rough in this area too - don't expect huge future improvements. There doesn't appear to be a way to introspect the individual names of
 the standard keyframed properties like Location's `X Location Y Location Z Location`. ID props and 
-custom prop names however _can_ be introspected, but i'm not adding it as a feature to the node.
+custom prop names however *can* be introspected, but i'm not adding it as a feature to the node.
 
 The node operates in several modes, it automatically attempts to process the input in these two ways.
 
