@@ -20,7 +20,7 @@ import math
 
 import bpy
 import mathutils
-from bpy.props import IntProperty, FloatProperty, FloatVectorProperty, StringProperty
+from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector, Euler, geometry
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
@@ -117,11 +117,16 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
 
     @staticmethod
     def draw_basic_arc_qlink(socket, context, layout, node):
+        """
+        here's an example of an "bound-to-node quicklink socket ui descriptor"
+        - this lets you define the ui of that quicklink, in this case it replicates
+          the standard quicklink.
+        """
 
         if socket.use_quicklink:
             new_node_idname = "GenVectorsNode"
 
-            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="NODETREE")
+            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
             op.socket_index = socket.index
             op.origin = node.name
             op.new_node_idname = new_node_idname
