@@ -20,7 +20,7 @@ import math
 
 import bpy
 import mathutils
-from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
+from bpy.props import IntProperty, FloatProperty, FloatVectorProperty, StringProperty
 from mathutils import Vector, Euler, geometry
 
 from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
@@ -114,6 +114,23 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         description="3 points, Start-Through-End",
         update=updateNode,
         size=3)
+
+    quicklink_func_name = StringProperty(
+        default="draw_basic_arc_qlink",
+        name="quicklink_func_name")
+
+    @staticmethod
+    def draw_basic_arc_qlink(socket, context, layout, node):
+
+        if socket.use_quicklink:
+            new_node_idname = "GenVectorsNode"
+
+            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="NODETREE")
+            op.socket_index = socket.index
+            op.origin = node.name
+            op.new_node_idname = new_node_idname
+            op.new_node_offsetx = -200 - 40 * socket.index
+            op.new_node_offsety = -30 * socket.index
 
     def sv_init(self, context):
 
