@@ -115,10 +115,6 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode,
         size=3)
 
-    quicklink_func_name = StringProperty(
-        default="draw_basic_arc_qlink",
-        name="quicklink_func_name")
-
     @staticmethod
     def draw_basic_arc_qlink(socket, context, layout, node):
 
@@ -139,6 +135,7 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         vector_prop = self.inputs.new('VerticesSocket', "arc_pts")
         vector_prop.use_expander = False
         vector_prop.use_quicklink = True
+        vector_prop.quicklink_func_name = 'draw_basic_arc_qlink'
 
         # outputs
         self.outputs.new('VerticesSocket', "Verts")
