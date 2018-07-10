@@ -115,12 +115,25 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode,
         size=3)
 
-    def sv_init(self, context):
-        self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
-        self.inputs.new('VerticesSocket', "arc_pts").prop_name = 'arc_pts'
+    # def sv_init(self, context):
+    #     self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
+    #     self.inputs.new('VerticesSocket', "arc_pts").prop_name = 'arc_pts'
 
-        self.outputs.new('VerticesSocket', "Verts", "Verts")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
+    #     self.outputs.new('VerticesSocket', "Verts", "Verts")
+    #     self.outputs.new('StringsSocket', "Edges", "Edges")
+
+    def sv_init(self, context):
+
+        # inputs
+        self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
+        vector_prop = self.inputs.new('VerticesSocket', "arc_pts")
+        vector_prop.prop_name = 'arc_pts'
+        vector_prop.use_expander = False
+        vector_prop.use_quicklink = True
+
+        # outputs
+        self.outputs.new('VerticesSocket', "Verts")
+        self.outputs.new('StringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
         pass
