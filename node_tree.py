@@ -89,6 +89,8 @@ class SvSocketCommon:
     use_quicklink = BoolProperty(default=True)
     expanded = BoolProperty(default=False)
 
+    quicklink_func_name = StringProperty(default="", name="quicklink_func_name")    
+
     @property
     def other(self):
         return get_other_socket(self)
@@ -217,6 +219,13 @@ class SvSocketCommon:
 
             elif self.use_prop:  # no property but use default prop
                 self.draw_expander_template(context, layout, prop_origin=self)
+
+            elif self.quicklink_func_name:
+                try:
+                    getattr(node, self.quicklink_func_name)(self, context, layout, node)
+                except Exception as e:
+                    self.draw_quick_link(context, layout, node)
+                layout.label(text)
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
