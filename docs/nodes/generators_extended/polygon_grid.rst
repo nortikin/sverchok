@@ -81,3 +81,7 @@ Notes:
 Example of usage
 ----------------
 
+.. image:: https://user-images.githubusercontent.com/10011941/42779991-581204a4-8942-11e8-8339-19ef08408246.png
+
+.. image:: https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png
+
