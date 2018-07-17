@@ -71,7 +71,7 @@ def binpack(nodes, maxValue):
     for item in items:
         # try to fit the item into the first bin that is not full
         for bin in bins:
-            if bin.height + item[0][1] <= maxValue: # bin not full ? => add item
+            if bin.height + item[0][1] <= maxValue:  # bin not full ? => add item
                 # print 'Adding', item, 'to', bin
                 bin.append(item)
                 break
@@ -357,9 +357,13 @@ class SvDisplayNodesPanel(bpy.types.Panel):
 
     @classmethod
     def poll(cls, context):
-        # only show up in this tree
+        # do not show if there is no node tree
+        if not context.space_data.node_tree:
+            return False
+
+        # do not show if the tree is not a sverchock node tree
         if not context.space_data.tree_type == 'SverchCustomTreeType':
-            return
+            return False
 
         # only show up if developer_mode has been set to True
         with sv_preferences() as prefs:
