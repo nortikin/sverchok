@@ -80,6 +80,7 @@ def sv_colors_definition():
             "Scene": prefs.color_sce,
             "Layout": prefs.color_lay,
             "Generator": prefs.color_gen,
+            "Generators Extended": prefs.color_gen
             }
     else:
         sv_node_colors = default_theme
