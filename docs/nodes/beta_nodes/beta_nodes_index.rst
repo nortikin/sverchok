@@ -12,4 +12,5 @@ Beta Nodes
    sample_uv_color
    color_by_formula
    spiralNode
+   contour2D
 

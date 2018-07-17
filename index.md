@@ -30,6 +30,7 @@
 ## Generators Extended
     SvBoxRoundedNode
     SvBricksNode
+    SvPolygonGridNode
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
@@ -39,7 +40,6 @@
     SvImageComponentsNode
     SvScriptNode
     SvTorusKnotNode
-    SvHexaGridNodeMK1
     SvRingNode
     SvEllipseNode
 
@@ -308,6 +308,7 @@
     SvSetCustomMeshNormals
     ---
     SvSpiralNode
+    SvContourNode
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -336,6 +337,6 @@
     SvIndexToMaskNode
     SvMultiExtrudeAlt
     SvOffsetLineNode
-    SvContourNode
     SvPlanarEdgenetToPolygons
+
     

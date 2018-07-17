@@ -11,8 +11,8 @@ Generators Extended
    hilbert
    hilbert3d
    hilbert_image
-   hexa_grid_mk1
    image_components
+   polygon_grid
    profile_mk2
    mesh_eval
    ring

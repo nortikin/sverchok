@@ -210,8 +210,8 @@ def idname_draw(self, context):
         return
     bl_idname = node.bl_idname
     box = layout.box()
-    col = box.column(align=True)
-    col.scale_y = 0.8
+    col = box.column(align=False)
+    col.scale_y = 0.9
     row = col.row(align=True)
     colom = row.column(align=True)
     colom.scale_x = 3
