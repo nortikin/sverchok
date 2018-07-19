@@ -40,8 +40,8 @@ grid_type_items = [
 size_mode_items = [
     ("RADIUS", "Radius", "Define polygon by its radius", custom_icon("SV_RAD"), 0),
     ("SIDE", "Side", "Define polygon by its side", custom_icon("SV_SIDE"), 1)]
-    
-    
+
+
 def triang_layout(settings, pol_type):
     '''Define triangular layout'''
     _, _, level = settings
@@ -51,21 +51,21 @@ def triang_layout(settings, pol_type):
         offset_y = range(cols)
         grid_center = [(level - 1) * 2 / 3, 0.0]
         tile_rotated = 0
-        
+
     elif pol_type == 'TRIANGLE':
         rows = range(1, 2 * cols + 1, 2)
         offset_y = range(cols)
         grid_center = [(level - 1) * 2 / 3, 0.0]
         tile_rotated = [[(y) % 2 for y in range(rows[x])] for x in range(cols)]
-        
+
     else: # pol_type == 'SQUARE':
         rows = range(1, 2 * cols + 2, 2)
         offset_y = range(0, 2 * cols, 2)
-        grid_center = [(level - 1)/2 , 0.0]
+        grid_center = [(level - 1) / 2, 0.0]
         tile_rotated = 0
     return cols, rows, offset_y, grid_center, tile_rotated
 
-    
+
 def hexa_layout(settings, pol_type):
     '''Define hexagonal layout'''
     _, _, level = settings
@@ -75,20 +75,20 @@ def hexa_layout(settings, pol_type):
         rows = [cols - abs(level - 1 - l) for l in range(cols)]
         offset_y = [level - 1 - abs(level - 1 - l) for l in range(cols)]
         grid_center = [level - 1, (level - 1) / 2]
-        
+
     elif pol_type == 'TRIANGLE':
         cols = 2 * level
         rows = [4 * level - abs(2*level - 1 - 2 * l) for l in range(cols)]
         offset_y = [2 * level - 0.5 - abs(level - 0.5 - l) for l in range(cols)]
         tile_rotated = [[(y + int(x / level)) % 2 for y in range(rows[x])] for x in range(cols)]
-        grid_center = [level - 2/3 , 0.0]
-        
+        grid_center = [level - 2 / 3, 0.0]
+
     else: # pol_type == 'SQUARE':
         cols = 2 * level
         rows = [3 * level - 1 - abs(2 * level - 1 - 2 * l) for l in range(cols)]
         offset_y = [2 * level - 1 - abs(2 * level - 1 - 2 * l) for l in range(cols)]
-        grid_center = [level - 0.5 , (level - 1) / 2]
-        
+        grid_center = [level - 0.5, (level - 1) / 2]
+
     return cols, rows, offset_y, grid_center, tile_rotated
 
 
@@ -101,20 +101,20 @@ def diamond_layout(settings, pol_type):
         rows = [level - abs(level - 1 - l) for l in range(cols)]
         offset_y = [level - 1 - abs(level - 1 - l) for l in range(cols)]
         grid_center = [level - 1, 0.0]
-        
+
     elif pol_type == 'TRIANGLE':
         cols = 2 * level
         rows = [cols - abs(2 * level - 1 - 2 * l) for l in range(cols)]
         offset_y = [level - 0.5 - abs(level - 0.5 - l) for l in range(cols)]
         tile_rotated = [[(y + int(x / level)) % 2 for y in range(rows[x])] for x in range(cols)]
-        grid_center = [ (level - 1) + 1/3.0 , 0.0]
-        
+        grid_center = [(level - 1) + 1/3.0, 0.0]
+
     else: # pol_type == 'SQUARE':
         cols = 2 * level - 1
         rows = [2 * level - 1 - abs(2 * level - 2 - 2 * l) for l in range(cols)]
-        offset_y = [2 * level - 1 - abs(2 * level -2 - 2 * l) for l in range(cols)]
+        offset_y = [2 * level - 1 - abs(2 * level - 2 - 2 * l) for l in range(cols)]
         grid_center = [level - 1, 0.0]
-        
+
     return cols, rows, offset_y, grid_center, tile_rotated
 
 
@@ -125,21 +125,21 @@ def rect_layout(settings, pol_type):
     rows = [numy] * numx
     tile_rotated = 0
     if pol_type == 'HEXAGON':
-        offset_y = [ l % 2 for l in range(cols)]
-        grid_center = [ (numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
-        
+        offset_y = [l % 2 for l in range(cols)]
+        grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
+
     elif pol_type == 'TRIANGLE':
-        offset_y = [ 0 for l in range(cols)]
+        offset_y = [0 for l in range(cols)]
         grid_center = [(numx) / 2 - 2/3.0, (numy-1) / 2]
         tile_rotated = [[(x + y) % 2 for y in range(rows[x])] for x in range(cols)]
-        
+
     else: # pol_type == 'SQUARE':
-        offset_y = [ 0 for l in range(cols)]
+        offset_y = [0 for l in range(cols)]
         grid_center = [(numx-1) / 2, (numy-1) / 2]
-        
+
     return cols, rows, offset_y, grid_center, tile_rotated
 
-    
+
 def generate_grid(center, layout, pol_type, settings):
     r = settings[0]   # radius
     a = settings[1]   # angle
@@ -148,11 +148,11 @@ def generate_grid(center, layout, pol_type, settings):
         dx = r * 3 / 2    # distance between two consecutive points along X
         dy = r * sqrt(3)  # distance between two consecutive points along Y
         off_base = dy / 2
-    if pol_type ==  'TRIANGLE':
+    if pol_type == 'TRIANGLE':
         dx = r * 3 / 2
-        dy = r * sqrt(3)/2  
+        dy = r * sqrt(3)/2
         off_base = dy
-    elif pol_type ==  'SQUARE':
+    elif pol_type == 'SQUARE':
         dx = r * sqrt(2)
         dy = r * sqrt(2)
         off_base = dy / 2
@@ -164,30 +164,28 @@ def generate_grid(center, layout, pol_type, settings):
     tile_rotated:  offset in x for each tile
     grid_center : center of the grid
     '''
-    
+
     if layout == "TRIANGLE":
         cols, rows, offset_y, grid_center, tile_rotated = triang_layout(settings, pol_type)
 
-    elif layout == "HEXAGON":  
+    elif layout == "HEXAGON":
         cols, rows, offset_y, grid_center, tile_rotated = hexa_layout(settings, pol_type)
 
-    elif layout == "DIAMOND": 
+    elif layout == "DIAMOND":
         cols, rows, offset_y, grid_center, tile_rotated = diamond_layout(settings, pol_type)
 
     elif layout == "RECTANGLE":
-         cols, rows, offset_y, grid_center, tile_rotated = rect_layout(settings, pol_type)
-
+        cols, rows, offset_y, grid_center, tile_rotated = rect_layout(settings, pol_type)
 
     cx = grid_center[0] * dx if center else (-dx/2 if pol_type == 'SQUARE' else -dx*2/3)
     cy = grid_center[1] * dy if center else 0
 
-
     if pol_type == 'TRIANGLE':
         sin_base = sin(radians(30))
         x_offset = r * sin_base
-        grid = [(x * dx - cx - x_offset * tile_rotated[x][y], y * dy - offset_y[x] * off_base - cy , tile_rotated[x][y]) for x in range(cols) for y in range(rows[x])]
+        grid = [(x * dx - cx - x_offset * tile_rotated[x][y], y * dy - offset_y[x] * off_base - cy, tile_rotated[x][y]) for x in range(cols) for y in range(rows[x])]
     else:
-        grid = [(x * dx - cx , y * dy - offset_y[x] * off_base - cy , 0) for x in range(cols) for y in range(rows[x])]
+        grid = [(x * dx - cx, y * dy - offset_y[x] * off_base - cy, 0) for x in range(cols) for y in range(rows[x])]
 
     angle = radians(a)
     cosa = cos(angle)
@@ -205,7 +203,6 @@ def generate_tiles(tile_settings):
 
     local_angle = 45 if sides == 4 else 30
 
-    # verts, edges, polys = circle(radius*scale, radians(local_angle - angle), sides, None, 'pydata')
     tile = circle(radius*scale, radians(local_angle - angle), sides, None, 'pydata')
 
     for grid in grid_list:
@@ -338,13 +335,13 @@ class SvPolygonGridNode(bpy.types.Node, SverchCustomTreeNode):
         if self.gridLayout == "RECTANGLE":
             if "Level" in inputs:
                 inputs.remove(inputs["Level"])
-            if not "NumX" in inputs:
+            if "NumX" not in inputs:
                 inputs.new("StringsSocket", "NumX").prop_name = "numx"
-            if not "NumY" in inputs:
+            if "NumY" not in inputs:
                 inputs.new("StringsSocket", "NumY").prop_name = "numy"
 
         elif self.gridLayout in {"TRIANGLE", "DIAMOND", "HEXAGON"}:
-            if not "Level" in inputs:
+            if "Level" not in inputs:
                 inputs.new("StringsSocket", "Level").prop_name = "level"
             for socket_name in named_sockets:
                 if socket_name in inputs:
@@ -406,7 +403,6 @@ class SvPolygonGridNode(bpy.types.Node, SverchCustomTreeNode):
 
         params = match_long_repeat([input_radius, input_angle, input_scale, grid_list])
 
-
         vert_list, edge_list, poly_list = [[], [], []]
         for r, a, s, grid in zip(*params):
             tile_settings = [r, a, s, self.separate, [grid], sides]
@@ -416,7 +412,7 @@ class SvPolygonGridNode(bpy.types.Node, SverchCustomTreeNode):
             edge_list.extend(edges)
             poly_list.extend(polys)
 
-        if self.separate and len(vert_list)<2:
+        if self.separate and len(vert_list) < 2:
             vert_list = vert_list[0]
             edge_list = edge_list[0]
             poly_list = poly_list[0]
