@@ -581,6 +581,47 @@ class SvUpdateMonadClasses(Operator):
         return {'FINISHED'}
 
 
+class SvMonadDuplicateUnique(Operator):
+    '''Duplicate monad into a unique monad'''
+    bl_idname = "node.sv_monad_duplicate_unique"
+    bl_label = "Duplicate Unique"
+
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        tree_type = space_data.tree_type
+
+        if not tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            return
+
+        node = context.active_node
+        if node:
+            return hasattr(node, 'monad')
+
+    def execute(self, context):
+        """
+        - get associated monad from data.node_groups. (node.monad)
+        - make a copy of that node_group. (obtain resulting name)
+        - duplicate the node
+        - replace the new node.monad with the copy
+
+        """
+        current_monad_node = context.active_node
+        current_monad_tree = context.active_node.monad
+
+        print(current_monad_node, current_monad_tree)
+
+        # for monad in context.blend_data.node_groups:
+        #     if monad.bl_idname == "SverchGroupTreeType":
+        #         if not getattr(bpy.types, monad.cls_bl_idname, None):
+        #             try:
+        #                 monad.update_cls()
+        #             except Exception as err:
+        #                 print(err)
+        #                 print("{} group class could not be created".format(monad.name))
+        return {'FINISHED'}
+
+
 classes = [
     SvMoveSocketOpExp,
     SvRenameSocketOpExp,
@@ -590,7 +631,8 @@ classes = [
     SvMonadExpand,
     SvTreePathParent,
     SvMonadCreateFromSelected,
-    SvUpdateMonadClasses
+    SvUpdateMonadClasses,
+    SvMonadDuplicateUnique
 ]
 
 
