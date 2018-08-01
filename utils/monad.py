@@ -611,6 +611,7 @@ class SvMonadDuplicateUnique(Operator):
 
         print(current_monad_node, current_monad_tree)
 
+        current_monad_node.make_unique()
         # for monad in context.blend_data.node_groups:
         #     if monad.bl_idname == "SverchGroupTreeType":
         #         if not getattr(bpy.types, monad.cls_bl_idname, None):

@@ -302,6 +302,45 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return cls_ref
 
+    def make_unique(self):
+        """
+        create a new version of the monad class, with a copy of the node tree linked to .monad
+        """
+
+        monad_base_name = make_valid_identifier(self.name)
+        monad_itentifier = id(self) ^ random.randint(0, 4294967296)
+
+        cls_dict = {}
+
+        try:
+            # the monad cls_bl_idname needs to be unique and cannot change
+            cls_name = "SvGroupNode{}_{}".format(monad_base_name, monad_itentifier)
+            self.cls_bl_idname = cls_name
+        except Exception:
+            return None
+
+        self.verify_props()
+
+        cls_dict["bl_idname"] = cls_name
+        cls_dict["bl_label"] = self.name
+
+        cls_dict["input_template"] = self.generate_inputs()
+        cls_dict["output_template"] = self.generate_outputs()
+
+        self.make_props(cls_dict)
+
+        # done with setup
+
+        old_cls_ref = get_node_class_reference(cls_name)
+
+        bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
+
+        cls_ref = type(cls_name, bases, cls_dict)
+        sverchok.utils.register_node_class(cls_ref)
+
+        return cls_ref
+
+
     def make_props(self, cls_dict):
         for s in self.float_props:
             prop_dict = s.get_settings()
