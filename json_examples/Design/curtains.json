@@ -1,0 +1,1336 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {
+    "A Number": "Frame.005",
+    "A Number.001": "Frame.005",
+    "A Number.002": "Frame.005",
+    "A Number.003": "Frame.005",
+    "A Number.004": "Frame.005",
+    "Frame": "Frame.007",
+    "Frame.001": "Frame.007",
+    "Frame.002": "Frame.007",
+    "Frame.003": "Frame.007",
+    "Frame.004": "Frame.007",
+    "Frame.005": "Frame.007",
+    "Frame.006": "Frame.007",
+    "List Item": "Frame.004",
+    "List Split": "Frame.001",
+    "List Split.001": "Frame.006",
+    "List Split.002": "Frame.006",
+    "List Split.003": "Frame.001",
+    "Math MK2": "Frame.003",
+    "Math MK2.001": "Frame.003",
+    "Math MK2.002": "Frame.003",
+    "Math MK2.003": "Frame.003",
+    "Math MK2.004": "Frame.003",
+    "Math MK2.005": "Frame.003",
+    "Math MK2.006": "Frame.001",
+    "Math MK2.007": "Frame.001",
+    "Math MK2.008": "Frame.006",
+    "Monad": "Frame.002",
+    "Monad.001": "Frame.002",
+    "Move": "Frame.001",
+    "Move.001": "Frame.001",
+    "Note": "Frame.007",
+    "Plane MK2": "Frame.004",
+    "Random Num Gen": "Frame.006",
+    "Range Float": "Frame.001",
+    "Range Float.001": "Frame.006",
+    "Range Float.002": "Frame.006",
+    "Range Float.003": "Frame.006",
+    "Range Float.004": "Frame.006",
+    "Range Float.005": "Frame.001",
+    "Stethoscope MK2.001": "Frame.001",
+    "UV Connection": "Frame",
+    "Vector Noise MK2": "Frame.001",
+    "Vector Noise MK2.001": "Frame.001",
+    "Vector in.001": "Frame.002",
+    "Vector in.002": "Frame.001",
+    "Vector out": "Frame.002",
+    "Vector out.001": "Frame.004",
+    "Viewer Draw": "Frame"
+  },
+  "groups": {
+    "Monad": "{\"nodes\": {\"Group Inputs Exp\": {\"use_custom_color\": true, \"hide\": false, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"outputs\": [[\"\\u0440\\u044f\\u0434\", \"StringsSocket\"], [\"\\u043c\\u043d\\u043e\\u0436\\u0438\\u0442\\u0435\\u043b\\u044c\", \"StringsSocket\"], [\"\\u0434\\u0435\\u043b\\u0438\\u0442\\u0435\\u043b\\u044c\", \"StringsSocket\"], [\"\\u0434\\u043e\\u0431\\u0430\\u0432\\u043a\\u0430\", \"StringsSocket\"]], \"location\": [-542.5521240234375, 321.4207458496094], \"params\": {\"node_kind\": \"outputs\"}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvGroupInputsNodeExp\", \"width\": 140.0}, \"Math MK2\": {\"hide\": false, \"width\": 140.0, \"params\": {\"input_mode_two\": \"Float\", \"current_op\": \"SINE\"}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvScalarMathNodeMK2\", \"location\": [-322.362548828125, 484.77630615234375]}, \"Math MK2.001\": {\"hide\": false, \"width\": 140.0, \"params\": {\"y_\": 20.0}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvScalarMathNodeMK2\", \"location\": [-320.13421630859375, 631.0512084960938]}, \"Math MK2.005\": {\"hide\": false, \"width\": 140.0, \"params\": {\"input_mode_two\": \"Float\", \"current_op\": \"NEG\"}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvScalarMathNodeMK2\", \"location\": [-330.21435546875, 263.5793762207031]}, \"Math MK2.004\": {\"hide\": false, \"width\": 140.0, \"params\": {\"input_mode_two\": \"Float\", \"current_op\": \"ABS\"}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvScalarMathNodeMK2\", \"location\": [-332.5521240234375, 374.96221923828125]}, \"Group Outputs Exp\": {\"use_custom_color\": true, \"hide\": false, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"width\": 140.0, \"params\": {\"node_kind\": \"inputs\"}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvGroupOutputsNodeExp\", \"inputs\": [[\"Out\", \"StringsSocket\"]], \"location\": [-140.13421630859375, 321.4207458496094]}, \"Math MK2.003\": {\"hide\": false, \"width\": 140.0, \"params\": {\"current_op\": \"ADD\", \"y_\": 20.0}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvScalarMathNodeMK2\", \"location\": [-329.7945251464844, 11.790301322937012]}, \"Math MK2.002\": {\"hide\": false, \"width\": 140.0, \"params\": {\"current_op\": \"DIV\", \"y_\": 19.970001220703125}, \"label\": \"\", \"height\": 100.0, \"bl_idname\": \"SvScalarMathNodeMK2\", \"location\": [-325.5166015625, 143.22976684570312]}}, \"cls_bl_idname\": \"SvGroupNodeMonad_139913027433695\", \"groups\": {}, \"update_lists\": [[\"Group Inputs Exp\", 0, \"Math MK2.001\", 0], [\"Group Inputs Exp\", 1, \"Math MK2.001\", 1], [\"Math MK2.001\", 0, \"Math MK2\", 0], [\"Math MK2\", 0, \"Math MK2.004\", 0], [\"Math MK2.004\", 0, \"Math MK2.005\", 0], [\"Math MK2.005\", 0, \"Math MK2.002\", 0], [\"Group Inputs Exp\", 2, \"Math MK2.002\", 1], [\"Math MK2.002\", 0, \"Math MK2.003\", 0], [\"Group Inputs Exp\", 3, \"Math MK2.003\", 1], [\"Math MK2.003\", 0, \"Group Outputs Exp\", 0]], \"export_version\": \"0.072\", \"framed_nodes\": {}, \"bl_idname\": \"SverchGroupTreeType\"}"
+  },
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044c",
+      "location": [
+        -1744.357666015625,
+        -16.940567016601562
+      ],
+      "params": {
+        "float_": 26.84000015258789,
+        "int_": 0,
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c",
+      "location": [
+        -1749.6875,
+        175.24505615234375
+      ],
+      "params": {
+        "float_": 20.0,
+        "int_": 0,
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044c",
+      "location": [
+        -1747.7750244140625,
+        75.49539947509766
+      ],
+      "params": {
+        "float_": -20.0,
+        "int_": 0,
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1746.8492431640625,
+        -207.83148193359375
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 80,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.004": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1746.8492431640625,
+        -312.34210205078125
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 20,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        1.0,
+        0.11306069791316986,
+        0.020205369219183922
+      ],
+      "height": 327.5101318359375,
+      "hide": false,
+      "label": "out",
+      "location": [
+        83.1455078125,
+        -341.182861328125
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 373.396484375
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080015897750854,
+        0.17349475622177124,
+        0.019664091989398003
+      ],
+      "height": 704.2642822265625,
+      "hide": false,
+      "label": "combo",
+      "location": [
+        363.048583984375,
+        49.1220703125
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 826.935546875
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.5633690357208252,
+        0.6080008745193481,
+        0.023357151076197624
+      ],
+      "height": 675.6595458984375,
+      "hide": false,
+      "label": "top",
+      "location": [
+        12.714599609375,
+        254.25238037109375
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 1269.889892578125
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080015897750854,
+        0.40179115533828735,
+        0.010982142761349678
+      ],
+      "height": 808.2523193359375,
+      "hide": false,
+      "label": "wave",
+      "location": [
+        110.991455078125,
+        75.12213134765625
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 210.52587890625
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.32452064752578735,
+        0.6080000996589661,
+        0.15434634685516357
+      ],
+      "height": 333.0611572265625,
+      "hide": false,
+      "label": "generator",
+      "location": [
+        -62.831298828125,
+        125.27728271484375
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 596.79931640625
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.05300811678171158,
+        0.6080003976821899,
+        0.08946345746517181
+      ],
+      "height": 615.7156372070312,
+      "hide": false,
+      "label": "inputs",
+      "location": [
+        -53.52294921875,
+        87.97598266601562
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 205.6826171875
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.4360339343547821,
+        0.6080002784729004,
+        0.20849928259849548
+      ],
+      "height": 496.6114501953125,
+      "hide": false,
+      "label": "ranges",
+      "location": [
+        -47.88623046875,
+        -47.01824951171875
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 837.34814453125
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.9605157375335693,
+        0.601018488407135,
+        1.0
+      ],
+      "height": 1642.365478515625,
+      "hide": false,
+      "label": "Sverchok_viewer",
+      "location": [
+        -2506.16455078125,
+        543.171875
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 3628.46435546875
+    },
+    "List Item": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1211.9200439453125,
+        70.47297668457031
+      ],
+      "params": {
+        "item": -1
+      },
+      "width": 140.0
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        561.6642456054688,
+        -189.9044952392578
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Split.001": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -750.4096069335938,
+        -673.1322631835938
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Split.002": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -748.7008056640625,
+        -287.97686767578125
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Split.003": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        787.7043762207031,
+        -380.82183837890625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Math MK2": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -172.97427368164062,
+        -192.52474975585938
+      ],
+      "params": {
+        "current_op": "SINE",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Math MK2.001": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -172.92486572265625,
+        68.13466262817383
+      ],
+      "params": {
+        "y_": 20.0
+      },
+      "width": 140.0
+    },
+    "Math MK2.002": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -177.97555541992188,
+        -430.4380798339844
+      ],
+      "params": {
+        "current_op": "DIV",
+        "y_": 19.970001220703125
+      },
+      "width": 140.0
+    },
+    "Math MK2.003": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -182.25344848632812,
+        -561.8775024414062
+      ],
+      "params": {
+        "current_op": "ADD",
+        "y_": 20.0
+      },
+      "width": 140.0
+    },
+    "Math MK2.004": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -172.08050537109375,
+        -298.6376647949219
+      ],
+      "params": {
+        "current_op": "ABS",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Math MK2.005": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -172.91201782226562,
+        -62.23272705078125
+      ],
+      "params": {
+        "current_op": "ADD",
+        "y_": 20.0
+      },
+      "width": 140.0
+    },
+    "Math MK2.006": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        560.7507934570312,
+        -387.36517333984375
+      ],
+      "params": {
+        "current_op": "SINE",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Math MK2.007": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        563.3565063476562,
+        -510.3204345703125
+      ],
+      "params": {
+        "current_op": "POW2",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Math MK2.008": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1385.696044921875,
+        -542.2179260253906
+      ],
+      "params": {
+        "current_op": "-1",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Monad": {
+      "bl_idname": "SvMonadGenericNode",
+      "color": [
+        0.8308190107345581,
+        0.911391019821167,
+        0.7545620203018188
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0432\u043e\u043b\u043d\u0430",
+      "location": [
+        -132.42213439941406,
+        536.3558959960938
+      ],
+      "params": {
+        "all_props": {
+          "cls_bl_idname": "SvGroupNodeMonad_139913027433695",
+          "float_props": {
+            "x_": {
+              "default": 1.0,
+              "name": "\u0440\u044f\u0434"
+            },
+            "y_": {
+              "default": 19.970001220703125,
+              "name": "\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044c"
+            },
+            "y_2": {
+              "default": 20.0,
+              "name": "\u0434\u043e\u0431\u0430\u0432\u043a\u0430"
+            },
+            "y_3": {
+              "default": 20.0,
+              "name": "\u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c"
+            }
+          },
+          "int_props": {},
+          "name": "Monad"
+        },
+        "cls_dict": {
+          "cls_bl_idname": "SvGroupNodeMonad_139913027433695",
+          "input_template": [
+            [
+              "\u0440\u044f\u0434",
+              "StringsSocket",
+              {
+                "prop_name": "x_"
+              }
+            ],
+            [
+              "\u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c",
+              "StringsSocket",
+              {
+                "prop_name": "y_"
+              }
+            ],
+            [
+              "\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044c",
+              "StringsSocket",
+              {
+                "prop_name": "y_"
+              }
+            ],
+            [
+              "\u0434\u043e\u0431\u0430\u0432\u043a\u0430",
+              "StringsSocket",
+              {
+                "prop_name": "y_"
+              }
+            ]
+          ],
+          "output_template": [
+            [
+              "Out",
+              "StringsSocket"
+            ]
+          ]
+        },
+        "loops": 0,
+        "monad": "Monad"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Monad.001": {
+      "bl_idname": "SvMonadGenericNode",
+      "color": [
+        0.8308190107345581,
+        0.911391019821167,
+        0.7545620203018188
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "\u0432\u043e\u043b\u043d\u0430",
+      "location": [
+        -133.5313720703125,
+        797.4242553710938
+      ],
+      "params": {
+        "all_props": {
+          "cls_bl_idname": "SvGroupNodeMonad_139913027433695",
+          "float_props": {
+            "x_": {
+              "default": 1.0,
+              "name": "\u0440\u044f\u0434"
+            },
+            "y_": {
+              "default": 19.970001220703125,
+              "name": "\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044c"
+            },
+            "y_2": {
+              "default": 20.0,
+              "name": "\u0434\u043e\u0431\u0430\u0432\u043a\u0430"
+            },
+            "y_3": {
+              "default": 20.0,
+              "name": "\u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c"
+            }
+          },
+          "int_props": {},
+          "name": "Monad"
+        },
+        "cls_dict": {
+          "cls_bl_idname": "SvGroupNodeMonad_139913027433695",
+          "input_template": [
+            [
+              "\u0440\u044f\u0434",
+              "StringsSocket",
+              {
+                "prop_name": "x_"
+              }
+            ],
+            [
+              "\u043c\u043d\u043e\u0436\u0438\u0442\u0435\u043b\u044c",
+              "StringsSocket",
+              {
+                "prop_name": "y_"
+              }
+            ],
+            [
+              "\u0434\u0435\u043b\u0438\u0442\u0435\u043b\u044c",
+              "StringsSocket",
+              {
+                "prop_name": "y_"
+              }
+            ],
+            [
+              "\u0434\u043e\u0431\u0430\u0432\u043a\u0430",
+              "StringsSocket",
+              {
+                "prop_name": "y_"
+              }
+            ]
+          ],
+          "output_template": [
+            [
+              "Out",
+              "StringsSocket"
+            ]
+          ]
+        },
+        "loops": 0,
+        "monad": "Monad"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        790.6714782714844,
+        35.087791442871094
+      ],
+      "params": {
+        "mult_": 0.1899999976158142,
+        "separate": 0
+      },
+      "width": 127.04615020751953
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1000.6436157226562,
+        -174.1404571533203
+      ],
+      "params": {
+        "mult_": 0.1899999976158142,
+        "separate": 0
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1461.4051513671875,
+        680.151123046875
+      ],
+      "params": {
+        "text": "nikitron 2018 - curtain generator to make interior textile. v 0.1"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1406.8720703125,
+        69.10789108276367
+      ],
+      "params": {
+        "direction": "YZ",
+        "normalize": 1,
+        "numx": 80,
+        "numy": 20,
+        "separate": 1,
+        "sizex": 1.5,
+        "sizey": 2.5299999713897705,
+        "stepx": 1.0,
+        "stepy": 1.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Random Num Gen": {
+      "bl_idname": "SvRndNumGen",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -919.1128540039062,
+        -451.9010925292969
+      ],
+      "params": {
+        "high_i": 0,
+        "seed": 3,
+        "size": 80,
+        "type_selected_mode": "Float"
+      },
+      "width": 140.0
+    },
+    "Range Float": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        377.0514669418335,
+        -232.2779541015625
+      ],
+      "params": {
+        "count_": 19,
+        "mode": "FRANGE_COUNT",
+        "start_": -0.03999999538064003,
+        "stop_": 0.0
+      },
+      "width": 140.0
+    },
+    "Range Float.001": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -888.5364990234375,
+        -684.4865112304688
+      ],
+      "params": {
+        "count_": 19,
+        "mode": "FRANGE_COUNT",
+        "start_": 100.0,
+        "stop_": 20.0
+      },
+      "width": 140.0
+    },
+    "Range Float.002": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -921.9171752929688,
+        -289.0780487060547
+      ],
+      "params": {
+        "count_": 19,
+        "mode": "FRANGE_COUNT",
+        "start_": 13.859999656677246,
+        "stop_": 20.0
+      },
+      "width": 140.0
+    },
+    "Range Float.003": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1200.8734130859375,
+        -421.8278503417969
+      ],
+      "params": {
+        "count_": 19,
+        "mode": "FRANGE_COUNT",
+        "start_": 5.239999771118164,
+        "stop_": 0.0
+      },
+      "width": 140.0
+    },
+    "Range Float.004": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1196.531494140625,
+        -584.6149291992188
+      ],
+      "params": {
+        "count_": 19,
+        "mode": "FRANGE_COUNT",
+        "start_": 3.0,
+        "stop_": 0.0
+      },
+      "width": 140.0
+    },
+    "Range Float.005": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        387.8463535308838,
+        -396.6595458984375
+      ],
+      "params": {
+        "count_": 19,
+        "mode": "FRANGE_COUNT",
+        "start_": 0.24999994039535522,
+        "stop_": 0.0
+      },
+      "width": 140.0
+    },
+    "Stethoscope MK2.001": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1002.1175537109375,
+        -409.2794494628906
+      ],
+      "params": {
+        "num_elements": 1,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1445.0274658203125,
+        16.622161865234375
+      ],
+      "params": {
+        "cicl_check_U": 0,
+        "cicl_check_V": 0,
+        "dir_check": "U_dir",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector Noise MK2": {
+      "bl_idname": "SvNoiseNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        555.3283538818359,
+        -4.939411163330078
+      ],
+      "params": {
+        "noise_type": "VORONOI_F3",
+        "seed": 1
+      },
+      "width": 140.0
+    },
+    "Vector Noise MK2.001": {
+      "bl_idname": "SvNoiseNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        774.03125,
+        -179.71241760253906
+      ],
+      "params": {
+        "noise_type": "VORONOI_F1",
+        "seed": 1
+      },
+      "width": 140.0
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        326.3953857421875,
+        470.4742126464844
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector in.002": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        375.53486919403076,
+        -74.52061462402344
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector out": {
+      "bl_idname": "VectorsOutNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -783.141357421875,
+        296.20475006103516
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector out.001": {
+      "bl_idname": "VectorsOutNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1010.42578125,
+        41.28343200683594
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1618.07080078125,
+        34.21600341796875
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "face_colors": [
+          0.8990018963813782,
+          0.04189547896385193,
+          0.017823023721575737
+        ],
+        "shading": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number.003",
+      0,
+      "Plane MK2",
+      0
+    ],
+    [
+      "A Number.004",
+      0,
+      "Plane MK2",
+      1
+    ],
+    [
+      "Plane MK2",
+      0,
+      "List Item",
+      0
+    ],
+    [
+      "List Item",
+      0,
+      "Vector out",
+      0
+    ],
+    [
+      "Vector out",
+      1,
+      "Monad",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Monad",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Monad",
+      2
+    ],
+    [
+      "Vector out",
+      2,
+      "Monad",
+      3
+    ],
+    [
+      "Vector out",
+      1,
+      "Monad.001",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Monad.001",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Monad.001",
+      2
+    ],
+    [
+      "Vector out",
+      0,
+      "Monad.001",
+      3
+    ],
+    [
+      "Monad.001",
+      0,
+      "Vector in.001",
+      0
+    ],
+    [
+      "Vector out",
+      1,
+      "Vector in.001",
+      1
+    ],
+    [
+      "Monad",
+      0,
+      "Vector in.001",
+      2
+    ],
+    [
+      "List Item",
+      1,
+      "Vector out.001",
+      0
+    ],
+    [
+      "A Number.004",
+      0,
+      "Math MK2.008",
+      0
+    ],
+    [
+      "Math MK2.008",
+      0,
+      "Range Float.004",
+      2
+    ],
+    [
+      "Math MK2.008",
+      0,
+      "Range Float.003",
+      2
+    ],
+    [
+      "A Number.003",
+      0,
+      "Random Num Gen",
+      0
+    ],
+    [
+      "Range Float.003",
+      0,
+      "Random Num Gen",
+      2
+    ],
+    [
+      "Range Float.004",
+      0,
+      "Random Num Gen",
+      3
+    ],
+    [
+      "Math MK2.008",
+      0,
+      "Range Float.002",
+      2
+    ],
+    [
+      "Range Float.002",
+      0,
+      "List Split.002",
+      0
+    ],
+    [
+      "Vector out.001",
+      1,
+      "Math MK2.001",
+      0
+    ],
+    [
+      "List Split.002",
+      0,
+      "Math MK2.001",
+      1
+    ],
+    [
+      "Math MK2.001",
+      0,
+      "Math MK2.005",
+      0
+    ],
+    [
+      "Random Num Gen",
+      0,
+      "Math MK2.005",
+      1
+    ],
+    [
+      "Math MK2.005",
+      0,
+      "Math MK2",
+      0
+    ],
+    [
+      "Math MK2",
+      0,
+      "Math MK2.004",
+      0
+    ],
+    [
+      "Range Float.001",
+      0,
+      "List Split.001",
+      0
+    ],
+    [
+      "Math MK2.004",
+      0,
+      "Math MK2.002",
+      0
+    ],
+    [
+      "List Split.001",
+      0,
+      "Math MK2.002",
+      1
+    ],
+    [
+      "Math MK2.002",
+      0,
+      "Math MK2.003",
+      0
+    ],
+    [
+      "Vector out.001",
+      0,
+      "Math MK2.003",
+      1
+    ],
+    [
+      "Math MK2.003",
+      0,
+      "Vector in.002",
+      0
+    ],
+    [
+      "Vector out.001",
+      1,
+      "Vector in.002",
+      1
+    ],
+    [
+      "Vector out.001",
+      2,
+      "Vector in.002",
+      2
+    ],
+    [
+      "Vector in.002",
+      0,
+      "Vector Noise MK2.001",
+      0
+    ],
+    [
+      "Math MK2.008",
+      0,
+      "Range Float.005",
+      2
+    ],
+    [
+      "Range Float.005",
+      0,
+      "Math MK2.006",
+      0
+    ],
+    [
+      "Math MK2.006",
+      0,
+      "Math MK2.007",
+      0
+    ],
+    [
+      "Math MK2.007",
+      0,
+      "List Split.003",
+      0
+    ],
+    [
+      "Math MK2.008",
+      0,
+      "Range Float",
+      2
+    ],
+    [
+      "Range Float",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "Vector in.002",
+      0,
+      "Vector Noise MK2",
+      0
+    ],
+    [
+      "Vector in.002",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector Noise MK2",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "List Split",
+      0,
+      "Move",
+      2
+    ],
+    [
+      "Move",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Vector Noise MK2.001",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "List Split.003",
+      0,
+      "Move.001",
+      2
+    ],
+    [
+      "Move.001",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Vector in.001",
+      0,
+      "UV Connection",
+      1
+    ],
+    [
+      "Math MK2.007",
+      0,
+      "Stethoscope MK2.001",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw",
+      1
+    ]
+  ]
+}
