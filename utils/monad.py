@@ -607,19 +607,11 @@ class SvMonadDuplicateUnique(Operator):
 
         """
         current_monad_node = context.active_node
-        current_monad_tree = context.active_node.monad
+        copied_monad_node = current_monad_node.copy()
+        current_monad_tree = copied_monad_node.monad
+        # print(current_monad_node, current_monad_tree)
 
-        print(current_monad_node, current_monad_tree)
-
-        current_monad_node.make_unique()
-        # for monad in context.blend_data.node_groups:
-        #     if monad.bl_idname == "SverchGroupTreeType":
-        #         if not getattr(bpy.types, monad.cls_bl_idname, None):
-        #             try:
-        #                 monad.update_cls()
-        #             except Exception as err:
-        #                 print(err)
-        #                 print("{} group class could not be created".format(monad.name))
+        current_monad_node.monad.make_unique()
         return {'FINISHED'}
 
 

@@ -25,7 +25,8 @@ from bpy.types import Node, NodeTree
 from bpy.props import StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty
 
 import sverchok
-from sverchok.utils import get_node_class_reference
+from sverchok.utils import get_node_class_reference, sv_IO_monad_helpers
+from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree
 from sverchok.utils.logging import info, error
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
@@ -305,40 +306,29 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     def make_unique(self):
         """
         create a new version of the monad class, with a copy of the node tree linked to .monad
+
+        this will attempt to store the duplicate in a json, like is used for IO/json. The upside is 
+        that this will test the pack/unpack routine continuously. the downside is that this will likely 
+        expose all the shortcommings that we don't know about because it wasn't being tested extensively.
+
+        i'm trying to saw... this is wonky AF. :)  
+
         """
+        node_items = {}
+        groups_dict = {}
+        pack_monad(node, node_items, groups_dict, create_dict_of_tree)
 
-        monad_base_name = make_valid_identifier(self.name)
-        monad_itentifier = id(self) ^ random.randint(0, 4294967296)
+        # modify the content of node_items and groups_dict if needed, to correspond wit the new desired name
+        
+        # generate a new copy of monad group node. using ( copy? ) 
+        # place new empty version of the monad node
 
-        cls_dict = {}
+        node_tree = self.id_data
+        nodes = node_tree.nodes
+        unpack_monad(nodes, node_ref)
 
-        try:
-            # the monad cls_bl_idname needs to be unique and cannot change
-            cls_name = "SvGroupNode{}_{}".format(monad_base_name, monad_itentifier)
-            self.cls_bl_idname = cls_name
-        except Exception:
-            return None
 
-        self.verify_props()
 
-        cls_dict["bl_idname"] = cls_name
-        cls_dict["bl_label"] = self.name
-
-        cls_dict["input_template"] = self.generate_inputs()
-        cls_dict["output_template"] = self.generate_outputs()
-
-        self.make_props(cls_dict)
-
-        # done with setup
-
-        old_cls_ref = get_node_class_reference(cls_name)
-
-        bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
-
-        cls_ref = type(cls_name, bases, cls_dict)
-        sverchok.utils.register_node_class(cls_ref)
-
-        return cls_ref
 
 
     def make_props(self, cls_dict):
