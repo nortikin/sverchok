@@ -47,6 +47,40 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
 
+def monad_make_unique(node):
+
+    """
+    create a new version of the monad class, with a copy of the node tree linked to .monad
+
+    this will attempt to store the duplicate in a json, like is used for IO/json. The upside is 
+    that this will test the pack/unpack routine continuously. the downside is that this will likely 
+    expose all the shortcommings that we don't know about because it wasn't being tested extensively.
+
+    this is wonky AF. :)  
+
+    """
+    node_items = {}
+    groups_dict = {}
+    sv_IO_monad_helpers.pack_monad(node, node_items, groups_dict, create_dict_of_tree)
+    
+    # generate a new copy of monad group node. using ( copy? ) 
+    monad_group = bpy.data.node_groups[node.monad.name]
+    new_monad_group = monad_group.copy()
+    
+    # modify the content of node_items and groups_dict if needed, to correspond wit the new desired name
+    node_items['all_props']['name'] = new_monad_group.name
+    node_items['all_props']['cls_bl_idname'] = '' # ... # 'SvGroupNodeMonad_1864203114103'
+    node_items['monad'] = new_monad_group.name
+    node_items['cls_dict']['cls_bl_idname'] = '' # ... # 'SvGroupNodeMonad_1864203114103'
+
+    # place new empty version of the monad node
+    node_tree = node.id_data
+    nodes = node_tree.nodes
+    node_ref = place_new_monad_node(node)
+
+    # sv_IO_monad_helpers.unpack_monad(nodes, node_ref)
+
+
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
@@ -302,32 +336,6 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         sverchok.utils.register_node_class(cls_ref)
 
         return cls_ref
-
-    def make_unique(self):
-        """
-        create a new version of the monad class, with a copy of the node tree linked to .monad
-
-        this will attempt to store the duplicate in a json, like is used for IO/json. The upside is 
-        that this will test the pack/unpack routine continuously. the downside is that this will likely 
-        expose all the shortcommings that we don't know about because it wasn't being tested extensively.
-
-        i'm trying to saw... this is wonky AF. :)  
-
-        """
-        node_items = {}
-        groups_dict = {}
-        pack_monad(node, node_items, groups_dict, create_dict_of_tree)
-
-        # modify the content of node_items and groups_dict if needed, to correspond wit the new desired name
-        
-        # generate a new copy of monad group node. using ( copy? ) 
-        # place new empty version of the monad node
-
-        node_tree = self.id_data
-        nodes = node_tree.nodes
-        unpack_monad(nodes, node_ref)
-
-
 
 
 

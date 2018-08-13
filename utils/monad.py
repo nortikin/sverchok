@@ -16,6 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import sys
 
 import bpy
 from bpy.types import Operator
@@ -24,6 +25,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket
+from sverchok.core.monad import monad_make_unique
 
 
 socket_types = [
@@ -33,8 +35,6 @@ socket_types = [
 ]
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
-
-
 
 
 
@@ -606,12 +606,14 @@ class SvMonadDuplicateUnique(Operator):
         - replace the new node.monad with the copy
 
         """
-        current_monad_node = context.active_node
-        copied_monad_node = current_monad_node.copy()
-        current_monad_tree = copied_monad_node.monad
-        # print(current_monad_node, current_monad_tree)
-
-        current_monad_node.monad.make_unique()
+        
+        try:
+            monad_make_unique(context.active_node)
+        except Exception as err:
+            sys.stderr.write('ERROR: %s\n' % str(err))
+            print(sys.exc_info()[-1].tb_frame.f_code)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+        
         return {'FINISHED'}
 
 
