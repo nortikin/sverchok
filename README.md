@@ -1,8 +1,13 @@
+<p align="center">
+<a href="http://nikitron.cc.ua/sverchok_en.html">
+<img src="ui/logo/png/sverchock_icon_t.png" width="150" title="hover text">
+</a>
+</p>
+<h1 align="center">Sverchok</h1>
+
 [![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
 
-# English
-
-## Sverchok parametric tools
+## English
 
 **addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
@@ -89,7 +94,7 @@ Email: sverchok-b3d@yandex.ru
 
 [![Please donate](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JZESR6GN9AKNS)
 
-# По-русски
+## По-русски
 
 **дополнение к**: [Blender](http://blender.org)  (версия *2.77* и выше).  
 **текущая версия**: Смотри настройки Сверчка или панель   
