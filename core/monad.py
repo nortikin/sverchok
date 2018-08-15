@@ -26,7 +26,7 @@ from bpy.props import StringProperty, FloatProperty, IntProperty, BoolProperty, 
 
 import sverchok
 from sverchok.utils import get_node_class_reference, sv_IO_monad_helpers
-from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree
+from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree, import_tree
 from sverchok.utils.logging import info, error
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
