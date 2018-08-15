@@ -47,6 +47,23 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
 
+def make_valid_identifier(name):
+    """Create a valid python identifier from name for use a a part of class name"""
+    while name and not name[0].isalpha():
+        name = name[1:]
+    if not name:
+        return "generic"
+    return "".join(ch for ch in name if ch.isalnum() or ch == "_")
+
+
+def make_new_classname(monad_node_group):
+    monad_base_name = make_valid_identifier(monad_node_group.name)
+    monad_itentifier = id(monad_node_group) ^ random.randint(0, 4294967296)
+
+    cls_name = "SvGroupNode{}_{}".format(monad_base_name, monad_itentifier)
+    return cls_name
+
+
 def monad_make_unique(node):
 
     """
@@ -59,36 +76,31 @@ def monad_make_unique(node):
     this is wonky AF. :)  
 
     """
-    node_items = {}
-    groups_dict = {}
-    sv_IO_monad_helpers.pack_monad(node, node_items, groups_dict, create_dict_of_tree)
-    
+    # sv_IO_monad_helpers.pack_monad(node, node_items, groups_dict, create_dict_of_tree)
+    node_tree = node.id_data
+    nodes = node_tree.nodes
+
     # generate a new copy of monad group node. using ( copy? ) 
     monad_group = bpy.data.node_groups[node.monad.name]
     new_monad_group = monad_group.copy()
-    
-    # modify the content of node_items and groups_dict if needed, to correspond wit the new desired name
+    new_cls_name = make_new_classname(new_monad_group) 
+
+    # the new tree dict will contain information about 1 node only, and 
+    # the node_group too (at the moment) but the node_group data can be ignored.
+    skip_set = {n for n in nodes if n != node}
+    layout_json = create_dict_of_tree(ng=node_tree, skip_set)
+
+    # massage content of node_items, to correspond with the new desired name.
+    node_items = layout_json['nodes'][node.name]
     node_items['all_props']['name'] = new_monad_group.name
-    node_items['all_props']['cls_bl_idname'] = '' # ... # 'SvGroupNodeMonad_1864203114103'
+    node_items['all_props']['cls_bl_idname'] = new_cls_name # 'SvGroupNodeMonad_1864203114103'
     node_items['monad'] = new_monad_group.name
-    node_items['cls_dict']['cls_bl_idname'] = '' # ... # 'SvGroupNodeMonad_1864203114103'
+    node_items['cls_dict']['cls_bl_idname'] = new_cls_name # 'SvGroupNodeMonad_1864203114103'
 
     # place new empty version of the monad node
-    node_tree = node.id_data
-    nodes = node_tree.nodes
-    node_ref = place_new_monad_node(node)
+    # sv_IO_monad_helpers.unpack_monad(nodes, node_ref=node_items)
+    import_tree(node_tree, nodes_json=layout_json)
 
-    # sv_IO_monad_helpers.unpack_monad(nodes, node_ref)
-
-
-
-def make_valid_identifier(name):
-    """Create a valid python identifier from name for use a a part of class name"""
-    while name and not name[0].isalpha():
-        name = name[1:]
-    if not name:
-        return "generic"
-    return "".join(ch for ch in name if ch.isalnum() or ch == "_")
 
 
 def get_socket_data(socket):
