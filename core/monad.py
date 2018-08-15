@@ -75,8 +75,11 @@ def monad_make_unique(node):
 
     this is wonky AF. :)  
 
+    upon reflection: 
+        -because the node ignores the stored nodegroup data in the layout_json, 
+        it does not rely on the pure serializzation storage. 
+
     """
-    # sv_IO_monad_helpers.pack_monad(node, node_items, groups_dict, create_dict_of_tree)
     node_tree = node.id_data
     nodes = node_tree.nodes
 
@@ -94,12 +97,11 @@ def monad_make_unique(node):
     node_ref = layout_json['nodes'][node.name]
     node_items = node_ref['params']
     node_items['all_props']['name'] = new_monad_group.name
-    node_items['all_props']['cls_bl_idname'] = new_cls_name # 'SvGroupNodeMonad_1864203114103'
+    node_items['all_props']['cls_bl_idname'] = new_cls_name
     node_items['monad'] = new_monad_group.name
-    node_items['cls_dict']['cls_bl_idname'] = new_cls_name # 'SvGroupNodeMonad_1864203114103'
+    node_items['cls_dict']['cls_bl_idname'] = new_cls_name
 
     # place new empty version of the monad node
-    # sv_IO_monad_helpers.unpack_monad(nodes, node_ref=node_items)
     import_tree(node_tree, nodes_json=layout_json)
 
     # at this point record all incoming and outgoing connections
