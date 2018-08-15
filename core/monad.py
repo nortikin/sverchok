@@ -102,6 +102,15 @@ def monad_make_unique(node):
     # sv_IO_monad_helpers.unpack_monad(nodes, node_ref=node_items)
     import_tree(node_tree, nodes_json=layout_json)
 
+    # at this point record all incoming and outgoing connections
+    ...
+
+    # remove the old node (this is probably a duplicate anyway)
+    ...
+
+    # reconnect old connections.
+    ...
+
 
 def get_socket_data(socket):
     other = get_other_socket(socket)
