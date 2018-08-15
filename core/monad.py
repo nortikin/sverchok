@@ -88,10 +88,11 @@ def monad_make_unique(node):
     # the new tree dict will contain information about 1 node only, and 
     # the node_group too (at the moment) but the node_group data can be ignored.
     skip_set = {n for n in nodes if n != node}
-    layout_json = create_dict_of_tree(ng=node_tree, skip_set)
+    layout_json = create_dict_of_tree(ng=node_tree, skip_set=skip_set)
 
     # massage content of node_items, to correspond with the new desired name.
-    node_items = layout_json['nodes'][node.name]
+    node_ref = layout_json['nodes'][node.name]
+    node_items = node_ref['params']
     node_items['all_props']['name'] = new_monad_group.name
     node_items['all_props']['cls_bl_idname'] = new_cls_name # 'SvGroupNodeMonad_1864203114103'
     node_items['monad'] = new_monad_group.name
@@ -100,7 +101,6 @@ def monad_make_unique(node):
     # place new empty version of the monad node
     # sv_IO_monad_helpers.unpack_monad(nodes, node_ref=node_items)
     import_tree(node_tree, nodes_json=layout_json)
-
 
 
 def get_socket_data(socket):
