@@ -67,19 +67,14 @@ def make_new_classname(monad_node_group):
 def monad_make_unique(node):
 
     """
-    create a new version of the monad class, with a copy of the node tree linked to .monad
+    Create a new version of the monad class (duplicate but unique)
 
-    this will attempt to store the duplicate in a json, like is used for IO/json. The upside is 
-    that this will test the pack/unpack routine continuously. the downside is that this will likely 
-    expose all the shortcommings that we don't know about because it wasn't being tested extensively.
-
-    this is wonky AF. :)  
-
-    upon reflection: 
-        -because the node ignores the stored nodegroup data in the layout_json, 
-        it does not rely on the pure serializzation storage. 
-
+    This will attempt to store the duplicate in a json using create_dict_of_tree (from the Gist IO).
+    The upside is that this will test the pack/unpack routine continuously. 
+    The downside is that this will likely expose all the shortcommings that we don't know 
+    about because it wasn't being tested extensively.
     """
+
     node_tree = node.id_data
     nodes = node_tree.nodes
 
