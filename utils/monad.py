@@ -581,10 +581,10 @@ class SvUpdateMonadClasses(Operator):
         return {'FINISHED'}
 
 
-class SvMonadDuplicateUnique(Operator):
+class SvMonadMakeUnique(Operator):
     '''Duplicate monad into a unique monad'''
-    bl_idname = "node.sv_monad_duplicate_unique"
-    bl_label = "Duplicate Unique"
+    bl_idname = "node.sv_monad_make_unique"
+    bl_label = "Make Unique (Monad)"
 
     @classmethod
     def poll(cls, context):
@@ -627,7 +627,7 @@ classes = [
     SvTreePathParent,
     SvMonadCreateFromSelected,
     SvUpdateMonadClasses,
-    SvMonadDuplicateUnique
+    SvMonadMakeUnique
 ]
 
 
