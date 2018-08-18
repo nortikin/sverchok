@@ -108,6 +108,8 @@ def monad_make_unique(node):
     # reconnect old connections.
     ...
 
+    # return newly generated node?
+
 
 def get_socket_data(socket):
     other = get_other_socket(socket)
