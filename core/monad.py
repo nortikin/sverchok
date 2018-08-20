@@ -99,14 +99,22 @@ def monad_make_unique(node):
     # place new empty version of the monad node
     import_tree(node_tree, nodes_json=layout_json)
 
-    # at this point record all incoming and outgoing connections
-    ...
+    """
+    notions..:
+    
+        if (original instance has no connections) then 
+            replace it outright.
+        else
+            if mode=='replace':
+                store connections
+                replace instance with new unique instance
+                reconnect old connections
+            elif mode=='dupe_translate':
+                generate unique instance
+                attache node to transform operator.
 
-    # remove the old node (this is probably a duplicate anyway)
-    ...
 
-    # reconnect old connections.
-    ...
+    """
 
     # return newly generated node?
 
