@@ -85,8 +85,10 @@ def monad_make_unique(node):
 
     # the new tree dict will contain information about 1 node only, and 
     # the node_group too (at the moment) but the node_group data can be ignored.
-    skip_set = {n for n in nodes if n != node}
-    layout_json = create_dict_of_tree(ng=node_tree, skip_set=skip_set)
+    layout_json = create_dict_of_tree(ng=node_tree, identified_node=node)
+
+    # do not restore links this way. wipe this entry and restore at a later stage.
+    layout_json['update_lists'] = []
 
     # massage content of node_items, to correspond with the new desired name.
     node_ref = layout_json['nodes'][node.name]
@@ -99,14 +101,24 @@ def monad_make_unique(node):
     # place new empty version of the monad node
     import_tree(node_tree, nodes_json=layout_json)
 
-    # at this point record all incoming and outgoing connections
-    ...
+    """
+    notions..:
+    
+        if (original instance has no connections) then 
+            replace it outright.
+        else
+            if mode=='replace':
+                store connections
+                replace instance with new unique instance
+                reconnect old connections
+            elif mode=='dupe_translate':
+                generate unique instance
+                attache node to transform operator.
 
-    # remove the old node (this is probably a duplicate anyway)
-    ...
 
-    # reconnect old connections.
-    ...
+    """
+
+    # return newly generated node?
 
 
 def get_socket_data(socket):
