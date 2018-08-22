@@ -98,8 +98,13 @@ def monad_make_unique(node):
     node_items['monad'] = new_monad_group.name
     node_items['cls_dict']['cls_bl_idname'] = new_cls_name
 
+    pre_nodes = set(nodes)
+
     # place new empty version of the monad node
     import_tree(node_tree, nodes_json=layout_json)
+
+    # check the set difference, result can be used as reference for plumbing
+    newly_generated_node = (set(node_tree.nodes) ^ pre_nodes).pop()
 
     """
     notions..:
@@ -118,7 +123,7 @@ def monad_make_unique(node):
 
     """
 
-    # return newly generated node?
+    return newly_generated_node
 
 
 def get_socket_data(socket):
