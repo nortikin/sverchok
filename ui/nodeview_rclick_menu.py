@@ -178,6 +178,8 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             col.prop(node, 'label_size', slider=True)
             col.prop(node, 'shrink')
 
+        if node and hasattr(node, 'monad'):
+            layout.operator("node.sv_monad_make_unique", icon="RNA_ADD")
 
 
 def register():

@@ -49,6 +49,9 @@ Install Sverchok as you would any blender addon.
    Press `Update Sverchok` button.   
    At the end press F8 to reload add-ons. In NodeView the new version number will appear in the N-panel.   
 
+-  _Additionally_  
+   It is recommended to have such python libreries as scipy, marching cubes, shapely. They are used in some scripted nodes.  
+
 ### Troubleshooting Installation Errors
 
 If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
@@ -138,6 +141,9 @@ Email: sverchok-b3d@yandex.ru
    Используйте кнопку `Check for new version` в панели Сверчка в раскладке узлов (`N` чтобы вызвать). 
    Нажмите кнопку `Update Sverchok` там же.  
    Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия.  
+
+-  _Дополнительно_  
+   Рекомендуем установить некоторые python библиотеки, как то scipy, marching cubes, shapely. Они использованы в некоторых скриптовых узлах.  
 
 ### Известные ошибки установки
 Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.  
