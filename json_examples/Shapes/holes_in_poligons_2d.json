@@ -3,16 +3,21 @@
   "framed_nodes": {
     "Centers polygons 3": "Frame.004",
     "Circle": "Frame.003",
+    "Cylinder": "Frame.004",
+    "Frame.001": "Frame",
+    "Frame.002": "Frame",
+    "Frame.003": "Frame",
+    "Frame.004": "Frame",
+    "List Length": "Frame.004",
     "Matrix Apply": "Frame.003",
-    "Move": "Frame.004",
-    "Plane MK2": "Frame.004",
+    "Note": "Frame",
     "Polygon Boom": "Frame.002",
-    "Polygons to Edges": "Frame.002",
     "Range Float": "Frame.003",
+    "Range Int": "Frame.003",
+    "Reroute": "Frame",
+    "Reroute.001": "Frame",
     "Scripted Node Lite": "Frame.001",
-    "Scripted Node Lite.001": "Frame",
-    "Scripted Node Lite.002": "Frame",
-    "Vector in": "Frame.004"
+    "Viewer Draw": "Frame"
   },
   "groups": {},
   "nodes": {
@@ -23,12 +28,12 @@
       "label": "",
       "location": [
         151.7725760936737,
-        493.4723663330078
+        493.4723358154297
       ],
       "params": {
         "Separate": 1
       },
-      "width": 140.0
+      "width": 100.0
     },
     "Circle": {
       "bl_idname": "SvCircleNode",
@@ -41,8 +46,8 @@
       "hide": false,
       "label": "",
       "location": [
-        148.1439208984375,
-        7.618629455566406
+        167.457763671875,
+        172.73373413085938
       ],
       "params": {
         "rad_": 0.10600003600120544,
@@ -51,94 +56,8 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Frame": {
-      "bl_idname": "NodeFrame",
-      "height": 372.4134521484375,
-      "hide": false,
-      "label": "to order",
-      "location": [
-        0.0,
-        60.0
-      ],
-      "params": {},
-      "width": 200.85003662109375
-    },
-    "Frame.001": {
-      "bl_idname": "NodeFrame",
-      "height": 202.3009033203125,
-      "hide": false,
-      "label": "one hole",
-      "location": [
-        41.679115295410156,
-        58.653072357177734
-      ],
-      "params": {},
-      "width": 258.166015625
-    },
-    "Frame.002": {
-      "bl_idname": "NodeFrame",
-      "height": 291.4602355957031,
-      "hide": false,
-      "label": "poligon per poligon",
-      "location": [
-        0.0,
-        84.24474334716797
-      ],
-      "params": {},
-      "width": 200.39273071289062
-    },
-    "Frame.003": {
-      "bl_idname": "NodeFrame",
-      "height": 262.79510498046875,
-      "hide": false,
-      "label": "on every poligon circle",
-      "location": [
-        0.0,
-        60.0
-      ],
-      "params": {},
-      "width": 680.509521484375
-    },
-    "Frame.004": {
-      "bl_idname": "NodeFrame",
-      "height": 493.13433837890625,
-      "hide": false,
-      "label": "squeres with centers",
-      "location": [
-        3.672997236251831,
-        129.91368103027344
-      ],
-      "params": {},
-      "width": 444.2841796875
-    },
-    "Matrix Apply": {
-      "bl_idname": "SvMatrixApplyJoinNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        381.7261962890625,
-        7.618629455566406
-      ],
-      "params": {
-        "do_join": 0
-      },
-      "width": 140.0
-    },
-    "Move": {
-      "bl_idname": "SvMoveNodeMK2",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        151.35651469230652,
-        285.9526824951172
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "Plane MK2": {
-      "bl_idname": "SvPlaneNodeMK2",
+    "Cylinder": {
+      "bl_idname": "CylinderNode",
       "color": [
         0.0,
         0.5,
@@ -148,22 +67,153 @@
       "hide": false,
       "label": "",
       "location": [
-        -92.15864491462708,
-        525.9579010009766
+        -198.92467427253723,
+        492.9993133544922
       ],
       "params": {
-        "center": 1,
-        "linkSizes": 1,
-        "normalize": 1,
-        "numx": 6,
-        "numy": 5,
-        "sizeRatio": 1.0,
-        "sizex": 1.0,
-        "sizey": 1.0,
-        "syncing": 0
+        "cap_": 1,
+        "radBot_": 3.0,
+        "radTop_": 2.0,
+        "vert_": 8
       },
       "use_custom_color": true,
       "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.1127164363861084,
+        0.1283397376537323,
+        0.6080000996589661
+      ],
+      "height": 736.830810546875,
+      "hide": false,
+      "label": "",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 1302.7686767578125
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.20882950723171234,
+        0.7706804275512695,
+        1.0
+      ],
+      "height": 247.59854125976562,
+      "hide": false,
+      "label": "one hole",
+      "location": [
+        -221.4429473876953,
+        119.83309936523438
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 274.74200439453125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080001592636108,
+        0.12700000405311584,
+        0.5906147360801697
+      ],
+      "height": 173.93081665039062,
+      "hide": false,
+      "label": "poligon per poligon",
+      "location": [
+        0.0,
+        84.24474334716797
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 160.35296630859375
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6079999804496765,
+        0.6079999804496765,
+        0.6079999804496765
+      ],
+      "height": 360.2255859375,
+      "hide": false,
+      "label": "on every poligon circle",
+      "location": [
+        85.61787414550781,
+        219.57968139648438
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 539.662353515625
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "height": 292.2958984375,
+      "hide": false,
+      "label": "squeres with centers",
+      "location": [
+        3.672997236251831,
+        129.91368103027344
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 511.0502014160156
+    },
+    "List Length": {
+      "bl_idname": "ListLengthNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -10.994446992874146,
+        380.3145751953125
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Matrix Apply": {
+      "bl_idname": "SvMatrixApplyJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        365.7973175048828,
+        179.16677856445312
+      ],
+      "params": {
+        "do_join": 0
+      },
+      "width": 100.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        572.7691040039062,
+        525.5955200195312
+      ],
+      "params": {
+        "text": "nikitron 2018 - script node light - holes example for imitating boolean 2d operation with no intersection"
+      },
+      "use_custom_color": true,
+      "width": 400.0
     },
     "Polygon Boom": {
       "bl_idname": "PolygonBoomNode",
@@ -175,19 +225,7 @@
         381.4602279663086
       ],
       "params": {},
-      "width": 140.0
-    },
-    "Polygons to Edges": {
-      "bl_idname": "Pols2EdgsNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        375.60906982421875,
-        248.62500762939453
-      ],
-      "params": {},
-      "width": 140.0
+      "width": 100.0
     },
     "Range Float": {
       "bl_idname": "SvGenFloatRange",
@@ -195,16 +233,55 @@
       "hide": false,
       "label": "",
       "location": [
-        -98.4303970336914,
-        7.618629455566406
+        -12.812522888183594,
+        167.19830322265625
       ],
       "params": {
         "count_": 25,
         "mode": "FRANGE_COUNT",
-        "start_": 0.03099999949336052,
-        "stop_": 0.10700000077486038
+        "start_": 0.4899999797344208,
+        "stop_": 0.9319999814033508
       },
       "width": 140.0
+    },
+    "Range Int": {
+      "bl_idname": "GenListRangeIntNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -13.512138366699219,
+        19.006927490234375
+      ],
+      "params": {
+        "mode": "COUNTRANGE",
+        "start_": 4
+      },
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        66.13886260986328,
+        442.0242004394531
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        82.99327850341797,
+        477.8207702636719
+      ],
+      "params": {},
+      "width": 16.0
     },
     "Scripted Node Lite": {
       "bl_idname": "SvScriptNodeLite",
@@ -217,81 +294,18 @@
       "hide": false,
       "label": "",
       "location": [
-        842.7535171508789,
-        244.65383529663086
+        579.6314544677734,
+        305.8338623046875
       ],
       "params": {
         "inject_params": 0,
         "injected_state": 0,
         "script_name": "hole_in_ordered_poligon.py",
-        "script_str": "\"\"\"\nin verts_A v\nin verts_B v\nout verts v\nout faces s\n\"\"\" \n\nfrom mathutils import Vector\n# for sure this can be made in two lines of code\n\nif verts_A and verts_B:\n    for va, vb in zip(verts_A,verts_B):\n        # first define closest points to connect\n        length_short = 1000\n        ik_shortest = []\n        i = 0\n        la = len(va)\n        lb = len(vb)\n        for a in va:\n            k = 0\n            for b in vb:\n                vabl = (Vector(a)-Vector(b)).length\n                if length_short > vabl:\n                    length_short = vabl\n                    ik_shortest = [i,k]\n                k+=1\n            i+=1\n        # connection\n        i,k = ik_shortest\n        va_ = va.copy()\n        va_.extend(vb)\n        va_.append(va[i])\n        va_.append(vb[k])\n        verts.append(va_)\n\n        fap = [k+la,i]\n        # from i to la\n        for t in (range(i+1, la)):\n            fap.append(t)\n        # from la to i-1\n        for p in (range(i)):\n            fap.append(p)\n        # join both\n        fap.extend([la+lb,la+lb+1])\n        # if equal direction (silently): from k reversed to 0\n        for n in reversed(range(la,k+la)):\n            fap.append(n)\n        # continue from lb to k.... not gives 26 somehow\n        for d in reversed(range(k+la+1, lb+la)): # 24+3=27\n            fap.append(d)\n        faces.append([fap])"
+        "script_str": "\"\"\"\nin verts_A v\nin edges_A s\nin verts_B v\nin edges_B s\nout verts v\nout faces s\n\"\"\" \n\nfrom mathutils import Vector\nfrom sverchok.nodes.modifier_change.polygons_to_edges import pols_edges\n# for sure this can be made in two lines of code\n# i.e. a - circle 24 verts, b - triangle 3 verts (27 length)\n\n\ndef order(verts, edges, verts_o,k):\n    for i in edges:\n        if k in i:\n            # this is awesome !!\n            k = i[int(not i.index(k))]\n            verts_o.append(verts[k])\n            return k, i\n    return False, False\n\nif verts_A and verts_B and edges_A and edges_B:\n\n\n    # pols2edges\n    if len(edges_A[0][0]) > 2:\n        edges_A = pols_edges(edges_A, unique_edges=True)\n    if len(edges_B[0][0]) > 2:\n        edges_B = pols_edges(edges_B, unique_edges=True)\n\n\n    # ordering sort edges chain\n    def ordering(in_verts, in_edges):\n        ed = 1\n        vout = []\n        for edges, verts in zip(in_edges, in_verts):\n            verts_o = []\n            k = 0\n            while True:\n                k, ed = order(verts, edges, verts_o,k)\n                if ed:\n                    edges.remove(ed)\n                if not ed:\n                    break\n            vout.append(verts_o)\n        return vout\n\n    verts_A = ordering(verts_A,edges_A)\n    verts_B = ordering(verts_B,edges_B)\n    # print('>>>>>',verts_A)\n\n\n    # main part\n\n    for va, vb in zip(verts_A,verts_B):\n        # first define closest points to connect\n        length_short = 1000\n        ik_shortest = []\n        i = 0\n        la = len(va) # 24\n        lb = len(vb) # 3\n        for a in va:\n            k = 0\n            for b in vb:\n                vabl = (Vector(a)-Vector(b)).length\n                if length_short > vabl:\n                    length_short = vabl\n                    ik_shortest = [i,k]\n                k+=1\n            i+=1\n        # connection / i.e. k=1 i=12\n        i,k = ik_shortest\n        va_ = va.copy()\n        va_.extend(vb)\n        va_.append(va[i])\n        va_.append(vb[k])\n        verts.append(va_)\n\n        # 25,12\n        fap = [k+la,i]\n        # from i to la / 13...23\n        for t in (range(i+1, la)):\n            fap.append(t)\n        # from 0 to i-1 / 0 to 11\n        for p in (range(i)):\n            fap.append(p)\n        # join both with copy vertices at end / 27 to 28\n        fap.extend([la+lb,la+lb+1])\n        # if equal direction (silently): from k reversed to 0 / 24 only\n        for n in reversed(range(la,k+la)):\n            fap.append(n)\n        # continue from lb to k / only 26\n        for d in reversed(range(k+la+1, lb+la)):\n            fap.append(d)\n        faces.append([fap])"
       },
       "snlite_ui": [],
       "use_custom_color": true,
-      "width": 197.81297302246094
-    },
-    "Scripted Node Lite.001": {
-      "bl_idname": "SvScriptNodeLite",
-      "color": [
-        0.0,
-        0.800000011920929,
-        0.949999988079071
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        607.300537109375,
-        302.5310974121094
-      ],
-      "params": {
-        "inject_params": 0,
-        "injected_state": 0,
-        "script_name": "topo_sort_for_profile.py",
-        "script_str": "\"\"\"\nin in_verts v\nin in_edges s\nout vout v\nout eout s\n\"\"\"\n\n\ndef dodo(verts, edges, verts_o,k):\n    for i in edges:\n        if k in i:\n            # this is awesome !!\n            k = i[int(not i.index(k))]\n            verts_o.append(verts[k])\n            return k, i\n    return False, False\n\nif in_verts:\n    for edges, verts in zip(in_edges, in_verts):\n        ed = 1\n        edges_o = []\n        verts_o = []\n        k = 0\n        while True:\n            k, ed = dodo(verts, edges, verts_o,k)\n            if ed:\n                edges.remove(ed)\n            if not ed:\n                break\n        edges_o = [[k,k+1] for k in range(len(verts_o)-1)]\n        edges_o.append([0, len(verts_o)-1])\n        eout.append(edges_o)\n        vout.append(verts_o)\n"
-      },
-      "snlite_ui": [],
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Scripted Node Lite.002": {
-      "bl_idname": "SvScriptNodeLite",
-      "color": [
-        0.0,
-        0.800000011920929,
-        0.949999988079071
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        606.8034057617188,
-        133.13893127441406
-      ],
-      "params": {
-        "inject_params": 0,
-        "injected_state": 0,
-        "script_name": "topo_sort_for_profile.py",
-        "script_str": "\"\"\"\nin in_verts v\nin in_edges s\nout vout v\nout eout s\n\"\"\"\n\n\ndef dodo(verts, edges, verts_o,k):\n    for i in edges:\n        if k in i:\n            # this is awesome !!\n            k = i[int(not i.index(k))]\n            verts_o.append(verts[k])\n            return k, i\n    return False, False\n\nif in_verts:\n    for edges, verts in zip(in_edges, in_verts):\n        ed = 1\n        edges_o = []\n        verts_o = []\n        k = 0\n        while True:\n            k, ed = dodo(verts, edges, verts_o,k)\n            if ed:\n                edges.remove(ed)\n            if not ed:\n                break\n        edges_o = [[k,k+1] for k in range(len(verts_o)-1)]\n        edges_o.append([0, len(verts_o)-1])\n        eout.append(edges_o)\n        vout.append(verts_o)\n"
-      },
-      "snlite_ui": [],
-      "use_custom_color": true,
-      "width": 140.0
-    },
-    "Vector in": {
-      "bl_idname": "GenVectorsNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -77.62452626228333,
-        235.7145233154297
-      ],
-      "params": {
-        "x_": 0.0030000004917383194,
-        "y_": 0.030000001192092896
-      },
-      "width": 100.0
+      "width": 214.38900756835938
     },
     "Viewer Draw": {
       "bl_idname": "ViewerNode2",
@@ -304,29 +318,33 @@
       "hide": false,
       "label": "",
       "location": [
-        1110.4849853515625,
-        313.8064880371094
+        873.3146362304688,
+        362.4919738769531
       ],
       "params": {
         "activate": 1,
+        "display_faces": 1,
         "display_verts": 0,
         "edge_colors": [
-          0.06761481612920761,
-          0.0031899053137749434,
-          0.0031899053137749434
+          0.0,
+          0.004466313403099775,
+          1.0
         ],
-        "edge_width": 1,
+        "edge_width": 2,
         "face_colors": [
-          0.7601117491722107,
-          0.8990015387535095,
-          0.6346182227134705
+          0.0,
+          0.39016348123550415,
+          0.041407130658626556
         ],
         "ngon_tessellate": 1,
+        "shading": 1,
+        "transparant": 0,
         "vertex_colors": [
-          0.014934837818145752,
-          0.015052422881126404,
-          0.014486275613307953
-        ]
+          0.09485653787851334,
+          0.6600186228752136,
+          1.0
+        ],
+        "vertex_size": 3.0
       },
       "use_custom_color": true,
       "width": 140.0
@@ -334,40 +352,28 @@
   },
   "update_lists": [
     [
-      "Plane MK2",
+      "Cylinder",
+      "Polygons",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Length",
+      "Data"
+    ],
+    [
+      "List Length",
       0,
-      "Polygon Boom",
-      0
+      "Range Float",
+      2
     ],
     [
-      "Plane MK2",
-      2,
-      "Polygon Boom",
-      1
-    ],
-    [
-      "Plane MK2",
+      "List Length",
       0,
-      "Centers polygons 3",
-      0
-    ],
-    [
-      "Plane MK2",
-      2,
-      "Centers polygons 3",
-      1
-    ],
-    [
-      "Centers polygons 3",
-      2,
-      "Move",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move",
-      1
+      "Range Int",
+      2
     ],
     [
       "Range Float",
@@ -376,22 +382,28 @@
       0
     ],
     [
-      "Polygon Boom",
-      1,
-      "Polygons to Edges",
-      0
-    ],
-    [
-      "Polygon Boom",
+      "Range Int",
       0,
-      "Scripted Node Lite.001",
-      0
-    ],
-    [
-      "Polygons to Edges",
-      0,
-      "Scripted Node Lite.001",
+      "Circle",
       1
+    ],
+    [
+      "Cylinder",
+      "Vertices",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Centers polygons 3",
+      "Vertices"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Centers polygons 3",
+      "Polygons"
     ],
     [
       "Circle",
@@ -406,34 +418,52 @@
       1
     ],
     [
-      "Move",
-      0,
+      "Circle",
+      2,
+      "Matrix Apply",
+      2
+    ],
+    [
+      "Centers polygons 3",
+      3,
       "Matrix Apply",
       3
     ],
     [
-      "Matrix Apply",
+      "Reroute.001",
+      "Output",
+      "Polygon Boom",
+      "vertices"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Polygon Boom",
+      "edg_pol"
+    ],
+    [
+      "Polygon Boom",
       0,
-      "Scripted Node Lite.002",
+      "Scripted Node Lite",
       0
     ],
     [
-      "Matrix Apply",
+      "Polygon Boom",
       1,
-      "Scripted Node Lite.002",
+      "Scripted Node Lite",
       1
     ],
     [
-      "Scripted Node Lite.001",
+      "Matrix Apply",
       0,
       "Scripted Node Lite",
-      0
+      2
     ],
     [
-      "Scripted Node Lite.002",
-      0,
+      "Matrix Apply",
+      2,
       "Scripted Node Lite",
-      1
+      3
     ],
     [
       "Scripted Node Lite",
