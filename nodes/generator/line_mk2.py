@@ -48,6 +48,10 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Line MK2'
     bl_icon = 'GRIP'
 
+    def update_normalize(self, context):
+        self.update_sockets()
+        updateNode(self, context)
+
     direction = EnumProperty(
         name="Direction", items=directionItems,
         default="X", update=updateNode)
@@ -66,10 +70,10 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     normalize = BoolProperty(
         name='Normalize', description='Normalize line to size',
-        default=False, update=updateNode)
+        default=False, update=update_normalize)
 
     size = FloatProperty(
-        name='Size', description='Size of line',
+        name='Size', description='Size of the normalized line',
         default=10.0, update=updateNode)
 
     def sv_init(self, context):
@@ -78,6 +82,18 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
 
+    def update_sockets(self):
+        inputs = self.inputs
+
+        if self.normalize:
+            if "Size" in inputs:
+                inputs.remove(inputs["Size"])
+            else:
+                inputs.new("StringsSocket", "Size").prop_name = "size"
+        else:
+            if "Size" in inputs:
+                inputs.remove(inputs["Size"])
+
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -85,26 +101,28 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "center", toggle=True)
         row.prop(self, "normalize", toggle=True)
-        if self.normalize:
-            row = col.row(align=True)
-            row.prop(self, "size")
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
         input_num = self.inputs["Num"].sv_get()
         input_step = self.inputs["Step"].sv_get()
+        if "Size" in self.inputs:
+            input_size = self.inputs["Size"].sv_get()[0][0]
+        else:
+            input_size = 1.0
+
         c, d = self.center, self.direction
         stepList = []
-        res1,res2 = [],[]
+        res1, res2 = [], []
         for n, s in zip(*match_long_repeat([input_num, input_step])):
             for num in n:
-                num = max(2,num)
+                num = max(2, num)
                 s = s[:(num - 1)]  # shorten if needed
                 fullList(s, num - 1)  # extend if needed
-                stepList.append([S * self.size / sum(s) for S in s] if self.normalize else s)
+                stepList.append([S * input_size / sum(s) for S in s] if self.normalize else s)
         for s in stepList:
-            r1,r2 = make_line(s, c, d)
+            r1, r2 = make_line(s, c, d)
             res1.append(r1)
             res2.append(r2)
         if self.outputs['Vertices'].is_linked:
