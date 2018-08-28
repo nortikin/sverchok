@@ -53,7 +53,7 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if "Size" not in self.inputs:
             size_socket = self.inputs.new('StringsSocket', "Size")
             size_socket.prop_name = 'size'
-            size_socket.hide_safe = True
+            size_socket.hide_safe = not self.normalize
 
     def wrapped_update(self, context):
         """ need to do UX transformation before updating node"""
