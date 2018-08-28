@@ -48,11 +48,20 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Line MK2'
     bl_icon = 'GRIP'
 
+    def upgrade_if_needed(self):
+        """ This allows us to keep the node mk2 - on the fly node upgrade"""
+        if "Size" not in self.inputs:
+            size_socket = self.inputs.new('StringsSocket', "Size")
+            size_socket.prop_name = 'size'
+            size_socket.hide_safe = True
+
     def wrapped_update(self, context):
+        """ need to do UX transformation before updating node"""
+        self.upgrade_if_needed()
         size_socket = self.inputs["Size"]
         size_socket.hide_safe = not self.normalize
-
         updateNode(self, context)
+
 
     direction = EnumProperty(
         name="Direction", items=directionItems,
@@ -95,6 +104,7 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "center", toggle=True)
         row.prop(self, "normalize", toggle=True)
 
+
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
@@ -106,6 +116,7 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         normal_size = 1.0
         if self.normalize:
+            self.upgrade_if_needed()
             normal_size = self.inputs["Size"].sv_get()[0][0]
 
         for n, s in zip(*match_long_repeat([input_num, input_step])):
