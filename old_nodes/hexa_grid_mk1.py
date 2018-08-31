@@ -113,6 +113,8 @@ class SvHexaGridNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvHexaGridNodeMK1'
     bl_label = 'Hexa Grid MK1'
     sv_icon = 'SV_HEXA_GRID'
+    
+    replacement_nodes = [('SvPolygonGridNode', None, None)]
 
     def update_layout(self, context):
         self.update_sockets()
