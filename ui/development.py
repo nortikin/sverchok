@@ -170,26 +170,32 @@ class SvViewHelpForNode(bpy.types.Operator):
 
 
 class SvViewSourceForNode(bpy.types.Operator):
-    ''' Open source code of node in OS text editor '''
+    ''' Open source code of node in OS text editor or as a Blender textblock'''
     bl_idname = "node.sv_view_node_source"
-    bl_label = "display the source in your editor"
+    bl_label = "display the source in your editor or as a Blender textblock"
     kind = StringProperty(default='external')
     
     def execute(self, context):
         n = context.active_node
         fpath = self.get_filepath_from_node(n)
+        string_dir = remapper.get(n.bl_idname)
 
         with sv_preferences() as prefs:
             app_name = prefs.external_editor
+            if not app_name and self.kind == 'external':
+                self.report({'INFO'}, "Set first a external editor on Sverchok Prefences (User Preferences -> Add-ons)")
+                return {'CANCELLED'}
 
             if prefs.real_sverchok_path:
-                print(fpath)
                 _dst = os.path.dirname(sverchok.__file__)
                 _src = prefs.real_sverchok_path
                 fpath = fpath.replace(_dst, _src)
-                print(fpath)
 
-            subprocess.Popen([app_name, fpath])
+            if self.kind == 'internal':
+                text = bpy.ops.text.open(filepath=fpath)
+                self.report({'INFO'}, "Opened as new textblock")
+            elif self.kind == 'external':
+                subprocess.Popen([app_name, fpath])
             return {'FINISHED'}
         return {'CANCELLED'}
 
@@ -210,29 +216,29 @@ def idname_draw(self, context):
         return
     bl_idname = node.bl_idname
     box = layout.box()
-    col = box.column(align=True)
-    col.scale_y = 0.8
+    col = box.column(align=False)
+    col.scale_y = 0.9
     row = col.row(align=True)
     colom = row.column(align=True)
     colom.scale_x = 3
     colom.label(bl_idname+':')
     colom = row.column(align=True)
-    colom.operator('node.copy_bl_idname', text='COPY').name = bl_idname
-    
+    colom.operator('node.copy_bl_idname', text='', icon='COPY_ID').name = bl_idname
+
     # show these anyway, can fail and let us know..
     row = col.row(align=True)
-    row.label('HELP & DOCs:')
+    row.label('Help & Docs:')
     row = col.row(align=True)
-    row.operator('node.view_node_help', text='ONLINE').kind = 'online'
-    row.operator('node.view_node_help', text='OFFLINE').kind = 'offline'
-    row.operator('node.view_node_help', text='GITHUB').kind = 'github' #, icon='GHOST'
-
+    row.operator('node.view_node_help', text='Online').kind = 'online'
+    row.operator('node.view_node_help', text='Offline').kind = 'offline'
+    row.operator('node.view_node_help', text='Github').kind = 'github' #, icon='GHOST'
+    col.separator()
     # view the source of the current node ( warning, some nodes rely on more than one file )
     row = col.row(align=True)
-    #row.label('view source')
-    row.label('VIEW CODE:')
+    row.label('Edit Source:')
     row = col.row(align=True)
-    row.operator('node.sv_view_node_source', text='EXTERNALLY').kind = 'external'
+    row.operator('node.sv_view_node_source', text='Externally').kind = 'external'
+    row.operator('node.sv_view_node_source', text='Internally').kind = 'internal'
 
 
 def register():
