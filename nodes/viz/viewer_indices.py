@@ -216,7 +216,7 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bg_verts_col = make_color_prop("bg_verts", (.2, .2, .2, 1.0))
     numid_edges_col = make_color_prop("numid_edges", (1.0, 1.0, 0.1, 1.0))
     numid_faces_col = make_color_prop("numid_faces", (1.0, .8, .8, 1.0))
-    numid_verts_col = make_color_prop("numid_verts", (1, 1, 1, 1.0))
+    numid_verts_col = make_color_prop("numid_verts", (0.6, 1, 0.3, 1.0))
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices', 'vertices')
@@ -373,10 +373,6 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
         # draw text on locations instead of indices.
         text_so = inputs['text'].sv_get(default=[])
         text = dataCorrect(text_so)
-        if text:
-            fullList(text, len(verts))
-            for i, t in enumerate(text):
-                fullList(text[i], len(verts[i]))
 
         # read non vertex inputs in a loop and assign to data_collected
         data_collected = []
@@ -386,6 +382,21 @@ class IndexViewerNode(bpy.types.Node, SverchCustomTreeNode):
             data_collected.append(input_stream)
 
         edges, faces, matrices = data_collected
+
+        if text:
+            # here was only verts
+            if self.display_vert_index:
+                fullList(text, len(verts))
+                for i, t in enumerate(text):
+                    fullList(text[i], len(verts[i]))
+            elif self.display_edge_index:
+                fullList(text, len(edges))
+                for i, t in enumerate(text):
+                    fullList(text[i], len(edges[i]))
+            elif self.display_face_index:
+                fullList(text, len(faces))
+                for i, t in enumerate(text):
+                    fullList(text[i], len(faces[i]))
 
         bg = self.draw_bg
         settings = self.get_settings()
@@ -409,3 +420,6 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvBakeText)
     bpy.utils.unregister_class(IndexViewerNode)
+
+if __name__ == '__main__':
+    register()
