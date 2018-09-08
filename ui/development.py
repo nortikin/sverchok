@@ -114,7 +114,7 @@ class SvViewHelpForNode(bpy.types.Operator):
     bl_idname = "node.view_node_help"
     bl_label = "display a browser with compiled html"
     kind = StringProperty(default='online')
-    
+
     def execute(self, context):
         n = context.active_node
 
@@ -165,7 +165,7 @@ class SvViewHelpForNode(bpy.types.Operator):
                         destination.write(line.replace("{{variable}}", n.bl_label))
                     else:
                         destination.write(line)
-        
+
         webbrowser.open(path2)
 
 
@@ -174,17 +174,13 @@ class SvViewSourceForNode(bpy.types.Operator):
     bl_idname = "node.sv_view_node_source"
     bl_label = "display the source in your editor or as a Blender textblock"
     kind = StringProperty(default='external')
-    
+
     def execute(self, context):
         n = context.active_node
         fpath = self.get_filepath_from_node(n)
         string_dir = remapper.get(n.bl_idname)
 
         with sv_preferences() as prefs:
-            app_name = prefs.external_editor
-            if not app_name and self.kind == 'external':
-                self.report({'INFO'}, "Set first a external editor on Sverchok Prefences (User Preferences -> Add-ons)")
-                return {'CANCELLED'}
 
             if prefs.real_sverchok_path:
                 _dst = os.path.dirname(sverchok.__file__)
@@ -192,13 +188,48 @@ class SvViewSourceForNode(bpy.types.Operator):
                 fpath = fpath.replace(_dst, _src)
 
             if self.kind == 'internal':
-                text = bpy.ops.text.open(filepath=fpath)
-                self.report({'INFO'}, "Opened as new textblock")
-            elif self.kind == 'external':
-                subprocess.Popen([app_name, fpath])
-            return {'FINISHED'}
-        return {'CANCELLED'}
+                self.view_source_internal(context.screen.areas, fpath)
 
+            elif self.kind == 'external':
+                self.view_source_external(prefs, fpath)
+
+            return {'FINISHED'}
+
+        return {'CANCELLED'}
+        
+    def view_source_internal(self, areas, fpath):
+        block_name = fpath.split('\\')[-1]
+        repeated = False
+        for t in bpy.data.texts:
+            if t.name == block_name:
+                self.report({'INFO'}, "'" + block_name + "' was already opened")
+                repeated = True;
+                break
+        if not repeated:
+            text = bpy.ops.text.open(filepath=fpath)
+            self.report({'INFO'}, "'" + block_name + "' opened as new text data-block")
+
+        displayed = False
+        for area in areas:
+            if area.type == "TEXT_EDITOR":
+                area.spaces[0].text = bpy.data.texts[block_name]
+                displayed = True
+                break
+        if not displayed:
+            bpy.ops.screen.area_split(direction='VERTICAL', factor=0.5)
+            areas[-1].type = 'TEXT_EDITOR'
+            areas[-1].spaces[0].text = bpy.data.texts[block_name]
+            
+        return {'FINISHED'}
+    
+    def view_source_external(self, prefs, fpath):
+        app_name = prefs.external_editor
+        if not app_name:
+            self.report({'INFO'}, "Set first a external editor on Sverchok Preferences (User Preferences -> Add-ons)")
+            return {'CANCELLED'}
+        subprocess.Popen([app_name, fpath])
+        return {'FINISHED'}
+    
     def get_filepath_from_node(self, n):
         """ get full filepath on disk for a given node reference """
         sv_path = os.path.dirname(sverchok.__file__)
