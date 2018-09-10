@@ -406,8 +406,9 @@ class SvPresetToGist(bpy.types.Operator):
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
         except Exception as err:
             exception(err)
-            self.report({'ERROR'}, "Error uploading the gist, check your internet connection!")
+            self.report({'ERROR'}, "Error 222: net connection or github login failed!")
             return {'CANCELLED'}
+            
         finally:
             return {'FINISHED'}
 
