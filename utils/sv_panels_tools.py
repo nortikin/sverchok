@@ -202,19 +202,25 @@ class SvLayoutScanProperties(bpy.types.Operator):
                     if any((s.links for s in node.outputs)):
                         templist.append([node.label, node.name, ""])
                 
-                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode', 'SvColorInputNode'}:
-                    if not node.outputs:
-                        debug("Node %s does not have outputs", node.name)
-                        continue
-                    if len(node.inputs) and node.inputs[0].is_linked:
-                        debug("Node %s: first input is linked", node.name)
-                        continue
-                    if (not node.outputs[0].is_linked) or (node.to3d != True):
+                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode', 'SvColorInputNode', 'SvBmeshViewerNodeMK2'}:
+                    if idname != 'SvBmeshViewerNodeMK2':
+                        if not node.outputs:
+                            debug("Node %s does not have outputs", node.name)
+                            continue
+                        if len(node.inputs) and node.inputs[0].is_linked:
+                            debug("Node %s: first input is linked", node.name)
+                            continue
+                        if (not node.outputs[0].is_linked) or (node.to3d != True):
+                            debug("Node %s: first output is not linked or to3d == False", node.name)
+                            continue
+                    elif (node.to3d != True):
                         debug("Node %s: first output is not linked or to3d == False", node.name)
                         continue
 
                     if 'Integer' in idname:
                         templist.append([node.label, node.name, 'int_'])
+                    elif 'SvBmeshViewerNodeMK2' in idname:
+                        templist.append([node.label, node.name, 'basemesh_name'])
                     elif 'Float' in idname:
                         templist.append([node.label, node.name, 'float_'])                     
                     elif idname == 'SvColorInputNode':

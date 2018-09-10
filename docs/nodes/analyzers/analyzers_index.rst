@@ -18,6 +18,7 @@ Analyzers
    normal
    normals
    bvh_overlap_polys
+   object_insolation
    points_inside_mesh
    polygons_centers
    polygons_centers_mk3

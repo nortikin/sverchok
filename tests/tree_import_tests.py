@@ -55,6 +55,19 @@ class MonadImportTest(ReferenceTreeTestCase):
             self.assert_node_property_equals("ImportedTree", "Monad", "amplitude", 0.6199999451637268)
 
 
+# to keep automated tests from breaking, i've collected a list of examples that need to be skipped
+# because they 
+#  1) require .blend data (greasepencil strokes) or
+#  2) 3rd party python modules (mcubes, conway)
+
+UNITTEST_BLACKLIST = [
+    "GreacePencil_injection.json",
+    "pointsONface_gather_lines.json",
+    "Generative_Art_Lsystem.json",
+    "Elfnor_topology_nodes.json",
+    "l-systems.json"
+]
+
 @batch_only
 class ExamplesImportTest(SverchokTestCase):
     def test_import_examples(self):
@@ -75,6 +88,11 @@ class ExamplesImportTest(SverchokTestCase):
 
                 # assuming these are all jsons for now.
                 name = basename(path)
+
+                if name in UNITTEST_BLACKLIST:
+                    info("Skipping (blacklisted) : %s to permit unit tests to continue", name)
+                    continue
+
                 with self.subTest(file=name):
                     info("Importing: %s", name)
                     with self.temporary_node_tree("ImportedTree") as new_tree:

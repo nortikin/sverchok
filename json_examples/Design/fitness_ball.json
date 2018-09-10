@@ -1,0 +1,395 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {
+    "Area": "Frame.003",
+    "Bevel": "Frame.002",
+    "Exec Node Mod": "Frame.001",
+    "Frame.001": "Frame",
+    "Frame.002": "Frame",
+    "Frame.003": "Frame",
+    "IcoSphere": "Frame.002",
+    "List Length": "Frame.003",
+    "List Mask (out)": "Frame.003",
+    "Logic functions": "Frame.003",
+    "MultiExtrude Alt from addons": "Frame.001",
+    "Note": "Frame",
+    "Range Int": "Frame.003",
+    "Viewer BMesh": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "Area": {
+      "bl_idname": "AreaNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        572.365966796875,
+        -661.9018402099609
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Bevel": {
+      "bl_idname": "SvBevelNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        318.9669494628906,
+        -460.96656799316406
+      ],
+      "params": {
+        "offset_": 0.0020000000949949026,
+        "vertexOnly": 1
+      },
+      "width": 140.0
+    },
+    "Exec Node Mod": {
+      "bl_idname": "SvExecNodeMod",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1905.8748168945312,
+        -107.86015319824219
+      ],
+      "params": {},
+      "string_storage": "{\"lines\": [\"for i in V1:\", \"    if not len(i.modifiers):\", \"        if not 'SVSUBSURF' in i.modifiers:\", \"            i.modifiers.new('SVSUBSURF', type='SUBSURF')\", \"            i.modifiers('SVSUBSURF').levels = 2\"]}",
+      "width": 423.4766845703125
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.9455686211585999,
+        0.5794939994812012,
+        1.0
+      ],
+      "height": 848.2757568359375,
+      "hide": false,
+      "label": "Sverchok_viewer",
+      "location": [
+        -875.9337768554688,
+        -135.65916442871094
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 2372.742431640625
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080001592636108,
+        0.11451481282711029,
+        0.06644260883331299
+      ],
+      "height": 709.5698852539062,
+      "hide": false,
+      "label": "make and subsurf",
+      "location": [
+        -60.07696533203125,
+        -296.7444305419922
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 1072.9991455078125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.08661127090454102,
+        0.6080000996589661,
+        0.059750430285930634
+      ],
+      "height": 373.38641357421875,
+      "hide": false,
+      "label": "make & bevel",
+      "location": [
+        -60.07696533203125,
+        -296.7444305419922
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 442.00494384765625
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "color": [
+        0.6080000996589661,
+        0.5236026644706726,
+        0.10070108622312546
+      ],
+      "height": 341.6268310546875,
+      "hide": false,
+      "label": "filter small",
+      "location": [
+        -60.07696533203125,
+        -296.7444305419922
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 681.189697265625
+    },
+    "IcoSphere": {
+      "bl_idname": "SvIcosphereNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        77.31498718261719,
+        -570.4289703369141
+      ],
+      "params": {
+        "radius": 0.33500000834465027,
+        "subdivisions": 4
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "List Length": {
+      "bl_idname": "ListLengthNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        572.1047973632812,
+        -527.7114562988281
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Mask (out)": {
+      "bl_idname": "MaskListNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1052.9414672851562,
+        -560.6852569580078
+      ],
+      "params": {
+        "Level": 2
+      },
+      "width": 140.0
+    },
+    "Logic functions": {
+      "bl_idname": "SvLogicNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        772.6224365234375,
+        -666.0075225830078
+      ],
+      "params": {
+        "i_y": 0.0005000000237487257,
+        "items_": "LESS"
+      },
+      "width": 207.5538330078125
+    },
+    "MultiExtrude Alt from addons": {
+      "bl_idname": "SvMultiExtrudeAlt",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1316.7052612304688,
+        -57.01835632324219
+      ],
+      "params": {
+        "num": 3,
+        "off": 0.009999999776482582,
+        "opt1": 1,
+        "opt4": 0,
+        "ran": 1,
+        "roty": 0.0,
+        "rotz": 0.0,
+        "sca": 1.0,
+        "var1": 0.18443799018859863,
+        "var2": 0.39193081855773926,
+        "var3": 0.0
+      },
+      "width": 212.9016571044922
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        544.6343383789062,
+        -221.12290954589844
+      ],
+      "params": {
+        "text": "2018-nikitron - fitball_maker with multiextruder"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Range Int": {
+      "bl_idname": "GenListRangeIntNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        799.1470947265625,
+        -503.3143005371094
+      ],
+      "params": {
+        "mode": "COUNTRANGE"
+      },
+      "width": 140.0
+    },
+    "Viewer BMesh": {
+      "bl_idname": "SvBmeshViewerNodeMK2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1652.7598266601562,
+        -73.01829528808594
+      ],
+      "params": {
+        "autosmooth": 1,
+        "basemesh_name": "fitball",
+        "lp": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "IcoSphere",
+      0,
+      "Bevel",
+      0
+    ],
+    [
+      "IcoSphere",
+      1,
+      "Bevel",
+      1
+    ],
+    [
+      "IcoSphere",
+      2,
+      "Bevel",
+      2
+    ],
+    [
+      "Bevel",
+      2,
+      "List Length",
+      0
+    ],
+    [
+      "List Length",
+      0,
+      "Range Int",
+      2
+    ],
+    [
+      "Bevel",
+      0,
+      "Area",
+      0
+    ],
+    [
+      "Bevel",
+      2,
+      "Area",
+      1
+    ],
+    [
+      "Area",
+      0,
+      "Logic functions",
+      0
+    ],
+    [
+      "Range Int",
+      0,
+      "List Mask (out)",
+      0
+    ],
+    [
+      "Logic functions",
+      0,
+      "List Mask (out)",
+      1
+    ],
+    [
+      "Bevel",
+      0,
+      "MultiExtrude Alt from addons",
+      0
+    ],
+    [
+      "Bevel",
+      2,
+      "MultiExtrude Alt from addons",
+      1
+    ],
+    [
+      "List Mask (out)",
+      3,
+      "MultiExtrude Alt from addons",
+      2
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      0,
+      "Viewer BMesh",
+      0
+    ],
+    [
+      "MultiExtrude Alt from addons",
+      1,
+      "Viewer BMesh",
+      2
+    ],
+    [
+      "Viewer BMesh",
+      0,
+      "Exec Node Mod",
+      0
+    ]
+  ]
+}

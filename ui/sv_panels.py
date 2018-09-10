@@ -208,9 +208,11 @@ class Sv3DPanel(bpy.types.Panel):
                         else:
                             tex = no
 
+                        #print(node.bl_idname, tex)
+
                         if node.bl_idname == "ObjectsNodeMK2":
                             row = col.row(align=True)
-                            row.label(text=node.label if node.label else no)
+                            row.label(text=tex)
                             colo = row.row(align=True)
                             colo.scale_x = little_width * 5
                             op = colo.operator("node.sverchok_object_insertion", text="Get")
@@ -218,6 +220,15 @@ class Sv3DPanel(bpy.types.Panel):
                             op.tree_name = tree.name
                             op.grup_name = node.groupname
                             op.sort = node.sort
+
+                        elif node.bl_idname == 'SvBmeshViewerNodeMK2':
+                            row = col.row(align=True)
+                            row.prop(node, 'basemesh_name', text='')
+                            row.prop_search(
+                            node, 'material', bpy.data, 'materials', text='',
+                            icon='MATERIAL_DATA')
+                            #row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
+
                         elif node.bl_idname == 'SvObjectsNodeMK3':
                             node.draw_sv3dpanel_ob3(col, little_width)
 

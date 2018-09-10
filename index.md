@@ -30,6 +30,7 @@
 ## Generators Extended
     SvBoxRoundedNode
     SvBricksNode
+    SvPolygonGridNode
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
@@ -39,7 +40,6 @@
     SvImageComponentsNode
     SvScriptNode
     SvTorusKnotNode
-    SvHexaGridNodeMK1
     SvRingNode
     SvEllipseNode
 
@@ -62,6 +62,7 @@
     SvPointInside
     SvProportionalEditNode
     SvRaycasterLiteNode
+    SvOBJInsolationNode
 
 ## Transforms
     SvRotationNode
@@ -253,11 +254,14 @@
 ## Scene
     SvObjectsNodeMK3
     SvObjInLite
+    SvCurveInputNode
     SvObjEdit
     SvFrameInfoNodeMK2
+    SvLampOutNode
     SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4
+    SvFCurveInNodeMK1
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -285,6 +289,9 @@
     SvBVHnearNewNode
     SvUnsubdivideNode
     SvLimitedDissolveMK2
+    SvMetaballOutLiteNode
+    SvArmaturePropsNode
+    SvLatticePropsNode
     ---
     SvColorsInNodeMK1
     SvColorInputNode

@@ -56,7 +56,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ot = objs[0].type in ['MESH', 'CURVE', 'FONT', 'SURFACE', 'META']
         for obj in objs:
             if o8.is_linked:
-                ms.append([m[:] for m in obj.matrix_world])
+                ms.append(obj.matrix_world)
             if ot:
                 obj_data = obj.to_mesh(scene, mod, 'PREVIEW')
                 if o1.is_linked:

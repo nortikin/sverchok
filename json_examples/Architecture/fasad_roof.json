@@ -1,0 +1,860 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {
+    "A Number": "Frame.007",
+    "Easing 0..1": "Frame.005",
+    "Exec Node Mod": "Frame.006",
+    "Extrude Separate Faces": "Frame.004",
+    "Formula": "Frame.005",
+    "Frame": "Frame.004",
+    "Frame.001": "Frame.004",
+    "Frame.002": "Frame.004",
+    "Frame.003": "Frame.004",
+    "List Length": "Frame.006",
+    "List Repeater.001": "Frame.001",
+    "List Reverse": "Frame.004",
+    "Matrix Apply (verts)": "Frame.002",
+    "Matrix Apply (verts).001": "Frame",
+    "Matrix in": "Frame.002",
+    "Matrix in.002": "Frame.006",
+    "Move": "Frame.003",
+    "Move.001": "Frame.003",
+    "Move.002": "Frame.006",
+    "Objects in Lite": "Frame.007",
+    "Plane MK2": "Frame.004",
+    "Profile Parametric": "Frame.005",
+    "Range Float": "Frame",
+    "Range Float.001": "Frame.005",
+    "Range Int": "Frame.006",
+    "Rotation": "Frame.006",
+    "Rotation.002": "Frame.003",
+    "Solidify": "Frame.006",
+    "Vector Interpolation mk3": "Frame",
+    "Vector Math": "Frame.003",
+    "Vector Math.001": "Frame.006",
+    "Vector in.001": "Frame.003"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        451.8851013183594,
+        774.6038208007812
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 20,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Easing 0..1": {
+      "bl_idname": "SvEasingNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1125.070556640625,
+        1086.9735107421875
+      ],
+      "params": {
+        "activate": 0,
+        "selected_mode": "6"
+      },
+      "width": 140.0
+    },
+    "Exec Node Mod": {
+      "bl_idname": "SvExecNodeMod",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1858.9890594482422,
+        1154.4685707092285
+      ],
+      "params": {},
+      "string_storage": "{\"lines\": [\"for i in V1:\", \"    append([i])\"]}",
+      "width": 165.948486328125
+    },
+    "Extrude Separate Faces": {
+      "bl_idname": "SvExtrudeSeparateNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        939.3424873352051,
+        662.9344177246094
+      ],
+      "params": {
+        "height_": -12.0
+      },
+      "width": 140.0
+    },
+    "Formula": {
+      "bl_idname": "Formula2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        968.7046508789062,
+        1075.8916015625
+      ],
+      "params": {
+        "formula": "-abs(sin(x))"
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 312.7823791503906,
+      "hide": false,
+      "label": "interpol",
+      "location": [
+        136.81665420532227,
+        18.715774536132812
+      ],
+      "params": {},
+      "width": 368.8697509765625
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 206.3363037109375,
+      "hide": false,
+      "label": "suddenly need edges mult",
+      "location": [
+        -43.546875,
+        7.811016082763672
+      ],
+      "params": {},
+      "width": 200.3529052734375
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 236.74697875976562,
+      "hide": false,
+      "label": "rotate tangent",
+      "location": [
+        -16.25816249847412,
+        -60.2693977355957
+      ],
+      "params": {},
+      "width": 361.7841796875
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "height": 362.4088134765625,
+      "hide": false,
+      "label": "rotate and move under roof",
+      "location": [
+        29.427814483642578,
+        5.0373382568359375
+      ],
+      "params": {},
+      "width": 540.3529052734375
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "height": 678.2764892578125,
+      "hide": false,
+      "label": "columns",
+      "location": [
+        -26.048015594482422,
+        -39.044708251953125
+      ],
+      "params": {},
+      "width": 1166.005126953125
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "height": 290.73822021484375,
+      "hide": false,
+      "label": "profiling",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 680.0316162109375
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "height": 442.93902587890625,
+      "hide": false,
+      "label": "rotate and extrude",
+      "location": [
+        -150.9270782470703,
+        56.979557037353516
+      ],
+      "params": {},
+      "width": 720.3526611328125
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "height": 371.1920166015625,
+      "hide": false,
+      "label": "inputs",
+      "location": [
+        71.319580078125,
+        97.912353515625
+      ],
+      "params": {},
+      "width": 203.63198852539062
+    },
+    "List Length": {
+      "bl_idname": "ListLengthNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1678.9890594482422,
+        1154.4685707092285
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Repeater.001": {
+      "bl_idname": "ListRepeaterNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1134.9659423828125,
+        628.8069267272949
+      ],
+      "params": {
+        "level": 0,
+        "number": 20,
+        "unwrap": 1
+      },
+      "width": 140.0
+    },
+    "List Reverse": {
+      "bl_idname": "ListReverseNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1707.45112991333,
+        553.1391906738281
+      ],
+      "params": {
+        "level": 3
+      },
+      "width": 140.0
+    },
+    "Matrix Apply (verts)": {
+      "bl_idname": "MatrixApplyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1519.8122720718384,
+        627.4244499206543
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix Apply (verts).001": {
+      "bl_idname": "MatrixApplyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        821.4802284240723,
+        328.13002014160156
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "custom_socket_props": {
+        "2": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1358.3809976577759,
+        638.0411491394043
+      ],
+      "params": {
+        "r_": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Matrix in.002": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "custom_socket_props": {
+        "2": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2027.0963592529297,
+        954.4686317443848
+      ],
+      "params": {
+        "r_": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1547.4512519836426,
+        382.5264434814453
+      ],
+      "params": {
+        "mult_": -1.649999976158142
+      },
+      "width": 140.0
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1707.45112991333,
+        382.5264434814453
+      ],
+      "params": {
+        "mult_": 1.649999976158142
+      },
+      "width": 140.0
+    },
+    "Move.002": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1827.0963592529297,
+        914.4686317443848
+      ],
+      "params": {
+        "mult_": -0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Objects in Lite": {
+      "bl_idname": "SvObjInLite",
+      "color": [
+        0.0,
+        0.5,
+        0.20000000298023224
+      ],
+      "geom": "{\"Polygons\": [], \"Vertices\": [-7.113242149353027, 0.0, 0.0, -6.222028732299805, 0.7471374869346619, 0.0, -5.3184661865234375, 1.2349379062652588, 0.0, -4.390204429626465, 1.500449538230896, 0.0, -3.4248948097229004, 1.5807204246520996, 0.0, -2.4101877212524414, 1.5127986669540405, 0.0, -1.3337335586547852, 1.3337323665618896, 0.0, -0.18318307399749756, 1.0805697441101074, 0.0, 1.053813099861145, 0.7903590202331543, 0.0, 2.389604330062866, 0.5001481771469116, 0.0, 3.8365399837493896, 0.24698543548583984, 0.0, 5.4069695472717285, 0.06791891157627106, 0.0, 7.113242149353027, 0.0, 0.0], \"Edges\": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 12], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        455.1641845703125,
+        689.3716430664062
+      ],
+      "params": {
+        "currently_storing": 1,
+        "obj_name": "BezierCurve"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        771.9753608703613,
+        658.4444274902344
+      ],
+      "params": {
+        "center": 1,
+        "normalize": 0,
+        "stepx": 0.5099999904632568,
+        "stepy": 0.25
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Profile Parametric": {
+      "bl_idname": "SvProfileNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "Z",
+      "location": [
+        1289.5948486328125,
+        1084.0189208984375
+      ],
+      "params": {
+        "current_axis": "Z",
+        "extended_parsing": 1,
+        "filename": "Profile Parametric",
+        "selected_axis": "Z"
+      },
+      "path_file": "# Here is autogenerated values, \n# Please, rename text to avoid data loose.\n# Objects are: \n# \"'BezierCircle\".\n# Object origin should be at 0,0,0. \n# Property panel has precision 8 \n# and curve subdivision 20.\n\n# Spline 0\n\nM -0.70000029,0.59999514 \n#L.1...\nL 3e-07,0.59999508 2.8e-07,2.1e-07 \n#C.3\nC 2.6e-07,-0.61687046 0.42741197,-1.09166479 1.00000024,-1.40000618 20 0 \n#L.4...\nL 1.00000024,-1.91000092 \n#C.5\nC (0.73804504+a),(-1.91000342) (0.49075741+a),(-2.01556277) (0.29999971+a),(-2.21000099) 20 0 \n#C.6\nC (-0.58361995+a),(-1.34133947) -0.70000035,-0.65629202 -0.70000029,0.59999514 20 0 \n# hacky way till be fixed x\n# for curves not only for lines\nL -0.70000029,0.59999514 \nx \n\n# expression (#+a) added because \n# you selected knots in curve",
+      "profile_sublist_storage": "{\"knots\": [[-0.7000002861022949, 0.5999951362609863, -1.6423857118752494e-07], [2.980232238769531e-07, 0.5999950766563416, 2.541069079597946e-07], [2.8312206268310547e-07, 2.086162567138672e-07, 1.8705166837662546e-07], [2.5926243552021333e-07, -0.6168704628944397, 2.988103915413376e-07], [0.4274119734764099, -1.0916647911071777, 1.6862030349784618e-07], [1.000000238418579, -1.4000061750411987, 2.6862363711188664e-07], [1.000000238418579, -1.9100009202957153, 1.345131579455483e-07], [0.7380450367927551, -1.910003423690796, -3.851826022582827e-06], [0.49075740575790405, -2.0155627727508545, 4.667019766202429e-06], [0.2999997138977051, -2.210000991821289, -2.8383232120177126e-07], [-0.5836199522018433, -1.3413394689559937, 5.403747422860761e-07], [-0.7000003457069397, -0.6562920212745667, -3.964034476666711e-06]], \"knotsnames\": [\"M.0\", \"L.1\", \"L.2\", \"C.3h1\", \"C.3h2\", \"C.3k\", \"L.4\", \"C.5h1\", \"C.5h2\", \"C.5k\", \"C.6h1\", \"C.6h2\"]}",
+      "width": 140.0
+    },
+    "Range Float": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        821.4802284240723,
+        228.1300506591797
+      ],
+      "params": {
+        "count_": 150,
+        "mode": "FRANGE_COUNT",
+        "stop_": 1.0
+      },
+      "width": 140.0
+    },
+    "Range Float.001": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        809.9160766601562,
+        1075.074951171875
+      ],
+      "params": {
+        "mode": "FRANGE_COUNT",
+        "stop_": 9.42477798461914
+      },
+      "width": 140.0
+    },
+    "Range Int": {
+      "bl_idname": "GenListRangeIntNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1678.9890594482422,
+        1034.468692779541
+      ],
+      "params": {
+        "count_": 61,
+        "mode": "COUNTRANGE",
+        "stop_": 60
+      },
+      "width": 140.0
+    },
+    "Rotation": {
+      "bl_idname": "SvRotationNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1518.9890594482422,
+        1154.4685707092285
+      ],
+      "params": {
+        "angle_": -90.0,
+        "mode": "EULER",
+        "x_": 0.0,
+        "y_": 90.0,
+        "z_": 90.0
+      },
+      "width": 140.0
+    },
+    "Rotation.002": {
+      "bl_idname": "SvRotationNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1367.4512519836426,
+        382.5264434814453
+      ],
+      "params": {
+        "angle_": 90.0
+      },
+      "width": 140.0
+    },
+    "Solidify": {
+      "bl_idname": "SvSolidifyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2038.9889373779297,
+        1154.4685707092285
+      ],
+      "params": {
+        "thickness": 0.2199999988079071
+      },
+      "width": 140.0
+    },
+    "Vector Interpolation mk3": {
+      "bl_idname": "SvInterpolationNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        989.9971961975098,
+        338.19410705566406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector Math": {
+      "bl_idname": "SvVectorMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1367.4512519836426,
+        202.52647399902344
+      ],
+      "params": {
+        "current_op": "NORMALIZE"
+      },
+      "width": 140.0
+    },
+    "Vector Math.001": {
+      "bl_idname": "SvVectorMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1647.0963592529297,
+        874.4686317443848
+      ],
+      "params": {
+        "current_op": "NORMALIZE"
+      },
+      "width": 140.0
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1547.4512519836426,
+        222.5264434814453
+      ],
+      "params": {
+        "z_": -0.6000000238418579
+      },
+      "width": 100.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1985.5609130859375,
+        666.9271240234375
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 1,
+        "display_verts": 0,
+        "shading": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2260.736572265625,
+        1181.083251953125
+      ],
+      "params": {
+        "display_edges": 1,
+        "display_verts": 0,
+        "shading": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number",
+      0,
+      "Range Float.001",
+      2
+    ],
+    [
+      "Range Float.001",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "Easing 0..1",
+      0
+    ],
+    [
+      "Easing 0..1",
+      0,
+      "Profile Parametric",
+      0
+    ],
+    [
+      "Profile Parametric",
+      0,
+      "List Length",
+      0
+    ],
+    [
+      "List Length",
+      0,
+      "Range Int",
+      2
+    ],
+    [
+      "Objects in Lite",
+      0,
+      "Matrix Apply (verts).001",
+      0
+    ],
+    [
+      "Objects in Lite",
+      3,
+      "Matrix Apply (verts).001",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Range Float",
+      2
+    ],
+    [
+      "Matrix Apply (verts).001",
+      0,
+      "Vector Interpolation mk3",
+      0
+    ],
+    [
+      "Range Float",
+      0,
+      "Vector Interpolation mk3",
+      1
+    ],
+    [
+      "Vector Interpolation mk3",
+      1,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "Vector Interpolation mk3",
+      1,
+      "Rotation.002",
+      0
+    ],
+    [
+      "Rotation.002",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "Vector Interpolation mk3",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector Math",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "Profile Parametric",
+      0,
+      "Rotation",
+      0
+    ],
+    [
+      "Range Int",
+      0,
+      "Exec Node Mod",
+      0
+    ],
+    [
+      "Rotation",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "Exec Node Mod",
+      0,
+      "Solidify",
+      2
+    ],
+    [
+      "Plane MK2",
+      0,
+      "Extrude Separate Faces",
+      0
+    ],
+    [
+      "Plane MK2",
+      2,
+      "Extrude Separate Faces",
+      2
+    ],
+    [
+      "Extrude Separate Faces",
+      2,
+      "List Repeater.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "List Repeater.001",
+      1
+    ],
+    [
+      "List Repeater.001",
+      0,
+      "List Reverse",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "Vector Interpolation mk3",
+      1,
+      "Matrix in",
+      3
+    ],
+    [
+      "Extrude Separate Faces",
+      0,
+      "Matrix Apply (verts)",
+      0
+    ],
+    [
+      "Matrix in",
+      0,
+      "Matrix Apply (verts)",
+      1
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "List Reverse",
+      0,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "Move.001",
+      0,
+      "Viewer Draw",
+      2
+    ],
+    [
+      "Vector Interpolation mk3",
+      0,
+      "Move.002",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "Move.002",
+      1
+    ],
+    [
+      "Move.002",
+      0,
+      "Matrix in.002",
+      0
+    ],
+    [
+      "Vector Interpolation mk3",
+      1,
+      "Matrix in.002",
+      3
+    ],
+    [
+      "Solidify",
+      0,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Viewer Draw.001",
+      1
+    ],
+    [
+      "Matrix in.002",
+      0,
+      "Viewer Draw.001",
+      2
+    ]
+  ]
+}

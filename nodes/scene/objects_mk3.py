@@ -230,7 +230,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
             with hard_freeze(self) as _: 
 
-                mtrx = [list(m) for m in obj.matrix_world]
+                mtrx = obj.matrix_world
                 if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
                     mtrx_out.append(mtrx)
                     continue

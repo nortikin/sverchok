@@ -25,6 +25,8 @@ import bpy
 from mathutils import Vector, Matrix
 import numpy as np
 
+from sverchok.utils.logging import info
+
 DEBUG_MODE = False
 HEAT_MAP = False
 RELOAD_EVENT = False
@@ -197,7 +199,7 @@ def dataCorrect(data, nominal_dept=2):
     if not dept: # for empty lists
         return []
     if dept < 2:
-        return [dept, data]
+        return data #[dept, data]
     else:
         output = dataStandart(data, dept, nominal_dept)
         return output
@@ -576,6 +578,12 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
     '''
+    if not inputsocketname in node.inputs:
+        # - node not initialized in sv_init yet, 
+        # - or socketname incorrect
+        info("changable_socket was called on node (%s) with a socket named \"%s\", this socket does not exist" % (node.name, inputsocketname))
+        return 
+
     in_socket = node.inputs[inputsocketname]
     ng = node.id_data
     if in_socket.links:

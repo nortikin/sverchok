@@ -38,7 +38,7 @@ prePostItems = [
     ("POST", "Post", "Calculate B op A", 1)
 ]
 
-id_mat = Matrix_listing([Matrix.Identity(4)])
+id_mat = [Matrix.Identity(4)]
 ABC = tuple('ABCDEFGHIJKLMNOPQRSTUVWXYZ')
 
 
@@ -190,7 +190,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         I = []  # collect the inputs from the connected sockets
         for s in filter(lambda s: s.is_linked, self.inputs):
-            I.append([Matrix(m) for m in s.sv_get(default=id_mat)])
+            I.append(s.sv_get(default=id_mat))
 
         operation = self.get_operation()
 
@@ -202,12 +202,11 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
 
             matrixList = [operation(params) for params in zip(*parameters)]
 
-            matrices = Matrix_listing(matrixList)
-            outputs['C'].sv_set(matrices)
+            outputs['C'].sv_set(matrixList)
 
         else:  # single input operations
             parameters = I[0]
-            print("parameters=", parameters)
+          #  print("parameters=", parameters)
 
             if self.operation == "BASIS":
                 xList = []
@@ -222,14 +221,12 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
                 outputs['Y'].sv_set(yList)
                 outputs['Z'].sv_set(zList)
 
-                matrices = Matrix_listing(parameters)
-                outputs['C'].sv_set(matrices)
+                outputs['C'].sv_set(parameters)
 
             else:  # INVERSE / FILTER
                 matrixList = [operation(a) for a in parameters]
 
-                matrices = Matrix_listing(matrixList)
-                outputs['C'].sv_set(matrices)
+                outputs['C'].sv_set(matrixList)
 
 
 def register():

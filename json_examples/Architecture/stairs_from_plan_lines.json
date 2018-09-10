@@ -1,0 +1,2030 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {
+    "Delete Loose": "Frame.003",
+    "Frame.007": "Frame.003",
+    "Frame.008": "Frame.003",
+    "Frame.009": "Frame.006",
+    "Frame.010": "Frame.006",
+    "Frame.011": "Frame.006",
+    "List Del Levels": "Frame.009",
+    "List Del Levels.001": "Frame.009",
+    "List Del Levels.002": "Frame.007",
+    "List Del Levels.003": "Frame.007",
+    "List First & Last": "Frame.001",
+    "List Flip": "Frame.001",
+    "List Item": "Frame.009",
+    "List Item.001": "Frame.009",
+    "List Item.002": "Frame.010",
+    "List Item.003": "Frame.010",
+    "List Item.004": "Frame.007",
+    "List Item.005": "Frame.007",
+    "List Item.006": "Frame.007",
+    "List Join": "Frame.001",
+    "List Join.002": "Frame",
+    "List Length": "Frame.008",
+    "List Mask (out)": "Frame.004",
+    "List Math": "Frame",
+    "List Reverse": "Frame.001",
+    "List Sort": "Frame.007",
+    "List Split": "Frame.002",
+    "List Zip": "Frame.001",
+    "Logic functions": "Frame.004",
+    "Math MK2": "Frame.001",
+    "Matrix Apply (verts)": "Frame.011",
+    "Matrix Deform": "Frame",
+    "Matrix Math": "Frame",
+    "Matrix View": "Frame",
+    "Matrix in": "Frame.011",
+    "Matrix out": "Frame",
+    "Move": "Frame.002",
+    "Move.001": "Frame.002",
+    "Move.002": "Frame.001",
+    "Move.003": "Frame",
+    "Polygon Boom.001": "Frame.008",
+    "Range Float": "Frame.008",
+    "Remove Doubles": "Frame.006",
+    "Reroute": "Frame.005",
+    "Scripted Node": "Frame.004",
+    "Scripted Node.001": "Frame.005",
+    "Socket Converter": "Frame",
+    "Stethoscope MK2": "Frame.007",
+    "Switch": "Frame.011",
+    "UV Connection.001": "Frame.001",
+    "Vector Math": "Frame.010",
+    "Vector Math.001": "Frame",
+    "Vector Sort.001": "Frame.008",
+    "Vector X/Y/Z": "Frame.011",
+    "Vector X/Y/Z.001": "Frame.011",
+    "Vector in.001": "Frame.003",
+    "Vector in.002": "Frame.002",
+    "Vector in.004": "Frame.002",
+    "Vector in.005": "Frame.001",
+    "Viewer Draw": "Frame.003",
+    "Viewer Draw.001": "Frame.005",
+    "Viewer Draw.002": "Frame.001",
+    "Viewer Draw.004": "Frame",
+    "Viewer Index": "Frame.003",
+    "Viewer Index.001": "Frame.005",
+    "Viewer Index.002": "Frame.001",
+    "Viewer Index.003": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "height",
+      "location": [
+        -2404.115478515625,
+        -83.84907531738281
+      ],
+      "params": {
+        "float_": 0.42000001668930054,
+        "float_max": 1.0,
+        "float_min": 0.05000000074505806,
+        "int_": 0,
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "threshold",
+      "location": [
+        -2405.7109375,
+        -166.9200439453125
+      ],
+      "params": {
+        "float_": 1.2400000095367432,
+        "float_max": 5.0,
+        "float_min": 0.05000000074505806,
+        "int_": 0,
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "sort_distance",
+      "location": [
+        -2408.902099609375,
+        -249.9915771484375
+      ],
+      "params": {
+        "float_": 1.0,
+        "float_max": 1.0,
+        "float_min": 0.05000000074505806,
+        "int_": 152,
+        "int_max": 10000,
+        "int_min": -10000,
+        "selected_mode": "int",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "X or Y oriented",
+      "location": [
+        -2404.196533203125,
+        -330.96527099609375
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 0,
+        "int_max": 1,
+        "int_min": 0,
+        "selected_mode": "int",
+        "show_limits": 0,
+        "to3d": 1
+      },
+      "width": 140.0
+    },
+    "Delete Loose": {
+      "bl_idname": "SvDeleteLooseNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        405.43450927734375,
+        266.36158752441406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 522.6727905273438,
+      "hide": false,
+      "label": "BACK MATRIX",
+      "location": [
+        538.0587768554688,
+        186.7982940673828
+      ],
+      "params": {},
+      "width": 1395.791259765625
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 578.1309814453125,
+      "hide": false,
+      "label": "MAKE",
+      "location": [
+        572.4266967773438,
+        302.5439758300781
+      ],
+      "params": {},
+      "width": 1032.177001953125
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 249.68722534179688,
+      "hide": false,
+      "label": "MOVE",
+      "location": [
+        537.3062133789062,
+        158.44371032714844
+      ],
+      "params": {},
+      "width": 673.5255737304688
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "height": 724.5340576171875,
+      "hide": false,
+      "label": "SORT",
+      "location": [
+        353.58026123046875,
+        244.86561584472656
+      ],
+      "params": {},
+      "width": 785.3814697265625
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "height": 270.7259521484375,
+      "hide": false,
+      "label": "FILTER WASTES",
+      "location": [
+        458.9499816894531,
+        284.6101989746094
+      ],
+      "params": {},
+      "width": 542.6487426757812
+    },
+    "Frame.005": {
+      "bl_idname": "NodeFrame",
+      "height": 552.00537109375,
+      "hide": false,
+      "label": "SEPARATE DIRECTION",
+      "location": [
+        579.73681640625,
+        115.89727020263672
+      ],
+      "params": {},
+      "width": 445.9678649902344
+    },
+    "Frame.006": {
+      "bl_idname": "NodeFrame",
+      "height": 434.2419738769531,
+      "hide": false,
+      "label": "prerotate",
+      "location": [
+        437.74407958984375,
+        272.8146057128906
+      ],
+      "params": {},
+      "width": 1427.093505859375
+    },
+    "Frame.007": {
+      "bl_idname": "NodeFrame",
+      "height": 340.0562744140625,
+      "hide": false,
+      "label": "sort edges",
+      "location": [
+        311.009521484375,
+        627.4877166748047
+      ],
+      "params": {},
+      "width": 163.360595703125
+    },
+    "Frame.008": {
+      "bl_idname": "NodeFrame",
+      "height": 661.4767456054688,
+      "hide": false,
+      "label": "vertex sort",
+      "location": [
+        153.03085327148438,
+        147.8243408203125
+      ],
+      "params": {},
+      "width": 204.3199462890625
+    },
+    "Frame.009": {
+      "bl_idname": "NodeFrame",
+      "height": 355.99261474609375,
+      "hide": false,
+      "label": "first edge",
+      "location": [
+        39.3763427734375,
+        169.65807342529297
+      ],
+      "params": {},
+      "width": 311.03759765625
+    },
+    "Frame.010": {
+      "bl_idname": "NodeFrame",
+      "height": 364.3596496582031,
+      "hide": false,
+      "label": "edge_direction",
+      "location": [
+        43.80413818359375,
+        154.8806610107422
+      ],
+      "params": {},
+      "width": 376.194580078125
+    },
+    "Frame.011": {
+      "bl_idname": "NodeFrame",
+      "height": 307.1072998046875,
+      "hide": false,
+      "label": "rotate to vector",
+      "location": [
+        27.5689697265625,
+        216.94580841064453
+      ],
+      "params": {},
+      "width": 475.72540283203125
+    },
+    "List Del Levels": {
+      "bl_idname": "ListLevelsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1707.3436279296875,
+        75.53646850585938
+      ],
+      "params": {
+        "Sverch_LisLev": "2"
+      },
+      "width": 140.0
+    },
+    "List Del Levels.001": {
+      "bl_idname": "ListLevelsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1712.4764404296875,
+        13.198570251464844
+      ],
+      "params": {
+        "Sverch_LisLev": "2"
+      },
+      "width": 140.0
+    },
+    "List Del Levels.002": {
+      "bl_idname": "ListLevelsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        595.6119384765625,
+        223.9315643310547
+      ],
+      "params": {
+        "Sverch_LisLev": "1"
+      },
+      "width": 140.0
+    },
+    "List Del Levels.003": {
+      "bl_idname": "ListLevelsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        586.1265258789062,
+        107.70219421386719
+      ],
+      "params": {
+        "Sverch_LisLev": "1"
+      },
+      "width": 140.0
+    },
+    "List First & Last": {
+      "bl_idname": "ListFLNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        2260.0823364257812,
+        81.10940551757812
+      ],
+      "params": {
+        "level": 1
+      },
+      "width": 140.0
+    },
+    "List Flip": {
+      "bl_idname": "ListFlipNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        2255.9755249023438,
+        125.146484375
+      ],
+      "params": {
+        "level": 2
+      },
+      "width": 140.0
+    },
+    "List Item": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1863.7791748046875,
+        237.40435028076172
+      ],
+      "params": {
+        "item": 0,
+        "level": 2
+      },
+      "width": 140.0
+    },
+    "List Item.001": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1868.2928466796875,
+        82.80520629882812
+      ],
+      "params": {
+        "item": 0,
+        "level": 3
+      },
+      "width": 143.46014404296875
+    },
+    "List Item.002": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1538.3751831054688,
+        255.30079650878906
+      ],
+      "params": {
+        "level": 2
+      },
+      "width": 143.46014404296875
+    },
+    "List Item.003": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1539.5285034179688,
+        92.50926208496094
+      ],
+      "params": {
+        "level": 2
+      },
+      "width": 143.46014404296875
+    },
+    "List Item.004": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        592.030517578125,
+        184.99476623535156
+      ],
+      "params": {
+        "level": 2
+      },
+      "width": 140.0
+    },
+    "List Item.005": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        588.3036804199219,
+        268.98631286621094
+      ],
+      "params": {
+        "level": 3
+      },
+      "width": 140.0
+    },
+    "List Item.006": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        590.0617065429688,
+        147.52992248535156
+      ],
+      "params": {
+        "level": 3
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2366.7986450195312,
+        222.15837860107422
+      ],
+      "params": {
+        "JoinLevel": 1
+      },
+      "width": 140.0
+    },
+    "List Join.002": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3659.8561401367188,
+        188.84612655639648
+      ],
+      "params": {
+        "wrap_check": 1
+      },
+      "width": 140.0
+    },
+    "List Length": {
+      "bl_idname": "ListLengthNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        780.3280334472656,
+        -48.34684753417969
+      ],
+      "params": {
+        "level": 0
+      },
+      "width": 140.0
+    },
+    "List Mask (out)": {
+      "bl_idname": "MaskListNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -300.6951599121094,
+        191.47425842285156
+      ],
+      "params": {
+        "Level": 2
+      },
+      "width": 140.0
+    },
+    "List Math": {
+      "bl_idname": "ListFuncNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3371.9127807617188,
+        146.87890625
+      ],
+      "params": {
+        "func_": "MAX",
+        "level": 1
+      },
+      "width": 140.0
+    },
+    "List Reverse": {
+      "bl_idname": "ListReverseNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        2256.3361206054688,
+        37.699432373046875
+      ],
+      "params": {
+        "level": 1
+      },
+      "width": 140.0
+    },
+    "List Sort": {
+      "bl_idname": "ListSortNodeMK2",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        582.3396606445312,
+        61.18486022949219
+      ],
+      "params": {
+        "level": 3
+      },
+      "width": 140.0
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1351.1571655273438,
+        253.2864227294922
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Zip": {
+      "bl_idname": "ZipNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        2253.1102905273438,
+        172.3228759765625
+      ],
+      "params": {
+        "level": 2,
+        "unwrap": 1
+      },
+      "width": 140.0
+    },
+    "Logic functions": {
+      "bl_idname": "SvLogicNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -467.2658996582031,
+        192.3730010986328
+      ],
+      "params": {
+        "i_y": 0.07000000029802322,
+        "items_": "BIG"
+      },
+      "width": 140.0
+    },
+    "Math MK2": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1936.1566772460938,
+        89.04754638671875
+      ],
+      "params": {
+        "current_op": "NEG",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Matrix Apply (verts)": {
+      "bl_idname": "MatrixApplyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -877.4512939453125,
+        81.07703399658203
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix Apply (verts).001": {
+      "bl_idname": "MatrixApplyNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2242.73974609375,
+        194.49472045898438
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Matrix Deform": {
+      "bl_idname": "MatrixDeformNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3839.5836791992188,
+        102.07568359375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix Math": {
+      "bl_idname": "SvMatrixMathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Matrix Invert",
+      "location": [
+        3021.8605346679688,
+        -136.89024353027344
+      ],
+      "params": {
+        "operation": "INVERT"
+      },
+      "width": 140.0
+    },
+    "Matrix View": {
+      "bl_idname": "SvMatrixViewer",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        4217.299499511719,
+        -97.96031188964844
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -878.54638671875,
+        236.16612243652344
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix out": {
+      "bl_idname": "MatrixOutNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3214.5704956054688,
+        -96.11988830566406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1535.3256225585938,
+        247.57798767089844
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1711.3367309570312,
+        243.44944763183594
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.002": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2075.2573852539062,
+        131.02096557617188
+      ],
+      "params": {},
+      "width": 150.7852783203125
+    },
+    "Move.003": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        3211.2868041992188,
+        133.62471389770508
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2601.3427734375,
+        377.3623962402344
+      ],
+      "params": {
+        "text": "nikitron 2018 - make stairs from lines in plan that represents steps"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Objects in Lite": {
+      "bl_idname": "SvObjInLite",
+      "color": [
+        0.0,
+        0.5,
+        0.20000000298023224
+      ],
+      "geom": "{\"Polygons\": [], \"Vertices\": [-1.0, 0.0, 0.0585782527923584, 0.9999999403953552, 0.0, 0.0585782527923584, -1.1941555738449097, 0.5685991644859314, 0.0585782527923584, 0.8058444857597351, 0.5685991644859314, 0.0585782527923584, -1.4789888858795166, 1.2980091571807861, 0.0585782527923584, 0.5210112929344177, 1.2980091571807861, 0.0585782527923584, -1.7058939933776855, 2.269834041595459, 0.0585782527923584, 0.2941059470176697, 2.269834041595459, 0.0585782527923584, -2.069689989089966, 3.1601786613464355, 0.0585782527923584, -0.06968995928764343, 3.1601786613464355, 0.0585782527923584], \"Edges\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], \"Matrix\": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]}",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2617.28076171875,
+        209.9088897705078
+      ],
+      "params": {
+        "currently_storing": 1,
+        "obj_name": "BezierCurve"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Polygon Boom.001": {
+      "bl_idname": "PolygonBoomNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        776.3694763183594,
+        291.9472961425781
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Range Float": {
+      "bl_idname": "SvGenFloatRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        776.3609924316406,
+        -170.343017578125
+      ],
+      "params": {
+        "mode": "FRANGE_STEP",
+        "step_": 0.15000000596046448
+      },
+      "width": 140.0
+    },
+    "Remove Doubles": {
+      "bl_idname": "SvRemoveDoublesNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2074.0151977539062,
+        233.4236602783203
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        128.11297607421875,
+        120.48309707641602
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2417.087646484375,
+        147.9871063232422
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.002": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2413.99072265625,
+        113.88780975341797
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.003": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -2417.087646484375,
+        179.68844604492188
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Scripted Node": {
+      "bl_idname": "SvScriptNode",
+      "color": [
+        0.0,
+        0.800000011920929,
+        0.949999988079071
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "edge-length.py",
+      "location": [
+        -642.9909362792969,
+        192.25193786621094
+      ],
+      "params": {
+        "button_names": "",
+        "files_popup": "default_cube_ordered.py",
+        "has_buttons": 0,
+        "script_name": "edge-length.py",
+        "script_str": "import mathutils \nfrom mathutils import Vector\n\n#get length of all edges\n \ndef sv_main(verts=[[]],edges=[[]]):\n \n    # in boilerplate - make your own sockets\n    in_sockets = [\n        ['v', 'Vertices',  verts],\n        ['s', 'Edges',  edges],\n    ]\n    lengths = []\n    for v,es in zip(verts,edges):\n        lens=[]\n        for e0,e1 in es:\n            lens.append((Vector(v[e0])-Vector(v[e1])).length) \n        lengths.append(lens)    \n    \n    out_sockets = [\n        ['s', 'Lengths', lengths],\n    ]\n \n    return in_sockets, out_sockets\n",
+        "user_name": "templates"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Scripted Node.001": {
+      "bl_idname": "SvScriptNode",
+      "color": [
+        0.0,
+        0.800000011920929,
+        0.949999988079071
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "separate_ver_hor_edges.py",
+      "location": [
+        -66.41998291015625,
+        210.9200897216797
+      ],
+      "params": {
+        "button_names": "",
+        "files_popup": "rot_to_euler_xyz.py",
+        "float_list": [
+          0.0,
+          1.0,
+          2.0,
+          1.3299999237060547,
+          4.0,
+          5.0,
+          6.0,
+          7.0,
+          8.0,
+          9.0,
+          10.0,
+          11.0,
+          12.0,
+          13.0,
+          14.0,
+          15.0,
+          16.0,
+          17.0,
+          18.0,
+          19.0,
+          20.0,
+          21.0,
+          22.0,
+          23.0,
+          24.0,
+          25.0,
+          26.0,
+          27.0,
+          28.0,
+          29.0,
+          30.0,
+          31.0
+        ],
+        "has_buttons": 0,
+        "int_list": [
+          0,
+          1,
+          2,
+          1,
+          1,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "script_name": "separate_ver_hor_edges.py",
+        "script_str": "# it separates vertical and horisontal edges\nfrom sverchok.data_structure import sv_zip\nfrom math import sin\n\n\ndef sv_main(v=[],e=[],tres=1.0,rou=1):\n    \n    in_sockets = [\n        ['v', 'Vertices',  v],\n        ['s', 'edges', e],\n        ['s', 'Threshold', tres],\n        ['s', 'Round', rou],\n    ]\n    \n\n    edgX=[]\n    edgY=[]\n    edgZ=[]\n    edgN=[]\n    if v:\n        v = v[0]\n        if rou<1:\n            ro=1\n        elif rou>2:\n            ro=2\n        else:\n            ro = rou\n        for edg in e[0]:\n            if abs(round((v[edg[0]][2]-v[edg[1]][2]),ro)) < tres and abs(round((v[edg[0]][1] - v[edg[1]][1]),ro)) < tres:\n                edgX.append(edg)\n            elif abs(round((v[edg[0]][0] - v[edg[1]][0]),ro)) < tres and abs(round((v[edg[0]][1] - v[edg[1]][1]),ro)) < tres:\n                edgZ.append(edg)\n            elif abs(round((v[edg[0]][2] - v[edg[1]][2]),ro)) < tres and abs(round((v[edg[0]][0] - v[edg[1]][0]),ro)) < tres:\n                edgY.append(edg)\n            else:\n                edgN.append(edg)\n    \n    out_sockets = [\n        ['v', 'Vers', [v]],\n        ['s', 'edgX', [edgX]],\n        ['s', 'edgY', [edgY]],\n        ['s', 'edgZ', [edgZ]],\n        ['s', 'edgN', [edgN]],\n    ]\n\n    return in_sockets, out_sockets\n\n",
+        "user_name": "templates"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Socket Converter": {
+      "bl_idname": "ConverterNode",
+      "color": [
+        0.6740000247955322,
+        0.24199999868869781,
+        0.3630000054836273
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        3539.2306518554688,
+        138.41362762451172
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Stethoscope MK2": {
+      "bl_idname": "SvStethoscopeNodeMK2",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        590.5914306640625,
+        19.459396362304688
+      ],
+      "params": {
+        "activate": 0,
+        "num_elements": 1,
+        "text_color": [
+          0.949999988079071,
+          0.949999988079071,
+          0.949999988079071
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Switch": {
+      "bl_idname": "SvSwitchNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1038.0313720703125,
+        190.96229553222656
+      ],
+      "params": {},
+      "width": 119.621826171875
+    },
+    "UV Connection.001": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2574.4373168945312,
+        223.9806137084961
+      ],
+      "params": {
+        "cicl_check_U": 1,
+        "cicl_check_V": 0,
+        "cup_U": 1,
+        "cup_V": 0,
+        "dir_check": "U_dir",
+        "slice_check": 0
+      },
+      "width": 128.77734375
+    },
+    "Vector Math": {
+      "bl_idname": "SvVectorMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1363.6870727539062,
+        174.03939247131348
+      ],
+      "params": {
+        "current_op": "SUB"
+      },
+      "width": 140.0
+    },
+    "Vector Math.001": {
+      "bl_idname": "SvVectorMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        4000.4298706054688,
+        228.31981658935547
+      ],
+      "params": {
+        "current_op": "SUB"
+      },
+      "width": 140.0
+    },
+    "Vector Sort.001": {
+      "bl_idname": "SvVertSortNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        780.2027282714844,
+        160.7523193359375
+      ],
+      "params": {
+        "mode": "DIST"
+      },
+      "width": 140.0
+    },
+    "Vector X/Y/Z": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1150.5516357421875,
+        74.6302261352539
+      ],
+      "params": {
+        "axis_y": "0",
+        "axis_z": "0"
+      },
+      "width": 199.764404296875
+    },
+    "Vector X/Y/Z.001": {
+      "bl_idname": "SvAxisInputNodeMK2",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -1152.8236083984375,
+        35.385597229003906
+      ],
+      "params": {
+        "axis_x": "0",
+        "axis_y": "1",
+        "axis_z": "0"
+      },
+      "width": 199.764404296875
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        573.0726623535156,
+        -59.15803527832031
+      ],
+      "params": {
+        "x_": 0.0,
+        "y_": 2000.0,
+        "z_": 0.0
+      },
+      "width": 100.0
+    },
+    "Vector in.002": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1238.1637573242188,
+        147.64524841308594
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector in.004": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1585.9097290039062,
+        89.0992202758789
+      ],
+      "params": {
+        "y_": 0.0,
+        "z_": 0.15000000596046448
+      },
+      "width": 100.0
+    },
+    "Vector in.005": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1933.5166625976562,
+        40.059234619140625
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        990.4630737304688,
+        324.8281936645508
+      ],
+      "params": {
+        "activate": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        168.59100341796875,
+        311.6523971557617
+      ],
+      "params": {
+        "activate": 0,
+        "display_verts": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.002": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2765.3407592773438,
+        225.54276275634766
+      ],
+      "params": {
+        "activate": 0,
+        "display_verts": 1,
+        "ngon_tessellate": 1,
+        "shading": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.004": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        4188.768737792969,
+        222.23595428466797
+      ],
+      "params": {
+        "activate": 1,
+        "display_verts": 0,
+        "ngon_tessellate": 1,
+        "shading": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Index": {
+      "bl_idname": "IndexViewerNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        979.2319946289062,
+        43.15203857421875
+      ],
+      "params": {
+        "activate": 0,
+        "display_edge_index": 1,
+        "display_vert_index": 1,
+        "draw_bg": 1
+      },
+      "use_custom_color": true,
+      "width": 137.0482177734375
+    },
+    "Viewer Index.001": {
+      "bl_idname": "IndexViewerNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        179.1949462890625,
+        41.114646911621094
+      ],
+      "params": {
+        "activate": 0,
+        "display_edge_index": 1,
+        "display_vert_index": 0,
+        "draw_bg": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Index.002": {
+      "bl_idname": "IndexViewerNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2755.7279663085938,
+        -60.317352294921875
+      ],
+      "params": {
+        "activate": 0,
+        "display_edge_index": 0,
+        "display_face_index": 1,
+        "display_vert_index": 0,
+        "draw_bg": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Index.003": {
+      "bl_idname": "IndexViewerNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2044.0795288085938,
+        -72.42825317382812
+      ],
+      "params": {
+        "activate": 0,
+        "display_edge_index": 0,
+        "display_face_index": 1,
+        "display_vert_index": 1,
+        "draw_bg": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Objects in Lite",
+      "Vertices",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Objects in Lite",
+      "Matrix",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "Matrix Apply (verts).001",
+      "Vectors"
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Matrix Apply (verts).001",
+      "Matrixes"
+    ],
+    [
+      "Objects in Lite",
+      "Edges",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Matrix Apply (verts).001",
+      0,
+      "Remove Doubles",
+      1
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Remove Doubles",
+      "PolyEdge"
+    ],
+    [
+      "Remove Doubles",
+      1,
+      "List Item",
+      0
+    ],
+    [
+      "List Item",
+      0,
+      "List Item.001",
+      0
+    ],
+    [
+      "List Item.001",
+      0,
+      "List Del Levels",
+      0
+    ],
+    [
+      "Remove Doubles",
+      0,
+      "List Item.002",
+      0
+    ],
+    [
+      "List Del Levels",
+      0,
+      "List Item.002",
+      1
+    ],
+    [
+      "List Item.001",
+      1,
+      "List Del Levels.001",
+      0
+    ],
+    [
+      "Remove Doubles",
+      0,
+      "List Item.003",
+      0
+    ],
+    [
+      "List Del Levels.001",
+      0,
+      "List Item.003",
+      1
+    ],
+    [
+      "List Item.003",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "List Item.002",
+      0,
+      "Vector Math",
+      1
+    ],
+    [
+      "A Number.003",
+      0,
+      "Switch",
+      0
+    ],
+    [
+      "Vector X/Y/Z",
+      0,
+      "Switch",
+      1
+    ],
+    [
+      "Vector X/Y/Z.001",
+      0,
+      "Switch",
+      2
+    ],
+    [
+      "Vector Math",
+      0,
+      "Matrix in",
+      2
+    ],
+    [
+      "Switch",
+      0,
+      "Matrix in",
+      3
+    ],
+    [
+      "Remove Doubles",
+      0,
+      "Matrix Apply (verts)",
+      0
+    ],
+    [
+      "Matrix in",
+      0,
+      "Matrix Apply (verts)",
+      1
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "Scripted Node",
+      0
+    ],
+    [
+      "Remove Doubles",
+      1,
+      "Scripted Node",
+      1
+    ],
+    [
+      "Scripted Node",
+      0,
+      "Logic functions",
+      0
+    ],
+    [
+      "Matrix in",
+      0,
+      "Matrix Math",
+      0
+    ],
+    [
+      "Matrix Math",
+      0,
+      "Matrix out",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "Vector in.001",
+      1
+    ],
+    [
+      "Remove Doubles",
+      1,
+      "List Mask (out)",
+      0
+    ],
+    [
+      "Logic functions",
+      0,
+      "List Mask (out)",
+      1
+    ],
+    [
+      "Matrix Apply (verts)",
+      0,
+      "Scripted Node.001",
+      0
+    ],
+    [
+      "List Mask (out)",
+      3,
+      "Scripted Node.001",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scripted Node.001",
+      2
+    ],
+    [
+      "Scripted Node.001",
+      "edgY",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Scripted Node.001",
+      0,
+      "Delete Loose",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Delete Loose",
+      "PolyEdge"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Item.005",
+      "Data"
+    ],
+    [
+      "List Item.005",
+      0,
+      "List Del Levels.002",
+      0
+    ],
+    [
+      "Delete Loose",
+      0,
+      "List Item.004",
+      0
+    ],
+    [
+      "List Del Levels.002",
+      0,
+      "List Item.004",
+      1
+    ],
+    [
+      "List Item.004",
+      0,
+      "List Item.006",
+      0
+    ],
+    [
+      "List Item.006",
+      0,
+      "List Del Levels.003",
+      0
+    ],
+    [
+      "Delete Loose",
+      1,
+      "List Sort",
+      0
+    ],
+    [
+      "List Del Levels.003",
+      0,
+      "List Sort",
+      1
+    ],
+    [
+      "Delete Loose",
+      0,
+      "Polygon Boom.001",
+      0
+    ],
+    [
+      "List Sort",
+      0,
+      "Polygon Boom.001",
+      1
+    ],
+    [
+      "Polygon Boom.001",
+      0,
+      "Vector Sort.001",
+      0
+    ],
+    [
+      "Polygon Boom.001",
+      1,
+      "Vector Sort.001",
+      1
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Vector Sort.001",
+      2
+    ],
+    [
+      "Vector Sort.001",
+      0,
+      "List Length",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Range Float",
+      1
+    ],
+    [
+      "List Length",
+      0,
+      "Range Float",
+      2
+    ],
+    [
+      "Range Float",
+      0,
+      "Vector in.002",
+      2
+    ],
+    [
+      "Vector in.002",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "Vector Sort.001",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Math MK2",
+      0
+    ],
+    [
+      "Math MK2",
+      0,
+      "Vector in.005",
+      2
+    ],
+    [
+      "Move",
+      0,
+      "Move.002",
+      0
+    ],
+    [
+      "Vector in.005",
+      0,
+      "Move.002",
+      1
+    ],
+    [
+      "Move.002",
+      0,
+      "List Reverse",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector in.004",
+      2
+    ],
+    [
+      "Move",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Vector in.004",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "Move",
+      0,
+      "List Zip",
+      0
+    ],
+    [
+      "Move.001",
+      0,
+      "List Zip",
+      1
+    ],
+    [
+      "List Zip",
+      0,
+      "List Flip",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "List First & Last",
+      0
+    ],
+    [
+      "List First & Last",
+      1,
+      "List Join",
+      0
+    ],
+    [
+      "List Flip",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "List First & Last",
+      2,
+      "List Join",
+      2
+    ],
+    [
+      "List Reverse",
+      0,
+      "List Join",
+      3
+    ],
+    [
+      "List Join",
+      0,
+      "UV Connection.001",
+      0
+    ],
+    [
+      "UV Connection.001",
+      0,
+      "Move.003",
+      0
+    ],
+    [
+      "Matrix out",
+      0,
+      "Move.003",
+      1
+    ],
+    [
+      "Move.003",
+      0,
+      "List Math",
+      0
+    ],
+    [
+      "List Math",
+      0,
+      "Socket Converter",
+      0
+    ],
+    [
+      "Socket Converter",
+      0,
+      "List Join.002",
+      0
+    ],
+    [
+      "UV Connection.001",
+      0,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "List Join.002",
+      0,
+      "Vector Math.001",
+      1
+    ],
+    [
+      "Matrix Math",
+      0,
+      "Matrix Deform",
+      0
+    ],
+    [
+      "List Join.002",
+      0,
+      "Matrix Deform",
+      1
+    ],
+    [
+      "Vector Sort.001",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "UV Connection.001",
+      0,
+      "Viewer Index.002",
+      0
+    ],
+    [
+      "UV Connection.001",
+      1,
+      "Viewer Index.002",
+      2
+    ],
+    [
+      "Delete Loose",
+      0,
+      "Viewer Index",
+      0
+    ],
+    [
+      "List Sort",
+      0,
+      "Viewer Index",
+      1
+    ],
+    [
+      "Scripted Node.001",
+      0,
+      "Viewer Index.001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer Index.001",
+      "edges"
+    ],
+    [
+      "List Sort",
+      0,
+      "Stethoscope MK2",
+      0
+    ],
+    [
+      "Matrix Deform",
+      0,
+      "Matrix View",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Viewer Index.003",
+      0
+    ],
+    [
+      "Scripted Node.001",
+      0,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer Draw.001",
+      "edg_pol"
+    ],
+    [
+      "UV Connection.001",
+      0,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "UV Connection.001",
+      1,
+      "Viewer Draw.002",
+      1
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "Viewer Draw.004",
+      0
+    ],
+    [
+      "UV Connection.001",
+      1,
+      "Viewer Draw.004",
+      1
+    ],
+    [
+      "Matrix Deform",
+      0,
+      "Viewer Draw.004",
+      2
+    ]
+  ]
+}

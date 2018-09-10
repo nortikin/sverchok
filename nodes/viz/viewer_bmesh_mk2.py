@@ -70,7 +70,6 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
     ''' With this mode you make a massive assumption about the
         constant state of geometry. Assumes the count of verts
         edges/faces stays the same, and only updates the locations
-
         node.fixed_verts is not suitable for initial object creation
         but if over time you find that the only change is going to be
         vertices, this mode can be switched to to increase efficiency
@@ -89,7 +88,6 @@ def make_bmesh_geometry(node, idx, context, verts, *topology):
         sv_object.hide_select = False
 
     if matrix:
-        matrix = matrix_sanitizer(matrix)
         if node.extended_matrix:
             sv_object.data.transform(matrix)
             sv_object.matrix_local = Matrix.Identity(4)
@@ -128,7 +126,6 @@ def make_bmesh_geometry_merged(node, idx, context, yielder_object):
         edges, faces, matrix = topology
 
         if matrix:
-            matrix = matrix_sanitizer(matrix)
             verts = [matrix * Vector(v) for v in verts]
 
         big_verts.extend(verts)
@@ -230,6 +227,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         '''will update in place without geometry updates'''
         for obj in self.get_children():
             obj.layers = self.layer_choice[:]
+
+    to3d = BoolProperty(default=True)
 
     material = StringProperty(default='', update=updateNode)
     grouping = BoolProperty(default=False)
@@ -345,18 +344,20 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
             box.prop(self, 'calc_normals', text='calculate normals')
+            box.prop(self, 'to3d', text='to3d')
             box.prop(self, 'layer_choice', text='layer')
 
     def get_geometry_from_sockets(self):
 
         def get(socket_name):
             data = self.inputs[socket_name].sv_get(default=[]) # , deepcopy=False) # can't because of fulllist.
-            return dataCorrect(data)
+            return data  # dataCorrect(data) returns [1, list-of-matrices] for matrix socket.
 
         mverts = get('vertices')
         medges = get('edges')
         mfaces = get('faces')
         mmtrix = get('matrix')
+        
         return mverts, medges, mfaces, mmtrix
 
     def get_structure(self, stype, sindex):

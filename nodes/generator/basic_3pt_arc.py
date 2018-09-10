@@ -115,12 +115,36 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode,
         size=3)
 
-    def sv_init(self, context):
-        self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
-        self.inputs.new('VerticesSocket', "arc_pts").prop_name = 'arc_pts'
+    @staticmethod
+    def draw_basic_arc_qlink(socket, context, layout, node):
+        """
+        here's an example of an "bound-to-node quicklink socket ui descriptor"
+        - this lets you define the ui of that quicklink, in this case it replicates
+          the standard quicklink.
+        """
 
-        self.outputs.new('VerticesSocket', "Verts", "Verts")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
+        if socket.use_quicklink:
+            new_node_idname = "GenVectorsNode"
+
+            op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+            op.socket_index = socket.index
+            op.origin = node.name
+            op.new_node_idname = new_node_idname
+            op.new_node_offsetx = -200 - 40 * socket.index
+            op.new_node_offsety = -30 * socket.index
+
+    def sv_init(self, context):
+
+        # inputs
+        self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
+        vector_prop = self.inputs.new('VerticesSocket', "arc_pts")
+        vector_prop.use_expander = False
+        vector_prop.use_quicklink = True
+        vector_prop.quicklink_func_name = 'draw_basic_arc_qlink'
+
+        # outputs
+        self.outputs.new('VerticesSocket', "Verts")
+        self.outputs.new('StringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
         pass

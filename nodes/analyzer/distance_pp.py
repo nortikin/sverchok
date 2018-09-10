@@ -55,9 +55,9 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
 
         elif self.inputs['matrix1'].is_linked and self.inputs['matrix2'].is_linked:
             propa = self.inputs['matrix1'].sv_get()
-            prop1 = Matrix_location(Matrix_generate(propa))
+            prop1 = Matrix_location(propa)
             propb = self.inputs['matrix2'].sv_get()
-            prop2 = Matrix_location(Matrix_generate(propb))
+            prop2 = Matrix_location(propb)
         else:
             prop1, prop2 = [], []
 

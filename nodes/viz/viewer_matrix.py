@@ -60,9 +60,8 @@ def screen_v3dBGL_overlay(context, args):
         r, g, b = color
         bgl.glColor4f(r, g, b, alpha)
         bgl.glBegin(bgl.GL_QUADS)
-        M = Matrix(matrix)
         for x, y in [(-.5, .5), (.5 ,.5), (.5 ,-.5), (-.5 ,-.5)]:
-            vector3d = M * Vector((x, y, 0))
+            vector3d = matrix * Vector((x, y, 0))
             vector2d = loc3d2d(region, region3d, vector3d)
             bgl.glVertex2f(*vector2d)
 
@@ -87,29 +86,35 @@ def match_color_to_matrix(node):
     get_mat_theta_idx = data_out.append
 
     if len(data) > 0:
-        if is_matrix(data[0]):
-            # 0. likely stores [matrix, matrix, matrix, ..]
-            theta = 1 / len(data)
-            for idx, matrix in enumerate(data):
-                get_mat_theta_idx([matrix, theta, idx])
+        theta = 1 / len(data)
+        for idx, matrix in enumerate(data):
+            get_mat_theta_idx([matrix, theta, idx])
 
-        elif is_matrix(data[0][0]):
+     #  is_matrix() doesnt work with mathutils.Matrix()
+     #
+     #   if is_matrix(data[0]):
+     #       # 0. likely stores [matrix, matrix, matrix, ..]
+     #       theta = 1 / len(data)
+     #       for idx, matrix in enumerate(data):
+     #           get_mat_theta_idx([matrix, theta, idx])
 
-            if all(isinstance(m, list) and len(m) == 1 and is_matrix(m[0]) for m in data):
-                # 1. stores [[matrix],[matrix],..]
-                theta = 1 / len(data)
-                for idx, m in enumerate(data):
-                    matrix = m[0]
-                    get_mat_theta_idx([matrix, theta, idx])
+     #   elif is_matrix(data[0][0]):
 
-            else:
-                # 2. stores [[matrix, matrix, matrix],[matrix, matrix, matrix],..]
-                for matrix_list in data:
-                    if len(matrix_list) == 0:
-                        continue
-                    theta = 1 / len(matrix_list)
-                    for idx, matrix in enumerate(matrix_list):
-                        get_mat_theta_idx([matrix, theta, idx])
+     #       if all(isinstance(m, list) and len(m) == 1 and is_matrix(m[0]) for m in data):
+     #           # 1. stores [[matrix],[matrix],..]
+     #           theta = 1 / len(data)
+     #           for idx, m in enumerate(data):
+     #               matrix = m[0]
+     #               get_mat_theta_idx([matrix, theta, idx])
+
+     #       else:
+     #           # 2. stores [[matrix, matrix, matrix],[matrix, matrix, matrix],..]
+     #           for matrix_list in data:
+     #               if len(matrix_list) == 0:
+     #                   continue
+     #               theta = 1 / len(matrix_list)
+     #               for idx, matrix in enumerate(matrix_list):
+     #                   get_mat_theta_idx([matrix, theta, idx])
 
 
     if not node.simple:
@@ -187,14 +192,9 @@ class SvMatrixViewer(bpy.types.Node, SverchCustomTreeNode):
             self.free()
 
 
-
 def register():
     bpy.utils.register_class(SvMatrixViewer)
 
 
 def unregister():
     bpy.utils.unregister_class(SvMatrixViewer)
-
-
-
-

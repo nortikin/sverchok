@@ -48,6 +48,21 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Line MK2'
     bl_icon = 'GRIP'
 
+    def upgrade_if_needed(self):
+        """ This allows us to keep the node mk2 - on the fly node upgrade"""
+        if "Size" not in self.inputs:
+            size_socket = self.inputs.new('StringsSocket', "Size")
+            size_socket.prop_name = 'size'
+            size_socket.hide_safe = not self.normalize
+
+    def wrapped_update(self, context):
+        """ need to do UX transformation before updating node"""
+        self.upgrade_if_needed()
+        size_socket = self.inputs["Size"]
+        size_socket.hide_safe = not self.normalize
+        updateNode(self, context)
+
+
     direction = EnumProperty(
         name="Direction", items=directionItems,
         default="X", update=updateNode)
@@ -66,7 +81,7 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     normalize = BoolProperty(
         name='Normalize', description='Normalize line to size',
-        default=False, update=updateNode)
+        default=False, update=wrapped_update)
 
     size = FloatProperty(
         name='Size', description='Size of line',
@@ -75,6 +90,9 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Num").prop_name = 'num'
         self.inputs.new('StringsSocket', "Step").prop_name = 'step'
+        size_socket = self.inputs.new('StringsSocket', "Size")
+        size_socket.prop_name = 'size'
+        size_socket.hide_safe = True
         self.outputs.new('VerticesSocket', "Vertices", "Vertices")
         self.outputs.new('StringsSocket', "Edges", "Edges")
 
@@ -85,9 +103,7 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "center", toggle=True)
         row.prop(self, "normalize", toggle=True)
-        if self.normalize:
-            row = col.row(align=True)
-            row.prop(self, "size")
+
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
@@ -97,12 +113,18 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         c, d = self.center, self.direction
         stepList = []
         res1,res2 = [],[]
+
+        normal_size = 1.0
+        if self.normalize:
+            self.upgrade_if_needed()
+            normal_size = self.inputs["Size"].sv_get()[0][0]
+
         for n, s in zip(*match_long_repeat([input_num, input_step])):
             for num in n:
                 num = max(2,num)
                 s = s[:(num - 1)]  # shorten if needed
                 fullList(s, num - 1)  # extend if needed
-                stepList.append([S * self.size / sum(s) for S in s] if self.normalize else s)
+                stepList.append([S * normal_size / sum(s) for S in s] if self.normalize else s)
         for s in stepList:
             r1,r2 = make_line(s, c, d)
             res1.append(r1)

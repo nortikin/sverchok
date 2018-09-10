@@ -87,8 +87,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             M = mathutils.Matrix()
             orig.append(M)
         matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
-        matrixes = Matrix_listing(matrixes_)
-        Ma.sv_set(matrixes)
+        Ma.sv_set(matrixes_)
 
 
 def register():
@@ -98,5 +97,5 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvMatrixGenNodeMK2)
 
-if __name__ == '__main__':
-    register()
+#if __name__ == '__main__':
+#    register()

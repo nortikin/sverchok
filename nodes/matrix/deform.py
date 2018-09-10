@@ -40,10 +40,8 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
         O,L,S,R,A = self.inputs
         Om = self.outputs[0]
         if Om.is_linked:
-            if O.is_linked:
-                orig = Matrix_generate(O.sv_get())
-            else:
-                return
+            orig = O.sv_get()
+            
             if L.is_linked:
                 loc = Vector_generate(L.sv_get())
             else:
@@ -67,8 +65,7 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
                     angle = A.sv_get()
                     rotA = [[]]
             matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
-            matrixes = Matrix_listing(matrixes_)
-            Om.sv_set(matrixes)
+            Om.sv_set(matrixes_)
 
     def update_socket(self, context):
         updateNode(self, context)

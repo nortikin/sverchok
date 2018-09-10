@@ -129,6 +129,12 @@ class SvExtraSearch(bpy.types.Operator):
 
     my_enum = bpy.props.EnumProperty(items=item_cb)
 
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in sv_tree_types:
+            return True
+
     def bl_idname_from_bl_label(self, context):
         macro_result = loop['results'][int(self.my_enum)]
         bl_label = macro_result[1].split(' | ')[0].strip()

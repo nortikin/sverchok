@@ -56,11 +56,10 @@ def mirrorAxis(vertex, vert_a, vert_b):
 
 def mirrorPlane(vertex, matrix):
     vert = []
-    a = Matrix(matrix)
-    eul = a.to_euler()
+    eul = matrix.to_euler()
     normal = Vector((0.0, 0.0, 1.0))
     normal.rotate(eul)
-    tras = Matrix.Translation(2 * a.to_translation())
+    tras = Matrix.Translation(2 * matrix.to_translation())
     for i in vertex:
         v = Vector(i)
         r = v.reflect(normal)

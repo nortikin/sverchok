@@ -46,7 +46,7 @@ class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         objects = self.inputs[1].sv_get()
         matrices, objects = match_long_repeat([matrices, objects])
         for obj, mat in zip(objects, matrices):
-            setattr(obj, 'matrix_world', Matrix(mat))
+            setattr(obj, 'matrix_world', mat)
 
         if self.outputs[0].is_linked:
             self.outputs[0].sv_set(objects)
@@ -58,3 +58,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvObjRemoteNodeMK2)
+
+#if __name__ == '__main__':
+#    register()

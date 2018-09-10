@@ -411,7 +411,7 @@ def draw_callback_view(n_id, cached_view, options):
                 data_polygons = sl2
 
         if sl3:
-            data_matrix = Matrix_generate(sl3)
+            data_matrix = sl3
         else:
             data_matrix = [Matrix() for i in range(verlen+1)]
 

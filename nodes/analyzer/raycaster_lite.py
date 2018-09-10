@@ -49,18 +49,18 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         so('StringsSocket', 'Success')
 
     @staticmethod
-    def svmesh_to_bvh_lists(vsock, fsock):
-        for vertices, polygons in zip(*C([vsock.sv_get(), fsock.sv_get()])):
+    def svmesh_to_bvh_lists(v, f):
+        for vertices, polygons in zip(*C([v, f])):
             yield BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
 
     def process(self):
-        vert_sock, face_sock, start_sock, direction_sock = self.inputs
         L, N, I, D, S = self.outputs
         RL = []
 
-        st, di = C([start_sock.sv_get()[0], direction_sock.sv_get()[0]])
+        vert_in, face_in, start_in, direction_in = C([sock.sv_get() for sock in self.inputs])
         
-        for bvh in self.svmesh_to_bvh_lists(vert_sock, face_sock):
+        for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in]):
+            st, di = C([st, di])
             RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st, di)])
 
         if L.is_linked:

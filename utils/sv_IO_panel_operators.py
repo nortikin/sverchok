@@ -173,7 +173,7 @@ class SvNodeTreeImporter(bpy.types.Operator):
 
 
 class SvNodeTreeImportFromGist(bpy.types.Operator):
-
+    ''' Import tree json by link in clipboard (ctrl+C) '''
     bl_idname = "node.tree_import_from_gist"
     bl_label = "sv NodeTree Gist Import Operator"
 

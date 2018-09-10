@@ -1,4 +1,5 @@
 
+from mathutils import Matrix
 from sverchok.core.socket_conversions import ImplicitConversionProhibited
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info, error
@@ -19,7 +20,7 @@ class SocketConversionTests(EmptyTreeTestCase):
         # Trigger processing of NGon node
         ngon.process()
         # Read what MatrixApply node sees
-        data = matrix_apply.inputs['Matrixes'].sv_get()
+        data =[[v[:] for v in m] for m in matrix_apply.inputs['Matrixes'].sv_get()]
 
         # It should see this list of matrices.
         expected_data = [
@@ -39,7 +40,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                  (0.0, 1.0, 0.0, -1.0),
                  (0.0, 0.0, 1.0, 0),
                  (0.0, 0.0, 0.0, 1.0)]
-            ]
+        ]
 
         self.assert_sverchok_data_equal(data, expected_data, precision=8)
 

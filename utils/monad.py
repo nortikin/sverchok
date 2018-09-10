@@ -16,6 +16,7 @@
 #
 # END GPL LICENSE BLOCK #####
 
+import sys
 
 import bpy
 from bpy.types import Operator
@@ -24,6 +25,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket
+from sverchok.core.monad import monad_make_unique
 
 
 socket_types = [
@@ -33,8 +35,6 @@ socket_types = [
 ]
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
-
-
 
 
 
@@ -581,6 +581,42 @@ class SvUpdateMonadClasses(Operator):
         return {'FINISHED'}
 
 
+class SvMonadMakeUnique(Operator):
+    '''Duplicate monad into a unique monad'''
+    bl_idname = "node.sv_monad_make_unique"
+    bl_label = "Make Unique (Monad)"
+
+    @classmethod
+    def poll(cls, context):
+        space_data = context.space_data
+        tree_type = space_data.tree_type
+
+        if not tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            return
+
+        node = context.active_node
+        if node:
+            return hasattr(node, 'monad')
+
+    def execute(self, context):
+        """
+        - get associated monad from data.node_groups. (node.monad)
+        - make a copy of that node_group. (obtain resulting name)
+        - duplicate the node
+        - replace the new node.monad with the copy
+
+        """
+        
+        try:
+            monad_make_unique(context.active_node)
+        except Exception as err:
+            sys.stderr.write('ERROR: %s\n' % str(err))
+            print(sys.exc_info()[-1].tb_frame.f_code)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+        
+        return {'FINISHED'}
+
+
 classes = [
     SvMoveSocketOpExp,
     SvRenameSocketOpExp,
@@ -590,7 +626,8 @@ classes = [
     SvMonadExpand,
     SvTreePathParent,
     SvMonadCreateFromSelected,
-    SvUpdateMonadClasses
+    SvUpdateMonadClasses,
+    SvMonadMakeUnique
 ]
 
 

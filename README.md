@@ -1,8 +1,13 @@
+<p align="center">
+<a href="http://nikitron.cc.ua/sverchok_en.html">
+<img src="ui/logo/png/sverchock_icon_t.png" width="150" title="hover text">
+</a>
+</p>
+<h1 align="center">Sverchok</h1>
+
 [![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
 
-# English
-
-## Sverchok parametric tools
+## English
 
 **addon for**: [Blender](http://blender.org)  (version *2.78* and above).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
@@ -49,6 +54,9 @@ Install Sverchok as you would any blender addon.
    Press `Update Sverchok` button.   
    At the end press F8 to reload add-ons. In NodeView the new version number will appear in the N-panel.   
 
+-  _Additionally_  
+   It is recommended to have such python libreries as scipy, marching cubes, shapely. They are used in some scripted nodes.  
+
 ### Troubleshooting Installation Errors
 
 If you are installing from a release zip, please be aware that if it contains a folder named `sverchok-master.x.y.z`, you will need to rename that folder to `sverchok-master` because folder names with dots are not valid python package names. But it's best to just name it `sverchok`.  
@@ -89,7 +97,7 @@ Email: sverchok-b3d@yandex.ru
 
 [![Please donate](https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=JZESR6GN9AKNS)
 
-# По-русски
+## По-русски
 
 **дополнение к**: [Blender](http://blender.org)  (версия *2.77* и выше).  
 **текущая версия**: Смотри настройки Сверчка или панель   
@@ -138,6 +146,9 @@ Email: sverchok-b3d@yandex.ru
    Используйте кнопку `Check for new version` в панели Сверчка в раскладке узлов (`N` чтобы вызвать). 
    Нажмите кнопку `Update Sverchok` там же.  
    Нажмите потом `F8` чтобы перезагрузить дополнения блендера. Должна поменяться версия.  
+
+-  _Дополнительно_  
+   Рекомендуем установить некоторые python библиотеки, как то scipy, marching cubes, shapely. Они использованы в некоторых скриптовых узлах.  
 
 ### Известные ошибки установки
 Не установилось? Список причин [тыц](http://nikitron.cc.ua/sverch/html/installation.html). Если вашей ошибки там нет - пишите письма.  

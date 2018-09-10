@@ -240,7 +240,6 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.label = metaball_object.name
 
         origins = self.inputs['Origins'].sv_get()
-        origins = Matrix_generate(origins)
         radiuses = self.inputs['Radius'].sv_get()[0]
         stiffnesses = self.inputs['Stiffness'].sv_get()[0]
         negation = self.inputs['Negation'].sv_get(default=[[0]])[0]
