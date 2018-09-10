@@ -21,6 +21,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTree
 from sverchok.node_tree import SverchCustomTreeNode
 
+from sverchok.utils.sv_git_connection import login_found
 from sverchok.utils.sv_IO_panel_tools import (
     _EXPORTER_REVISION_,
     get_file_obj_from_zip,
@@ -71,9 +72,10 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
             imp.id_tree = ntree.name
             imp.compress = io_props.compress_output
 
-            row1b = col.row(align=True)
-            exp = row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
-            exp.selected_only = io_props.export_selected_only
+            if login_found:
+                row1b = col.row(align=True)
+                exp = row1b.operator('node.tree_export_to_gist', text='Export to gist', icon='URL')
+                exp.selected_only = io_props.export_selected_only
 
             ziprow = col.row(align=True)
             ziprow.label('Archive .blend as')
