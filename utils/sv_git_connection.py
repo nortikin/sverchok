@@ -5,4 +5,11 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-login_found = True
+from sverchok.utils.sv_gist_tools import get_git_login_hash
+
+login_found = False
+
+if get_git_login_hash():
+    login_found = True
+
+
