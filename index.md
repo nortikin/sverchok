@@ -77,6 +77,7 @@
     SvRemoveDoublesNode
     SvSeparateMeshNode
     SvLimitedDissolve
+    SvMeshBeautify
     ---
     PolygonBoomNode
     Pols2EdgsNode
