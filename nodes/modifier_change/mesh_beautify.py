@@ -38,7 +38,7 @@ class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
         in_verts = self.inputs['Verts'].sv_get()
         in_faces = self.inputs['Faces'].sv_get()
 
-        out_verts. out_faces = [], []
+        out_verts, out_faces = [], []
 
         if in_verts and in_faces:
             fill = bmesh.ops.beautify_fill
