@@ -9,6 +9,7 @@ import bpy
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
 class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
