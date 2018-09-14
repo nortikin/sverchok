@@ -15,19 +15,19 @@ and optional inputs(Vector, matrix and user data)
 Parameters
 ----------
 
-+--------------+---------------+-------------+----------------------------------------------------+
-| Param        | Type          | Default     | Description                                        |
-+==============+===============+=============+====================================================+
-| **Vertices** | Vector        |             | vertices from nodes generators or lists (in, out)  |
-+--------------+---------------+-------------+----------------------------------------------------+
-| **PolyEdge** | Int           |             | index of polgons or edges     (in, out)            |
-+--------------+---------------+-------------+----------------------------------------------------+
-| **Sortmode** | XYZ, Dist,    | XYZ         | will sort the index according to different criteria|
-|              | Axis, Connect,|             |                                                    |
-|              | User          |             |                                                    |
-+--------------+---------------+-------------+----------------------------------------------------+
-| **Item order** | Int         |             | output the index sequence                          |
-+--------------+---------------+-------------+----------------------------------------------------+
++----------------+---------------+-------------+----------------------------------------------------+
+| Param          | Type          | Default     | Description                                        |
++================+===============+=============+====================================================+
+| **Vertices**   | Vector        |             | vertices from nodes generators or lists (in, out)  |
++----------------+---------------+-------------+----------------------------------------------------+
+| **PolyEdge**   | Int           |             | index of polgons or edges     (in, out)            |
++----------------+---------------+-------------+----------------------------------------------------+
+| **Sortmode**   | XYZ, Dist,    | XYZ         | will sort the index according to different criteria|
+|                | Axis, Connect,|             |                                                    |
+|                | User          |             |                                                    |
++----------------+---------------+-------------+----------------------------------------------------+
+| **Item order** | Int           |             | output the index sequence                          |
++----------------+---------------+-------------+----------------------------------------------------+
 
 Outputs
 -------
@@ -43,6 +43,8 @@ Example with an Hilbert 3d node and polyline viewer with Vector sort set to Dist
 .. image:: https://cloud.githubusercontent.com/assets/1275858/24357298/7c3e0f6a-12fd-11e7-9852-0d800ec51742.png
 
 The *Connect* mode it is meant to work with paths. Sorting the vertices along the edges.
+The "Search fot limits" option will handle discontinities in the path.
+
 Example used to sort the vertices after the *Mesh Filter* node
 
 .. image:: https://user-images.githubusercontent.com/10011941/35187803-3f88191c-fe2a-11e7-874b-da8cb4ec3751.png
