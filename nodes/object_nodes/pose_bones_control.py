@@ -35,7 +35,7 @@ class SvArmatureControlNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvObjectSocket', 'Armature Object')
         self.inputs.new('StringsSocket', 'bone select index').prop_name = "Sindex"
         self.inputs.new('VerticesSocket', "rotation XYZ")
-        self.inputs.new('MatrixSocket', "rotation matrix")
+        self.inputs.new('MatrixSocket', "matrix basis")
         
 
     def process(self):
@@ -55,7 +55,7 @@ class SvArmatureControlNode(bpy.types.Node, SverchCustomTreeNode):
         elif rotmat.is_linked:
             R = rotmat.sv_get()
             for obarm, r in zip(armat, R):
-                obarm.matrix = r
+                obarm.matrix_basis = r
 
 
 
