@@ -63,6 +63,14 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
     auto_release = BoolProperty(update=set_child_quota)
 
+    modes = [
+        ("VERTS", "Verts", "On vertices", "", 1),
+        ("FACES", "Polys", "On polygons", "", 2)]
+
+    mode = EnumProperty(items=modes,
+                        default='VERTS',
+                        update=updateNode)
+
     def sv_init(self, context):
         #self.inputs.new("SvObjectSocket", "parent")
         self.inputs.new("SvObjectSocket", "child")
@@ -70,6 +78,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
         self.name_node_generated_parent = 'parant'
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "mode", expand=True)
         col = layout.column(align=True)
         col.prop(self, 'name_node_generated_parent', text='', icon='LOOPSEL')
         #col.prop_search(self, 'name_child', bpy.data, 'objects', text='')
@@ -102,8 +111,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
         # at this point there's a reference to an ob, and the mesh is empty.
         child = self.inputs['child'].sv_get()[0]
-        #print('Checking',child)
-
+        #print('checking',child)
 
         if transforms and transforms[0]:
             sin, cos = math.sin, math.cos
@@ -128,7 +136,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
             faces = [[i, i + 1, i + 2] for i in strides]
 
             ob.data.from_pydata(verts, [], faces)
-            ob.dupli_type = 'FACES'
+            ob.dupli_type = self.mode
             ob.use_dupli_faces_scale = self.scale
             child.parent = ob
 
