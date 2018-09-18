@@ -102,47 +102,35 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
         # at this point there's a reference to an ob, and the mesh is empty.
         child = self.inputs['child'].sv_get()[0]
-        #print('проверка',child)
+        #print('Checking',child)
 
 
         if transforms and transforms[0]:
-            # -- this mode will face duplicate --
-            # i expect this can be done faster using numpy
-            # please view this only as exploratory
+            sin, cos = math.sin, math.cos
 
-            if self.inputs['matr/vert'].links[0].from_socket.bl_idname == 'VerticesSocket':
-                transforms = transforms[0]
-                # -- this mode will vertex duplicate --
-                ob.data.from_pydata(transforms, [], [])
-                ob.dupli_type = 'VERTS'
-                child.parent = ob
+            theta = 2 * math.pi / 3
+            thetb = theta * 2
+            ofs = 0.5 * math.pi + theta
 
-            elif self.inputs['matr/vert'].links[0].from_socket.bl_idname == 'MatrixSocket':
-                sin, cos = math.sin, math.cos
+            A = Vector((cos(0 + ofs), sin(0 + ofs), 0))
+            B = Vector((cos(theta + ofs), sin(theta + ofs), 0))
+            C = Vector((cos(thetb + ofs), sin(thetb + ofs), 0))
 
-                theta = 2 * math.pi / 3
-                thetb = theta * 2
-                ofs = 0.5 * math.pi + theta
+            verts = []
+            add_verts = verts.extend
 
-                A = Vector((cos(0 + ofs), sin(0 + ofs), 0))
-                B = Vector((cos(theta + ofs), sin(theta + ofs), 0))
-                C = Vector((cos(thetb + ofs), sin(thetb + ofs), 0))
+            num_matrices = len(transforms)
+            for m in transforms:
+                M = matrix_sanitizer(m)
+                add_verts([(M * A)[:], (M * B)[:], (M * C)[:]])
 
-                verts = []
-                add_verts = verts.extend
+            strides = range(0, num_matrices * 3, 3)
+            faces = [[i, i + 1, i + 2] for i in strides]
 
-                num_matrices = len(transforms)
-                for m in transforms:
-                    M = matrix_sanitizer(m)
-                    add_verts([(M * A)[:], (M * B)[:], (M * C)[:]])
-
-                strides = range(0, num_matrices * 3, 3)
-                faces = [[i, i + 1, i + 2] for i in strides]
-
-                ob.data.from_pydata(verts, [], faces)
-                ob.dupli_type = 'FACES'
-                ob.use_dupli_faces_scale = self.scale
-                child.parent = ob
+            ob.data.from_pydata(verts, [], faces)
+            ob.dupli_type = 'FACES'
+            ob.use_dupli_faces_scale = self.scale
+            child.parent = ob
 
 
 def register():
