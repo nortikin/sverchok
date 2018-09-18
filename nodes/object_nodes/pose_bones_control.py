@@ -30,27 +30,33 @@ class SvArmatureControlNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Sindex = IntProperty(name='Bone Index', default=0, update=updateNode)
-    arm_ref = StringProperty(default='', update=updateNode)
-
-    def draw_buttons(self, context,   layout):
-        layout.prop_search(self, 'arm_ref', bpy.data, 'objects')
-
 
     def sv_init(self, context):
+        self.inputs.new('SvObjectSocket', 'Armature Object')
         self.inputs.new('StringsSocket', 'bone select index').prop_name = "Sindex"
-        self.inputs.new('StringsSocket', "rotation matrix")
+        self.inputs.new('VerticesSocket', "rotation XYZ")
+        self.inputs.new('MatrixSocket', "rotation matrix")
         
 
     def process(self):
-        selind, rotmat = self.inputs
+        armobj, selind, rot, rotmat = self.inputs
         
-        if rotmat.is_linked:
-            rots = rotmat.sv_get()
-            armatbl = bpy.data.objects[self.arm_ref].pose.bones
+        numbb = selind.sv_get()[0]
+        armat = [armobj.sv_get()[0].pose.bones[i] for i in numbb]
 
-            numbb = selind.sv_get()[0]
-            for ind, rot in zip(numbb, rots):
-                armatbl[ind].matrix = rot
+
+        if rot.is_linked:
+            R = rot.sv_get()[0]
+            for obarm, r in zip(armat, R):
+                obarm.rotation_mode = 'XYZ'    
+                obarm.rotation_euler = (radians(r[0]), radians(r[1]), radians(r[2]))
+
+
+        elif rotmat.is_linked:
+            R = rotmat.sv_get()
+            for obarm, r in zip(armat, R):
+                obarm.matrix = r
+
 
 
 def register():
