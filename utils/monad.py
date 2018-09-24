@@ -586,6 +586,25 @@ class SvMonadMakeUnique(Operator):
     bl_idname = "node.sv_monad_make_unique"
     bl_label = "Make Unique (Monad)"
 
+    # partial copy of Blender's own NodeAddOperator
+
+    use_transform = BoolProperty(
+        name="Use Transform",
+        description="Start transform operator after inserting the node",
+        default=True)
+
+    @staticmethod
+    def store_mouse_cursor(context, event):
+        space = context.space_data
+        tree = space.edit_tree
+
+        # convert mouse position to the View2D for later node placement
+        if context.region.type == 'WINDOW':
+            # convert mouse position to the View2D for later node placement
+            space.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+        else:
+            space.cursor_location = tree.view_center
+
     @classmethod
     def poll(cls, context):
         space_data = context.space_data
@@ -606,15 +625,40 @@ class SvMonadMakeUnique(Operator):
         - replace the new node.monad with the copy
 
         """
-        
+        space = context.space_data
+        tree = space.edit_tree
+
         try:
-            monad_make_unique(context.active_node)
+            node = monad_make_unique(context.active_node)
+    
+            # select only the new node
+            for n in tree.nodes:
+                n.select = False
+    
+            node.select = True
+            tree.nodes.active = node
+            node.location = space.cursor_location                
+
+
         except Exception as err:
             sys.stderr.write('ERROR: %s\n' % str(err))
             print(sys.exc_info()[-1].tb_frame.f_code)
             print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+            return {'CANCELLED'}
         
         return {'FINISHED'}
+
+    # Default invoke stores the mouse position to place the node correctly
+    # and optionally invokes the transform operator
+    def invoke(self, context, event):
+        self.store_mouse_cursor(context, event)
+        result = self.execute(context)
+
+        if self.use_transform and ('FINISHED' in result):
+            # removes the node again if transform is canceled
+            bpy.ops.node.translate_attach_remove_on_cancel('INVOKE_DEFAULT')
+
+        return result
 
 
 classes = [
