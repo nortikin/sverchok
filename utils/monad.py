@@ -591,7 +591,7 @@ class SvMonadMakeUnique(Operator):
     use_transform = BoolProperty(
         name="Use Transform",
         description="Start transform operator after inserting the node",
-        default=False)
+        default=True)
 
     @staticmethod
     def store_mouse_cursor(context, event):
