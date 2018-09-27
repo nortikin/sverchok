@@ -54,7 +54,8 @@ Notes
 Providing a float values as a Seed parameter may be unconventional, if you are uncomfortable with it you 
 could place a *FloatToInt* node before the Seed parameter.
 
-(*)On the "F Distribution" the minimum "Beta" is 0.025
+(*)Notes on Alpha and Beta values
+   On the "F Distribution" the minimum "Beta" is 0.025
    On the "Pareto" distribution the minimum valid "Alpha" is 0.01
    On the "Standard T" distribution the minimum valid "Alpha" is 0.017
    On the "Triangular" distribution the "Alpha" parameter has to be greater than the "Float Low" and smaller than the  "Float High".
