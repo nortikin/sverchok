@@ -18,7 +18,7 @@
 
 import numpy as np
 
-from math import isclose, ceil, floor
+from math import isclose
 
 import bpy
 from bpy.props import BoolProperty, FloatProperty, IntProperty
@@ -28,7 +28,11 @@ from sverchok.data_structure import updateNode, match_long_repeat
 
 
 class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
-    ''' Generate a random number (int of float) thru a given range (inclusive) '''
+    """
+    Triggers: Random thru a range
+    Tooltip: Generate a random number (int of float) thru a given range (inclusive) .
+    """
+    ''' '''
     bl_idname = 'SvRndNumGen'
     bl_label = 'Random Num Gen'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -64,17 +68,17 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         options={'ANIMATABLE'}, update=updateNode)
 
     alpha = FloatProperty(
-        name='Alpha', description='seed, grow',
+        name='Alpha', description='Distribution parameter',
         default=2.0, min=(1e-06),
         options={'ANIMATABLE'}, update=updateNode)
 
     beta = FloatProperty(
-        name='Beta', description='seed, grow',
+        name='Beta', description='Distribution parameter',
         default=2.0, min=(1e-06),
         options={'ANIMATABLE'}, update=updateNode)
 
     t_in = FloatProperty(
-         name="t",
+         name="t", description='Distribution parameter',
          default=.5, min=1e-06, max=1.0-1e-06, precision=6,
          options={'ANIMATABLE'}, update=updateNode)
 
@@ -129,14 +133,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
             if si[2].prop_name[-1] == 'f':
                 si[2].prop_name = 'low_i'
                 si[3].prop_name = 'high_i'
-
-            if self.weighted and 'Weights' not in si:
-                self.inputs.new('StringsSocket', 'Weights', 'Weights')
-            elif not self.weighted and 'Weights' in si:
-                self.inputs.remove(self.inputs['Weights'])
+            si['Weights'].hide_safe = not self.weighted
             for i in range(0, 3):
-                if ssk[i][0] in si:
-                    self.inputs.remove(self.inputs[ssk[i][0]])
+                si[ssk[i][0]].hide_safe = True
 
         elif m == 'Float':
             dsm = self.distribute_mode
@@ -144,13 +143,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
             if si[2].prop_name[-1] == 'i':
                 si[2].prop_name = 'low_f'
                 si[3].prop_name = 'high_f'
-            if 'Weights' in si:
-                self.inputs.remove(self.inputs['Weights'])
+            si['Weights'].hide_safe = True
             for i in range(1, 4):
-                if i in func[2] and ssk[i-1][0] not in si:
-                    self.inputs.new('StringsSocket', ssk[i-1][0], ssk[i-1][0]).prop_name = ssk[i-1][1]
-                elif i not in func[2] and ssk[i-1][0] in si:
-                    self.inputs.remove(self.inputs[ssk[i-1][0]])
+                si[ssk[i-1][0]].hide_safe = i not in func[2]
 
         updateNode(self, context)
 
@@ -166,14 +161,15 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     )
 
     weighted = BoolProperty(
-        name='Weighted', description='on means output list, off means output np.array 1d',
+        name='Weighted',
+        description='Input probability for each number',
         default=False,
         update=adjust_inputs)
 
     distribute_mode = bpy.props.EnumProperty(
         name="Distribution",
         items=distribute_options,
-        description="offers....",
+        description="Distribution method",
         default="UNIFORM", update=adjust_inputs
     )
 
@@ -183,6 +179,15 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         si.new('StringsSocket', "Seed").prop_name = 'seed'
         si.new('StringsSocket', "Low").prop_name = 'low_i'
         si.new('StringsSocket', "High").prop_name = 'high_i'
+        si.new('StringsSocket', 'Weights').hide_safe = not self.weighted
+
+        ssk = self.soket_opt
+        func = self.func_dict[self.distribute_mode]
+        m = self.type_selected_mode
+        for i in range(1, 4):
+            si.new('StringsSocket', ssk[i-1][0]).prop_name = ssk[i-1][1]
+            si[ssk[i-1][0]].hide_safe = ((m == "Int") or i not in func[2])
+
         so = self.outputs
         so.new('StringsSocket', "Value")
 
@@ -279,15 +284,17 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         return result
 
     def process(self):
+        print(len(self.inputs))
+        inputs = self.inputs
         outputs = self.outputs
         m = self.type_selected_mode
         if outputs['Value'].is_linked:
             if m == 'Int':
-                params = [self.inputs[i].sv_get()[0] for i in range(4)]
-                if len(self.inputs) == 5 and self.inputs[4].is_linked:
-                    params.append(self.inputs[4].sv_get())
+                params = [inputs[i].sv_get()[0] for i in range(4)]
+                if self.weighted and inputs[4].is_linked:
+                    params.append(inputs[4].sv_get())
             elif m == 'Float':
-                params = [self.inputs[i].sv_get()[0] for i in range(len(self.inputs))]
+                params = [inputs[i].sv_get()[0] for i in range(len(inputs)) if not inputs[i].hide]
             out = [self.produce_range(*args) for args in zip(*match_long_repeat(params))]
             outputs['Value'].sv_set(out)
 
