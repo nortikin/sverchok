@@ -32,7 +32,6 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     Triggers: Random thru a range
     Tooltip: Generate a random number (int of float) thru a given range (inclusive) .
     """
-    ''' '''
     bl_idname = 'SvRndNumGen'
     bl_label = 'Random Num Gen'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -96,7 +95,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         "F_DIST":        (5, np.random.f,                     [1, 2, 0],    True,  "F Distrib.",            (1e-06, 0.025)),
         "GAMMA":         (6, np.random.gamma,                 [1, 6, 0],    True,  "Gamma",                 (1e-06, 1e-06)),
         "GEOMETRIC":     (7, np.random.geometric,             [3, 0],       True,  "Geometric",             (1e-06, 1e-06)),
-        "GUMBEL":        (8, np.random.gumbel,                [6, 6, 0],   True,  "Gumbel",                (1e-06, 1e-06)),
+        "GUMBEL":        (8, np.random.gumbel,                [6, 6, 0],    True,  "Gumbel",                (1e-06, 1e-06)),
         "LAPLACE":       (9,  np.random.laplace,              [6, 6, 0],    True,  "Laplace",               (1e-06, 1e-06)),
         "LOGISTIC":      (10, np.random.logistic,             [6, 6, 0],    True,  "Logistic",              (1e-06, 1e-06)),
         "LOG_NORMAL":    (11, np.random.lognormal,            [6, 1, 0],    True,  "Log Normal",            (1e-06, 1e-06)),
@@ -272,7 +271,6 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         return result
 
     def produce_range(self, *params):
-
         if self.type_selected_mode == 'Int':
             result = self.int_random_range(*params)
         else:
@@ -284,7 +282,6 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         return result
 
     def process(self):
-        print(len(self.inputs))
         inputs = self.inputs
         outputs = self.outputs
         m = self.type_selected_mode

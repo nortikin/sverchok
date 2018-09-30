@@ -1,5 +1,5 @@
-Random
-======
+Random Num Gen
+==============
 
 
 Functionality
@@ -20,9 +20,9 @@ Inputs & Parameters
 +----------------+------------------------------------------------------------------------+
 | Seed           | Accepts float values, they are hashed into *Integers* internally.      |
 +----------------+------------------------------------------------------------------------+
-| Int/Float Low  | Accepts float values, they are hashed into *Integers* internally.      |
+| Int/Float Low  | Lower limit of values (included)*                                      |
 +----------------+------------------------------------------------------------------------+
-| Int/Float High | Number of random numbers to spit out                                   |
+| Int/Float High | Higher limit of values (included)*                                     |
 +----------------+------------------------------------------------------------------------+
 | Weights        | On "Int" mode. Can be supplied to create a non-uniform distribution    |
 +----------------+------------------------------------------------------------------------+
@@ -33,15 +33,16 @@ Inputs & Parameters
 |                | Standard Cauchy, Standard Gamma, Standard T, Triangular, Uniform,      |
 |                | Vonmises, Wald, Weibull, Zipf                                          |
 +----------------+------------------------------------------------------------------------+
-| Alpha          | Distribution parameter. Alpha > 0*                                     |
+| Alpha          | Distribution parameter. Alpha > 0**                                    |
 +----------------+------------------------------------------------------------------------+
-| Beta           | Secondary distribution parameter. Beta > 0*                            |
+| Beta           | Secondary distribution parameter. Beta > 0**                           |
 +----------------+------------------------------------------------------------------------+
 |  t             | Normalized distribution parameter. 0 < t < 1                           |
 +----------------+------------------------------------------------------------------------+
 
-What's a Seed? Read the `Python docs here <https://docs.python.org/3.4/library/random.html>`_
-Learn more about the distribution functions on the `SciPy random reference <https://docs.scipy.org/doc/numpy-1.14.0/reference/routines.random.html>`_
+What's a Seed? Read the `Python docs here <https://docs.python.org/3.4/library/random.html>`_.
+
+Learn more about the distribution functions on the `SciPy random reference <https://docs.scipy.org/doc/numpy-1.14.0/reference/routines.random.html>`_.
 
 Outputs
 -------
@@ -54,17 +55,19 @@ Notes
 Providing a float values as a Seed parameter may be unconventional, if you are uncomfortable with it you 
 could place a *FloatToInt* node before the Seed parameter.
 
-(*)Notes on Alpha and Beta values
-   On the "F Distribution" the minimum "Beta" is 0.025
-   On the "Pareto" distribution the minimum valid "Alpha" is 0.01
-   On the "Standard T" distribution the minimum valid "Alpha" is 0.017
-   On the "Triangular" distribution the "Alpha" parameter has to be greater than the "Float Low" and smaller than the  "Float High".
-   On the "Weibull the minimum valid "Alpha" is 0.0028. 
-   On the "Zipf" distribution the minimum valid "Alpha" has to be bigger than 1.0
+(*) Notes on Float Low and Float High
+ Except on some distributions (Uniform, Beta and Triangular) the output values are mapped to fit the desired range. Due this mapping there will be at least one value which matches the "Float High" and  another that matches the "Float Low"
+(**)Notes on Alpha and Beta values
+ - On the "F Distribution" the minimum "Beta" is 0.025 
+ - On the "Pareto" distribution the minimum valid "Alpha" is 0.01
+ - On the "Standard T" distribution the minimum valid "Alpha" is 0.017
+ - On the "Triangular" distribution the "Alpha" parameter has to be greater than the "Float Low" and smaller than the  "Float High".
+ - On the "Weibull the minimum valid "Alpha" is 0.0028. 
+ - On the "Zipf" distribution the minimum valid "Alpha" has to be bigger than 1.0
 
 Examples
 --------
-With the "Weighted" distribution you can control the relative probability of each possilbe solution.
+With the "Weighted" distribution you can control the relative probability of each possible solution.
 
 .. image:: https://user-images.githubusercontent.com/10011941/46135042-9816dd00-c244-11e8-80e4-41195b3fbdcd.png
   :alt: Weighted_Distribution1.PNG
