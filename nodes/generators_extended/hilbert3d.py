@@ -22,7 +22,7 @@ import bpy
 from bpy.props import IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, match_long_repeat
 
 def hilbert(step, n):
 
@@ -40,7 +40,7 @@ def hilbert(step, n):
     vx = vx.flatten().tolist()
     vy = vy.flatten().tolist()
     vz = vz.flatten().tolist()
-    verts = [list(zip(vx, vy, vz))]
+    verts = list(zip(vx, vy, vz))
     return verts
 
 
@@ -71,20 +71,25 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
         verts_socket, edges_socket = self.outputs
 
         if verts_socket.is_linked:
-            Integer = int(level_socket.sv_get()[0][0])
-            Step = size_socket.sv_get()[0][0]
+            Integer = level_socket.sv_get()[0]
+            Step = size_socket.sv_get()[0]
 
-            verts = hilbert(Step, Integer)
+            Integer,Step = match_long_repeat((Integer,Step))
+            verts = []
+            for lev,siz in zip(Integer, Step):
+                verts.append(hilbert(siz, int(lev)))
             verts_socket.sv_set(verts)
-
             if edges_socket.is_linked:
                 listEdg = []
-                r = len(verts[0])-1
-                for i in range(r):
-                    listEdg.append((i, i+1))
+                for ve in verts:
+                    listEdg_ = []
+                    r = len(ve[0])-1
+                    for i in range(r):
+                        listEdg_.append((i, i+1))
 
-                edg = list(listEdg)
-                edges_socket.sv_set([edg])
+                    listEdg.append(list(listEdg))
+                edg = listEdg
+                edges_socket.sv_set(edg)
 
 
 def register():
