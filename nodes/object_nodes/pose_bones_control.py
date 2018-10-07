@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import IntProperty, StringProperty
+from bpy.props import IntProperty, StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -30,22 +30,31 @@ class SvArmatureControlNode(bpy.types.Node, SverchCustomTreeNode):
 
     Sindex = IntProperty(name='Bone Index', default=0, update=updateNode)
 
+    modes = [
+        ("mi_per_bon", "Ind&Mat per Bone", "", 1),
+        ("mi_per_obj", "Ind&Mat per Armature", "", 2)]
+
+    mode = EnumProperty(items=modes, default='mi_per_bon', update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "mode", expand=False)
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Armature Object')
         self.inputs.new('StringsSocket', 'bone select index').prop_name = "Sindex"
         self.inputs.new('MatrixSocket', "matrix basis")
-        
 
     def process(self):
         armobjL, selind, rotmat = self.inputs
         R = rotmat.sv_get()
-
-        for ilist, armobj in zip(selind.sv_get(), armobjL.sv_get()):
-            armatbl = [armobj.pose.bones[i] for i in ilist]
-            
-            for bone, r in zip(armatbl, R):
-                bone.matrix_basis = r
-
+        if self.mode == "mi_per_bon":
+            for ilist, armobj in zip(selind.sv_get(), armobjL.sv_get()):
+                armatbl = [armobj.pose.bones[i] for i in ilist]
+                for bone, r in zip(armatbl, R):
+                    bone.matrix_basis = r
+        elif self.mode == "mi_per_obj":
+            for ind, armobj, matr in zip(selind.sv_get()[0], armobjL.sv_get(), R):
+                armobj.pose.bones[ind].matrix_basis = matr
 
 
 def register():
