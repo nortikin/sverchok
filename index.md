@@ -292,6 +292,7 @@
     SvLimitedDissolveMK2
     SvMetaballOutLiteNode
     SvArmaturePropsNode
+    SvArmatureControlNode
     SvLatticePropsNode
     ---
     SvColorsInNodeMK1
