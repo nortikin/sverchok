@@ -16,8 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-# made by: Linus Yng, haxed by zeffii to mk2
-# pylint: disable=c0326
+# made by: Alessandro Zomparelli
+# url: www.alessandrozomparelli.com
 
 import io
 import itertools
