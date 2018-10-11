@@ -54,8 +54,8 @@ def convert_to_text(list):
 
 class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Text Out to datablock
-    Tooltip: Quickly write data from NodeView to text datablock
+    Triggers: Export gcode from vertices position
+    Tooltip: Generate a gcode file from a list of vertices
     """
     bl_idname = 'SvExportGcodeNnode'
     bl_label = 'Export Gcode'
