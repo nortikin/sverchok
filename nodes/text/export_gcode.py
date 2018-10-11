@@ -142,7 +142,6 @@ M84 ; disable motors
     def process(self):
         # manage data
         feed = self.feed
-        constant_flow = False
         flow = self.flow
         vertices = self.inputs['Vertices'].sv_get()
         #start_code = '\n'.join(self.inputs['Start Code'].sv_get()[0])
@@ -156,11 +155,14 @@ M84 ; disable motors
         if '.gcode' not in folder: folder += '.gcode'
         path = bpy.path.abspath(folder)
         file = open(path, 'w')
-        for line in bpy.data.texts[self.start_code].lines:
-            file.write(line.body + '\n')
+        try:
+            for line in bpy.data.texts[self.start_code].lines:
+                file.write(line.body + '\n')
+        except:
+            pass
 
         # sort vertices
-        if self.auto_sort:
+        if self.auto_sort and self.gcode_mode == 'RETR':
             sorted_verts = []
             for curve in vertices:
                 # mean z
@@ -197,7 +199,7 @@ M84 ; disable motors
                     first_point = False
                 else:
                     # start after retraction
-                    if v == curve[0]:
+                    if v == curve[0] and self.gcode_mode == 'RETR':
                         file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + '\n')
                         e += self.push
                         file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
@@ -207,14 +209,17 @@ M84 ; disable motors
                         file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                 count+=1
                 last_vert = new_vert
-            if curve != vertices[-1]: #file.write(stop_extrusion)
+            if curve != vertices[-1] and self.gcode_mode == 'RETR': #file.write(stop_extrusion)
                 e -= self.pull
                 file.write('G0 E' + format(e, '.4f') + '\n')
                 file.write('G1 X' + format(last_vert[0], '.4f') + ' Y' + format(last_vert[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + '\n')
 
         # end code
-        for line in bpy.data.texts[self.end_code].lines:
-            file.write(line.body + '\n')
+        try:
+            for line in bpy.data.texts[self.end_code].lines:
+                file.write(line.body + '\n')
+        except:
+            pass
         #file.write(end_code)
         file.close()
         print("Saved gcode to " + path)
