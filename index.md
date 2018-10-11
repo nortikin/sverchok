@@ -317,6 +317,7 @@
     SvTypeViewerNode
     SvSkinViewerNodeMK1b
     SvMatrixViewer
+    SvExportGcodeNnode
     ---
     SvBManalyzinNode
     SvBMObjinputNode
