@@ -75,6 +75,7 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
     start_code = StringProperty(name="Start", default='')
     end_code = StringProperty(name="End", default='')
     auto_sort = BoolProperty(name="Auto Sort", default=True)
+    close_all = BoolProperty(name="Close Shapes", default=False)
     nozzle = FloatProperty(name="Nozzle", default=0.4, min=0, soft_max=10)
     layer_height = FloatProperty(name="Layer Height", default=0.1, min=0, soft_max=10)
     filament = FloatProperty(name="Filament (\u03A6)", default=1.75, min=0, soft_max=120)
@@ -111,7 +112,7 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         col.label(text="Speed (Feed Rate F):", icon='DRIVER')
         col.prop(self, 'feed', text='Print')
         if self.gcode_mode == 'RETR':
-            col.prop(self, 'feed_vertical', text='Vertical')
+            col.prop(self, 'feed_vertical', text='Z Lift')
             col.prop(self, 'feed_horizontal', text='Travel')
         col.separator()
         if self.gcode_mode == 'RETR':
@@ -120,6 +121,7 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, 'dz', text='Z Hop')
             col.prop(self, 'push', text='Preload')
             col.prop(self, 'auto_sort', text="Sort Layers (z)")
+            col.prop(self, 'close_all')
             col.separator()
         #col.prop(self, 'flow_mult')
         col.label(text='Custom Code:', icon='SCRIPT')
@@ -209,7 +211,12 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
                         file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                 count+=1
                 last_vert = new_vert
-            if curve != vertices[-1] and self.gcode_mode == 'RETR': #file.write(stop_extrusion)
+            if curve != vertices[-1] and self.gcode_mode == 'RETR':
+                if self.close_all:
+                    new_vert = mathutils.Vector(curve[0])
+                    dist = (new_vert-last_vert).length
+                    e += dist*flow
+                    file.write('G1 X' + format(new_vert[0], '.4f') + ' Y' + format(new_vert[1], '.4f') + ' Z' + format(new_vert[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                 e -= self.pull
                 file.write('G0 E' + format(e, '.4f') + '\n')
                 file.write('G1 X' + format(last_vert[0], '.4f') + ' Y' + format(last_vert[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
