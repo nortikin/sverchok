@@ -61,37 +61,18 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Export Gcode'
     bl_icon = 'COPYDOWN'
 
-
-    _start_code = '''
-G21 ; set untis to millimeters
-G90 ; use absolute coordinates
-M82; set extruder to absolute positions....
-G28 ; home all axe
-G28 E ; home Extruder
-G93 ; ingresso tubo
-G92 E0 ; set position
-'''
-
-    _end_code = '''
-
-M83
-
-G0 E-0.5
-G92 ; set position
-G28 ; home all axes
-G28 E; homing extruder
-M84 ; disable motors
-'''
-
     folder = StringProperty(name="File", default="", subtype='FILE_PATH')
     pull = FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
     push = FloatProperty(name="Push", default=4.0, min=0, soft_max=10)
     dz = FloatProperty(name="dz", default=2.0, min=0, soft_max=20)
     #flow_mult = FloatProperty(name="Flow Mult", default=1.0, min=0, soft_max=3)
-    feed = IntProperty(name="Feed Rate (F)", default=1000, min=0, soft_max=5000)
+    feed = IntProperty(name="Feed Rate (F)", default=1000, min=0, soft_max=20000)
+    feed_horizontal = IntProperty(name="Feed Horizontal", default=1000, min=0, soft_max=20000)
+    feed_vertical = IntProperty(name="Feed Vertical", default=1000, min=0, soft_max=20000)
+    feed = IntProperty(name="Feed Rate (F)", default=1000, min=0, soft_max=20000)
     flow = FloatProperty(name="Flow (E/mm)", default=0.044, min=0, soft_max=1)
-    start_code = StringProperty(name="Start", default=_start_code)
-    end_code = StringProperty(name="End", default=_end_code)
+    start_code = StringProperty(name="Start", default='')
+    end_code = StringProperty(name="End", default='')
     auto_sort = BoolProperty(name="Auto Sort", default=True)
 
     gcode_mode = EnumProperty(items=[
@@ -119,13 +100,18 @@ M84 ; disable motors
         #col = layout.column(align=True)
         if self.gcode_mode == 'RETR':
             #col.label(text="Retraction:")
-            col.prop(self, 'auto_sort')
+            col.prop(self, 'auto_sort', text="Sort Layers")
             col.prop(self, 'pull')
             col.prop(self, 'dz')
             col.prop(self, 'push')
         col = layout.column(align=True)
-        col.prop(self, 'feed')
-        col.prop(self, 'flow')
+        col.label(text="Speed (Feed Rate F):")
+        col.prop(self, 'feed', text='Print')
+        if self.gcode_mode == 'RETR':
+            col.prop(self, 'feed_vertical', text='Vertical')
+            col.prop(self, 'feed_horizontal', text='Horizontal')
+        col.label(text="Extrusion (E/Length):")
+        col.prop(self, 'flow', text="Flow")
         #col.prop(self, 'flow_mult')
         col = layout.column(align=True)
         col.prop_search(self, 'start_code', bpy.data, 'texts')
@@ -142,6 +128,8 @@ M84 ; disable motors
     def process(self):
         # manage data
         feed = self.feed
+        feed_v = self.feed_vertical
+        feed_h = self.feed_horizontal
         flow = self.flow
         vertices = self.inputs['Vertices'].sv_get()
         #start_code = '\n'.join(self.inputs['Start Code'].sv_get()[0])
@@ -193,16 +181,18 @@ M84 ; disable motors
 
                 # first point of the gcode
                 if first_point:
-                    file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed, '.0f') + '\n')
-                    file.write('G0 E0.5 \n')
+                    file.write('G92 E0 \n')
                     file.write('M82 \n')
+                    file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed, '.0f') + '\n')
+                    #file.write('G0 E0.5 \n')
                     first_point = False
                 else:
                     # start after retraction
                     if v == curve[0] and self.gcode_mode == 'RETR':
-                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + '\n')
+                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_h, '.0f') + '\n')
                         e += self.push
-                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
+                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
+                        file.write( 'G1 F' + format(feed, '.0f') + '\n')
                     # regular extrusion
                     else:
                         e += flow*dist
@@ -212,7 +202,7 @@ M84 ; disable motors
             if curve != vertices[-1] and self.gcode_mode == 'RETR': #file.write(stop_extrusion)
                 e -= self.pull
                 file.write('G0 E' + format(e, '.4f') + '\n')
-                file.write('G1 X' + format(last_vert[0], '.4f') + ' Y' + format(last_vert[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + '\n')
+                file.write('G1 X' + format(last_vert[0], '.4f') + ' Y' + format(last_vert[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
 
         # end code
         try:
