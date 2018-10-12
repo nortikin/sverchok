@@ -27,6 +27,7 @@ import sverchok
 import bpy, os, mathutils
 from numpy import mean
 import operator
+from math import pi
 
 from bpy.props import BoolProperty, EnumProperty, StringProperty, FloatProperty, IntProperty
 
@@ -70,10 +71,13 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
     feed_horizontal = IntProperty(name="Feed Horizontal", default=1000, min=0, soft_max=20000)
     feed_vertical = IntProperty(name="Feed Vertical", default=1000, min=0, soft_max=20000)
     feed = IntProperty(name="Feed Rate (F)", default=1000, min=0, soft_max=20000)
-    flow = FloatProperty(name="Flow (E/mm)", default=0.044, min=0, soft_max=1)
+    esteps = FloatProperty(name="E Steps/Unit", default=5, min=0, soft_max=100)
     start_code = StringProperty(name="Start", default='')
     end_code = StringProperty(name="End", default='')
     auto_sort = BoolProperty(name="Auto Sort", default=True)
+    nozzle = FloatProperty(name="Nozzle", default=0.4, min=0, soft_max=10)
+    layer_height = FloatProperty(name="Layer Height", default=0.1, min=0, soft_max=10)
+    filament = FloatProperty(name="Filament (\u03A6)", default=1.75, min=0, soft_max=120)
 
     gcode_mode = EnumProperty(items=[
             ("CONT", "Continuous", ""),
@@ -83,7 +87,7 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         #self.inputs.new('StringsSocket', 'Flow', 'Flow').prop_name = 'flow'
         #self.inputs.new('StringsSocket', 'Start Code', 'Start Code').prop_name = 'start_code'
-        #self.inputs.new('StringsSocket', 'End Code', 'End Code').prop_name = 'end_code'
+        self.inputs.new('StringsSocket', 'Layer Height', 'Layer Height').prop_name = 'layer_height'
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
 
     def draw_buttons(self, context, layout):
@@ -98,25 +102,30 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row()
         row.prop(self, 'gcode_mode', expand=True, toggle=True)
         #col = layout.column(align=True)
-        if self.gcode_mode == 'RETR':
-            #col.label(text="Retraction:")
-            col.prop(self, 'auto_sort', text="Sort Layers")
-            col.prop(self, 'pull')
-            col.prop(self, 'dz')
-            col.prop(self, 'push')
         col = layout.column(align=True)
-        col.label(text="Speed (Feed Rate F):")
+        col.label(text="Extrusion:", icon='MOD_FLUIDSIM')
+        #col.prop(self, 'esteps')
+        col.prop(self, 'filament')
+        col.prop(self, 'nozzle')
+        col.separator()
+        col.label(text="Speed (Feed Rate F):", icon='DRIVER')
         col.prop(self, 'feed', text='Print')
         if self.gcode_mode == 'RETR':
             col.prop(self, 'feed_vertical', text='Vertical')
-            col.prop(self, 'feed_horizontal', text='Horizontal')
-        col.label(text="Extrusion (E/Length):")
-        col.prop(self, 'flow', text="Flow")
+            col.prop(self, 'feed_horizontal', text='Travel')
+        col.separator()
+        if self.gcode_mode == 'RETR':
+            col.label(text="Retraction:", icon='NOCURVE')
+            col.prop(self, 'pull', text='Retraction')
+            col.prop(self, 'dz', text='Z Hop')
+            col.prop(self, 'push', text='Preload')
+            col.prop(self, 'auto_sort', text="Sort Layers (z)")
+            col.separator()
         #col.prop(self, 'flow_mult')
-        col = layout.column(align=True)
+        col.label(text='Custom Code:', icon='SCRIPT')
         col.prop_search(self, 'start_code', bpy.data, 'texts')
         col.prop_search(self, 'end_code', bpy.data, 'texts')
-        col = layout.column(align=True)
+        col.separator()
         row = col.row(align=True)
         row.scale_y = 4.0
         row.operator(TEXT_IO_CALLBACK, text='Export Gcode').fn_name = 'process'
@@ -130,7 +139,8 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         feed = self.feed
         feed_v = self.feed_vertical
         feed_h = self.feed_horizontal
-        flow = self.flow
+        flow = self.layer_height * self.nozzle / ((self.filament/2)**2 * pi)
+        print("flow: " + str(flow))
         vertices = self.inputs['Vertices'].sv_get()
         #start_code = '\n'.join(self.inputs['Start Code'].sv_get()[0])
         #end_code = '\n'.join(self.inputs['End Code'].sv_get()[0])
@@ -143,6 +153,7 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         if '.gcode' not in folder: folder += '.gcode'
         path = bpy.path.abspath(folder)
         file = open(path, 'w')
+        #file.write('M92 E' + format(self.esteps, '.4f') + '\n')
         try:
             for line in bpy.data.texts[self.start_code].lines:
                 file.write(line.body + '\n')
@@ -161,7 +172,7 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
             vertices = [data[0] for data in sorted(sorted_verts, key=lambda height: height[1])]
 
         # initialize variables
-        e = 0.5
+        e = 0
         first_point = True
         count = 0
         last_vert = mathutils.Vector((0,0,0))
@@ -182,7 +193,6 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
                 # first point of the gcode
                 if first_point:
                     file.write('G92 E0 \n')
-                    file.write('M82 \n')
                     file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed, '.0f') + '\n')
                     #file.write('G0 E0.5 \n')
                     first_point = False
@@ -195,7 +205,7 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
                         file.write( 'G1 F' + format(feed, '.0f') + '\n')
                     # regular extrusion
                     else:
-                        e += flow*dist
+                        e += dist*flow
                         file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                 count+=1
                 last_vert = new_vert
