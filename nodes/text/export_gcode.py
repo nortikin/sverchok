@@ -33,6 +33,7 @@ from bpy.props import BoolProperty, EnumProperty, StringProperty, FloatProperty,
 
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
 from sverchok.data_structure import node_id, multi_socket, updateNode
+from sverchok.utils.sv_itertools import sv_zip_longest2, flatten, list_of_lists, recurse_verts_fxy, match_longest_lists
 
 from sverchok.utils.sv_text_io_common import (
     FAIL_COLOR, READY_COLOR, TEXT_IO_CALLBACK,
@@ -62,14 +63,17 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Export Gcode'
     bl_icon = 'COPYDOWN'
 
+    last_e = FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
+    path_length = FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
+
     folder = StringProperty(name="File", default="", subtype='FILE_PATH')
     pull = FloatProperty(name="Pull", default=5.0, min=0, soft_max=10)
     push = FloatProperty(name="Push", default=4.0, min=0, soft_max=10)
     dz = FloatProperty(name="dz", default=2.0, min=0, soft_max=20)
-    #flow_mult = FloatProperty(name="Flow Mult", default=1.0, min=0, soft_max=3)
+    flow_mult = FloatProperty(name="Flow Mult", default=1.0, min=0, soft_max=3)
     feed = IntProperty(name="Feed Rate (F)", default=1000, min=0, soft_max=20000)
-    feed_horizontal = IntProperty(name="Feed Horizontal", default=1000, min=0, soft_max=20000)
-    feed_vertical = IntProperty(name="Feed Vertical", default=1000, min=0, soft_max=20000)
+    feed_horizontal = IntProperty(name="Feed Horizontal", default=2000, min=0, soft_max=20000)
+    feed_vertical = IntProperty(name="Feed Vertical", default=500, min=0, soft_max=20000)
     feed = IntProperty(name="Feed Rate (F)", default=1000, min=0, soft_max=20000)
     esteps = FloatProperty(name="E Steps/Unit", default=5, min=0, soft_max=100)
     start_code = StringProperty(name="Start", default='')
@@ -89,7 +93,14 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         #self.inputs.new('StringsSocket', 'Flow', 'Flow').prop_name = 'flow'
         #self.inputs.new('StringsSocket', 'Start Code', 'Start Code').prop_name = 'start_code'
         self.inputs.new('StringsSocket', 'Layer Height', 'Layer Height').prop_name = 'layer_height'
+        self.inputs.new('StringsSocket', 'Flow Mult', 'Flow Mult').prop_name = 'flow_mult'
         self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
+
+        self.outputs.new('StringsSocket', 'Info', 'Info')
+        self.outputs.new('VerticesSocket', 'Print Verts', 'Print Verts')
+        self.outputs.new('StringsSocket', 'Print Edges', 'Print Edges')
+        self.outputs.new('VerticesSocket', 'Travel Verts', 'Travel Verts')
+        self.outputs.new('StringsSocket', 'Travel Edges', 'Travel Edges')
 
     def draw_buttons(self, context, layout):
 
@@ -132,7 +143,6 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         row.scale_y = 4.0
         row.operator(TEXT_IO_CALLBACK, text='Export Gcode').fn_name = 'process'
 
-
     def update_socket(self, context):
         self.update()
 
@@ -141,11 +151,18 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         feed = self.feed
         feed_v = self.feed_vertical
         feed_h = self.feed_horizontal
-        flow = self.layer_height * self.nozzle / ((self.filament/2)**2 * pi)
-        print("flow: " + str(flow))
+        layer = self.layer_height
+        layer = self.inputs['Layer Height'].sv_get()
         vertices = self.inputs['Vertices'].sv_get()
-        #start_code = '\n'.join(self.inputs['Start Code'].sv_get()[0])
-        #end_code = '\n'.join(self.inputs['End Code'].sv_get()[0])
+        flow_mult = self.inputs['Flow Mult'].sv_get()
+
+        # data matching
+        vertices = list_of_lists(vertices)
+        flow_mult = list_of_lists(flow_mult)
+        layer = list_of_lists(layer)
+        vertices, flow_mult, layer = match_longest_lists([vertices, flow_mult, layer])
+        print(vertices)
+        print(layer)
 
         # open file
         if self.folder == '':
@@ -175,51 +192,79 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
 
         # initialize variables
         e = 0
-        first_point = True
-        count = 0
         last_vert = mathutils.Vector((0,0,0))
         maxz = 0
+        path_length = 0
+
+        printed_verts = []
+        printed_edges = []
+        travel_verts = []
+        travel_edges = []
 
         # write movements
-        for curve in vertices:
-            #path = path[0]
-            #print(curve)
-            for v in curve:
-                #print(v)
-                new_vert = mathutils.Vector(v)
-                dist = (new_vert-last_vert).length
+        for i in range(len(vertices)):
+            curve = vertices[i]
+            first_id = len(printed_verts)
+            for j in range(len(curve)):
+                v = curve[j]
+                v_flow_mult = flow_mult[i][j]
+                v_layer = layer[i][j]
 
                 # record max z
                 maxz = max(maxz,v[2])
 
+                printed_verts.append(v)
+
                 # first point of the gcode
-                if first_point:
+                if i ==  j == 0:
                     file.write('G92 E0 \n')
                     file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed, '.0f') + '\n')
-                    #file.write('G0 E0.5 \n')
-                    first_point = False
                 else:
                     # start after retraction
-                    if v == curve[0] and self.gcode_mode == 'RETR':
+                    if j == 0 and self.gcode_mode == 'RETR':
                         file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_h, '.0f') + '\n')
                         e += self.push
-                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
-                        file.write( 'G1 F' + format(feed, '.0f') + '\n')
+                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed_v, '.0f') + '\n')
+                        file.write( 'G1 E' + format(e, '.4f') + '\n')
+                        travel_verts.append((v[0], v[1], maxz+self.dz))
+                        travel_edges.append((len(travel_verts)-1, len(travel_verts)-2))
+                        travel_verts.append(v)
+                        travel_edges.append((len(travel_verts)-1, len(travel_verts)-2))
                     # regular extrusion
                     else:
-                        e += dist*flow
+                        v1 = mathutils.Vector(v)
+                        v0 = mathutils.Vector(curve[j-1])
+                        dist = (v1-v0).length
+                        print(dist)
+                        area = v_layer * self.nozzle + pi*(v_layer/2)**2 # rectangle + circle
+                        cylinder = pi*(self.filament/2)**2
+                        flow = area / cylinder
+                        e += dist * v_flow_mult * flow
                         file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
-                count+=1
-                last_vert = new_vert
-            if curve != vertices[-1] and self.gcode_mode == 'RETR':
+                        path_length += dist
+                        printed_edges.append([len(printed_verts)-1, len(printed_verts)-2])
+            if self.gcode_mode == 'RETR':
+                v0 = mathutils.Vector(curve[-1])
                 if self.close_all:
-                    new_vert = mathutils.Vector(curve[0])
-                    dist = (new_vert-last_vert).length
-                    e += dist*flow
-                    file.write('G1 X' + format(new_vert[0], '.4f') + ' Y' + format(new_vert[1], '.4f') + ' Z' + format(new_vert[2], '.4f') + ' E' + format(e, '.4f') + '\n')
-                e -= self.pull
-                file.write('G0 E' + format(e, '.4f') + '\n')
-                file.write('G1 X' + format(last_vert[0], '.4f') + ' Y' + format(last_vert[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
+                    #printed_verts.append(v0)
+                    printed_edges.append([len(printed_verts)-1, first_id])
+
+                    v1 = mathutils.Vector(curve[0])
+                    dist = (v0-v1).length
+                    area = v_layer * self.nozzle + pi*(v_layer/2)**2 # rectangle + circle
+                    cylinder = pi*(self.filament/2)**2
+                    flow = area / cylinder
+                    e += dist * v_flow_mult * flow
+                    file.write('G1 X' + format(v1[0], '.4f') + ' Y' + format(v1[1], '.4f') + ' Z' + format(v1[2], '.4f') + ' E' + format(e, '.4f') + '\n')
+                    path_length += dist
+                    v0 = v1
+                if i < len(vertices)-1:
+                    e -= self.pull
+                    file.write('G0 E' + format(e, '.4f') + '\n')
+                    file.write('G1 X' + format(v0[0], '.4f') + ' Y' + format(v0[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
+                    travel_verts.append(v0.to_tuple())
+                    travel_verts.append((v0.x, v0.y, maxz+self.dz))
+                    travel_edges.append((len(travel_verts)-1, len(travel_verts)-2))
 
         # end code
         try:
@@ -230,6 +275,14 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         #file.write(end_code)
         file.close()
         print("Saved gcode to " + path)
+        info = "Extruded Filament: " + format(e, '.2f') + '\n'
+        info += "Extruded Volume: " + format(e*pi*(self.filament/2)**2, '.2f') + '\n'
+        info += "Printed Path: " + format(path_length, '.2f')
+        self.outputs[0].sv_set(info)
+        self.outputs[1].sv_set(printed_verts)
+        self.outputs[2].sv_set(printed_edges)
+        self.outputs[3].sv_set(travel_verts)
+        self.outputs[4].sv_set(travel_edges)
 
 def register():
     bpy.utils.register_class(SvExportGcodeNnode)
