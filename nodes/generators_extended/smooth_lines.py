@@ -27,30 +27,34 @@ def spline_points(points, weights, index, params):
     cyclic = params.loop
     divs = params.num_points
     a, b, c = points
-    w1, w2, w3 = weights
+
+    if len(weights) == 3:
+        w1, w2, w3 = weights
+    else:
+        w2 = weights[0]
 
     # if params.clamping == 'HARD' and params.mode == 'ABSOLUTE':
     # locate points  // # (1 - w) * p1 + w * p2
     p1 = Vector(a).lerp(Vector(b), w2)[:] # locate_point(a, b, w2)
     p2 = Vector(c).lerp(Vector(b), w2)[:] # locate_point(b, c, 1-w2)
 
-    return bezlerp(p1, b, b, p2, divs)
+    return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
 
 
-def func_xpline_2d(V_list, W_list, params):
+def func_xpline_2d(vlist, wlist, params):
 
     # nonsense input, garbage in / out
-    if len(V_list) < 3:
-        return V_list
+    if len(vlist) < 3:
+        return vlist
 
     if params.loop:
-        V_list.append(V_list[0])
-        W_list.append(W_list[0])
+        vlist.append(vlist[0])
+        wlist.append(wlist[0])
 
     final_points = []
     add_points = final_points.append
-    for i, _ in enumerate(len(V_list)-3):
-        add_points(spline_points(V_list[i:i+3], W_list[i:i+3], index=i, params=params))
+    for i in range(len(vlist)-3):
+        add_points(spline_points(vlist[i:i+3], wlist[i:i+3], index=i, params=params))
 
     if params.loop:
         for section in final_points:
@@ -60,9 +64,6 @@ def func_xpline_2d(V_list, W_list, params):
             final_points[index].pop()
 
     return final_points
-
-
-
 
 
 class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
@@ -101,7 +102,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
     #    ...
 
     def process(self):
-        necessary_sockets = [self.inputs["vectors"], self.inputs["weights"]]
+        necessary_sockets = [self.inputs["vectors"],]
         if not all(s.is_linked for s in necessary_sockets):
             return
 
@@ -109,19 +110,31 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
             # gather own data, rather than socket data
             ...
 
+        V_list = self.inputs['vectors'].sv_get()
+        W_list = self.inputs['weights'].sv_get()
         verts_out = []
+
+        if not W_list:
+            W_list = self.repeater_generator(self.weights)
+
         for vlist, wlist in zip(V_list, W_list):
             params = lambda: None
             params.num_points = 10
             params.loop = False
             params.remove_doubles = False
-            verts_out.append(func_xpline_2d(V_list, W_list, params))
+            params.weight = self.weights
+            verts_out.append(func_xpline_2d(vlist, wlist, params))
 
         edges_out = []
 
         self.outputs['verts'].sv_set(verts_out)
         self.outputs['edges'].sv_set(edges_out)
 
+    def repeater_generator(self, weight):
+        def yielder():
+            while True:
+                yield weight
+        return yielder
 
 def register():
     bpy.utils.register_class(SvSmoothLines)
