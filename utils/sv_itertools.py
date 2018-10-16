@@ -94,7 +94,6 @@ def recurse_verts_fxy(l1, l2, f):
 
 # append all the elements to one single list
 def append_all(l, flat):
-    # by Alessandro Zomparelli
     if isinstance(l,(list)):
         return [append_all(i, flat) for i in l]
     else:
@@ -103,14 +102,12 @@ def append_all(l, flat):
 
 # flatten sublists
 def flatten(l):
-    # by Alessandro Zomparelli
     flat = []
     append_all(l, flat)
     return flat
 
 # append all the lists to one single list
 def append_lists(l, lists):
-    # by Alessandro Zomparelli
     if isinstance(l,(list)):
         flat_list = True
         for i in l:
@@ -128,14 +125,12 @@ def append_lists(l, lists):
 
 # generate a single list with 1 level lists inside
 def list_of_lists(l):
-    # by Alessandro Zomparelli
     out_list = []
     append_lists(l, out_list)
     return out_list
 
 # works with irregular sublists
 def match_longest_lists(lists):
-    # by Alessandro Zomparelli
     add_level = max([isinstance(l, list) for l in lists])
     if add_level:
         for i in range(len(lists)):
