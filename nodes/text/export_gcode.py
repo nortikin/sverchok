@@ -218,13 +218,22 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
                 # first point of the gcode
                 if i ==  j == 0:
                     file.write('G92 E0 \n')
-                    file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed, '.0f') + '\n')
+                    params = v[:3] + (feed,)
+                    to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
+                    file.write(to_write)
+                    #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed, '.0f') + '\n')
                 else:
                     # start after retraction
                     if j == 0 and self.gcode_mode == 'RETR':
-                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_h, '.0f') + '\n')
+                        params = v[:2] + (maxz+self.dz,) + (feed_h,)
+                        to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
+                        file.write(to_write)
+                        #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_h, '.0f') + '\n')
                         e += self.push
-                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed_v, '.0f') + '\n')
+                        params = v[:3] + (feed_v,)
+                        to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
+                        file.write(to_write)
+                        #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed_v, '.0f') + '\n')
                         file.write( 'G1 E' + format(e, '.4f') + '\n')
                         travel_verts.append((v[0], v[1], maxz+self.dz))
                         travel_edges.append((len(travel_verts)-1, len(travel_verts)-2))
@@ -240,7 +249,10 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
                         cylinder = pi*(self.filament/2)**2
                         flow = area / cylinder
                         e += dist * v_flow_mult * flow
-                        file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
+                        params = v[:3] + (e,)
+                        to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} E{3:.4f}\n'.format(*params)
+                        file.write(to_write)
+                        #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                         path_length += dist
                         printed_edges.append([len(printed_verts)-1, len(printed_verts)-2])
             if self.gcode_mode == 'RETR':
@@ -255,13 +267,19 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
                     cylinder = pi*(self.filament/2)**2
                     flow = area / cylinder
                     e += dist * v_flow_mult * flow
-                    file.write('G1 X' + format(v1[0], '.4f') + ' Y' + format(v1[1], '.4f') + ' Z' + format(v1[2], '.4f') + ' E' + format(e, '.4f') + '\n')
+                    params = v1[:3] + (e,)
+                    to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} E{3:.4f}\n'.format(*params)
+                    file.write(to_write)
+                    #file.write('G1 X' + format(v1[0], '.4f') + ' Y' + format(v1[1], '.4f') + ' Z' + format(v1[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                     path_length += dist
                     v0 = v1
                 if i < len(vertices)-1:
                     e -= self.pull
                     file.write('G0 E' + format(e, '.4f') + '\n')
-                    file.write('G1 X' + format(v0[0], '.4f') + ' Y' + format(v0[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
+                    params = v0[:2] + (maxz+self.dz,) + (feed_v,)
+                    to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
+                    file.write(to_write)
+                    #file.write('G1 X' + format(v0[0], '.4f') + ' Y' + format(v0[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
                     travel_verts.append(v0.to_tuple())
                     travel_verts.append((v0.x, v0.y, maxz+self.dz))
                     travel_edges.append((len(travel_verts)-1, len(travel_verts)-2))
