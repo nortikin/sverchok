@@ -54,7 +54,8 @@ def func_xpline_2d(vlist, wlist, params):
     final_points = []
     add_points = final_points.append
     for i in range(len(vlist)-3):
-        add_points(spline_points(vlist[i:i+3], wlist[i:i+3], index=i, params=params))
+        weights = wlist if len(wlist) == 1 else wlist[i:i+3]
+        add_points(spline_points(vlist[i:i+3], weights, index=i, params=params))
 
     if params.loop:
         for section in final_points:
@@ -89,7 +90,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         default="cyclic", update=updateNode)
 
     n_verts = IntProperty(default=5, name="n_verts", min=0) 
-    weights = FloatProperty(default=0.0, name="weights", min=0.0)
+    weights = FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new("VerticesSocket", "vectors")
