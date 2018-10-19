@@ -124,16 +124,15 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
             B = Vector((cos(theta + ofs), sin(theta + ofs), 0))
             C = Vector((cos(thetb + ofs), sin(thetb + ofs), 0))
 
-            verts = []
-            add_verts = verts.extend
-
-            num_matrices = len(transforms)
-            for m in transforms:
-                M = matrix_sanitizer(m)
-                add_verts([(M * A)[:], (M * B)[:], (M * C)[:]])
-
-            strides = range(0, num_matrices * 3, 3)
-            faces = [[i, i + 1, i + 2] for i in strides]
+            if self.mode == "FACES":
+                verts = []
+                add_verts = verts.extend
+                for M in transforms:
+                    add_verts.extend([(M * A), (M * B), (M * C)])
+                faces = [[i, i + 1, i + 2] for i in range(0, len(transforms) * 3, 3)]
+            elif self.mode == "VERTS":
+                verts = [M.to_translation() for M in transforms]
+                faces = []
 
             ob.data.from_pydata(verts, [], faces)
             ob.dupli_type = self.mode
