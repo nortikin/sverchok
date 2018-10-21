@@ -53,7 +53,7 @@ def func_xpline_2d(vlist, wlist, params):
 
     final_points = []
     add_points = final_points.append
-    for i in range(len(vlist)-3):
+    for i in range(len(vlist)-2):
         weights = wlist if len(wlist) == 1 else wlist[i:i+3]
         add_points(spline_points(vlist[i:i+3], weights, index=i, params=params))
 
@@ -115,8 +115,13 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         W_list = self.inputs['weights'].sv_get()
         verts_out = []
 
+        if W_list and V_list:
+            # ensure all vectors from V_list are matched by a weight.
+            W_list = self.extend_if_needed(V_list, W_list)
+
         if not W_list:
             W_list = self.repeater_generator(self.weights)
+
 
         for vlist, wlist in zip(V_list, W_list):
             params = lambda: None
@@ -136,6 +141,26 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
             while True:
                 yield weight
         return yielder
+
+    def extend_if_needed(self, vl, wl):
+        # match wl to correspond with vl
+        try:
+            last_value = wl[-1][-1]
+        except:
+            last_value = 0.5
+
+        if (len(vl) > len(wl)):
+            num_new_empty_lists = len(vl) - len(wl)
+            for emlist in range(num_new_empty_lists):
+                wl.append([])
+
+        # extend each sublist in wl to match quantity found in sublists of v1
+        for i, vlist in enumerate(vl):
+            if (len(vlist) > len(wl[i])):
+                num_new_repeats = len(vlist) - len(wl[i])
+                for n in range(num_new_repeats):
+                    wl[i].append(last_value)
+        return wl
 
 def register():
     bpy.utils.register_class(SvSmoothLines)
