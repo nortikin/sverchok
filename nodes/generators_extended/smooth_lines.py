@@ -84,12 +84,12 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         items=smooth_mode_options, description="offers....",
         default="absolute", update=updateNode)
 
-    close_mode_options = [(k, k, '', i) for i, k in enumerate(["cyclic", "open"])]
-    close_selected_mode = EnumProperty(
-        items=close_mode_options, description="offers....",
+    type_mode_options = [(k, k, '', i) for i, k in enumerate(["cyclic", "open"])]
+    type_selected_mode = EnumProperty(
+        items=type_mode_options, description="offers....",
         default="cyclic", update=updateNode)
 
-    n_verts = IntProperty(default=5, name="n_verts", min=0) 
+    n_verts = IntProperty(default=5, name="n_verts", min=0, update=updateNode) 
     weights = FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
 
     def sv_init(self, context):
@@ -99,8 +99,18 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("VerticesSocket", "verts")
         self.outputs.new("StringsSocket", "edges")
 
-    # def draw_buttons(self, context, layout):
-    #    ...
+    def draw_buttons(self, context, layout):
+
+        # with attrs socket connected all params must be passed via this socket, to override node variables
+        attr_socket = self.inputs.get('attributes')
+        if not attr_socket or not attr_socket.is_linked:
+            return
+
+        col = layout.column()
+        col.prop(self, "smooth_selected_mode", text="mode")
+        col.prop(self, "type_selected_mode", text="type")
+        col.prop(self, "n_verts", text='num verts')
+
 
     def process(self):
         necessary_sockets = [self.inputs["vectors"],]
@@ -125,8 +135,8 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
         for vlist, wlist in zip(V_list, W_list):
             params = lambda: None
-            params.num_points = 10
-            params.loop = False
+            params.num_points = self.n_verts # or from attributes
+            params.loop = False if not self.type_selected_mode == 'cyclic' else True
             params.remove_doubles = False
             params.weight = self.weights
             verts_out.append(func_xpline_2d(vlist, wlist, params))
