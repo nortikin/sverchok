@@ -28,15 +28,22 @@ def spline_points(points, weights, index, params):
     divs = params.num_points
     a, b, c = points
 
-    if len(weights) == 3:
-        w1, w2, w3 = weights
+    if len(weights) == 2:
+        w1, w2 = weights
     else:
         w2 = weights[0]
 
+    # return early if no weight, then user wants no smooth/fillet
+    if -0.0001 < w2 < 0.0001:
+        return [b]
+
+    weight_to_use_1 = 1 - w2
+    weight_to_use_2 = 1 - w2
+
     # if params.clamping == 'HARD' and params.mode == 'ABSOLUTE':
-    # locate points  // # (1 - w) * p1 + w * p2
-    p1 = Vector(a).lerp(Vector(b), w2)[:] # locate_point(a, b, w2)
-    p2 = Vector(c).lerp(Vector(b), w2)[:] # locate_point(b, c, 1-w2)
+
+    p1 = Vector(a).lerp(Vector(b), weight_to_use_1)[:]
+    p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
 
@@ -57,7 +64,7 @@ def func_xpline_2d(vlist, wlist, params):
         add_points([vlist[0]])
 
     for i in range(len(vlist)-2):
-        weights = wlist if len(wlist) == 1 else wlist[i:i+3]
+        weights = wlist if len(wlist) == 1 else wlist[i:i+2]
         add_points(spline_points(vlist[i:i+3], weights, index=i, params=params))
 
     if not params.loop:
