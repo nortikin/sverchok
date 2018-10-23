@@ -47,17 +47,29 @@ def func_xpline_2d(vlist, wlist, params):
     if len(vlist) < 3:
         return vlist
 
+    final_points = []
+    add_points = final_points.extend
+
     if params.loop:
         vlist.extend(vlist[:2])
         wlist.extend(wlist[:2])
+    else:
+        add_points([vlist[0]])
 
-    final_points = []
-    add_points = final_points.append
     for i in range(len(vlist)-2):
         weights = wlist if len(wlist) == 1 else wlist[i:i+3]
         add_points(spline_points(vlist[i:i+3], weights, index=i, params=params))
 
+    if not params.loop:
+        add_points([vlist[-1]])
+
     return final_points
+
+def edge_sequence_from_verts(num_indices, params):
+    new_edges = [[i, i+1] for i in range(num_indices-1)]
+    if params.loop:
+        new_edges.append([num_indices-1, 0])
+    return new_edges
 
 
 class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
@@ -82,7 +94,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         items=type_mode_options, description="offers....",
         default="open", update=updateNode)
 
-    n_verts = IntProperty(default=5, name="n_verts", min=0, update=updateNode) 
+    n_verts = IntProperty(default=5, name="n_verts", min=2, update=updateNode) 
     weights = FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
 
     def sv_init(self, context):
@@ -114,9 +126,13 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
             # gather own data, rather than socket data
             ...
 
+        edges_socket = self.outputs['edges']
+        verts_socket = self.outputs['verts']
+
         V_list = self.inputs['vectors'].sv_get()
         W_list = self.inputs['weights'].sv_get()
         verts_out = []
+        edges_out = []
 
         if W_list and V_list:
             # ensure all vectors from V_list are matched by a weight.
@@ -125,19 +141,22 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         if not W_list:
             W_list = self.repeater_generator(self.weights)
 
-
         for vlist, wlist in zip(V_list, W_list):
+            
+            # setup this sequence
             params = lambda: None
             params.num_points = self.n_verts # or from attributes
             params.loop = False if not self.type_selected_mode == 'cyclic' else True
             params.remove_doubles = False
             params.weight = self.weights
-            verts_out.append(func_xpline_2d(vlist, wlist, params))
 
-        edges_out = []
+            new_verts = func_xpline_2d(vlist, wlist, params)
+            verts_out.append(new_verts)
+            if edges_socket.is_linked:
+                edges_out.append(edge_sequence_from_verts(len(new_verts), params))
 
-        self.outputs['verts'].sv_set(verts_out)
-        self.outputs['edges'].sv_set(edges_out)
+        verts_socket.sv_set(verts_out)
+        edges_socket.sv_set(edges_out)
 
     def repeater_generator(self, weight):
         def yielder():
