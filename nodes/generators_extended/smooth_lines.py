@@ -40,10 +40,18 @@ def spline_points(points, weights, index, params):
     weight_to_use_1 = 1 - w2
     weight_to_use_2 = 1 - w2
 
-    # if params.clamping == 'HARD' and params.mode == 'ABSOLUTE':
+    # if params.clamping == 'HARD' 
+    if params.mode == 'absolute':
+        len_ab = (Vector(a)-Vector(b)).length
+        len_cb = (Vector(c)-Vector(b)).length
+        weight_to_use_1 = w2 / len_ab
+        weight_to_use_2 = w2 / len_cb
+        p1 = Vector(b).lerp(Vector(a), weight_to_use_1)[:]
+        p2 = Vector(b).lerp(Vector(c), weight_to_use_2)[:]
+    else:
 
-    p1 = Vector(a).lerp(Vector(b), weight_to_use_1)[:]
-    p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
+        p1 = Vector(a).lerp(Vector(b), weight_to_use_1)[:]
+        p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
 
@@ -150,12 +158,14 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
         for vlist, wlist in zip(V_list, W_list):
             
-            # setup this sequence
+            # setup this sequence, 
             params = lambda: None
-            params.num_points = self.n_verts # or from attributes
+            params.num_points = self.n_verts
             params.loop = False if not self.type_selected_mode == 'cyclic' else True
             params.remove_doubles = False
             params.weight = self.weights
+            params.mode = self.smooth_selected_mode
+            # params = self.get_params_from_attribute_socket()
 
             new_verts = func_xpline_2d(vlist, wlist, params)
             verts_out.append(new_verts)
