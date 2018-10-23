@@ -48,21 +48,14 @@ def func_xpline_2d(vlist, wlist, params):
         return vlist
 
     if params.loop:
-        vlist.append(vlist[0])
-        wlist.append(wlist[0])
+        vlist.extend(vlist[:2])
+        wlist.extend(wlist[:2])
 
     final_points = []
     add_points = final_points.append
     for i in range(len(vlist)-2):
         weights = wlist if len(wlist) == 1 else wlist[i:i+3]
         add_points(spline_points(vlist[i:i+3], weights, index=i, params=params))
-
-    if params.loop:
-        for section in final_points:
-            section.pop()
-    else:
-        for index in range(len(final_points)-1):
-            final_points[index].pop()
 
     return final_points
 
@@ -87,7 +80,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
     type_mode_options = [(k, k, '', i) for i, k in enumerate(["cyclic", "open"])]
     type_selected_mode = EnumProperty(
         items=type_mode_options, description="offers....",
-        default="cyclic", update=updateNode)
+        default="open", update=updateNode)
 
     n_verts = IntProperty(default=5, name="n_verts", min=0, update=updateNode) 
     weights = FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
@@ -103,7 +96,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
         # with attrs socket connected all params must be passed via this socket, to override node variables
         attr_socket = self.inputs.get('attributes')
-        if not attr_socket or not attr_socket.is_linked:
+        if attr_socket and attr_socket.is_linked:
             return
 
         col = layout.column()
