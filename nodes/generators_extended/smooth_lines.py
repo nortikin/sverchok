@@ -139,6 +139,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
         if self.inputs["attributes"].is_linked:
             # gather own data, rather than socket data
+            # NOT IMPLEMENTED YET
             ...
 
         edges_socket = self.outputs['edges']
