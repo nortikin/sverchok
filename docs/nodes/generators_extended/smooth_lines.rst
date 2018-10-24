@@ -25,6 +25,11 @@ Inputs & Parameters
 | type           | cycle or open                                                                         |
 +----------------+---------------------------------------------------------------------------------------+
 
+- Absolute mode hopes to use the inputted weight value to give a symmetric curve (think of it as a lazy radius).
+- Relative mode uses the weights to interpolate between points, and produce a bezier curve that is weighted in a distinct direction if one edge is longer.
+
+
+
 Outputs
 -------
 
