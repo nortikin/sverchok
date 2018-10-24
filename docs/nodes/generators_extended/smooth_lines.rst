@@ -28,7 +28,7 @@ Inputs & Parameters
 Outputs
 -------
 
-verts and edges, representing the original line with curved corners.
+verts and edges, representing the modified polyline with newly curved corners.
 
 
 Examples and Notes
