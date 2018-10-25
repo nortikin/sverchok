@@ -21,7 +21,7 @@ def find_projected_arc_center(p1, p2, b, radius=0.5):
 
     # could be optimized for true 45 degree angle segments, but later maybe?
     ratio = len_b_to_focal / radius
-    mid = Vector(b).lerp(focal, ratio)[:]
+    mid = Vector(b).lerp(focal, 1-ratio)[:]
     return p1, mid, p2
 
 def spline_points(points, weights, index, params):
