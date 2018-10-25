@@ -13,7 +13,16 @@ from bpy.props import FloatProperty, IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.nodes.generator.basic_3pt_arc import generate_3PT_mode_1 as three_point_arc
 
+def find_projected_arc_center(p1, p2, b, radius=0.5):
+    focal = (Vector(p1) + Vector(p2)) / 2
+    len_b_to_focal = (Vector(b) - focal).length
+
+    # could be optimized for true 45 degree angle segments, but later maybe?
+    ratio = len_b_to_focal / radius
+    mid = Vector(b).lerp(focal, ratio)[:]
+    return p1, mid, p2
 
 def spline_points(points, weights, index, params):
     """ 
@@ -41,17 +50,20 @@ def spline_points(points, weights, index, params):
     weight_to_use_2 = 1 - w2
 
     # if params.clamping == 'HARD' 
-    if params.mode == 'absolute':
+    if params.mode in {'absolute', 'arc'}:
         len_ab = (Vector(a)-Vector(b)).length
         len_cb = (Vector(c)-Vector(b)).length
         weight_to_use_1 = w2 / len_ab
         weight_to_use_2 = w2 / len_cb
         p1 = Vector(b).lerp(Vector(a), weight_to_use_1)[:]
         p2 = Vector(b).lerp(Vector(c), weight_to_use_2)[:]
-    else:
-
+    elif params.mode == 'relative':
         p1 = Vector(a).lerp(Vector(b), weight_to_use_1)[:]
         p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
+    
+    if params.mode == 'arc':
+        pts = find_projected_arc_center(p1, p2, b, radius=w2)
+        return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
 
@@ -99,7 +111,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Smooth Lines'
     bl_icon = 'GREASEPENCIL'
 
-    smooth_mode_options = [(k, k, '', i) for i, k in enumerate(["absolute", "relative"])]
+    smooth_mode_options = [(k, k, '', i) for i, k in enumerate(["absolute", "relative", "arc"])]
     smooth_selected_mode = EnumProperty(
         items=smooth_mode_options, description="offers....",
         default="absolute", update=updateNode)
