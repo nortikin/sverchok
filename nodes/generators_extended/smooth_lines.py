@@ -82,7 +82,7 @@ def spline_points(points, weights, index, params):
     weight_to_use_1 = 1 - w2
     weight_to_use_2 = 1 - w2
 
-    if params.mode in {'absolute', 'arc'}:
+    if params.mode == 'absolute':
         len_ab = (Vector(a)-Vector(b)).length
         len_cb = (Vector(c)-Vector(b)).length
         weight_to_use_1 = w2 / len_ab
@@ -92,9 +92,8 @@ def spline_points(points, weights, index, params):
     elif params.mode == 'relative':
         p1 = Vector(a).lerp(Vector(b), weight_to_use_1)[:]
         p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
-    
-    if params.mode == 'arc':
-        pts = find_projected_arc_center(p2, p1, b, radius=w2)
+    elif params.mode == 'arc':
+        pts = find_projected_arc_center(c, a, b, radius=w2)
         return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
