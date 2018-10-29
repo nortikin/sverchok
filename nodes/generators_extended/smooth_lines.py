@@ -100,8 +100,8 @@ def spline_points(points, weights, index, params):
         p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
     
     if params.mode == 'arc':
-        pts = find_projected_arc_center(p1, p2, b, radius=w2)
-        return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0][::-1]
+        pts = find_projected_arc_center(p2, p1, b, radius=w2)
+        return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
 
