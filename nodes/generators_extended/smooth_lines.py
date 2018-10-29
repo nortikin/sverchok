@@ -21,7 +21,8 @@ pi_two = pi * 2
 
 
 def find_projected_arc_center(p1, p2, b, radius=0.5):
-    """                     .
+    """
+                            .
                         .  B.
                     .       .
                c.           .a
@@ -31,31 +32,25 @@ def find_projected_arc_center(p1, p2, b, radius=0.5):
 
     c = circle enter distance
     b = tangent distance
-
     """    
-
 
     a = Vector(p1)
     b = Vector(b)
     c = Vector(p2)
+
     focal = (a + c) / 2.0
     focal_length = (b-focal).length
-    ab_length = (a-b).length
-    cb_length = (c-b).length
-    
     angleA = (a-b).angle(c-b) / 2.0
-    #if angleA < pi_two:
-    #    angleA = pi_two - angleA
 
     sideA = radius
-    sideB = sideA / tan(angleA)  # 45.42
-    sideC = sideA / sin(angleA)  # 48.56
+    sideB = sideA / tan(angleA)
+    sideC = sideA / sin(angleA)
 
     ratio = (sideC - radius) / focal_length
     mid = b.lerp(focal, ratio)[:]
     
-    ab_rate = sideB / ab_length
-    cb_rate = sideB / cb_length
+    ab_rate = sideB / (a-b).length
+    cb_rate = sideB / (c-b).length
     p1 = b.lerp(a, ab_rate)[:]
     p2 = b.lerp(c, cb_rate)[:]
 
@@ -87,7 +82,6 @@ def spline_points(points, weights, index, params):
     weight_to_use_1 = 1 - w2
     weight_to_use_2 = 1 - w2
 
-    # if params.clamping == 'HARD' 
     if params.mode in {'absolute', 'arc'}:
         len_ab = (Vector(a)-Vector(b)).length
         len_cb = (Vector(c)-Vector(b)).length
