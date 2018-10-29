@@ -11,18 +11,56 @@ from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 from bpy.props import FloatProperty, IntProperty, EnumProperty
 
+from math import sin, cos, tan, radians,pi
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.nodes.generator.basic_3pt_arc import generate_3PT_mode_1 as three_point_arc
 
-def find_projected_arc_center(p1, p2, b, radius=0.5):
-    focal = (Vector(p1) + Vector(p2)) / 2
-    len_b_to_focal = (Vector(b) - focal).length
+pi_two = pi * 2
 
-    # could be optimized for true 45 degree angle segments, but later maybe?
-    ratio = len_b_to_focal / radius
-    mid = Vector(b).lerp(focal, 1-ratio)[:]
+
+def find_projected_arc_center(p1, p2, b, radius=0.5):
+    """                     .
+                        .  B.
+                    .       .
+               c.           .a
+            .               .
+        .                 C . = 90
+    .....A........b..........
+
+    c = circle enter distance
+    b = tangent distance
+
+    """    
+
+
+    a = Vector(p1)
+    b = Vector(b)
+    c = Vector(p2)
+    focal = (a + c) / 2.0
+    focal_length = (b-focal).length
+    ab_length = (a-b).length
+    cb_length = (c-b).length
+    
+    angleA = (a-b).angle(c-b) / 2.0
+    #if angleA < pi_two:
+    #    angleA = pi_two - angleA
+
+    sideA = radius
+    sideB = sideA / tan(angleA)  # 45.42
+    sideC = sideA / sin(angleA)  # 48.56
+
+    ratio = (sideC - radius) / focal_length
+    mid = b.lerp(focal, ratio)[:]
+    
+    ab_rate = sideB / ab_length
+    cb_rate = sideB / cb_length
+    p1 = b.lerp(a, ab_rate)[:]
+    p2 = b.lerp(c, cb_rate)[:]
+
     return p1, mid, p2
+
 
 def spline_points(points, weights, index, params):
     """ 
@@ -63,12 +101,14 @@ def spline_points(points, weights, index, params):
     
     if params.mode == 'arc':
         pts = find_projected_arc_center(p1, p2, b, radius=w2)
-        return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0]
+        return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0][::-1]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
 
 
 def func_xpline_2d(vlist, wlist, params):
+
+    print('start -----')
 
     # nonsense input, garbage in / out
     if len(vlist) < 3:
