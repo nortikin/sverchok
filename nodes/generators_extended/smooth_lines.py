@@ -11,8 +11,55 @@ from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 from bpy.props import FloatProperty, IntProperty, EnumProperty
 
+from math import sin, cos, tan, radians,pi
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.nodes.generator.basic_3pt_arc import generate_3PT_mode_1 as three_point_arc
+
+pi_two = pi * 2
+
+
+def find_projected_arc_center(p1, p2, b, radius=0.5):
+    """                     .
+                        .  B.
+                    .       .
+               c.           .a
+            .               .
+        .                 C . = 90
+    .....A........b..........
+
+    c = circle enter distance
+    b = tangent distance
+
+    """    
+
+
+    a = Vector(p1)
+    b = Vector(b)
+    c = Vector(p2)
+    focal = (a + c) / 2.0
+    focal_length = (b-focal).length
+    ab_length = (a-b).length
+    cb_length = (c-b).length
+    
+    angleA = (a-b).angle(c-b) / 2.0
+    #if angleA < pi_two:
+    #    angleA = pi_two - angleA
+
+    sideA = radius
+    sideB = sideA / tan(angleA)  # 45.42
+    sideC = sideA / sin(angleA)  # 48.56
+
+    ratio = (sideC - radius) / focal_length
+    mid = b.lerp(focal, ratio)[:]
+    
+    ab_rate = sideB / ab_length
+    cb_rate = sideB / cb_length
+    p1 = b.lerp(a, ab_rate)[:]
+    p2 = b.lerp(c, cb_rate)[:]
+
+    return p1, mid, p2
 
 
 def spline_points(points, weights, index, params):
@@ -41,17 +88,20 @@ def spline_points(points, weights, index, params):
     weight_to_use_2 = 1 - w2
 
     # if params.clamping == 'HARD' 
-    if params.mode == 'absolute':
+    if params.mode in {'absolute', 'arc'}:
         len_ab = (Vector(a)-Vector(b)).length
         len_cb = (Vector(c)-Vector(b)).length
         weight_to_use_1 = w2 / len_ab
         weight_to_use_2 = w2 / len_cb
         p1 = Vector(b).lerp(Vector(a), weight_to_use_1)[:]
         p2 = Vector(b).lerp(Vector(c), weight_to_use_2)[:]
-    else:
-
+    elif params.mode == 'relative':
         p1 = Vector(a).lerp(Vector(b), weight_to_use_1)[:]
         p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
+    
+    if params.mode == 'arc':
+        pts = find_projected_arc_center(p2, p1, b, radius=w2)
+        return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
 
@@ -99,7 +149,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Smooth Lines'
     bl_icon = 'GREASEPENCIL'
 
-    smooth_mode_options = [(k, k, '', i) for i, k in enumerate(["absolute", "relative"])]
+    smooth_mode_options = [(k, k, '', i) for i, k in enumerate(["absolute", "relative", "arc"])]
     smooth_selected_mode = EnumProperty(
         items=smooth_mode_options, description="offers....",
         default="absolute", update=updateNode)
