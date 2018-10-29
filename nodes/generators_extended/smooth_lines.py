@@ -108,8 +108,6 @@ def spline_points(points, weights, index, params):
 
 def func_xpline_2d(vlist, wlist, params):
 
-    print('start -----')
-
     # nonsense input, garbage in / out
     if len(vlist) < 3:
         return vlist
