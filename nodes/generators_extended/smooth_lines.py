@@ -200,17 +200,9 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         if not W_list:
             W_list = self.repeater_generator(self.weights)
 
+        params = self.get_params_from_attribute_socket()
         for vlist, wlist in zip(V_list, W_list):
             
-            # setup this sequence, 
-            params = lambda: None
-            params.num_points = self.n_verts
-            params.loop = False if not self.type_selected_mode == 'cyclic' else True
-            params.remove_doubles = False
-            params.weight = self.weights
-            params.mode = self.smooth_selected_mode
-            # params = self.get_params_from_attribute_socket()
-
             new_verts = func_xpline_2d(vlist, wlist, params)
             verts_out.append(new_verts)
             if edges_socket.is_linked:
@@ -218,6 +210,15 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
         verts_socket.sv_set(verts_out)
         edges_socket.sv_set(edges_out)
+
+    def get_params_from_attrsocket(self):
+        params = lambda: None
+        params.num_points = self.n_verts
+        params.loop = False if not self.type_selected_mode == 'cyclic' else True
+        params.remove_doubles = False
+        params.weight = self.weights
+        params.mode = self.smooth_selected_mode
+        return params
 
     def repeater_generator(self, weight):
         def yielder():
