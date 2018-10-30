@@ -197,10 +197,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
             # ensure all vectors from V_list are matched by a weight.
             W_list = self.extend_if_needed(V_list, W_list)
 
-        if not W_list:
-            W_list = self.repeater_generator(self.weights)
-
-        params = self.get_params_from_attribute_socket()
+        params = self.get_params()
         for vlist, wlist in zip(V_list, W_list):
             
             new_verts = func_xpline_2d(vlist, wlist, params)
@@ -211,7 +208,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         verts_socket.sv_set(verts_out)
         edges_socket.sv_set(edges_out)
 
-    def get_params_from_attrsocket(self):
+    def get_params(self):
         params = lambda: None
         params.num_points = self.n_verts
         params.loop = False if not self.type_selected_mode == 'cyclic' else True
@@ -219,12 +216,6 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         params.weight = self.weights
         params.mode = self.smooth_selected_mode
         return params
-
-    def repeater_generator(self, weight):
-        def yielder():
-            while True:
-                yield weight
-        return yielder
 
     def extend_if_needed(self, vl, wl):
         # match wl to correspond with vl
