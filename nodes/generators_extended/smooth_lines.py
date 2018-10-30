@@ -11,13 +11,12 @@ from mathutils.geometry import interpolate_bezier as bezlerp
 from mathutils import Vector
 from bpy.props import FloatProperty, IntProperty, EnumProperty
 
-from math import sin, cos, tan, radians,pi
+from math import sin, tan
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.nodes.generator.basic_3pt_arc import generate_3PT_mode_1 as three_point_arc
-
-pi_two = pi * 2
+from sverchok.utils.sv_itertools import extend_if_needed
 
 
 def find_projected_arc_center(p1, p2, b, radius=0.5):
@@ -195,7 +194,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
         if W_list and V_list:
             # ensure all vectors from V_list are matched by a weight.
-            W_list = self.extend_if_needed(V_list, W_list)
+            W_list = extend_if_needed(V_list, W_list, default=0.5)
 
         params = self.get_params()
         for vlist, wlist in zip(V_list, W_list):
@@ -217,25 +216,6 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
         params.mode = self.smooth_selected_mode
         return params
 
-    def extend_if_needed(self, vl, wl):
-        # match wl to correspond with vl
-        try:
-            last_value = wl[-1][-1]
-        except:
-            last_value = 0.5
-
-        if (len(vl) > len(wl)):
-            num_new_empty_lists = len(vl) - len(wl)
-            for emlist in range(num_new_empty_lists):
-                wl.append([])
-
-        # extend each sublist in wl to match quantity found in sublists of v1
-        for i, vlist in enumerate(vl):
-            if (len(vlist) > len(wl[i])):
-                num_new_repeats = len(vlist) - len(wl[i])
-                for n in range(num_new_repeats):
-                    wl[i].append(last_value)
-        return wl
 
 def register():
     bpy.utils.register_class(SvSmoothLines)

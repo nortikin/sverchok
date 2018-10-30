@@ -75,3 +75,24 @@ def recurse_fxy(l1, l2, f):
         return [recurse_fxy(x, l2, f) for x in l1]
     else: #not l1_type and l2_type
         return [recurse_fxy(l1, y, f) for y in l2]
+
+
+def extend_if_needed(vl, wl, default=0.5):
+    # match wl to correspond with vl
+    try:
+        last_value = wl[-1][-1]
+    except:
+        last_value = default
+
+    if (len(vl) > len(wl)):
+        num_new_empty_lists = len(vl) - len(wl)
+        for emlist in range(num_new_empty_lists):
+            wl.append([])
+
+    # extend each sublist in wl to match quantity found in sublists of v1
+    for i, vlist in enumerate(vl):
+        if (len(vlist) > len(wl[i])):
+            num_new_repeats = len(vlist) - len(wl[i])
+            for n in range(num_new_repeats):
+                wl[i].append(last_value)
+    return wl
