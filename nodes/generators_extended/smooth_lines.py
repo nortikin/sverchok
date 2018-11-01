@@ -142,17 +142,17 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GREASEPENCIL'
 
     smooth_mode_options = [(k, k, '', i) for i, k in enumerate(["absolute", "relative", "arc"])]
-    smooth_selected_mode = EnumProperty(
+    smooth_selected_mode: EnumProperty(
         items=smooth_mode_options, description="offers....",
         default="absolute", update=updateNode)
 
     type_mode_options = [(k, k, '', i) for i, k in enumerate(["cyclic", "open"])]
-    type_selected_mode = EnumProperty(
+    type_selected_mode: EnumProperty(
         items=type_mode_options, description="offers....",
         default="open", update=updateNode)
 
-    n_verts = IntProperty(default=5, name="n_verts", min=2, update=updateNode) 
-    weights = FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
+    n_verts: IntProperty(default=5, name="n_verts", min=2, update=updateNode) 
+    weights: FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new("VerticesSocket", "vectors")
