@@ -63,6 +63,7 @@
     SvProportionalEditNode
     SvRaycasterLiteNode
     SvOBJInsolationNode
+    EvaluateImageNode
 
 ## Transforms
     SvRotationNode
@@ -309,6 +310,7 @@
     SvSetCustomMeshNormals
     ---
     SvSpiralNode
+    SvExportGcodeNode
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -317,7 +319,6 @@
     SvTypeViewerNode
     SvSkinViewerNodeMK1b
     SvMatrixViewer
-    SvExportGcodeNnode
     ---
     SvBManalyzinNode
     SvBMObjinputNode
@@ -340,4 +341,3 @@
     SvOffsetLineNode
     SvContourNode
     SvPlanarEdgenetToPolygons
-    

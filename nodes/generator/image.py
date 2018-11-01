@@ -45,19 +45,19 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         options={'ANIMATABLE'}, update=updateNode)
 
     Xvecs = IntProperty(
-        name='Xvecs', description='Xvecs', default=10, min=2, max=100,
+        name='Xvecs', description='Xvecs', default=10, min=2, soft_max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
     Yvecs = IntProperty(
-        name='Yvecs', description='Yvecs', default=10, min=2, max=100,
+        name='Yvecs', description='Yvecs', default=10, min=2, soft_max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
     Xstep = FloatProperty(
-        name='Xstep', description='Xstep', default=1.0, min=0.01, max=100,
+        name='Xstep', description='Xstep', default=1.0, min=0.01, soft_max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
     Ystep = FloatProperty(
-        name='Ystep', description='Ystep', default=1.0, min=0.01, max=100,
+        name='Ystep', description='Ystep', default=1.0, min=0.01, soft_max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
@@ -82,12 +82,12 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
 
         # inputs
         if inputs['vecs X'].is_linked:
-            IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 100)
+            IntegerX = min(int(inputs['vecs X'].sv_get()[0][0]), 1000000)
         else:
             IntegerX = int(self.Xvecs)
 
         if inputs['vecs Y'].is_linked:
-            IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 100)
+            IntegerY = min(int(inputs['vecs Y'].sv_get()[0][0]), 1000000)
         else:
             IntegerY = int(self.Yvecs)
 
@@ -109,7 +109,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
 
         if outputs['edgs'].is_linked:
             listEdg = []
-            
+
             for i in range(IntegerY):
                 for j in range(IntegerX-1):
                     listEdg.append((IntegerX*i+j, IntegerX*i+j+1))
@@ -127,7 +127,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                     listPlg.append((IntegerX*j+i, IntegerX*j+i+1, IntegerX*j+i+IntegerX+1, IntegerX*j+i+IntegerX))
             plg = [list(listPlg)]
         outputs['pols'].sv_set(plg)
-        
+
 
     def make_vertices(self, delitelx, delitely, stepx, stepy, image_name):
         lenx = bpy.data.images[image_name].size[0]
@@ -150,7 +150,7 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
                 #  каждый пиксель кодируется RGBA, и записан строкой, без разделения на строки и столбцы.
                 middle = (imag[addition]*R+imag[addition+1]*G+imag[addition+2]*B)*imag[addition+3]
                 vertex = [x*stepx[x], y*stepy[y], middle]
-                vertices.append(vertex) 
+                vertices.append(vertex)
                 addition += int(xcoef*4)
         return vertices
 

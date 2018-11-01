@@ -54,12 +54,12 @@ def convert_to_text(list):
         else: break
     return list
 
-class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
+class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Export gcode from vertices position
     Tooltip: Generate a gcode file from a list of vertices
     """
-    bl_idname = 'SvExportGcodeNnode'
+    bl_idname = 'SvExportGcodeNode'
     bl_label = 'Export Gcode'
     bl_icon = 'COPYDOWN'
 
@@ -304,8 +304,8 @@ class SvExportGcodeNnode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[3].sv_set(travel_edges)
 
 def register():
-    bpy.utils.register_class(SvExportGcodeNnode)
+    bpy.utils.register_class(SvExportGcodeNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvExportGcodeNnode)
+    bpy.utils.unregister_class(SvExportGcodeNode)
