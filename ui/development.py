@@ -94,7 +94,7 @@ def node_show_branch(self, context):
         return
     if BRANCH:
         layout = self.layout
-        layout.label("GIT: {}".format(BRANCH))
+        layout.label(text="GIT: {}".format(BRANCH))
 
 class SvCopyIDName(bpy.types.Operator):
     ''' Copy node's ID name to clipboard to use in code '''
@@ -102,7 +102,7 @@ class SvCopyIDName(bpy.types.Operator):
     bl_label = "copy bl idname to clipboard"
     # bl_options = {'REGISTER', 'UNDO'}
 
-    name = bpy.props.StringProperty(default='')
+    name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
         context.window_manager.clipboard = self.name
@@ -113,7 +113,8 @@ class SvViewHelpForNode(bpy.types.Operator):
     """ Open docs on site, on local PC or on github """
     bl_idname = "node.view_node_help"
     bl_label = "display a browser with compiled html"
-    kind = StringProperty(default='online')
+
+    kind: StringProperty(default='online')
 
     def execute(self, context):
         n = context.active_node
@@ -173,7 +174,8 @@ class SvViewSourceForNode(bpy.types.Operator):
     ''' Open source code of node in OS text editor or as a Blender textblock'''
     bl_idname = "node.sv_view_node_source"
     bl_label = "display the source in your editor or as a Blender textblock"
-    kind = StringProperty(default='external')
+
+    kind: StringProperty(default='external')
 
     def execute(self, context):
         n = context.active_node
@@ -252,13 +254,13 @@ def idname_draw(self, context):
     row = col.row(align=True)
     colom = row.column(align=True)
     colom.scale_x = 3
-    colom.label(bl_idname+':')
+    colom.label(text=bl_idname+':')
     colom = row.column(align=True)
     colom.operator('node.copy_bl_idname', text='', icon='COPY_ID').name = bl_idname
 
     # show these anyway, can fail and let us know..
     row = col.row(align=True)
-    row.label('Help & Docs:')
+    row.label(text='Help & Docs:')
     row = col.row(align=True)
     row.operator('node.view_node_help', text='Online').kind = 'online'
     row.operator('node.view_node_help', text='Offline').kind = 'offline'
@@ -266,7 +268,7 @@ def idname_draw(self, context):
     col.separator()
     # view the source of the current node ( warning, some nodes rely on more than one file )
     row = col.row(align=True)
-    row.label('Edit Source:')
+    row.label(text='Edit Source:')
     row = col.row(align=True)
     row.operator('node.sv_view_node_source', text='Externally').kind = 'external'
     row.operator('node.sv_view_node_source', text='Internally').kind = 'internal'

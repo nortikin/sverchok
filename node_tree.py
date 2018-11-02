@@ -208,10 +208,10 @@ class SvSocketCommon:
                     t = prop.name if prop else text
             info_text = t + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
-            layout.label(info_text)
+            layout.label(text=info_text)
 
         elif self.is_output:  # unlinked OUTPUT
-            layout.label(text)
+            layout.label(text=text)
 
         else:  # unlinked INPUT
             if self.prop_name:  # has property
@@ -229,7 +229,7 @@ class SvSocketCommon:
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
-                layout.label(text)
+                layout.label(text=text)
 
     def draw_color(self, context, node):
         return socket_colors[self.bl_idname]
