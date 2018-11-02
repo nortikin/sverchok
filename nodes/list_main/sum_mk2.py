@@ -29,13 +29,11 @@ class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Sum'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_count',
-                        default=1, min=1,
-                        update=updateNode)
+    level: IntProperty(name='level_to_count', default=1, min=1, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data", "Data")
-        self.outputs.new('StringsSocket', "Sum", "Sum")
+        self.inputs.new('StringsSocket', "Data")
+        self.outputs.new('StringsSocket', "Sum")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -77,6 +75,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListSumNodeMK2)
-
-if __name__ == '__main__':
-    register()

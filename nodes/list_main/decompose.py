@@ -34,8 +34,8 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     # two veriables for multi socket input
-    base_name = StringProperty(default='data')
-    multi_socket_type = StringProperty(default='StringsSocket')
+    base_name: StringProperty(default='data')
+    multi_socket_type: StringProperty(default='StringsSocket')
 
     def auto_count(self):
         data = self.inputs['data'].sv_get(default="not found")
@@ -57,10 +57,10 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         self.multi_socket_type = other.bl_idname
         multi_socket(self, min=1, start=0, breck=True, out_count=self.count)
 
-    level = IntProperty(
+    level: IntProperty(
         name='level', default=1, min=1, update=updateNode)
 
-    count = IntProperty(
+    count: IntProperty(
         name='Count', default=1, min=1, max=16, update=set_count)
 
     def draw_buttons(self, context, layout):
@@ -111,7 +111,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvListDecomposeNode)
-
-
-# if __name__ == '__main__':
-#    register()

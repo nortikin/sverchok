@@ -30,11 +30,11 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Zip'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level', default=1, min=1, update=updateNode)
-    typ = StringProperty(name='typ', default='')
-    newsock = BoolProperty(name='newsock', default=False)
+    level: IntProperty(name='level', default=1, min=1, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
-    unwrap = BoolProperty(
+    unwrap: BoolProperty(
         name='unwrap',
         description='unwrap objects?',
         default=False,
@@ -125,6 +125,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ZipNode)
-
-# if __name__ == '__main__':
-#    register()

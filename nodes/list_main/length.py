@@ -31,19 +31,17 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Length'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_count',
-                        default=1, min=0,
-                        update=updateNode)
+    level: IntProperty(name='level_to_count', default=1, min=0, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data", "Data")
-        self.outputs.new('StringsSocket', "Length", "Length")
+        self.inputs.new('StringsSocket', "Data")
+        self.outputs.new('StringsSocket', "Length")
 
     def process(self):
-        # достаём два слота - вершины и полики
+
         if 'Length' in self.outputs and self.outputs['Length'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
                 data = self.inputs['Data'].sv_get()
