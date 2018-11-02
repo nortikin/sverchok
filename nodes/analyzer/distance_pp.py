@@ -33,15 +33,14 @@ class DistancePPNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DISTANCE'
 
-    Cross_dist = BoolProperty(name='Cross_dist', description='DANGEROUS! If crossover dimension calculation, be sure',
-                              default=False)
+    Cross_dist: BoolProperty(name='Cross_dist', description='DANGEROUS! If crossover dimension calculation, be sure', default=False)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices1', 'vertices1')
-        self.inputs.new('MatrixSocket', 'matrix1', 'matrix1')
-        self.inputs.new('VerticesSocket', 'vertices2', 'vertices2')
-        self.inputs.new('MatrixSocket', 'matrix2', 'matrix2')
-        self.outputs.new('StringsSocket', 'distances', 'distances')
+        self.inputs.new('VerticesSocket', 'vertices1')
+        self.inputs.new('MatrixSocket', 'matrix1')
+        self.inputs.new('VerticesSocket', 'vertices2')
+        self.inputs.new('MatrixSocket', 'matrix2')
+        self.outputs.new('StringsSocket', 'distances')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Cross_dist", text="CrossOver")

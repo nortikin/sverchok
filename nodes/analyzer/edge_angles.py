@@ -40,12 +40,12 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Angles at the edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    signed = BoolProperty(name="Signed",
+    signed: BoolProperty(name="Signed",
         description="Return negative angle for concave edges",
         default=False,
         update=updateNode)
 
-    complement = BoolProperty(name="Complement",
+    complement: BoolProperty(name="Complement",
         description="Return Pi (or 180) for angle between complanar faces, instead of 0",
         default=False,
         update=updateNode)
@@ -55,7 +55,7 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
             ("degrees", "Degree", "Return angles in degrees", 2)
         ]
 
-    angles_mode = EnumProperty(items=angle_modes, default="radians", update=updateNode)
+    angles_mode: EnumProperty(items=angle_modes, default="radians", update=updateNode)
 
     degenerated_modes = [
             ("zero", "Zero", "Return zero angle", 1),
@@ -65,11 +65,10 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
             ("default", "Default", "Use value returned by bmesh", 6)
         ]
 
-    degenerated_mode = EnumProperty(name="Wire/Boundary value",
+    degenerated_mode: EnumProperty(name="Wire/Boundary value",
         items=degenerated_modes,
         description="What to return as angle for wire or boundary edges",
-        default="default",
-        update=updateNode)
+        default="default", update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "signed")
@@ -150,6 +149,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvEdgeAnglesNode)
-
-if __name__ == '__main__':
-    register()

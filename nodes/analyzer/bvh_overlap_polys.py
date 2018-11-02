@@ -30,11 +30,11 @@ class SvBvhOverlapNodeNew(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'overlap_polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    triangles = BoolProperty(name="all triangles",
+    triangles: BoolProperty(name="all triangles",
                              description="all triangles", default=False,
                              update=updateNode)
 
-    epsilon = FloatProperty(name="epsilon",
+    epsilon: FloatProperty(name="epsilon",
                             default=0.0, min=0.0, max=10.0,
                             update=updateNode)
 

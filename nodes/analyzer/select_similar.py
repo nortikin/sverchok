@@ -79,30 +79,30 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    mode = EnumProperty(name = "Select",
+    mode: EnumProperty(name = "Select",
             items = modes,
             default = "faces",
             update = update_mode)
 
-    vertex_mode = EnumProperty(name = "Select by",
+    vertex_mode: EnumProperty(name = "Select by",
             items = vertex_modes,
             default = "0",
             update = update_mode)
-    edge_mode = EnumProperty(name = "Select by",
+    edge_mode: EnumProperty(name = "Select by",
             items = edge_modes,
             default = "101",
             update = update_mode)
-    face_mode = EnumProperty(name = "Select by",
+    face_mode: EnumProperty(name = "Select by",
             items = face_modes,
             default = "203",
             update = update_mode)
 
-    compare = EnumProperty(name = "Compare by",
+    compare: EnumProperty(name = "Compare by",
             items = cmp_modes,
             default = "0",
             update = update_mode)
 
-    threshold = FloatProperty(name = "Threshold",
+    threshold: FloatProperty(name = "Threshold",
             min=0.0, default=0.1,
             update=updateNode)
 
@@ -242,4 +242,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSelectSimilarNode)
-

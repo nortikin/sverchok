@@ -87,9 +87,7 @@ class AreaNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_AREA'
 
-    per_face = BoolProperty(name='per_face',
-                            default=True,
-                            update=updateNode)
+    per_face: BoolProperty(name='per_face', default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices", "Vertices")

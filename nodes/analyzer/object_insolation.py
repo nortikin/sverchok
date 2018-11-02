@@ -61,10 +61,10 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Object ID Insolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    mode = BoolProperty(name='input mode', default=False, update=updateNode)
+    mode: BoolProperty(name='input mode', default=False, update=updateNode)
     #mode2 = BoolProperty(name='output mode', default=False, update=updateNode)
-    sort_critical = IntProperty(name='sort_critical', default=12, min=1,max=24, update=updateNode)
-    separate = BoolProperty(name='separate the', default=False, update=updateNode)
+    sort_critical: IntProperty(name='sort_critical', default=12, min=1,max=24, update=updateNode)
+    separate: BoolProperty(name='separate the', default=False, update=updateNode)
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
@@ -215,6 +215,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvOBJInsolationNode)
-
-if __name__ == '__main__':
-    register()

@@ -61,12 +61,12 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
             ("const", "Constant", "", 'NOCURVE', 6)
         ]
 
-    falloff_type = EnumProperty(name="Falloff type",
+    falloff_type: EnumProperty(name="Falloff type",
             items=falloff_types,
             default='smooth',
             update=updateNode)
 
-    radius = FloatProperty(name="Radius", 
+    radius: FloatProperty(name="Radius", 
             default=1.0, min=0.0001,
             update=updateNode)
 
@@ -137,4 +137,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvProportionalEditNode)
-

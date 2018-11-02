@@ -229,7 +229,7 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
             cls.on_update_submode(self)
         updateNode(self, context)
 
-    mode = EnumProperty(name="Mode",
+    mode: EnumProperty(name="Mode",
             items=modes,
             default='Vertices',
             update=update_mode)
@@ -241,7 +241,7 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return []
 
-    submode = EnumProperty(name="Filter",
+    submode: EnumProperty(name="Filter",
                 items = get_submodes,
                 update = update_submode)
 
@@ -289,5 +289,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvMeshFilterNode)
-
-

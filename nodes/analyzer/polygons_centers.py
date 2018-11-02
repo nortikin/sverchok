@@ -29,7 +29,7 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Centers polygons 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Separate = BoolProperty(
+    Separate: BoolProperty(
         name="Separate", description="separate by objects", 
         default=True, update=updateNode)
 
