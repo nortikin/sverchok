@@ -39,7 +39,7 @@ class SvNodePickup(bpy.types.Operator):
     bl_label = "Node Pickup"
     # bl_options = {'REGISTER', 'UNDO'}
 
-    nodegroup_name = bpy.props.StringProperty(default='')
+    nodegroup_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
         active = bpy.data.node_groups[nodegroup_name].nodes.active
@@ -54,23 +54,23 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Node Remote (Control)'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    activate = BoolProperty(
+    activate: BoolProperty(
         default=True,
         name='Show', description='Activate node?',
         update=updateNode)
 
-    nodegroup_name = StringProperty(
+    nodegroup_name: StringProperty(
         default='',
         description='stores the name of the nodegroup referenced by this node',
         update=updateNode)
 
-    node_name = StringProperty(
+    node_name: StringProperty(
         default='',
         description='stores the name of the node referenced by this node',
         update=updateNode)
 
-    input_idx = StringProperty()
-    execstr = StringProperty(default='', update=updateNode)
+    input_idx: StringProperty()
+    execstr: StringProperty(default='', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'auto_convert')
@@ -119,6 +119,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvNodeRemoteNode)
     bpy.utils.unregister_class(SvNodePickup)
-
-if __name__ == '__main__':
-    register()

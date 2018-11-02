@@ -40,7 +40,7 @@ class SvRemoveSocketOperator(bpy.types.Operator):
     bl_idname = "node.sverchok_remove_socket"
     bl_label = "Remove Socket"
 
-    socket_name = StringProperty()
+    socket_name: StringProperty()
 
     def execute(self, context):
         socket = context.socket
@@ -56,7 +56,7 @@ class SvMoveSocketOperator(bpy.types.Operator):
     bl_idname = "node.sverchok_move_socket"
     bl_label = "Remove Socket"
 
-    pos = IntProperty()
+    pos: IntProperty()
 
     def execute(self, context):
         socket = context.socket
@@ -81,9 +81,9 @@ class SvEditSocket(bpy.types.NodeSocket):
     def change_socket(self, context):
         pass
 
-    socket_type = EnumProperty(items=socket_types, update=change_socket,
+    socket_type: EnumProperty(items=socket_types, update=change_socket,
                                 default="StringsSocket")
-    old_name = StringProperty()
+    old_name: StringProperty()
 
     def draw_color(self, context, node):
         colors = {"StringsSocket": (0.6, 1.0, 0.6, 1.0),
@@ -104,7 +104,7 @@ class SvEditSocket(bpy.types.NodeSocket):
 
 class StoreSockets:
 
-    socket_data = StringProperty()
+    socket_data: StringProperty()
 
     def draw_buttons(self, context, layout):
         if self.id_data.bl_idname == "SverchCustomTreeType" and self.parent:
@@ -163,7 +163,7 @@ class SvGroupNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
     bl_label = 'Group'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    group_name = StringProperty()
+    group_name: StringProperty()
 
     def update(self):
         '''
@@ -243,8 +243,8 @@ class SvIterationNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
     bl_label = 'Group Inputs'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    iter_count = IntProperty(name="Count")
-    group_name = StringProperty()
+    iter_count: IntProperty(name="Count")
+    group_name: StringProperty()
 
     def update(self):
         '''
@@ -320,12 +320,9 @@ class SvGroupOutputsNode(bpy.types.Node, SverchCustomTreeNode, StoreSockets):
         yield self.inputs, "inputs"
 
 classes = [
-    #SvEditSocket,
     SvGroupNode,
     SvGroupInputsNode,
     SvGroupOutputsNode,
-    #SvMoveSocketOperator,
-    #SvRemoveSocketOperator,
 ]
 
 def register():

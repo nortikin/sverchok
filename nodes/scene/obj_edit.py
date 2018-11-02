@@ -32,8 +32,8 @@ class SvObjEditCallback(bpy.types.Operator):
     bl_label = "Sverchok object in lite callback"
     bl_options = {'REGISTER', 'UNDO'}
 
-    cmd = StringProperty()
-    mode = StringProperty()
+    cmd: StringProperty()
+    mode: StringProperty()
 
     def execute(self, context):
         getattr(context.node, self.cmd)(self, self.mode)
@@ -46,7 +46,7 @@ class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Obj Edit mode'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    obj_passed_in = StringProperty()
+    obj_passed_in: StringProperty()
 
     def set_edit(self, ops, mode):
         try:

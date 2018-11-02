@@ -32,9 +32,9 @@ class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MATERIAL'
 
     def sv_init(self, context):
-        self.inputs.new('SvObjectSocket', "Object", "Object")
-        self.outputs.new('VerticesSocket', "Verts", "Verts")
-        self.outputs.new('StringsSocket', "Pols", "Pols")
+        self.inputs.new('SvObjectSocket', "Object")
+        self.outputs.new('VerticesSocket', "Verts")
+        self.outputs.new('StringsSocket', "Pols")
 
     def avail_objects(self, context):
         items = [('','','')]
@@ -51,9 +51,9 @@ class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
                 items = [(p.name, p.name, "") for p in obj.data.uv_layers]
         return items
 
-    objects = EnumProperty(items=avail_objects, name="Objects",
+    objects: EnumProperty(items=avail_objects, name="Objects",
         description="Choose Objects", update=updateNode)
-    uv = EnumProperty(items=avail_uvs, name="UV",
+    uv: EnumProperty(items=avail_uvs, name="UV",
         description="Choose UV to load", update=updateNode)
 
     def draw_buttons(self, context, layout):
@@ -132,6 +132,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvUVtextureNode)
-
-if __name__ == '__main__':
-    register()

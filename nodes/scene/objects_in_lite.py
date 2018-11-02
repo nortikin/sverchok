@@ -34,7 +34,7 @@ class SvObjLiteCallback(bpy.types.Operator):
     bl_label = "Sverchok object in lite callback"
     bl_options = {'REGISTER', 'UNDO'}
 
-    cmd = StringProperty()
+    cmd: StringProperty()
 
     def execute(self, context):
         getattr(context.node, self.cmd)()
@@ -47,12 +47,12 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Objects in Lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    modifiers = BoolProperty(
+    modifiers: BoolProperty(
         description='Apply modifier geometry to import (original untouched)',
         name='Modifiers', default=False, update=updateNode)
 
-    currently_storing = BoolProperty()
-    obj_name = StringProperty(update=updateNode)
+    currently_storing: BoolProperty()
+    obj_name: StringProperty(update=updateNode)
     node_dict = {}
 
     def drop(self):

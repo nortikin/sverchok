@@ -29,7 +29,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Object ID Out MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    modifiers = BoolProperty(name='Modifiers', default=False, update=updateNode)
+    modifiers: BoolProperty(name='Modifiers', default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Objects")

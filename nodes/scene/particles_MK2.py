@@ -29,7 +29,7 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'ParticlesMK2'
     bl_icon = 'PARTICLES'
 
-    Filt_D = BoolProperty(default=True, update=updateNode)
+    Filt_D: BoolProperty(default=True, update=updateNode)
 
     def draw_buttons_ext(self, context,   layout):
         layout.prop(self, "Filt_D", text="filter death")

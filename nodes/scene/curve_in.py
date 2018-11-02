@@ -139,10 +139,10 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Curve Input'
     bl_icon = 'ROOTCURVE'
 
-    object_names = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
     mode_options = [(k, k, '', i) for i, k in enumerate(["LINEAR", "CATMUL"])]
     
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode: bpy.props.EnumProperty(
         items=mode_options, description="offers....", default="LINEAR", update=updateNode
     )
 

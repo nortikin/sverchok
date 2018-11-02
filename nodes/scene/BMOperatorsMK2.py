@@ -51,16 +51,16 @@ class SvBMOpsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
           'inset_region(bm,faces=e,use_boundary=v[0],use_even_offset=v[1],use_interpolate=v[2],use_relative_offset=v[3],use_edge_rail=v[4],thickness=v[5],depth=v[6],use_outset=v[7])',
           ]
 
-    oper = EnumProperty(name="BMop", default=PV[0], items=e(PV), update=updateNode)
+    oper: EnumProperty(name="BMop", default=PV[0], items=e(PV), update=updateNode)
 
-    V0 = FloatProperty(name='V0', default=0, update=updateNode)
-    V1 = FloatProperty(name='V1', default=0, update=updateNode)
-    V2 = FloatProperty(name='V2', default=0, update=updateNode)
-    V3 = FloatProperty(name='V3', default=0, update=updateNode)
-    V4 = FloatProperty(name='V4', default=0, update=updateNode)
-    V5 = FloatProperty(name='V5', default=0, update=updateNode)
-    V6 = FloatProperty(name='V6', default=0, update=updateNode)
-    V7 = FloatProperty(name='V7', default=0, update=updateNode)
+    V0: FloatProperty(name='V0', default=0, update=updateNode)
+    V1: FloatProperty(name='V1', default=0, update=updateNode)
+    V2: FloatProperty(name='V2', default=0, update=updateNode)
+    V3: FloatProperty(name='V3', default=0, update=updateNode)
+    V4: FloatProperty(name='V4', default=0, update=updateNode)
+    V5: FloatProperty(name='V5', default=0, update=updateNode)
+    V6: FloatProperty(name='V6', default=0, update=updateNode)
+    V7: FloatProperty(name='V7', default=0, update=updateNode)
 
     def sv_init(self, context):
         si = self.inputs.new

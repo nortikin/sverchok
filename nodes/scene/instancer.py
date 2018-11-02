@@ -68,7 +68,7 @@ class SvInstancerOp(bpy.types.Operator):
     bl_label = "Sverchok instancer op"
     bl_options = {'REGISTER', 'UNDO'}
 
-    obj_name = StringProperty(default="")
+    obj_name: StringProperty(default="")
 
     def execute(self, context):
         n = context.node
@@ -99,33 +99,33 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         sorted_named_objects = sorted([i.name for i in objs if display(i)])
         return [(name, name, "") for name in sorted_named_objects]
 
-    objects_to_choose = EnumProperty(
+    objects_to_choose: EnumProperty(
         items=obj_available,
         name="Objects",
         description="Choose Object to take mesh from",
         update=updateNode)
 
-    grouping = BoolProperty(default=False, update=updateNode)
+    grouping: BoolProperty(default=False, update=updateNode)
 
-    activate = BoolProperty(
+    activate: BoolProperty(
         default=True,
         name='Show', description='Activate node?',
         update=updateNode)
 
-    basemesh_name = StringProperty(
+    basemesh_name: StringProperty(
         default='Alpha',
         description='stores the mesh name found in the object, this mesh is instanced',
         update=updateNode)
 
-    mesh_to_clone = StringProperty(
+    mesh_to_clone: StringProperty(
         default='',
         description='stores the name of the object from where to get the mesh',
         update=updateNode)
 
-    has_instance = BoolProperty(default=False)
+    has_instance: BoolProperty(default=False)
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('MatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -135,7 +135,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         cfg = "node.instancer_config"
         if not self.has_instance:
             row = layout.row(align=True)
-            row.label('pick object by name')
+            row.label(text='pick object by name')
             row = layout.row(align=True)
             row.prop(self, "objects_to_choose", '')
             row.operator(cfg, text="use").obj_name = self.objects_to_choose

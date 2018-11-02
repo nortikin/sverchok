@@ -29,8 +29,8 @@ class SvParticlesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'PARTICLES'
 
     def sv_init(self, context):
-        self.inputs.new('SvObjectSocket', "Object", "Object")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
+        self.inputs.new('SvObjectSocket', "Object")
+        self.outputs.new('VerticesSocket', "Vertices")
 
     def avail_objects(self, context):
         items = [('','','')]
@@ -47,14 +47,13 @@ class SvParticlesNode(bpy.types.Node, SverchCustomTreeNode):
                 items = [(p.name, p.name, "") for p in obj.particle_systems]
         return items
 
-    objects = EnumProperty(items=avail_objects, name="Objects",
+    objects: EnumProperty(items=avail_objects, name="Objects",
         description="Choose Objects", update=updateNode)
-    particles = EnumProperty(items=avail_particles, name="Particles",
+    particles: EnumProperty(items=avail_particles, name="Particles",
         description="Choose Particles to load", update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'particles', 'particles')
-
 
     def update(self):
         pass
@@ -85,6 +84,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvParticlesNode)
-
-if __name__ == '__main__':
-    register()
