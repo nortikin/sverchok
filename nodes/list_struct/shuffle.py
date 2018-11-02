@@ -31,15 +31,10 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Shuffle'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_Shuffle',
-                        default=2, min=1,
-                        update=updateNode)
-    seed = IntProperty(name='Seed',
-                       default=0,
-                       update=updateNode)
-
-    typ = StringProperty(name='typ', default='')
-    newsock = BoolProperty(name='newsock', default=False)
+    level: IntProperty(name='level_to_Shuffle', default=2, min=1, update=updateNode)
+    seed: IntProperty(name='Seed', default=0, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'level', text="level")
@@ -47,10 +42,10 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'seed', text="Seed")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
+        self.inputs.new('StringsSocket', "data")
         self.inputs.new('StringsSocket', "seed").prop_name = 'seed'
 
-        self.outputs.new('StringsSocket', 'data', 'data')
+        self.outputs.new('StringsSocket', 'data')
 
     def update(self):
         if 'data' in self.inputs and self.inputs['data'].links:

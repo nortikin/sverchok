@@ -65,7 +65,7 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Slice Lite '
     bl_icon = 'SEQ_LUMA_WAVEFORM'
 
-    num_slices = IntProperty(default=1, min=0, name='Slice units', update=updateNode)
+    num_slices: IntProperty(default=1, min=0, name='Slice units', update=updateNode)
 
     def sv_init(self, context):
         new_in = self.inputs.new

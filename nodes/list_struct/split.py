@@ -42,23 +42,13 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
             self.level = self.level_unwrap
         updateNode(self, context)
 
-    level = IntProperty(name='Level',
-                        default=1, min=0,
-                        update=updateNode)
-    level_unwrap = IntProperty(name='Level',
-                               default=1, min=1,
-                               update=updateNode)
-    split = IntProperty(name='Split size',
-                        default=1, min=1,
-                        update=updateNode)
-    unwrap = BoolProperty(name='Unwrap',
-                          default=True,
-                          update=change_mode)
+    level: IntProperty(name='Level', default=1, min=0, update=updateNode)
+    level_unwrap: IntProperty(name='Level', default=1, min=1, update=updateNode)
+    split: IntProperty(name='Split size', default=1, min=1, update=updateNode)
+    unwrap: BoolProperty(name='Unwrap', default=True, update=change_mode)
 
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         if self.unwrap:

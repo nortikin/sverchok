@@ -36,25 +36,19 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Item'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_count',
-                        default=2, min=0,
-                        update=updateNode)
-    item = IntProperty(name='item',
-                       default=0,
-                       update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
+    item: IntProperty(name='item', default=0, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data", "Data")
-        self.inputs.new('StringsSocket', "Item", "Item").prop_name = 'item'
-        self.outputs.new('StringsSocket', "Item", "Item")
-        self.outputs.new('StringsSocket', "Other", "Other")
+        self.inputs.new('StringsSocket', "Data")
+        self.inputs.new('StringsSocket', "Item").prop_name = 'item'
+        self.outputs.new('StringsSocket', "Item")
+        self.outputs.new('StringsSocket', "Other")
 
     def update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:

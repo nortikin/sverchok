@@ -90,20 +90,20 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode_items = [(name, name, "", idx) for _, idx, name, _ in node_item_list]
 
-    func_ = EnumProperty(
+    func_: EnumProperty(
         name="Modes",
         description="Mode Choices",
         default=SET, items=mode_items,
         update=updateNode
     )
 
-    listify = BoolProperty(
+    listify: BoolProperty(
         default=True,
         description='Output lists or proper sets',
         update=updateNode
     )
 
-    help_url = StringProperty(default='list_main/list_modifier')
+    help_url: StringProperty(default='list_main/list_modifier')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "func_", text='')

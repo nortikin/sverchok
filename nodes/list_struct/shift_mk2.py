@@ -31,13 +31,13 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Shift'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    shift_c = IntProperty(name='Shift', default=0, update=updateNode)
-    enclose = BoolProperty(name='check_tail', default=True, update=updateNode)
-    level = IntProperty(name='level', default=0, min=0, update=updateNode)
+    shift_c: IntProperty(name='Shift', default=0, update=updateNode)
+    enclose: BoolProperty(name='check_tail', default=True, update=updateNode)
+    level: IntProperty(name='level', default=0, min=0, update=updateNode)
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["np", "py"])]
     
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode: bpy.props.EnumProperty(
         items=mode_options, default="np", update=updateNode,
         description="np is numpy, py is handwritten shifting"
     )
@@ -105,6 +105,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ShiftNodeMK2)
-
-#if __name__ == '__main__':
-#    register()

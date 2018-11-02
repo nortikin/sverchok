@@ -30,19 +30,19 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Index To Mask'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    ML = IntProperty(name='Mask Length', default=10, min=2, update=updateNode)
+    ML: IntProperty(name='Mask Length', default=10, min=2, update=updateNode)
     
     def update_mode(self, context):
         self.inputs['mask size'].hide_safe = self.data_to_mask
         self.inputs['data to mask'].hide_safe = not self.data_to_mask
         updateNode(self, context)
 
-    data_to_mask = BoolProperty(name = "data masking",
+    data_to_mask: BoolProperty(name = "data masking",
             description = "Use data to define mask length",
             default = False,
             update=update_mode)
-    complex_data = BoolProperty(name = "topo mask",
-            description = "data consists of verts or polygons\edges. Otherwise the two vertices will be masked as [[[T, T, T], [F, F, F]]] instead of [[T, F]]",
+    complex_data: BoolProperty(name = "topo mask",
+            description = "data consists of verts or polygons / edges. Otherwise the two vertices will be masked as [[[T, T, T], [F, F, F]]] instead of [[T, F]]",
             default = False,
             update=update_mode)
 

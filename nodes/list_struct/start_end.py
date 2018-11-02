@@ -29,13 +29,9 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List First & Last'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_count',
-                        default=2, min=0,
-                        update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -48,7 +44,6 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         if self.inputs['Data'].links:
-            # адаптивный сокет
             inputsocketname = 'Data'
             outputsocketname = ["Middl",'First', 'Last']
             changable_sockets(self, inputsocketname, outputsocketname)

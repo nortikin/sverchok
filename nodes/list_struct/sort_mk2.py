@@ -29,21 +29,17 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Sort'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_count',
-                        default=2, min=0,
-                        update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
-        self.inputs.new('StringsSocket', "keys", "keys")
-        self.outputs.new('StringsSocket', "data", "data")
+        self.inputs.new('StringsSocket', "data")
+        self.inputs.new('StringsSocket', "keys")
+        self.outputs.new('StringsSocket', "data")
 
     def update(self):
         if 'data' in self.outputs and self.inputs['data'].links:
@@ -80,6 +76,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(ListSortNodeMK2)
-
-if __name__ == '__main__':
-    register()
