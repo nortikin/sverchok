@@ -43,7 +43,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     text_cache = {}
-    n_id = StringProperty(default='')
+    n_id: StringProperty(default='')
     
     def update_text(self, context):
         self.format_text()
@@ -51,11 +51,9 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs[0].links:
             updateNode(self, context)
 
-    text = StringProperty(
-        name='text', default='your text here', update=update_text)
+    text: StringProperty(name='text', default='your text here', update=update_text)
     
-    show_text = BoolProperty(
-        default=False, name="Show text", description="Show text box in node")
+    show_text: BoolProperty(default=False, name="Show text", description="Show text box in node")
 
     def format_text(self):
         n_id = node_id(self)
@@ -67,8 +65,8 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
         self.width = 400
         self.color = (0.5, 0.5, 1)
         self.use_custom_color = True
-        self.inputs.new('StringsSocket', "Text In", "Text In")
-        self.outputs.new('StringsSocket', "Text Out", "Text Out")
+        self.inputs.new('StringsSocket', "Text In")
+        self.outputs.new('StringsSocket', "Text Out")
 
     def draw_buttons(self, context, layout):
         if self.show_text:

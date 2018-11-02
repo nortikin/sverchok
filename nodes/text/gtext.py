@@ -148,7 +148,7 @@ class SverchokGText(bpy.types.Operator):
     bl_label = "Sverchok gtext"
     bl_options = {'REGISTER', 'UNDO'}
 
-    mode = bpy.props.StringProperty(default="")
+    mode: bpy.props.StringProperty(default="")
 
     def execute(self, context):
         node = context.node
@@ -187,10 +187,10 @@ class GTextNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'GText'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    text = StringProperty(name='text', default='your text here')
-    locator = IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
-    text_scale = IntProperty(name="font size", default=25, update=wrapped_update)
-    stroke_color = FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1)
+    text: StringProperty(name='text', default='your text here')
+    locator: IntVectorProperty(name="locator", description="stores location", default=(0, 0), size=2)
+    text_scale: IntProperty(name="font size", default=25, update=wrapped_update)
+    stroke_color: FloatVectorProperty(subtype='COLOR', size=3, min=0, max=1)
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -250,6 +250,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SverchokGText)
     bpy.utils.unregister_class(GTextNode)
-
-if __name__ == '__main__':
-    register()

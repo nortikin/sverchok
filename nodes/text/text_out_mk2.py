@@ -134,21 +134,21 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         elif self.text_mode == 'SV':
             self.inputs.new('StringsSocket', 'Data')
 
-    text = StringProperty()
+    text: StringProperty()
 
-    text_mode = EnumProperty(items=text_modes, default='CSV', update=change_mode, name="Text format")
-    csv_dialect = EnumProperty(items=csv_dialects, default='excel', name="Dialect")
-    sv_mode = EnumProperty(items=sv_modes, default='compact', name="Format")
-    json_mode = EnumProperty(items=json_modes, default='pretty', name="Format")
+    text_mode: EnumProperty(items=text_modes, default='CSV', update=change_mode, name="Text format")
+    csv_dialect: EnumProperty(items=csv_dialects, default='excel', name="Dialect")
+    sv_mode: EnumProperty(items=sv_modes, default='compact', name="Format")
+    json_mode: EnumProperty(items=json_modes, default='pretty', name="Format")
 
-    append = BoolProperty(default=False, description="Append to output file")
-    base_name = StringProperty(name='base_name', default='Col ')
-    multi_socket_type = StringProperty(name='multi_socket_type', default='StringsSocket')
+    append: BoolProperty(default=False, description="Append to output file")
+    base_name: StringProperty(name='base_name', default='Col ')
+    multi_socket_type: StringProperty(name='multi_socket_type', default='StringsSocket')
 
-    autodump = BoolProperty(default=False, description="autodump", name="auto dump")
+    autodump: BoolProperty(default=False, description="autodump", name="auto dump")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Col 0', 'Col 0')
+        self.inputs.new('StringsSocket', 'Col 0')
 
     def draw_buttons(self, context, layout):
 

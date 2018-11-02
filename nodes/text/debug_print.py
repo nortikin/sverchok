@@ -33,14 +33,14 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
     # but needs changes in node_s, want to think a bit more before adding an index option to
     # stringsockets, for now draw_button_ext
     defaults = [True for i in range(32)]
-    print_socket = BoolVectorProperty(name='Print',
+    print_socket: BoolVectorProperty(name='Print',
                                       default=defaults, size=32,
                                       update=updateNode)
     base_name = 'Data '
     multi_socket_type = 'StringsSocket'
-    print_data = BoolProperty(name='Active', description='Turn on/off printing to stdout',
-                              default=True,
-                              update=updateNode)
+    print_data: BoolProperty(
+        name='Active', description='Turn on/off printing to stdout',
+        default=True, update=updateNode)
 
     def sv_init(self, context):
         socket = self.inputs.new('StringsSocket', "Data 0")
@@ -69,6 +69,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvDebugPrintNode)
-
-if __name__ == '__main__':
-    register()

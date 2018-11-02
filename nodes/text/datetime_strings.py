@@ -73,22 +73,22 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
         texts[doc_name].from_string(reference_table)
 
 
-    time_offset = StringProperty(
+    time_offset: StringProperty(
         default="01/01/2018", update=updateNode,
         description="for graphing purposes you might need to subtract a start date", name='offset')
 
-    calc_subordinal = BoolProperty(
+    calc_subordinal: BoolProperty(
         update=updateNode,
         name="Subordinal", 
         description="produces the ordinal with a subordinal - useful for timeseries with sub day precision"
     )
 
-    date_pattern = StringProperty(
+    date_pattern: StringProperty(
         default="%m/%d/%Y", update=updateNode,
         description="date formatting information", name="Date Time String Formatter")
 
-    make_reference = BoolProperty(name="Make Reference in Texts", update=show_short_reference)
-    float_to_int = BoolProperty(name="Float to Int", update=updateNode)
+    make_reference: BoolProperty(name="Make Reference in Texts", update=show_short_reference)
+    float_to_int: BoolProperty(name="Float to Int", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new("StringsSocket", "times")

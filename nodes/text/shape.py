@@ -31,7 +31,7 @@ class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Data shape"
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    text = StringProperty(name='Text')
+    text: StringProperty(name='Text')
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Data")
@@ -56,4 +56,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvDataShapeNode)
-

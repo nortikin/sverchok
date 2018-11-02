@@ -30,9 +30,9 @@ class SverchokViewerMK1(bpy.types.Operator):
     bl_label = "Sverchok viewer.mk1"
     bl_options = {'INTERNAL', 'UNDO'}
 
-    nodename = StringProperty(name='nodename')
-    treename = StringProperty(name='treename')
-    lines = IntProperty(name='lines', description='lines count for operate on',default=1000)
+    nodename: StringProperty(name='nodename')
+    treename: StringProperty(name='treename')
+    lines: IntProperty(name='lines', description='lines count for operate on',default=1000)
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
@@ -169,18 +169,18 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer text mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    autoupdate = BoolProperty(name='update', default=False)
-    frame = BoolProperty(name='frame', default=True)
-    lines = IntProperty(name='lines', description='lines count for operate on', default=1000, \
+    autoupdate: BoolProperty(name='update', default=False)
+    frame: BoolProperty(name='frame', default=True)
+    lines: IntProperty(name='lines', description='lines count for operate on', default=1000, \
                         min=1, max=2000)
 
     # multi sockets veriables
-    newsock = BoolProperty(name='newsock', default=False)
+    newsock: BoolProperty(name='newsock', default=False)
     base_name = 'data'
     multi_socket_type = 'StringsSocket'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'data0', 'data0')
+        self.inputs.new('StringsSocket', 'data0')
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row()
@@ -224,6 +224,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(ViewerNodeTextMK3)
     bpy.utils.unregister_class(SverchokViewerMK1)
-
-if __name__ == '__main__':
-    register()
