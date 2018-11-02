@@ -83,13 +83,13 @@ def process_from_socket(self, context):
 
 class SvSocketCommon:
     """ Base class for all Sockets """
-    use_prop = BoolProperty(default=False)
+    use_prop: BoolProperty(default=False)
 
-    use_expander = BoolProperty(default=True)
-    use_quicklink = BoolProperty(default=True)
-    expanded = BoolProperty(default=False)
+    use_expander: BoolProperty(default=True)
+    use_quicklink: BoolProperty(default=True)
+    expanded: BoolProperty(default=False)
 
-    quicklink_func_name = StringProperty(default="", name="quicklink_func_name")    
+    quicklink_func_name: StringProperty(default="", name="quicklink_func_name")    
 
     @property
     def other(self):
@@ -249,10 +249,12 @@ class SvSocketCommon:
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
+    
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
-    prop_name = StringProperty(default='')
-    num_matrices = IntProperty(default=0)
+
+    prop_name: StringProperty(default='')
+    num_matrices: IntProperty(default=0)
 
     @property
     def extra_info(self):
@@ -281,11 +283,11 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 class VerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
     bl_idname = "VerticesSocket"
-    bl_label = "Vertices Socket"
+    bl_label ="Vertices Socket"
 
-    prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         if self.prop_name:
@@ -316,9 +318,9 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvQuaternionSocket"
     bl_label = "Quaternion Socket"
 
-    prop = FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         if self.prop_name:
@@ -349,9 +351,9 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvColorSocket"
     bl_label = "Color Socket"
 
-    prop = FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         if self.prop_name:
@@ -381,9 +383,9 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvDummySocket"
     bl_label = "Dummys Socket"
 
-    prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         return self.other.get_prop_data()
@@ -401,13 +403,13 @@ class StringsSocket(NodeSocket, SvSocketCommon):
     bl_idname = "StringsSocket"
     bl_label = "Strings Socket"
 
-    prop_name = StringProperty(default='')
+    prop_name: StringProperty(default='')
 
-    prop_type = StringProperty(default='')
-    prop_index = IntProperty()
-    nodule_color = FloatVectorProperty(default=socket_colors["StringsSocket"], size=4)
+    prop_type: StringProperty(default='')
+    prop_index: IntProperty()
+    nodule_color: FloatVectorProperty(default=socket_colors["StringsSocket"], size=4)
 
-    custom_draw = StringProperty()
+    custom_draw: StringProperty()
 
     def get_prop_data(self):
         if self.prop_name:
@@ -447,11 +449,11 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
 
-    socket_index = bpy.props.IntProperty()
-    origin = bpy.props.StringProperty()
-    new_node_idname = bpy.props.StringProperty()
-    new_node_offsetx = bpy.props.IntProperty(default=-200)
-    new_node_offsety = bpy.props.IntProperty(default=0)
+    socket_index: bpy.props.IntProperty()
+    origin: bpy.props.StringProperty()
+    new_node_idname: bpy.props.StringProperty()
+    new_node_offsetx: bpy.props.IntProperty(default=-200)
+    new_node_offsety: bpy.props.IntProperty(default=0)
 
     def execute(self, context):
         tree = context.space_data.edit_tree
@@ -477,8 +479,8 @@ class SvNodeTreeCommon(object):
     Common methods shared between Sverchok node trees
     '''
 
-    has_changed = BoolProperty(default=False)
-    limited_init = BoolProperty(default=False)
+    has_changed: BoolProperty(default=False)
+    limited_init: BoolProperty(default=False)
 
     def build_update_list(self):
         build_update_list(self)
@@ -545,11 +547,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # for node in outputs:
         #   node.disable()
 
-    sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
-    sv_process = BoolProperty(name="Process", default=True, description='Process layout')
-    sv_user_colors = StringProperty(default="")
+    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
+    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
+    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
+    sv_user_colors: StringProperty(default="")
 
     def update(self):
         '''
