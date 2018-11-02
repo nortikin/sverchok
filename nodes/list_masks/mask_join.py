@@ -29,16 +29,10 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Mask Join (in)'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name="Level",
-                        default=1, min=1,
-                        update=updateNode)
-    choice = BoolProperty(name="Choice",
-                          default=False,
-                          update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    level: IntProperty(name="Level", default=1, min=1, update=updateNode)
+    choice: BoolProperty(name="Choice", default=False, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Mask')
