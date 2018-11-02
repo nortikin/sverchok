@@ -29,8 +29,8 @@ class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'BMesh Obj in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    UseSKey = BoolProperty(name='with_shapekey', default=False, update=updateNode)
-    keyIND = IntProperty(name='SHKey_ind', default=0, update=updateNode)
+    UseSKey: BoolProperty(name='with_shapekey', default=False, update=updateNode)
+    keyIND: IntProperty(name='SHKey_ind', default=0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')

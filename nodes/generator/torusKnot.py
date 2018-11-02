@@ -202,62 +202,62 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
             updateNode(self, context)
 
     # TORUS KNOT Options
-    torus_p = IntProperty(
+    torus_p: IntProperty(
         name="p",
         default=2, min=1, soft_min=1,
         description="Number of REVOLUTIONs around the torus hole before closing the knot",
         update=updateNode)
 
-    torus_q = IntProperty(
+    torus_q: IntProperty(
         name="q",
         default=3, min=1, soft_min=1,
         description="Number of SPINs through the torus hole before closing the knot",
         update=updateNode)
 
-    flip_p = BoolProperty(
+    flip_p: BoolProperty(
         name="Flip p",
         default=False,
         description="Flip REVOLUTION direction",
         update=updateNode)
 
-    flip_q = BoolProperty(
+    flip_q: BoolProperty(
         name="Flip q",
         default=False,
         description="Flip SPIN direction",
         update=updateNode)
 
-    multiple_links = BoolProperty(
+    multiple_links: BoolProperty(
         name="Multiple Links",
         default=True,
         description="Generate ALL links or just ONE link when p and q are not co-primes",
         update=updateNode)
 
-    torus_u = IntProperty(
+    torus_u: IntProperty(
         name="p multiplier",
         default=1, min=1, soft_min=1,
         description="p multiplier",
         update=updateNode)
 
-    torus_v = IntProperty(
+    torus_v: IntProperty(
         name="q multiplier",
         default=1, min=1, soft_min=1,
         description="q multiplier",
         update=updateNode)
 
-    torus_rP = FloatProperty(
+    torus_rP: FloatProperty(
         name="Revolution Phase",
         default=0.0,
         description="Phase the revolutions by this radian amount",
         update=updateNode)
 
-    torus_sP = FloatProperty(
+    torus_sP: FloatProperty(
         name="Spin Phase",
         default=0.0,
         description="Phase the spins by this radian amount",
         update=updateNode)
 
     # TORUS DIMENSIONS options
-    mode = EnumProperty(
+    mode: EnumProperty(
         name="Torus Dimensions",
         items=(("MAJOR_MINOR", "Major/Minor",
                 "Use the Major/Minor radii for torus dimensions."),
@@ -265,67 +265,67 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
                 "Use the Exterior/Interior radii for torus dimensions.")),
         update=update_mode)
 
-    torus_R = FloatProperty(
+    torus_R: FloatProperty(
         name="Major Radius",
         default=1.0, min=0.0, max=100.0,
         subtype='DISTANCE', unit='LENGTH',
         description="Radius from the torus origin to the center of the cross section",
         update=major_minor_radii_changed)
 
-    torus_r = FloatProperty(
+    torus_r: FloatProperty(
         name="Minor Radius",
         default=.25, min=0.0, max=100.0,
         subtype='DISTANCE', unit='LENGTH',
         description="Radius of the torus' cross section",
         update=major_minor_radii_changed)
 
-    torus_iR = FloatProperty(
+    torus_iR: FloatProperty(
         name="Interior Radius",
         default=.75, min=0.0, max=100.0,
         subtype='DISTANCE', unit='LENGTH',
         description="Interior radius of the torus (closest to the torus center)",
         update=external_internal_radii_changed)
 
-    torus_eR = FloatProperty(
+    torus_eR: FloatProperty(
         name="Exterior Radius",
         default=1.25, min=0.0, max=100.0,
         subtype='DISTANCE', unit='LENGTH',
         description="Exterior radius of the torus (farthest from the torus center)",
         update=external_internal_radii_changed)
 
-    torus_s = FloatProperty(
+    torus_s: FloatProperty(
         name="Scale",
         default=1.0, min=0.01, max=100.0,
         description="Scale factor to multiply the radii",
         update=updateNode)
 
-    torus_h = FloatProperty(
+    torus_h: FloatProperty(
         name="Height",
         default=1.0, min=0.0, max=100.0,
         description="Scale along the local Z axis",
         update=updateNode)
 
     # CURVE options
-    torus_res = IntProperty(
+    torus_res: IntProperty(
         name="Curve Resolution",
         default=100, min=3, soft_min=3,
         description="Number of vertices in the curve (per link)",
         update=updateNode)
 
-    adaptive_resolution = BoolProperty(
+    adaptive_resolution: BoolProperty(
         name="Adaptive Resolution",
         default=False,
         description="Auto adjust the curve resolution based on TK length",
         update=updateNode)
 
     # VECTORS options
-    normalize_normals = BoolProperty(
+    normalize_normals: BoolProperty(
         name="Normalize Normals",
         default=True,
         description="Normalize the normal vectors",
         update=updateNode)
 
-    normalize_tangents = BoolProperty(
+    normalize_tangents: BoolProperty(
         name="Normalize Tangents",
         default=True,
         description="Normalize the tangent vectors",
@@ -460,6 +460,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvTorusKnotNode)
-
-if __name__ == '__main__':
-    register()

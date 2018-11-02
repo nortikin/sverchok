@@ -103,13 +103,13 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = '3pt Arc'
     bl_icon = 'SPHERECURVE'
 
-    num_verts = IntProperty(
+    num_verts: IntProperty(
         name='num_verts',
         description='Num Vertices',
         default=20, min=3,
         update=updateNode)
 
-    arc_pts = FloatVectorProperty(
+    arc_pts: FloatVectorProperty(
         name='atc_pts',
         description="3 points, Start-Through-End",
         update=updateNode,

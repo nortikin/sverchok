@@ -30,15 +30,15 @@ class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Random Vector MK2'
     bl_icon = 'RNDCURVE'
 
-    count_inner = IntProperty(
+    count_inner: IntProperty(
         name='Count', description='random', default=1, min=1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    scale = FloatProperty(
+    scale: FloatProperty(
         name='Scale', description='scale for vectors', default=1.0,
         options={'ANIMATABLE'}, update=updateNode)
 
-    seed = IntProperty(
+    seed: IntProperty(
         name='Seed', description='random seed', default=1,
         options={'ANIMATABLE'}, update=updateNode)
 

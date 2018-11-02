@@ -231,47 +231,47 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_BRICKS'
 
-    du_ = FloatProperty(name='Unit width', description='One brick width',
+    du_: FloatProperty(name='Unit width', description='One brick width',
             default=2.0, min=0.0,
             update=updateNode)
-    dv_ = FloatProperty(name='Unit heigth', description='One brick height',
+    dv_: FloatProperty(name='Unit heigth', description='One brick height',
             default=1.0, min=0.0,
             update=updateNode)
-    sizeu_ = FloatProperty(name='Width', description='Grid width',
+    sizeu_: FloatProperty(name='Width', description='Grid width',
             default=10.0, min=0.0,
             update=updateNode)
-    sizev_ = FloatProperty(name='Height', description='Grid height',
+    sizev_: FloatProperty(name='Height', description='Grid height',
             default=10.0, min=0.0,
             update=updateNode)
-    toothing_ = FloatProperty(name='Toothing',
+    toothing_: FloatProperty(name='Toothing',
             description='Bricks toothing amount',
             default=0.0,
             update=updateNode)
-    toothing_r_ = FloatProperty(name='Toothing Random',
+    toothing_r_: FloatProperty(name='Toothing Random',
             description='Bricks toothing randomization factor',
             default=0.0, min=0.0, max=1.0,
             update=updateNode)
-    rdu_ = FloatProperty(name='Random U',
+    rdu_: FloatProperty(name='Random U',
             description='Randomization amplitude along width',
             default=0.0, min=0.0,
             update=updateNode)
-    rdv_ = FloatProperty(name='Random V',
+    rdv_: FloatProperty(name='Random V',
             description='Randomization amplitude along height',
             default=0.0, min=0.0,
             update=updateNode)
-    shift_ = FloatProperty(name='Shift',
+    shift_: FloatProperty(name='Shift',
             description='Bricks shifting factor',
             default=0.5, min=0.0, max=1.0,
             update=updateNode)
-    rand_seed_ = IntProperty(name='Seed', description='Random seed',
+    rand_seed_: IntProperty(name='Seed', description='Random seed',
             default=0,
             update=updateNode)
 
-    cycle_u = BoolProperty(name = "Cycle U",
+    cycle_u: BoolProperty(name = "Cycle U",
             description = "Cycle edges and faces in U direction",
             default = False,
             update=updateNode)
-    cycle_v = BoolProperty(name = "Cycle v",
+    cycle_v: BoolProperty(name = "Cycle v",
             description = "Cycle edges and faces in V direction",
             default = False,
             update=updateNode)
@@ -289,7 +289,7 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
             del result[-1]
         return result
 
-    faces_mode = EnumProperty(name="Faces",
+    faces_mode: EnumProperty(name="Faces",
             description="Faces triangularization mode",
             items = available_face_modes,
             update=updateNode)
@@ -555,4 +555,3 @@ def test():
     assert uline.search_range_u(1,13) == [2,7,12]
     assert uline.search_range_u(3,11) == [7]
     assert uline.search_range_u(0,2) == [1]
-

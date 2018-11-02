@@ -37,25 +37,24 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'NGon'
     bl_icon = 'RNDCURVE'
 
-    rad_ = FloatProperty(name='Radius', description='Radius',
+    rad_: FloatProperty(name='Radius', description='Radius',
                          default=1.0,
                          update=updateNode)
-    sides_ = IntProperty(name='N Sides', description='Number of polygon sides',
+    sides_: IntProperty(name='N Sides', description='Number of polygon sides',
                         default=5, min=3,
                         update=updateNode)
-    rand_seed_ = FloatProperty(name='Seed', description='Random seed',
+    rand_seed_: FloatProperty(name='Seed', description='Random seed',
                         default=0.0,
                         update=updateNode)
-    rand_r_ = FloatProperty(name='RandomR', description='Radius randomization amplitude',
+    rand_r_: FloatProperty(name='RandomR', description='Radius randomization amplitude',
                         default=0.0, min=0.0,
                         update=updateNode)
-    rand_phi_ = FloatProperty(name='RandomPhi', description='Angle randomization amplitude (radians)',
+    rand_phi_: FloatProperty(name='RandomPhi', description='Angle randomization amplitude (radians)',
                         default=0.0, min=0.0, max=pi,
                         update=updateNode)
-    shift_ = IntProperty(name='Shift', description='Edges bind shift (star factor)',
+    shift_: IntProperty(name='Shift', description='Edges bind shift (star factor)',
                         default=0, min=0,
-                        update=updateNode)
-                        
+                        update=updateNode)             
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
@@ -65,9 +64,9 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "RandomSeed").prop_name = 'rand_seed_'
         self.inputs.new('StringsSocket', "Shift").prop_name = 'shift_'
 
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
 
 #     def draw_buttons(self, context, layout):
 #         layout.prop(self, "mode_", text="Mode")
@@ -144,4 +143,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvNGonNode)
-

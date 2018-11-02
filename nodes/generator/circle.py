@@ -31,17 +31,12 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Circle'
     bl_icon = 'MESH_CIRCLE'
 
-    rad_ = FloatProperty(name='Radius', description='Radius',
-                         default=1.0,
-                         update=updateNode)
-    vert_ = IntProperty(name='N Vertices', description='Vertices',
-                        default=24, min=3,
-                        update=updateNode)
-    degr_ = FloatProperty(name='Degrees', description='Degrees',
-                          default=pi*2, min=0, max=pi*2, subtype='ANGLE',
-                          options={'ANIMATABLE'}, update=updateNode)
-    mode_ = BoolProperty(name='mode_', description='Mode',
-                         default=0,  update=updateNode)
+    rad_: FloatProperty(name='Radius', description='Radius', default=1.0, update=updateNode)
+    vert_: IntProperty(name='N Vertices', description='Vertices', default=24, min=3, update=updateNode)
+    mode_: BoolProperty(name='mode_', description='Mode', default=0,  update=updateNode)
+    degr_: FloatProperty(
+        name='Degrees', description='Degrees', default=pi*2, min=0, max=pi*2, 
+        subtype='ANGLE', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'

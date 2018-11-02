@@ -98,18 +98,18 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
     def get_subdivisions(self):
         return self['subdivisions']
 
-    subdivisions = IntProperty(
+    subdivisions: IntProperty(
         name = "Subdivisions", description = "How many times to recursively subdivide the sphere",
         default=2, min=0,
         set = set_subdivisions, get = get_subdivisions,
         update=updateNode)
 
-    subdivisions_max = IntProperty(
+    subdivisions_max: IntProperty(
         name = "Max. Subdivisions", description = "Maximum number of subdivisions available",
         default = 5, min=2,
         update=updateNode)
     
-    radius = FloatProperty(
+    radius: FloatProperty(
         name = "Radius",
         default=1.0, min=0.0,
         update=updateNode)

@@ -90,54 +90,54 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def update_sizey(self, context):
         self.update_size(context, "Y")
 
-    direction = EnumProperty(
+    direction: EnumProperty(
         name="Direction", items=directionItems,
         default="XY", update=updateNode)
 
-    numx = IntProperty(
+    numx: IntProperty(
         name='N Verts X', description='Number of vertices along X',
         default=2, min=2, update=updateNode)
 
-    numy = IntProperty(
+    numy: IntProperty(
         name='N Verts Y', description='Number of vertices along Y',
         default=2, min=2, update=updateNode)
 
-    stepx = FloatProperty(
+    stepx: FloatProperty(
         name='Step X', description='Step length X',
         default=1.0, update=updateNode)
 
-    stepy = FloatProperty(
+    stepy: FloatProperty(
         name='Step Y', description='Step length Y',
         default=1.0, update=updateNode)
 
-    separate = BoolProperty(
+    separate: BoolProperty(
         name='Separate', description='Separate UV coords',
         default=False, update=updateNode)
 
-    center = BoolProperty(
+    center: BoolProperty(
         name='Center', description='Center the plane around origin',
         default=False, update=updateNode)
 
-    normalize = BoolProperty(
+    normalize: BoolProperty(
         name='Normalize', description='Normalize the plane sizes',
         default=False, update=updateNode)
 
-    sizex = FloatProperty(
+    sizex: FloatProperty(
         name='Size X', description='Plane size along X',
         default=10.0, min=0.01, update=update_sizex)
 
-    sizey = FloatProperty(
+    sizey: FloatProperty(
         name='Size Y', description='Plane size along Y',
         default=10.0, min=0.01, update=update_sizey)
 
-    sizeRatio = FloatProperty(
+    sizeRatio: FloatProperty(
         name="Size Ratio", default=1.0)
 
-    linkSizes = BoolProperty(
+    linkSizes: BoolProperty(
         name='Link', description='Link the normalize sizes',
         default=False, update=update_size_link)
 
-    syncing = BoolProperty(
+    syncing: BoolProperty(
         name='Syncing', description='Syncing flag', default=False)
 
     def sv_init(self, context):
