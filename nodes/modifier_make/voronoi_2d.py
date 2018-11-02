@@ -30,18 +30,14 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Voronoi 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    clip = FloatProperty(
+    clip: FloatProperty(
         name='clip', description='Clipping Distance',
-        default=1.0, min=0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1.0, min=0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
-        # self.inputs.new('StringsSocket', "Clipping")
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
-        # Polygon output does not work right now. Should be fixed
-        # self.outputs.new('StringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "clip", text="Clipping")
@@ -116,7 +112,6 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
-        # self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polygons")
 
     def process(self):

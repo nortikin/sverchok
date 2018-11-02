@@ -35,27 +35,27 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     direction = [('U_dir', 'U_dir', 'u direction'), ('V_dir', 'V_dir', 'v direction')]
     polsORedges = [('Pols', 'Pols', 'Pols'), ('Edges', 'Edges', 'Edges')]
 
-    JoinLevel = IntProperty(
+    JoinLevel: IntProperty(
         name='JoinLevel', description='Choose connect level of data (see help)',
         default=1, min=1, max=2, update=updateNode)
 
-    polygons = EnumProperty(
-        name='polsORedges', items=polsORedges, options={'ANIMATABLE'}, update=updateNode)
+    polygons: EnumProperty(
+        name='polsORedges', items=polsORedges, update=updateNode)
     
-    dir_check = EnumProperty(
-        name='direction', items=direction, options={'ANIMATABLE'}, update=updateNode)
+    dir_check: EnumProperty(
+        name='direction', items=direction, update=updateNode)
 
     # as cyclic too have to have U cyclic and V cyclic flags - two flags
-    cicl_check_U = BoolProperty(name='cycleU', description='cycle U', default=False, update=updateNode)
-    cicl_check_V = BoolProperty(name='cycleV', description='cycle V', default=False, update=updateNode)
-    cup_U = BoolProperty(name='cup U', description='cup U', default=False, update=updateNode)
-    cup_V = BoolProperty(name='cup V', description='cup V', default=False, update=updateNode)
-    slice_check = BoolProperty(name='slice', description='slice polygon', default=True, update=updateNode)
+    cicl_check_U: BoolProperty(name='cycleU', description='cycle U', default=False, update=updateNode)
+    cicl_check_V: BoolProperty(name='cycleV', description='cycle V', default=False, update=updateNode)
+    cup_U: BoolProperty(name='cup U', description='cup U', default=False, update=updateNode)
+    cup_V: BoolProperty(name='cup V', description='cup V', default=False, update=updateNode)
+    slice_check: BoolProperty(name='slice', description='slice polygon', default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.outputs.new('StringsSocket', 'data', 'data')
+        self.inputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('VerticesSocket', 'vertices')
+        self.outputs.new('StringsSocket', 'data')
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -71,7 +71,6 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "polygons", text="polygons", expand=True)
         row = col.row(align=True)
         row.prop(self, "slice_check", text="slice")
-        #layout.prop(self, "JoinLevel", text="level")
 
     def connect(self, vers, dirn, ciclU, ciclV, clev, polygons, slice, cupU, cupV):
         ''' doing all job to connect '''
@@ -248,6 +247,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(LineConnectNodeMK2)
-
-if __name__ == '__main__':
-    register()

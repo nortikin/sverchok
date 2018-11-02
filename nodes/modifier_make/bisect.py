@@ -86,22 +86,21 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bisect'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    inner = BoolProperty(
+    inner: BoolProperty(
         name='inner', description='clear inner',
         default=False, update=updateNode)
 
-    outer = BoolProperty(
+    outer: BoolProperty(
         name='outer', description='clear outer',
         default=False, update=updateNode)
 
-    fill = BoolProperty(
+    fill: BoolProperty(
         name='fill', description='Fill cuts', 
         default=False, update=updateNode)
 
-    slice_mode = BoolProperty(
+    slice_mode: BoolProperty(
         name="Per Object", update=updateNode, default=False,
-        description="slice each object with all matrices, or match object and matrices individually"
-    )
+        description="slice each object with all matrices, or match object and matrices individually")
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices')

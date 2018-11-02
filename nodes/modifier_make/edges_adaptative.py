@@ -23,8 +23,7 @@ from mathutils import Matrix
 
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate, updateNode,
-                                     match_long_repeat)
+from sverchok.data_structure import (Vector_generate, updateNode, match_long_repeat)
 
 
 class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,20 +32,19 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Adaptive Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    mesh_join = BoolProperty(name="Join meshes", default=True,
-                             update=updateNode)
+    mesh_join: BoolProperty(name="Join meshes", default=True, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mesh_join")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'VersR', 'VersR')
-        self.inputs.new('StringsSocket', 'EdgeR', 'EdgeR')
-        self.inputs.new('VerticesSocket', 'VersD', 'VersD')
-        self.inputs.new('StringsSocket', 'EdgeD', 'EdgeD')
+        self.inputs.new('VerticesSocket', 'VersR')
+        self.inputs.new('StringsSocket', 'EdgeR')
+        self.inputs.new('VerticesSocket', 'VersD')
+        self.inputs.new('StringsSocket', 'EdgeD')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges', 'Edges')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'Edges')
 
     def process(self):
         if not all(s.is_linked for s in self.inputs):

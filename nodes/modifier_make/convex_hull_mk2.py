@@ -99,18 +99,16 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     # bl_icon = 'OUTLINER_OB_EMPTY'
 
     hull_mode_options = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
-    hull_mode = EnumProperty(
-        description=" 3d or 2d?", default="3D", items=hull_mode_options, update=updateNode
-    )
+    hull_mode: EnumProperty(
+        description=" 3d or 2d?", default="3D", items=hull_mode_options, update=updateNode)
 
     plane_choices = [(k, k, '', i) for i, k in enumerate(["X", "Y", "Z"])]
-    plane = EnumProperty(
-        description="track 2D plane", default="X", items=plane_choices, update=updateNode
-    )
+    plane: EnumProperty(
+        description="track 2D plane", default="X", items=plane_choices, update=updateNode)
 
-    outside = BoolProperty(default=True, update=updateNode)
-    inside = BoolProperty(default=False, update=updateNode)
-    sort_edges = BoolProperty(default=True, update=updateNode)
+    outside: BoolProperty(default=True, update=updateNode)
+    inside: BoolProperty(default=False, update=updateNode)
+    sort_edges: BoolProperty(default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')

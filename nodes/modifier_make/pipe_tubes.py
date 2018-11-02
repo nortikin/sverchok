@@ -30,27 +30,17 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Pipe'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    #nsides = IntProperty(name='nsides', description='number of sides',
-    #              default=4, min=4, max=24,
-    #              options={'ANIMATABLE'}, update=updateNode)
-    diameter = FloatProperty(name='diameter', description='diameter',
-                  default=1.0,
-                  options={'ANIMATABLE'}, update=updateNode)
+    diameter: FloatProperty(
+        name='diameter', description='diameter', default=1.0, update=updateNode)
+
     shape_prop = [('Square','Square','Square'),('Round','Round','Round')]
-    shape = EnumProperty(items=shape_prop, name='shape',default='Square',
-                         options={'ANIMATABLE'}, update=updateNode)
-    #offset = FloatProperty(name='offset', description='offset from ends',
-    #              default=0.0, min=-1, max=0.5,
-    #              options={'ANIMATABLE'}, update=updateNode)
-    #extrude = FloatProperty(name='extrude', description='extrude',
-    #              default=1.0, min=0.2, max=10.0,
-    #              options={'ANIMATABLE'}, update=updateNode)
-    close = BoolProperty(name='close', description='close ends',
-                  default=True,
-                  options={'ANIMATABLE'}, update=updateNode)
-    cup_fill = BoolProperty(name='close', description='close ends',
-                  default=True,
-                  options={'ANIMATABLE'}, update=updateNode)
+    shape: EnumProperty(items=shape_prop, name='shape',default='Square', update=updateNode)
+    
+    close: BoolProperty(
+        name='close', description='close ends', default=True, update=updateNode)
+    
+    cup_fill = BoolProperty(
+        name='close', description='close ends', default=True, update=updateNode)
 
 
     def draw_buttons(self, context, layout):
@@ -59,17 +49,15 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self,'shape',expand=True)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vers', 'Vers')
-        self.inputs.new('StringsSocket', "Edgs", "Edgs")
-        #self.inputs.new('StringsSocket', "Diameter", "Diameter").prop_name = 'diameter'
-        #self.inputs.new('StringsSocket', "Sides", "Sides").prop_name = 'nsides'
-        #self.inputs.new('StringsSocket', "Offset", "Offset").prop_name = 'offset'
-        s = self.inputs.new('VerticesSocket', "Size", "Size")
+        self.inputs.new('VerticesSocket', 'Vers')
+        self.inputs.new('StringsSocket', "Edgs")
+
+        s = self.inputs.new('VerticesSocket', "Size")
         s.use_prop = True
         s.prop = (0.5,0.5,0.5)
         #self.inputs.new('StringsSocket', "Extrude", "Extrude").prop_name = 'extrude'
-        self.outputs.new('VerticesSocket', 'Vers', 'Vers')
-        self.outputs.new('StringsSocket', "Pols", "Pols")
+        self.outputs.new('VerticesSocket', 'Vers')
+        self.outputs.new('StringsSocket', "Pols")
 
     def process(self):
         
@@ -147,7 +135,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvPipeNode)
-
-if __name__ == '__main__':
-    register()
 
