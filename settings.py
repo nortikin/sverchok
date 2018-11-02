@@ -31,44 +31,44 @@ class SverchokPreferences(AddonPreferences):
 
     tab_modes = [(k, k, '', i) for i, k in enumerate(["General", "Node Defaults", "Theme"])]
     
-    selected_tab = bpy.props.EnumProperty(
+    selected_tab: bpy.props.EnumProperty(
         items=tab_modes,
         description="pick viewing mode",
         default="General"
     )
 
     #  debugish...
-    show_debug = BoolProperty(
+    show_debug: BoolProperty(
         name="Print update timings",
         description="Print update timings in console",
         default=False, subtype='NONE',
         update=update_debug_mode)
 
-    no_data_color = FloatVectorProperty(
+    no_data_color: FloatVectorProperty(
         name="No data", description='When a node can not get data',
         size=3, min=0.0, max=1.0,
         default=(1, 0.3, 0), subtype='COLOR',
         update=update_system.update_error_colors)
 
-    exception_color = FloatVectorProperty(
+    exception_color: FloatVectorProperty(
         name="Error", description='When node has an exception',
         size=3, min=0.0, max=1.0,
         default=(0.8, 0.0, 0), subtype='COLOR',
         update=update_system.update_error_colors)
 
     #  heat map settings
-    heat_map = BoolProperty(
+    heat_map: BoolProperty(
         name="Heat map",
         description="Color nodes according to time",
         default=False, subtype='NONE',
         update=update_heat_map)
 
-    heat_map_hot = FloatVectorProperty(
+    heat_map_hot: FloatVectorProperty(
         name="Heat map hot", description='',
         size=3, min=0.0, max=1.0,
         default=(.8, 0, 0), subtype='COLOR')
 
-    heat_map_cold = FloatVectorProperty(
+    heat_map_cold: FloatVectorProperty(
         name="Heat map cold", description='',
         size=3, min=0.0, max=1.0,
         default=(1, 1, 1), subtype='COLOR')
@@ -80,57 +80,57 @@ class SverchokPreferences(AddonPreferences):
         ("UPDATE", "Node tree update", "Profile whole node tree update process", 2)
     ]
 
-    profile_mode = EnumProperty(name = "Profiling mode",
+    profile_mode: EnumProperty(name = "Profiling mode",
             items = profiling_sections,
             default = "NONE",
             description = "Performance profiling mode")
 
-    developer_mode = BoolProperty(name = "Developer mode",
+    developer_mode: BoolProperty(name = "Developer mode",
             description = "Show some additional panels or features useful for Sverchok developers only",
             default = False)
 
     #  theme settings
 
-    sv_theme = EnumProperty(
+    sv_theme: EnumProperty(
         items=color_def.themes,
         name="Theme preset",
         description="Select a theme preset",
         update=color_def.color_callback,
         default="default_theme")
 
-    auto_apply_theme = BoolProperty(
+    auto_apply_theme: BoolProperty(
         name="Apply theme", description="Apply theme automaticlly",
         default=False)
 
-    apply_theme_on_open = BoolProperty(
+    apply_theme_on_open: BoolProperty(
         name="Apply theme", description="Apply theme automaticlly",
         default=False)
 
-    color_viz = FloatVectorProperty(
+    color_viz: FloatVectorProperty(
         name="Visualization", description='',
         size=3, min=0.0, max=1.0,
         default=(1, 0.3, 0), subtype='COLOR',
         update=update_theme)
 
-    color_tex = FloatVectorProperty(
+    color_tex: FloatVectorProperty(
         name="Text", description='',
         size=3, min=0.0, max=1.0,
         default=(0.5, 0.5, 1), subtype='COLOR',
         update=update_theme)
 
-    color_sce = FloatVectorProperty(
+    color_sce: FloatVectorProperty(
         name="Scene", description='',
         size=3, min=0.0, max=1.0,
         default=(0, 0.5, 0.2), subtype='COLOR',
         update=update_theme)
 
-    color_lay = FloatVectorProperty(
+    color_lay: FloatVectorProperty(
         name="Layout", description='',
         size=3, min=0.0, max=1.0,
         default=(0.674, 0.242, 0.363), subtype='COLOR',
         update=update_theme)
 
-    color_gen = FloatVectorProperty(
+    color_gen: FloatVectorProperty(
         name="Generator", description='',
         size=3, min=0.0, max=1.0,
         default=(0, 0.5, 0.5), subtype='COLOR',
@@ -143,7 +143,7 @@ class SverchokPreferences(AddonPreferences):
         ("NONE", "None", "Sverchok doesn't update on frame change", 2)
     ]
 
-    frame_change_mode = EnumProperty(
+    frame_change_mode: EnumProperty(
         items=frame_change_modes,
         name="Frame change",
         description="Select frame change handler",
@@ -152,26 +152,26 @@ class SverchokPreferences(AddonPreferences):
 
     #  ctrl+space settings
 
-    show_icons = BoolProperty(
+    show_icons: BoolProperty(
         name="Show icons in ctrl+space menu",
         default=False,
         description="Use icons in ctrl+space menu")
 
-    over_sized_buttons = BoolProperty(
+    over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
 
-    enable_live_objin = BoolProperty(
+    enable_live_objin: BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
 
-    stethoscope_view_scale = FloatProperty(
+    stethoscope_view_scale: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
-    stethoscope_view_xy_multiplier = FloatProperty(
+    stethoscope_view_xy_multiplier: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
-    defaults_location = StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
-    external_editor = StringProperty(description='which external app to invoke to view sources')
-    real_sverchok_path = StringProperty(description='use with symlinked to get correct src->dst')
+    defaults_location: StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
+    external_editor: StringProperty(description='which external app to invoke to view sources')
+    real_sverchok_path: StringProperty(description='use with symlinked to get correct src->dst')
 
     # Logging settings
 
@@ -186,32 +186,32 @@ class SverchokPreferences(AddonPreferences):
             ("ERROR", "Errors", "Show errors only", 3)
         ]
 
-    log_level = EnumProperty(name = "Logging level",
+    log_level: EnumProperty(name = "Logging level",
             description = "Minimum events severity level to output. All more severe messages will be logged as well.",
             items = log_levels,
             update = update_log_level,
             default = "INFO")
 
-    log_to_buffer = BoolProperty(name = "Log to text buffer",
+    log_to_buffer: BoolProperty(name = "Log to text buffer",
             description = "Enable log output to internal Blender's text buffer",
             default = True)
-    log_to_buffer_clean = BoolProperty(name = "Clear buffer at startup",
+    log_to_buffer_clean: BoolProperty(name = "Clear buffer at startup",
             description = "Clear text buffer at each Blender startup",
             default = False)
-    log_to_file = BoolProperty(name = "Log to file",
+    log_to_file: BoolProperty(name = "Log to file",
             description = "Enable log output to external file",
             default = False)
-    log_to_console = BoolProperty(name = "Log to console",
+    log_to_console: BoolProperty(name = "Log to console",
             description = "Enable log output to console / terminal / standard output.",
             default = True)
 
-    log_buffer_name = StringProperty(name = "Buffer name", default = "sverchok.log")
-    log_file_name = StringProperty(name = "File path", default = os.path.join(datafiles, "sverchok.log"))
+    log_buffer_name: StringProperty(name = "Buffer name", default = "sverchok.log")
+    log_file_name: StringProperty(name = "File path", default = os.path.join(datafiles, "sverchok.log"))
 
 
     # updating sverchok
-    dload_archive_name = StringProperty(name="archive name", default="master")
-    dload_archive_path = StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
+    dload_archive_name: StringProperty(name="archive name", default="master")
+    dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
 
 
     def draw(self, context):
