@@ -49,7 +49,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Formula shape '''
     bl_idname = 'SvFormulaShapeNode'
     bl_label = 'Formula shape'
-    bl_icon = 'IPO'
+    bl_icon = 'NONE'
     
     # vertex numers
     number = IntProperty(name='number', description='vertex number', default=100,
