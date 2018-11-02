@@ -48,7 +48,7 @@ class SvSocketStandard(SvSocketCommon):
 class SvFloatSocket(SvSocketStandard, NodeSocket):
     bl_idname = "SvFloatSocket"
 
-    default_value = FloatProperty(update=process_from_socket)
+    default_value: FloatProperty(update=process_from_socket)
 
     def draw_color(self, context, node):
         return (0.6, 1.0, 0.6, 1.0)
@@ -57,7 +57,7 @@ class SvFloatSocket(SvSocketStandard, NodeSocket):
 class SvIntSocket(SvSocketStandard, NodeSocket):
     bl_idname = "SvIntSocket"
 
-    default_value = IntProperty(update=process_from_socket)
+    default_value: IntProperty(update=process_from_socket)
 
     def draw_color(self, context, node):
         return (0.6, 1.0, 0.6, 1.0)
@@ -66,7 +66,7 @@ class SvIntSocket(SvSocketStandard, NodeSocket):
 class SvUnsignedIntSocket(SvSocketStandard, NodeSocket):
     bl_idname = "SvUnsignedIntSocket"
 
-    default_value = IntProperty(min=0, update=process_from_socket)
+    default_value: IntProperty(min=0, update=process_from_socket)
 
     def draw_color(self, context, node):
         return (0.6, 1.0, 0.6, 1.0)
@@ -77,7 +77,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvObjectSocket"
     bl_label = "Object Socket"
 
-    object_ref = StringProperty(update=process_from_socket)
+    object_ref: StringProperty(update=process_from_socket)
 
     def draw(self, context, layout, node, text):
         if not self.is_output and not self.is_linked:
@@ -107,7 +107,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvTextSocket"
     bl_label = "Text Socket"
 
-    text = StringProperty(update=process_from_socket)
+    text: StringProperty(update=process_from_socket)
 
     def draw(self, context, layout, node, text):
         if self.is_linked and not self.is_output:
