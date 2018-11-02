@@ -97,24 +97,24 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         ("polygons", "Face", "Pcol - color per face", 2),
         ("loops", "Loop", "Color per loop", 3)]
 
-    mode = EnumProperty(items=modes, default='vertices', update=updateNode)
-    object_ref = StringProperty(default='', update=updateNode)
-    vertex_color = StringProperty(default='SvCol', update=updateNode)
-    clear = BoolProperty(name='clear c', default=True, update=updateNode)
+    mode: EnumProperty(items=modes, default='vertices', update=updateNode)
+    object_ref: StringProperty(default='', update=updateNode)
+    vertex_color: StringProperty(default='SvCol', update=updateNode)
+    clear: BoolProperty(name='clear c', default=True, update=updateNode)
 
-    clear_c = FloatVectorProperty(
+    clear_c: FloatVectorProperty(
         name='cl_color', subtype='COLOR', min=0, max=1, size=4,
         default=(0, 0, 0, 1), update=updateNode)
 
-    use_active = BoolProperty(
+    use_active: BoolProperty(
         default=False, name="Use active layer",
         description="Use active vertex layer")
 
-    unit_color = FloatVectorProperty(
+    unit_color: FloatVectorProperty(
         name='', default=(.3, .3, .2, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
-    vcol_size = EnumProperty(
+    vcol_size: EnumProperty(
         items=vcol_options,
         name='Num Color Components',
         description="3 = rgb, 4 = rgba.  older versions of Blender only support 3 components",

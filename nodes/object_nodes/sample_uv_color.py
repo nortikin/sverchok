@@ -31,8 +31,8 @@ class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Sample UV Color'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    image = StringProperty(default='', update=updateNode)
-    object_ref = StringProperty(default='', update=updateNode)
+    image: StringProperty(default='', update=updateNode)
+    object_ref: StringProperty(default='', update=updateNode)
 
     def draw_buttons(self, context,   layout):
         layout.prop_search(self, 'object_ref', bpy.data, 'objects')

@@ -28,9 +28,9 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vertex group weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    fade_speed = FloatProperty(name='fade', default=2, update=updateNode)
-    clear = BoolProperty(name='clear w', default=True, update=updateNode)
-    group_name = StringProperty(default='Sv_VGroup', update=updateNode)
+    fade_speed: FloatProperty(name='fade', default=2, update=updateNode)
+    clear: BoolProperty(name='clear w', default=True, update=updateNode)
+    group_name: StringProperty(default='Sv_VGroup', update=updateNode)
 
     def draw_buttons(self, context,   layout):
         layout.prop(self, "group_name", text="")
@@ -85,6 +85,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvVertexGroupNodeMK2)
-
-if __name__ == '__main__':
-    register()

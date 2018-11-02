@@ -30,9 +30,9 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Object ID Point on Mesh MK2' #new is pointless name
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Mdist = FloatProperty(name='Max_Distance', default=10, update=updateNode)
-    mode = BoolProperty(name='for in points', default=False, update=updateNode)
-    mode2 = BoolProperty(name='for out points', default=True, update=updateNode)
+    Mdist: FloatProperty(name='Max_Distance', default=10, update=updateNode)
+    mode: BoolProperty(name='for in points', default=False, update=updateNode)
+    mode2: BoolProperty(name='for out points', default=True, update=updateNode)
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new

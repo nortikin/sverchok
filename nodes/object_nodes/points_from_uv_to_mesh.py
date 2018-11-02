@@ -56,7 +56,7 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Find UV Coord on Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    object_ref = StringProperty(default='', update=updateNode)
+    object_ref: StringProperty(default='', update=updateNode)
 
     def draw_buttons(self, context,   layout):
         layout.prop_search(self, 'object_ref', bpy.data, 'objects')

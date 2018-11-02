@@ -28,7 +28,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Object ID Sort'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Modes = StringProperty(name='formula', default='location.x', update=updateNode)
+    Modes: StringProperty(name='formula', default='location.x', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Objects')

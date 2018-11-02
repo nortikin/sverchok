@@ -95,8 +95,8 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         self.process()
 
 
-    type_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
-    frame_collection_name = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    type_collection_name: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    frame_collection_name: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
     M = ['actions', 'brushes', 'filepath', 'grease_pencil', 'groups',
          'images', 'libraries', 'linestyles', 'masks', 'materials',
@@ -105,26 +105,27 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     T = ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE',
          'LATTICE', 'EMPTY', 'CAMERA', 'LAMP', 'SPEAKER']
 
-    Mode = EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
-    Type = EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
-    text_name = bpy.props.StringProperty(update=updateNode)
-    object_name = bpy.props.StringProperty(update=updateNode)
-    image_name = bpy.props.StringProperty(update=updateNode)
-    pass_pixels = bpy.props.BoolProperty(update=updateNode)
+    Mode: EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
+    Type: EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
+    text_name: bpy.props.StringProperty(update=updateNode)
+    object_name: bpy.props.StringProperty(update=updateNode)
+    image_name: bpy.props.StringProperty(update=updateNode)
+    pass_pixels: bpy.props.BoolProperty(update=updateNode)
 
     # GP props
-    gp_name = bpy.props.StringProperty(update=updateNode)
-    gp_layer = bpy.props.StringProperty(update=updateNode)
-    gp_frame_current = bpy.props.BoolProperty(default=True, update=updateNode)
-    gp_frame_override = bpy.props.IntProperty(default=1, update=updateNode)
-    gp_stroke_idx = bpy.props.IntProperty(update=updateNode)
+    gp_name: bpy.props.StringProperty(update=updateNode)
+    gp_layer: bpy.props.StringProperty(update=updateNode)
+    gp_frame_current: bpy.props.BoolProperty(default=True, update=updateNode)
+    gp_frame_override: bpy.props.IntProperty(default=1, update=updateNode)
+    gp_stroke_idx: bpy.props.IntProperty(update=updateNode)
+
     gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "active frame"])]
-    gp_selected_frame_mode = bpy.props.EnumProperty(
+    gp_selected_frame_mode: bpy.props.EnumProperty(
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
         default="pick frame", update=frame_updateNode
     )
-    gp_frame_pick = bpy.props.StringProperty(update=frame_updateNode)
-    gp_pass_points = bpy.props.BoolProperty(default=True, update=updateNode)
+    gp_frame_pick: bpy.props.StringProperty(update=frame_updateNode)
+    gp_pass_points: bpy.props.BoolProperty(default=True, update=updateNode)
 
     def draw_gp_options(self, context, layout):
         # -- points  [p.co for p in points]

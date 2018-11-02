@@ -34,7 +34,7 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
         ("per Loop", "per Loop", "", 2)
         ]
 
-    mode = EnumProperty(items=modes, default='per Vert', update=updateNode)
+    mode: EnumProperty(items=modes, default='per Vert', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

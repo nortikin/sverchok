@@ -30,15 +30,15 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Select Object Vertices'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    formula = StringProperty(name='formula', default='val == 0', update=updateNode)
-    deselect_all = BoolProperty(name='deselect', default=False, update=updateNode)
+    formula: StringProperty(name='formula', default='val == 0', update=updateNode)
+    deselect_all: BoolProperty(name='deselect', default=False, update=updateNode)
 
     modes = [
         ("vertices", "Vert", "", 1),
         ("polygons", "Face", "", 2),
         ("edges", "Edge", "", 3)]
 
-    mode = EnumProperty(items=modes, default='vertices', update=updateNode)
+    mode: EnumProperty(items=modes, default='vertices', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "deselect_all", text="clear selection")
