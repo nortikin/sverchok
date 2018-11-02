@@ -38,7 +38,6 @@
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
-    SvScriptNode
     SvTorusKnotNode
     SvRingNode
     SvEllipseNode
@@ -159,10 +158,7 @@
 
 ## Number
     SvNumberNode
-    FloatNode
-    IntegerNode
     Float2IntNode
-    ScalarMathNode
     SvScalarMathNodeMK2
     Formula2Node
     SvExecNodeMod
@@ -176,7 +172,6 @@
     ---
     SvRndNumGen
     RandomNode
-    SvEasingNode
     SvMixNumbersNode
 
 ## Vector
@@ -222,11 +217,8 @@
     SvNeuroElman1LNode
 
 ## Viz
-    ViewerNode2
     SvBmeshViewerNodeMK2
-    IndexViewerNode
     SvMetaballOutNode
-    SvTextureViewerNode
     Sv3DviewPropsNode
 
 ## Text
@@ -237,7 +229,6 @@
     SvDataShapeNode
     GTextNode
     SvDebugPrintNode
-    SvStethoscopeNodeMK2
 
 ## BPY Data
     SvGetPropNode
