@@ -43,14 +43,14 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         ("1", "Clip", "Split the ngons using a scanfill algorithm", 2)
     ]
 
-    quad_mode = EnumProperty(
+    quad_mode: EnumProperty(
         name='Quads mode',
         description="Quads processing mode",
         items=quad_modes,
         default="0",
         update=updateNode)
 
-    ngon_mode = EnumProperty(
+    ngon_mode: EnumProperty(
         name="Polygons mode",
         description="Polygons processing mode",
         items=ngon_modes,
@@ -58,9 +58,9 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('StringsSocket', 'Edges')
+        self.inputs.new('StringsSocket', 'Polygons')
         self.inputs.new('StringsSocket', 'Mask')
 
         self.outputs.new('VerticesSocket', 'Vertices')

@@ -29,11 +29,11 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'PolyEdge')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'PolyEdge')
 
     def process(self):
 

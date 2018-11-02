@@ -58,61 +58,61 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    falloff_type = EnumProperty(name = "Falloff",
+    falloff_type: EnumProperty(name = "Falloff",
             items = falloff_types,
             default = "4",
             update=updateNode)
-    corner_type = EnumProperty(name = "Corner Cut Type",
+    corner_type: EnumProperty(name = "Corner Cut Type",
             items = corner_types,
             default = "0",
             update=updateNode)
 
-    cuts = IntProperty(name = "Number of Cuts",
+    cuts: IntProperty(name = "Number of Cuts",
             description = "Specifies the number of cuts per edge to make",
             min=1, default=1,
             update=updateNode)
-    smooth = FloatProperty(name = "Smooth",
+    smooth: FloatProperty(name = "Smooth",
             description = "Displaces subdivisions to maintain approximate curvature",
             min=0.0, max=1.0, default=0.0,
             update=updateNode)
-    fractal = FloatProperty(name = "Fractal",
+    fractal: FloatProperty(name = "Fractal",
             description = "Displaces the vertices in random directions after the mesh is subdivided",
             min=0.0, max=1.0, default=0.0,
             update=updateNode)
-    along_normal = FloatProperty(name = "Along normal",
+    along_normal: FloatProperty(name = "Along normal",
             description = "Causes the vertices to move along the their normals, instead of random directions",
             min=0.0, max=1.0, default=0.0,
             update=updateNode)
-    seed = IntProperty(name = "Seed",
+    seed: IntProperty(name = "Seed",
             description = "Random seed",
             default = 0,
             update=updateNode)
-    grid_fill = BoolProperty(name = "Grid fill",
+    grid_fill: BoolProperty(name = "Grid fill",
             description = "fill in fully-selected faces with a grid",
             default = True,
             update=updateNode)
-    single_edge = BoolProperty(name = "Single edge",
+    single_edge: BoolProperty(name = "Single edge",
             description = "tessellate the case of one edge selected in a quad or triangle",
             default = False,
             update=updateNode)
-    only_quads = BoolProperty(name = "Only Quads",
+    only_quads: BoolProperty(name = "Only Quads",
             description = "only subdivide quads (for loopcut)",
             default = False,
             update=updateNode)
-    smooth_even = BoolProperty(name = "Even smooth",
+    smooth_even: BoolProperty(name = "Even smooth",
             description = "maintain even offset when smoothing",
             default = False,
             update=updateNode)
 
-    show_new = BoolProperty(name = "Show New",
+    show_new: BoolProperty(name = "Show New",
             description = "Show outputs with new geometry",
             default = False,
             update=update_mode)
-    show_old = BoolProperty(name = "Show Old",
+    show_old: BoolProperty(name = "Show Old",
             description = "Show outputs with old geometry",
             default = False,
             update=update_mode)
-    show_options = BoolProperty(name = "Show Options",
+    show_options: BoolProperty(name = "Show Options",
             description = "Show options on the node",
             default = False,
             update=updateNode)
@@ -149,9 +149,9 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('StringsSocket', 'Faces', 'Faces')
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('StringsSocket', 'Edges')
+        self.inputs.new('StringsSocket', 'Faces')
         self.inputs.new('StringsSocket', 'EdgeMask')
 
         self.inputs.new('StringsSocket', 'Cuts').prop_name = "cuts"
@@ -280,4 +280,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSubdivideNode)
-

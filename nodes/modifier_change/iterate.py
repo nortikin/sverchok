@@ -104,16 +104,16 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Iterate matrix transformation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    count_ = IntProperty(
+    count_: IntProperty(
         name='Iterations', description='Number of iterations',
         default=1, min=0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', "Matrix", "Matrix")
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
-        self.inputs.new('StringsSocket', "Iterations", "Iterations").prop_name = "count_"
+        self.inputs.new('MatrixSocket', "Matrix")
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('StringsSocket', 'Edges')
+        self.inputs.new('StringsSocket', 'Polygons')
+        self.inputs.new('StringsSocket', "Iterations").prop_name = "count_"
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Edges')
@@ -190,7 +190,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvIterateNode)
-
-
-if __name__ == '__main__':
-    register()

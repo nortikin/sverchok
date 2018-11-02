@@ -31,9 +31,7 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
-modeItems = [
-    ("2D", "2D", "", 0),
-    ("3D", "3D", "", 1)]
+modeItems = [("2D", "2D", "", 0), ("3D", "3D", "", 1)]
 
 ''' helpers '''
 
@@ -269,10 +267,10 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Intersect Edges MK2'
     sv_icon = 'SV_XALL'
 
-    mode = bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)
-    rm_switch = bpy.props.BoolProperty(update=updateNode)
-    rm_doubles = bpy.props.FloatProperty(min=0.0, default=0.0001, step=0.1, update=updateNode)
-    epsilon = bpy.props.FloatProperty(min=1.0e-5, default=1.0e-5, step=0.02, update=updateNode)
+    mode: bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)
+    rm_switch: bpy.props.BoolProperty(update=updateNode)
+    rm_doubles: bpy.props.FloatProperty(min=0.0, default=0.0001, step=0.1, update=updateNode)
+    epsilon: bpy.props.FloatProperty(min=1.0e-5, default=1.0e-5, step=0.02, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts_in')

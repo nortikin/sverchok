@@ -31,9 +31,9 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Limited Dissolve MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    angle = FloatProperty(default=5.0, min=0.0, update=updateNode)
-    use_dissolve_boundaries = BoolProperty(update=updateNode)
-    delimit = IntProperty(update=updateNode)
+    angle: FloatProperty(default=5.0, min=0.0, update=updateNode)
+    use_dissolve_boundaries: BoolProperty(update=updateNode)
+    delimit: IntProperty(update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'bmesh_list')

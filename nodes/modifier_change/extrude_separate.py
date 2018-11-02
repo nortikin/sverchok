@@ -36,18 +36,13 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Extrude Separate Faces'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    height_ = FloatProperty(
-        name="Height", description="Extrusion amount",
-        default=0.0, update=updateNode)
-
-    scale_ = FloatProperty(
-        name="Scale", description="Extruded faces scale",
-        default=1.0, min=0.0, update=updateNode)
+    height_: FloatProperty(name="Height", description="Extrusion amount", default=0.0, update=updateNode)
+    scale_: FloatProperty(name="Scale", description="Extruded faces scale", default=1.0, min=0.0, update=updateNode)
 
     replacement_nodes = [
-            ('SvInsetSpecial',
-                dict(Vertices='vertices', Polygons='polygons'),
-                dict(Vertices='vertices', Polygons='polygons'))]
+        ('SvInsetSpecial',
+            dict(Vertices='vertices', Polygons='polygons'),
+            dict(Vertices='vertices', Polygons='polygons'))]
 
     def sv_init(self, context):
         inew = self.inputs.new

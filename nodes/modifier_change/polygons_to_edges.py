@@ -43,16 +43,15 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Polygons to Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    unique_edges = BoolProperty(name="Unique Edges", default=False,
-                                update=SverchCustomTreeNode.process_node)
-
+    unique_edges: BoolProperty(
+        name="Unique Edges", default=False, update=SverchCustomTreeNode.process_node)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "unique_edges")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "pols", "pols")
-        self.outputs.new('StringsSocket', "edgs", "edgs")
+        self.inputs.new('StringsSocket', "pols")
+        self.outputs.new('StringsSocket', "edgs")
 
     def process(self):
         if not self.outputs[0].is_linked:
@@ -69,6 +68,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(Pols2EdgsNode)
-
-if __name__ == '__main__':
-    register()

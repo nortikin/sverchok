@@ -69,87 +69,87 @@ def vsca(self, r):
 
 class SvMExtrudeProps():
 
-    off = FloatProperty(
+    off: FloatProperty(
         soft_min=0.001, soft_max=10, min=-100, max=100, default=1.0,
         name="Offset", description="Translation", update=updateNode)
 
-    offx = FloatProperty(
+    offx: FloatProperty(
         soft_min=-10.0, soft_max=10.0, min=-100.0, max=100.0, default=0.0,
         name="Loc X", description="Global Translation X", update=updateNode)
 
-    offy = FloatProperty(
+    offy: FloatProperty(
         soft_min=-10.0, soft_max=10.0, min=-100.0, max=100.0, default=0.0,
         name="Loc Y", description="Global Translation Y", update=updateNode)
 
-    offz = FloatProperty(
+    offz: FloatProperty(
         soft_min=-10.0, soft_max=10.0, min=-100.0, max=100.0, default=0.0,
         name="Loc Z", description="Global Translation Z", update=updateNode)
 
-    rotx = FloatProperty(
+    rotx: FloatProperty(
         min=-85, max=85, soft_min=-30, soft_max=30, default=0,
         name="Rot X", description="X Rotation", update=updateNode)
 
-    roty = FloatProperty(
+    roty: FloatProperty(
         min=-85, max=85, soft_min=-30, soft_max=30, default=0,
         name="Rot Y", description="Y Rotation", update=updateNode)
 
-    rotz = FloatProperty(
+    rotz: FloatProperty(
         min=-85, max=85, soft_min=-30, soft_max=30, default=-0,
         name="Rot Z", description="Z Rotation", update=updateNode)
 
-    nrotx = FloatProperty(
+    nrotx: FloatProperty(
         min=-85, max=85, soft_min=-30, soft_max=30, default=0,
         name="N Rot X", description="Normal X Rotation", update=updateNode)
 
-    nroty = FloatProperty(
+    nroty: FloatProperty(
         min=-85, max=85, soft_min=-30, soft_max=30, default=0,     
         name="N Rot Y", description="Normal Y Rotation", update=updateNode)
 
-    nrotz = FloatProperty(
+    nrotz: FloatProperty(
         min=-85, max=85, soft_min=-30, soft_max=30, default=-0,
         name="N Rot Z", description="Normal Z Rotation", update=updateNode)
 
-    sca = FloatProperty(
+    sca: FloatProperty(
         min=0.01, max=10, soft_min=0.5, soft_max=1.5, default=1.0,
         name="Scale", description="Scaling of the selected faces after extrusion", update=updateNode)
 
-    var1 = FloatProperty(
+    var1: FloatProperty(
         soft_min=-1, soft_max=1, default=0, min=-10, max=10,
         name="Offset Var", description="Offset variation", update=updateNode)
 
-    var2 = FloatProperty(
+    var2: FloatProperty(
         min=-10, max=10, soft_min=-1, soft_max=1, default=0,
         name="Rotation Var", description="Rotation variation", update=updateNode)
 
-    var3 = FloatProperty(
+    var3: FloatProperty(
         min=-10, max=10, soft_min=-1, soft_max=1, default=0,
         name="Scale Noise", description="Scaling noise", update=updateNode)
 
-    var4 = IntProperty(
+    var4: IntProperty(
         min=0, max=100, default=100,
         name="Probability", description="Probability, chance of extruding a face", update=updateNode)
 
-    num = IntProperty(
+    num: IntProperty(
         min=1, max=500, soft_max=100, default=5,
         name="Repeat", description="Repetitions", update=updateNode)
 
-    ran = IntProperty(
+    ran: IntProperty(
         min=-9999, max=9999, default=0,     
         name="Seed", description="Seed to feed random values", update=updateNode)
 
-    opt1 = BoolProperty(
+    opt1: BoolProperty(
         default=True, name="Polygon coordinates",
         description="Polygon coordinates, Object coordinates", update=updateNode)
 
-    opt2 = BoolProperty(
+    opt2: BoolProperty(
         default=False, name="Proportional offset",
         description="Scale * Offset", update=updateNode)
 
-    opt3 = BoolProperty(
+    opt3: BoolProperty(
         default=False, name="Per step rotation noise",
         description="Per step rotation noise, Initial rotation noise", update=updateNode)
 
-    opt4 = BoolProperty(
+    opt4: BoolProperty(
         default=False, name="Per step scale noise",
         description="Per step scale noise, Initial scale noise", update=updateNode)
 

@@ -69,9 +69,8 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, [])
 
-    offset_ = FloatProperty(
-        name='Amount',
-        description='Amount to offset beveled edge',
+    offset_: FloatProperty(
+        name='Amount', description='Amount to offset beveled edge',
         default=0.0, min=0.0, update=updateNode)
 
     offset_modes = [
@@ -81,24 +80,20 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         ("3", "Percent", "Amount is percent of adjacent edge length", 4)
     ]
 
-    offsetType = EnumProperty(
-        name='Amount Type',
-        description="What distance Amount measures",
+    offsetType: EnumProperty(
+        name='Amount Type', description="What distance Amount measures",
         items=offset_modes, update=updateNode)
 
-    segments_ = IntProperty(
-        name="Segments",
-        description="Number of segments in bevel",
+    segments_: IntProperty(
+        name="Segments", description="Number of segments in bevel",
         default=1, min=1, update=updateNode)
 
-    profile_ = FloatProperty(
-        name="Profile",
-        description="Profile shape; 0.5 - round",
+    profile_: FloatProperty(
+        name="Profile", description="Profile shape; 0.5 - round",
         default=0.5, min=0.0, max=1.0, update=updateNode)
 
-    vertexOnly = BoolProperty(
-        name="Vertex mode",
-        description="Only bevel edges, not edges",
+    vertexOnly: BoolProperty(
+        name="Vertex mode", description="Only bevel edges, not edges",
         default=False, update=mode_change)
 
     def sv_init(self, context):

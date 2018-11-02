@@ -69,11 +69,10 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode_options = [(mode, mode, '', idx) for idx, mode in enumerate(['mask', 'match'])]
         
-    selected_mode = EnumProperty(
-        items=mode_options, description="offers flip options", default="match", update=updateNode
-    )
+    selected_mode: EnumProperty(
+        items=mode_options, description="offers flip options", default="match", update=updateNode)
 
-    reverse = BoolProperty(update=updateNode)
+    reverse: BoolProperty(update=updateNode)
 
 
     def sv_init(self, context):
@@ -101,9 +100,6 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-
-        # if vertices_s is [[]] and faces_s is [[]]:
-        #    return
 
         geom = [[], [], []]
 
