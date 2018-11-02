@@ -42,9 +42,9 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    formula = StringProperty(name='formula', default='x+n[0]', update=updateNode)
-    newsock = BoolProperty(name='newsock', default=False)
-    typ = StringProperty(name='typ', default='')
+    formula: StringProperty(name='formula', default='x+n[0]', update=updateNode)
+    newsock: BoolProperty(name='newsock', default=False)
+    typ: StringProperty(name='typ', default='')
 
     base_name = 'n'
     multi_socket_type = 'StringsSocket'

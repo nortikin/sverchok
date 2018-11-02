@@ -45,25 +45,21 @@ class SvGenFibonacci(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Fibonacci sequence'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    x1_ = FloatProperty(
+    x1_: FloatProperty(
         name='x1', description='First sequence value',
-        default=1.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1.0, update=updateNode)
 
-    x2_ = FloatProperty(
+    x2_: FloatProperty(
         name='x2', description='Second sequence value',
-        default=1.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1.0, update=updateNode)
 
-    count_ = IntProperty(
+    count_: IntProperty(
         name='count', description='Number of items to generate',
-        default=10,
-        options={'ANIMATABLE'}, min=3, update=updateNode)
+        default=10, min=3, update=updateNode)
 
-    maxValue_ = FloatProperty(
+    maxValue_: FloatProperty(
         name='max', description='Maximum (absolute) value',
-        default=0.0, min=0.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0.0, min=0.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X1").prop_name = 'x1_'

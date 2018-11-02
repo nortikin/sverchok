@@ -119,22 +119,22 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
 
-    current_op = EnumProperty(
+    current_op: EnumProperty(
         name="Function", description="Function choice", default="MUL",
         items=mode_items, update=mode_change)
 
-    x_ = FloatProperty(default=1.0, name='x', update=updateNode)
-    y_ = FloatProperty(default=1.0, name='y', update=updateNode)
-    xi_ = IntProperty(default=1, name='x', update=updateNode)
-    yi_ = IntProperty(default=1, name='y', update=updateNode)
+    x_: FloatProperty(default=1.0, name='x', update=updateNode)
+    y_: FloatProperty(default=1.0, name='y', update=updateNode)
+    xi_: IntProperty(default=1, name='x', update=updateNode)
+    yi_: IntProperty(default=1, name='y', update=updateNode)
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["Float", "Int"])]
 
-    input_mode_one = EnumProperty(
+    input_mode_one: EnumProperty(
         items=mode_options, description="offers int / float selection for socket 1",
         default="Float", update=lambda s, c: property_change(s, c, 'input_mode_one'))
 
-    input_mode_two = EnumProperty(
+    input_mode_two: EnumProperty(
         items=mode_options, description="offers int / float selection for socket 2",
         default="Float", update=lambda s, c: property_change(s, c, 'input_mode_two'))
 

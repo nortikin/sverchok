@@ -55,29 +55,27 @@ class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Exponential sequence'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    x0_ = FloatProperty(
+    x0_: FloatProperty(
         name='x0', description='Value for n = 0',
-        default=1.0,
-        update=updateNode)
+        default=1.0, update=updateNode)
 
-    maxValue_ = FloatProperty(
+    maxValue_: FloatProperty(
         name='Max', description='Maximum (absolute) value',
-        default=0.0, min=0.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0.0, min=0.0, update=updateNode)
 
-    alpha_ = FloatProperty(
+    alpha_: FloatProperty(
         name='alpha', description='Coefficient in exp(alpha*n)',
         default=0.1, update=updateNode)
     
-    base_ = FloatProperty(
+    base_: FloatProperty(
         name='base', description='Base of exponent - in base^n',
         default=2.0, update=updateNode)
     
-    nmin_ = IntProperty(
+    nmin_: IntProperty(
         name='N from', description='Minimal value of N',
         default=0, update=updateNode)
 
-    nmax_ = IntProperty(
+    nmax_: IntProperty(
         name='N to', description='Maximal value of N',
         default=10, update=updateNode)
 
@@ -90,10 +88,9 @@ class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
         self.inputs[1].prop_name = self.mode
         updateNode(self, context)
 
-    mode = EnumProperty(items=modes, default='alpha_', update=mode_change)
+    mode: EnumProperty(items=modes, default='alpha_', update=mode_change)
 
-    func_dict = {'alpha_': exponential_e,
-                 'base_': exponential_b }
+    func_dict = {'alpha_': exponential_e, 'base_': exponential_b }
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X0").prop_name = 'x0_'
@@ -135,4 +132,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvGenExponential)
-

@@ -28,8 +28,8 @@ class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "float", "float")
-        self.outputs.new('StringsSocket', "int", "int")
+        self.inputs.new('StringsSocket', "float")
+        self.outputs.new('StringsSocket', "int")
 
     def process(self):
         Number = self.inputs['float'].sv_get()
@@ -47,7 +47,6 @@ class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(Float2IntNode)
-
 
 def unregister():
     bpy.utils.unregister_class(Float2IntNode)

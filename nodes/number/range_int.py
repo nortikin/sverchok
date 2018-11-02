@@ -61,26 +61,22 @@ class GenListRangeInt(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Range Int'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    start_ = IntProperty(
+    start_: IntProperty(
         name='start', description='start',
-        default=0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0, update=updateNode)
 
-    stop_ = IntProperty(
+    stop_: IntProperty(
         name='stop', description='stop',
-        default=10,
-        options={'ANIMATABLE'}, update=updateNode)
-    count_ = IntProperty(
+        default=10, update=updateNode)
+    count_: IntProperty(
         name='count', description='num items',
-        default=10,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=10, update=updateNode)
 
-    step_ = IntProperty(
+    step_: IntProperty(
         name='step', description='step',
-        default=1,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1, update=updateNode)
 
-    current_mode = StringProperty(default="LAZYRANGE")
+    current_mode: StringProperty(default="LAZYRANGE")
 
     modes = [
         ("LAZYRANGE", "Range", "Use python Range function", 1),
@@ -99,14 +95,14 @@ class GenListRangeInt(bpy.types.Node, SverchCustomTreeNode):
         self.current_mode = mode
         updateNode(self, context)
 
-    mode = EnumProperty(items=modes, default='LAZYRANGE', update=mode_change)
+    mode: EnumProperty(items=modes, default='LAZYRANGE', update=mode_change)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Start").prop_name = 'start_'
         self.inputs.new('StringsSocket', "Step").prop_name = 'step_'
         self.inputs.new('StringsSocket', "Stop").prop_name = 'stop_'
 
-        self.outputs.new('StringsSocket', "Range", "Range")
+        self.outputs.new('StringsSocket', "Range")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

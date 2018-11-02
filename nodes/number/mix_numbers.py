@@ -109,91 +109,74 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
 
-    numType = EnumProperty(
-        name="Number Type",
-        default="FLOAT", items=typeItems,
-        update=update_type)
+    numType: EnumProperty(
+        name="Number Type", default="FLOAT", items=typeItems, update=update_type)
 
     # INTERPOLATION settings
-    interpolation = EnumProperty(
+    interpolation: EnumProperty(
         name="Interpolation",
-        default="LINEAR", items=interplationItems,
-        update=updateNode)
+        default="LINEAR", items=interplationItems, update=updateNode)
 
-    easing = EnumProperty(
+    easing: EnumProperty(
         name="Easing",
-        default="EASE_IN_OUT", items=easingItems,
-        update=updateNode)
+        default="EASE_IN_OUT", items=easingItems, update=updateNode)
 
     # BACK interpolation settings
-    backScale = FloatProperty(
+    backScale: FloatProperty(
         name="Scale", description="Back scale",
-        default=0.5, soft_min=0.0, soft_max=10.0,
-        update=updateNode)
+        default=0.5, soft_min=0.0, soft_max=10.0, update=updateNode)
 
     # ELASTIC interpolation settings
-    elasticBase = FloatProperty(
+    elasticBase: FloatProperty(
         name="Base", description="Elastic base",
-        default=1.6, soft_min=0.0, soft_max=10.0,
-        update=updateNode)
+        default=1.6, soft_min=0.0, soft_max=10.0, update=updateNode)
 
-    elasticExponent = FloatProperty(
+    elasticExponent: FloatProperty(
         name="Exponent", description="Elastic exponent",
-        default=6.0, soft_min=0.0, soft_max=10.0,
-        update=updateNode)
+        default=6.0, soft_min=0.0, soft_max=10.0, update=updateNode)
 
-    elasticBounces = IntProperty(
+    elasticBounces: IntProperty(
         name="Bounces", description="Elastic bounces",
-        default=6, soft_min=1, soft_max=10,
-        update=updateNode)
+        default=6, soft_min=1, soft_max=10, update=updateNode)
 
     # EXPONENTIAL interpolation settings
-    exponentialBase = FloatProperty(
+    exponentialBase: FloatProperty(
         name="Base", description="Exponential base",
-        default=2.0, soft_min=0.0, soft_max=10.0,
-        update=updateNode)
+        default=2.0, soft_min=0.0, soft_max=10.0, update=updateNode)
 
-    exponentialExponent = FloatProperty(
+    exponentialExponent: FloatProperty(
         name="Exponent", description="Exponential exponent",
-        default=10.0, soft_min=0.0, soft_max=20.0,
-        update=updateNode)
+        default=10.0, soft_min=0.0, soft_max=20.0, update=updateNode)
 
     # BOUNCE interpolation settings
-    bounceAttenuation = FloatProperty(
+    bounceAttenuation: FloatProperty(
         name="Attenuation", description="Bounce attenuation",
-        default=0.5, soft_min=0.1, soft_max=0.9,
-        update=updateNode)
+        default=0.5, soft_min=0.1, soft_max=0.9, update=updateNode)
 
-    bounceBounces = IntProperty(
+    bounceBounces: IntProperty(
         name="Bounces", description="Bounce bounces",
-        default=4, soft_min=1, soft_max=10,
-        update=updateNode)
+        default=4, soft_min=1, soft_max=10, update=updateNode)
 
     # INPUT sockets settings
-    value_float1 = FloatProperty(
+    value_float1: FloatProperty(
         name="Value 1", description="Mix FLOAT value 1",
-        default=0.0,
-        update=updateNode)
+        default=0.0, update=updateNode)
 
-    value_float2 = FloatProperty(
+    value_float2: FloatProperty(
         name="Value 2", description="Mix FLOAT value 2",
-        default=1.0,
-        update=updateNode)
+        default=1.0, update=updateNode)
 
-    value_int1 = IntProperty(
+    value_int1: IntProperty(
         name="Value 1", description="Mix INT value 1",
-        default=0,
-        update=updateNode)
+        default=0, update=updateNode)
 
-    value_int2 = IntProperty(
+    value_int2: IntProperty(
         name="Value 2", description="Mix INT value 2",
-        default=1,
-        update=updateNode)
+        default=1, update=updateNode)
 
-    factor = FloatProperty(
+    factor: FloatProperty(
         name="Factor", description="Factor value",
-        default=0.5, min=0.0, max=1.0,
-        update=updateNode)
+        default=0.5, min=0.0, max=1.0, update=updateNode)
 
 
     def sv_init(self, context):
@@ -267,6 +250,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvMixNumbersNode)
-
-if __name__ == '__main__':
-    register()

@@ -55,27 +55,27 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].replace_socket('StringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
         self.process_node(context)
 
-    int_ = IntProperty(
+    int_: IntProperty(
         default=0, name="an int", update=updateNode,
         get=lambda s: uget(s, 'int_'),
         set=lambda s, val: uset(s, val, 'int_')) 
-    int_min = IntProperty(default=-1024, description='minimum')
-    int_max = IntProperty(default=1024, description='maximum')
+    int_min: IntProperty(default=-1024, description='minimum')
+    int_max: IntProperty(default=1024, description='maximum')
 
-    float_ = FloatProperty(
+    float_: FloatProperty(
         default=0.0, name="a float", update=updateNode,
         get=lambda s: uget(s, 'float_'),
         set=lambda s, val: uset(s, val, 'float_'))
-    float_min = FloatProperty(default=-500.0, description='minimum')
-    float_max = FloatProperty(default=500.0, description='maximum')
+    float_min: FloatProperty(default=-500.0, description='minimum')
+    float_max: FloatProperty(default=500.0, description='maximum')
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["float", "int"])]
     
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode: bpy.props.EnumProperty(
         items=mode_options, default="float", update=wrapped_update)
 
-    show_limits = BoolProperty(default=False)
-    to3d = BoolProperty(default=False, update=updateNode)
+    show_limits: BoolProperty(default=False)
+    to3d: BoolProperty(default=False, update=updateNode)
 
     def sv_init(self, context):
         self['float_'] = 0.0
