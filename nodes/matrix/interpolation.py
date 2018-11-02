@@ -37,15 +37,14 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    factor_ = bpy.props.FloatProperty(name='Factor', description='Interpolation',
-                                      default=0.5, min=0.0, max=1.0,
-                                      options={'ANIMATABLE'}, update=updateNode)
+    factor_: bpy.props.FloatProperty(
+        name='Factor', description='Interpolation', default=0.5, min=0.0, max=1.0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
-        self.inputs.new('MatrixSocket', "A", "A")
-        self.inputs.new('MatrixSocket', "B", "B")
-        self.outputs.new('MatrixSocket', "C", "C")
+        self.inputs.new('StringsSocket', "Factor").prop_name = 'factor_'
+        self.inputs.new('MatrixSocket', "A")
+        self.inputs.new('MatrixSocket', "B")
+        self.outputs.new('MatrixSocket', "C")
 
     def process(self):
         # inputs

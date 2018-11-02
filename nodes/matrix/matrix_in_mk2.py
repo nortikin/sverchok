@@ -20,8 +20,7 @@ import bpy
 import mathutils
 from bpy.props import FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (matrixdef, Matrix_listing,
-                                    Vector_generate, updateNode)
+from sverchok.data_structure import (matrixdef, Matrix_listing, Vector_generate, updateNode)
 
 
 class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -30,18 +29,14 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix in'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    l_ = FloatVectorProperty(name='L', default=(0.0,0.0,0.0), 
-            description='Location', precision=3,
-            update=updateNode)
-    s_ = FloatVectorProperty(name='S', default=(1.0,1.0,1.0), 
-            description='Scale', precision=3,
-            update=updateNode)
-    r_ = FloatVectorProperty(name='R', default=(0.0,0.0,1.0), 
-            description='Rotation', precision=3,
-            update=updateNode)
-    a_ = FloatProperty(name='A', description='Angle',
-            default=0.0, precision=3,
-            update=updateNode)
+    l_: FloatVectorProperty(
+        name='L', default=(0.0,0.0,0.0), description='Location', precision=3, update=updateNode)
+    s_: FloatVectorProperty(
+        name='S', default=(1.0,1.0,1.0), description='Scale', precision=3, update=updateNode)
+    r_: FloatVectorProperty(
+        name='R', default=(0.0,0.0,1.0), description='Rotation', precision=3, update=updateNode)
+    a_: FloatProperty(
+        name='A', description='Angle', default=0.0, precision=3, update=updateNode)
 
     def sv_init(self, context):
         s = self.inputs.new('VerticesSocket', "Location")
@@ -96,6 +91,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvMatrixGenNodeMK2)
-
-#if __name__ == '__main__':
-#    register()

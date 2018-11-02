@@ -33,16 +33,9 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix Euler'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-
-    X = FloatProperty(name='X', description='X rotation',
-                             default=0.0,
-                             options={'ANIMATABLE'}, update=updateNode)
-    Y = FloatProperty(name='Y', description='Y rotation',
-                             default=0.0,
-                             options={'ANIMATABLE'}, update=updateNode)
-    Z = FloatProperty(name='Z', description='Z rotation',
-                             default=0.0,
-                             options={'ANIMATABLE'}, update=updateNode)
+    X: FloatProperty(name='X', description='X rotation', default=0.0, update=updateNode)
+    Y: FloatProperty(name='Y', description='Y rotation', default=0.0, update=updateNode)
+    Z: FloatProperty(name='Z', description='Z rotation', default=0.0, update=updateNode)
 
     def change_prop(self, context):
         for i, name in enumerate(self.order):
@@ -57,15 +50,15 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
         ('ZXY', 'ZXY',        "", 4),
         ('ZYX', 'ZYX',        "", 5),
     ]
-    order = EnumProperty(name="Order", description="Order",
-                          default="XYZ", items=orders,
-                          update=change_prop)
+    order: EnumProperty(
+        name="Order", description="Order",
+        default="XYZ", items=orders, update=change_prop)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "pos0").prop_name = 'X'
         self.inputs.new('StringsSocket', "pos1").prop_name = 'Y'
         self.inputs.new('StringsSocket', "pos1").prop_name = 'Z'
-        self.outputs.new('MatrixSocket', "Matrix", "Matrix")
+        self.outputs.new('MatrixSocket', "Matrix")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "order", text="Order:")

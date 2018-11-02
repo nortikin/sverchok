@@ -35,7 +35,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix Apply'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    do_join = BoolProperty(name='Join', default=True, update=updateNode)
+    do_join: BoolProperty(name='Join', default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")

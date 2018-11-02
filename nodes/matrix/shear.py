@@ -37,21 +37,16 @@ class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
         ("XZ",       "XZ-plane",        ""),
         ("YZ",       "YZ-plane",        ""),
     ]
-    factor1_ = FloatProperty(name='Factor 1', description='Factor1',
-                             default=0.0,
-                             options={'ANIMATABLE'}, update=updateNode)
-    factor2_ = FloatProperty(name='Factor 2', description='Factor2',
-                             default=0.0,
-                             options={'ANIMATABLE'}, update=updateNode)
+    factor1_: FloatProperty(name='Factor 1', description='Factor1', default=0.0, update=updateNode)
+    factor2_: FloatProperty(name='Factor 2', description='Factor2', default=0.0, update=updateNode)
 
-    plane_ = EnumProperty(name="Plane", description="Function choice",
-                          default="XY", items=mode_items,
-                          update=updateNode)
+    plane_: EnumProperty(
+        name="Plane", description="Function choice", default="XY", items=mode_items, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Factor1").prop_name = 'factor1_'
         self.inputs.new('StringsSocket', "Factor2").prop_name = 'factor2_'
-        self.outputs.new('MatrixSocket', "Matrix", "Matrix")
+        self.outputs.new('MatrixSocket', "Matrix")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "plane_", "Shear plane:", expand=True)
