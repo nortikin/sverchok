@@ -296,7 +296,6 @@
     ---
     SvSculptMaskNode
     SvGreasePencilStrokes
-    SvTextureViewerNodeLite
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
@@ -308,7 +307,6 @@
     SvPolylineViewerNodeMK1
     SvTypeViewerNode
     SvSkinViewerNodeMK1b
-    SvMatrixViewer
     ---
     SvBManalyzinNode
     SvBMObjinputNode

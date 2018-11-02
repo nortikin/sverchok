@@ -28,7 +28,7 @@ class SvAxisInputNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvAxisInputNodeMK2'
     bl_label = 'Vector X/Y/Z'
-    bl_icon = 'MANIPUL'
+    bl_icon = 'NONE' #'MANIPUL'
 
     m = [("-1", "-1", "", 0), ("0", "0", "", 1), ("1", "1", "", 2)]
     axis_x = EnumProperty(items=m, update=updateNode, name='X', default='1')

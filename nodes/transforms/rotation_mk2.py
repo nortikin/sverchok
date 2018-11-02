@@ -57,7 +57,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Axis Rotation MK2 '''
     bl_idname = 'SvRotationNodeMK2'
     bl_label = 'Rotation'
-    bl_icon = 'MAN_ROT'
+    bl_icon = 'NONE' #'MAN_ROT'
 
     angle_ = FloatProperty(name='Angle', description='rotation angle',
                             default=0.0,

@@ -37,7 +37,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = "SvLampOutNode"
     bl_label = "Lamp"
-    bl_icon = "OUTLINER_OB_LAMP"
+    bl_icon = 'NONE' #"OUTLINER_OB_LAMP"
 
     activate = BoolProperty(name = "Activate",
         default=True,

@@ -28,7 +28,7 @@ class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Move vectors MK2 '''
     bl_idname = 'SvMoveNodeMK2'
     bl_label = 'Move'
-    bl_icon = 'MAN_TRANS'
+    bl_icon = 'NONE' #'MAN_TRANS'
 
     mult_ = FloatProperty(name='multiplier',
                           default=1.0,
