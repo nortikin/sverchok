@@ -112,15 +112,15 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         ("PLANE", "Plane", "Mirror around plane", 3),
     ]
 
-    mode = EnumProperty(name="mode", description="mode",
-                          default='VERTEX', items=modes,
-                          update=mode_change)
-    current_mode = StringProperty(default="VERTEX")
+    mode: EnumProperty(
+        name="mode", description="mode", default='VERTEX', items=modes, update=mode_change)
+
+    current_mode: StringProperty(default="VERTEX")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('VerticesSocket', "Vert A", "Vert A")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('VerticesSocket', "Vert A")
+        self.outputs.new('VerticesSocket', "Vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
