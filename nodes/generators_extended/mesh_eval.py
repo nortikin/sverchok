@@ -138,8 +138,8 @@ class SvJsonFromMesh(bpy.types.Operator):
     bl_label = "JSON from mesh"
     bl_options = {'REGISTER'}
 
-    nodename = StringProperty(name='nodename')
-    treename = StringProperty(name='treename')
+    nodename: StringProperty(name='nodename')
+    treename: StringProperty(name='treename')
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
@@ -208,13 +208,13 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename = StringProperty(default="", update=on_update)
-    precision = IntProperty(name = "Precision",
+    filename: StringProperty(default="", update=on_update)
+    precision: IntProperty(name = "Precision",
                     description = "Number of decimal places used for coordinates when generating JSON from selection",
                     min=0, max=10, default=8,
                     update=updateNode)
 
-    sample_tree = BoolProperty(name = "Example tree",
+    sample_tree: BoolProperty(name = "Example tree",
                     description = "Create example nodes when generating JSON from selection",
                     default = False,
                     update=updateNode)
@@ -439,4 +439,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvJsonFromMesh)
     bpy.utils.unregister_class(SvMeshEvalNode)
-

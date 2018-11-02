@@ -39,13 +39,13 @@ from sverchok.data_structure import fullList, updateNode, dataCorrect
 # for sharing data with node from operator profilizer
 # 2 classes
 class SvSublistGroup(bpy.types.PropertyGroup):
-    SvX = bpy.props.FloatProperty()
-    SvY = bpy.props.FloatProperty()
-    SvZ = bpy.props.FloatProperty()
-    SvName = bpy.props.StringProperty()
+    SvX: bpy.props.FloatProperty()
+    SvY: bpy.props.FloatProperty()
+    SvZ: bpy.props.FloatProperty()
+    SvName: bpy.props.StringProperty()
 
 class SvListGroup(bpy.types.PropertyGroup):
-    SvSubLists = bpy.props.CollectionProperty(type=SvSublistGroup)    
+    SvSubLists: bpy.props.CollectionProperty(type=SvSublistGroup)    
     
         
 idx_map = {i: j for i, j in enumerate(ascii_lowercase)}
@@ -511,11 +511,11 @@ class SvPrifilizer(bpy.types.Operator):
     bl_label = "SvPrifilizer"
     bl_options = {'REGISTER', 'UNDO'}
 
-    nodename = StringProperty(name='nodename')
-    treename = StringProperty(name='treename')
-    knotselected = BoolProperty(description='if selected knots than use extended parsing in PN', default=False)
-    x = BoolProperty(default=True)
-    y = BoolProperty(default=True)
+    nodename: StringProperty(name='nodename')
+    treename: StringProperty(name='treename')
+    knotselected: BoolProperty(description='if selected knots than use extended parsing in PN', default=False)
+    x: BoolProperty(default=True)
+    y: BoolProperty(default=True)
 
 
     def stringadd(self, x,selected=False):
@@ -731,8 +731,8 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Profile Parametric'
     bl_icon = 'SYNTAX_ON'
 
-    SvLists = bpy.props.CollectionProperty(type=SvListGroup)
-    SvSubLists = bpy.props.CollectionProperty(type=SvSublistGroup)
+    SvLists: bpy.props.CollectionProperty(type=SvListGroup)
+    SvSubLists: bpy.props.CollectionProperty(type=SvSublistGroup)
 
     def mode_change(self, context):
         if not (self.selected_axis == self.current_axis):
@@ -740,28 +740,28 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.current_axis = self.selected_axis
             updateNode(self, context)
 
-    x = BoolProperty(default=True)
-    y = BoolProperty(default=True)
+    x: BoolProperty(default=True)
+    y: BoolProperty(default=True)
 
     axis_options = [("X", "X", "", 0), ("Y", "Y", "", 1), ("Z", "Z", "", 2)]
 
-    current_axis = StringProperty(default='Z')
+    current_axis: StringProperty(default='Z')
 
-    knotsnames = StringProperty(name='knotsnames', default='')
-    selected_axis = EnumProperty(
+    knotsnames: StringProperty(name='knotsnames', default='')
+    selected_axis: EnumProperty(
         items=axis_options, update=mode_change, name="Type of axis",
         description="offers basic axis output vectors X|Y|Z", default="Z")
 
-    profile_file = StringProperty(default="", update=updateNode)
-    filename = StringProperty(default="", update=updateNode)
-    posxy = FloatVectorProperty(default=(0.0, 0.0), size=2)
-    extended_parsing = BoolProperty(default=False)
+    profile_file: StringProperty(default="", update=updateNode)
+    filename: StringProperty(default="", update=updateNode)
+    posxy: FloatVectorProperty(default=(0.0, 0.0), size=2)
+    extended_parsing: BoolProperty(default=False)
 
-    precision = IntProperty(
+    precision: IntProperty(
         name="Precision", min=0, max=10, default=8, update=updateNode,
         description="decimal precision of coordinates when generating profile from selection")
 
-    curve_points_count = IntProperty(
+    curve_points_count: IntProperty(
         name="Curve points count", min=1, max=100, default=20, update=updateNode,
         description="Default number of points on curve segment")
 
@@ -784,7 +784,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "extended_parsing", text="extended parsing")
-        layout.label("Profile Generator settings")
+        layout.label(text="Profile Generator settings")
         layout.prop(self, "precision")
         layout.prop(self, "curve_points_count")
         row = layout.row(align=True)
@@ -793,13 +793,13 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "a", "a")
-        self.inputs.new('StringsSocket', "b", "b")
+        self.inputs.new('StringsSocket', "a")
+        self.inputs.new('StringsSocket', "b")
 
-        self.outputs.new('VerticesSocket', "Verts", "Verts")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('VerticesSocket', "Knots", "Knots")
-        self.outputs.new('StringsSocket', "KnotsNames", "KnotsNames")
+        self.outputs.new('VerticesSocket', "Verts")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('VerticesSocket', "Knots")
+        self.outputs.new('StringsSocket', "KnotsNames")
 
 
     def adjust_inputs(self):
@@ -992,7 +992,3 @@ def register():
 
 def unregister():
     _ = [unregister_class(cls) for cls in reversed(classes)]
-
-
-#if __name__ == '__main__':
-#    register()

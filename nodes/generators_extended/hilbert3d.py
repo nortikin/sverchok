@@ -50,12 +50,12 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Hilbert3d'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level_ = IntProperty(
+    level_: IntProperty(
         name='level', description='Level',
         default=2, min=1, max=5,
         options={'ANIMATABLE'}, update=updateNode)
 
-    size_ = FloatProperty(
+    size_: FloatProperty(
         name='size', description='Size',
         default=1.0, min=0.1,
         options={'ANIMATABLE'}, update=updateNode)

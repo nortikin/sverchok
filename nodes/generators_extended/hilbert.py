@@ -30,19 +30,19 @@ class HilbertNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_HILBERT2D'
 
-    level_ = IntProperty(
+    level_: IntProperty(
         name='level', description='Level', default=2, min=1, max=6,
         options={'ANIMATABLE'}, update=updateNode)
 
-    size_ = FloatProperty(
+    size_: FloatProperty(
         name='size', description='Size', default=1.0, min=0.1,
         options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Level", "Level").prop_name = 'level_'
-        self.inputs.new('StringsSocket', "Size", "Size").prop_name = 'size_'
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
+        self.inputs.new('StringsSocket', "Level").prop_name = 'level_'
+        self.inputs.new('StringsSocket', "Size").prop_name = 'size_'
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
         pass

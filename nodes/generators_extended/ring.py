@@ -132,7 +132,7 @@ class SvRingNode(bpy.types.Node, SverchCustomTreeNode):
             updateNode(self, context)
 
     # Ring DIMENSIONS options
-    mode = EnumProperty(
+    mode: EnumProperty(
         name="Ring Dimensions",
         items=(("MAJOR_MINOR", "Major/Minor",
                 "Use the Major/Minor radii for ring dimensions."),
@@ -140,49 +140,49 @@ class SvRingNode(bpy.types.Node, SverchCustomTreeNode):
                 "Use the Exterior/Interior radii for ring dimensions.")),
         update=update_mode)
 
-    ring_R = FloatProperty(
+    ring_R: FloatProperty(
         name="Major Radius",
         description="Radius from the ring center to the middle of ring band",
         default=1.0, min=0.00, max=100.0,
         update=major_minor_radii_changed)
 
-    ring_r = FloatProperty(
+    ring_r: FloatProperty(
         name="Minor Radius",
         description="Width of the ring band",
         default=.25, min=0.00, max=100.0,
         update=major_minor_radii_changed)
 
-    ring_iR = FloatProperty(
+    ring_iR: FloatProperty(
         name="Interior Radius",
         description="Interior radius of the ring (closest to the ring center)",
         default=.75, min=0.00, max=100.0,
         update=external_internal_radii_changed)
 
-    ring_eR = FloatProperty(
+    ring_eR: FloatProperty(
         name="Exterior Radius",
         description="Exterior radius of the ring (farthest from the ring center)",
         default=1.25, min=0.00, max=100.0,
         update=external_internal_radii_changed)
 
     # Ring RESOLUTION options
-    ring_n1 = IntProperty(
+    ring_n1: IntProperty(
         name="Radial Sections", description="Number of radial sections",
         default=32, min=3, soft_min=3,
         update=updateNode)
 
-    ring_n2 = IntProperty(
+    ring_n2: IntProperty(
         name="Circular Sections", description="Number of circular sections",
         default=3, min=2, soft_min=2,
         update=updateNode)
 
     # Ring Phase Options
-    ring_rP = FloatProperty(
+    ring_rP: FloatProperty(
         name="Phase", description="Phase of the radial sections (in degrees)",
         default=0.0, min=0.0, soft_min=0.0,
         update=updateNode)
 
     # OTHER options
-    Separate = BoolProperty(
+    Separate: BoolProperty(
         name='Separate', description='Separate UV coords',
         default=False,
         update=updateNode)
@@ -256,6 +256,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvRingNode)
-
-if __name__ == '__main__':
-    register()

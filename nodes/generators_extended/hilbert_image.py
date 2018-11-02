@@ -29,32 +29,32 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Hilbert image'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    name_image = StringProperty(
+    name_image: StringProperty(
         name='image_name', description='image name', update=updateNode)
 
-    level_ = IntProperty(
+    level_: IntProperty(
         name='level', description='Level', default=2, min=1, max=20,
         options={'ANIMATABLE'}, update=updateNode)
 
-    size_ = FloatProperty(
+    size_: FloatProperty(
         name='size', description='Size', default=1.0, min=0.1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    sensitivity_ = FloatProperty(
+    sensitivity_: FloatProperty(
         name='sensitivity', description='sensitivity', default=1, min=0.1, max=1.0,
         options={'ANIMATABLE'}, update=updateNode)
 
-    R = FloatProperty(
+    R: FloatProperty(
         name='R', description='R',
         default=0.30, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    G = FloatProperty(
+    G: FloatProperty(
         name='G', description='G',
         default=0.59, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    B = FloatProperty(
+    B: FloatProperty(
         name='B', description='B',
         default=0.11, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)

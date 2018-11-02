@@ -297,14 +297,14 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         self.read_xml()
         self.make_sockets()
 
-    filename = StringProperty(default="", update=updateNode_filename)
+    filename: StringProperty(default="", update=updateNode_filename)
 
-    rseed = IntProperty(
+    rseed: IntProperty(
         name='rseed', description='random seed',
         default=21, min=0, options={'ANIMATABLE'},
         update=updateNode)
 
-    maxmats = IntProperty(
+    maxmats: IntProperty(
         name='maxmats', description='maximum nunber of matrices',
         default=1000, min=1, options={'ANIMATABLE'},
         update=updateNode)
