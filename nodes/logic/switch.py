@@ -56,12 +56,12 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.remove(self.inputs[n])
                 self.outputs.remove(self.outputs[-1])
         
-    switch_state = IntProperty(name="state", min=0, max=1, default=1, update=updateNode)
-    switch_count = IntProperty(name="count", min=1, max=10, default=1, update=change_count)
+    switch_state: IntProperty(name="state", min=0, max=1, default=1, update=updateNode)
+    switch_count: IntProperty(name="count", min=1, max=10, default=1, update=change_count)
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["single", "multi"])]
 
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode: bpy.props.EnumProperty(
         description="pick a different processing mode", default="single",
         items=mode_options, update=wrapped_updateNode)
         
