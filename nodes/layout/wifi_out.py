@@ -34,8 +34,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Wifi out'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    var_name = StringProperty(name='var_name',
-                              default='')
+    var_name: StringProperty(name='var_name', default='')
 
     def avail_var_name(self, context):
         ng = self.id_data
@@ -45,7 +44,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
             out.sort(key=lambda n: n[0])
         return out
 
-    var_names = EnumProperty(items=avail_var_name, name="var names")
+    var_names: EnumProperty(items=avail_var_name, name="var names")
 
     def set_var_name(self):
         self.var_name = self.var_names

@@ -59,18 +59,18 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
         else: #create first socket
             self.inputs.new('StringsSocket', self.var_name+"[0]")
         
-    var_name = StringProperty(name='var_name', update=change_var_name)
+    var_name: StringProperty(name='var_name', update=change_var_name)
 
-    base_name = StringProperty(default='')
-    multi_socket_type = StringProperty(default='StringsSocket')
+    base_name: StringProperty(default='')
+    multi_socket_type: StringProperty(default='StringsSocket')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "var_name", text="Var")
 
     def sv_init(self, context):
         ng = self.id_data
-        var_set = {node.var_name for node in ng.nodes
-                           if node.bl_idname == 'WifiInNode'}
+        var_set = {node.var_name for node in ng.nodes if node.bl_idname == 'WifiInNode'}
+
         for name in name_seq(): 
             if not name in var_set:
                 self.var_name = name
@@ -78,8 +78,8 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
                 
     def copy(self, node):
         ng = self.id_data
-        var_set = {node.var_name for node in ng.nodes
-                           if node.bl_idname == 'WifiInNode'}
+        var_set = {node.var_name for node in ng.nodes if node.bl_idname == 'WifiInNode'}
+
         for name in name_seq():
             if not name in var_set:
                 self.var_name = name
@@ -93,8 +93,8 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
             self.var_name = n
         else: 
             ng = self.id_data
-            var_set = {node.var_name for node in ng.nodes
-                           if node.bl_idname == 'WifiInNode'}
+            var_set = {node.var_name for node in ng.nodes if node.bl_idname == 'WifiInNode'}
+
             for name in name_seq():
                 if not name in var_set:
                     self.var_name = name
