@@ -255,7 +255,6 @@
     SvObjEdit
     SvFrameInfoNodeMK2
     SvLampOutNode
-    SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
@@ -286,7 +285,6 @@
     SvBVHnearNewNode
     SvUnsubdivideNode
     SvLimitedDissolveMK2
-    SvMetaballOutLiteNode
     SvArmaturePropsNode
     SvLatticePropsNode
     ---
