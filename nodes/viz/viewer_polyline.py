@@ -133,7 +133,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     twist: FloatProperty(default=0.0, update=updateNode)
     caps: BoolProperty(update=updateNode)
 
-    data_kind = StringProperty(default='CURVE')
+    data_kind: StringProperty(default='CURVE')
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
@@ -182,8 +182,8 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
             return dataCorrect(data)
 
         mverts = get('vertices')
-        mradii = self.inputs['radii'].sv_get(deepcopy=False)
-        mtwist = self.inputs['twist'].sv_get(deepcopy=False)
+        mradii = self.inputs['radii'].sv_get(deepcopy=True)
+        mtwist = self.inputs['twist'].sv_get(deepcopy=True)
         mmtrix = get('matrix')
 
         # extend all non empty lists to longest of these
