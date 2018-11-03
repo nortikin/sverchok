@@ -19,17 +19,14 @@
 import itertools
 from collections import defaultdict
 
-import bpy
 import bmesh
-from bpy.props import BoolProperty, StringProperty, FloatProperty, IntProperty
-from mathutils import Matrix
+import bpy
+from bpy.props import (BoolProperty, FloatProperty, IntProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.utils.sv_viewer_utils import (
-    greek_alphabet, matrix_sanitizer, remove_non_updated_objects
-)
 
 
 def process_mesh_into_features(skin_vertices, edge_keys, assume_unique=True):
@@ -93,20 +90,11 @@ def shrink_geometry(bm, dist, layers):
     bm.verts.ensure_lookup_table()
     
     verts, edges, faces = pydata_from_bmesh(bm)
-    data_out = [verts, edges, faces]
+    data_out = [verts, edges]
     for layer_name in made_layers:
         data_out.append([bm.verts[i][layer_name] for i in range(len(bm.verts))])
 
     return data_out
-
-
-def assign_empty_mesh(idx):
-    meshes = bpy.data.meshes
-    mt_name = 'empty_skin_mesh_sv.' + str("%04d" % idx)
-    if mt_name in meshes:
-        return meshes[mt_name]
-    else:
-        return meshes.new(mt_name)
 
 
 def force_pydata(mesh, verts, edges):
@@ -127,20 +115,11 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix, _, _ = geometry
-    name = node.basemesh_name + '.' + str("%04d" % idx)
+    name = node.basedata_name + '.' + str("%04d" % idx)
 
-    # remove object
     if name in objects:
-        obj = objects[name]
-        # assign the object an empty mesh, this allows the current mesh
-        # to be uncoupled and removed from bpy.data.meshes
-        obj.data = assign_empty_mesh(idx)
-
-        # remove uncoupled mesh, and add it straight back.
-        if name in meshes:
-            meshes.remove(meshes[name])
-        mesh = meshes.new(name)
-        obj.data = mesh
+        obj = objects.get(name)
+        node.clear_current_mesh(obj.data)
     else:
         # this is only executed once, upon the first run.
         mesh = meshes.new(name)
@@ -149,18 +128,17 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
 
     # at this point the mesh is always fresh and empty
     obj['idx'] = idx
-    obj['basename'] = node.basemesh_name
+    obj['basedata_name'] = node.basedata_name
 
     data_layers = None
     if node.distance_doubles > 0.0:
         bm = bmesh_from_pydata(verts, edges, [])
-        verts, edges, faces, d1, d2 = shrink_geometry(bm, node.distance_doubles, layers)
-        data_layers = d1, d2
+        verts, edges, _, *data_layers = shrink_geometry(bm, node.distance_doubles, layers)
 
     force_pydata(obj.data, verts, edges)
     obj.update_tag(refresh={'OBJECT', 'DATA'})
 
-    if node.live_updates:
+    if node.activate:
 
         if 'sv_skin' in obj.modifiers:
             sk = obj.modifiers['sv_skin']
@@ -175,54 +153,16 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
         b.levels = node.levels
         b.render_levels = node.render_levels
 
-    if matrix:
-        matrix = matrix_sanitizer(matrix)
-        obj.matrix_local = matrix
-    else:
-        obj.matrix_local = Matrix.Identity(4)
+    node.push_custom_matrix_if_present(obj, matrix)    
 
     return obj, data_layers
 
 
-class SvSkinmodViewOpMK1b(bpy.types.Operator):
+class SvSkinViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
-    bl_idname = "node.sv_callback_skinmod_viewer_mk1b"
-    bl_label = "Sverchok skinmod general callback 1b"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    fn_name = StringProperty(default='')
-
-    def skin_ops(self, context, type_op):
-        n = context.node
-        k = n.basemesh_name + "_"
-
-        if type_op == 'add_material':
-            mat = bpy.data.materials.new('sv_material')
-            mat.use_nodes = True
-            mat.use_fake_user = True  # usually handy
-            n.material = mat.name
-
-    def execute(self, context):
-        self.skin_ops(context, self.fn_name)
-        return {'FINISHED'}
-
-
-class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
-
-    bl_idname = 'SvSkinViewerNodeMK1b'
-    bl_label = 'Skin Mesher mk1b'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-
-    basemesh_name = StringProperty(
-        default='Alpha',
-        update=updateNode,
-        description="sets which base name the object will use, "
-        "use N-panel to pick alternative random names")
-
-    live_updates = BoolProperty(
-        default=0,
-        update=updateNode,
-        description="This auto updates the modifier (by removing and adding it)")
+    bl_idname = 'SvSkinViewerNodeMK2'
+    bl_label = 'Skin Mesher mk2'
+    bl_icon = 'MOD_SKIN'
 
     general_radius_x = FloatProperty(
         name='general_radius_x',
@@ -247,16 +187,13 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
         description="removes coinciding verts, also aims to remove double radii data",
         update=updateNode)
 
-    material = StringProperty(default='', update=updateNode)
     use_root = BoolProperty(default=True, update=updateNode)
     use_slow_root = BoolProperty(default=False, update=updateNode)
 
 
     def sv_init(self, context):
-        gai = bpy.context.scene.SvGreekAlphabet_index
-        self.basemesh_name = greek_alphabet[gai]
-        bpy.context.scene.SvGreekAlphabet_index += 1
-        self.use_custom_color = True
+        self.sv_init_helper_basedata_name()
+
         self.inputs.new('VerticesSocket', 'vertices')
         self.inputs.new('StringsSocket', 'edges')
         self.inputs.new('MatrixSocket', 'matrix')
@@ -265,22 +202,13 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
+        self.draw_live_and_outliner(context, layout)
+        self.draw_object_buttons(context, layout)
 
-        r = layout.row(align=True)
-        r.prop(self, "live_updates", text="Live", toggle=True)
-        r.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
-
-        r3 = layout.column(align=True)
-        r3.prop(self, 'levels', text="div View")
-        r3.prop(self, 'render_levels', text="div Render")
-        r3.prop(self, 'distance_doubles', text='doubles distance')
-
-        sh = "node.sv_callback_skinmod_viewer_mk1b"
-        r5 = layout.row(align=True)
-        r5.prop_search(
-            self, 'material', bpy.data, 'materials', text='',
-            icon='MATERIAL_DATA')
-        r5.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
+        r1 = layout.column(align=True)
+        r1.prop(self, 'levels', text="div View")
+        r1.prop(self, 'render_levels', text="div Render")
+        r1.prop(self, 'distance_doubles', text='doubles distance')
 
 
     def draw_buttons_ext(self, context, layout):
@@ -290,7 +218,6 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
         r = k.row(align=True)
         r.prop(self, "use_root", text="mark all", toggle=True)
         r.prop(self, "use_slow_root", text="mark some", toggle=True)
-
 
 
     def get_geometry_from_sockets(self):
@@ -304,7 +231,7 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        if not self.live_updates:
+        if not self.activate:
             return
 
         # only interested in the first
@@ -323,8 +250,8 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
             catch_idx = idx
             self.unit_generator(idx, geometry)
 
-        # remove stail objects
-        remove_non_updated_objects(self, catch_idx)
+        self.remove_non_updated_objects(catch_idx)
+        self.set_corresponding_materials()
 
 
     def unit_generator(self, idx, geometry):
@@ -356,25 +283,13 @@ class SvSkinViewerNodeMK1b(bpy.types.Node, SverchCustomTreeNode):
         elif self.use_slow_root:
             process_mesh_into_features(obj.data.skin_vertices[0].data, obj.data.edge_keys)
 
-        # truthy if self.material is in .materials
-        if bpy.data.materials.get(self.material):
-            self.set_corresponding_materials([obj])
-
-
-    def set_corresponding_materials(self, objs):
-        for obj in objs:
-            obj.active_material = bpy.data.materials[self.material]
 
     def flip_roots_or_junctions_only(self, data):
-        ...
-
+        pass
 
 
 def register():
-    bpy.utils.register_class(SvSkinmodViewOpMK1b)
-    bpy.utils.register_class(SvSkinViewerNodeMK1b)
-
+    bpy.utils.register_class(SvSkinViewerNodeMK2)
 
 def unregister():
-    bpy.utils.unregister_class(SvSkinViewerNodeMK1b)
-    bpy.utils.unregister_class(SvSkinmodViewOpMK1b)
+    bpy.utils.unregister_class(SvSkinViewerNodeMK2)

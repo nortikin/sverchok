@@ -19,43 +19,10 @@
 import bpy
 from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 
-from mathutils import Matrix, Vector
-
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.geom import multiply_vectors
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
-
-from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer, remove_non_updated_objects, get_children,
-    natural_plus_one, get_random_init, greek_alphabet)
-
-
-def get_obj_curve(obj_index, node):
-    curves = bpy.data.curves
-    objects = bpy.data.objects
-    scene = bpy.context.scene
-
-    curve_name = node.basemesh_name + '.' + str("%04d" % obj_index)
-
-    # if curve data exists, pick it up else make new curve
-    cu = curves.get(curve_name)
-    if not cu:
-        cu = curves.new(name=curve_name, type='CURVE')
-
-    # if object reference exists, pick it up else make a new one
-    obj = objects.get(curve_name)
-    if not obj:
-        obj = objects.new(curve_name, cu)
-        obj['basename'] = node.basemesh_name
-        obj['idx'] = obj_index
-        scene.objects.link(obj)
-
-    # break down existing splines entirely.
-    if cu.splines:
-        cu.splines.clear()
-
-    return obj, cu
 
 
 def set_bevel_object(node, cu, obj_index):
@@ -74,7 +41,7 @@ def set_bevel_object(node, cu, obj_index):
 # -- POLYLINE --
 def live_curve(obj_index, node, verts, radii, twist):
 
-    obj, cu = get_obj_curve(obj_index, node)
+    obj, cu = node.get_obj_curve(obj_index)
 
     obj.show_wire = node.show_wire
     cu.bevel_depth = node.depth
@@ -133,66 +100,15 @@ def live_curve(obj_index, node, verts, radii, twist):
 def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     sv_object = live_curve(obj_index, node, verts, radii, twist)
     sv_object.hide_select = False
-
-    if matrix:
-        matrix = matrix_sanitizer(matrix)
-        sv_object.matrix_local = matrix
-    else:
-        sv_object.matrix_local = Matrix.Identity(4)
-
+    node.push_custom_matrix_if_present(sv_object, matrix)
     return sv_object
 
-# could be imported from bmeshviewr directly, it's almost identical
-class SvPolylineViewOpMK1(bpy.types.Operator):
 
-    bl_idname = "node.sv_callback_polyline_viewer_mk1"
-    bl_label = "Sverchok polyline showhide"
-    bl_options = {'REGISTER', 'UNDO'}
+class SvPolylineViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
-    fn_name = StringProperty(default='')
-
-    def dispatch(self, context, type_op):
-        n = context.node
-        objs = get_children(n, kind='CURVE')
-
-        # find a simpler way to do this :)
-        if type_op in {'hide', 'hide_render', 'hide_select', 'select'}:
-            for obj in objs:
-                setattr(obj, type_op, getattr(n, type_op))
-            setattr(n, type_op, not getattr(n, type_op))
-
-        elif type_op == 'random_mesh_name':
-            n.basemesh_name = get_random_init()
-
-        elif type_op == 'add_material':
-            mat = bpy.data.materials.new('sv_material')
-            mat.use_nodes = True
-            n.material = mat.name
-            print(mat.name)
-
-    def execute(self, context):
-        self.dispatch(context, self.fn_name)
-        return {'FINISHED'}
-
-
-# should inherit from bmeshviewer, many of these methods are largely identical.
-class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
-    '''cv 2D/3D Polyline'''
-    bl_idname = 'SvPolylineViewerNodeMK1'
-    bl_label = 'Polyline Viewer MK1'
+    bl_idname = 'SvPolylineViewerNodeMK2'
+    bl_label = 'Polyline Viewer MK2'
     bl_icon = 'MOD_CURVE'
-
-    activate = BoolProperty(
-        name='Show',
-        description='When enabled this will process incoming data',
-        default=True,
-        update=updateNode)
-
-    basemesh_name = StringProperty(
-        default='Alpha',
-        description="which base name the object will use",
-        update=updateNode
-    )
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["Multi", "Single"])]
     selected_mode = bpy.props.EnumProperty(
@@ -208,13 +124,6 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         description="2D or 3D curves", default="3D"
     )
 
-    material = StringProperty(default='', update=updateNode)
-
-    hide = BoolProperty(default=True)
-    hide_render = BoolProperty(default=True)
-    select = BoolProperty(default=True)
-    hide_select = BoolProperty(default=False)
-
     depth = FloatProperty(min=0.0, default=0.2, update=updateNode)
     resolution = IntProperty(min=0, default=3, update=updateNode)
     bspline = BoolProperty(default=False, update=updateNode)
@@ -223,18 +132,12 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     radii = FloatProperty(min=0, default=0.2, update=updateNode)
     twist = FloatProperty(default=0.0, update=updateNode)
     caps = BoolProperty(update=updateNode)
-    show_wire = BoolProperty(update=updateNode)
-    use_smooth = BoolProperty(default=True, update=updateNode)
 
-
-    def copy(self, other):
-        self.basemesh_name = get_random_init()
+    data_kind = StringProperty(default='CURVE')
 
     def sv_init(self, context):
-        gai = bpy.context.scene.SvGreekAlphabet_index
-        self.basemesh_name = greek_alphabet[gai]
-        bpy.context.scene.SvGreekAlphabet_index += 1
-        self.use_custom_color = True
+        self.sv_init_helper_basedata_name()
+
         self.inputs.new('VerticesSocket', 'vertices')
         self.inputs.new('MatrixSocket', 'matrix')
         self.inputs.new('StringsSocket', 'radii').prop_name = 'radii'
@@ -242,43 +145,11 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvObjectSocket', 'bevel object')
         self.outputs.new('SvObjectSocket', "object")
 
-    def icons(self, button_type):
-
-        icon = 'WARNING'
-        if button_type == 'v':
-            icon = 'RESTRICT_VIEW_' + ['ON', 'OFF'][self.hide]
-        elif button_type == 'r':
-            icon = 'RESTRICT_RENDER_' + ['ON', 'OFF'][self.hide_render]
-        elif button_type == 's':
-            icon = 'RESTRICT_SELECT_' + ['ON', 'OFF'][self.select]
-        return icon
 
     def draw_buttons(self, context, layout):
-        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-        sh = 'node.sv_callback_polyline_viewer_mk1'
 
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-
-        row.operator(sh, text='', icon=self.icons('v')).fn_name = 'hide'
-        row.operator(sh, text='', icon=self.icons('s')).fn_name = 'hide_select'
-        row.operator(sh, text='', icon=self.icons('r')).fn_name = 'hide_render'
-
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.scale_y = 1
-        row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_MESH')
-
-        row = col.row(align=True)
-        row.scale_y = 2
-        row.operator(sh, text='Select / Deselect').fn_name = 'select'
-        row = col.row(align=True)
-        row.scale_y = 1
-
-        row.prop_search(
-            self, 'material', bpy.data, 'materials', text='',
-            icon='MATERIAL_DATA')
+        self.draw_live_and_outliner(context, layout)
+        self.draw_object_buttons(context, layout)
 
         layout.row().prop(self, 'curve_dimensions', expand=True)
 
@@ -301,12 +172,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.separator()
-
-        row = layout.row(align=True)
-        sh = 'node.sv_callback_polyline_viewer_mk1'
-        row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
-        row.operator(sh, text='+Material').fn_name = 'add_material'
+        self.draw_ext_object_buttons(context, layout)
 
 
     def get_geometry_from_sockets(self, has_matrices):
@@ -338,7 +204,7 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         if not self.activate:
             return
 
-        if not (self.inputs['vertices'].is_linked):
+        if not self.inputs['vertices'].is_linked:
             return
 
         has_matrices = self.inputs['matrix'].is_linked
@@ -362,24 +228,16 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
                 out_objects.append(new_obj)
                 break
 
-        # warning: uses possibly undefined index..
-        remove_non_updated_objects(self, obj_index, kind='CURVE')
+        last_index = len(mverts) - 1
+        self.remove_non_updated_objects(last_index)
         self.set_corresponding_materials()
 
         self.outputs['object'].sv_set(out_objects)
 
 
-    def set_corresponding_materials(self):
-        if bpy.data.materials.get(self.material):
-            for obj in get_children(self, kind='CURVE'):
-                obj.active_material = bpy.data.materials[self.material]
-
-
 def register():
-    bpy.utils.register_class(SvPolylineViewerNodeMK1)
-    bpy.utils.register_class(SvPolylineViewOpMK1)
+    bpy.utils.register_class(SvPolylineViewerNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPolylineViewerNodeMK1)
-    bpy.utils.unregister_class(SvPolylineViewOpMK1)
+    bpy.utils.unregister_class(SvPolylineViewerNodeMK2)
