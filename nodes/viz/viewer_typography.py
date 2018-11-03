@@ -93,12 +93,12 @@ def make_text_object(node, idx, context, data):
     node.push_custom_matrix_if_present(sv_object, matrix)
 
 
-class SvFontFileImporterOpMK1(bpy.types.Operator):
+class SvFontFileImporterOpV28(bpy.types.Operator):
 
     bl_idname = "node.sv_fontfile_importer_mk1"
     bl_label = "sv FontFile Importer"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Filepath used for importing the font file",
         maxlen=1024, default="", subtype='FILE_PATH')
@@ -116,40 +116,40 @@ class SvFontFileImporterOpMK1(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
-    bl_idname = 'SvTypeViewerNodeMK1'
-    bl_label = 'Typography Viewer mk1'
+    bl_idname = 'SvTypeViewerNodeV28'
+    bl_label = 'Typography Viewer'
     bl_icon = 'OUTLINER_OB_FONT'
 
-    grouping = BoolProperty(default=False)
-    data_kind = StringProperty(name='data kind', default='FONT')
+    grouping: BoolProperty(default=False)
+    data_kind: StringProperty(name='data kind', default='FONT')
 
-    show_options = BoolProperty(default=0)
-    fontname = StringProperty(default='', update=updateNode)
-    fsize = FloatProperty(default=1.0, update=updateNode)
+    show_options: BoolProperty(default=0)
+    fontname: StringProperty(default='', update=updateNode)
+    fsize: FloatProperty(default=1.0, update=updateNode)
 
     # space
-    space_character = FloatProperty(default=1.0, update=updateNode)
-    space_word = FloatProperty(default=1.0, update=updateNode)
-    space_line = FloatProperty(default=1.0, update=updateNode)
-    yoffset = FloatProperty(default=0.0, update=updateNode)
-    xoffset = FloatProperty(default=0.0, update=updateNode)
+    space_character: FloatProperty(default=1.0, update=updateNode)
+    space_word: FloatProperty(default=1.0, update=updateNode)
+    space_line: FloatProperty(default=1.0, update=updateNode)
+    yoffset: FloatProperty(default=0.0, update=updateNode)
+    xoffset: FloatProperty(default=0.0, update=updateNode)
 
     # modifications
-    offset = FloatProperty(default=0.0, update=updateNode)
-    extrude = FloatProperty(default=0.0, update=updateNode)
+    offset: FloatProperty(default=0.0, update=updateNode)
+    extrude: FloatProperty(default=0.0, update=updateNode)
 
     # bevel
-    bevel_depth = FloatProperty(default=0.0, update=updateNode)
-    bevel_resolution = IntProperty(default=0, update=updateNode)
+    bevel_depth: FloatProperty(default=0.0, update=updateNode)
+    bevel_resolution: IntProperty(default=0, update=updateNode)
 
     # orientation x | y 
-    align_x = bpy.props.EnumProperty(
+    align_x: bpy.props.EnumProperty(
         items=mode_options_x, description="Horizontal Alignment",
         default="LEFT", update=updateNode)
 
-    align_y = bpy.props.EnumProperty(
+    align_y: bpy.props.EnumProperty(
         items=mode_options_y, description="Vertical Alignment",
         default="TOP_BASELINE", update=updateNode)
     
@@ -172,7 +172,7 @@ class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             col.prop(self, 'fsize')
             col.prop(self, 'show_options', toggle=True)
             if self.show_options:
-                col.label('position')
+                col.label(text='position')
                 row = col.row(align=True)
                 if row:
                     row.prop(self, 'xoffset', text='XOFF')
@@ -183,14 +183,14 @@ class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 col1.prop(self, 'space_word', text='W')
                 col1.prop(self, 'space_line', text='L')
 
-                col.label('modifications')
+                col.label(text='modifications')
                 col.prop(self, 'offset')
                 col.prop(self, 'extrude')
-                col.label('bevel')
+                col.label(text='bevel')
                 col.prop(self, 'bevel_depth')
                 col.prop(self, 'bevel_resolution')
 
-                col.label("alignment")
+                col.label(text="alignment")
                 row = col.row(align=True)
                 row.prop(self, 'align_x', text="")
                 row.prop(self, 'align_y', text="")
@@ -263,10 +263,10 @@ class SvTypeViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
 
 def register():
-    bpy.utils.register_class(SvTypeViewerNodeMK1)
-    bpy.utils.register_class(SvFontFileImporterOpMK1)
+    bpy.utils.register_class(SvTypeViewerNodeV28)
+    bpy.utils.register_class(SvFontFileImporterOpV28)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvFontFileImporterOpMK1)
-    bpy.utils.unregister_class(SvTypeViewerNodeMK1)
+    bpy.utils.unregister_class(SvFontFileImporterOpV28)
+    bpy.utils.unregister_class(SvTypeViewerNodeV28)

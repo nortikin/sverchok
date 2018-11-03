@@ -173,14 +173,14 @@ def make_curve_geometry(node, context, obj_index, verts, *topology):
     node.push_custom_matrix_if_present(sv_object, matrix)
 
 
-class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
     Triggers: CV object curves
     Tooltip: Advanced 2d/3d curve outputting into scene
     """
 
-    bl_idname = 'SvCurveViewerNodeMK2'
-    bl_label = 'Curve Viewer mk2'
+    bl_idname = 'SvCurveViewerNodeV28'
+    bl_label = 'Curve Viewer'
     bl_icon = 'MOD_CURVE'
 
     selected_mode: bpy.props.EnumProperty(
@@ -241,7 +241,7 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def set_fill_mode(self):
         return getattr(self, "fill_" + self.curve_dimensions) 
 
-    def remove_cloner_curve(self):
+    def remove_cloner_curve(self, obj_index):
         # opportunity to remove the .cloner.
         if self.selected_mode == 'Duplicate':
             curve_name = self.basedata_name + '.cloner.' + str("%04d" % obj_index)
@@ -351,12 +351,12 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             self.to_group(objs)
 
         self.set_corresponding_materials()
-        self.remove_cloner_curve()
+        self.remove_cloner_curve(obj_index)
 
 
 def register():
-    bpy.utils.register_class(SvCurveViewerNodeMK2)
+    bpy.utils.register_class(SvCurveViewerNodeV28)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvCurveViewerNodeMK2)
+    bpy.utils.unregister_class(SvCurveViewerNodeV28)

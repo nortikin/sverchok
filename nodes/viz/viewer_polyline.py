@@ -104,14 +104,14 @@ def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     return sv_object
 
 
-class SvPolylineViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
-    bl_idname = 'SvPolylineViewerNodeMK2'
-    bl_label = 'Polyline Viewer MK2'
+    bl_idname = 'SvPolylineViewerNodeV28'
+    bl_label = 'Polyline Viewer'
     bl_icon = 'MOD_CURVE'
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["Multi", "Single"])]
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode: bpy.props.EnumProperty(
         items=mode_options,
         description="offers joined of unique curves",
         default="Multi", update=updateNode
@@ -119,19 +119,19 @@ class SvPolylineViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
 
     dimension_modes = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
     
-    curve_dimensions = bpy.props.EnumProperty(
+    curve_dimensions: bpy.props.EnumProperty(
         items=dimension_modes, update=updateNode,
         description="2D or 3D curves", default="3D"
     )
 
-    depth = FloatProperty(min=0.0, default=0.2, update=updateNode)
-    resolution = IntProperty(min=0, default=3, update=updateNode)
-    bspline = BoolProperty(default=False, update=updateNode)
-    close = BoolProperty(default=False, update=updateNode)
+    depth: FloatProperty(min=0.0, default=0.2, update=updateNode)
+    resolution: IntProperty(min=0, default=3, update=updateNode)
+    bspline: BoolProperty(default=False, update=updateNode)
+    close: BoolProperty(default=False, update=updateNode)
 
-    radii = FloatProperty(min=0, default=0.2, update=updateNode)
-    twist = FloatProperty(default=0.0, update=updateNode)
-    caps = BoolProperty(update=updateNode)
+    radii: FloatProperty(min=0, default=0.2, update=updateNode)
+    twist: FloatProperty(default=0.0, update=updateNode)
+    caps: BoolProperty(update=updateNode)
 
     data_kind = StringProperty(default='CURVE')
 
@@ -236,8 +236,8 @@ class SvPolylineViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
 
 
 def register():
-    bpy.utils.register_class(SvPolylineViewerNodeMK2)
+    bpy.utils.register_class(SvPolylineViewerNodeV28)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvPolylineViewerNodeMK2)
+    bpy.utils.unregister_class(SvPolylineViewerNodeV28)

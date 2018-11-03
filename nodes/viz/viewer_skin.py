@@ -158,37 +158,37 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
     return obj, data_layers
 
 
-class SvSkinViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
-    bl_idname = 'SvSkinViewerNodeMK2'
-    bl_label = 'Skin Mesher mk2'
+    bl_idname = 'SvSkinViewerNodeV28'
+    bl_label = 'Skin Mesher'
     bl_icon = 'MOD_SKIN'
 
-    general_radius_x = FloatProperty(
+    general_radius_x: FloatProperty(
         name='general_radius_x',
         default=0.25,
         description='value used to uniformly set the radii of skin vertices x',
         min=0.0001, step=0.05,
         update=updateNode)
 
-    general_radius_y = FloatProperty(
+    general_radius_y: FloatProperty(
         name='general_radius_y',
         default=0.25,
         description='value used to uniformly set the radii of skin vertices y',
         min=0.0001, step=0.05,
         update=updateNode)
 
-    levels = IntProperty(min=0, default=1, max=3, update=updateNode)
-    render_levels = IntProperty(min=0, default=1, max=3, update=updateNode)
+    levels: IntProperty(min=0, default=1, max=3, update=updateNode)
+    render_levels: IntProperty(min=0, default=1, max=3, update=updateNode)
 
-    distance_doubles = FloatProperty(
+    distance_doubles: FloatProperty(
         default=0.0, min=0.0,
         name='doubles distance',
         description="removes coinciding verts, also aims to remove double radii data",
         update=updateNode)
 
-    use_root = BoolProperty(default=True, update=updateNode)
-    use_slow_root = BoolProperty(default=False, update=updateNode)
+    use_root: BoolProperty(default=True, update=updateNode)
+    use_slow_root: BoolProperty(default=False, update=updateNode)
 
 
     def sv_init(self, context):
@@ -214,7 +214,7 @@ class SvSkinViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def draw_buttons_ext(self, context, layout):
         k = layout.box()
         r = k.row(align=True)
-        r.label("setting roots")
+        r.label(text="setting roots")
         r = k.row(align=True)
         r.prop(self, "use_root", text="mark all", toggle=True)
         r.prop(self, "use_slow_root", text="mark some", toggle=True)
@@ -289,7 +289,7 @@ class SvSkinViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
 
 def register():
-    bpy.utils.register_class(SvSkinViewerNodeMK2)
+    bpy.utils.register_class(SvSkinViewerNodeV28)
 
 def unregister():
-    bpy.utils.unregister_class(SvSkinViewerNodeMK2)
+    bpy.utils.unregister_class(SvSkinViewerNodeV28)

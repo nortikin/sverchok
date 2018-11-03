@@ -218,11 +218,11 @@
 ## Viz
     Sv3DviewPropsNode
     ---
-    SvCurveViewerNodeMK2
-    SvPolylineViewerNodeMK2
-    SvBmeshViewerNodeMK3
-    SvTypeViewerNodeMK1
-    SvSkinViewerNodeMK2
+    SvBmeshViewerNodeV28
+    SvCurveViewerNodeV28
+    SvPolylineViewerNodeV28
+    SvTypeViewerNodeV28
+    SvSkinViewerNodeV28
 
 ## Text
     ViewerNodeTextMK3

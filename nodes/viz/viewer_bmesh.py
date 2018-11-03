@@ -154,38 +154,38 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     sv_object.matrix_local = Matrix.Identity(4)
 
 
-class SvBmeshViewerNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
+class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """ bmv Generate Live geom """
 
-    bl_idname = 'SvBmeshViewerNodeMK3'
-    bl_label = 'Viewer BMesh 3'
+    bl_idname = 'SvBmeshViewerNodeV28'
+    bl_label = 'Viewer BMesh'
     bl_icon = 'OUTLINER_OB_MESH'
 
-    grouping = BoolProperty(default=False)
-    merge = BoolProperty(default=False, update=updateNode)
+    grouping: BoolProperty(default=False)
+    merge: BoolProperty(default=False, update=updateNode)
 
-    calc_normals = BoolProperty(default=False, update=updateNode)
+    calc_normals: BoolProperty(default=False, update=updateNode)
 
-    fixed_verts = BoolProperty(
+    fixed_verts: BoolProperty(
         default=False,
         description="Use only with unchanging topology")
 
-    autosmooth = BoolProperty(
+    autosmooth: BoolProperty(
         default=False,
         update=updateNode,
         description="This auto sets all faces to smooth shade")
 
-    extended_matrix = BoolProperty(
+    extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
 
-        self.inputs.new('VerticesSocket', 'vertices', 'vertices')
-        self.inputs.new('StringsSocket', 'edges', 'edges')
-        self.inputs.new('StringsSocket', 'faces', 'faces')
-        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.inputs.new('VerticesSocket', 'vertices')
+        self.inputs.new('StringsSocket', 'edges')
+        self.inputs.new('StringsSocket', 'faces')
+        self.inputs.new('MatrixSocket', 'matrix')
 
         self.outputs.new('SvObjectSocket', "Objects")
 
@@ -331,13 +331,9 @@ class SvBmeshViewerNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
 
 def register():
-    bpy.utils.register_class(SvBmeshViewerNodeMK3)
+    bpy.utils.register_class(SvBmeshViewerNodeV28)
 
 
 
 def unregister():
-    bpy.utils.unregister_class(SvBmeshViewerNodeMK3)
-
-
-# if __name__ == '__main__':
-#     register()
+    bpy.utils.unregister_class(SvBmeshViewerNodeV28)
