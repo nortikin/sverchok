@@ -183,29 +183,29 @@ class SvCurveViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_label = 'Curve Viewer mk2'
     bl_icon = 'MOD_CURVE'
 
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode: bpy.props.EnumProperty(
         items=mode_options,
         description="merge or use duplicates",
         default="Unique",
         update=updateNode)
     
-    curve_dimensions = bpy.props.EnumProperty(
+    curve_dimensions: bpy.props.EnumProperty(
         items=dimension_modes, update=updateNode,
         description="2D or 3D curves", default="3D")
 
-    fill_2D = bpy.props.EnumProperty(
+    fill_2D: bpy.props.EnumProperty(
         items=fill_modes_2d, description="offers fill more for 2d Curve data",
         default=fill_modes_2d[2][0], update=updateNode)
 
-    fill_3D = bpy.props.EnumProperty(
+    fill_3D: bpy.props.EnumProperty(
         items=fill_modes_3d, description="offers fill more for 3d Curve data",
         default=fill_modes_3d[3][0], update=updateNode)
 
-    data_kind = StringProperty(default='CURVE')
-    grouping = BoolProperty(default=False)
+    data_kind: StringProperty(default='CURVE')
+    grouping: BoolProperty(default=False)
 
-    depth = FloatProperty(min=0.0, default=0.2, update=updateNode)
-    resolution = IntProperty(min=0, default=3, update=updateNode)
+    depth: FloatProperty(min=0.0, default=0.2, update=updateNode)
+    resolution: IntProperty(min=0, default=3, update=updateNode)
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()

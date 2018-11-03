@@ -109,5 +109,5 @@ utils_modules = [
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
     "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     #"loadscript",
-    "debug_script", "sv_update_utils"
+    "debug_script", "sv_update_utils", "sv_object_helper"
 ]
