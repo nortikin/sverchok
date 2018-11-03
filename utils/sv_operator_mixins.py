@@ -43,7 +43,7 @@ class SvGenericCallbackWithParams():
 
     '''    
 
-    fn_name = bpy.props.StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
 
     def execute(self, context):
@@ -84,8 +84,8 @@ class SvGenericFileSelector():
 
     '''    
 
-    fn_name = bpy.props.StringProperty(default='')
-    filepath = bpy.props.StringProperty(
+    fn_name: bpy.props.StringProperty(default='')
+    filepath: bpy.props.StringProperty(
         name="File Path",
         description="Filepath used for getting the file path",
         maxlen=1024, default="", subtype='FILE_PATH')
@@ -134,8 +134,8 @@ class SvGenericDirectorySelector():
 
     '''    
 
-    fn_name = bpy.props.StringProperty(default='')
-    directory = bpy.props.StringProperty(
+    fn_name: bpy.props.StringProperty(default='')
+    directory: bpy.props.StringProperty(
         name="Base Path",
         description="Directory selected",
         maxlen=1024, default="", subtype='DIR_PATH')
