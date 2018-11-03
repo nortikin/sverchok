@@ -43,9 +43,9 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'vert_'
         self.inputs.new('StringsSocket', "Degrees").prop_name = 'degr_'
 
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode_", text="Mode")
