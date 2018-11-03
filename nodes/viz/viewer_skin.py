@@ -111,7 +111,7 @@ def force_pydata(mesh, verts, edges):
 
 
 def make_bmesh_geometry(node, context, geometry, idx, layers):
-    scene = context.scene
+    scene = context.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix, _, _ = geometry

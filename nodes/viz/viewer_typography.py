@@ -60,7 +60,7 @@ def font_set_props(f, node, txt):
     f.align_y = node.align_y
 
 def get_obj_and_fontcurve(context, name):
-    scene = context.scene
+    scene = context.collection
     curves = bpy.data.curves
     objects = bpy.data.objects
 
@@ -230,7 +230,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         if self.parent_to_empty:
             mtname = 'Empty_' + self.basemesh_name
             self.parent_name = mtname
-            scene = bpy.context.scene
+            scene = bpy.context.collection
             if not mtname in bpy.data.objects:
                 empty = bpy.data.objects.new(mtname, None)
                 scene.objects.link(empty)

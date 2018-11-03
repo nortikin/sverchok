@@ -121,9 +121,9 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Height").prop_name = 'height_'
         self.inputs.new('StringsSocket', "Subdivisions").prop_name = 'subd_'
 
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

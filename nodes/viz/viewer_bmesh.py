@@ -44,7 +44,7 @@ def default_mesh(name):
 
 
 def make_bmesh_geometry(node, obj_index, context, verts, *topology):
-    scene = context.scene
+    scene = context.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
 
@@ -101,7 +101,7 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
 
 
 def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
-    scene = context.scene
+    scene = context.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     name = node.basedata_name + '.' + str("%04d" % obj_index)
