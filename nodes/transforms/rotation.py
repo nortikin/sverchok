@@ -81,15 +81,15 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
-            self.inputs.new('VerticesSocket', "Center", "Center")
-            self.inputs.new('VerticesSocket', "Axis", "Axis")
-            self.inputs.new('StringsSocket', "Angle", "Angle").prop_name = "angle_"
+            self.inputs.new('VerticesSocket', "Center")
+            self.inputs.new('VerticesSocket', "Axis")
+            self.inputs.new('StringsSocket', "Angle").prop_name = "angle_"
         elif mode == 'EULER' or mode == 'QUAT':
-            self.inputs.new('StringsSocket', "X", "X").prop_name = "x_"
-            self.inputs.new('StringsSocket', "Y", "Y").prop_name = "y_"
-            self.inputs.new('StringsSocket', "Z", "Z").prop_name = "z_"
+            self.inputs.new('StringsSocket', "X").prop_name = "x_"
+            self.inputs.new('StringsSocket', "Y").prop_name = "y_"
+            self.inputs.new('StringsSocket', "Z").prop_name = "z_"
             if mode == 'QUAT':
-                self.inputs.new('StringsSocket', "W", "W").prop_name = "w_"
+                self.inputs.new('StringsSocket', "W").prop_name = "w_"
 
         self.current_mode = mode
         updateNode(self, context)

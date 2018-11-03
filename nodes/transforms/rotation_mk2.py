@@ -59,27 +59,21 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Rotation'
     bl_icon = 'NONE' #'MAN_ROT'
 
-    angle_ = FloatProperty(name='Angle', description='rotation angle',
-                            default=0.0,
-                            options={'ANIMATABLE'}, update=updateNode)
-    x_ = FloatProperty(name='X', description='X angle',
-                            default=0.0,
-                            options={'ANIMATABLE'}, update=updateNode)
-    y_ = FloatProperty(name='Y', description='Y angle',
-                            default=0.0,
-                            options={'ANIMATABLE'}, update=updateNode)
-    z_ = FloatProperty(name='Z', description='Z angle',
-                            default=0.0,
-                            options={'ANIMATABLE'}, update=updateNode)
-    w_ = FloatProperty(name='W', description='W',
-                            default=1.0,
-                            options={'ANIMATABLE'}, update=updateNode)
+    angle_: FloatProperty(
+        name='Angle', description='rotation angle', default=0.0, update=updateNode)
+    x_: FloatProperty(
+        name='X', description='X angle', default=0.0, update=updateNode)
+    y_: FloatProperty(
+        name='Y', description='Y angle', default=0.0, update=updateNode)
+    z_: FloatProperty(
+        name='Z', description='Z angle', default=0.0, update=updateNode)
+    w_: FloatProperty(
+        name='W', description='W', default=1.0, update=updateNode)
 
-    current_mode = StringProperty(default="AXIS")
+    current_mode: StringProperty(default="AXIS")
 
-    separate = BoolProperty(name='separate', description='Separate UV coords',
-                            default=False,
-                            update=updateNode)
+    separate: BoolProperty(
+        name='separate', description='Separate UV coords', default=False, update=updateNode)
 
     def mode_change(self, context):
         # just because click doesn't mean we need to change mode
@@ -91,15 +85,15 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
-            self.inputs.new('VerticesSocket', "centers", "centers")
-            self.inputs.new('VerticesSocket', "axis", "axis")
-            self.inputs.new('StringsSocket', "angle", "angle").prop_name = "angle_"
+            self.inputs.new('VerticesSocket', "centers")
+            self.inputs.new('VerticesSocket', "axis")
+            self.inputs.new('StringsSocket', "angle").prop_name = "angle_"
         elif mode == 'EULER' or mode == 'QUAT':
-            self.inputs.new('StringsSocket', "X", "X").prop_name = "x_"
-            self.inputs.new('StringsSocket', "Y", "Y").prop_name = "y_"
-            self.inputs.new('StringsSocket', "Z", "Z").prop_name = "z_"
+            self.inputs.new('StringsSocket', "X").prop_name = "x_"
+            self.inputs.new('StringsSocket', "Y").prop_name = "y_"
+            self.inputs.new('StringsSocket', "Z").prop_name = "z_"
             if mode == 'QUAT':
-                self.inputs.new('StringsSocket', "W", "W").prop_name = "w_"
+                self.inputs.new('StringsSocket', "W").prop_name = "w_"
 
         self.current_mode = mode
         updateNode(self, context)
@@ -110,9 +104,8 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ("QUAT", "Quat", "Quaternion Rotation", 3),
     ]
 
-    mode = EnumProperty(name="mode", description="mode",
-                        default='AXIS', items=modes,
-                        update=mode_change)
+    mode: EnumProperty(
+        name="mode", description="mode", default='AXIS', items=modes, update=mode_change)
 
     orders = [
         ('XYZ', "XYZ",        "", 0),
@@ -122,16 +115,15 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ('ZXY', 'ZXY',        "", 4),
         ('ZYX', 'ZYX',        "", 5),
     ]
-    order = EnumProperty(name="Order", description="Order",
-                         default="XYZ", items=orders,
-                         update=updateNode)
+    order: EnumProperty(
+        name="Order", description="Order", default="XYZ", items=orders, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "vertices", "vertices")
-        self.inputs.new('VerticesSocket', "centers", "centers")
-        self.inputs.new('VerticesSocket', "axis", "axis")
-        self.inputs.new('StringsSocket', "angle", "angle").prop_name = "angle_"
-        self.outputs.new('VerticesSocket', "vertices", "vertices")
+        self.inputs.new('VerticesSocket', "vertices")
+        self.inputs.new('VerticesSocket', "centers")
+        self.inputs.new('VerticesSocket', "axis")
+        self.inputs.new('StringsSocket', "angle").prop_name = "angle_"
+        self.outputs.new('VerticesSocket', "vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -184,6 +176,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvRotationNodeMK2)
-
-if __name__ == '__main__':
-    register()
