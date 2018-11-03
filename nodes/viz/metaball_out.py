@@ -30,7 +30,7 @@ class SvMetaballOperator(bpy.types.Operator):
     bl_label = "Sverchok metaball general callback"
     bl_options = {'REGISTER', 'UNDO'}
 
-    fn_name = StringProperty(default='')
+    fn_name: StringProperty(default='')
 
     def hide_unhide(self, context, type_op):
         node = context.node
@@ -62,23 +62,19 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
             meta.name = self.metaball_ref_name
             self.label = meta.name
 
-    n_id = StringProperty(default='')
-    metaball_ref_name = StringProperty(default='')
+    n_id: StringProperty(default='')
+    metaball_ref_name: StringProperty(default='')
 
-    activate = BoolProperty(
-        name='Activate',
-        default=True,
-        description='When enabled this will process incoming data',
-        update=updateNode)
+    activate: BoolProperty(
+        name='Activate', default=True, description='When enabled this will process incoming data', update=updateNode)
 
-    hide = BoolProperty(default=True)
-    hide_render = BoolProperty(default=True)
-    hide_select = BoolProperty(default=True)
-    select_state = BoolProperty(default=False)
+    hide: BoolProperty(default=True)
+    hide_render: BoolProperty(default=True)
+    hide_select: BoolProperty(default=True)
+    select_state: BoolProperty(default=False)
 
-    meta_name = StringProperty(default='SvMetaBall', name="Base name",
-                                description="Base name of metaball",
-                                update=rename_metaball)
+    meta_name: StringProperty(
+        default='SvMetaBall', name="Base name", description="Base name of metaball", update=rename_metaball)
 
     meta_types = [
             ("BALL", "Ball", "Ball", "META_BALL", 1),
@@ -90,33 +86,28 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     meta_type_by_id = dict((item[4], item[0]) for item in meta_types)
 
-    meta_type = EnumProperty(name='Meta type',
-            description = "Meta object type",
-            items = meta_types, update=updateNode)
+    meta_type: EnumProperty(
+        name='Meta type', description="Meta object type", items=meta_types, update=updateNode)
 
-    material = StringProperty(name="Material", default='', update=updateNode)
+    material: StringProperty(name="Material", default='', update=updateNode)
+    radius: FloatProperty(name='Radius', description='Metaball radius', default=1.0, min=0.0, update=updateNode)
 
-    radius = FloatProperty(
-        name='Radius',
-        description='Metaball radius',
-        default=1.0, min=0.0, update=updateNode)
-
-    stiffness = FloatProperty(
+    stiffness: FloatProperty(
         name='Stiffness',
         description='Metaball stiffness',
         default=2.0, min=0.0, update=updateNode)
 
-    view_resolution = FloatProperty(
+    view_resolution: FloatProperty(
         name='Resolution (viewport)',
         description='Resolution for viewport',
         default=0.2, min=0.0, max=1.0, update=updateNode)
 
-    render_resolution = FloatProperty(
+    render_resolution: FloatProperty(
         name='Resolution (render)',
         description='Resolution for rendering',
         default=0.1, min=0.0, max=1.0, update=updateNode)
 
-    threshold = FloatProperty(
+    threshold: FloatProperty(
         name='Threshold',
         description='Influence of meta elements',
         default=0.6, min=0.0, max=5.0, update=updateNode)
@@ -290,4 +281,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvMetaballOperator)
     bpy.utils.unregister_class(SvMetaballOutNode)
-

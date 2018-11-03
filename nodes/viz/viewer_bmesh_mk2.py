@@ -156,7 +156,7 @@ class SvBmeshViewOp2(bpy.types.Operator):
     bl_label = "Sverchok bmesh general callback"
     bl_options = {'REGISTER', 'UNDO'}
 
-    fn_name = StringProperty(default='')
+    fn_name: StringProperty(default='')
 
     def hide_unhide(self, context, type_op):
         n = context.node
@@ -228,46 +228,46 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for obj in self.get_children():
             obj.layers = self.layer_choice[:]
 
-    to3d = BoolProperty(default=True)
+    to3d: BoolProperty(default=True)
 
-    material = StringProperty(default='', update=updateNode)
-    grouping = BoolProperty(default=False)
-    merge = BoolProperty(default=False, update=updateNode)
+    material: StringProperty(default='', update=updateNode)
+    grouping: BoolProperty(default=False)
+    merge: BoolProperty(default=False, update=updateNode)
 
-    hide = BoolProperty(default=True)
-    hide_render = BoolProperty(default=True)
-    hide_select = BoolProperty(default=True)
+    hide: BoolProperty(default=True)
+    hide_render: BoolProperty(default=True)
+    hide_select: BoolProperty(default=True)
 
-    select_state_mesh = BoolProperty(default=False)
-    calc_normals = BoolProperty(default=False, update=updateNode)
+    select_state_mesh: BoolProperty(default=False)
+    calc_normals: BoolProperty(default=False, update=updateNode)
 
-    activate = BoolProperty(
+    activate: BoolProperty(
         default=True,
         description='When enabled this will process incoming data',
         update=updateNode)
 
-    basemesh_name = StringProperty(
+    basemesh_name: StringProperty(
         default='Alpha',
         update=updateNode,
         description="sets which base name the object will use, "
         "use N-panel to pick alternative random names")
 
-    fixed_verts = BoolProperty(
+    fixed_verts: BoolProperty(
         default=False,
         description="Use only with unchanging topology")
 
-    autosmooth = BoolProperty(
+    autosmooth: BoolProperty(
         default=False,
         update=updateNode,
         description="This auto sets all faces to smooth shade")
 
-    layer_choice = BoolVectorProperty(
+    layer_choice: BoolVectorProperty(
         subtype='LAYER', size=20,
         update=layer_updateNode,
         description="This sets which layer objects are placed on",
         get=g, set=s)
 
-    extended_matrix = BoolProperty(
+    extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
 
@@ -492,6 +492,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvBmeshViewerNodeMK2)
     bpy.utils.unregister_class(SvBmeshViewOp2)
-
-if __name__ == '__main__':
-    register()

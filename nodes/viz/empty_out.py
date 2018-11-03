@@ -36,15 +36,14 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
             empty.name = self.empty_name
             self.label = empty.name
 
-    n_id = StringProperty(default='')
-    empty_name = StringProperty(default='Sv empty', name="Base name",
-                                description="Base name of empty",
-                                update=rename_empty)
-    auto_remove = BoolProperty(default=True,
-                               description="Remove on node delete",
-                               name="Auto delete")
+    n_id: StringProperty(default='')
+    empty_name: StringProperty(
+        default='Sv empty', name="Base name", description="Base name of empty", update=rename_empty)
+    auto_remove: BoolProperty(
+        default=True, description="Remove on node delete", name="Auto delete")
+    
     # To speed up finding the empty if many objects
-    empty_ref_name = StringProperty(default='')
+    empty_ref_name: StringProperty(default='')
 
     def create_empty(self):
         n_id = node_id(self)

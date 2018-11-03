@@ -39,15 +39,15 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Lamp"
     bl_icon = 'NONE' #"OUTLINER_OB_LAMP"
 
-    activate = BoolProperty(name = "Activate",
-        default=True,
+    activate: BoolProperty(
+        name="Activate", default=True,
         description='When enabled this will process incoming data',
         update=updateNode)
 
-    lamp_name = StringProperty(
+    lamp_name: StringProperty(
         default='Lamp_Alpha',
-        update=updateNode,
-        description="sets which base name the object will use")
+        description="sets which base name the object will use",
+        update=updateNode)
 
     lamp_types = [
             ("POINT", "Point", "Omnidirectional point light source", "LAMP_POINT", 0),
@@ -63,11 +63,9 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Spot Blend'].hide_safe = not is_spot
         updateNode(self, context)
 
-    type = EnumProperty(name = "Type",
-            description = "Light source type",
-            items = lamp_types,
-            default = "POINT",
-            update = update_type)
+    type: EnumProperty(
+        name="Type", description="Light source type",
+        items=lamp_types, default="POINT", update=update_type)
 
     area_types = [
             ("RECTANGLE", "Rectangle", "Rectangular area", 0),
@@ -81,76 +79,58 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Size Y'].hide_safe = square
         updateNode(self, context)
 
-    area_type = EnumProperty(name = "Area type",
-            description = "Area shape type",
-            default = "RECTANGLE",
-            items = area_types,
-            update = update_area_type)
+    area_type: EnumProperty(
+        name="Area type", description="Area shape type", default="RECTANGLE",
+        items=area_types, update=update_area_type)
 
-    size = FloatProperty(name = "Size",
-            description = "Light source size",
-            default = 0.1,
-            update=updateNode)
+    size: FloatProperty(
+        name="Size", description="Light source size", default=0.1, update=updateNode)
 
-    size_x = FloatProperty(name = "Size X",
-            description = "Light source size",
-            default = 0.1,
-            update=updateNode)
-    size_y = FloatProperty(name = "Size Y",
-            description = "Light source size",
-            default = 0.1,
-            update=updateNode)
+    size_x: FloatProperty(
+        name="Size X", description="Light source size", default=0.1, update=updateNode)
+    
+    size_y: FloatProperty(
+        name="Size Y", description="Light source size", default=0.1, update=updateNode)
 
-    spot_size = FloatProperty(name = "Spot Size",
-            description = "Angle of the spotlight beam (degrees)",
-            default = 45.0, min = 0.0, max = 180.0,
-            update=updateNode)
+    spot_size: FloatProperty(
+        name="Spot Size", description="Angle of the spotlight beam (degrees)",
+        default=45.0, min=0.0, max=180.0, update=updateNode)
 
-    spot_blend = FloatProperty(name = "Spot Blend",
-            description = "The softness of the spotlight edge",
-            default = 0.15, min=0.0, max=1.0,
-            update=updateNode)
+    spot_blend: FloatProperty(
+        name="Spot Blend", description="The softness of the spotlight edge",
+        default=0.15, min=0.0, max=1.0, update=updateNode)
 
-    strength = FloatProperty(name = "Strength",
-            description = "Lamp power",
-            default = 100.0, min=0.0, max=1000000,
-            update=updateNode)
+    strength: FloatProperty(
+        name="Strength", description="Lamp power",
+        default=100.0, min=0.0, max=1000000, update=updateNode)
 
-    show_cone = BoolProperty(name = "Show cone",
-            description = "Draw transparent cone in the 3D View",
-            default = False,
-            update=updateNode)
+    show_cone: BoolProperty(
+        name="Show cone", description="Draw transparent cone in the 3D View",
+        default=False, update=updateNode)
 
-    max_bounces = IntProperty(name = "Max Bounces",
-            description = "Maximum number of bounces the lamp will contribute to the render",
-            min = 1, max = 1000000, default = 1024,
-            update=updateNode)
+    max_bounces: IntProperty(
+        name="Max Bounces", description="Maximum number of bounces the lamp will contribute to the render",
+        min=1, max=1000000, default=1024, update=updateNode)
 
-    cast_shadow = BoolProperty(name = "Cast shadow",
-            description = "Lamp casts shadows",
-            default = True,
-            update=updateNode)
+    cast_shadow: BoolProperty(
+        name="Cast shadow", description="Lamp casts shadows",
+        default=True, update=updateNode)
 
-    multiple_imporance = BoolProperty(name = "Multiple importance",
-            description = "Use multiple importance sampling for the lamp",
-            default = True,
-            update=updateNode)
+    multiple_imporance: BoolProperty(
+        name="Multiple importance", description="Use multiple importance sampling for the lamp",
+        default=True, update=updateNode)
 
-    use_nodes = BoolProperty(name = "Use Nodes",
-            description = "Use node tree instead of directly specified color",
-            default = True,
-            update=updateNode)
+    use_nodes: BoolProperty(
+        name="Use Nodes", description="Use node tree instead of directly specified color",
+        default=True, update=updateNode)
 
-    light_color = FloatVectorProperty(name = "Color",
-        description = "Light color",
-        update=updateNode, default=(1.0, 1.0, 1.0, 1.0),
-        size=4, min=0.0, max=1.0, subtype='COLOR'
-    )
+    light_color: FloatVectorProperty(
+        name="Color", description="Light color", update=updateNode,
+        default=(1.0, 1.0, 1.0, 1.0), size=4, min=0.0, max=1.0, subtype='COLOR')
 
-    emission_node_name = StringProperty(name = "Emission Node",
-            description = "Name of Emission node in the lamp shader, that contains Sthrength and Color inputs",
-            default = "Emission",
-            update=updateNode)
+    emission_node_name: StringProperty(
+        name="Emission Node", description="Name of Emission node in the lamp shader, that contains Sthrength and Color inputs",
+        default="Emission", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'Origin')
@@ -327,4 +307,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvLampOutNode)
-
