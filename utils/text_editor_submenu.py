@@ -43,7 +43,7 @@ class SvScriptLoader(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     # from object in
-    script_path = StringProperty(name='script path')
+    script_path: StringProperty(name='script path')
 
     def execute(self, context):
         path = get_template_path()
@@ -80,6 +80,3 @@ def unregister():
     bpy.utils.unregister_class(SvScriptLoader)
     bpy.utils.unregister_class(SvTextSubMenu)
     bpy.types.TEXT_MT_templates.remove(menu_draw)
-
-if __name__ == "__main__":
-    register()

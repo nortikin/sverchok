@@ -13,27 +13,27 @@ from bpy.props import StringProperty, BoolProperty, PointerProperty, EnumPropert
 
 class SvIOPanelProperties(bpy.types.PropertyGroup):
 
-    new_nodetree_name = StringProperty(
+    new_nodetree_name: StringProperty(
         name='new_nodetree_name',
         default="Imported_name",
         description="The name to give the new NodeTree, defaults to: Imported")
 
-    compress_output = BoolProperty(
+    compress_output: BoolProperty(
         default=0,
         name='compress_output',
         description='option to also compress the json, will generate both')
 
-    gist_id = StringProperty(
+    gist_id: StringProperty(
         name='new_gist_id',
         default="Enter Gist ID here",
         description="This gist ID will be used to obtain the RAW .json from github")
 
-    io_options_enum = EnumProperty(
+    io_options_enum: EnumProperty(
         items=[("Import", "Import", "", 0), ("Export", "Export", "", 1)],
         description="display import or export",
         default="Export")
 
-    export_selected_only = BoolProperty(
+    export_selected_only: BoolProperty(
         name="Selected Only",
         description="Export selected nodes only",
         default=False)
@@ -47,7 +47,3 @@ def register():
 def unregister():
     del bpy.types.NodeTree.io_panel_properties
     unregister_class(SvIOPanelProperties)
-
-
-# if __name__ == '__main__':
-#    register()

@@ -178,12 +178,12 @@ class SvProfileDump(bpy.types.Operator):
             ("nfl", "Name, file, line", "Function name, file name, line number", 3)
         ]
 
-    sort = EnumProperty(name = "Sort by",
+    sort: EnumProperty(name = "Sort by",
             description = "How to sort dumped statistics",
             items = sort_methods,
             default = "tottime")
 
-    strip_dirs = BoolProperty(name = "Strip directories",
+    strip_dirs: BoolProperty(name = "Strip directories",
             description = "Strip directory path part of file name in the output",
             default = True)
 
@@ -201,7 +201,7 @@ class SvProfileSave(bpy.types.Operator):
     bl_label = "Dump profiling statistics to binary file"
     bl_options = {'INTERNAL'}
 
-    filepath = bpy.props.StringProperty(subtype="FILE_PATH")
+    filepath: bpy.props.StringProperty(subtype="FILE_PATH")
 
     def execute(self, context):
         save_stats(self.filepath)
@@ -232,4 +232,3 @@ def register():
 def unregister():
     for class_name in reversed(classes):
         bpy.utils.unregister_class(class_name)
-

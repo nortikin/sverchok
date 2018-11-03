@@ -103,7 +103,7 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         name="Orientation axis", description="Which axis of donor objects to align with recipient edge",
         default="X", items=axes, update=orient_axis_change)
 
-    up_axis = EnumProperty(
+    up_axis: EnumProperty(
         name="Up axis", description="Which axis of donor objects should look up",
         default='Z', items=axes, update=updateNode)
 

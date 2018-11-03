@@ -172,7 +172,7 @@ class SvNavigateCategory(bpy.types.Operator):
     bl_idname = "sv.navigate_category"
     bl_description = "Navigate Prev/Next category"
 
-    direction = IntProperty(default=0)
+    direction: IntProperty(default=0)
 
     def execute(self, context):
         displayProps = context.space_data.node_tree.displayNodesProps
@@ -323,27 +323,27 @@ class SvDisplayNodePanelProperties(bpy.types.PropertyGroup):
         self.create_nodes(context)
         self.arrange_nodes(context)
 
-    constrain_layout = EnumProperty(
+    constrain_layout: EnumProperty(
         name="Constrain Layout", default="ASPECT",
         items=constrainLayoutItems, update=arrange_nodes)
 
-    category = EnumProperty(
+    category: EnumProperty(
         name="Category",
         items=category_items, update=update_category)
 
-    grid_width = IntProperty(
+    grid_width: IntProperty(
         name="Grid Width",
         default=700, update=arrange_nodes)
 
-    grid_height = IntProperty(
+    grid_height: IntProperty(
         name="Grid Height",
         default=500, update=arrange_nodes)
 
-    grid_x_space = IntProperty(
+    grid_x_space: IntProperty(
         name="Grid X spacing",
         default=20, update=arrange_nodes)
 
-    grid_y_space = IntProperty(
+    grid_y_space: IntProperty(
         name="Grid Y spacing",
         default=20, update=arrange_nodes)
 

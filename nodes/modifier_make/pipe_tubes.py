@@ -39,7 +39,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     close: BoolProperty(
         name='close', description='close ends', default=True, update=updateNode)
     
-    cup_fill = BoolProperty(
+    cup_fill: BoolProperty(
         name='close', description='close ends', default=True, update=updateNode)
 
 

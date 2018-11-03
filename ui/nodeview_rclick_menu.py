@@ -120,7 +120,7 @@ class SvGenericDeligationOperator(bpy.types.Operator):
     bl_idname = "node.sv_deligate_operator"
     bl_label = "Execute generic code"
 
-    fn = bpy.props.StringProperty(default='')
+    fn: bpy.props.StringProperty(default='')
 
     def execute(self, context):
         tree = context.space_data.edit_tree

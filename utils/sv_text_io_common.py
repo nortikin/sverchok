@@ -70,7 +70,7 @@ class SvTextIOMK2Op(bpy.types.Operator):
     bl_label = "text IO operator cb"
     bl_options = {'REGISTER', 'UNDO'}
 
-    fn_name = bpy.props.StringProperty(name='tree name')
+    fn_name: bpy.props.StringProperty(name='tree name')
 
     def execute(self, context):
         n = context.node

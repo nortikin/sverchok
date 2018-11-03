@@ -48,7 +48,7 @@ class SverchokBakeAll(bpy.types.Operator):
     bl_label = "Sverchok bake all"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_tree_name = StringProperty(name='tree_name', default='')
+    node_tree_name: StringProperty(name='tree_name', default='')
 
     @classmethod
     def poll(cls, context):
@@ -73,7 +73,7 @@ class SverchokUpdateCurrent(bpy.types.Operator):
     bl_label = "Sverchok update all"
     bl_options = {'REGISTER', 'UNDO'}
 
-    node_group = StringProperty(default="")
+    node_group: StringProperty(default="")
 
     def execute(self, context):
         ng = bpy.data.node_groups.get(self.node_group)
@@ -119,7 +119,7 @@ class SvSwitchToLayout (bpy.types.Operator):
     bl_label = "switch layouts"
     bl_options = {'REGISTER', 'UNDO'}
 
-    layout_name = bpy.props.StringProperty(
+    layout_name: bpy.props.StringProperty(
         default='', name='layout_name',
         description='layout name to change layout by button')
 
@@ -148,7 +148,7 @@ class SvClearNodesLayouts (bpy.types.Operator):
     bl_label = "del layouts"
     bl_options = {'REGISTER', 'UNDO'}
 
-    do_clear = bpy.props.BoolProperty(
+    do_clear: bpy.props.BoolProperty(
         default=False, name='even used',
         description='remove even if layout has one user (not fake user)')
 
@@ -177,8 +177,8 @@ class SvClearNodesLayouts (bpy.types.Operator):
 
 
 class Sv3dPropItem(bpy.types.PropertyGroup):
-    node_name = StringProperty()
-    prop_name = StringProperty()
+    node_name: StringProperty()
+    prop_name: StringProperty()
 
 
 class SvLayoutScanProperties(bpy.types.Operator):
@@ -281,8 +281,3 @@ def unregister():
 
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
-
-
-
-if __name__ == '__main__':
-    register()

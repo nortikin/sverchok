@@ -60,10 +60,10 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
     bl_label = "start n stop obj updating"
 
     _timer = None
-    mode = StringProperty(default='')
-    node_name = StringProperty(default='')
-    node_group = StringProperty(default='')
-    speed = FloatProperty(default=1 / 13)
+    mode: StringProperty(default='')
+    node_name: StringProperty(default='')
+    node_group: StringProperty(default='')
+    speed: FloatProperty(default=1 / 13)
 
     def modal(self, context, event):
 
@@ -249,7 +249,7 @@ class Sv3DPanel(bpy.types.Panel):
                             colo.prop(node, max_name, text='', slider=True, emboss=False)
 
                         elif node.bl_idname in {'SvColorInputNode'}:
-                            col.label(tex)
+                            col.label(text=tex)
                             col.template_color_picker(node, ver, value_slider=True)
                             col.prop(node, ver, text='')
 
@@ -415,6 +415,3 @@ def unregister():
 
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
-
-if __name__ == '__main__':
-    register()

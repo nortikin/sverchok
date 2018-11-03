@@ -88,10 +88,8 @@ class Sv3DviewAlign(bpy.types.Operator):
     """ Zoom to viewer output """
     bl_idname = "node.view3d_align_from"
     bl_label = "Align 3dview to Viewer"
-    # bl_options = {'REGISTER', 'UNDO'}
 
-    fn_name = bpy.props.StringProperty(default='')
-    # obj_type = bpy.props.StringProperty(default='MESH')
+    fn_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
 
@@ -122,7 +120,3 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(cls) for cls in classes[::-1]]
-
-
-# if __name__ == '__main__':
-#    register()

@@ -155,10 +155,10 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     bl_icon = 'NONE'
 
     # unique and non chaning identifier set upon first creation
-    cls_bl_idname = StringProperty()
+    cls_bl_idname: StringProperty()
 
-    float_props = CollectionProperty(type=SvFloatPropertySettingsGroup)
-    int_props = CollectionProperty(type=SvIntPropertySettingsGroup)
+    float_props: CollectionProperty(type=SvFloatPropertySettingsGroup)
+    int_props: CollectionProperty(type=SvIntPropertySettingsGroup)
 
     def get_current_as_default(self, prop_dict, node, prop_name):
         prop_dict['default'] = getattr(node, prop_name)
@@ -440,17 +440,17 @@ class SvGroupNodeExp:
     """
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    vectorize = BoolProperty(
+    vectorize: BoolProperty(
         name="Vectorize", description="Vectorize using monad",
         default=False, update=updateNode)
 
-    split = BoolProperty(
+    split: BoolProperty(
         name="Split", description="Split inputs into lenght 1",
         default=False, update=updateNode)
 
-    loop_me = BoolProperty(default=False, update=updateNode)
-    loops_max = IntProperty(default=5, description='maximum')
-    loops = IntProperty(
+    loop_me: BoolProperty(default=False, update=updateNode)
+    loops_max: IntProperty(default=5, description='maximum')
+    loops: IntProperty(
         name='loop n times', default=0,
         description='change max value in sidebar with variable named loops_max',
         get=lambda s: uget(s, 'loops'),

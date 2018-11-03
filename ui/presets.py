@@ -159,8 +159,8 @@ class SvPreset(object):
                 bl_label = "Add {} preset".format(self.name)
                 bl_options = {'REGISTER', 'UNDO'}
 
-                cursor_x = bpy.props.IntProperty()
-                cursor_y = bpy.props.IntProperty()
+                cursor_x: bpy.props.IntProperty()
+                cursor_y: bpy.props.IntProperty()
 
                 @classmethod
                 def poll(cls, context):
@@ -214,10 +214,8 @@ class SvSaveSelected(bpy.types.Operator):
     bl_label = "Save selected tree part"
     bl_options = {'INTERNAL'}
 
-    preset_name = StringProperty(name = "Name",
-            description = "Preset name")
-
-    id_tree = StringProperty()
+    preset_name: StringProperty(name="Name", description="Preset name")
+    id_tree: StringProperty()
 
     def execute(self, context):
         if not self.id_tree:
@@ -269,21 +267,13 @@ class SvPresetProps(bpy.types.Operator):
     bl_label = "Preset properties"
     bl_options = {'INTERNAL'}
 
-    old_name = StringProperty(name = "Old name",
-            description = "Preset name")
+    old_name: StringProperty(name="Old name", description="Preset name")
+    new_name: StringProperty(name="Name", description="New preset name")
 
-    new_name = StringProperty(name = "Name",
-            description = "New preset name")
-
-    description = StringProperty(name = "Description",
-            description = "Preset description")
-
-    author = StringProperty(name = "Author",
-            description = "Preset author name")
-
-    license = StringProperty(name = "License",
-            description = "Preset license (short name)",
-            default = "CC-BY-SA")
+    description: StringProperty(name="Description", description="Preset description")
+    author: StringProperty(name="Author", description="Preset author name")
+    license: StringProperty(
+        name="License", description="Preset license (short name)", default="CC-BY-SA")
 
     def draw(self, context):
         layout = self.layout
@@ -350,8 +340,7 @@ class SvDeletePreset(bpy.types.Operator):
     bl_label = "Do you really want to delete this preset? This action cannot be undone."
     bl_options = {'INTERNAL'}
 
-    preset_name = StringProperty(name = "Preset name",
-            description = "Preset name")
+    preset_name: StringProperty(name="Preset name", description="Preset name")
 
     def execute(self, context):
         if not self.preset_name:
@@ -381,8 +370,7 @@ class SvPresetToGist(bpy.types.Operator):
     bl_label = "Export preset to Gist"
     bl_options = {'INTERNAL'}
 
-    preset_name = StringProperty(name = "Preset name",
-            description = "Preset name")
+    preset_name: StringProperty(name="Preset name", description="Preset name")
 
     def execute(self, context):
         if not self.preset_name:
@@ -421,17 +409,14 @@ class SvPresetToFile(bpy.types.Operator):
     bl_label = "Export preset to file"
     bl_options = {'INTERNAL'}
 
-    preset_name = StringProperty(name = "Preset name",
-            description = "Preset name")
+    filter_glob: StringProperty(default="*.json", options={'HIDDEN'})
+    preset_name: StringProperty(name="Preset name", description="Preset name")
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Path where preset should be saved to",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    filter_glob = StringProperty(
-        default="*.json",
-        options={'HIDDEN'})
 
     def execute(self, context):
         if not self.preset_name:
@@ -468,17 +453,14 @@ class SvPresetFromFile(bpy.types.Operator):
     bl_label = "Import preset from file"
     bl_options = {'INTERNAL'}
 
-    preset_name = StringProperty(name = "Preset name",
-            description = "Preset name")
+    preset_name: StringProperty(name="Preset name", description="Preset name")
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Path where preset should be saved to",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    filter_glob = StringProperty(
-        default="*.json",
-        options={'HIDDEN'})
+    filter_glob: StringProperty(default="*.json", options={'HIDDEN'})
 
     def execute(self, context):
         if not self.preset_name:
@@ -515,11 +497,11 @@ class SvPresetFromGist(bpy.types.Operator):
     bl_label = "Import preset from Gist"
     bl_options = {'INTERNAL'}
 
-    gist_id = StringProperty(name = "Gist ID",
-            description = "Gist identifier (or full URL)")
+    gist_id: StringProperty(
+        name="Gist ID", description="Gist identifier (or full URL)")
 
-    preset_name = StringProperty(name = "Preset name",
-            description = "Preset name")
+    preset_name: StringProperty(
+        name="Preset name", description="Preset name")
 
     def execute(self, context):
         if not self.preset_name:
@@ -637,21 +619,21 @@ class SvUserPresetsPanel(bpy.types.Panel):
                 layout.label("Use the `Save Preset' button.")
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
-    manage_mode = BoolProperty(name = "Manage Presets",
-            description = "Presets management mode",
-            default = False)
+    manage_mode: BoolProperty(
+        name="Manage Presets",
+        description="Presets management mode", default=False)
 
 classes = [
-        SvSaveSelected,
-        SvUserPresetsPanelProps,
-        SvPresetFromFile,
-        SvPresetFromGist,
-        SvPresetProps,
-        SvDeletePreset,
-        SvPresetToGist,
-        SvPresetToFile,
-        SvUserPresetsPanel
-    ]
+    SvSaveSelected,
+    SvUserPresetsPanelProps,
+    SvPresetFromFile,
+    SvPresetFromGist,
+    SvPresetProps,
+    SvDeletePreset,
+    SvPresetToGist,
+    SvPresetToFile,
+    SvUserPresetsPanel
+]
 
 def register():
     for clazz in classes:
@@ -671,4 +653,3 @@ def unregister():
 
     for name in preset_add_operators:
         bpy.utils.unregister_class(preset_add_operators[name])
-

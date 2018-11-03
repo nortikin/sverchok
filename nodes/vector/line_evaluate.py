@@ -29,7 +29,7 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Evaluate'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    factor_ = FloatProperty(
+    factor_: FloatProperty(
         name='factor', description='Step length', default=0.5, min=0.0, max=1.0, update=updateNode)
 
     def sv_init(self, context):

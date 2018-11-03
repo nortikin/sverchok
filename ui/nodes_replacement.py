@@ -25,8 +25,8 @@ class SvSocketReplacement(bpy.types.PropertyGroup):
     """
     Utility class for mapping old socket name to new socket name.
     """
-    old_name = bpy.props.StringProperty(name="Name of socket in the old node")
-    new_name = bpy.props.StringProperty(name="Name of socket in the new node")
+    old_name: bpy.props.StringProperty(name="Name of socket in the old node")
+    new_name: bpy.props.StringProperty(name="Name of socket in the new node")
 
 def set_inputs_mapping(operator, mapping):
     operator.inputs_mapping.clear()
@@ -60,12 +60,14 @@ class SvReplaceNode(bpy.types.Operator):
     bl_label = "Replace selected node with another"
     bl_options = {'INTERNAL'}
 
-    old_node_name = bpy.props.StringProperty(name="Old node name")
-    new_bl_idname = bpy.props.StringProperty(name="New node bl_idname")
-    inputs_mapping = bpy.props.CollectionProperty(name="Input sockets names mapping",
-            type = SvSocketReplacement)
-    outputs_mapping = bpy.props.CollectionProperty(name="Output sockets names mapping",
-            type = SvSocketReplacement)
+    old_node_name: bpy.props.StringProperty(name="Old node name")
+    new_bl_idname: bpy.props.StringProperty(name="New node bl_idname")
+
+    inputs_mapping: bpy.props.CollectionProperty(
+        name="Input sockets names mapping", type=SvSocketReplacement)
+
+    outputs_mapping: bpy.props.CollectionProperty(
+        name="Output sockets names mapping", type=SvSocketReplacement)
 
     def get_new_input_name(self, old_name):
         for item in self.inputs_mapping:
@@ -152,4 +154,3 @@ def register():
 def unregister():
     for cls in classes:
         bpy.utils.unregister_class(cls)
-
