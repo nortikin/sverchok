@@ -48,9 +48,16 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector polar output'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    func_dict = {'z': cylindrical, 'theta': spherical}
+    
     coord_modes = [
         ("z", "Cylinder", "Use cylindrical coordinates", 1),
         ("theta",  "Sphere", "Use spherical coordinates", 2),
+    ]
+
+    angle_modes = [
+        ("radians", "Radian", "Use angles in radians", 1),
+        ("degrees", "Degree", "Use angles in degrees", 2)
     ]
 
     def coordinate_changed(self, context):
@@ -63,16 +70,8 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             raise Exception ("Unexpected mode - {}".format(mode_name))
 
-    coordinates = EnumProperty(items=coord_modes, default='z', update=coordinate_changed)
-
-    func_dict = {'z': cylindrical, 'theta': spherical}
-
-    angle_modes = [
-            ("radians", "Radian", "Use angles in radians", 1),
-            ("degrees", "Degree", "Use angles in degrees", 2)
-        ]
-
-    angles_mode = EnumProperty(items=angle_modes, default="radians", update=updateNode)
+    coordinates: EnumProperty(items=coord_modes, default='z', update=coordinate_changed)
+    angles_mode: EnumProperty(items=angle_modes, default="radians", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new("VerticesSocket", "Vectors")
@@ -120,5 +119,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(VectorPolarOutNode)
-
-

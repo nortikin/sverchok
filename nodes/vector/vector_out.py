@@ -29,10 +29,10 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_COMBINE_OUT'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vectors", "Vectors")
-        self.outputs.new('StringsSocket', "X", "X")
-        self.outputs.new('StringsSocket', "Y", "Y")
-        self.outputs.new('StringsSocket', "Z", "Z")
+        self.inputs.new('VerticesSocket', "Vectors")
+        self.outputs.new('StringsSocket', "X")
+        self.outputs.new('StringsSocket', "Y")
+        self.outputs.new('StringsSocket', "Z")
 
     def process(self):
         # inputs

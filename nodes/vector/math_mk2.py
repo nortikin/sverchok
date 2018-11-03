@@ -99,16 +99,16 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.update_sockets()
         updateNode(self, context)
 
-    current_op = EnumProperty(
+    current_op: EnumProperty(
         items=mode_items,
         name="Function",
         description="Function choice",
         default="CROSS",
         update=mode_change)
 
-    amount = FloatProperty(default=1.0, name='amount', update=updateNode)
-    v3_input_0 = FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
-    v3_input_1 = FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
+    amount: FloatProperty(default=1.0, name='amount', update=updateNode)
+    v3_input_0: FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
+    v3_input_1: FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
 
 
     def draw_label(self):

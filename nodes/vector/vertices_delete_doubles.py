@@ -29,8 +29,8 @@ class VertsDelDoublesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "vers", "vers")
-        self.outputs.new('VerticesSocket', "vers", "vers")
+        self.inputs.new('VerticesSocket', "vers")
+        self.outputs.new('VerticesSocket', "vers")
 
     def process(self):
         vers = self.inputs['vers'].sv_get()

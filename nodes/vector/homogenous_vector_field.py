@@ -32,24 +32,26 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvHomogenousVectorField'
     bl_label = 'Vector P Field'
 
-    xdim__ = IntProperty(default=2, min=1, update=updateNode)
-    ydim__ = IntProperty(default=3, min=1, update=updateNode)
-    zdim__ = IntProperty(default=4, min=1, update=updateNode)
-    sizex__ = FloatProperty(default=1.0, min=.01, update=updateNode)
-    sizey__ = FloatProperty(default=1.0, min=.01, update=updateNode)
-    sizez__ = FloatProperty(default=1.0, min=.01, update=updateNode)
-    seed = IntProperty(default=0, min=0, update=updateNode)
+    xdim__: IntProperty(default=2, min=1, update=updateNode)
+    ydim__: IntProperty(default=3, min=1, update=updateNode)
+    zdim__: IntProperty(default=4, min=1, update=updateNode)
+    sizex__: FloatProperty(default=1.0, min=.01, update=updateNode)
+    sizey__: FloatProperty(default=1.0, min=.01, update=updateNode)
+    sizez__: FloatProperty(default=1.0, min=.01, update=updateNode)
+    seed: IntProperty(default=0, min=0, update=updateNode)
 
-    randomize_factor = FloatProperty(name='randomize', default=0.0, min=0.0, update=updateNode)
-    rm_doubles_distance = FloatProperty(name='rm distance', default=0.0, update=updateNode)
+    randomize_factor: FloatProperty(name='randomize', default=0.0, min=0.0, update=updateNode)
+    rm_doubles_distance: FloatProperty(name='rm distance', default=0.0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "xdim").prop_name='xdim__'
-        self.inputs.new("StringsSocket", "ydim").prop_name='ydim__'
-        self.inputs.new("StringsSocket", "zdim").prop_name='zdim__'
-        self.inputs.new("StringsSocket", "size x").prop_name='sizex__'
-        self.inputs.new("StringsSocket", "size y").prop_name='sizey__'
-        self.inputs.new("StringsSocket", "size z").prop_name='sizez__'
+        snew = self.inputs.new
+        snew("StringsSocket", "xdim").prop_name='xdim__'
+        snew("StringsSocket", "ydim").prop_name='ydim__'
+        snew("StringsSocket", "zdim").prop_name='zdim__'
+        snew("StringsSocket", "size x").prop_name='sizex__'
+        snew("StringsSocket", "size y").prop_name='sizey__'
+        snew("StringsSocket", "size z").prop_name='sizez__'
+        
         self.outputs.new("VerticesSocket", "verts")
 
     def draw_buttons(self, context, layout):
@@ -67,7 +69,6 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
             hs0 = size[0] / 2
             hs1 = size[1] / 2
             hs2 = size[2] / 2
-
 
             x_ = np.linspace(-hs0, hs0, xdim)
             y_ = np.linspace(-hs1, hs1, ydim)

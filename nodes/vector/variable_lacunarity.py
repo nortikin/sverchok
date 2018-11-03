@@ -56,22 +56,20 @@ class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Variable Lacunarity'
     bl_icon = 'FORCE_TURBULENCE'
 
-    noise_type1 = EnumProperty(
+    noise_type1: EnumProperty(
         items=avail_noise,
         default='STDPERLIN',
         description="Noise type",
         update=updateNode)
 
-    noise_type2 = EnumProperty(
+    noise_type2: EnumProperty(
         items=avail_noise,
         default='STDPERLIN',
         description="Noise type",
         update=updateNode)
 
-    distortion = FloatProperty(
-        default=0.2, name="Distortion", update=updateNode)
-
-    seed = IntProperty(default=0, name='Seed', update=updateNode)
+    distortion: FloatProperty(default=0.2, name="Distortion", update=updateNode)
+    seed: IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')

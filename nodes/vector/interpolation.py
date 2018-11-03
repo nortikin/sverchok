@@ -102,15 +102,11 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    t_in = FloatProperty(name="t",
-                         default=.5, min=0, max=1, precision=5,
-                         update=updateNode)
+    t_in: FloatProperty(name="t", default=.5, min=0, max=1, precision=5, update=updateNode)
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
-    mode = EnumProperty(name='Mode',
-                        default="LIN", items=modes,
-                        update=updateNode)
+    mode: EnumProperty(name='Mode', default="LIN", items=modes, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')

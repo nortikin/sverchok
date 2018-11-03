@@ -33,16 +33,15 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Color Input"
     bl_icon = "COLOR"
 
-    use_alpha = BoolProperty(name = "Use Alpha", default=False, update=updateNode)
+    use_alpha: BoolProperty(name="Use Alpha", default=False, update=updateNode)
 
-    color_data = FloatVectorProperty(name = "Color",
-            description = "Color",
-            size = 4, min=0.0, max=1.0, subtype='COLOR',
-            update=updateNode)
+    color_data: FloatVectorProperty(
+        name="Color", description="Color", size=4,
+        min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
-    to3d = BoolProperty(name = "To 3D Panel",
-            description = "Show this node in 3D panel",
-            default=True, update=updateNode)
+    to3d: BoolProperty(
+        name = "To 3D Panel", description="Show this node in 3D panel",
+        default=True, update=updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvColorSocket", "Color")
@@ -70,4 +69,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvColorInputNode)
-

@@ -38,22 +38,21 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Lerp'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    factor_ = FloatProperty(
+    factor_: FloatProperty(
         name='factor', description='Step length',
-        default=0.5, soft_min=0.0, soft_max=1.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0.5, soft_min=0.0, soft_max=1.0, update=updateNode)
 
-    process_mode = bpy.props.EnumProperty(
+    process_mode: bpy.props.EnumProperty(
         items=[(t, t, '', idx) for idx, t in enumerate(["Lerp", "Evaluate"])],
         description="choose LERP or Evaluate",
         default="Lerp", update=updateNode
     )
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
+        self.inputs.new('StringsSocket', "Factor").prop_name = 'factor_'
         self.inputs.new('VerticesSocket', "Vertices A")
         self.inputs.new('VerticesSocket', "Vertices B")
-        self.outputs.new('VerticesSocket', "EvPoint", "EvPoint")
+        self.outputs.new('VerticesSocket', "EvPoint")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'process_mode', text='Evaluate', expand=True)

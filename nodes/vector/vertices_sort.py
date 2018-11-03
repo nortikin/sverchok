@@ -167,7 +167,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'DIST':
             while len(self.inputs) > 2:
                 self.inputs.remove(self.inputs[-1])
-            self.inputs.new('VerticesSocket', 'Base Point', 'Base Point')
+            self.inputs.new('VerticesSocket', 'Base Point')
 
         if self.mode == 'AXIS':
             while len(self.inputs) > 2:
@@ -181,7 +181,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'USER':
             while len(self.inputs) > 2:
                 self.inputs.remove(self.inputs[-1])
-            self.inputs.new('StringsSocket', 'Index Data', 'Index Data')
+            self.inputs.new('StringsSocket', 'Index Data')
 
         updateNode(self, [])
 
@@ -191,14 +191,10 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
              ("CONNEX", "Connect", "Sort by connections",   4),
              ("USER",   "User", "User defined", 10)]
 
-    mode = EnumProperty(default='XYZ', items=modes,
-                        name='Mode',
-                        description='Sort Mode',
-                        update=mode_change)
-    limit_mode = BoolProperty(default=False,
-                        name='Search for limits',
-                        description='Find discontinuities first',
-                        update=updateNode)
+    mode: EnumProperty(
+        default='XYZ', items=modes, name='Mode', description='Sort Mode', update=mode_change)
+    limit_mode: BoolProperty(
+        default=False, name='Search for limits', description='Find discontinuities first', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=False)
@@ -208,8 +204,8 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "limit_mode")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'PolyEdge')
 
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'PolyEdge')

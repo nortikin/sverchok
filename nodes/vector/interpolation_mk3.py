@@ -31,28 +31,22 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Interpolation mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    t_in = FloatProperty(name="t",
-                         default=.5, min=0, max=1, precision=5,
-                         update=updateNode)
-
-    h = FloatProperty(default=.001, precision=5, update=updateNode)
+    t_in: FloatProperty(name="t", default=.5, min=0, max=1, precision=5, update=updateNode)
+    h: FloatProperty(default=.001, precision=5, update=updateNode)
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
-    mode = EnumProperty(name='Mode',
-                        default="LIN", items=modes,
-                        update=updateNode)
+    mode: EnumProperty(name='Mode', default="LIN", items=modes, update=updateNode)
 
     knot_modes = [('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
                   ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
                   ('POINTS', 'Points', "Points based", 2),
                   ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 
-    knot_mode = EnumProperty(name='Knot Mode',
-                             default="DISTANCE", items=knot_modes,
-                             update=updateNode)
+    knot_mode: EnumProperty(
+        name='Knot Mode', default="DISTANCE", items=knot_modes, update=updateNode)
 
-    is_cyclic = BoolProperty(name="Is Cyclic", default=False, update=updateNode)
+    is_cyclic: BoolProperty(name="Is Cyclic", default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')

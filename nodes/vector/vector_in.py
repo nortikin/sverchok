@@ -29,8 +29,8 @@ class SvVectorFromCursor(bpy.types.Operator):
     bl_label = "Vector from 3D Cursor"
     bl_options = {'REGISTER'}
 
-    nodename = StringProperty(name='nodename')
-    treename = StringProperty(name='treename')
+    nodename: StringProperty(name='nodename')
+    treename: StringProperty(name='treename')
 
     def execute(self, context):
         cursor = bpy.context.scene.cursor_location
@@ -46,17 +46,11 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector in'
     sv_icon = 'SV_COMBINE_IN'
 
-    x_ = FloatProperty(name='X', description='X',
-                       default=0.0, precision=3,
-                       update=updateNode)
-    y_ = FloatProperty(name='Y', description='Y',
-                       default=0.0, precision=3,
-                       update=updateNode)
-    z_ = FloatProperty(name='Z', description='Z',
-                       default=0.0, precision=3,
-                       update=updateNode)
+    x_: FloatProperty(name='X', description='X', default=0.0, precision=3, update=updateNode)
+    y_: FloatProperty(name='Y', description='Y', default=0.0, precision=3, update=updateNode)
+    z_: FloatProperty(name='Z', description='Z', default=0.0, precision=3, update=updateNode)
     
-    advanced_mode = BoolProperty(name='deep copy', update=updateNode)
+    advanced_mode: BoolProperty(name='deep copy', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x_'
@@ -111,4 +105,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(GenVectorsNode)
     bpy.utils.unregister_class(SvVectorFromCursor)
-
