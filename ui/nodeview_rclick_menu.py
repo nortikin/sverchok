@@ -148,7 +148,13 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         tree = context.space_data.edit_tree
-        nodes = tree.nodes
+        
+        try:
+            nodes = tree.nodes
+        except:
+            layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
+            return
+
         node = valid_active_node(nodes)
 
         if node:
