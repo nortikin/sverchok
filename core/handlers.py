@@ -8,7 +8,8 @@ from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
 
 from sverchok.ui import (
-    color_def
+    color_def,
+    nodeview_bgl_viewer_draw_mk2
 )
 
 
@@ -81,7 +82,7 @@ def sv_clean(scene):
     # viewer_draw_mk2.callback_disable_all()
     # index_viewer_draw.callback_disable_all()
     # nodeview_bgl_viewer_draw.callback_disable_all()
-    # nodeview_bgl_viewer_draw_mk2.callback_disable_all()
+    nodeview_bgl_viewer_draw_mk2.callback_disable_all()
     # bgl_callback_3dview.callback_disable_all()
 
     data_structure.sv_Vars = {}
@@ -123,10 +124,8 @@ def sv_post_load(scene):
             color_def.apply_theme()
     '''
     unsafe_nodes = {
-        'SvScriptNode',
         'FormulaNode',
         'Formula2Node',
-        'EvalKnievalNode',
     }
 
     unsafe = False
