@@ -130,7 +130,7 @@ class Sv3DPanel(bpy.types.Panel):
 
     def draw(self, context):
         layout = self.layout
-        little_width = 0.12
+        little_width = 0.32
 
         addon = context.user_preferences.addons.get(sverchok.__name__)
         if addon.preferences.enable_live_objin:
@@ -316,7 +316,9 @@ class SverchokToolsMenu(bpy.types.Panel):
         op = col.operator("node.sverchok_update_current", text=u)
         op.node_group = ng_name
         box = layout.box()
-        little_width = 0.12
+
+        little_width = 0.32
+        
         col = box.column(align=True)
         row = col.row(align=True)
         row.label(text='Layout')
@@ -362,7 +364,6 @@ class SverchokToolsMenu(bpy.types.Panel):
 
                 split = row.column(align=True)
                 split.scale_x = little_width
-                # animate_icon = ('UN' if tree.sv_animate else '') + 'LOCKED'
                 split.prop(tree, 'sv_animate', icon='ANIM', text=' ')
 
                 split = row.column(align=True)
