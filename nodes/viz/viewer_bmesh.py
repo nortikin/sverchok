@@ -218,8 +218,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def get_geometry_from_sockets(self):
 
         def get(socket_name):
-            data = self.inputs[socket_name].sv_get(default=[]) # , deepcopy=False) # can't because of fulllist.
-            return dataCorrect(data)
+            data = self.inputs[socket_name].sv_get(default=[])
+            return data
 
         mverts = get('vertices')
         medges = get('edges')
