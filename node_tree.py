@@ -146,7 +146,7 @@ class SvSocketCommon:
             layout.prop(prop_origin, prop_name)
         else:
             if self.use_expander:
-                split = layout.split(percentage=.2, align=True)
+                split = layout.split(factor=.2, align=True)
                 c1 = split.column(align=True)
                 c2 = split.column(align=True)
 
@@ -535,7 +535,7 @@ class SvNodeTreeCommon(object):
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
-    bl_label = 'Sverchok Node Tree'
+    bl_label = 'Sverchok Nodes'
     bl_icon = 'RNA'
 
     def turn_off_ng(self, context):
