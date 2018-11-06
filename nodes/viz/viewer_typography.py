@@ -206,7 +206,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop_search(self, 'fontname', bpy.data, 'fonts', text='', icon='FONT_DATA')
-        row.operator(shf, text='', icon='ZOOMIN')
+        row.operator(shf, text='', icon='ZOOM_IN')
 
         box = col.box()
         if box:

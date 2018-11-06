@@ -284,50 +284,34 @@ class SverchokToolsMenu(bpy.types.Panel):
         except:
             return False
 
-    def draw(self, context):
-
-        ng_name = context.space_data.node_tree.name
-        layout = self.layout
-        # layout.scale_y=1.1
-        layout.active = True
-
-        addon = context.user_preferences.addons.get(sverchok.__name__)
+    def draw_profiling_info_if_needed(self, layout, addon):
         if addon.preferences.profile_mode != "NONE":
             profile_col = layout.column(align=True)
+
             if profile.is_currently_enabled:
                 profile_col.operator("node.sverchok_profile_toggle", text="Stop profiling", icon="CANCEL")
             else:
                 profile_col.operator("node.sverchok_profile_toggle", text="Start profiling", icon="TIME")
+
             if profile.have_gathered_stats():
                 row = profile_col.row(align=True)
                 row.operator("node.sverchok_profile_dump", text="Dump data", icon="TEXT")
                 row.operator("node.sverchok_profile_save", text="Save data", icon="SAVE_AS")
                 profile_col.operator("node.sverchok_profile_reset", text="Reset data", icon="X")
 
-        row = layout.row(align=True)
-        col = row.column(align=True)
-        col.scale_y = 3.0
-        col.scale_x = 0.5
-        u = "Update all"
-        col.operator("node.sverchok_update_all", text=u)
-        col = row.column(align=True)
-        col.scale_y = 3.0
-        u = "Update {0}".format(ng_name)
-        op = col.operator("node.sverchok_update_current", text=u)
-        op.node_group = ng_name
-        box = layout.box()
-
-        little_width = 0.32
-        
+    def draw_interaction_template(self, layout):
         col = box.column(align=True)
         row = col.row(align=True)
         row.label(text='Layout')
+
         col0 = row.column(align=True)
         col0.scale_x = little_width
         col0.label(text='B')
+
         col1 = row.column(align=True)
         col1.scale_x = little_width
         col1.label(icon='RESTRICT_VIEW_OFF', text=' ')
+
         col2 = row.column(align=True)
         col2.scale_x = little_width
         col2.label(icon='ANIM', text=' ')
@@ -339,6 +323,62 @@ class SverchokToolsMenu(bpy.types.Panel):
         col3 = row.column(align=True)
         col3.scale_x = little_width
         col3.label(text='F')
+
+
+    def draw(self, context):
+
+        ng_name = context.space_data.node_tree.name
+        layout = self.layout
+        layout.active = True
+
+        little_width = 0.32
+
+        addon = context.user_preferences.addons.get(sverchok.__name__)
+
+        self.draw_profiling_info_if_needed(layout, addon)
+
+        row = layout.row(align=True)
+        col = row.column(align=True)
+        col.scale_y = 3.0
+        col.scale_x = 0.5
+
+        # two oversized buttons
+
+        col.operator("node.sverchok_update_all", text="Update all")
+        col = row.column(align=True)
+        col.scale_y = 3.0
+
+        op = col.operator("node.sverchok_update_current", text="Update {0}".format(ng_name))
+        op.node_group = ng_name
+
+        # end two oversized buttons
+        
+        box = layout.box()
+
+        col = box.column(align=True)
+        row = col.row(align=True)
+        row.label(text='Layout')
+
+        col0 = row.column(align=True)
+        col0.scale_x = little_width
+        col0.label(text='B')
+
+        col1 = row.column(align=True)
+        col1.scale_x = little_width
+        col1.label(icon='RESTRICT_VIEW_OFF', text=' ')
+
+        col2 = row.column(align=True)
+        col2.scale_x = little_width
+        col2.label(icon='ANIM', text=' ')
+
+        col3 = row.column(align=True)
+        col3.scale_x = little_width
+        col3.label(text='P')
+
+        col3 = row.column(align=True)
+        col3.scale_x = little_width
+        col3.label(text='F')
+
 
         for name, tree in bpy.data.node_groups.items():
             if tree.bl_idname == 'SverchCustomTreeType':
