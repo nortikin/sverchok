@@ -109,7 +109,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
         layout.separator()
         layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
-        layout.menu("NODEVIEW_MT_AddTransforms", **icon('MANIPUL'))
+        layout.menu("NODEVIEW_MT_AddTransforms", **icon('ORIENTATION_LOCAL'))
         layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
         layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
         layout.separator()
@@ -139,7 +139,7 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout_draw_categories(self.layout, node_cats[self.bl_label])
-        layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUG'))
+        layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
