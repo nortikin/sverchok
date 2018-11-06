@@ -168,9 +168,6 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             if hasattr(node, "rclick_menu"):
                 node.rclick_menu(context, layout)
 
-        else:
-            layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
-
         if node and len(node.outputs):
             layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
@@ -187,6 +184,8 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         if node and hasattr(node, 'monad'):
             layout.operator("node.sv_monad_make_unique", icon="RNA_ADD").use_transform=True
 
+        layout.separator()
+        layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
 
 def register():
     bpy.utils.register_class(SvGenericDeligationOperator)

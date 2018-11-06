@@ -222,7 +222,7 @@ class SverchokPreferences(AddonPreferences):
         if self.selected_tab == "General":
 
             col = layout.row().column()
-            col_split = col.split(0.5)
+            col_split = col.split(factor=0.5)
             col1 = col_split.column()
             col1.label(text="UI:")
             col1.prop(self, "show_icons")
@@ -264,15 +264,15 @@ class SverchokPreferences(AddonPreferences):
 
             row = layout.row()
             col = row.column(align=True)
-            row_sub1 = col.row().split(0.5)
+            row_sub1 = col.row().split(factor=0.5)
             box_sub1 = row_sub1.box()
             box_sub1_col = box_sub1.column(align=True)
-            box_sub1_col.label('stethoscope mk2 settings')
+            box_sub1_col.label(text='stethoscope mk2 settings')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
             box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
 
             col3 = row_sub1.split().column()
-            col3.label('Location of custom defaults')
+            col3.label(text='Location of custom defaults')
             col3.prop(self, 'defaults_location', text='')
 
 
@@ -280,8 +280,8 @@ class SverchokPreferences(AddonPreferences):
 
             row = layout.row()
             col = row.column(align=True)
-            split = col.row().split(0.66)
-            split2 = col.row().split(0.66)
+            split = col.row().split(factor=0.66)
+            split2 = col.row().split(factor=0.66)
             left_split = split.row()
             right_split = split.row()
 
@@ -300,20 +300,20 @@ class SverchokPreferences(AddonPreferences):
 
             split_extra_colors = split2.column().split()
             col_x1 = split_extra_colors.column()
-            col_x1.label("Error colors: ( error / no data )")
+            col_x1.label(text="Error colors: ( error / no data )")
             row_x1 = col_x1.row()
             row_x1.prop(self, "exception_color", text='')
             row_x1.prop(self, "no_data_color", text='')
 
             col_x2 = split_extra_colors.split().column()
-            col_x2.label("Heat map colors: ( hot / cold )")
+            col_x2.label(text="Heat map colors: ( hot / cold )")
             row_x2 = col_x2.row()
             row_x2.active = self.heat_map
             row_x2.prop(self, "heat_map_hot", text='')
             row_x2.prop(self, "heat_map_cold", text='')
 
             col3 = right_split.column()
-            col3.label('Theme:')
+            col3.label(text='Theme:')
             col3.prop(self, 'sv_theme', text='')
             col3.separator()
             col3.prop(self, 'auto_apply_theme', text="Auto apply theme changes")
