@@ -139,7 +139,7 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         layout_draw_categories(self.layout, node_cats[self.bl_label])
-        layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
+        layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUG'))
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
@@ -197,45 +197,12 @@ classes = [
 ]
 
 
-# def ff_unregister_node_categories():
-#     """
-#     Below (in the register function) we remove the SVERCHOK group from _node_categories collection, by doing:
-
-#         _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
-
-#     this allows us to populate the NODE_MT_add menu as we want. In doing so we lose the automatic unregistration of 
-#     various menu and category classes. This function behaves as a dedicated removal of those classes (for F8 and disable add-on),
-#     """
-
-#     def ff_unregister_node_cat_types(cats):
-#         for mt in cats[2]:
-#             bpy.utils.unregister_class(mt)
-#         for pt in cats[3]:
-#             bpy.utils.unregister_class(pt)
-
-#     cat_types = _items_to_remove['sverchok_popped']
-#     if cat_types:
-#         ff_unregister_node_cat_types(cat_types)
-
-#     del _items_to_remove['sverchok_popped']
-
-
 
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
 
-    # we pop sverchok from the standard nodecat collection to avoid the menu items appearing in the default Add node menu.
-    # _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
-
-    # bpy.types.NODE_MT_add.append(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
-
 
 def unregister():
-    # bpy.types.NODE_MT_add.remove(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
-
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
-
-    # because we popped sverchok off the nodecat collection in register, we have to do our own class unregistration here.
-    # ff_unregister_node_categories()

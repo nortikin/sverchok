@@ -285,7 +285,7 @@ class SverchokPreferences(AddonPreferences):
             left_split = split.row()
             right_split = split.row()
 
-            split_viz_colors = left_split.column().split(percentage=0.5, align=True)
+            split_viz_colors = left_split.column().split(factor=0.5, align=True)
 
             if True:
                 col1 = split_viz_colors.column()
