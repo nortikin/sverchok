@@ -789,6 +789,8 @@ class SverchCustomTreeNode:
             if self.id_data.is_frozen():
                 return
 
+            # self.id_data.has_changed = True
+
             if data_structure.DEBUG_MODE:
                 a = time.perf_counter()
                 process_from_node(self)
