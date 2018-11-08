@@ -87,10 +87,6 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Verts UV")
         self.inputs.new('StringsSocket', "U domain").prop_name = 'domU'
         self.inputs.new('StringsSocket', "V domain").prop_name = 'domV'
-        #if self.shift_mode_U not 'NONE':
-        #self.inputs.new('StringsSocket', "U shift").prop_name = 'shiftU'
-        #if self.shift_mode_V not 'NONE':
-        #self.inputs.new('StringsSocket', "V shift").prop_name = 'shiftV'
         self.outputs.new('StringsSocket', "R")
         self.outputs.new('StringsSocket', "G")
         self.outputs.new('StringsSocket', "B")

@@ -90,14 +90,14 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
         ], default='CONT', name="Mode")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Layer Height', 'Layer Height').prop_name = 'layer_height'
-        self.inputs.new('StringsSocket', 'Flow Mult', 'Flow Mult').prop_name = 'flow_mult'
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
+        self.inputs.new('StringsSocket', 'Layer Height',).prop_name = 'layer_height'
+        self.inputs.new('StringsSocket', 'Flow Mult',).prop_name = 'flow_mult'
+        self.inputs.new('VerticesSocket', 'Vertices',)
 
-        self.outputs.new('StringsSocket', 'Info', 'Info')
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Printed Edges', 'Printed Edges')
-        self.outputs.new('StringsSocket', 'Travel Edges', 'Travel Edges')
+        self.outputs.new('StringsSocket', 'Info',)
+        self.outputs.new('VerticesSocket', 'Vertices',)
+        self.outputs.new('StringsSocket', 'Printed Edges',)
+        self.outputs.new('StringsSocket', 'Travel Edges',)
 
     def draw_buttons(self, context, layout):
 
@@ -131,7 +131,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, 'auto_sort', text="Sort Layers (z)")
             col.prop(self, 'close_all')
             col.separator()
-        #col.prop(self, 'flow_mult')
         col.label(text='Custom Code:', icon='SCRIPT')
         col.prop_search(self, 'start_code', bpy.data, 'texts')
         col.prop_search(self, 'end_code', bpy.data, 'texts')
