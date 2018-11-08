@@ -50,7 +50,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     y_: FloatProperty(name='Y', description='Y', default=0.0, precision=3, update=updateNode)
     z_: FloatProperty(name='Z', description='Z', default=0.0, precision=3, update=updateNode)
     
-    advanced_mode: BoolProperty(name='deep copy', update=updateNode)
+    advanced_mode: BoolProperty(name='deep copy', update=updateNode, default=True)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x_'
