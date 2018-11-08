@@ -39,7 +39,13 @@ def find_projected_arc_center(p1, p2, b, radius=0.5):
 
     focal = (a + c) / 2.0
     focal_length = (b-focal).length
-    angleA = (a-b).angle(c-b) / 2.0
+
+    try:
+        angleA = (a-b).angle(c-b) / 2.0
+    except ValueError as e:
+        print('smoothlines encountered non zero length vectors')
+        #  Vector.angle(other): zero length vectors have no valid angle
+        return None
 
     sideA = radius
     sideB = sideA / tan(angleA)
@@ -93,6 +99,8 @@ def spline_points(points, weights, index, params):
         p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
     elif params.mode == 'arc':
         pts = find_projected_arc_center(c, a, b, radius=w2)
+        if not pts:
+            return [b]
         return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
