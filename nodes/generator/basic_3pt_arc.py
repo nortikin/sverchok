@@ -45,10 +45,10 @@ def generate_3PT_mode_1(pts=None, num_verts=20, make_edges=False):
     mat_rot = mathutils.Matrix.Rotation(math.radians(90.0), 4, axis)
 
     # triangle edges
-    v1_ = ((v1 - edge1_mid) * mat_rot) + edge1_mid
-    v2_ = ((v2 - edge1_mid) * mat_rot) + edge1_mid
-    v3_ = ((v3 - edge2_mid) * mat_rot) + edge2_mid
-    v4_ = ((v4 - edge2_mid) * mat_rot) + edge2_mid
+    v1_ = ((v1 - edge1_mid) @ mat_rot) + edge1_mid
+    v2_ = ((v2 - edge1_mid) @ mat_rot) + edge1_mid
+    v3_ = ((v3 - edge2_mid) @ mat_rot) + edge2_mid
+    v4_ = ((v4 - edge2_mid) @ mat_rot) + edge2_mid
 
     r = geometry.intersect_line_line(v1_, v2_, v3_, v4_)
     if r:
@@ -65,7 +65,7 @@ def generate_3PT_mode_1(pts=None, num_verts=20, make_edges=False):
 
         for i in range(num_verts + 1):
             mat_rot = mathutils.Matrix.Rotation(((s / num_verts) * i), 4, axis)
-            vec = ((v4 - p1) * mat_rot) + p1
+            vec = ((v4 - p1) @ mat_rot) + p1
             verts.append(vec[:])
     else:
         # do straight line
