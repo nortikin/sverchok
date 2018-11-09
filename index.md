@@ -231,6 +231,7 @@
     NoteNode
     SvDataShapeNode
     GTextNode
+    SvStethoscopeNodeMK2
     SvDebugPrintNode
 
 ## BPY Data
