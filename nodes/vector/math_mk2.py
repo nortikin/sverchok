@@ -155,13 +155,13 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         num_inputs = len(inputs)
 
         # get either input data, or socket default
-        input_one = inputs[0].sv_get(deepcopy=False)
+        input_one = inputs[0].sv_get(deepcopy=True)
         
         level = levelsOflist(input_one) - 1
         if num_inputs == 1:
             result = recurse_fx(input_one, func, level)
         else:
-            input_two = inputs[1].sv_get(deepcopy=False)
+            input_two = inputs[1].sv_get(deepcopy=True)
             result = recurse_fxy(input_one, input_two, func, level)
 
         outputs[0].sv_set(result)

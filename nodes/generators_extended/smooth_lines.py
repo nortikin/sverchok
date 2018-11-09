@@ -14,7 +14,7 @@ from bpy.props import FloatProperty, IntProperty, EnumProperty
 from math import sin, tan
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, enum_item_4
 from sverchok.nodes.generator.basic_3pt_arc import generate_3PT_mode_1 as three_point_arc
 from sverchok.utils.sv_itertools import extend_if_needed
 
@@ -39,7 +39,13 @@ def find_projected_arc_center(p1, p2, b, radius=0.5):
 
     focal = (a + c) / 2.0
     focal_length = (b-focal).length
-    angleA = (a-b).angle(c-b) / 2.0
+
+    try:
+        angleA = (a-b).angle(c-b) / 2.0
+    except ValueError as e:
+        print('smoothlines encountered non zero length vectors')
+        #  Vector.angle(other): zero length vectors have no valid angle
+        return None
 
     sideA = radius
     sideB = sideA / tan(angleA)
@@ -93,6 +99,8 @@ def spline_points(points, weights, index, params):
         p2 = Vector(c).lerp(Vector(b), weight_to_use_2)[:]
     elif params.mode == 'arc':
         pts = find_projected_arc_center(c, a, b, radius=w2)
+        if not pts:
+            return [b]
         return three_point_arc(pts=pts, num_verts=divs, make_edges=False)[0]
 
     return [v[:] for v in bezlerp(p1, b, b, p2, divs)]
@@ -141,15 +149,12 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Smooth Lines'
     bl_icon = 'GREASEPENCIL'
 
-    smooth_mode_options = [(k, k, '', i) for i, k in enumerate(["absolute", "relative", "arc"])]
     smooth_selected_mode: EnumProperty(
-        items=smooth_mode_options, description="offers....",
-        default="absolute", update=updateNode)
+        items=enum_item_4(["absolute", "relative", "arc"]), default="absolute",
+        description="gives various representations of the smooth corner", update=updateNode)
 
-    type_mode_options = [(k, k, '', i) for i, k in enumerate(["cyclic", "open"])]
     type_selected_mode: EnumProperty(
-        items=type_mode_options, description="offers....",
-        default="open", update=updateNode)
+        items=enum_item_4(["cyclic", "open"]), default="open", update=updateNode)
 
     n_verts: IntProperty(default=5, name="n_verts", min=2, update=updateNode) 
     weights: FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
