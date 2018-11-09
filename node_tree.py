@@ -558,6 +558,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
+        print('custom tree has updated')
         self.has_changed = True
 
     def process_ani(self):
