@@ -573,7 +573,7 @@ class SvUserPresetsPanel(bpy.types.Panel):
         panel_props = ntree.preset_panel_properties
 
         if any(node.select for node in ntree.nodes):
-            layout.operator('node.sv_save_selected', text="Save Preset", icon='SAVE_PREFS').id_tree = ntree.name
+            layout.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON').id_tree = ntree.name
             layout.separator()
 
         presets = get_presets()
@@ -586,7 +586,7 @@ class SvUserPresetsPanel(bpy.types.Panel):
             col.operator("node.sv_preset_from_file", icon='IMPORT')
 
             if len(presets):
-                layout.label("Manage presets:")
+                layout.label(text="Manage presets:")
                 for preset in presets:
                     name = preset.name
 
@@ -605,18 +605,18 @@ class SvUserPresetsPanel(bpy.types.Panel):
                     delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
                     delete.preset_name = name
             else:
-                layout.label("You do not have any presets.")
-                layout.label("You can import some presets")
-                layout.label("from Gist or from file.")
+                layout.label(text="You do not have any presets.")
+                layout.label(text="You can import some presets")
+                layout.label(text="from Gist or from file.")
 
         else:
             if len(presets):
-                layout.label("Use preset:")
+                layout.label(text="Use preset:")
                 draw_presets_ops(layout, ntree.name, presets)
             else:
-                layout.label("You do not have any presets.")
-                layout.label("Select some nodes and")
-                layout.label("Use the `Save Preset' button.")
+                layout.label(text="You do not have any presets.")
+                layout.label(text="Select some nodes and")
+                layout.label(text="Use the `Save Preset' button.")
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(
