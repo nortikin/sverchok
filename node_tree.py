@@ -553,15 +553,30 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors: StringProperty(default="")
 
+    tree_link_count = IntProperty(name='keep track of current link count', default=0)
+
+    @property
+    def timestamp(self):
+        return time.monotonic()
+
+    @property
+    def has_link_count_changed(self):
+        link_count = len(self.links)
+        if not link_count == self.tree_link_count: 
+            print('update event: link count changed')
+            self.tree_link_count = link_count
+            return True
+
     def update(self):
         '''
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
+        # print('svtree update', self.timestamp)
         self.has_changed = True
 
-        # maybe if the update function came with an "event" property, we could be more disciplined in the next line
-        self.process()
+        if self.has_link_count_changed:
+            self.process()
 
     def process_ani(self):
         """
