@@ -186,6 +186,8 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
         layout.separator()
         layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
+        layout.separator()
+        # layout.operator("node.duplicate_move")
 
 def register():
     bpy.utils.register_class(SvGenericDeligationOperator)
