@@ -553,7 +553,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors: StringProperty(default="")
 
-    tree_link_count = IntProperty(name='keep track of current link count', default=0)
+    tree_link_count: IntProperty(name='keep track of current link count', default=0)
 
     @property
     def timestamp(self):

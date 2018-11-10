@@ -9,7 +9,8 @@ from sverchok.core import upgrade_nodes, upgrade_group
 
 from sverchok.ui import (
     color_def,
-    nodeview_bgl_viewer_draw_mk2
+    nodeview_bgl_viewer_draw_mk2,
+    bgl_callback_3dview
 )
 
 
@@ -83,7 +84,7 @@ def sv_clean(scene):
     # index_viewer_draw.callback_disable_all()
     # nodeview_bgl_viewer_draw.callback_disable_all()
     nodeview_bgl_viewer_draw_mk2.callback_disable_all()
-    # bgl_callback_3dview.callback_disable_all()
+    bgl_callback_3dview.callback_disable_all()
 
     data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
@@ -122,26 +123,7 @@ def sv_post_load(scene):
         pref = addon.preferences
         if pref.apply_theme_on_open:
             color_def.apply_theme()
-    '''
-    unsafe_nodes = {
-        'FormulaNode',
-        'Formula2Node',
-    }
 
-    unsafe = False
-    for tree in sv_trees:
-        if any((n.bl_idname in unsafe_nodes for n in tree.nodes)):
-            unsafe = True
-            break
-    # do nothing with this for now
-    #if unsafe:
-    #    print("unsafe nodes found")
-    #else:
-    #    print("safe")
-
-    #print("post load .update()")
-    # do an update
-    '''
     for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
             ng.update()
