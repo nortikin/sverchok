@@ -574,9 +574,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         '''
         # print('svtree update', self.timestamp)
         self.has_changed = True
-
-        if self.has_link_count_changed:
-            self.process()
+        self.has_link_count_changed
+        self.process()
 
     def process_ani(self):
         """
