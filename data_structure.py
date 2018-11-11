@@ -453,7 +453,7 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
         if loc[0]:
             k = min(len(loc[0])-1, i)
             mat_tran = de.Translation(loc[0][k])
-            ma *= mat_tran
+            ma = ma @ mat_tran
 
         if vec_angle[0] and rot[0]:
             k = min(len(rot[0])-1, i)
@@ -463,13 +463,13 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             vec_b = rot[0][k].normalized()
 
             mat_rot = vec_b.rotation_difference(vec_a).to_matrix().to_4x4()
-            ma = ma * mat_rot
+            ma = ma @ mat_rot
 
         elif rot[0]:
             k = min(len(rot[0])-1, i)
             a = min(len(angle[0])-1, i)
             mat_rot = de.Rotation(radians(angle[0][a]), 4, rot[0][k].normalized())
-            ma = ma * mat_rot
+            ma = ma @ mat_rot
 
         if scale[0]:
             k = min(len(scale[0])-1, i)
@@ -477,7 +477,7 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
             id_m = Matrix.Identity(4)
             for j in range(3):
                 id_m[j][j] = scale2[j]
-            ma *= id_m
+            ma = ma @ id_m
 
         modif.append(ma)
     return modif
