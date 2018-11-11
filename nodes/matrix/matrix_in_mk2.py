@@ -39,22 +39,15 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='A', description='Angle', default=0.0, precision=3, update=updateNode)
 
     def sv_init(self, context):
-        s = self.inputs.new('VerticesSocket', "Location")
-        s.prop_name = 'l_'
-        s = self.inputs.new('VerticesSocket', "Scale")
-        s.prop_name = 's_'
-        s = self.inputs.new('VerticesSocket', "Rotation")
-        s.prop_name = 'r_'
-        s = self.inputs.new('StringsSocket', "Angle")
-        s.prop_name = 'a_'
+
+        inew = self.inputs.new
+        inew('VerticesSocket', "Location").prop_name = 'l_'
+        inew('VerticesSocket', "Scale").prop_name = 's_'
+        inew('VerticesSocket', "Rotation").prop_name = 'r_'
+        inew('StringsSocket', "Angle").prop_name = 'a_'
+
         self.outputs.new('MatrixSocket', "Matrix")
     
-    def migrate_from(self, old_node):
-        if old_node.bl_idname == 'MatrixGenNode':
-            self.l_ = old_node.inputs['Location'].prop
-            self.s_ = old_node.inputs['Scale'].prop
-            self.r_ = old_node.inputs['Rotation'].prop
-
     def process(self):
         L,S,R,A = self.inputs
         Ma = self.outputs[0]
@@ -64,6 +57,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         scale = Vector_generate(S.sv_get())
         rot = Vector_generate(R.sv_get())
         rotA, angle = [[]], [[0.0]]
+
         # ability to add vector & vector difference instead of only rotation values
         if A.is_linked:
             if A.links[0].from_socket.bl_idname == 'VerticesSocket':

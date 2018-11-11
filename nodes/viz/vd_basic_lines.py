@@ -61,8 +61,10 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
         inew('StringsSocket', 'edges')
 
     def draw_buttons(self, context, layout):
-        layout.column().prop(self, "activate", text="ACTIVATE")
-        layout.column().prop(self, "edge_color")
+        layout.row().prop(self, "activate", text="ACTIVATE")
+        r1 = layout.row(align=True)
+        r1.label(icon="UV_EDGESEL")
+        r1.prop(self, "edge_color", text='')
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
