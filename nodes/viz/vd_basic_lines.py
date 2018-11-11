@@ -13,7 +13,7 @@ from gpu_extras.batch import batch_for_shader
 # import mathutils
 # from mathutils import Vector
 import sverchok
-from bpy.props import StringProperty, BoolProperty  #FloatProperty, 
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
@@ -25,9 +25,10 @@ def screen_v3dBGL(context, args):
     
     shader = args[0]
     batch = args[1]
+    line4f = args[2]
 
     shader.bind()
-    shader.uniform_float("color", (1, 1, 0, 1))
+    shader.uniform_float("color", line4f)
     batch.draw(shader)
 
 
@@ -46,6 +47,10 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
     n_id: StringProperty(default='')
     activate: BoolProperty(name='Show', description='Activate', default=True, update=updateNode)
 
+    edge_color: FloatVectorProperty(
+        subtype='COLOR', min=0, max=1,
+        default=(0.3, 0.3, 0.3, 1.0), name='edge color', size=4, update=updateNode)
+
     @property
     def fully_enabled(self):
         return "edges" in self.inputs
@@ -57,6 +62,7 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.column().prop(self, "activate", text="ACTIVATE")
+        layout.column().prop(self, "edge_color")
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
@@ -64,7 +70,6 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
             return
 
         n_id = node_id(self)
-
         callback_disable(n_id)
 
         verts_socket, edges_socket = self.inputs
@@ -75,13 +80,16 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
             prope = edges_socket.sv_get(deepcopy=False, default=[])
       
             coords = propv[0]
+            indices = prope[0]
             shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-            batch = batch_for_shader(shader, 'LINES', {"pos" : coords})
+            batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=indices)
+
+            line4f = self.edge_color[:]
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL,
-                'args': (shader, batch)
+                'args': (shader, batch, line4f)
             }            
             callback_enable(n_id, draw_data)
 
