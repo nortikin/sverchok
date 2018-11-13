@@ -30,7 +30,7 @@ class SverchokPreferences(AddonPreferences):
             color_def.apply_theme()
 
     tab_modes = [(k, k, '', i) for i, k in enumerate(["General", "Node Defaults", "Theme"])]
-    
+
     selected_tab = bpy.props.EnumProperty(
         items=tab_modes,
         description="pick viewing mode",
@@ -168,6 +168,9 @@ class SverchokPreferences(AddonPreferences):
     stethoscope_view_xy_multiplier = FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
 
+    index_viewer_scale = FloatProperty(
+        default=1.0, min=0.01, step=0.01, description='default index viewer scale')
+
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     defaults_location = StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
     external_editor = StringProperty(description='which external app to invoke to view sources')
@@ -178,7 +181,7 @@ class SverchokPreferences(AddonPreferences):
     def update_log_level(self, context):
         logging.info("Setting log level to %s", self.log_level)
         logging.setLevel(self.log_level)
-    
+
     log_levels = [
             ("DEBUG", "Debug", "Debug output", 0),
             ("INFO", "Information", "Informational output", 1),
@@ -270,6 +273,8 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col.label('stethoscope mk2 settings')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
             box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
+            box_sub1_col.label('index viewer settings')
+            box_sub1_col.prop(self, 'index_viewer_scale', text='scale')
 
             col3 = row_sub1.split().column()
             col3.label('Location of custom defaults')
