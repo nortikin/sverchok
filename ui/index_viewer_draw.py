@@ -24,6 +24,7 @@ import blf
 import bgl
 from mathutils import Vector
 
+from sverchok.utils.context_managers import sv_preferences
 from sverchok.data_structure import Vector_generate, Matrix_generate
 
 SpaceView3D = bpy.types.SpaceView3D
@@ -154,8 +155,15 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
     display_edge_index = settings['display_edge_index']
     display_face_index = settings['display_face_index']
 
+    try:
+        with sv_preferences() as prefs:
+            scale = prefs.index_viewer_scale
+    except:
+        # print('did not find preferences - you need to save user preferences')
+        scale = 1.0
+
     font_id = 0
-    text_height = 13
+    text_height = int(13.0 * scale)
     blf.size(font_id, text_height, 72)  # should check prefs.dpi
 
     region_mid_width = region.width / 2.0
@@ -222,7 +230,7 @@ def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw
 
         if data_edges and display_edge_index:
             for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
-                
+
                 v1 = Vector(final_verts[idx1])
                 v2 = Vector(final_verts[idx2])
                 loc = v1 + ((v2 - v1) / 2)
