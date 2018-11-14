@@ -11,13 +11,19 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 # import mathutils
-# from mathutils import Vector
+from mathutils import Vector, Matrix
 import sverchok
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.utils.sv_batch_primitives import MatrixDraw28
 
+
+def screen_v3dMatrix(context, args):
+    mdraw = MatrixDraw28()
+    for matrix in args[0]:
+        mdraw.draw_matrix(matrix, color)
 
 def screen_v3dBGL(context, args):
     # region = context.region
@@ -30,6 +36,7 @@ def screen_v3dBGL(context, args):
     shader.bind()
     shader.uniform_float("color", line4f)
     batch.draw(shader)
+
 
 
 class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
@@ -59,6 +66,7 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
         inew = self.inputs.new
         inew('VerticesSocket', 'verts')
         inew('StringsSocket', 'edges')
+        inew('MatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
         layout.row().prop(self, "activate", text="ACTIVATE")
@@ -93,6 +101,20 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
                 'custom_function': screen_v3dBGL,
                 'args': (shader, batch, line4f)
             }            
+
+            callback_enable(n_id, draw_data)
+            return
+
+        matrix_socket = self.inputs['matrix']
+        if matrix_socket.is_linked:
+            matrices = matrix_socket.sv_get(deepcopy=False, default=[Matrix()])
+
+            draw_data = {
+                'tree_name': self.id_data.name[:],
+                'custom_function': screen_v3dMatrix,
+                'args': (matrices,)
+            }            
+
             callback_enable(n_id, draw_data)
 
     def copy(self, node):
