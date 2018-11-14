@@ -126,7 +126,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
                 verts = []
                 add_verts = verts.extend
                 for M in transforms:
-                    add_verts([(M * A), (M * B), (M * C)])
+                    add_verts([(M @ A), (M @ B), (M @ C)])
                 faces = [[i, i + 1, i + 2] for i in range(0, len(transforms) * 3, 3)]
             elif self.mode == "VERTS":
                 verts = [M.to_translation() for M in transforms]
