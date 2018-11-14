@@ -23,7 +23,7 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 def screen_v3dMatrix(context, args):
     mdraw = MatrixDraw28()
     for matrix in args[0]:
-        mdraw.draw_matrix(matrix, color)
+        mdraw.draw_matrix(matrix)
 
 def screen_v3dBGL(context, args):
     # region = context.region
@@ -82,7 +82,7 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         callback_disable(n_id)
 
-        verts_socket, edges_socket = self.inputs
+        verts_socket, edges_socket = self.inputs[:2]
 
         if verts_socket.is_linked and edges_socket.is_linked:
 
