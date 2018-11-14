@@ -92,21 +92,22 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
 
         outv = []
         outp = []
-        for E,V in zip(Edgs,Vecs):
+        for E,V in zip(Edgs, Vecs):
             outv_ = []
             outp_ = []
             k = 0
             Size, E = match_long_cycle([Size,E])
             for e,S in zip(E,Size):
-                S0,S1,S2 = S
+                S0, S1, S2 = S
                 S2 = (S2-1)/2
-                circle = [ (Vector((sin(radians(i))*S0,cos(radians(i))*S1,0))*Diameter) \
-                            for i in range(45,405,Sides) ]
-                v2,v1 = Vector(V[e[1]]),Vector(V[e[0]])
+
+                circle = [ (Vector((sin(radians(i))*S0, cos(radians(i))*S1, 0)) * Diameter) for i in range(45, 405, Sides)]
+                v2,v1 = Vector(V[e[1]]), Vector(V[e[0]])
+                
                 vecdi = v2-v1
                 matrix_rot = vecdi.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
-                verts1 = [ (ve*matrix_rot+v1-vecdi*S2)[:] for ve in circle ]
-                verts2 = [ (ve*matrix_rot+v2+vecdi*S2)[:] for ve in circle ]
+                verts1 = [ (ve@matrix_rot+v1-vecdi*S2)[:] for ve in circle ]
+                verts2 = [ (ve@matrix_rot+v2+vecdi*S2)[:] for ve in circle ]
                 outv_.extend(verts1)
                 outv_.extend(verts2)
                 pols = [ [k+i+0,k+i-1,k+i+Nsides-1,k+i+Nsides] for i in range(1,Nsides,1) ]
@@ -135,4 +136,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvPipeNode)
-

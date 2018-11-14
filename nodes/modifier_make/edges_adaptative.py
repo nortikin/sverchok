@@ -82,11 +82,11 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 mat_s = Matrix.Scale(e_scale / d_scale, 4)
                 mat_r = Matrix.Rotation(q1.angle, 4, q1.axis)
                 mat_l = Matrix.Translation(vc[e[0]])
-                mat = mat_l * mat_r * mat_s
+                mat = mat_l @ mat_r @ mat_s
 
                 offset = len(v_out)
                 for v in verD:
-                    v_out_app((mat * v)[:])
+                    v_out_app((mat @ v)[:])
                 if mesh_join:
                     for edge in edgD:
                         e_out_app([i + offset for i in edge])

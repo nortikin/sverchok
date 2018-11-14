@@ -35,10 +35,11 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     mode2: BoolProperty(name='for out points', default=True, update=updateNode)
 
     def sv_init(self, context):
-        si,so = self.inputs.new,self.outputs.new
+        si, so = self.inputs.new, self.outputs.new
         si('SvObjectSocket', 'Objects')
         si('VerticesSocket', "point").use_prop = True
         si('StringsSocket', "max_dist").prop_name = "Mdist"
+        
         so('StringsSocket', "succes")
         so('VerticesSocket', "Point_on_mesh")
         so('VerticesSocket', "Normal_on_mesh")
@@ -46,28 +47,32 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
-        row.prop(self,    "mode",   text="In Mode")
-        row.prop(self,    "mode2",   text="Out Mode")
+        row.prop(self, "mode", text="In Mode")
+        row.prop(self, "mode2", text="Out Mode")
 
     def process(self):
-        o,p,md = self.inputs
-        S,P,N,I = self.outputs
-        Out,point,sm1,sm2 = [],p.sv_get()[0],self.mode,self.mode2
+        o, p, md = self.inputs
+        S, P, N, I = self.outputs
+
+        Out, point, sm1, sm2 = [], p.sv_get()[0], self.mode, self.mode2
         obj = o.sv_get()
         max_dist = second_as_first_cycle(obj, md.sv_get()[0])
-        for i,i2 in zip(obj,max_dist):
+
+        for i, i2 in zip(obj, max_dist):
             if sm1:
-                Out.append([i.closest_point_on_mesh(i.matrix_local.inverted()*Vector(p), i2) for p in point])
+                Out.append([i.closest_point_on_mesh(i.matrix_local.inverted() @ Vector(p), i2) for p in point])
             else:
                 Out.append([i.closest_point_on_mesh(p, i2) for p in point])
+        
         if P.is_linked:
             if sm2:
-                out =[]
-                for i,i2 in zip(obj,Out):
-                    out.append([(i.matrix_world*i3[1])[:] for i3 in i2])
+                out = []
+                for i, i2 in zip(obj, Out):
+                    out.append([(i.matrix_world * i3[1])[:] for i3 in i2])
                 P.sv_set(out)
             else:
                 P.sv_set([[i2[1][:] for i2 in o] for o in Out])
+        
         if S.is_linked:
             S.sv_set([[i2[0] for i2 in o] for o in Out])
         if N.is_linked:

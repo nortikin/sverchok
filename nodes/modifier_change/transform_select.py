@@ -85,10 +85,10 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         vertListA, vertListT, vertListF = [[], [], []]
         for ma, v, mt, mf in zip(*params):
             if ma == 1:  # do some processing using Matrix T here
-                v = (mt * Vector(v))[:]
+                v = (mt @ Vector(v))[:]
                 vertListT.append(v)
             else:  # do some processing using Matrix F here
-                v = (mf * Vector(v))[:]
+                v = (mf @ Vector(v))[:]
                 vertListF.append(v)
             vertListA.append(v)
 

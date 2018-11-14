@@ -61,9 +61,9 @@ class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
         faces_out.append(list(range(nring)))
         for i,m in enumerate(mats):
             for j,v in enumerate(verts[0]):
-                vout = Matrix(m) * Vector(v)
+                vout = Matrix(m) @ Vector(v)
                 verts_out.append(vout.to_tuple())
-                vID = j + i*nring
+                vID = j + i * nring
                 # rings
                 if j != 0:
                     edges_out.append([vID, vID - 1])
