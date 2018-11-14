@@ -191,7 +191,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     fullList(matrix_spaces, len(extruded_verts))
                     for vertex_idx, (vertex, matrix) in enumerate(zip(*match_long_repeat([extruded_verts, matrices]))):
                         bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=matrix_spaces[vertex_idx])
-                        matrix_spaces[vertex_idx] = matrix.inverted() * matrix_spaces[vertex_idx]
+                        matrix_spaces[vertex_idx] = matrix.inverted() @ matrix_spaces[vertex_idx]
                 else:
                     height = height_per_iteration[idx]
                     scale = scale_per_iteration[idx]
@@ -201,7 +201,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     center = get_faces_center(extruded_faces)
                     translation = Matrix.Translation(center)
                     rotation = normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
-                    m = translation * rotation
+                    m = translation @ rotation
                     bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=extruded_verts)
                     bmesh.ops.translate(bm, verts=extruded_verts, vec=dr)
 

@@ -84,7 +84,7 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
                     x_axis = Vector((z_axis[1] * -1, z_axis[0], 0)).normalized()
                     y_axis = z_axis.cross(x_axis).normalized()
                     m_r = Matrix(list([*zip(x_axis[:], y_axis[:], z_axis[:])])).to_4x4()
-                m = (Matrix.Translation(face.calc_center_median()) * m_r).inverted()
+                m = (Matrix.Translation(face.calc_center_median()) @ m_r).inverted()
                 transform(bm, matrix=ma, space=m, verts=face.verts)
                 if linked_extruded_polygons or linked_other_polygons:
                     new_extruded_faces.append([v.index for v in face.verts])

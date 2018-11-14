@@ -140,7 +140,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
             ax1, ax2, ax3 = z, x, y
 
         if self.scale_all:
-            scale_matrix = Matrix.Scale(1/scale, 4, ax1) * Matrix.Scale(scale, 4, ax2) * Matrix.Scale(scale, 4, ax3)
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1) @ Matrix.Scale(scale, 4, ax2) @ Matrix.Scale(scale, 4, ax3)
         else:
             scale_matrix = Matrix.Identity(4)
 
@@ -153,7 +153,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             raise Exception("Unsupported algorithm")
 
-        return rot * scale_matrix
+        return rot @ scale_matrix
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -200,7 +200,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
                 src_vertex_projection = Vector(src_vertex)
                 src_vertex_projection[self.orient_axis] = 0
                 # Scale and rotate the projection, then move it towards spline vertex
-                new_vertex = matrix * Vector(src_vertex_projection) + spline_vertex
+                new_vertex = matrix @ Vector(src_vertex_projection) + spline_vertex
                 new_vertices.append(new_vertex)
 
             result_vertices.append(new_vertices)

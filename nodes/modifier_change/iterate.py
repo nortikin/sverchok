@@ -58,7 +58,7 @@ def iterate(matrices, matrix, vertices, edges, faces, count, offset, r=0):
     if count == 0:
         return result_vertices, result_edges, result_faces
 
-    new_vertices = [matrix*v for v in vertices]
+    new_vertices = [matrix @ v for v in vertices]
     new_edges = [(v1+offset+r, v2+offset+r) for v1, v2 in edges]
     new_faces = [[v+offset+r for v in face] for face in faces]
 
@@ -93,7 +93,7 @@ def calc_matrix_powers(matrices, count):
     result = []
     result.extend(matrices)
     for m in matrices:
-        result.extend([m*n for n in calc_matrix_powers(matrices, count-1)])
+        result.extend([m @ n for n in calc_matrix_powers(matrices, count-1)])
 
     return result
 

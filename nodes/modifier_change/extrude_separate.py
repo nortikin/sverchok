@@ -132,7 +132,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 dr = face.normal * height
                 center = face.calc_center_median()
                 translation = Matrix.Translation(center)
-                m = (translation * m_r).inverted()
+                m = (translation @ m_r).inverted()
                 
                 # inset, scale and push operations
                 bmesh.ops.scale(bm, vec=vec, space=m, verts=face.verts)
