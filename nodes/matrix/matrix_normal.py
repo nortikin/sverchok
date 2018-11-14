@@ -57,7 +57,7 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
         T, U = self.track, self.up
         for V, N in zip(loc, nor):
             n = N.to_track_quat(T, U)
-            m = Matrix.Translation(V) * n.to_matrix().to_4x4()
+            m = Matrix.Translation(V) @ n.to_matrix().to_4x4()
             out.append(m)
         Ma.sv_set(out)
 

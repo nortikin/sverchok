@@ -144,7 +144,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
             mat_s[1][1] = S[1]
             mat_s[2][2] = S[2]
 
-        m = mat_t * mat_r * mat_s
+        m = mat_t @ mat_r @ mat_s
 
         return m
 
@@ -160,7 +160,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_operation(self):
         if self.operation == "MULTIPLY":
-            return lambda l: reduce((lambda a, b: a * b), l)
+            return lambda l: reduce((lambda a, b: a @ b), l)
         elif self.operation == "FILTER":
             return self.operation_filter
         elif self.operation == "INVERT":

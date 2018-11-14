@@ -75,7 +75,7 @@ class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     seed_set(140230)
 
-                Random.append([(random_unit_vector()*sc).to_tuple() for i in range(int(max(1, c)))])
+                Random.append([(random_unit_vector() * sc).to_tuple() for i in range(int(max(1, c)))])
 
             random_socket.sv_set(Random)
 
