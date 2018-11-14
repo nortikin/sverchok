@@ -82,7 +82,7 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 OB = FakeObj(OB)
             if sm1:
                 obm = OB.matrix_local.inverted()
-                outfin.append([OB.ray_cast(obm@Vector(i), obm@Vector(i2)) for i,i2 in zip(st,en)])
+                outfin.append([OB.ray_cast(obm @ Vector(i), obm @ Vector(i2)) for i,i2 in zip(st,en)])
             else:
                 outfin.append([OB.ray_cast(i,i2) for i,i2 in zip(st,en)])
         if S.is_linked:
