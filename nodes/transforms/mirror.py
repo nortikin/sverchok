@@ -50,7 +50,7 @@ def mirrorAxis(vertex, vert_a, vert_b):
 
         mat = Matrix.Translation(2 * (v - w2 - v))
         mat_rot = Matrix.Rotation(radians(360), 4, c)
-        vert.append(((mat * mat_rot) * v)[:])
+        vert.append(((mat @ mat_rot) @ v)[:])
     return vert
 
 
@@ -63,7 +63,7 @@ def mirrorPlane(vertex, matrix):
     for i in vertex:
         v = Vector(i)
         r = v.reflect(normal)
-        vert.append((tras * r)[:])
+        vert.append((tras @ r)[:])
     return vert
 
 

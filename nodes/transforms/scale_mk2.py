@@ -60,7 +60,7 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def scaling(self, v, c, m):
         # print(c,v,m)
-        return [(Vector(c) + m * (Vector(v) - Vector(c)))[:]]
+        return [(Vector(c) + m @ (Vector(v) - Vector(c)))[:]]
 
 
 def register():

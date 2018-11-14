@@ -54,7 +54,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
             if k > lengthve:
                 k = lengthve
             for v in vecs[k]:
-                out_.append(m * v)
+                out_.append(m @ v)
             out.append(out_)
         return out
 

@@ -107,7 +107,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
         if self.angles_mode == 'degrees':
             angle = radians(angle)
         matrix = Matrix.Rotation(angle, 4, 'Z')
-        return matrix * vertex
+        return matrix @ vertex
 
     def bend(self, mins, maxs, low_limit, hi_limit, angle, vertex):
         if self.angles_mode == 'degrees':
@@ -168,7 +168,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
 
             if not isinstance(origin, Matrix):
                 origin = Matrix(origin)
-            src_vertices = [origin.inverted() * Vector(v) for v in vertices]
+            src_vertices = [origin.inverted() @ Vector(v) for v in vertices]
             # bounding box
             mins = tuple(min([vertex[i] for vertex in src_vertices]) for i in range(3))
             maxs = tuple(max([vertex[i] for vertex in src_vertices]) for i in range(3))
@@ -185,7 +185,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
                     v[0] = vertex[0]
                 if self.lock_y:
                     v[1] = vertex[1]
-                v = tuple(origin * v)
+                v = tuple(origin @ v)
                 vs.append(v)
 
             out_vertices.append(vs)
