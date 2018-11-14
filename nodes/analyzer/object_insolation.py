@@ -112,7 +112,7 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
 
             if sm1:
                 obm = NOB.matrix_local.inverted()
-                outfin.append([NOB.ray_cast(obm*Vector(i), obm*Vector(i2)) for i,i2 in zip(st,en)])
+                outfin.append([NOB.ray_cast(obm @ Vector(i), obm @ Vector(i2)) for i,i2 in zip(st,en)])
             else:
                 outfin.append([NOB.ray_cast(i,i2) for i,i2 in zip(st,en)])
 
