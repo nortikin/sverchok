@@ -36,8 +36,8 @@ def screen_v3dBGL_matrix(context, args):
     cdat, simple, plane, grid, alpha = args
     for matrix, color in cdat:
         mdraw = MatrixDraw28()
-        show_plate = (color[0], color[1], color[2], alpha)  if alpha > 0.0  else False
-        mdraw.draw_matrix(matrix, color, skip=simple, grid=grid, show_plate=show_plate)
+        # show_plate = (color[0], color[1], color[2], alpha)  if alpha > 0.0  else False
+        mdraw.draw_matrix(matrix, color, skip=simple, grid=grid) # , show_plate=show_plate)
 
 
 def match_color_to_matrix(node):

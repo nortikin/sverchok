@@ -26,37 +26,37 @@ class MatrixDraw28(object):
         self.bb = [Vector() for i in range(24)]
         self.mat = Matrix()
 
-    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0, 1.0), skip=False, grid=True, show_plate=False):
+    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0, 1.0), skip=False, grid=True): # , show_plate=False):
         """.."""
         if not isinstance(mat, Matrix):
             mat = Matrix(mat)
         self.mat = mat
 
-        if show_plate:
-            self.draw_plate(plate_color=show_plate[:3], alpha=show_plate[3])
+        # if show_plate:
+        #     self.draw_plate(plate_color=show_plate[:3], alpha=show_plate[3])
 
         self.draw_axis(skip)
         if grid:
             self.draw_grid(bbcol)
 
-    def draw_plate(self, plate_color, alpha):
+    # def draw_plate(self, plate_color, alpha):
 
-        r, g, b = plate_color
-        pt = 0.5
-        G = -0.001  # to z offset the plane from the axis
-        tri_1 = [(-pt, pt, G), (pt, pt, G), (pt ,-pt, G)]
-        tri_2 = [(-pt ,pt, G), (pt ,-pt, G), (-pt,-pt, G)]
-        coords = tri_1 + tri_2
+    #     r, g, b = plate_color
+    #     pt = 0.5
+    #     G = -0.001  # to z offset the plane from the axis
+    #     tri_1 = [(-pt, pt, G), (pt, pt, G), (pt ,-pt, G)]
+    #     tri_2 = [(-pt ,pt, G), (pt ,-pt, G), (-pt,-pt, G)]
+    #     coords = tri_1 + tri_2
 
-        coords_transformed = []
-        for x, y, z in coords:
-            coords_transformed.append(self.mat @ Vector((x, y, z)))
+    #     coords_transformed = []
+    #     for x, y, z in coords:
+    #         coords_transformed.append(self.mat @ Vector((x, y, z)))
 
-        # batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords}, indices=indices)
-        batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords_transformed})
-        uniform_shader.bind()
-        uniform_shader.uniform_float("color", (r, g, b, alpha))
-        batch.draw(uniform_shader)        
+    #     # batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords}, indices=indices)
+    #     batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords_transformed})
+    #     uniform_shader.bind()
+    #     uniform_shader.uniform_float("color", (r, g, b, alpha))
+    #     batch.draw(uniform_shader)        
 
     def draw_axis(self, skip):
         """.."""
