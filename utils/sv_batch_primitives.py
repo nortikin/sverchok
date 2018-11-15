@@ -43,19 +43,20 @@ class MatrixDraw28(object):
 
         r, g, b = plate_color
         pt = 0.5
-        tri_1 = [(-pt, pt, 0), (pt, pt, 0), (pt ,-pt, 0)]
-        tri_2 = [(-pt ,pt, 0), (pt ,-pt, 0), (-pt,-pt, 0)]
+        G = -0.001  # to z offset the plane from the axis
+        tri_1 = [(-pt, pt, G), (pt, pt, G), (pt ,-pt, G)]
+        tri_2 = [(-pt ,pt, G), (pt ,-pt, G), (-pt,-pt, G)]
         coords = tri_1 + tri_2
 
         coords_transformed = []
         for x, y, z in coords:
-            coords_transformed.append(self.mat * Vector((x, y, z)))
+            coords_transformed.append(self.mat @ Vector((x, y, z)))
 
         # batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords}, indices=indices)
         batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords_transformed})
-        shader.bind()
-        shader.uniform_float("color", (r, g, b, alpha))
-        batch.draw(shader)        
+        uniform_shader.bind()
+        uniform_shader.uniform_float("color", (r, g, b, alpha))
+        batch.draw(uniform_shader)        
 
     def draw_axis(self, skip):
         """.."""

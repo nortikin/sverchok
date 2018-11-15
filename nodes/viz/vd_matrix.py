@@ -34,7 +34,7 @@ def screen_v3dBGL_matrix(context, args):
     # region = context.region
     # region3d = context.space_data.region_3d
     cdat, simple, plane, grid, alpha = args
-    for matrix, color in args[0]:
+    for matrix, color in cdat:
         mdraw = MatrixDraw28()
         show_plate = (color[0], color[1], color[2], alpha)  if alpha > 0.0  else False
         mdraw.draw_matrix(matrix, color, skip=simple, grid=grid, show_plate=show_plate)
@@ -64,15 +64,15 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixViewer28'
     bl_label = 'Matrix View'
 
-    color_start = FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
-    color_end = FloatVectorProperty(subtype='COLOR', default=(1, 0.02, 0.02), min=0, max=1, size=3, update=updateNode)
-    n_id = StringProperty()
+    color_start: FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
+    color_end: FloatVectorProperty(subtype='COLOR', default=(1, 0.02, 0.02), min=0, max=1, size=3, update=updateNode)
+    n_id: StringProperty()
 
-    simple = BoolProperty(name='simple', update=updateNode, default=True)
-    grid = BoolProperty(name='grid', update=updateNode, default=True)
-    plane = BoolProperty(name='plane', update=updateNode, default=True)
-    alpha = FloatProperty(name='alpha', update=updateNode, min=0.0, max=1.0, subtype='FACTOR', default=0.13)
-    show_options = BoolProperty(name='options', update=updateNode)
+    simple: BoolProperty(name='simple', update=updateNode, default=True)
+    grid: BoolProperty(name='grid', update=updateNode, default=True)
+    plane: BoolProperty(name='plane', update=updateNode, default=True)
+    alpha: FloatProperty(name='alpha', update=updateNode, min=0.0, max=1.0, subtype='FACTOR', default=0.13)
+    show_options: BoolProperty(name='options', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('MatrixSocket', 'Matrix')
