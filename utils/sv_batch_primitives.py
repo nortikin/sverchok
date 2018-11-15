@@ -24,19 +24,42 @@ class MatrixDraw28(object):
         self.z_p = Vector((0.0, 0.0, 0.5))
         self.z_n = Vector((0.0, 0.0, -0.5))
         self.bb = [Vector() for i in range(24)]
+        self.mat = Matrix()
 
-    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0, 1.0), skip=False, grid=True):
+    def draw_matrix(self, mat, bbcol=(1.0, 1.0, 1.0, 1.0), skip=False, grid=True, show_plate=False):
         """.."""
         if not isinstance(mat, Matrix):
             mat = Matrix(mat)
+        self.mat = mat
 
-        self.draw_axis(mat, skip)
+        if show_plate:
+            self.draw_plate(plate_color=show_plate[:3], alpha=show_plate[3])
+
+        self.draw_axis(skip)
         if grid:
-            self.draw_grid(mat, bbcol)
+            self.draw_grid(bbcol)
 
-    def draw_axis(self, mat, skip):
+    def draw_plate(self, plate_color, alpha):
+
+        r, g, b = plate_color
+        pt = 0.5
+        tri_1 = [(-pt, pt, 0), (pt, pt, 0), (pt ,-pt, 0)]
+        tri_2 = [(-pt ,pt, 0), (pt ,-pt, 0), (-pt,-pt, 0)]
+        coords = tri_1 + tri_2
+
+        coords_transformed = []
+        for x, y, z in coords:
+            coords_transformed.append(self.mat * Vector((x, y, z)))
+
+        # batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords}, indices=indices)
+        batch = batch_for_shader(uniform_shader, 'TRIS', {"pos" : coords_transformed})
+        shader.bind()
+        shader.uniform_float("color", (r, g, b, alpha))
+        batch.draw(shader)        
+
+    def draw_axis(self, skip):
         """.."""
-        zero_tx = mat @ self.zero
+        zero_tx = self.mat @ self.zero
 
         axis = [
             [(1.0, 0.2, 0.2, 1.0), self.x_p],
@@ -46,18 +69,17 @@ class MatrixDraw28(object):
             [(0.2, 0.2, 1.0, 1.0), self.z_p],
             [(0.0, 0.0, 0.6, 1.0), self.z_n]]
 
-        # draw axis markers
         coords, colors = [], []
         for idx, (col, axial) in enumerate(axis):
             if idx % 2 and skip:
                 continue
             colors.extend([col, col])
-            coords.extend([zero_tx, mat @ axial])
+            coords.extend([zero_tx, self.mat @ axial])
 
         batch = batch_for_shader(smooth_shader, "LINES", dict(pos=coords, color=colors))
         batch.draw(smooth_shader)
 
-    def draw_grid(self, mat, bbcol):
+    def draw_grid(self, bbcol):
         """.."""
         bb = self.bb
 
@@ -76,7 +98,7 @@ class MatrixDraw28(object):
 
         for x, y in yield_xy():
             bb[i][:] = x, y, z
-            bb[i] = mat @ bb[i]
+            bb[i] = self.mat @ bb[i]
             i += 1
 
         points = []
