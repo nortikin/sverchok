@@ -5,9 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import sys
 import bpy
 # import mathutils
-# from mathutils import Vector
+from mathutils import Matrix, Vector
 from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -51,35 +52,47 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
 
     script_name: StringProperty()
     script_str: StringProperty()
+    loaded: BoolProperty()
     node_dict = {}
 
-    def init_ui(self, context):
-        # this function is like sv_init but dynamic
+    def handle_execution_nid(self, func_name, msg, *args):
         try:
-            node_dict[self.n_id]["functor_init"](self, context)
+            self.node_dict[self.n_id][func_name](*args)
         except Exception as err:
-            print('failed to initialize sockets\n', err)
+            print("error in funcname:", func_name)
+            print(msg + '\n', err)
+            sys.stderr.write('ERROR: %s\n' % str(err))
+            print(sys.exc_info()[-1].tb_frame.f_code)
+            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 
+    def init_socket(self, context):
+        msg = 'failed to initialize sockets'
+        self.handle_execution_nid("functor_init", msg, (self, context))
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        row.operator("node.svfunctor_callback").fn_name='load'
-        row.operator("node.svfunctor_callback").fn_name='reset'
+        row.operator("node.svfunctor_callback", text='Load').fn_name='load'
+        row.operator("node.svfunctor_callback", text='Reset').fn_name='reset'
         self.draw_buttons_script(context, layout)
 
-    def process_script(self, context):
-        try:
-            node_dict[self.n_id]["process"](self, context)
-        except Exception as err:
-            print('failed to process custom function\n', err)
+    def draw_buttons_script(self, context, layout):
+        msg = 'failed to load custom draw_buttons function'
+        self.handle_execution_nid("draw_buttons", msg, (self, context, layout))
 
     def process(self):
         self.process_script(context)
 
-    def load(self):
-        ...
+    def process_script(self, context):
+        msg = 'failed to process custom function'
+        self.handle_execution_nid("process", msg, (self, context))
 
-    def reset(self):
+    def load(self, context):
+        print('time to load')
+        self.init_socket(context)
+        self.loaded = True
+
+    def reset(self, context):
+        print('reset')
         ...
 
 classes = [SvSNCallbackFunctor, SvSNFunctor]
