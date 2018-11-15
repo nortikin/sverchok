@@ -218,6 +218,7 @@
 ## Viz
     Sv3DviewPropsNode
     SvVDBasicLines
+    SvMatrixViewer28
     ---
     SvBmeshViewerNodeV28
     SvCurveViewerNodeV28
