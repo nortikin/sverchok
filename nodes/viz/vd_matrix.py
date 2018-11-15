@@ -19,25 +19,61 @@
 
 import bgl
 import bpy
+import gpu
+from gpu_extras.batch import batch_for_shader
 from mathutils import Matrix, Vector, Color
 from bpy.props import FloatVectorProperty, StringProperty, BoolProperty, FloatProperty
-# from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
-
+from bpy_extras.view3d_utils import location_3d_to_region_2d as loc3d2d
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 
+smooth_2d_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
 
-def screen_v3dBGL_matrix(context, args):
-    # region = context.region
-    # region3d = context.space_data.region_3d
-    cdat, simple, plane, grid, alpha = args
+def screen_v3d_batch_matrix(context, args):
+    cdat, simple, plane, grid = args
     for matrix, color in cdat:
         mdraw = MatrixDraw28()
-        # show_plate = (color[0], color[1], color[2], alpha)  if alpha > 0.0  else False
-        mdraw.draw_matrix(matrix, color, skip=simple, grid=grid) # , show_plate=show_plate)
+        mdraw.draw_matrix(matrix, skip=simple, grid=grid)
+
+def screen_v3d_batch_matrix_overlay(context, args):
+    region = context.region
+    region3d = context.space_data.region_3d
+    cdat, alpha = args[0], args[1]
+    if not alpha > 0.0:
+        return
+    
+    pt = 0.5
+    G = -0.001  # to z offset the plane from the axis
+    coords = (-pt, pt, G), (pt, pt, G), (pt ,-pt, G), (-pt,-pt, G)
+    indices_plane = [(0, 1, 2), (0, 2, 3)]
+
+    # first calculate positions and lerp colors
+    coords_transformed = []
+    indices_shifted = []
+    idx_offset = 0
+    colors = []
+    for i, (matrix, color) in enumerate(cdat):
+        r, g, b = color
+        for x, y, z in coords:
+            vector3d = matrix @ Vector((x, y, z))
+            vector2d = loc3d2d(region, region3d, vector3d)
+            coords_transformed.append(vector2d)
+            colors.append((r, g, b, alpha))
+
+        for indices in indices_plane:
+            indices_shifted.append(tuple(idx+idx_offset for idx in indices))
+
+        idx_offset += 4
+
+    batch = batch_for_shader(
+        smooth_2d_shader, 'TRIS', {"pos" : coords_transformed, "color": colors},
+        indices=indices_shifted)
+
+    # smooth_2d_shader.bind()
+    batch.draw(smooth_2d_shader) 
 
 
 def match_color_to_matrix(node):
@@ -100,14 +136,23 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
-                'custom_function': screen_v3dBGL_matrix,
-                'args': (cdat, self.simple, self.plane, self.grid, self.alpha)
+                'custom_function': screen_v3d_batch_matrix,
+                'args': (cdat, self.simple, self.plane, self.grid)
             }
-            callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
 
+            draw_data_2d = {
+                'tree_name': self.id_data.name[:],
+                'custom_function': screen_v3d_batch_matrix_overlay,
+                'args': (cdat, self.alpha)
+            }
+
+            callback_enable(self.n_id, draw_data, overlay='POST_VIEW')
+            callback_enable(self.n_id+'__2D', draw_data_2d, overlay='POST_PIXEL')
 
     def free(self):
         callback_disable(node_id(self))
+        callback_disable(node_id(self) + '__2D')
+
 
     # reset n_id on copy
     def copy(self, node):
