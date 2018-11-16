@@ -7,6 +7,8 @@
 
 import sys
 import bpy
+import inspect
+
 # import mathutils
 from mathutils import Matrix, Vector
 from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty
@@ -16,6 +18,7 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
+functions = "draw_buttons", "process", "functor_init"
 sn_callback = "node.svfunctor_callback"
 
 def make_name(type_, index_):
@@ -68,19 +71,21 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             print(self.name,': node dict not found for', hash(self))
             return
 
+        if func_name == 'process':
+            locals().update(ND.get("all_members"))
+
         try:
-            ND[func_name](*args)
+            if args:
+                ND[func_name](self, *args)
+            else:
+                ND[func_name](self)
+
         except Exception as err:
             print(msg, ": error in funcname :", func_name)
             sys.stderr.write('ERROR: %s\n' % str(err))
             exec_info = sys.exc_info()[-1]
             print('on line # {}'.format(exec_info.tb_lineno))
             print('code:', exec_info.tb_frame.f_code)
-
-    def init_socket(self, context):
-        """ This will call the hoisted function:  functor_init(self, context) """
-        msg = 'failed to initialize sockets'
-        self.handle_execution_nid("functor_init", msg, (self, context))
 
     def draw_buttons(self, context, layout):
 
@@ -96,25 +101,47 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         if self.loaded:
             self.draw_buttons_script(context, layout)
 
+    ###  delegation funcions
+
     def draw_buttons_script(self, context, layout):
         """ This will call the hoisted function:  draw_buttons(self, context, layout) """
         msg = 'failed to load custom draw_buttons function'
-        self.handle_execution_nid("draw_buttons", msg, (self, context, layout))
+        self.handle_execution_nid("draw_buttons", msg, context, layout)
+
+    def process_script(self):
+        """ This will call the hoisted function:  process(self, context) """
+        msg = 'failed to process custom function'
+        self.handle_execution_nid("process", msg, None)
+
+    def init_socket(self, context):
+        """ This will call the hoisted function:  functor_init(self, context) """
+        msg = 'failed to initialize sockets'
+        self.handle_execution_nid("functor_init", msg, context)
+
+    ###  processors :)
 
     def process(self):
         if not all([self.script_name, self.script_str]):
             return        
-        self.process_script(context)
+        self.process_script()
 
-    def process_script(self, context):
-        """ This will call the hoisted function:  process(self, context) """
-        msg = 'failed to process custom function'
-        self.handle_execution_nid("process", msg, (self, context))
+    def get_starfunks(self, module):
+        members = inspect.getmembers(module)
+        return {m[0]: m[1] for m in members if (not m[0] in functions) and (not m[0].startswith('__'))}
+
+    def get_functions(self):
+        script = self.script_name.replace('.py', '').strip()
+        exec(f'import {script}')
+        module = locals().get(script)
+
+        dict_functions = {named: getattr(module, named) for named in functions}
+        dict_functions['all_members'] = self.get_starfunks(module)
+        return dict_functions
 
     def load(self, context):
         print('time to load', self.script_name)
-        return
-
+        self.node_dict[hash(self)] = self.get_functions()
+        self.script_str = bpy.data.texts[self.script_name].as_string()
         self.init_socket(context)
         self.loaded = True
 
@@ -129,6 +156,12 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     def copy(self, node):
         self.node_dict[hash(self)] = {}
         self.load()
+
+    def draw_label(self):
+        if self.script_name:
+            return 'SNF: ' + self.script_name
+        else:
+            return self.bl_label
 
 
 classes = [SvSNCallbackFunctor, SvSNFunctor]
