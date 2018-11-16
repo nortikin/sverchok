@@ -130,7 +130,7 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
 
         if matrix:
             matrix = matrix_sanitizer(matrix)
-            verts = [matrix * Vector(v) for v in verts]
+            verts = [matrix @ Vector(v) for v in verts]
 
         big_verts.extend(verts)
         big_edges.extend([[a + vert_count, b + vert_count] for a, b in edges])

@@ -23,15 +23,11 @@ from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 
 from mathutils import Vector
 
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    dataCorrect,
-    fullList,
-    updateNode)
-
-from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 from sverchok.utils.sv_obj_helper import SvObjHelper
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_viewer_utils import matrix_sanitizer
+from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import (dataCorrect, fullList, updateNode)
 
 
 def tuple_to_enumdata(*iterable):
@@ -113,7 +109,7 @@ def make_merged_live_curve(node, obj_index, verts, edges, matrices):
 
         # and rebuild
         for edge in edges:
-            v0, v1 = m * Vector(verts[edge[0]]), m * Vector(verts[edge[1]])
+            v0, v1 = m @ Vector(verts[edge[0]]), m @ Vector(verts[edge[1]])
 
             full_flat = [v0[0], v0[1], v0[2], 0.0, v1[0], v1[1], v1[2], 0.0]
 
