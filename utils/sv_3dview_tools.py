@@ -72,7 +72,7 @@ def get_center(self, context):
                 if not vertex_links:
                     location = Matrix(matrix).to_translation()[:]
                 else:                        
-                    location = (Matrix(matrix) * Vector(location))[:]
+                    location = (Matrix(matrix) @ Vector(location))[:]
 
         else:
             self.report({'INFO'}, 'viewer has no get_center function')
