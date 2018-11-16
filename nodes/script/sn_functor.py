@@ -34,6 +34,8 @@ def make_annotations():
         annotations[iname] = IntProperty(name=iname, update=updateNode)
         fname = make_name('float', i)
         annotations[fname] = FloatProperty(name=fname, update=updateNode)
+        bname = make_name('bool', i)
+        annotations[bname] = BoolProperty(name=bname, update=updateNode)
     return annotations
 
 class SvSNPropsFunctor:
@@ -71,10 +73,12 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         except Exception as err:
             print(msg, ": error in funcname :", func_name)
             sys.stderr.write('ERROR: %s\n' % str(err))
-            print(sys.exc_info()[-1].tb_frame.f_code)
-            print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+            exec_info = sys.exc_info()[-1]
+            print('on line # {}'.format(exec_info.tb_lineno))
+            print('code:', exec_info.tb_frame.f_code)
 
     def init_socket(self, context):
+        """ This will call the hoisted function:  functor_init(self, context) """
         msg = 'failed to initialize sockets'
         self.handle_execution_nid("functor_init", msg, (self, context))
 
@@ -93,13 +97,17 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             self.draw_buttons_script(context, layout)
 
     def draw_buttons_script(self, context, layout):
+        """ This will call the hoisted function:  draw_buttons(self, context, layout) """
         msg = 'failed to load custom draw_buttons function'
         self.handle_execution_nid("draw_buttons", msg, (self, context, layout))
 
     def process(self):
+        if not all([self.script_name, self.script_str]):
+            return        
         self.process_script(context)
 
     def process_script(self, context):
+        """ This will call the hoisted function:  process(self, context) """
         msg = 'failed to process custom function'
         self.handle_execution_nid("process", msg, (self, context))
 
@@ -114,6 +122,13 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         print('reset')
         self.loaded = ""
         self.script_name = ""
+        self.script_str = ''
+        self.node_dict[hash(self)] = {}
+        self.clear_sockets()
+
+    def copy(self, node):
+        self.node_dict[hash(self)] = {}
+        self.load()
 
 
 classes = [SvSNCallbackFunctor, SvSNFunctor]
