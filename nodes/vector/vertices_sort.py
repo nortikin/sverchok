@@ -284,9 +284,9 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
                     return -q.angle
 
             for v, p, m in zip(Vector_generate(verts), poly_edge, mat_iter):
-                axis = m * Vector((0, 0, 1))
-                axis_norm = m * Vector((1, 0, 0))
-                base_point = m * Vector((0, 0, 0))
+                axis = m @ Vector((0, 0, 1))
+                axis_norm = m @ Vector((1, 0, 0))
+                base_point = m @ Vector((0, 0, 0))
                 intersect_d = [intersect_point_line(v_c, base_point, axis) for v_c in v]
                 rotate_d = [f(axis, (axis_norm + v_l[0]).rotation_difference(v_c)) for v_c, v_l in zip(v, intersect_d)]
                 s_v = ((data[0][1], data[1], i) for i, data in enumerate(zip(intersect_d, rotate_d)))
