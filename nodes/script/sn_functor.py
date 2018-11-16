@@ -65,7 +65,7 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     loaded: BoolProperty()
     node_dict = {}
 
-    def handle_execution_nid(self, func_name, msg, *args):
+    def handle_execution_nid(self, func_name, msg, args):
         ND = self.node_dict.get(hash(self))
         if not ND:
             print(self.name,': node dict not found for', hash(self))
@@ -106,17 +106,17 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     def draw_buttons_script(self, context, layout):
         """ This will call the hoisted function:  draw_buttons(self, context, layout) """
         msg = 'failed to load custom draw_buttons function'
-        self.handle_execution_nid("draw_buttons", msg, context, layout)
+        self.handle_execution_nid("draw_buttons", msg, args=(context, layout))
 
     def process_script(self):
         """ This will call the hoisted function:  process(self, context) """
         msg = 'failed to process custom function'
-        self.handle_execution_nid("process", msg, None)
+        self.handle_execution_nid("process", msg, args=None)
 
     def init_socket(self, context):
         """ This will call the hoisted function:  functor_init(self, context) """
         msg = 'failed to initialize sockets'
-        self.handle_execution_nid("functor_init", msg, context)
+        self.handle_execution_nid("functor_init", msg, args=(context,))
 
     ###  processors :)
 
