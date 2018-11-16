@@ -14,25 +14,30 @@ from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
+sn_callback = "node.svfunctor_callback"
 
 def make_name(type_, index_):
     return type_ + '_0{0}'.format(index_)
 
+
 class SvSNCallbackFunctor(bpy.types.Operator, SvGenericCallbackWithParams):
-    bl_idname = "node.svfunctor_callback"
+    bl_idname = sn_callback
     bl_label = "Callback for functor node"
 
-class SvSNPropsFunctor:
 
-    __annotations__ = {}
-    __annotations__['n_id'] = StringProperty()
-
+def make_annotations():
+    annotations = {}
     for i in range(5):
         iname = make_name('int', i)
-        __annotations__[iname] = IntProperty(name=iname, update=updateNode)
+        annotations[iname] = IntProperty(name=iname, update=updateNode)
         fname = make_name('float', i)
-        __annotations__[fname] = FloatProperty(name=fname, update=updateNode)
+        annotations[fname] = FloatProperty(name=fname, update=updateNode)
+    return annotations
+
+class SvSNPropsFunctor:
+    __annotations__ = make_annotations()
 
     def clear_sockets(self):
         self.inputs.clear()
@@ -56,11 +61,15 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     node_dict = {}
 
     def handle_execution_nid(self, func_name, msg, *args):
+        ND = self.node_dict.get(hash(self))
+        if not ND:
+            print(self.name,': node dict not found for', hash(self))
+            return
+
         try:
-            self.node_dict[self.n_id][func_name](*args)
+            ND[func_name](*args)
         except Exception as err:
-            print("error in funcname:", func_name)
-            print(msg + '\n', err)
+            print(msg, ": error in funcname :", func_name)
             sys.stderr.write('ERROR: %s\n' % str(err))
             print(sys.exc_info()[-1].tb_frame.f_code)
             print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
@@ -70,10 +79,18 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         self.handle_execution_nid("functor_init", msg, (self, context))
 
     def draw_buttons(self, context, layout):
+
+        if not self.loaded:
+            row = layout.row()
+            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
+
         row = layout.row()
-        row.operator("node.svfunctor_callback", text='Load').fn_name='load'
-        row.operator("node.svfunctor_callback", text='Reset').fn_name='reset'
-        self.draw_buttons_script(context, layout)
+        row.operator(sn_callback, text='Load').fn_name='load'
+        row.operator(sn_callback, text='Reset').fn_name='reset'
+
+        if self.loaded:
+            self.draw_buttons_script(context, layout)
 
     def draw_buttons_script(self, context, layout):
         msg = 'failed to load custom draw_buttons function'
@@ -87,13 +104,17 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         self.handle_execution_nid("process", msg, (self, context))
 
     def load(self, context):
-        print('time to load')
+        print('time to load', self.script_name)
+        return
+
         self.init_socket(context)
         self.loaded = True
 
     def reset(self, context):
         print('reset')
-        ...
+        self.loaded = ""
+        self.script_name = ""
+
 
 classes = [SvSNCallbackFunctor, SvSNFunctor]
 register, unregister = bpy.utils.register_classes_factory(classes)
