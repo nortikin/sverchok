@@ -56,10 +56,12 @@ def frange_count(start, stop, count):
 def frange_step(start, step, count):
     ''' Gives count values with step from start'''
     if abs(step) < 1e-5:
-        step = 1
-    for i in range(int(count)):
-        yield start
-        start += step
+        for i in range(int(count)):
+            yield start
+    else:
+        for i in range(int(count)):
+            yield start
+            start += step
 
 
 class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):

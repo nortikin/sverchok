@@ -51,6 +51,8 @@ def countRange(start=0, step=1, count=10):
     count = max(count, 0)
     if count == 0:
         return []
+    if step == 0:
+        return [start] * count
     stop = (count*step) + start
     return list(range(start, stop, step))
 
