@@ -20,3 +20,5 @@ Generators Extended
    script3
    scripted_intro
    script_mk2
+   smooth_lines
+   

@@ -316,8 +316,8 @@ class SvPolylineViewerNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             return dataCorrect(data)
 
         mverts = get('vertices')
-        mradii = self.inputs['radii'].sv_get(deepcopy=False)
-        mtwist = self.inputs['twist'].sv_get(deepcopy=False)
+        mradii = self.inputs['radii'].sv_get(deepcopy=True)
+        mtwist = self.inputs['twist'].sv_get(deepcopy=True)
         mmtrix = get('matrix')
 
         # extend all non empty lists to longest of these

@@ -34,8 +34,9 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
 
     boundary_modes = [
         ("CLIP", "Clip", "", 0),
-        ("CYCLIC", "Repeat", "", 1),
-        ("MIRROR", "Mirror", "", 2)]
+        ("EXTEND", "Extend", "", 1),
+        ("CYCLIC", "Repeat", "", 2),
+        ("MIRROR", "Mirror", "", 3)]
 
     shift_modes = [
         ("NONE", "None", "", 0),
@@ -86,10 +87,6 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Verts UV")
         self.inputs.new('StringsSocket', "U domain").prop_name = 'domU'
         self.inputs.new('StringsSocket', "V domain").prop_name = 'domV'
-        #if self.shift_mode_U not 'NONE':
-        #self.inputs.new('StringsSocket', "U shift").prop_name = 'shiftU'
-        #if self.shift_mode_V not 'NONE':
-        #self.inputs.new('StringsSocket', "V shift").prop_name = 'shiftV'
         self.outputs.new('StringsSocket', "R")
         self.outputs.new('StringsSocket', "G")
         self.outputs.new('StringsSocket', "B")
@@ -141,8 +138,6 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
         blue = [[]]
 
         if outputs['R'].is_linked or outputs['G'].is_linked or outputs['B'].is_linked:
-            # copy images data, pixels is created on every access with [i], extreme speedup.
-            # http://blender.stackexchange.com/questions/3673/why-is-accessing-image-data-so-slow
             imag = bpy.data.images[self.image_name].pixels[:]
             sizeU = bpy.data.images[self.image_name].size[0]
             sizeV = bpy.data.images[self.image_name].size[1]
@@ -152,18 +147,21 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
                 u = floor(vx)
                 v = floor(vy)
                 u0 = u
+                inside_domain = True
 
                 if self.shift_mode_U == 'ALTERNATE':
                     if (v//sizeV)%2: u += floor(sizeU*self.shiftU)
                 if self.shift_mode_U == 'CONSTANT':
                     u += floor(sizeU*self.shiftU*(v//sizeV))
                 if self.boundU == 'CLIP':
-                    u = max(0,min(u,sizeU-1))
+                    inside_domain = 0 <= u < sizeU
                 elif self.boundU == 'CYCLIC':
                     u = u%sizeU
                 elif self.boundU == 'MIRROR':
                     if (u//sizeU)%2: u = sizeU - 1 - u%(sizeU)
                     else: u = u%(sizeU)
+                elif self.boundU == 'EXTEND':
+                    u = max(0,min(u,sizeU-1))
 
 
                 if self.shift_mode_V == 'ALTERNATE':
@@ -171,17 +169,24 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
                 if self.shift_mode_V == 'CONSTANT':
                     v += floor(sizeV*self.shiftV*(u0//sizeU))
                 if self.boundV == 'CLIP':
-                    v = max(0,min(v,sizeV-1))
+                    inside_domain = inside_domain and 0 <= v < sizeV
                 elif self.boundV == 'CYCLIC':
                     v = v%sizeV
                 elif self.boundV == 'MIRROR':
                     if (v//sizeV)%2: v = sizeV - 1 - v%(sizeV)
                     else: v = v%(sizeV)
+                elif self.boundV == 'EXTEND':
+                    v = max(0,min(v,sizeV-1))
 
-                index = int(u*4 + v*4*sizeU)
-                red[0].append(imag[index])
-                green[0].append(imag[index+1])
-                blue[0].append(imag[index+2])
+                if inside_domain:
+                    index = int(u*4 + v*4*sizeU)
+                    red[0].append(imag[index])
+                    green[0].append(imag[index+1])
+                    blue[0].append(imag[index+2])
+                else:
+                    red[0].append(0)
+                    green[0].append(0)
+                    blue[0].append(0)
         outputs['R'].sv_set(red)
         outputs['G'].sv_set(green)
         outputs['B'].sv_set(blue)

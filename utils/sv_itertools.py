@@ -75,6 +75,7 @@ def recurse_fxy(l1, l2, f):
     else: #not l1_type and l2_type
         return [recurse_fxy(l1, y, f) for y in l2]
 
+
 def recurse_verts_fxy(l1, l2, f):
     l1_type = isinstance(l1, (list))
     l2_type = isinstance(l2, (list))
@@ -147,3 +148,24 @@ def match_longest_lists(lists):
         return zip(*[match_longest_lists([l[i] for l in lists]) for i in range(max_length)])
     except:
         return lists
+
+
+def extend_if_needed(vl, wl, default=0.5):
+    # match wl to correspond with vl
+    try:
+        last_value = wl[-1][-1]
+    except:
+        last_value = default
+
+    if (len(vl) > len(wl)):
+        num_new_empty_lists = len(vl) - len(wl)
+        for emlist in range(num_new_empty_lists):
+            wl.append([])
+
+    # extend each sublist in wl to match quantity found in sublists of v1
+    for i, vlist in enumerate(vl):
+        if (len(vlist) > len(wl[i])):
+            num_new_repeats = len(vlist) - len(wl[i])
+            for n in range(num_new_repeats):
+                wl[i].append(last_value)
+    return wl

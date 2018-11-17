@@ -90,17 +90,14 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
         ], default='CONT', name="Mode")
 
     def sv_init(self, context):
-        #self.inputs.new('StringsSocket', 'Flow', 'Flow').prop_name = 'flow'
-        #self.inputs.new('StringsSocket', 'Start Code', 'Start Code').prop_name = 'start_code'
-        self.inputs.new('StringsSocket', 'Layer Height', 'Layer Height').prop_name = 'layer_height'
-        self.inputs.new('StringsSocket', 'Flow Mult', 'Flow Mult').prop_name = 'flow_mult'
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
+        self.inputs.new('StringsSocket', 'Layer Height',).prop_name = 'layer_height'
+        self.inputs.new('StringsSocket', 'Flow Mult',).prop_name = 'flow_mult'
+        self.inputs.new('VerticesSocket', 'Vertices',)
 
-        self.outputs.new('StringsSocket', 'Info', 'Info')
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Printed Edges', 'Printed Edges')
-        #self.outputs.new('VerticesSocket', 'Travel Verts', 'Travel Verts')
-        self.outputs.new('StringsSocket', 'Travel Edges', 'Travel Edges')
+        self.outputs.new('StringsSocket', 'Info',)
+        self.outputs.new('VerticesSocket', 'Vertices',)
+        self.outputs.new('StringsSocket', 'Printed Edges',)
+        self.outputs.new('StringsSocket', 'Travel Edges',)
 
     def draw_buttons(self, context, layout):
 
@@ -134,7 +131,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, 'auto_sort', text="Sort Layers (z)")
             col.prop(self, 'close_all')
             col.separator()
-        #col.prop(self, 'flow_mult')
         col.label(text='Custom Code:', icon='SCRIPT')
         col.prop_search(self, 'start_code', bpy.data, 'texts')
         col.prop_search(self, 'end_code', bpy.data, 'texts')
@@ -172,7 +168,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
         if '.gcode' not in folder: folder += '.gcode'
         path = bpy.path.abspath(folder)
         file = open(path, 'w')
-        #file.write('M92 E' + format(self.esteps, '.4f') + '\n')
         try:
             for line in bpy.data.texts[self.start_code].lines:
                 file.write(line.body + '\n')
@@ -213,7 +208,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
                 # record max z
                 maxz = max(maxz,v[2])
 
-
                 # first point of the gcode
                 if i ==  j == 0:
                     printed_verts.append(v)
@@ -221,19 +215,16 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
                     params = v[:3] + (feed,)
                     to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
                     file.write(to_write)
-                    #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed, '.0f') + '\n')
                 else:
                     # start after retraction
                     if j == 0 and self.gcode_mode == 'RETR':
                         params = v[:2] + (maxz+self.dz,) + (feed_h,)
                         to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
                         file.write(to_write)
-                        #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_h, '.0f') + '\n')
                         e += self.push
                         params = v[:3] + (feed_v,)
                         to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
                         file.write(to_write)
-                        #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' F' + format(feed_v, '.0f') + '\n')
                         file.write( 'G1 E' + format(e, '.4f') + '\n')
                         printed_verts.append((v[0], v[1], maxz+self.dz))
                         travel_edges.append((len(printed_verts)-1, len(printed_verts)-2))
@@ -253,7 +244,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
                         params = v[:3] + (e,)
                         to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} E{3:.4f}\n'.format(*params)
                         file.write(to_write)
-                        #file.write('G1 X' + format(v[0], '.4f') + ' Y' + format(v[1], '.4f') + ' Z' + format(v[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                         path_length += dist
                         printed_edges.append([len(printed_verts)-1, len(printed_verts)-2])
             if self.gcode_mode == 'RETR':
@@ -271,7 +261,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
                     params = v1[:3] + (e,)
                     to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} E{3:.4f}\n'.format(*params)
                     file.write(to_write)
-                    #file.write('G1 X' + format(v1[0], '.4f') + ' Y' + format(v1[1], '.4f') + ' Z' + format(v1[2], '.4f') + ' E' + format(e, '.4f') + '\n')
                     path_length += dist
                     v0 = v1
                 if i < len(vertices)-1:
@@ -280,7 +269,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
                     params = v0[:2] + (maxz+self.dz,) + (feed_v,)
                     to_write = 'G1 X{0:.4f} Y{1:.4f} Z{2:.4f} F{3:.0f}\n'.format(*params)
                     file.write(to_write)
-                    #file.write('G1 X' + format(v0[0], '.4f') + ' Y' + format(v0[1], '.4f') + ' Z' + format(maxz+self.dz, '.4f') + ' F' + format(feed_v, '.0f') + '\n')
                     printed_verts.append(v0.to_tuple())
                     printed_verts.append((v0.x, v0.y, maxz+self.dz))
                     travel_edges.append((len(printed_verts)-1, len(printed_verts)-2))
@@ -291,7 +279,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
                 file.write(line.body + '\n')
         except:
             pass
-        #file.write(end_code)
         file.close()
         print("Saved gcode to " + path)
         info = "Extruded Filament: " + format(e, '.2f') + '\n'
@@ -300,7 +287,6 @@ class SvExportGcodeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].sv_set(info)
         self.outputs[1].sv_set(printed_verts)
         self.outputs[2].sv_set(printed_edges)
-        #self.outputs[3].sv_set(travel_verts)
         self.outputs[3].sv_set(travel_edges)
 
 def register():
