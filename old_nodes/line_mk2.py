@@ -48,6 +48,8 @@ class SvLineNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Line MK2'
     bl_icon = 'GRIP'
 
+    replacement_nodes = [('SvLineNodeMK3', None, None)]
+    
     def upgrade_if_needed(self):
         """ This allows us to keep the node mk2 - on the fly node upgrade"""
         if "Size" not in self.inputs:

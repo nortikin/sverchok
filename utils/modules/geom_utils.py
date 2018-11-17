@@ -38,6 +38,9 @@ def normalize(v):
 def sub_v3_v3v3(a, b):
     return a[0]-b[0], a[1]-b[1], a[2]-b[2]
 
+def add_v3_v3v3(a, b):
+    return a[0]+b[0], a[1]+b[1], a[2]+b[2]
+
 def madd_v3_v3v3fl(a, b, f=1.0):
     return a[0]+b[0]*f, a[1]+b[1]*f, a[2]+b[2]*f
 

@@ -276,7 +276,7 @@
       "width": 391.4091796875
     },
     "Line MK2": {
-      "bl_idname": "SvLineNodeMK2",
+      "bl_idname": "SvLineNodeMK3",
       "color": [
         0.9200000166893005,
         0.9200000166893005,
@@ -297,7 +297,7 @@
       "width": 140.0
     },
     "Line MK2.001": {
-      "bl_idname": "SvLineNodeMK2",
+      "bl_idname": "SvLineNodeMK3",
       "color": [
         0.9200000166893005,
         0.9200000166893005,
