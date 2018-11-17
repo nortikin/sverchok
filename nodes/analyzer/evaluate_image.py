@@ -87,11 +87,11 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Verts UV")
         self.inputs.new('StringsSocket', "U domain").prop_name = 'domU'
         self.inputs.new('StringsSocket', "V domain").prop_name = 'domV'
-        self.outputs.new('StringsSocket', "BW")
         self.outputs.new('StringsSocket', "R")
         self.outputs.new('StringsSocket', "G")
         self.outputs.new('StringsSocket', "B")
         self.outputs.new('StringsSocket', "A")
+        self.outputs.new('StringsSocket', "BW")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Image:")
@@ -193,7 +193,7 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
                     blue[0].append(0)
                     alpha[0].append(0)
         if outputs['BW'].is_linked:
-            bw[0] = [(r+g+b)/3 for r,g,b in zip(red[0], green[0], blue[0])]
+            bw[0] = [0.2126*r + 0.7152*g + 0.0722*b for r,g,b in zip(red[0], green[0], blue[0])]
         outputs['BW'].sv_set(bw)
         outputs['A'].sv_set(alpha)
         outputs['R'].sv_set(red)
