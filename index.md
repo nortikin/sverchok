@@ -42,6 +42,7 @@
     SvTorusKnotNode
     SvRingNode
     SvEllipseNode
+    SvSmoothLines
 
 ## Analyzers
     SvBBoxNode
@@ -63,6 +64,7 @@
     SvProportionalEditNode
     SvRaycasterLiteNode
     SvOBJInsolationNode
+    EvaluateImageNode
 
 ## Transforms
     SvRotationNode
@@ -309,6 +311,7 @@
     SvSetCustomMeshNormals
     ---
     SvSpiralNode
+    SvExportGcodeNode
 
 ## Alpha Nodes
     SvCurveViewerNode
@@ -339,4 +342,3 @@
     SvOffsetLineNode
     SvContourNode
     SvPlanarEdgenetToPolygons
-    
