@@ -87,9 +87,11 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Verts UV")
         self.inputs.new('StringsSocket', "U domain").prop_name = 'domU'
         self.inputs.new('StringsSocket', "V domain").prop_name = 'domV'
+        self.outputs.new('StringsSocket', "BW")
         self.outputs.new('StringsSocket', "R")
         self.outputs.new('StringsSocket', "G")
         self.outputs.new('StringsSocket', "B")
+        self.outputs.new('StringsSocket', "A")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Image:")
@@ -133,11 +135,13 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
         else: domV = self.domV
 
         # outputs
+        bw = [[]]
         red = [[]]
+        alpha = [[]]
         green = [[]]
         blue = [[]]
 
-        if outputs['R'].is_linked or outputs['G'].is_linked or outputs['B'].is_linked:
+        if outputs['R'].is_linked or outputs['G'].is_linked or outputs['B'].is_linked or outputs['A'].is_linked or outputs['BW'].is_linked:
             imag = bpy.data.images[self.image_name].pixels[:]
             sizeU = bpy.data.images[self.image_name].size[0]
             sizeV = bpy.data.images[self.image_name].size[1]
@@ -163,7 +167,6 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
                 elif self.boundU == 'EXTEND':
                     u = max(0,min(u,sizeU-1))
 
-
                 if self.shift_mode_V == 'ALTERNATE':
                     if (u0//sizeU)%2: v += floor(sizeV*self.shiftV)
                 if self.shift_mode_V == 'CONSTANT':
@@ -183,10 +186,16 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
                     red[0].append(imag[index])
                     green[0].append(imag[index+1])
                     blue[0].append(imag[index+2])
+                    alpha[0].append(imag[index+3])
                 else:
                     red[0].append(0)
                     green[0].append(0)
                     blue[0].append(0)
+                    alpha[0].append(0)
+        if outputs['BW'].is_linked:
+            bw[0] = [(r+g+b)/3 for r,g,b in zip(red[0], green[0], blue[0])]
+        outputs['BW'].sv_set(bw)
+        outputs['A'].sv_set(alpha)
         outputs['R'].sv_set(red)
         outputs['G'].sv_set(green)
         outputs['B'].sv_set(blue)
