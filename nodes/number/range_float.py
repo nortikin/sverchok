@@ -41,8 +41,7 @@ def frange(start, stop, step):
 
 def frange_count(start, stop, count):
     ''' Gives count total values in [start,stop] '''
-    
-        
+    # we are casting to int here because the input can be floats.
 
     if count < 2:
         yield start
