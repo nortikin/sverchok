@@ -17,8 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import (EnumProperty, FloatVectorProperty,
-                       IntProperty, IntVectorProperty, BoolProperty)
+from bpy.props import (
+    EnumProperty, FloatVectorProperty,
+    IntProperty, IntVectorProperty, BoolProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
