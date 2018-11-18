@@ -63,6 +63,8 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         try:
             verts = inputs['Verts'].sv_get()[0]
             linked = outputs['Edges'].is_linked
+            if not linked:
+                return            
         except (IndexError, KeyError) as e:
             return
 
