@@ -141,10 +141,12 @@ class EvaluateImageNode(bpy.types.Node, SverchCustomTreeNode):
         green = [[]]
         blue = [[]]
 
-        if outputs['R'].is_linked or outputs['G'].is_linked or outputs['B'].is_linked or outputs['A'].is_linked or outputs['BW'].is_linked:
+        if any(socket.is_linked for socket in self.outputs):
+            
             imag = bpy.data.images[self.image_name].pixels[:]
             sizeU = bpy.data.images[self.image_name].size[0]
             sizeV = bpy.data.images[self.image_name].size[1]
+            
             for vert in verts:
                 vx = vert[0]*(sizeU-1)/domU
                 vy = vert[1]*sizeV/domV
