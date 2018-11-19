@@ -102,6 +102,8 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     vertex_color = StringProperty(default='SvCol', update=updateNode)
     clear = BoolProperty(name='clear c', default=True, update=updateNode)
 
+    safe_mode = BoolProperty(update=updateNode)
+    
     clear_c = FloatVectorProperty(
         name='cl_color', subtype='COLOR', min=0, max=1, size=4,
         default=(0, 0, 0, 1), update=updateNode)
@@ -127,6 +129,7 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mode", expand=True)
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "safe_mode", text="Safe Mode")
         row = layout.row(align=True)
         row.prop(self, "clear", text="clear unindexed")
         row.prop(self, "clear_c", text="")
@@ -149,6 +152,9 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         return vertex_color or vcols.new(name=self.vertex_color)
 
     def process(self):
+        
+        if not self.safe_mode:
+            return
 
         color_socket = self.inputs["Color"]
         index_socket = self.inputs["Index"]
