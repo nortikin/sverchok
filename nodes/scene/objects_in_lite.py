@@ -68,7 +68,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             obj = bpy.data.objects.get(obj_name)
 
         if obj:
-            obj_data = obj.to_mesh(bpy.context.scene, self.modifiers, 'PREVIEW')
+            obj_data = obj.to_mesh(bpy.context.depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
             self.node_dict[hash(self)] = {
                 'Vertices': list([v.co[:] for v in obj_data.vertices]),
                 'Edges': obj_data.edge_keys,
@@ -102,11 +102,11 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         if not self.currently_storing:
             row.operator(callback, text='G E T').cmd = 'dget'
             row.prop(self, 'modifiers', text='', icon='MODIFIER')
-            layout.label('--None--')
+            layout.label(text='--None--')
         else:
             row.operator(callback, text='D R O P').cmd = 'drop'
             row.prop(self, 'modifiers', text='', icon='MODIFIER')
-            layout.label(self.obj_name)
+            layout.label(text=self.obj_name)
 
 
     def process(self):

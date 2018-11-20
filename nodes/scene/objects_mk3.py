@@ -104,11 +104,11 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         """
         self.object_names.clear()
 
-        groups = bpy.data.groups
         if self.groupname and groups[self.groupname].objects:
+            groups = bpy.data.groups
             names = [obj.name for obj in groups[self.groupname].objects]
         else:
-            names = [obj.name for obj in bpy.data.objects if obj.select]
+            names = [obj.name for obj in bpy.data.objects if obj.select_get()]
 
         if self.sort:
             names.sort()
@@ -151,7 +151,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
+        # row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
 
         row = col.row()
         op_text = "Get selection"  # fallback
@@ -207,6 +207,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             return
             
         scene = bpy.context.scene
+        depsgraph = bpy.context.depsgraph
         data_objects = bpy.data.objects
         outputs = self.outputs
         
@@ -243,7 +244,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         vers, edgs, pols = pydata_from_bmesh(bm)
                         del bm
                     else:
-                        obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
+                        obj_data = obj.to_mesh(depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
