@@ -54,37 +54,32 @@ def screen_v3dMatrix(context, args):
     for matrix in args[0]:
         mdraw.draw_matrix(matrix)
 
+
+def draw_uniform(GL_KIND, coords, indices, color):
+    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, indices=indices)
+    shader.bind()
+    shader.uniform_float("color", color)
+    batch.draw(shader)
+
+
 def draw_edges(context, args):
     geom, line4f = args
     coords, indices = geom.verts, geom.edges
-
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=indices)
-    shader.bind()
-    shader.uniform_float("color", line4f)
-    batch.draw(shader)
+    draw_uniform('LINES', coords, indices, line4f)
 
 def draw_faces(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.faces
 
     new_indices = ensure_triangles(coords, indices)
-
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'TRIS', {"pos" : coords}, indices=new_indices)
-    shader.bind()
-    shader.uniform_float("color", config.face4f)
-    batch.draw(shader)
+    draw_uniform('TRIS', coords, new_indices, config.face4f)
 
     if not config.display_edges:
         return
     
     edge_indices = edges_from_faces(indices)
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=edge_indices)
-    shader.bind()
-    shader.uniform_float("color", config.line4f)
-    batch.draw(shader)
+    draw_uniform('LINES', coords, edge_indices, config.line4f)
 
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
