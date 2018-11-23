@@ -69,6 +69,8 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         ND = self.node_dict.get(hash(self))
         if not ND:
             print(self.name,': node dict not found for', hash(self))
+            self.node_dict[hash(self)] = {}
+            print('making new node dict')
             return
 
         if func_name == 'process':
@@ -147,15 +149,15 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
 
     def reset(self, context):
         print('reset')
-        self.loaded = ""
+        self.loaded = False
         self.script_name = ""
-        self.script_str = ''
+        self.script_str = ""
         self.node_dict[hash(self)] = {}
         self.clear_sockets()
 
     def copy(self, node):
         self.node_dict[hash(self)] = {}
-        self.load()
+        self.load(bpy.context)
 
     def draw_label(self):
         if self.script_name:

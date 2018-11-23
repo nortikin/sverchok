@@ -199,6 +199,11 @@ class SvSocketCommon:
                 if not self.is_output and not self.is_linked and self.prop_type:
                     layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
                     return
+            elif node.bl_idname in {'SvSNFunctor'} and not self.is_output:
+                if not self.is_linked:
+                    layout.prop(node, self.prop_name, text=self.name)
+                    return
+
 
         if self.is_linked:  # linked INPUT or OUTPUT
             t = text
