@@ -69,8 +69,8 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         ND = self.node_dict.get(hash(self))
         if not ND:
             print(self.name,': node dict not found for', hash(self))
-            self.node_dict[hash(self)] = {}
-            print('making new node dict')
+            if func_name == 'functor_init':
+                print('this is probably a .blend load event..')
             return
 
         if func_name == 'process':
