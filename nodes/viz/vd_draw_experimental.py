@@ -23,22 +23,19 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.geom import multiply_vectors_deep
 
 
+def edges_from_faces(indices):
+    """ we don't want repeat edges, ever.."""
+    out = set()
+    concat = out.add
+    for face in indices:
+        for edge in zip(face, list(face[1:]) + list([face[0]])):
+            concat(tuple(sorted(edge)))
+    return list(out)
+
 def screen_v3dMatrix(context, args):
     mdraw = MatrixDraw28()
     for matrix in args[0]:
         mdraw.draw_matrix(matrix)
-
-# def screen_v3dBGL(context, args):
-#     # region = context.region
-#     # region3d = context.space_data.region_3d
-    
-#     shader = args[0]
-#     batch = args[1]
-#     line4f = args[2]
-
-#     shader.bind()
-#     shader.uniform_float("color", line4f)
-#     batch.draw(shader)
 
 def draw_edges(context, args):
     geom, line4f = args
@@ -51,7 +48,7 @@ def draw_edges(context, args):
     batch.draw(shader)
 
 def draw_faces(context, args):
-    geom, line4f = args
+    geom, config = args
     coords, indices = geom.verts, geom.faces
 
     new_indices = []
@@ -72,9 +69,18 @@ def draw_faces(context, args):
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'TRIS', {"pos" : coords}, indices=new_indices)
     shader.bind()
-    shader.uniform_float("color", line4f)
+    shader.uniform_float("color", config.face4f)
     batch.draw(shader)
 
+    if not config.display_edges:
+        return
+    
+    edge_indices = edges_from_faces(indices)
+    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=edge_indices)
+    shader.bind()
+    shader.uniform_float("color", config.line4f)
+    batch.draw(shader)
 
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
@@ -96,6 +102,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR', min=0, max=1,
         default=(0.3, 0.3, 0.3, 1.0), name='edge color', size=4, update=updateNode)
 
+    face_color: FloatVectorProperty(
+        subtype='COLOR', min=0, max=1,
+        default=(0.3, 0.3, 0.3, 1.0), name='face color', size=4, update=updateNode)
+
+    display_edges: BoolProperty(update=updateNode, name="display edges")
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -109,6 +120,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         r1 = layout.row(align=True)
         r1.label(icon="UV_EDGESEL")
         r1.prop(self, "edge_color", text='')
+        r1.prop(self, "face_color", text='')
+        r2 = layout.row(align=True)
+        r2.prop(self, "display_edges", icon="SNAP_EDGE", expand=True, text="")
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
@@ -122,6 +136,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
         if verts_socket.is_linked: 
             geom = lambda: None
+            config = lambda: None
             
             propv = verts_socket.sv_get(deepcopy=False, default=[])
             coords = propv[0]
@@ -154,12 +169,14 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             elif faces_socket.is_linked:
                 geom.faces = indices
-                line4f = self.edge_color[:]
+                config.line4f = self.edge_color[:]
+                config.face4f = self.face_color[:]
+                config.display_edges = self.display_edges
 
                 draw_data = {
                     'tree_name': self.id_data.name[:],
                     'custom_function': draw_faces,
-                    'args': (geom, line4f)
+                    'args': (geom, config)
                 } 
                 callback_enable(n_id, draw_data)
                 return
