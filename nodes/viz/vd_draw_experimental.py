@@ -32,7 +32,7 @@ def edges_from_faces(indices):
             concat(tuple(sorted(edge)))
     return list(out)
 
-def ensure_triangles(indices):
+def ensure_triangles(coords, indices):
     new_indices = []
     concat = new_indices.append
     concat2 = new_indices.extend
@@ -68,7 +68,7 @@ def draw_faces(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.faces
 
-    new_indices = ensure_triangles(indices)
+    new_indices = ensure_triangles(coords, indices)
 
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'TRIS', {"pos" : coords}, indices=new_indices)
