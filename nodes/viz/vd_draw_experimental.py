@@ -32,6 +32,23 @@ def edges_from_faces(indices):
             concat(tuple(sorted(edge)))
     return list(out)
 
+def ensure_triangles(indices):
+    new_indices = []
+    concat = new_indices.append
+    concat2 = new_indices.extend
+    for idxset in indices:
+        num_verts = len(idxset)
+        if num_verts == 3:
+            concat(tuple(idxset))
+        elif num_verts == 4:
+            # a b c d  ->  [a, b, c], [a, c, d]
+            concat2([(idxset[0], idxset[1], idxset[2]), (idxset[0], idxset[2], idxset[3])])
+        else:
+            subcoords = [Vector(coords[idx]) for idx in idxset]
+            for pol in tessellate([subcoords]):
+                concat([idxset[i] for i in pol])
+    return new_indices    
+
 def screen_v3dMatrix(context, args):
     mdraw = MatrixDraw28()
     for matrix in args[0]:
@@ -51,20 +68,7 @@ def draw_faces(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.faces
 
-    new_indices = []
-    concat = new_indices.append
-    for idxset in indices:
-        num_verts = len(idxset)
-        if num_verts == 3:
-            concat(tuple(idxset))
-        elif num_verts == 4:
-            # a b c d  ->  [a, b, c], [a, c, d]
-            concat((idxset[0], idxset[1], idxset[2]))
-            concat((idxset[0], idxset[2], idxset[3]))
-        else:
-            subcoords = [Vector(coords[idx]) for idx in idxset]
-            for pol in tessellate([subcoords]):
-                concat([idxset[i] for i in pol])
+    new_indices = ensure_triangles(indices)
 
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'TRIS', {"pos" : coords}, indices=new_indices)
