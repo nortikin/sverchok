@@ -21,6 +21,7 @@ from sverchok.data_structure import node_id, updateNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.geom import multiply_vectors_deep
+from sverchok.utils.modules.geom_utils import obtain_normal as normal 
 
 
 def edges_from_faces(indices):
@@ -49,7 +50,8 @@ def ensure_triangles(coords, indices):
                 concat([idxset[i] for i in pol])
     return new_indices    
 
-def screen_v3dMatrix(context, args):
+def draw_matrix(context, args):
+    """ this takes one or more matrices packed into an iterable """
     mdraw = MatrixDraw28()
     for matrix in args[0]:
         mdraw.draw_matrix(matrix)
@@ -188,7 +190,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
-                'custom_function': screen_v3dMatrix,
+                'custom_function': draw_matrix,
                 'args': (matrices,)
             }            
 
