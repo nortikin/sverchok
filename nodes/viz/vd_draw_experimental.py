@@ -75,6 +75,7 @@ def draw_edges(context, args):
     draw_uniform('LINES', coords, indices, line4f)
 
 def draw_faces(context, args):
+    print('computation!!!')
     geom, config = args
     coords, face_indices = geom.verts, geom.faces
 
@@ -91,8 +92,7 @@ def draw_faces(context, args):
     if not config.display_edges:
         return
     
-    edge_indices = geom.edges or edges_from_faces(face_indices)
-    draw_uniform('LINES', coords, edge_indices, config.line4f)
+    draw_uniform('LINES', coords, geom.edges, config.line4f)
 
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
@@ -206,7 +206,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             if faces_socket.is_linked:
                 geom.faces = face_indices
-                geom.edges = edge_indices
+
+                if self.display_edges:
+                    # pass edges from socket if we can, else we manually compute them from faces
+                    geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
+
                 config.line4f = self.edge_color[:]
                 config.face4f = self.face_color[:]
                 config.display_edges = self.display_edges
