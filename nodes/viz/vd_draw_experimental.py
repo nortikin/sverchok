@@ -81,8 +81,7 @@ def draw_faces(context, args):
     coords, face_indices = geom.verts, geom.faces
 
     if config.shade == "flat":
-        new_face_indices = ensure_triangles(coords, face_indices)
-        draw_uniform('TRIS', coords, new_face_indices, config.face4f)
+        draw_uniform('TRIS', coords, face_indices, config.face4f)
     elif config.shade == "facet":
         # new_indices = ensure_triangles(coords, indices)
         # draw_smooth('TRIS', coords, new_indices, config.face4f)
@@ -207,9 +206,15 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 return
 
             if faces_socket.is_linked:
-                geom.faces = face_indices
+
+                # we could offer different optimizations, like 
+                #  -expecting only tris as input, then no processing
+                #  -expecting only quads, then minimal processing needed
+                #  -expecting mixed bag, then ensure_triangles (current default)
+                geom.faces = ensure_triangles(coords, face_indices)
 
                 if self.display_edges:
+                    # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
 
