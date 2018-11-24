@@ -65,16 +65,24 @@ def draw_matrix(context, args):
 
 def draw_uniform(GL_KIND, coords, indices, color):
     shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, indices=indices)
+    if indices:
+        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, indices=indices)
+    else:
+        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords})
     shader.bind()
     shader.uniform_float("color", color)
     batch.draw(shader)
 
+def draw_verts(context, args):
+    geom, config = args
+    draw_uniform('POINTS', geom.verts, None, config.vcol)
 
 def draw_edges(context, args):
-    geom, line4f = args
+    geom, config = args
     coords, indices = geom.verts, geom.edges
-    draw_uniform('LINES', coords, indices, line4f)
+    draw_uniform('LINES', coords, indices, config.line4f)
+    if config.display_verts:
+        draw_uniform('POINTS', geom.verts, None, config.vcol)
 
 def draw_faces(context, args):
     geom, config = args
@@ -89,11 +97,10 @@ def draw_faces(context, args):
     elif config.shade == "smooth":
         pass
 
-    if not config.display_edges:
-        return
-    
-    draw_uniform('LINES', coords, geom.edges, config.line4f)
-
+    if config.display_edges:
+        draw_uniform('LINES', coords, geom.edges, config.line4f)
+    if config.display_verts:
+        draw_uniform('POINTS', coords, None, config.vcol)
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -122,8 +129,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 1.0),
         name='face color', size=4, update=updateNode)
 
-
+    display_verts: BoolProperty(update=updateNode, name="display verts")
     display_edges: BoolProperty(update=updateNode, name="display edges")
+    display_faces: BoolProperty(update=updateNode, name="display faces")
 
     selected_draw_mode: EnumProperty(
         items=enum_item_4(["flat", "facet", "smooth"]),
@@ -147,9 +155,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         if b1:
             inside_box = b1.row(align=True)
             button_column = inside_box.column(align=True)
-            button_column.label(text='', icon="UV_VERTEXSEL")
-            button_column.prop(self, "display_edges", icon="UV_EDGESEL", text="")
-            button_column.label(text='', icon="UV_FACESEL")
+            button_column.prop(self, "display_verts", text='', icon="UV_VERTEXSEL")
+            button_column.prop(self, "display_edges", text='', icon="UV_EDGESEL")
+            button_column.prop(self, "display_faces", text='', icon="UV_FACESEL")
 
             colors_column = inside_box.column(align=True)
             colors_column.prop(self, "vert_color", text='')
@@ -172,6 +180,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             geom = lambda: None
             config = lambda: None
 
+            config.vcol = self.vert_color[:]
+            config.line4f = self.edge_color[:]
+            config.face4f = self.face_color[:]
+            config.display_verts = self.display_verts
+            
             edge_indices = None
             face_indices = None
             
@@ -192,15 +205,22 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 coords = multiply_vectors_deep(m, coords)
       
             geom.verts = coords
-            
+
+            if self.display_verts and not any([self.display_edges, self.display_faces]):
+                draw_data = {
+                    'tree_name': self.id_data.name[:],
+                    'custom_function': draw_verts,
+                    'args': (geom, config)
+                } 
+                callback_enable(n_id, draw_data)
+                return
+
             if edges_socket.is_linked and not faces_socket.is_linked:
                 geom.edges = edge_indices
-                line4f = self.edge_color[:]
-
                 draw_data = {
                     'tree_name': self.id_data.name[:],
                     'custom_function': draw_edges,
-                    'args': (geom, line4f)
+                    'args': (geom, config)
                 } 
                 callback_enable(n_id, draw_data)
                 return
@@ -218,11 +238,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
 
-                config.line4f = self.edge_color[:]
-                config.face4f = self.face_color[:]
                 config.display_edges = self.display_edges
                 config.shade = self.selected_draw_mode
-
                 draw_data = {
                     'tree_name': self.id_data.name[:],
                     'custom_function': draw_faces,
