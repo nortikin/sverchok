@@ -10,18 +10,20 @@ import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
 
+from bpy.props import (
+    StringProperty, BoolProperty, FloatVectorProperty, EnumProperty)
+
 # import mathutils
 from mathutils import Vector, Matrix
 from mathutils.geometry import tessellate_polygon as tessellate
 
 import sverchok
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, updateNode
+from sverchok.data_structure import node_id, updateNode, enum_item_4
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.geom import multiply_vectors_deep
-from sverchok.utils.modules.geom_utils import obtain_normal as normal 
+# from sverchok.utils.modules.geom_utils import obtain_normal as normal 
 
 
 def edges_from_faces(indices):
@@ -34,6 +36,8 @@ def edges_from_faces(indices):
     return list(out)
 
 def ensure_triangles(coords, indices):
+    """ this fully tesselates the incoming topology into tris,
+    not optimized for meshes that don't contain ngons """
     new_indices = []
     concat = new_indices.append
     concat2 = new_indices.extend
@@ -74,8 +78,15 @@ def draw_faces(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.faces
 
-    new_indices = ensure_triangles(coords, indices)
-    draw_uniform('TRIS', coords, new_indices, config.face4f)
+    if config.shade == "flat":
+        new_indices = ensure_triangles(coords, indices)
+        draw_uniform('TRIS', coords, new_indices, config.face4f)
+    elif config.shade == "facet":
+        # new_indices = ensure_triangles(coords, indices)
+        # draw_smooth('TRIS', coords, new_indices, config.face4f)
+        pass
+    elif config.shade == "smooth":
+        pass
 
     if not config.display_edges:
         return
@@ -89,7 +100,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     Triggers: exp vd
     Tooltip: experimental drawing node
     
-    not a very exciting node kids.
+    not a very exciting node.
     """
 
     bl_idname = 'SvVDExperimental'
@@ -99,15 +110,26 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     n_id: StringProperty(default='')
     activate: BoolProperty(name='Show', description='Activate', default=True, update=updateNode)
 
+    vert_color: FloatVectorProperty(
+        subtype='COLOR', min=0, max=1, default=(0.8, 0.8, 0.8, 1.0),
+        name='vert color', size=4, update=updateNode)
+
     edge_color: FloatVectorProperty(
-        subtype='COLOR', min=0, max=1,
-        default=(0.3, 0.3, 0.3, 1.0), name='edge color', size=4, update=updateNode)
+        subtype='COLOR', min=0, max=1, default=(0.03, 0.24, 0.42, 1.0),
+        name='edge color', size=4, update=updateNode)
 
     face_color: FloatVectorProperty(
-        subtype='COLOR', min=0, max=1,
-        default=(0.3, 0.3, 0.3, 1.0), name='face color', size=4, update=updateNode)
+        subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 1.0),
+        name='face color', size=4, update=updateNode)
+
 
     display_edges: BoolProperty(update=updateNode, name="display edges")
+
+    selected_draw_mode: EnumProperty(
+        items=enum_item_4(["flat", "facet", "smooth"]),
+        description="pick how the node will draw faces",
+        default="flat", update=updateNode
+    )
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -117,13 +139,23 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         inew('MatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
-        layout.row().prop(self, "activate", text="ACTIVATE")
-        r1 = layout.row(align=True)
-        r1.label(icon="UV_EDGESEL")
-        r1.prop(self, "edge_color", text='')
-        r1.prop(self, "face_color", text='')
-        r2 = layout.row(align=True)
-        r2.prop(self, "display_edges", icon="SNAP_EDGE", expand=True, text="")
+        r0 = layout.row()
+        r0.prop(self, "activate", text="", icon="RESTRICT_RENDER_" + ("OFF" if self.activate else "ON"))
+        r0.prop(self, "selected_draw_mode", expand=True)
+        
+        b1 = layout.box()
+        if b1:
+            r1 = b1.row(align=True)
+            r1.label(text='', icon="UV_VERTEXSEL")
+            r1.prop(self, "vert_color", text='')
+            r2 = b1.row(align=True)
+            r2.prop(self, "display_edges", icon="UV_EDGESEL", text="")
+            r2.prop(self, "edge_color", text='')
+            r3 = b1.row(align=True)
+            r3.label(text='', icon="UV_FACESEL")
+            r3.prop(self, "face_color", text='')
+        
+
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
@@ -173,6 +205,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 config.line4f = self.edge_color[:]
                 config.face4f = self.face_color[:]
                 config.display_edges = self.display_edges
+                config.shade = self.selected_draw_mode
 
                 draw_data = {
                     'tree_name': self.id_data.name[:],
@@ -182,6 +215,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 callback_enable(n_id, draw_data)
                 return
 
+            else:
+                # draw verts only
+                pass
 
             return
 
