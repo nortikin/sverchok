@@ -19,7 +19,7 @@ from mathutils.geometry import tessellate_polygon as tessellate
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, updateNode, enum_item_4
+from sverchok.data_structure import node_id, updateNode, enum_item_4, enum_item_5
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.geom import multiply_vectors_deep
@@ -133,9 +133,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_edges: BoolProperty(update=updateNode, name="display edges")
     display_faces: BoolProperty(update=updateNode, name="display faces")
 
-    #  SNAP_VOLUME , ALIASED  ,   BRUSH_TEXFILL
+    #        ['SNAP_VOLUME', 'ALIASED', 'BRUSH_TEXFILL']),
     selected_draw_mode: EnumProperty(
-        items=enum_item_4(["flat", "facet", "smooth"]),
+        items=enum_item_5(["flat", "facet", "smooth"], ['SNAP_VOLUME', 'ALIASED', 'BRUSH_TEXFILL']), 
         description="pick how the node will draw faces",
         default="flat", update=updateNode
     )
@@ -150,7 +150,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         r0 = layout.row()
         r0.prop(self, "activate", text="", icon="RESTRICT_RENDER_" + ("OFF" if self.activate else "ON"))
-        r0.prop(self, "selected_draw_mode", expand=True)
+        r0.separator()
+        r0.prop(self, "selected_draw_mode", expand=True, text='')
         
         b1 = layout.column()
         if b1:
@@ -164,8 +165,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             colors_column.prop(self, "vert_color", text='')
             colors_column.prop(self, "edge_color", text='')
             colors_column.prop(self, "face_color", text='')
-        
-
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):

@@ -495,6 +495,10 @@ def enum_item_4(s):
     """return a 4*n list usable in enum property from a list with one value"""
     return [(n, n, '', i) for i, n in enumerate(s)]
 
+def enum_item_5(s, icons):
+    """return a 4*n list usable in enum property from a list with one value"""
+    return [(n, n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
+
 
 #####################################################
 ############### debug settings magic ################
