@@ -76,11 +76,11 @@ def draw_edges(context, args):
 
 def draw_faces(context, args):
     geom, config = args
-    coords, indices = geom.verts, geom.faces
+    coords, face_indices = geom.verts, geom.faces
 
     if config.shade == "flat":
-        new_indices = ensure_triangles(coords, indices)
-        draw_uniform('TRIS', coords, new_indices, config.face4f)
+        new_face_indices = ensure_triangles(coords, face_indices)
+        draw_uniform('TRIS', coords, new_face_indices, config.face4f)
     elif config.shade == "facet":
         # new_indices = ensure_triangles(coords, indices)
         # draw_smooth('TRIS', coords, new_indices, config.face4f)
@@ -91,7 +91,7 @@ def draw_faces(context, args):
     if not config.display_edges:
         return
     
-    edge_indices = edges_from_faces(indices)
+    edge_indices = geom.edges or edges_from_faces(face_indices)
     draw_uniform('LINES', coords, edge_indices, config.line4f)
 
 
@@ -170,16 +170,20 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         if verts_socket.is_linked: 
             geom = lambda: None
             config = lambda: None
+
+            edge_indices = None
+            face_indices = None
             
             propv = verts_socket.sv_get(deepcopy=False, default=[])
             coords = propv[0]
 
             if edges_socket.is_linked:
                 prope = edges_socket.sv_get(deepcopy=False, default=[])
-                indices = prope[0]
-            elif faces_socket.is_linked:
+                edge_indices = prope[0]
+            
+            if faces_socket.is_linked:
                 propf = faces_socket.sv_get(deepcopy=False, default=[])
-                indices = propf[0]
+                face_indices = propf[0]
 
             if matrix_socket.is_linked:
                 # for now just deal with first
@@ -188,8 +192,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
       
             geom.verts = coords
             
-            if edges_socket.is_linked:
-                geom.edges = indices
+            if edges_socket.is_linked and not faces_socket.is_linked:
+                geom.edges = edge_indices
                 line4f = self.edge_color[:]
 
                 draw_data = {
@@ -200,8 +204,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 callback_enable(n_id, draw_data)
                 return
 
-            elif faces_socket.is_linked:
-                geom.faces = indices
+            if faces_socket.is_linked:
+                geom.faces = face_indices
+                geom.edges = edge_indices
                 config.line4f = self.edge_color[:]
                 config.face4f = self.face_color[:]
                 config.display_edges = self.display_edges
