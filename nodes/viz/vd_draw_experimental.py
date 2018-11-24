@@ -86,21 +86,21 @@ def draw_edges(context, args):
 
 def draw_faces(context, args):
     geom, config = args
-    coords, face_indices = geom.verts, geom.faces
 
-    if config.shade == "flat":
-        draw_uniform('TRIS', coords, face_indices, config.face4f)
-    elif config.shade == "facet":
-        # new_indices = ensure_triangles(coords, indices)
-        # draw_smooth('TRIS', coords, new_indices, config.face4f)
-        pass
-    elif config.shade == "smooth":
-        pass
+    if config.display_faces:
+        if config.shade == "flat":
+            draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
+        elif config.shade == "facet":
+            # new_indices = ensure_triangles(coords, indices)
+            # draw_smooth('TRIS', geom.verts, new_indices, config.face4f)
+            pass
+        elif config.shade == "smooth":
+            pass
 
     if config.display_edges:
-        draw_uniform('LINES', coords, geom.edges, config.line4f)
+        draw_uniform('LINES', geom.verts, geom.edges, config.line4f)
     if config.display_verts:
-        draw_uniform('POINTS', coords, None, config.vcol)
+        draw_uniform('POINTS', geom.verts, None, config.vcol)
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -184,6 +184,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             config.line4f = self.edge_color[:]
             config.face4f = self.face_color[:]
             config.display_verts = self.display_verts
+            config.display_edges = self.display_edges
+            config.display_faces = self.display_faces
+            config.shade = self.selected_draw_mode
             
             edge_indices = None
             face_indices = None
@@ -231,15 +234,14 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 #  -expecting only tris as input, then no processing
                 #  -expecting only quads, then minimal processing needed
                 #  -expecting mixed bag, then ensure_triangles (current default)
-                geom.faces = ensure_triangles(coords, face_indices)
+                if self.display_faces:
+                    geom.faces = ensure_triangles(coords, face_indices)
 
                 if self.display_edges:
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
 
-                config.display_edges = self.display_edges
-                config.shade = self.selected_draw_mode
                 draw_data = {
                     'tree_name': self.id_data.name[:],
                     'custom_function': draw_faces,
