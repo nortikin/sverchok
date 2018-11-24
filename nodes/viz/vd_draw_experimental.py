@@ -23,7 +23,7 @@ from sverchok.data_structure import node_id, updateNode, enum_item_4
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.geom import multiply_vectors_deep
-# from sverchok.utils.modules.geom_utils import obtain_normal as normal 
+from sverchok.utils.modules.geom_utils import obtain_normal3 as normal 
 
 
 def edges_from_faces(indices):
@@ -36,8 +36,10 @@ def edges_from_faces(indices):
     return list(out)
 
 def ensure_triangles(coords, indices):
-    """ this fully tesselates the incoming topology into tris,
-    not optimized for meshes that don't contain ngons """
+    """ 
+    this fully tesselates the incoming topology into tris,
+    not optimized for meshes that don't contain ngons 
+    """
     new_indices = []
     concat = new_indices.append
     concat2 = new_indices.extend
@@ -75,7 +77,6 @@ def draw_edges(context, args):
     draw_uniform('LINES', coords, indices, line4f)
 
 def draw_faces(context, args):
-    print('computation!!!')
     geom, config = args
     coords, face_indices = geom.verts, geom.faces
 
@@ -145,15 +146,16 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         
         b1 = layout.box()
         if b1:
-            r1 = b1.row(align=True)
-            r1.label(text='', icon="UV_VERTEXSEL")
-            r1.prop(self, "vert_color", text='')
-            r2 = b1.row(align=True)
-            r2.prop(self, "display_edges", icon="UV_EDGESEL", text="")
-            r2.prop(self, "edge_color", text='')
-            r3 = b1.row(align=True)
-            r3.label(text='', icon="UV_FACESEL")
-            r3.prop(self, "face_color", text='')
+            inside_box = b1.row(align=True)
+            button_column = inside_box.column(align=True)
+            button_column.label(text='', icon="UV_VERTEXSEL")
+            button_column.prop(self, "display_edges", icon="UV_EDGESEL", text="")
+            button_column.label(text='', icon="UV_FACESEL")
+
+            colors_column = inside_box.column(align=True)
+            colors_column.prop(self, "vert_color", text='')
+            colors_column.prop(self, "edge_color", text='')
+            colors_column.prop(self, "face_color", text='')
         
 
 
