@@ -133,6 +133,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_edges: BoolProperty(update=updateNode, name="display edges")
     display_faces: BoolProperty(update=updateNode, name="display faces")
 
+    #  SNAP_VOLUME , ALIASED  ,   BRUSH_TEXFILL
     selected_draw_mode: EnumProperty(
         items=enum_item_4(["flat", "facet", "smooth"]),
         description="pick how the node will draw faces",
@@ -151,7 +152,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         r0.prop(self, "activate", text="", icon="RESTRICT_RENDER_" + ("OFF" if self.activate else "ON"))
         r0.prop(self, "selected_draw_mode", expand=True)
         
-        b1 = layout.box()
+        b1 = layout.column()
         if b1:
             inside_box = b1.row(align=True)
             button_column = inside_box.column(align=True)
