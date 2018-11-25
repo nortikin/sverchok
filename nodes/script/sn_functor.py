@@ -8,6 +8,7 @@
 import sys
 import bpy
 import inspect
+from importlib import reload
 
 # import mathutils
 from mathutils import Matrix, Vector
@@ -71,12 +72,19 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             print(self.name,': node dict not found for', hash(self))
             if func_name == 'functor_init':
                 print('this is probably a .blend load event..')
+            print('ending early')
             return
 
         if func_name == 'process':
             locals().update(ND.get("all_members"))
-
+        elif func_name == 'functor_init':
+            print('will attempt to functor init!')
+ 
         try:
+
+            if not ND.get(func_name) and func_name == 'draw_buttons':
+                return
+
             if args:
                 ND[func_name](self, *args)
             else:
@@ -124,7 +132,10 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
 
     def process(self):
         if not all([self.script_name, self.script_str]):
-            return        
+            return
+        if self.loaded and not self.node_dict.get(hash(self)):
+            self.node_dict[hash(self)] = self.get_functions()
+            self.loaded = True
         self.process_script()
 
     def get_starfunks(self, module):
@@ -134,14 +145,19 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     def get_functions(self):
         script = self.script_name.replace('.py', '').strip()
         exec(f'import {script}')
+
         module = locals().get(script)
 
-        dict_functions = {named: getattr(module, named) for named in functions}
+        dict_functions = {named: getattr(module, named) for named in functions if hasattr(module, named)}
         dict_functions['all_members'] = self.get_starfunks(module)
         return dict_functions
 
     def load(self, context):
+
         print('time to load', self.script_name)
+        # if any current connections... gather them 
+        self.clear_sockets()
+        # restore connections where applicable (by socket name)
         self.node_dict[hash(self)] = self.get_functions()
         self.script_str = bpy.data.texts[self.script_name].as_string()
         self.init_socket(context)
