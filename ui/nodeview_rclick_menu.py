@@ -97,15 +97,17 @@ def add_connection(tree, bl_idname_new_node, offset):
             # maybe in the future.. or if someone does know :)
             links.new(outputs[0], inputs[0])
 
-        elif bl_idname_new_node == 'ViewerNode2':
+        elif bl_idname_new_node == 'SvVDExperimental':
 
             if 'verts' in output_map:
+
                 if 'faces' in output_map:
                     links.new(outputs[output_map['verts']], inputs[0])
-                    links.new(outputs[output_map['faces']], inputs[1])
-                elif 'edges' in output_map:
+                    links.new(outputs[output_map['faces']], inputs[2])
+                if 'edges' in output_map:
                     links.new(outputs[output_map['verts']], inputs[0])
                     links.new(outputs[output_map['edges']], inputs[1])
+
 
         else:
             ...
@@ -126,7 +128,7 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         tree = context.space_data.edit_tree
 
         if self.fn == 'vdmk2':
-            add_connection(tree, bl_idname_new_node="ViewerNode2", offset=[180, 0])
+            add_connection(tree, bl_idname_new_node="SvVDExperimental", offset=[180, 0])
         elif self.fn == 'vdmk2 + idxv':
             add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewerNode"], offset=[180, 0])
         elif self.fn == '+idxv':

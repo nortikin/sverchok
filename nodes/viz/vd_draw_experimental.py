@@ -129,9 +129,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 1.0),
         name='face color', size=4, update=updateNode)
 
-    display_verts: BoolProperty(update=updateNode, name="display verts")
-    display_edges: BoolProperty(update=updateNode, name="display edges")
-    display_faces: BoolProperty(update=updateNode, name="display faces")
+    display_verts: BoolProperty(default=False, update=updateNode, name="display verts")
+    display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
+    display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
 
     #        ['SNAP_VOLUME', 'ALIASED', 'BRUSH_TEXFILL']),
     selected_draw_mode: EnumProperty(

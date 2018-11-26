@@ -147,7 +147,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvSmoothLines'
     bl_label = 'Smooth Lines'
-    bl_icon = 'GREASEPENCIL'
+    bl_icon = 'NORMALIZE_FCURVES'
 
     smooth_selected_mode: EnumProperty(
         items=enum_item_4(["absolute", "relative", "arc"]), default="absolute",

@@ -66,6 +66,7 @@ def sv_main_handler(scene):
     """
     Main Sverchok handler for updating node tree upon editor changes
     """
+    print('depsgraph_update_pre called')
     for ng in sverchok_trees():
         # print("Scene handler looking at tree {}".format(ng.name))
         if ng.has_changed:
@@ -152,7 +153,8 @@ def set_frame_change(mode):
 def register():
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
-    # bpy.app.handlers.scene_update_pre.append(sv_main_handler)
+    bpy.app.handlers.depsgraph_update_pre.append(sv_main_handler)
+
     data_structure.setup_init()
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -165,5 +167,5 @@ def register():
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
-    # bpy.app.handlers.scene_update_pre.remove(sv_main_handler)
+    bpy.app.handlers.depsgraph_update_pre.remove(sv_main_handler)
     set_frame_change(None)
