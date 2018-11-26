@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from math import pi
 
 import bpy
 import gpu
@@ -54,7 +55,29 @@ def ensure_triangles(coords, indices):
             subcoords = [Vector(coords[idx]) for idx in idxset]
             for pol in tessellate([subcoords]):
                 concat([idxset[i] for i in pol])
-    return new_indices    
+    return new_indices
+
+def generate_facet_data(verts, faces, face_color, vector_light):
+    # first random! 
+    out_verts = []
+    out_vcols = []
+    concat_verts = out_verts.extend
+    concat_vcols = out_vcols.extend
+    for face in faces:
+        vecs = [verts[j] for j in face]
+        concat_verts(vecs)
+
+        normal_no = Vector(normal(*vecs))
+        normal_no = (normal_no.angle(vector_light, 0)) / pi
+
+        r = (normal_no * face_color[0]) - 0.1
+        g = (normal_no * face_color[1]) - 0.1
+        b = (normal_no * face_color[2]) - 0.1
+        vcol = (r+0.2, g+0.2, b+0.2, 1.0)
+        concat_vcols([vcol, vcol, vcol])
+
+    return out_verts, out_vcols
+
 
 def draw_matrix(context, args):
     """ this takes one or more matrices packed into an iterable """
@@ -72,6 +95,12 @@ def draw_uniform(GL_KIND, coords, indices, color):
     shader.bind()
     shader.uniform_float("color", color)
     batch.draw(shader)
+
+def draw_smooth(coords, vcols):
+    shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
+    batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
+    batch.draw(shader)
+
 
 def draw_verts(context, args):
     geom, config = args
@@ -91,9 +120,7 @@ def draw_faces(context, args):
         if config.shade == "flat":
             draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
         elif config.shade == "facet":
-            # new_indices = ensure_triangles(coords, indices)
-            # draw_smooth('TRIS', geom.verts, new_indices, config.face4f)
-            pass
+            draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
         elif config.shade == "smooth":
             pass
 
@@ -129,11 +156,14 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 1.0),
         name='face color', size=4, update=updateNode)
 
+    vector_light: FloatVectorProperty(
+        name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
+        default=(0.2, 0.6, 0.4), update=updateNode)    
+
     display_verts: BoolProperty(default=False, update=updateNode, name="display verts")
     display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
 
-    #        ['SNAP_VOLUME', 'ALIASED', 'BRUSH_TEXFILL']),
     selected_draw_mode: EnumProperty(
         items=enum_item_5(["flat", "facet", "smooth"], ['SNAP_VOLUME', 'ALIASED', 'BRUSH_TEXFILL']), 
         description="pick how the node will draw faces",
@@ -166,6 +196,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             colors_column.prop(self, "edge_color", text='')
             colors_column.prop(self, "face_color", text='')
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'vector_light', text='')
+
     def process(self):
         if not (self.id_data.sv_show and self.activate):
             callback_disable(node_id(self))
@@ -180,6 +213,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             geom = lambda: None
             config = lambda: None
 
+            config.vector_light = self.vector_light[:]
             config.vcol = self.vert_color[:]
             config.line4f = self.edge_color[:]
             config.face4f = self.face_color[:]
@@ -241,6 +275,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
+
+                if self.selected_draw_mode == 'facet' and self.display_faces:
+                    facet_verts, facet_verts_vcols = generate_facet_data(geom.verts, geom.faces, config.face4f, config.vector_light)
+                    geom.facet_verts = facet_verts
+                    geom.facet_verts_vcols = facet_verts_vcols
 
                 draw_data = {
                     'tree_name': self.id_data.name[:],

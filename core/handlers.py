@@ -9,7 +9,7 @@ from sverchok.core import upgrade_nodes, upgrade_group
 
 from sverchok.ui import (
     color_def,
-    nodeview_bgl_viewer_draw_mk2,
+    nodeview_bgl_viewer_draw_mk2,  # rename in future:   bgl_callback_nodeview
     bgl_callback_3dview
 )
 
