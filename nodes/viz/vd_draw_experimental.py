@@ -23,9 +23,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode, enum_item_4, enum_item_5
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal 
-
 
 def edges_from_faces(indices):
     """ we don't want repeat edges, ever.."""
@@ -58,7 +58,6 @@ def ensure_triangles(coords, indices):
     return new_indices
 
 def generate_facet_data(verts, faces, face_color, vector_light):
-    # first random! 
     out_verts = []
     out_vcols = []
     concat_verts = out_verts.extend
@@ -78,6 +77,23 @@ def generate_facet_data(verts, faces, face_color, vector_light):
 
     return out_verts, out_vcols
 
+def generate_smooth_data(verts, faces, face_color, vector_light):
+    """ this piggy backs off bmesh's automated normal calculation... """
+    out_vcols = []
+    concat_vcols = out_vcols.append
+
+    bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
+
+    for vert in bm.verts:
+        normal_no = (vert.normal.angle(vector_light, 0)) / pi
+        r = (normal_no * face_color[0]) - 0.1
+        g = (normal_no * face_color[1]) - 0.1
+        b = (normal_no * face_color[2]) - 0.1
+        vcol = (r+0.2, g+0.2, b+0.2, 1.0)
+        concat_vcols(vcol)
+
+    return out_vcols
+
 
 def draw_matrix(context, args):
     """ this takes one or more matrices packed into an iterable """
@@ -96,9 +112,13 @@ def draw_uniform(GL_KIND, coords, indices, color):
     shader.uniform_float("color", color)
     batch.draw(shader)
 
-def draw_smooth(coords, vcols):
+def draw_smooth(coords, vcols, indices=None):
     shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
-    batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
+    if indices:
+        print(len(coords), len(vcols))
+        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, indices=indices)
+    else:
+        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
     batch.draw(shader)
 
 
@@ -122,6 +142,7 @@ def draw_faces(context, args):
         elif config.shade == "facet":
             draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
         elif config.shade == "smooth":
+            draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
             pass
 
     if config.display_edges:
@@ -165,7 +186,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
 
     selected_draw_mode: EnumProperty(
-        items=enum_item_5(["flat", "facet", "smooth"], ['SNAP_VOLUME', 'ALIASED', 'BRUSH_TEXFILL']), 
+        items=enum_item_5(["flat", "facet", "smooth"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED']), 
         description="pick how the node will draw faces",
         default="flat", update=updateNode
     )
@@ -280,6 +301,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     facet_verts, facet_verts_vcols = generate_facet_data(geom.verts, geom.faces, config.face4f, config.vector_light)
                     geom.facet_verts = facet_verts
                     geom.facet_verts_vcols = facet_verts_vcols
+                elif self.selected_draw_mode == 'smooth' and self.display_faces:
+                    geom.smooth_vcols = generate_smooth_data(geom.verts, geom.faces, config.face4f, config.vector_light)
 
                 draw_data = {
                     'tree_name': self.id_data.name[:],
