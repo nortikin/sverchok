@@ -107,7 +107,8 @@ def add_connection(tree, bl_idname_new_node, offset):
                 if 'edges' in output_map:
                     links.new(outputs[output_map['verts']], inputs[0])
                     links.new(outputs[output_map['edges']], inputs[1])
-
+                
+                tree.update()
 
         else:
             ...
