@@ -175,7 +175,7 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
         col = layout.column()
         col.prop(self, "smooth_selected_mode", text="mode")
-        col.prop(self, "type_selected_mode", text="type")
+        col.prop(self, "type_selected_mode", text="type", expand=True)
         col.prop(self, "n_verts", text='num verts')
 
 

@@ -27,14 +27,13 @@ from mathutils import noise
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_degenerate, match_long_repeat)
 
-# noise nodes
+# noise nodes are different in 2.8 api
 # from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
-
 
 noise_options = [
     ('BLENDER', 0),
-    ('STDPERLIN', 1),
-    ('NEWPERLIN', 2),
+    ('PERLIN_ORIGINAL', 1),
+    ('PERLIN_NEW', 2),
     ('VORONOI_F1', 3),
     ('VORONOI_F2', 4),
     ('VORONOI_F3', 5),
@@ -50,7 +49,7 @@ def deepnoise(v, _noise_type):
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
 
-noise_dict = {t[0]: t[1] for t in noise_options}
+# noise_dict = {t[0]: t[0] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
 noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
@@ -85,7 +84,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     noise_type: EnumProperty(
         items=avail_noise,
-        default='STDPERLIN',
+        default='PERLIN_ORIGINAL',
         description="Noise type",
         update=updateNode)
 
@@ -109,7 +108,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         out = []
         verts = inputs['Vertices'].sv_get(deepcopy=False)
         seeds = inputs['Seed'].sv_get()[0]
-        _noise_type = noise_dict[self.noise_type]
+
         noise_function = noise_f[self.out_mode]
 
 
@@ -122,7 +121,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             seed_val = int(round(seed_val)) or 140230
 
             noise.seed_set(seed_val)
-            out.append([noise_function(v, _noise_type) for v in obj])
+            out.append([noise_function(v, noise_basis=self.noise_type) for v in obj])
 
         if 'Noise V' in outputs:
             outputs['Noise V'].sv_set(Vector_degenerate(out))
