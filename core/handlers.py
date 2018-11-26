@@ -7,11 +7,7 @@ from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
 
-from sverchok.ui import (
-    color_def,
-    nodeview_bgl_viewer_draw_mk2,  # rename in future:   bgl_callback_nodeview
-    bgl_callback_3dview
-)
+from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 
 
 _state = {'frame': None}
@@ -84,7 +80,7 @@ def sv_clean(scene):
     # viewer_draw_mk2.callback_disable_all()
     # index_viewer_draw.callback_disable_all()
     # nodeview_bgl_viewer_draw.callback_disable_all()
-    nodeview_bgl_viewer_draw_mk2.callback_disable_all()
+    bgl_callback_nodeview.callback_disable_all()
     bgl_callback_3dview.callback_disable_all()
 
     data_structure.sv_Vars = {}

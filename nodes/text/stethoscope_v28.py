@@ -28,7 +28,7 @@ from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
-from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL
+from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 
 # status colors
