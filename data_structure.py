@@ -927,3 +927,52 @@ def std_links_processing(matcher):
         return real_process
 
     return decorator
+
+
+# EDGE CACHE settings : used to accellerate the (linear) edge list generation
+_edgeCache = {}
+_edgeCache["main"] = []  # e.g. [[0, 1], [1, 2], ... , [N-1, N]] (extended as needed)
+
+
+def update_edge_cache(n):
+    """
+    Extend the edge list cache to contain at least n edges.
+
+    NOTE: This is called by the get_edge_list to make sure the edge cache is large
+    enough, but it can also be called preemptively by the nodes prior to making
+    multiple calls to get_edge_list in order to pre-augment the cache to a known
+    size and thus accellearate the subsequent calls to get_edge_list as they
+    will not have to augment the cache with every call.
+    """
+    m = len(_edgeCache["main"])  # current number of edges in the edge cache
+    if n > m: # requested #edges < cached #edges ? => extend the cache
+        _edgeCache["main"].extend([[m + i, m + i + 1] for i in range(n - m)])
+
+
+def get_edge_list(n):
+    """
+    Get the list of n edges connecting n+1 vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-1, n]]
+
+    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    """
+    update_edge_cache(n) # make sure the edge cache is large enough
+    return _edgeCache["main"][:n] # return a subset list of the edge cache
+
+
+def get_edge_loop(n):
+    """
+    Get the loop list of n edges connecting n vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-2, n-1], [n-1, 0]]
+
+    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    """
+    nn = n - 1
+    update_edge_cache(nn) # make sure the edge cache is large enough
+    return _edgeCache["main"][:nn] + [[nn, 0]]
