@@ -222,6 +222,8 @@
     SvVDExperimental
     SvMatrixViewer28
     ---
+    SvIDXViewer28
+    ---
     SvBmeshViewerNodeV28
     SvCurveViewerNodeV28
     SvPolylineViewerNodeV28
@@ -300,7 +302,6 @@
     SvMatrixMathNode
     ---
     SvSculptMaskNode
-    SvGreasePencilStrokes
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---

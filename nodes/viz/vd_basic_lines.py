@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import bgl
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
@@ -33,9 +33,11 @@ def screen_v3dBGL(context, args):
     batch = args[1]
     line4f = args[2]
 
+    # bgl.glLineWidth(3)
     shader.bind()
     shader.uniform_float("color", line4f)
     batch.draw(shader)
+    # bgl.glLineWidth(1)
 
 
 
