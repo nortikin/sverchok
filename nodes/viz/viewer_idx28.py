@@ -121,16 +121,16 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
         box = layout.box()
-        little_width = 0.135
+        little_width = 0.735
 
         col = box.column(align=True)
         row = col.row(align=True)
         row.label(text='Colors')
 
-        for label in ['VERTEXSEL', 'EDGESEL', 'FACESEL']:
+        for _icon in ['VERTEXSEL', 'EDGESEL', 'FACESEL']:
             colz = row.column(align=True)
             colz.scale_x = little_width
-            colz.label(icon='VERTEXSEL', text=' ')
+            colz.label(icon=_icon, text=' ')
 
         colprops = [
             ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
