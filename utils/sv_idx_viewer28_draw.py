@@ -20,6 +20,12 @@ callback_dict = {}
 point_dict = {}
 
 
+def calc_median(vlist):
+    a = Vector((0, 0, 0))
+    for v in vlist:
+        a += v
+    return a / len(vlist)
+
 def adjust_list(in_list, x, y):
     return [[old_x + x, old_y + y] for (old_x, old_y) in in_list]
 
@@ -130,11 +136,7 @@ def draw_indices_2D(context, args):
 
     ########
     # points
-    def calc_median(vlist):
-        a = Vector((0, 0, 0))
-        for v in vlist:
-            a += v
-        return a / len(vlist)
+
 
     for obj_index, verts in enumerate(data_vector):
         final_verts = verts

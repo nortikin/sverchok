@@ -33,7 +33,19 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Viewer Index+'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    # node id
+    def get_scale(self):
+        try:
+            with sv_preferences() as prefs:
+                scale = prefs.index_viewer_scale
+        except:
+            scale = 1.0
+        return scale
+
+    def make_color_prop(name, col):
+        return FloatVectorProperty(
+            name=name, description='', size=4, min=0.0, max=1.0,
+            default=col, subtype='COLOR', update=updateNode)
+
     n_id: StringProperty(default='', options={'SKIP_SAVE'})
 
     activate: BoolProperty(
@@ -53,10 +65,6 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     display_face_index: BoolProperty(
         name="Faces", description="Display face indices", update=updateNode)
 
-    def make_color_prop(name, col):
-        return FloatVectorProperty(
-            name=name, description='', size=4, min=0.0, max=1.0,
-            default=col, subtype='COLOR', update=updateNode)
 
     bg_edges_col: make_color_prop("bg_edges", (.2, .2, .2, 1.0))
     bg_faces_col: make_color_prop("bg_faces", (.2, .2, .2, 1.0))
@@ -72,9 +80,6 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         inew('StringsSocket', 'faces')
         inew('MatrixSocket', 'matrix')
 
-    # reset n_id on copy
-    def copy(self, node):
-        self.n_id = ''
 
     def draw_buttons(self, context, layout):
         view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
@@ -118,54 +123,36 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         box = layout.box()
         little_width = 0.135
 
-        # heading - wide column for descriptors
         col = box.column(align=True)
         row = col.row(align=True)
-        row.label(text='Colors')  # IDX pallete
+        row.label(text='Colors')
 
-        # heading - remaining column space divided by
-        # little_width factor. shows icons only
-        col1 = row.column(align=True)
-        col1.scale_x = little_width
-        col1.label(icon='VERTEXSEL', text=' ')
+        for label in ['VERTEXSEL', 'EDGESEL', 'FACESEL']:
+            colz = row.column(align=True)
+            colz.scale_x = little_width
+            colz.label(icon='VERTEXSEL', text=' ')
 
-        col2 = row.column(align=True)
-        col2.scale_x = little_width
-        col2.label(icon='EDGESEL', text=' ')
-
-        col3 = row.column(align=True)
-        col3.scale_x = little_width
-        col3.label(icon='FACESEL', text=' ')
-
-        # 'table info'
         colprops = [
-            ['Numbers :', [
-                'numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-            ['Background :', [
-                'bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
+            ['Numbers :', ['numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
+            ['Background :', ['bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
-        # each first draws the table row heading, 'label'
-        # then for each geometry type will draw the color property
-        # with the same spacing as col1, col2, col3 above
         for label, geometry_types in colprops:
             row = col.row(align=True)
             row.label(text=label)
             for colprop in geometry_types:
-                col4 = row.column(align=True)
-                col4.scale_x = little_width
-                col4.prop(self, colprop, text="")
+                colx = row.column(align=True)
+                colx.scale_x = little_width
+                colx.prop(self, colprop, text="")
 
         # layout.prop(self, 'bakebuttonshow', text='show bake UI')
 
     def update(self):
-        # used because this node should disable itself in certain scenarios
-        # : namely , no inputs.
+        # used because this node should disable itself if no inputs.
         n_id = node_id(self)
         callback_disable(n_id)
 
     def process(self):
-        inputs = self.inputs
         n_id = node_id(self)
         callback_disable(n_id)
 
@@ -175,18 +162,11 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         self.use_custom_color = True
 
-        if not (self.activate and inputs['vertices'].is_linked):
+        if not (self.activate and self.inputs['vertices'].is_linked):
             return
 
         self.generate_callback(n_id)
 
-    def get_scale(self):
-        try:
-            with sv_preferences() as prefs:
-                scale = prefs.index_viewer_scale
-        except:
-            scale = 1.0
-        return scale
 
     def get_geometry(self):
         
@@ -221,6 +201,10 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
     def free(self):
         callback_disable(node_id(self))
+
+    def copy(self, node):
+        ''' reset n_id on copy '''
+        self.n_id = ''
 
 
 def register():
