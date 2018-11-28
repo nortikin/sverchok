@@ -78,7 +78,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('VerticesSocket', 'vertices')
+        inew('VerticesSocket', 'verts')
         inew('StringsSocket', 'edges')
         inew('StringsSocket', 'faces')
         inew('MatrixSocket', 'matrix')
@@ -167,6 +167,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             setattr(geom, socket, input_stream)
 
         # further process geom here? <<  YES >> 
+        print(len(geom.verts), len(geom.matrix))
 
         return geom
 
@@ -178,14 +179,14 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             return
 
         self.use_custom_color = True
-        if not (self.activate and self.inputs['vertices'].is_linked):
+        if not (self.activate and self.inputs['verts'].is_linked):
             return
 
         self.generate_callback(n_id)
 
     def generate_callback(self, n_id):
 
-        verts = self.inputs['vertices'].sv_get()
+        verts = self.inputs['verts'].sv_get()
         if not verts:
             return
 
@@ -197,7 +198,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             'custom_function': draw_indices_2D,
             'args': (geom, config)} 
 
-        callback_enable(n_id, draw_data, 'POST_PIXEL')
+        callback_enable(n_id, draw_data, overlay='POST_PIXEL')
 
     def free(self):
         callback_disable(node_id(self))
