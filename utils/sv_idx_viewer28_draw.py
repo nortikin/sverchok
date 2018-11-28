@@ -83,6 +83,8 @@ def draw_indices_2D(context, args):
     region = context.region
     region3d = context.space_data.region_3d
 
+    geom, settings = args
+
     vert_idx_color = settings['numid_verts_col']
     edge_idx_color = settings['numid_edges_col']
     face_idx_color = settings['numid_faces_col']
@@ -93,6 +95,8 @@ def draw_indices_2D(context, args):
     display_edge_index = settings['display_edge_index']
     display_face_index = settings['display_face_index']
     scale = settings['scale']
+    draw_bg = settings['draw_bg']
+    draw_bface = settings['draw_bface']
 
     font_id = 0
     text_height = int(13.0 * scale)

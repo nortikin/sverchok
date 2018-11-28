@@ -57,6 +57,10 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         name='draw_bg', description='draw background poly?',
         default=False, update=updateNode)
 
+    draw_bface: BoolProperty(
+        name='draw_bface', description='draw backfacing indices?',
+        default=True, update=updateNode)
+
     display_vert_index: BoolProperty(
         name="Vertices", description="Display vertex indices",
         default=True, update=updateNode)
@@ -64,7 +68,6 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         name="Edges", description="Display edge indices", update=updateNode)
     display_face_index: BoolProperty(
         name="Faces", description="Display face indices", update=updateNode)
-
 
     bg_edges_col: make_color_prop("bg_edges", (.2, .2, .2, 1.0))
     bg_faces_col: make_color_prop("bg_faces", (.2, .2, .2, 1.0))
@@ -90,10 +93,10 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         split = row.split()
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
-        row.prop(self, "draw_bg", text="Background", toggle=True)
+        row.prop(self, "draw_bg", text="BG", toggle=True)
+        row.prop(self, "draw_bface", text="BF", toggle=True)
 
         col = column_all.column(align=True)
-
         for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
             row = col.row(align=True)
             row.prop(self, f"display_{item}_index", toggle=True, icon=item_icon, text='')
@@ -115,6 +118,8 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             'display_vert_index': self.display_vert_index,
             'display_edge_index': self.display_edge_index,
             'display_face_index': self.display_face_index,
+            'draw_bface': self.draw_bface,
+            'draw_bg': self.draw_bg,
             'scale': self.get_scale()
         }.copy()
 
@@ -145,31 +150,12 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                 colx.scale_x = little_width
                 colx.prop(self, colprop, text="")
 
-        # layout.prop(self, 'bakebuttonshow', text='show bake UI')
-
     def update(self):
         # used because this node should disable itself if no inputs.
         n_id = node_id(self)
         callback_disable(n_id)
 
-    def process(self):
-        n_id = node_id(self)
-        callback_disable(n_id)
-
-        # end if tree status is set to not show
-        if not self.id_data.sv_show:
-            return
-
-        self.use_custom_color = True
-
-        if not (self.activate and self.inputs['vertices'].is_linked):
-            return
-
-        self.generate_callback(n_id)
-
-
     def get_geometry(self):
-        
         inputs = self.inputs
         geom = lambda: None
 
@@ -180,7 +166,22 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
             setattr(geom, socket, input_stream)
 
+        # further process geom here? <<  YES >> 
+
         return geom
+
+    def process(self):
+        n_id = node_id(self)
+        callback_disable(n_id)
+
+        if not self.id_data.sv_show:
+            return
+
+        self.use_custom_color = True
+        if not (self.activate and self.inputs['vertices'].is_linked):
+            return
+
+        self.generate_callback(n_id)
 
     def generate_callback(self, n_id):
 
@@ -197,7 +198,6 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             'args': (geom, config)} 
 
         callback_enable(n_id, draw_data, 'POST_PIXEL')
-
 
     def free(self):
         callback_disable(node_id(self))
