@@ -89,23 +89,13 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         col = column_all.column(align=True)
 
-        row = col.row(align=True)
-        row.prop(self, "display_vert_index", toggle=True, icon='VERTEXSEL', text='')
-        row.prop(self, "numid_verts_col", text="")
-        if self.draw_bg:
-            row.prop(self, "bg_verts_col", text="")
-
-        row = col.row(align=True)
-        row.prop(self, "display_edge_index", toggle=True, icon='EDGESEL', text='')
-        row.prop(self, "numid_edges_col", text="")
-        if self.draw_bg:
-            row.prop(self, "bg_edges_col", text="")
-
-        row = col.row(align=True)
-        row.prop(self, "display_face_index", toggle=True, icon='FACESEL', text='')
-        row.prop(self, "numid_faces_col", text="")
-        if self.draw_bg:
-            row.prop(self, "bg_faces_col", text="")
+        for item, item_icon in zip(['VERT', 'EDGE', 'FACE'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
+            item_small = item.lower()
+            row = col.row(align=True)
+            row.prop(self, f"display_{item_small}_index", toggle=True, icon=item_icon, text='')
+            row.prop(self, f"numid_{item_small}s_col", text="")
+            if self.draw_bg:
+                row.prop(self, f"bg_{item_small}s_col", text="") 
 
     def get_settings(self):
         '''Produce a dict of settings for the callback'''

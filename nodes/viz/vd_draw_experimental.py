@@ -7,14 +7,14 @@
 
 from math import pi
 
+import bgl
 import bpy
 import gpu
 from gpu_extras.batch import batch_for_shader
 
 from bpy.props import (
-    StringProperty, BoolProperty, FloatVectorProperty, EnumProperty)
+    StringProperty, BoolProperty, FloatVectorProperty, EnumProperty, FloatProperty)
 
-# import mathutils
 from mathutils import Vector, Matrix
 from mathutils.geometry import tessellate_polygon as tessellate
 
@@ -26,6 +26,7 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal 
+
 
 def edges_from_faces(indices):
     """ we don't want repeat edges, ever.."""
@@ -94,7 +95,6 @@ def generate_smooth_data(verts, faces, face_color, vector_light):
 
     return out_vcols
 
-
 def draw_matrix(context, args):
     """ this takes one or more matrices packed into an iterable """
     mdraw = MatrixDraw28()
@@ -121,7 +121,6 @@ def draw_smooth(coords, vcols, indices=None):
         batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
     batch.draw(shader)
 
-
 def draw_verts(context, args):
     geom, config = args
     draw_uniform('POINTS', geom.verts, None, config.vcol)
@@ -129,9 +128,10 @@ def draw_verts(context, args):
 def draw_edges(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.edges
+
     draw_uniform('LINES', coords, indices, config.line4f)
     if config.display_verts:
-        draw_uniform('POINTS', geom.verts, None, config.vcol)
+        draw_verts(context, args)
 
 def draw_faces(context, args):
     geom, config = args
@@ -179,7 +179,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     vector_light: FloatVectorProperty(
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
-        default=(0.2, 0.6, 0.4), update=updateNode)    
+        default=(0.2, 0.6, 0.4), update=updateNode)
+
+    # glGet with argument GL_POINT_SIZE_RANGE
+    # point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=1.0, min=1.0, max=5.0)
+    # edge_width: FloatProperty(description="glLineWidth( GLfloat width)", update=updateNode, default=1.0, min=1.0, max=5.0)
 
     display_verts: BoolProperty(default=False, update=updateNode, name="display verts")
     display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
@@ -219,6 +223,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'vector_light', text='')
+        # layout.prop(self, 'point_size', text='')
+        # layout.prop(self, 'edge_width', text='')
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
@@ -242,6 +248,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             config.display_edges = self.display_edges
             config.display_faces = self.display_faces
             config.shade = self.selected_draw_mode
+            config.point_size = self.point_size
+            config.edge_width = self.edge_width
             
             edge_indices = None
             face_indices = None
