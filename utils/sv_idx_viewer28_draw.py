@@ -110,12 +110,12 @@ def draw_indices_2D(context, args):
 
     def draw_index(rgb, rgb2, index, vec, text=''):
 
-        # vec_4d = perspective_matrix * vec.to_4d()
-        # if vec_4d.w <= 0.0:
-        #     return
+        vec_4d = perspective_matrix @ vec.to_4d()
+        if vec_4d.w <= 0.0:
+            return
 
-        # x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
-        # y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
+        x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
+        y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
 
         # if draw_bg:
         #     polyline = get_points(index)
@@ -128,37 +128,35 @@ def draw_indices_2D(context, args):
         #     bgl.glEnd()
 
         # ''' draw text '''
-        # txt_width, txt_height = blf.dimensions(0, index)
-        # bgl.glColor4f(*rgb)
-        # blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
-        # blf.draw(0, index)
-        pass
+        index_str = str(index)
+        txt_width, txt_height = blf.dimensions(0, index_str)
+        blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
+        blf.draw(0, index_str)
 
     ########
     # points
 
-
-    for obj_index, verts in enumerate(data_vector):
-        final_verts = verts
+    for obj_index, verts in enumerate(geom.verts):
 
         # if draw_matrix:
         #    matrix = data_matrix[obj_index]
         #    final_verts = [matrix @ v for v in verts]
 
         if display_vert_index:
-            for idx, v in enumerate(final_verts):
-                draw_index(vert_idx_color, vert_bg_color, idx, v)
+            blf.color(font_id, *vert_idx_color)
+            for idx, vpos in enumerate(verts):
+                draw_index(None, None, idx, vpos)
 
         # if data_edges and display_edge_index:
         #     for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
 
-        #         v1 = Vector(final_verts[idx1])
-        #         v2 = Vector(final_verts[idx2])
+        #         v1 = Vector(verts[idx1])
+        #         v2 = Vector(verts[idx2])
         #         loc = v1 + ((v2 - v1) / 2)
         #         draw_index(edge_idx_color, edge_bg_color, edge_index, loc)
 
         # if data_faces and display_face_index:
         #     for face_index, f in enumerate(data_faces[obj_index]):
-        #         verts = [Vector(final_verts[idx]) for idx in f]
+        #         verts = [Vector(verts[idx]) for idx in f]
         #         median = calc_median(verts)
         #         draw_index(face_idx_color, face_bg_color, face_index, median)

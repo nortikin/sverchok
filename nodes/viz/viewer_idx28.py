@@ -94,7 +94,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         r = split.column()
         r.prop(self, "activate", text="Show", toggle=True, icon=view_icon)
         row.prop(self, "draw_bg", text="BG", toggle=True)
-        row.prop(self, "draw_bface", text="BF", toggle=True)
+        row.prop(self, "draw_bface", text="", icon='GHOST_ENABLED', toggle=True)
 
         col = column_all.column(align=True)
         for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
