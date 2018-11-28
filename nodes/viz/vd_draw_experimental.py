@@ -143,7 +143,8 @@ def draw_faces(context, args):
             draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
         elif config.shade == "smooth":
             draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
-            pass
+        elif config.shade == 'fragment':
+            pass   # draw_fragment(...)
 
     if config.display_edges:
         draw_uniform('LINES', geom.verts, geom.edges, config.line4f)
@@ -190,7 +191,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
 
     selected_draw_mode: EnumProperty(
-        items=enum_item_5(["flat", "facet", "smooth"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED']), 
+        items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']), 
         description="pick how the node will draw faces",
         default="flat", update=updateNode
     )
@@ -248,8 +249,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             config.display_edges = self.display_edges
             config.display_faces = self.display_faces
             config.shade = self.selected_draw_mode
-            config.point_size = self.point_size
-            config.edge_width = self.edge_width
+            # config.point_size = self.point_size
+            # config.edge_width = self.edge_width
             
             edge_indices = None
             face_indices = None
@@ -311,6 +312,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     geom.facet_verts_vcols = facet_verts_vcols
                 elif self.selected_draw_mode == 'smooth' and self.display_faces:
                     geom.smooth_vcols = generate_smooth_data(geom.verts, geom.faces, config.face4f, config.vector_light)
+                elif self.selected_draw_mode == 'fragment' and self.display_faces:
+                    pass
 
                 draw_data = {
                     'tree_name': self.id_data.name[:],
