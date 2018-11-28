@@ -133,30 +133,30 @@ def draw_indices_2D(context, args):
         blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
         blf.draw(0, index_str)
 
-    ########
-    # points
+    # SV DATA
 
     for obj_index, verts in enumerate(geom.verts):
 
-        # if draw_matrix:
-        #    matrix = data_matrix[obj_index]
-        #    final_verts = [matrix @ v for v in verts]
+        final_verts = verts
+
+        if obj_index < len(geom.matrix):
+            matrix = geom.matrix[obj_index]
+            final_verts = [matrix @ v for v in verts]
 
         if display_vert_index:
             blf.color(font_id, *vert_idx_color)
-            for idx, vpos in enumerate(verts):
+            for idx, vpos in enumerate(final_verts):
                 draw_index(None, None, idx, vpos)
 
-        # if data_edges and display_edge_index:
-        #     for edge_index, (idx1, idx2) in enumerate(data_edges[obj_index]):
+        if display_edge_index and obj_index < len(geom.edges):
+            blf.color(font_id, *edge_idx_color)
+            for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
+                loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
+                draw_index(None, None, edge_index, loc)
 
-        #         v1 = Vector(verts[idx1])
-        #         v2 = Vector(verts[idx2])
-        #         loc = v1 + ((v2 - v1) / 2)
-        #         draw_index(edge_idx_color, edge_bg_color, edge_index, loc)
-
-        # if data_faces and display_face_index:
-        #     for face_index, f in enumerate(data_faces[obj_index]):
-        #         verts = [Vector(verts[idx]) for idx in f]
-        #         median = calc_median(verts)
-        #         draw_index(face_idx_color, face_bg_color, face_index, median)
+        if display_face_index and obj_index < len(geom.faces):
+            blf.color(font_id, *face_idx_color)
+            for face_index, f in enumerate(geom.faces[obj_index]):
+                poly_verts = [final_verts[idx] for idx in f]
+                median = calc_median(poly_verts)
+                draw_index(None, None, face_index, median)
