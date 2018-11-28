@@ -109,7 +109,8 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             'numid_verts_col': self.numid_verts_col[:],
             'display_vert_index': self.display_vert_index,
             'display_edge_index': self.display_edge_index,
-            'display_face_index': self.display_face_index
+            'display_face_index': self.display_face_index,
+            'scale': self.get_scale()
         }.copy()
 
     def draw_buttons_ext(self, context, layout):
@@ -187,30 +188,33 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             scale = 1.0
         return scale
 
-    def generate_callback(self, n_id):
-
-
+    def get_geometry(self):
+        
         inputs = self.inputs
-        verts, matrices = [], []
         geom = lambda: None
-
-        # gather vertices from input
-        verts = inputs['vertices'].sv_get()
-        if not verts:
-            return
 
         for socket in ['verts', 'edges', 'faces', 'matrix']:
             input_stream = inputs[socket].sv_get(default=[])
+            if socket == 'verts' and input_stream:
+                input_stream = Vector_generate(input_stream)
+
             setattr(geom, socket, input_stream)
 
+        return geom
+
+    def generate_callback(self, n_id):
+
+        verts = self.inputs['vertices'].sv_get()
+        if not verts:
+            return
+
         config = self.get_settings_dict()
-        config.scale = self.get_scale()
+        geom = self.get_geometry()
 
         draw_data = {
             'tree_name': self.id_data.name[:],
             'custom_function': draw_indices_2D,
-            'args': (geom, config)
-        } 
+            'args': (geom, config)} 
 
         callback_enable(n_id, draw_data, 'POST_PIXEL')
 

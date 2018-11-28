@@ -77,16 +77,6 @@ def draw_indices_2D(context, args):
     region = context.region
     region3d = context.space_data.region_3d
 
-    # ensure data or empty lists.
-    data_vector = Vector_generate(draw_verts) if draw_verts else []
-    data_edges = draw_edges
-    data_faces = draw_faces
-    data_matrix = draw_matrix or []
-
-    # if (data_vector, data_matrix) == (0, 0):
-    #     return
-
-
     vert_idx_color = settings['numid_verts_col']
     edge_idx_color = settings['numid_edges_col']
     face_idx_color = settings['numid_faces_col']
@@ -96,6 +86,7 @@ def draw_indices_2D(context, args):
     display_vert_index = settings['display_vert_index']
     display_edge_index = settings['display_edge_index']
     display_face_index = settings['display_face_index']
+    scale = settings['scale']
 
     font_id = 0
     text_height = int(13.0 * scale)
@@ -148,7 +139,6 @@ def draw_indices_2D(context, args):
     for obj_index, verts in enumerate(data_vector):
         final_verts = verts
 
-        # quicklt apply matrix if necessary
         if draw_matrix:
             matrix = data_matrix[obj_index]
             final_verts = [matrix @ v for v in verts]
