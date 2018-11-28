@@ -168,6 +168,9 @@ class SverchokPreferences(AddonPreferences):
     stethoscope_view_xy_multiplier: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
 
+    index_viewer_scale: FloatProperty(
+        default=1.0, min=0.01, step=0.01, description='default index viewer scale')
+
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     defaults_location: StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
     external_editor: StringProperty(description='which external app to invoke to view sources')
@@ -267,9 +270,13 @@ class SverchokPreferences(AddonPreferences):
             row_sub1 = col.row().split(factor=0.5)
             box_sub1 = row_sub1.box()
             box_sub1_col = box_sub1.column(align=True)
+            
             box_sub1_col.label(text='stethoscope mk2 settings')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
             box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
+            
+            box_sub1_col.label(text='Index Viewer settings')
+            box_sub1_col.prop(self, 'index_viewer_scale', text='scale')            
 
             col3 = row_sub1.split().column()
             col3.label(text='Location of custom defaults')

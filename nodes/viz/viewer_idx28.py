@@ -15,8 +15,8 @@ from sverchok.data_structure import (
     dataCorrect, node_id, updateNode, fullList, Vector_generate, Matrix_generate)
 
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D
-
 
 
 # status colors
@@ -89,15 +89,14 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         col = column_all.column(align=True)
 
-        for item, item_icon in zip(['VERT', 'EDGE', 'FACE'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
-            item_small = item.lower()
+        for item, item_icon in zip(['vert', 'edge', 'face'], ['VERTEXSEL', 'EDGESEL', 'FACESEL']):
             row = col.row(align=True)
-            row.prop(self, f"display_{item_small}_index", toggle=True, icon=item_icon, text='')
-            row.prop(self, f"numid_{item_small}s_col", text="")
+            row.prop(self, f"display_{item}_index", toggle=True, icon=item_icon, text='')
+            row.prop(self, f"numid_{item}s_col", text="")
             if self.draw_bg:
-                row.prop(self, f"bg_{item_small}s_col", text="") 
+                row.prop(self, f"bg_{item}s_col", text="") 
 
-    def get_settings(self):
+    def get_settings_dict(self):
         '''Produce a dict of settings for the callback'''
         # A copy is needed, we can't have reference to the
         # node in a callback, it will crash blender on undo
@@ -141,7 +140,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         colprops = [
             ['Numbers :', [
                 'numid_verts_col', 'numid_edges_col', 'numid_faces_col']],
-            ['Backgrnd :', [
+            ['Background :', [
                 'bg_verts_col', 'bg_edges_col', 'bg_faces_col']]
         ]
 
@@ -156,7 +155,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                 col4.scale_x = little_width
                 col4.prop(self, colprop, text="")
 
-        layout.prop(self, 'bakebuttonshow', text='show bake UI')
+        # layout.prop(self, 'bakebuttonshow', text='show bake UI')
 
     def update(self):
         # used because this node should disable itself in certain scenarios
@@ -180,41 +179,32 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
         self.generate_callback(n_id)
 
-    def generate_callback(self, n_id):
-
+    def get_scale(self):
         try:
             with sv_preferences() as prefs:
                 scale = prefs.index_viewer_scale
         except:
-            # print('did not find preferences - you need to save user preferences')
             scale = 1.0
+        return scale
+
+    def generate_callback(self, n_id):
+
 
         inputs = self.inputs
         verts, matrices = [], []
-        text = ''
+        geom = lambda: None
 
         # gather vertices from input
-        propv = inputs['vertices'].sv_get()
-        verts = dataCorrect(propv)
-
-        # end early, no point doing anything else.
+        verts = inputs['vertices'].sv_get()
         if not verts:
             return
 
-        # read non vertex inputs in a loop and assign to data_collected
-        data_collected = []
-        for socket in ['edges', 'faces', 'matrix']:
-            propm = inputs[socket].sv_get(default=[])
-            input_stream = propm
-            data_collected.append(input_stream)
+        for socket in ['verts', 'edges', 'faces', 'matrix']:
+            input_stream = inputs[socket].sv_get(default=[])
+            setattr(geom, socket, input_stream)
 
-        edges, faces, matrices = data_collected
-
-        bg = self.draw_bg
-        settings = self.get_settings()
-
-        geom = None
-        config = None
+        config = self.get_settings_dict()
+        config.scale = self.get_scale()
 
         draw_data = {
             'tree_name': self.id_data.name[:],
@@ -222,7 +212,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             'args': (geom, config)
         } 
 
-        callback_enable(n_id, draw_data)
+        callback_enable(n_id, draw_data, 'POST_PIXEL')
 
 
     def free(self):
