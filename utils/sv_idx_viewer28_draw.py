@@ -108,7 +108,7 @@ def draw_indices_2D(context, args):
     # vars for projection
     perspective_matrix = region3d.perspective_matrix.copy()
 
-    def draw_index(rgb, rgb2, index, vec, text=''):
+    def draw_index(index, vec):
 
         vec_4d = perspective_matrix @ vec.to_4d()
         if vec_4d.w <= 0.0:
@@ -117,51 +117,22 @@ def draw_indices_2D(context, args):
         x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
         y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
 
-        # if draw_bg:
-        #     polyline = get_points(index)
-
-        #     ''' draw polygon '''
-        #     bgl.glColor4f(*rgb2)
-        #     bgl.glBegin(bgl.GL_POLYGON)
-        #     for pointx, pointy in polyline:
-        #         bgl.glVertex2f(pointx+x, pointy+y)
-        #     bgl.glEnd()
-
         # ''' draw text '''
         index_str = str(index)
         txt_width, txt_height = blf.dimensions(0, index_str)
         blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
         blf.draw(0, index_str)
 
-    # SV DATA
+    if draw_bface:
 
-    for obj_index, verts in enumerate(geom.verts):
-
-        final_verts = verts
-
-        if obj_index < len(geom.matrix):
-            matrix = geom.matrix[obj_index]
-            final_verts = [matrix @ v for v in verts]
-
-        if display_vert_index:
-            # blf.shadow(font_id, 5, *vert_bg_color)
-            blf.color(font_id, *vert_idx_color)
-            for idx, vpos in enumerate(final_verts):
-                draw_index(None, None, idx, vpos)
-
-        if display_edge_index and obj_index < len(geom.edges):
-            # blf.shadow(font_id, 5, *edge_bg_color)
-            blf.color(font_id, *edge_idx_color)
-            for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
-                loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
-                draw_index(None, None, edge_index, loc)
-
-        if display_face_index and obj_index < len(geom.faces):
-            # blf.shadow(font_id, 5, *face_bg_color)
-            blf.color(font_id, *face_idx_color)
-            for face_index, f in enumerate(geom.faces[obj_index]):
-                poly_verts = [final_verts[idx] for idx in f]
-                median = calc_median(poly_verts)
-                draw_index(None, None, face_index, median)
+        blf.color(font_id, *vert_idx_color)
+        for vidx in geom.vert_data:
+            draw_index(*vidx)
     
-    # blf.shadow(font_id, 0, *face_bg_color)
+        blf.color(font_id, *edge_idx_color)
+        for eidx in geom.edge_data:
+            draw_index(*eidx)
+
+        blf.color(font_id, *face_idx_color)
+        for fidx in geom.face_data:
+            draw_index(*fidx)
