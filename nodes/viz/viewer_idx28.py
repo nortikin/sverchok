@@ -163,7 +163,6 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     def get_geometry(self):
         inputs = self.inputs
         geom = lambda: None
-        display_topology = lambda: None
 
         for socket in ['verts', 'edges', 'faces', 'matrix']:
             input_stream = inputs[socket].sv_get(default=[])
@@ -172,36 +171,45 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
             setattr(geom, socket, input_stream)
 
-    for obj_index, verts in enumerate(geom.verts):
+        if not self.draw_bface:
+            # turn all geom into a list of bmeshes.
+            return geom
 
-        final_verts = verts
+        else:
+            # pass only data onto the draw callback that you intend to show.
+            display_topology = lambda: None
+            display_topology.vert_data = []
+            display_topology.edge_data = []
+            display_topology.face_data = []
 
-        if obj_index < len(geom.matrix):
-            matrix = geom.matrix[obj_index]
-            final_verts = [matrix @ v for v in verts]
+            concat_vert = display_topology.vert_data.append
+            concat_edge = display_topology.edge_data.append
+            concat_face = display_topology.face_data.append
+            
+            for obj_index, verts in enumerate(geom.verts):
 
-        if display_vert_index:
-            # blf.shadow(font_id, 5, *vert_bg_color)
-            blf.color(font_id, *vert_idx_color)
-            for idx, vpos in enumerate(final_verts):
-                draw_index(None, None, idx, vpos)
+                final_verts = verts
 
-        if display_edge_index and obj_index < len(geom.edges):
-            # blf.shadow(font_id, 5, *edge_bg_color)
-            blf.color(font_id, *edge_idx_color)
-            for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
-                loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
-                draw_index(None, None, edge_index, loc)
+                if obj_index < len(geom.matrix):
+                    matrix = geom.matrix[obj_index]
+                    final_verts = [matrix @ v for v in verts]
 
-        if display_face_index and obj_index < len(geom.faces):
-            # blf.shadow(font_id, 5, *face_bg_color)
-            blf.color(font_id, *face_idx_color)
-            for face_index, f in enumerate(geom.faces[obj_index]):
-                poly_verts = [final_verts[idx] for idx in f]
-                median = calc_median(poly_verts)
-                draw_index(None, None, face_index, median)
+                if self.display_vert_index:
+                    for idx, vpos in enumerate(final_verts):
+                        concat_vert((idx, vpos))
 
-        return geom
+                if self.display_edge_index and obj_index < len(geom.edges):
+                    for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
+                        loc = final_verts[idx1].lerp(final_verts[idx2], 0.5)
+                        concat_edge((edge_index, loc))
+
+                if self.display_face_index and obj_index < len(geom.faces):
+                    for face_index, f in enumerate(geom.faces[obj_index]):
+                        poly_verts = [final_verts[idx] for idx in f]
+                        median = calc_median(poly_verts)
+                        concat_face((face_index, median))
+
+            return display_topology
 
     def process(self):
         n_id = node_id(self)
