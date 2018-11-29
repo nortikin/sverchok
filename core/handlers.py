@@ -62,10 +62,10 @@ def sv_main_handler(scene):
     """
     Main Sverchok handler for updating node tree upon editor changes
     """
-    print('depsgraph_update_pre called')
     for ng in sverchok_trees():
         # print("Scene handler looking at tree {}".format(ng.name))
         if ng.has_changed:
+            print('depsgraph_update_pre called - ng.has_changed -> ')
             # print('sv_main_handler')
             # print("Edit detected in {}".format(ng.name))
             ng.process()
