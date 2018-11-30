@@ -183,7 +183,9 @@ def draw_indices_2D(context, args):
                 hit = bvh.ray_cast(eye_location, direction)
                 if hit:
                     if hit[2] == idx:
-                       draw_index(idx, world_coordinate)
+                        # each index obtained, can be used to figure out which verts/edges are associated
+                        # this is not yet implemented.
+                        draw_index(idx, world_coordinate)
 
     except Exception as err:
         print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
