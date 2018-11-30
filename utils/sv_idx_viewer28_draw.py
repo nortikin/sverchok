@@ -194,27 +194,28 @@ def draw_indices_2D(context, args):
                             # this is not yet implemented.
                             draw_index(idx, world_coordinate)
                         
-            #             if display_vert_index:
-            #                 cache_vert_indices.add(idx)
+                        if display_vert_index:
+                            for j in polygon:
+                                cache_vert_indices.add(j)
 
-            #             # this could be woefully slow...
-            #             if display_edge_index and edges:
-            #                 for j in range(len(polygon)-1):
-            #                     cache_edge_indices.add(tuple(sorted([polygon[j], polygon[j+1]])))
-            #                 cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
+                        # this could be woefully slow...
+                        if display_edge_index and edges:
+                            for j in range(len(polygon)-1):
+                                cache_edge_indices.add(tuple(sorted([polygon[j], polygon[j+1]])))
+                            cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
 
-            # blf.color(font_id, *vert_idx_color)
-            # for idx in cache_vert_indices:
-            #     draw_index(idx, vertices[idx])
+            blf.color(font_id, *vert_idx_color)
+            for idx in cache_vert_indices:
+                draw_index(idx, vertices[idx])
 
-            # blf.color(font_id, *edge_idx_color)
-            # for idx, edge in enumerate(edges):
-            #     sorted_edge = tuple(sorted(edge))
-            #     if sorted_edge in cache_edge_indices:
-            #         idx1, idx2 = sorted_edge
-            #         loc = vertices[idx1].lerp(vertices[idx2], 0.5)
-            #         draw_index(idx, loc)
-            #         cache_edge_indices.pop(sorted_edge)
+            blf.color(font_id, *edge_idx_color)
+            for idx, edge in enumerate(edges):
+                sorted_edge = tuple(sorted(edge))
+                if sorted_edge in cache_edge_indices:
+                    idx1, idx2 = sorted_edge
+                    loc = vertices[idx1].lerp(vertices[idx2], 0.5)
+                    draw_index(idx, loc)
+                    cache_edge_indices.remove(sorted_edge)
 
     except Exception as err:
         print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
