@@ -163,7 +163,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     def get_face_extras(self, geom):
         face_medians = []
         face_normals = []
-        for obj_index, faces in geom.faces:
+        for obj_index, faces in enumerate(geom.faces):
             
             verts = geom.verts[obj_index]
             
@@ -173,7 +173,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             concat_normal = normals.append
 
             for face in faces:
-                poly_verts = [verts[idx] for idx in f]
+                poly_verts = [verts[idx] for idx in face]
                 concat_normal(normal(poly_verts))
                 concat_median(calc_median(poly_verts))
             

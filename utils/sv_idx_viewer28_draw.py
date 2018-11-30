@@ -13,6 +13,7 @@ import blf
 import bgl
 import mathutils
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 from sverchok.data_structure import Vector_generate
 
@@ -20,6 +21,7 @@ SpaceView3D = bpy.types.SpaceView3D
 callback_dict = {}
 point_dict = {}
 
+# pylint: disable=W0703
 
 def calc_median(vlist):
     a = Vector((0, 0, 0))
@@ -77,7 +79,7 @@ def get_points(index):
 
 ## end of util functions
 
-# def draw_callback_px(n_id, draw_verts, draw_edges, draw_faces, draw_matrix, draw_bg, settings, text):
+
 def draw_indices_2D(context, args):
 
     context = bpy.context
@@ -147,17 +149,15 @@ def draw_indices_2D(context, args):
 
     try:
 
-        # this will assume that verts are premultiplied.
-
         for obj_index, polygons in enumerate(geom.faces):
             vertices = geom.verts[obj_index]
-            bvh = mathutils.bvhtree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
+            bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
 
-            # do we perform initial test like check the normal of a face, and reject it if it's facing away?
-            # then for each forward facing face remaining; we test how many intersections it would take for
-            # a ray to cast onto it. If the count is more than 1 we stop casting.
 
             for idx, polygon in enumerate(polygons):
+
+                # do we perform initial test like check the normal of a face, and reject it if it's facing away?
+
                 face_normal = geom.face_normals[obj_index][idx]
                 world_coordinate = geom.face_medians[obj_index][idx]
 
@@ -167,15 +167,14 @@ def draw_indices_2D(context, args):
                 if dot_value < 0.0:
                     continue
 
-                # reaching hear means the polygon is forward facing (towards eye)
-                # but we don't know if it's occluded by other polygons yet.
+                # then for each forward facing face remaining; we test how many intersections it would take for
+                # a ray to cast onto it. If the count is more than 1 we stop casting.
 
-                #         ---- Returns a tuple (Vector location, Vector normal, int index, float distance),
-                #         ----  Values will all be None if no hit is found.
-                #         bvh.ray_cast(origin, direction, distance=sys.float_info.max)
+                # ---- Returns a tuple (Vector location, Vector normal, int index, float distance),
+                # ----  Values will all be None if no hit is found.
+                # bvh.ray_cast(origin, direction, distance=sys.float_info.max)
 
-                draw_index((idx, world_coordinate))
-
+                draw_index(idx, world_coordinate)
 
     except Exception as err:
         print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
