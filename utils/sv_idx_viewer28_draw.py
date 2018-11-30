@@ -22,6 +22,7 @@ callback_dict = {}
 point_dict = {}
 
 # pylint: disable=W0703
+# pylint: disable=C0301
 
 def calc_median(vlist):
     a = Vector((0, 0, 0))
@@ -170,14 +171,12 @@ def draw_indices_2D(context, args):
                 # then for each forward facing face remaining; we test how many intersections it would take for
                 # a ray to cast onto it. If the count is more than 1 we stop casting.
                 # OR
-                # cast ray from eye with direction to the median of the polygon, the
-                # reycast will return (almost definitely..) but if the return idx does not correspond with the
-                # polygon index, then it is occluded :)
+                # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
+                # but if the return idx does not correspond with the polygon index, then it is occluded :)
 
                 # bvh.ray_cast(origin, direction, distance=sys.float_info.max) : returns
                 # if hit: (Vector location, Vector normal, int index, float distance)
                 # else:   (None, None, None, None)
-
 
                 draw_index(idx, world_coordinate)
 
