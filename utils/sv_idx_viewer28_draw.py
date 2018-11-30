@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import sys
 import math
 
 import bpy
@@ -23,6 +23,8 @@ point_dict = {}
 
 # pylint: disable=W0703
 # pylint: disable=C0301
+
+maxdist = sys.float_info.max
 
 def calc_median(vlist):
     a = Vector((0, 0, 0))
@@ -177,7 +179,10 @@ def draw_indices_2D(context, args):
                 # bvh.ray_cast(origin, direction, distance=sys.float_info.max) : returns
                 # if hit: (Vector location, Vector normal, int index, float distance)
                 # else:   (None, None, None, None)
-
+                # hit = bvh.ray_cast(eye_location, result_vector) #, distance=maxdist)
+                # if hit:
+                #     if hit[2] == idx:
+                #        draw_index(idx, world_coordinate)
                 draw_index(idx, world_coordinate)
 
     except Exception as err:
