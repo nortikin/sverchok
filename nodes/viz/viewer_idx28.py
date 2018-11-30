@@ -160,19 +160,33 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         callback_disable(n_id)
 
+    def get_face_normals(self, geom):
+        pass
+    
+    def get_face_medians(self, geom):
+        pass
+
+
     def get_geometry(self):
         inputs = self.inputs
         geom = lambda: None
 
-        for socket in ['verts', 'edges', 'faces', 'matrix']:
+        for socket in ['matrix', 'verts', 'edges', 'faces']:
             input_stream = inputs[socket].sv_get(default=[])
             if socket == 'verts' and input_stream:
+                # ensure they are Vector()
                 input_stream = Vector_generate(input_stream)
+                # ensure they are Matrix() multiplied
+                for obj_index, verts in enumerate(input_stream):
+                    if obj_index < len(geom.matrix):
+                        matrix = geom.matrix[obj_index]
+                        input_stream[obj_index] = [matrix @ v for v in verts]
 
             setattr(geom, socket, input_stream)
 
         if not self.draw_bface:
-            # turn all geom into a list of bmeshes.
+            geom.face_normals = self.get_face_normals(geom)
+            geom.face_medians = self.get_face_medians(geom)
             return geom
 
         else:
@@ -186,13 +200,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             concat_edge = display_topology.edge_data.append
             concat_face = display_topology.face_data.append
             
-            for obj_index, verts in enumerate(geom.verts):
-
-                final_verts = verts
-
-                if obj_index < len(geom.matrix):
-                    matrix = geom.matrix[obj_index]
-                    final_verts = [matrix @ v for v in verts]
+            for obj_index, final_verts in enumerate(geom.verts):
 
                 if self.display_vert_index:
                     for idx, vpos in enumerate(final_verts):

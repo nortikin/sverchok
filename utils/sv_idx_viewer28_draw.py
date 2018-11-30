@@ -11,9 +11,10 @@ import math
 import bpy
 import blf
 import bgl
+import mathutils
 from mathutils import Vector
 
-from sverchok.data_structure import Vector_generate, Matrix_generate
+from sverchok.data_structure import Vector_generate
 
 SpaceView3D = bpy.types.SpaceView3D
 callback_dict = {}
@@ -136,3 +137,46 @@ def draw_indices_2D(context, args):
         blf.color(font_id, *face_idx_color)
         for fidx in geom.face_data:
             draw_index(*fidx)
+
+        # if drawing all geometry, we end early.
+        return
+
+    eye = Vector(region3d.view_matrix[2][:3])
+    eye.length = region3d.view_distance
+    eye_location = region3d.view_location + eye  
+
+    try:
+
+        # this will assume that verts are premultiplied.
+
+        for obj_index, polygons in enumerate(geom.faces):
+            vertices = geom.verts[obj_index]
+            bvh = mathutils.bvhtree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
+
+            # do we perform initial test like check the normal of a face, and reject it if it's facing away?
+            # then for each forward facing face remaining; we test how many intersections it would take for
+            # a ray to cast onto it. If the count is more than 1 we stop casting.
+
+            for idx, polygon in enumerate(polygons):
+                face_normal = geom.face_normals[obj_index][idx]
+                world_coordinate = geom.face_medians[obj_index][idx]
+
+                result_vector = eye_location - world_coordinate
+                dot_value = face_normal.dot(result_vector.normalized())
+
+                if dot_value < 0.0:
+                    continue
+
+                # reaching hear means the polygon is forward facing (towards eye)
+                # but we don't know if it's occluded by other polygons yet.
+
+                #         ---- Returns a tuple (Vector location, Vector normal, int index, float distance),
+                #         ----  Values will all be None if no hit is found.
+                #         bvh.ray_cast(origin, direction, distance=sys.float_info.max)
+
+                draw_index((idx, world_coordinate))
+
+
+    except Exception as err:
+        print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
+        print(err)
