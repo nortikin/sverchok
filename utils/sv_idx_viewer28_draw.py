@@ -179,11 +179,11 @@ def draw_indices_2D(context, args):
                 # bvh.ray_cast(origin, direction, distance=sys.float_info.max) : returns
                 # if hit: (Vector location, Vector normal, int index, float distance)
                 # else:   (None, None, None, None)
-                # hit = bvh.ray_cast(eye_location, result_vector) #, distance=maxdist)
-                # if hit:
-                #     if hit[2] == idx:
-                #        draw_index(idx, world_coordinate)
-                draw_index(idx, world_coordinate)
+                direction = world_coordinate - eye_location
+                hit = bvh.ray_cast(eye_location, direction)
+                if hit:
+                    if hit[2] == idx:
+                       draw_index(idx, world_coordinate)
 
     except Exception as err:
         print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
