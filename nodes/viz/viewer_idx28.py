@@ -8,6 +8,7 @@
 
 import bpy
 from mathutils import Vector
+from mathutils.geometry import normal  # takes 3 or more! :)
 from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
@@ -17,7 +18,6 @@ from sverchok.data_structure import (
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_idx_viewer28_draw import draw_indices_2D
-
 
 # status colors
 FAIL_COLOR = (0.1, 0.05, 0)
@@ -160,11 +160,27 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         callback_disable(n_id)
 
-    def get_face_normals(self, geom):
-        pass
-    
-    def get_face_medians(self, geom):
-        pass
+    def get_face_extras(self, geom):
+        face_medians = []
+        face_normals = []
+        for obj_index, faces in geom.faces:
+            
+            verts = geom.verts[obj_index]
+            
+            medians = []
+            normals = []
+            concat_median = medians.append
+            concat_normal = normals.append
+
+            for face in faces:
+                poly_verts = [verts[idx] for idx in f]
+                concat_normal(normal(poly_verts))
+                concat_median(calc_median(poly_verts))
+            
+            face_medians.append(medians)
+            face_normals.append(normals)
+        
+        return face_medians, face_normals
 
 
     def get_geometry(self):
@@ -174,8 +190,10 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         for socket in ['matrix', 'verts', 'edges', 'faces']:
             input_stream = inputs[socket].sv_get(default=[])
             if socket == 'verts' and input_stream:
+                
                 # ensure they are Vector()
                 input_stream = Vector_generate(input_stream)
+                
                 # ensure they are Matrix() multiplied
                 for obj_index, verts in enumerate(input_stream):
                     if obj_index < len(geom.matrix):
@@ -185,8 +203,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             setattr(geom, socket, input_stream)
 
         if not self.draw_bface:
-            geom.face_normals = self.get_face_normals(geom)
-            geom.face_medians = self.get_face_medians(geom)
+            geom.face_medians, geom.face_normals = self.get_face_extras(geom)
             return geom
 
         else:
