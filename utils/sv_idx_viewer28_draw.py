@@ -7,6 +7,7 @@
 
 import sys
 import math
+import traceback
 
 import bpy
 import blf
@@ -153,10 +154,15 @@ def draw_indices_2D(context, args):
     try:
 
         for obj_index, polygons in enumerate(geom.faces):
+            edges = geom.edges[obj_index]
             vertices = geom.verts[obj_index]
             bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
 
+            cache_vert_indices = set()
+            cache_edge_indices = set()
+            # cache_faces_indices = set()
 
+            blf.color(font_id, *face_idx_color)
             for idx, polygon in enumerate(polygons):
 
                 # do we perform initial test like check the normal of a face, and reject it if it's facing away?
@@ -183,10 +189,34 @@ def draw_indices_2D(context, args):
                 hit = bvh.ray_cast(eye_location, direction)
                 if hit:
                     if hit[2] == idx:
-                        # each index obtained, can be used to figure out which verts/edges are associated
-                        # this is not yet implemented.
-                        draw_index(idx, world_coordinate)
+                        if display_face_index:
+                            # each index obtained, can be used to figure out which verts/edges are associated
+                            # this is not yet implemented.
+                            draw_index(idx, world_coordinate)
+                        
+            #             if display_vert_index:
+            #                 cache_vert_indices.add(idx)
+
+            #             # this could be woefully slow...
+            #             if display_edge_index and edges:
+            #                 for j in range(len(polygon)-1):
+            #                     cache_edge_indices.add(tuple(sorted([polygon[j], polygon[j+1]])))
+            #                 cache_edge_indices.add(tuple(sorted([polygon[-1], polygon[0]])))
+
+            # blf.color(font_id, *vert_idx_color)
+            # for idx in cache_vert_indices:
+            #     draw_index(idx, vertices[idx])
+
+            # blf.color(font_id, *edge_idx_color)
+            # for idx, edge in enumerate(edges):
+            #     sorted_edge = tuple(sorted(edge))
+            #     if sorted_edge in cache_edge_indices:
+            #         idx1, idx2 = sorted_edge
+            #         loc = vertices[idx1].lerp(vertices[idx2], 0.5)
+            #         draw_index(idx, loc)
+            #         cache_edge_indices.pop(sorted_edge)
 
     except Exception as err:
         print('---- ERROR in sv_idx_viewer28 Occlusion backface drawing ----')
         print(err)
+        print(traceback.format_exc())
