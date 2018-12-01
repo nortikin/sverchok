@@ -25,7 +25,6 @@ point_dict = {}
 # pylint: disable=W0703
 # pylint: disable=C0301
 
-maxdist = sys.float_info.max
 
 def calc_median(vlist):
     a = Vector((0, 0, 0))
@@ -154,7 +153,7 @@ def draw_indices_2D(context, args):
     try:
 
         for obj_index, polygons in enumerate(geom.faces):
-            edges = geom.edges[obj_index]
+            edges = geom.edges[obj_index] if obj_index < len(geom.edges) else []
             vertices = geom.verts[obj_index]
             bvh = BVHTree.FromPolygons(vertices, polygons, all_triangles=False, epsilon=0.0)
 

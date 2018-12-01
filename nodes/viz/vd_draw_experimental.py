@@ -115,7 +115,7 @@ def draw_uniform(GL_KIND, coords, indices, color):
 def draw_smooth(coords, vcols, indices=None):
     shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
     if indices:
-        print(len(coords), len(vcols))
+        # print(len(coords), len(vcols))
         batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, indices=indices)
     else:
         batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
