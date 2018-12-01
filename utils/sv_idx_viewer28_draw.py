@@ -176,9 +176,6 @@ def draw_indices_2D(context, args):
                 if dot_value < 0.0:
                     continue
 
-                # then for each forward facing face remaining; we test how many intersections it would take for
-                # a ray to cast onto it. If the count is more than 1 we stop casting.
-                # OR
                 # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
                 # but if the return idx does not correspond with the polygon index, then it is occluded :)
 
@@ -190,8 +187,6 @@ def draw_indices_2D(context, args):
                 if hit:
                     if hit[2] == idx:
                         if display_face_index:
-                            # each index obtained, can be used to figure out which verts/edges are associated
-                            # this is not yet implemented.
                             draw_index(idx, world_coordinate)
                         
                         if display_vert_index:
