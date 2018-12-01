@@ -180,12 +180,25 @@ def draw_faces(context, args):
         elif config.shade == "smooth":
             draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
         elif config.shade == 'fragment':
-            draw_fragment(context, args)
+            if config.draw_fragment_function:
+                config.draw_fragment_function(context, args)
+            else:
+                draw_fragment(context, args)
 
     if config.display_edges:
         draw_uniform('LINES', geom.verts, geom.edges, config.line4f)
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol)
+
+
+
+def get_shader_data(named_shader=None):
+    source = bpy.data.texts[named_shader].as_string()
+    exec(source)
+    local_vars = vars().copy()
+    print(local_vars)
+    names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
+    return [local_vars.get(name) for name in names]
 
 
 
@@ -200,6 +213,29 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVDExperimental'
     bl_label = 'VD Experimental'
     bl_icon = 'GREASEPENCIL'
+
+    node_dict = {}
+
+    def wrapped_update(self, context):
+        if self.custom_shader_location in bpy.data.texts:
+            try:
+                vertex_shader, fragment_shader, draw_fragment = get_shader_data(named_shader=self.custom_shader_location)
+            
+                self.custom_vertex_shader = vertex_shader
+                self.custom_fragment_shader = fragment_shader
+                self.node_dict[hash(self)] = {'draw_fragment': draw_fragment}
+
+            except Exception as err:
+                print(err)
+                print(traceback.format_exc())
+
+                # reset custom shader        
+                self.custom_vertex_shader = ''
+                self.custom_fragment_shader = ''
+                self.node_dict[hash(self)] = None
+        
+        self.process_node(context)
+
 
     n_id: StringProperty(default='')
     activate: BoolProperty(name='Show', description='Activate', default=True, update=updateNode)
@@ -230,7 +266,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
-    custom_shader_location: StringProperty(update=updateNode)
+    custom_shader_location: StringProperty(update=wrapped_update)
 
     selected_draw_mode: EnumProperty(
         items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']), 
@@ -244,6 +280,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         inew('StringsSocket', 'edges')
         inew('StringsSocket', 'faces')
         inew('MatrixSocket', 'matrix')
+        self.node_dict[hash(self)] = {}
 
     def draw_buttons(self, context, layout):
         r0 = layout.row()
@@ -358,7 +395,16 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 elif self.selected_draw_mode == 'smooth' and self.display_faces:
                     geom.smooth_vcols = generate_smooth_data(geom.verts, geom.faces, config.face4f, config.vector_light)
                 elif self.selected_draw_mode == 'fragment' and self.display_faces:
-                    config.shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader)
+        
+                    config.draw_fragment_function = None
+                    
+                    if self.node_dict[hash(self)].get('draw_fragment'):
+                        ND = self.node_dict[hash(self)]
+                        config.draw_fragment_function = ND.get('draw_fragment')
+                        config.shader = gpu.types.GPUShader(self.custom_vertex_shader, self.custom_fragment_shader)
+                    else:
+                        config.shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader)
+        
                     config.batch = batch_for_shader(config.shader, 'TRIS', {"position": geom.verts}, indices=geom.faces)
 
                 draw_data = {
