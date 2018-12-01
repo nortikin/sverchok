@@ -95,14 +95,14 @@ def draw_indices_2D(context, args):
     vert_idx_color = settings['numid_verts_col']
     edge_idx_color = settings['numid_edges_col']
     face_idx_color = settings['numid_faces_col']
-    vert_bg_color = settings['bg_verts_col']
-    edge_bg_color = settings['bg_edges_col']
-    face_bg_color = settings['bg_faces_col']
+    # vert_bg_color = settings['bg_verts_col']
+    # edge_bg_color = settings['bg_edges_col']
+    # face_bg_color = settings['bg_faces_col']
     display_vert_index = settings['display_vert_index']
     display_edge_index = settings['display_edge_index']
     display_face_index = settings['display_face_index']
     scale = settings['scale']
-    draw_bg = settings['draw_bg']
+    # draw_bg = settings['draw_bg']
     draw_bface = settings['draw_bface']
 
     font_id = 0
@@ -160,12 +160,11 @@ def draw_indices_2D(context, args):
 
             cache_vert_indices = set()
             cache_edge_indices = set()
-            # cache_faces_indices = set()
 
             blf.color(font_id, *face_idx_color)
             for idx, polygon in enumerate(polygons):
 
-                # do we perform initial test like check the normal of a face, and reject it if it's facing away?
+                # check the face normal, reject it if it's facing away.
 
                 face_normal = geom.face_normals[obj_index][idx]
                 world_coordinate = geom.face_medians[obj_index][idx]
@@ -174,14 +173,14 @@ def draw_indices_2D(context, args):
                 dot_value = face_normal.dot(result_vector.normalized())
 
                 if dot_value < 0.0:
-                    continue
+                    continue # reject
 
                 # cast ray from eye towards the median of the polygon, the reycast will return (almost definitely..)
                 # but if the return idx does not correspond with the polygon index, then it is occluded :)
 
                 # bvh.ray_cast(origin, direction, distance=sys.float_info.max) : returns
-                # if hit: (Vector location, Vector normal, int index, float distance)
-                # else:   (None, None, None, None)
+                # if hit: (Vector location, Vector normal, int index, float distance) else all (None, ...)
+
                 direction = world_coordinate - eye_location
                 hit = bvh.ray_cast(eye_location, direction)
                 if hit:
