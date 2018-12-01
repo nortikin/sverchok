@@ -25,7 +25,31 @@ from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
-from sverchok.utils.modules.geom_utils import obtain_normal3 as normal 
+from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
+
+default_vertex_shader = '''
+    uniform mat4 viewProjectionMatrix;
+
+    in vec3 position;
+    out vec3 pos;
+
+    void main()
+    {
+        pos = position;
+        gl_Position = viewProjectionMatrix * vec4(position, 1.0f);
+    }
+'''
+
+default_fragment_shader = '''
+    uniform float brightness;
+
+    in vec3 pos;
+
+    void main()
+    {
+        gl_FragColor = vec4(pos * brightness, 1.0);
+    }
+'''
 
 
 def edges_from_faces(indices):
@@ -133,6 +157,18 @@ def draw_edges(context, args):
     if config.display_verts:
         draw_verts(context, args)
 
+def draw_fragment(context, args):
+    geom, config = args
+    batch = config.batch
+    shader = config.shader 
+
+    shader.bind()
+    matrix = context.region_data.perspective_matrix
+    shader.uniform_float("viewProjectionMatrix", matrix)
+    shader.uniform_float("brightness", 0.5)
+    batch.draw(shader)
+
+
 def draw_faces(context, args):
     geom, config = args
 
@@ -144,12 +180,14 @@ def draw_faces(context, args):
         elif config.shade == "smooth":
             draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
         elif config.shade == 'fragment':
-            pass   # draw_fragment(...)
+            draw_fragment(context, args)
 
     if config.display_edges:
         draw_uniform('LINES', geom.verts, geom.edges, config.line4f)
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol)
+
+
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -313,7 +351,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 elif self.selected_draw_mode == 'smooth' and self.display_faces:
                     geom.smooth_vcols = generate_smooth_data(geom.verts, geom.faces, config.face4f, config.vector_light)
                 elif self.selected_draw_mode == 'fragment' and self.display_faces:
-                    pass
+                    config.shader = gpu.types.GPUShader(default_vertex_shader, default_fragment_shader)
+                    config.batch = batch_for_shader(config.shader, 'TRIS', {"position": geom.verts}, indices=geom.faces)
 
                 draw_data = {
                     'tree_name': self.id_data.name[:],
