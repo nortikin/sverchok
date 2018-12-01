@@ -228,6 +228,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
 
+    custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
+    custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
+    custom_shader_location: StringProperty(update=updateNode)
+
     selected_draw_mode: EnumProperty(
         items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']), 
         description="pick how the node will draw faces",
@@ -258,7 +262,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             colors_column = inside_box.column(align=True)
             colors_column.prop(self, "vert_color", text='')
             colors_column.prop(self, "edge_color", text='')
-            colors_column.prop(self, "face_color", text='')
+            if not self.selected_draw_mode == 'fragment':
+                colors_column.prop(self, "face_color", text='')
+            else:
+                colors_column.prop(self, "custom_shader_location", icon='TEXT', text='')
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'vector_light', text='')
