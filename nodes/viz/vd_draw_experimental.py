@@ -153,7 +153,8 @@ def draw_edges(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.edges
 
-    draw_uniform('LINES', coords, indices, config.line4f)
+    if config.display_edges:
+        draw_uniform('LINES', coords, indices, config.line4f)
     if config.display_verts:
         draw_verts(context, args)
 
@@ -316,6 +317,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
         n_id = node_id(self)
         callback_disable(n_id)
+
+        if not any([self.display_verts, self.display_edges, self.display_faces]):
+            return
 
         # the blend reload event requires better handling. 
         # if not self.node_dict.get(hash(self)) and self.custom_shader_location:
