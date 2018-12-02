@@ -70,7 +70,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
         points = list((x,y,0) for x,y in zip(listVertX, listVertY) )
         return points
 
-    def make_edges(self, Vertices, Angle):
+    def make_edges(self, Angle, Vertices):
         listEdg = [(i, i+1) for i in range(Vertices-1)]
 
         if Angle < 360 and self.mode_ == 1:
@@ -117,7 +117,7 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
             verts_output.sv_set(points)
 
         if edges_output.is_linked:
-            edg = [self.make_edges(v, a) for a, v, r in zip(*parameters)]
+            edg = [self.make_edges(a, v) for a, v, r in zip(*parameters)]
             edges_output.sv_set(edg)
 
         if faces_output.is_linked:
