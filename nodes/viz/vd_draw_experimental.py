@@ -196,7 +196,7 @@ def get_shader_data(named_shader=None):
     source = bpy.data.texts[named_shader].as_string()
     exec(source)
     local_vars = vars().copy()
-    print(local_vars)
+    # print(local_vars)
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
 
@@ -317,6 +317,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         n_id = node_id(self)
         callback_disable(n_id)
 
+        # the blend reload event requires better handling. 
+        # if not self.node_dict.get(hash(self)) and self.custom_shader_location:
+        #     self.wrapped_update(None)
+        #     return
+            
         verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]
 
         if verts_socket.is_linked: 
