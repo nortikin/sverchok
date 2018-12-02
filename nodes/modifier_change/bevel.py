@@ -157,6 +157,8 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
                     segments=segments,
                     profile=profile,
                     vertex_only=self.vertexOnly,
+                    # strength= (float)
+                    # hnmode= (enum in ['NONE', 'FACE', 'ADJACENT', 'FIXED_NORMAL_SHADING'], default 'NONE')
                     material=-1)['faces']
             except:
                 print('wtf?!...')

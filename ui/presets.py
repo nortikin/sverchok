@@ -32,7 +32,8 @@ from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
 
 def get_presets_directory():
-    presets = join(bpy.utils.user_resource('DATAFILES', path='sverchok/presets', create=True))
+    path_partial = os.path.join('sverchok', 'presets')
+    presets = join(bpy.utils.user_resource('DATAFILES', path=path_partial, create=True))
     if not os.path.exists(presets):
         os.makedirs(presets)
     return presets
@@ -557,7 +558,7 @@ class SvUserPresetsPanel(bpy.types.Panel):
     bl_label = "Presets"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
-    bl_category = 'Presets'
+    # bl_category = 'Presets'
     use_pin = True
 
     @classmethod
