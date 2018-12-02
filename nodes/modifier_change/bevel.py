@@ -99,7 +99,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         si('StringsSocket', "Offset").prop_name = "offset_"
         si('StringsSocket', "Segments").prop_name = "segments_"
         si('StringsSocket', "Profile").prop_name = "profile_"
-        
+
         so('VerticesSocket', 'Vertices')
         so('StringsSocket', 'Edges')
         so('StringsSocket', 'Polygons')
@@ -141,14 +141,23 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = match_long_repeat(self.get_socket_data())
 
+        # bevel(bm, 
+        #       geom, offset, offset_type, segments, profile, vertex_only, clamp_overlap, 
+        #       material, loop_slide, mark_seam, mark_sharp, strength, hnmode)
+
         for vertices, edges, faces, mask, offset, segments, profile in zip(*meshes):
             bm = bmesh_from_pydata(vertices, edges, faces)
             geom = self.create_geom(bm, mask)
 
             try:
                 bevel_faces = bmesh.ops.bevel(bm,
-                    geom=geom, offset=offset, offset_type=self.offsetType, segments=segments,
-                    profile=profile, vertex_only=self.vertexOnly, material=-1)['faces']
+                    geom=geom,
+                    offset=offset,
+                    offset_type=self.offsetType,
+                    segments=segments,
+                    profile=profile,
+                    vertex_only=self.vertexOnly,
+                    material=-1)['faces']
             except:
                 print('wtf?!...')
 
