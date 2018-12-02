@@ -217,7 +217,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     node_dict = {}
 
-    def wrapped_update(self, context):
+    def populate_node_with_custom_shader_from_text(self):
         if self.custom_shader_location in bpy.data.texts:
             try:
                 vertex_shader, fragment_shader, draw_fragment = get_shader_data(named_shader=self.custom_shader_location)
@@ -233,9 +233,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 # reset custom shader        
                 self.custom_vertex_shader = ''
                 self.custom_fragment_shader = ''
-                self.node_dict[hash(self)] = None
-        
-        self.process_node(context)
+                self.node_dict[hash(self)] = {}
+
+    def wrapped_update(self, context=None):
+        self.populate_node_with_custom_shader_from_text()
+        if context:
+            self.process_node(context)
 
 
     n_id: StringProperty(default='')
@@ -321,11 +324,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         if not any([self.display_verts, self.display_edges, self.display_faces]):
             return
 
-        # the blend reload event requires better handling. 
-        # if not self.node_dict.get(hash(self)) and self.custom_shader_location:
-        #     self.wrapped_update(None)
-        #     return
-            
         verts_socket, edges_socket, faces_socket, matrix_socket = self.inputs[:4]
 
         if verts_socket.is_linked: 
@@ -406,9 +404,15 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 elif self.selected_draw_mode == 'fragment' and self.display_faces:
         
                     config.draw_fragment_function = None
+
+                    # double reload, for testing.
+                    ND = self.node_dict.get(hash(self))
+                    if not ND:
+                        if self.custom_shader_location in bpy.data.texts:
+                            self.populate_node_with_custom_shader_from_text()
+                            ND = self.node_dict.get(hash(self))
                     
-                    if self.node_dict[hash(self)].get('draw_fragment'):
-                        ND = self.node_dict[hash(self)]
+                    if ND and ND.get('draw_fragment'):
                         config.draw_fragment_function = ND.get('draw_fragment')
                         config.shader = gpu.types.GPUShader(self.custom_vertex_shader, self.custom_fragment_shader)
                     else:
