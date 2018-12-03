@@ -185,10 +185,11 @@ class SvObjHelper():
         if self.parent_to_empty:
             self.parent_name = 'Empty_' + self.basedata_name
             collection = bpy.context.collection
+            scene = bpy.context.scene
             if not self.parent_name in bpy.data.objects:
                 empty = bpy.data.objects.new(self.parent_name, None)
                 collection.objects.link(empty)
-                collection.update()        
+                scene.update()        
 
     def to_parent(self, objs):
         for obj in objs:
@@ -367,7 +368,7 @@ class SvObjHelper():
 
     def push_custom_matrix_if_present(self, sv_object, matrix):
         if matrix:
-            matrix = matrix_sanitizer(matrix)
+            # matrix = matrix_sanitizer(matrix)    
             sv_object.matrix_local = matrix
         else:
             sv_object.matrix_local = Matrix.Identity(4)    

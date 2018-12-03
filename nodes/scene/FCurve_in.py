@@ -52,7 +52,8 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     def add_empty(self, context):
         empty = bpy.data.objects.new("sv_fcurve_empty", None)
         scene = bpy.context.scene
-        scene.objects.link(empty)
+        collection = bpy.context.collection
+        collection.objects.link(empty)
         scene.update()
 
         self.object_name = empty.name
@@ -129,11 +130,5 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].sv_set(evaluated)
 
 
-def register():
-    bpy.utils.register_class(SvFCurveMK1CB)
-    bpy.utils.register_class(SvFCurveInNodeMK1)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvFCurveInNodeMK1)
-    bpy.utils.unregister_class(SvFCurveMK1CB)
+classes = [SvFCurveMK1CB, SvFCurveInNodeMK1]
+register, unregister = bpy.utils.register_classes_factory(classes)

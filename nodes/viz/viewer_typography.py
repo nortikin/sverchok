@@ -60,7 +60,7 @@ def font_set_props(f, node, txt):
     f.align_y = node.align_y
 
 def get_obj_and_fontcurve(context, name):
-    scene = context.collection
+    collection = context.collection
     curves = bpy.data.curves
     objects = bpy.data.objects
 
@@ -75,7 +75,7 @@ def get_obj_and_fontcurve(context, name):
         sv_object = objects[name]
     else:
         sv_object = objects.new(name, f)
-        scene.objects.link(sv_object)
+        collection.objects.link(sv_object)
 
     return sv_object, f
 
@@ -230,10 +230,13 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         if self.parent_to_empty:
             mtname = 'Empty_' + self.basemesh_name
             self.parent_name = mtname
-            scene = bpy.context.collection
+            
+            scene = bpy.context.scene
+            collection = bpy.context.collection
+
             if not mtname in bpy.data.objects:
                 empty = bpy.data.objects.new(mtname, None)
-                scene.objects.link(empty)
+                collection.objects.link(empty)
                 scene.update()
 
         last_index = 0
@@ -262,11 +265,6 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 obj.parent = None
 
 
-def register():
-    bpy.utils.register_class(SvTypeViewerNodeV28)
-    bpy.utils.register_class(SvFontFileImporterOpV28)
 
-
-def unregister():
-    bpy.utils.unregister_class(SvFontFileImporterOpV28)
-    bpy.utils.unregister_class(SvTypeViewerNodeV28)
+classes = [SvTypeViewerNodeV28, SvFontFileImporterOpV28]
+register, unregister = bpy.utils.register_classes_factory(classes)
