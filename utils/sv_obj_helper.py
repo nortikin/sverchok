@@ -314,7 +314,7 @@ class SvObjHelper():
             collection.objects.unlink(obj)
             objects.remove(obj, do_unlink=True)
 
-        # delete associated meshes
+        # delete associated meshes/curves etc
         for object_name in obj_names:
             kinds.remove(kinds[object_name])        
 
