@@ -305,7 +305,7 @@ class SvObjHelper():
             kinds = bpy.data.curves
 
         objects = bpy.data.objects
-        collection = bpy.context.collection
+        collection = bpy.context.scene.collection
 
         # remove excess objects
         for object_name in obj_names:
@@ -326,7 +326,7 @@ class SvObjHelper():
         obj['basedata_name'] = self.basedata_name
         obj['madeby'] = self.name
         obj['idx'] = obj_index
-        bpy.context.collection.objects.link(obj)
+        bpy.context.scene.collection.objects.link(obj)
         return obj
 
     def get_or_create_object(self, object_name, obj_index, data):

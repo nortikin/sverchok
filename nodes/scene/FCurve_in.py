@@ -52,7 +52,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     def add_empty(self, context):
         empty = bpy.data.objects.new("sv_fcurve_empty", None)
         scene = bpy.context.scene
-        collection = bpy.context.collection
+        collection = scene.collection
         collection.objects.link(empty)
         scene.update()
 

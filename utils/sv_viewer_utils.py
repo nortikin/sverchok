@@ -90,7 +90,7 @@ def remove_non_updated_objects(node, obj_index, kind='MESH'):
         kinds = bpy.data.curves
 
     objects = bpy.data.objects
-    collection = bpy.context.collection
+    collection = bpy.context.scene.collection
 
     # remove excess objects
     for object_name in objs:
