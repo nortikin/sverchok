@@ -232,7 +232,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             self.parent_name = mtname
             
             scene = bpy.context.scene
-            collection = bpy.context.collection
+            collection = scene.collection
 
             if not mtname in bpy.data.objects:
                 empty = bpy.data.objects.new(mtname, None)

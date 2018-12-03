@@ -111,7 +111,7 @@ def force_pydata(mesh, verts, edges):
 
 
 def make_bmesh_geometry(node, context, geometry, idx, layers):
-    scene = context.collection
+    collection = context.scene.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix, _, _ = geometry
@@ -124,7 +124,7 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
         # this is only executed once, upon the first run.
         mesh = meshes.new(name)
         obj = objects.new(name, mesh)
-        scene.objects.link(obj)
+        collection.objects.link(obj)
 
     # at this point the mesh is always fresh and empty
     obj['idx'] = idx

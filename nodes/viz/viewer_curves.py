@@ -25,7 +25,7 @@ from mathutils import Vector
 
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_viewer_utils import matrix_sanitizer
+# from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (dataCorrect, fullList, updateNode)
 
@@ -81,7 +81,6 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
     # if object reference exists, pick it up else make a new one
     # assign the same curve to all Objects.
     for obj_index, matrix in enumerate(matrices):
-        m = matrix_sanitizer(matrix)
 
         # get object to clone the Curve data into.
         obj_name = node.basedata_name + '.' + str("%04d" % obj_index)
@@ -95,7 +94,7 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
         obj['basedata_name'] = node.basedata_name
         obj['madeby'] = node.name
         obj['idx'] = obj_index
-        obj.matrix_local = m
+        obj.matrix_local = matrix
 
 
 # -- MERGE --
@@ -104,9 +103,8 @@ def make_merged_live_curve(node, obj_index, verts, edges, matrices):
     obj, cu = node.get_obj_curve(obj_index)
     set_curve_props(node, cu)
     
-    for matrix in matrices:
-        m = matrix_sanitizer(matrix)
-
+    for m in matrices:
+        
         # and rebuild
         for edge in edges:
             v0, v1 = m @ Vector(verts[edge[0]]), m @ Vector(verts[edge[1]])
