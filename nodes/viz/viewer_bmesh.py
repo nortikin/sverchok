@@ -28,7 +28,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer,
+    #matrix_sanitizer,
     natural_plus_one,
     greek_alphabet
 )
@@ -36,15 +36,15 @@ from sverchok.utils.sv_obj_helper import SvObjHelper, CALLBACK_OP, get_random_in
 
 
 def default_mesh(name):
-    verts, faces = [(1, 1, -1), (1, -1, -1), (-1, -1, -1)], [(0, 1, 2)]
+    # verts, faces = [(1, 1, -1), (1, -1, -1), (-1, -1, -1)], [(0, 1, 2)]
     mesh_data = bpy.data.meshes.new(name)
-    mesh_data.from_pydata(verts, [], faces)
-    mesh_data.update()
+    # mesh_data.from_pydata(verts, [], faces)
+    # mesh_data.update()
     return mesh_data
 
 
 def make_bmesh_geometry(node, obj_index, context, verts, *topology):
-    scene = context.collection
+    collection = context.scene.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
 
@@ -56,7 +56,7 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
     else:
         temp_mesh = default_mesh(name)
         sv_object = objects.new(name, temp_mesh)
-        scene.objects.link(sv_object)
+        collection.objects.link(sv_object)
 
     # book-keeping via ID-props!? even this is can be broken by renames
     sv_object['idx'] = obj_index
@@ -90,7 +90,7 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
         sv_object.hide_select = False
 
     if matrix:
-        matrix = matrix_sanitizer(matrix)
+        # matrix = matrix_sanitizer(matrix)
         if node.extended_matrix:
             sv_object.data.transform(matrix)
             sv_object.matrix_local = Matrix.Identity(4)
@@ -129,7 +129,7 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
         edges, faces, matrix = topology
 
         if matrix:
-            matrix = matrix_sanitizer(matrix)
+            # matrix = matrix_sanitizer(matrix)
             verts = [matrix @ Vector(v) for v in verts]
 
         big_verts.extend(verts)
