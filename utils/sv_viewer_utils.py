@@ -88,13 +88,13 @@ def remove_non_updated_objects(node, obj_index, kind='MESH'):
         kinds = bpy.data.curves
 
     objects = bpy.data.objects
-    scene = bpy.context.scene
+    collection = bpy.context.collection
 
     # remove excess objects
     for object_name in objs:
         obj = objects[object_name]
         obj.hide_select = False
-        scene.objects.unlink(obj)
+        collection.objects.unlink(obj)
         objects.remove(obj, do_unlink=True)
 
     # delete associated meshes

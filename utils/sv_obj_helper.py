@@ -184,11 +184,11 @@ class SvObjHelper():
     def ensure_parent(self):
         if self.parent_to_empty:
             self.parent_name = 'Empty_' + self.basedata_name
-            scene = bpy.context.scene
+            collection = bpy.context.collection
             if not self.parent_name in bpy.data.objects:
                 empty = bpy.data.objects.new(self.parent_name, None)
-                scene.objects.link(empty)
-                scene.update()        
+                collection.objects.link(empty)
+                collection.update()        
 
     def to_parent(self, objs):
         for obj in objs:
@@ -304,13 +304,13 @@ class SvObjHelper():
             kinds = bpy.data.curves
 
         objects = bpy.data.objects
-        scene = bpy.context.collection
+        collection = bpy.context.collection
 
         # remove excess objects
         for object_name in obj_names:
             obj = objects[object_name]
             obj.hide_select = False
-            scene.objects.unlink(obj)
+            collection.objects.unlink(obj)
             objects.remove(obj, do_unlink=True)
 
         # delete associated meshes
@@ -319,7 +319,7 @@ class SvObjHelper():
 
     def create_object(self, object_name, obj_index, data):
         """
-        Create a new object and link it into scene.
+        Create a new object and link it into collection.
         """
         obj = bpy.data.objects.new(object_name, data)
         obj['basedata_name'] = self.basedata_name
@@ -341,7 +341,7 @@ class SvObjHelper():
     def get_obj_curve(self, obj_index):
         curves = bpy.data.curves
         objects = bpy.data.objects
-        scene = bpy.context.collection
+        collection = bpy.context.collection
 
         curve_name = self.basedata_name + '.' + str("%04d" % obj_index)
 
