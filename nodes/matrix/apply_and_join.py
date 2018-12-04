@@ -20,7 +20,7 @@ import bpy
 from bpy.props import BoolProperty
 from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Matrix_generate, updateNode)
+from sverchok.data_structure import (Matrix_generate, updateNode) #, fullList_deep_copy)
 from sverchok.utils.sv_mesh_utils import mesh_join
 
 
@@ -42,6 +42,7 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Edges")
         self.inputs.new('StringsSocket', "Faces")
         self.inputs.new('MatrixSocket', "Matrices")
+
         self.outputs.new('VerticesSocket', "Vertices")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Faces")

@@ -95,13 +95,17 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
             sv_object.data.transform(matrix)
             sv_object.matrix_local = Matrix.Identity(4)
         else:
+            print('pre', matrix)
             sv_object.matrix_local = matrix
+            print('post', sv_object.matrix_local)
+            print('------')
     else:
         sv_object.matrix_local = Matrix.Identity(4)
 
 
 def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
-    scene = context.collection
+    scene = context.scene
+    collection = scene.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     name = node.basedata_name + '.' + str("%04d" % obj_index)
@@ -111,7 +115,7 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     else:
         temp_mesh = default_mesh(name)
         sv_object = objects.new(name, temp_mesh)
-        scene.objects.link(sv_object)
+        collection.objects.link(sv_object)
 
     # book-keeping via ID-props!
     sv_object['idx'] = obj_index
@@ -218,8 +222,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def get_geometry_from_sockets(self):
 
         def get(socket_name):
-            data = self.inputs[socket_name].sv_get(default=[])
-            return data
+            return self.inputs[socket_name].sv_get(default=[])
 
         mverts = get('vertices')
         medges = get('edges')

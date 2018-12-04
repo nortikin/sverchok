@@ -184,7 +184,7 @@ class SvObjHelper():
     def ensure_parent(self):
         if self.parent_to_empty:
             self.parent_name = 'Empty_' + self.basedata_name
-            collection = bpy.context.collection
+            collection = bpy.context.scene.collection
             scene = bpy.context.scene
             if not self.parent_name in bpy.data.objects:
                 empty = bpy.data.objects.new(self.parent_name, None)
@@ -342,7 +342,7 @@ class SvObjHelper():
     def get_obj_curve(self, obj_index):
         curves = bpy.data.curves
         objects = bpy.data.objects
-        collection = bpy.context.collection
+        collection = bpy.context.scene.collection
 
         curve_name = self.basedata_name + '.' + str("%04d" % obj_index)
 
