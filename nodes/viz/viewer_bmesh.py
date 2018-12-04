@@ -95,10 +95,7 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
             sv_object.data.transform(matrix)
             sv_object.matrix_local = Matrix.Identity(4)
         else:
-            print('pre', matrix)
             sv_object.matrix_local = matrix
-            print('post', sv_object.matrix_local)
-            print('------')
     else:
         sv_object.matrix_local = Matrix.Identity(4)
 
