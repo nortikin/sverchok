@@ -19,11 +19,19 @@
 import numpy as np
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty, BoolProperty
+from bpy.props import EnumProperty, FloatProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, dataCorrect, repeat_last
 from sverchok.utils.geom import LinearSpline, CubicSpline
+
+
+def make_range(number):
+    if number in {0, 1, 2} or number < 0:
+        return [0.0]
+    return np.linspace(0.0, 1.0, num=number, endpoint=True).tolist()
+
+
 
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Advanced Vect. Interpolation'''
@@ -31,7 +39,12 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Interpolation mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    def wrapped_updateNode(self, context):
+        self.inputs['Interval'].prop_name = 'int_in' if self.infer_from_integer_input else 't_in'
+        self.process_node(context)
+
     t_in: FloatProperty(name="t", default=.5, min=0, max=1, precision=5, update=updateNode)
+    int_in: IntProperty(name="int in", default=10, min=3, update=updateNode)
     h: FloatProperty(default=.001, precision=5, update=updateNode)
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
@@ -46,7 +59,8 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     knot_mode: EnumProperty(
         name='Knot Mode', default="DISTANCE", items=knot_modes, update=updateNode)
 
-    is_cyclic: BoolProperty(name="Is Cyclic", default=False, update=updateNode)
+    is_cyclic: BoolProperty(name="Cyclic", default=False, update=updateNode)
+    infer_from_integer_input: BoolProperty(name="Range from Int", default=False, update=wrapped_updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
@@ -57,20 +71,21 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode', expand=True)
-        layout.prop(self, 'is_cyclic')
+        row = layout.row(align=True)
+        row.prop(self, 'is_cyclic', toggle=True)
+        row.prop(self, 'infer_from_integer_input',toggle=True)
+
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'h')
         layout.prop(self, 'knot_mode')
 
     def process(self):
-        if 'Unit Tanget' not in self.outputs:
-            return
+
         if not any((s.is_linked for s in self.outputs)):
             return
 
         calc_tanget = self.outputs['Tanget'].is_linked or self.outputs['Unit Tanget'].is_linked
-
         norm_tanget = self.outputs['Unit Tanget'].is_linked
 
         h = self.h
@@ -79,6 +94,13 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             verts = self.inputs['Vertices'].sv_get()
             verts = dataCorrect(verts)
             t_ins = self.inputs['Interval'].sv_get()
+
+            if self.infer_from_integer_input:
+                t_ins = [make_range(int(value)) for value in t_ins[0]]
+
+                # if len(t_ins) > len(verts):
+                #    extend verts to length of t_ins :)
+
             verts_out = []
             tanget_out = []
             norm_tanget_out = []

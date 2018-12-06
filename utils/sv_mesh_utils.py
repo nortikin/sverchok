@@ -50,7 +50,7 @@ def mesh_join_ext(vertices_s, edges_s, faces_s, wrap=False):
     num_vert_streams = len(vertices_s)
 
     if num_vert_streams == len(edges_s) == len(faces_s):
-        print('matching stream lengths')
+        # print('matching stream lengths')
         pass
     elif num_vert_streams > len(edges_s):
         fullList_deep_copy(edges_s, num_vert_streams)
