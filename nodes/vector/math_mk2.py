@@ -52,9 +52,9 @@ func_dict = {
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
 
-    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),          "Scale XY"),
-    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),          "Scale XZ"),
-    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),          "Scale YZ")
+    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),           "Scale XY"),
+    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),           "Scale XZ"),
+    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),           "Scale YZ")
 
 }
 
@@ -103,7 +103,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         items=mode_items,
         name="Function",
         description="Function choice",
-        default="CROSS",
+        default="COMPONENT-WISE",
         update=mode_change)
 
     amount: FloatProperty(default=1.0, name='amount', update=updateNode)
@@ -116,7 +116,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, ctx, layout):
-        layout.prop(self, "current_op", text="Functions:")
+        layout.prop(self, "current_op", text="F (x)")
 
 
     def sv_init(self, context):
