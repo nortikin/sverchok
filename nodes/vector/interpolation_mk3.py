@@ -60,7 +60,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name='Knot Mode', default="DISTANCE", items=knot_modes, update=updateNode)
 
     is_cyclic: BoolProperty(name="Cyclic", default=False, update=updateNode)
-    infer_from_integer_input: BoolProperty(name="Range from Int", default=False, update=wrapped_updateNode)
+    infer_from_integer_input: BoolProperty(name="IntRange", default=False, update=wrapped_updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
@@ -98,8 +98,11 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             if self.infer_from_integer_input:
                 t_ins = [make_range(int(value)) for value in t_ins[0]]
 
-                # if len(t_ins) > len(verts):
-                #    extend verts to length of t_ins :)
+                if len(t_ins) > len(verts):
+                    new_verts = verts[:]
+                    for i in range(len(t_ins) - len(verts)):
+                        new_verts.append(verts[-1])
+                    verts = new_verts
 
             verts_out = []
             tanget_out = []
