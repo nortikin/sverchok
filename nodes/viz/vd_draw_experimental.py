@@ -362,8 +362,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
       
             geom.verts = coords
 
-            # edges_and_faces_linked = all([edges_socket.is_linked, faces_socket.is_linked])
-            if self.display_verts and not any([self.display_edges, self.display_faces]): # or not edges_and_faces_linked:
+            if self.display_verts and not any([edges_socket.is_linked, faces_socket.is_linked]):
                 draw_data = {
                     'tree_name': self.id_data.name[:],
                     'custom_function': draw_verts,
