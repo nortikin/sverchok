@@ -59,7 +59,7 @@ class SvAreaNode(bpy.types.Node, SverchCustomTreeNode):
         # no smart auto extending here.
         areas = []
         for verts, faces in zip(Vertices, Polygons):
-            areas.append(areas_from_polygons(Vers, faces, sum_faces=self.sum_faces))
+            areas.append(areas_from_polygons(verts, faces, sum_faces=self.sum_faces))
         
         outputs['Area'].sv_set(areas)
 
