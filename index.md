@@ -135,6 +135,7 @@
     SvListModifierNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
+    SvPolygonSortNode
 
 ## List Main
     ListJoinNode
