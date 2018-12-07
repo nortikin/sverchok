@@ -90,28 +90,23 @@ class AreaNode(bpy.types.Node, SverchCustomTreeNode):
     per_face: BoolProperty(name='per_face', default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', "Polygons", "Polygons")
-        self.outputs.new('StringsSocket', "Area", "Area")
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('StringsSocket', "Polygons")
+        self.outputs.new('StringsSocket', "Area")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "per_face", text="Count faces")
 
     def process(self):
-        # inputs
         inputs = self.inputs
-        outputs = self.outputs
-
-        if not 'Area' in outputs:
-            return
-
         Vertices = inputs["Vertices"].sv_get()
         Polygons = inputs["Polygons"].sv_get()
 
-        # outputs
-        if outputs['Area'].is_linked:
-            outputs['Area'].sv_set([areas(Vertices, Polygons, self.per_face)])
-
+        outputs = self.outputs
+        if not outputs['Area'].is_linked:
+            return
+        
+        outputs['Area'].sv_set([areas(Vertices, Polygons, self.per_face)])
 
 
 def register():
