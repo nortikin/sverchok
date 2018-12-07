@@ -46,7 +46,7 @@
 ## Analyzers
     SvBBoxNode
     SvVolumeNode
-    AreaNode
+    SvAreaNode
     DistancePPNode
     CentersPolsNodeMK2
     CentersPolsNodeMK3
