@@ -52,12 +52,12 @@ def make_hull(vertices, params):
             verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.inside and params.outside:
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context='VERTS')
             verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
             used_v_indices = set(range(len(vertices))) - set(unused_v_indices)
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context='VERTS')
             verts = [v[:] for idx, v in enumerate(vertices) if idx in unused_v_indices]
 
 
@@ -72,7 +72,7 @@ def make_hull(vertices, params):
             verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.inside and params.outside:
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context='VERTS')
             if params.sort_edges:
                 bm.faces.ensure_lookup_table()
                 addv = verts.append
@@ -82,7 +82,7 @@ def make_hull(vertices, params):
                 verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context='VERTS')
             verts, _, _ = pydata_from_bmesh(bm)
 
 
