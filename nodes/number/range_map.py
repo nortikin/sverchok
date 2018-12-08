@@ -27,7 +27,7 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Map a range from one to another'''
     bl_idname = 'SvMapRangeNode'
     bl_label = 'Map Range'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_OFFSET'
 
     old_min: FloatProperty(
         name='Old Min', description='Old Min',
