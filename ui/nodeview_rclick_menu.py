@@ -8,10 +8,20 @@
 
 import bpy
 from sverchok.utils.sv_node_utils import frame_adjust
-
+from sverchok.menu import draw_add_node_operator
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
+
+# for rclick i want convenience..
+common_nodes = [
+    ['GenVectorsNode', 'VectorsOutNode'],
+    ['SvNumberNode', 'GenListRangeIntNode', 'SvGenFloatRange'],
+    ['SvScalarMathNodeMK2', 'SvVectorMathNodeMK2']
+]
+
+
+
 
 def connect_idx_viewer(tree, existing_node, new_node):
     # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
@@ -189,8 +199,18 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
         layout.separator()
         layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
-        layout.separator()
         # layout.operator("node.duplicate_move")
+        self.draw_conveniences(context, node)
+
+    def draw_conveniences(self, context, node):
+        layout = self.layout
+        layout.separator()
+        for nodelist in common_nodes:
+            for named_node in nodelist:
+                print(named_node)
+                draw_add_node_operator(layout, named_node)
+
+
 
 def register():
     bpy.utils.register_class(SvGenericDeligationOperator)
