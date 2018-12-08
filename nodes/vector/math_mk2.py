@@ -93,7 +93,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Vector: Add, Dot P..'''
     bl_idname = 'SvVectorMathNodeMK2'
     bl_label = 'Vector Math'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'THREE_DOTS'
 
     def mode_change(self, context):
         self.update_sockets()

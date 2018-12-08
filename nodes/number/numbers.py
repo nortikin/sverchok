@@ -46,7 +46,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Integer  / Float '''
     bl_idname = 'SvNumberNode'
     bl_label = 'A Number'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'DOT'
 
     def wrapped_update(self, context):
         kind = self.selected_mode

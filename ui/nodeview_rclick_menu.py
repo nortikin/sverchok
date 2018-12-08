@@ -21,8 +21,6 @@ common_nodes = [
 ]
 
 
-
-
 def connect_idx_viewer(tree, existing_node, new_node):
     # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
     links = tree.links
@@ -207,7 +205,6 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         layout.separator()
         for nodelist in common_nodes:
             for named_node in nodelist:
-                print(named_node)
                 draw_add_node_operator(layout, named_node)
 
 
