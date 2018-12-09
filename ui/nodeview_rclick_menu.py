@@ -169,18 +169,20 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         node = valid_active_node(nodes)
 
         if node:
+            if hasattr(node, "rclick_menu"):
+                node.rclick_menu(context, layout)
+                layout.separator()
+
             if node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
                 layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
             else:
                 if has_outputs(node):
                     layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
                     # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
+            if len(node.outputs):
+                layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
-            if hasattr(node, "rclick_menu"):
-                node.rclick_menu(context, layout)
-
-        if node and len(node.outputs):
-            layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
+            layout.separator()
 
         if node and node.bl_idname == 'NodeFrame':
             # give options for Frame nodes..

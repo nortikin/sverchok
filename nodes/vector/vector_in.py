@@ -51,6 +51,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     z_: FloatProperty(name='Z', description='Z', default=0.0, precision=3, update=updateNode)
     
     advanced_mode: BoolProperty(name='deep copy', update=updateNode, default=True)
+    show_3d_cursor_button: BoolProperty(name='show button', update=updateNode, default=False)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "X").prop_name = 'x_'
@@ -60,16 +61,27 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Vectors")
 
     def draw_buttons(self, context, layout):
-        if not any(s.is_linked for s in self.inputs):
-            get_cursor = layout.operator('node.sverchok_vector_from_cursor', text='3D Cursor')
+        # unfortunately, the mere fact that this function is present, will inject vertical space
+        # regardless of whether content is drawn.
+        if not any(s.is_linked for s in self.inputs) and self.show_3d_cursor_button:
+            row = layout.row()
+            get_cursor = row.operator('node.sverchok_vector_from_cursor', text='3D Cursor')
             get_cursor.nodename = self.name
             get_cursor.treename = self.id_data.name
+        else:
+            pass
 
     def draw_buttons_ext(self, context, layout):
         layout.row().prop(self, 'advanced_mode')
         
     def rclick_menu(self, context, layout):
         layout.prop(self, "advanced_mode", text="use deep copy")
+        layout.prop(self, "show_3d_cursor_button", text="show 3d cursor button")
+        if not any(s.is_linked for s in self.inputs):
+            opname = 'node.sverchok_vector_from_cursor'
+            get_cursor = layout.operator(opname, text='Vector from 3D Cursor', icon='PIVOT_CURSOR')
+            get_cursor.nodename = self.name
+            get_cursor.treename = self.id_data.name        
             
     def process(self):
         if not self.outputs['Vectors'].is_linked:
