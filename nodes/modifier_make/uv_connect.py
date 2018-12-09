@@ -27,7 +27,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' uv Edges/Surfaces '''
     bl_idname = 'LineConnectNodeMK2'
     bl_label = 'UV Connection'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'GRID'
 
     base_name = 'vertices '
     multi_socket_type = 'VerticesSocket'

@@ -36,13 +36,11 @@ def get_templates():
 
 
 class SvScriptLoader(bpy.types.Operator):
-
     """ Load Scripts into TextEditor """
     bl_idname = "node.script_template"
     bl_label = "Sverchok script template"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # from object in
     script_path: StringProperty(name='script path')
 
     def execute(self, context):
