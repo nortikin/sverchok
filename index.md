@@ -80,21 +80,15 @@
     SvSeparateMeshNode
     SvLimitedDissolve
     SvMeshBeautify
+    SvTriangulateNode
     ---
     PolygonBoomNode
     Pols2EdgsNode
     SvMeshJoinNode
     ---
-    SvBevelNode
-    SvSubdivideNode
-    SvSmoothNode
-    SvIntersectEdgesNodeMK2
-    SvOffsetNode
     SvFillsHoleNode
-    SvTriangulateNode
-    ---
-    SvFlipNormalsNode
     SvRecalcNormalsNode
+    SvFlipNormalsNode
     SvRandomizeVerticesNode
     ---
     SvIterateNode
@@ -108,15 +102,12 @@
     SvSplitEdgesNode
 
 ## Modifier Make
-    LineConnectNodeMK2
-    SvLatheNode
     SvConvexHullNode
     SvConvexHullNodeMK2
+    SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
     SvWafelNode
-    CrossSectionNode
-    SvBisectNode
     ---
     SvAdaptiveEdgeNode
     AdaptivePolsNode
@@ -157,6 +148,17 @@
     ListShuffleNode
     ListSortNodeMK2
     ListFlipNode
+
+## CAD
+    SvBevelNode
+    SvSmoothNode
+    SvIntersectEdgesNodeMK2
+    SvOffsetNode
+    SvLatheNode
+    ---
+    LineConnectNodeMK2
+    CrossSectionNode
+    SvBisectNode
 
 ## Number
     SvNumberNode
