@@ -58,8 +58,9 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Y").prop_name = 'y_'
         self.inputs.new('StringsSocket', "Z").prop_name = 'z_'
         self.width = 100
-        self.outputs.new('VerticesSocket', "Vectors")
+        self.outputs.new('VerticesSocket', "Vectors")  # .custom_draw = 'mode_custom_draw'
 
+    # def mode_custom_draw(self, socket, context, layout):
     def draw_buttons(self, context, layout):
         # unfortunately, the mere fact that this function is present, will inject vertical space
         # regardless of whether content is drawn.
@@ -68,8 +69,6 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
             get_cursor = row.operator('node.sverchok_vector_from_cursor', text='3D Cursor')
             get_cursor.nodename = self.name
             get_cursor.treename = self.id_data.name
-        else:
-            pass
 
     def draw_buttons_ext(self, context, layout):
         layout.row().prop(self, 'advanced_mode')
