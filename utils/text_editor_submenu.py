@@ -27,7 +27,7 @@ sv_path = os.path.dirname(sv_get_local_path()[0])
 
 
 def get_template_path():
-    return os.path.join(sv_path, "node_scripts", "templates")
+    return os.path.join(sv_path, "node_scripts", "SNLite_templates")
 
 
 def get_templates():
