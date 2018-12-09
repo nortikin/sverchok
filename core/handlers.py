@@ -76,10 +76,6 @@ def sv_clean(scene):
     """
     Cleanup callbacks, clean dicts.
     """
-    # viewer_draw.callback_disable_all()
-    # viewer_draw_mk2.callback_disable_all()
-    # index_viewer_draw.callback_disable_all()
-    # nodeview_bgl_viewer_draw.callback_disable_all()
     bgl_callback_nodeview.callback_disable_all()
     bgl_callback_3dview.callback_disable_all()
 
