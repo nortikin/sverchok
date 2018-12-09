@@ -41,7 +41,6 @@
     SvTorusKnotNode
     SvRingNode
     SvEllipseNode
-    SvSmoothLines
 
 ## Analyzers
     SvBBoxNode
@@ -102,6 +101,8 @@
     SvSplitEdgesNode
 
 ## Modifier Make
+    LineConnectNodeMK2
+    ---
     SvConvexHullNode
     SvConvexHullNodeMK2
     SvSubdivideNode
@@ -155,8 +156,8 @@
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvLatheNode
+    SvSmoothLines
     ---
-    LineConnectNodeMK2
     CrossSectionNode
     SvBisectNode
 
