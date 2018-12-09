@@ -108,7 +108,6 @@
     SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
-    SvWafelNode
     ---
     SvAdaptiveEdgeNode
     AdaptivePolsNode
@@ -152,14 +151,15 @@
 
 ## CAD
     SvBevelNode
-    SvSmoothNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvLatheNode
+    SvSmoothNode
     SvSmoothLines
     ---
     CrossSectionNode
     SvBisectNode
+    SvWafelNode
 
 ## Number
     SvNumberNode
