@@ -61,7 +61,7 @@ class GenListRangeIntNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator range list of ints '''
     bl_idname = 'GenListRangeIntNode'
     bl_label = 'Range Int'
-    bl_icon = 'IPO_CONSTANT0'
+    bl_icon = 'IPO_CONSTANT'
 
     start_: IntProperty(
         name='start', description='start',
