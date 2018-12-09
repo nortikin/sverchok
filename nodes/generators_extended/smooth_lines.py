@@ -37,6 +37,9 @@ def find_projected_arc_center(p1, p2, b, radius=0.5):
     b = Vector(b)
     c = Vector(p2)
 
+    a = (a-b).normalized() + b
+    c = (c-b).normalized() + b
+
     focal = (a + c) / 2.0
     focal_length = (b-focal).length
 
