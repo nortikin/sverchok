@@ -204,7 +204,6 @@ class SvSocketCommon:
                     layout.prop(node, self.prop_name, text=self.name)
                     return
 
-
         if self.is_linked:  # linked INPUT or OUTPUT
             t = text
             if not self.is_output:

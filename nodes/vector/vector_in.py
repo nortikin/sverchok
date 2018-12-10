@@ -58,9 +58,8 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Y").prop_name = 'y_'
         self.inputs.new('StringsSocket', "Z").prop_name = 'z_'
         self.width = 100
-        self.outputs.new('VerticesSocket', "Vectors")  # .custom_draw = 'mode_custom_draw'
+        self.outputs.new('VerticesSocket', "Vectors")
 
-    # def mode_custom_draw(self, socket, context, layout):
     def draw_buttons(self, context, layout):
         # unfortunately, the mere fact that this function is present, will inject vertical space
         # regardless of whether content is drawn.
@@ -80,7 +79,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
             opname = 'node.sverchok_vector_from_cursor'
             get_cursor = layout.operator(opname, text='Vector from 3D Cursor', icon='PIVOT_CURSOR')
             get_cursor.nodename = self.name
-            get_cursor.treename = self.id_data.name        
+            get_cursor.treename = self.id_data.name
             
     def process(self):
         if not self.outputs['Vectors'].is_linked:
