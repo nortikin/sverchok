@@ -67,7 +67,7 @@ def simple28_grid_xy(context, args):
     batch.draw(shader)    
 
     # draw grid and graph
-    config.batch.draw(config.shader)
+    # config.batch.draw(config.shader)
     pass
 
 
@@ -205,17 +205,15 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         if self.activate:
 
             config = lambda: None
-
-            palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y, scale, multiplier = self.get_drawing_attributes()
 
             config.loc = (x, y)
-            config.palette = palette
+            config.palette = palette_dict.get(self.selected_theme_mode)[:]
             config.scale = scale
             config.easing_func = easing_func
 
             geom = self.generate_graph_geom(config)
-            config.batch, config.shader = self.generate_shader(geom)
+            # config.batch, config.shader = self.generate_shader(geom)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],

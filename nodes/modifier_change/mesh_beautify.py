@@ -25,7 +25,7 @@ class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mesh Beautify'
     bl_icon = 'OUTLINER_OB_EMPTY'
    
-    beautify_mode = bpy.props.EnumProperty(
+    beautify_mode: bpy.props.EnumProperty(
         name='Beautify', items=enum_item_4(['AREA', 'ANGLE']), default="AREA", update=updateNode
     )
 
