@@ -284,9 +284,11 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
             box_sub1_col.prop(self, 'render_scale', text='scale')
             
-            box_sub1_col.label('Stethoscope MK2 settings')
-            box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
-            box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')             box_sub1_col.label('Index Viewer settings')
+            box_sub1_col.label('Stethoscope')
+            box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
+
+            box_sub1_col.label('Index Viewer')
+            box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
             box_sub1_col.prop(self, 'index_viewer_scale', text='scale')           
 
             col3 = row_sub1.split().column()
