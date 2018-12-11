@@ -22,6 +22,8 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
 import blf
 import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.data_structure import updateNode, node_id
@@ -52,58 +54,22 @@ palette_dict = {
 }
 
 
-def simple28_grid_xy(x, y, args):
-    func = args[0]
-    back_color, grid_color, line_color = args[1]
-    scale = args[2]
+def simple28_grid_xy(context, args):
+    
+    geom, config = args
+    back_color, grid_color, line_color = config.palette
 
-    def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
+    # draw background, this could be cached......
+    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
+    shader.bind()
+    shader.uniform_float("color", back_color)
+    batch.draw(shader)    
 
-        # bgl.glColor4f(*color)
-        # bgl.glBegin(bgl.GL_POLYGON)
-
-        # for coord in [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]:
-        #     bgl.glVertex2f(*coord)
-        # bgl.glEnd()
-        pass
-
-    size = 140 * scale
-
-    # draw bg fill
-    draw_rect(x=x, y=y, w=size, h=size, color=back_color)
-
-    # draw grid
-    # bgl.glColor4f(*grid_color)
-    num_divs = 8
-    offset = size / num_divs
-    line_parts_x = []
-    line_parts_y = []
-    for i in range(num_divs + 1):
-        xpos1 = x + (i * offset)
-        ypos1 = y
-        ypos2 = y - size
-        line_parts_x.extend([[xpos1, ypos1], [xpos1, ypos2]])
-
-        ypos = y - (i * offset)
-        line_parts_y.extend([[x, ypos], [x + size, ypos]])
-
-    # bgl.glLineWidth(0.8)
-    # bgl.glBegin(bgl.GL_LINES)
-    # for coord in line_parts_x + line_parts_y:
-    #     bgl.glVertex2f(*coord)
-    # bgl.glEnd()
-
-    # draw graph-line
-    # bgl.glColor4f(*line_color)
-    # bgl.glLineWidth(2.0)
-    # bgl.glBegin(bgl.GL_LINE_STRIP)
-    # num_points = 100
-    # seg_diff = 1 / num_points
-    # for i in range(num_points + 1):
-    #     _px = x + ((i * seg_diff) * size)
-    #     _py = y - (1 - func(i * seg_diff) * size) - size
-    #     bgl.glVertex2f(_px, _py)
-    # bgl.glEnd()
+    # draw grid and graph
+    grid_batch = config.batch
+    grid_shader = config.shader
+    grid_batch.draw(grid_shader)
     pass
 
 
@@ -165,6 +131,58 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
         return x, y, scale, multiplier
 
+    def generate_shader(self, geom):
+        shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+        batch = batch_for_shader(shader, 'LINES', {"pos": geom.vertices, "color": geom.vertex_colors}, indices=geom.indices)
+        return batch, shader
+
+    def generate_graph_geom(self, config):
+
+        geom = lambda: None
+        x, y = config.loc
+        size = 140 * config.scale
+        back_color, grid_color, line_color = config.palette
+        easing_func = config.easing_func
+
+        # background geom
+        w = size
+        h = size
+        geom.background_coords = [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]
+        geom.background_indices = [(0, 1, 2), (0, 2, 3)]
+
+        # grid geom and associated vertex colors
+        num_divs = 8
+        offset = size / num_divs
+
+        vertices = []
+        vertex_colors = []
+        indices = []
+        for i in range(num_divs + 1):
+            xpos1 = x + (i * offset)
+            ypos1 = y
+            ypos2 = y - size
+            vertices.extend([[xpos1, ypos1], [xpos1, ypos2]])
+
+            ypos = y - (i * offset)
+            vertices.extend([[x, ypos], [x + size, ypos]])
+            vertex_colors.extend([grid_color,] * 4)
+            indices.append([i, i+1])
+
+        # graph-line geom and associated vertex colors
+        idx_offset = len(indices)
+        num_points = 100
+        seg_diff = 1 / num_points
+        for i in range(num_points + 1):
+            _px = x + ((i * seg_diff) * size)
+            _py = y - (1 - easing_func(i * seg_diff) * size) - size
+            vertices.append([_px, _py])
+            vertex_colors.extend([line_color,] * 2)
+            indices.append([idx_offset + i, idx_offset + i + 1])
+
+        geom.vertices = vertices
+        geom.vertex_colors = vertex_colors
+        geom.indices = indices
+        return geom
 
     def process(self):
         p = self.inputs['Float'].sv_get()
@@ -188,6 +206,8 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate:
 
+            config = lambda: None
+
             palette = palette_dict.get(self.selected_theme_mode)[:]
             x, y, scale, multiplier = self.get_drawing_attributes()
 
@@ -195,7 +215,9 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             config.palette = palette
             config.scale = scale
             config.easing_func = easing_func
-            geom = lambda: None   # should store precomputed geometry for graphs.
+
+            geom = self.generate_graph_geom(config)
+            config.batch, config.shader = self.generate_shader(geom)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
