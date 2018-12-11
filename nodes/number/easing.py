@@ -54,21 +54,21 @@ palette_dict = {
 }
 
 
-def simple28_grid_xy(context, args):
+def simple28_grid_xy(x, y, args):
     
     geom, config = args
     back_color, grid_color, line_color = config.palette
 
     # draw background, this could be cached......
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
     shader.bind()
     shader.uniform_float("color", back_color)
     batch.draw(shader)    
 
     # draw grid and graph
-    # config.batch.draw(config.shader)
-    pass
+    config.batch.draw(config.shader)
+
 
 
 class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
@@ -213,10 +213,12 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             config.easing_func = easing_func
 
             geom = self.generate_graph_geom(config)
-            # config.batch, config.shader = self.generate_shader(geom)
+            config.batch, config.shader = self.generate_shader(geom)
 
             draw_data = {
+                'mode': 'custom_function',
                 'tree_name': self.id_data.name[:],
+                'loc': (x, y),
                 'custom_function': simple28_grid_xy,
                 'args': (geom, config)
             }             
