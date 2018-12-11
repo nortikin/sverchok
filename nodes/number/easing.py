@@ -55,6 +55,7 @@ palette_dict = {
 
 
 def simple28_grid_xy(x, y, args):
+    """ x and y are passed by default so you could add font content """
     
     geom, config = args
     back_color, grid_color, line_color = config.palette
