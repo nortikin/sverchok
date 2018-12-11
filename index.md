@@ -163,21 +163,22 @@
 
 ## Number
     SvNumberNode
-    Float2IntNode
     SvScalarMathNodeMK2
-    Formula2Node
-    SvExecNodeMod
-    ---
     GenListRangeIntNode
     SvGenFloatRange
-    SvMapRangeNode
     SvListInputNode
-    SvGenFibonacci
-    SvGenExponential
-    ---
     SvRndNumGen
     RandomNode
+    Float2IntNode
+    ---
+    SvExecNodeMod
+    SvMapRangeNode
+    SvEasingNode
     SvMixNumbersNode
+    Formula2Node
+    ---
+    SvGenFibonacci
+    SvGenExponential
 
 ## Vector
     GenVectorsNode
