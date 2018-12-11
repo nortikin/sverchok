@@ -26,7 +26,7 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 from sverchok.utils.context_managers import sv_preferences
-from sverchok.data_structure import updateNode, node_id
+from sverchok.data_structure import updateNode, node_id, enum_item_4
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 
@@ -42,15 +42,19 @@ for k in sorted(easing_dict.keys()):
 palette_dict = {
     "default": (
         (0.243299, 0.590403, 0.836084, 1.00),  # back_color
-        (0.390805, 0.754022, 1.000000, 1.00),  # grid_color
+        (0.390805, 0.754022, 1.000000, 0.70),  # grid_color
         (1.000000, 0.330010, 0.107140, 1.00)   # line_color
     ),
     "scope": (
         (0.274677, 0.366253, 0.386430, 1.00),  # back_color
         (0.423268, 0.558340, 0.584078, 1.00),  # grid_color
         (0.304762, 1.000000, 0.062827, 1.00)   # line_color
+    ),
+    "sniper": (
+        (0.2, 0.2, 0.2, 0.20),  # back_color
+        (0.423268, 0.558340, 0.584078, 0.40),  # grid_color
+        (0.304762, 1.000000, 0.062827, 1.00)   # line_color
     )
-
 }
 
 
@@ -85,7 +89,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     )
 
     selected_mode: EnumProperty(
-        items=easing_list, description="offers easing choice",
+        items=easing_list, description="Set easing Function to:",
         default="0", update=updateNode
     )
 
@@ -94,16 +98,14 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         description='input to the easy function', update=updateNode
     )
 
-    theme_mode_options = [(m, m, '', idx) for idx, m in enumerate(["default", "scope"])]
     selected_theme_mode: EnumProperty(
-        items=theme_mode_options, default="default", update=updateNode
+        items=enum_item_4(["default", "scope", "sniper"]), default="default", update=updateNode
     )
 
     def draw_buttons(self, context, l):
-        c = l.column()
-        c.label(text="set easing function")
-        c.prop(self, "selected_mode", text="")
-        c.prop(self, 'activate')
+        r = l.row(align=True)
+        r.prop(self, "selected_mode", text="")
+        r.prop(self, 'activate', icon='NORMALIZE_FCURVES', text='')
 
     def draw_buttons_ext(self, context, l):
         l.prop(self, "selected_theme_mode")
