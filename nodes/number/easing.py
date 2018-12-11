@@ -164,17 +164,25 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             ypos = y - (i * offset)
             vertices.extend([[x, ypos], [x + size, ypos]])
             vertex_colors.extend([grid_color,] * 4)
+
+        for i in range(0, (num_divs+1)*4, 2):
             indices.append([i, i+1])
 
+
         # graph-line geom and associated vertex colors
-        idx_offset = len(indices)
+        idx_offset = len(vertices)
+        graphline = []
         num_points = 100
         seg_diff = 1 / num_points
-        for i in range(num_points + 1):
+        for i in range(num_points+1):
             _px = x + ((i * seg_diff) * size)
             _py = y - (1 - easing_func(i * seg_diff) * size) - size
-            vertices.append([_px, _py])
+            graphline.append([_px, _py])
             vertex_colors.append(line_color)
+
+        vertices.extend(graphline)
+
+        for i in range(num_points):
             indices.append([idx_offset + i, idx_offset + i + 1])
 
         geom.vertices = vertices
