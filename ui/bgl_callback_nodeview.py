@@ -213,7 +213,7 @@ def draw_graphical_data(data):
 def restore_opengl_defaults():
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
-    bgl.glColor4f(0.0, 0.0, 0.0, 1.0)     # doesn't exist anymore ..    
+    # bgl.glColor4f(0.0, 0.0, 0.0, 1.0)     # doesn't exist anymore ..    
 
 
 def draw_callback_px(n_id, data):

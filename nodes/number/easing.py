@@ -67,9 +67,7 @@ def simple28_grid_xy(context, args):
     batch.draw(shader)    
 
     # draw grid and graph
-    grid_batch = config.batch
-    grid_shader = config.shader
-    grid_batch.draw(grid_shader)
+    config.batch.draw(config.shader)
     pass
 
 
@@ -176,7 +174,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             _px = x + ((i * seg_diff) * size)
             _py = y - (1 - easing_func(i * seg_diff) * size) - size
             vertices.append([_px, _py])
-            vertex_colors.extend([line_color,] * 2)
+            vertex_colors.append(line_color)
             indices.append([idx_offset + i, idx_offset + i + 1])
 
         geom.vertices = vertices
