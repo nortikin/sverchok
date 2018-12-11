@@ -52,7 +52,7 @@ palette_dict = {
 }
 
 
-def simple_grid_xy(x, y, args):
+def simple28_grid_xy(x, y, args):
     func = args[0]
     back_color, grid_color, line_color = args[1]
     scale = args[2]
@@ -147,6 +147,25 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
         self.outputs.new('StringsSocket', "Float")
 
+    def get_drawing_attributes(self):
+        """
+        adjust render location based on preference multiplier setting
+        """
+        x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+
+        try:
+            with sv_preferences() as prefs:
+                multiplier = prefs.render_location_xy_multiplier
+                scale = prefs.render_scale
+        except:
+            # print('did not find preferences - you need to save user preferences')
+            multiplier = 1.0
+            scale = 1.0
+        x, y = [x * multiplier, y * multiplier]
+
+        return x, y, scale, multiplier
+
+
     def process(self):
         p = self.inputs['Float'].sv_get()
         n_id = node_id(self)
@@ -170,33 +189,26 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         if self.activate:
 
             palette = palette_dict.get(self.selected_theme_mode)[:]
-            x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+            x, y, scale, multiplier = self.get_drawing_attributes()
 
-            # adjust render location based on preference multiplier setting
-            try:
-                with sv_preferences() as prefs:
-                    multiplier = prefs.render_location_xy_multiplier
-                    scale = prefs.render_scale
-            except:
-                # print('did not find preferences - you need to save user preferences')
-                multiplier = 1.0
-                scale = 1.0
-            x, y = [x * multiplier, y * multiplier]
+            config.loc = (x, y)
+            config.palette = palette
+            config.scale = scale
+            config.easing_func = easing_func
+            geom = lambda: None   # should store precomputed geometry for graphs.
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
-                'mode': 'custom_function',
-                'custom_function': simple_grid_xy,
-                'loc': (x, y),
-                'args': (easing_func, palette, scale)
-            }
+                'custom_function': simple28_grid_xy,
+                'args': (geom, config)
+            }             
             nvBGL.callback_enable(n_id, draw_data)
 
     def free(self):
         nvBGL.callback_disable(node_id(self))
 
-    # reset n_id on copy
     def copy(self, node):
+        # reset n_id on copy
         self.n_id = ''
 
 
