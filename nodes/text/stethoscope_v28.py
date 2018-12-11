@@ -48,7 +48,7 @@ def adjust_location(_x, _y, location_theta):
 class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvStethoscopeNodeMK2'
     bl_label = 'Stethoscope MK2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'LONGDISPLAY'
 
     n_id: StringProperty(default='')
     font_id: IntProperty(default=0, update=updateNode)
@@ -132,7 +132,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             try:
                 with sv_preferences() as prefs:
                     scale = prefs.stethoscope_view_scale
-                    location_theta = prefs.stethoscope_view_xy_multiplier
+                    location_theta = prefs.render_location_xy_multiplier
             except:
                 # print('did not find preferences - you need to save user preferences')
                 scale = 1.0
