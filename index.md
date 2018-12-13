@@ -235,6 +235,8 @@
     SvPolylineViewerNodeV28
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
+    ---
+    SvTextureViewerNode
 
 ## Text
     ViewerNodeTextMK3

@@ -188,7 +188,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         else:
             row = col.row(align=True)
             row.prop_search(self, 'text', bpy.data, 'texts', text="Read")
-            row.operator("node.sv_textin_file_importer", text='', icon='FILESEL')
+            row.operator("node.sv_textin_file_importer", text='', icon='EMPTY_SINGLE_ARROW')
 
             row = col.row(align=True)
             row.prop(self, 'textmode', expand=True)
