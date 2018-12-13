@@ -20,8 +20,10 @@ import os
 import numpy as np
 # import math as m
 
-import bgl
 import bpy
+import gpu
+import bgl
+from gpu_extras.batch import batch_for_shader
 from bpy.props import (
     FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
 )
@@ -119,10 +121,10 @@ def init_texture(width, height, texname, texture, clr):
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
 
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
+    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
+    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
 
     bgl.glTexImage2D(
         bgl.GL_TEXTURE_2D,
@@ -133,18 +135,8 @@ def init_texture(width, height, texname, texture, clr):
 
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
-    border_color = (0.390805, 0.754022, 1.000000, 1.00)
-
-    texture, texname, width, height = args
-
-    def draw_borders(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
-        # function to draw a border color around the texture
-        # bgl.glColor4f(*color)
-        # bgl.glBegin(bgl.GL_LINE_LOOP)
-        # for coord in [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]:
-        #     bgl.glVertex2f(*coord)
-        # bgl.glEnd()
-        pass
+    # border_color = (0.390805, 0.754022, 1.000000, 1.00)
+    texture, texname, width, height, batch, shader = args
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
         # function to draw a texture
@@ -152,29 +144,23 @@ def simple_screen(x, y, args):
 
         # act_tex = bgl.Buffer(bgl.GL_INT, 1)
         # bgl.glGetIntegerv(bgl.GL_TEXTURE_2D, act_tex)
-
         # bgl.glEnable(bgl.GL_TEXTURE_2D)
         # bgl.glActiveTexture(bgl.GL_TEXTURE0)
         # bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
         # bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
-        # texco = [(0, 1), (1, 1), (1, 0), (0, 0)]
-        # verco = [(x, y), (x + w, y), (x + w, y - h), (x, y - h)]
-
-        # bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-        # bgl.glBegin(bgl.GL_QUADS)
-        # for i in range(4):
-        #     bgl.glTexCoord3f(texco[i][0], texco[i][1], 0.0)
-        #     bgl.glVertex2f(verco[i][0], verco[i][1])
-        # bgl.glEnd()
-
         # # restoring settings
         # bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
         # bgl.glDisable(bgl.GL_TEXTURE_2D)
+        bgl.glActiveTexture(bgl.GL_TEXTURE0)
+        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+
+        shader.bind()
+        shader.uniform_int("image", 0)
+        batch.draw(shader)
         pass
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
-    draw_borders(x=x, y=y, w=width, h=height, color=border_color)
 
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -388,17 +374,32 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 multiplier = 1.0
                 scale = 1.0
             x, y = [x * multiplier, y * multiplier]
-            width, height =[width * scale, height * scale]
+            width, height = [width * scale, height * scale]
 
+            batch, shader = self.generate_batch_shader((x, y, width, height))
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (texture, self.texture[n_id], width, height)
+                'args': (texture, self.texture[n_id], width, height, batch, shader)
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
+
+    def generate_batch_shader(self, args):
+        x, y, w, h = args
+        shader = gpu.shader.from_builtin('2D_IMAGE')
+        batch = batch_for_shader(
+            shader, 'TRI_FAN',
+            {
+                "pos": ((x, y), (x + w, y), (x + w, y - h), (x, y - h)),
+                "texCoord": ((0, 1), (1, 1), (1, 0), (0, 0))
+            },
+        )
+        return batch, shader
+
+
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
