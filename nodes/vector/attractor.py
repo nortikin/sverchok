@@ -28,7 +28,7 @@ def get_avg_vector(vectors):
     result = Vector((0,0,0))
     for vector in vectors:
         result += vector
-    result = (1.0/float(len(vectors))) * result
+    result = (1.0/float(len(vectors))) @ result
     return result
 
 def inverse(c, x):
@@ -67,32 +67,24 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         ]
     
     def update_type(self, context):
-        self.inputs['Direction'].hide = (self.attractor_type == 'Point')
-        self.inputs['Coefficient'].hide = (self.falloff_type not in ['inverse_exp', 'gauss'])
+        self.inputs['Direction'].hide_safe = (self.attractor_type == 'Point')
+        self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])
         updateNode(self, context)
 
-    attractor_type = EnumProperty(name="Attractor type",
-            items=types,
-            default='Point',
-            update=update_type)
+    attractor_type: EnumProperty(
+        name="Attractor type", items=types, default='Point', update=update_type)
     
-    falloff_type = EnumProperty(name="Falloff type",
-            items=falloff_types,
-            default='inverse_square',
-            update=update_type)
+    falloff_type: EnumProperty(
+        name="Falloff type", items=falloff_types, default='inverse_square', update=update_type)
 
-    clamp = BoolProperty(name="Clamp",
-            description="Restrict coefficient with R",
-            default=True,
-            update=updateNode)
+    clamp: BoolProperty(
+        name="Clamp", description="Restrict coefficient with R", default=True, update=updateNode)
 
-    amplitude = FloatProperty(name="Amplitude", 
-            default=0.5, min=0.0,
-            update=updateNode)
+    amplitude: FloatProperty(
+        name="Amplitude", default=0.5, min=0.0, update=updateNode)
 
-    coefficient = FloatProperty(name="Coefficient",
-            default=0.5,
-            update=updateNode)
+    coefficient: FloatProperty(
+        name="Coefficient", default=0.5, update=updateNode)
     
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -246,4 +238,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvAttractorNode)
-

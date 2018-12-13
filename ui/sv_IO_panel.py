@@ -52,7 +52,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
         ntree = context.space_data.node_tree
         row = layout.row(align=True)
         row.scale_y = 0.5
-        row.label(_EXPORTER_REVISION_)
+        row.label(text=_EXPORTER_REVISION_)
 
         box = layout.box()
         io_props = ntree.io_panel_properties
@@ -78,7 +78,7 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
                 exp.selected_only = io_props.export_selected_only
 
             ziprow = col.row(align=True)
-            ziprow.label('Archive .blend as')
+            ziprow.label(text='Archive .blend as')
             ziprow.operator('node.blend_to_archive', text='.zip').archive_ext = 'zip'
             ziprow.operator('node.blend_to_archive', text='.gz').archive_ext = 'gz'
 

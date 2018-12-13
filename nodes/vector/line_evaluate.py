@@ -29,15 +29,14 @@ class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Evaluate'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    factor_ = FloatProperty(name='factor', description='Step length',
-                            default=0.5, min=0.0, max=1.0,
-                            options={'ANIMATABLE'}, update=updateNode)
+    factor_: FloatProperty(
+        name='factor', description='Step length', default=0.5, min=0.0, max=1.0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Factor", "Factor").prop_name = 'factor_'
-        self.inputs.new('VerticesSocket', "Vertice A", "Vertice A")
-        self.inputs.new('VerticesSocket', "Vertice B", "Vertice B")
-        self.outputs.new('VerticesSocket', "EvPoint", "EvPoint")
+        self.inputs.new('StringsSocket', "Factor").prop_name = 'factor_'
+        self.inputs.new('VerticesSocket', "Vertice A")
+        self.inputs.new('VerticesSocket', "Vertice B")
+        self.outputs.new('VerticesSocket', "EvPoint")
 
     def process(self):
         if not self.outputs['EvPoint'].is_linked:

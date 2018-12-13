@@ -127,11 +127,11 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         ("MULT",         "Mult",        "", 1),
         ("SIN",          "Sin",         "", 2),
         ("COS",          "Cos",         "", 3),
-        ("POW",         "POW",        "", 4),
+        ("POW",          "POW",         "", 4),
         ("SQRT",         "Sqrt",        "", 5),
     ]
 
-    current_op = StringProperty(default="SIMPLE")
+    current_op: StringProperty(default="SIMPLE")
 
     def mode_change(self, context):
 
@@ -140,31 +140,19 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
             self.current_op = self.operations
             updateNode(self, context)
 
-    operations = EnumProperty(
+    operations: EnumProperty(
         items=mode_items,
         name="Function",
         description="Function choice",
         default="SIMPLE",
         update=mode_change)
 
-    factor = FloatProperty(name="factor",
-                        default=1.0, precision=5,
-                        update=updateNode)
-    minimum = FloatProperty(name="minimum",
-                        default=0.0, min=0.0, max=0.5, precision=5,
-                        update=updateNode)
-    maximum = FloatProperty(name="maximum",
-                        default=1.0, min=0.5, max=1.0, precision=5,
-                        update=updateNode)
-    scale = FloatProperty(name="scale",
-                        default=1.0, precision=5,
-                        update=updateNode)
-    t_in_x = FloatProperty(name="tU",
-                        default=.5, min=0, max=1, precision=5,
-                        update=updateNode)
-    t_in_y = FloatProperty(name="tV",
-                        default=.5, min=0, max=1, precision=5,
-                        update=updateNode)
+    factor: FloatProperty(name="factor", default=1.0, precision=5, update=updateNode)
+    minimum: FloatProperty(name="minimum", default=0.0, min=0.0, max=0.5, precision=5, update=updateNode)
+    maximum: FloatProperty(name="maximum", default=1.0, min=0.5, max=1.0, precision=5, update=updateNode)
+    scale: FloatProperty(name="scale", default=1.0, precision=5, update=updateNode)
+    t_in_x: FloatProperty(name="tU", default=.5, min=0, max=1, precision=5, update=updateNode)
+    t_in_y: FloatProperty(name="tV", default=.5, min=0, max=1, precision=5, update=updateNode)
 
     def sv_init(self, context):
         s = self.inputs.new('VerticesSocket', 'Vertices')
@@ -173,7 +161,7 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', 'IntervalY')
         a = self.inputs.new('VerticesSocket', 'Attractor')
         a.use_prop = True
-        s.prop = (0, 0, 1)
+        s.prop = (0, 0, 1)   ## WTF
         self.outputs.new('VerticesSocket', 'vStripesOut')
         self.outputs.new('VerticesSocket', 'vStripesIn')
         self.outputs.new('VerticesSocket', 'vShape')
@@ -315,6 +303,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvInterpolationStripesNode)
-
-if __name__ == '__main__':
-    register()

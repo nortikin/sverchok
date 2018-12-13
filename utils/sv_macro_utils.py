@@ -48,8 +48,8 @@ class SvMacroInterpretter(bpy.types.Operator):
     bl_label = "Sverchok check for new minor version"
     bl_options = {'REGISTER'}
 
-    macro_bl_idname = StringProperty()
-    settings = StringProperty()
+    macro_bl_idname: StringProperty()
+    settings: StringProperty()
 
     def create_node(self, context, node_type):
         space = context.space_data
@@ -93,4 +93,3 @@ def register():
 def unregister():
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
-

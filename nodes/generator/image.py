@@ -29,35 +29,34 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Image'
     bl_icon = 'FILE_IMAGE'
 
+    name_image: StringProperty(name='image_name', description='image name', default='', update=updateNode)
 
-    name_image = StringProperty(name='image_name', description='image name', default='', update=updateNode)
-
-    R = FloatProperty(
+    R: FloatProperty(
         name='R', description='R', default=0.30, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    G = FloatProperty(
+    G: FloatProperty(
         name='G', description='G', default=0.59, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    B = FloatProperty(
+    B: FloatProperty(
         name='B', description='B', default=0.11, min=0, max=1,
         options={'ANIMATABLE'}, update=updateNode)
 
-    Xvecs = IntProperty(
-        name='Xvecs', description='Xvecs', default=10, min=2, soft_max=100,
+    Xvecs: IntProperty(
+        name='Xvecs', description='Xvecs', default=10, min=2, max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
-    Yvecs = IntProperty(
-        name='Yvecs', description='Yvecs', default=10, min=2, soft_max=100,
+    Yvecs: IntProperty(
+        name='Yvecs', description='Yvecs', default=10, min=2, max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
-    Xstep = FloatProperty(
-        name='Xstep', description='Xstep', default=1.0, min=0.01, soft_max=100,
+    Xstep: FloatProperty(
+        name='Xstep', description='Xstep', default=1.0, min=0.01, max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
-    Ystep = FloatProperty(
-        name='Ystep', description='Ystep', default=1.0, min=0.01, soft_max=100,
+    Ystep: FloatProperty(
+        name='Ystep', description='Ystep', default=1.0, min=0.01, max=100,
         options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):

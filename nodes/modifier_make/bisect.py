@@ -86,22 +86,21 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bisect'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    inner = BoolProperty(
+    inner: BoolProperty(
         name='inner', description='clear inner',
         default=False, update=updateNode)
 
-    outer = BoolProperty(
+    outer: BoolProperty(
         name='outer', description='clear outer',
         default=False, update=updateNode)
 
-    fill = BoolProperty(
+    fill: BoolProperty(
         name='fill', description='Fill cuts', 
         default=False, update=updateNode)
 
-    slice_mode = BoolProperty(
+    slice_mode: BoolProperty(
         name="Per Object", update=updateNode, default=False,
-        description="slice each object with all matrices, or match object and matrices individually"
-    )
+        description="slice each object with all matrices, or match object and matrices individually")
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices')
@@ -140,7 +139,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
             for cut_mat in cut_mats:
                 pp = cut_mat.to_translation()
-                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
+                pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
                 for obj in zip(verts_ob, edg_pols):
                     res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner, self.fill)
                     if not res:
@@ -155,7 +154,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
                 cut_mat = cut_mats[idx if idx < len(cut_mats) else -1]
                 pp = cut_mat.to_translation()
-                pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
+                pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
         
                 res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner, self.fill)
                 if not res:

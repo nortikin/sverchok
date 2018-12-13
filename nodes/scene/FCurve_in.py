@@ -42,17 +42,18 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         self.new_prop_name = ""
 
-    array_index = IntProperty(default=0, min=0, name="array index", update=updateNode)
-    fcurve_datapath = StringProperty(name="fcurve", default="", update=updateNode)
-    warning_msg = StringProperty(name="node warning")
-    object_name = StringProperty(name="object name", update=updateNode)
+    array_index: IntProperty(default=0, min=0, name="array index", update=updateNode)
+    fcurve_datapath: StringProperty(name="fcurve", default="", update=updateNode)
+    warning_msg: StringProperty(name="node warning")
+    object_name: StringProperty(name="object name", update=updateNode)
 
-    new_prop_name = StringProperty(name="new prop name", update=wrapped_update)
+    new_prop_name: StringProperty(name="new prop name", update=wrapped_update)
 
     def add_empty(self, context):
         empty = bpy.data.objects.new("sv_fcurve_empty", None)
         scene = bpy.context.scene
-        scene.objects.link(empty)
+        collection = scene.collection
+        collection.objects.link(empty)
         scene.update()
 
         self.object_name = empty.name
@@ -71,13 +72,13 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         animation_data = bpy.data.objects[self.object_name].animation_data
         if not animation_data:
-            layout.label("no animation data, add a named prop")
+            layout.label(text="no animation data, add a named prop")
             layout.prop(self, "new_prop_name", text="custom prop")
             return
 
         action = animation_data.action
         if not action:
-            layout.label("{} has no action".format(self.object_name))
+            layout.label(text="{} has no action".format(self.object_name))
             return
 
         r = layout.row()
@@ -129,11 +130,5 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].sv_set(evaluated)
 
 
-def register():
-    bpy.utils.register_class(SvFCurveMK1CB)
-    bpy.utils.register_class(SvFCurveInNodeMK1)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvFCurveInNodeMK1)
-    bpy.utils.unregister_class(SvFCurveMK1CB)
+classes = [SvFCurveMK1CB, SvFCurveInNodeMK1]
+register, unregister = bpy.utils.register_classes_factory(classes)

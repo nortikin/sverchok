@@ -3,8 +3,7 @@ ui_modules = [
     "sv_panels", "nodeview_rclick_menu", "nodeview_space_menu", "nodeview_keymaps",
     "monad", "sv_icons", "presets", "nodes_replacement", "sv_panel_display_nodes",
     # bgl modules
-    "viewer_draw", "viewer_draw_mk2", "nodeview_bgl_viewer_draw", "nodeview_bgl_viewer_draw_mk2",
-    "index_viewer_draw", "bgl_callback_3dview",
+    "bgl_callback_3dview", "bgl_callback_nodeview",
     # show git info
     "development",
 ]

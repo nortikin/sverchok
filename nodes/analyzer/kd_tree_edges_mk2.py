@@ -31,19 +31,19 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'KDT Closest Edges MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    mindist = FloatProperty(
+    mindist: FloatProperty(
         name='mindist', description='Minimum dist', min=0.0,
         default=0.1, update=updateNode)
 
-    maxdist = FloatProperty(
+    maxdist: FloatProperty(
         name='maxdist', description='Maximum dist', min=0.0,
         default=2.0, update=updateNode)
 
-    maxNum = IntProperty(
+    maxNum: IntProperty(
         name='maxNum', description='max edge count',
         default=4, min=1, update=updateNode)
 
-    skip = IntProperty(
+    skip: IntProperty(
         name='skip', description='skip first n',
         default=0, min=0, update=updateNode)
 
@@ -64,7 +64,7 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             verts = inputs['Verts'].sv_get()[0]
             linked = outputs['Edges'].is_linked
             if not linked:
-                return            
+                return
         except (IndexError, KeyError) as e:
             return
 

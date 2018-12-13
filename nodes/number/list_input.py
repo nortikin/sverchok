@@ -17,8 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import (EnumProperty, FloatVectorProperty,
-                       IntProperty, IntVectorProperty, BoolProperty)
+from bpy.props import (
+    EnumProperty, FloatVectorProperty,
+    IntProperty, IntVectorProperty, BoolProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -31,33 +32,33 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     defaults = [0 for i in range(32)]
-    to3d = BoolProperty(name='to3d', description='show in 3d panel', default=True)
-    int_ = IntProperty(name='int_', description='integer number',
-                       default=1, min=1, max=32,
-                       update=updateNode)
-    v_int = IntProperty(name='int_', description='integer number',
-                        default=1, min=1, max=10,
-                        update=updateNode)
-    int_list = IntVectorProperty(name='int_list', description="Integer list",
-                                 default=defaults, size=32,
-                                 update=updateNode)
-    float_list = FloatVectorProperty(name='float_list', description="Float list",
-                                     default=defaults, size=32,
-                                     update=updateNode)
-    vector_list = FloatVectorProperty(name='vector_list', description="Vector list",
-                                      default=defaults, size=32,
-                                      update=updateNode)
+    to3d: BoolProperty(name='to3d', description='show in 3d panel', default=True)
+    
+    int_: IntProperty(
+        name='int_', description='integer number', default=1, min=1, max=32, update=updateNode)
+
+    v_int: IntProperty(
+        name='int_', description='integer number', default=1, min=1, max=10, update=updateNode)
+    
+    int_list: IntVectorProperty(
+        name='int_list', description="Integer list", default=defaults, size=32,update=updateNode)
+    
+    float_list: FloatVectorProperty(
+        name='float_list', description="Float list", default=defaults, size=32, update=updateNode)
+
+    vector_list: FloatVectorProperty(
+        name='vector_list', description="Vector list", default=defaults, size=32, update=updateNode)
 
     def changeMode(self, context):
         if self.mode == 'vector':
             if 'Vector List' not in self.outputs:
                 self.outputs.remove(self.outputs[0])
-                self.outputs.new('VerticesSocket', 'Vector List', 'Vector List')
+                self.outputs.new('VerticesSocket', 'Vector List')
                 return
         else:
             if 'List' not in self.outputs:
                 self.outputs.remove(self.outputs[0])
-                self.outputs.new('StringsSocket', 'List', 'List')
+                self.outputs.new('StringsSocket', 'List')
                 return
 
     modes = [
@@ -65,12 +66,10 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
         ("float_list", "Float", "Float", "", 2),
         ("vector", "Vector", "Vector", "", 3)]
 
-    mode = EnumProperty(items=modes,
-                        default='int_list',
-                        update=changeMode)
+    mode: EnumProperty(items=modes, default='int_list', update=changeMode)
 
     def sv_init(self, context):
-        self.outputs.new('StringsSocket', "List", "List")
+        self.outputs.new('StringsSocket', "List")
 
     def draw_buttons(self, context, layout):
         if self.mode == 'vector':
@@ -115,6 +114,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvListInputNode)
-
-if __name__ == '__main__':
-    register()

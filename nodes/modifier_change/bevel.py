@@ -59,46 +59,34 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_BEVEL'
 
     def mode_change(self, context):
-        inputs, outputs = self.inputs, self.outputs
-        print(inputs[3])
-        if not self.vertexOnly:
-            inputs[3].name = 'BevelEdges'
-
-        elif self.vertexOnly:
-            inputs[3].name = 'VerticesMask'
-
+        self.inputs[3].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
         updateNode(self, [])
 
-    offset_ = FloatProperty(
-        name='Amount',
-        description='Amount to offset beveled edge',
+    offset_: FloatProperty(
+        name='Amount', description='Amount to offset beveled edge',
         default=0.0, min=0.0, update=updateNode)
 
     offset_modes = [
-        ("0", "Offset", "Amount is offset of new edges from original", 1),
-        ("1", "Width", "Amount is width of new face", 2),
-        ("2", "Depth", "Amount is perpendicular distance from original edge to bevel face", 3),
-        ("3", "Percent", "Amount is percent of adjacent edge length", 4)
+        ("OFFSET", "Offset", "Amount is offset of new edges from original", 1),
+        ("WIDTH", "Width", "Amount is width of new face", 2),
+        ("DEPTH", "Depth", "Amount is perpendicular distance from original edge to bevel face", 3),
+        ("PERCENT", "Percent", "Amount is percent of adjacent edge length", 4)
     ]
 
-    offsetType = EnumProperty(
-        name='Amount Type',
-        description="What distance Amount measures",
-        items=offset_modes, update=updateNode)
+    offsetType: EnumProperty(
+        name='Amount Type', description="What distance Amount measures",
+        items=offset_modes, default='OFFSET', update=updateNode)
 
-    segments_ = IntProperty(
-        name="Segments",
-        description="Number of segments in bevel",
+    segments_: IntProperty(
+        name="Segments", description="Number of segments in bevel",
         default=1, min=1, update=updateNode)
 
-    profile_ = FloatProperty(
-        name="Profile",
-        description="Profile shape; 0.5 - round",
+    profile_: FloatProperty(
+        name="Profile", description="Profile shape; 0.5 - round",
         default=0.5, min=0.0, max=1.0, update=updateNode)
 
-    vertexOnly = BoolProperty(
-        name="Vertex mode",
-        description="Only bevel edges, not edges",
+    vertexOnly: BoolProperty(
+        name="Vertex mode", description="Only bevel edges, not edges",
         default=False, update=mode_change)
 
     def sv_init(self, context):
@@ -111,6 +99,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         si('StringsSocket', "Offset").prop_name = "offset_"
         si('StringsSocket', "Segments").prop_name = "segments_"
         si('StringsSocket', "Profile").prop_name = "profile_"
+
         so('VerticesSocket', 'Vertices')
         so('StringsSocket', 'Edges')
         so('StringsSocket', 'Polygons')
@@ -152,14 +141,27 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = match_long_repeat(self.get_socket_data())
 
+        # bevel(bm, 
+        #       geom, offset, offset_type, segments, profile, vertex_only, clamp_overlap, 
+        #       material, loop_slide, mark_seam, mark_sharp, strength, hnmode)
+
         for vertices, edges, faces, mask, offset, segments, profile in zip(*meshes):
             bm = bmesh_from_pydata(vertices, edges, faces)
             geom = self.create_geom(bm, mask)
 
-            bevel_faces = bmesh.ops.bevel(
-                bm, geom=geom, offset=offset,
-                offset_type=int(self.offsetType), segments=segments,
-                profile=profile, vertex_only=self.vertexOnly, material=-1)['faces']
+            try:
+                bevel_faces = bmesh.ops.bevel(bm,
+                    geom=geom,
+                    offset=offset,
+                    offset_type=self.offsetType,
+                    segments=segments,
+                    profile=profile,
+                    vertex_only=self.vertexOnly,
+                    # strength= (float)
+                    # hnmode= (enum in ['NONE', 'FACE', 'ADJACENT', 'FIXED_NORMAL_SHADING'], default 'NONE')
+                    material=-1)['faces']
+            except:
+                print('wtf?!...')
 
             new_bevel_faces = [[v.index for v in face.verts] for face in bevel_faces]
             out.append(pydata_from_bmesh(bm))

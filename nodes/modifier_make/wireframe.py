@@ -50,35 +50,29 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Wireframe'
     bl_icon = 'MOD_WIREFRAME'
 
-    thickness = FloatProperty(
+    thickness: FloatProperty(
         name='thickness', description='thickness',
-        default=0.01, min=0.0,
-        update=updateNode)
+        default=0.01, min=0.0, update=updateNode)
 
-    offset = FloatProperty(
+    offset: FloatProperty(
         name='offset', description='offset',
-        default=0.01, min=0.0,
-        update=updateNode)
+        default=0.01, min=0.0, update=updateNode)
 
-    replace = BoolProperty(
+    replace: BoolProperty(
         name='replace', description='replace',
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
-    even_offset = BoolProperty(
+    even_offset: BoolProperty(
         name='even_offset', description='even_offset',
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
-    relative_offset = BoolProperty(
+    relative_offset: BoolProperty(
         name='relative_offset', description='even_offset',
-        default=False,
-        update=updateNode)
+        default=False, update=updateNode)
 
-    boundary = BoolProperty(
+    boundary: BoolProperty(
         name='boundary', description='boundry',
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'

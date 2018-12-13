@@ -34,17 +34,17 @@ class SvNodeTreeExporter(bpy.types.Operator):
     bl_idname = "node.tree_exporter"
     bl_label = "sv NodeTree Export Operator"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Filepath used for exporting too",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
         default="*.json",
         options={'HIDDEN'})
 
-    id_tree = StringProperty()
-    compress = BoolProperty()
+    id_tree: StringProperty()
+    compress: BoolProperty()
 
     def execute(self, context):
         ng = bpy.data.node_groups[self.id_tree]
@@ -99,12 +99,12 @@ class SvNodeTreeImporterSilent(bpy.types.Operator):
     bl_idname = "node.tree_importer_silent"
     bl_label = "sv NodeTree Import Silent"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Filepath used to import from",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    id_tree = StringProperty()
+    id_tree: StringProperty()
 
     def execute(self, context):
 
@@ -139,17 +139,17 @@ class SvNodeTreeImporter(bpy.types.Operator):
     bl_idname = "node.tree_importer"
     bl_label = "sv NodeTree Import Operator"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Filepath used to import from",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    filter_glob = StringProperty(
+    filter_glob: StringProperty(
         default="*.json",
         options={'HIDDEN'})
 
-    id_tree = StringProperty()
-    new_nodetree_name = StringProperty()
+    id_tree: StringProperty()
+    new_nodetree_name: StringProperty()
 
     def execute(self, context):
         if not self.id_tree:
@@ -177,9 +177,9 @@ class SvNodeTreeImportFromGist(bpy.types.Operator):
     bl_idname = "node.tree_import_from_gist"
     bl_label = "sv NodeTree Gist Import Operator"
 
-    id_tree = StringProperty()
-    new_nodetree_name = StringProperty()
-    gist_id = StringProperty()
+    id_tree: StringProperty()
+    new_nodetree_name: StringProperty()
+    gist_id: StringProperty()
 
     def execute(self, context):
         if not self.id_tree:
@@ -209,7 +209,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
     bl_idname = "node.tree_export_to_gist"
     bl_label = "sv NodeTree Gist Export Operator"
 
-    selected_only = BoolProperty(name="Selected only", default=False)
+    selected_only: BoolProperty(name="Selected only", default=False)
 
     def execute(self, context):
         ng = context.space_data.node_tree
@@ -256,7 +256,7 @@ class SvBlendToArchive(bpy.types.Operator):
     bl_idname = "node.blend_to_archive"
     bl_label = "Archive .blend"
 
-    archive_ext = bpy.props.StringProperty(default='zip')
+    archive_ext: bpy.props.StringProperty(default='zip')
     
 
     def complete_msg(self, blend_archive_path):

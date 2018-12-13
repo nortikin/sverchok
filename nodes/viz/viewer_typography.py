@@ -16,7 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import itertools
+# pylint: disable=E1121
+
 
 import bpy
 from bpy.props import (
@@ -26,26 +27,45 @@ from bpy.props import (
     FloatProperty,
     IntProperty
 )
-from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
-from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer, natural_plus_one, get_random_init, greek_alphabet
-)
+from sverchok.utils.sv_obj_helper import SvObjHelper, enum_from_list
 
+mode_options_x = enum_from_list('LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH')
+mode_options_y = enum_from_list('TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM')
 
-def make_text_object(node, idx, context, data):
-    scene = context.scene
+def get_font(node):
+    fonts = bpy.data.fonts
+    default = fonts.get('Bfont')
+    return fonts.get(node.fontname, default)
+
+def font_set_props(f, node, txt):
+
+    f.body = txt
+    f.size = node.fsize
+    f.font = get_font(node)
+
+    f.space_character = node.space_character
+    f.space_word = node.space_word
+    f.space_line = node.space_line
+    f.offset_x = node.xoffset
+    f.offset_y = node.yoffset
+    f.offset = node.offset
+    f.extrude = node.extrude
+    f.bevel_depth = node.bevel_depth
+    f.bevel_resolution = node.bevel_resolution
+
+    f.align_x = node.align_x
+    f.align_y = node.align_y
+
+def get_obj_and_fontcurve(context, name):
+    collection = context.collection
     curves = bpy.data.curves
     objects = bpy.data.objects
 
-    txt, matrix = data
-
-    name = node.basemesh_name + "_" + str(idx)
-
     # CURVES
-    if not (name in curves):
+    if not name in curves:
         f = curves.new(name, 'FONT')
     else:
         f = curves[name]
@@ -55,55 +75,30 @@ def make_text_object(node, idx, context, data):
         sv_object = objects[name]
     else:
         sv_object = objects.new(name, f)
-        scene.objects.link(sv_object)
+        collection.objects.link(sv_object)
 
-    default = bpy.data.fonts.get('Bfont')
+    return sv_object, f
 
-    f.body = txt
 
-    # misc
-    f.size = node.fsize
-    f.font = bpy.data.fonts.get(node.fontname, default)
+def make_text_object(node, idx, context, data):
+    txt, matrix = data
+    name = node.basedata_name + '.' + str("%04d" % idx)
 
-    # space
-    f.space_character = node.space_character
-    f.space_word = node.space_word
-    f.space_line = node.space_line
-
-    f.offset_x = node.xoffset
-    f.offset_y = node.yoffset
-
-    # modifications
-    f.offset = node.offset
-    f.extrude = node.extrude
-
-    # bevel
-    f.bevel_depth = node.bevel_depth
-    f.bevel_resolution = node.bevel_resolution
-
-    # alignment, now expanded! 
-    f.align_x = node.align_x
-    if hasattr(node, "align_y"):
-        f.align_y = node.align_y
-
+    sv_object, f = get_obj_and_fontcurve(context, name)
+    font_set_props(f, node, txt)
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
-    sv_object['basename'] = node.basemesh_name
+    sv_object['basedata_name'] = node.basemesh_name
     sv_object.hide_select = False
-
-    if matrix:
-        matrix = matrix_sanitizer(matrix)
-        sv_object.matrix_local = matrix
-    else:
-        sv_object.matrix_local = Matrix.Identity(4)
+    node.push_custom_matrix_if_present(sv_object, matrix)
 
 
-class SvFontFileImporterOp(bpy.types.Operator):
+class SvFontFileImporterOpV28(bpy.types.Operator):
 
-    bl_idname = "node.sv_fontfile_importer"
+    bl_idname = "node.sv_fontfile_importer_mk1"
     bl_label = "sv FontFile Importer"
 
-    filepath = StringProperty(
+    filepath: StringProperty(
         name="File Path",
         description="Filepath used for importing the font file",
         maxlen=1024, default="", subtype='FILE_PATH')
@@ -121,172 +116,63 @@ class SvFontFileImporterOp(bpy.types.Operator):
         return {'RUNNING_MODAL'}
 
 
-class SvTypeViewOp2(bpy.types.Operator):
+class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
-    bl_idname = "node.sv_callback_type_viewer"
-    bl_label = "Sverchok Type general callback"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    fn_name = StringProperty(default='')
-
-    def hide_unhide(self, context, type_op):
-        n = context.node
-        k = n.basemesh_name + "_"
-
-        child = lambda obj: obj.type == "FONT" and obj.name.startswith(k)
-        objs = list(filter(child, bpy.data.objects))
-
-        if type_op in {'hide', 'hide_render', 'hide_select'}:
-            op_value = getattr(n, type_op)
-            for obj in objs:
-                setattr(obj, type_op, op_value)
-            setattr(n, type_op, not op_value)
-
-        elif type_op == 'typography_select':
-            for obj in objs:
-                obj.select = n.select_state_mesh
-            n.select_state_mesh = not n.select_state_mesh
-
-        elif type_op == 'random_mesh_name':
-            n.basemesh_name = get_random_init()
-
-        elif type_op == 'add_material':
-            mat = bpy.data.materials.new('sv_material')
-            mat.use_nodes = True
-            mat.use_fake_user = True  # usually handy
-            n.material = mat.name
-
-    def execute(self, context):
-        self.hide_unhide(context, self.fn_name)
-        return {'FINISHED'}
-
-
-class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Create Text Obj'''
-    bl_idname = 'SvTypeViewerNode'
+    bl_idname = 'SvTypeViewerNodeV28'
     bl_label = 'Typography Viewer'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'OUTLINER_OB_FONT'
 
-    # hints found at ba.org/forum/showthread.php?290106
-    # - this will not allow objects on multiple layers, yet.
-    def g(self):
-        self['lp'] = self.get('lp', [False] * 20)
-        return self['lp']
+    grouping: BoolProperty(default=False)
+    data_kind: StringProperty(name='data kind', default='FONT')
 
-    def s(self, value):
-        val = []
-        for b in zip(self['lp'], value):
-            val.append(b[0] != b[1])
-        self['lp'] = val
-
-    def layer_updateNode(self, context):
-        '''will update in place without geometry updates'''
-        for obj in self.get_children():
-            obj.layers = self.layer_choice[:]
-
-    material = StringProperty(default='', update=updateNode)
-    grouping = BoolProperty(default=False)
-
-    hide = BoolProperty(default=True)
-    hide_render = BoolProperty(default=True)
-    hide_select = BoolProperty(default=True)
-
-    select_state_mesh = BoolProperty(default=False)
-
-    activate = BoolProperty(
-        default=True,
-        description='When enabled this will process incoming data',
-        update=updateNode)
-
-    basemesh_name = StringProperty(
-        default='Alpha',
-        update=updateNode,
-        description="sets which base name the object will use, "
-        "use N-panel to pick alternative random names")
-
-    layer_choice = BoolVectorProperty(
-        subtype='LAYER', size=20,
-        update=layer_updateNode,
-        description="This sets which layer objects are placed on",
-        get=g, set=s)
-
-    show_options = BoolProperty(default=0)
-    fontname = StringProperty(default='', update=updateNode)
-    fsize = FloatProperty(default=1.0, update=updateNode)
+    show_options: BoolProperty(default=0)
+    fontname: StringProperty(default='', update=updateNode)
+    fsize: FloatProperty(default=1.0, update=updateNode)
 
     # space
-    space_character = FloatProperty(default=1.0, update=updateNode)
-    space_word = FloatProperty(default=1.0, update=updateNode)
-    space_line = FloatProperty(default=1.0, update=updateNode)
-    yoffset = FloatProperty(default=0.0, update=updateNode)
-    xoffset = FloatProperty(default=0.0, update=updateNode)
+    space_character: FloatProperty(default=1.0, update=updateNode)
+    space_word: FloatProperty(default=1.0, update=updateNode)
+    space_line: FloatProperty(default=1.0, update=updateNode)
+    yoffset: FloatProperty(default=0.0, update=updateNode)
+    xoffset: FloatProperty(default=0.0, update=updateNode)
 
     # modifications
-    offset = FloatProperty(default=0.0, update=updateNode)
-    extrude = FloatProperty(default=0.0, update=updateNode)
+    offset: FloatProperty(default=0.0, update=updateNode)
+    extrude: FloatProperty(default=0.0, update=updateNode)
 
     # bevel
-    bevel_depth = FloatProperty(default=0.0, update=updateNode)
-    bevel_resolution = IntProperty(default=0, update=updateNode)
+    bevel_depth: FloatProperty(default=0.0, update=updateNode)
+    bevel_resolution: IntProperty(default=0, update=updateNode)
 
     # orientation x | y 
-    mode_options = [(_item, _item, "", idx) for idx, _item in enumerate(['LEFT', 'CENTER', 'RIGHT', 'JUSTIFY', 'FLUSH'])]
-    align_x = bpy.props.EnumProperty(
-        items=mode_options, description="Horizontal Alignment", default="LEFT", update=updateNode
-    )
+    align_x: bpy.props.EnumProperty(
+        items=mode_options_x, description="Horizontal Alignment",
+        default="LEFT", update=updateNode)
 
-    mode_options_y = [(_item, _item, "", idx) for idx, _item in enumerate(['TOP_BASELINE', 'TOP', 'CENTER', 'BOTTOM'])]
-    align_y = bpy.props.EnumProperty(
-        items=mode_options_y, description="Vertical Alignment", default="TOP_BASELINE", update=updateNode
-    )
-
-    parent_to_empty = BoolProperty(default=False, update=updateNode)
-    parent_name = StringProperty()  # calling updateNode would recurse.
+    align_y: bpy.props.EnumProperty(
+        items=mode_options_y, description="Vertical Alignment",
+        default="TOP_BASELINE", update=updateNode)
+    
 
     def sv_init(self, context):
-        # self['lp'] = [True] + [False] * 19
-        gai = bpy.context.scene.SvGreekAlphabet_index
-        self.basemesh_name = greek_alphabet[gai]
-        bpy.context.scene.SvGreekAlphabet_index += 1
-        self.use_custom_color = True
-        self.inputs.new('StringsSocket', 'text', 'text')
-        self.inputs.new('MatrixSocket', 'matrix', 'matrix')
+        self.sv_init_helper_basedata_name()
+        self.inputs.new('StringsSocket', 'text')
+        self.inputs.new('MatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
-        view_icon = 'BLENDER' if self.activate else 'ERROR'
-
-        sh = 'node.sv_callback_type_viewer'
-
-        def icons(TYPE):
-            ICON = {
-                'hide': 'RESTRICT_VIEW',
-                'hide_render': 'RESTRICT_RENDER',
-                'hide_select': 'RESTRICT_SELECT'}.get(TYPE)
-            return 'WARNING' if not ICON else ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
-
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.column().prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
-
-        row.separator()
-        row.operator(sh, text='', icon=icons('hide')).fn_name = 'hide'
-        row.operator(sh, text='', icon=icons('hide_select')).fn_name = 'hide_select'
-        row.operator(sh, text='', icon=icons('hide_render')).fn_name = 'hide_render'
+        self.draw_live_and_outliner(context, layout)
+        self.draw_object_buttons(context, layout)
 
         col = layout.column(align=True)
         if col:
             row = col.row(align=True)
             row.prop(self, "grouping", text="Group", toggle=True)
-            row.operator(sh, text='Select').fn_name = 'typography_select'
-
-            row = col.row(align=True)
-            row.prop(self, "basemesh_name", text="", icon='OUTLINER_OB_CURVE')
 
             col = layout.column(align=True)
             col.prop(self, 'fsize')
             col.prop(self, 'show_options', toggle=True)
             if self.show_options:
-                col.label('position')
+                col.label(text='position')
                 row = col.row(align=True)
                 if row:
                     row.prop(self, 'xoffset', text='XOFF')
@@ -297,37 +183,30 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 col1.prop(self, 'space_word', text='W')
                 col1.prop(self, 'space_line', text='L')
 
-                col.label('modifications')
+                col.label(text='modifications')
                 col.prop(self, 'offset')
                 col.prop(self, 'extrude')
-                col.label('bevel')
+                col.label(text='bevel')
                 col.prop(self, 'bevel_depth')
                 col.prop(self, 'bevel_resolution')
 
-                col.label("alignment")
+                col.label(text="alignment")
                 row = col.row(align=True)
                 row.prop(self, 'align_x', text="")
                 row.prop(self, 'align_y', text="")
                 col.separator()
 
-            row = col.row(align=True)
-            row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
-            row.operator(sh, text='', icon='ZOOMIN').fn_name = 'add_material'
 
     def draw_buttons_ext(self, context, layout):
-        sh = 'node.sv_callback_type_viewer'
-        shf = 'node.sv_fontfile_importer'
+        shf = 'node.sv_fontfile_importer_mk1'
 
         self.draw_buttons(context, layout)
-
-        layout.separator()
-        row = layout.row(align=True)
-        row.operator(sh, text='Rnd Name').fn_name = 'random_mesh_name'
+        self.draw_ext_object_buttons(context, layout)
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop_search(self, 'fontname', bpy.data, 'fonts', text='', icon='FONT_DATA')
-        row.operator(shf, text='', icon='ZOOMIN')
+        row.operator(shf, text='', icon='ZOOM_IN')
 
         box = col.box()
         if box:
@@ -351,12 +230,16 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
         if self.parent_to_empty:
             mtname = 'Empty_' + self.basemesh_name
             self.parent_name = mtname
+            
             scene = bpy.context.scene
-            if not (mtname in bpy.data.objects):
+            collection = scene.collection
+
+            if not mtname in bpy.data.objects:
                 empty = bpy.data.objects.new(mtname, None)
-                scene.objects.link(empty)
+                collection.objects.link(empty)
                 scene.update()
 
+        last_index = 0
         for obj_index, txt_content in enumerate(text):
             matrix = matrices[obj_index]
             if isinstance(txt_content, list) and (len(txt_content) == 1):
@@ -365,16 +248,15 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 txt_content = str(txt_content)
 
             make_text_object(self, obj_index, bpy.context, (txt_content, matrix))
+            last_index = obj_index
 
-        self.remove_non_updated_objects(obj_index)
+        self.remove_non_updated_objects(last_index)
         objs = self.get_children()
 
         if self.grouping:
             self.to_group(objs)
 
-        # truthy if self.material is in .materials
-        if bpy.data.materials.get(self.material):
-            self.set_corresponding_materials(objs)
+        self.set_corresponding_materials()
 
         for obj in objs:
             if self.parent_to_empty:
@@ -383,57 +265,6 @@ class SvTypeViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 obj.parent = None
 
 
-    def get_children(self):
-        objs = [obj for obj in bpy.data.objects if obj.type == 'FONT']
-        return [o for o in objs if o.get('basename') == self.basemesh_name]
 
-    def remove_non_updated_objects(self, obj_index):
-        objs = self.get_children()
-        objs = [obj.name for obj in objs if obj['idx'] > obj_index]
-        if not objs:
-            return
-
-        curves = bpy.data.curves
-        objects = bpy.data.objects
-        scene = bpy.context.scene
-
-        # remove excess objects
-        for object_name in objs:
-            obj = objects[object_name]
-            obj.hide_select = False
-            scene.objects.unlink(obj)
-            objects.remove(obj)
-
-        # delete associated meshes
-        for object_name in objs:
-            curves.remove(curves[object_name])
-
-    def to_group(self, objs):
-        groups = bpy.data.groups
-        named = self.basemesh_name
-
-        # alias group, or generate new group and alias that
-        group = groups.get(named, groups.new(named))
-
-        for obj in objs:
-            if not (obj.name in group.objects):
-                group.objects.link(obj)
-
-    def set_corresponding_materials(self, objs):
-        for obj in objs:
-            obj.active_material = bpy.data.materials[self.material]
-
-    def copy(new_node, node):
-        new_node.basemesh_name = get_random_init()
-
-
-def register():
-    bpy.utils.register_class(SvTypeViewerNode)
-    bpy.utils.register_class(SvTypeViewOp2)
-    bpy.utils.register_class(SvFontFileImporterOp)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvFontFileImporterOp)
-    bpy.utils.unregister_class(SvTypeViewerNode)
-    bpy.utils.unregister_class(SvTypeViewOp2)
+classes = [SvTypeViewerNodeV28, SvFontFileImporterOpV28]
+register, unregister = bpy.utils.register_classes_factory(classes)

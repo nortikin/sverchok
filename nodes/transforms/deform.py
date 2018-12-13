@@ -61,7 +61,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Factor'].hide_safe = (self.mode != 'Taper')
         updateNode(self, context)
 
-    mode = EnumProperty(name="Mode",
+    mode: EnumProperty(name="Mode",
             default="Twist",
             items = modes,
             update=update_mode)
@@ -71,31 +71,14 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
             ("degrees", "Degree", "Use angles in degrees", 2)
         ]
 
-    angles_mode = EnumProperty(items=angle_modes, default="radians", update=updateNode)
+    angles_mode: EnumProperty(items=angle_modes, default="radians", update=updateNode)
+    angle: FloatProperty(name="Angle", default=pi/4, update=updateNode)
+    factor: FloatProperty(name="Factor", default=0.785, update=updateNode)
+    lock_x: BoolProperty(name="Lock X", default=False, update=updateNode)
+    lock_y: BoolProperty(name="Lock Y", default=False, update=updateNode)
 
-    angle = FloatProperty(name="Angle",
-                default=pi/4,
-                update=updateNode)
-
-    factor = FloatProperty(name="Factor",
-                default=0.785,
-                update=updateNode)
-
-    lock_x = BoolProperty(name="Lock X",
-                default=False,
-                update=updateNode)
-    lock_y = BoolProperty(name="Lock Y",
-                default=False,
-                update=updateNode)
-
-    low_limit = FloatProperty(name="Low limit",
-                default=0.0,
-                min=0.0, max=100.0,
-                update=updateNode)
-    hi_limit = FloatProperty(name="High limit",
-                default=100.0,
-                min=0.0, max=100.0,
-                update=updateNode)
+    low_limit: FloatProperty(name="Low limit", default=0.0, min=0.0, max=100.0, update=updateNode)
+    hi_limit: FloatProperty(name="High limit", default=100.0, min=0.0, max=100.0, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode")
@@ -107,7 +90,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "lock_y", toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
+        self.inputs.new('VerticesSocket', "Vertices")
         self.inputs.new('MatrixSocket', 'Origin')
         self.inputs.new('StringsSocket', "Angle").prop_name = "angle"
         self.inputs.new('StringsSocket', "Factor").prop_name = "factor"
@@ -124,7 +107,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
         if self.angles_mode == 'degrees':
             angle = radians(angle)
         matrix = Matrix.Rotation(angle, 4, 'Z')
-        return matrix * vertex
+        return matrix @ vertex
 
     def bend(self, mins, maxs, low_limit, hi_limit, angle, vertex):
         if self.angles_mode == 'degrees':
@@ -185,7 +168,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
 
             if not isinstance(origin, Matrix):
                 origin = Matrix(origin)
-            src_vertices = [origin.inverted() * Vector(v) for v in vertices]
+            src_vertices = [origin.inverted() @ Vector(v) for v in vertices]
             # bounding box
             mins = tuple(min([vertex[i] for vertex in src_vertices]) for i in range(3))
             maxs = tuple(max([vertex[i] for vertex in src_vertices]) for i in range(3))
@@ -202,7 +185,7 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
                     v[0] = vertex[0]
                 if self.lock_y:
                     v[1] = vertex[1]
-                v = tuple(origin * v)
+                v = tuple(origin @ v)
                 vs.append(v)
 
             out_vertices.append(vs)
@@ -215,4 +198,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSimpleDeformNode)
-

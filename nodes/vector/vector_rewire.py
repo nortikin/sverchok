@@ -34,19 +34,19 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_REWIRE'
 
-    selected_mode_from = EnumProperty(
+    selected_mode_from: EnumProperty(
         items=mode_options,
         description="offers....",
         default="X", update=updateNode
     )
 
-    selected_mode_to = EnumProperty(
+    selected_mode_to: EnumProperty(
         items=mode_options2,
         description="offers....",
         default="Z", update=updateNode
     )
 
-    scalar = FloatProperty(default=0.0, update=updateNode)
+    scalar: FloatProperty(default=0.0, update=updateNode)
     
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vectors")

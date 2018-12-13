@@ -133,7 +133,7 @@ class SverchokApplyTheme(bpy.types.Operator):
     bl_label = "Sverchok Apply theme"
     bl_options = {'REGISTER', 'UNDO'}
 
-    tree_name = StringProperty()
+    tree_name: StringProperty()
 
     def execute(self, context):
         if self.tree_name:

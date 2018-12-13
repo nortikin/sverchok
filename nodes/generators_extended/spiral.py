@@ -489,72 +489,72 @@ class SvSpiralNode(bpy.types.Node, SverchCustomTreeNode):
 
     presetItems = [(k, k.title(), "", "", i) for i, (k, v) in enumerate(sorted(spiralPresets.items()))]
 
-    presets = EnumProperty(
+    presets: EnumProperty(
         name="Presets", items=presetItems,
         update=update_presets)
 
-    stype = EnumProperty(
+    stype: EnumProperty(
         name="Type", items=spiralTypeItems,
         default="ARCHIMEDEAN", update=update_spiral)
 
-    normalize = EnumProperty(
+    normalize: EnumProperty(
         name="Normalize Radius", items=normalizeItems,
         default="ER", update=update_spiral)
 
-    iRadius = FloatProperty(
+    iRadius: FloatProperty(
         name="Interior Radius", description="Interior radius",
         default=1.0, min=0.0, update=update_spiral)
 
-    eRadius = FloatProperty(
+    eRadius: FloatProperty(
         name="Exterior Radius", description="Exterior radius",
         default=2.0, min=0.0, update=update_spiral)
 
-    turns = IntProperty(
+    turns: IntProperty(
         name="Turns", description="Number of turns",
         default=11, min=1, update=update_spiral)
 
-    arms = IntProperty(
+    arms: IntProperty(
         name="Arms", description="Number of spiral arms",
         default=1, min=1, update=update_spiral)
 
-    flip = BoolProperty(
+    flip: BoolProperty(
         name="Flip Direction", description="Flip spiral direction",
         default=False, update=update_spiral)
 
-    scale = FloatProperty(
+    scale: FloatProperty(
         name="Scale", description="Scale spiral vertices",
         default=1.0, update=update_spiral)
 
-    height = FloatProperty(
+    height: FloatProperty(
         name="Height", description="Height of the spiral along z",
         default=0.0, update=update_spiral)
 
-    phase = FloatProperty(
+    phase: FloatProperty(
         name="Phase", description="Phase amount in radians around spiral center",
         default=0.0, update=update_spiral)
 
-    exponent = FloatProperty(
+    exponent: FloatProperty(
         name="Exponent", description="Exponent attenuator",
         default=2.0, update=update_spiral)
 
-    resolution = IntProperty(
+    resolution: IntProperty(
         name="Turn Resolution", description="Number of vertices in one turn in the spiral",
         default=100, min=3, update=update_spiral)
 
-    adaptive_resolution = BoolProperty(
+    adaptive_resolution: BoolProperty(
         name="Adaptive Resolution",
         description="Auto adjust the curve resolution based on curve length",
         default=False, update=update_spiral)
 
-    normalize_normals = BoolProperty(
+    normalize_normals: BoolProperty(
         name="Normalize Normals", description="Normalize the normal vectors",
         default=True, update=update_spiral)
 
-    normalize_tangents = BoolProperty(
+    normalize_tangents: BoolProperty(
         name="Normalize Tangents", description="Normalize the tangent vectors",
         default=True, update=update_spiral)
 
-    updating = BoolProperty(default=False)  # used for disabling update callback
+    updating: BoolProperty(default=False)  # used for disabling update callback
 
     def sv_init(self, context):
         self.width = 160

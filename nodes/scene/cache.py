@@ -32,10 +32,10 @@ class SvCacheNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
-    n_id = StringProperty()
+    n_id: StringProperty()
     
-    cache_amount = IntProperty(default=1, min=0)
-    cache_offset = IntProperty(default=1, min=0)
+    cache_amount: IntProperty(default=1, min=0)
+    cache_offset: IntProperty(default=1, min=0)
     node_dict = {}
     
     def sv_init(self, context):

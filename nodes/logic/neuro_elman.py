@@ -174,40 +174,23 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     Elman = SvNeuro_Elman()
-    k_learning = FloatProperty(name='k_learning',
-                            default=0.1,
-                            update=updateNode)
-    gisterezis = FloatProperty(name='gisterezis',
-                            default=0.1,
-                            min = 0.0,
-                            update=updateNode)
-    maximum = FloatProperty(name='maximum',
-                            default=3.0,
-                            update=updateNode)
-    menushka = BoolProperty(name='menushka',
-                            default=False)
-    epsilon = FloatProperty(name='epsilon',
-                            default=1.0,
-                            update=updateNode)
-    treshold = FloatProperty(name='treshold',
-                            default=0.01,
-                            update=updateNode)
-    k_lambda = FloatProperty(name='k_lambda',
-                            default=0.001,
-                            max = 0.1,
-                            update=updateNode)
-    cycles = IntProperty(name='cycles', default=3, min = 1, update=updateNode)
-    lA = IntProperty(name='lA', default=1, min = 0, update=updateNode)
-    lB = IntProperty(name='lB', default=5, min = 0, update=updateNode)
-    lC = IntProperty(name='lC', default=1, min = 0, update=updateNode)
-
-
+    
+    k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode)
+    gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode)
+    maximum: FloatProperty(name='maximum', default=3.0, update=updateNode)
+    menushka: BoolProperty(name='menushka', default=False)
+    epsilon: FloatProperty(name='epsilon', default=1.0, update=updateNode)
+    treshold: FloatProperty(name='treshold', default=0.01, update=updateNode)
+    k_lambda: FloatProperty(name='k_lambda', default=0.001, max=0.1, update=updateNode)
+    cycles: IntProperty(name='cycles', default=3, min = 1, update=updateNode)
+    lA: IntProperty(name='lA', default=1, min = 0, update=updateNode)
+    lB: IntProperty(name='lB', default=5, min = 0, update=updateNode)
+    lC: IntProperty(name='lC', default=1, min = 0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
-        self.inputs.new('StringsSocket', "etalon", "etalon")
-        self.outputs.new('StringsSocket', "result", "result")
-
+        self.inputs.new('StringsSocket', "data")
+        self.inputs.new('StringsSocket', "etalon")
+        self.outputs.new('StringsSocket', "result")
 
     def draw_buttons(self, context, layout):
         handle_name = self.name + self.id_data.name
@@ -310,8 +293,8 @@ class SvNeuroOps(bpy.types.Operator):
     bl_label = "Sverchok Neuro operators"
     bl_options = {'REGISTER', 'UNDO'}
 
-    typ = IntProperty(name = 'typ', default=0)
-    handle_name = StringProperty(name='handle')
+    typ: IntProperty(name='typ', default=0)
+    handle_name: StringProperty(name='handle')
 
     def execute(self, context):
         if self.typ == 1:
@@ -324,10 +307,6 @@ class SvNeuroOps(bpy.types.Operator):
                 handle_write(self.handle_name, prop)
 
         return {'FINISHED'}
-
-
-
-
 
 
 def register():

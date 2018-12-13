@@ -308,7 +308,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
         node_types = set([
             'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite',
             'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode',
-            'SvRxNodeScript', 'SvProfileNodeMK2'])
+            'SvRxNodeScript', 'SvProfileNodeMK2', 'SvVDExperimental'])
 
         for ng in ngs:
             nodes = [n for n in ng.nodes if n.bl_idname in node_types]
@@ -334,6 +334,14 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     n.load_text()
                 else:
                     pass
+            
+            # only handle viewerdraw experimental
+            for n in nodes:
+                if n.bl_idname == 'SvVDExperimental':
+                    if n.custom_shader_location == text_file_name:
+                        # this may seem silly, but it triggers an update.
+                        n.custom_shader_location = n.custom_shader_location
+
 
             # update node group with affected nodes
             ng.update()

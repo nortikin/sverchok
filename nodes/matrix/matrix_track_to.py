@@ -30,33 +30,33 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     TUA = ["X Y", "X Z", "Y X", "Y Z", "Z X", "Z Y"]
-    tu_axes = EnumProperty(
+    tu_axes: EnumProperty(
         name="Track/Up Axes",
         description="Select which two of the XYZ axes to be the Track and Up axes",
         items=e(TUA), default=TUA[0], update=updateNode)
 
-    normalize = BoolProperty(
+    normalize: BoolProperty(
         name="Normalize Vectors", description="Normalize the output X,Y,Z vectors",
         default=True, update=updateNode)
 
-    origin = FloatVectorProperty(
+    origin: FloatVectorProperty(
         name='Location', description="The location component of the output matrix",
         default=(0, 0, 0), update=updateNode)
 
-    scale = FloatVectorProperty(
+    scale: FloatVectorProperty(
         name='Scale', description="The scale component of the output matrix",
         default=(1, 1, 1), update=updateNode)
 
-    vA = FloatVectorProperty(
+    vA: FloatVectorProperty(
         name='A', description="A direction",
         default=(1, 0, 0), update=updateNode)
 
-    vB = FloatVectorProperty(
+    vB: FloatVectorProperty(
         name='B', description='B direction',
         default=(0, 1, 0), update=updateNode)
 
     TUM = ["A B", "A -B", "-A B", "-A -B", "B A", "B -A", "-B A", "-B -A"]
-    tu_mapping = EnumProperty(
+    tu_mapping: EnumProperty(
         name="Track/Up Mapping",
         description="Map the Track and Up vectors to one of the two inputs or their negatives",
         items=e(TUM), default=TUM[0], update=updateNode)

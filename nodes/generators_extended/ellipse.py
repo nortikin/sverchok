@@ -82,54 +82,54 @@ class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    centering = EnumProperty(
+    centering: EnumProperty(
         name="Centering", items=centeringItems,
         description="Center the ellipse around F1, C or F2",
         default="C", update=updateNode)
 
-    mode = EnumProperty(
+    mode: EnumProperty(
         name="Mode", items=modeItems,
         description="Ellipse definition mode",
         default="AB", update=update_mode)
 
-    lastMode = EnumProperty(
+    lastMode: EnumProperty(
         name="Mode", items=modeItems,
         description="Ellipse definition last mode",
         default="AB")
 
-    major_radius = FloatProperty(
+    major_radius: FloatProperty(
         name='Major Radius', description='Ellipse major radius',
         default=1.0, min=0.0, update=update_ellipse)
 
-    minor_radius = FloatProperty(
+    minor_radius: FloatProperty(
         name='Minor Radius', description='Ellipse minor radius',
         default=0.8, min=0.0, update=update_ellipse)
 
-    eccentricity = FloatProperty(
+    eccentricity: FloatProperty(
         name='Eccentricity', description='Ellipse eccentricity',
         default=0.6, min=0.0, max=1.0, update=update_ellipse)
 
-    focal_length = FloatProperty(
+    focal_length: FloatProperty(
         name='Focal Length', description='Ellipse focal length',
         default=0.6, min=0.0, update=update_ellipse)
 
-    num_verts = IntProperty(
+    num_verts: IntProperty(
         name='Num Verts', description='Number of vertices in the ellipse',
         default=36, min=3, update=updateNode)
 
-    phase = FloatProperty(
+    phase: FloatProperty(
         name='Phase', description='Phase ellipse vertices around the center by this radians amount',
         default=0.0, update=updateNode)
 
-    rotation = FloatProperty(
+    rotation: FloatProperty(
         name='Rotation', description='Rotate ellipse vertices around the centering point by this radians amount',
         default=0.0, update=updateNode)
 
-    scale = FloatProperty(
+    scale: FloatProperty(
         name='Scale', description='Scale ellipse radii by this amount',
         default=1.0, min=0.0, update=updateNode)
 
-    updating = BoolProperty(default=False)  # used for disabling update callback
+    updating: BoolProperty(default=False)  # used for disabling update callback
 
     def sv_init(self, context):
         self.width = 150
@@ -140,12 +140,11 @@ class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Rotation").prop_name = "rotation"
         self.inputs.new('StringsSocket', "Scale").prop_name = "scale"
 
-        self.outputs.new('VerticesSocket', "Verts", "Verts")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polys", "Polys")
-
-        self.outputs.new('VerticesSocket', "F1", "F1")
-        self.outputs.new('VerticesSocket', "F2", "F2")
+        self.outputs.new('VerticesSocket', "Verts")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polys")
+        self.outputs.new('VerticesSocket', "F1")
+        self.outputs.new('VerticesSocket', "F2")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

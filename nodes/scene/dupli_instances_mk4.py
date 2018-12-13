@@ -54,28 +54,26 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
                     if not obj.name == self.name_child:
                         obj.parent = None
 
-    name_node_generated_parent = StringProperty(
+    name_node_generated_parent: StringProperty(
         description="name of the parent that this node generates",
         update=updateNode)
 
-    scale = BoolProperty(default=False,
+    scale: BoolProperty(default=False,
         description="scale children", update=updateNode)
 
-    auto_release = BoolProperty(update=set_child_quota)
+    auto_release: BoolProperty(update=set_child_quota)
 
     modes = [
         ("VERTS", "Verts", "On vertices", "", 1),
         ("FACES", "Polys", "On polygons", "", 2)]
 
-    mode = EnumProperty(items=modes,
-                        default='VERTS',
-                        update=updateNode)
+    mode: EnumProperty(items=modes, default='VERTS', update=updateNode)
 
     def sv_init(self, context):
         #self.inputs.new("SvObjectSocket", "parent")
         self.inputs.new("SvObjectSocket", "child")
         self.inputs.new("MatrixSocket", "matr/vert")
-        self.name_node_generated_parent = 'parant'
+        self.name_node_generated_parent = 'parent'
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -128,7 +126,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
                 verts = []
                 add_verts = verts.extend
                 for M in transforms:
-                    add_verts([(M * A), (M * B), (M * C)])
+                    add_verts([(M @ A), (M @ B), (M @ C)])
                 faces = [[i, i + 1, i + 2] for i in range(0, len(transforms) * 3, 3)]
             elif self.mode == "VERTS":
                 verts = [M.to_translation() for M in transforms]
@@ -146,6 +144,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvDupliInstancesMK4)
-
-if __name__ == '__main__':
-    register()

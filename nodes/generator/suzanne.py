@@ -27,7 +27,7 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvSuzanneNode(bpy.types.Node, SverchCustomTreeNode):
-    "Suzanne primitive"
+    """Suzanne primitive"""
 
     bl_idname = "SvSuzanneNode"
     bl_label = "Suzanne"

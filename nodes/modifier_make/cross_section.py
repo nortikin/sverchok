@@ -167,11 +167,11 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Cross Section'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    fill_check = BoolProperty(
+    fill_check: BoolProperty(
         name='fill', description='to fill section',
         default=False, update=updateNode)
 
-    tri = BoolProperty(
+    tri: BoolProperty(
         name='tri', description='triangle or polygon',
         default=True, update=updateNode)
 
@@ -231,14 +231,9 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['edges'].sv_set(edges_out)
 
 
-
-
 def register():
     bpy.utils.register_class(CrossSectionNode)
 
 
 def unregister():
     bpy.utils.unregister_class(CrossSectionNode)
-
-if __name__ == '__main__':
-    register()

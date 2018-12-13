@@ -52,9 +52,9 @@ func_dict = {
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
 
-    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),          "Scale XY"),
-    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),          "Scale XZ"),
-    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),          "Scale YZ")
+    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),           "Scale XY"),
+    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),           "Scale XZ"),
+    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),           "Scale YZ")
 
 }
 
@@ -93,22 +93,22 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''Vector: Add, Dot P..'''
     bl_idname = 'SvVectorMathNodeMK2'
     bl_label = 'Vector Math'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'THREE_DOTS'
 
     def mode_change(self, context):
         self.update_sockets()
         updateNode(self, context)
 
-    current_op = EnumProperty(
+    current_op: EnumProperty(
         items=mode_items,
         name="Function",
         description="Function choice",
-        default="CROSS",
+        default="COMPONENT-WISE",
         update=mode_change)
 
-    amount = FloatProperty(default=1.0, name='amount', update=updateNode)
-    v3_input_0 = FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
-    v3_input_1 = FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
+    amount: FloatProperty(default=1.0, name='amount', update=updateNode)
+    v3_input_0: FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
+    v3_input_1: FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
 
 
     def draw_label(self):
@@ -116,7 +116,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, ctx, layout):
-        layout.prop(self, "current_op", text="Functions:")
+        layout.prop(self, "current_op", text="F (x)")
 
 
     def sv_init(self, context):
@@ -155,13 +155,13 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         num_inputs = len(inputs)
 
         # get either input data, or socket default
-        input_one = inputs[0].sv_get(deepcopy=False)
+        input_one = inputs[0].sv_get(deepcopy=True)
         
         level = levelsOflist(input_one) - 1
         if num_inputs == 1:
             result = recurse_fx(input_one, func, level)
         else:
-            input_two = inputs[1].sv_get(deepcopy=False)
+            input_two = inputs[1].sv_get(deepcopy=True)
             result = recurse_fxy(input_one, input_two, func, level)
 
         outputs[0].sv_set(result)

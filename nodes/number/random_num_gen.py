@@ -36,55 +36,45 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Random Num Gen'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    low_f = FloatProperty(
+    low_f: FloatProperty(
         name='Float Low', description='Minimum float value',
-        default=0.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0.0, update=updateNode)
 
-    high_f = FloatProperty(
+    high_f: FloatProperty(
         name='Float High', description='Maximum float value',
-        default=1.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1.0, update=updateNode)
 
-    low_i = IntProperty(
+    low_i: IntProperty(
         name='Int Low', description='Minimum integer value',
-        default=0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0, update=updateNode)
 
-    high_i = IntProperty(
+    high_i: IntProperty(
         name='Int High', description='Maximum integer value',
-        default=10,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=10, update=updateNode)
 
-    size = IntProperty(
+    size: IntProperty(
         name='Size', description='number of values to output (count.. or size)',
-        default=10, min=1,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=10, min=1, update=updateNode)
 
-    seed = IntProperty(
+    seed: IntProperty(
         name='Seed', description='seed, grow',
-        default=0, min=0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0, min=0, update=updateNode)
 
-    alpha = FloatProperty(
+    alpha: FloatProperty(
         name='Alpha', description='Distribution parameter',
-        default=2.0, min=(1e-06),
-        options={'ANIMATABLE'}, update=updateNode)
+        default=2.0, min=(1e-06), update=updateNode)
 
-    beta = FloatProperty(
+    beta: FloatProperty(
         name='Beta', description='Distribution parameter',
-        default=2.0, min=(1e-06),
-        options={'ANIMATABLE'}, update=updateNode)
+        default=2.0, min=(1e-06), update=updateNode)
 
-    t_in = FloatProperty(
+    t_in: FloatProperty(
          name="t", description='Distribution parameter',
-         default=.5, min=1e-06, max=1.0-1e-06, precision=6,
-         options={'ANIMATABLE'}, update=updateNode)
+         default=.5, min=1e-06, max=1.0-1e-06, precision=6, update=updateNode)
 
-    as_list = BoolProperty(
+    as_list: BoolProperty(
         name='As List', description='on means output list, off means output np.array 1d',
-        default=True,
-        update=updateNode)
+        default=True, update=updateNode)
 
     func_dict = {
         "UNIFORM":       (0, np.random.ranf,                  [0],          False, "Uniform",               (1e-06, 1e-06)),
@@ -153,24 +143,18 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         ("Float", "Float", "", 1)
     ]
 
-    type_selected_mode = bpy.props.EnumProperty(
-        items=type_mode_options,
-        description="offers....",
+    type_selected_mode: bpy.props.EnumProperty(
+        items=type_mode_options, description="offers....",
         default="Int", update=adjust_inputs
     )
 
-    weighted = BoolProperty(
-        name='Weighted',
-        description='Input probability for each number',
-        default=False,
-        update=adjust_inputs)
+    weighted: BoolProperty(
+        name='Weighted', description='Input probability for each number',
+        default=False, update=adjust_inputs)
 
-    distribute_mode = bpy.props.EnumProperty(
-        name="Distribution",
-        items=distribute_options,
-        description="Distribution method",
-        default="UNIFORM", update=adjust_inputs
-    )
+    distribute_mode: bpy.props.EnumProperty(
+        name="Distribution", items=distribute_options, description="Distribution method",
+        default="UNIFORM", update=adjust_inputs)
 
     def sv_init(self, context):
         si = self.inputs

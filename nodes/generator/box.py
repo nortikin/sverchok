@@ -35,22 +35,22 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Box'
     bl_icon = 'MESH_CUBE'
 
-    Divx = IntProperty(
+    Divx: IntProperty(
         name='Divx', description='divisions x',
         default=1, min=1, options={'ANIMATABLE'},
         update=updateNode)
 
-    Divy = IntProperty(
+    Divy: IntProperty(
         name='Divy', description='divisions y',
         default=1, min=1, options={'ANIMATABLE'},
         update=updateNode)
 
-    Divz = IntProperty(
+    Divz: IntProperty(
         name='Divz', description='divisions z',
         default=1, min=1, options={'ANIMATABLE'},
         update=updateNode)
 
-    Size = FloatProperty(
+    Size: FloatProperty(
         name='Size', description='Size',
         default=1.0, options={'ANIMATABLE'},
         update=updateNode)
@@ -139,8 +139,6 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['Vers'].sv_set(out[0])
         outputs['Edgs'].sv_set(out[1])
         outputs['Pols'].sv_set(out[2])
-
-        self.debug("hello from the box")
 
 
 def register():

@@ -44,15 +44,15 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         #("ACC",         "Accumulate",     "", 5),
     ]
 
-    func_ = EnumProperty(
+    func_: EnumProperty(
         name="Function", description="Function choice",
         default="AVR", items=mode_items, update=updateNode)
     
-    level = IntProperty(
+    level: IntProperty(
         name='level_to_count',
         default=1, min=0, update=updateNode)
     
-    wrap = BoolProperty(
+    wrap: BoolProperty(
         name='wrap', description='extra level add', 
         default=False,update=updateNode)
 

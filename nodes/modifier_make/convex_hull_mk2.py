@@ -52,12 +52,12 @@ def make_hull(vertices, params):
             verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.inside and params.outside:
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context='VERTS')
             verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
             used_v_indices = set(range(len(vertices))) - set(unused_v_indices)
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context='VERTS')
             verts = [v[:] for idx, v in enumerate(vertices) if idx in unused_v_indices]
 
 
@@ -72,7 +72,7 @@ def make_hull(vertices, params):
             verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.inside and params.outside:
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in unused_v_indices], context='VERTS')
             if params.sort_edges:
                 bm.faces.ensure_lookup_table()
                 addv = verts.append
@@ -82,7 +82,7 @@ def make_hull(vertices, params):
                 verts, _, faces = pydata_from_bmesh(bm)
 
         elif not params.outside and params.inside:
-            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context=1)
+            bmesh.ops.delete(bm, geom=[bm.verts[i] for i in used_v_indices], context='VERTS')
             verts, _, _ = pydata_from_bmesh(bm)
 
 
@@ -99,18 +99,16 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     # bl_icon = 'OUTLINER_OB_EMPTY'
 
     hull_mode_options = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
-    hull_mode = EnumProperty(
-        description=" 3d or 2d?", default="3D", items=hull_mode_options, update=updateNode
-    )
+    hull_mode: EnumProperty(
+        description=" 3d or 2d?", default="3D", items=hull_mode_options, update=updateNode)
 
     plane_choices = [(k, k, '', i) for i, k in enumerate(["X", "Y", "Z"])]
-    plane = EnumProperty(
-        description="track 2D plane", default="X", items=plane_choices, update=updateNode
-    )
+    plane: EnumProperty(
+        description="track 2D plane", default="X", items=plane_choices, update=updateNode)
 
-    outside = BoolProperty(default=True, update=updateNode)
-    inside = BoolProperty(default=False, update=updateNode)
-    sort_edges = BoolProperty(default=True, update=updateNode)
+    outside: BoolProperty(default=True, update=updateNode)
+    inside: BoolProperty(default=False, update=updateNode)
+    sort_edges: BoolProperty(default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')

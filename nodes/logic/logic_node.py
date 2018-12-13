@@ -32,7 +32,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     '''And, Or, If, <, >..'''
     bl_idname = 'SvLogicNode'
     bl_label = 'Logic functions'
-    bl_icon = 'LOGIC'
+    bl_icon = 'NONE' #'LOGIC'
 
     # Math functions from http://docs.python.org/3.3/library/math.html
     # maybe this should be distilled to most common with the others available via Formula2 Node
@@ -129,15 +129,14 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
         'ROUND-N':  ("x","i_y"),
         }
 
-    # items_ is a really bad name but changing it breaks old layouts
-    items_ = EnumProperty(name="Logic Gate", description="Logic Gate choice",
-                          default="AND", items=mode_items,
-                          update=change_type)
-    x = IntProperty(default=1, name='x', max=1, min=0, update=updateNode)
-    y = IntProperty(default=1, name='y', max=1, min=0, update=updateNode)
+    x: IntProperty(default=1, name='x', max=1, min=0, update=updateNode)
+    y: IntProperty(default=1, name='y', max=1, min=0, update=updateNode)
 
-    i_x = FloatProperty(default=1, name='x', update=updateNode)
-    i_y = FloatProperty(default=1, name='y', update=updateNode)
+    i_x: FloatProperty(default=1, name='x', update=updateNode)
+    i_y: FloatProperty(default=1, name='y', update=updateNode)
+
+    items_: EnumProperty(
+        name="Logic Gate", description="Logic Gate choice", default="AND", items=mode_items, update=change_type)
 
      # boolvector to control prop type
     def change_prop_type(self, context):
@@ -150,7 +149,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 inputs[1].prop_name = 'i_y'
 
-    prop_types = BoolVectorProperty(size=2, default=(False, False), update=change_prop_type)
+    prop_types: BoolVectorProperty(size=2, default=(False, False), update=change_prop_type)
 
 
     def draw_buttons(self, context, layout):

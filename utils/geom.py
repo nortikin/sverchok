@@ -884,3 +884,17 @@ def multiply_vectors(M, vlist):
         )
 
     return vlist
+
+def multiply_vectors_deep(M, vlist):
+    """ returns a new list of vectors as tuples, transformed by matrix M (= Matrix() or 4*4 list) """
+    # (4*4 matrix)  X   (3*1 vector)
+    nlist = []
+    concat = nlist.append
+    for i, v in enumerate(vlist):
+        concat((
+            M[0][0]*v[0] + M[0][1]*v[1] + M[0][2]*v[2] + M[0][3]* 1.0,
+            M[1][0]*v[0] + M[1][1]*v[1] + M[1][2]*v[2] + M[1][3]* 1.0, 
+            M[2][0]*v[0] + M[2][1]*v[1] + M[2][2]*v[2] + M[2][3]* 1.0
+        ))
+
+    return nlist

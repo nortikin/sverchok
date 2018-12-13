@@ -109,13 +109,14 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
         layout.separator()
         layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
-        layout.menu("NODEVIEW_MT_AddTransforms", **icon('MANIPUL'))
+        layout.menu("NODEVIEW_MT_AddTransforms", **icon('ORIENTATION_LOCAL'))
         layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
         layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
+        layout.menu("NODEVIEW_MT_AddCAD", **icon('TOOL_SETTINGS'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
-        layout.menu("NODEVIEW_MT_AddMatrix")
+        layout.menu("NODEVIEW_MT_AddMatrix", **icon('EMPTY_AXIS'))
         layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()
@@ -125,7 +126,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddLayout", **icon("SV_LAYOUT"))
         layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddNetwork", **icon("OOPS"))
+        layout.menu("NODEVIEW_MT_AddNetwork", **icon("SYSTEM"))
         layout.menu("NODEVIEW_MT_AddBetas", **icon("SV_BETA"))
         layout.menu("NODEVIEW_MT_AddAlphas", **icon("SV_ALPHA"))
         layout.separator() 
@@ -188,6 +189,7 @@ classes = [
     make_class('Number', "Number"),
     make_class('Vector', "Vector"),
     make_class('Matrix', "Matrix"),
+    make_class('CAD', "CAD"),
     make_class('ModifierChange', "Modifier Change"),
     make_class('ModifierMake', "Modifier Make"),
     make_class('Logic', "Logic"),
@@ -197,45 +199,12 @@ classes = [
 ]
 
 
-# def ff_unregister_node_categories():
-#     """
-#     Below (in the register function) we remove the SVERCHOK group from _node_categories collection, by doing:
-
-#         _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
-
-#     this allows us to populate the NODE_MT_add menu as we want. In doing so we lose the automatic unregistration of 
-#     various menu and category classes. This function behaves as a dedicated removal of those classes (for F8 and disable add-on),
-#     """
-
-#     def ff_unregister_node_cat_types(cats):
-#         for mt in cats[2]:
-#             bpy.utils.unregister_class(mt)
-#         for pt in cats[3]:
-#             bpy.utils.unregister_class(pt)
-
-#     cat_types = _items_to_remove['sverchok_popped']
-#     if cat_types:
-#         ff_unregister_node_cat_types(cat_types)
-
-#     del _items_to_remove['sverchok_popped']
-
-
 
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
 
-    # we pop sverchok from the standard nodecat collection to avoid the menu items appearing in the default Add node menu.
-    # _items_to_remove['sverchok_popped'] = _node_categories.pop("SVERCHOK")
-
-    # bpy.types.NODE_MT_add.append(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
-
 
 def unregister():
-    # bpy.types.NODE_MT_add.remove(bpy.types.NODEVIEW_MT_Dynamic_Menu.draw)
-
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
-
-    # because we popped sverchok off the nodecat collection in register, we have to do our own class unregistration here.
-    # ff_unregister_node_categories()

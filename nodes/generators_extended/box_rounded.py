@@ -346,27 +346,27 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Rounded Box'
     bl_icon = 'MESH_CAPSULE'
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name='radius', description='fillet radius',
         default=1.0, update=updateNode, min=0.0, step=0.2)
 
-    arcdiv = IntProperty(
+    arcdiv: IntProperty(
         name='arcdiv', description='number of divisions in fillet',
         min=0, max=10, default=4, update=updateNode)
 
-    lindiv = FloatProperty(
+    lindiv: FloatProperty(
         name='lindiv', description='rate of linear division per surface',
         default=0., min=0.0, step=0.2, precision=1, update=updateNode)
 
-    div_type = IntProperty(
+    div_type: IntProperty(
         name='div_type', description='CORNERS, EDGES, ALL',
         min=0, max=2, default=0, update=updateNode)
 
-    odd_axis_align = IntProperty(
+    odd_axis_align: IntProperty(
         name='odd_axis_align', description='uhh',
         default=0, min=0, max=1, update=updateNode)
 
-    vector_vsize = FloatVectorProperty(size=3, default=(1,1,1), name='vector size', update=updateNode)
+    vector_vsize: FloatVectorProperty(size=3, default=(1,1,1), name='vector size', update=updateNode)
 
     def sv_init(self, context):
         new = self.inputs.new

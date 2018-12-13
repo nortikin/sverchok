@@ -8,10 +8,18 @@
 
 import bpy
 from sverchok.utils.sv_node_utils import frame_adjust
-
+from sverchok.menu import draw_add_node_operator
 
 sv_tree_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
 supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
+
+# for rclick i want convenience..
+common_nodes = [
+    ['GenVectorsNode', 'VectorsOutNode'],
+    ['SvNumberNode', 'GenListRangeIntNode', 'SvGenFloatRange'],
+    ['SvScalarMathNodeMK2', 'SvVectorMathNodeMK2']
+]
+
 
 def connect_idx_viewer(tree, existing_node, new_node):
     # get connections going into vdmk2 and make a new idxviewer and connect the same sockets to that.
@@ -97,15 +105,18 @@ def add_connection(tree, bl_idname_new_node, offset):
             # maybe in the future.. or if someone does know :)
             links.new(outputs[0], inputs[0])
 
-        elif bl_idname_new_node == 'ViewerNode2':
+        elif bl_idname_new_node == 'SvVDExperimental':
 
             if 'verts' in output_map:
+
                 if 'faces' in output_map:
                     links.new(outputs[output_map['verts']], inputs[0])
-                    links.new(outputs[output_map['faces']], inputs[1])
-                elif 'edges' in output_map:
+                    links.new(outputs[output_map['faces']], inputs[2])
+                if 'edges' in output_map:
                     links.new(outputs[output_map['verts']], inputs[0])
                     links.new(outputs[output_map['edges']], inputs[1])
+                
+                tree.update()
 
         else:
             ...
@@ -120,13 +131,13 @@ class SvGenericDeligationOperator(bpy.types.Operator):
     bl_idname = "node.sv_deligate_operator"
     bl_label = "Execute generic code"
 
-    fn = bpy.props.StringProperty(default='')
+    fn: bpy.props.StringProperty(default='')
 
     def execute(self, context):
         tree = context.space_data.edit_tree
 
         if self.fn == 'vdmk2':
-            add_connection(tree, bl_idname_new_node="ViewerNode2", offset=[180, 0])
+            add_connection(tree, bl_idname_new_node="SvVDExperimental", offset=[180, 0])
         elif self.fn == 'vdmk2 + idxv':
             add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewerNode"], offset=[180, 0])
         elif self.fn == '+idxv':
@@ -148,25 +159,30 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         tree = context.space_data.edit_tree
-        nodes = tree.nodes
+        
+        try:
+            nodes = tree.nodes
+        except:
+            layout.operator("node.new_node_tree", text="New Sverchok Node Tree", icon="RNA_ADD")
+            return
+
         node = valid_active_node(nodes)
 
         if node:
+            if hasattr(node, "rclick_menu"):
+                node.rclick_menu(context, layout)
+                layout.separator()
+
             if node.bl_idname in {'ViewerNode2', 'SvBmeshViewerNodeMK2'}:
                 layout.operator("node.sv_deligate_operator", text="Connect IDXViewer").fn = "+idxv"
             else:
                 if has_outputs(node):
                     layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
                     # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
+            if len(node.outputs):
+                layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
-            if hasattr(node, "rclick_menu"):
-                node.rclick_menu(context, layout)
-
-        else:
-            layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
-
-        if node and len(node.outputs):
-            layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
+            layout.separator()
 
         if node and node.bl_idname == 'NodeFrame':
             # give options for Frame nodes..
@@ -180,6 +196,19 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
 
         if node and hasattr(node, 'monad'):
             layout.operator("node.sv_monad_make_unique", icon="RNA_ADD").use_transform=True
+
+        layout.separator()
+        layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
+        # layout.operator("node.duplicate_move")
+        self.draw_conveniences(context, node)
+
+    def draw_conveniences(self, context, node):
+        layout = self.layout
+        layout.separator()
+        for nodelist in common_nodes:
+            for named_node in nodelist:
+                draw_add_node_operator(layout, named_node)
+
 
 
 def register():

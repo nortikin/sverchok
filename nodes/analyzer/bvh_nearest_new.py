@@ -34,7 +34,7 @@ class SvBVHnearNewNode(bpy.types.Node, SverchCustomTreeNode):
             ("find_nearest_range", "nearest in range", "", 1),
         ]
 
-    mode = EnumProperty(name="Mode", items=modes, default='find_nearest', update=updateNode)
+    mode: EnumProperty(name="Mode", items=modes, default='find_nearest', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')

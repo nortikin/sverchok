@@ -29,24 +29,19 @@ class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Reverse'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_Reverse',
-                        default=2, min=1,
-                        update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    level: IntProperty(name='level_to_Reverse', default=2, min=1, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
-        self.outputs.new('StringsSocket', 'data', 'data')
+        self.inputs.new('StringsSocket', 'data')
+        self.outputs.new('StringsSocket', 'data')
 
     def update(self):
         if 'data' in self.inputs and self.inputs['data'].links:
-            # адаптивный сокет
             inputsocketname = 'data'
             outputsocketname = ['data']
             changable_sockets(self, inputsocketname, outputsocketname)

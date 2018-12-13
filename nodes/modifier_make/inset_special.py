@@ -149,17 +149,17 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Inset Special'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    inset = FloatProperty(
+    inset: FloatProperty(
         name='Inset',
         description='inset amount',
         default=0.1, update=updateNode)
-    distance = FloatProperty(
+    distance: FloatProperty(
         name='Distance',
         description='Distance',
         default=0.0, update=updateNode)
 
-    ignore = IntProperty(name='Ignore', description='skip polygons', default=0, update=updateNode)
-    make_inner = IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
+    ignore: IntProperty(name='Ignore', description='skip polygons', default=0, update=updateNode)
+    make_inner: IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
 
     # axis = FloatVectorProperty(
     #   name='axis', description='axis relative to normal',

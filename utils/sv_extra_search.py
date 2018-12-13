@@ -127,7 +127,7 @@ class SvExtraSearch(bpy.types.Operator):
     bl_label = "Extra Search"
     bl_property = "my_enum"
 
-    my_enum = bpy.props.EnumProperty(items=item_cb)
+    my_enum: bpy.props.EnumProperty(items=item_cb)
 
     @classmethod
     def poll(cls, context):

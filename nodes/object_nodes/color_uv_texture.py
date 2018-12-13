@@ -31,11 +31,11 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Set UV Color'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    mode1 = BoolProperty(name='normal_update', default=True, update=updateNode)
-    image = StringProperty(default='', update=updateNode)
-    object_ref = StringProperty(default='', update=updateNode)
+    mode1: BoolProperty(name='normal_update', default=True, update=updateNode)
+    image: StringProperty(default='', update=updateNode)
+    object_ref: StringProperty(default='', update=updateNode)
 
-    unit_color = FloatVectorProperty(name='', default=(1.0, 1.0, 1.0, 1.0),
+    unit_color: FloatVectorProperty(name='', default=(1.0, 1.0, 1.0, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR', update=updateNode)
 
     def draw_buttons(self, context,   layout):

@@ -50,10 +50,9 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Extrude Region'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    keep_original = BoolProperty(name="Keep original",
-        description="Keep original geometry",
-        default=False,
-        update=updateNode)
+    keep_original: BoolProperty(
+        name="Keep original", description="Keep original geometry",
+        default=False, update=updateNode)
 
     transform_modes = [
             ("Matrix", "By matrix", "Transform vertices by specified matrix", 0),
@@ -69,26 +68,23 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             self.multiple = True
         updateNode(self, context)
 
-    transform_mode = EnumProperty(name="Transformation mode",
-            description="How vertices transformation is specified",
-            default="Matrix",
-            items = transform_modes,
-            update=update_mode)
+    transform_mode: EnumProperty(
+        name="Transformation mode", description="How vertices transformation is specified",
+        default="Matrix", items=transform_modes, update=update_mode)
 
-    height_ = FloatProperty(name="Height", description="Extrusion amount",
-                default=0.0,
-                update=updateNode)
-    scale_ = FloatProperty(name="Scale", description="Extruded faces scale",
-                default=1.0, min=0.0,
-                update=updateNode)
-    multiple = BoolProperty(name="Multiple extrude", description="Extrude the same region several times",
-                default=False,
-                update=updateNode)
+    height_: FloatProperty(
+        name="Height", description="Extrusion amount", default=0.0, update=updateNode)
+
+    scale_: FloatProperty(
+        name="Scale", description="Extruded faces scale", default=1.0, min=0.0, update=updateNode)
+
+    multiple: BoolProperty(
+        name="Multiple extrude", description="Extrude the same region several times", default=False, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('StringsSocket', 'Edges')
+        self.inputs.new('StringsSocket', 'Polygons')
         self.inputs.new('StringsSocket', 'Mask')
         self.inputs.new('MatrixSocket', 'Matrices')
         self.inputs.new('StringsSocket', "Height").prop_name = "height_"
@@ -195,7 +191,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     fullList(matrix_spaces, len(extruded_verts))
                     for vertex_idx, (vertex, matrix) in enumerate(zip(*match_long_repeat([extruded_verts, matrices]))):
                         bmesh.ops.transform(bm, verts=[vertex], matrix=matrix, space=matrix_spaces[vertex_idx])
-                        matrix_spaces[vertex_idx] = matrix.inverted() * matrix_spaces[vertex_idx]
+                        matrix_spaces[vertex_idx] = matrix.inverted() @ matrix_spaces[vertex_idx]
                 else:
                     height = height_per_iteration[idx]
                     scale = scale_per_iteration[idx]
@@ -205,7 +201,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     center = get_faces_center(extruded_faces)
                     translation = Matrix.Translation(center)
                     rotation = normal.rotation_difference((0,0,1)).to_matrix().to_4x4()
-                    m = translation * rotation
+                    m = translation @ rotation
                     bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=extruded_verts)
                     bmesh.ops.translate(bm, verts=extruded_verts, vec=dr)
 
@@ -241,7 +237,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvExtrudeRegionNode)
-
-if __name__ == '__main__':
-    register()
-

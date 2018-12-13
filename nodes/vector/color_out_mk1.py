@@ -39,12 +39,12 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[idx].name = socket
         updateNode(self, context)
 
-    unit_color = FloatVectorProperty(
+    unit_color: FloatVectorProperty(
         update=updateNode, name='', default=(.3, .3, .2, 1.0),
         size=4, min=0.0, max=1.0, subtype='COLOR'
     )
 
-    use_alpha = BoolProperty(default=False, update=updateNode)
+    use_alpha: BoolProperty(default=False, update=updateNode)
 
     def sv_init(self, context):
         self.width = 110

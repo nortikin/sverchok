@@ -27,7 +27,7 @@ from bpy.props import (
 class PropsBase:
     # ignored /internal names
     internal_names  = {"prop_name", "attr", "update", "bl_rna", "rna_type"}
-    prop_name = StringProperty(description="Internal name")
+    prop_name: StringProperty(description="Internal name")
 
     def get_settings(self):
         settings = {k:v for k, v in self.items() if k not in self.internal_names}
@@ -111,17 +111,17 @@ class SvFloatPropertySettingsGroup(PropertyGroup, PropsBase):
                     break
         return settings
 
-    name = StringProperty(description="Show name")
-    description = StringProperty()
-    default = FloatProperty(default=0.0)
-    min = FloatProperty(default=sys.float_info.min)
-    max = FloatProperty(default=sys.float_info.max)
-    soft_min = FloatProperty(default=sys.float_info.min)
-    soft_max = FloatProperty(default=sys.float_info.max)
-    step = IntProperty(default=3)
-    precision = IntProperty(default=2)
-    subtype = EnumProperty(items=float_items, name="Subtype", default='NONE')
-    unit = EnumProperty(items=unit_items, name="Unit", default='NONE')
+    name: StringProperty(description="Show name")
+    description: StringProperty()
+    default: FloatProperty(default=0.0)
+    min: FloatProperty(default=sys.float_info.min)
+    max: FloatProperty(default=sys.float_info.max)
+    soft_min: FloatProperty(default=sys.float_info.min)
+    soft_max: FloatProperty(default=sys.float_info.max)
+    step: IntProperty(default=3)
+    precision: IntProperty(default=2)
+    subtype: EnumProperty(items=float_items, name="Subtype", default='NONE')
+    unit: EnumProperty(items=unit_items, name="Unit", default='NONE')
 
 
 # INT PROPERTY
@@ -175,15 +175,15 @@ class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
                     break
         return settings
 
-    name = StringProperty(description="Show name")
-    description = StringProperty()
-    default = IntProperty(default=0)
-    min = IntProperty(default=-2**31)
-    max = IntProperty(default=2**31-1)
-    soft_min = IntProperty(default=-2**31)
-    soft_max = IntProperty(default=2**31-1)
-    step = IntProperty(default=1) # not used
-    subtype = EnumProperty(items=float_items, name="Subtype", default='NONE')
+    name: StringProperty(description="Show name")
+    description: StringProperty()
+    default: IntProperty(default=0)
+    min: IntProperty(default=-2**31)
+    max: IntProperty(default=2**31-1)
+    soft_min: IntProperty(default=-2**31)
+    soft_max: IntProperty(default=2**31-1)
+    step: IntProperty(default=1) # not used
+    subtype: EnumProperty(items=float_items, name="Subtype", default='NONE')
 
 
 classes = [

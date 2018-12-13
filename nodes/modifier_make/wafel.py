@@ -62,48 +62,54 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
     # now we just need to sort out the properties that creates socket
     # from the ones that should process.
 
-    thick = FloatProperty(name='thick', description='thickness of material',
-                           default=0.01)
+    thick: FloatProperty(
+        name='thick', description='thickness of material', default=0.01)
 
-    circle_rad = FloatProperty(name='radius', description='radius of circle',
-                           default=0.01)
+    circle_rad: FloatProperty(
+        name='radius', description='radius of circle', default=0.01)
 
-    tube_radius = FloatProperty(name='tube_radius', description='radius of tube',
-                           default=0.05)
+    tube_radius: FloatProperty(
+        name='tube_radius', description='radius of tube', default=0.05)
 
-    threshold = FloatProperty(name='threshold', description='threshold for intersect edge',
-                           default=16)
+    threshold: FloatProperty(
+        name='threshold', description='threshold for intersect edge', default=16)
 
-    circl_place = EnumProperty(name='place Bind', items=[('Up','Up','Up'),('Midl','Midl','Midl'),('Down','Down','Down')],
-                           description='circle placement', default='Up', update=updateNode)
+    circl_place: EnumProperty(
+        name='place Bind', items=[('Up','Up','Up'),('Midl','Midl','Midl'),('Down','Down','Down')],
+        description='circle placement', default='Up', update=updateNode)
 
-    out_up_down = EnumProperty(name='out_up_down', items=[('Up','Up','Up'),('Down','Down','Down')],
-                           description='out up or down sect', default='Up', update=updateNode)
+    out_up_down: EnumProperty(
+        name='out_up_down', items=[('Up','Up','Up'),('Down','Down','Down')],
+        description='out up or down sect', default='Up', update=updateNode)
 
-    rounded = BoolProperty(name='rounded', description='making rounded edges',
-                           default = False, update=updateNode)
-    rounded_outside = BoolProperty(name='roundout', description='making rounded edges outside',
-                           default = False, update=updateNode)
+    rounded: BoolProperty(
+        name='rounded', description='making rounded edges',
+        default=False, update=updateNode)
 
-    bindCircle = BoolProperty(name='Bind2', description='circle for leyer to bind with contras',
-                           default=False, update=ext_draw_checking)
+    rounded_outside: BoolProperty(
+        name='roundout', description='making rounded edges outside',
+        default=False, update=updateNode)
 
-    do_contra = BoolProperty(name='Contra', description='making contraversion for some coplanar segment',
-                            default = False, update=ext_draw_checking)
+    bindCircle: BoolProperty(
+        name='Bind2', description='circle for leyer to bind with contras',
+        default=False, update=ext_draw_checking)
 
-    do_tube_sect = BoolProperty(name='Tube', description='making tube section',
-                            default = False, update=ext_draw_checking)
+    do_contra: BoolProperty(
+        name='Contra', description='making contraversion for some coplanar segment',
+        default = False, update=ext_draw_checking)
+
+    do_tube_sect: BoolProperty(
+        name='Tube', description='making tube section',
+        default = False, update=ext_draw_checking)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vecLine', 'vecLine')
-        self.inputs.new('VerticesSocket', 'vecPlane', 'vecPlane')
-        self.inputs.new('StringsSocket', 'edgPlane', 'edgPlane')
+        self.inputs.new('VerticesSocket', 'vecLine')
+        self.inputs.new('VerticesSocket', 'vecPlane')
+        self.inputs.new('StringsSocket', 'edgPlane')
         self.inputs.new('StringsSocket', 'thick').prop_name = 'thick'
 
-        self.outputs.new('VerticesSocket', 'vert', 'vert')
-        self.outputs.new('StringsSocket', 'edge', 'edge')
-        #self.outputs.new('VerticesSocket', 'vertLo', 'vertLo')
-        #self.outputs.new('StringsSocket', 'edgeLo', 'edgeLo')
+        self.outputs.new('VerticesSocket', 'vert')
+        self.outputs.new('StringsSocket', 'edge')
         self.outputs.new('VerticesSocket', 'centers', 'centers')
 
     def draw_main_ui_elements(self, context, layout):
@@ -567,7 +573,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvWafelNode)
-
-
-if __name__ == '__main__':
-    register()

@@ -29,10 +29,10 @@ class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Color by formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    ModeR = StringProperty(name='formulaR', default='r', update=updateNode)
-    ModeG = StringProperty(name='formulaG', default='g', update=updateNode)
-    ModeB = StringProperty(name='formulaB', default='b', update=updateNode)
-    ModeA = StringProperty(name='formulaA', default='a', update=updateNode)
+    ModeR: StringProperty(name='formulaR', default='r', update=updateNode)
+    ModeG: StringProperty(name='formulaG', default='g', update=updateNode)
+    ModeB: StringProperty(name='formulaB', default='b', update=updateNode)
+    ModeA: StringProperty(name='formulaA', default='a', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvColorSocket', 'Colors(rgba)')
@@ -43,7 +43,7 @@ class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
         for element in 'RGBA':
             row = layout.row()
             split = row.split(percentage=0.15)
-            split.label(element)
+            split.label(text=element)
             split.split().prop(self, "Mode"+element, text='')
 
     def process(self):

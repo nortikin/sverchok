@@ -31,9 +31,9 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Limited Dissolve'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    angle = FloatProperty(default=5.0, min=0.0, update=updateNode)
-    use_dissolve_boundaries = BoolProperty(update=updateNode)
-    delimit = IntProperty(update=updateNode)    
+    angle: FloatProperty(default=5.0, min=0.0, update=updateNode)
+    use_dissolve_boundaries: BoolProperty(update=updateNode)
+    delimit: IntProperty(update=updateNode)    
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts')
@@ -76,8 +76,6 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
         for verts, edges, faces in zip(*meshes):
 
             bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
-
-            # // it's a little undocumented..
             ret = bmesh.ops.dissolve_limit(
                 bm, angle_limit=self.angle, 
                 use_dissolve_boundaries=self.use_dissolve_boundaries, 

@@ -259,57 +259,57 @@ class SvPolygonGridNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_sockets()
         updateNode(self, context)
 
-    gridType = EnumProperty(
+    gridType: EnumProperty(
         name="Type",
         description="Polygon Type",
         default="HEXAGON", items=grid_type_items,
         update=update_layout)
 
-    gridLayout = EnumProperty(
+    gridLayout: EnumProperty(
         name="Layout",
         description="Polygon Layout",
         default="RECTANGLE", items=grid_layout_items,
         update=update_layout)
 
-    sizeMode = EnumProperty(
+    sizeMode: EnumProperty(
         name="size_mode",
         description="Define tiles by",
         default="RADIUS", items=size_mode_items,
         update=update_layout)
 
-    level = IntProperty(
+    level: IntProperty(
         name="Level", description="Number of levels in non rectangular layouts",
         default=3, min=1, update=updateNode)
 
-    numx = IntProperty(
+    numx: IntProperty(
         name="NumX", description="Number of points along X",
         default=7, min=1, update=updateNode)
 
-    numy = IntProperty(
+    numy: IntProperty(
         name="NumY", description="Number of points along Y",
         default=6, min=1, update=updateNode)
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name="Size", description="Radius / Side of the grid tile",
         default=1.0, min=0.0, update=updateNode)
 
-    angle = FloatProperty(
+    angle: FloatProperty(
         name="Angle", description="Angle to rotate the grid and tiles",
         default=0.0, update=updateNode)
 
-    scale = FloatProperty(
+    scale: FloatProperty(
         name="Scale", description="Scale of the polygon tile",
         default=1.0, min=0.0, update=updateNode)
 
-    center = BoolProperty(
+    center: BoolProperty(
         name="Center", description="Center grid around origin",
         default=True, update=updateNode)
 
-    separate = BoolProperty(
+    separate: BoolProperty(
         name="Separate", description="Separate tiles",
         default=False, update=updateNode)
 
-    distanceName = "Radius"
+    distanceName = "Radius"   ### WTF
 
     def sv_init(self, context):
         self.width = 170

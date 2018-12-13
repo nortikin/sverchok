@@ -46,17 +46,17 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self.inputs[idx].prop_name = socket.lower() + '_'
         updateNode(self, context)
 
-    use_alpha = BoolProperty(default=False, update=updateNode)
+    use_alpha: BoolProperty(default=False, update=updateNode)
 
-    r_ = fprop_generator(name='R', description='Red (0..1)')
-    g_ = fprop_generator(name='G', description='Green (0..1)')
-    b_ = fprop_generator(name='B', description='Blue (0..1)')
-    a_ = fprop_generator(name='A', description='Alpha (0..1) - opacity', default=1.0)
+    r_: fprop_generator(name='R', description='Red (0..1)')
+    g_: fprop_generator(name='G', description='Green (0..1)')
+    b_: fprop_generator(name='B', description='Blue (0..1)')
+    a_: fprop_generator(name='A', description='Alpha (0..1) - opacity', default=1.0)
 
-    h_ = fprop_generator(name='H', description='Hue (0..1)')
-    s_ = fprop_generator(name='S', description='Saturation (0..1) - different for hsv and hsl')
-    l_ = fprop_generator(name='L', description='Lightness / Brightness (0..1)')
-    v_ = fprop_generator(name='V', description='Value / Brightness (0..1)')
+    h_: fprop_generator(name='H', description='Hue (0..1)')
+    s_: fprop_generator(name='S', description='Saturation (0..1) - different for hsv and hsl')
+    l_: fprop_generator(name='L', description='Lightness / Brightness (0..1)')
+    v_: fprop_generator(name='V', description='Value / Brightness (0..1)')
 
     mode_options = [
         ("RGB", "RGB", "", 0),
@@ -64,7 +64,7 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         ("HSL", "HSL", "", 2),
     ]
 
-    selected_mode = bpy.props.EnumProperty(
+    selected_mode: bpy.props.EnumProperty(
         default="RGB", description="offers color spaces",
         items=mode_options, update=psuedo_update
     )

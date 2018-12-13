@@ -4,7 +4,6 @@
 >
 > - do not use tabs, anywhere
 > - indent the Node's line using 4 spaces
-> - use `>` to add a comment, place it at the start of the line.
 > - if you aren't sure, follow the existing convention
 >
 > Failing to follow these points will break the node category parser.
@@ -25,6 +24,7 @@
     svBasicArcNode
     RandomVectorNodeMK2
     SvScriptNodeLite
+    SvSNFunctor
     ImageNode
 
 ## Generators Extended
@@ -38,16 +38,14 @@
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
-    SvScriptNode
     SvTorusKnotNode
     SvRingNode
     SvEllipseNode
-    SvSmoothLines
 
 ## Analyzers
     SvBBoxNode
     SvVolumeNode
-    AreaNode
+    SvAreaNode
     DistancePPNode
     CentersPolsNodeMK2
     CentersPolsNodeMK3
@@ -73,6 +71,8 @@
     SvMirrorNode
     MatrixApplyNode
     SvSimpleDeformNode
+    ---
+    Svb28MatrixArrayNode
 
 ## Modifier Change
     SvDeleteLooseNode
@@ -80,21 +80,15 @@
     SvSeparateMeshNode
     SvLimitedDissolve
     SvMeshBeautify
+    SvTriangulateNode
     ---
     PolygonBoomNode
     Pols2EdgsNode
     SvMeshJoinNode
     ---
-    SvBevelNode
-    SvSubdivideNode
-    SvSmoothNode
-    SvIntersectEdgesNodeMK2
-    SvOffsetNode
     SvFillsHoleNode
-    SvTriangulateNode
-    ---
-    SvFlipNormalsNode
     SvRecalcNormalsNode
+    SvFlipNormalsNode
     SvRandomizeVerticesNode
     ---
     SvIterateNode
@@ -109,14 +103,12 @@
 
 ## Modifier Make
     LineConnectNodeMK2
-    SvLatheNode
+    ---
     SvConvexHullNode
     SvConvexHullNodeMK2
+    SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
-    SvWafelNode
-    CrossSectionNode
-    SvBisectNode
     ---
     SvAdaptiveEdgeNode
     AdaptivePolsNode
@@ -159,27 +151,36 @@
     ListSortNodeMK2
     ListFlipNode
 
+## CAD
+    SvBevelNode
+    SvIntersectEdgesNodeMK2
+    SvOffsetNode
+    SvLatheNode
+    SvSmoothNode
+    SvSmoothLines
+    ---
+    CrossSectionNode
+    SvBisectNode
+    SvWafelNode
+
 ## Number
     SvNumberNode
-    FloatNode
-    IntegerNode
-    Float2IntNode
-    ScalarMathNode
     SvScalarMathNodeMK2
-    Formula2Node
-    SvExecNodeMod
-    ---
     GenListRangeIntNode
     SvGenFloatRange
-    SvMapRangeNode
     SvListInputNode
-    SvGenFibonacci
-    SvGenExponential
-    ---
     SvRndNumGen
     RandomNode
+    Float2IntNode
+    ---
+    SvExecNodeMod
+    SvMapRangeNode
     SvEasingNode
     SvMixNumbersNode
+    Formula2Node
+    ---
+    SvGenFibonacci
+    SvGenExponential
 
 ## Vector
     GenVectorsNode
@@ -224,12 +225,20 @@
     SvNeuroElman1LNode
 
 ## Viz
-    ViewerNode2
-    SvBmeshViewerNodeMK2
-    IndexViewerNode
-    SvMetaballOutNode
-    SvTextureViewerNode
     Sv3DviewPropsNode
+    SvVDBasicLines
+    SvVDExperimental
+    SvMatrixViewer28
+    ---
+    SvIDXViewer28
+    ---
+    SvBmeshViewerNodeV28
+    SvCurveViewerNodeV28
+    SvPolylineViewerNodeV28
+    SvTypeViewerNodeV28
+    SvSkinViewerNodeV28
+    ---
+    SvTextureViewerNode
 
 ## Text
     ViewerNodeTextMK3
@@ -237,9 +246,8 @@
     SvTextOutNodeMK2
     NoteNode
     SvDataShapeNode
-    GTextNode
-    SvDebugPrintNode
     SvStethoscopeNodeMK2
+    SvDebugPrintNode
 
 ## BPY Data
     SvGetPropNode
@@ -262,7 +270,6 @@
     SvObjEdit
     SvFrameInfoNodeMK2
     SvLampOutNode
-    SvEmptyOutNode
     SvInstancerNode
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
@@ -293,7 +300,6 @@
     SvBVHnearNewNode
     SvUnsubdivideNode
     SvLimitedDissolveMK2
-    SvMetaballOutLiteNode
     SvArmaturePropsNode
     SvLatticePropsNode
     ---
@@ -306,8 +312,6 @@
     SvMatrixMathNode
     ---
     SvSculptMaskNode
-    SvGreasePencilStrokes
-    SvTextureViewerNodeLite
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
@@ -315,13 +319,6 @@
     SvExportGcodeNode
 
 ## Alpha Nodes
-    SvCurveViewerNode
-    SvCurveViewerNodeAlt
-    SvPolylineViewerNodeMK1
-    SvTypeViewerNode
-    SvSkinViewerNodeMK1b
-    SvMatrixViewer
-    ---
     SvBManalyzinNode
     SvBMObjinputNode
     SvBMoutputNode

@@ -27,7 +27,7 @@ sv_path = os.path.dirname(sv_get_local_path()[0])
 
 
 def get_template_path():
-    return os.path.join(sv_path, "node_scripts", "templates")
+    return os.path.join(sv_path, "node_scripts", "SNLite_templates")
 
 
 def get_templates():
@@ -36,14 +36,12 @@ def get_templates():
 
 
 class SvScriptLoader(bpy.types.Operator):
-
     """ Load Scripts into TextEditor """
     bl_idname = "node.script_template"
     bl_label = "Sverchok script template"
     bl_options = {'REGISTER', 'UNDO'}
 
-    # from object in
-    script_path = StringProperty(name='script path')
+    script_path: StringProperty(name='script path')
 
     def execute(self, context):
         path = get_template_path()
@@ -80,6 +78,3 @@ def unregister():
     bpy.utils.unregister_class(SvScriptLoader)
     bpy.utils.unregister_class(SvTextSubMenu)
     bpy.types.TEXT_MT_templates.remove(menu_draw)
-
-if __name__ == "__main__":
-    register()

@@ -7,15 +7,7 @@ from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
 
-from sverchok.ui import (
-    viewer_draw,
-    viewer_draw_mk2,
-    index_viewer_draw,
-    nodeview_bgl_viewer_draw,
-    nodeview_bgl_viewer_draw_mk2,
-    bgl_callback_3dview,
-    color_def
-)
+from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 
 
 _state = {'frame': None}
@@ -73,6 +65,7 @@ def sv_main_handler(scene):
     for ng in sverchok_trees():
         # print("Scene handler looking at tree {}".format(ng.name))
         if ng.has_changed:
+            print('depsgraph_update_pre called - ng.has_changed -> ')
             # print('sv_main_handler')
             # print("Edit detected in {}".format(ng.name))
             ng.process()
@@ -83,11 +76,7 @@ def sv_clean(scene):
     """
     Cleanup callbacks, clean dicts.
     """
-    viewer_draw.callback_disable_all()
-    viewer_draw_mk2.callback_disable_all()
-    index_viewer_draw.callback_disable_all()
-    nodeview_bgl_viewer_draw.callback_disable_all()
-    nodeview_bgl_viewer_draw_mk2.callback_disable_all()
+    bgl_callback_nodeview.callback_disable_all()
     bgl_callback_3dview.callback_disable_all()
 
     data_structure.sv_Vars = {}
@@ -127,28 +116,7 @@ def sv_post_load(scene):
         pref = addon.preferences
         if pref.apply_theme_on_open:
             color_def.apply_theme()
-    '''
-    unsafe_nodes = {
-        'SvScriptNode',
-        'FormulaNode',
-        'Formula2Node',
-        'EvalKnievalNode',
-    }
 
-    unsafe = False
-    for tree in sv_trees:
-        if any((n.bl_idname in unsafe_nodes for n in tree.nodes)):
-            unsafe = True
-            break
-    # do nothing with this for now
-    #if unsafe:
-    #    print("unsafe nodes found")
-    #else:
-    #    print("safe")
-
-    #print("post load .update()")
-    # do an update
-    '''
     for ng in sv_trees:
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
             ng.update()
@@ -158,14 +126,14 @@ def set_frame_change(mode):
     post = bpy.app.handlers.frame_change_post
     pre = bpy.app.handlers.frame_change_pre
 
-    scene = bpy.app.handlers.scene_update_post
+    # scene = bpy.app.handlers.scene_update_post
     # remove all
     if sv_update_handler in post:
         post.remove(sv_update_handler)
     if sv_update_handler in pre:
         pre.remove(sv_update_handler)
-    if sv_scene_handler in scene:
-        scene.remove(sv_scene_handler)
+    #if sv_scene_handler in scene:
+    #    scene.remove(sv_scene_handler)
 
     # apply the right one
     if mode == "POST":
@@ -177,7 +145,8 @@ def set_frame_change(mode):
 def register():
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
-    bpy.app.handlers.scene_update_pre.append(sv_main_handler)
+    bpy.app.handlers.depsgraph_update_pre.append(sv_main_handler)
+
     data_structure.setup_init()
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -190,5 +159,5 @@ def register():
 def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
-    bpy.app.handlers.scene_update_pre.remove(sv_main_handler)
+    bpy.app.handlers.depsgraph_update_pre.remove(sv_main_handler)
     set_frame_change(None)

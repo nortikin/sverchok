@@ -29,28 +29,20 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Repeater'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level',
-                        default=1, min=0,
-                        update=updateNode)
-    number = IntProperty(name='number',
-                         default=1, min=1,
-                         update=updateNode)
-    unwrap = BoolProperty(name='unwrap',
-                          default=False,
-                          update=updateNode)
-    typ = StringProperty(name='typ',
-                         default='')
-    newsock = BoolProperty(name='newsock',
-                           default=False)
+    level: IntProperty(name='level', default=1, min=0, update=updateNode)
+    number: IntProperty(name='number', default=1, min=1, update=updateNode)
+    unwrap: BoolProperty(name='unwrap', default=False, update=updateNode)
+    typ: StringProperty(name='typ', default='')
+    newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
         layout.prop(self, "unwrap", text="unwrap")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data", "Data")
-        self.inputs.new('StringsSocket', "Number", "Number").prop_name = 'number'
-        self.outputs.new('StringsSocket', "Data", "Data")
+        self.inputs.new('StringsSocket', "Data")
+        self.inputs.new('StringsSocket', "Number").prop_name = 'number'
+        self.outputs.new('StringsSocket', "Data")
 
     def update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:

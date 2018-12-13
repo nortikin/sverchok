@@ -30,21 +30,19 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Scale MK2 '''
     bl_idname = 'SvScaleNodeMK2'
     bl_label = 'Scale'
-    bl_icon = 'MAN_SCALE'
+    bl_icon = 'NONE' #'MAN_SCALE'
 
-    factor_ = FloatProperty(name='multiplyer', description='scaling factor',
-                            default=1.0,
-                            options={'ANIMATABLE'}, update=updateNode)
+    factor_: FloatProperty(
+        name='multiplyer', description='scaling factor', default=1.0, update=updateNode)
 
-    separate = BoolProperty(name='separate', description='Separate UV coords',
-                            default=False,
-                            update=updateNode)
+    separate: BoolProperty(
+        name='separate', description='Separate UV coords', default=False, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "vertices", "vertices")
-        self.inputs.new('VerticesSocket', "centers", "centers")
-        self.inputs.new('StringsSocket', "multiplier", "multiplier").prop_name = "factor_"
-        self.outputs.new('VerticesSocket', "vertices", "vertices")
+        self.inputs.new('VerticesSocket', "vertices")
+        self.inputs.new('VerticesSocket', "centers")
+        self.inputs.new('StringsSocket', "multiplier").prop_name = "factor_"
+        self.outputs.new('VerticesSocket', "vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'separate')
@@ -62,7 +60,7 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def scaling(self, v, c, m):
         # print(c,v,m)
-        return [(Vector(c) + m * (Vector(v) - Vector(c)))[:]]
+        return [(Vector(c) + m @ (Vector(v) - Vector(c)))[:]]
 
 
 def register():
@@ -71,6 +69,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvScaleNodeMK2)
-
-if __name__ == '__main__':
-    register()

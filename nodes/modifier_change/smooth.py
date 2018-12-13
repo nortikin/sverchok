@@ -35,60 +35,51 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['BorderFactor'].hide_safe = not self.laplacian
         updateNode(self, context)
 
-    laplacian = BoolProperty(name = "Laplacian Smooth",
-            description = "Use Laplacian smoothing",
-            default = False,
-            update=update_mode)
+    laplacian: BoolProperty(
+        name="Laplacian Smooth", description="Use Laplacian smoothing",
+        default=False, update=update_mode)
 
-    iterations = IntProperty(name = "Iterations",
-            min=1, max=1000, default=1,
-            update=updateNode)
+    iterations: IntProperty(
+        name="Iterations", min=1, max=1000, default=1, update=updateNode)
 
-    factor = FloatProperty(name = "Factor",
-            description = "Smoothing factor",
-            min=0.0, default=0.5,
-            update=updateNode)
+    factor: FloatProperty(
+        name="Factor", description="Smoothing factor", min=0.0, default=0.5, update=updateNode)
 
-    border_factor = FloatProperty(name = "Border factor",
-            description = "Smoothing factor in border",
-            min=0.0, default=0.5,
-            update=updateNode)
+    border_factor: FloatProperty(
+        name="Border factor", description="Smoothing factor in border",
+        min=0.0, default=0.5, update=updateNode)
 
-    mirror_clip_x = BoolProperty(name = "Clip X",
-            description = "set vertices close to the X axis before the operation to 0",
-            default = False,
-            update=updateNode)
-    mirror_clip_y = BoolProperty(name = "Clip Y",
-            description = "set vertices close to the Y axis before the operation to 0",
-            default = False,
-            update=updateNode)
-    mirror_clip_z = BoolProperty(name = "Clip Z",
-            description = "set vertices close to the Z axis before the operation to 0",
-            default = False,
-            update=updateNode)
+    mirror_clip_x: BoolProperty(
+        name="Clip X", description="set vertices close to the X axis before the operation to 0",
+        default=False, update=updateNode)
 
-    clip_dist = FloatProperty(name = "Clip threshold",
-            description = "Clipping threshold",
-            min=0.0, default=0.0001,
-            update=updateNode)
+    mirror_clip_y: BoolProperty(
+        name="Clip Y", description="set vertices close to the Y axis before the operation to 0",
+        default=False, update=updateNode)
 
-    use_x = BoolProperty(name = "X",
-            description = "smooth vertices along X axis",
-            default = True,
-            update=updateNode)
-    use_y = BoolProperty(name = "Y",
-            description = "smooth vertices along Y axis",
-            default = True,
-            update=updateNode)
-    use_z = BoolProperty(name = "Z",
-            description = "smooth vertices along Z axis",
-            default = True,
-            update=updateNode)
+    mirror_clip_z: BoolProperty(
+        name="Clip Z", description="set vertices close to the Z axis before the operation to 0",
+        default=False, update=updateNode)
 
-    preserve_volume = BoolProperty(name="Preserve volume",
-            description = "Apply volume preservation after smooth",
-            default = True,
-            update=updateNode)
+    clip_dist: FloatProperty(
+        name="Clip threshold", description="Clipping threshold",
+        min=0.0, default=0.0001, update=updateNode)
+
+    use_x: BoolProperty(
+        name="X", description="smooth vertices along X axis",
+        default=True, update=updateNode)
+
+    use_y: BoolProperty(
+        name="Y", description="smooth vertices along Y axis",
+        default=True, update=updateNode)
+
+    use_z: BoolProperty(
+        name="Z", description="smooth vertices along Z axis",
+        default=True, update=updateNode)
+
+    preserve_volume: BoolProperty(
+        name="Preserve volume", description="Apply volume preservation after smooth",
+        default=True, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -197,4 +188,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSmoothNode)
-

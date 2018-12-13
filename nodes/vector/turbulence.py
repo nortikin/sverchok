@@ -67,33 +67,28 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         ('SCALAR', 'Scalar', 'Scalar output', '', 1),
         ('VECTOR', 'Vector', 'Vector output', '', 2)]
 
-    out_mode = EnumProperty(
+    out_mode: EnumProperty(
         items=out_modes,
         default='VECTOR',
         description='Output type',
         update=changeMode)
 
-    noise_type = EnumProperty(
+    noise_type: EnumProperty(
         items=avail_noise,
         default='STDPERLIN',
         description="Noise type",
         update=updateNode)
 
-    octaves = IntProperty(default=3, min=0, max=6,
-                          description='Octaves',
-                          name='Octaves', update=updateNode)
-    hard = BoolProperty(default=True,
-                          description="Hard(sharp) or soft (smooth)transitions",
-                          name="Hard", update=updateNode)
-    amp = FloatProperty(default=0.50,
-                          description="The amplitude scaling factor",
-                          name="Amplitude", update=updateNode)
-    freq = FloatProperty(default=2.00,
-                          description="The frequency scaling factor",
-                          name="Frequency", update=updateNode)
-    rseed = IntProperty(default=0,
-                          description="Random seed",
-                          name="Random seed", update=updateNode)
+    octaves: IntProperty(
+        default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
+    hard: BoolProperty(
+        default=True, description="Hard(sharp) or soft (smooth)transitions", name="Hard", update=updateNode)
+    amp: FloatProperty(
+        default=0.50, description="The amplitude scaling factor", name="Amplitude", update=updateNode)
+    freq: FloatProperty(
+        default=2.00, description="The frequency scaling factor", name="Frequency", update=updateNode)
+    rseed: IntProperty(
+        default=0, description="Random seed", name="Random seed", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')
@@ -109,33 +104,33 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'noise_type', text="Type")
 
     def process(self):
-            inputs, outputs = self.inputs, self.outputs
+        inputs, outputs = self.inputs, self.outputs
 
-            if not outputs[0].is_linked:
-                return
+        if not outputs[0].is_linked:
+            return
 
-            _noise_type = noise_dict[self.noise_type]
-            tfunc = turbulence_f[self.out_mode]
+        _noise_type = noise_dict[self.noise_type]
+        tfunc = turbulence_f[self.out_mode]
 
-            verts = inputs['Vertices'].sv_get(deepcopy=False)
-            maxlen = len(verts)
-            arguments = [verts]
+        verts = inputs['Vertices'].sv_get(deepcopy=False)
+        maxlen = len(verts)
+        arguments = [verts]
 
-            # gather socket data into arguments
-            for socket in inputs[1:]:
-                data = socket.sv_get()[0]
-                fullList(data, maxlen)
-                arguments.append(data)
+        # gather socket data into arguments
+        for socket in inputs[1:]:
+            data = socket.sv_get()[0]
+            fullList(data, maxlen)
+            arguments.append(data)
 
-            # iterate over vert lists and pass arguments to the turbulence function
-            out = []
-            for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
-                final_vert_list = seed_adjusted(vert_list, seed)
-                out.append([tfunc(v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
+        # iterate over vert lists and pass arguments to the turbulence function
+        out = []
+        for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
+            final_vert_list = seed_adjusted(vert_list, seed)
+            out.append([tfunc(v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
 
-            if 'Noise V' in outputs:
-                out = Vector_degenerate(out)
-            outputs[0].sv_set(out)
+        if 'Noise V' in outputs:
+            out = Vector_degenerate(out)
+        outputs[0].sv_set(out)
 
 
 def register():

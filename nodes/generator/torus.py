@@ -152,7 +152,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
             updateNode(self, context)
 
     # TORUS DIMENSIONS options
-    mode = EnumProperty(
+    mode: EnumProperty(
         name="Torus Dimensions",
         items=(("MAJOR_MINOR", "Major/Minor",
                 "Use the Major/Minor radii for torus dimensions."),
@@ -160,7 +160,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
                 "Use the Exterior/Interior radii for torus dimensions.")),
         update=update_mode)
 
-    torus_R = FloatProperty(
+    torus_R: FloatProperty(
         name="Major Radius",
         min=0.00, max=100.0,
         default=1.0,
@@ -169,7 +169,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         description="Radius from the torus origin to the center of the cross section",
         update=major_minor_radii_changed)
 
-    torus_r = FloatProperty(
+    torus_r: FloatProperty(
         name="Minor Radius",
         min=0.00, max=100.0,
         default=.25,
@@ -178,7 +178,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         description="Radius of the torus' cross section",
         update=major_minor_radii_changed)
 
-    torus_iR = FloatProperty(
+    torus_iR: FloatProperty(
         name="Interior Radius",
         min=0.00, max=100.0,
         default=.75,
@@ -187,7 +187,7 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         description="Interior radius of the torus (closest to the torus center)",
         update=external_internal_radii_changed)
 
-    torus_eR = FloatProperty(
+    torus_eR: FloatProperty(
         name="Exterior Radius",
         min=0.00, max=100.0,
         default=1.25,
@@ -197,14 +197,14 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         update=external_internal_radii_changed)
 
     # TORUS RESOLUTION options
-    torus_n1 = IntProperty(
+    torus_n1: IntProperty(
         name="Revolution Sections",
         default=32,
         min=3, soft_min=3,
         description="Number of sections around the torus center",
         update=updateNode)
 
-    torus_n2 = IntProperty(
+    torus_n2: IntProperty(
         name="Spin Sections",
         default=16,
         min=3, soft_min=3,
@@ -212,26 +212,26 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     # TORUS Phase Options
-    torus_rP = FloatProperty(
+    torus_rP: FloatProperty(
         name="Revolution Phase",
         default=0.0,
         description="Phase the revolution sections by this radian amount",
         update=updateNode)
 
-    torus_sP = FloatProperty(
+    torus_sP: FloatProperty(
         name="Spin Phase",
         default=0.0,
         description="Phase the spin sections by this radian amount",
         update=updateNode)
 
-    torus_sT = IntProperty(
+    torus_sT: IntProperty(
         name="Spin Twist",
         default=0,
         description="Twist the spin sections by this number of increments",
         update=updateNode)
 
     # OTHER options
-    Separate = BoolProperty(
+    Separate: BoolProperty(
         name='Separate',
         description='Separate UV coords',
         default=False,
@@ -319,6 +319,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvTorusNode)
-
-if __name__ == '__main__':
-    register()

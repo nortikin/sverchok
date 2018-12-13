@@ -59,13 +59,13 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
         ('SCALAR', 'Scalar', 'Scalar output', '', 1),
         ('VECTOR', 'Vector', 'Vector output', '', 2)]
 
-    out_mode = EnumProperty(
+    out_mode: EnumProperty(
         items=out_modes,
         default='VECTOR',
         description='Output type',
         update=changeMode)
 
-    noise_type = EnumProperty(
+    noise_type: EnumProperty(
         items=avail_noise,
         description="Noise type",
         update=updateNode)
@@ -74,8 +74,8 @@ class SvNoiseNode(bpy.types.Node, SverchCustomTreeNode):
     noise_f = {'SCALAR': noise.noise, 'VECTOR': noise.noise_vector}
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('VerticesSocket', 'Noise V', 'Noise V')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('VerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'out_mode', expand=True)

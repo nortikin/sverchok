@@ -47,14 +47,14 @@ bl_info = {
         "AgustinJB, Zeffii, Kosvor, "
         "Portnov, Elfnor, kalwalt, DolphinDream"
     ),
-    "version": (0, 5, 9, 6),
-    "blender": (2, 7, 8),
-    "location": "Nodes > CustomNodesTree > Add user nodes",
+    "version": (0, 6, 0, 0),
+    "blender": (2, 80, 0),
+    "location": "Node Editor",
+    "category": "Node",
     "description": "Parametric node-based geometry programming",
     "warning": "",
     "wiki_url": "http://nikitron.cc.ua/sverch/html/main.html",
-    "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679",
-    "category": "Node"
+    "tracker_url": "http://www.blenderartists.org/forum/showthread.php?272679"
 }
 
 

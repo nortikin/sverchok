@@ -27,34 +27,29 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Map a range from one to another'''
     bl_idname = 'SvMapRangeNode'
     bl_label = 'Map Range'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_OFFSET'
 
-    old_min = FloatProperty(
+    old_min: FloatProperty(
         name='Old Min', description='Old Min',
-        default=0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0, update=updateNode)
 
-    old_max = FloatProperty(
+    old_max: FloatProperty(
         name='Old Max', description='Old Max',
-        default=1,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1, update=updateNode)
 
-    new_min = FloatProperty(
+    new_min: FloatProperty(
         name='New Min', description='New Min',
-        default=0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0, update=updateNode)
 
-    new_max = FloatProperty(
+    new_max: FloatProperty(
         name='New Max', description='New Max',
-        default=10,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=10, update=updateNode)
 
-    value = FloatProperty(
+    value: FloatProperty(
         name='Value', description='New Max',
-        default=.5,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=.5, update=updateNode)
 
-    clamp = BoolProperty(default=True, name='Clamp', update=updateNode)
+    clamp: BoolProperty(default=True, name='Clamp', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Value").prop_name = 'value'

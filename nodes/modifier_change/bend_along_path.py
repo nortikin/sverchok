@@ -42,27 +42,22 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
             ("diff", "Rotation difference", "Use rotational difference calculation", 3)
         ]
 
-    algorithm = EnumProperty(name = "Algorithm",
-        description = "Rotation calculation algorithm",
-        default = "householder",
-        items = algorithms, update=updateNode)
+    algorithm: EnumProperty(
+        name="Algorithm", description="Rotation calculation algorithm",
+        default="householder", items=algorithms, update=updateNode)
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
 
-    mode = EnumProperty(name='Mode',
-        default="SPL", items=modes,
-        update=updateNode)
+    mode: EnumProperty(name='Mode', default="SPL", items=modes, update=updateNode)
 
     metrics =    [('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
                   ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
                   ('POINTS', 'Points', "Points based", 2),
                   ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 
-    metric = EnumProperty(name='Metric',
-        description = "Knot mode",
-        default="DISTANCE", items=metrics,
-        update=updateNode)
+    metric: EnumProperty(
+        name='Metric', description = "Knot mode", default="DISTANCE", items=metrics, update=updateNode)
 
     axes = [
             ("X", "X", "X axis", 1),
@@ -70,10 +65,9 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
             ("Z", "Z", "Z axis", 3)
         ]
 
-    orient_axis_ = EnumProperty(name = "Orientation axis",
-        description = "Which axis of object to put along path",
-        default = "Z",
-        items = axes, update=updateNode)
+    orient_axis_: EnumProperty(
+        name="Orientation axis", description="Which axis of object to put along path",
+        default="Z", items=axes, update=updateNode)
 
     def get_axis_idx(self, letter):
         return 'XYZ'.index(letter)
@@ -83,30 +77,25 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
 
     orient_axis = property(get_orient_axis_idx)
 
-    up_axis = EnumProperty(name = "Up axis",
-        description = "Which axis of object should look up",
-        default = 'X',
-        items = axes, update=updateNode)
+    up_axis: EnumProperty(
+        name="Up axis", description="Which axis of object should look up",
+        default='X', items=axes, update=updateNode)
 
-    scale_all = BoolProperty(name="Scale all axes",
-        description="Scale objects along all axes or only along orientation axis",
-        default=True,
-        update=updateNode)
+    scale_all: BoolProperty(
+        name="Scale all axes", description="Scale objects along all axes or only along orientation axis",
+        default=True, update=updateNode)
 
-    flip = BoolProperty(name = "Flip spline",
-        description = "Invert spline direction - not from lesser coordinate values to greater, but vice versa",
-        default = False,
-        update=updateNode)
+    flip: BoolProperty(
+        name="Flip spline", description="Invert spline direction - not from lesser coordinate values to greater, but vice versa",
+        default=False, update=updateNode)
     
-    is_cyclic = BoolProperty(name = "Cyclic",
-        description = "Whether the spline is cyclic",
-        default = False,
-        update=updateNode)
+    is_cyclic: BoolProperty(
+        name="Cyclic", description="Whether the spline is cyclic",
+        default=False, update=updateNode)
 
-    tangent_precision = FloatProperty(name='Tangent precision',
-        description = "Step for tangents calculation. Lesser values correspond to better precision.",
-        default = 0.001, min=0.000001, max=0.1, precision=8,
-        update=updateNode)
+    tangent_precision: FloatProperty(
+        name='Tangent precision', description="Step for tangents calculation. Lesser values correspond to better precision.",
+        default=0.001, min=0.000001, max=0.1, precision=8, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -114,7 +103,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
 
     def draw_buttons(self, context, layout):
-        layout.label("Orientation:")
+        layout.label(text="Orientation:")
         layout.prop(self, "orient_axis_", expand=True)
         layout.prop(self, "mode")
 
@@ -151,7 +140,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
             ax1, ax2, ax3 = z, x, y
 
         if self.scale_all:
-            scale_matrix = Matrix.Scale(1/scale, 4, ax1) * Matrix.Scale(scale, 4, ax2) * Matrix.Scale(scale, 4, ax3)
+            scale_matrix = Matrix.Scale(1/scale, 4, ax1) @ Matrix.Scale(scale, 4, ax2) @ Matrix.Scale(scale, 4, ax3)
         else:
             scale_matrix = Matrix.Identity(4)
 
@@ -164,7 +153,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             raise Exception("Unsupported algorithm")
 
-        return rot * scale_matrix
+        return rot @ scale_matrix
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):
@@ -211,7 +200,7 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
                 src_vertex_projection = Vector(src_vertex)
                 src_vertex_projection[self.orient_axis] = 0
                 # Scale and rotate the projection, then move it towards spline vertex
-                new_vertex = matrix * Vector(src_vertex_projection) + spline_vertex
+                new_vertex = matrix @ Vector(src_vertex_projection) + spline_vertex
                 new_vertices.append(new_vertex)
 
             result_vertices.append(new_vertices)
@@ -223,4 +212,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBendAlongPathNode)
-

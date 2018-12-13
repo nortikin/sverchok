@@ -32,8 +32,9 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
 
     F = ['X', 'Y', 'Z', '-X', '-Y', '-Z']
     S = ['X', 'Y', 'Z']
-    track = EnumProperty(name="track", default=F[4], items=e(F), update=updateNode)
-    up = EnumProperty(name="up", default=S[2], items=e(S), update=updateNode)
+    
+    track: EnumProperty(name="track", default=F[4], items=e(F), update=updateNode)
+    up: EnumProperty(name="up", default=S[2], items=e(S), update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Location").use_prop = True
@@ -56,7 +57,7 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
         T, U = self.track, self.up
         for V, N in zip(loc, nor):
             n = N.to_track_quat(T, U)
-            m = Matrix.Translation(V) * n.to_matrix().to_4x4()
+            m = Matrix.Translation(V) @ n.to_matrix().to_4x4()
             out.append(m)
         Ma.sv_set(out)
 

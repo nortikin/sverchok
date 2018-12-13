@@ -39,7 +39,7 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
                     n_panel = area.spaces[0]
 
                     row = layout.row(align=True)
-                    row.label('3dview {idx}:'.format(idx=idx))
+                    row.label(text='3dview {idx}:'.format(idx=idx))
 
                     col = row.column()
                     col.prop(n_panel, 'show_only_render', text='render')

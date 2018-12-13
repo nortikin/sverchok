@@ -33,12 +33,12 @@ class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Split Edges'
     # sv_icon = 'SV_EDGE_SPLIT'
 
-    factor = FloatProperty(
+    factor: FloatProperty(
         name="Factor", description="Split Factor",
         default=0.5, min=0.0, soft_min=0.0, max=1.0,
         update=updateNode)
 
-    mirror = BoolProperty(
+    mirror: BoolProperty(
         name="Mirror", description="Mirror split",
         default=False,
         update=updateNode)
@@ -119,6 +119,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvSplitEdgesNode)
-
-if __name__ == '__main__':
-    register()

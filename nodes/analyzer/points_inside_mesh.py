@@ -104,13 +104,13 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["algo 1", "algo 2"])]
     
-    selected_algo = bpy.props.EnumProperty(
+    selected_algo: bpy.props.EnumProperty(
         items=mode_options,
         description="offers different approaches to finding internal points",
         default="algo 1", update=updateNode
     )
-    epsilon_bvh = bpy.props.FloatProperty(update=updateNode, default=0.0, min=0.0, max=1.0, description="fudge value")
-    num_samples = bpy.props.IntProperty(min=1, max=6, default=3)
+    epsilon_bvh: bpy.props.FloatProperty(update=updateNode, default=0.0, min=0.0, max=1.0, description="fudge value")
+    num_samples: bpy.props.IntProperty(min=1, max=6, default=3)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'verts')

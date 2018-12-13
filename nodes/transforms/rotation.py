@@ -33,7 +33,7 @@ def axis_rotation(vertex, center, axis, angle):
     for ve,ce,ax,an in zip(vertex, center, axis, angle):
         mat = Matrix.Rotation(radians(an), 4,  ax)
         c = Vector(ce)
-        rotated.append((c + mat * ( Vector(ve) - c))[:])
+        rotated.append((c + mat @ ( Vector(ve) - c))[:])
     return rotated
 
 def euler_rotation(vertex, x, y, z, order):
@@ -41,7 +41,7 @@ def euler_rotation(vertex, x, y, z, order):
     mat_eul = Euler((radians(x), radians(y), radians(z)), order).to_matrix().to_4x4()
     for i in vertex:
         v = Vector(i)
-        rotated.append((mat_eul*v)[:])
+        rotated.append((mat_eul @ v)[:])
     return rotated
 
 def quat_rotation(vertex, x, y, z, w):
@@ -49,32 +49,27 @@ def quat_rotation(vertex, x, y, z, w):
     quat = Quaternion((w, x, y, z)).normalized()
     for i in vertex:
         v = Vector(i)
-        rotated.append((quat*v)[:])
+        rotated.append((quat @ v)[:])
     return rotated
 
 class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Axis Rotation '''
     bl_idname = 'SvRotationNode'
     bl_label = 'Rotation'
-    bl_icon = 'MAN_ROT'
+    bl_icon = 'NONE' #'MAN_ROT'
 
-    angle_ = FloatProperty(name='Angle', description='rotation angle',
-                           default=0.0,
-                           options={'ANIMATABLE'}, update=updateNode)
-    x_ = FloatProperty(name='X', description='X angle',
-                           default=0.0,
-                           options={'ANIMATABLE'}, update=updateNode)
-    y_ = FloatProperty(name='Y', description='Y angle',
-                           default=0.0,
-                           options={'ANIMATABLE'}, update=updateNode)
-    z_ = FloatProperty(name='Z', description='Z angle',
-                           default=0.0,
-                           options={'ANIMATABLE'}, update=updateNode)
-    w_ = FloatProperty(name='W', description='W',
-                           default=1.0,
-                           options={'ANIMATABLE'}, update=updateNode)
+    angle_: FloatProperty(
+        name='Angle', description='rotation angle', default=0.0, update=updateNode)
+    x_: FloatProperty(
+        name='X', description='X angle', default=0.0, update=updateNode)
+    y_: FloatProperty(
+        name='Y', description='Y angle', default=0.0, update=updateNode)
+    z_: FloatProperty(
+        name='Z', description='Z angle', default=0.0, update=updateNode)
+    w_: FloatProperty(
+        name='W', description='W', default=1.0, update=updateNode)
 
-    current_mode = StringProperty(default="AXIS")
+    current_mode: StringProperty(default="AXIS")
 
     def mode_change(self, context):
         # just because click doesn't mean we need to change mode
@@ -86,15 +81,15 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
-            self.inputs.new('VerticesSocket', "Center", "Center")
-            self.inputs.new('VerticesSocket', "Axis", "Axis")
-            self.inputs.new('StringsSocket', "Angle", "Angle").prop_name = "angle_"
+            self.inputs.new('VerticesSocket', "Center")
+            self.inputs.new('VerticesSocket', "Axis")
+            self.inputs.new('StringsSocket', "Angle").prop_name = "angle_"
         elif mode == 'EULER' or mode == 'QUAT':
-            self.inputs.new('StringsSocket', "X", "X").prop_name = "x_"
-            self.inputs.new('StringsSocket', "Y", "Y").prop_name = "y_"
-            self.inputs.new('StringsSocket', "Z", "Z").prop_name = "z_"
+            self.inputs.new('StringsSocket', "X").prop_name = "x_"
+            self.inputs.new('StringsSocket', "Y").prop_name = "y_"
+            self.inputs.new('StringsSocket', "Z").prop_name = "z_"
             if mode == 'QUAT':
-                self.inputs.new('StringsSocket', "W", "W").prop_name = "w_"
+                self.inputs.new('StringsSocket', "W").prop_name = "w_"
 
         self.current_mode = mode
         updateNode(self, context)
@@ -105,9 +100,8 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
         ("QUAT", "Quat", "Quaternion Rotation", 3),
     ]
 
-    mode = EnumProperty(name="mode", description="mode",
-                        default='AXIS', items=modes,
-                        update=mode_change)
+    mode: EnumProperty(
+        name="mode", description="mode", default='AXIS', items=modes, update=mode_change)
 
     orders = [
         ('XYZ', "XYZ",        "", 0),
@@ -117,16 +111,15 @@ class SvRotationNode(bpy.types.Node, SverchCustomTreeNode):
         ('ZXY', 'ZXY',        "", 4),
         ('ZYX', 'ZYX',        "", 5),
     ]
-    order = EnumProperty(name="Order", description="Order",
-                         default="XYZ", items=orders,
-                         update=updateNode)
+    order: EnumProperty(
+        name="Order", description="Order", default="XYZ", items=orders, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('VerticesSocket', "Center", "Center")
-        self.inputs.new('VerticesSocket', "Axis", "Axis")
-        self.inputs.new('StringsSocket', "Angle", "Angle").prop_name = "angle_"
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('VerticesSocket', "Center")
+        self.inputs.new('VerticesSocket', "Axis")
+        self.inputs.new('StringsSocket', "Angle").prop_name = "angle_"
+        self.outputs.new('VerticesSocket', "Vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -177,6 +170,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvRotationNode)
-
-if __name__ == '__main__':
-    register()

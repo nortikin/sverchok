@@ -32,9 +32,9 @@ class SvOB3Callback(bpy.types.Operator):
     bl_idname = "node.ob3_callback"
     bl_label = "Object In mk3 callback"
 
-    fn_name = StringProperty(default='')
-    node_name = StringProperty(default='')
-    tree_name = StringProperty(default='')
+    fn_name: StringProperty(default='')
+    node_name: StringProperty(default='')
+    tree_name: StringProperty(default='')
 
     def execute(self, context):
         """
@@ -67,26 +67,26 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
-    groupname = StringProperty(
+    groupname: StringProperty(
         name='groupname', description='group of objects (green outline CTRL+G)',
         default='', update=updateNode)
 
-    modifiers = BoolProperty(
+    modifiers: BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
         default=False, update=updateNode)
 
-    vergroups = BoolProperty(
+    vergroups: BoolProperty(
         name='Vergroups',
         description='Use vertex groups to nesty insertion',
         default=False, update=hide_show_versgroups)
 
-    sort = BoolProperty(
+    sort: BoolProperty(
         name='sort by name',
         description='sorting inserted objects by names',
         default=True, update=updateNode)
 
-    object_names = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
 
     def sv_init(self, context):
@@ -104,11 +104,11 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         """
         self.object_names.clear()
 
-        groups = bpy.data.groups
         if self.groupname and groups[self.groupname].objects:
+            groups = bpy.data.groups
             names = [obj.name for obj in groups[self.groupname].objects]
         else:
-            names = [obj.name for obj in bpy.data.objects if obj.select]
+            names = [obj.name for obj in bpy.data.objects if obj.select_get()]
 
         if self.sort:
             names.sort()
@@ -138,20 +138,20 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             remain = len(self.object_names) - 5
 
             for i, obj_ref in enumerate(self.object_names):
-                layout.label(obj_ref.name)
+                layout.label(text=obj_ref.name)
                 if i > 4 and remain > 0:
                     postfix = ('' if remain == 1 else 's')
                     more_items = '... {0} more item' + postfix
-                    layout.label(more_items.format(remain))
+                    layout.label(text=more_items.format(remain))
                     break
         else:
-            layout.label('--None--')
+            layout.label(text='--None--')
 
     def draw_buttons(self, context, layout):
 
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
+        # row.prop_search(self, 'groupname', bpy.data, 'groups', text='', icon='HAND')
 
         row = col.row()
         op_text = "Get selection"  # fallback
@@ -207,6 +207,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             return
             
         scene = bpy.context.scene
+        depsgraph = bpy.context.depsgraph
         data_objects = bpy.data.objects
         outputs = self.outputs
         
@@ -243,7 +244,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         vers, edgs, pols = pydata_from_bmesh(bm)
                         del bm
                     else:
-                        obj_data = obj.to_mesh(scene, self.modifiers, 'PREVIEW')
+                        obj_data = obj.to_mesh(depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)

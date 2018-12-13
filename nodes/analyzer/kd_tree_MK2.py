@@ -34,11 +34,11 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ('find_range', 'find_range', 'find closest tree vectors in range', '', 1),
     ]
 
-    number = IntProperty(
+    number: IntProperty(
         min=1, default=1, name='Number',
         description="find this amount", update=updateNode)
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         min=0, default=1, name='Radius',
         description="search in this radius", update=updateNode)
 
@@ -47,8 +47,8 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['radius'].hide_safe = self.mode == "find_n"
         updateNode(self, context)
 
-    mode = EnumProperty(
-        items=modes, description="mathutils kdtree metods",
+    mode: EnumProperty(
+        items=modes, description="mathutils kdtree methods",
         default="find_n", update=update_mode)
 
     def draw_buttons(self, context, layout):

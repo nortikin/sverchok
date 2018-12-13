@@ -31,9 +31,9 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vectors", "Vectors")
-        self.inputs.new('MatrixSocket', "Matrixes", "Matrixes")
-        self.outputs.new('VerticesSocket', "Vectors", "Vectors")
+        self.inputs.new('VerticesSocket', "Vectors")
+        self.inputs.new('MatrixSocket', "Matrixes")
+        self.outputs.new('VerticesSocket', "Vectors")
 
     def process(self):
         if self.outputs['Vectors'].is_linked:
@@ -54,7 +54,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
             if k > lengthve:
                 k = lengthve
             for v in vecs[k]:
-                out_.append(m * v)
+                out_.append(m @ v)
             out.append(out_)
         return out
 

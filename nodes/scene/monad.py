@@ -33,7 +33,7 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 class SvSocketAquisition:
 
     socket_map = {'outputs': 'to_socket', 'inputs': 'from_socket'}
-    node_kind = StringProperty()
+    node_kind: StringProperty()
 
     @property
     def get_outputs_info(self):
@@ -155,8 +155,8 @@ class SvMonadGenericNode(Node, SverchCustomTreeNode,  monad_def.SvGroupNodeExp):
     bl_label = 'Group'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    data_storage = StringProperty()
-    cls_bl_idname = StringProperty(update=call_init)
+    data_storage: StringProperty()
+    cls_bl_idname: StringProperty(update=call_init)
 
     @property
     def input_template(self):

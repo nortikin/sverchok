@@ -48,33 +48,18 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
             print('Timeout')
 
 
-    send = StringProperty(name='send',
-                          description='Message to send',
-                          default='message',
-                          update=send_msg)
+    send: StringProperty(
+        name='send', description='Message to send', default='message', update=send_msg)
 
-    receive = StringProperty(name='receive',
-                             description='Received message',
-                             default='',
-                             update=updateNode)
+    receive: StringProperty(
+        name='receive', description='Received message', default='', update=updateNode)
 
-    ip = StringProperty(name='ip',
-                        description='IP address of server',
-                        default='127.0.0.1')
+    ip: StringProperty(name='ip', description='IP address of server', default='127.0.0.1')
+    port: IntProperty(name='port', description='Port number to send message', default=9250)
+    buffer_size: IntProperty(name='buffer_size', description='Size of buffer', default=8192)
 
-    port = IntProperty(name='port',
-                       description='Port number to send message',
-                       default=9250)
-
-    buffer_size = IntProperty(name='buffer_size',
-                              description='Size of buffer',
-                              default=8192)
-
-    timeout = FloatProperty(name='timeout',
-                            description='Timeout (sec)',
-                            default=0.5)
-
-    active = BoolProperty(default=False, name='Active')
+    timeout: FloatProperty(name='timeout', description='Timeout (sec)', default=0.5)
+    active: BoolProperty(default=False, name='Active')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'active', text='Active')
@@ -84,8 +69,8 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'timeout', text='Timeout')
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'send', 'send').prop_name = 'send'
-        self.outputs.new('StringsSocket', 'receive', 'receive')
+        self.inputs.new('StringsSocket', 'send').prop_name = 'send'
+        self.outputs.new('StringsSocket', 'receive')
 
     @profile
     def process(self):
@@ -109,6 +94,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(UdpClientNode)
-
-if __name__ == '__main__':
-    register()

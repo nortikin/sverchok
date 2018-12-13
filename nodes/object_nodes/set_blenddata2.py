@@ -34,7 +34,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Object ID Set MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    formula = StringProperty(name='formula', default='delta_location', update=updateNode)
+    formula: StringProperty(name='formula', default='delta_location', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="")

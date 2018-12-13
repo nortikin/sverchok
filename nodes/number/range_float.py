@@ -41,8 +41,13 @@ def frange(start, stop, step):
 
 def frange_count(start, stop, count):
     ''' Gives count total values in [start,stop] '''
+    # we are casting to int here because the input can be floats.
+
     if count < 2:
         yield start
+    elif start == stop:
+        for i in range(int(count)):
+            yield start
     else:
         count = int(count)
         step = (stop - start) / (count - 1)
@@ -56,38 +61,37 @@ def frange_count(start, stop, count):
 def frange_step(start, step, count):
     ''' Gives count values with step from start'''
     if abs(step) < 1e-5:
-        step = 1
-    for i in range(int(count)):
-        yield start
-        start += step
+        for i in range(int(count)):
+            yield start
+    else:
+        for i in range(int(count)):
+            yield start
+            start += step
 
 
 class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator range list of floats'''
     bl_idname = 'SvGenFloatRange'
     bl_label = 'Range Float'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'IPO_LINEAR'
 
-    start_ = FloatProperty(
+    start_: FloatProperty(
         name='start', description='start',
-        default=0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=0, update=updateNode)
 
-    stop_ = FloatProperty(
+    stop_: FloatProperty(
         name='stop', description='stop',
-        default=10,
-        options={'ANIMATABLE'}, update=updateNode)
-    count_ = IntProperty(
+        default=10, update=updateNode)
+
+    count_: IntProperty(
         name='count', description='num items',
-        default=10,
-        options={'ANIMATABLE'}, min=1, update=updateNode)
+        default=10, min=1, update=updateNode)
 
-    step_ = FloatProperty(
+    step_: FloatProperty(
         name='step', description='step',
-        default=1.0,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1.0, update=updateNode)
 
-    current_mode = StringProperty(default="FRANGE")
+    current_mode: StringProperty(default="FRANGE")
 
     modes = [
         ("FRANGE", "Range", "Series based frange like function", 1),
@@ -115,14 +119,14 @@ class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
         self.current_mode = mode
         updateNode(self, context)
 
-    mode = EnumProperty(items=modes, default='FRANGE', update=mode_change)
+    mode: EnumProperty(items=modes, default='FRANGE', update=mode_change)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Start").prop_name = 'start_'
         self.inputs.new('StringsSocket', "Step").prop_name = 'stop_'
         self.inputs.new('StringsSocket', "Stop").prop_name = 'step_'
 
-        self.outputs.new('StringsSocket', "Range", "Range")
+        self.outputs.new('StringsSocket', "Range")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

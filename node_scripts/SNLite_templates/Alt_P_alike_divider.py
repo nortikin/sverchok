@@ -17,7 +17,7 @@ ofaces = faces
 itera = min(max(itera,1),4)
 multi = min(max(multi,-1.0),1.0)
 
-def iteration(vers,facs,scal):
+def iteration(vers, facs, scal):
     overts = []
     ofaces = []
     for ov, of in zip(vers, facs):
@@ -27,9 +27,9 @@ def iteration(vers,facs,scal):
         fcs = []
         for f in of:
             vrts = [ov[i] for i in f]
-            norm = nm(V(ov[f[0]]),V(ov[f[1]]),V(ov[f[2]]))
+            norm = nm(V(ov[f[0]]), V(ov[f[1]]), V(ov[f[2]]))
             nv  = np.array(vrts)
-            vrt  = (nv.sum(axis=0)/len(f))+np.array(norm*scal)
+            vrt  = (nv.sum(axis=0) / len(f)) + np.array(norm * scal)
             fcs = [[i,k,lv] for i,k in zip(f,f[-1:]+f[:-1])]
             overts_.append(vrt.tolist())
             ofaces_.extend(fcs)

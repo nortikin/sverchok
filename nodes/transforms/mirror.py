@@ -50,7 +50,7 @@ def mirrorAxis(vertex, vert_a, vert_b):
 
         mat = Matrix.Translation(2 * (v - w2 - v))
         mat_rot = Matrix.Rotation(radians(360), 4, c)
-        vert.append(((mat * mat_rot) * v)[:])
+        vert.append(((mat @ mat_rot) @ v)[:])
     return vert
 
 
@@ -63,7 +63,7 @@ def mirrorPlane(vertex, matrix):
     for i in vertex:
         v = Vector(i)
         r = v.reflect(normal)
-        vert.append((tras * r)[:])
+        vert.append((tras @ r)[:])
     return vert
 
 
@@ -112,15 +112,15 @@ class SvMirrorNode(bpy.types.Node, SverchCustomTreeNode):
         ("PLANE", "Plane", "Mirror around plane", 3),
     ]
 
-    mode = EnumProperty(name="mode", description="mode",
-                          default='VERTEX', items=modes,
-                          update=mode_change)
-    current_mode = StringProperty(default="VERTEX")
+    mode: EnumProperty(
+        name="mode", description="mode", default='VERTEX', items=modes, update=mode_change)
+
+    current_mode: StringProperty(default="VERTEX")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('VerticesSocket', "Vert A", "Vert A")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('VerticesSocket', "Vert A")
+        self.outputs.new('VerticesSocket', "Vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

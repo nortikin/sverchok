@@ -59,7 +59,7 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ("DIFF", "Diff", "", 2)
     ]
 
-    selected_mode = EnumProperty(
+    selected_mode: EnumProperty(
         items=mode_options,
         description="offers basic booleans using CSG",
         default="ITX",
@@ -74,15 +74,17 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Polys Nested'].hide_safe = not self.nest_objs
         updateNode(self, context)
 
-    nest_objs = BoolProperty(name="accumulate nested",
-                             description="bool first two objs, then applies rest to result one by one",
-                             default=False,
-                             update=update_mode)
+    nest_objs: BoolProperty(
+        name="accumulate nested",
+        description="bool first two objs, then applies rest to result one by one",
+        default=False,
+        update=update_mode)
 
-    out_last = BoolProperty(name="only final result",
-                            description="output only last iteration result",
-                            default=True,
-                            update=update_mode)
+    out_last: BoolProperty(
+        name="only final result",
+        description="output only last iteration result",
+        default=True,
+        update=update_mode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts A')
@@ -91,8 +93,8 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket',  'Polys B')
         self.inputs.new('VerticesSocket', 'Verts Nested').hide_safe = True
         self.inputs.new('StringsSocket',  'Polys Nested').hide_safe = True
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
         row = layout.row()

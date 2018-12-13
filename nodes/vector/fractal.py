@@ -123,24 +123,24 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
             socket_func(*names)
         updateNode(self, context)
 
-    noise_type = EnumProperty(
+    noise_type: EnumProperty(
         items=avail_noise,
         default='STDPERLIN',
         description="Noise type",
         update=updateNode)
 
-    fractal_type = EnumProperty(
+    fractal_type: EnumProperty(
         items=avail_fractal,
         default="FRACTAL",
         description="Fractal type",
         update=wrapped_update)
 
-    h_factor = FloatProperty(default=0.05, description='H factor parameter', name='H Factor', update=updateNode)
-    lacunarity = FloatProperty(default=0.5, description='Lacunarity parameter', name='Lacunarity', update=updateNode)
-    octaves = IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
-    offset = FloatProperty(default=0.0, name='Offset', description='Offset parameter', update=updateNode)
-    gain = FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
-    seed = IntProperty(default=0, name='Seed', update=updateNode)
+    h_factor: FloatProperty(default=0.05, description='H factor parameter', name='H Factor', update=updateNode)
+    lacunarity: FloatProperty(default=0.5, description='Lacunarity parameter', name='Lacunarity', update=updateNode)
+    octaves: IntProperty(default=3, min=0, max=6, description='Octaves', name='Octaves', update=updateNode)
+    offset: FloatProperty(default=0.0, name='Offset', description='Offset parameter', update=updateNode)
+    gain: FloatProperty(default=0.5, description='Gain parameter', name='Gain', update=updateNode)
+    seed: IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vertices')

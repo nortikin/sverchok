@@ -50,13 +50,13 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Lathe'
     bl_icon = 'MOD_SCREW'
 
-    remove_doubles = BoolProperty(name='merge', description='Remove doubles', update=updateNode)
-    dist = FloatProperty(name="merge distance", default=0.0001, update=updateNode)
-    Degrees = FloatProperty(name="Degrees", default=360.0, update=updateNode)
-    Steps = IntProperty(name="Steps", default=20, min=0, update=updateNode)
-    cent = FloatVectorProperty(name='cent', size=3, update=updateNode)
-    dvec = FloatVectorProperty(name='dvec', size=3, update=updateNode)
-    axis = FloatVectorProperty(name='axis', size=3, update=updateNode, default=(0, 0, 1))
+    remove_doubles: BoolProperty(name='merge', description='Remove doubles', update=updateNode)
+    dist: FloatProperty(name="merge distance", default=0.0001, update=updateNode)
+    Degrees: FloatProperty(name="Degrees", default=360.0, update=updateNode)
+    Steps: IntProperty(name="Steps", default=20, min=0, update=updateNode)
+    cent: FloatVectorProperty(name='cent', size=3, update=updateNode)
+    dvec: FloatVectorProperty(name='dvec', size=3, update=updateNode)
+    axis: FloatVectorProperty(name='axis', size=3, update=updateNode, default=(0, 0, 1))
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts')

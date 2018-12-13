@@ -29,26 +29,26 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    JoinLevel = IntProperty(name='JoinLevel', description='Choose join level of data (see help)',
+    JoinLevel: IntProperty(name='JoinLevel', description='Choose join level of data (see help)',
                             default=1, min=1,
                             update=updateNode)
-    mix_check = BoolProperty(name='mix', description='Grouping similar to zip()',
+    mix_check: BoolProperty(name='mix', description='Grouping similar to zip()',
                              default=False,
                              update=updateNode)
-    wrap_check = BoolProperty(name='wrap', description='Grouping similar to append(list)',
+    wrap_check: BoolProperty(name='wrap', description='Grouping similar to append(list)',
                               default=False,
                               update=updateNode)
-    typ = StringProperty(name='typ',
+    typ: StringProperty(name='typ',
                          default='')
-    newsock = BoolProperty(name='newsock',
+    newsock: BoolProperty(name='newsock',
                            default=False)
 
     base_name = 'data '
     multi_socket_type = 'StringsSocket'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data", "data")
-        self.outputs.new('StringsSocket', 'data', 'data')
+        self.inputs.new('StringsSocket', 'data')
+        self.outputs.new('StringsSocket', 'data')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mix_check", text="mix")

@@ -35,8 +35,9 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
              'np.unique(x)','x.sum()','x.cumsum()','x.mean()','x.var()','x.std()','x.prod()',
              'x.cumprod()','np.array(x)','np.array_equal(x,y)','np.invert(x)','np.rot90(x,1)',
              'x[y]','x+y','x*y','Custom']
-    Mod = EnumProperty(name="getmodes", default="np.array(x)", items=e(Modes), update=updateNode)
-    Cust = StringProperty(default='x[y.argsort()]', update=updateNode)
+
+    Mod: EnumProperty(name="getmodes", default="np.array(x)", items=e(Modes), update=updateNode)
+    Cust: StringProperty(default='x[y.argsort()]', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'x')

@@ -75,20 +75,19 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Remove Doubles'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    distance = FloatProperty(
+    distance: FloatProperty(
         name='Distance', description='Remove distance',
-        default=0.001, precision=3, min=0, update=updateNode
-    )
+        default=0.001, precision=3, min=0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Distance').prop_name = 'distance'
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.inputs.new('StringsSocket', 'PolyEdge', 'PolyEdge')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'PolyEdge')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges', 'Edges')
-        self.outputs.new('StringsSocket', 'Polygons', 'Polygons')
-        self.outputs.new('VerticesSocket', 'Doubles', 'Doubles')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'Edges')
+        self.outputs.new('StringsSocket', 'Polygons')
+        self.outputs.new('VerticesSocket', 'Doubles')
 
     def draw_buttons(self, context, layout):
         #layout.prop(self, 'distance', text="Distance")

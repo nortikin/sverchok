@@ -32,35 +32,35 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_TRIANGULATE'
 
     quad_modes = [
-        ("0", "Beauty", "Split the quads in nice triangles, slower method", 1),
-        ("1", "Fixed", "Split the quads on the 1st and 3rd vertices", 2),
-        ("2", "Fixed Alternate", "Split the quads on the 2nd and 4th vertices", 3),
-        ("3", "Shortest Diagonal", "Split the quads based on the distance between the vertices", 4)
+        ("BEAUTY", "Beauty", "Split the quads in nice triangles, slower method", 1),
+        ("FIXED", "Fixed", "Split the quads on the 1st and 3rd vertices", 2),
+        ("ALTERNATE", "Fixed Alternate", "Split the quads on the 2nd and 4th vertices", 3),
+        ("SHORT_EDGE", "Shortest Diagonal", "Split the quads based on the distance between the vertices", 4)
     ]
 
     ngon_modes = [
-        ("0", "Beauty", "Arrange the new triangles nicely, slower method", 1),
-        ("1", "Clip", "Split the ngons using a scanfill algorithm", 2)
+        ("BEAUTY", "Beauty", "Arrange the new triangles nicely, slower method", 1),
+        ("EAR_CLIP", "Clip", "Split the ngons using a scanfill algorithm", 2)
     ]
 
-    quad_mode = EnumProperty(
+    quad_mode: EnumProperty(
         name='Quads mode',
         description="Quads processing mode",
         items=quad_modes,
-        default="0",
+        default="BEAUTY",
         update=updateNode)
 
-    ngon_mode = EnumProperty(
+    ngon_mode: EnumProperty(
         name="Polygons mode",
         description="Polygons processing mode",
         items=ngon_modes,
-        default="0",
+        default="BEAUTY",
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edges', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('StringsSocket', 'Edges')
+        self.inputs.new('StringsSocket', 'Polygons')
         self.inputs.new('StringsSocket', 'Mask')
 
         self.outputs.new('VerticesSocket', 'Vertices')
@@ -103,9 +103,8 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
                     b_faces.append(face)
 
             res = bmesh.ops.triangulate(
-                bm, faces=b_faces,
-                quad_method=int(self.quad_mode),
-                ngon_method=int(self.ngon_mode))
+                bm, faces=b_faces, quad_method=self.quad_mode, ngon_method=self.ngon_mode
+            )
 
             b_new_edges = [tuple(v.index for v in edge.verts) for edge in res['edges']]
             b_new_faces = [[v.index for v in face.verts] for face in res['faces']]

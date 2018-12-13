@@ -30,9 +30,9 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Mask (out)'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Level = IntProperty(name='Level', description='Choose list level of data (see help)',
-                        default=1, min=1, max=10,
-                        update=updateNode)
+    Level: IntProperty(
+        name='Level', description='Choose list level of data (see help)',
+        default=1, min=1, max=10, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "data")

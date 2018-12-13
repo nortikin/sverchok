@@ -53,40 +53,39 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_sockets()
         updateNode(self, context)
 
-    prePost = EnumProperty(
+    prePost: EnumProperty(
         name='Pre Post',
         description='Order of operations PRE = A op B vs POST = B op A)',
         items=prePostItems, default="PRE", update=updateNode)
 
-    operation = EnumProperty(
+    operation: EnumProperty(
         name="Operation",
         description="Operation to apply on the given matrices",
         items=operationItems, default="MULTIPLY", update=update_operation)
 
-    filter_t = BoolProperty(
+    filter_t: BoolProperty(
         name="Filter Translation",
         description="Filter out the translation component of the matrix",
         default=False, update=updateNode)
 
-    filter_r = BoolProperty(
+    filter_r: BoolProperty(
         name="Filter Rotation",
         description="Filter out the rotation component of the matrix",
         default=False, update=updateNode)
 
-    filter_s = BoolProperty(
+    filter_s: BoolProperty(
         name="Filter Scale",
         description="Filter out the scale component of the matrix",
         default=False, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', "A", "A")
-        self.inputs.new('MatrixSocket', "B", "B")
+        self.inputs.new('MatrixSocket', "A")
+        self.inputs.new('MatrixSocket', "B")
 
-        self.outputs.new('MatrixSocket', "C", "C")
-
-        self.outputs.new('VerticesSocket', "X", "X")
-        self.outputs.new('VerticesSocket', "Y", "Y")
-        self.outputs.new('VerticesSocket', "Z", "Z")
+        self.outputs.new('MatrixSocket', "C")
+        self.outputs.new('VerticesSocket', "X")
+        self.outputs.new('VerticesSocket', "Y")
+        self.outputs.new('VerticesSocket', "Z")
 
         self.operation = "MULTIPLY"
 
@@ -145,7 +144,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
             mat_s[1][1] = S[1]
             mat_s[2][2] = S[2]
 
-        m = mat_t * mat_r * mat_s
+        m = mat_t @ mat_r @ mat_s
 
         return m
 
@@ -161,7 +160,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_operation(self):
         if self.operation == "MULTIPLY":
-            return lambda l: reduce((lambda a, b: a * b), l)
+            return lambda l: reduce((lambda a, b: a @ b), l)
         elif self.operation == "FILTER":
             return self.operation_filter
         elif self.operation == "INVERT":

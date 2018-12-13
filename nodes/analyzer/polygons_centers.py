@@ -29,7 +29,7 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Centers polygons 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    Separate = BoolProperty(
+    Separate: BoolProperty(
         name="Separate", description="separate by objects", 
         default=True, update=updateNode)
 
@@ -116,13 +116,13 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 vecz = Vector((0, 1e-6, 1))
                 q_rot0 = vecz.rotation_difference(nor).to_matrix().to_4x4()
                 q_rot2 = nor.rotation_difference(vecz).to_matrix().to_4x4()
-                if med[1]>med[0]:
-                    vecy = Vector((1e-6, 1, 0)) * q_rot2
+                if med[1] > med[0]:
+                    vecy = Vector((1e-6, 1, 0)) @ q_rot2
                 else:
-                    vecy = Vector((1, 1e-6, 0)) * q_rot2
+                    vecy = Vector((1, 1e-6, 0)) @ q_rot2
                 q_rot1 = vecy.rotation_difference(med).to_matrix().to_4x4()
                 # loc is matrix * rot vector * rot vector
-                M = loc*q_rot1*q_rot0
+                M = loc @ q_rot1 @ q_rot0
                 mat_collect_.append(M)
             mat_collect.extend(mat_collect_)
 

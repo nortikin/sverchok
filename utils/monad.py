@@ -39,8 +39,8 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
 class MonadOpCommon():
-    node_name = StringProperty()
-    pos = IntProperty()
+    node_name: StringProperty()
+    pos: IntProperty()
 
     def get_data(self, context):
         """ expects:
@@ -60,7 +60,7 @@ class SvMoveSocketOpExp(Operator, MonadOpCommon):
     bl_idname = "node.sverchok_move_socket_exp"
     bl_label = "Move Socket"
 
-    direction = IntProperty()
+    direction: IntProperty()
 
     def execute(self, context):
         node, kind, socket = self.get_data(context)
@@ -98,7 +98,7 @@ class SvRenameSocketOpExp(Operator, MonadOpCommon):
     bl_idname = "node.sverchok_rename_socket_exp"
     bl_label = "Rename Socket"
 
-    new_name = StringProperty()
+    new_name: StringProperty()
 
     def draw(self, context):
         layout = self.layout
@@ -147,7 +147,7 @@ class SvEditSocketOpExp(Operator, MonadOpCommon):
     bl_idname = "node.sverchok_edit_socket_exp"
     bl_label = "Edit Socket"
 
-    socket_type = EnumProperty(
+    socket_type: EnumProperty(
         items=socket_types, default="StringsSocket")
 
     def draw(self, context):
@@ -179,8 +179,8 @@ class SvGroupEdit(Operator):
     bl_idname = "node.sv_group_edit"
     bl_label = "edits an sv group"
 
-    group_name = StringProperty()
-    short_cut = BoolProperty()
+    group_name: StringProperty()
+    short_cut: BoolProperty()
 
     def execute(self, context):
         ng = bpy.data.node_groups
@@ -390,8 +390,8 @@ class SvMonadCreateFromSelected(Operator):
     bl_idname = "node.sv_monad_from_selected"
     bl_label = "Create monad from selected nodes (sub graph)"
 
-    group_name = StringProperty(default="Monad")
-    use_relinking = BoolProperty(default=True)
+    group_name: StringProperty(default="Monad")
+    use_relinking: BoolProperty(default=True)
 
     @classmethod
     def poll(cls, context):
@@ -588,7 +588,7 @@ class SvMonadMakeUnique(Operator):
 
     # partial copy of Blender's own NodeAddOperator
 
-    use_transform = BoolProperty(
+    use_transform: BoolProperty(
         name="Use Transform",
         description="Start transform operator after inserting the node",
         default=True)
@@ -673,7 +673,6 @@ classes = [
     SvUpdateMonadClasses,
     SvMonadMakeUnique
 ]
-
 
 
 def register():

@@ -46,7 +46,7 @@ class SvBVHtreeNode(bpy.types.Node, SverchCustomTreeNode):
             inputs.new('StringsSocket', 'Polys')
 
     Modes = ['FromObject','FromBMesh','FromSVdata']
-    Mod = EnumProperty(name="getmodes", default=Modes[0], items=e(Modes), update=mode_change)
+    Mod: EnumProperty(name="getmodes", default=Modes[0], items=e(Modes), update=mode_change)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Objects')

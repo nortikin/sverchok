@@ -83,13 +83,13 @@ def process_from_socket(self, context):
 
 class SvSocketCommon:
     """ Base class for all Sockets """
-    use_prop = BoolProperty(default=False)
+    use_prop: BoolProperty(default=False)
 
-    use_expander = BoolProperty(default=True)
-    use_quicklink = BoolProperty(default=True)
-    expanded = BoolProperty(default=False)
+    use_expander: BoolProperty(default=True)
+    use_quicklink: BoolProperty(default=True)
+    expanded: BoolProperty(default=False)
 
-    quicklink_func_name = StringProperty(default="", name="quicklink_func_name")    
+    quicklink_func_name: StringProperty(default="", name="quicklink_func_name")    
 
     @property
     def other(self):
@@ -146,7 +146,7 @@ class SvSocketCommon:
             layout.prop(prop_origin, prop_name)
         else:
             if self.use_expander:
-                split = layout.split(percentage=.2, align=True)
+                split = layout.split(factor=.2, align=True)
                 c1 = split.column(align=True)
                 c2 = split.column(align=True)
 
@@ -199,6 +199,10 @@ class SvSocketCommon:
                 if not self.is_output and not self.is_linked and self.prop_type:
                     layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
                     return
+            elif node.bl_idname in {'SvSNFunctor'} and not self.is_output:
+                if not self.is_linked:
+                    layout.prop(node, self.prop_name, text=self.name)
+                    return
 
         if self.is_linked:  # linked INPUT or OUTPUT
             t = text
@@ -208,10 +212,10 @@ class SvSocketCommon:
                     t = prop.name if prop else text
             info_text = t + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
-            layout.label(info_text)
+            layout.label(text=info_text)
 
         elif self.is_output:  # unlinked OUTPUT
-            layout.label(text)
+            layout.label(text=text)
 
         else:  # unlinked INPUT
             if self.prop_name:  # has property
@@ -229,7 +233,7 @@ class SvSocketCommon:
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
-                layout.label(text)
+                layout.label(text=text)
 
     def draw_color(self, context, node):
         return socket_colors[self.bl_idname]
@@ -249,10 +253,12 @@ class SvSocketCommon:
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
+    
     bl_idname = "MatrixSocket"
     bl_label = "Matrix Socket"
-    prop_name = StringProperty(default='')
-    num_matrices = IntProperty(default=0)
+
+    prop_name: StringProperty(default='')
+    num_matrices: IntProperty(default=0)
 
     @property
     def extra_info(self):
@@ -281,11 +287,11 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
 class VerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
     bl_idname = "VerticesSocket"
-    bl_label = "Vertices Socket"
+    bl_label ="Vertices Socket"
 
-    prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         if self.prop_name:
@@ -316,9 +322,9 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvQuaternionSocket"
     bl_label = "Quaternion Socket"
 
-    prop = FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         if self.prop_name:
@@ -349,9 +355,9 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvColorSocket"
     bl_label = "Color Socket"
 
-    prop = FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         if self.prop_name:
@@ -381,9 +387,9 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvDummySocket"
     bl_label = "Dummys Socket"
 
-    prop = FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-    prop_name = StringProperty(default='')
-    use_prop = BoolProperty(default=False)
+    prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
+    prop_name: StringProperty(default='')
+    use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         return self.other.get_prop_data()
@@ -401,13 +407,13 @@ class StringsSocket(NodeSocket, SvSocketCommon):
     bl_idname = "StringsSocket"
     bl_label = "Strings Socket"
 
-    prop_name = StringProperty(default='')
+    prop_name: StringProperty(default='')
 
-    prop_type = StringProperty(default='')
-    prop_index = IntProperty()
-    nodule_color = FloatVectorProperty(default=socket_colors["StringsSocket"], size=4)
+    prop_type: StringProperty(default='')
+    prop_index: IntProperty()
+    nodule_color: FloatVectorProperty(default=socket_colors["StringsSocket"], size=4)
 
-    custom_draw = StringProperty()
+    custom_draw: StringProperty()
 
     def get_prop_data(self):
         if self.prop_name:
@@ -447,11 +453,11 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
 
-    socket_index = bpy.props.IntProperty()
-    origin = bpy.props.StringProperty()
-    new_node_idname = bpy.props.StringProperty()
-    new_node_offsetx = bpy.props.IntProperty(default=-200)
-    new_node_offsety = bpy.props.IntProperty(default=0)
+    socket_index: bpy.props.IntProperty()
+    origin: bpy.props.StringProperty()
+    new_node_idname: bpy.props.StringProperty()
+    new_node_offsetx: bpy.props.IntProperty(default=-200)
+    new_node_offsety: bpy.props.IntProperty(default=0)
 
     def execute(self, context):
         tree = context.space_data.edit_tree
@@ -477,8 +483,8 @@ class SvNodeTreeCommon(object):
     Common methods shared between Sverchok node trees
     '''
 
-    has_changed = BoolProperty(default=False)
-    limited_init = BoolProperty(default=False)
+    has_changed: BoolProperty(default=False)
+    limited_init: BoolProperty(default=False)
 
     def build_update_list(self):
         build_update_list(self)
@@ -533,7 +539,7 @@ class SvNodeTreeCommon(object):
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
-    bl_label = 'Sverchok Node Tree'
+    bl_label = 'Sverchok Nodes'
     bl_icon = 'RNA'
 
     def turn_off_ng(self, context):
@@ -545,18 +551,35 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # for node in outputs:
         #   node.disable()
 
-    sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
-    sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
-    sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
-    sv_process = BoolProperty(name="Process", default=True, description='Process layout')
-    sv_user_colors = StringProperty(default="")
+    sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
+    sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
+    sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
+    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
+    sv_user_colors: StringProperty(default="")
+
+    tree_link_count: IntProperty(name='keep track of current link count', default=0)
+
+    @property
+    def timestamp(self):
+        return time.monotonic()
+
+    @property
+    def has_link_count_changed(self):
+        link_count = len(self.links)
+        if not link_count == self.tree_link_count: 
+            print('update event: link count changed')
+            self.tree_link_count = link_count
+            return True
 
     def update(self):
         '''
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
+        # print('svtree update', self.timestamp)
         self.has_changed = True
+        self.has_link_count_changed
+        self.process()
 
     def process_ani(self):
         """
@@ -786,6 +809,8 @@ class SverchCustomTreeNode:
         if self.id_data.bl_idname == "SverchCustomTreeType":
             if self.id_data.is_frozen():
                 return
+
+            # self.id_data.has_changed = True
 
             if data_structure.DEBUG_MODE:
                 a = time.perf_counter()

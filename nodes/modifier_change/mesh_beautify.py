@@ -10,7 +10,7 @@ import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-
+from sverchok.data_structure import enum_item_4, updateNode
 
 class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
 
@@ -24,6 +24,13 @@ class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMeshBeautify'
     bl_label = 'Mesh Beautify'
     bl_icon = 'OUTLINER_OB_EMPTY'
+   
+    beautify_mode: bpy.props.EnumProperty(
+        name='Beautify', items=enum_item_4(['AREA', 'ANGLE']), default="AREA", update=updateNode
+    )
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'beautify_mode', expand=True)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts')
@@ -46,7 +53,7 @@ class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
             for verts, faces in zip(in_verts, in_faces):
                 bm = bmesh_from_pydata(verts, [], faces)
                 bm.verts.ensure_lookup_table()
-                fill(bm, faces=bm.faces[:], edges=bm.edges[:], use_restrict_tag=False, method=0)
+                fill(bm, faces=bm.faces[:], edges=bm.edges[:], use_restrict_tag=False, method=self.beautify_mode)
                 nv, ne, nf = pydata_from_bmesh(bm)
                 out_verts.append(nv)
                 out_faces.append(nf)

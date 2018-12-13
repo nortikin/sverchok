@@ -17,7 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from mathutils import Matrix, Vector
-#from math import copysign
 
 import bpy
 from bpy.props import IntProperty, FloatProperty
@@ -37,10 +36,8 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.inputs.new('StringsSocket', 'Edg_Pol', 'Edg_Pol')
-        #self.inputs.new('StringsSocket', 'Polygons', 'Polygons')
-        #self.inputs.new('StringsSocket', 'ExtrudeEdges')
+        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('StringsSocket', 'Edg_Pol')
         self.inputs.new('MatrixSocket', "Matrices")
 
         self.outputs.new('VerticesSocket', 'Vertices')
@@ -71,7 +68,6 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         result_ext_vertices = []
         result_ext_edges = []
         result_ext_faces = []
-
 
         meshes = match_long_repeat([vertices_s, edges_s, matrices_s]) #, extrude_edges_s])
         
@@ -139,8 +135,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvExtrudeEdgesNode)
-
-if __name__ == '__main__':
-    register()
-
 

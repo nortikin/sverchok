@@ -14,7 +14,7 @@ from bpy.props import FloatProperty, IntProperty, EnumProperty
 from math import sin, tan
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, enum_item_4
 from sverchok.nodes.generator.basic_3pt_arc import generate_3PT_mode_1 as three_point_arc
 from sverchok.utils.sv_itertools import extend_if_needed
 
@@ -150,20 +150,17 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvSmoothLines'
     bl_label = 'Smooth Lines'
-    bl_icon = 'GREASEPENCIL'
+    bl_icon = 'NORMALIZE_FCURVES'
 
-    smooth_mode_options = [(k, k, '', i) for i, k in enumerate(["absolute", "relative", "arc"])]
-    smooth_selected_mode = EnumProperty(
-        items=smooth_mode_options, description="offers....",
-        default="absolute", update=updateNode)
+    smooth_selected_mode: EnumProperty(
+        items=enum_item_4(["absolute", "relative", "arc"]), default="absolute",
+        description="gives various representations of the smooth corner", update=updateNode)
 
-    type_mode_options = [(k, k, '', i) for i, k in enumerate(["cyclic", "open"])]
-    type_selected_mode = EnumProperty(
-        items=type_mode_options, description="offers....",
-        default="open", update=updateNode)
+    type_selected_mode: EnumProperty(
+        items=enum_item_4(["cyclic", "open"]), default="open", update=updateNode)
 
-    n_verts = IntProperty(default=5, name="n_verts", min=2, update=updateNode) 
-    weights = FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
+    n_verts: IntProperty(default=5, name="n_verts", min=2, update=updateNode) 
+    weights: FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new("VerticesSocket", "vectors")
@@ -180,8 +177,10 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
             return
 
         col = layout.column()
-        col.prop(self, "smooth_selected_mode", text="mode")
-        col.prop(self, "type_selected_mode", text="type")
+        row1 = col.row(align=True)
+        row1.prop(self, "smooth_selected_mode", text="mode", expand=True)
+        row2 = col.row(align=True)
+        row2.prop(self, "type_selected_mode", text="type", expand=True)
         col.prop(self, "n_verts", text='num verts')
 
 

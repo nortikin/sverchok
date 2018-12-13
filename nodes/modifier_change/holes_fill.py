@@ -46,10 +46,9 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Fill Holes'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    sides = IntProperty(
+    sides: IntProperty(
         name='Sides', description='Side to fill',
-        default=4, min=3,
-        update=updateNode)
+        default=4, min=3, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'vertices')

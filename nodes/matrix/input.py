@@ -34,12 +34,12 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
                  0.0, 0.0, 1.0, 0.0,
                  0.0, 0.0, 0.0, 1.0)
 
-    matrix = FloatVectorProperty(name="matrix", description="matrix",
-                                 default=id_matrix, subtype='MATRIX',
-                                 size=16, precision=3, update=updateNode)
+    matrix: FloatVectorProperty(
+        name="matrix", description="matrix", default=id_matrix,
+        subtype='MATRIX', size=16, precision=3, update=updateNode)
 
     def sv_init(self, context):
-        self.outputs.new('MatrixSocket', "Matrix", "Matrix")
+        self.outputs.new('MatrixSocket', "Matrix")
         self.width = 300
 
     def draw_buttons(self, context, layout):

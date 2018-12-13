@@ -18,19 +18,15 @@
 import itertools
 import numpy as np
 from math import sin, cos, pi, atan2, asin, ceil
+
 import bpy
+
 from bpy.props import IntProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (
-    match_long_repeat,
-    updateNode, match_long_cycle)
-from sverchok.utils.modules.geom_utils import (
-    pt_in_triangle,
-    length_v2)
+from sverchok.data_structure import (match_long_repeat, updateNode, match_long_cycle)
+from sverchok.utils.modules.geom_utils import (pt_in_triangle, length_v2)
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.nodes.modifier_change.edges_intersect_mk2 import (
-    remove_doubles_from_edgenet,
-    intersect_edges_2d)
+from sverchok.nodes.modifier_change.edges_intersect_mk2 import (remove_doubles_from_edgenet, intersect_edges_2d)
 
 
 mode_items = [
@@ -428,41 +424,41 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Contour 2D'
     bl_icon = 'FORCE_FORCE'
 
-    modeI = EnumProperty(
+    modeI: EnumProperty(
         name="modeI",
         description="Type of contour when multiple distances are given",
         items=mode_items, default="Constant",
         update=updateNode)
 
-    list_match = EnumProperty(
+    list_match: EnumProperty(
         name="list_match",
         description="Behaviour on diffent list lengths",
         items=list_match_Items, default="Long Repeat",
         update=updateNode)
 
-    rm_doubles = FloatProperty(
+    rm_doubles: FloatProperty(
         name='R. Doubles',
         description="Remove Doubles Distance",
         min=0.0, default=0.0001,
         step=0.1, update=updateNode)
 
-    mask_t = FloatProperty(
+    mask_t: FloatProperty(
         name='Mask tolerance',
         description="Mask tolerance",
         min=-1.0, default=1.0e-5,
         step=0.02, update=updateNode)
 
-    intersecction_handle = EnumProperty(
+    intersecction_handle: EnumProperty(
         name="intersecction_handle",
         description="Intersecction mode",
         items=intersec_mode_items, default="Circular",
         update=updateNode)
 
-    rad_ = FloatProperty(
+    rad_: FloatProperty(
         name='Distance', description='Contour distance',
         default=1.0, min=1.0e-5, update=updateNode)
 
-    vert_ = IntProperty(
+    vert_: IntProperty(
         name='N Vertices', description='Nº of Vertices per input vector',
         default=24, min=4, update=updateNode)
 
@@ -472,8 +468,8 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Verts_in")
         self.inputs.new('StringsSocket', "Edges_in")
 
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "modeI", expand=True)

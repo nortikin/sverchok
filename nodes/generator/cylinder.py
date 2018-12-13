@@ -22,8 +22,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, sv_zip,
-                                     updateNode)
+from sverchok.data_structure import (match_long_repeat, sv_zip, updateNode)
 
 
 def cylinder_vertices(Subd, Vertices, Height, RadiusBot, RadiusTop, Separate):
@@ -93,25 +92,25 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Cylinder'
     bl_icon = 'MESH_CYLINDER'
 
-    radTop_ = FloatProperty(name='Radius Top',
+    radTop_: FloatProperty(name='Radius Top',
                             default=1.0,
                             options={'ANIMATABLE'}, update=updateNode)
-    radBot_ = FloatProperty(name='Radius Bottom',
+    radBot_: FloatProperty(name='Radius Bottom',
                             default=1.0,
                             options={'ANIMATABLE'}, update=updateNode)
-    vert_ = IntProperty(name='Vertices',
+    vert_: IntProperty(name='Vertices',
                         default=32, min=3,
                         options={'ANIMATABLE'}, update=updateNode)
-    height_ = FloatProperty(name='Height',
+    height_: FloatProperty(name='Height',
                             default=2.0,
                             options={'ANIMATABLE'}, update=updateNode)
-    subd_ = IntProperty(name='Subdivisions',
+    subd_: IntProperty(name='Subdivisions',
                         default=0, min=0,
                         options={'ANIMATABLE'}, update=updateNode)
-    cap_ = BoolProperty(name='Caps',
+    cap_: BoolProperty(name='Caps',
                         default=True,
                         options={'ANIMATABLE'}, update=updateNode)
-    Separate = BoolProperty(name='Separate', description='Separate UV coords',
+    Separate: BoolProperty(name='Separate', description='Separate UV coords',
                             default=False,
                             update=updateNode)
 
@@ -122,9 +121,9 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Height").prop_name = 'height_'
         self.inputs.new('StringsSocket', "Subdivisions").prop_name = 'subd_'
 
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
-        self.outputs.new('StringsSocket', "Polygons", "Polygons")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('StringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -166,6 +165,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(CylinderNode)
-
-if __name__ == '__main__':
-    register()

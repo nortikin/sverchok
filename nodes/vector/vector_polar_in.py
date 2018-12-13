@@ -45,18 +45,17 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
 
-    rho_ = FloatProperty(name='rho', description='Rho coordinate',
-            default=0.0, precision=3,
-            update=updateNode)
-    phi_ = FloatProperty(name='phi', description='Phi coordinate',
-            default=0.0, precision=3,
-            update=updateNode)
-    theta_ = FloatProperty(name='theta', description='Theta coordinate',
-            default=0.0, precision=3,
-            update=updateNode)
-    z_ = FloatProperty(name='Z', description='Z coordinate',
-            default=0.0, precision=3,
-            update=updateNode)
+    rho_: FloatProperty(
+        name='rho', description='Rho coordinate', default=0.0, precision=3, update=updateNode)
+    
+    phi_: FloatProperty(
+        name='phi', description='Phi coordinate', default=0.0, precision=3, update=updateNode)
+    
+    theta_: FloatProperty(
+        name='theta', description='Theta coordinate', default=0.0, precision=3, update=updateNode)
+    
+    z_: FloatProperty(
+        name='Z', description='Z coordinate', default=0.0, precision=3, update=updateNode)
 
     coord_modes = [
         ("z_", "Cylinder", "Use cylindrical coordinates", 1),
@@ -67,7 +66,7 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs[2].prop_name = self.coordinates
         updateNode(self, context)
 
-    coordinates = EnumProperty(items=coord_modes, default='z_', update=coordinate_changed)
+    coordinates: EnumProperty(items=coord_modes, default='z_', update=coordinate_changed)
 
     func_dict = {'z_': cylindrical, 'theta_': spherical}
 
@@ -76,7 +75,7 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
             ("degrees", "Degree", "Use angles in degrees", 2)
         ]
 
-    angles_mode = EnumProperty(items=angle_modes, default="radians", update=updateNode)
+    angles_mode: EnumProperty(items=angle_modes, default="radians", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "rho").prop_name = 'rho_'
@@ -116,4 +115,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(VectorPolarInNode)
-

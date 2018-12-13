@@ -34,19 +34,18 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Adaptive Polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    width_coef = FloatProperty(name='width_coef',
-                               description='with coefficient for sverchok adaptivepols donors size',
-                               default=1.0, max=3.0, min=0.5,
-                               update=updateNode)
+    width_coef: FloatProperty(
+        name='width_coef', description='with coefficient for sverchok adaptivepols donors size',
+        default=1.0, max=3.0, min=0.5, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "VersR", "VersR")
-        self.inputs.new('StringsSocket', "PolsR", "PolsR")
-        self.inputs.new('VerticesSocket', "VersD", "VersD")
-        self.inputs.new('StringsSocket', "PolsD", "PolsD")
-        self.inputs.new('StringsSocket', "Z_Coef", "Z_Coef")
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Poligons", "Poligons")
+        self.inputs.new('VerticesSocket', "VersR")
+        self.inputs.new('StringsSocket', "PolsR")
+        self.inputs.new('VerticesSocket', "VersD")
+        self.inputs.new('StringsSocket', "PolsD")
+        self.inputs.new('StringsSocket', "Z_Coef")
+        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('StringsSocket', "Poligons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "width_coef", text="donor width")
@@ -138,6 +137,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(AdaptivePolsNode)
-
-#if __name__ == '__main__':
-#    register()

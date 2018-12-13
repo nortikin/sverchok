@@ -33,9 +33,9 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vectors", "Vectors")
-        self.inputs.new('MatrixSocket', "Matrixes", "Matrixes")
-        self.outputs.new('VerticesSocket', "Vectors", "Vectors")
+        self.inputs.new('VerticesSocket', "Vectors")
+        self.inputs.new('MatrixSocket', "Matrixes")
+        self.outputs.new('VerticesSocket', "Vectors")
 
     def process(self):
         # inputs
@@ -61,7 +61,7 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
                 k = lengthve
             vec_c = Vector((0, 0, 0))
             for v in vecs[k]:
-                vec = v*m
+                vec = v @ m
                 out_.append(vec)
                 vec_c += vec
 
@@ -80,7 +80,7 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
             mat_rot_norm = vec0.rotation_difference(norm).to_matrix().to_4x4()
             out_pre = []
             for v in out_:
-                v_out = (v-vec_c) * mat_rot_norm
+                v_out = (v-vec_c) @ mat_rot_norm
                 out_pre.append(v_out[:])
 
             out.append(out_pre)

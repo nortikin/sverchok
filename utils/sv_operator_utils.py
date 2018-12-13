@@ -27,12 +27,12 @@ class SvGenericCallbackOldOp(bpy.types.Operator):
     bl_label = "Sverchok text input"
     bl_options = {'REGISTER', 'UNDO'}
 
-    fn_name = StringProperty(name='function name')
+    fn_name: StringProperty(name='function name')
 
     # this information is not communicated unless you trigger it from a node
     # in the case the operator button appears on a 3dview panel, it will need to pass these too.
-    tree_name = StringProperty(default='')
-    node_name = StringProperty(default='')
+    tree_name: StringProperty(default='')
+    node_name: StringProperty(default='')
 
     def get_node(self, context):
         """ context.node is usually provided, else tree_name/node_name must be passed """
@@ -61,4 +61,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvGenericCallbackOldOp)
-

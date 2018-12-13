@@ -37,15 +37,9 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'List Slice'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name='level_to_count',
-                        default=2, min=0,
-                        update=updateNode)
-    start = IntProperty(name='Start',
-                        default=0,
-                        update=updateNode)
-    stop = IntProperty(name='Stop',
-                       default=1,
-                       update=updateNode)
+    level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
+    start: IntProperty(name='Start', default=0, update=updateNode)
+    stop: IntProperty(name='Stop', default=1, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
@@ -54,8 +48,8 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Data")
         self.inputs.new('StringsSocket', "Start").prop_name = 'start'
         self.inputs.new('StringsSocket', "Stop").prop_name = 'stop'
-        self.outputs.new('StringsSocket', "Slice", "Slice")
-        self.outputs.new('StringsSocket', "Other", "Other")
+        self.outputs.new('StringsSocket', "Slice")
+        self.outputs.new('StringsSocket', "Other")
 
     def update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:

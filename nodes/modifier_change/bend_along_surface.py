@@ -40,19 +40,16 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
 
-    mode = EnumProperty(name='Mode',
-        default="SPL", items=modes,
-        update=updateNode)
+    mode: EnumProperty(name='Mode', default="SPL", items=modes, update=updateNode)
 
     metrics =    [('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
                   ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
                   ('POINTS', 'Points', "Points based", 2),
                   ('CHEBYSHEV', 'Chebyshev', "Chebyshev distance", 3)]
 
-    metric = EnumProperty(name='Metric',
-        description = "Knot mode",
-        default="DISTANCE", items=metrics,
-        update=updateNode)
+    metric: EnumProperty(
+        name='Metric', description="Knot mode",
+        default="DISTANCE", items=metrics, update=updateNode)
 
     axes = [
             ("X", "X", "X axis", 1),
@@ -60,15 +57,13 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             ("Z", "Z", "Z axis", 3)
         ]
 
-    orient_axis_ = EnumProperty(name = "Orientation axis",
-        description = "Which axis of object to put along path",
-        default = "Z",
-        items = axes, update=updateNode)
+    orient_axis_: EnumProperty(
+        name="Orientation axis", description="Which axis of object to put along path",
+        default="Z", items=axes, update=updateNode)
 
-    normal_precision = FloatProperty(name='Normal precision',
-        description = "Step for normals calculation. Lesser values correspond to better precision.",
-        default = 0.001, min=0.000001, max=0.1, precision=8,
-        update=updateNode)
+    normal_precision: FloatProperty(
+        name='Normal precision', description = "Step for normals calculation. Lesser values correspond to better precision.",
+        default = 0.001, min=0.000001, max=0.1, precision=8, update=updateNode)
 
     def get_axis_idx(self, letter):
         return 'XYZ'.index(letter)
@@ -78,35 +73,26 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     orient_axis = property(get_orient_axis_idx)
 
-    autoscale = BoolProperty(name="Auto scale",
-        description="Scale object along orientation axis automatically",
-        default=False,
-        update=updateNode)
+    autoscale: BoolProperty(
+        name="Auto scale", description="Scale object along orientation axis automatically",
+        default=False, update=updateNode)
 
-    grouped = BoolProperty(name = "Grouped",
-        description = "If enabled, then the node expects list of lists of vertices, instead of list of vertices. Output has corresponding shape.",
-        default = True,
-        update=updateNode)
+    grouped: BoolProperty(
+        name="Grouped",
+        description="If enabled, the node expects list of lists of vertices, instead of list of vertices. Output has corresponding shape.",
+        default=True, update=updateNode)
 
-    is_cycle_u = BoolProperty(name="Cycle U",
-        description = "Whether the spline is cyclic in U direction",
-        default = False,
-        update=updateNode)
+    is_cycle_u: BoolProperty(
+        name="Cycle U", description="Whether the spline is cyclic in U direction", default=False, update=updateNode)
 
-    is_cycle_v = BoolProperty(name="Cycle V",
-        description = "Whether the spline is cyclic in V direction",
-        default = False,
-        update=updateNode)
+    is_cycle_v: BoolProperty(
+        name="Cycle V", description="Whether the spline is cyclic in V direction", default=False, update=updateNode)
 
-    flip = BoolProperty(name = "Flip surface",
-        description = "Flip the surface orientation",
-        default = False,
-        update=updateNode)
+    flip: BoolProperty(
+        name="Flip surface", description="Flip the surface orientation", default=False, update=updateNode)
 
-    transpose = BoolProperty(name = "Swap U/V",
-        description = "Swap U and V directions in surface definition",
-        default = False,
-        update=updateNode)
+    transpose: BoolProperty(
+        name="Swap U/V", description="Swap U and V directions in surface definition", default=False, update=updateNode)
     
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Vertices")
@@ -114,7 +100,7 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', 'Vertices')
 
     def draw_buttons(self, context, layout):
-        layout.label("Orientation:")
+        layout.label(text="Orientation:")
         layout.prop(self, "orient_axis_", expand=True)
         layout.prop(self, "mode")
 
@@ -237,4 +223,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBendAlongSurfaceNode)
-

@@ -150,7 +150,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Get property'
     bl_icon = 'FORCE_VORTEX'
 
-    bad_prop = BoolProperty(default=False)
+    bad_prop: BoolProperty(default=False)
 
     def verify_prop(self, context):
         try:
@@ -168,7 +168,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
             outputs.new(s_type, "Data")
 
 
-    prop_name = StringProperty(name='', update=verify_prop)
+    prop_name: StringProperty(name='', update=verify_prop)
 
     @property
     def obj(self):
@@ -191,8 +191,8 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Set property'
     bl_icon = 'FORCE_VORTEX'
 
-    ok_prop = BoolProperty(default=False)
-    bad_prop = BoolProperty(default=False)
+    ok_prop: BoolProperty(default=False)
+    bad_prop: BoolProperty(default=False)
 
 
     @property
@@ -223,9 +223,9 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
         if s_type == "VerticesSocket":
             inputs[0].use_prop = True
         
-    prop_name = StringProperty(name='', update=verify_prop)
-    float_prop = FloatProperty(update=updateNode, name="x")
-    int_prop = IntProperty(update=updateNode, name="x")
+    prop_name: StringProperty(name='', update=verify_prop)
+    float_prop: FloatProperty(update=updateNode, name="x")
+    int_prop: IntProperty(update=updateNode, name="x")
     
     def draw_buttons(self, context, layout):
         layout.alert = self.bad_prop

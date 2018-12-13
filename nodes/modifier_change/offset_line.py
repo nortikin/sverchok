@@ -75,8 +75,8 @@ def offset_edges(verts_in, edges_in, shift_in):
         mat_r1 = Matrix.Rotation(radians(-45),2,'X')
         mat_r2 = Matrix.Rotation(radians(45),2,'X')
         shift_end_points = shift/sin(radians(45))
-        vert_new1 = (vert_edg * mat_r1).normalized() * shift_end_points + verts_in[item_point]
-        vert_new2 = (vert_edg * mat_r2).normalized() * shift_end_points + verts_in[item_point]
+        vert_new1 = (vert_edg @ mat_r1).normalized() * shift_end_points + verts_in[item_point]
+        vert_new2 = (vert_edg @ mat_r2).normalized() * shift_end_points + verts_in[item_point]
         return [vert_new1,vert_new2]
 
     def get_middle_points(item_point, shift):
@@ -89,7 +89,7 @@ def offset_edges(verts_in, edges_in, shift_in):
             vert_edg2 = verts_in[second_item2] - verts_in[item_point]
             angle = calc_angle(vert_edg1, vert_edg2) / 2
             mat_r = Matrix.Rotation(angle, 2, 'X')        
-            points.append((vert_edg1 * mat_r).normalized() * shift/sin(angle) + verts_in[item_point])
+            points.append((vert_edg1 @ mat_r).normalized() * shift/sin(angle) + verts_in[item_point])
         return points
 
     #Seting points
@@ -191,7 +191,7 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Offset line'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    offset = FloatProperty(
+    offset: FloatProperty(
         name='offset', description='distance of offset',
         default=0.1, update=updateNode)
 

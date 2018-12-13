@@ -49,28 +49,28 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Formula shape '''
     bl_idname = 'SvFormulaShapeNode'
     bl_label = 'Formula shape'
-    bl_icon = 'IPO'
+    bl_icon = 'NONE'
     
-    # vertex numers
-    number = IntProperty(name='number', description='vertex number', default=100,
-                    options={'ANIMATABLE'},
-                    update=updateNode)
-    # scale
-    scale = FloatProperty(name='scale', description='scale', default=1,
-                    options={'ANIMATABLE'},
-                    update=updateNode)
-    # sphere
-    XX = FloatProperty(name='XX', description='XX factor', default=1,
-                    options={'ANIMATABLE'},
-                    update=updateNode)
-    # sphere
-    YY = FloatProperty(name='YY', description='YY factor', default=1,
-                    options={'ANIMATABLE'},
-                    update=updateNode)
-    # sphere
-    ZZ = FloatProperty(name='ZZ', description='ZZ factor', default=1,
-                    options={'ANIMATABLE'},
-                    update=updateNode)
+    number: IntProperty(
+        name='number', description='vertex number', default=100,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    scale: FloatProperty(
+        name='scale', description='scale', default=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    ## sphere
+    XX: FloatProperty(
+        name='XX', description='XX factor', default=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    YY: FloatProperty(
+        name='YY', description='YY factor', default=1,
+        options={'ANIMATABLE'}, update=updateNode)
+
+    ZZ: FloatProperty(
+        name='ZZ', description='ZZ factor', default=1,
+        options={'ANIMATABLE'}, update=updateNode)
     
     # formula for usual case
     list_formulaX = [    'i*XX',
@@ -211,15 +211,10 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     formulaX_enum = [(i, i, 'formulaX {0}'.format(k), k) for k, i in enumerate(list_formulaX)]
     formulaY_enum = [(i, i, 'formulaY {0}'.format(k), k) for k, i in enumerate(list_formulaY)]
     formulaZ_enum = [(i, i, 'formulaZ {0}'.format(k), k) for k, i in enumerate(list_formulaZ)]
-    formulaX = EnumProperty(items=formulaX_enum, name='formulaX',
-                    options={'ANIMATABLE'},
-                    update=updateNode)
-    formulaY = EnumProperty(items=formulaY_enum, name='formulaY',
-                    options={'ANIMATABLE'},
-                    update=updateNode)
-    formulaZ = EnumProperty(items=formulaZ_enum, name='formulaZ',
-                    options={'ANIMATABLE'},
-                    update=updateNode)
+    
+    formulaX: EnumProperty(items=formulaX_enum, name='formulaX', update=updateNode)
+    formulaY: EnumProperty(items=formulaY_enum, name='formulaY', update=updateNode)
+    formulaZ: EnumProperty(items=formulaZ_enum, name='formulaZ', update=updateNode)
     
     list_X_X = [    'XX',
                     'i',
@@ -256,9 +251,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     ]
     
     X_X_enum = [(i, i, i, k) for k, i in enumerate(list_X_X)]
-    X_X = EnumProperty(items=X_X_enum, name='X_X',
-                    options={'ANIMATABLE'},
-                    update=updateNode)
+    X_X: EnumProperty(items=X_X_enum, name='X_X', update=updateNode)
                     
     list_Y_Y = [    'YY',
                     'i',
@@ -295,9 +288,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     ]
     
     Y_Y_enum = [(i, i, i, k) for k, i in enumerate(list_Y_Y)]
-    Y_Y = EnumProperty(items=Y_Y_enum, name='Y_Y',
-                    options={'ANIMATABLE'},
-                    update=updateNode)
+    Y_Y: EnumProperty(items=Y_Y_enum, name='Y_Y', options={'ANIMATABLE'}, update=updateNode)
     
     list_Z_Z = [    'ZZ',
                     'i',
@@ -334,9 +325,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     ]
     
     Z_Z_enum = [(i, i, i, k) for k, i in enumerate(list_Z_Z)]
-    Z_Z = EnumProperty(items=Z_Z_enum, name='Z_Z',
-                    options={'ANIMATABLE'},
-                    update=updateNode)
+    Z_Z: EnumProperty(items=Z_Z_enum, name='Z_Z', options={'ANIMATABLE'}, update=updateNode)
     
     list_i = [      'n*f',
                     'n*f*ZZ',
@@ -345,9 +334,7 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
                     'n*f*ZZ*XX*YY', ]
     
     i_enum = [(i, i, 'i override {0}'.format(k), k) for k, i in enumerate(list_i)]
-    i_override = EnumProperty(items=i_enum, name='i_override',
-                    options={'ANIMATABLE'},
-                    update=updateNode)
+    i_override: EnumProperty(items=i_enum, name='i_override', options={'ANIMATABLE'}, update=updateNode)
     
     # end veriables enumerate
     
@@ -421,10 +408,6 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvFormulaShapeNode)
-if __name__ == '__main__':
-    register()
-
-
 
 
 ### --------------------- Sphere setups: enable engine, Main sphere formula (further) and single preset to view this presets in action
