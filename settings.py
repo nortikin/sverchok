@@ -279,15 +279,6 @@ class SverchokPreferences(AddonPreferences):
             row_sub1 = col.row().split(factor=0.5)
             box_sub1 = row_sub1.box()
             box_sub1_col = box_sub1.column(align=True)
-<<<<<<< HEAD
-            box_sub1_col.label('Render Scale & Location')
-            box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-            box_sub1_col.prop(self, 'render_scale', text='scale')
-            box_sub1_col.label('Stethoscope MK2 settings')
-            box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
-            box_sub1_col.label('Index Viewer settings')
-            box_sub1_col.prop(self, 'index_viewer_scale', text='scale')
-=======
 
             box_sub1_col.label('Render Scale & Location')
             box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
@@ -299,7 +290,6 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col.label('Index Viewer')
             box_sub1_col.prop(self, 'stethoscope_view_xy_multiplier', text='xy multiplier')
             box_sub1_col.prop(self, 'index_viewer_scale', text='scale')
->>>>>>> 28046799183d21dfe88179f1d59efbfd079b6add
 
             col3 = row_sub1.split().column()
             col3.label(text='Location of custom defaults')
