@@ -305,7 +305,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             layout.separator()
 
         row = layout.row(align=True)
-        leftside = row.split(0.7)
+        leftside = row.split(factor=0.7)
         leftside.prop(self, 'image_name', text='')
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
