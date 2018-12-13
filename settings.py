@@ -163,19 +163,6 @@ class SverchokPreferences(AddonPreferences):
     enable_live_objin: BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
 
-<<<<<<< HEAD
-    render_scale = FloatProperty(
-        default=1.0, min=0.01, step=0.01, description='default render scale')
-
-    render_location_xy_multiplier = FloatProperty(
-        default=1.0, min=0.01, step=0.01, description='default render location xy multiplier')
-
-    stethoscope_view_scale = FloatProperty(
-        default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
-
-    index_viewer_scale = FloatProperty(
-        default=1.0, min=0.01, step=0.01, description='default index viewer scale')
-=======
     ##  BLF/BGL/GPU  scale and location props
 
     render_scale: FloatProperty(
@@ -192,7 +179,6 @@ class SverchokPreferences(AddonPreferences):
         default=1.0, min=0.01, step=0.01, description='default index viewer scale')
 
     ##
->>>>>>> 28046799183d21dfe88179f1d59efbfd079b6add
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     defaults_location: StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
