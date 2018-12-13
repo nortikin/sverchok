@@ -364,15 +364,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_constant)
 
-            # adjust render location based on preference multiplier setting
-            try:
-                with sv_preferences() as prefs:
-                    multiplier = prefs.render_location_xy_multiplier
-                    scale = prefs.render_scale
-            except:
-                # print('did not find preferences - you need to save user preferences')
-                multiplier = 1.0
-                scale = 1.0
+            multiplier, scale = self.get_preferences()
             x, y = [x * multiplier, y * multiplier]
             width, height = [width * scale, height * scale]
 
@@ -399,8 +391,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         )
         return batch, shader
 
-
-
+    def get_preferences(self):
+        # adjust render location based on preference multiplier setting
+        try:
+            with sv_preferences() as prefs:
+                multiplier = prefs.render_location_xy_multiplier
+                scale = prefs.render_scale
+        except:
+            # print('did not find preferences - you need to save user preferences')
+            multiplier = 1.0
+            scale = 1.0
+        return multiplier, scale
+   
     def free(self):
         nvBGL2.callback_disable(node_id(self))
         self.delete_texture()
