@@ -309,7 +309,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         leftside.prop(self, 'image_name', text='')
         rightside = leftside.split().row(align=True)
         rightside.operator(callback_to_self, text="Save").fn_name = "save_bitmap"
-        rightside.operator(directory_select, text="", icon='IMASEL').fn_name = "set_dir"
+        rightside.operator(directory_select, text="", icon='FILE_IMAGE').fn_name = "set_dir"
         transfer = layout.column(align=True)
         transfer.separator()
         transfer.label(text="Transfer to image viewer")
