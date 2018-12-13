@@ -146,6 +146,7 @@
     ListMatchNode
     ListFuncNode
     SvListDecomposeNode
+    SvListStatisticsNode
 
 ## List Struct
     ShiftNodeMK2
