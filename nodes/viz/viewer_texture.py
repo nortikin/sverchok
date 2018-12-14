@@ -121,10 +121,10 @@ def init_texture(width, height, texname, texture, clr):
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
 
-    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP)
-    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP)
-    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
-    # bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+    bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
 
     bgl.glTexImage2D(
         bgl.GL_TEXTURE_2D,
@@ -140,24 +140,22 @@ def simple_screen(x, y, args):
 
     def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
         # function to draw a texture
-        # bgl.glDisable(bgl.GL_DEPTH_TEST)
+        bgl.glDisable(bgl.GL_DEPTH_TEST)
 
-        # act_tex = bgl.Buffer(bgl.GL_INT, 1)
-        # bgl.glGetIntegerv(bgl.GL_TEXTURE_2D, act_tex)
-        # bgl.glEnable(bgl.GL_TEXTURE_2D)
-        # bgl.glActiveTexture(bgl.GL_TEXTURE0)
-        # bgl.glTexEnvf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
-        # bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
-
-        # # restoring settings
-        # bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
-        # bgl.glDisable(bgl.GL_TEXTURE_2D)
+        act_tex = bgl.Buffer(bgl.GL_INT, 1)
+        bgl.glGetIntegerv(bgl.GL_TEXTURE_2D, act_tex)
+        bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glActiveTexture(bgl.GL_TEXTURE0)
+        #bgl.glTexParameterf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
         shader.bind()
-        shader.uniform_int("image", 0)
+        shader.uniform_int("image", act_tex)
         batch.draw(shader)
+
+        # # restoring settings
+        bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
+        bgl.glDisable(bgl.GL_TEXTURE_2D)
         pass
 
     draw_texture(x=x, y=y, w=width, h=height, texname=texname)
