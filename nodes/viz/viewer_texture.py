@@ -96,7 +96,7 @@ gl_color_dict = {
 }
 
 factor_buffer_dict = {
-    'BW': 1,  # GL_LUMINANCE
+    'BW': 1,  # GL_RED
     'RGB': 3,  # GL_RGB
     'RGBA': 4  # GL_RGBA
 }
@@ -172,9 +172,9 @@ def simple_screen(x, y, args):
         bgl.glDisable(bgl.GL_DEPTH_TEST)
 
         act_tex = bgl.Buffer(bgl.GL_INT, 1)
-        bgl.glGetIntegerv(bgl.GL_TEXTURE_2D, act_tex)
-        bgl.glEnable(bgl.GL_TEXTURE_2D)
-        bgl.glActiveTexture(bgl.GL_TEXTURE0)
+        #bgl.glGetIntegerv(bgl.GL_TEXTURE_2D, act_tex)
+        #bgl.glEnable(bgl.GL_TEXTURE_2D)
+        #bgl.glActiveTexture(bgl.GL_TEXTURE0)
         #bgl.glTexParameterf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
@@ -390,7 +390,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_constant)
-            
+
             multiplier, scale = self.get_preferences()
             x, y = [x * multiplier, y * multiplier]
             width, height = [width * scale, height * scale]
