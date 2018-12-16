@@ -123,9 +123,14 @@ fragment_shader = '''
     out vec4 fragColor;
 
     uniform sampler2D image;
+    uniform bool ColorMode;
 
     void main()
     {
+        if (ColorMode==true)
+        {
+           fragColor = texture(image, texCoord_interp);
+        }
         fragColor = texture(image, texCoord_interp).rrrr;
     }
 '''
@@ -180,6 +185,7 @@ def simple_screen(x, y, args):
 
         shader.bind()
         shader.uniform_int("image", act_tex)
+        shader.uniform_bool("ColorMode",cMode)
         batch.draw(shader)
 
         # # restoring settings
@@ -371,6 +377,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         size_tex = 0
         width = 0
         height = 0
+        cMode = 0
+        if (self.color_mode == 'RGB' or 'RGBA'):
+           cMode = 1
 
         if self.to_image_viewer:
 
@@ -395,7 +404,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             x, y = [x * multiplier, y * multiplier]
             width, height = [width * scale, height * scale]
 
-            batch, shader = self.generate_batch_shader((x, y, width, height))
+            batch, shader = self.generate_batch_shader((x, y, width, height, cMode))
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
@@ -407,11 +416,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             nvBGL2.callback_enable(n_id, draw_data)
 
     def generate_batch_shader(self, args):
-        x, y, w, h = args
+        x, y, w, h, cMode = args
         shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
         batch = batch_for_shader(
             shader, 'TRI_FAN',
             {
+                "ColorMode": cMode,
                 "pos": ((x, y), (x + w, y), (x + w, y - h), (x, y - h)),
                 "texCoord": ((0, 1), (1, 1), (1, 0), (0, 0))
             },
