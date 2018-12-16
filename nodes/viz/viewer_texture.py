@@ -51,6 +51,7 @@ class SvTextureViewerDirSelect(bpy.types.Operator, SvGenericDirectorySelector):
     bl_label = "Pick directory"
 
 
+
 size_tex_list = [
     ('XS', 'XS', 'extra small squared tex: 64px', '', 64),
     ('S', 'S', 'small squared tex: 128px', '', 128),
@@ -100,6 +101,34 @@ factor_buffer_dict = {
     'RGBA': 4  # GL_RGBA
 }
 
+vertex_shader = '''
+    uniform mat4 ModelViewProjectionMatrix;
+/* Keep in sync with intern/opencolorio/gpu_shader_display_transform_vertex.glsl */
+    in vec2 texCoord;
+    in vec2 pos;
+
+    out vec2 texCoord_interp;
+
+    void main()
+    {
+       gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
+       gl_Position.z = 1.0;
+       texCoord_interp = texCoord;
+    }
+'''
+
+fragment_shader = '''
+
+    in vec2 texCoord_interp;
+    out vec4 fragColor;
+
+    uniform sampler2D image;
+
+    void main()
+    {
+        fragColor = texture(image, texCoord_interp).rrrr;
+    }
+'''
 
 def transfer_to_image(pixels, name, width, height, mode):
     # transfer pixels(data) from Node tree to image viewer
@@ -360,7 +389,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
-            init_texture(width, height, name[0], texture, gl_color_constant)
+            #init_texture(width, height, name[0], texture, gl_color_constant)
+            init_texture(width, height, name[0], texture, bgl.GL_RED)
 
             multiplier, scale = self.get_preferences()
             x, y = [x * multiplier, y * multiplier]
@@ -379,7 +409,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def generate_batch_shader(self, args):
         x, y, w, h = args
-        shader = gpu.shader.from_builtin('2D_IMAGE')
+        shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
         batch = batch_for_shader(
             shader, 'TRI_FAN',
             {
