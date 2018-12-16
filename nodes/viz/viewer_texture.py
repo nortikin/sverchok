@@ -90,7 +90,7 @@ gl_color_list = [
 ]
 
 gl_color_dict = {
-    'BW': 6409,  # GL_LUMINANCE
+    'BW': 6403,  # GL_RED
     'RGB': 6407,  # GL_RGB
     'RGBA': 6408  # GL_RGBA
 }
@@ -389,9 +389,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
-            #init_texture(width, height, name[0], texture, gl_color_constant)
-            init_texture(width, height, name[0], texture, bgl.GL_RED)
-
+            init_texture(width, height, name[0], texture, gl_color_constant)
+            
             multiplier, scale = self.get_preferences()
             x, y = [x * multiplier, y * multiplier]
             width, height = [width * scale, height * scale]
