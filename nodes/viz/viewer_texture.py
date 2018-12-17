@@ -1,24 +1,17 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+# contribubtions:
+#   kalwalt
+#   zeffii
 
 import os
 import numpy as np
-# import math as m
+
 
 import bpy
 import gpu
@@ -49,6 +42,7 @@ class SvTextureViewerDirSelect(bpy.types.Operator, SvGenericDirectorySelector):
     """ Pick the directory to store images in """
     bl_idname = "node.sv_texview_dirselect"
     bl_label = "Pick directory"
+
 
 
 size_tex_list = [
@@ -89,17 +83,52 @@ gl_color_list = [
 ]
 
 gl_color_dict = {
-    'BW': 6409,  # GL_LUMINANCE
+    'BW': 6403,  # GL_RED
     'RGB': 6407,  # GL_RGB
     'RGBA': 6408  # GL_RGBA
 }
 
 factor_buffer_dict = {
-    'BW': 1,  # GL_LUMINANCE
+    'BW': 1,  # GL_RED
     'RGB': 3,  # GL_RGB
     'RGBA': 4  # GL_RGBA
 }
 
+vertex_shader = '''
+    uniform mat4 ModelViewProjectionMatrix;
+    
+    /* Keep in sync with intern/opencolorio/gpu_shader_display_transform_vertex.glsl */
+    
+    in vec2 texCoord;
+    in vec2 pos;
+
+    out vec2 texCoord_interp;
+
+    void main()
+    {
+       gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
+       gl_Position.z = 1.0;
+       texCoord_interp = texCoord;
+    }
+'''
+
+fragment_shader = '''
+    in vec2 texCoord_interp;
+    out vec4 fragColor;
+
+    uniform sampler2D image;
+    uniform bool ColorMode;
+
+    void main()
+    {
+        if (ColorMode) {
+           fragColor = texture(image, texCoord_interp);
+        }else{
+           fragColor = texture(image, texCoord_interp).rrrr;
+        }
+    }
+'''
+cMode = ((False,))
 
 def transfer_to_image(pixels, name, width, height, mode):
     # transfer pixels(data) from Node tree to image viewer
@@ -136,33 +165,33 @@ def init_texture(width, height, texname, texture, clr):
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
     # border_color = (0.390805, 0.754022, 1.000000, 1.00)
-    texture, texname, width, height, batch, shader = args
+    texture, texname, width, height, batch, shader, cMod = args
 
-    def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
+    def draw_texture(x=0, y=0, w=30, h=10, texname=texname, c=cMod):
         # function to draw a texture
         bgl.glDisable(bgl.GL_DEPTH_TEST)
 
         act_tex = bgl.Buffer(bgl.GL_INT, 1)
-        # bgl.glGetIntegerv(bgl.GL_TEXTURE_2D, act_tex)
-        # bgl.glEnable(bgl.GL_TEXTURE_2D)
-        # bgl.glActiveTexture(bgl.GL_TEXTURE0)
-        # bgl.glTexParameterf(bgl.GL_TEXTURE_ENV, bgl.GL_TEXTURE_ENV_MODE, bgl.GL_REPLACE)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
 
         shader.bind()
         shader.uniform_int("image", act_tex)
+        shader.uniform_bool("ColorMode", c)
         batch.draw(shader)
 
-        # # restoring settings
+        # restoring settings
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, act_tex[0])
         bgl.glDisable(bgl.GL_TEXTURE_2D)
-        pass
 
-    draw_texture(x=x, y=y, w=width, h=height, texname=texname)
+    draw_texture(x=x, y=y, w=width, h=height, texname=texname, c=cMod)
 
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Texture Viewer node'''
+    """
+    Triggers: Texture Viewer node 
+    Tooltip: Generate textures and images from inside Sverchok
+    """
+
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
     texture = {}
@@ -173,7 +202,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.new('StringsSocket', "Width").prop_name = 'width_custom_tex'
                 self.inputs.new('StringsSocket', "Height").prop_name = 'height_custom_tex'
         else:
-
             if len(self.inputs) == 3:
                 self.inputs.remove(self.inputs[-1])
                 self.inputs.remove(self.inputs[-1])
@@ -264,7 +292,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def get_buffer(self):
         data = self.inputs['Float'].sv_get(deepcopy=False)
         self.total_size = self.calculate_total_size()
-        
+
         #  self.make_data_correct_length(data)
         texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size).tolist())
         return texture
@@ -342,6 +370,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         size_tex = 0
         width = 0
         height = 0
+        if self.color_mode in ('RGB', 'RGBA'):
+           cMode = ((True,))
+        else:
+           cMode = ((False,))
+
+        print(cMode)
 
         if self.to_image_viewer:
 
@@ -357,6 +391,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             width, height = self.texture_width_height
             x, y = self.xy_offset
             gl_color_constant = gl_color_dict.get(self.color_mode)
+    
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
@@ -366,25 +401,25 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             x, y = [x * multiplier, y * multiplier]
             width, height = [width * scale, height * scale]
 
-            batch, shader = self.generate_batch_shader((x, y, width, height))
+            batch, shader = self.generate_batch_shader((x, y, width, height, cMode))
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (texture, self.texture[n_id], width, height, batch, shader)
+                'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
 
     def generate_batch_shader(self, args):
-        x, y, w, h = args
-        shader = gpu.shader.from_builtin('2D_IMAGE')
+        x, y, w, h, cM = args
+        shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
         batch = batch_for_shader(
             shader, 'TRI_FAN',
             {
                 "pos": ((x, y), (x + w, y), (x + w, y - h), (x, y - h)),
-                "texCoord": ((0, 1), (1, 1), (1, 0), (0, 0))
+                "texCoord": ((0, 1), (1, 1), (1, 0), (0, 0)),
             },
         )
         return batch, shader
@@ -400,13 +435,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             multiplier = 1.0
             scale = 1.0
         return multiplier, scale
-   
+
     def free(self):
         nvBGL2.callback_disable(node_id(self))
         self.delete_texture()
 
-    # reset n_id on copy
     def copy(self, node):
+        # reset n_id on copy
         self.n_id = ''
 
     def set_dir(self, operator):
@@ -446,5 +481,3 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
 classes = [SvTextureViewerOperator, SvTextureViewerDirSelect, SvTextureViewerNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
-
-
