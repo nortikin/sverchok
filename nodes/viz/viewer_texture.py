@@ -123,11 +123,14 @@ fragment_shader = '''
     {
         if (ColorMode) {
            fragColor = texture(image, texCoord_interp);
-        }else{
+        } else {
            fragColor = texture(image, texCoord_interp).rrrr;
         }
     }
 '''
+
+# why (( )) ? see uniform_bool(name, seq) in
+# https://docs.blender.org/api/blender2.8/gpu.types.html
 cMode = ((False,))
 
 def transfer_to_image(pixels, name, width, height, mode):
@@ -293,7 +296,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         data = self.inputs['Float'].sv_get(deepcopy=False)
         self.total_size = self.calculate_total_size()
 
-        #  self.make_data_correct_length(data)
         texture = bgl.Buffer(bgl.GL_FLOAT, self.total_size, np.resize(data, self.total_size).tolist())
         return texture
 
@@ -308,7 +310,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         nrow.prop(self, 'to_image_viewer')
         row = layout.row(align=True)
         row.prop(self, 'color_mode', expand=True)
-
 
     def draw_buttons_ext(self, context, layout):
         img_format = self.bitmap_format
@@ -371,7 +372,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         width = 0
         height = 0
 
-        # why (( )) ?
         cMode = ((True,)) if self.color_mode in ('RGB', 'RGBA') else ((False,))
 
         if self.to_image_viewer:
