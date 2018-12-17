@@ -175,9 +175,9 @@ def init_texture(width, height, texname, texture, clr):
 def simple_screen(x, y, args):
     # draw a simple scren display for the texture
     # border_color = (0.390805, 0.754022, 1.000000, 1.00)
-    texture, texname, width, height, batch, shader = args
+    texture, texname, width, height, batch, shader, cMod = args
 
-    def draw_texture(x=0, y=0, w=30, h=10, texname=texname):
+    def draw_texture(x=0, y=0, w=30, h=10, texname=texname, c=cMod):
         # function to draw a texture
         bgl.glDisable(bgl.GL_DEPTH_TEST)
 
@@ -190,7 +190,7 @@ def simple_screen(x, y, args):
 
         shader.bind()
         shader.uniform_int("image", act_tex)
-        shader.uniform_bool("ColorMode", cMode)
+        shader.uniform_bool("ColorMode", c)
         batch.draw(shader)
 
         # # restoring settings
@@ -198,7 +198,7 @@ def simple_screen(x, y, args):
         bgl.glDisable(bgl.GL_TEXTURE_2D)
         pass
 
-    draw_texture(x=x, y=y, w=width, h=height, texname=texname)
+    draw_texture(x=x, y=y, w=width, h=height, texname=texname, c=cMod)
 
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -382,8 +382,12 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         size_tex = 0
         width = 0
         height = 0
-        if (self.color_mode == 'RGB' or 'RGBA'):
+        if self.color_mode in ('RGB', 'RGBA'):
            cMode = ((True,))
+        else:
+           cMode = ((False,))
+
+        print(cMode)
 
         if self.to_image_viewer:
 
@@ -414,7 +418,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
                 'loc': (x, y),
-                'args': (texture, self.texture[n_id], width, height, batch, shader)
+                'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
             }
 
             nvBGL2.callback_enable(n_id, draw_data)
