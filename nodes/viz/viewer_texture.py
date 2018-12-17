@@ -129,10 +129,6 @@ fragment_shader = '''
     }
 '''
 
-# why (( )) ? see uniform_bool(name, seq) in
-# https://docs.blender.org/api/blender2.8/gpu.types.html
-cMode = ((False,))
-
 def transfer_to_image(pixels, name, width, height, mode):
     # transfer pixels(data) from Node tree to image viewer
     image = bpy.data.images.get(name)
@@ -372,6 +368,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         width = 0
         height = 0
 
+        # why (( )) ? see uniform_bool(name, seq) in
+        # https://docs.blender.org/api/blender2.8/gpu.types.html
+        # cMode = ((self.color_mode in ('RGB', 'RGBA'),))
         cMode = ((True,)) if self.color_mode in ('RGB', 'RGBA') else ((False,))
 
         if self.to_image_viewer:
@@ -416,8 +415,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             shader, 'TRI_FAN',
             {
                 "pos": ((x, y), (x + w, y), (x + w, y - h), (x, y - h)),
-                "texCoord": ((0, 1), (1, 1), (1, 0), (0, 0)),
-            },
+                "texCoord": ((0, 1), (1, 1), (1, 0), (0, 0))
+            }
         )
         return batch, shader
 
