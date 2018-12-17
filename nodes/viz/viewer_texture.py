@@ -370,12 +370,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         size_tex = 0
         width = 0
         height = 0
-        if self.color_mode in ('RGB', 'RGBA'):
-           cMode = ((True,))
-        else:
-           cMode = ((False,))
 
-        print(cMode)
+        # why (( )) ?
+        cMode = ((True,)) if self.color_mode in ('RGB', 'RGBA') else ((False,))
 
         if self.to_image_viewer:
 
@@ -476,7 +473,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
         img.save_render(desired_path, scene)
         print('Bitmap saved!  path is:', desired_path)
-
 
 
 classes = [SvTextureViewerOperator, SvTextureViewerDirSelect, SvTextureViewerNode]
