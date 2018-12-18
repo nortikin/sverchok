@@ -338,14 +338,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         transfer.label(text="Transfer to image viewer")
         transfer.prop(self, 'texture_name', text='', icon='EXPORT')
 
-    def draw_label(self):
-        if self.selected_mode == 'USER':
-            width, height = self.texture_width_height
-            label = (self.label or self.name) + ' {0} x {1}'.format(width, height)
-        else:
-            label = (self.label or self.name) + ' ' + str(size_tex_dict.get(self.selected_mode)) + "^2"
-        return label
-
     def sv_init(self, context):
         self.width = 180
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
@@ -472,6 +464,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         desired_path = os.path.join(self.base_dir, self.image_name + extension)
         img.save_render(desired_path, scene)
         print('Bitmap saved!  path is:', desired_path)
+
+    def draw_label(self):
+        """ draw the node's header text"""
+
+        text = (self.label or self.name) + " "
+        if self.selected_mode == 'USER':
+            width, height = self.texture_width_height
+            text += f'{width} x {height}'
+        else:
+            text += str(size_tex_dict.get(self.selected_mode)) + "^2"
+        
+        return text
 
 
 classes = [SvTextureViewerOperator, SvTextureViewerDirSelect, SvTextureViewerNode]
