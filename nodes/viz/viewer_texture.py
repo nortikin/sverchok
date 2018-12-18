@@ -338,11 +338,15 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         self.width = 180
         inew = self.inputs.new
         inew('StringsSocket', "Float").prop_name = 'in_float'
-        inew('StringsSocket', "Width").prop_name = 'width_custom_tex'
-        inew('StringsSocket', "Height").prop_name = 'height_custom_tex'
-        self.inputs['Width'].hide_safe = True
-        self.inputs['Height'].hide_safe = True
 
+        width_socket = inew('StringsSocket', "Width")
+        width_socket.prop_name = 'width_custom_tex'
+        width_socket.hide_safe = True
+        
+        height_socket = inew('StringsSocket', "Height")
+        height_socket.prop_name = 'height_custom_tex'
+        height_socket.hide_safe = True
+        pass
 
     def delete_texture(self):
         n_id = node_id(self)
