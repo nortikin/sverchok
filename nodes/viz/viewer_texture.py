@@ -368,7 +368,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         width = 0
         height = 0
 
-        # why (( )) ? see uniform_bool(name, seq) in
+        # why is cMode a sequence like (bool,) ? see uniform_bool(name, seq) in
         # https://docs.blender.org/api/blender2.8/gpu.types.html
         is_multi_channel = self.color_mode in ('RGB', 'RGBA')
         cMode = (is_multi_channel,)
