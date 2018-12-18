@@ -391,11 +391,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_constant)
 
-            multiplier, scale = self.get_preferences()
-            x, y = [x * multiplier, y * multiplier]
-            width, height = [width * scale, height * scale]
-
+            x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
             batch, shader = self.generate_batch_shader((x, y, width, height))
+
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
@@ -429,6 +427,15 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             multiplier = 1.0
             scale = 1.0
         return multiplier, scale
+
+    def adjust_position_and_dimensions(self, x, y, width, height):
+        """
+        this could also return scale for a blf notation in the vacinity of the texture
+        """
+        multiplier, scale = self.get_preferences()
+        x, y = [x * multiplier, y * multiplier]
+        width, height = [width * scale, height * scale]
+        return x, y, width, height
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
