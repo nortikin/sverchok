@@ -162,7 +162,8 @@ def init_texture(width, height, texname, texture, clr):
 
 
 def simple_screen(x, y, args):
-    # draw a simple scren display for the texture
+    """ shader draw function for the texture """
+
     # border_color = (0.390805, 0.754022, 1.000000, 1.00)
     texture, texname, width, height, batch, shader, cMod = args
 
