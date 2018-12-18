@@ -197,19 +197,14 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     texture = {}
 
     def wrapped_update(self, context):
-        if self.selected_mode == 'USER':
-            if len(self.inputs) == 1:
-                self.inputs.new('StringsSocket', "Width").prop_name = 'width_custom_tex'
-                self.inputs.new('StringsSocket', "Height").prop_name = 'height_custom_tex'
-        else:
-            if len(self.inputs) == 3:
-                self.inputs.remove(self.inputs[-1])
-                self.inputs.remove(self.inputs[-1])
-
+        hide_inputs = not (self.selected_mode == 'USER')
+        self.inputs["Width"].hide_safe = hide_inputs
+        self.inputs["Height"].hide_safe = hide_inputs
         updateNode(self, context)
 
     def wrapped_updateNode_(self, context):
         self.activate = False
+        updateNode(self, context)
 
     n_id: StringProperty(default='')
     to_image_viewer: BoolProperty(
@@ -341,7 +336,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 180
-        self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
+        inew = self.inputs.new
+        inew('StringsSocket', "Float").prop_name = 'in_float'
+        inew('StringsSocket', "Width").prop_name = 'width_custom_tex'
+        inew('StringsSocket', "Height").prop_name = 'height_custom_tex'
+        self.inputs['Width'].hide_safe = True
+        self.inputs['Height'].hide_safe = True
+
 
     def delete_texture(self):
         n_id = node_id(self)
