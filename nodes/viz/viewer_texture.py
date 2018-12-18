@@ -370,8 +370,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # why (( )) ? see uniform_bool(name, seq) in
         # https://docs.blender.org/api/blender2.8/gpu.types.html
-        # cMode = ((self.color_mode in ('RGB', 'RGBA'),))
-        cMode = ((True,)) if self.color_mode in ('RGB', 'RGBA') else ((False,))
+        is_multi_channel = self.color_mode in ('RGB', 'RGBA')
+        cMode = (is_multi_channel,)
 
         if self.to_image_viewer:
 
@@ -397,7 +397,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             x, y = [x * multiplier, y * multiplier]
             width, height = [width * scale, height * scale]
 
-            batch, shader = self.generate_batch_shader((x, y, width, height, cMode))
+            batch, shader = self.generate_batch_shader((x, y, width, height))
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'mode': 'custom_function',
@@ -409,7 +409,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             nvBGL2.callback_enable(n_id, draw_data)
 
     def generate_batch_shader(self, args):
-        x, y, w, h, cM = args
+        x, y, w, h = args
         shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
         batch = batch_for_shader(
             shader, 'TRI_FAN',
