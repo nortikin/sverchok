@@ -385,7 +385,8 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             width, height = self.texture_width_height
             x, y = self.xy_offset
             gl_color_constant = gl_color_dict.get(self.color_mode)
-    
+
+        
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
@@ -404,16 +405,13 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             nvBGL2.callback_enable(n_id, draw_data)
 
+
     def generate_batch_shader(self, args):
         x, y, w, h = args
+        positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
+        indices = ((0, 1), (1, 1), (1, 0), (0, 0))
         shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-        batch = batch_for_shader(
-            shader, 'TRI_FAN',
-            {
-                "pos": ((x, y), (x + w, y), (x + w, y - h), (x, y - h)),
-                "texCoord": ((0, 1), (1, 1), (1, 0), (0, 0))
-            }
-        )
+        batch = batch_for_shader(shader, 'TRI_FAN', {"pos": positions, "texCoord": indices})
         return batch, shader
 
     def get_preferences(self):
