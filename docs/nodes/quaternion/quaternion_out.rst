@@ -1,0 +1,59 @@
+Quaternion Out
+--------------
+
+Quaternion Out node converts a quaternion into various formats for a selected mode.
+
+Modes
+=====
+
+The available **Modes** are: WXYZ, EULER, AXIS-ANGLE & MATRIX.
+
++============+==============================================================+
+| Mode       | Description                                                  |
++------------+--------------------------------------------------------------+
+| WXYZ       | Converts a quaternion into its W, X, Y, Z components. [1]    |
++------------+--------------------------------------------------------------+
+| EULER      | Converts a quaternion into X, Y, Z angles corresponding      |
+|            | to the Euler rotation given an Euler rotation order. [2,3]   |
++------------+--------------------------------------------------------------+
+| AXIS-ANGLE | Converts a quaternion into the Axis & Angle of rotation. [2] |
++------------+--------------------------------------------------------------+
+| MATRIX     | Converts a quaternion into an orthogonal 4x4 rotation matrix.|
++============+==============================================================+
+
+Notes:
+[1] : For WXYZ the node provides a "Normalize" option to let the input quaternion
+be normalized before outputting its components.
+[2] : For EULER and AXIS-ANGLE modes, which output angles, the node provides an
+angle unit conversion to let the angle output values be converted to Radians,
+Degrees or Unities (0-1 range).
+[3] : For EULER mode the node provides the option to select the Euler rotation order:
+"XYZ", "XZY", "YXZ", "YZX", "ZXY" or "ZYX".
+
+Inputs
+======
+
+**Quaternions**
+The node takes a list of (one or more) quaternions and based on the selected mode
+it converts the quaternions into the corresponding components.
+
+
+Outputs
+=======
+
+Based on the selected **Mode** the node makes available the corresponding output sockets:
+
++============+================================+
+| Mode       | Output Sockets (types)         |
++------------+--------------------------------+
+| WXYZ       | W, X, Y, Z  (floats)           |
++------------+--------------------------------+
+| EULER      | X, Y, Z angles (floats)        |
++------------+--------------------------------+
+| AXIS-ANGLE | Axis (Vector) & Angle (float)  |
++------------+--------------------------------+
+| MATRIX     | Matrix (4x4 matrix)            |
++============+================================+
+
+The node only generates the conversion when the output sockets are connected.
+
