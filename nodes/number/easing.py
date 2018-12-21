@@ -102,7 +102,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         items=enum_item_4(["default", "scope", "sniper"]), default="default", update=updateNode
     )
 
-    def draw_buttons(self, context, l):
+    def mode_custom_draw(self, socket, context, l):
         r = l.row(align=True)
         r.prop(self, "selected_mode", text="")
         r.prop(self, 'activate', icon='NORMALIZE_FCURVES', text='')
@@ -112,7 +112,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
-        self.outputs.new('StringsSocket', "Float")
+        self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
     def get_drawing_attributes(self):
         """
@@ -241,6 +241,16 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     def copy(self, node):
         # reset n_id on copy
         self.n_id = ''
+
+    def update(self):
+        # must handle disconnecting sockets while still drawing to view
+        if not ("Float" in self.inputs):
+            return
+        try:
+            if not self.inputs[0].other:
+                nvBGL.callback_disable(node_id(self))        
+        except:
+            print('Easing node update holdout (not a problem)')
 
 
 classes = [SvEasingNode,]
