@@ -102,17 +102,24 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         items=enum_item_4(["default", "scope", "sniper"]), default="default", update=updateNode
     )
 
-    def mode_custom_draw(self, socket, context, l):
+    def custom_draw_socket(self, socket, context, l):
+        info = socket.get_socket_info()
+
         r = l.row(align=True)
-        r.prop(self, "selected_mode", text="")
-        r.prop(self, 'activate', icon='NORMALIZE_FCURVES', text='')
+        split = r.split(factor=0.85)
+        r1 = split.row(align=True)
+        r1.prop(self, "selected_mode", text="")
+        r1.prop(self, 'activate', icon='NORMALIZE_FCURVES', text="")
+        if info:
+            r2 = split.row()
+            r2.label(text=info)
 
     def draw_buttons_ext(self, context, l):
         l.prop(self, "selected_theme_mode")
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
-        self.outputs.new('StringsSocket', "Float").custom_draw = 'mode_custom_draw'
+        self.outputs.new('StringsSocket', "Float").custom_draw = 'custom_draw_socket'
 
     def get_drawing_attributes(self):
         """
@@ -243,7 +250,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         self.n_id = ''
 
     def update(self):
-        # must handle disconnecting sockets while still drawing to view
+        # handle disconnecting sockets, also disconnect drawing to view?
         if not ("Float" in self.inputs):
             return
         try:

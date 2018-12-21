@@ -140,6 +140,13 @@ class SvSocketCommon:
         # print("getting base extra info")
         return ""
 
+    def get_socket_info(self):
+        """ Return Number of encapsulated data lists, or empty str  """
+        try:
+            return SvGetSocketInfo(self)
+        except:
+            return ''
+
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
 
         if self.bl_idname == "StringsSocket":
