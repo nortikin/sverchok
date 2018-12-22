@@ -29,5 +29,5 @@ def scaled_dpi():
     """
     find the xy position for the blf content, adjusted for screen res.
     """
-    ps = bpy.context.user_preferences.system
+    ps = bpy.context.preferences.system
     return ps.dpi * ps.pixel_size / 72

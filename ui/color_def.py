@@ -70,7 +70,7 @@ def color_callback(self, context):
 
 def sv_colors_definition():
     addon_name = sverchok.__name__
-    addon = bpy.context.user_preferences.addons.get(addon_name)
+    addon = bpy.context.preferences.addons.get(addon_name)
     debug("got addon")
     if addon:
         prefs = addon.preferences

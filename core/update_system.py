@@ -258,7 +258,7 @@ def do_update_heat_map(node_list, nodes):
         return
     t_max = max(times)
     addon_name = data_structure.SVERCHOK_NAME
-    addon = bpy.context.user_preferences.addons.get(addon_name)
+    addon = bpy.context.preferences.addons.get(addon_name)
     if addon:
         # to use Vector.lerp
         cold = Vector(addon.preferences.heat_map_cold)
@@ -474,6 +474,6 @@ def get_update_lists(ng):
 
 def register():
     addon_name = sverchok.__name__
-    addon = bpy.context.user_preferences.addons.get(addon_name)
+    addon = bpy.context.preferences.addons.get(addon_name)
     if addon:
         update_error_colors(addon.preferences, [])

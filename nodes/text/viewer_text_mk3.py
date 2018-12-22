@@ -103,7 +103,7 @@ class SverchokViewerMK1(bpy.types.Operator):
             a.shrink = False
             a.use_custom_color = True
             # this trick allows us to negative color, so user accept it as grey!!!
-            color = [1 - i for i in bpy.context.user_preferences.themes['Default'].node_editor.space.back[:]]
+            color = [1 - i for i in bpy.context.preferences.themes['Default'].node_editor.space.back[:]]
             a.color[:] = color
 
     def do_text(self,outs,node):

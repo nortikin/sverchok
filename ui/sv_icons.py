@@ -47,7 +47,7 @@ def remove_custom_icons():
 def get_icon_switch():
     """Return show_icons setting from addon preferences"""
 
-    addon = bpy.context.user_preferences.addons.get(addon_name)
+    addon = bpy.context.preferences.addons.get(addon_name)
 
     if addon and hasattr(addon, "preferences"):
         return addon.preferences.show_icons

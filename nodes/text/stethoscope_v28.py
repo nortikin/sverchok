@@ -82,8 +82,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Data')
         try:
-            current_theme = bpy.context.user_preferences.themes.items()[0][0]
-            editor = bpy.context.user_preferences.themes[current_theme].node_editor
+            current_theme = bpy.context.preferences.themes.items()[0][0]
+            editor = bpy.context.preferences.themes[current_theme].node_editor
             self.text_color = high_contrast_color(editor.space.back)
         except:
             print('-', end='')

@@ -56,7 +56,7 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
 
         # bpy.context.scene.world?, should check properly
         world = bpy.data.worlds['World']
-        prefs = bpy.context.user_preferences
+        prefs = bpy.context.preferences
         theme = prefs.themes['Default']
 
         row = layout.row(align=True)
