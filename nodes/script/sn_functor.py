@@ -61,7 +61,11 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     bl_label = 'SN Functor'
     bl_icon = 'SYSTEM'
 
-    script_name: StringProperty()
+    def wrapped_update(self, context):
+        # self.script_name = self.script_name.strip()
+        print(f'set self.script_name to:|{self.script_name}|')
+
+    script_name: StringProperty(update=wrapped_update)
     script_str: StringProperty()
     loaded: BoolProperty()
     node_dict = {}
@@ -101,7 +105,7 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
 
         if not self.loaded:
             row = layout.row()
-            row.prop_search(self, 'script_name', bpy.data, 'texts', text='', icon='TEXT')
+            row.prop_search(self, 'script_name', bpy.data, 'texts', text='')
             row.operator(sn_callback, text='', icon='PLUGIN').fn_name = 'load'
 
         row = layout.row()
@@ -155,11 +159,9 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
     def load(self, context):
 
         print('time to load', self.script_name)
-        # if any current connections... gather them 
         self.clear_sockets()
-        # restore connections where applicable (by socket name)
-        self.node_dict[hash(self)] = self.get_functions()
         self.script_str = bpy.data.texts[self.script_name].as_string()
+        self.node_dict[hash(self)] = self.get_functions()
         self.init_socket(context)
         self.loaded = True
 
@@ -180,6 +182,14 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             return 'SNF: ' + self.script_name
         else:
             return self.bl_label
+
+    def handle_reload(self, context):
+        print('handling reload')
+        # if any current connections... gather them 
+        self.load(context)
+        # restore connections where applicable (by socket name)
+
+
 
 
 classes = [SvSNCallbackFunctor, SvSNFunctor]
