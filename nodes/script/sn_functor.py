@@ -77,7 +77,6 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
 
         if func_name == 'process':
             locals().update(ND.get("all_members"))
-            print('----', locals())
         elif func_name == 'functor_init':
             print('will attempt to functor init!')
  
@@ -139,30 +138,18 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             self.loaded = True
         self.process_script()
 
-    # def get_starfunks(self, members=None):
-    #     return {key: value for key, value in members.items()}
- 
+    def get_starfunks(self, module):
+        members = inspect.getmembers(module)
+        return {m[0]: m[1] for m in members if (not m[0] in functions) and (not m[0].startswith('__'))}
+
     def get_functions(self):
-        # script = self.script_name.replace('.py', '').strip()
-        # exec(f'import {script}')
+        script = self.script_name.replace('.py', '').strip()
+        exec(f'import {script}')
 
-        # module = locals().get(script)
-        exec(self.script_str)
-        module = locals()
-        all_members = {}
+        module = locals().get(script)
 
-        dict_functions = {}
-        dict_functions['all_members'] = {}
-        
-        for named in functions:
-            if named in module:
-                dict_functions[named] = module.pop(named)
-
-        for named, code_object in module.items():
-            if named == 'self':
-                continue
-            dict_functions['all_members'][named] = code_object
-
+        dict_functions = {named: getattr(module, named) for named in functions if hasattr(module, named)}
+        dict_functions['all_members'] = self.get_starfunks(module)
         return dict_functions
 
     def load(self, context):
@@ -171,8 +158,8 @@ class SvSNFunctor(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         # if any current connections... gather them 
         self.clear_sockets()
         # restore connections where applicable (by socket name)
-        self.script_str = bpy.data.texts[self.script_name].as_string()
         self.node_dict[hash(self)] = self.get_functions()
+        self.script_str = bpy.data.texts[self.script_name].as_string()
         self.init_socket(context)
         self.loaded = True
 
