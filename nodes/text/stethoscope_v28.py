@@ -141,7 +141,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             data = inputs[0].sv_get(deepcopy=False)
             self.num_elements = len(data)
 
-
             if self.selected_mode == 'text-based':
                 props = lambda: None
                 props.line_width = self.line_width
@@ -159,10 +158,9 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 #                # implement another nvBGL parses for gfx
                 processed_data = data
 
-            node_width = (self.width_hidden + 30.0) if self.hide else self.width
-
             # adjust proposed text location in case node is framed.
             # take into consideration the hidden state
+            node_width = (self.width_hidden + 30.0) if self.hide else self.width
             _x, _y = recursive_framed_location_finder(self, self.location[:])
             _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
 
