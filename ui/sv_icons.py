@@ -83,6 +83,3 @@ def register():
 
 def unregister():
     remove_custom_icons()
-
-if __name__ == '__main__':
-    register()
