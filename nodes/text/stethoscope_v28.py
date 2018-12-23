@@ -24,7 +24,7 @@ import blf
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, IntProperty
 from mathutils import Vector
 
-from sverchok.utils.context_managers import sv_preferences
+from sverchok.settings import get_params
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
@@ -120,6 +120,13 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'font_id')
 
+    def get_preferences(self):
+        # supplied with default, forces at least one value :)
+        props = get_params({
+            'stethoscope_view_scale': 1.0, 
+            'render_location_xy_multiplier': 1.0})
+        return props.stethoscope_view_scale, props.render_location_xy_multiplier
+
     def process(self):
         inputs = self.inputs
         n_id = node_id(self)
@@ -128,15 +135,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(n_id)
 
         if self.activate and inputs[0].is_linked:
-
-            try:
-                with sv_preferences() as prefs:
-                    scale = prefs.stethoscope_view_scale
-                    location_theta = prefs.render_location_xy_multiplier
-            except:
-                # print('did not find preferences - you need to save user preferences')
-                scale = 1.0
-                location_theta = 1.0
+            scale, location_theta = self.get_preferences()
 
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
@@ -197,7 +196,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvStethoscopeNodeMK2)
-
 
 def unregister():
     bpy.utils.unregister_class(SvStethoscopeNodeMK2)
