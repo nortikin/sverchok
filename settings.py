@@ -11,6 +11,32 @@ from sverchok.utils import sv_panels_tools, logging
 from sverchok.ui import color_def
 
 
+def get_params(settings_and_fallbacks):
+    """
+    This function returns an object which you can use the . op on.
+    example usage:
+
+        from sverchok.settings import get_params
+
+        props = get_params({'prop_name_1': 20, 'prop_name_2': 30})
+        # 20 = props.prop_name_1
+        # 30 = props.prop_name_2
+    """
+    from sverchok.utils.context_managers import sv_preferences
+
+    props = lambda: None
+
+    with sv_preferences() as prefs:
+        for k, v in settings_and_fallbacks.items():
+            try:
+                value = getattr(prefs, k)
+            except:
+                print(f'returning a default for {k}')
+                value = v
+            setattr(props, k, value)
+    return props
+
+
 class SverchokPreferences(AddonPreferences):
 
     bl_idname = __package__
