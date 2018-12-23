@@ -132,10 +132,8 @@ def draw_text_data(data):
     text_height = 15 * scale
     line_height = 14 * scale
 
-    # why does the text look so jagged?  <-- still valid question
-    # dpi = bpy.context.preferences.system.dpi
     blf.size(font_id, int(text_height), 72)
-    blf.color(font_id, r, g, b, 1.0) # bgl.glColor3f(*color)
+    blf.color(font_id, r, g, b, 1.0)
     ypos = y
 
     for line in lines:
