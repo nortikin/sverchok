@@ -21,7 +21,7 @@ from bpy.props import (
     FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
 )
 
-from sverchok.utils.context_managers import sv_preferences
+from sverchok.settings import get_params
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
@@ -404,7 +404,6 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
 
             nvBGL2.callback_enable(n_id, draw_data)
 
-
     def generate_batch_shader(self, args):
         x, y, w, h = args
         positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
@@ -414,22 +413,17 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         return batch, shader
 
     def get_preferences(self):
-        # adjust render location based on preference multiplier setting
-        try:
-            with sv_preferences() as prefs:
-                multiplier = prefs.render_location_xy_multiplier
-                scale = prefs.render_scale
-        except:
-            # print('did not find preferences - you need to save user preferences')
-            multiplier = 1.0
-            scale = 1.0
-        return multiplier, scale
+        # supplied with default, forces at least one value :)
+        props = get_params({
+            'render_scale': 1.0, 
+            'render_location_xy_multiplier': 1.0})
+        return props.render_scale, props.render_location_xy_multiplier
 
     def adjust_position_and_dimensions(self, x, y, width, height):
         """
         this could also return scale for a blf notation in the vacinity of the texture
         """
-        multiplier, scale = self.get_preferences()
+        scale, multiplier = self.get_preferences()
         x, y = [x * multiplier, y * multiplier]
         width, height = [width * scale, height * scale]
         return x, y, width, height
