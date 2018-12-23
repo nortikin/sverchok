@@ -121,7 +121,7 @@ def apply_theme(ng=None):
         for ng in sverchok_trees():
             apply_theme(ng)
     else:
-        for n in filter(lambda n:hasattr(n, "set_color"), ng.nodes):
+        for n in filter(lambda n: hasattr(n, "set_color"), ng.nodes):
             n.set_color()
 
 
