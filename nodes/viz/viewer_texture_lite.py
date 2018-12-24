@@ -19,30 +19,14 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.nodes.viz.viewer_texture import (
-    vertex_shader, fragment_shader, init_texture, simple_screen)
+    vertex_shader, fragment_shader, init_texture, simple_screen,
+    gl_color_list, gl_color_dict, factor_buffer_dict)
 
-gl_color_list = [
-    ('BW', 'bw', 'grayscale texture', '', 0),
-    ('RGB', 'rgb', 'rgb colored texture', '', 1),
-    ('RGBA', 'rgba', 'rgba colored texture', '', 2)
-]
 
 out_modes = [
     ('UV\image editor', 'UV\image editor', 'insert values into image editor (only RGBA mode!)', '', 0),
     ('bgl', 'bgl', 'create texture inside nodetree', '', 1),
 ]
-
-gl_color_dict = {
-    'BW': 6403,  # GL_RED
-    'RGB': 6407,  # GL_RGB
-    'RGBA': 6408  # GL_RGBA
-}
-
-factor_buffer_dict = {
-    'BW': 1,  # GL_RED
-    'RGB': 3,  # GL_RGB
-    'RGBA': 4  # GL_RGBA
-}
 
 
 class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
