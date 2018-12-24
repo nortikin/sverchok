@@ -29,7 +29,7 @@ def hard_freeze(self):
 @contextmanager
 def sv_preferences():
     '''
-    use this whenever you need set or get content of the user_preferences class
+    use this whenever you need set or get content of the preferences class
     usage
         from sverchok.utils.context_managers import sv_preferences
         ...

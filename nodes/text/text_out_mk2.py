@@ -152,7 +152,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
 
-        addon = context.user_preferences.addons.get(sverchok.__name__)
+        addon = context.preferences.addons.get(sverchok.__name__)
         over_sized_buttons = addon.preferences.over_sized_buttons
 
         col = layout.column(align=True)

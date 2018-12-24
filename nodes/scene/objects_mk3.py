@@ -157,7 +157,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         op_text = "Get selection"  # fallback
     
         try:
-            addon = context.user_preferences.addons.get(sverchok.__name__)
+            addon = context.preferences.addons.get(sverchok.__name__)
             if addon.preferences.over_sized_buttons:
                 row.scale_y = 4.0
                 op_text = "G E T"

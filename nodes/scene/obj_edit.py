@@ -66,7 +66,7 @@ class SvObjEdit(bpy.types.Node, SverchCustomTreeNode):
         if not (self.inputs and self.inputs[0]):
             return
 
-        addon = context.user_preferences.addons.get(sverchok.__name__)
+        addon = context.preferences.addons.get(sverchok.__name__)
         prefs = addon.preferences
         callback = 'node.sverchok_objectedit_cb'
 

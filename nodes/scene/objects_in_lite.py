@@ -91,7 +91,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         out('MatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
-        addon = context.user_preferences.addons.get(sverchok.__name__)
+        addon = context.preferences.addons.get(sverchok.__name__)
         prefs = addon.preferences
         callback = 'node.sverchok_objectinlite_cb'
 

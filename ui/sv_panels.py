@@ -132,7 +132,7 @@ class Sv3DPanel(bpy.types.Panel):
         layout = self.layout
         little_width = 0.32
 
-        addon = context.user_preferences.addons.get(sverchok.__name__)
+        addon = context.preferences.addons.get(sverchok.__name__)
         if addon.preferences.enable_live_objin:
 
             # Live Update Modal trigger.
@@ -333,7 +333,7 @@ class SverchokToolsMenu(bpy.types.Panel):
 
         little_width = 0.32
 
-        addon = context.user_preferences.addons.get(sverchok.__name__)
+        addon = context.preferences.addons.get(sverchok.__name__)
 
         self.draw_profiling_info_if_needed(layout, addon)
 
