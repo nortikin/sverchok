@@ -82,6 +82,15 @@ def sv_clean(scene):
     data_structure.sv_Vars = {}
     data_structure.temp_handle = {}
 
+@persistent
+def sv_undo(scene):
+    """
+    this is to handle any number of undo related events. Initially it might just handle the
+    removal of viewer nodes.
+
+    """
+    pass
+
 
 @persistent
 def sv_post_load(scene):
@@ -143,6 +152,7 @@ def set_frame_change(mode):
 
 
 def register():
+    # bpy.app.handlers.undo_post.append(sv_undo)
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.append(sv_main_handler)
@@ -160,4 +170,5 @@ def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.remove(sv_main_handler)
+    # bpy.app.handlers.undo_post.remove(sv_undo)
     set_frame_change(None)
