@@ -45,7 +45,7 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "Mod", "Get")
+        layout.prop(self, "Mod", text="Get")
         if self.Mod == 'Custom':
             layout.prop(self, "Cust", text="")
 
