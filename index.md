@@ -237,6 +237,7 @@
     SvSkinViewerNodeV28
     ---
     SvTextureViewerNode
+    SvTextureViewerNodeLite
 
 ## Text
     ViewerNodeTextMK3
