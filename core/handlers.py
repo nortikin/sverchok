@@ -83,19 +83,6 @@ def sv_clean(scene):
     data_structure.temp_handle = {}
 
 @persistent
-def sv_undo(scene):
-    """
-    this is to handle any number of undo related events. 
-    """
-
-    # undo doesn't appear granular to the point of being able
-    # to query the undo event that triggered this handler.
-    # doing this is about the simplest approach. 
-    sv_clean(scene)
-    sv_scene_handler(scene)
-
-
-@persistent
 def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
@@ -155,7 +142,6 @@ def set_frame_change(mode):
 
 
 def register():
-    bpy.app.handlers.undo_pre.append(sv_undo)
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.append(sv_main_handler)
@@ -173,5 +159,4 @@ def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.remove(sv_main_handler)
-    bpy.app.handlers.undo_pre.remove(sv_undo)
     set_frame_change(None)
