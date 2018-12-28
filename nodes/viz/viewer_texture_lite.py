@@ -39,11 +39,11 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     image: StringProperty(default='', update=updateNode)
 
     width_custom_tex: IntProperty(
-        min=1, max=2024, default=206, name='Width Tex',
+        min=1, max=2024, default=206, name='Width',
         description="set the custom texture size", update=updateNode)
 
     height_custom_tex: IntProperty(
-        min=1, max=2024, default=124, name='Height Tex',
+        min=1, max=2024, default=124, name='Height',
         description="set the custom texture size", update=updateNode)
 
     color_mode: EnumProperty(
@@ -69,8 +69,10 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         else:
             row = layout.row(align=True)
             row.prop(self, 'color_mode', expand=True)
-            col.prop(self, 'width_custom_tex')
-            col.prop(self, 'height_custom_tex')
+            row2 = col.row(align=True)
+            # row2.label(text='Dims Tex')
+            row2.prop(self, 'width_custom_tex')
+            row2.prop(self, 'height_custom_tex')
 
     def sv_init(self, context):
         self.width = 180

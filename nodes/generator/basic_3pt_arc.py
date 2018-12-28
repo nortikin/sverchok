@@ -29,7 +29,7 @@ from sverchok.data_structure import updateNode
 
 def generate_3PT_mode_1(pts=None, num_verts=20, make_edges=False):
     '''
-    Arc from start - throught - Eend
+    Arc from [start - through - end]
     - call this function only if you have 3 pts,
     - do your error checking before passing to it.
     '''
