@@ -104,8 +104,8 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         # this may seem silly, but it triggers an update.
                         n.custom_shader_location = n.custom_shader_location
 
-            for n in [n for n in ng.nodes if n.bl_idname == 'SvSNFunctor']:
-                if n.script_name == text_file_name:
+            for n in [n for n in ng.nodes if n.bl_idname in {'SvSNFunctor', 'SvSNFunctorB'}]:
+                if n.script_name.strip() == text_file_name.strip():
                     print('handle the shortcut')
                     n.handle_reload(context)
 

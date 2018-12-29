@@ -25,6 +25,7 @@
     RandomVectorNodeMK2
     SvScriptNodeLite
     SvSNFunctor
+    SvSNFunctorB
     ImageNode
 
 ## Generators Extended
