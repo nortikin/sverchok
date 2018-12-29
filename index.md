@@ -314,6 +314,7 @@
     ---
     SvSpiralNode
     SvExportGcodeNode
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvCurveViewerNode
