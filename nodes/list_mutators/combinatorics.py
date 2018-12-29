@@ -76,7 +76,7 @@ class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         ''' Add/remove sockets as A-Z sockets are connected/disconnected '''
 
-        # not a multiple quaternion operation ? => no need to update sockets
+        # not a multiple input operation ? => no need to update sockets
         if self.operation not in multiple_input_operations:
             return
 
