@@ -143,10 +143,6 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             self.loaded = True
         self.process_script()
 
-    def get_starfunks(self, module):
-        members = inspect.getmembers(module)
-        return {m[0]: m[1] for m in members if (not m[0] in functions) and (not m[0].startswith('__'))}
-
     def get_functions(self):
         # exec(f'import {script}')
 
