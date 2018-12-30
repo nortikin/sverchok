@@ -8,6 +8,7 @@
 import sys
 import inspect
 import imp
+import types
 import itertools
 from importlib import reload
 
@@ -149,8 +150,8 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         name = self.script_name.strip()  # strip is needed because propsearch.
         try:
             self.script_str = bpy.data.texts[name].as_string()
-            # module = types.ModuleType(name   # might work!)
-            module = imp.new_module(name)
+            module = types.ModuleType(name)   # might work!)
+            # module = imp.new_module(name)
             exec(self.script_str, module.__dict__)
         except Exception as err:
             print('wtf man', err)
