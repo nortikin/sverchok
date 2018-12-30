@@ -6,12 +6,12 @@
 # License-Filename: LICENSE
 
 import sys
-import bpy
 import inspect
-from importlib import reload
 import imp
+import itertools
+from importlib import reload
 
-# import mathutils
+import bpy
 from mathutils import Matrix, Vector
 from bpy.props import FloatProperty, IntProperty, StringProperty, BoolProperty
 
@@ -191,10 +191,24 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
 
     def handle_reload(self, context):
         print('handling reload')
-        # if any current connections... gather them 
-        self.load(context)
-        # restore connections where applicable (by socket name)
 
+        # if any current connections... gather them 
+        reconnections = []
+        mappings = itertools.chain.from_iterable([node.inputs, node.outputs])
+        for i in (i for i in mappings if i.is_linked):
+            for L in i.links:
+                reconnections.append([L.from_socket.path_from_id(), L.to_socket.path_from_id()])
+
+        self.load(context)
+
+        # restore connections where applicable (by socket name)
+        node_tree = self.id_data
+        for str_from, str_to in reconnections:
+            try:
+                node_tree.links.new(eval(str_from), eval(str_to))
+            except Exception as err:
+                print(f'failed {str_from} -> {str_to}')
+                print(err)
 
 
 
