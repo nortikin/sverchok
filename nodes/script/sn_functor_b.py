@@ -190,6 +190,12 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
             return self.bl_label
 
     def handle_reload(self, context):
+        """
+        Handles the reload event.
+          - gather existing connections
+          - perform reload / refresh
+          - try to set the connections
+        """
         print('handling reload')
 
         # if any current connections... gather them 
