@@ -149,6 +149,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         name = self.script_name.strip()  # strip is needed because propsearch.
         try:
             self.script_str = bpy.data.texts[name].as_string()
+            # module = types.ModuleType(name   # might work!)
             module = imp.new_module(name)
             exec(self.script_str, module.__dict__)
         except Exception as err:
@@ -193,23 +194,34 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
           - try to set the connections
         """
         print('handling reload')
+        node = self
+        nodes = self.id_data.nodes
 
         # if any current connections... gather them 
         reconnections = []
         mappings = itertools.chain.from_iterable([node.inputs, node.outputs])
         for i in (i for i in mappings if i.is_linked):
             for L in i.links:
-                reconnections.append([L.from_socket.path_from_id(), L.to_socket.path_from_id()])
+                link = lambda: None
+                link.from_node = L.from_socket.node.name
+                link.from_socket = L.from_socket.index
+                link.to_node = L.to_socket.node.name
+                link.to_socket = L.to_socket.index
+                reconnections.append(link)
 
         self.load(context)
 
         # restore connections where applicable (by socket name)
         node_tree = self.id_data
-        for str_from, str_to in reconnections:
+        for link in reconnections:
             try:
-                node_tree.links.new(eval(str_from), eval(str_to))
+                from_part = nodes[link.from_node].outputs[link.from_socket]
+                to_part = nodes[link.to_node].inputs[link.to_socket]
+                node_tree.links.new(from_part, to_part)
             except Exception as err:
-                print(f'failed {str_from} -> {str_to}')
+                str_from = f'nodes[{link.from_node}].outputs[{link.from_socket}]'
+                str_to = f'nodes[{link.to_node}].inputs[{link.to_socket}]'
+                print(f'failed: {str_from} -> {str_to}')
                 print(err)
 
 
