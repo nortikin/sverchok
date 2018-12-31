@@ -345,3 +345,7 @@
     SvOffsetLineNode
     SvContourNode
     SvPlanarEdgenetToPolygons
+    ---
+    SvQuaternionOutNode
+    SvQuaternionInNode
+    SvQuaternionMathNode
