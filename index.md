@@ -137,6 +137,7 @@
     SvDatetimeStrings
     SvPolygonSortNode
 
+
 ## List Main
     ListJoinNode
     ZipNode
@@ -180,7 +181,9 @@
     SvRndNumGen
     RandomNode
     SvEasingNode
+    ---
     SvMixNumbersNode
+    SvMixInputsNode
 
 ## Vector
     GenVectorsNode

@@ -1,10 +1,10 @@
-Mix Numbers
-===========
+Mix Inputs
+==========
 
 Functionality
 -------------
 
-This node mixes two values using a given factor and a selected interpolation and easing functions.
+This node mixes two values using a given factor for the selected interpolation & easing functions.
 
 For a factor of 0.0 it outputs the first value while the factor of 1.0 it outputs the last value. For every factor value between 0-1 it will output a value between the first and second input value. (*)
 
@@ -14,18 +14,22 @@ Note:
 Inputs & Parameters
 -------------------
 
-All parameters except for **Type**, **Interpolation** and **Easing** can be given by the node or an external input.
+All parameters except for **Mode**, **Interpolation** and **Easing** can be given by the node or an external input.
+
+All inputs are vectorized and they will accept single or multiple values.
 
 This node has the following parameters:
 
 +-------------------+---------------+-------------+-----------------------------------------------------+
 | Parameter         | Type          | Default     | Description                                         |
 +===================+===============+=============+=====================================================+
-| **Type**          | Enum:         | Float       | Type of inputs values to interpolate.               |
-|                   |  Int          |             | When Float is selected the input value1 and value2  |
-|                   |  Float        |             | expect float values                                 |
-|                   |               |             | When Int is selected the input value1 and value2    |
-|                   |               |             | expect int values.                                  |
+| **Mode**          | Enum:         | Float       | Type of input values to interpolate.                |
+|                   |  Int          |             | The input and output socket types will change       |
+|                   |  Float        |             | according to the selected mode to match the type.   |
+|                   |  Vector       |             |                                                     |
+|                   |  Color        |             | Note: changing the mode will not disconnect the     |
+|                   |  Quaternion   |             | connected input and output sockets.                 |
+|                   |  Matrix       |             |                                                     |
 +-------------------+---------------+-------------+-----------------------------------------------------+
 | **Interpolation** | Enum:         | Linear      | Type of interpolation.                              |
 |                   |  Linear       |             |   f(x) ~ x                                          |
@@ -45,9 +49,19 @@ This node has the following parameters:
 |                   |  Ease Out     |             |  Ease Out = slowly approaches the ending value      |
 |                   |  Ease In-Out  |             |  Ease In-Out = slowly departs and approaches values |
 +-------------------+---------------+-------------+-----------------------------------------------------+
-| **Value1**        | Int or Float  | 0 or 0.0    | Starting value                                      |
+| **A**             | Int           | 0           | Starting value                                      |
+|                   | Float         | 0.0         |                                                     |
+|                   | Vector        | (0,0,0)     |                                                     |
+|                   | Color         | (0,0,0,1)   |                                                     |
+|                   | Quaternion    | (1,0,0,0)   |                                                     |
+|                   | Matrix        | Identity    |                                                     |
 +-------------------+---------------+-------------+-----------------------------------------------------+
-| **Value2**        | Int or Float  | 1 or 1.0    | Ending value                                        |
+| **B**             | Int           | 0           | Ending value                                        |
+|                   | Float         | 0.0         |                                                     |
+|                   | Vector        | (0,0,0)     |                                                     |
+|                   | Color         | (1,1,1,1)   |                                                     |
+|                   | Quaternion    | (1,1,1,1)   |                                                     |
+|                   | Matrix        | Identity    |                                                     |
 +-------------------+---------------+-------------+-----------------------------------------------------+
 | **Factor**        | Float         | 0.5         | Mixing factor (between 0.0 and 1.0)                 |
 +-------------------+---------------+-------------+-----------------------------------------------------+
@@ -66,15 +80,13 @@ For certain interpolation types the node provides extra parameters on the proper
   Extra parameters to adjust the attenuation of the bounce and the number of bounces. The defaults are 0.5 and 4.
 
 * Elastic
-  Extra parameters to adjust the base and the exponent of the damping oscillation as well as the number of bounces (oscillations).
- The defaults are 1.6, 6.0 and 6.
+  Extra parameters to adjust the base and the exponent of the damping oscillation as well as the number of bounces (oscillations). The defaults are 1.6, 6.0 and 6.
 
 Outputs
 -------
 
-This node has one output: **Value**.
+This node has one output corresponding to the selected mode listing the interpolated values between A and B inputs.
 
-Inputs and outputs are vectorized, so if series of values is passed to one of inputs, then this node will produce several sequences.
 
 Example of usage
 ----------------
