@@ -180,7 +180,7 @@
     SvRndNumGen
     RandomNode
     SvEasingNode
-    SvMixNumbersNode
+    SvMixInputsNode
 
 ## Vector
     GenVectorsNode
