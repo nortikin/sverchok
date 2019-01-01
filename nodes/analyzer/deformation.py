@@ -33,24 +33,26 @@ def edge_elongation(np_verts, np_verts_n, np_edges):
     pairs = np_verts_n[np_edges, :]
     dif_v = pairs[:, 0, :] - pairs[:, 1, :]
     dist = np.linalg.norm(dif_v, axis=1)
-    dif_l = dist - dist_rest
+    elong = dist - dist_rest
 
-    return dif_l
+    return elong
 
 
-def vert_edge_tension(dif_l, np_verts, np_edges):
-    '''Redistribute edge length variation to verts'''
-    x = dif_l[:, np.newaxis] / 2
+def vert_edge_defromation(elong, np_verts, np_edges):
+    '''Redistribute edge length variation to vertices'''
+
+    x = elong[:, np.newaxis] / 2
     v_len = len(np_verts)
-    tension = np.zeros((v_len, v_len, 1), dtype=np.float32)
-    tension[np_edges[:, 0], np_edges[:, 1], :] = x
-    tension[np_edges[:, 1], np_edges[:, 0], :] = x
-    tension = np.sum(tension, axis=1)[:, 0]
-    return tension
+    deformation = np.zeros((v_len, v_len, 1), dtype=np.float32)
+    deformation[np_edges[:, 0], np_edges[:, 1], :] = x
+    deformation[np_edges[:, 1], np_edges[:, 0], :] = x
+
+    return np.sum(deformation, axis=1)[:, 0]
 
 
 def area_calc_setup(pols):
     '''Analyze pols information'''
+
     np_pols = np.array(pols)
     p_len = len(pols)
     if np_pols.dtype == np.object:
@@ -69,7 +71,8 @@ def area_calc_setup(pols):
 
 
 def get_normals(v_pols):
-    '''calculate polygon normals'''
+    '''Calculate polygon normals'''
+
     v1 = v_pols[:, 1, :] - v_pols[:, 0, :]
     v2 = v_pols[:, 2, :] - v_pols[:, 0, :]
     pols_normal = np.cross(v1, v2)
@@ -80,6 +83,7 @@ def get_normals(v_pols):
 
 def area_calc(np_verts, area_params):
     '''Calculate polygons area'''
+
     np_pols, pols_sides_max, pols_sides, p_len, p_non_regular = area_params
 
     v_pols = np_verts[np_pols, :]
@@ -107,72 +111,79 @@ def area_calc(np_verts, area_params):
     return area
 
 
-def area_to_verts(np_verts, area_params, pols_tension):
-    '''Redistribute area variation to verts'''
+def area_to_verts(np_verts, area_params, pols_deformation):
+    '''Redistribute area variation to verts.'''
+
     np_pols, pols_sides_max, pols_sides, p_len, advance = area_params
 
     pol_id = np.arange(p_len)
-    pol_tens_to_vert = pols_tension / pols_sides
-    tension = np.zeros((len(np_verts), p_len), dtype=np.float32)
+    pol_def_to_vert = pols_deformation / pols_sides
+    deformation = np.zeros((len(np_verts), p_len), dtype=np.float32)
     if advance:
         for i in range(pols_sides_max):
             mask = pols_sides > i
-            tension[np_pols[mask, i], pol_id[mask]] += pol_tens_to_vert[mask]
+            deformation[np_pols[mask, i], pol_id[mask]] += pol_def_to_vert[mask]
 
     else:
         for i in range(pols_sides_max):
-            tension[np_pols[:, i], pol_id] += pols_tension
+            deformation[np_pols[:, i], pol_id] += pol_def_to_vert
 
-    return np.sum(tension, axis=1)
+    return np.sum(deformation, axis=1)
 
 
-def calc_pols_tension(np_verts, np_verts_n, area_params):
+def area_variation(np_verts, np_verts_n, area_params):
+    '''get areas and subtract relaxed area to deformed area'''
+
     relax_area = area_calc(np_verts, area_params)
-    tension_area = area_calc(np_verts_n, area_params)
-    return tension_area - relax_area
+    defromation_area = area_calc(np_verts_n, area_params)
+
+    return defromation_area - relax_area
 
 
-def calc_tensions(meshes, gates, result):
+def calc_deformations(meshes, gates, result):
+    '''calculate edge elong and polygon area variation'''
 
     for vertices, vertices_n, edges, pols in zip(*meshes):
         np_verts = np.array(vertices)
         np_verts_n = np.array(vertices_n)
         if len(edges) > 0 and (gates[0] or gates[1]):
             np_edges = np.array(edges)
-            dif_l = edge_elongation(np_verts, np_verts_n, np_edges)
-            result[0].append(dif_l if gates[4] else dif_l.tolist())
+            elong = edge_elongation(np_verts, np_verts_n, np_edges)
+            result[0].append(elong if gates[4] else elong.tolist())
             if gates[1]:
-                tension = vert_edge_tension(dif_l, np_verts, np_edges)
-                result[1].append(tension if gates[4] else tension.tolist())
+                elong_v = vert_edge_defromation(elong, np_verts, np_edges)
+                result[1].append(elong_v if gates[4] else elong_v.tolist())
 
         if len(pols) > 0 and (gates[2] or gates[3]):
             area_params = area_calc_setup(pols)
-            pols_tension = calc_pols_tension(np_verts, np_verts_n, area_params)
-            result[2].append(pols_tension if gates[4] else pols_tension.tolist())
+            area_var = area_variation(np_verts, np_verts_n, area_params)
+            result[2].append(area_var if gates[4] else area_var.tolist())
             if gates[3]:
-                tens_verts_pols = area_to_verts(np_verts, area_params, pols_tension)
-                result[3].append(tens_verts_pols if gates[4] else tens_verts_pols.tolist())
-        
+                area_var_v = area_to_verts(np_verts, area_params, area_var)
+                result[3].append(area_var_v if gates[4] else area_var_v.tolist())
+
     return result
 
 
-class SvTensionNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDeformationNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Measure deformation
-    Tooltip: Measure deformation
+    Tooltip: Deformation between to states, edge elong a area variation
     '''
-    bl_idname = 'SvTensionNode'
-    bl_label = 'Tension'
+    bl_idname = 'SvDeformationNode'
+    bl_label = 'Deformation'
     bl_icon = 'SNAP_NORMAL'
 
     output_numpy = BoolProperty(
         name='Output NumPy', description='output NumPy arrays',
         default=False, update=updateNode)
-        
+
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "output_numpy", toggle=False)  
-        
+        '''draw buttons on the N-panel'''
+        layout.prop(self, "output_numpy", toggle=False)
+
     def sv_init(self, context):
+        '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
         sinw('VerticesSocket', "Rest Verts")
@@ -180,12 +191,13 @@ class SvTensionNode(bpy.types.Node, SverchCustomTreeNode):
         sinw('StringsSocket', "Edges")
         sinw('StringsSocket', "Pols")
 
-        sonw('StringsSocket', "Edges_Tension")
-        sonw('StringsSocket', "Pols_Tension")
-        sonw('StringsSocket', "Vert_Edge_T")
-        sonw('StringsSocket', "Vert_Pol_T")
+        sonw('StringsSocket', "Edges_Def")
+        sonw('StringsSocket', "Pols_Def")
+        sonw('StringsSocket', "Vert_Edge_Def")
+        sonw('StringsSocket', "Vert_Pol_Def")
 
     def get_data(self):
+        '''get all data from sockets'''
         si = self.inputs
         vertices_s = si['Rest Verts'].sv_get(default=[[]])
         vertices_n = si['Distort Verts'].sv_get(default=[[]])
@@ -204,33 +216,37 @@ class SvTensionNode(bpy.types.Node, SverchCustomTreeNode):
         return ready
 
     def process(self):
+        '''main node function called every update'''
         so = self.outputs
         if not self.ready():
             return
 
         result = [[], [], [], []]
         gates = []
-        gates.append(so['Edges_Tension'].is_linked)
-        gates.append(so['Vert_Edge_T'].is_linked)
-        gates.append(so['Pols_Tension'].is_linked)
-        gates.append(so['Vert_Pol_T'].is_linked)
+        gates.append(so['Edges_Def'].is_linked)
+        gates.append(so['Vert_Edge_Def'].is_linked)
+        gates.append(so['Pols_Def'].is_linked)
+        gates.append(so['Vert_Pol_Def'].is_linked)
         gates.append(self.output_numpy)
         meshes = self.get_data()
-        result = calc_tensions(meshes, gates, result)
+
+        result = calc_deformations(meshes, gates, result)
 
         if gates[0]:
-            so['Edges_Tension'].sv_set(result[0])
+            so['Edges_Def'].sv_set(result[0])
         if gates[1]:
-            so['Vert_Edge_T'].sv_set(result[1])
+            so['Vert_Edge_Def'].sv_set(result[1])
         if gates[2]:
-            so['Pols_Tension'].sv_set(result[2])
+            so['Pols_Def'].sv_set(result[2])
         if gates[3]:
-            so['Vert_Pol_T'].sv_set(result[3])
+            so['Vert_Pol_Def'].sv_set(result[3])
 
 
 def register():
-    bpy.utils.register_class(SvTensionNode)
+    '''register class in Blender'''
+    bpy.utils.register_class(SvDeformationNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTensionNode)
+    '''unregister class in Blender'''
+    bpy.utils.unregister_class(SvDeformationNode)

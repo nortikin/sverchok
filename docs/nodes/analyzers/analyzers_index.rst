@@ -8,7 +8,10 @@ Analyzers
    area
    bbox
    distance_pp
+   deformation
    edge_angles
+   evaluate_image
+   image_components
    kd_tree
    kd_tree_edges_mk2
    mesh_filter
