@@ -1,5 +1,5 @@
 Deformation
-=====
+===========
 
 Functionality
 -------------
@@ -8,7 +8,7 @@ Deformation node is one of the analyzer type. It is used to get the deformation 
 
 
 Inputs
-----------
+------
 
 All inputs need to proceed from an external node
 
@@ -29,11 +29,11 @@ In the N-Panel you can use the toggle **Output NumPy** to get NumPy arrays (make
 
 Outputs
 -------
-- **Edges_Def** :the variation of the length of the edges.
-- **Pols_Def** : the variation of the areas of each polygon.
+- **Edges Def** :the variation of the length of the edges.
+- **Pols Def** : the variation of the areas of each polygon.
 
-- **Vert_Pol_Def**: Each polygon will distribute its areal variation to its vertices. Each vertex will get the sum of the deformations related to itself.
-- **Vert_Edge_Def**: Each edge will distribute its elongation to its vertices. Each vertex will get the sum of elongations related to itself.
+- **Vert Pol Def**: Each polygon will distribute its areal variation to its vertices. Each vertex will get the sum of the deformations related to itself.
+- **Vert Edge Def**: Each edge will distribute its elongation to its vertices. Each vertex will get the sum of elongations related to itself.
 
 
 Examples of usage
@@ -52,4 +52,3 @@ You can compare many different states at the same time.
 
 .. image:: https://user-images.githubusercontent.com/10011941/50576199-d526d880-0e0c-11e9-89cf-12cd8462da41.png
   :alt: DefromationNode3.PNG
-
