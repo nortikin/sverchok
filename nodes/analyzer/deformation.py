@@ -191,10 +191,10 @@ class SvDeformationNode(bpy.types.Node, SverchCustomTreeNode):
         sinw('StringsSocket', "Edges")
         sinw('StringsSocket', "Pols")
 
-        sonw('StringsSocket', "Edges_Def")
-        sonw('StringsSocket', "Pols_Def")
-        sonw('StringsSocket', "Vert_Edge_Def")
-        sonw('StringsSocket', "Vert_Pol_Def")
+        sonw('StringsSocket', "Edges Def")
+        sonw('StringsSocket', "Pols Def")
+        sonw('StringsSocket', "Vert Edge Def")
+        sonw('StringsSocket', "Vert Pol Def")
 
     def get_data(self):
         '''get all data from sockets'''
@@ -223,23 +223,23 @@ class SvDeformationNode(bpy.types.Node, SverchCustomTreeNode):
 
         result = [[], [], [], []]
         gates = []
-        gates.append(so['Edges_Def'].is_linked)
-        gates.append(so['Vert_Edge_Def'].is_linked)
-        gates.append(so['Pols_Def'].is_linked)
-        gates.append(so['Vert_Pol_Def'].is_linked)
+        gates.append(so['Edges Def'].is_linked)
+        gates.append(so['Vert Edge Def'].is_linked)
+        gates.append(so['Pols Def'].is_linked)
+        gates.append(so['Vert Pol Def'].is_linked)
         gates.append(self.output_numpy)
         meshes = self.get_data()
 
         result = calc_deformations(meshes, gates, result)
 
         if gates[0]:
-            so['Edges_Def'].sv_set(result[0])
+            so['Edges Def'].sv_set(result[0])
         if gates[1]:
-            so['Vert_Edge_Def'].sv_set(result[1])
+            so['Vert Edge Def'].sv_set(result[1])
         if gates[2]:
-            so['Pols_Def'].sv_set(result[2])
+            so['Pols Def'].sv_set(result[2])
         if gates[3]:
-            so['Vert_Pol_Def'].sv_set(result[3])
+            so['Vert Pol Def'].sv_set(result[3])
 
 
 def register():
