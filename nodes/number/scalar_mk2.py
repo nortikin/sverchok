@@ -142,8 +142,6 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         items=mode_options, description="offers int / float selection for socket 2",
         default="Float", update=lambda s, c: property_change(s, c, 'input_mode_two'))
 
-    output_as_int: BoolProperty(default=False, name='Cast output to Int', update=updateNode)
-
     def draw_label(self):
         num_inputs = len(self.inputs)
         label = [self.current_op]
@@ -160,23 +158,15 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         return " ".join(label)
 
-
-
     def draw_buttons(self, ctx, layout):
         row = layout.row(align=True)
-        
         row.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
-
-        output_icon = "IPO_CONSTANT" if self.output_as_int else "IPO_LINEAR"
-        row.prop(self, 'output_as_int', text='', icon=output_icon)
 
 
     def draw_buttons_ext(self, ctx, layout):
         layout.row().prop(self, 'input_mode_one', text="input 1")
         if len(self.inputs) == 2:
             layout.row().prop(self, 'input_mode_two', text="input 2")
-        layout.label(text='output')
-        layout.row().prop(self, 'output_as_int')
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "x").prop_name = 'x_'
@@ -226,26 +216,10 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 # special case at the moment
                 result = recurse_fx(x, sin)
                 result2 = recurse_fx(x, cos)
-                self.outputs[1].sv_set(self.correct_output(result2))
+                self.outputs[1].sv_set(result2)
 
-            self.outputs[0].sv_set(self.correct_output(result))
-
-
-    def correct_output(self, socket_data_send):
-        return self.inte(socket_data_send) if self.output_as_int else socket_data_send
-
-    # higjacked straight from float->int node
-    @classmethod
-    def inte(cls, l):
-        if isinstance(l, (int, float)):
-            return round(l)
-        else:
-            return [cls.inte(i) for i in l]
+            self.outputs[0].sv_set(result)
 
 
-def register():
-    bpy.utils.register_class(SvScalarMathNodeMK2)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvScalarMathNodeMK2)
+classes = [SvScalarMathNodeMK2]
+register, unregister = bpy.utils.register_classes_factory(classes)
