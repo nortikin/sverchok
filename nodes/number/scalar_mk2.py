@@ -163,7 +163,12 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, ctx, layout):
-        layout.row().prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
+        row = layout.row(align=True)
+        
+        row.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
+
+        output_icon = "IPO_CONSTANT" if self.output_as_int else "IPO_LINEAR"
+        row.prop(self, 'output_as_int', text='', icon=output_icon)
 
 
     def draw_buttons_ext(self, ctx, layout):
