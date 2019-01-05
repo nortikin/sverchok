@@ -183,7 +183,7 @@ class svBasicArcNode(bpy.types.Node, SverchCustomTreeNode):
         nv = []
         # get vert_nums, or pad till matching quantity
         if inputs['num_verts'].is_linked:
-            nv = inputs['num_verts'].sv_get(deepcopy=False)[0]
+            nv = inputs['num_verts'].sv_get(deepcopy=True)[0]
 
             if nv and (len(nv) < num_arcs):
                 pad_num = num_arcs - len(nv)
