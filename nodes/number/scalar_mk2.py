@@ -21,7 +21,7 @@ from fractions import gcd
 from itertools import zip_longest
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty, IntProperty
+from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
 
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
@@ -142,6 +142,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         items=mode_options, description="offers int / float selection for socket 2",
         default="Float", update=lambda s, c: property_change(s, c, 'input_mode_two'))
 
+    output_as_int: BoolProperty(default=False, name='Cast output to Int', update=updateNode)
 
     def draw_label(self):
         num_inputs = len(self.inputs)
@@ -169,7 +170,8 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.row().prop(self, 'input_mode_one', text="input 1")
         if len(self.inputs) == 2:
             layout.row().prop(self, 'input_mode_two', text="input 2")
-
+        layout.label(text='output')
+        layout.row().prop(self, 'output_as_int')
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "x").prop_name = 'x_'
@@ -219,10 +221,21 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 # special case at the moment
                 result = recurse_fx(x, sin)
                 result2 = recurse_fx(x, cos)
-                self.outputs[1].sv_set(result2)
+                self.outputs[1].sv_set(self.correct_output(result2))
 
-            self.outputs[0].sv_set(result)
+            self.outputs[0].sv_set(self.correct_output(result))
 
+
+    def correct_output(self, socket_data_send):
+        return self.inte(socket_data_send) if self.output_as_int else socket_data_send
+
+    # higjacked straight from float->int node
+    @classmethod
+    def inte(cls, l):
+        if isinstance(l, (int, float)):
+            return round(l)
+        else:
+            return [cls.inte(i) for i in l]
 
 
 def register():
