@@ -24,11 +24,8 @@ from bpy.types import NodeTree, NodeSocket
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
 from sverchok.core.socket_data import (
-    SvGetSocketInfo,
-    SvGetSocket,
-    SvSetSocket,
-    SvNoDataError,
-    sentinel)
+    SvGetSocketInfo, SvGetSocket, SvSetSocket,
+    SvNoDataError, sentinel)
 
 from sverchok.data_structure import (
     updateNode,
@@ -43,7 +40,7 @@ socket_colors = {
     "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
     "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
     "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
-    "ObjectSocket": (0.69, 0.74, 0.73, 1.0),
+    "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
     "TextSocket": (0.68, 0.85, 0.90, 1),
 }
 
@@ -226,7 +223,7 @@ class SvSocketCommon:
             return source_data
         else:
             policy = self.node.get_implicit_conversions(self.name, implicit_conversions)
-            self.node.debug("Trying to convert data for input socket %s by %s", self.name, policy)
+            self.node.debug(f"Trying to convert data for input socket {self.name} by {policy}")
             return policy.convert(self, source_data)
 
 
@@ -262,9 +259,6 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             layout.label(text=text + '. ' + SvGetSocketInfo(self))
         else:
             layout.label(text=text)
-
-    def draw_color(self, context, node):
-        return (0.69,  0.74,  0.73, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
@@ -461,11 +455,8 @@ class StringsSocket(NodeSocket, SvSocketCommon):
     bl_label = "Strings Socket"
 
     prop_name: StringProperty(default='')
-
     prop_type: StringProperty(default='')
     prop_index: IntProperty()
-    nodule_color: FloatVectorProperty(default=socket_colors["StringsSocket"], size=4)
-
     custom_draw: StringProperty()
 
     def get_prop_data(self):
@@ -497,15 +488,11 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         else:
             raise SvNoDataError(self)
 
-    def draw_color(self, context, node):
-        return self.nodule_color
-
-
 
 classes = [
     VerticesSocket, MatrixSocket, StringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket,
-    SvTextSocket, SvObjectSocket,
+    SvTextSocket, SvObjectSocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
