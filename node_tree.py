@@ -24,15 +24,10 @@ import math
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
-
 from mathutils import Matrix
 
 from sverchok import data_structure
-from sverchok.data_structure import (
-    updateNode,
-    get_other_socket,
-    socket_id,
-    replace_socket)
+from sverchok.data_structure import get_other_socket
 
 from sverchok.core.update_system import (
     build_update_list,
@@ -42,8 +37,7 @@ from sverchok.core.update_system import (
 
 from sverchok.core.socket_conversions import (
     DefaultImplicitConversionPolicy,
-    is_vector_to_matrix
-    )
+    is_vector_to_matrix)
 
 from sverchok.core.node_defaults import set_defaults_if_defined
 
@@ -63,11 +57,11 @@ class SvLinkNewNodeInput(bpy.types.Operator):
     bl_idname = "node.sv_quicklink_new_node_input"
     bl_label = "Add a new node to the left"
 
-    socket_index: bpy.props.IntProperty()
-    origin: bpy.props.StringProperty()
-    new_node_idname: bpy.props.StringProperty()
-    new_node_offsetx: bpy.props.IntProperty(default=-200)
-    new_node_offsety: bpy.props.IntProperty(default=0)
+    socket_index: IntProperty()
+    origin: StringProperty()
+    new_node_idname: StringProperty()
+    new_node_offsetx: IntProperty(default=-200)
+    new_node_offsety: IntProperty(default=0)
 
     def execute(self, context):
         tree = context.space_data.edit_tree

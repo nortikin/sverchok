@@ -30,6 +30,11 @@ from sverchok.core.socket_data import (
     SvNoDataError,
     sentinel)
 
+from sverchok.data_structure import (
+    updateNode,
+    get_other_socket,
+    socket_id,
+    replace_socket)
 
 socket_colors = {
     "StringsSocket": (0.6, 1.0, 0.6, 1.0),
