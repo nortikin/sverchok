@@ -35,9 +35,7 @@ from sverchok.core.update_system import (
     process_tree,
     get_update_lists, update_error_nodes)
 
-from sverchok.core.socket_conversions import (
-    DefaultImplicitConversionPolicy,
-    is_vector_to_matrix)
+from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
 from sverchok.core.node_defaults import set_defaults_if_defined
 

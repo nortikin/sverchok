@@ -21,7 +21,7 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 from bpy.types import NodeTree, NodeSocket
 
-from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
+from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy, is_vector_to_matrix
 
 from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket,
