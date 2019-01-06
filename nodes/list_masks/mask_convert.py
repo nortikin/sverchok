@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
 class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):

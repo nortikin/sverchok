@@ -49,14 +49,11 @@ def new_input(node, ident, name):
 
         c1 = inew('StringsSocket', 'stroke color')
         c1.prop_name = 'unit_1_color'
-        c1.nodule_color = nodule_color
 
         becomes
 
         with new_input(self, 'StringsSocket', 'stroke color') as c1:
             c1.prop_name = 'unit_1_color'
-            c1.nodule_color = nodule_color        
-
 
     '''
     yield node.inputs.new(ident, name)

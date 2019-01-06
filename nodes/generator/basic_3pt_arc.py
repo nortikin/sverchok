@@ -23,7 +23,7 @@ import mathutils
 from bpy.props import IntProperty, FloatProperty, FloatVectorProperty
 from mathutils import Vector, Euler, geometry
 
-from sverchok.node_tree import SverchCustomTreeNode, VerticesSocket, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 

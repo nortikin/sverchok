@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from sverchok.node_tree import (SverchCustomTreeNode)
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Vector_generate, matrixdef, Matrix_listing,
                             Matrix_generate, updateNode)
 

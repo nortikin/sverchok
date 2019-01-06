@@ -20,7 +20,7 @@ import colorsys
 import bpy
 from bpy.props import FloatProperty, BoolProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.sv_itertools import sv_zip_longest
 

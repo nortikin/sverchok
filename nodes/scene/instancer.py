@@ -24,7 +24,7 @@ import mathutils
 from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 
 
@@ -166,7 +166,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
         socket = inputs[socket_name].links[0].from_socket
-        if isinstance(socket, socket_type):
+        if socket.bl_idname == socket_type:
             return dataCorrect(inputs[socket_name].sv_get())
         else:
             return []
@@ -176,7 +176,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         inputs = self.inputs
-        s_name, s_type = ['matrix', MatrixSocket]
+        s_name, s_type = ['matrix', "MatrixSocket"]
         matrices = []
         if s_name in inputs and inputs[s_name].is_linked:
             matrices = self.get_corrected_data(s_name, s_type)

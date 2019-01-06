@@ -20,7 +20,7 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty
 from mathutils import Matrix
 
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, Matrix_listing
 
 

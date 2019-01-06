@@ -18,7 +18,7 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 
 
 class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):

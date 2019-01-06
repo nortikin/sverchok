@@ -11,7 +11,7 @@ from mathutils import Vector
 from mathutils.geometry import normal  # takes 3 or more! :)
 from bpy.props import (BoolProperty, FloatVectorProperty, StringProperty, FloatProperty)
 
-from sverchok.node_tree import SverchCustomTreeNode, MatrixSocket, VerticesSocket, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (
     dataCorrect, node_id, updateNode, fullList, Vector_generate, Matrix_generate)
 

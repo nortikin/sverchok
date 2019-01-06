@@ -20,7 +20,7 @@ import bpy
 import bmesh
 from bpy.props import BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
+from sverchok.data_structure import updateNode
 
 
 class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
