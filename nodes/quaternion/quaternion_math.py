@@ -48,7 +48,8 @@ operations = {
     # one quaternion + scalar => quaternion (QS => Q)
     "SCALE":     (40, "QS", "Q", "Scale a quaternion by given factor"),
     # one quaternion => scalar value (Q => S)
-    "MAGNITUDE": (50, "Q", "S", "Magnitude of a quaternion"),
+    "QUADRANCE": (50, "Q", "S", "Quadrance of a quaternion"),
+    "MAGNITUDE": (51, "Q", "S", "Magnitude of a quaternion"),
 }
 
 operationItems = [(k, k.title(), s[3], "", s[0]) for k, s in sorted(operations.items(), key=lambda k: k[1][0])]
@@ -211,6 +212,8 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
             return lambda q: q.normalized()
         elif self.operation == "SCALE":
             return lambda q, s: Quaternion([q[i] * s[i] for i in range(4)])
+        elif self.operation == "QUADRANCE":
+            return lambda q: q.dot(q)
         elif self.operation == "MAGNITUDE":
             return lambda q: q.magnitude
 
@@ -249,11 +252,11 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         operation = self.get_operation()
 
-        if self.operation in NQ_operations:  # multiple input operations
+        if self.operation in NQ_operations:
             parameters = match_long_repeat(I)
             quaternionList = [operation(params) for params in zip(*parameters)]
 
-        elif self.operation in QQ_operations:  # multiple input operations
+        elif self.operation in QQ_operations:
             parameters = match_long_repeat(I)
             quaternionList = [operation(*params) for params in zip(*parameters)]
 

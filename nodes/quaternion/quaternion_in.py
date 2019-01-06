@@ -187,7 +187,7 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
                 quaternionList.append(q)
 
         elif self.mode == "AXISANGLE":
-            I = [inputs[n].sv_get()[0] for n in {"Axis", "Angle"}]
+            I = [inputs[n].sv_get()[0] for n in ["Axis", "Angle"]]
             params = match_long_repeat(I)
             au = angleConversion[self.angleUnits]
             for axis, angle in zip(*params):

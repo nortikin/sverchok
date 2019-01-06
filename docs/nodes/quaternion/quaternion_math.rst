@@ -20,6 +20,7 @@ The available arithmetic operations and their corresponding inputs/outputs are:
 | INVERT     |   Q    |   Q    | Invert a quaternion                 |
 | NORMALIZE  |   Q    |   Q    | Normalize a quaternion              |
 | SCALE      |   QS   |   Q    | Scale a quaternion by given factor  |
+| QUADRANCE  |   Q    |   S    | Quadrance of a quaternion           |
 | MAGNITUDE  |   Q    |   S    | Magnitude of a quaternion           |
 +============+========+========+=====================================+
 
@@ -144,11 +145,21 @@ S = (s if sw else 1, s if sx else 1, s if sy else 1, s if sz else 1)
 scale(q, S) = (w * Sw, x * Sx, y * Sy, z * Sz)
 
 
+* QUADRANCE : the quadreance of a quaternion
+
+q = (w, x, y, z)
+
+Quadrance(q) = w * w + x * x + y * y + z * z
+
+Note: essentially this is the dot product of the quaternion with itself, and also equal to square of the magnitude.
+
 * MAGNITUDE : the magnitude of a quaternion
 
 q = (w, x, y, z)
 
 Magnitude(q) = sqrt(w * w + x * x + y * y + z * z)
+
+Note: this is essentially the square root of the quadrance (the length of the quaternion).
 
 
 Output

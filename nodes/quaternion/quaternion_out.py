@@ -138,6 +138,8 @@ class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
         quaternionList = [Quaternion(q) for q in input_Q]
 
         if self.mode == "WXYZ":
+            if self.normalize:
+                quaternionList = [q.normalized() for q in quaternionList]
             for i, name in enumerate("WXYZ"):
                 if outputs[name].is_linked:
                     outputs[name].sv_set([[q[i] for q in quaternionList]])
