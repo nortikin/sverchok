@@ -26,9 +26,10 @@ from math import pi
 
 modeItems = [
     ("WXYZ", "WXYZ", "Convert components into quaternion", 0),
-    ("EULER", "Euler Angles", "Convert Euler angles into quaternion", 1),
-    ("AXISANGLE", "Axis Angle", "Convert Axis & Angle into quaternion", 2),
-    ("MATRIX", "Matrix", "Convert Rotation Matrix into quaternion", 3),
+    ("SCALARVECTOR", "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
+    ("EULER", "Euler Angles", "Convert Euler angles into quaternion", 2),
+    ("AXISANGLE", "Axis Angle", "Convert Axis & Angle into quaternion", 3),
+    ("MATRIX", "Matrix", "Convert Rotation Matrix into quaternion", 4),
 ]
 
 eulerOrderItems = [
@@ -52,6 +53,7 @@ idMat = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 input_sockets = {
     "WXYZ": ["W", "X", "Y", "Z"],
+    "SCALARVECTOR": ["Scalar", "Vector"],
     "EULER": ["Angle X", "Angle Y", "Angle Z"],
     "AXISANGLE": ["Angle", "Axis"],
     "MATRIX": ["Matrix"]
@@ -81,7 +83,7 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     mode = EnumProperty(
-        name='Mode', description='Input mode (wxyz, Euler, Axis-Angle, Matrix)',
+        name='Mode', description='The input component format of the quaternion',
         items=modeItems, default="WXYZ", update=update_mode)
 
     eulerOrder = EnumProperty(
@@ -107,6 +109,14 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
     component_z = FloatProperty(
         name='Z', description='Z component',
         default=0.0, precision=3, update=updateNode)
+
+    scalar = FloatProperty(
+        name='Scalar', description='Scalar component of the quaternion',
+        default=0.0, update=updateNode)
+
+    vector = FloatVectorProperty(
+        name='Vector', description='Vector component of the quaternion',
+        size=3, default=(0.0, 0.0, 0.0), subtype="XYZ", update=updateNode)
 
     angle_x = FloatProperty(
         name='Angle X', description='Rotation angle about X axis',
@@ -137,6 +147,8 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "X").prop_name = 'component_x'
         self.inputs.new('StringsSocket', "Y").prop_name = 'component_y'
         self.inputs.new('StringsSocket', "Z").prop_name = 'component_z'
+        self.inputs.new('StringsSocket', "Scalar").prop_name = 'scalar'
+        self.inputs.new('VerticesSocket', "Vector").prop_name = "vector"
         self.inputs.new('StringsSocket', "Angle X").prop_name = 'angle_x'
         self.inputs.new('StringsSocket', "Angle Y").prop_name = 'angle_y'
         self.inputs.new('StringsSocket', "Angle Z").prop_name = 'angle_z'
@@ -155,7 +167,7 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode in {"EULER", "AXISANGLE"}:
             row = layout.row(align=True)
             row.prop(self, "angleUnits", expand=True)
-        if self.mode == "WXYZ":
+        if self.mode in {"WXYZ", "SCALARVECTOR"}:
             layout.prop(self, "normalize", toggle=True)
 
     def process(self):
@@ -171,6 +183,15 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
             params = match_long_repeat(I)
             for wxyz in zip(*params):
                 q = Quaternion(wxyz)
+                if self.normalize:
+                    q.normalize()
+                quaternionList.append(q)
+
+        elif self.mode == "SCALARVECTOR":
+            I = [inputs[n].sv_get()[0] for n in ["Scalar", "Vector"]]
+            params = match_long_repeat(I)
+            for scalar, vector in zip(*params):
+                q = Quaternion([scalar, *vector])
                 if self.normalize:
                     q.normalize()
                 quaternionList.append(q)

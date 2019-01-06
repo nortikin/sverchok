@@ -26,9 +26,10 @@ from math import pi
 
 modeItems = [
     ("WXYZ", "WXYZ", "Convert quaternion into components", 0),
-    ("EULER", "Euler Angles", "Convert quaternion into Euler angles", 1),
-    ("AXISANGLE", "Axis Angle", "Convert quaternion into Axis & Angle", 2),
-    ("MATRIX", "Matrix", "Convert quaternion into Rotation Matrix", 3),
+    ("SCALARVECTOR", "Scalar Vector", "Convert quaternion into Scalar & Vector", 1),
+    ("EULER", "Euler Angles", "Convert quaternion into Euler angles", 2),
+    ("AXISANGLE", "Axis Angle", "Convert quaternion into Axis & Angle", 3),
+    ("MATRIX", "Matrix", "Convert quaternion into Rotation Matrix", 4),
 ]
 
 eulerOrderItems = [
@@ -50,6 +51,7 @@ angleConversion = {"RAD": 1.0, "DEG": 180.0 / pi, "UNI": 0.5 / pi}
 
 output_sockets = {
     "WXYZ": ["W", "X", "Y", "Z"],
+    "SCALARVECTOR": ["Scalar", "Vector"],
     "EULER": ["Angle X", "Angle Y", "Angle Z"],
     "AXISANGLE": ["Angle", "Axis"],
     "MATRIX": ["Matrix"]
@@ -79,7 +81,7 @@ class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     mode = EnumProperty(
-        name='Mode', description='Output mode (wxyz, Euler, Axis-Angle, Matrix)',
+        name='Mode', description='The output component format of the quaternion',
         items=modeItems, default="WXYZ", update=update_mode)
 
     eulerOrder = EnumProperty(
@@ -106,6 +108,9 @@ class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', "X")
         self.outputs.new('StringsSocket', "Y")
         self.outputs.new('StringsSocket', "Z")
+        # scalar-vector output
+        self.outputs.new('StringsSocket', "Scalar")
+        self.outputs.new('VerticesSocket', "Vector")
         # euler angle ouputs
         self.outputs.new('StringsSocket', "Angle X")
         self.outputs.new('StringsSocket', "Angle Y")
@@ -126,7 +131,7 @@ class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode in {"EULER", "AXISANGLE"}:
             row = layout.row(align=True)
             row.prop(self, "angleUnits", expand=True)
-        if self.mode == "WXYZ":
+        if self.mode in {"WXYZ", "SCALARVECTOR"}:
             layout.prop(self, "normalize", toggle=True)
 
     def process(self):
@@ -140,9 +145,22 @@ class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == "WXYZ":
             if self.normalize:
                 quaternionList = [q.normalized() for q in quaternionList]
+
             for i, name in enumerate("WXYZ"):
                 if outputs[name].is_linked:
                     outputs[name].sv_set([[q[i] for q in quaternionList]])
+
+        elif self.mode == "SCALARVECTOR":
+            if self.normalize:
+                quaternionList = [q.normalized() for q in quaternionList]
+
+            if outputs['Scalar'].is_linked:
+                scalarList = [q[0] for q in quaternionList]
+                outputs['Scalar'].sv_set([scalarList])
+
+            if outputs['Vector'].is_linked:
+                vectorList = [tuple(q[1:]) for q in quaternionList]
+                outputs['Vector'].sv_set([vectorList])
 
         elif self.mode == "EULER":
             au = angleConversion[self.angleUnits]

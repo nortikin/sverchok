@@ -128,7 +128,7 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
         inputs_AZ = list(filter(lambda s: s.name in ABC, inputs))
 
         # last A-Z socket connected ? => add an empty A-Z socket at the end
-        if inputs_AZ[-1].links:
+        if inputs_AZ and inputs_AZ[-1].links:
             name = ABC[len(inputs_AZ)]  # pick the next letter A to Z
             inputs.new("SvQuaternionSocket", name)
         else:  # last input disconnected ? => remove all but last unconnected
