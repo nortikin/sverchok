@@ -19,7 +19,7 @@
 import bpy
 from mathutils import Vector
 from bpy.props import FloatProperty, BoolProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_recursive import sv_recursive_transformations
 

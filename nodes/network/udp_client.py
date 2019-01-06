@@ -20,7 +20,7 @@ import socket
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, EnumProperty, StringProperty, BoolProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.profile import profile
 from sverchok.data_structure import updateNode
 

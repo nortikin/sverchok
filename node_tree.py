@@ -19,7 +19,6 @@
 
 import sys
 import time
-import math
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty

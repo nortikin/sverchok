@@ -19,7 +19,7 @@
 import bpy
 import bmesh
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode)
+from sverchok.data_structure import updateNode
 
 
 class SvBMtoElementNode(bpy.types.Node, SverchCustomTreeNode):

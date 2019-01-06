@@ -19,7 +19,7 @@
 from math import sin, cos, radians
 import bpy
 from bpy.props import FloatProperty, EnumProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
 def cylindrical(rho, phi, z, mode):

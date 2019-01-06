@@ -17,6 +17,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import math
+
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 from bpy.types import NodeTree, NodeSocket
@@ -41,7 +43,7 @@ socket_colors = {
     "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
     "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
     "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
-    "TextSocket": (0.68, 0.85, 0.90, 1),
+    "SvTextSocket": (0.68, 0.85, 0.90, 1)
 }
 
 def process_from_socket(self, context):

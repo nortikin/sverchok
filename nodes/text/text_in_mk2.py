@@ -31,7 +31,7 @@ import sverchok
 import bpy
 from bpy.props import BoolProperty, EnumProperty, StringProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, multi_socket, updateNode
 
 from sverchok.utils.sv_text_io_common import (
