@@ -490,6 +490,31 @@ class StringsSocket(NodeSocket, SvSocketCommon):
         else:
             raise SvNoDataError(self)
 
+"""
+type_map_to/from are used to get the bl_idname from a single letter
+    
+    sockets.type_map_to.get("v")
+    >>> "VerticesSocket"
+
+    sockets.type_map_from.get("VerticesSocket")
+    >>> "v"
+
+"""
+
+type_map_to = {
+    "v": VerticesSocket.bl_idname,
+    "m": MatrixSocket.bl_idname,
+    "s": StringsSocket.bl_idname,
+    "ob": SvObjectSocket.bl_idname,
+    "co": SvColorSocket.bl_idname,
+    "d": SvDummySocket.bl_idname,
+    "q": SvQuaternionSocket.bl_idname,
+    "t": SvTextSocket.bl_idname
+}
+
+type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.items()}
+
+
 
 classes = [
     VerticesSocket, MatrixSocket, StringsSocket,
