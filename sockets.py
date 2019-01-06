@@ -21,10 +21,10 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 from bpy.types import NodeTree, NodeSocket
 
-
 from sverchok.core.socket_data import SvGetSocket, SvGetSocketInfo, SvNoDataError
 from sverchok.node_tree import SvSocketCommon, process_from_socket, sentinel
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
+
 
 class SvSocketStandard(SvSocketCommon):
     def get_prop_data(self):
@@ -101,17 +101,9 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
             return default
 
 
-
-
 classes = [
     SvTextSocket,
     SvObjectSocket,
 ]
 
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+register, unregister = bpy.utils.register_classes_factory(classes)
