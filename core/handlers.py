@@ -8,6 +8,7 @@ from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
 
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
+from sverchok.utils import app_handler_ops
 
 
 _state = {'frame': None}
@@ -177,12 +178,18 @@ def set_frame_change(mode):
         pre.append(sv_update_handler)
 
 
+handler_dict = {
+    'undo_pre': sv_handler_undo_pre,
+    'undo_post': sv_handler_undo_post,
+    'load_pre': sv_clean,
+    'load_post': sv_post_load,
+    'depsgraph_update_pre': sv_main_handler
+}
+
+
 def register():
-    bpy.app.handlers.undo_pre.append(sv_handler_undo_pre)
-    bpy.app.handlers.undo_post.append(sv_handler_undo_post)    
-    bpy.app.handlers.load_pre.append(sv_clean)
-    bpy.app.handlers.load_post.append(sv_post_load)
-    bpy.app.handlers.depsgraph_update_pre.append(sv_main_handler)
+
+    app_handler_ops(append=handler_dict)
 
     data_structure.setup_init()
     addon_name = data_structure.SVERCHOK_NAME
@@ -194,10 +201,5 @@ def register():
 
 
 def unregister():
-    bpy.app.handlers.undo_pre.remove(sv_handler_undo_pre)
-    bpy.app.handlers.undo_post.remove(sv_handler_undo_post)    
-    bpy.app.handlers.load_pre.remove(sv_clean)
-    bpy.app.handlers.load_post.remove(sv_post_load)
-    bpy.app.handlers.depsgraph_update_pre.remove(sv_main_handler)
-
+    app_handler_ops(remove=handler_dict)
     set_frame_change(None)

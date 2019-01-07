@@ -95,6 +95,22 @@ def clear_node_classes():
     node_classes.clear()
 
 
+def app_handler_ops(append=None, remove=None):
+    """ append or remove multiple items to specific bpy.app.handlers """
+
+    (operation, handler_dict) = ('append', append) if append else ('remove', remove)
+    for handler_name, handler_function in handler_dict.items():
+        handler = getattr(bpy.app.handlers, handler_name)
+        
+        # bpy.app.handlers.<handler>.<append or remove>(function_name)
+        getattr(handler, operation)(handler_function)
+
+    if append:
+        print('sv: append app.handlers<listed>')
+    else:
+        print('sv: removed app.handlers<listed>')
+
+
 utils_modules = [
     # non UI tools
     "cad_module", "cad_module_class", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",
