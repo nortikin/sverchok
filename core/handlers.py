@@ -11,6 +11,7 @@ from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 
 
 _state = {'frame': None}
+_nodegroup_tracking = {'groups': 0}
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -22,6 +23,41 @@ def has_frame_changed(scene):
     last_frame = _state['frame']
     _state['frame'] = scene.frame_current
     return not last_frame == scene.frame_current
+
+#
+#
+#  undo_post and undo_pre app.handlers exist in this preliminary form to
+#  handle when a user invokes a scripted placement of a node which places
+#  a node and hooks it up while freezing the nodetree prevents intermediate updates
+#  The reason this specifically needs to be handled in the undo event is because
+#  if the user presses ctrl+z to the point where it removes a node that's drawing
+#  the node's own "free" function is not called by the undo system. ( i'll argue it should, 
+#  and that that is a blender bug) . So because free is not called, the callback isn't 
+#  removed from the draw handlers. Rather than moaning about it, this tracks the total
+#  node count over the trees and only performs a clean if that changes.
+#
+#  If at any time the undo system is fixed and does call "node.free()" when a node is removed
+#  after ctrl+z. then these two functions and handlers are no longer needed.
+
+@persistent
+def handler_undo_pre(scene):
+    for ng in sverchok_trees():
+        _nodegroup_tracking['groups'] += len(ng.nodes)
+
+@persistent
+def handler_undo_post(scene):
+    num_to_test_against = 0
+    for ng in sverchok_trees():
+        num_to_test_against += len(ng.nodes)
+
+    # only perform clean if the undo event triggered
+    # a difference in total node count among trees.
+    if not (_nodegroup_tracking['groups'] == num_to_test_against):
+        print('looks like a node was removed, cleaning')
+        sv_clean(scene)
+        sv_main_handler(scene)
+
+    _nodegroup_tracking = {'groups': 0}
 
 
 @persistent
@@ -142,6 +178,8 @@ def set_frame_change(mode):
 
 
 def register():
+    bpy.app.handlers.undo_pre.append(handler_undo_pre)
+    bpy.app.handlers.undo_post.append(handler_undo_post)    
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.append(sv_main_handler)
@@ -156,7 +194,10 @@ def register():
 
 
 def unregister():
+    bpy.app.handlers.undo_pre.remove(handler_undo_pre)
+    bpy.app.handlers.undo_post.remove(handler_undo_post)    
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.remove(sv_main_handler)
+
     set_frame_change(None)
