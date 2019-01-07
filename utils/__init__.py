@@ -105,10 +105,7 @@ def app_handler_ops(append=None, remove=None):
         # bpy.app.handlers.<handler>.<append or remove>(function_name)
         getattr(handler, operation)(handler_function)
 
-    if append:
-        print('sv: append app.handlers<listed>')
-    else:
-        print('sv: removed app.handlers<listed>')
+    print(f'sv: {operation} app.handlers<listed>')
 
 
 utils_modules = [
