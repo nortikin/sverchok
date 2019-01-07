@@ -26,16 +26,12 @@ def has_frame_changed(scene):
     return not last_frame == scene.frame_current
 
 #
-#
-#  undo_post and undo_pre app.handlers exist in this preliminary form to
-#  handle when a user invokes a scripted placement of a node which places
-#  a node and hooks it up while freezing the nodetree prevents intermediate updates
-#  The reason this specifically needs to be handled in the undo event is because
-#  if the user presses ctrl+z to the point where it removes a node that's drawing
-#  the node's own "free" function is not called by the undo system. ( i'll argue it should, 
-#  and that that is a blender bug) . So because free is not called, the callback isn't 
-#  removed from the draw handlers. Rather than moaning about it, this tracks the total
-#  node count over the trees and only performs a clean if that changes.
+#  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
+#  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attache viewer draw"
+#  will invoke a number of commands as one event, if you undo that event (ctrl+z) then
+#  there is never a point where the node can ask "am i connected to anything, do i need 
+#  to stop drawing?". When the Undo event causes a node to be removed, its node.free function
+#  is not called. (maybe it should be...) 
 #
 #  If at any time the undo system is fixed and does call "node.free()" when a node is removed
 #  after ctrl+z. then these two functions and handlers are no longer needed.
