@@ -40,12 +40,12 @@ def has_frame_changed(scene):
 #  after ctrl+z. then these two functions and handlers are no longer needed.
 
 @persistent
-def handler_undo_pre(scene):
+def sv_handler_undo_pre(scene):
     for ng in sverchok_trees():
         _nodegroup_tracking['groups'] += len(ng.nodes)
 
 @persistent
-def handler_undo_post(scene):
+def sv_handler_undo_post(scene):
     num_to_test_against = 0
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
@@ -178,8 +178,8 @@ def set_frame_change(mode):
 
 
 def register():
-    bpy.app.handlers.undo_pre.append(handler_undo_pre)
-    bpy.app.handlers.undo_post.append(handler_undo_post)    
+    bpy.app.handlers.undo_pre.append(sv_handler_undo_pre)
+    bpy.app.handlers.undo_post.append(sv_handler_undo_post)    
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.append(sv_main_handler)
@@ -194,8 +194,8 @@ def register():
 
 
 def unregister():
-    bpy.app.handlers.undo_pre.remove(handler_undo_pre)
-    bpy.app.handlers.undo_post.remove(handler_undo_post)    
+    bpy.app.handlers.undo_pre.remove(sv_handler_undo_pre)
+    bpy.app.handlers.undo_post.remove(sv_handler_undo_post)    
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
     bpy.app.handlers.depsgraph_update_pre.remove(sv_main_handler)
