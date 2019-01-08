@@ -65,7 +65,7 @@
     SvRaycasterLiteNode
     SvOBJInsolationNode
     EvaluateImageNode
-    SvTensionNode
+    SvDeformationNode
 
 ## Transforms
     SvRotationNode
