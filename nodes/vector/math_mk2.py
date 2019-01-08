@@ -139,10 +139,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         renames = 'AB'
         for idx, t_in in enumerate(t_inputs):
             s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
-            if t_in == 'v':
-                s.prop_name = 'v3_input_' + str(idx)
-            else:
-                s.prop_name = 'amount'
+            s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
 
 
     def process(self):
