@@ -95,7 +95,12 @@ def add_connection(tree, bl_idname_new_node, offset):
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
             # we can't determin thru cursor location which socket was nearest the rightclick
             # maybe in the future.. or if someone does know :)
-            links.new(outputs[0], inputs[0])
+            for socket in outputs:
+                if socket.hide:
+                    continue
+                # connect_stethoscope to first visible output socket of active node
+                links.new(socket, inputs[0])
+                break
 
         elif bl_idname_new_node == 'ViewerNode2':
 
