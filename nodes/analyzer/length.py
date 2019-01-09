@@ -100,18 +100,11 @@ class SvLengthNode(bpy.types.Node, SverchCustomTreeNode):
 
         return match_long_repeat([vertices, edges_in])
 
-    def ready(self):
-        '''check if there are the needed links'''
-        si = self.inputs
-        so = self.outputs
-        ready = so[0].is_linked and si[0].is_linked
-
-        return ready
-
     def process(self):
         '''main node function called every update'''
+        si = self.inputs
         so = self.outputs
-        if not self.ready():
+        if not (so[0].is_linked and si[0].is_linked):
             return
 
         result = []
