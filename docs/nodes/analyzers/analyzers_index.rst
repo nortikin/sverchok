@@ -14,6 +14,7 @@ Analyzers
    image_components
    kd_tree
    kd_tree_edges_mk2
+   length
    mesh_filter
    mesh_select
    select_similar
