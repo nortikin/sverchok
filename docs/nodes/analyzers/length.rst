@@ -26,7 +26,7 @@ In the N-Panel you can use the toggle **Output NumPy** to get NumPy arrays in st
 Outputs
 -------
 
-**Length**: it will be calculated if **Vertices** inputs is linked. If no **Edges** are supplied the node will use the sequence order to calculate de distances.
+**Length**: it will be calculated if **Vertices** input is linked. If no **Edges** are supplied the node will use the sequence order to calculate de distances.
 
 
 Example of usage
