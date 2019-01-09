@@ -143,17 +143,22 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     def sv_init(self, context):
+        # component inputs
         self.inputs.new('StringsSocket', "W").prop_name = 'component_w'
         self.inputs.new('StringsSocket', "X").prop_name = 'component_x'
         self.inputs.new('StringsSocket', "Y").prop_name = 'component_y'
         self.inputs.new('StringsSocket', "Z").prop_name = 'component_z'
+        # scalar-vector inputs
         self.inputs.new('StringsSocket', "Scalar").prop_name = 'scalar'
         self.inputs.new('VerticesSocket', "Vector").prop_name = "vector"
+        # euler angles inputs
         self.inputs.new('StringsSocket', "Angle X").prop_name = 'angle_x'
         self.inputs.new('StringsSocket', "Angle Y").prop_name = 'angle_y'
         self.inputs.new('StringsSocket', "Angle Z").prop_name = 'angle_z'
+        # axis-angle inputs
         self.inputs.new('VerticesSocket', "Axis").prop_name = "axis"
         self.inputs.new('StringsSocket', "Angle").prop_name = 'angle'
+        # matrix input
         self.inputs.new('MatrixSocket', "Matrix")
         self.outputs.new('SvQuaternionSocket', "Quaternions")
 
