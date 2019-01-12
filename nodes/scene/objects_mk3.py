@@ -108,7 +108,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             groups = bpy.data.groups
             names = [obj.name for obj in groups[self.groupname].objects]
         else:
-            names = [obj.name for obj in bpy.data.objects if obj.select_get()]
+            names = [obj.name for obj in bpy.data.objects if (obj.select_get() and len(obj.users_scene) > 0 and len(obj.users_collection) > 0)]
 
         if self.sort:
             names.sort()
