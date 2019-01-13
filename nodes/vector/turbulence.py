@@ -30,8 +30,8 @@ from sverchok.utils.sv_seed_funcs import get_offset, seed_adjusted
 
 noise_options = [
     ('BLENDER', 0),
-    ('STDPERLIN', 1),
-    ('NEWPERLIN', 2),
+    ('PERLIN_ORIGINAL', 1),
+    ('PERLIN_NEW', 2),
     ('VORONOI_F1', 3),
     ('VORONOI_F2', 4),
     ('VORONOI_F3', 5),
@@ -75,7 +75,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
     noise_type: EnumProperty(
         items=avail_noise,
-        default='STDPERLIN',
+        default='PERLIN_ORIGINAL',
         description="Noise type",
         update=updateNode)
 
@@ -91,12 +91,14 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         default=0, description="Random seed", name="Random seed", update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
-        self.inputs.new('StringsSocket', 'Hard').prop_name = 'hard'
-        self.inputs.new('StringsSocket', 'Amplitude').prop_name = 'amp'
-        self.inputs.new('StringsSocket', 'Frequency').prop_name = 'freq'
-        self.inputs.new('StringsSocket', 'Random seed').prop_name = 'rseed'
+        inew = self.inputs.new
+        inew('VerticesSocket', 'Vertices')
+        inew('StringsSocket', 'Octaves').prop_name = 'octaves'
+        inew('StringsSocket', 'Hard').prop_name = 'hard'
+        inew('StringsSocket', 'Amplitude').prop_name = 'amp'
+        inew('StringsSocket', 'Frequency').prop_name = 'freq'
+        inew('StringsSocket', 'Random seed').prop_name = 'rseed'
+
         self.outputs.new('VerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
@@ -109,7 +111,6 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
 
-        _noise_type = noise_dict[self.noise_type]
         tfunc = turbulence_f[self.out_mode]
 
         verts = inputs['Vertices'].sv_get(deepcopy=False)
@@ -126,10 +127,11 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         out = []
         for idx, (vert_list, octaves, hard, amp, freq, seed) in enumerate(zip(*arguments)):
             final_vert_list = seed_adjusted(vert_list, seed)
-            out.append([tfunc(v, octaves, hard, _noise_type, amp, freq) for v in final_vert_list])
+            out.append([tfunc(v, octaves, hard, noise_basis=self.noise_type, amplitude_scale=amp, frequency_scale=freq) for v in final_vert_list])
 
         if 'Noise V' in outputs:
             out = Vector_degenerate(out)
+
         outputs[0].sv_set(out)
 
 
