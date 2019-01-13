@@ -43,8 +43,8 @@ noise_options = [
     ('CELLNOISE', 14)
 ]
 
-def deepnoise(v, noise_basis=_noise_type):
-    u = noise.noise_vector(v, noise_basis=_noise_type)[:]
+def deepnoise(v, noise_basis='PERLIN_ORIGINAL'):
+    u = noise.noise_vector(v, noise_basis=noise_basis)[:]
     a = u[0], u[1], u[2]-1   # a = u minus (0,0,1)
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
