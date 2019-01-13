@@ -55,9 +55,8 @@ class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             mov = sv_recursive_transformations(self.moving, vers, vecs, mult, self.separate)
             self.outputs['vertices'].sv_set(mov)
 
-    def moving(self, v, c, m):
-        #print('moving function test',v,c,m)
-        return [(Vector(v) + Vector(c) * m)[:]]
+    def moving(self, v, c, multiplier):
+        return [(Vector(v) + Vector(c) * multiplier)[:]]
 
 
 def register():

@@ -55,7 +55,7 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         # outputs
         if self.outputs[0].is_linked:
-            sca = sv_recursive_transformations(self.scaling,vers,vecs,mult,self.separate)
+            sca = sv_recursive_transformations(self.scaling, vers, vecs, mult, self.separate)
             self.outputs['vertices'].sv_set(sca)
 
     def scaling(self, v, c, multiplier):
