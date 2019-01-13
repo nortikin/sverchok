@@ -57,7 +57,7 @@ class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def moving(self, v, c, m):
         #print('moving function test',v,c,m)
-        return [(Vector(v) + Vector(c) @ m)[:]]
+        return [(Vector(v) + Vector(c) * m)[:]]
 
 
 def register():
