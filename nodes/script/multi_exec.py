@@ -75,8 +75,8 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         # add() remove() clear() move()
-        row.operator(callback_id, text='', icon='ZOOMIN').cmd = 'add_new_line'
-        row.operator(callback_id, text='', icon='ZOOMOUT').cmd = 'remove_last_line'
+        row.operator(callback_id, text='', icon='ZOOM_IN').cmd = 'add_new_line'
+        row.operator(callback_id, text='', icon='ZOOM_OUT').cmd = 'remove_last_line'
         row.operator(callback_id, text='', icon='TRIA_UP').cmd = 'shift_up'
         row.operator(callback_id, text='', icon='TRIA_DOWN').cmd = 'shift_down'
         row.operator(callback_id, text='', icon='SNAP_ON').cmd = 'delete_blank'

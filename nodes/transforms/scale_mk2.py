@@ -58,9 +58,9 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             sca = sv_recursive_transformations(self.scaling,vers,vecs,mult,self.separate)
             self.outputs['vertices'].sv_set(sca)
 
-    def scaling(self, v, c, m):
+    def scaling(self, v, c, multiplier):
         # print(c,v,m)
-        return [(Vector(c) + m * (Vector(v) - Vector(c)))[:]]
+        return [(Vector(c) + multiplier * (Vector(v) - Vector(c)))[:]]
 
 
 def register():
