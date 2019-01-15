@@ -24,6 +24,7 @@ from mathutils import noise
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_seed_funcs import get_offset, seed_adjusted
+from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL
 
 # helpers
 def dict_from(options, idx1, idx2):
@@ -48,20 +49,7 @@ def ridged(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
 def hybrid(nbasis, verts, h_factor, lacunarity, octaves, offset, gain):
     return [noise.hybrid_multi_fractal(v, h_factor, lacunarity, octaves, offset, gain, noise_basis=nbasis) for v in verts]
 
-# noise nodes
-# from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
-noise_options = [
-    ('BLENDER', 0),
-    ('PERLIN_ORIGINAL', 1),
-    ('PERLIN_NEW', 2),
-    ('VORONOI_F1', 3),
-    ('VORONOI_F2', 4),
-    ('VORONOI_F3', 5),
-    ('VORONOI_F4', 6),
-    ('VORONOI_F2F1', 7),
-    ('VORONOI_CRACKLE', 8),
-    ('CELLNOISE', 14)
-]
+
 
 fractal_options = [
     ('FRACTAL', 0, fractal),
@@ -124,7 +112,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
 
     noise_type: EnumProperty(
         items=avail_noise,
-        default='PERLIN_ORIGINAL',
+        default=PERLIN_ORIGINAL,
         description="Noise type",
         update=updateNode)
 

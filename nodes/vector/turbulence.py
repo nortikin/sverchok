@@ -23,25 +23,9 @@ from mathutils import noise, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_degenerate, fullList)
 from sverchok.utils.sv_seed_funcs import get_offset, seed_adjusted
-
-# noise nodes
-# from http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
+from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL
 
 
-noise_options = [
-    ('BLENDER', 0),
-    ('PERLIN_ORIGINAL', 1),
-    ('PERLIN_NEW', 2),
-    ('VORONOI_F1', 3),
-    ('VORONOI_F2', 4),
-    ('VORONOI_F3', 5),
-    ('VORONOI_F4', 6),
-    ('VORONOI_F2F1', 7),
-    ('VORONOI_CRACKLE', 8),
-    ('CELLNOISE', 14)
-]
-
-noise_dict = {t[0]: t[1] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 
 turbulence_f = {'SCALAR': noise.turbulence, 'VECTOR': noise.turbulence_vector}
@@ -75,7 +59,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
     noise_type: EnumProperty(
         items=avail_noise,
-        default='PERLIN_ORIGINAL',
+        default=PERLIN_ORIGINAL,
         description="Noise type",
         update=updateNode)
 
