@@ -207,7 +207,9 @@ def register():
         # to remove from list.
         consoleHandler = logging.getLogger().handlers[0]
     logging.captureWarnings(True)
-    info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
+    # info("Registering Sverchok addon. Messages issued during registration will be only available in the console and in file (if configured).")
+    print("sv: enable internal debug logging.")
+    info(f"log level, {level}")
 
 def unregister():
     logging.shutdown()

@@ -19,5 +19,5 @@ def logo():
         print(with_color.format(line))
 
 def show_welcome():
-    print("** version: ", get_version_string()," **")
     logo()
+    print("\nsv: version:", get_version_string())

@@ -335,8 +335,7 @@ def register():
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
 
     build_help_remap(original_categories)
-
-    print("\n** Sverchok loaded with {i} nodes **".format(i=node_count))
+    print(f"sv: {node_count} nodes.")
 
 
 def unregister():

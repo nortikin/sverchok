@@ -105,7 +105,15 @@ def app_handler_ops(append=None, remove=None):
         # bpy.app.handlers.<handler>.<append or remove>(function_name)
         getattr(handler, operation)(handler_function)
 
-    print(f'sv: {operation} app.handlers<listed>')
+    # try:
+    #     names = lambda d: [f"    {k} -> {v.__name__}" for k, v in d.items()] 
+    #     listed = "\n".join(names(handler_dict))
+    # except Exception as err:
+    #     print('error while listing event handlers', err)
+    #     listed = ""
+
+    print(f'sv: {operation} app.handlers:')
+    # print(f'{listed}')
 
 
 utils_modules = [
