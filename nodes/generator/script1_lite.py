@@ -525,10 +525,4 @@ classes = [
     SvScriptNodeLite
 ]
 
-
-def register():
-    _ = [bpy.utils.register_class(name) for name in classes]
-
-
-def unregister():
-    _ = [bpy.utils.unregister_class(name) for name in classes]
+register, unregister = bpy.utils.register_classes_factory(classes)
