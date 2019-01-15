@@ -141,8 +141,7 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
 
             result_angles.append(new_angles)
 
-        if self.outputs['Angles'].is_linked:
-            self.outputs['Angles'].sv_set(result_angles)
+        self.outputs['Angles'].sv_set(result_angles)
 
 def register():
     bpy.utils.register_class(SvEdgeAnglesNode)
