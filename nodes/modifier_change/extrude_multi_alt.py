@@ -217,11 +217,7 @@ def perform_mextrude(self, bm, sel):
                 nf.normal_update()
                 no = nf.normal.copy()
 
-                # face/obj coÃ¶rdinates
-                if self.opt1:
-                    ce = nf.calc_center_bounds()
-                else:
-                    ce = origin
+                ce = nf.calc_center_bounds() if self.opt1 else origin
 
                 # per step rotation noise
                 if self.opt3:
@@ -247,17 +243,11 @@ def perform_mextrude(self, bm, sel):
                     sf.normal_update()
                 bm.faces.remove(of)
                 of = nf
+
             bm.verts.index_update()
             bm.faces.index_update()
 
         after.append(of)
-
-   # for v in bm.verts:
-   #     v.select = False
-   # for e in bm.edges:
-   #     e.select = False
-   # for f in after:
-   #     f.select = f not in sel
 
     out_verts, _, out_faces = pydata_from_bmesh(bm)
     del bm
