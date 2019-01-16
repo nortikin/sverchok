@@ -133,13 +133,13 @@ class DefaultMacros():
         elif term == 'gp +':
             needed_nodes = [
                 ['SvGetAssetProperties', (0.00, 0.00)],
-                ['SvScriptNodeLite', (250, 55)],
-                ['SvScalarMathNodeMK2', (430, 115)],
-                ['Float2IntNode', (600, 50)],
-                ['SvGenFloatRange', (720, 90)],
-                ['SvInterpolationNodeMK3', (880, 40)],
-                ['LineConnectNodeMK2', (1060, -40)],
-                ['ViewerNode2', (1245, 50)],
+                ['SvPathLengthNode', (250, 115)],
+                ['SvScalarMathNodeMK2', (420, 115)],
+                ['Float2IntNode', (590, 115)],
+                ['SvGenFloatRange', (760, 115)],
+                ['SvInterpolationNodeMK3', (930, 115)],
+                ['LineConnectNodeMK2', (1100, 115)],
+                ['ViewerNode2', (1290, 115)],
             ]
       
             made_nodes = []
@@ -149,9 +149,8 @@ class DefaultMacros():
                 n.location = node_location[0] + x, node_location[1] + y
                 made_nodes.append(n)
 
-            # Script node lite
-            snlite = made_nodes[1]
-            sn_loader(snlite, script_name='path_length.py')
+            # Path Length
+            made_nodes[1].segment = False
 
             # ID Selector
             made_nodes[0].Mode = 'grease_pencil'  # the rest must be user driven
@@ -160,7 +159,7 @@ class DefaultMacros():
             # Scalar Math node
             made_nodes[2].current_op = 'MUL'
             made_nodes[2].y_ = 2.5
-            links.new(made_nodes[1].outputs[0], made_nodes[2].inputs[0])   # snlite-> math
+            links.new(made_nodes[1].outputs[0], made_nodes[2].inputs[0])   # path length -> math
             links.new(made_nodes[2].outputs[0], made_nodes[3].inputs[0])   # math -> float
 
             # Float2Int node
