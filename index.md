@@ -49,7 +49,7 @@
     SvVolumeNode
     AreaNode
     DistancePPNode
-    SvLengthNode
+    SvPathLengthNode
     CentersPolsNodeMK2
     CentersPolsNodeMK3
     GetNormalsNode

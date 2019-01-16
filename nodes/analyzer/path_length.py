@@ -20,7 +20,7 @@
 import bpy
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat, get_edge_list
 import numpy as np
 
 
@@ -39,7 +39,6 @@ def edges_length(meshes, gates, result):
 
     for vertices, edges in zip(*meshes):
         np_verts = np.array(vertices)
-        print(np_verts.shape)
         if type(edges[0]) in (list, tuple):
             np_edges = np.array(edges)
         else:
@@ -55,26 +54,26 @@ def edges_length(meshes, gates, result):
     return result
 
 
-class SvLengthNode(bpy.types.Node, SverchCustomTreeNode):
+class SvPathLengthNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Path / Edges length
-    Tooltip: Deformation between to states, edge elong a area variation
+    Tooltip: Masseuses the length of a path or the length of it's segments
     '''
-    bl_idname = 'SvLengthNode'
-    bl_label = 'Length'
+    bl_idname = 'SvPathLengthNode'
+    bl_label = 'Path Length'
     bl_icon = 'MOD_SIMPLEDEFORM'
 
     output_numpy = BoolProperty(
         name='Output NumPy', description='output NumPy arrays',
         default=False, update=updateNode)
 
-    sum_lengths = BoolProperty(
-        name='by Edge', description='individual lengths or the sum of them',
+    segment = BoolProperty(
+        name='Segment', description='Get segments length or the sum of them',
         default=True, update=updateNode)
 
     def draw_buttons(self, context, layout):
         '''draw buttons on the Node'''
-        layout.prop(self, "sum_lengths", toggle=False)
+        layout.prop(self, "segment", toggle=False)
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
@@ -85,7 +84,7 @@ class SvLengthNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', "Verts")
+        sinw('VerticesSocket', "Vertices")
         sinw('StringsSocket', "Edges")
 
         sonw('StringsSocket', "Length")
@@ -93,24 +92,28 @@ class SvLengthNode(bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         '''get all data from sockets'''
         si = self.inputs
-        vertices = si['Verts'].sv_get(default=[[]])
-        edges_in = si['Edges'].sv_get(default=[[]])
-        if len(edges_in[0]) < 1:
+
+        vertices = si['Vertices'].sv_get()
+
+        if si['Edges'].is_linked:
+            edges_in = si['Edges'].sv_get()
+        else:
             edges_in = edges_aux(vertices)
 
         return match_long_repeat([vertices, edges_in])
+
 
     def process(self):
         '''main node function called every update'''
         si = self.inputs
         so = self.outputs
-        if not (so[0].is_linked and si[0].is_linked):
+        if not (so['Length'].is_linked):
             return
 
         result = []
         gates = []
         gates.append(self.output_numpy)
-        gates.append(self.sum_lengths)
+        gates.append(self.segment)
         meshes = self.get_data()
 
         result = edges_length(meshes, gates, result)
@@ -120,9 +123,9 @@ class SvLengthNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     '''register class in Blender'''
-    bpy.utils.register_class(SvLengthNode)
+    bpy.utils.register_class(SvPathLengthNode)
 
 
 def unregister():
     '''unregister class in Blender'''
-    bpy.utils.unregister_class(SvLengthNode)
+    bpy.utils.unregister_class(SvPathLengthNode)
