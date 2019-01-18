@@ -26,7 +26,7 @@ In the N-Panel you can use the toggle **Output NumPy** to get NumPy arrays in st
 Outputs
 -------
 
-**Length**: it will be calculated if **Vertices** input is linked. If no **Edges** are supplied the node will use the sequence order to calculate de distances.
+**Length**: it will be calculated if **Vertices** input is linked. If no **Edges** are supplied the node will use the sequence order to calculate de length.
 
 
 Example of usage
@@ -35,7 +35,7 @@ Example of usage
 .. image:: https://user-images.githubusercontent.com/10011941/51251936-c4449e00-199a-11e9-89a7-557cc7e93731.png
   :alt: PathLengthDemo1.PNG
 
-Measuring a Bender curve with the default vertices, with a higher interpolation and by edges
+Measuring a Bender curve with the default vertices, with a higher interpolation and by segments
 
 .. image:: https://user-images.githubusercontent.com/10011941/51251933-c4449e00-199a-11e9-99b8-fa53c8586484.png
   :alt: PathLengthDemo2.PNG

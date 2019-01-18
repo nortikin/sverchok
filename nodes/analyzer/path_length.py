@@ -57,11 +57,11 @@ def edges_length(meshes, gates, result):
 class SvPathLengthNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Path / Edges length
-    Tooltip: Masseuses the length of a path or the length of it's segments
+    Tooltip: Measures the length of a path or the length of its segments
     '''
     bl_idname = 'SvPathLengthNode'
     bl_label = 'Path Length'
-    bl_icon = 'MOD_SIMPLEDEFORM'
+    sv_icon = 'SV_PATH_LENGTH'
 
     output_numpy = BoolProperty(
         name='Output NumPy', description='output NumPy arrays',
