@@ -133,15 +133,15 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # inputs
+        Vertices = self.inputs['vertices'].sv_get()
+        
         if self.mode == 'AXIS':
-            Vertices = self.inputs['vertices'].sv_get()
             Angle = self.inputs['angle'].sv_get()
             Center = self.inputs['center'].sv_get(default=[[[0.0, 0.0, 0.0]]])
             Axis = self.inputs['axis'].sv_get(default=[[[0.0, 0.0, 1.0]]])
             parameters = match_long_repeat([Vertices, Center, Axis, Angle])
 
-        elif self.mode == 'EULER' or self.mode == 'QUAT':
-            Vertices = self.inputs['vertices'].sv_get()
+        elif self.mode in {'EULER', 'QUAT'}:
             X = self.inputs['X'].sv_get()[0]
             Y = self.inputs['Y'].sv_get()[0]
             Z = self.inputs['Z'].sv_get()[0]
