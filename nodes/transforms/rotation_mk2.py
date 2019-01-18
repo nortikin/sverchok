@@ -159,14 +159,12 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # outputs
         if self.mode == 'AXIS':
             points = [axis_rotation(v, c, d, a) for v, c, d, a in zip(*parameters)]
-            #points = sv_recursive_transformations(axis_rotation,vers,vecs,mult,self.separate)
-            self.outputs['vertices'].sv_set(points)
         elif self.mode == 'EULER':
             points = [euler_rotation(v, x, y, z, o) for v, x, y, z, o in zip(*parameters)]
-            self.outputs['vertices'].sv_set(points)
         elif self.mode == 'QUAT':
             points = [quat_rotation(m, x, y, z, w) for m, x, y, z, w in zip(*parameters)]
-            self.outputs['vertices'].sv_set(points)
+        
+        self.outputs['vertices'].sv_set(points)
 
 
 
