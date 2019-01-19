@@ -21,7 +21,7 @@ from ast import literal_eval
 import bpy
 from bpy.props import BoolProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (changable_sockets, updateNode)
+from sverchok.data_structure import changable_sockets, updateNode
 
 from sverchok.utils.listutils import preobrazovatel
 
@@ -34,10 +34,10 @@ class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
 
     typ: StringProperty(name='typ', default='')
     newsock: BoolProperty(name='newsock', default=False)
-    Sverch_LisLev: StringProperty(name='Sverch_LisLev',
-                                   description='User defined nesty levels. (i.e. 1,2)',
-                                   default='1,2,3',
-                                   update=updateNode)
+
+    Sverch_LisLev: StringProperty(
+        name='Sverch_LisLev', description='User defined nesty levels. (i.e. 1,2)',
+        default='1,2,3', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'data')
