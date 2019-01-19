@@ -40,17 +40,16 @@ class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         # достаём два слота - вершины и полики
-        if 'Sum' in self.outputs and self.outputs['Sum'].is_linked:
-            if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = self.inputs['Data'].sv_get()
+        if self.outputs['Sum'].is_linked and self.inputs['Data'].is_linked:
+            data = self.inputs['Data'].sv_get()
 
-                lol = levelsOflist(data) - 1
-                level = min(lol, self.level)
-                out = self.summ(data, level, lol)
+            lol = levelsOflist(data) - 1
+            level = min(lol, self.level)
+            out = self.summ(data, level, lol)
 
-                if self.level == 1:
-                    out = [out]
-                self.outputs['Sum'].sv_set(out)
+            if self.level == 1:
+                out = [out]
+            self.outputs['Sum'].sv_set(out)
 
     def summ(self, data, level, lol):
         out = []
