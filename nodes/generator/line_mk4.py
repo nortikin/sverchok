@@ -29,7 +29,7 @@ modeItems = [
 
 directions = {"X": [1, 0, 0], "Y": [0, 1, 0], "Z": [0, 0, 1]}
 
-socket_names = {"A": "Point A", "B": "Point B", "O": "Origin", "D": "Distance"}
+socket_names = {"A": "A", "B": "B", "O": "Origin", "D": "Distance"}
 
 
 def get_vector_interpolator(ox, oy, oz, nx, ny, nz):
@@ -94,7 +94,7 @@ def make_line(steps, size, v1, v2, center, normalize, mode):
 
 class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Line, segment.
+    Triggers: Line, Segment
     Tooltip: Generate line between two points or from a point in a direction.
     """
     bl_idname = 'SvLineNodeMK4'
@@ -248,7 +248,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
 
 class SvSetLineDirection(bpy.types.Operator, SvGenericCallbackWithParams):
     bl_label = "Set line direction"
-    bl_idname = "node.set_line_direction"   # dont use sv.
+    bl_idname = "node.set_line_direction"
     bl_description = "Set the direction of the line along X, Y or Z"
 
     direction = StringProperty(default="X")
