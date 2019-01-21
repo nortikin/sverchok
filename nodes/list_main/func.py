@@ -1,22 +1,9 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
-
-from itertools import accumulate
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
 
 import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty
@@ -24,8 +11,30 @@ from bpy.props import EnumProperty, IntProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
-def acc(l):
-    return list(accumulate(l))
+
+def avr(data):
+    sum_d = 0.0
+    flag = True
+    for d in data:
+        if type(d) not in [float, int]:
+            idx_avr = len(data)//2
+            result = data[idx_avr]
+            flag = False
+            break
+
+        sum_d += d
+
+    if flag:
+        result = sum_d / len(data)
+    return result
+
+
+func_dict = {
+    "MIN": min,
+    "MAX": max,
+    "AVR": avr,
+    "SUM": sum 
+}
 
 class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -70,24 +79,16 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        func_dict = {
-            "MIN": min,
-            "MAX": max,
-            "AVR": self.avr,
-            "SUM": sum 
-        }
+        if self.outputs['Function'].is_linked and self.inputs['Data'].is_linked:
+            data = self.inputs['Data'].sv_get()
+            func = func_dict[self.func_]
 
-        if self.outputs['Function'].is_linked:
-            if self.inputs['Data'].is_linked:
-                data = self.inputs['Data'].sv_get()
-                func = func_dict[self.func_]
+            if not self.level:
+                out = [func(data)]
+            else:
+                out = self.count(data, self.level, func)
 
-                if not self.level:
-                    out = [func(data)]
-                else:
-                    out = self.count(data, self.level, func)
-
-                self.outputs['Function'].sv_set([out] if self.wrap else out)
+            self.outputs['Function'].sv_set([out] if self.wrap else out)
 
     def count(self, data, level, func):
         out = []
@@ -102,21 +103,6 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
             pass
         return out
 
-    def avr(self, data):
-        sum_d = 0.0
-        flag = True
-        for d in data:
-            if type(d) not in [float, int]:
-                idx_avr = len(data)//2
-                result = data[idx_avr]
-                flag = False
-                break
-
-            sum_d += d
-
-        if flag:
-            result = sum_d / len(data)
-        return result
 
 def register():
     bpy.utils.register_class(ListFuncNode)
