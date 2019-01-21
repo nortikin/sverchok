@@ -68,7 +68,7 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
-        layout.prop(self, "func_", "Functions:")
+        layout.prop(self, "func_", text="Functions:")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "wrap")
