@@ -50,15 +50,20 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         objs = self.inputs[0].sv_get()
         if isinstance(objs[0], list):
             objs = objs[0]
+
         o1,o2,o3,o4,o5,o6,o7,o8 = self.outputs
         vs,vn,es,ps,pa,pc,pn,ms = [],[],[],[],[],[],[],[]
-        scene, mod = bpy.context.scene, self.modifiers
+        
+        depsgraph = bpy.context.depsgraph
+
         ot = objs[0].type in ['MESH', 'CURVE', 'FONT', 'SURFACE', 'META']
         for obj in objs:
             if o8.is_linked:
                 ms.append(obj.matrix_world)
             if ot:
-                obj_data = obj.to_mesh(scene, mod, 'PREVIEW')
+                # obj_data = obj.to_mesh(scene, mod, 'PREVIEW')
+                obj_data = obj.to_mesh(depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+                
                 if o1.is_linked:
                     vs.append([v.co[:] for v in obj_data.vertices])
                 if o2.is_linked:
@@ -74,6 +79,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 if o7.is_linked:
                     pn.append([p.normal[:] for p in obj_data.polygons])
                 bpy.data.meshes.remove(obj_data)
+
         for i,i2 in zip(self.outputs, [vs,vn,es,ps,pa,pc,pn,ms]):
             if i.is_linked:
                 i.sv_set(i2)
