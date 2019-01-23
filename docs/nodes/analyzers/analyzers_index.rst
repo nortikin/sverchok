@@ -22,6 +22,7 @@ Analyzers
    normals
    bvh_overlap_polys
    object_insolation
+   path_length
    points_inside_mesh
    polygons_centers
    polygons_centers_mk3
