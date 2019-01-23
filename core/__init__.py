@@ -111,3 +111,8 @@ def init_bookkeeping(sv_name):
     ascii_print.show_welcome()
     node_defaults.register_defaults()
     auto_gather_node_classes()    
+
+
+
+_nodegroup_tracking = {'groups': 0}
+undo_handler_node_count = _nodegroup_tracking['groups']

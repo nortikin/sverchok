@@ -5,14 +5,15 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core import upgrade_nodes, upgrade_group
+from sverchok.core import upgrade_nodes, upgrade_group, undo_handler_node_count
+
 
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 
 
 _state = {'frame': None}
-_nodegroup_tracking = {'groups': 0}
+undo_handler_node_count = 0
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -38,23 +39,32 @@ def has_frame_changed(scene):
 
 @persistent
 def sv_handler_undo_pre(scene):
+    print('called undo pre')
+
+    from sverchok.core import undo_handler_node_count
+
     for ng in sverchok_trees():
-        _nodegroup_tracking['groups'] += len(ng.nodes)
+        undo_handler_node_count += len(ng.nodes)
+    print('collected num nodes:', undo_handler_node_count)
 
 @persistent
 def sv_handler_undo_post(scene):
+    print('called undo post')
+    
+    from sverchok.core import undo_handler_node_count
+
     num_to_test_against = 0
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
 
     # only perform clean if the undo event triggered
     # a difference in total node count among trees.
-    if not (_nodegroup_tracking['groups'] == num_to_test_against):
+    if not (undo_handler_node_count == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
         sv_main_handler(scene)
 
-    _nodegroup_tracking = {'groups': 0}
+    undo_handler_node_count = 0
 
 
 @persistent
