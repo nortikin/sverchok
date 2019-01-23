@@ -114,5 +114,5 @@ def init_bookkeeping(sv_name):
 
 
 
-_nodegroup_tracking = {'groups': 0}
-undo_handler_node_count = _nodegroup_tracking['groups']
+undo_handler_node_count = {}
+undo_handler_node_count['sv_groups'] = 0

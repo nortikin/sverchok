@@ -13,7 +13,7 @@ from sverchok.utils import app_handler_ops
 
 
 _state = {'frame': None}
-undo_handler_node_count = 0
+
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -44,12 +44,14 @@ def sv_handler_undo_pre(scene):
     from sverchok.core import undo_handler_node_count
 
     for ng in sverchok_trees():
-        undo_handler_node_count += len(ng.nodes)
+        undo_handler_node_count['sv_groups'] += len(ng.nodes)
     print('collected num nodes:', undo_handler_node_count)
 
 @persistent
 def sv_handler_undo_post(scene):
     print('called undo post')
+    # this function appears to be hoisted into an environment that does not have the same locals()
+    # hence this dict must be imported. (jan 2019)
     
     from sverchok.core import undo_handler_node_count
 
@@ -59,12 +61,12 @@ def sv_handler_undo_post(scene):
 
     # only perform clean if the undo event triggered
     # a difference in total node count among trees.
-    if not (undo_handler_node_count == num_to_test_against):
+    if not (undo_handler_node_count['sv_groups'] == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
         sv_main_handler(scene)
 
-    undo_handler_node_count = 0
+    undo_handler_node_count['sv_groups'] = 0
 
 
 @persistent
