@@ -62,8 +62,8 @@ def sv_handler_undo_post(scene):
     if not (undo_handler_node_count == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
-    
-    sv_main_handler(scene)
+        sv_main_handler(scene)
+
     undo_handler_node_count = 0
 
 
