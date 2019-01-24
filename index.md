@@ -236,6 +236,7 @@
     SvPolylineViewerNodeV28
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
+    SvMetaballOutNode
     ---
     SvTextureViewerNode
     SvTextureViewerNodeLite
