@@ -148,7 +148,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         types = self.inputs['Types'].sv_get()
 
         level = get_data_nesting_level_mod(origins)
-        if level == 1:
+        if level == 2:
             # We have list of lists of matrices.
             # Create a meta object per each list of matrices.
             self.debug("Will create META object for each list of input matrices")
@@ -156,12 +156,12 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             stiffnesses = stiffnesses[0]
             negation = negation[0]
             types = types[0]
-        elif level == 2:
+        elif level == 1:
             # We have list of matrices.
             # Create single meta object.
             #origins = [Matrix_generate(origin) for origin in origins]
             self.debug("Will create single META object")
-            self.debug(describe_data_shape(origins))
+            # self.debug(describe_data_shape(origins))
             origins = [origins]
         else:
             raise Exception("`Origins' input of Metaball node requires data nesting level 3 or 4, not {}".format(level))
