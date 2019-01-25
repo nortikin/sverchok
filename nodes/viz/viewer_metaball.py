@@ -190,6 +190,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             items = match_long_repeat([m_origins, m_radiuses, m_stiffnesses, m_negation, m_types])
             items = list(zip(*items))
 
+            # D.elements.foreach_set
+            # D.elements.foreach_set('co', full_list_of_locations)
+
             if len(items) == len(metaball_object.data.elements):
                 #self.debug('Updating existing metaball data')
 
