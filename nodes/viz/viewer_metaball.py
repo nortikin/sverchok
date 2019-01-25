@@ -37,7 +37,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_label = 'Metaball'
     bl_icon = 'META_BALL'
 
-    data_kind = StringProperty(default='META')
+    data_kind: StringProperty(default='META')
 
     meta_types = [
         ("BALL", "Ball", "Ball", "META_BALL", 1),
@@ -48,27 +48,27 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     meta_type_by_id = dict((item[4], item[0]) for item in meta_types)
 
-    meta_type = EnumProperty(
+    meta_type: EnumProperty(
         name='Meta type', description="Meta object type",
         items=meta_types, update=updateNode)
 
-    radius = FloatProperty(
+    radius: FloatProperty(
         name='Radius', description='Metaball radius',
         default=1.0, min=0.0, update=updateNode)
 
-    stiffness = FloatProperty(
+    stiffness: FloatProperty(
         name='Stiffness', description='Metaball stiffness',
         default=2.0, min=0.0, update=updateNode)
 
-    view_resolution = FloatProperty(
+    view_resolution: FloatProperty(
         name='Resolution (viewport)', description='Resolution for viewport',
         default=0.2, min=0.0, max=1.0, update=updateNode)
 
-    render_resolution = FloatProperty(
+    render_resolution: FloatProperty(
         name='Resolution (render)', description='Resolution for rendering',
         default=0.1, min=0.0, max=1.0, update=updateNode)
 
-    threshold = FloatProperty(
+    threshold: FloatProperty(
         name='Threshold', description='Influence of meta elements',
         default=0.6, min=0.0, max=5.0, update=updateNode)
 
