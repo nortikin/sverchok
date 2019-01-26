@@ -186,6 +186,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
            
             elements = metaball_object.data.elements 
             diff = len(elements) - len(items[0])
+
+            print(len(elements), 'vs', diff)
+
             if not diff == 0:
 
                 # less items than current elements, clearing is faster
