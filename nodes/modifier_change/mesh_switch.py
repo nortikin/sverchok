@@ -39,17 +39,17 @@ class SvMeshSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         inputs = self.inputs
-        if inputs[-2].links: # last Verts socket linked ? => create more sockets
+        if inputs[-2].links:  # last Verts socket linked ? => create more sockets
             name = ABC[int(len(inputs) / 2)]  # pick the next letter A to Z
             inputs.new("VerticesSocket", "Verts " + name)
             inputs.new("StringsSocket", "EdgePolys " + name)
         else:  # last Verts input unlinked ? => remove all but last unlinked
             # get the list of Verts socket labels (linked or unlinked)
             vertSockets = filter(lambda s: "Verts" in s.name, inputs)
-            socketLabels = [s.name[-1] for s in vertSockets] # (ABCD)
+            socketLabels = [s.name[-1] for s in vertSockets]  # (ABCD)
             # get the labels of last unlinked Verts sockets in reverse order
             unlinkedSocketLabels = []
-            for label in socketLabels[::-1]: # in reverse order (DCBA)
+            for label in socketLabels[::-1]:  # in reverse order (DCBA)
                 if inputs["Verts " + label].is_linked:
                     break
                 else:
@@ -76,15 +76,15 @@ class SvMeshSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
         inputs = self.inputs
 
+        # get the list of labels of the linked Verts input sockets
+        vertSockets = filter(lambda s: "Verts" in s.name and s.is_linked, inputs)
+        socketLabels = [s.name[-1] for s in vertSockets]  # (ABCD)
+
         input_n = inputs["Selected"].sv_get()[0][0]
         num = max(1, len(socketLabels))
         n = max(0, int(input_n)) % num
 
-        # get the list of labels of the linked Verts input sockets
-        vertSockets = filter(lambda s: "Verts" in s.name and s.is_linked, inputs)
-        socketLabels = [s.name[-1] for s in vertSockets] # (ABCD)
-
-        label = socketLabels[n] # the label of the selected input
+        label = socketLabels[n]  # the label of the selected input
 
         if outputs["Verts"].is_linked:
             verts = inputs["Verts " + label].sv_get()
