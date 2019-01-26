@@ -59,6 +59,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         ("CUBE", "Cube", "Cube", "META_CUBE", 5)]
 
     meta_type_by_id = dict((item[4], item[0]) for item in meta_types)
+    meta_deconvert = {item[0]: item[4] for item in meta_types}
 
     meta_type: EnumProperty(
         name='Meta type', description="Meta object type",
@@ -201,12 +202,11 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             # set up all flat lists.
             full_origins, full_radii, full_stiff, full_negation, full_types = items
             full_negation_bools = [bool(n) for n in full_negation]
-            #full_types_str = [self.meta_type_by_id[meta_type] for meta_type in full_types]
-            full_types_str = full_types
             full_centers, full_rotations, full_size_x, full_size_y, full_size_z = decompose_matrices(full_origins)
 
             # pass all flat lists
-            # elements.foreach_set('type', full_types_str)
+            # elements.foreach_set('type', full_types_int)
+            _ = [setattr(element, 'type', _type) for element, _type in zip(elements, full_types)]
             elements.foreach_set('radius', full_radii)
             elements.foreach_set('stiffness', full_stiff)
             elements.foreach_set('use_negative', full_negation_bools)
