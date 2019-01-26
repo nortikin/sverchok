@@ -14,6 +14,13 @@ from sverchok.data_structure import Matrix_generate, match_long_repeat, updateNo
 from sverchok.utils.sv_obj_helper import SvObjHelper
 
 
+def decompose_matrices(matrices):
+    # center, rotation, scale = origin.decompose()
+    # center[:3], rotation, scale[0], scale[1], scale[2]
+    # this returns [all centers, all_rotations, all_scale_x, all_scale_y, sall_scale_z]
+    return list(zip(*[(m[0][:3], m[1], m[2][0], m[2][1], m[2][2]) for m in [matrix.decompose() for matrix in matrices]]))
+
+
 def get_data_nesting_level_mod(data):
     try:
         if isinstance(data[0], Matrix):
@@ -124,23 +131,6 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         if not self.inputs['Origins'].is_linked:
             return
 
-        def setup_element(element, item):
-            (origin, radius, stiffness, negate, meta_type) = item
-            center, rotation, scale = origin.decompose()
-            element.co = center[:3]
-            if isinstance(meta_type, int):
-                if meta_type not in self.meta_type_by_id:
-                    raise Exception("`Types' input expects an integer number from 1 to 5")
-                meta_type = self.meta_type_by_id[meta_type]
-            element.type = meta_type
-            element.radius = radius
-            element.stiffness = stiffness
-            element.rotation = rotation
-            element.size_x = scale[0]
-            element.size_y = scale[1]
-            element.size_z = scale[2]
-            element.use_negative = bool(negate)
-
         origins = self.inputs['Origins'].sv_get()
         radiuses = self.inputs['Radius'].sv_get()
         stiffnesses = self.inputs['Stiffness'].sv_get()
@@ -188,23 +178,34 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             m_types       = ensure_nesting_level(m_types, 1)
 
             items = match_long_repeat([m_origins, m_radiuses, m_stiffnesses, m_negation, m_types])
-            items = list(zip(*items))
+           
+            elements = metaball_object.data.elements 
+            diff = len(elements) - len(items[0])
+            if not diff == 0:
 
-            # D.elements.foreach_set
-            # D.elements.foreach_set('co', full_list_of_locations)
+                # less items than current elements, clearing is faster
+                new_num_to_create = diff if diff > 0 else len(items[0])
+                if diff > 0:
+                    elements.clear()
+                _ = [elements.new() for i in range(new_num_to_create)]
 
-            if len(items) == len(metaball_object.data.elements):
-                #self.debug('Updating existing metaball data')
+            # set up all flat lists.
+            full_origins, full_radii, full_stiff, full_negation, full_types = items
+            full_negation_bools = [bool(n) for n in full_negation]
+            full_types_str = [self.meta_type_by_id[meta_type] for meta_type in full_types]
+            full_centers, full_rotations, full_size_x, full_size_y, full_size_z = decompose_matrices(full_origins)
 
-                for (item, element) in zip(items, metaball_object.data.elements):
-                    setup_element(element, item)
-            else:
-                self.debug('Recreating metaball #%s data', object_index)
-                metaball_object.data.elements.clear()
+            # pass all flat lists
+            elements.foreach_set('type', full_types_str)
+            elements.foreach_set('radius', full_radii)
+            elements.foreach_set('stiffness', full_stiff)
+            elements.foreach_set('use_negative', full_negation_bools)
+            elements.foreach_set('co', full_centers)
+            elements.foreach_set('rotation', full_rotations)
+            elements.foreach_set('size_x', full_size_x)
+            elements.foreach_set('size_y', full_size_y)
+            elements.foreach_set('size_z', full_size_z)
 
-                for item in items:
-                    element = metaball_object.data.elements.new()
-                    setup_element(element, item)
         
         self.remove_non_updated_objects(object_index)
         self.set_corresponding_materials()
