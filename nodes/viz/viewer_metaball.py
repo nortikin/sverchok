@@ -187,14 +187,15 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             elements = metaball_object.data.elements 
             diff = len(elements) - len(items[0])
 
-            print(len(elements), 'vs', diff)
+            # print('elements:', len(elements), 'vs', diff, ' -->len items[0]', len(items[0]))
 
             if not diff == 0:
 
                 # less items than current elements, clearing is faster
-                new_num_to_create = diff if diff > 0 else len(items[0])
+                new_num_to_create = abs(diff) if diff < 0 else len(items[0])
                 if diff > 0:
                     elements.clear()
+
                 _ = [elements.new() for i in range(new_num_to_create)]
 
             # set up all flat lists.
