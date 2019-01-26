@@ -86,6 +86,7 @@
     PolygonBoomNode
     Pols2EdgsNode
     SvMeshJoinNode
+    SvMeshSwitchNode
     ---
     SvBevelNode
     SvSubdivideNode
