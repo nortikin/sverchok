@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import numpy as np
+
 import bpy
 from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty, FloatProperty, EnumProperty
@@ -19,6 +21,9 @@ def decompose_matrices(matrices):
     # center[:3], rotation, scale[0], scale[1], scale[2]
     # this returns [all centers, all_rotations, all_scale_x, all_scale_y, sall_scale_z]
     return list(zip(*[(m[0][:3], m[1], m[2][0], m[2][1], m[2][2]) for m in [matrix.decompose() for matrix in matrices]]))
+
+def flatten_list(data):
+    return np.array(data).flatten()
 
 
 def get_data_nesting_level_mod(data):
@@ -192,16 +197,17 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             # set up all flat lists.
             full_origins, full_radii, full_stiff, full_negation, full_types = items
             full_negation_bools = [bool(n) for n in full_negation]
-            full_types_str = [self.meta_type_by_id[meta_type] for meta_type in full_types]
+            #full_types_str = [self.meta_type_by_id[meta_type] for meta_type in full_types]
+            full_types_str = full_types
             full_centers, full_rotations, full_size_x, full_size_y, full_size_z = decompose_matrices(full_origins)
 
             # pass all flat lists
-            elements.foreach_set('type', full_types_str)
+            # elements.foreach_set('type', full_types_str)
             elements.foreach_set('radius', full_radii)
             elements.foreach_set('stiffness', full_stiff)
             elements.foreach_set('use_negative', full_negation_bools)
-            elements.foreach_set('co', full_centers)
-            elements.foreach_set('rotation', full_rotations)
+            elements.foreach_set('co', flatten_list(full_centers))
+            elements.foreach_set('rotation', flatten_list(full_rotations))
             elements.foreach_set('size_x', full_size_x)
             elements.foreach_set('size_y', full_size_y)
             elements.foreach_set('size_z', full_size_z)
