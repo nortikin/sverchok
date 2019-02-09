@@ -46,7 +46,7 @@ def enum_from_list_idx(*item_list):
 
 
 
-common_ops = ['object_hide', 'object_hide_select', 'object_hide_render']
+common_ops = ['object_hide_viewport', 'object_hide_select', 'object_hide_render']
 CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 
 def get_random_init_v2():
@@ -224,7 +224,7 @@ class SvObjHelper():
     material: StringProperty(name='material', default='', update=updateNode)
 
     # to be used as standard toggles for object attributes of same name
-    object_hide: BoolProperty(name='object hide viewport', default=True)
+    object_hide_viewport: BoolProperty(name='object hide viewport', default=True)
     object_hide_render: BoolProperty(name='object hide render', default=True)
     object_hide_select: BoolProperty(name='object hide select', default=False)
 
@@ -252,15 +252,13 @@ class SvObjHelper():
             'object_hide_render': 'RESTRICT_RENDER',
             'object_hide_select': 'RESTRICT_SELECT'}.get(TYPE)
         if not NAMED_ICON:
-            return 'WARNING'
+            return 'ERROR'
         return NAMED_ICON + ['_ON', '_OFF'][getattr(self, TYPE)]
 
     def draw_live_and_outliner(self, context, layout):
-        view_icon = 'RESTRICT_VIEW_' + ('OFF' if self.activate else 'ON')
-
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.column().prop(self, "activate", text="LIVE", toggle=True, icon=view_icon)
+        row.column().prop(self, "activate", text="LIVE", toggle=True)
 
         for op_name in common_ops: 
             tracked_operator(self, row, fn_name=op_name, icon=self.icons(op_name))
