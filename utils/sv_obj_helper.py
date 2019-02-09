@@ -124,7 +124,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
 
         elif type_op == "object_select":
             for obj in objs:
-                obj.select = n.object_select
+                obj.select_set(n.object_select)
             n.object_select = not n.object_select
 
         elif type_op == 'random_basedata_name':   # random_data_name  ?
