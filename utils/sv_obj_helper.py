@@ -116,7 +116,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
 
         objs = n.get_children()
 
-        if type_op in {'object_hide', 'object_hide_render', 'object_hide_select'}:
+        if type_op in {'object_hide_viewport', 'object_hide_render', 'object_hide_select'}:
             for obj in objs:
                 stripped_op_name = type_op.replace("object_", '')
                 setattr(obj, stripped_op_name, getattr(n, type_op))
@@ -224,7 +224,7 @@ class SvObjHelper():
     material: StringProperty(name='material', default='', update=updateNode)
 
     # to be used as standard toggles for object attributes of same name
-    object_hide: BoolProperty(name='object hide', default=True)
+    object_hide: BoolProperty(name='object hide viewport', default=True)
     object_hide_render: BoolProperty(name='object hide render', default=True)
     object_hide_select: BoolProperty(name='object hide select', default=False)
 
@@ -248,7 +248,7 @@ class SvObjHelper():
 
     def icons(self, TYPE):
         NAMED_ICON = {
-            'object_hide': 'RESTRICT_VIEW',
+            'object_hide_viewport': 'RESTRICT_VIEW',
             'object_hide_render': 'RESTRICT_RENDER',
             'object_hide_select': 'RESTRICT_SELECT'}.get(TYPE)
         if not NAMED_ICON:
