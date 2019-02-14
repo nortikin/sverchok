@@ -314,10 +314,10 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         else:
             if not self.one_sock:
                 for name in self.csv_data[n_id]:
-                    self.outputs.new('StringsSocket', name, name)
+                    self.outputs.new('StringsSocket', name)
             else:
                 name = 'one_sock'
-                self.outputs.new('StringsSocket', name, name)
+                self.outputs.new('StringsSocket', name)
 
 
     def load_csv_data(self):
