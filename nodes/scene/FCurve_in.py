@@ -66,7 +66,7 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
 
         row = layout.row(align=True)
         row.prop_search(self, 'object_name', bpy.data, 'objects', text='', icon='OBJECT_DATA')
-        row.operator("node.sv_fcurvenodemk1_callback_with_params", text='', icon="ZOOMIN").fn_name="add_empty"
+        row.operator("node.sv_fcurvenodemk1_callback_with_params", text='', icon="ZOOM_IN").fn_name="add_empty"
         if not self.object_name:
             return
 
