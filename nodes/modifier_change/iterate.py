@@ -30,7 +30,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, Matrix_genera
 def concat(lists):
     return reduce(iadd, lists)
 
-
+# no longer used. scedule to delete
 def Matrix_degenerate(ms):
     return [[j[:] for j in M] for M in ms]
 
@@ -181,7 +181,7 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
             if self.outputs['Polygons'].is_linked:
                 self.outputs['Polygons'].sv_set([result_faces])
             if self.outputs['Matrices'].is_linked:
-                self.outputs['Matrices'].sv_set(Matrix_degenerate(result_matrices))
+                self.outputs['Matrices'].sv_set(result_matrices)
 
 
 def register():
