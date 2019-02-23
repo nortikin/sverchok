@@ -109,6 +109,8 @@
     SvVertMaskNode
     SvTransformSelectNode
     SvSplitEdgesNode
+    ---
+    SvTestingNode
 
 ## Modifier Make
     LineConnectNodeMK2
