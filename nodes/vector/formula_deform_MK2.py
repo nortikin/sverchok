@@ -41,8 +41,7 @@ class SvFormulaDeformMK2Node(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         for element in 'XYZ':
             row = layout.row()
-            split = row.split(percentage=0.15)
-            split.label(text=element)
+            split = row.split(align=True)
             split.split().prop(self, "Mode"+element, text='')
 
     def process(self):
