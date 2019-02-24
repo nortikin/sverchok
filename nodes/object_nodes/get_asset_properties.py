@@ -162,7 +162,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         layout.row().prop(self, "Mode", text="data")
 
         if self.Mode == 'objects':
-            layout.prop(self, "Type", "type")
+            layout.prop(self, "Type", text="type")
             layout.prop_search(self, 'object_name', self, 'type_collection_name', text='name', icon='OBJECT_DATA')
         elif self.Mode == 'texts':
             layout.prop_search(self, 'text_name', bpy.data, 'texts', text='name')
