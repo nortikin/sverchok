@@ -102,7 +102,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
          'images', 'libraries', 'linestyles', 'masks', 'materials',
          'movieclips', 'node_groups', 'particles', 'scenes', 'screens', 'shape_keys',
          'sounds', 'speakers', 'texts', 'textures', 'worlds', 'objects']
-    T = ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE',
+    T = ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE', 'GPENCIL',
          'LATTICE', 'EMPTY', 'CAMERA', 'LAMP', 'SPEAKER']
 
     Mode: EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
