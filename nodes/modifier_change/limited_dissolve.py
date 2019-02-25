@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
-import bmesh.ops
+from bmesh.ops import dissolve_limit
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
@@ -33,7 +33,6 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
 
     angle: FloatProperty(default=5.0, min=0.0, update=updateNode)
     use_dissolve_boundaries: BoolProperty(update=updateNode)
-    delimit: IntProperty(update=updateNode)    
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Verts')
@@ -47,24 +46,12 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "angle")
         layout.prop(self, "use_dissolve_boundaries")
-        layout.prop(self, "delimit")                
-
 
     def process(self):
-
-        in_linked = lambda x: self.inputs[x].is_linked
-        out_linked = lambda x: self.outputs[x].is_linked
-
-        if not in_linked('Verts'):
-            return
-        else:
-            if not (in_linked('Polys') or in_linked('Edges')):
-                return
-
-        if not (any(out_linked(x) for x in ['Verts', 'Edges', 'Polys'])):
+        if not self.outputs['Verts'].is_linked:
             return
 
-        verts = self.inputs['Verts'].sv_get(default=[[]])
+        verts = self.inputs['Verts'].sv_get()
         edges = self.inputs['Edges'].sv_get(default=[[]])
         faces = self.inputs['Polys'].sv_get(default=[[]])
         meshes = match_long_repeat([verts, edges, faces])
@@ -74,13 +61,11 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
         r_faces = []
 
         for verts, edges, faces in zip(*meshes):
-
             bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
-            ret = bmesh.ops.dissolve_limit(
+            ret = dissolve_limit(
                 bm, angle_limit=self.angle, 
                 use_dissolve_boundaries=self.use_dissolve_boundaries, 
-                verts=bm.verts, edges=bm.edges, delimit=self.delimit)
-
+                verts=bm.verts, edges=bm.edges)
             new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
             bm.free()
 
@@ -88,10 +73,10 @@ class SvLimitedDissolve(bpy.types.Node, SverchCustomTreeNode):
             r_edges.append(new_edges)
             r_faces.append(new_faces)
 
-        jk = [['Verts', r_verts], ['Edges', r_edges], ['Polys', r_faces]]
-        for x, xdata in jk:
-            if out_linked(x):
-                self.outputs[x].sv_set(xdata)
+        self.outputs['Verts'].sv_set(r_verts)
+        self.outputs['Edges'].sv_set(r_edges)
+        self.outputs['Polys'].sv_set(r_faces)
+
 
 def register():
     bpy.utils.register_class(SvLimitedDissolve)
