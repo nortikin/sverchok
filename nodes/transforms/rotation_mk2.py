@@ -34,7 +34,7 @@ def axis_rotation(vertex, center, axis, angle):
     for ve,ce,ax,an in zip(vertex, center, axis, angle):
         mat = Matrix.Rotation(radians(an), 4,  ax)
         c = Vector(ce)
-        rotated.append((c + mat * ( Vector(ve) - c))[:])
+        rotated.append((c + mat @ ( Vector(ve) - c))[:])
     return rotated
 
 def euler_rotation(vertex, x, y, z, order):
@@ -42,7 +42,7 @@ def euler_rotation(vertex, x, y, z, order):
     mat_eul = Euler((radians(x), radians(y), radians(z)), order).to_matrix().to_4x4()
     for i in vertex:
         v = Vector(i)
-        rotated.append((mat_eul*v)[:])
+        rotated.append((mat_eul@v)[:])
     return rotated
 
 def quat_rotation(vertex, x, y, z, w):
@@ -50,7 +50,7 @@ def quat_rotation(vertex, x, y, z, w):
     quat = Quaternion((w, x, y, z)).normalized()
     for i in vertex:
         v = Vector(i)
-        rotated.append((quat*v)[:])
+        rotated.append((quat@v)[:])
     return rotated
 
 class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -120,7 +120,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "vertices")
-        self.inputs.new('VerticesSocket', "centers")
+        self.inputs.new('VerticesSocket', "center")
         self.inputs.new('VerticesSocket', "axis")
         self.inputs.new('StringsSocket', "angle").prop_name = "angle_"
         self.outputs.new('VerticesSocket', "vertices")
