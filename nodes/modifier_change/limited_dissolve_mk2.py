@@ -33,7 +33,6 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
 
     angle: FloatProperty(default=5.0, min=0.0, update=updateNode)
     use_dissolve_boundaries: BoolProperty(update=updateNode)
-    delimit: IntProperty(update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'bmesh_list')
@@ -69,10 +68,11 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
             edgm = [np.array(bm.edges[:])[ma] for bm,ma in zip(bmlist,edgmask.sv_get())]
         else:
             edgm = [bm.edges for bm in bmlist]
-        udb, dlm = self.use_dissolve_boundaries, self.delimit
+        udb = self.use_dissolve_boundaries
         for bm, ang, vm, em in zip(bmlist, safc(bmlist, angle), verm, edgm):
             # it's a little undocumented..
-            ret.append(dissolve_limit(bm, angle_limit=ang, use_dissolve_boundaries=udb, verts=vm, edges=em, delimit=dlm)['region'])
+            ret.append(dissolve_limit(bm, angle_limit=ang, use_dissolve_boundaries=udb, verts=vm, edges=em)['region'])
+            # delimit is {'NORMAL', 'MATERIAL', 'SEAM', 'SHARP', 'UV'} set now. Not so useful in Sverchok.
         if o1.is_linked:
             o1.sv_set([[v.co[:] for v in bm.verts]for bm in bmlist])
         if o2.is_linked:
