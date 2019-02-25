@@ -69,9 +69,9 @@ class SvBMOpsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'bmesh_list')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "oper", "Get")
+        layout.prop(self, "oper", text="Get")
         for i in range(self.oper.count("=v[")):
-            layout.prop(self, "V"+str(i), "v"+str(i))
+            layout.prop(self, "V"+str(i), text="v"+str(i))
 
     def process(self):
         if not self.outputs['bmesh_list'].is_linked:
