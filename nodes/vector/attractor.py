@@ -28,8 +28,7 @@ def get_avg_vector(vectors):
     result = Vector((0,0,0))
     for vector in vectors:
         result += vector
-    result = (1.0/float(len(vectors))) @ result
-    return result
+    return result / len(vectors)
 
 def inverse(c, x):
     return 1.0/x
