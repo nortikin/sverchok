@@ -34,19 +34,19 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     falloff_types = [
-            ("0", "Smooth", "", 'SMOOTHCURVE', 0),
-            ("1", "Sphere", "", 'SPHERECURVE', 1),
-            ("2", "Root", "", 'ROOTCURVE', 2),
-            ("3", "Sharp", "", 'SHARPCURVE', 3),
-            ("4", "Linear", "", 'LINCURVE', 4),
-            ("7", "Inverse Square", "", 'ROOTCURVE', 7)
+            ("SMOOTH", "Smooth", "", 'SMOOTHCURVE', 0),
+            ("SPHERE", "Sphere", "", 'SPHERECURVE', 1),
+            ("ROOT",   "Root",   "", 'ROOTCURVE', 2),
+            ("SHARP",  "Sharp",  "", 'SHARPCURVE', 3),
+            ("LINEAR",    "Linear", "", 'LINCURVE', 4),
+            ("INVERSE_SQUARE",   "Inverse Square", "", 'ROOTCURVE', 7)
         ]
 
     corner_types = [
-            ("0", "Inner Vertices", "", 0),
-            ("1", "Path", "", 1),
-            ("2", "Fan", "", 2),
-            ("3", "Straight Cut", "", 3)
+            ("INNER_VERT", "Inner Vertices", "", 0),
+            ("PATH", "Path", "", 1),
+            ("FAN", "Fan", "", 2),
+            ("STRAIGHT_CUT", "Straight Cut", "", 3)
         ]
 
     Sel_modes = [
@@ -65,11 +65,11 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
     falloff_type: EnumProperty(name="Falloff",
             items=falloff_types,
-            default="4",
+            default="LINEAR",
             update=updateNode)
     corner_type: EnumProperty(name="Corner Cut Type",
             items=corner_types,
-            default="0",
+            default="INNER_VERT",
             update=updateNode)
     cuts: IntProperty(name="Number of Cuts",
             description="Specifies the number of cuts per edge to make",
@@ -182,10 +182,10 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
         for bm,ind in zip(bmlist,useedges):
             geom = subdivide_edges(bm, edges=ind,
                     smooth=self.smooth,
-                    smooth_falloff=int(self.falloff_type),
+                    smooth_falloff=self.falloff_type,
                     fractal=self.fractal, along_normal=self.along_normal,
                     cuts=self.cuts, seed=self.seed,
-                    quad_corner_type=int(self.corner_type),
+                    quad_corner_type=self.corner_type,
                     use_grid_fill=self.grid_fill,
                     use_single_edge=self.single_edge,
                     use_only_quads=self.only_quads,
