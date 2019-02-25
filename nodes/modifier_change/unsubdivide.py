@@ -69,9 +69,6 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         if o4.is_linked:
             o4.sv_set(Val)
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvUnsubdivideNode)

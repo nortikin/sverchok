@@ -62,9 +62,6 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 out.sv_set([eval(string)])
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvNumpyArrayNode)

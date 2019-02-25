@@ -269,8 +269,6 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
         elif self.textmode == 'JSON':
             self.load_json()
 
-    def update_socket(self, context):
-        self.update()
 
     #
     # CSV methods.

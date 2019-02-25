@@ -142,9 +142,6 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
         if o25.is_linked:
             o25.sv_set(Val)
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvBManalyzinNode)

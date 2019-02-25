@@ -94,9 +94,6 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
             uvV.sv_set([UVMAPV])
             uvP.sv_set([UVMAPP])
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvUVPointonMeshNode)

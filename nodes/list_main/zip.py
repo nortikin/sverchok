@@ -115,9 +115,6 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 return False
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(ZipNode)

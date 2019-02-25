@@ -234,9 +234,6 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         if g:
             bpy.data.groups.remove(g)
 
-    def update_socket(self, context):
-        self.update()
-
     def free(self):
         self.remove_non_updated_objects(-1, self.basemesh_name)
         self.ungroup()

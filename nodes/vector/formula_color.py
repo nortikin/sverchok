@@ -60,9 +60,6 @@ class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
                 exec_string = "Oo.sv_set([[({n.ModeR},{n.ModeG},{n.ModeB},{n.ModeA}) for i, (r, g, b, a) in enumerate(L)] for I, L in enumerate(V)])"
                 exec(exec_string.format(n=self))
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvFormulaColorNode)

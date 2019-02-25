@@ -75,10 +75,6 @@ class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
         if bmL.is_linked:
             bmL.sv_set(Val)
 
-    def update_socket(self, context):
-        self.update()
-
-
 def register():
     bpy.utils.register_class(SvBMObjinputNode)
 

@@ -306,10 +306,6 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             mesh.update()
 
 
-    def update_socket(self, context):
-        self.update()
-
-
     def add_material(self):
 
         mat = bpy.data.materials.new('sv_material')

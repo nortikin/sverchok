@@ -354,9 +354,6 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         outputs[polygons].sv_set([polygon_data])
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(svImageImporterOp)

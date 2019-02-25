@@ -57,9 +57,6 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
                 R.sv_set(rots)
                 A.sv_set([angles])
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(MatrixOutNode)

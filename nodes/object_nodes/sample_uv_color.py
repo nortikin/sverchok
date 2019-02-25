@@ -68,9 +68,6 @@ class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode):
                 outc.append(pixels[int(V.x*(width-1)), int(V.y*(height-1))].tolist())
             Colors.sv_set([outc])
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvSampleUVColorNode)

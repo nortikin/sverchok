@@ -68,9 +68,6 @@ class SvBVHtreeNode(bpy.types.Node, SverchCustomTreeNode):
                 bvh.append(BVHTree.FromPolygons(i, i2, all_triangles=False, epsilon=0.0))
         self.outputs[0].sv_set(bvh)
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvBVHtreeNode)

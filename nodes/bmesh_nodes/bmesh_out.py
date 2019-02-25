@@ -51,9 +51,6 @@ class SvBMoutputNode(bpy.types.Node, SverchCustomTreeNode):
         e.sv_set(elist)
         p.sv_set(plist)
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvBMoutputNode)

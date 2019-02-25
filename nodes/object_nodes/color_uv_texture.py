@@ -73,9 +73,6 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
             pixels[Vy, Vx] = C
         image.pixels = pixels.flatten().tolist()
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvMeshUVColorNode)

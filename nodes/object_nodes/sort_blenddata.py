@@ -54,9 +54,6 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
             X.sort(key=dict(zip(X, Y)).get)
             Oo.sv_set(X)
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvSortObjsNode)

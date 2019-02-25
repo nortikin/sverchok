@@ -59,9 +59,6 @@ class SvFormulaDeformMK2Node(bpy.types.Node, SverchCustomTreeNode):
                 exec_string = "Oo.sv_set([[({n.ModeX},{n.ModeY},{n.ModeZ}) for i, (x, y, z) in enumerate(L)] for I, L in enumerate(V)])"
                 exec(exec_string.format(n=self))
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvFormulaDeformMK2Node)

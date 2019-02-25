@@ -43,9 +43,6 @@ class SvBMtoElementNode(bpy.types.Node, SverchCustomTreeNode):
             e.sv_set([i.edges[:] for i in bml])
             p.sv_set([i.faces[:] for i in bml])
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvBMtoElementNode)

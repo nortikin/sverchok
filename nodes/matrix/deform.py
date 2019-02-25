@@ -67,9 +67,6 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
             matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
             Om.sv_set(matrixes_)
 
-    def update_socket(self, context):
-        updateNode(self, context)
-
 
 def register():
     bpy.utils.register_class(MatrixDeformNode)

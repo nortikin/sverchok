@@ -179,8 +179,6 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row.operator(TEXT_IO_CALLBACK, text='D U M P').fn_name = 'dump'
             col2.prop(self, 'append', "Append")
 
-    def update_socket(self, context):
-        self.update()
 
     def process(self):
         if self.text_mode in {'CSV', 'JSON'}:

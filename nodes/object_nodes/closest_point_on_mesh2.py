@@ -80,9 +80,6 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if I.is_linked:
             I.sv_set([[i2[3] for i2 in o] for o in Out])
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvPointOnMeshNodeMK2)

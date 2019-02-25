@@ -66,9 +66,6 @@ class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
         O1.sv_set(out1)
         O2.sv_set(out2)
 
-    def update_socket(self, context):
-        self.update()
-
 
 def register():
     bpy.utils.register_class(SvFilterObjsNode)
