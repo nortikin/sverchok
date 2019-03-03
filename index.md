@@ -16,6 +16,7 @@
     SvBoxNode
     SvCircleNode
     CylinderNode
+    SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
     SvTorusNode
