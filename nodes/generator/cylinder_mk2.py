@@ -20,20 +20,19 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, updateNode)
+from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loop)
 from sverchok.utils.geom import CubicSpline
 
-from math import sin, cos, pi, sqrt
+from math import sin, cos, pi
 
 import numpy as np
 
-
-def get_resample_profile(profile, samples, cycle):
+def resample_1D_array(profile, samples, cyclic):
     ''' Resample 1D array '''
     N = len(profile)
     v = [[n / (N - 1), p, 0] for n, p in enumerate(profile)]
     samples_array = np.array(samples).clip(0, 1)
-    spline = CubicSpline(v, metric="POINTS", is_cyclic=cycle)
+    spline = CubicSpline(v, metric="POINTS", is_cyclic=cyclic)
     out = spline.eval(samples_array)
     verts = out.tolist()
 
@@ -42,17 +41,19 @@ def get_resample_profile(profile, samples, cycle):
     return resampled_profile
 
 
-def cylinder_verts(rt, rb, np, nm, h, t, ph, s, profile_p, profile_m, flags):
+def make_verts(rt, rb, np, nm, h, t, ph, s, profile_p, profile_m, flags):
     """
     Generate cylinder vertices for the given parameters
         rt : top radius
         rb : bottom radius
-        np : number of parallels
-        nm : number of meridians
+        np : number of parallels (= number of points in a meridian)
+        nm : number of meridians (= number of points in a parallel)
         h  : height
-        t  : twist from bottom to top
-        ph : phase
-        s  : scale
+        t  : twist (rotate parallel verts by this angle around Z from bottom to top)
+        ph : phase (rotate all verts by this angle around Z axis)
+        s  : scale the entire mesh (radii & height)
+        profile_p : parallels profile
+        profile_m : meridians profile
     """
     separate, center, cyclic = flags
 
@@ -60,93 +61,109 @@ def cylinder_verts(rt, rb, np, nm, h, t, ph, s, profile_p, profile_m, flags):
     rb = rb * s
     h = h * s
 
-    # resample PARALLELS profile
-    resample_p = [m / nm for m in range(nm + 1)]
-    resampled_profile_p = get_resample_profile(profile_p, resample_p, cyclic)
-    # resample MERIDIANS profile
-    resample_m = [p / np for p in range(np + 1)]
-    resampled_profile_m = get_resample_profile(profile_m, resample_m, False)
+    if len(profile_p) < 2:  # no profile given (make profile all ones)
+        resampled_profile_p = [1] * nm
+    else:
+        # resample PARALLELS profile to nm parallel points [0-1]
+        samples = [m / nm for m in range(nm + 1)]
+        resampled_profile_p = resample_1D_array(profile_p, samples, cyclic)
 
-    dA = 2.0 * pi / (nm)  # angle increment
-    dH = h / (np - 1)  # height increment
-    dT = t / (np - 1)  # twist increment
+    if len(profile_m) < 2:  # no profile given (make profile all ones)
+        resampled_profile_m = [1] * np
+    else:
+        # resample MERIDIANS profile to np meridian points [0-1)
+        samples = [p / (np - 1) for p in range(np)]
+        resampled_profile_m = resample_1D_array(profile_m, samples, False)
+
+    dA = 2.0 * pi / nm  # angle increment from one meridian to the next
+    dH = h / (np - 1)  # height increment from one parallel to the next
+    dT = t / (np - 1)  # twist increment from one parallel to the next
     dZ = - h / 2 if center else 0  # center offset
 
     vert_list = []
-    addVerts = vert_list.append if separate else vert_list.extend
-    for p in range(np):
+    add_verts = vert_list.append if separate else vert_list.extend
+    for p in range(np):  # for every point on a meridian (traverse the parallels)
         f = p / (np - 1)  # interpolation factor between rb and rt
-        r = (rb * (1 - f) + rt * f)
+        r = rb * (1 - f) + rt * f  # interpolated radius between bottom and top radii
         rp = r * resampled_profile_m[p]  # modulate radius by meridian profile
         z = dZ + dH * p
-        phase = ph + dT * p  # paralle's total phase (phase + delta twist)
+        phase = ph + dT * p  # parallel's total phase (phase + delta twist)
 
         verts = []
-        for m in range(nm):
+        for m in range(nm):  # for every point on a parallel (traverse the meridians)
             rpm = rp * resampled_profile_p[m]  # modulate radius by parallel profile
-
             a = phase + dA * m
             x = rpm * cos(a)
             y = rpm * sin(a)
             verts.append([x, y, z])
 
-        addVerts(verts)
+        add_verts(verts)
 
     return vert_list
 
 
-def cylinder_edges(P, M):
+def make_edges(P, M, separate):
     """
-    Generate cylinder edges for the given parameters
-        P : number of parallels
-        M : number of meridians
+    Generate the cylinder edges for the given parameters
+        P : number of parallels (= number of points in a meridian)
+        M : number of meridians (= number of points in a parallel)
     """
     edge_list = []
 
-    # generate PARALLELS edges (close loops)
-    for i in range(P):
-        for j in range(M - 1):
-            edge_list.append([i * M + j, i * M + j + 1])
-        edge_list.append([i * M + M - 1, i * M])  # close the loop
+    if separate:  # replicate edges in one parallel for every meridian point
+        edge_list = [get_edge_loop(M)] * P
+    else:
+        add_edge = edge_list.append
+        # generate PARALLELS edges (close paths)
+        for i in range(P):  # for every point on a meridian
+            for j in range(M - 1):  # for every point on a parallel (minus last)
+                add_edge([i * M + j, i * M + j + 1])
+            add_edge([(i + 1) * M - 1, i * M])  # close the path
 
-    # generate MERIDIANS edges
-    for j in range(M):
-        for i in range(P - 1):
-            edge_list.append([i * M + j, (i + 1) * M + j])
+        # generate MERIDIANS edges (open paths)
+        for j in range(M):  # for every point on a parallel
+            for i in range(P - 1):  # for every point on a meridian (minus last)
+                add_edge([i * M + j, (i + 1) * M + j])
 
     return edge_list
 
 
-def cylinder_polys(P, M, cap_bottom, cap_top):
+def make_polys(P, M, cap_bottom, cap_top, separate):
     """
-    Generate cylinder polygons for the given parameters
-        P : number of parallels
-        M : number of meridians
+    Generate the cylinder polygons for the given parameters
+        P : number of parallels (= number of points in a meridian)
+        M : number of meridians (= number of points in a parallel)
+        cap_bottom : turn on/off the bottom cap generation
+        cap_top    : turn on/off the top cap generation
     """
     poly_list = []
 
-    for i in range(P - 1):
-        for j in range(M - 1):
-            poly_list.append([i * M + j, i * M + j + 1, (i + 1) * M + j + 1, (i + 1) * M + j])
-        poly_list.append([(i + 1) * M - 1, i * M, (i + 1) * M, (i + 2) * M - 1])
+    if separate:
+        poly_list = [[list(range(M))]] * P
+    else:
+        add_poly = poly_list.append
+        for i in range(P - 1):
+            for j in range(M - 1):
+                add_poly([i * M + j, i * M + j + 1, (i + 1) * M + j + 1, (i + 1) * M + j])
+            add_poly([(i + 1) * M - 1, i * M, (i + 1) * M, (i + 2) * M - 1])
 
-    if cap_bottom:
-        cap = []
-        for i in reversed(range(M)):
-            cap.append(i)
-        poly_list.append(cap)
+        if cap_bottom:
+            cap = [j for j in reversed(range(M))]
+            add_poly(cap)
 
-    if cap_top:
-        cap = []
-        for i in range(M):
-            cap.append((P - 1) * M + i)
-        poly_list.append(cap)
+        if cap_top:
+            offset = (P - 1) * M
+            cap = [offset + j for j in range(M)]
+            add_poly(cap)
 
     return poly_list
 
 
 class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Cylinder '''
+    """
+    Triggers: Cylinder, Tube
+    Tooltip: Generate cylinder based meshes
+    """
     bl_idname = 'SvCylinderNodeMK2'
     bl_label = 'Cylinder MK2'
     bl_icon = 'MESH_CYLINDER'
@@ -238,48 +255,55 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
 
         # read inputs
-        input_RT = inputs["RadiusT"].sv_get()[0]
-        input_RB = inputs["RadiusB"].sv_get()[0]
-        input_NP = inputs["Parallels"].sv_get()[0]
-        input_NM = inputs["Meridians"].sv_get()[0]
-        input_H = inputs["Height"].sv_get()[0]
-        input_T = inputs["Twist"].sv_get()[0]
-        input_PH = inputs["Phase"].sv_get()[0]
-        input_S = inputs["Scale"].sv_get()[0]
+        input_rt = inputs["RadiusT"].sv_get()[0]
+        input_rb = inputs["RadiusB"].sv_get()[0]
+        input_np = inputs["Parallels"].sv_get()[0]
+        input_nm = inputs["Meridians"].sv_get()[0]
+        input_h = inputs["Height"].sv_get()[0]
+        input_t = inputs["Twist"].sv_get()[0]
+        input_ph = inputs["Phase"].sv_get()[0]
+        input_s = inputs["Scale"].sv_get()[0]
 
-        profile_p = inputs["Parallels Profile"].sv_get(default=[[1, 1]])[0]
-        profile_m = inputs["Meridians Profile"].sv_get(default=[[1, 1]])[0]
+        profile_p = inputs["Parallels Profile"].sv_get(default=[[]])[0]
+        profile_m = inputs["Meridians Profile"].sv_get(default=[[]])[0]
 
         # sanitize inputs
-        input_NP = list(map(lambda n: max(2, n), input_NP))
-        input_NM = list(map(lambda m: max(3, m), input_NM))
+        input_np = list(map(lambda n: max(2, n), input_np))
+        input_nm = list(map(lambda m: max(3, m), input_nm))
 
-        params = match_long_repeat([input_RT, input_RB,
-                                    input_NP, input_NM,
-                                    input_H, input_T,
-                                    input_PH, input_S])
+        params = match_long_repeat([input_rt, input_rb,
+                                    input_np, input_nm,
+                                    input_h, input_t,
+                                    input_ph, input_s])
 
         flags = [self.separate, self.center, self.cyclic]
+
+        verts_output_linked = self.outputs['Vertices'].is_linked
+        edges_output_linked = self.outputs['Edges'].is_linked
+        polys_output_linked = self.outputs['Polygons'].is_linked
 
         verts_list = []
         edges_list = []
         polys_list = []
         for rt, rb, np, nm, h, t, ph, s in zip(*params):
-            verts = cylinder_verts(rt, rb, np, nm, h, t, ph, s, profile_p, profile_m, flags)
-            edges = cylinder_edges(np, nm)
-            polys = cylinder_polys(np, nm, self.cap_bottom, self.cap_top)
-            verts_list.append(verts)
-            edges_list.append(edges)
-            polys_list.append(polys)
+            if verts_output_linked:
+                verts = make_verts(rt, rb, np, nm, h, t, ph, s, profile_p, profile_m, flags)
+                verts_list.append(verts)
+            if edges_output_linked:
+                edges = make_edges(np, nm, self.separate)
+                edges_list.append(edges)
+            if polys_output_linked:
+                polys = make_polys(np, nm, self.cap_bottom, self.cap_top, self.separate)
+                polys_list.append(polys)
 
         # outputs
-        if self.outputs['Vertices'].is_linked:
+        if verts_output_linked:
             self.outputs['Vertices'].sv_set(verts_list)
 
-        if self.outputs['Edges'].is_linked:
+        if edges_output_linked:
             self.outputs['Edges'].sv_set(edges_list)
 
-        if self.outputs['Polygons'].is_linked:
+        if polys_output_linked:
             self.outputs['Polygons'].sv_set(polys_list)
 
 
