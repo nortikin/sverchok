@@ -32,12 +32,16 @@ epsilon = 1e-10  # used to eliminate vertex overlap at the South/North poles
 # name : [ sx, sy, sz, xp, xm, np, nm ]
 super_presets = {
     " ":                [0.0, 0.0, 0.0, 0.0, 0.0, 0, 0],
-    "SPHERE":           [1.0, 1.0, 1.0, 1.0, 1.0, 24, 24],
+    "SPHERE":           [1.0, 1.0, 1.0, 1.0, 1.0, 32, 32],
     "CUBE":             [1.0, 1.0, 1.0, 0.0, 0.0, 3, 5],
     "CYLINDER":         [1.0, 1.0, 1.0, 1.0, 0.0, 4, 32],
     "OCTOHEDRON":       [1.0, 1.0, 1.0, 1.0, 1.0, 3, 4],
-    "SPINNING TOP":     [1.0, 1.0, 1.0, 1.0, 3.0, 24, 24],
-    "STAR":             [1.0, 1.0, 1.0, 4.0, 4.0, 32, 32],
+    "SPINNING TOP":     [1.0, 1.0, 1.0, 1.0, 4.0, 32, 32],
+    "CUBIC CONE":       [1.0, 1.0, 1.0, 1.0, 2.0, 32, 32],
+    "CUBIC BALL":       [1.0, 1.0, 1.0, 2.0, 1.0, 32, 32],
+    "CUSHION":          [1.0, 1.0, 0.2, 2.0, 1.0, 32, 32],
+    "STAR BALL":        [1.0, 1.0, 1.0, 4.0, 1.0, 32, 64],
+    "STAR":             [1.0, 1.0, 1.0, 4.0, 4.0, 64, 64],
     "ROUNDED BIN":      [1.0, 1.0, 1.0, 0.5, 0.0, 32, 32],
     "ROUNDED CUBE":     [1.0, 1.0, 1.0, 0.2, 0.2, 32, 32],
     "ROUNDED CYLINDER": [1.0, 1.0, 1.0, 1.0, 0.1, 32, 32],
@@ -46,7 +50,7 @@ super_presets = {
 
 def make_verts(sx, sy, sz, xp, xm, np, nm):
     """
-    Generate the super ellipsoid vertices for the given parameters
+    Generate the super-ellipsoid vertices for the given parameters
         sx : scale along x
         sx : scale along y
         sx : scale along z
@@ -58,20 +62,20 @@ def make_verts(sx, sy, sz, xp, xm, np, nm):
     verts = []
     for p in range(np):
         a = (pi / 2 - epsilon) * (2 * p / (np - 1) - 1)
-        cosA = cos(a)
-        sinA = sin(a)
-        powCA = pow(abs(cosA), xm) * sign(cosA)
-        powSA = pow(abs(sinA), xm) * sign(sinA)
+        cos_a = cos(a)
+        sin_a = sin(a)
+        pow_ca = pow(abs(cos_a), xm) * sign(cos_a)
+        pow_sa = pow(abs(sin_a), xm) * sign(sin_a)
         for m in range(nm):
             b = pi * (2 * m / nm - 1)
-            cosB = cos(b)
-            sinB = sin(b)
-            powCB = pow(abs(cosB), xp) * sign(cosB)
-            powSB = pow(abs(sinB), xp) * sign(sinB)
+            cos_b = cos(b)
+            sin_b = sin(b)
+            pow_cb = pow(abs(cos_b), xp) * sign(cos_b)
+            pow_sb = pow(abs(sin_b), xp) * sign(sin_b)
 
-            x = sx * powCA * powCB
-            y = sy * powCA * powSB
-            z = sz * powSA
+            x = sx * pow_ca * pow_cb
+            y = sy * pow_ca * pow_sb
+            z = sz * pow_sa
             verts.append([x, y, z])
 
     return verts
@@ -79,19 +83,21 @@ def make_verts(sx, sy, sz, xp, xm, np, nm):
 
 def make_edges(P, M):
     """
-    Generate the super ellipsoid edges for the given parameters
-        P : number of parallels
-        M : number of meridians
+    Generate the super-ellipsoid edges for the given parameters
+        P : number of parallels (= number of points in a meridian)
+        M : number of meridians (= number of points in a parallel)
     """
     edge_list = []
 
-    for i in range(P):
-        for j in range(M - 1):
+    # generate parallels edges (close paths)
+    for i in range(P):  # for every point on a meridian
+        for j in range(M - 1):  # for every point on a parallel (minus last)
             edge_list.append([i * M + j, i * M + j + 1])
-        edge_list.append([(i + 1) * M - 1, i * M])
+        edge_list.append([(i + 1) * M - 1, i * M])  # close the path
 
-    for i in range(P):
-        for j in range(M):
+    # generate meridians edges (open paths)
+    for j in range(M):  # for every point on a parallel
+        for i in range(P - 1):  # for every point on a meridian (minus last)
             edge_list.append([i * M + j, (i + 1) * M + j])
 
     return edge_list
@@ -99,7 +105,7 @@ def make_edges(P, M):
 
 def make_polys(P, M, cap_top, cap_bottom):
     """
-    Generate the super ellipsoid polygons for the given parameters
+    Generate the super-ellipsoid polygons for the given parameters
         P : number of parallels
         M : number of meridians
     """
@@ -111,15 +117,11 @@ def make_polys(P, M, cap_top, cap_bottom):
         poly_list.append([(i + 1) * M - 1, i * M, (i + 1) * M, (i + 2) * M - 1])
 
     if cap_top:
-        cap = []
-        for j in range(M):
-            cap.append(M * (P - 1) + j)
+        cap = [M * (P - 1) + j for j in range(M)]
         poly_list.append(cap)
 
     if cap_bottom:
-        cap = []
-        for j in reversed(range(M)):
-            cap.append(j)
+        cap = [j for j in reversed(range(M))]
         poly_list.append(cap)
 
     return poly_list
@@ -128,7 +130,7 @@ def make_polys(P, M, cap_top, cap_bottom):
 class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Sphere Cube Cylinder Octohedron Star
-    Tooltip: Generate various Super Ellipsoid shapes.
+    Tooltip: Generate various Super-Ellipsoid shapes
     """
     bl_idname = 'SvSuperEllipsoidNode'
     bl_label = 'Super Ellipsoid'
@@ -164,7 +166,7 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
     preset_items = [(k, k.title(), "", "", i) for i, (k, v) in enumerate(sorted(super_presets.items()))]
 
     presets = EnumProperty(
-        name="Presets", items=preset_items,
+        name="Presets", items=preset_items, description="Various presets",
         update=update_presets)
 
     scale_x = FloatProperty(
@@ -206,6 +208,7 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
     updating = BoolProperty(default=False)  # used for disabling update callback
 
     def sv_init(self, context):
+        self.width = 150
         self.inputs.new('StringsSocket', "SX").prop_name = 'scale_x'
         self.inputs.new('StringsSocket', "SY").prop_name = 'scale_y'
         self.inputs.new('StringsSocket', "SZ").prop_name = 'scale_z'
@@ -246,32 +249,41 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
         input_nm = inputs["NM"].sv_get()[0]
 
         # sanitize inputs
-        input_np = list(map(lambda a: max(3, a), input_np))
-        input_nm = list(map(lambda a: max(3, a), input_nm))
+        input_xp = list(map(lambda a: max(0.0, a), input_xp))
+        input_xm = list(map(lambda a: max(0.0, a), input_xm))
+        input_np = list(map(lambda a: max(3, int(a)), input_np))
+        input_nm = list(map(lambda a: max(3, int(a)), input_nm))
 
         params = match_long_repeat([input_sx, input_sy, input_sz,
                                     input_xp, input_xm,
                                     input_np, input_nm])
 
+        verts_output_linked = self.outputs['Vertices'].is_linked
+        edges_output_linked = self.outputs['Edges'].is_linked
+        polys_output_linked = self.outputs['Polygons'].is_linked
+
         verts_list = []
         edges_list = []
         polys_list = []
         for sx, sy, sz, xp, xm, np, nm in zip(*params):
-            verts = make_verts(sx, sy, sz, xp, xm, np, nm)
-            edges = make_edges(np, nm)
-            polys = make_polys(np, nm, self.cap_top, self.cap_bottom)
-            verts_list.append(verts)
-            edges_list.append(edges)
-            polys_list.append(polys)
+            if verts_output_linked:
+                verts = make_verts(sx, sy, sz, xp, xm, np, nm)
+                verts_list.append(verts)
+            if edges_output_linked:
+                edges = make_edges(np, nm)
+                edges_list.append(edges)
+            if polys_output_linked:
+                polys = make_polys(np, nm, self.cap_top, self.cap_bottom)
+                polys_list.append(polys)
 
         # outputs
-        if self.outputs['Vertices'].is_linked:
+        if verts_output_linked:
             self.outputs['Vertices'].sv_set(verts_list)
 
-        if self.outputs['Edges'].is_linked:
+        if edges_output_linked:
             self.outputs['Edges'].sv_set(edges_list)
 
-        if self.outputs['Polygons'].is_linked:
+        if polys_output_linked:
             self.outputs['Polygons'].sv_set(polys_list)
 
 
