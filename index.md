@@ -16,7 +16,6 @@
     SvBoxNode
     SvCircleNode
     CylinderNode
-    SvSuperEllipsoidNode
     SphereNode
     SvIcosphereNode
     SvTorusNode
@@ -43,6 +42,7 @@
     SvTorusKnotNode
     SvRingNode
     SvEllipseNode
+    SvSuperEllipsoidNode
     SvSmoothLines
 
 ## Analyzers
