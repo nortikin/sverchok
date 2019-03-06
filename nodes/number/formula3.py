@@ -27,6 +27,7 @@ import io
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
+from sverchok.utils import logging
 
 def make_functions_dict(*functions):
     return dict([(function.__name__, function) for function in functions])
@@ -62,18 +63,25 @@ safe_names['pi'] = pi
 
     
 def get_variables(string):
+    string = string.strip()
+    if not len(string):
+        return set()
     root = ast.parse(string, mode='eval')
     result = {node.id for node in ast.walk(root) if isinstance(node, ast.Name)}
     return result.difference(safe_names.keys())
 
 # It could be safer...
 def safe_eval(string, variables):
-    env = dict()
-    env.update(safe_names)
-    env.update(variables)
-    env["__builtins__"] = {}
-    root = ast.parse(string, mode='eval')
-    return eval(compile(root, "<expression>", 'eval'), env)
+    try:
+        env = dict()
+        env.update(safe_names)
+        env.update(variables)
+        env["__builtins__"] = {}
+        root = ast.parse(string, mode='eval')
+        return eval(compile(root, "<expression>", 'eval'), env)
+    except SyntaxError as e:
+        logging.exception(e)
+        raise Exception("Invalid expression syntax: " + str(e))
 
 class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -88,10 +96,48 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    formula = StringProperty(default = "x+y", update=on_update)
+    def on_update_dims(self, context):
+        if self.dimensions < 4:
+            self.formula4 = ""
+        if self.dimensions < 3:
+            self.formula3 = ""
+        if self.dimensions < 2:
+            self.formula2 = ""
+
+        self.adjust_sockets()
+        updateNode(self, context)
+
+    dimensions = IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
+
+    formula1 = StringProperty(default = "x+y", update=on_update)
+    formula2 = StringProperty(update=on_update)
+    formula3 = StringProperty(update=on_update)
+    formula4 = StringProperty(update=on_update)
+
+    separate = BoolProperty(name="Separate", default=False, update=updateNode)
+    wrap = BoolProperty(name="Wrap", default=False, update=updateNode)
+
+    def formulas(self):
+        return [self.formula1, self.formula2, self.formula3, self.formula4]
+
+    def formula(self, k):
+        return self.formulas()[k]
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "formula", text="")
+        layout.prop(self, "formula1", text="")
+        if self.dimensions > 1:
+            layout.prop(self, "formula2", text="")
+        if self.dimensions > 2:
+            layout.prop(self, "formula3", text="")
+        if self.dimensions > 3:
+            layout.prop(self, "formula4", text="")
+        row = layout.row()
+        row.prop(self, "separate")
+        row.prop(self, "wrap")
+
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "dimensions")
+        self.draw_buttons(context, layout)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "x")
@@ -100,11 +146,10 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     def get_variables(self):
         variables = set()
-        if not self.formula:
-            return variables
 
-        vs = get_variables(self.formula)
-        variables.update(vs)
+        for formula in self.formulas():
+            vs = get_variables(formula)
+            variables.update(vs)
 
         return list(sorted(list(variables)))
     
@@ -121,15 +166,13 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
                 self.inputs.new('StringsSocket', v)
 
-
     def update(self):
         '''
         update analyzes the state of the node and returns if the criteria to start processing
         are not met.
         '''
 
-        # keeping the file internal for now.
-        if not self.formula:
+        if not any(len(formula) for formula in self.formulas()):
             return
 
         self.adjust_sockets()
@@ -161,11 +204,20 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             parameters = [[[]]]
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
+            vector = []
+            for formula in self.formulas():
+                if formula:
+                    value = safe_eval(formula, variables)
+                    vector.append(value)
+            if self.separate:
+                results.append(vector)
+            else:
+                results.extend(vector)
+        
+        if self.wrap:
+            results = [results]
 
-            value = safe_eval(self.formula, variables)
-            results.append(value)
-
-        self.outputs['Result'].sv_set([results])
+        self.outputs['Result'].sv_set(results)
 
 
 def register():
