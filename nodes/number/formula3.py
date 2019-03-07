@@ -55,11 +55,92 @@ safe_names = make_functions_dict(
         # From mathutlis module
         Vector, Matrix,
         # Python type conversions
-        tuple, list
+        tuple, list, str
     )
 # Constants
 safe_names['e'] = e
 safe_names['pi'] = pi
+
+# Blender modules
+# Consider this not safe for now
+# safe_names["bpy"] = bpy
+
+class VariableCollector(ast.NodeVisitor):
+    """
+    Visitor class to collect free variable names from the expression.
+    The problem is that one doesn't just select all names from expression:
+    there can be local-only variables.
+
+    For example, in
+        
+        [g*g for g in lst]
+
+    only "lst" should be considered as a free variable, "g" should be not,
+    as it is bound by list comprehension scope.
+
+    This implementation is not exactly complete (at list, dictionary comprehensions
+    are not supported yet). But it works for most cases.
+
+    Please refer to ast.NodeVisitor class documentation for general reference.
+    """
+    def __init__(self):
+        self.variables = set()
+        # Stack of local variables
+        # It is not enough to track just a plain set of names,
+        # since one name can be re-introduced in the nested scope
+        self.local_vars = []
+
+    def push(self, local_vars):
+        self.local_vars.append(local_vars)
+
+    def pop(self):
+        return self.local_vars.pop()
+
+    def is_local(self, name):
+        """
+        Check if name is local variable
+        """
+
+        for item in self.local_vars:
+            if name in item:
+                return True
+        return False
+
+    def visit_SetComp(self, node):
+        local_vars = set()
+        for generator in node.generators:
+            if isinstance(generator.target, ast.Name):
+                local_vars.add(generator.target.id)
+        self.push(local_vars)
+        self.generic_visit(node)
+        self.pop()
+
+    def visit_ListComp(self, node):
+        local_vars = set()
+        for generator in node.generators:
+            if isinstance(generator.target, ast.Name):
+                local_vars.add(generator.target.id)
+        self.push(local_vars)
+        self.generic_visit(node)
+        self.pop()
+
+    def visit_Lambda(self, node):
+        local_vars = set()
+        arguments = node.args
+        for arg in arguments.args:
+            local_vars.add(arg.id)
+        if arguments.vararg:
+            local_vars.add(arguments.vararg.arg)
+        self.push(local_vars)
+        self.generic_visit(node)
+        self.pop()
+
+    def visit_Name(self, node):
+        name = node.id
+        if not self.is_local(name):
+            self.variables.add(name)
+
+        self.generic_visit(node)
 
     
 def get_variables(string):
@@ -67,7 +148,9 @@ def get_variables(string):
     if not len(string):
         return set()
     root = ast.parse(string, mode='eval')
-    result = {node.id for node in ast.walk(root) if isinstance(node, ast.Name)}
+    visitor = VariableCollector()
+    visitor.visit(root)
+    result = visitor.variables
     return result.difference(safe_names.keys())
 
 # It could be safer...
