@@ -78,7 +78,7 @@ class VariableCollector(ast.NodeVisitor):
     only "lst" should be considered as a free variable, "g" should be not,
     as it is bound by list comprehension scope.
 
-    This implementation is not exactly complete (at list, dictionary comprehensions
+    This implementation is not exactly complete (at least, dictionary comprehensions
     are not supported yet). But it works for most cases.
 
     Please refer to ast.NodeVisitor class documentation for general reference.
