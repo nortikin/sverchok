@@ -56,8 +56,8 @@ def make_verts(sx, sy, sz, xp, xm, np, nm):
         sx : scale along z
         xp : parallel exponent
         xm : meridian exponent
-        np : number of parallels
-        nm : number of meridians
+        np : number of parallels (= number of points in a meridian)
+        nm : number of meridians (= number of points in a parallel)
     """
     verts = []
     for p in range(np):
@@ -89,13 +89,13 @@ def make_edges(P, M):
     """
     edge_list = []
 
-    # generate parallels edges (close paths)
+    # generate PARALLELS edges (close paths)
     for i in range(P):  # for every point on a meridian
         for j in range(M - 1):  # for every point on a parallel (minus last)
             edge_list.append([i * M + j, i * M + j + 1])
         edge_list.append([(i + 1) * M - 1, i * M])  # close the path
 
-    # generate meridians edges (open paths)
+    # generate MERIDIANS edges (open paths)
     for j in range(M):  # for every point on a parallel
         for i in range(P - 1):  # for every point on a meridian (minus last)
             edge_list.append([i * M + j, (i + 1) * M + j])
@@ -103,11 +103,13 @@ def make_edges(P, M):
     return edge_list
 
 
-def make_polys(P, M, cap_top, cap_bottom):
+def make_polys(P, M, cap_bottom, cap_top):
     """
     Generate the super-ellipsoid polygons for the given parameters
-        P : number of parallels
-        M : number of meridians
+        P : number of parallels (= number of points in a meridian)
+        M : number of meridians (= number of points in a parallel)
+        cap_bottom : turn on/off the bottom cap generation
+        cap_top    : turn on/off the top cap generation
     """
     poly_list = []
 
@@ -116,12 +118,12 @@ def make_polys(P, M, cap_top, cap_bottom):
             poly_list.append([i * M + j, i * M + j + 1, (i + 1) * M + j + 1, (i + 1) * M + j])
         poly_list.append([(i + 1) * M - 1, i * M, (i + 1) * M, (i + 2) * M - 1])
 
-    if cap_top:
-        cap = [M * (P - 1) + j for j in range(M)]
-        poly_list.append(cap)
-
     if cap_bottom:
         cap = [j for j in reversed(range(M))]
+        poly_list.append(cap)
+
+    if cap_top:
+        cap = [(P - 1) * M + j for j in range(M)]
         poly_list.append(cap)
 
     return poly_list
@@ -197,12 +199,12 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
         name='Meridians', description="Number of meridians",
         default=10, min=3, update=update_ellipsoid)
 
-    cap_top = BoolProperty(
-        name='Cap Top', description="Generate top cap",
-        default=True, update=updateNode)
-
     cap_bottom = BoolProperty(
         name='Cap Bottom', description="Generate bottom cap",
+        default=True, update=updateNode)
+
+    cap_top = BoolProperty(
+        name='Cap Top', description="Generate top cap",
         default=True, update=updateNode)
 
     updating = BoolProperty(default=False)  # used for disabling update callback
@@ -230,8 +232,8 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         column = layout.column(align=True)
         row = column.row(align=True)
-        row.prop(self, "cap_top", text="Cap T", toggle=True)
         row.prop(self, "cap_bottom", text="Cap B", toggle=True)
+        row.prop(self, "cap_top", text="Cap T", toggle=True)
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
@@ -273,7 +275,7 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
                 edges = make_edges(np, nm)
                 edges_list.append(edges)
             if polys_output_linked:
-                polys = make_polys(np, nm, self.cap_top, self.cap_bottom)
+                polys = make_polys(np, nm, self.cap_bottom, self.cap_top)
                 polys_list.append(polys)
 
         # outputs
