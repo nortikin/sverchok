@@ -101,8 +101,8 @@ class VariableCollector(ast.NodeVisitor):
         Check if name is local variable
         """
 
-        for item in self.local_vars:
-            if name in item:
+        for stack_frame in self.local_vars:
+            if name in stack_frame:
                 return True
         return False
 
@@ -142,8 +142,10 @@ class VariableCollector(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-    
 def get_variables(string):
+    """
+    Get set of free variables used by formula
+    """
     string = string.strip()
     if not len(string):
         return set()
@@ -155,6 +157,10 @@ def get_variables(string):
 
 # It could be safer...
 def safe_eval(string, variables):
+    """
+    Evaluate expression, allowing only functions known to be "safe"
+    to be used.
+    """
     try:
         env = dict()
         env.update(safe_names)
