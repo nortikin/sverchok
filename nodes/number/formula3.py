@@ -276,6 +276,30 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 #self.debug("get_input: {} => {}".format(var, result[var]))
         return result
 
+    def migrate_from(self, old_node):
+        if old_node.bl_idname == 'Formula2Node':
+            formula = old_node.formula
+            # Older formula node allowed only fixed set of
+            # variables, with names "x", "n[0]" .. "n[100]".
+            # Other names could not be considered valid.
+            k = -1
+            for socket in old_node.inputs:
+                name = socket.name
+                if k == -1: # First socket name was "x"
+                    new_name = name
+                else: # Other names was "n[k]", which is syntactically not
+                      # a valid python variable name.
+                      # So we replace all occurences of "n[0]" in formula
+                      # with "n0", and so on.
+                    new_name = "n" + str(k)
+
+                logging.info("Replacing %s with %s", name, new_name)
+                formula = formula.replace(name, new_name)
+                k += 1
+
+            self.formula1 = formula
+            self.wrap = True
+
     def process(self):
 
         if not self.outputs[0].is_linked:
