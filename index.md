@@ -174,6 +174,7 @@
     ScalarMathNode
     SvScalarMathNodeMK2
     Formula2Node
+    SvFormulaNodeMk3
     SvExecNodeMod
     ---
     GenListRangeIntNode
