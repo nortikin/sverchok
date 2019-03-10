@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import BoolProperty, IntProperty, FloatProperty
+from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loop)
@@ -26,6 +26,15 @@ from sverchok.utils.geom import CubicSpline
 from math import sin, cos, pi
 
 import numpy as np
+
+angle_unit_items = [
+    ("RAD", "Rad", "Radians", "", 0),
+    ("DEG", "Deg", 'Degrees', "", 1),
+    ("UNI", "Uni", 'Unities', "", 2)
+]
+
+angle_conversion = {"RAD": 1.0, "DEG": pi / 180.0, "UNI": 2 * pi}
+
 
 def resample_1D_array(profile, samples, cyclic):
     ''' Resample 1D array '''
@@ -63,15 +72,13 @@ def make_verts(rt, rb, np, nm, h, t, ph, s, profile_p, profile_m, flags):
 
     if len(profile_p) < 2:  # no profile given (make profile all ones)
         resampled_profile_p = [1] * nm
-    else:
-        # resample PARALLELS profile to nm parallel points [0-1]
+    else: # resample PARALLELS profile to nm parallel points [0-1]
         samples = [m / nm for m in range(nm + 1)]
         resampled_profile_p = resample_1D_array(profile_p, samples, cyclic)
 
     if len(profile_m) < 2:  # no profile given (make profile all ones)
         resampled_profile_m = [1] * np
-    else:
-        # resample MERIDIANS profile to np meridian points [0-1)
+    else: # resample MERIDIANS profile to np meridian points [0-1)
         samples = [p / (np - 1) for p in range(np)]
         resampled_profile_m = resample_1D_array(profile_m, samples, False)
 
@@ -107,6 +114,7 @@ def make_edges(P, M, separate):
     Generate the cylinder edges for the given parameters
         P : number of parallels (= number of points in a meridian)
         M : number of meridians (= number of points in a parallel)
+        separate: split the parallels into separate edge lists
     """
     edge_list = []
 
@@ -135,6 +143,7 @@ def make_polys(P, M, cap_bottom, cap_top, separate):
         M : number of meridians (= number of points in a parallel)
         cap_bottom : turn on/off the bottom cap generation
         cap_top    : turn on/off the top cap generation
+        separate: split the parallels into separate poly lists
     """
     poly_list = []
 
@@ -168,6 +177,56 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Cylinder MK2'
     bl_icon = 'MESH_CYLINDER'
 
+    def update_angles(self, context):
+        """ Convert angle values to selected angle units """
+        if self.last_angle_units == "RAD":
+            if self.angle_units == "RAD":
+                au = 1.0  # RAD -> RAD
+            elif self.angle_units == "DEG":
+                au = 180.0 / pi  # RAD -> DEG
+            elif self.angle_units == "UNI":
+                au = 0.5 / pi  # RAD -> UNI
+
+        elif self.last_angle_units == "DEG":
+            if self.angle_units == "RAD":
+                au = pi / 180  # DEG -> RAD
+            elif self.angle_units == "DEG":
+                au = 1.0  # DEG -> DEG
+            elif self.angle_units == "UNI":
+                au = 1.0 / 360  # DEG -> UNI
+
+        elif self.last_angle_units == "UNI":
+            if self.angle_units == "RAD":
+                au = 2 * pi  # UNI -> RAD
+            elif self.angle_units == "DEG":
+                au = 360  # UNI -> DEG
+            elif self.angle_units == "UNI":
+                au = 1.0  # UNI -> UNI
+
+        self.last_angle_units = self.angle_units
+
+        self.updating = True  # inhibit update calls
+
+        self.twist = au * self.twist  # convert to current angle units
+        self.phase = au * self.phase  # convert to current angle units
+
+        self.updating = False
+        updateNode(self, context)
+
+    def update_cylinder(self, context):
+        if self.updating:
+            return
+
+        updateNode(self, context)
+
+    angle_units = EnumProperty(
+        name="Angle Units", description="Angle units (radians/degrees/unities)",
+        default="RAD", items=angle_unit_items, update=update_angles)
+
+    last_angle_units = EnumProperty(
+        name="Last Angle Units", description="Last angle units (radians/degrees/unities)",
+        default="RAD", items=angle_unit_items)  # used for updates when changing angle units
+
     radius_t = FloatProperty(
         name='Radius T', description="Top radius",
         default=1.0, update=updateNode)
@@ -190,11 +249,11 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     twist = FloatProperty(
         name='Twist', description="The twist of the cylinder",
-        default=0.0, update=updateNode)
+        default=0.0, update=update_cylinder)
 
     phase = FloatProperty(
         name='Phase', description="The phase of the cylinder",
-        default=0.0, update=updateNode)
+        default=0.0, update=update_cylinder)
 
     scale = FloatProperty(
         name='Scale', description="The scale of the cylinder",
@@ -220,6 +279,9 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='Cyclic', description='Parallels profile is cyclic',
         default=True, update=updateNode)
 
+    updating = BoolProperty(
+        name="Updating", description="Flag to inhibit updating", default=False)
+
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "RadiusT").prop_name = 'radius_t'
         self.inputs.new('StringsSocket', "RadiusB").prop_name = 'radius_b'
@@ -244,6 +306,8 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = column.row(align=True)
         row.prop(self, "separate", toggle=True)
         row.prop(self, "center", toggle=True)
+        row = layout.row(align=True)
+        row.prop(self, "angle_units", expand=True)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "cyclic", toggle=True)
@@ -278,6 +342,8 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         flags = [self.separate, self.center, self.cyclic]
 
+        au = angle_conversion[self.angle_units] # angle conversion to radians
+
         verts_output_linked = self.outputs['Vertices'].is_linked
         edges_output_linked = self.outputs['Edges'].is_linked
         polys_output_linked = self.outputs['Polygons'].is_linked
@@ -287,7 +353,7 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         polys_list = []
         for rt, rb, np, nm, h, t, ph, s in zip(*params):
             if verts_output_linked:
-                verts = make_verts(rt, rb, np, nm, h, t, ph, s, profile_p, profile_m, flags)
+                verts = make_verts(rt, rb, np, nm, h, t * au, ph * au, s, profile_p, profile_m, flags)
                 verts_list.append(verts)
             if edges_output_linked:
                 edges = make_edges(np, nm, self.separate)
