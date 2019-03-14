@@ -153,11 +153,11 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "items_", "Functions:")
+        layout.prop(self, "items_", text="Functions:")
 
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "items_", "Functions:")
+        layout.prop(self, "items_", text="Functions:")
         layout.label(text="Change property type")
         for i, s in enumerate(self.inputs):
             row = layout.row()
