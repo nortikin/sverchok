@@ -42,8 +42,8 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrix")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "track", "track")
-        layout.prop(self, "up", "up")
+        layout.prop(self, "track", text="track")
+        layout.prop(self, "up", text="up")
 
     def process(self):
         Ma = self.outputs[0]

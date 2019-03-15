@@ -53,7 +53,7 @@ class SvBVHtreeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'BVHtree_list')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "Mod", "Get")
+        layout.prop(self, "Mod", text="Get")
 
     def process(self):
         bvh = []
