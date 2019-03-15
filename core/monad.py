@@ -176,8 +176,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         if other.prop_name:
             prop_name = other.prop_name
-            prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))
 
+            # prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))  # <-- in 2.79
+            prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
 
             if prop_func.__name__ == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
