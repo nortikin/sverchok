@@ -97,8 +97,8 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.column().row()
         cols = self.split_columns(row, [1, 1], [True, True])
 
-        cols[0].prop(self, "tu_axes", "")
-        cols[1].prop(self, "tu_mapping", "")
+        cols[0].prop(self, "tu_axes", text="")
+        cols[1].prop(self, "tu_mapping", text="")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "normalize")

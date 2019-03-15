@@ -49,7 +49,7 @@ class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('MatrixSocket', "Matrix")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "plane_", "Shear plane:", expand=True)
+        layout.prop(self, "plane_", text="Shear plane:", expand=True)
 
     def process(self):
         if not self.outputs['Matrix'].is_linked:
