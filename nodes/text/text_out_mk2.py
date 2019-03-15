@@ -177,7 +177,7 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             row = col2.row(align=True)
             row.scale_y = 4.0 if over_sized_buttons else 1
             row.operator(TEXT_IO_CALLBACK, text='D U M P').fn_name = 'dump'
-            col2.prop(self, 'append', "Append")
+            col2.prop(self, 'append', text="Append")
 
 
     def process(self):

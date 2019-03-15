@@ -57,7 +57,7 @@ class SvUVtextureNode(bpy.types.Node, SverchCustomTreeNode):
         description="Choose UV to load", update=updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'uv', 'uv')
+        layout.prop(self, 'uv', text='uv')
 
 
     def update(self):

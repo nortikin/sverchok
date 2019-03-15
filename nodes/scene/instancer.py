@@ -137,7 +137,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             row = layout.row(align=True)
             row.label(text='pick object by name')
             row = layout.row(align=True)
-            row.prop(self, "objects_to_choose", '')
+            row.prop(self, "objects_to_choose", text='')
             row.operator(cfg, text="use").obj_name = self.objects_to_choose
         else:
             row = layout.row()
