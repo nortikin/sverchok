@@ -180,6 +180,11 @@ def draw_faces(context, args):
     geom, config = args
 
     if config.display_faces:
+
+        # this crashed blender when switched off
+        # if config.draw_gl_wireframe:
+        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+
         if config.shade == "flat":
             draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
         elif config.shade == "facet":
@@ -191,6 +196,10 @@ def draw_faces(context, args):
                 config.draw_fragment_function(context, args)
             else:
                 draw_fragment(context, args)
+
+        # if config.draw_gl_wireframe:
+        #    bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
 
     if config.display_edges:
         draw_uniform('LINES', geom.verts, geom.edges, config.line4f, config.line_width)
@@ -273,6 +282,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_verts: BoolProperty(default=False, update=updateNode, name="display verts")
     display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
+    draw_gl_wireframe: BoolProperty(default=False, update=updateNode, name="draw gl wireframe")
 
     custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
@@ -344,6 +354,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             config.display_edges = self.display_edges
             config.display_faces = self.display_faces
             config.shade = self.selected_draw_mode
+            config.draw_gl_wireframe = self.draw_gl_wireframe
 
             # config.point_size = self.point_size
             config.line_width = self.line_width
