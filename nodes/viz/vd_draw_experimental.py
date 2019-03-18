@@ -181,9 +181,8 @@ def draw_faces(context, args):
 
     if config.display_faces:
 
-        # this crashed blender when switched off
-        # if config.draw_gl_wireframe:
-        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
         if config.shade == "flat":
             draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
@@ -197,8 +196,8 @@ def draw_faces(context, args):
             else:
                 draw_fragment(context, args)
 
-        # if config.draw_gl_wireframe:
-        #    bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT, bgl.GL_FILL)
 
 
     if config.display_edges:
