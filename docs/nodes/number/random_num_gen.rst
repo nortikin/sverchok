@@ -26,6 +26,9 @@ Inputs & Parameters
 +----------------+------------------------------------------------------------------------+
 | Weights        | On "Int" mode. Can be supplied to create a non-uniform distribution    |
 +----------------+------------------------------------------------------------------------+
+| Unique         | On "Int" mode. Outputs non-repeated numbers.                           |
+|                | The output size will be limited to (High - Low + 1)                    |
++----------------+------------------------------------------------------------------------+
 | Distribution   | On "Float" mode many distribution functions can be selected.           |
 |                | Beta, Binomial, Chi_square, Exponential, F Distrib., Gamma, Geometric, | 
 |                | Gumbel, Laplace, Logistic, Log Normal, Log Series, Negative Binomial,  | 
