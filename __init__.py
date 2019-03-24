@@ -34,6 +34,8 @@
 #     Eleanor Howick (aka elfnor)
 #     Walter Perdan (aka kalwalt)
 #     Marius Giurgi (aka DolphinDream)
+#     Durman (aka Randum)
+#     Ivan Prytov (aka Ivan Prytov)
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
