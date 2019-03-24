@@ -204,7 +204,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
             c1 = c2.column()
             c1.prop(self, "unique" )
             c1.prop(self, "weighted")
- 
+
         else:
             layout.prop(self, "distribute_mode")
 
@@ -230,11 +230,10 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         population = range(low, high + 1)
 
         if self.weighted and len(weights) > 0:
-            fullList(weights,size)
+            fullList(weights, size)
             weights = weights[:size]
-
             total_weight = sum(weights)
-            weights = [w/total_weight for w in weights]
+            weights = [w / total_weight for w in weights]
             result = np.random.choice(population, size, replace=(not self.unique), p=weights)
         else:
            result = np.random.choice(population, size, replace=(not self.unique))
