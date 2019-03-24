@@ -200,11 +200,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, 'type_selected_mode', expand=True)
         if self.type_selected_mode == "Int":
-            c2 = layout.box()
-            c1 = c2.column()
-            c1.prop(self, "unique" )
-            c1.prop(self, "weighted")
-
+            c1 = layout.row(align=True)
+            c1.prop(self, "unique", toggle=True )
+            c1.prop(self, "weighted", toggle=True)
         else:
             layout.prop(self, "distribute_mode")
 
