@@ -26,10 +26,49 @@ from sverchok.utils.profile import profile
 from sverchok.data_structure import updateNode
 
 
-class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
+class SvUDP(bpy.types.Operator):
+    
+    '''
+    Making flag of run for threading function active, so
+    UDP networking can sent and receive something
+    '''
 
-    bl_idname = 'UdpClientNode'
-    bl_label = 'UDP Client'
+    bl_idname = "node.svudp"
+    bl_label = "Start or stop UDP node"
+
+    fn_name = StringProperty(default='')
+    node_name = StringProperty(default='')
+    tree_name = StringProperty(default='')
+
+    def execute(self, context):
+        """
+        returns the operator's 'self' too to allow the code being called to
+        print from self.report.
+        """
+        if self.tree_name and self.node_name:
+            ng = bpy.data.node_groups[self.tree_name]
+            node = ng.nodes[self.node_name]
+        else:
+            node = context.node
+        if self.fn_name == 'Run':
+            context.scene.svUDPrun = True
+            ev = threading.Thread(target=node.recv_msg, args=(context,))
+            ev.start()
+        else:
+            context.scene.svUDPrun = False
+        return {'FINISHED'}
+
+class SvUdpClientNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+    
+    '''
+    You acn send and receive UDP signal, 
+    that will auto parced from string value to list of data
+    If error accures with ast, than data is wrong.
+    Follow data structure. At least it has to be [[]] container
+    '''
+
+    bl_idname = 'SvUdpClientNodeMK2'
+    bl_label = 'UDP Client mk2'
 
     def send_msg(self, context):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -38,18 +77,16 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def recv_msg(self,context):
-        while True:
+        while context.scene.svUDPrun == True:
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 sock.bind((self.ip, self.port))
                 sock.settimeout(self.timeout)
                 data = sock.recv(self.buffer_size)
-                print(data)
                 if data:
                     self.receive = data.decode('UTF-8')
             except socket.timeout:
                 pass
-                #print('Timeout')
 
 
     send = StringProperty(name='send',
@@ -78,10 +115,12 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
                             description='Timeout (sec)',
                             default=0.5)
 
-    active = BoolProperty(default=False, name='Active')
-
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'active', text='Active')
+        if context.scene.svUDPrun == True:
+            t = 'Stop'
+        else:
+            t = 'Run'
+        layout.operator('node.svudp', text=t).fn_name = t
         layout.prop(self, 'ip', text='IP')
         layout.prop(self, 'port', text='Port')
         layout.prop(self, 'buffer_size', text='Buffer')
@@ -90,12 +129,11 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'send') #.prop_name = 'send'
         self.outputs.new('StringsSocket', 'receive')
-        ev = threading.Thread(target=self.recv_msg, args=(context,))
-        ev.start()
+        
 
     @profile
     def process(self):
-        if not self.active:
+        if not bpy.context.scene.svUDPrun:
             return
         if self.inputs[0].is_linked:
             input_value = self.inputs[0].sv_get()
@@ -103,20 +141,21 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
                 
                 self.send = str(input_value)
                 self.send_msg(bpy.context)
-                #print(type(self.send),type(self.ip),type(self.port))
-                #print('sent message',(self.ip),(self.port))
 
         elif self.outputs['receive'].is_linked:
-            #self.recv_msg()
             self.outputs['receive'].sv_set(ast.literal_eval(self.receive))
 
 
 def register():
-    bpy.utils.register_class(UdpClientNode)
+    bpy.utils.register_class(SvUdpClientNodeMK2)
+    bpy.utils.register_class(SvUDP)
+    bpy.types.Scene.svUDPrun = bpy.props.BoolProperty(False)
 
 
 def unregister():
-    bpy.utils.unregister_class(UdpClientNode)
+    del bpy.types.Scene.svUDPrun
+    bpy.utils.unregister_class(SvUDP)
+    bpy.utils.unregister_class(SvUdpClientNodeMK2)
 
 if __name__ == '__main__':
     register()
