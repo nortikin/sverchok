@@ -129,6 +129,8 @@ class SvUdpClientNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'send') #.prop_name = 'send'
         self.outputs.new('StringsSocket', 'receive')
+        ev = threading.Thread(target=self.recv_msg, args=(context,))
+        ev.start()
         
 
     @profile
