@@ -1,3 +1,7 @@
+=====================
+Pull request template
+=====================
+
 ## Addressed problem description
 
 Please describe what problem does this PR solve. If it was already was discussed in an issue, it is enough to give a link as #number.

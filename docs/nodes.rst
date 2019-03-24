@@ -15,6 +15,7 @@ Nodes
    Number <nodes/number/number_index>
    Vector <nodes/vector/vector_index>
    Matrix <nodes/matrix/matrix_index>
+   Quaternion <nodes/quaternion/quaternion_index>
    Logic <nodes/logic/logic_index>
    List Main <nodes/list_main/list_main_index>
    List Structure <nodes/list_struct/list_struct_index>

@@ -1,3 +1,7 @@
+==============
+Issue template
+==============
+
 ## Problem statement
 
 Please describe your problem here.

@@ -16,8 +16,10 @@ Modifier Change
    extrude_region
    holes_fill
    iterate
+   input_switch
    mesh_join
    mesh_separate
+   mesh_switch
    objects_along_edge
    bend_along_path
    bend_along_surface

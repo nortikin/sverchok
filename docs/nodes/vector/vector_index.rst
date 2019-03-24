@@ -7,6 +7,7 @@ Vector
 
    attractor
    axis_input_mk2
+   color_input
    drop
    interpolation_stripes
    interpolation_mk3
