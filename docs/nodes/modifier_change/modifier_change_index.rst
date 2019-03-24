@@ -16,7 +16,6 @@ Modifier Change
    extrude_region
    holes_fill
    iterate
-   input_switch
    mesh_join
    mesh_separate
    mesh_switch

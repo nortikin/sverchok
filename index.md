@@ -111,8 +111,6 @@
     SvVertMaskNode
     SvTransformSelectNode
     SvSplitEdgesNode
-    ---
-    SvInputSwitchNode
 
 ## Modifier Make
     LineConnectNodeMK2
@@ -230,6 +228,7 @@
 ## Logic
     SvLogicNode
     SvSwitchNode
+    SvInputSwitchNode
     SvNeuroElman1LNode
 
 ## Viz
