@@ -24,7 +24,7 @@ import bpy
 from bpy.props import BoolProperty, FloatProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
 
 class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
@@ -165,6 +165,12 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         update=adjust_inputs)
 
+    unique = BoolProperty(
+        name='Unique',
+        description='Output non-repeated numbers',
+        default=False,
+        update=updateNode)
+
     distribute_mode = bpy.props.EnumProperty(
         name="Distribution",
         items=distribute_options,
@@ -194,7 +200,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, 'type_selected_mode', expand=True)
         if self.type_selected_mode == "Int":
-            layout.prop(self, "weighted")
+            c1 = layout.row(align=True)
+            c1.prop(self, "unique", toggle=True )
+            c1.prop(self, "weighted", toggle=True)
         else:
             layout.prop(self, "distribute_mode")
 
@@ -212,16 +220,21 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
         else:
             size, seed, low, high, weights = params
         size = max(size, 1)
+        if self.unique:
+           size = min(size,high + 1 - low)
         seed = max(seed, 0)
         np.random.seed(seed)
         low, high = sorted([low, high])
+        population = range(low, high + 1)
+
         if self.weighted and len(weights) > 0:
-            population, weights = match_long_repeat([range(low, high+1), weights])
+            fullList(weights, size)
+            weights = weights[:size]
             total_weight = sum(weights)
-            weights = [w/total_weight for w in weights]
-            result = np.random.choice(population, size, p=weights)
+            weights = [w / total_weight for w in weights]
+            result = np.random.choice(population, size, replace=(not self.unique), p=weights)
         else:
-            result = np.random.random_integers(low, high, size)
+           result = np.random.choice(population, size, replace=(not self.unique))
 
         return result
 
