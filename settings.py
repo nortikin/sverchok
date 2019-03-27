@@ -220,6 +220,10 @@ class SverchokPreferences(AddonPreferences):
     dload_archive_name = StringProperty(name="archive name", default="master")
     dload_archive_path = StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
 
+    # parameter for switching between old and new update system
+    old_update_system = BoolProperty(name="Update node tree each time",
+                                description="Old update system",
+                                default=True)
 
     def draw(self, context):
 
@@ -230,13 +234,18 @@ class SverchokPreferences(AddonPreferences):
 
             col = layout.row().column()
             col_split = col.split(0.5)
+
             col1 = col_split.column()
-            col1.label(text="UI:")
-            col1.prop(self, "show_icons")
-            col1.prop(self, "over_sized_buttons")
-            col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
-            col1.prop(self, "external_editor", text="Ext Editor")
-            col1.prop(self, "real_sverchok_path", text="Src Directory")
+            col1.prop(self, 'old_update_system')
+            col1.separator()
+
+            col1box = col1.box()
+            col1box.label(text="UI:")
+            col1box.prop(self, "show_icons")
+            col1box.prop(self, "over_sized_buttons")
+            col1box.prop(self, "enable_live_objin", text='Enable Live Object-In')
+            col1box.prop(self, "external_editor", text="Ext Editor")
+            col1box.prop(self, "real_sverchok_path", text="Src Directory")
 
             col2 = col_split.split().column()
             col2.label(text="Frame change handler:")
