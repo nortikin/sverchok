@@ -672,11 +672,17 @@ class SverchCustomTreeNode:
             return override
         return self._implicit_conversion_policy.get(input_socket_name, DefaultImplicitConversionPolicy)
 
-    def set_color(self):
-        color = color_def.get_color(self.bl_idname)
+    def set_color(self, color=None):
+        # calling method without parameters will switch color node to default color
+        # if such color does not exist for node of such type will switch off coloring node at all
+        # with parameter color will be set anyway
+        if color is None:
+            color = color_def.get_color(self.bl_idname)
         if color:
             self.use_custom_color = True
             self.color = color
+        else:
+            self.use_custom_color = False
 
     def create_sockets(self):
         '''Create node input and output sockets from
