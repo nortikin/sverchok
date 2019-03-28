@@ -61,6 +61,14 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.operator("screen.frame_jump", text="", icon='FF').end = True
         row.prop(scene, "frame_current", text="")
 
+    @staticmethod
+    def additional_properties():
+        # properties that does not related with the node
+        props = {'frame_currnet': bpy.context.scene.frame_current,
+                 'frame_end': bpy.context.scene.frame_end,
+                 'frame_start': bpy.context.scene.frame_start}
+        return props
+
     def process(self):
         scene = bpy.context.scene
         outputs = self.outputs
