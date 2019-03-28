@@ -53,6 +53,7 @@ from sverchok.core.socket_conversions import (
 )
 
 from sverchok.core.node_defaults import set_defaults_if_defined
+from sverchok.core.update_system_mem import tree_updater
 
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
@@ -581,20 +582,30 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         Process the Sverchok node tree if animation layers show true.
         For animation callback/handler
         """
-        if self.sv_animate:
+        addon = bpy.context.user_preferences.addons.get(sverchok.__name__)
+
+        if addon.preferences.old_update_system and self.sv_animate:
             process_tree(self)
+        else:
+            tree_updater.update(props='ANIMATE')
 
     def process(self):
         """
         process the Sverchok tree upon editor changes from handler
         """
-        if self.has_changed:
-            self.build_update_list()
-            self.has_changed = False
-        if self.is_frozen():
-            return
-        if self.sv_process:
-            process_tree(self)
+        addon = bpy.context.user_preferences.addons.get(sverchok.__name__)
+        if addon.preferences.old_update_system:
+
+            if self.has_changed:
+                self.build_update_list()
+                self.has_changed = False
+            if self.is_frozen():
+                return
+            if self.sv_process:
+                process_tree(self)
+
+        else:
+            tree_updater.update(self)
 
         self.has_changed = False
 
@@ -811,13 +822,18 @@ class SverchCustomTreeNode:
             if self.id_data.is_frozen():
                 return
 
-            if data_structure.DEBUG_MODE:
+            addon = bpy.context.user_preferences.addons.get(sverchok.__name__)
+
+            if addon.preferences.old_update_system and data_structure.DEBUG_MODE:
                 a = time.perf_counter()
                 process_from_node(self)
                 b = time.perf_counter()
                 debug("Partial update from node %s in %s", self.name, round(b - a, 4))
-            else:
+            elif addon.preferences.old_update_system:
                 process_from_node(self)
+            else:
+                tree_updater.update(self)
+
         elif self.id_data.bl_idname == "SverchGroupTreeType":
             monad = self.id_data
             for instance in monad.instances:
