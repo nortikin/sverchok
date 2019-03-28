@@ -22,7 +22,7 @@ import bpy
 from bpy.props import StringProperty, CollectionProperty, BoolProperty
 
 from sverchok.core.update_system import process_tree, build_update_list
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.core.update_system_mem import tree_updater
 from sverchok.utils.logging import debug, info
 import sverchok
 
@@ -34,11 +34,15 @@ class SverchokUpdateAll(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        sv_ngs = filter(lambda ng:ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
-        for ng in sv_ngs:
-            ng.unfreeze(hard=True)
-        build_update_list()
-        process_tree()
+        addon = bpy.context.user_preferences.addons.get(sverchok.__name__)
+        if addon.preferences.old_update_system:
+            sv_ngs = filter(lambda ng:ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
+            for ng in sv_ngs:
+                ng.unfreeze(hard=True)
+            build_update_list()
+            process_tree()
+        else:
+            tree_updater.update()
         return {'FINISHED'}
 
 
@@ -77,10 +81,13 @@ class SverchokUpdateCurrent(bpy.types.Operator):
 
     def execute(self, context):
         ng = bpy.data.node_groups.get(self.node_group)
-        if ng:
+        addon = context.user_preferences.addons.get(sverchok.__name__)
+        if addon.preferences.old_update_system and ng:
             ng.unfreeze(hard=True)
             build_update_list(ng)
             process_tree(ng)
+        else:
+            tree_updater.update(ng)
         return {'FINISHED'}
 
 
