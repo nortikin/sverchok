@@ -573,10 +573,17 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             else:
                 [setattr(node, 'activate', False) for node in self.nodes if node.bl_idname == 'ViewerNode2']
 
+    def update_ng(self, context):
+        # updating current node tree after switcher "process layout" is pressed on
+        # mainly from N panel
+        addon = bpy.context.user_preferences.addons.get(sverchok.__name__)
+        if not addon.preferences.old_update_system:
+            tree_updater.update(self)
+
     sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake = BoolProperty(name="Bake", default=True, description='Bake this layout')
-    sv_process = BoolProperty(name="Process", default=True, description='Process layout')
+    sv_process = BoolProperty(name="Process", default=True, description='Process layout', update=update_ng)
     sv_user_colors = StringProperty(default="")
 
     def update(self):
