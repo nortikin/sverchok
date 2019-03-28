@@ -556,13 +556,22 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     bl_icon = 'RNA'
 
     def turn_off_ng(self, context):
-        process_tree(self)
+        addon = bpy.context.user_preferences.addons.get(sverchok.__name__)
+        if addon.preferences.old_update_system:
+            process_tree(self)
 
         # should turn off tree. for now it does by updating it whole
         # should work something like this
         # outputs = filter(lambda n: isinstance(n,SvOutput), self.nodes)
         # for node in outputs:
         #   node.disable()
+
+        # with new update system such approach can be done
+        else:
+            if self.sv_show:
+                [setattr(node, 'activate', True) for node in self.nodes if node.bl_idname == 'ViewerNode2']
+            else:
+                [setattr(node, 'activate', False) for node in self.nodes if node.bl_idname == 'ViewerNode2']
 
     sv_animate = BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show = BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
