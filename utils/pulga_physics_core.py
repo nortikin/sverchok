@@ -1,3 +1,10 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 import numpy as np
 
 def cross_indices3(n):
@@ -88,8 +95,7 @@ def self_react(params):
         if some_collisions:
             self_collision_force(result, dist, sum_rad, index_inter, mask, normal_v, collision)
         if some_attractions:
-            #antimask = np.invert(mask)
-            antimask = True
+            antimask = np.invert(mask)
             attract_force(result, dist_cor, antimask, indexes, normal_v, att_params)
 
         ps.r += np.sum(result, axis=1)
@@ -124,8 +130,8 @@ def attract_force(result, dist, mask, index, norm_v, att_params):
     id0 = index_non_inter[:, 0]
     id1 = index_non_inter[:, 1]
 
-
     direction = norm_v[mask] / dist2 * mass_product[mask, np.newaxis]
+
     variable_att = len(attract) > 1
 
     att = attract
@@ -623,7 +629,7 @@ def limit_speed(np_vel, max_vel):
     vel_exceded = vel_mag > max_vel
     np_vel[vel_exceded] = np_vel[vel_exceded] / vel_mag[vel_exceded, np.newaxis] * max_vel
 
-FORCE_CHAIN = ["self_react", "springs", "drag", "inflate", "random", "attractors", "world_f", "pins", "apply_f", "b_box", "Obstacles"]
+FORCE_CHAIN = ["self_react", "Springs", "drag", "inflate", "random", "attractors", "world_f", "Pins", "apply_f", "b_box", "Obstacles"]
 
 class PulgaSystem():
     '''Store states'''
@@ -703,20 +709,20 @@ class PulgaSystem():
         if not use_pins:
             return 
             
-        self.params['pins'] = np.array(pins)
+        self.params['Pins'] = np.array(pins)
                    
-        if self.params['pins'].dtype == np.int32:
-            if len(self.params['pins']) == len(self.verts):
-                self.params['pins'] = self.params['pins'] == 1
-                self.params['unpinned'] = np.invert(self.params['pins'])
+        if self.params['Pins'].dtype == np.int32:
+            if len(self.params['Pins']) == len(self.verts):
+                self.params['Pins'] = self.params['Pins'] == 1
+                self.params['unpinned'] = np.invert(self.params['Pins'])
             else:
                 self.params['unpinned'] = np.ones(len(self.verts), dtype=np.bool)
-                self.params['unpinned'][self.params['pins']] = False
+                self.params['unpinned'][self.params['Pins']] = False
       
-        self.vel[self.params['pins'], :] = 0
+        self.vel[self.params['Pins'], :] = 0
         
         if use_pins_goal:
-            self.verts[self.params['pins'], :] = np.array(pins_goal_pos)
+            self.verts[self.params['Pins'], :] = np.array(pins_goal_pos)
         forces_composite[0].append(local_func)
         forces_composite[1].append(self)       
         return 
@@ -724,18 +730,18 @@ class PulgaSystem():
             
     def apply_pins(self):
         '''cancel forces on pins'''
-        self.r[self.params["pins"], :] = 0
+        self.r[self.params["Pins"], :] = 0
 
 
 FUNC_DICT = {
     "self_react": self_react,
-    "springs":    spring_force,
+    "Springs":    spring_force,
     "drag":       drag_force_apply,
     "inflate":    inflate_force,
     "random":     random_force_apply,
     "attractors": attractors_force,
     "world_f":    (world_forces_apply, world_forces_apply_var),
-    "pins":       PulgaSystem.apply_pins,
+    "Pins":       PulgaSystem.apply_pins,
     "apply_f":    PulgaSystem.apply_forces,
     "b_box":      b_box_apply,
     "Obstacles":  collisions_apply
@@ -743,13 +749,13 @@ FUNC_DICT = {
     }
 INIT_FUNC_DICT = {
     "self_react": self_react_setup,
-    "springs":    spring_setup,
+    "Springs":    spring_setup,
     "drag":       drag_setup,
     "inflate":    inflate_setup,
     "random":     random_setup,
     "attractors": attractors_setup,
     "world_f":    world_forces_setup,
-    "pins":       pins_setup,
+    "Pins":       pins_setup,
     "apply_f":    apply_forces_setup,
     "b_box":      b_box_setup,
     "Obstacles":  collisions_setup
@@ -757,26 +763,10 @@ INIT_FUNC_DICT = {
     }
 
 
-def fill_gates_dict(gates_dict, gates):
-    '''redistribute booleans'''
-    gates_dict["accumulate"] = gates[0]
-    gates_dict["self_react"] = gates[1:4]
-    gates_dict["springs"] = gates[4:6]
-    gates_dict["pins"] = gates[6:8]
-    gates_dict["drag"] = [gates[8]] + [gates[3]]
-    gates_dict["inflate"] = gates[9]
-    gates_dict["random"] = gates[10]
-    gates_dict["attractors"] = gates[11]
-    gates_dict["world_f"] = gates[12]
-    gates_dict["Obstacles"] = gates[13]
-    gates_dict["b_box"] = gates[14]
-    gates_dict["output"] = gates[15:]
-    gates_dict["apply_f"] = True
-
 PARAMS_GROUPS = {
     "main":    ("Initial_Pos", "rads_in", 'Initial Velocity', "max_vel", "Density"),
-    "springs": ("springs", "fixed_len", "spring_k" ),
-    "pins": ("pins", "pins_goal_pos"),
+    "Springs": ("Springs", "fixed_len", "spring_k" ),
+    "Pins": ("Pins", "Pins Goal Position"),
     "self_react": ("self_collision",  "self_attract", "attract_decay", "grow", "min_rad", "max_rad"),
     "inflate": ("Pols", "inflate"),
     "drag": ("drag_force"),
@@ -824,7 +814,7 @@ def pulga_system_init(params, parameters, gates, out_lists, cache):
     if dictionaries[1]["accumulate"]:
         if len(cache) > 0:
             # ps.hard_update(cache)
-            ps.hard_update_list(cache, gates["self_react"][2], gates["pins"])
+            ps.hard_update_list(cache, gates["self_react"][2], gates["Pins"])
 
     iterate(iterations_max, force_map, force_parameters, out_params)
 

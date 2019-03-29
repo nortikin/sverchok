@@ -55,13 +55,12 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     bl_idname = 'SvPulgaPhysicsNode'
     bl_label = 'Pulga Physics'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'MOD_PHYSICS'
     
 
     iterations = IntProperty(
         name='Iterations', description='Number of Iterations',
         default=1, min=1, update=updateNode)
-   
 
     fixed_len = FloatProperty(
         name='Springs Length', description='Specify spring rest length, 0 to calculate it from initial position',
@@ -77,10 +76,10 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         
     self_collision = FloatProperty(
         name='Self Collision', description='Collision forces between vertices',
-        default=0.0, precision=4, update=updateNode)
+        default=0.0, precision=4, step=1e-2, update=updateNode)
     self_attract = FloatProperty(
         name='Self Attract', description='Attraction between vertices',
-        default=0.0, precision=4, update=updateNode)
+        default=0.0, precision=4, step=1e-2, update=updateNode)
     attract_decay = FloatProperty(
         name='Self Attract Decay', description='0 = no decay, 1 = linear, 2 = quadratic...',
         default=0.0, precision=3, update=updateNode)
@@ -187,15 +186,14 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
                 vel.append(data[i][2] if np else data[i][2].tolist())
         else:
             data = check_past(n_id) 
-            if len(data) > 0:
-                data = past
+            # if len(data) > 0:
+                # data, past, from_file = self.get_global_cache()
+                # data = past
             for i in range(len(data)):
                 verts.append(array(data[i][0]) if np else data[i][0])
                 rads.append(array(data[i][1]) if np else data[i][1])
                 vel.append(array(data[i][2]) if np else data[i][2])    
-          
-            
-              
+        
         return verts, rads, vel
 
     n_id = StringProperty()
@@ -245,25 +243,25 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
     
          
     prop_dict = {
-        "Initial_Pos"   : (0, ''          , 'v', 0),
-        "Iterations"    : (1, 'iterations', 's', 0),
-        "springs"       : (2, ''          , 's', 4),
-        "fixed_len"     : (4, 'fixed_len' , 's', 4),
-        "spring_k"      : (5, 'spring_k'  , 's', 4),
-        "pins"          : (6, ''          , 's', 5),
-        "pins_goal_pos" : (7, ''          , 'v', 5),
-        "rads_in"       : (8, 'rads_in'   , 's', 0),
-        "self_collision": (9, 'self_collision', 's', 1),
-        "self_attract"  : (10, 'self_attract' , 's', 2),
-        "attract_decay" : (11, 'attract_decay', 's', 2),
-        "grow"          : (12, 'grow'         , 's', 3),
-        "min_rad"       : (13, 'min_rad'      , 's', 3),
-        "max_rad"       : (14, 'max_rad'      , 's', 3),
-        "Pols"          : (15, ''           , 's', 7),
-        "inflate"       : (16, 'inflate'    , 's', 7),
-        "Initial Velocity"   : (17, 'initial_vel', 'v', 0),
-        "max_vel"       : (18, 'max_vel'    , 's', 0),
-        "drag_force"      : (19, 'drag_force' , 's', 6),
+        "Initial_Pos"     : (0, ''          , 'v', 0),
+        "Iterations"      : (1, 'iterations', 's', 0),
+        "Springs"         : (2, ''          , 's', 4),
+        "fixed_len"       : (4, 'fixed_len' , 's', 4),
+        "spring_k"        : (5, 'spring_k'  , 's', 4),
+        "Pins"            : (6, ''          , 's', 5),
+        "Pins Goal Position"   : (7, ''          , 'v', 5),
+        "rads_in"         : (8, 'rads_in'          , 's', 0),
+        "self_collision"  : (9, 'self_collision'   , 's', 1),
+        "self_attract"    : (10, 'self_attract'    , 's', 2),
+        "attract_decay"   : (11, 'attract_decay'   , 's', 2),
+        "grow"            : (12, 'grow'            , 's', 3),
+        "min_rad"         : (13, 'min_rad'         , 's', 3),
+        "max_rad"         : (14, 'max_rad'         , 's', 3),
+        "Pols"            : (15, ''                , 's', 7),
+        "inflate"         : (16, 'inflate'         , 's', 7),
+        "Initial Velocity": (17, 'initial_vel'     , 'v', 0),
+        "max_vel"         : (18, 'max_vel'         , 's', 0),
+        "drag_force"      : (19, 'drag_force'      , 's', 6),
         "Attractors"      : (20, ''                , 'v', 8),
         "force"           : (21, 'force'           , 's', 8),
         "att_clamp"       : (22, 'att_clamp'       , 's', 8),
@@ -281,27 +279,11 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
 
     }
     sorted_props = sorted(prop_dict.items(), key=lambda kv: kv[1])
-    prop_ui_groups2 = [[] for i in range(13)]
+    
+    prop_ui_groups = [[] for i in range(13)]
     for input_prop in sorted_props:
-            prop_ui_groups2[input_prop[1][3]].append(input_prop[0])
-            
-            
-    
-    prop_ui_groups = [
-        ["self_collision"],
-        [ "self_attract", "attract_decay"],
-        [ "grow", "min_rad", "max_rad"],
-        ["springs", "fixed_len", "spring_k"],
-        ["pins", "pins_goal_pos"],
-        ["drag_force"],
-        ["Pols", "inflate"],
-        ["Attractors", "force", "att_clamp", "att_decay_power"],
-        ["random_seed", "random_force", "random_variation"],
-        ["Obstacles", "Obstacles_pols", "obstacles_bounce"],
-        ["Gravity", "Wind"],
-        ["b_box"]
-        ] 
-    
+            prop_ui_groups[input_prop[1][3]].append(input_prop[0])
+               
     def update_sockets(self, context):
         ''' show and hide gated inputs'''
         prop_triggers = [
@@ -323,11 +305,11 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         
         for i in range(len(prop_triggers)):
             if prop_triggers[i]:
-                if si[self.prop_ui_groups2[i+1][0]].hide_safe:
-                    for p in self.prop_ui_groups2[i+1]:
+                if si[self.prop_ui_groups[i+1][0]].hide_safe:
+                    for p in self.prop_ui_groups[i+1]:
                         si[p].hide_safe = False
             else:
-                for p in self.prop_ui_groups2[i+1]:
+                for p in self.prop_ui_groups[i+1]:
                     si[p].hide_safe = True            
         if self.fit_M:
             if so["Rads"].hide_safe:
@@ -337,11 +319,11 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
                   
         updateNode(self, context)
 
-    self_react_M = BoolProperty(name="Self Collision",
+    self_react_M = BoolProperty(name="Collision",
         description="Self Collision: collision between input vertices as spheres",
         default=False,
         update=update_sockets)
-    self_attract_M = BoolProperty(name="Self Attraction",
+    self_attract_M = BoolProperty(name="Attraction",
         description="Self Attraction: attract between input vertices as spheres",
         default=False,
         update=update_sockets)
@@ -373,7 +355,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         description="Random force",
         default=False,
         update=update_sockets)
-    bounding_box_M = BoolProperty(name="Bounding Box",
+    bounding_box_M = BoolProperty(name="Boundaries",
         description="System bounding box",
         default=False,
         update=update_sockets)
@@ -417,9 +399,6 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         r0.prop(self, "self_react_M", toggle=True)
         r0.prop(self, "self_attract_M", toggle=True)
         r0.prop(self, "fit_M", toggle=True)
-        # r0.prop(self, "springs_M", toggle=True)
-        # r0.prop(self, "pins_M", toggle=True)
-        # r0.prop(self, "inflate_M", toggle=True)
 
         r = c1.row(align=True)
         r.prop(self, "springs_M", toggle=True)
@@ -431,9 +410,6 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         r2.prop(self, "drag_M", toggle=True)
         r2.prop(self, "attract_M", toggle=True)
         r2.prop(self, "random_M", toggle=True)
-        # r2.prop(self, "world_F_M", toggle=True)
-        # r2.prop(self, "obstacles_M", toggle=True)
-        # r2.prop(self, "bounding_box_M", toggle=True)
         
         r3 = c1.row(align=True)
         r3.prop(self, "world_F_M", toggle=True)
@@ -442,9 +418,10 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
 
         r4 = layout.column(align=True)
         r4.prop(self, "accumulative", toggle=True)
+        
         if self.accumulative:
             cr = r4.row(align=True)
-            cr.prop(self, "accumulative_pause", toggle=True)
+            # cr.prop(self, "accumulative_pause", toggle=True)
             cr.prop(self, "accumulative_reset", toggle=True)
             upd = cr.operator("node.sverchok_update_current", text="Update")
             ng_name = context.space_data.node_tree.name
@@ -477,8 +454,8 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         gates_dict = {}
         gates_dict["accumulate"] = self.accumulative
         gates_dict["self_react"] = [self.self_react_M, self.self_attract_M, self.fit_M]
-        gates_dict["springs"] = [si["springs"].is_linked, si["fixed_len"].is_linked]
-        gates_dict["pins"] = [si["pins"].is_linked, si["pins_goal_pos"].is_linked]
+        gates_dict["Springs"] = [si["Springs"].is_linked, si["fixed_len"].is_linked]
+        gates_dict["Pins"] = [si["Pins"].is_linked, si["Pins Goal Position"].is_linked]
         gates_dict["drag"] = [self.drag_M, self.fit_M]
         gates_dict["inflate"] = si["Pols"].is_linked
         gates_dict["random"] = self.random_M 
@@ -526,7 +503,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         '''main node function called every update'''
-        tiempo = time.time()
+
         si = self.inputs
         so = self.outputs
         if not any(socket.is_linked for socket in so):
@@ -565,8 +542,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
             so['Rads'].sv_set(rads_out)
         if so['Velocity'].is_linked:
             so['Velocity'].sv_set(velocity_out)
-       
-        print(time.time() - tiempo ) 
+
             
 
 
