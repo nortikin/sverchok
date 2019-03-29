@@ -31,6 +31,9 @@ if False:
     for d in list_debugs:
         d = swich_off_debug
 
+# Notes
+# Reroute nodes does not have "other" and "set_color" methods.
+
 
 class UpdateDataStructure:
     def __init__(self):
@@ -68,13 +71,13 @@ class UpdateDataStructure:
         id = self._get_id(sock)
         if not sock.is_output and sock.is_linked:
             if id not in cache:
-                cache[id] = sock.other.node.name
+                cache[id] = sock.links[0].from_node.name
                 status[id] = True
                 debug('Sock "{}" in node "{}" was linked'.format(sock.name, sock.node.name))
-            elif cache[id] == sock.other.node.name:
+            elif cache[id] == sock.links[0].from_node.name:
                 status[id] = False
             else:
-                cache[id] = sock.other.node.name
+                cache[id] = sock.links[0].from_node.name
                 status[id] = True
                 debug('Sock "{}" in node "{}" was relinked'.format(sock.name, sock.node.name))
         elif not sock.is_output:
@@ -216,8 +219,9 @@ class UpdateSystemMem(UpdateDataStructure):
                 debug('"{}" is changed - a prop was changed'.format(node.name))
                 return True
             for sock in node.inputs:
-                if sock.other and self.has_changed(sock.other):
-                    debug('"{}" is changed - data of "{}" - was changed'.format(node.name, sock.other.node.name))
+                if sock.links and self.has_changed(sock.links[0].from_socket):
+                    debug('"{}" is changed - data of "{}" - was changed'.format(
+                                            node.name, sock.links[0].from_node.name))
                     return True
             for sock in node.outputs:
                 for link in sock.links:
@@ -233,7 +237,7 @@ class UpdateSystemMem(UpdateDataStructure):
                 debug('Changed - "{}" - input was changed'.format(node.name))
             elif check_nodes:
                 node = check_nodes.pop()
-                if False in [soc.other.node.name in done for soc in node.inputs if soc.other]:
+                if False in [soc.links[0].from_node.name in done for soc in node.inputs if soc.links]:
                     debug('Cant decide - "{}" - input is undefined'.format(node.name))
                     continue
                 else:
@@ -260,7 +264,7 @@ class UpdateSystemMem(UpdateDataStructure):
             node = next_nodes.pop()
             next_nodes.extend([nn for nn in self._get_next_nodes(node) if nn not in done])
             if self.has_changed(node) and hasattr(node, 'process'):
-                previous_nodes = [sock.other.node for sock in node.inputs if sock.other]
+                previous_nodes = [sock.links[0].from_node for sock in node.inputs if sock.links]
                 if True not in [self.has_changed(node) for node in previous_nodes]:
                     debug_process('Process - "{}"'.format(node.name))
                     node.process()
@@ -284,10 +288,11 @@ class UpdateSystemMem(UpdateDataStructure):
 
     def _update_color_nodes(self, node_tree):
         for node in node_tree.nodes:
-            if self.has_changed(node):
-                node.set_color((1, 0, 0))
-            else:
-                node.set_color()
+            if hasattr(node, 'set_color'):
+                if self.has_changed(node):
+                    node.set_color((1, 0, 0))
+                else:
+                    node.set_color()
 
     def _update_tree(self, node_tree):
         self._root_nodes.pop(node_tree.name, None)
