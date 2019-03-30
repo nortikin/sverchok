@@ -45,6 +45,7 @@
     SvEllipseNode
     SvSuperEllipsoidNode
     SvSmoothLines
+    SvRGBCurvesLink
 
 ## Analyzers
     SvBBoxNode
