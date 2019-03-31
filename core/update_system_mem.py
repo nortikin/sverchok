@@ -18,7 +18,8 @@
 
 import bpy
 
-from sverchok.utils.logging import debug
+from sverchok.core.socket_data import SvNoDataError
+from sverchok.utils.logging import debug, exception
 from sverchok.utils.profile import profile
 
 
@@ -44,6 +45,7 @@ class UpdateDataStructure:
         self._prop_cache = dict()
         self._root_nodes = dict()
         self._ani_nodes = dict()
+        self._error_nodes = dict()
 
     @staticmethod
     def _get_id(obj, prop=None):
@@ -152,6 +154,12 @@ class UpdateDataStructure:
         else:
             raise TypeError
 
+    def _set_error_node(self, node, err):
+        self._error_nodes[self._get_id(node)] = err
+
+    def _get_error_node(self, node):
+        return self._error_nodes.get(self._get_id(node))
+
 
 class UpdateSystemMem(UpdateDataStructure):
     def _get_root_nodes(self, node_tree):
@@ -255,6 +263,14 @@ class UpdateSystemMem(UpdateDataStructure):
                     set_check_nodes(node)
                     debug('Remain - "{}"'.format(node.name))
 
+    def _process_node(self, node):
+        try:
+            node.process()
+            self._set_error_node(node, None)
+        except Exception as err:
+            self._set_error_node(node, err)
+            exception("Node {} had exception: {}".format(node.name, err))
+
     def _process_nodes_hard(self, start_nodes):
         debug_process('==========Start process nodes==========')
         next_nodes = start_nodes[:]
@@ -267,12 +283,12 @@ class UpdateSystemMem(UpdateDataStructure):
                 previous_nodes = [sock.links[0].from_node for sock in node.inputs if sock.links]
                 if True not in [self.has_changed(node) for node in previous_nodes]:
                     debug_process('Process - "{}"'.format(node.name))
-                    node.process()
+                    self._process_node(node)
                 elif False in [node.name in done for node in previous_nodes]:
                     debug_process('Node "{}" is skipped -  input is undefined'.format(node.name))
                 else:
                     debug_process('Process - "{}"'.format(node.name))
-                    node.process()
+                    self._process_node(node)
             done.add(node.name)
 
     def _process_nodes_easy(self, start_nodes):
@@ -283,16 +299,31 @@ class UpdateSystemMem(UpdateDataStructure):
             next_nodes.extend([nn for nn in self._get_next_nodes(node) if nn not in done])
             self._set_has_changed(node, change=True)
             if hasattr(node, 'process'):
-                node.process()
+                self._process_node(node)
             done.add(node.name)
 
-    def _update_color_nodes(self, node_tree):
+    def _set_update_color(self, node):
+        if self.has_changed(node):
+            node.set_color((1, 0, 0.3))
+        else:
+            node.set_color()
+
+    @staticmethod
+    def _set_error_color(node, err):
+        if isinstance(err, SvNoDataError):
+            node.set_color(color=(1, 0.3, 0))
+        else:
+            node.set_color(color=(0.8, 0.0, 0))
+
+    def _set_colors(self, node_tree):
         for node in node_tree.nodes:
             if hasattr(node, 'set_color'):
-                if self.has_changed(node):
-                    node.set_color((1, 0, 0))
+                err = self._get_error_node(node)
+                if err:
+                    self._set_error_color(node, err)
                 else:
-                    node.set_color()
+                    self._set_update_color(node)
+
 
     def _update_tree(self, node_tree):
         self._root_nodes.pop(node_tree.name, None)
@@ -338,7 +369,7 @@ class UpdateSystemMem(UpdateDataStructure):
                 self._update_from_node(obj)
         else:
             raise TypeError
-        [self._update_color_nodes(ng) for ng in node_trees]
+        [self._set_colors(ng) for ng in node_trees]
 
 
 tree_updater = UpdateSystemMem()
