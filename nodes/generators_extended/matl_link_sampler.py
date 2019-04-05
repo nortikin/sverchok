@@ -6,7 +6,7 @@ from sverchok.data_structure import updateNode
 class SvMatlLinkSampler(bpy.types.Node, SverchCustomTreeNode):
     ''' Material Link Sampler '''
     bl_idname = 'SvMatlLinkSampler'
-    bl_label = 'Material Link Sampler'
+    bl_label = 'Material Link Curve Sampler'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     name_matl = StringProperty(name='name_matl', description='Name of the material with a RGB Curves or ColorRamp node', default='', update=updateNode)
@@ -32,15 +32,37 @@ class SvMatlLinkSampler(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):    	
         layout.prop_search(self, "name_matl", bpy.data, 'materials', text="Material")
         layout.prop(self, "name_node", text="Node")
-        layout.prop(self, "refresh", text="Refresh")
+        layout.prop(self, "refresh", text="Change this to refresh")
+
+        # get node from material 
+        matl = bpy.data.materials[self.name_matl]
+        if (matl):
+            mnode = matl.node_tree.nodes[self.name_node]
+            if type(mnode) is bpy.types.ShaderNodeRGBCurve:
+                layout.template_curve_mapping(mnode, "mapping", type="COLOR")
+            if type(mnode) is bpy.types.ShaderNodeValToRGB:
+                layout.template_color_ramp(mnode, "color_ramp", expand=False)
+
+    def get_rgb_curve_values(self, mnode, output_index, output_count, curve_index):
+        output = self.outputs[output_index]
+        if output.is_linked:
+            data_out = []
+            for i in range(0, output_count):
+                data_out.append(mnode.mapping.curves[curve_index].evaluate(i / (output_count-1)))
+            output.sv_set([data_out])
+
+    def get_color_ramp_values(self, mnode, output_index, output_count, curve_index):
+        output = self.outputs[output_index]
+        if output.is_linked:
+            data_out = []
+            for i in range(0, output_count):
+                data_out.append(mnode.color_ramp.evaluate(i / (output_count-1))[curve_index])
+            output.sv_set([data_out])            
 
     def process(self):
 
-        outputs = self.outputs
-        count_c = self.inputs['C Count'].sv_get()[0][0]
-        count_r = self.inputs['R Count'].sv_get()[0][0]
-        count_g = self.inputs['G Count'].sv_get()[0][0]
-        count_b = self.inputs['B Count'].sv_get()[0][0]
+        # channel mapping (C = 3, R = 0, G = 1, B = 2)
+        chan_mapping = [3, 0, 1, 2]
 
         # get material node
         mnode = bpy.data.materials[self.name_matl].node_tree.nodes[self.name_node]
@@ -49,57 +71,15 @@ class SvMatlLinkSampler(bpy.types.Node, SverchCustomTreeNode):
         if type(mnode) is bpy.types.ShaderNodeRGBCurve:
             # init mapping
             mnode.mapping.initialize()
+            # get values            
+            for i in range(0, 4):
+                self.get_rgb_curve_values(mnode, i, self.inputs[i].sv_get()[0][0], chan_mapping[i])
 
-            if outputs[0].is_linked:
-                data_c = []
-                for i in range(0, count_c):
-                    data_c.append(mnode.mapping.curves[3].evaluate(i / (count_c-1)))
-                outputs[0].sv_set([data_c])
-
-            if outputs[1].is_linked:
-                data_r = []
-                for i in range(0, count_r):
-                    data_r.append(mnode.mapping.curves[0].evaluate(i / (count_r-1)))
-                outputs[1].sv_set([data_r])
-
-            if outputs[2].is_linked:
-                data_g = []
-                for i in range(0, count_g):
-                    data_g.append(mnode.mapping.curves[1].evaluate(i / (count_g-1)))
-                outputs[2].sv_set([data_g])
-
-            if outputs[3].is_linked:
-                data_b = []
-                for i in range(0, count_b):
-                    data_b.append(mnode.mapping.curves[2].evaluate(i / (count_b-1)))
-                outputs[3].sv_set([data_b])            
-
-        # ColorRamp
+        # ColorRamp ?
         if type(mnode) is bpy.types.ShaderNodeValToRGB:
-
-            if outputs[0].is_linked:
-                data_c = []
-                for i in range(0, count_c):
-                    data_c.append(mnode.color_ramp.evaluate(i / (count_c-1))[3])
-                outputs[0].sv_set([data_c])
-
-            if outputs[1].is_linked:
-                data_r = []
-                for i in range(0, count_r):
-                    data_r.append(mnode.color_ramp.evaluate(i / (count_r-1))[0])
-                outputs[1].sv_set([data_r])
-
-            if outputs[2].is_linked:
-                data_g = []
-                for i in range(0, count_g):
-                    data_g.append(mnode.color_ramp.evaluate(i / (count_g-1))[1])
-                outputs[2].sv_set([data_g])
-
-            if outputs[3].is_linked:
-                data_b = []
-                for i in range(0, count_b):
-                    data_b.append(mnode.color_ramp.evaluate(i / (count_b-1))[2])
-                outputs[3].sv_set([data_b])
+            # get values
+            for i in range(0, 4):
+                self.get_color_ramp_values(mnode, i, self.inputs[i].sv_get()[0][0], chan_mapping[i])            
 
 def register():
     bpy.utils.register_class(SvMatlLinkSampler)
@@ -108,4 +88,4 @@ def unregister():
     bpy.utils.unregister_class(SvMatlLinkSampler)
 
 if __name__ == '__main__':
-    register()
+    register() 
