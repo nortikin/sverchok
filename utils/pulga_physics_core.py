@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -168,10 +168,10 @@ def self_react_setup(ps, dicti, forces_composite):
     use_grow = use_grow and np.any(np_grow != 0)
 
     use_self_react = (use_attract or use_self_collision or use_grow)
-    
+
     if not use_self_react:
         return
-        
+
     ps.params['indexes'] = cross_indices3(ps.v_len)
     sum_rad = ps.rads[ps.params['indexes'][:, 0]] + ps.rads[ps.params['indexes'][:, 1]]
 
@@ -192,11 +192,11 @@ def att_setup(use_attract, ps, np_attract, attract_decay):
         mass_product = ps.mass[indexes[:, 0]] * ps.mass[indexes[:, 1]]
         att_params = [np_attract, np_att_decay, mass_product]
     else:
-        att_params = [] 
-        
+        att_params = []
+
     return att_params
 
-    
+
 def fit_setup(use_grow, np_grow, min_rad, max_rad):
     '''Prepare fitting data'''
     if use_grow:
@@ -205,7 +205,7 @@ def fit_setup(use_grow, np_grow, min_rad, max_rad):
         fit_params = [np_grow, np_min_rad, np_max_rad]
     else:
         fit_params = []
-            
+
     return fit_params
 
 
@@ -213,12 +213,11 @@ def attractors_setup(ps, dicti, forces_composite):
     '''prepare attractors system and data'''
     local_func, use_attractors, local_params = dicti
     if use_attractors:
-        attractors, force, att_clamp, att_decay_power = local_params
+        attractors, att_force, att_clamp, att_decay_power = local_params
         np_attrac = np.array(attractors)
-        np_attrac_f = np.array(force)
+        np_attrac_f = np.array(att_force)
         np_attrac_clamp = np.array(att_clamp)
         np_attrac_decay_pow = np.array(att_decay_power)
-        # use_att_clamp = np_attrac_clamp > 0
         params = [np_attrac, np_attrac_f, np_attrac_clamp, np_attrac_decay_pow]
 
         forces_composite[0].append(local_func)
@@ -387,6 +386,7 @@ def drag_force_apply(params):
     vel_mag = np.linalg.norm(ps.vel, axis=1)
     vel_mag_zero = vel_mag == 0
     vel_mag[vel_mag_zero] = 1
+    # squaring the speed is more accurate but harder to control
     # vel_mag2 = vel_mag * vel_mag
     vel_mag2 = vel_mag
     vel_norm = ps.vel/vel_mag[:, np.newaxis]
@@ -473,7 +473,6 @@ def b_box_coll_filter(np_pol_v, verts, rad):
     keep3 = np.any(keep*keep2, axis=0)
     keep = np.any(keep*keep2, axis=1)
     verts_m = np.all(keep3, axis=1)
-    # print(keep2.shape, keep3.shape, verts_m.shape,verts_x.shape)
     pols_m = np.all(keep, axis=1)
 
     return pols_m, verts_m
@@ -588,23 +587,23 @@ def world_forces_setup(ps, dicti, forces_composite):
         forces_composite[0].append(func)
         forces_composite[1].append(ps)
 
-        
+
 def world_forces_apply(ps):
     '''apply constant forces'''
     ps.r += ps.params['gravity'] + ps.params['wind']
 
-    
+
 def world_forces_apply_var(ps):
     '''apply constant forces'''
 
     ps.r += ps.params['gravity']  * ps.mass[:, np.newaxis] + ps.params['wind']
 
-        
+
 def pins_setup(ps, dicti, forces_composite):
     '''prepare pins data'''
 
     ps.pins_init(dicti, forces_composite)
-         
+
 
 def pins_apply(ps):
     '''apply pin mask'''
@@ -621,7 +620,7 @@ def apply_forces_setup(ps, dicti, forces_composite):
 def apply_all_forces(ps):
     '''applying forces and reseting resultant'''
     ps.apply_forces()
-    
+
 
 def limit_speed(np_vel, max_vel):
     ''''constrain speed magniture'''
@@ -660,10 +659,11 @@ class PulgaSystem():
         self.density = np.array(density)
         if len(density) > 1:
             self.density = numpy_fit_long_repeat([self.density], self.v_len)[0]
+        p["Pins Reactions"] = []
 
     def hard_update(self, cache, size_change, pins_gates):
         '''replace verts, rads and vel (in NumPy)'''
-        verts, rads, vel = cache
+        verts, rads, vel, react = cache
         if len(verts) == self.v_len:
             if pins_gates[0] and pins_gates[1]:
                 unpinned = self.params['unpinned']
@@ -676,7 +676,7 @@ class PulgaSystem():
 
     def hard_update_list(self, cache, size_change, pins_gates):
         '''replace verts, rads and velocity'''
-        verts, rads, vel = cache
+        verts, rads, vel, react = cache
         if type(verts) == list:
             if len(verts) == self.v_len:
                 if pins_gates[0] and pins_gates[1]:
@@ -705,12 +705,12 @@ class PulgaSystem():
         local_func, local_gates, local_params = dicti
         pins, pins_goal_pos = local_params
         use_pins, use_pins_goal = local_gates
-        
+
         if not use_pins:
-            return 
-            
+            return
+
         self.params['Pins'] = np.array(pins)
-                   
+
         if self.params['Pins'].dtype == np.int32:
             if len(self.params['Pins']) == len(self.verts):
                 self.params['Pins'] = self.params['Pins'] == 1
@@ -718,18 +718,19 @@ class PulgaSystem():
             else:
                 self.params['unpinned'] = np.ones(len(self.verts), dtype=np.bool)
                 self.params['unpinned'][self.params['Pins']] = False
-      
+
         self.vel[self.params['Pins'], :] = 0
-        
+
         if use_pins_goal:
             self.verts[self.params['Pins'], :] = np.array(pins_goal_pos)
         forces_composite[0].append(local_func)
-        forces_composite[1].append(self)       
-        return 
-            
-            
+        forces_composite[1].append(self)
+        return
+
+
     def apply_pins(self):
         '''cancel forces on pins'''
+        self.params["Pins Reactions"] = -self.r[self.params["Pins"]]
         self.r[self.params["Pins"], :] = 0
 
 
@@ -770,12 +771,12 @@ PARAMS_GROUPS = {
     "self_react": ("self_collision",  "self_attract", "attract_decay", "grow", "min_rad", "max_rad"),
     "inflate": ("Pols", "inflate"),
     "drag": ("drag_force"),
-    "attractors": ("Attractors", "force", "att_clamp", "att_decay_power"),
+    "attractors": ("Attractors", "att_force", "att_clamp", "att_decay_power"),
     "random": ("random_seed", "random_force", "random_variation"),
     "world_f": ("Gravity", "Wind"),
     "b_box": ("Bounding Box"),
     "Obstacles": ("Obstacles", "Obstacles_pols", "obstacles_bounce"),
-    
+
 }
 def fill_params_dict(p_dict, parameters, par):
     '''redistribute parameters'''
@@ -784,7 +785,7 @@ def fill_params_dict(p_dict, parameters, par):
             p_dict[x] = [par[p] for p in PARAMS_GROUPS[x] ]
         else:
             p_dict[x] = par[PARAMS_GROUPS[x]]
-        
+
 
     p_dict["apply_f"] = True
 
@@ -813,12 +814,11 @@ def pulga_system_init(params, parameters, gates, out_lists, cache):
 
     if dictionaries[1]["accumulate"]:
         if len(cache) > 0:
-            # ps.hard_update(cache)
             ps.hard_update_list(cache, gates["self_react"][2], gates["Pins"])
 
     iterate(iterations_max, force_map, force_parameters, out_params)
 
-    return ps.verts, ps.rads, ps.vel
+    return ps.verts, ps.rads, ps.vel, ps.params["Pins Reactions"]
 
 
 def iterate(iterations_max, force_map, force_parameters, out_params):
@@ -844,15 +844,16 @@ def prepare_output_data(ps, gate):
     use_numpy_out = gate
 
     if use_numpy_out:
-        return [ps.verts, ps.rads, ps.vel]
+        return [ps.verts, ps.rads, ps.vel, ps.params["Pins Reactions"]]
     else:
-        return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist()]
+        return [ps.verts.tolist(), ps.rads.tolist(), ps.vel.tolist(), ps.params["Pins Reactions"].tolist()]
 
 
 def record_data(data_out, out_lists):
     '''save data to main list'''
-    verts_out, rads_out, velocity_out = out_lists
-    new_verts, new_rad, new_vel = data_out
+    verts_out, rads_out, velocity_out, reactions_out = out_lists
+    new_verts, new_rad, new_vel, new_react = data_out
     verts_out.append(new_verts)
     rads_out.append(new_rad)
     velocity_out.append(new_vel)
+    reactions_out.append(new_react)

@@ -16,38 +16,35 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-
-
+import ast
+from numpy import array
 import bpy
 from bpy.props import IntProperty, StringProperty, BoolProperty, FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id, match_long_repeat
 from sverchok.utils.pulga_physics_core import pulga_system_init
-from numpy import array
-import time
-from copy import deepcopy
-import ast
+
 FILE_NAME = 'pulga_Memory '
 
 
-def check_past(n_id):
+def check_past_file(location):
     '''read text-block and parse values'''
-    name = FILE_NAME + n_id + ".txt"
+    name = FILE_NAME + location + ".txt"
     text = bpy.data.texts.get(name) or bpy.data.texts.new(name)
     tx = text.as_string()
-    if len(tx)>1:
+    if len(tx) > 1:
         return ast.literal_eval(text.as_string())
     else:
         return []
-        
-        
-def fill_past(p, n_id):
+
+
+def fill_past_file(p, location):
     '''write values to text-block'''
-    name = FILE_NAME + n_id + ".txt"
+    name = FILE_NAME + location + ".txt"
     text = bpy.data.texts.get(name) or bpy.data.texts.new(name)
     text.clear()
     text.write(''.join(str(p)))
-    
+
 class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Springs, Cloth
@@ -56,7 +53,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPulgaPhysicsNode'
     bl_label = 'Pulga Physics'
     bl_icon = 'MOD_PHYSICS'
-    
+
 
     iterations = IntProperty(
         name='Iterations', description='Number of Iterations',
@@ -73,7 +70,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
     rads_in = FloatProperty(
         name='Radius', description='Used to calculate mass, surface and collisions',
         default=1.0, update=updateNode)
-        
+
     self_collision = FloatProperty(
         name='Self Collision', description='Collision forces between vertices',
         default=0.0, precision=4, step=1e-2, update=updateNode)
@@ -92,23 +89,23 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
     max_rad = FloatProperty(
         name='Max Radius', description='Do not grow over this value',
         default=1.0, precision=3, update=updateNode)
-    
-    inflate  = FloatProperty(
+
+    inflate = FloatProperty(
         name='Inflate', description='push geometry along the normals proportional to polygon area',
         default=1.0, precision=3, update=updateNode)
-    
+
     initial_vel = FloatVectorProperty(
         name='Initial Velocity', description='Initial Velocity',
         size=3, default=(0., 0., 0.),
         precision=3, update=updateNode)
-        
+
     max_vel = FloatProperty(
         name='Max Velocity', description='Limit maximun speed. 0 = no limit',
         default=0.01, precision=3, update=updateNode)
     drag_force = FloatProperty(
         name='Drag Force', description='Movement resistance from environment',
         default=0.0, precision=3, update=updateNode)
-    force = FloatProperty(
+    att_force = FloatProperty(
         name='Attractors Force', description='Attractors Force magnitude',
         default=0.0, precision=3, update=updateNode)
     att_clamp = FloatProperty(
@@ -140,108 +137,100 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         name='Wind', description='wind or other constant forces that are mass dependent',
         size=3, default=(0., 0., 0.),
         precision=4, update=updateNode)
-  
-    obstacles_bounce =  FloatProperty(
+
+    obstacles_bounce = FloatProperty(
         name='Obstacles Bounce', description='Obstacles Bounce',
-        default=0.1, update=updateNode)  
+        default=0.1, update=updateNode)
 
     def handle_accumulative(self, context):
         '''start cache'''
-        n_id = node_id(self)
-        data = self.node_dict.get(n_id)
+
+        data = self.node_cache.get(0)
         if not self.accumulative:
-            self.accumulative_loaded = False
-            
             for i in range(len(data)):
-                self.accumulativity_set_data([], i) 
+                self.accumulativity_set_data([], i)
             self.accumulative_parse = False
-            
+
         if not data:
-            self.node_dict[n_id] = {}
-            data = self.node_dict.get(n_id)
+            self.node_cache[0] = {}
         updateNode(self, context)
 
     def memory_to_file(self, context):
         '''bump memory to text-block'''
-        if self.accumulative_pause or self.accumulative_parse:
-            n_id = node_id(self)
-            data = self.node_dict.get(n_id)
+        if self.accumulative_parse:
+            location = self.getNodeTree().name + "_"+ self.name
+            data = self.node_cache.get(0)
             out = []
             for i in range(len(data)):
-                out.append([data[i][0].tolist(), data[i][1].tolist(), data[i][2].tolist()])
-            fill_past(out, n_id)
-            
+                out.append([data[i][0].tolist(), data[i][1].tolist(), data[i][2].tolist(), data[i][3].tolist()])
+            check_past_file(out, location)
+
     def memory_to_lists(self):
         '''bump memory to output'''
         verts = []
         rads = []
         vel = []
+        react = []
         np = self.output_numpy
-        n_id = node_id(self)
-        data = self.node_dict.get(n_id)
+        data = self.node_cache.get(0)
         if type(data) == dict:
             for i in range(len(data)):
                 verts.append(data[i][0] if np else data[i][0].tolist())
                 rads.append(data[i][1] if np else data[i][1].tolist())
                 vel.append(data[i][2] if np else data[i][2].tolist())
+                react.append(data[i][3] if np else data[i][3].tolist())
         else:
-            data = check_past(n_id) 
-            # if len(data) > 0:
-                # data, past, from_file = self.get_global_cache()
-                # data = past
+            location = self.getNodeTree().name + "_"+ self.name
+            data = check_past_file(location)
             for i in range(len(data)):
                 verts.append(array(data[i][0]) if np else data[i][0])
                 rads.append(array(data[i][1]) if np else data[i][1])
-                vel.append(array(data[i][2]) if np else data[i][2])    
-        
-        return verts, rads, vel
+                vel.append(array(data[i][2]) if np else data[i][2])
+                react.append(array(data[i][3]) if np else data[i][3])
 
-    n_id = StringProperty()
-    node_dict = {}   
-    
-    accumulative = BoolProperty(name="Accumulative",
+        return verts, rads, vel, react
+
+    def reset_memory(self, context):
+        if self.accumulative_reset:
+            if not self.accumulative_parse:
+                self.node_cache[0] = {}
+            self.accumulative_reset = False
+            updateNode(self, context)
+
+    node_cache = {}
+
+    accumulative = BoolProperty(
+        name="Accumulative",
         description="Accumulate changes every NodeTree update",
         default=False,
         update=handle_accumulative)
-    accumulative_loaded = BoolProperty(name="accumulative is ready",
-        description="there is a cache",
-        default=False
-        )    
-    accumulative_pause = BoolProperty(name="Freeze",
-        description="Freeze accumulative changes on last update",
-        default=False,
-        update=memory_to_file
-        )
-    accumulative_reset = BoolProperty(name="Reset",
+
+    accumulative_reset = BoolProperty(
+        name="Reset",
         description="Restart accumulative memory",
         default=False,
-        update=updateNode)
-    accumulative_save = BoolProperty(name="Save",
-        description="Save accumulative memory",
+        update=reset_memory)
+
+    accumulative_parse = BoolProperty(
+        name="Pause",
+        description="Pause processing",
         default=False,
         update=memory_to_file
         )
-    accumulative_parse = BoolProperty(name="Pause",
-        description="Save to file accumulative memory",
-        default=False,
-        update=memory_to_file
-        )
-        
+
     def accumulativity_get_data(self):
         '''get data form previous update'''
-        n_id = node_id(self)
-        data = self.node_dict.get(n_id)
+        data = self.node_cache.get(0)
         return data
-    
+
     def accumulativity_set_data(self, cache, cache_id):
         '''store data form this update'''
-        n_id = node_id(self)
-        data = self.node_dict.get(n_id)
+        data = self.node_cache.get(0)
         data[cache_id] = cache
-        
+
         return data
-    
-         
+
+
     prop_dict = {
         "Initial_Pos"     : (0, ''          , 'v', 0),
         "Iterations"      : (1, 'iterations', 's', 0),
@@ -263,7 +252,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         "max_vel"         : (18, 'max_vel'         , 's', 0),
         "drag_force"      : (19, 'drag_force'      , 's', 6),
         "Attractors"      : (20, ''                , 'v', 8),
-        "force"           : (21, 'force'           , 's', 8),
+        "att_force"           : (21, 'att_force'           , 's', 8),
         "att_clamp"       : (22, 'att_clamp'       , 's', 8),
         "att_decay_power" : (23, 'att_decay_power' , 's', 8),
         "random_seed"     : (24, 'random_seed'     , 's', 9),
@@ -279,11 +268,11 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
 
     }
     sorted_props = sorted(prop_dict.items(), key=lambda kv: kv[1])
-    
+
     prop_ui_groups = [[] for i in range(13)]
     for input_prop in sorted_props:
-            prop_ui_groups[input_prop[1][3]].append(input_prop[0])
-               
+        prop_ui_groups[input_prop[1][3]].append(input_prop[0])
+
     def update_sockets(self, context):
         ''' show and hide gated inputs'''
         prop_triggers = [
@@ -302,7 +291,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         ]
         si = self.inputs
         so = self.outputs
-        
+
         for i in range(len(prop_triggers)):
             if prop_triggers[i]:
                 if si[self.prop_ui_groups[i+1][0]].hide_safe:
@@ -310,13 +299,18 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
                         si[p].hide_safe = False
             else:
                 for p in self.prop_ui_groups[i+1]:
-                    si[p].hide_safe = True            
+                    si[p].hide_safe = True
         if self.fit_M:
             if so["Rads"].hide_safe:
                 so["Rads"].hide_safe = False
         else:
             so["Rads"].hide_safe = True
-                  
+        if self.pins_M:
+            if so["Pins Reactions"].hide_safe:
+                so["Pins Reactions"].hide_safe = False
+        else:
+            so["Pins Reactions"].hide_safe = True
+
         updateNode(self, context)
 
     self_react_M = BoolProperty(name="Collision",
@@ -372,23 +366,24 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         description="Output NumPy arrays ",
         default=False,
         update=updateNode)
-   
+
     def sv_init(self, context):
-    
+
         '''create sockets'''
         self.width = 200
         si = self.inputs.new
         so = self.outputs.new
         vs, ss = 'VerticesSocket', 'StringsSocket'
-        
+
         for input_prop in self.sorted_props:
             input_type = vs if input_prop[1][2] == 'v' else ss
             si(input_type, input_prop[0]).prop_name = input_prop[1][1]
-        
-        
+
+
         so(vs, "Vertices")
-        so(ss, "Rads") 
+        so(ss, "Rads")
         so(vs, 'Velocity')
+        so(vs, 'Pins Reactions')
 
         self.update_sockets(context)
 
@@ -405,12 +400,12 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         r.prop(self, "pins_M", toggle=True)
         r.prop(self, "inflate_M", toggle=True)
 
-        
+
         r2 = c1.row(align=True)
         r2.prop(self, "drag_M", toggle=True)
         r2.prop(self, "attract_M", toggle=True)
         r2.prop(self, "random_M", toggle=True)
-        
+
         r3 = c1.row(align=True)
         r3.prop(self, "world_F_M", toggle=True)
         r3.prop(self, "obstacles_M", toggle=True)
@@ -418,7 +413,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
 
         r4 = layout.column(align=True)
         r4.prop(self, "accumulative", toggle=True)
-        
+
         if self.accumulative:
             cr = r4.row(align=True)
             # cr.prop(self, "accumulative_pause", toggle=True)
@@ -432,7 +427,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         '''draw buttons on the N-panel'''
         self.draw_buttons(context, layout)
         layout.prop(self, "output_numpy", toggle=False)
-        
+
 
     def get_data(self):
         '''get all data from sockets'''
@@ -440,11 +435,11 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         parameters = []
         for socket in si:
             if len(socket.prop_name)>0:
-                
+
                 parameters.append(socket.sv_get())
             else:
                 parameters.append(socket.sv_get(default=[[]]))
-            
+
 
         return match_long_repeat(parameters)
 
@@ -458,31 +453,25 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         gates_dict["Pins"] = [si["Pins"].is_linked, si["Pins Goal Position"].is_linked]
         gates_dict["drag"] = [self.drag_M, self.fit_M]
         gates_dict["inflate"] = si["Pols"].is_linked
-        gates_dict["random"] = self.random_M 
+        gates_dict["random"] = self.random_M
         gates_dict["attractors"] = si["Attractors"].is_linked
         gates_dict["world_f"] = [self.world_F_M, self.fit_M]
         gates_dict["Obstacles"] = si["Obstacles"].is_linked and si["Obstacles_pols"].is_linked
         gates_dict["b_box"] = si["Bounding Box"].is_linked
         gates_dict["output"] = self.output_numpy
         gates_dict["apply_f"] = True
-        
+
         return gates_dict
 
     def get_local_cache(self, past, data, from_file, temp_id):
         '''parse individual cached geometry if there is any'''
-        cache = []  
+        cache = []
         if self.accumulative:
             if from_file and len(past) > 0:
                 cache = past[temp_id]
             if not from_file and len(data) > 0:
                 cache = data.get(temp_id, [])
-                if self.accumulative_pause:
-                    cache2 = deepcopy(cache)
-                    self.accumulativity_set_data(cache2, temp_id)
-            if self.accumulative_reset:
-                cache = []
-                self.accumulative_reset = False
-                
+
         return cache
 
     def get_global_cache(self):
@@ -491,14 +480,14 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         past = []
         data = []
         if self.accumulative:
-            data = self.accumulativity_get_data()
+            #data = self.accumulativity_get_data()
+            data = self.node_cache.get(0)
             if type(data) != dict:
                 from_file = True
-                n_id = node_id(self)
-                self.node_dict[n_id] = {}
-                data = self.node_dict.get(n_id)
-                past = check_past(n_id)
-                
+                self.node_cache[0] = {}
+                location = self.getNodeTree().name + "_"+ self.name
+                past = check_past_file(location)
+
         return data, past, from_file
 
     def process(self):
@@ -508,42 +497,44 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         so = self.outputs
         if not any(socket.is_linked for socket in so):
             return
-        
+
         if not si['Initial_Pos'].is_linked:
             return
         verts_out = []
         rads_out = []
         velocity_out = []
-        
+        reactions_out = []
+
         if self.accumulative and self.accumulative_parse:
-            verts_out, rads_out, velocity_out = self.memory_to_lists() 
-        else: 
-            out_lists = [verts_out, rads_out, velocity_out]
-            params = self.get_data() 
+            verts_out, rads_out, velocity_out, reactions_out = self.memory_to_lists()
+        else:
+            out_lists = [verts_out, rads_out, velocity_out, reactions_out]
+            params = self.get_data()
             gates_dict = self.fill_gates_dict()
             data, past, from_file = self.get_global_cache()
-            temp_id = 0       
+            temp_id = 0
             for par in zip(*params):
                 cache = self.get_local_cache(past, data, from_file, temp_id)
                 par_dict = {}
                 for idx, p in enumerate(self.sorted_props):
-                    par_dict[p[0]] = par[idx] 
-                np_verts, np_rad, np_vel = pulga_system_init(par_dict, par, gates_dict, out_lists, cache)
+                    par_dict[p[0]] = par[idx]
+                cache_new = pulga_system_init(par_dict, par, gates_dict, out_lists, cache)
 
-                if self.accumulative and not self.accumulative_pause:
-                    cache = [np_verts, np_rad, np_vel]
-                    self.accumulativity_set_data(cache, temp_id)
- 
+                if self.accumulative:
+                    self.accumulativity_set_data(cache_new, temp_id)
+
                 temp_id += 1
 
         if so['Vertices'].is_linked:
-            so['Vertices'].sv_set(verts_out)        
+            so['Vertices'].sv_set(verts_out)
         if so['Rads'].is_linked:
             so['Rads'].sv_set(rads_out)
         if so['Velocity'].is_linked:
             so['Velocity'].sv_set(velocity_out)
+        if so['Pins Reactions'].is_linked:
+            so['Pins Reactions'].sv_set(reactions_out)
 
-            
+
 
 
 def register():
