@@ -44,4 +44,10 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
-
+Showing the different edges groups:
+.. image:: https://user-images.githubusercontent.com/10011941/56385208-c975eb00-621e-11e9-9b6f-6578ac91b704.png
+  :alt: Transform_Select_edges groups_node.png
+  
+You can input multiple matrices and they will be paired with the verts:  
+.. image:: https://user-images.githubusercontent.com/10011941/56385210-cda20880-621e-11e9-855f-dd387794873c.png
+  :alt: Transform_Select_procedural_node.png
