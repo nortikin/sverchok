@@ -4,8 +4,8 @@ Transform Select
 Functionality
 -------------
 
-This node splits the vertex data in two groups, applies one different matrix to each group and joins it again
-This node is useful mainly when other node generates ngons, especially not-convex ones.
+This node splits the vertex data in two groups, applies one different matrix to each group and joins it again.
+It would work as a standard transformation of the selected geometry when working on "Edit Mode".
 
 Inputs
 ------
@@ -34,11 +34,11 @@ This node has the following outputs:
 
 - **Vertices**. The whole group of vertices
 - **PolyEdge**. A copy of the PolyEdge data supplyed
-- **PolyEdge O**. PolyEdge data with vertices which are true and false (index refering to Vertices output)
+- **PolyEdge O**. PolyEdge data with vertices which are true and false (index referred to "Vertices" output)
 - **Vertices T**. Only the vertices marked as true
-- **PolyEdge T**. PolyEdge data with vertices which are true (index refering to Vertices T output)
+- **PolyEdge T**. PolyEdge data with vertices which are true (index referred to "Vertices T" output)
 - **Vertices F**. Only the vertices marked as false
-- **PolyEdge F**. PolyEdge data with vertices which are false (index refering to Vertices F output)
+- **PolyEdge F**. PolyEdge data with vertices which are false (index referred to "Vertices F" output)
 
 
 Examples of usage
