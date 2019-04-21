@@ -1,0 +1,152 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Circle": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        57.291385650634766,
+        429.27984619140625
+      ],
+      "params": {
+        "mode_": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -483.3358459472656,
+        243.8773956298828
+      ],
+      "params": {
+        "normalize": 1,
+        "numx": 10,
+        "numy": 10,
+        "sizex": 10.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Pulga Physics": {
+      "bl_idname": "SvPulgaPhysicsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -202.40333557128906,
+        275.76348876953125
+      ],
+      "params": {
+        "attract_M": 0,
+        "attract_decay": 2.0,
+        "density": 0.429999977350235,
+        "drag_M": 1,
+        "drag_force": 0.10000000149011612,
+        "fit_M": 1,
+        "grow": 0.009999999776482582,
+        "iterations": 139,
+        "max_rad": 2.559999942779541,
+        "max_vel": 0.009999999776482582,
+        "self_attract": 0.0024999999441206455,
+        "self_attract_M": 1,
+        "self_collision": 0.10000000149011612,
+        "self_react_M": 1
+      },
+      "width": 200.0
+    },
+    "Random Num Gen": {
+      "bl_idname": "SvRndNumGen",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -485.1219482421875,
+        -41.92808532714844
+      ],
+      "params": {
+        "high_f": 1.0,
+        "low_f": 0.10000000149011612,
+        "size": 400,
+        "type_selected_mode": "Float"
+      },
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        271.23095703125,
+        406.8813781738281
+      ],
+      "params": {
+        "activate": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Plane MK2",
+      0,
+      "Pulga Physics",
+      0
+    ],
+    [
+      "Random Num Gen",
+      0,
+      "Pulga Physics",
+      7
+    ],
+    [
+      "Pulga Physics",
+      1,
+      "Circle",
+      0
+    ],
+    [
+      "Circle",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Circle",
+      1,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "Pulga Physics",
+      0,
+      "Viewer Draw",
+      2
+    ]
+  ]
+}

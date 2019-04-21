@@ -356,3 +356,4 @@
     SvQuaternionOutNode
     SvQuaternionInNode
     SvQuaternionMathNode
+    SvPulgaPhysicsNode 
