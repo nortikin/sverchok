@@ -705,8 +705,9 @@ class PulgaSystem():
         local_func, local_gates, local_params = dicti
         pins, pins_goal_pos = local_params
         use_pins, use_pins_goal = local_gates
-
+        
         if not use_pins:
+            self.params["Pins Reactions"] = np.array([[]])
             return
 
         self.params['Pins'] = np.array(pins)
