@@ -342,3 +342,4 @@
     SvOffsetLineNode
     SvContourNode
     SvPlanarEdgenetToPolygons
+    SvPulgaPhysicsNode
