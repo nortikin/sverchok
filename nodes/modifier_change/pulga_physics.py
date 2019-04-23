@@ -163,7 +163,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
             out = []
             for i in range(len(data)):
                 out.append([data[i][0].tolist(), data[i][1].tolist(), data[i][2].tolist(), data[i][3].tolist()])
-            check_past_file(out, location)
+            fill_past_file(out, location)
 
     def memory_to_lists(self):
         '''bump memory to output'''
@@ -196,6 +196,12 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
                 self.node_cache[0] = {}
             self.accumulative_reset = False
             updateNode(self, context)
+        
+    def update_memory(self, context):
+        if self.accumulative_update:
+            self.accumulative_update = False
+            if not self.accumulative_parse:
+                updateNode(self, context)
 
     node_cache = {}
 
@@ -210,6 +216,12 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         description="Restart accumulative memory",
         default=False,
         update=reset_memory)
+        
+    accumulative_update = BoolProperty(
+        name="Update",
+        description="Iterate again",
+        default=False,
+        update=update_memory)
 
     accumulative_parse = BoolProperty(
         name="Pause",
@@ -416,11 +428,8 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.accumulative:
             cr = r4.row(align=True)
-            # cr.prop(self, "accumulative_pause", toggle=True)
             cr.prop(self, "accumulative_reset", toggle=True)
-            upd = cr.operator("node.sverchok_update_current", text="Update")
-            ng_name = context.space_data.node_tree.name
-            upd.node_group = ng_name
+            cr.prop(self,"accumulative_update",  toggle=True)
             cr.prop(self, "accumulative_parse", toggle=True)
 
     def draw_buttons_ext(self, context, layout):
