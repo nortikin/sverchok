@@ -28,5 +28,6 @@ Modifier Change
    randomize
    recalc_normals
    remove_doubles
+   transform_select
    triangulate
    vertices_mask
