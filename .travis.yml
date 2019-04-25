@@ -16,8 +16,8 @@ install:
         if [ -d blender ]
         then rm -rf blender
         fi
-        mv blender-2.79-linux-glibc219-x86_64 blender
-        rm blender-2.79-linux-glibc219-x86_64.tar.bz2
+        mv blender-2.79b-linux-glibc219-x86_64 blender
+        rm blender-2.79b-linux-glibc219-x86_64.tar.bz2
         echo "Current directory after downloading blender: $(pwd)"
         cd ..
     fi
