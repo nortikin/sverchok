@@ -11,7 +11,7 @@ install:
     then 
         mkdir -p installation
         cd installation
-        wget https://www.blend4web.com/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2
+        wget https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2
         tar xf blender-2.79-linux-glibc219-x86_64.tar.bz2
         if [ -d blender ]
         then rm -rf blender
