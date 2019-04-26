@@ -43,6 +43,7 @@
     SvTorusKnotNode
     SvRingNode
     SvEllipseNode
+    SvSuperEllipsoidNode
 
 ## Analyzers
     SvBBoxNode
