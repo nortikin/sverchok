@@ -63,7 +63,7 @@ def SvGetSocketInfo(socket):
         if s_id in socket_data_cache[ng]:
             data = socket_data_cache[ng][s_id]
             if data:
-                return "("+str(len(data)) + " obj)"
+                return str(len(data))
     return ''
 
 
