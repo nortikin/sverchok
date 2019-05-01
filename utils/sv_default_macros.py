@@ -73,6 +73,22 @@ macros = {
         'display_name': "selected nodes to List Join",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'join13']},
+    "> sw1": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch1']},
+    "> sw12": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch12']},
+    "> sw13": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch13']},
+    "> sw123": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch123']},
     "> gp +": {
         'display_name': "grease pencil setup",
         'file': 'macro',
@@ -258,6 +274,47 @@ class DefaultMacros():
                 # link the output math node to the ViewerDraw node
                 links.new(math_node.outputs[0], viewer_node.inputs[0])
 
+        elif "switch" in term:
+            selected_nodes = context.selected_nodes
+            # get bounding box of all selected nodes
+            minx = +1e10
+            maxx = -1e10
+            miny = +1e10
+            maxy = -1e10
+            for node in selected_nodes:
+                minx = min(minx, node.location.x)
+                maxx = max(maxx, node.location.x + node.width)
+                miny = min(miny, node.location.y - node.height)
+                maxy = max(maxy, node.location.y)
+
+            switch_node = nodes.new('SvInputSwitchNode')
+            switch_node.location = maxx + 100, maxy
+
+            # find out which sockets to connect
+            socket_numbers = term.replace("switch", "")
+            if len(socket_numbers) == 1: # one socket
+                socket_indices = [0]
+            else: # multiple sockets
+                socket_indices = [int(n) - 1 for n in socket_numbers]
+
+            switch_node.set_size = len(socket_indices)
+
+            sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.y, reverse=True)
+
+            # link the nodes to InputSwitch node
+            for i, node in enumerate(sorted_nodes):
+                label = switch_node.label_of_set(i)
+                for j, n in enumerate(socket_indices):
+                    links.new(node.outputs[n], switch_node.inputs[label + " " + str(j+1)])
+
+            if all(node.outputs[0].bl_idname == "VerticesSocket" for node in sorted_nodes):
+                viewer_node = nodes.new("SvVDExperimental")
+                viewer_node.location = switch_node.location.x + switch_node.width + 100, maxy
+
+                # link the input switch node to the ViewerDraw node
+                links.new(switch_node.outputs[0], viewer_node.inputs[0])
+                if len(socket_indices) > 1:
+                    links.new(switch_node.outputs[1], viewer_node.inputs[1])
 
         elif term == 'gp +':
             needed_nodes = [
