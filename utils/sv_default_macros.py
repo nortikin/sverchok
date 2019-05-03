@@ -312,9 +312,8 @@ class DefaultMacros():
                 viewer_node.location = switch_node.location.x + switch_node.width + 100, maxy
 
                 # link the input switch node to the ViewerDraw node
-                links.new(switch_node.outputs[0], viewer_node.inputs[0])
-                if len(socket_indices) > 1:
-                    links.new(switch_node.outputs[1], viewer_node.inputs[1])
+                for n, i in enumerate(socket_indices):
+                    links.new(switch_node.outputs[n], viewer_node.inputs[i])
 
         elif term == 'gp +':
             needed_nodes = [
