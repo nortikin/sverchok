@@ -69,6 +69,7 @@
     SvOBJInsolationNode
     EvaluateImageNode
     SvDeformationNode
+    SvLinkedVertsNode
 
 ## Transforms
     SvRotationNode
