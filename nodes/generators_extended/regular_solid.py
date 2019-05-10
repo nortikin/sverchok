@@ -29,7 +29,7 @@ from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
 
 class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Platonic, Archimedean or Catalan solidss.
+    Triggers: Platonic, Archimedean or Catalan solids.
     Tooltip: Add one of the Platonic, Archimedean or Catalan solids.
     """
     bl_idname = 'SvRegularSolid'
@@ -236,7 +236,7 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
             p = match_long_repeat(p)
             for p2 in zip(*p):
                 size, vTrunc, eTrunc = p2
-                print(size)
+
                 verts, faces = createSolid(self.source,
                                        vTrunc,
                                        eTrunc,
