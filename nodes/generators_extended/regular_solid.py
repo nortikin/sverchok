@@ -217,7 +217,7 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
         size = self.inputs["size"].sv_get()
         vTrunc = self.inputs["vTrunc"].sv_get()
         eTrunc = self.inputs["eTrunc"].sv_get()
-        params= [size, vTrunc, eTrunc]
+        params = [size, vTrunc, eTrunc]
         return match_long_repeat(params)
 
 
