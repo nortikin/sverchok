@@ -434,7 +434,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
-        layout.prop(self, 'vector_light', text='Light Orientation')
+        layout.prop(self, 'vector_light', text='')
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
 
