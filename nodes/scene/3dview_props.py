@@ -36,20 +36,21 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
             for area in window.screen.areas:
                 if area.type == 'VIEW_3D':
                     idx += 1
-                    n_panel = area.spaces[0]
+                    n_panel = area.spaces[0].overlay
+                    # context.space_data.overlay.show_overlays = False
 
                     row = layout.row(align=True)
                     row.label(text='3dview {idx}:'.format(idx=idx))
 
                     col = row.column()
-                    col.prop(n_panel, 'show_only_render', text='render')
+                    col.prop(n_panel, 'show_overlays', text='render')
 
                     col = row.column()
-                    col.active = not n_panel.show_only_render
+                    col.active = not n_panel.show_overlays
                     col.prop(n_panel, 'show_floor', text='grid')
 
                     row = layout.row(align=True)
-                    row.active = not n_panel.show_only_render
+                    row.active = not n_panel.show_overlays
                     row.prop(n_panel, "show_axis_x", text="X", toggle=True)
                     row.prop(n_panel, "show_axis_y", text="Y", toggle=True)
                     row.prop(n_panel, "show_axis_z", text="Z", toggle=True)
@@ -75,7 +76,7 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
             boxrow.prop(gradients, 'gradient', text='')
 
         row = layout.row(align=True)
-        row.prop(world, 'horizon_color', text='horizon')
+        # row.prop(world, '   color', text='horizon')
 
         row = layout.row(align=True)
         row.prop(prefs.inputs, 'view_rotate_method', text='orbit', expand=True)

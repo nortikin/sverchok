@@ -87,7 +87,7 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         r = layout.row(align=True)
-        r1 = r.split(0.35)        
+        r1 = r.split(factor=0.35)        
         r1.prop(self, 'reverse', text='reverse', toggle=True)
         r2 = r1.split().row()
         r2.prop(self, "selected_mode", expand=True)

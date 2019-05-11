@@ -31,7 +31,7 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         row = layout.row()
-        split = row.split(0.6)
+        split = row.split(factor=0.6)
         split.row().prop(self, "selected_mode", expand=True)
         if self.selected_mode == 'single':
             layout.prop(self, "switch_count")

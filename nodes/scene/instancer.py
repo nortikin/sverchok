@@ -147,7 +147,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             col2.scale_x = 0.3
             col2.operator(cfg, text="reset").obj_name = "__SV_INSTANCE_RESET__"
 
-        layout.label("Object base name", icon='OUTLINER_OB_MESH')
+        layout.label(text="Object base name", icon='OUTLINER_OB_MESH')
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "basemesh_name", text="")

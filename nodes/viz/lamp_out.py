@@ -37,7 +37,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = "SvLampOutNode"
     bl_label = "Lamp"
-    bl_icon = 'NONE' #"OUTLINER_OB_LAMP"
+    bl_icon = 'LIGHT' #"OUTLINER_OB_LAMP"
 
     activate: BoolProperty(
         name="Activate", default=True,
@@ -161,7 +161,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', 'Objects')
 
     def draw_buttons(self, context, layout):
-        view_icon = 'OUTLINER_OB_LAMP' if self.activate else 'ERROR'
+        view_icon = 'LIGHT' if self.activate else 'ERROR'
         layout.prop(self, "activate", text="UPD", toggle=True, icon=view_icon)
         layout.prop(self, 'lamp_name')
         layout.prop(self, 'type')

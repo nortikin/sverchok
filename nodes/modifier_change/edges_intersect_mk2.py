@@ -282,7 +282,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
         r = layout.row(align=True)
-        r1 = r.split(0.32)
+        r1 = r.split(factor=0.32)
         r1.prop(self, 'rm_switch', text='doubles', toggle=True)
         r2 = r1.split()
         r2.enabled = self.rm_switch

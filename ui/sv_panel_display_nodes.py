@@ -372,7 +372,7 @@ class SvDisplayNodesPanel(bpy.types.Panel):
     def draw(self, context):
         layout = self.layout
         displayProps = context.space_data.node_tree.displayNodesProps
-        split = layout.split(percentage=0.7, align=True)
+        split = layout.split(factor=0.7, align=True)
         c1 = split.column(align=True)
         c2 = split.column(align=True)
         c1.prop(displayProps, "category", text="")
