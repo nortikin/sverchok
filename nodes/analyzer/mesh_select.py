@@ -88,8 +88,8 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
         c.use_prop = True
         c.prop = (0.0, 0.0, 0.0)
 
-        self.inputs.new('StringsSocket', 'Percent', 'Percent').prop_name = 'percent'
-        self.inputs.new('StringsSocket', 'Radius', 'Radius').prop_name = 'radius'
+        self.inputs.new('StringsSocket', 'Percent').prop_name = 'percent'
+        self.inputs.new('StringsSocket', 'Radius').prop_name = 'radius'
 
         self.outputs.new('StringsSocket', 'VerticesMask')
         self.outputs.new('StringsSocket', 'EdgesMask')

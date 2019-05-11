@@ -110,7 +110,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('VerticesSocket', 'vert')
         self.outputs.new('StringsSocket', 'edge')
-        self.outputs.new('VerticesSocket', 'centers', 'centers')
+        self.outputs.new('VerticesSocket', 'centers')
 
     def draw_main_ui_elements(self, context, layout):
         col = layout.column(align=True)

@@ -727,8 +727,8 @@ class SvListOldNodes(bpy.types.Operator):
         self.report({'INFO'}, "See logs")
         return {'FINISHED'}
 
-class SvTestingPanel(bpy.types.Panel):
-    bl_idname = "SvTestingPanel"
+class SV_PT_TestingPanel(bpy.types.Panel):
+    bl_idname = "SV_PT_TestingPanel"
     bl_label = "SV Testing"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -751,7 +751,7 @@ class SvTestingPanel(bpy.types.Panel):
         layout.operator("node.sv_testing_list_old_nodes")
         layout.operator("node.sv_testing_dump_node_def")
 
-classes = [SvRunTests, SvDumpNodeDef, SvListOldNodes, SvTestingPanel]
+classes = [SvRunTests, SvDumpNodeDef, SvListOldNodes, SV_PT_TestingPanel]
 
 def register():
     for clazz in classes:

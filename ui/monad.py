@@ -36,8 +36,8 @@ def set_multiple_attrs(cls_ref, **kwargs):
         setattr(cls_ref, arg_name, value)
 
 
-class SvCustomGroupInterface(Panel):
-    bl_idname = "SvCustomGroupInterface"
+class SV_PT_CustomGroupInterface(Panel):
+    bl_idname = "SV_PT_CustomGroupInterface"
     bl_label = "Sv Custom Group Interface"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -130,9 +130,9 @@ class SvCustomGroupInterface(Panel):
 
 def register():
     bpy.types.NODE_HT_header.prepend(sv_back_to_parent)
-    bpy.utils.register_class(SvCustomGroupInterface)
+    bpy.utils.register_class(SV_PT_CustomGroupInterface)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvCustomGroupInterface)
+    bpy.utils.unregister_class(SV_PT_CustomGroupInterface)
     bpy.types.NODE_HT_header.remove(sv_back_to_parent)

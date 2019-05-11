@@ -31,8 +31,8 @@ from sverchok.utils.sv_IO_panel_tools import (
     create_dict_of_tree, import_tree)
 
 
-class SverchokIOLayoutsMenu(bpy.types.Panel):
-    bl_idname = "Sverchok_iolayouts_menu"
+class SV_PT_IOLayoutsMenu(bpy.types.Panel):
+    bl_idname = "SV_PT_IOLayoutsMenu"
     bl_label = "SV import/export"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -113,11 +113,11 @@ class SverchokIOLayoutsMenu(bpy.types.Panel):
 
 
 def register():
-    bpy.utils.register_class(SverchokIOLayoutsMenu)
+    bpy.utils.register_class(SV_PT_IOLayoutsMenu)
 
 
 def unregister():
-    bpy.utils.unregister_class(SverchokIOLayoutsMenu)
+    bpy.utils.unregister_class(SV_PT_IOLayoutsMenu)
 
 
 if __name__ == '__main__':
