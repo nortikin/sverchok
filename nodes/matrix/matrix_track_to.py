@@ -85,7 +85,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
             n2 = sum(ratios[n + 1:])  # size of all remaining columns
             p = n1 / (n1 + n2)  # percentage split of current vs remaning columns
             # print("n = ", n, " n1 = ", n1, " n2 = ", n2, " p = ", p)
-            split = col2.split(percentage=p, align=aligns[n])
+            split = col2.split(factor=p, align=aligns[n])
             col1 = split.column(align=True)
             col2 = split.column(align=True)
             cols.append(col1)

@@ -45,9 +45,9 @@ snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 defaults = [0] * 32
 
 
-class SvScriptNodeLitePyMenu(bpy.types.Menu):
+class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     bl_label = "SNLite templates"
-    bl_idname = "SvScriptNodeLitePyMenu"
+    bl_idname = "SV_MT_ScriptNodeLitePyMenu"
 
     def draw(self, context):
         if context.active_node:
@@ -454,7 +454,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
         col = layout.column()
-        col.menu(SvScriptNodeLitePyMenu.bl_idname)
+        col.menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
 
 
     # ---- IO Json storage is handled in this node locally ----
@@ -520,7 +520,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 classes = [
     SvScriptNodeLiteCustomCallBack,
     SvScriptNodeLiteTextImport,
-    SvScriptNodeLitePyMenu,
+    SV_MT_ScriptNodeLitePyMenu,
     SvScriptNodeLiteCallBack,
     SvScriptNodeLite
 ]

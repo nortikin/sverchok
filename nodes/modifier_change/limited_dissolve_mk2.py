@@ -33,6 +33,7 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
 
     angle: FloatProperty(default=5.0, min=0.0, update=updateNode)
     use_dissolve_boundaries: BoolProperty(update=updateNode)
+    delimit: IntProperty(update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'bmesh_list')

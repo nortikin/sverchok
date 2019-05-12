@@ -206,7 +206,7 @@ class SvSocketCommon:
                     getattr(node, self.quicklink_func_name)(self, context, layout, node)
                 except Exception as e:
                     self.draw_quick_link(context, layout, node)
-                layout.label(text)
+                layout.label(text=text)
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)

@@ -109,7 +109,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
         wm.event_timer_remove(self._timer)
 
 
-class Sv3DPanel(bpy.types.Panel):
+class SV_PT_3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in Sverchok layouts '''
 
     bl_space_type = 'VIEW_3D'
@@ -259,8 +259,8 @@ class Sv3DPanel(bpy.types.Panel):
 
 
 
-class SverchokToolsMenu(bpy.types.Panel):
-    bl_idname = "Sverchok_tools_menu"
+class SV_PT_ToolsMenu(bpy.types.Panel):
+    bl_idname = "SV_PT_ToolsMenu"
     bl_label = "SV " + version_and_sha
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
@@ -420,8 +420,8 @@ class SverchokToolsMenu(bpy.types.Panel):
 
 sv_tools_classes = [
     Sv3DViewObjInUpdater,
-    SverchokToolsMenu,
-    Sv3DPanel,
+    SV_PT_ToolsMenu,
+    SV_PT_3DPanel,
     SvRemoveStaleDrawCallbacks
 ]
 

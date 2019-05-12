@@ -32,11 +32,11 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', 'Mask')
-        self.inputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.inputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')
+        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('StringsSocket', 'Poly Egde')
 
-        self.outputs.new('VerticesSocket', 'Vertices', 'Vertices')
-        self.outputs.new('StringsSocket', 'Poly Egde', 'Poly Egde')
+        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('StringsSocket', 'Poly Egde')
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):

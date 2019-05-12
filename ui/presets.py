@@ -553,8 +553,8 @@ def draw_presets_ops(layout, id_tree=None, presets=None, context=None):
     for preset in presets:
         preset.draw_operator(layout, id_tree)
 
-class SvUserPresetsPanel(bpy.types.Panel):
-    bl_idname = "SvUserPresetsPanel"
+class SV_PT_UserPresetsPanel(bpy.types.Panel):
+    bl_idname = "SV_PT_UserPresetsPanel"
     bl_label = "Presets"
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'TOOLS'
@@ -633,7 +633,7 @@ classes = [
     SvDeletePreset,
     SvPresetToGist,
     SvPresetToFile,
-    SvUserPresetsPanel
+    SV_PT_UserPresetsPanel
 ]
 
 def register():

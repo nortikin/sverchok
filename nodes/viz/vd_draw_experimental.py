@@ -61,12 +61,12 @@ class SvObjBakeMK3(bpy.types.Operator):
     bl_label = "Sverchok mesh baker mk3"
     bl_options = {'REGISTER', 'UNDO'}
 
-    idname = StringProperty(
+    idname: StringProperty(
         name='idname',
         description='name of parent node',
         default='')
 
-    idtree = StringProperty(
+    idtree: StringProperty(
         name='idtree',
         description='name of parent tree',
         default='')
