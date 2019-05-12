@@ -92,7 +92,8 @@ class DistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     bl_idname = 'DistancePointLineNode'
     bl_label = 'Distance Point Line'
-    bl_icon = 'MOD_SIMPLEDEFORM'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DISTANCE'
 
     implentation_modes = [
         ("NumPy", "NumPy", "NumPy", 0),

@@ -1,5 +1,5 @@
-Distance Point LIne
-===========
+Distance Point Line
+===================
 
 Functionality
 -------------
@@ -15,7 +15,7 @@ Inputs / Parameters
 | Param            | Type        | Description                                                          |  
 +==================+=============+======================================================================+
 | **Verts**        | Vertices    | Points to calculate                                                  | 
-+------------------+---------------+-------------+------------------------------------------------------+
++------------------+-------------+----------------------------------------------------------------------+
 | **Verts_Line**   | Vertices    | It will get the first and last vertices's to define the line segment |
 +------------------+-------------+----------------------------------------------------------------------+
 
@@ -37,7 +37,7 @@ Outputs
 
 **In Line**: Returns true if point is aligned with input vertices.
 
-**Closest Point": Returns the closest point in the line
+**Closest Point**: Returns the closest point in the line
 
 **Closest in Segment**": Returns true if the closest point is between the input vertices
 
@@ -45,17 +45,16 @@ Outputs
 Example of usage
 ----------------
 
-.. image:: https://user-images.githubusercontent.com/10011941/51251936-c4449e00-199a-11e9-89a7-557cc7e93731.png
-  :alt: PathLengthDemo1.PNG
+.. image:: https://user-images.githubusercontent.com/10011941/57584308-0067b580-74da-11e9-966e-fe32cae35d29.png
+  :alt: Distance_point_line_procedural.PNG
 
-Measuring a Bender curve with the default vertices, with a higher interpolation and by segments
+It can be used to create perpendicular lines from input points
 
-.. image:: https://user-images.githubusercontent.com/10011941/51251933-c4449e00-199a-11e9-99b8-fa53c8586484.png
-  :alt: PathLengthDemo2.PNG
+.. image:: https://user-images.githubusercontent.com/10011941/57584321-3147ea80-74da-11e9-8da4-18fc028bcfdd.png
+  :alt: Sverchok_Distance_point_line.PNG
 
-Using the node to know the linear distance needed to build a 3 meter radius geodesic dome
+Or to select the points in a distance range 
 
-.. image:: https://user-images.githubusercontent.com/10011941/51251931-c4449e00-199a-11e9-9e75-69ead34fad64.png
-  :alt: PathLengthDemo2.PNG
+.. image:: https://user-images.githubusercontent.com/10011941/57584309-03fb3c80-74da-11e9-9f90-811731330189.png
+  :alt: Blender_distance_point_line.PNG
 
-Using the *Path Length* node to place circles of one meter of diameter along a given curve
