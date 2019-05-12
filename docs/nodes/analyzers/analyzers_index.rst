@@ -8,10 +8,12 @@ Analyzers
    area
    bbox
    distance_pp
+   distance_point_line
    deformation
    edge_angles
    kd_tree
    kd_tree_edges_mk2
+   linked_verts
    mesh_filter
    mesh_select
    select_similar
