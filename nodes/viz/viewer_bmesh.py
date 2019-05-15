@@ -256,46 +256,58 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 
-        if self.merge:
-            obj_index = 0
+        try:
 
-            def keep_yielding():
-                # this will yield all in one go.
-                for idx, Verts in enumerate(mverts):
+            # for animations we need to suppress depsgraph updates emminating from this part of the process/            
+            self.id_data.freeze(hard=True)
+
+
+            if self.merge:
+                obj_index = 0
+
+                def keep_yielding():
+                    # this will yield all in one go.
+                    for idx, Verts in enumerate(mverts):
+                        if not Verts:
+                            continue
+
+                        data = get_edges_faces_matrices(idx)
+                        yield (Verts, data)
+
+                yielder_object = keep_yielding()
+                make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
+
+            else:
+                for obj_index, Verts in enumerate(mverts):
                     if not Verts:
                         continue
 
-                    data = get_edges_faces_matrices(idx)
-                    yield (Verts, data)
+                    data = get_edges_faces_matrices(obj_index)
+                    make_bmesh_geometry(self, obj_index, bpy.context, Verts, *data)
 
-            yielder_object = keep_yielding()
-            make_bmesh_geometry_merged(self, obj_index, bpy.context, yielder_object)
+            last_index = (len(mverts) - 1) if not self.merge else 0
+            self.remove_non_updated_objects(last_index)
 
-        else:
-            for obj_index, Verts in enumerate(mverts):
-                if not Verts:
-                    continue
+            objs = self.get_children()
 
-                data = get_edges_faces_matrices(obj_index)
-                make_bmesh_geometry(self, obj_index, bpy.context, Verts, *data)
+            if self.grouping:
+                self.to_group(objs)
 
-        last_index = (len(mverts) - 1) if not self.merge else 0
-        self.remove_non_updated_objects(last_index)
+            # truthy if self.material is in .materials
+            if bpy.data.materials.get(self.material):
+                self.set_corresponding_materials()
 
-        objs = self.get_children()
+            if self.autosmooth:
+                self.set_autosmooth(objs)
 
-        if self.grouping:
-            self.to_group(objs)
 
-        # truthy if self.material is in .materials
-        if bpy.data.materials.get(self.material):
-            self.set_corresponding_materials()
+            if self.outputs[0].is_linked:
+                self.outputs[0].sv_set(objs)
 
-        if self.autosmooth:
-            self.set_autosmooth(objs)
+        except:
+             ... # self.id_data.unfreeze(hard=True)
 
-        if self.outputs[0].is_linked:
-            self.outputs[0].sv_set(objs)
+        self.id_data.unfreeze(hard=True)
 
 
     def set_autosmooth(self, objs):
