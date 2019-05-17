@@ -103,13 +103,13 @@ def get_closest_point_to_edge(edge, point):
     scalar_mult = project_point.dot(edge_vector)
     if scalar_mult < 0:
         project_point_inside_edge = edge[0]
-        coincidence = True
+        coincidence = 1
     elif project_point.length > edge_vector.length:
         project_point_inside_edge = edge[1]
-        coincidence = True
+        coincidence = 2
     else:
         project_point_inside_edge = project_point + edge[0]
-        coincidence = False
+        coincidence = 0
     return project_point_inside_edge, coincidence
 
 
@@ -181,14 +181,12 @@ def find_closest_index(edges_index, ind):
     :return old_3ind: indexes of closest 3 points exist on old line that correspond to old line - [int1, int2, int3]
     """
     i = bisect(edges_index, ind)
-    # print('edges -', edges_index)
-    # print('i -', i)
     if i == len(edges_index):
-        new_3ind = edges_index[i - 3], edges_index[i - 2], edges_index[i - 1]
-        old_3ind = [i - 3, i - 2, i - 1]
+        new_3ind = edges_index[i - 2], edges_index[i - 1], None
+        old_3ind = [i - 2, i - 1, None]
     elif i - 1 == 0:
-        new_3ind = edges_index[i - 1], edges_index[i], edges_index[i + 1]
-        old_3ind = [i - 1, i, i + 1]
+        new_3ind = None, edges_index[i - 1], edges_index[i]
+        old_3ind = [None, i - 1, i]
     else:
         new_3ind = edges_index[i - 2], edges_index[i - 1], edges_index[i]
         old_3ind = [i - 2, i - 1, i]
@@ -224,16 +222,27 @@ def project_points(new_lines, edges_indexes, kdtrees_from_lines, pr_points):
         coincidence_nest1 = []
         for ind, point in zip(inds, points):
             (new_i1, new_i2, new_i3), (old_i1, old_i2, old_i3) = find_closest_index(edges_ind, ind)
-            clos_p1, coincidence_p1 = get_closest_point_to_edge((line[new_i1], line[new_i2]), point)
-            clos_p2, coincidence_p2 = get_closest_point_to_edge((line[new_i2], line[new_i3]), point)
-            if clos_p1 - point < clos_p2 - point:
-                project_points_nest1.append(clos_p1)
-                old_indexes_nest1.append(old_i1)
-                coincidence_nest1.append(coincidence_p1)
-            else:
+            if new_i1 is None:
+                clos_p2, coincidence_start = get_closest_point_to_edge((line[new_i2], line[new_i3]), point)
                 project_points_nest1.append(clos_p2)
                 old_indexes_nest1.append(old_i2)
-                coincidence_nest1.append(coincidence_p2)
+                coincidence_nest1.append(coincidence_start)
+            elif new_i3 is None:
+                clos_p1, coincidence_end = get_closest_point_to_edge((line[new_i1], line[new_i2]), point)
+                project_points_nest1.append(clos_p1)
+                old_indexes_nest1.append(old_i1)
+                coincidence_nest1.append(coincidence_end)
+            else:
+                clos_p1, coincidence_p1 = get_closest_point_to_edge((line[new_i1], line[new_i2]), point)
+                clos_p2, coincidence_p2 = get_closest_point_to_edge((line[new_i2], line[new_i3]), point)
+                if clos_p1 - point < clos_p2 - point:
+                    project_points_nest1.append(clos_p1)
+                    old_indexes_nest1.append(old_i1)
+                    coincidence_nest1.append(coincidence_p1)
+                else:
+                    project_points_nest1.append(clos_p2)
+                    old_indexes_nest1.append(old_i2)
+                    coincidence_nest1.append(coincidence_p2)
         project_points.append(project_points_nest1)
         old_indexes.append(old_indexes_nest1)
         coincidence.append(coincidence_nest1)
@@ -241,58 +250,42 @@ def project_points(new_lines, edges_indexes, kdtrees_from_lines, pr_points):
     return project_points, old_indexes, coincidence
 
 
-def sort_points_along_line(line, points, position, replace):
+def sort_points_along_line(line, points, position):
     # sort points in order how how they move from start of line to end
-    points, position, replace = zip(*sorted(zip(points, position, replace), key=lambda l: l[1]))
-    new_p, new_pos, new_rep = [], [], []
-    for i in range(len(position)):
-        next_i = i + 1
-        while len(position) >= next_i and position[i] == position[next_i]:
-            next_i += 1
-        if next_i - i > 1:
-            distance = [(proj - line[position[i]]).length for proj in points[i:next_i]]
-            chunk_dist, chunk_p, chunck_pos, chunk_rep = zip(*sorted(
-                                                         zip(distance, points, position, replace), key=lambda l: l[0]))
-            new_p.append(chunk_p)
-            new_pos.append(chunck_pos)
-            new_rep.append(chunk_rep)
+    if not is_instance_of_vector(line):
+        line = [Vector(co) for co in line]
+    if not is_instance_of_vector(points):
+        points = [Vector(co) for co in points]
+    sorting_mask_temp = np.argsort(position)
+    sorting_mask = []
+    stack = []
+
+    def handle_stack(real_i=None):
+        nonlocal stack, sorting_mask
+        if len(stack) > 1:
+            distance = [(points[real_i] - line[position[stack[-1]]]).length for real_i in stack]
+            _, stack = zip(*sorted(zip(distance, stack), key=lambda l: l[0]))
+            sorting_mask.extend(stack)
+            stack = []
         else:
-            new_p.append(points[i])
-            new_pos.append(position[i])
-            new_rep.append(replace[i])
-    return new_p, new_pos, new_rep
+            sorting_mask.extend(stack)
+            stack = []
+        if real_i is not None:
+            stack.append(real_i)
 
+    for i in range(len(position)):
+        real_i = sorting_mask_temp[i]
+        if not stack:
+            stack.append(real_i)
+            continue
+        if len(position) > i and position[stack[-1]] == position[real_i]:
+            stack.append(real_i)
+            continue
+        handle_stack(real_i)
+    if stack:
+        handle_stack()
 
-def integrate_points_to_line(line, points, position, replace):
-    """
-    merge projected points with old line
-    :param line: points of old line - [Point 1, Point 2, ...]
-    :param points: projected points that should be merged - [Point 1, Point 2, ...]
-    :param position: indexes of points of old line after which projected points should be pasted - [int1, int2, ...]
-    :param replace: if projected points coincide with existing points of old line they should replace them ->
-                    -> [False, True, False, ...]
-    order of lists (points, position and replace) should be related with each other
-    :return:
-    """
-    points, position, replace = sort_points_along_line(line, points, position, replace)
-    last_pos = 0
-    merged_line = []
-    number_added_points = 0  # of input line
-    for i, p in enumerate(points):
-        if last_pos == position[i]:  # position didn't not move
-            if replace[i]:
-                pass
-            else:
-                if last_pos <= number_added_points:  # position didn't move first time
-                    merged_line.append(line[last_pos:position[i]+1])
-                    number_added_points += position[i] + 1 - last_pos
-        else:  # position moved
-            if replace[i]:
-                merged_line.append([line[last_pos:position[i]]])
-            else:
-                merged_line = [line[position[0] + 1]]
-
-        last_pos = position[i]
+    return sorting_mask
 
 
 class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
@@ -331,6 +324,7 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', 'Project_points')
         self.outputs.new('VerticesSocket', 'Points_projected')
         self.outputs.new('StringsSocket', 'Belonging')
+        self.outputs.new('StringsSocket', 'Sorting_mask')
 
     def draw_buttons_ext(self, context, layout):
         layout.row().prop(self, 'set_res', toggle=True)
@@ -350,8 +344,12 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
         projected_points, indexes, coincidence = project_points(new_lines, edges_indexes, trees, p_points)
 
         self.outputs['Points_projected'].sv_set([[v[:] for v in l] for l in projected_points])
-        self.outputs['Belonging'].sv_set([[[i] if c else (i, i+1) for i, c in zip(ind, coin)]
+        self.outputs['Belonging'].sv_set([[(i) if c == 1 else (i, i+1) if c == 0 else (i+1) for i, c in zip(ind, coin)]
                                           for ind, coin in zip(indexes, coincidence)])
+
+        if self.outputs['Sorting_mask'].is_linked:
+            self.outputs['Sorting_mask'].sv_set([sort_points_along_line(line, p, pos)
+                                                 for line, p, pos in zip(v_lines, projected_points, indexes)])
 
 
 def register():
