@@ -18,14 +18,12 @@
 
 import numpy as np
 from bisect import bisect
-from functools import reduce
 
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 from mathutils import kdtree, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import get_other_socket, updateNode, replace_socket, match_long_repeat
 from sverchok.data_structure import match_long_repeat
 
 '''
@@ -95,7 +93,10 @@ def get_closest_point_to_edge(edge, point):
     :param edge: [Vector 1, Vector 2]
     :param point: Vector
     :return project_point_inside_edge: Vector
-    :return coincidence: coincidence projected point with one of points of the edge - bool
+    :return coincidence: coincidence projected point with one of points of the edge - 0, 1, 2
+    0 - there is no coincidence
+    1 - coincidence with first point of edge
+    2 - coincidence with second point of edge
     """
     edge_vector = edge[1] - edge[0]
     point = point - edge[0]
@@ -177,6 +178,7 @@ def find_closest_index(edges_index, ind, cyclic=False):
     :param edges_index: index of position of Vectors from old line on new line - [int1, int2, ...]
     for example, if last vector of an edge has index 1 and this edge is divided on 3 parts new index of last Vector is 3
     :param ind: index of closest point on new line to project point - int
+    :param cyclic: is line closed - bool
     :return new_3ind: indexes of closest 3 points exist on old line that correspond to new line - [int1, int2, int3]
     :return old_3ind: indexes of closest 3 points exist on old line that correspond to old line - [int1, int2, int3]
     """
@@ -210,10 +212,14 @@ def project_points(new_lines, edges_indexes, kdtrees_from_lines, pr_points, cycl
     :param kdtrees_from_lines: KD trees prepared from new_lines - [KDTree 1, KDTree 2, ...]
     :param pr_points: points that should be projected - [[Vector 1, Vector 2, ...], [Vector 1, ...], ...]
     vector can be a list of 3 numbers
+    :param cyclic: is line closed - bool
     :return project_points: [[Vector 1, Vector 2, ...], [Vector 1, ...], ...]
     :return old_indexes: index of point of old line that located before projected point ->
                          -> [[int 1, int 2, ...], [int 1, ...], ...]
-    :return coincidence: coincidence projected points with points of old line - [[False, True, ...], [False, ...], ...]
+    :return coincidence: coincidence projected points with points of old line - [[0, 0, ...], [1, ...], ...]
+    0 - there is no coincidence
+    1 - coincidence with first point of edge
+    2 - coincidence with second point of edge
     """
     if not is_instance_of_vector(new_lines):
         vectors_line = [[Vector(co) for co in l] for l in new_lines]
@@ -260,7 +266,13 @@ def project_points(new_lines, edges_indexes, kdtrees_from_lines, pr_points, cycl
 
 
 def sort_points_along_line(line, points, position):
-    # sort points in order how how they move from start of line to end
+    """
+    sort points in order how they move from start of line to end
+    :param line: input line - [Vector 1, Vector 2, ...]
+    :param points: projected points - [Vector 1, Vector 2, ...]
+    :param position: index of first vector of edge which projected point belongs - [2, 3, 1, ...]
+    :return: sorting_mask: indexes of projected points for sorting them in right order
+    """
     if not is_instance_of_vector(line):
         line = [Vector(co) for co in line]
     if not is_instance_of_vector(points):
@@ -297,12 +309,37 @@ def sort_points_along_line(line, points, position):
     return sorting_mask
 
 
+def get_belonging_indexes(indexes, coincidence, v_lines):
+    """
+    according indexes and coincidences create mask that shows which edge or point of line projected point is belonged
+    :param indexes: index of first vector of edge which projected point belongs - [[2, 3, 1, ...], [2, ...], ...]
+    :param coincidence: coincidence projected points with points of old line - [[0, 0, ...], [1, ...], ...]
+    :param v_lines: input line - [[Vector 1, Vector 2, ...], [Vector 1, ...], ...]
+    :return: indexes of vectors of edge to which projected point belongs or index only of one vector if projected point
+    coincides with vector [[[0, 1], [1], [1, 2], ...], [[0], [1, 2], ...], ...]
+    """
+    bel_temp = []
+    for ind, coin, line in zip(indexes, coincidence, v_lines):
+        bel_nest = []
+        for i, c in zip(ind, coin):
+            if c == 1:
+                bel_nest.append([i])
+            elif c == 2:
+                bel_nest.append([i + 1])
+            elif i == len(line) - 1:
+                bel_nest.append((i, 0))
+            else:
+                bel_nest.append((i, i + 1))
+        bel_temp.append(bel_nest)
+    return bel_temp
+
+
 class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: project point to line
-    Tooltip: project point to line
+    If there are point and line the node will find closest point on the line to point
 
-    You can do something
+    You can use number of points and lines as many as you wish
     """
     bl_idname = 'SvProjectPointToLine'
     bl_label = 'Project point to line'
@@ -361,21 +398,7 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
         projected_points, indexes, coincidence = project_points(new_lines, edges_indexes, trees, p_points, self.cyclic)
 
         self.outputs['Points_projected'].sv_set([[v[:] for v in l] for l in projected_points])
-
-        bel_temp = []
-        for ind, coin, line in zip(indexes, coincidence, v_lines):
-            bel_nest = []
-            for i, c in zip(ind, coin):
-                if c == 1:
-                    bel_nest.append((i))
-                elif c == 2:
-                    bel_nest.append((i+1))
-                elif i == len(line)-1:
-                    bel_nest.append((i, 0))
-                else:
-                    bel_nest.append((i, i+1))
-            bel_temp.append(bel_nest)
-        self.outputs['Belonging'].sv_set(bel_temp)
+        self.outputs['Belonging'].sv_set(get_belonging_indexes(indexes, coincidence, v_lines))
 
         if self.outputs['Sorting_mask'].is_linked:
             self.outputs['Sorting_mask'].sv_set([sort_points_along_line(line, p, pos)
