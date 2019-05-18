@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import socket
+import threading, time, ast
 
 import bpy
 from bpy.props import IntProperty, FloatProperty, EnumProperty, StringProperty, BoolProperty
@@ -30,22 +31,25 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'UdpClientNode'
     bl_label = 'UDP Client'
 
-
     def send_msg(self, context):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         sock.setblocking(0)
         sock.sendto(bytes(self.send, 'UTF-8'), (self.ip, self.port))
 
 
-    def recv_msg(self):
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.setblocking(0)
-        sock.settimeout(self.timeout)
-        try:
-            data, _ = sock.recvfrom(self.buffer_size)
-            self.receive = data.decode('UTF-8')
-        except socket.timeout:
-            print('Timeout')
+    def recv_msg(self,context):
+        while True:
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                sock.bind((self.ip, self.port))
+                sock.settimeout(self.timeout)
+                data = sock.recv(self.buffer_size)
+                print(data)
+                if data:
+                    self.receive = data.decode('UTF-8')
+            except socket.timeout:
+                pass
+                #print('Timeout')
 
 
     send = StringProperty(name='send',
@@ -84,23 +88,27 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'timeout', text='Timeout')
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'send', 'send').prop_name = 'send'
-        self.outputs.new('StringsSocket', 'receive', 'receive')
+        self.inputs.new('StringsSocket', 'send') #.prop_name = 'send'
+        self.outputs.new('StringsSocket', 'receive')
+        ev = threading.Thread(target=self.recv_msg, args=(context,))
+        ev.start()
 
     @profile
     def process(self):
         if not self.active:
             return
+        if self.inputs[0].is_linked:
+            input_value = self.inputs[0].sv_get()
+            if self.send != str(input_value):
+                
+                self.send = str(input_value)
+                self.send_msg(bpy.context)
+                #print(type(self.send),type(self.ip),type(self.port))
+                #print('sent message',(self.ip),(self.port))
 
-        print(type(self.send),type(self.ip),type(self.port))
-        input_value = self.inputs[0].sv_get()
-        if self.send != str(input_value):
-            self.send = str(input_value)
-        #self.send_msg(bpy.context)
-
-        if self.outputs['receive'].is_linked:
-            self.recv_msg()
-            self.outputs['receive'].sv_set(self.receive)
+        elif self.outputs['receive'].is_linked:
+            #self.recv_msg()
+            self.outputs['receive'].sv_set(ast.literal_eval(self.receive))
 
 
 def register():

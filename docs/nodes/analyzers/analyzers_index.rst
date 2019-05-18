@@ -10,8 +10,6 @@ Analyzers
    distance_pp
    deformation
    edge_angles
-   evaluate_image
-   image_components
    kd_tree
    kd_tree_edges_mk2
    mesh_filter
@@ -26,5 +24,5 @@ Analyzers
    points_inside_mesh
    polygons_centers
    polygons_centers_mk3
-   raycast
+   raycaster_lite
    volume

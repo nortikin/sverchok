@@ -26,6 +26,9 @@ Inputs & Parameters
 +----------------+------------------------------------------------------------------------+
 | Weights        | On "Int" mode. Can be supplied to create a non-uniform distribution    |
 +----------------+------------------------------------------------------------------------+
+| Unique         | On "Int" mode. Outputs non-repeated numbers.                           |
+|                | The output size will be limited to (Int High -  Int Low + 1)           |
++----------------+------------------------------------------------------------------------+
 | Distribution   | On "Float" mode many distribution functions can be selected.           |
 |                | Beta, Binomial, Chi_square, Exponential, F Distrib., Gamma, Geometric, | 
 |                | Gumbel, Laplace, Logistic, Log Normal, Log Series, Negative Binomial,  | 
@@ -82,3 +85,9 @@ The distribution functions can lead from the default Uniform to a more organic r
   
 .. image:: https://user-images.githubusercontent.com/10011941/46135077-a82ebc80-c244-11e8-9616-6e8cb7218726.png
   :alt: Random_Distribution4.PNG
+
+The "Unique" toggle will make sure there are not repeated numbers, very usefull with the "List Item Node".
+
+.. image:: https://user-images.githubusercontent.com/10011941/54881844-9e34f180-4e54-11e9-8c92-3eee832c6958.png
+  :alt: Random_Distribution_Swerchok_parametric_design_random_sample_unique_example
+

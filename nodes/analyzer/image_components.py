@@ -304,7 +304,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         
         if not self.loaded:
             return
-        if not outputs['xya'].is_linked:
+        if not any([outputs['xya'].is_linked,outputs['rgb'].is_linked]):
             return
 
         # upload reload, this avoids errors - still not perfect
@@ -314,6 +314,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
 
         node_image = self.node_dict[hash(self)]['node_image']
         dict_data = node_image['image']
+        #print(node_image)
         xya = 'xya'
         rgb = 'rgb'
         m1 = self.xy_spread
@@ -328,7 +329,7 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
             if -0.001 <= m2 <= 0.001:
                 data = dict_data[rgb]
             else:
-                tmul = lambda v: (v[0]*m2, v[1]*m2, v[2]*m2)
+                tmul = lambda v: (v[0]*m1, v[1]*m1, v[2]*m2)
                 data = [tmul(v) for v in dict_data[rgb]]
 
             outputs[rgb].sv_set([data])
@@ -369,3 +370,7 @@ def unregister():
     bpy.utils.unregister_class(ImageComponentsOps)
     bpy.utils.unregister_class(SvImageComponentsNode)
     bpy.utils.unregister_class(svImageImporterOp)
+
+
+if __name__ == '__main__':
+    register()

@@ -45,6 +45,34 @@ macros = {
         'display_name': "output current idx / total",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'monad info']},
+    "> multiply *": {
+        'display_name': "multiply selected nodes",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'mathMUL']},
+    "> add +": {
+        'display_name': "add selected nodes",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'mathADD']},
+    "> sub -": {
+        'display_name': "subtract selected nodes",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'mathSUB']},
+    "> join1": {
+        'display_name': "selected nodes to List Join",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'join1']},
+    "> join123": {
+        'display_name': "selected nodes to List Join",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'join123']},
+    "> join12": {
+        'display_name': "selected nodes to List Join",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'join12']},
+    "> join13": {
+        'display_name': "selected nodes to List Join",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'join13']},
     "> sw1": {
         'display_name': "connect nodes to switch",
         'file': 'macro',
@@ -80,6 +108,18 @@ def sn_loader(snlite, script_name=None):
     snlite.script_name = os.path.basename(txt.name)
     snlite.load()
 
+def nodes_bounding_box(selected_nodes):
+    minx = +1e10
+    maxx = -1e10
+    miny = +1e10
+    maxy = -1e10
+    for node in selected_nodes:
+        minx = min(minx, node.location.x)
+        maxx = max(maxx, node.location.x + node.width)
+        miny = min(miny, node.location.y - node.height)
+        maxy = max(maxy, node.location.y)
+
+    return minx, maxx, miny, maxy
 
 class DefaultMacros():
 
@@ -147,17 +187,11 @@ class DefaultMacros():
 
         elif "switch" in term:
             selected_nodes = context.selected_nodes
+            if not selected_nodes:
+                operator.report({"ERROR_INVALID_INPUT"}, 'No selected nodes to use')
+                return  {'CANCELLED'}
             # get bounding box of all selected nodes
-            minx = +1e10
-            maxx = -1e10
-            miny = +1e10
-            maxy = -1e10
-            for node in selected_nodes:
-                minx = min(minx, node.location.x)
-                maxx = max(maxx, node.location.x + node.width)
-                miny = min(miny, node.location.y - node.height)
-                maxy = max(maxy, node.location.y)
-
+            minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
             switch_node = nodes.new('SvInputSwitchNode')
             switch_node.location = maxx + 100, maxy
 
@@ -186,6 +220,90 @@ class DefaultMacros():
                 links.new(switch_node.outputs[0], viewer_node.inputs[0])
                 if len(socket_indices) > 1:
                     links.new(switch_node.outputs[1], viewer_node.inputs[1])
+
+        elif "join" in term:
+            selected_nodes = context.selected_nodes
+            if not selected_nodes:
+                operator.report({"ERROR_INVALID_INPUT"}, 'No selected nodes to join')
+                return  {'CANCELLED'}
+            # get bounding box of all selected nodes
+            minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
+            # find out which sockets to connect
+            socket_numbers = term.replace("join", "")
+            if len(socket_numbers) == 1: # one socket
+                socket_indices = [int(socket_numbers) - 1]
+            else: # multiple sockets
+                socket_indices = [int(n) - 1 for n in socket_numbers]
+
+            join_nodes=[]
+            for i, s in enumerate(socket_indices):
+                join_nodes.append(nodes.new('ListJoinNode'))
+                join_nodes[i].location = maxx + 100, maxy - (180+(22*(len(selected_nodes)))) * i
+
+            sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.y, reverse=True)
+
+            # link the nodes to ListJoin nodes
+            for i, node in enumerate(sorted_nodes):
+                for j, n in enumerate(socket_indices):
+                    links.new(node.outputs[n], join_nodes[j].inputs[i])
+
+            if all(node.outputs[0].bl_idname == "VerticesSocket" for node in sorted_nodes):
+                viewer_node = nodes.new("ViewerNode2")
+                viewer_node.location = join_nodes[0].location.x + join_nodes[0].width + 100, maxy
+
+                # link the output switch node to the ViewerDraw node
+                links.new(join_nodes[0].outputs[0], viewer_node.inputs[0])
+                if len(socket_indices) > 1:
+                    links.new(join_nodes[1].outputs[0], viewer_node.inputs[1])
+
+        elif "math" in term:
+            selected_nodes = context.selected_nodes
+            if not selected_nodes:
+                operator.report({"ERROR_INVALID_INPUT"}, 'No selected nodes to use')
+                return  {'CANCELLED'}
+            selected_nodes = selected_nodes[:2]
+            # get bounding box of all selected nodes
+            minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
+            # find out which sockets to connect
+            operator = term.replace("math", "")
+            sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.y, reverse=True)
+            is_vector = all(node.outputs[0].bl_idname == "VerticesSocket" for node in sorted_nodes)
+            if operator == 'MUL':
+                if is_vector:
+                    math_node = nodes.new('SvVectorMathNodeMK2')
+                    math_node.current_op = 'CROSS'
+                else:
+                    if (sorted_nodes[0].outputs[0].bl_idname == "VerticesSocket"):
+                        math_node = nodes.new('SvVectorMathNodeMK2')
+                        math_node.current_op = 'SCALAR'
+                    elif (sorted_nodes[1].outputs[0].bl_idname == "VerticesSocket"):
+                        math_node = nodes.new('SvVectorMathNodeMK2')
+                        math_node.current_op = 'SCALAR'
+                        sorted_nodes =[sorted_nodes[1],sorted_nodes[0]]
+                    else:
+                        math_node = nodes.new('SvScalarMathNodeMK2')
+                        math_node.location = maxx + 100, maxy
+                        math_node.current_op = operator
+            else:
+                if is_vector:
+                    math_node = nodes.new('SvVectorMathNodeMK2')
+                    math_node.current_op = operator
+                else:
+                    math_node = nodes.new('SvScalarMathNodeMK2')
+                    math_node.current_op = operator
+
+            math_node.location = maxx + 100, maxy
+            # link the nodes to Math node
+            for i, node in enumerate(sorted_nodes):
+                links.new(node.outputs[0], math_node.inputs[i])
+
+            if is_vector:
+                viewer_node = nodes.new("ViewerNode2")
+                viewer_node.location = math_node.location.x + math_node.width + 100, maxy
+
+                # link the output math node to the ViewerDraw node
+                links.new(math_node.outputs[0], viewer_node.inputs[0])
+
 
         elif term == 'gp +':
             needed_nodes = [

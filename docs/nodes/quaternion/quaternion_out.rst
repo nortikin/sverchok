@@ -10,7 +10,7 @@ The available **Modes** are: WXYZ, EULER, AXIS-ANGLE & MATRIX.
 
 +===============+================================================================+
 | Mode          | Description                                                    |
-+---------------+----------------------------------------------------------------+
++===============+================================================================+
 | WXYZ          | Converts a quaternion into its W, X, Y, Z components. [1]      |
 +---------------+----------------------------------------------------------------+
 | SCALAR-VECTOR | Converts a quaternion into its Scalar & Vector components. [1] |
@@ -46,7 +46,7 @@ Based on the selected **Mode** the node makes available the corresponding output
 
 +===============+==================================+
 | Mode          | Output Sockets (types)           |
-+---------------+----------------------------------+
++===============+==================================+
 | WXYZ          | W, X, Y, Z  (floats)             |
 +---------------+----------------------------------+
 | SCALAR-VECTOR | Scalar (float) & Vector (vector) |
