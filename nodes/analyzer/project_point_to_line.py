@@ -171,7 +171,7 @@ def preparing_lines(vectors_line, resolution=False):
     return new_lines, edges_indexes, trees
 
 
-def find_closest_index(edges_index, ind):
+def find_closest_index(edges_index, ind, cyclic=False):
     """
     find 3 closest indexes of points exist in initial line
     :param edges_index: index of position of Vectors from old line on new line - [int1, int2, ...]
@@ -181,19 +181,28 @@ def find_closest_index(edges_index, ind):
     :return old_3ind: indexes of closest 3 points exist on old line that correspond to old line - [int1, int2, int3]
     """
     i = bisect(edges_index, ind)
-    if i == len(edges_index):
-        new_3ind = edges_index[i - 2], edges_index[i - 1], None
-        old_3ind = [i - 2, i - 1, None]
+    num = len(edges_index)
+    if i == num:
+        if cyclic:
+            new_3ind = edges_index[i - 2], edges_index[i - 1], edges_index[0]
+            old_3ind = [num - 2, num - 1, 0]
+        else:
+            new_3ind = edges_index[i - 2], edges_index[i - 1], None
+            old_3ind = [i - 2, i - 1, None]
     elif i - 1 == 0:
-        new_3ind = None, edges_index[i - 1], edges_index[i]
-        old_3ind = [None, i - 1, i]
+        if cyclic:
+            new_3ind = edges_index[-1], edges_index[i - 1], edges_index[i]
+            old_3ind = [num - 1, 0, 1]
+        else:
+            new_3ind = None, edges_index[i - 1], edges_index[i]
+            old_3ind = [None, i - 1, i]
     else:
         new_3ind = edges_index[i - 2], edges_index[i - 1], edges_index[i]
         old_3ind = [i - 2, i - 1, i]
     return new_3ind, old_3ind
 
 
-def project_points(new_lines, edges_indexes, kdtrees_from_lines, pr_points):
+def project_points(new_lines, edges_indexes, kdtrees_from_lines, pr_points, cyclic=False):
     """
     project points to prepared lines
     :param new_lines: prepared lines - [[Vector 1, Vector 2, ...], [Vector 1, ...], ...]
@@ -221,7 +230,7 @@ def project_points(new_lines, edges_indexes, kdtrees_from_lines, pr_points):
         old_indexes_nest1 = []
         coincidence_nest1 = []
         for ind, point in zip(inds, points):
-            (new_i1, new_i2, new_i3), (old_i1, old_i2, old_i3) = find_closest_index(edges_ind, ind)
+            (new_i1, new_i2, new_i3), (old_i1, old_i2, old_i3) = find_closest_index(edges_ind, ind, cyclic)
             if new_i1 is None:
                 clos_p2, coincidence_start = get_closest_point_to_edge((line[new_i2], line[new_i3]), point)
                 project_points_nest1.append(clos_p2)
@@ -319,12 +328,20 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
                           default=False,
                           update=switch_res_mode)
 
+    cyclic = BoolProperty(name='Cyclic',
+                          description='Close input lines',
+                          default=False,
+                          update=SverchCustomTreeNode.process_node)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Vectors_lines')
         self.inputs.new('VerticesSocket', 'Project_points')
         self.outputs.new('VerticesSocket', 'Points_projected')
         self.outputs.new('StringsSocket', 'Belonging')
         self.outputs.new('StringsSocket', 'Sorting_mask')
+
+    def draw_buttons(self, context, layout):
+        layout.row().prop(self, 'cyclic', toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         layout.row().prop(self, 'set_res', toggle=True)
@@ -341,11 +358,24 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
             resn = False
 
         new_lines, edges_indexes, trees = preparing_lines(v_lines, resn)
-        projected_points, indexes, coincidence = project_points(new_lines, edges_indexes, trees, p_points)
+        projected_points, indexes, coincidence = project_points(new_lines, edges_indexes, trees, p_points, self.cyclic)
 
         self.outputs['Points_projected'].sv_set([[v[:] for v in l] for l in projected_points])
-        self.outputs['Belonging'].sv_set([[(i) if c == 1 else (i, i+1) if c == 0 else (i+1) for i, c in zip(ind, coin)]
-                                          for ind, coin in zip(indexes, coincidence)])
+
+        bel_temp = []
+        for ind, coin, line in zip(indexes, coincidence, v_lines):
+            bel_nest = []
+            for i, c in zip(ind, coin):
+                if c == 1:
+                    bel_nest.append((i))
+                elif c == 2:
+                    bel_nest.append((i+1))
+                elif i == len(line)-1:
+                    bel_nest.append((i, 0))
+                else:
+                    bel_nest.append((i, i+1))
+            bel_temp.append(bel_nest)
+        self.outputs['Belonging'].sv_set(bel_temp)
 
         if self.outputs['Sorting_mask'].is_linked:
             self.outputs['Sorting_mask'].sv_set([sort_points_along_line(line, p, pos)
