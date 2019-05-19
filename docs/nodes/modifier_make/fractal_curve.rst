@@ -44,3 +44,15 @@ Connector** node to draw edges between these vertices.
 Examples of usage
 -----------------
 
+Classical example:
+
+.. image:: https://user-images.githubusercontent.com/284644/57985244-96718200-7a7e-11e9-8559-61a6feb78882.png
+
+Another example:
+
+.. image:: https://user-images.githubusercontent.com/284644/57985245-970a1880-7a7e-11e9-82ab-f69d61bd5e1d.png
+
+This node can process 3D curves as well:
+
+.. image:: https://user-images.githubusercontent.com/284644/57985246-970a1880-7a7e-11e9-84f3-198244d92df0.png
+
