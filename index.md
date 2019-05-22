@@ -128,6 +128,7 @@
     SvAdaptiveEdgeNode
     AdaptivePolsNode
     SvDuplicateAlongEdgeNode
+    SvFractalCurveNode
     SvSolidifyNode
     SvWireframeNode
     SvPipeNode
