@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -162,16 +162,14 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             else:
                 if has_outputs(node):
                     layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
-                    # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
+                    layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
             if hasattr(node, "rclick_menu"):
+                layout.separator()
                 node.rclick_menu(context, layout)
 
         else:
             layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
-
-        if node and len(node.outputs):
-            layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
         if node and node.bl_idname == 'NodeFrame':
             # give options for Frame nodes..

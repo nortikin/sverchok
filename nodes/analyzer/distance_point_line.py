@@ -18,79 +18,78 @@
 
 
 import bpy
-from bpy.props import BoolProperty, EnumProperty
+from bpy.props import BoolProperty, EnumProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from mathutils import Vector as V
 from mathutils.geometry import intersect_point_line
-import numpy as np
+from numpy import array, all as np_all, newaxis
+from numpy.linalg import norm as np_norm
 
-
-def computeDistance(p, line, line_end):
-
-    inter_p = intersect_point_line(p, line, line_end)
-    dist = (inter_p[0] - p).length
-    t = inter_p[1]
-    is_in_line = dist < 1e-6
-    closest_in_segment =  t > 0 and t < 1
+def compute_distance(point, line, line_end, tolerance):
+    '''call to the mathuutils function'''
+    inter_p = intersect_point_line(point, line, line_end)
+    dist = (inter_p[0] - point).length
+    segment_percent = inter_p[1]
+    is_in_line = dist < tolerance
+    closest_in_segment = 0 <= segment_percent <= 1
     is_in_segment = is_in_line and closest_in_segment
-    return dist, is_in_segment, is_in_line, inter_p[0], closest_in_segment
+    return dist, is_in_segment, is_in_line, list(inter_p[0]), closest_in_segment
 
 
-def compute_distances_mu(line, pts, result, gates):
+def compute_distances_mu(line, pts, result, gates, tolerance):
+    '''calculate all distances with mathuutils'''
     line_origin = V(line[0])
     line_end = V(line[-1])
-    local_result = [[], [], [], [],[]]
-    for p in pts:
-        # dist, is_in_segment, is_in_line, closest = computeDistance(V(p), line_origin, line_end)
-        data = computeDistance(V(p), line_origin, line_end)
-        for i, r in enumerate(local_result):
-            r.append(data[i])
-        # local_result[0].append(dist)
-        # local_result[1].append(is_in_segment)
-        # local_result[2].append(is_in_line)
-        # local_result[3].append(closest)
+    local_result = [[], [], [], [], []]
+    for point in pts:
+        data = compute_distance(V(point), line_origin, line_end, tolerance)
+        for i, res in enumerate(local_result):
+            res.append(data[i])
 
-    for i, r in enumerate(result):
+    for i, res in enumerate(result):
         if gates[i]:
-            r.append(local_result[i])
+            res.append(local_result[i])
 
 
-def compute_distances_np(line, pts, result, gates):
-    '''Adapted from https://math.stackexchange.com/questions/1905533/find-perpendicular-distance-from-point-to-line-in-3d'''
+def compute_distances_np(line, pts, result, gates, tolerance):
+    '''calculate all distances with NumPy'''
+    # Adapted from https://math.stackexchange.com/questions/1905533/find-perpendicular-distance-from-point-to-line-in-3d
 
-    np_pts = np.array(pts)
+    np_pts = array(pts)
     segment = V(line[-1]) - V(line[0])
     segment_length = segment.length
-    direction = segment / segment_length
-    v = np_pts - line[0]
-    t = v.dot(direction)
-    P = line[0] + t[:, np.newaxis] * direction
-    dif_v = P - np_pts
-    dist = np.linalg.norm(dif_v, axis=1)
+    line_direction = segment / segment_length
+    vect = np_pts - line[0]
+    vect_proy = vect.dot(line_direction)
+    closest_point = line[0] + vect_proy[:, newaxis] * line_direction
+    dif_v = closest_point - np_pts
+    dist = np_norm(dif_v, axis=1)
+
     is_in_segment = []
     is_in_line = []
     closest_in_segment = []
     if gates[4] or gates[1]:
-        closest_in_segment = np.all([t >= 0, t <= segment_length], axis=0)
+        closest_in_segment = np_all([vect_proy >= 0, vect_proy <= segment_length], axis=0)
     if gates[1] or gates[2]:
-        is_in_line = dist < 1e-6
+        np_tolerance = array(tolerance)
+        is_in_line = dist < tolerance
         if gates[1]:
-            is_in_segment = np.all([closest_in_segment, is_in_line], axis=0)
+            is_in_segment = np_all([closest_in_segment, is_in_line], axis=0)
 
-    local_result = [dist, is_in_segment, is_in_line, P, closest_in_segment]
+    local_result = [dist, is_in_segment, is_in_line, closest_point, closest_in_segment]
 
-    for i, r in enumerate(result):
+    for i, res in enumerate(result):
         if gates[i]:
-            r.append(local_result[i].tolist() if not gates[5] else local_result[i])
+            res.append(local_result[i].tolist() if not gates[5] else local_result[i])
 
 
-class DistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
+class SvDistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: Perpendicular to segment
     Tooltip: Distance Point to line and closest point in the line
     '''
-    bl_idname = 'DistancePointLineNode'
+    bl_idname = 'SvDistancePointLineNode'
     bl_label = 'Distance Point Line'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DISTANCE'
@@ -100,24 +99,42 @@ class DistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
         ("MathUtils", "MathUtils", "MathUtils", 1)]
 
     compute_distances = {
-         "NumPy": compute_distances_np,
-         "MathUtils": compute_distances_mu}
+        "NumPy": compute_distances_np,
+        "MathUtils": compute_distances_mu}
 
     output_numpy = BoolProperty(
-        name='Output NumPy', description='output NumPy arrays',
+        name='Output NumPy', description='Output NumPy arrays',
         default=False, update=updateNode)
 
     implementation = EnumProperty(
-        name='Segment', items=implentation_modes,
-        description='Get segments length or the sum of them',
+        name='Implementation', items=implentation_modes,
+        description='Choose calculation method',
         default="NumPy", update=updateNode)
 
+    tolerance = FloatProperty(
+        name="Tolerance", description='Intersection tolerance',
+        default=1.0e-6, min=0.0, precision=6,
+        update=updateNode)
+
+    list_match_global = EnumProperty(
+        name="Match Global",
+        description="Behavior on different list lengths, multiple objects level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+        
+    list_match_local = EnumProperty(
+        name="Match Local",
+        description="Behavior on different list lengths, object level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+        
     def sv_init(self, context):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', "Verts")
+        sinw('VerticesSocket', "Vertices")
         sinw('VerticesSocket', "Verts Line")
+        sinw('StringsSocket', "Tolerance").prop_name = 'tolerance'
 
         sonw('StringsSocket', "Distance")
         sonw('StringsSocket', "In Segment")
@@ -127,49 +144,60 @@ class DistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
+        layout.label(text="Implementation:")
         layout.prop(self, "implementation", expand=True)
         if self.implementation == "NumPy":
             layout.prop(self, "output_numpy", toggle=False)
+        layout.separator()
+        layout.label(text="List Match:")
+        layout.prop(self, "list_match_global", text="Global Match", expand=False)
+        layout.prop(self, "list_match_local", text="Local Match", expand=False)
+
+    def rclick_menu(self, context, layout):
+        '''right click sv_menu items'''
+        layout.prop_menu_enum(self, "implementation", text="Implementation")
+        if self.implementation == "NumPy":
+            layout.prop(self, "output_numpy", toggle=False)
+        layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
+        layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
+
 
     def get_data(self):
-        '''get all data from sockets'''
+        '''get all data from sockets and match lengths'''
         si = self.inputs
-        vertices_s = si['Verts'].sv_get(default=[[]])
-        verts_line = si['Verts Line'].sv_get(default=[[]])
-
-        return match_long_repeat([vertices_s, verts_line])
+        return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in si])
 
     def process(self):
         '''main node function called every update'''
         so = self.outputs
         si = self.inputs
-        if not (any(s.is_linked for s in so) and all(s.is_linked for s in si)):
+        if not (any(s.is_linked for s in so) and all(s.is_linked for s in si[:2])):
             return
 
-        result = [[], [], [], [], []]
-        gates = []
-        gates.append(so['Distance'].is_linked)
-        gates.append(so['In Segment'].is_linked)
-        gates.append(so['In Line'].is_linked)
-        gates.append(so['Closest Point'].is_linked)
-        gates.append(so['Closest in Segment'].is_linked)
+        result = [[] for socket in so]
+        gates = [socket.is_linked for socket in so]
+
         gates.append(self.output_numpy)
 
         group = self.get_data()
-
-        for pts, line in zip(*group):
-            self.compute_distances[self.implementation](line, pts, result, gates)
+        main_func = self.compute_distances[self.implementation]
+        match_func = list_match_func[self.list_match_local]
+        
+        for pts, line, tolerance in zip(*group):
+            if len(tolerance) > 1:
+                pts, tolerance = match_func([pts, tolerance])
+            main_func(line, pts, result, gates, tolerance)
 
         for i, r in enumerate(result):
             if gates[i]:
-                so[i].sv_set(result[i])
+                so[i].sv_set(r)
 
 
 def register():
     '''register class in Blender'''
-    bpy.utils.register_class(DistancePointLineNode)
+    bpy.utils.register_class(SvDistancePointLineNode)
 
 
 def unregister():
     '''unregister class in Blender'''
-    bpy.utils.unregister_class(DistancePointLineNode)
+    bpy.utils.unregister_class(SvDistancePointLineNode)
