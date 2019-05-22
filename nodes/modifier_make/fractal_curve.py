@@ -43,7 +43,7 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             default = 0.01, min = 0, update = updateNode)
 
     precision = IntProperty(
-        name="Precision", min=0, max=10, default=8, update=updateNode,
+        name="Precision", min=0, max=10, default=7, update=updateNode,
         description="decimal precision of coordinates for calculations")
 
     def move_to(self, curve, src, dst):
@@ -54,11 +54,60 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
         coef = dst / src
         return [vertex * coef for vertex in curve]
 
-    def rotate_to(self, curve, src, dst):
-        matrix = autorotate_diff(dst, src)
+    def check_plane(self, curve):
+        # Try to detect if the whole figure belongs to
+        # one of coordinate axes
+        epsilon = 10 ** (- self.precision)
+        if all([abs(v.z) < epsilon for v in curve]):
+            return 'XY'
+        elif all([abs(v.x) < epsilon for v in curve]):
+            return 'YZ'
+        elif all([abs(v.y) < epsilon for v in curve]):
+            return 'XZ'
+        else:
+            return None
+
+    def calc_rotation(self, curve, src, dst, plane=None):
+        # Some hacks.
+        # Problem: if src and/or dst are exactly parallel to
+        # one of coordinate axes, then Vector.rotation_difference
+        # sometimes returns a matrix that rotates our vector in
+        # completely different plane.
+        # For example, if whole figure lays in XY plane, and
+        # we are trying to rotate src = (0, 1, 0) into dst = (1, 0, 0),
+        # then rotation_difference might return us a matrix, which
+        # rotates (-1, 0, 0) into (0, 0, -1), which is out of XY plane
+        # ("because why no? it still rotates src into dst").
+        # Solution (hack): if whole figure lays in XY plane, then do
+        # not use general rotation_difference method, calculate
+        # rotation along Z axis only.
+        if plane == 'XY':
+            # Another unobvious hack: Vector.angle_signed method
+            # works with 2D vectors only (this is not stated in
+            # it's documentation!). Fortunately, in this particular
+            # case our vectors are actually 2D.
+            dst = Vector((dst[0], dst[1]))
+            src = Vector((src[0], src[1]))
+            angle = dst.angle_signed(src)
+            return Matrix.Rotation(angle, 4, 'Z')
+        elif plane == 'YZ':
+            dst = Vector((dst[1], dst[2]))
+            src = Vector((src[1], src[2]))
+            angle = dst.angle_signed(src)
+            return Matrix.Rotation(angle, 4, 'X')
+        elif plane == 'XZ':
+            dst = Vector((dst[2], dst[0]))
+            src = Vector((src[2], src[0]))
+            angle = dst.angle_signed(src)
+            return Matrix.Rotation(angle, 4, 'Y')
+        else:
+            return autorotate_diff(dst, src)
+
+    def rotate_to(self, curve, src, dst, plane=None):
+        matrix = self.calc_rotation(curve, src, dst, plane)
         return [matrix * vertex for vertex in curve]
 
-    def substitute(self, recipient, donor):
+    def substitute(self, recipient, donor, plane=None):
         line = donor[-1] - donor[0]
         result = []
         result.append(donor[0])
@@ -68,18 +117,19 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 result.append(pair[1])
                 continue
             scaled = self.scale_to(donor, line.length, new_line.length)
-            rotated = self.rotate_to(scaled, line, new_line)
+            rotated = self.rotate_to(scaled, line, new_line, plane)
             item = self.move_to(rotated, rotated[0], pair[0])
             result.extend(item[1:])
         if self.precision > 0:
-            result = [Vector(round(x, self.precision) for x in v) for v in result]
-            print(result)
+            result = [Vector(v.to_tuple(self.precision)) for v in result]
         return result
 
     def make_fractal(self, vertices):
         result = vertices
+        plane = self.check_plane(vertices)
+        print(plane)
         for i in range(self.iterations):
-            result = self.substitute(result, vertices)
+            result = self.substitute(result, vertices, plane)
         result = self.move_to(result, result[0], vertices[0])
         return result
 
