@@ -28,6 +28,7 @@ only for speed, never for aesthetics or line count or cleverness.
 
 import math
 import numpy as np
+from numpy import linalg
 from functools import wraps
 import time
 
@@ -871,6 +872,347 @@ def diameter(vertices, axis):
     m = min(xs)
     return (M-m)
 
+def center(data):
+    """
+    input: data - a list of 3-tuples or numpy array of same shape
+    output: 3-tuple - arithmetical average of input vertices (barycenter)
+    """
+    array = np.array(data)
+    n = array.shape[0]
+    center = array.sum(axis=0) / n
+    return tuple(center)
+
+class PlaneEquation(object):
+    """
+    An object, containing the coefficients A, B, C, D in the equation of a
+    plane:
+        
+        A*x + B*y + C*z + D = 0
+    """
+    def __init__(self, a, b, c, d):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.d = d
+
+    def __repr__(self):
+        return "[{}, {}, {}, {}]".format(self.a, self.b, self.c, self.d)
+    
+    def __str__(self):
+        return "{}x + {}y + {}z + {} = 0".format(self.a, self.b, self.c, self.d)
+
+    @classmethod
+    def from_normal_and_point(cls, normal, point):
+        a, b, c = tuple(normal)
+        cx, cy, cz = tuple(point)
+        d = - (a*cx + b*cy + c*cz)
+        return PlaneEquation(a, b, c, d)
+
+    @classmethod
+    def from_three_points(cls, p1, p2, p3):
+        x1, y1, z1 = p1[0], p1[1], p1[2]
+        x2, y2, z2 = p2[0], p2[1], p2[2]
+        x3, y3, z3 = p3[0], p3[1], p3[2]
+
+        a = (y2 - y1)*(z3-z1) - (z2 - z1)*(y3 - y1)
+        b = - (x2 - x1)*(z3-z1) + (z2 - z1)*(x3 - x1)
+        c = (x2 - x1)*(y3 - y1) - (y2 - y1)*(x3 - x1)
+
+        return PlaneEquation.from_normal_and_point((a, b, c), p1)
+
+    def normalized(self):
+        """
+        Return equation, which defines exactly the same plane, but with coefficients adjusted so that
+
+            A^2 + B^2 + C^2 = 1
+
+        holds.
+        """
+        normal = self.normal.length
+        return PlaneEquation(a/normal, b/normal, c/normal, d/normal)
+    
+    def check(self, point, eps=1e-6):
+        """
+        Check if specified point belongs to the plane.
+        """
+        a, b, c, d = self.a, self.b, self.c, self.d
+        x, y, z = point[0], point[1], point[2]
+        value = a*x + b*y + c*z + d
+        return abs(value) < eps
+
+    def evaluate(self, u, v):
+        p0 = self.nearest_point_to_origin()
+        a, b, c, d = self.a, self.b, self.c, self.d
+        v1 = mathutils.Vector((-b, a, c))
+        v2 = mathutils.Vector((a, -c, b))
+
+        return p0 + u*v1 + v*v2
+
+    @property
+    def normal(self):
+        return mathutils.Vector((self.a, self.b, self.c))
+
+    @normal.setter
+    def normal(self, normal):
+        self.a = normal[0]
+        self.b = normal[1]
+        self.c = normal[2]
+
+    def nearest_point_to_origin(self):
+        a, b, c, d = self.a, self.b, self.c, self.d
+        sqr = a*a + b*b + c*c
+        return mathutils.Vector(((- a*d)/sqr, (- b*d)/sqr, (- c*d)/sqr))
+    
+    def distance_to_point(self, point):
+        point_on_plane = self.nearest_point_to_origin()
+        return mathutils.geometry.distance_point_to_plane(mathutils.Vector(point), point_on_plane, self.normal)
+
+    def intersect_with_line(self, line):
+        a, b, c, d = self.a, self.b, self.c, self.d
+        x0, y0, z0 = line.x0, line.y0, line.z0
+
+        # Here we numerically solve the system of linear equations:
+        #
+        #   /    x - x0   y - y0   z - z0
+        #   |    ------ = ------ = ------, (line)
+        #   /      A        B        C                (*)
+        #   `
+        #   |   A x + B y + C z + D = 0    (plane)
+        #    `
+        # 
+        # with relation to x, y, z.
+        # It is possible that any two of A, B, C are equal to zero,
+        # but not all three of them.
+        # Depending on which of A, B, C is not zero, we should
+        # consider different representations of line equation.
+        #
+        # For example, if B != 0, we can represent (*) as
+        #
+        #   B (x - x0) = A (y - y0),
+        #   C (y - y0) = B (z - z0),
+        #   A x + B x + C z + D = 0.
+        #
+        # But, if B == 0, then this representation will contain
+        # two exactly equivalent equations:
+        # 
+        #   0 = A (y - y0),
+        #   C (y - y0) = 0,
+        #   A x + 0 + C z + D = 0.
+        #
+        # In this case, the system will become singular; so
+        # we must choose another representation of (*) system.
+
+        epsilon = 1e-8
+
+        if abs(a) > epsilon:
+            matrix = np.array([
+                        [b, -a, 0],
+                        [c, 0, -a],
+                        [a, b, c]])
+            free = np.array([
+                        b*x0 - a*y0,
+                        c*x0 - a*z0,
+                        -d])
+        elif abs(b) > epsilon:
+            matrix = np.array([
+                        [b, -a, 0],
+                        [0, c, -b],
+                        [a, b, c]])
+
+            free = np.array([
+                        b*x0 - a*y0,
+                        c*y0 - b*z0,
+                        -d])
+        elif abs(c) > epsilon:
+            matrix = np.array([
+                        [c, 0, -a],
+                        [0, c, -b],
+                        [a, b, c]])
+            free = np.array([
+                        c*x0 - a*z0,
+                        c*y0 - b*z0,
+                        -d])
+        else:
+            raise Exception("Invalid plane: all coefficients are (nearly) zero: {}, {}, {}".format(a, b, c))
+
+        if abs(linalg.det(matrix)) < 1e-8:
+            raise Exception("Plane: {}, line: {}".format(self, line))
+
+        result = np.linalg.solve(matrix, free)
+        x, y, z = result[0], result[1], result[2]
+        return mathutils.Vector((x, y, z))
+
+    def projection_of_point(self, point):
+        # Draw a line, which has the same direction vector
+        # as this plane's normal, and which contains the
+        # given point.
+        line = LineEquation(self.a, self.b, self.c, point)
+        # Then find the intersection of this plane with that line.
+        return self.intersect_with_line(line)
+
+class LineEquation(object):
+    """
+    An object, containing the coefficients A, B, C, x0, y0, z0 in the
+    equation of a line:
+
+            x - x0   y - y0   z - z0
+            ------ = ------ = ------,
+               A       B        C
+    """
+
+    def __init__(self, a, b, c, point):
+        self.a = a
+        self.b = b
+        self.c = c
+        self.point = point
+
+    @classmethod
+    def from_two_points(cls, p1, p2):
+        x1, y1, z1 = p1[0], p1[1], p1[2]
+        x2, y2, z2 = p2[0], p2[1], p2[2]
+
+        a = x2 - x1
+        b = y2 - y1
+        c = z2 - z1
+
+        return LineEquation(a, b, c, p1)
+
+    def check(self, point, eps=1e-6):
+        """
+        Check if the specified point belongs to the line.
+        """
+        a, b, c = self.a, self.b, self.c
+        x0, y0, z0 = self.x0, self.y0, self.z0
+        x, y, z = point[0], point[1], point[2]
+
+        value1 = b * (x - x0) - a * (y - y0)
+        value2 = c * (y - y0) - b * (z - z0)
+
+        return abs(value1) < eps and abs(value2) < eps
+
+    @property
+    def x0(self):
+        return self.point[0]
+    
+    @x0.setter
+    def x0(self, x0):
+        self.point[0] = x0
+
+    @property
+    def y0(self):
+        return self.point[1]
+    
+    @y0.setter
+    def y0(self, y0):
+        self.point[1] = y0
+
+    @property
+    def z0(self):
+        return self.point[2]
+    
+    @z0.setter
+    def z0(self, z0):
+        self.point[2] = z0
+
+    @property
+    def direction(self):
+        return mathutils.Vector((self.a, self.b, self.c))
+
+    @direction.setter
+    def direction(self, vector):
+        self.a = vector[0]
+        self.b = vector[1]
+        self.c = vector[2]
+
+    def __repr__(self):
+        return "[{}, {}, {}, ({}, {}, {})]".format(self.a, self.b, self.c, self.x0, self.y0, self.z0)
+    
+    def __str__(self):
+        return "(x - {})/{} = (y - {})/{} = (z - {})/{}".format(self.x0, self.a, self.y0, self.b, self.z0, self.c)
+
+    def distance_to_point(self, point):
+        # TODO: there should be more effective way to do this
+        return self.projection_of_point(point).length
+
+    def projection_of_point(self, point):
+        # Draw a plane, which has the same normal as
+        # this line's direction vector, and which contains the
+        # given point
+        plane = PlaneEquation.from_normal_and_point(self.direction, point)
+        # Then find an intersection of that plane with this line.
+        return plane.intersect_with_line(self)
+
+class LinearApproximationData(object):
+    """
+    This class contains results of linear approximation calculation.
+    It's instance is returned by linear_approximation() method.
+    """
+    def __init__(self):
+        self.center = None
+        self.eigenvalues = None
+        self.eigenvectors = None
+
+    def most_similar_plane(self):
+        """
+        Return coefficients of an equation of a plane, which
+        is the best linear approximation for input vertices.
+
+        output: an instance of PlaneEquation class.
+        """
+
+        idx = np.argmin(self.eigenvalues)
+        normal = self.eigenvectors[:, idx]
+        return PlaneEquation.from_normal_and_point(normal, self.center)
+
+    def most_similar_line(self):
+        """
+        Return coefficients of an equation of a plane, which
+        is the best linear approximation for input vertices.
+
+        output: an instance of LineEquation class.
+        """
+
+        idx = np.argmax(self.eigenvalues)
+        eigenvector = self.eigenvectors[:, idx]
+        a, b, c = tuple(eigenvector)
+
+        return LineEquation(a, b, c, self.center)
+
+def linear_approximation(data):
+    """
+    Calculate best linear approximation for a list of vertices.
+    Input vertices can be approximated by a plane or by a line,
+    or both.
+
+    input: list of 3-tuples.
+    output: an instance of LinearApproximationData class.
+    """
+    result = LinearApproximationData()
+
+    result.center = cx,cy,cz = center(data)
+    
+    xs = [x[0]-cx for x in data]
+    ys = [x[1]-cy for x in data]
+    zs = [x[2]-cz for x in data]
+    
+    sx2 = sum(x**2 for x in xs)
+    sy2 = sum(y**2 for y in ys)
+    sz2 = sum(z**2 for z in zs)
+    
+    sxy = sum(x*y for (x,y) in zip(xs,ys))
+    sxz = sum(x*z for (x,z) in zip(xs,zs))
+    syz = sum(y*z for (y,z) in zip(ys,zs))
+    
+    n = len(data)
+    
+    matrix = np.array([
+        [sx2, sxy, sxz],
+        [sxy, sy2, syz],
+        [sxz, syz, sz2]
+        ])
+    
+    result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
+    return result
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
