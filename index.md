@@ -359,4 +359,5 @@
     SvQuaternionOutNode
     SvQuaternionInNode
     SvQuaternionMathNode
-    SvPulgaPhysicsNode 
+    SvPulgaPhysicsNode
+    SvProjectPointToLine
