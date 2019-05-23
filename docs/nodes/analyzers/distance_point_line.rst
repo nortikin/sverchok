@@ -30,7 +30,7 @@ Inputs / Parameters
 +---------------------+-------------+----------------------------------------------------------------------+
 | **Line Vertices**   | Vertices    | It will get the first and last vertices's to define the line segment |
 +---------------------+-------------+----------------------------------------------------------------------+
-| **Tolerance**       | Float       | Minimal distance to accept  one point is intersecting.               |
+| **Tolerance**       | Float       | Minimal distance to accept one point is intersecting.               |
 +---------------------+-------------+----------------------------------------------------------------------+
 
 Advanced Parameters
@@ -72,7 +72,7 @@ It can be used to create perpendicular lines from input points
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/distance_point_line/distance_point_line_sverchok_blender_perpendicular_to_line.png
   :alt: Sverchok_Distance_point_line.PNG
 
-Or to select the points in a distance range.
+In this example the node is used to separate the points which are at less than two units from the lineOr to select the points in a distance range.
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/distance_point_line/distance_point_line_sverchok_blender_procedural.png
   :alt: Blender_distance_point_line.PNG
