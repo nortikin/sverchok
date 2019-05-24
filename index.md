@@ -52,7 +52,7 @@
     SvVolumeNode
     AreaNode
     DistancePPNode
-    DistancePointLineNode
+    SvDistancePointLineNode
     SvPathLengthNode
     CentersPolsNodeMK2
     CentersPolsNodeMK3
