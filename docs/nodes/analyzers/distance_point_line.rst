@@ -83,5 +83,6 @@ In this example the Inset Polygon node gets the inset and distance inputs from t
   :alt: Sverchok_Distance_polygon_line.PNG
   
 This example uses the node to scale geometry along a custom axis.
+
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/distance_point_line/distance_point_line_sverchok_blender_scale_custom_axis.png
   :alt: Sverchok_scale_along_custom_axis.PNG
