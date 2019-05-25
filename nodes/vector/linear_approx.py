@@ -25,7 +25,10 @@ from sverchok.data_structure import (updateNode)
 from sverchok.utils.geom import linear_approximation
 
 class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Linear Approximation '''
+    """
+    Triggers: Linear Approximation
+    Tooltip: Approximate vertices with straight line or plane.
+    """
     bl_idname = 'SvLinearApproxNode'
     bl_label = 'Linear Approximation'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -54,6 +57,8 @@ class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Projections")
         self.outputs.new('VerticesSocket', "Diffs")
         self.outputs.new('StringsSocket', "Distances")
+
+        self.update_mode(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
