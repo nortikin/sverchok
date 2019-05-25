@@ -30,7 +30,7 @@ Inputs / Parameters
 +---------------------+-------------+----------------------------------------------------------------------+
 | **Line Vertices**   | Vertices    | It will get the first and last vertices's to define the line segment |
 +---------------------+-------------+----------------------------------------------------------------------+
-| **Tolerance**       | Float       | Minimal distance to accept one point is intersecting.               |
+| **Tolerance**       | Float       | Minimal distance to accept one point is intersecting.                |
 +---------------------+-------------+----------------------------------------------------------------------+
 
 Advanced Parameters
