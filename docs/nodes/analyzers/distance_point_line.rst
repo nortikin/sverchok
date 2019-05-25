@@ -72,7 +72,7 @@ It can be used to create perpendicular lines from input points
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/distance_point_line/distance_point_line_sverchok_blender_perpendicular_to_line.png
   :alt: Sverchok_Distance_point_line.PNG
 
-In this example the node is used to separate the points which are at less than two units from the lineOr to select the points in a distance range.
+In this example the node is used to separate the points which are at less than two units from the line.
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/distance_point_line/distance_point_line_sverchok_blender_procedural.png
   :alt: Blender_distance_point_line.PNG
