@@ -42,6 +42,7 @@ from mathutils.geometry import interpolate_bezier, intersect_line_line, intersec
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.data_structure import match_long_repeat
+from sverchok.utils.logging import debug, info
 
 identity_matrix = Matrix()
 
@@ -767,7 +768,7 @@ class Spline2D(object):
             norm = np.linalg.norm(n)
             if norm != 0:
                 n = n / norm
-            #print("DU: {}, DV: {}, N: {}".format(du, dv, n))
+            #debug("DU: {}, DV: {}, N: {}".format(du, dv, n))
             result = tuple(n)
             self._normal_cache[(u,v)] = result
             return result
@@ -787,7 +788,7 @@ class GenerateLookup():
         self.acquire_lookup_table()
         self.get_buckets()
         # for idx, (k, v) in enumerate(sorted(self.lookup.items())):
-        #     print(k, v)
+        #     debug(k, v)
 
     def find_bucket(self, factor):
         for bucket_min, bucket_max in zip(self.buckets[:-1], self.buckets[1:]):
@@ -1009,12 +1010,32 @@ class PlaneEquation(object):
         value = a*x + b*y + c*z + d
         return abs(value) < eps
 
-    def evaluate(self, u, v):
-        p0 = self.nearest_point_to_origin()
-        a, b, c, d = self.a, self.b, self.c, self.d
-        v1 = mathutils.Vector((-b, a, c))
-        v2 = mathutils.Vector((a, -c, b))
+    def two_vectors(self):
+        """
+        Return two vectors that are parallel two this plane.
+        Note: the two vectors returned are orthogonal.
 
+        output: (Vector, Vector)
+        """
+        v1 = self.normal.orthogonal()
+        v2 = v1.cross(self.normal)
+        return v1, v2
+
+
+    def evaluate(self, u, v):
+        """
+        Return a point on the plane by it's UV coordinates.
+        UV coordinates origin is self.point.
+        Orientation of UV coordinates system is undefined.
+        Scale of UV coordinates system is defined by coordinates
+        of self.normal. One can use plane.normalized().evaluate()
+        two make sure that the scale of UV coordinates system is 1:1.
+
+        input: two floats.
+        output: Vector.
+        """
+        p0 = self.nearest_point_to_origin()
+        v1, v2 = self.two_vectors()
         return p0 + u*v1 + v*v2
 
     @property
@@ -1028,16 +1049,31 @@ class PlaneEquation(object):
         self.c = normal[2]
 
     def nearest_point_to_origin(self):
+        """
+        Returns the point on plane which is the nearest
+        to the origin (0, 0, 0).
+        output: Vector.
+        """
         a, b, c, d = self.a, self.b, self.c, self.d
         sqr = a*a + b*b + c*c
         return mathutils.Vector(((- a*d)/sqr, (- b*d)/sqr, (- c*d)/sqr))
     
     def distance_to_point(self, point):
+        """
+        Return distance from specified point to this plane.
+        input: Vector or 3-tuple
+        output: float.
+        """
         point_on_plane = self.nearest_point_to_origin()
         return mathutils.geometry.distance_point_to_plane(mathutils.Vector(point), point_on_plane, self.normal)
 
     def intersect_with_line(self, line):
-        a, b, c, d = self.a, self.b, self.c, self.d
+        """
+        Calculate intersection between this plane and specified line.
+        input: line - an instance of LineEquation.
+        output: Vector.
+        """
+        a, b, c = line.a, line.b, line.c
         x0, y0, z0 = line.x0, line.y0, line.z0
 
         # Here we numerically solve the system of linear equations:
@@ -1046,7 +1082,7 @@ class PlaneEquation(object):
         #   |    ------ = ------ = ------, (line)
         #   /      A        B        C                (*)
         #   `
-        #   |   A x + B y + C z + D = 0    (plane)
+        #   |   Ap x + Bp y + Cp z + Dp = 0    (plane)
         #    `
         # 
         # with relation to x, y, z.
@@ -1059,48 +1095,50 @@ class PlaneEquation(object):
         #
         #   B (x - x0) = A (y - y0),
         #   C (y - y0) = B (z - z0),
-        #   A x + B x + C z + D = 0.
+        #   Ap x + Bp x + Cp z + Dp = 0.
         #
         # But, if B == 0, then this representation will contain
         # two exactly equivalent equations:
         # 
         #   0 = A (y - y0),
         #   C (y - y0) = 0,
-        #   A x + 0 + C z + D = 0.
+        #   Ap x + 0 + Cp z + Dp = 0.
         #
         # In this case, the system will become singular; so
         # we must choose another representation of (*) system.
 
         epsilon = 1e-8
 
+        #info("Line: %s", line)
+
         if abs(a) > epsilon:
             matrix = np.array([
                         [b, -a, 0],
                         [c, 0, -a],
-                        [a, b, c]])
+                        [self.a, self.b, self.c]])
             free = np.array([
                         b*x0 - a*y0,
                         c*x0 - a*z0,
-                        -d])
+                        -self.d])
         elif abs(b) > epsilon:
             matrix = np.array([
                         [b, -a, 0],
                         [0, c, -b],
-                        [a, b, c]])
+                        [self.a, self.b, self.c]])
 
             free = np.array([
                         b*x0 - a*y0,
                         c*y0 - b*z0,
-                        -d])
+                        -self.d])
         elif abs(c) > epsilon:
             matrix = np.array([
                         [c, 0, -a],
                         [0, c, -b],
-                        [a, b, c]])
+                        [self.a, self.b, self.c]])
             free = np.array([
                         c*x0 - a*z0,
                         c*y0 - b*z0,
-                        -d])
+                        -self.d])
         else:
             raise Exception("Invalid plane: all coefficients are (nearly) zero: {}, {}, {}".format(a, b, c))
 
@@ -1112,12 +1150,73 @@ class PlaneEquation(object):
         return mathutils.Vector((x, y, z))
 
     def projection_of_point(self, point):
+        """
+        Return a projection of specified point to this plane.
+        input: Vector.
+        output: Vector.
+        """
         # Draw a line, which has the same direction vector
         # as this plane's normal, and which contains the
         # given point.
         line = LineEquation(self.a, self.b, self.c, point)
         # Then find the intersection of this plane with that line.
         return self.intersect_with_line(line)
+
+    def intersect_with_plane(self, plane2):
+        """
+        Return an intersection of this plane with another one.
+        
+        input: PlaneEquation
+        output: LineEquation or None, in case two planes are parallel.
+        """
+        if self.is_parallel(plane2):
+            debug("{} is parallel to {}".format(self, plane2))
+            return None
+
+        # We need an arbitrary point on this plane and two vectors.
+        # Draw two lines in this plane and see for theirs intersection
+        # with another plane.
+        p0 = self.nearest_point_to_origin()
+        v1, v2 = self.two_vectors()
+        line1 = LineEquation.from_direction_and_point(v1, p0)
+        line2 = LineEquation.from_direction_and_point(v2, p0)
+
+        # it might be that one of vectors we chose is parallel to plane2
+        # (since we are choosing them arbitrarily); but from the way
+        # we are choosing v1 and v2, we know they are orthogonal.
+        # So if wee just rotate them by pi/4, they will no longer be
+        # parallel to plane2.
+        if plane2.is_parallel(line1) or plane2.is_parallel(line2):
+            v1_new = v1 + v2
+            v2_new = v1 - v2
+            debug("{}, {} => {}, {}".format(v1, v2, v1_new, v2_new))
+            line1 = LineEquation.from_direction_and_point(v1_new, p0)
+            line2 = LineEquation.from_direction_and_point(v2_new, p0)
+
+        info("line1: %s", line1)
+        info("line2: %s", line2)
+
+        p1 = plane2.intersect_with_line(line1)
+        p2 = plane2.intersect_with_line(line2)
+        print("{} => {}".format(v1, p1))
+        print("{} => {}".format(v2, p2))
+        print("Plane2: {}".format(plane2))
+        return LineEquation.from_two_points(p1, p2)
+
+    def is_parallel(self, other):
+        """
+        Check if other object is parallel to this plane.
+        input: PlaneEquation, LineEquation or Vector.
+        output: boolean.
+        """
+        if isinstance(other, PlaneEquation):
+            return abs(self.normal.angle(other.normal)) < 1e-8
+        elif isinstance(other, LineEquation):
+            return abs(self.normal.dot(other.direction)) < 1e-8
+        elif isinstance(other, mathutils.Vector):
+            return abs(self.normal.dot(other)) < 1e-8
+        else:
+            raise Exception("Don't know how to check is_parallel for {}".format(type(other)))
 
 class LineEquation(object):
     """
@@ -1130,6 +1229,9 @@ class LineEquation(object):
     """
 
     def __init__(self, a, b, c, point):
+        epsilon = 1e-8
+        if abs(a) < epsilon and abs(b) < epsilon and abs(c) < epsilon:
+            raise Exception("Direction is (nearly) zero: {}, {}, {}".format(a, b, c))
         self.a = a
         self.b = b
         self.c = c
@@ -1137,6 +1239,8 @@ class LineEquation(object):
 
     @classmethod
     def from_two_points(cls, p1, p2):
+        if (mathutils.Vector(p1) - mathutils.Vector(p2)).length < 1e-8:
+            raise Exception("Two points are (almost) the same: {}, {}".format(p1, p2))
         x1, y1, z1 = p1[0], p1[1], p1[2]
         x2, y2, z2 = p2[0], p2[1], p2[2]
 
@@ -1145,6 +1249,11 @@ class LineEquation(object):
         c = z2 - z1
 
         return LineEquation(a, b, c, p1)
+
+    @classmethod
+    def from_direction_and_point(cls, direction, point):
+        a, b, c = tuple(direction)
+        return LineEquation(a, b, c, point)
 
     @classmethod
     def from_coordinate_axis(cls, axis_name):
@@ -1211,10 +1320,20 @@ class LineEquation(object):
         return "(x - {})/{} = (y - {})/{} = (z - {})/{}".format(self.x0, self.a, self.y0, self.b, self.z0, self.c)
 
     def distance_to_point(self, point):
+        """
+        Return the distance between the specified point and this line.
+        input: Vector or 3-tuple.
+        output: float.
+        """
         # TODO: there should be more effective way to do this
         return self.projection_of_point(point).length
 
     def projection_of_point(self, point):
+        """
+        Return the projection of the specified point on this line.
+        input: Vector or 3-tuple.
+        output: Vector.
+        """
         # Draw a plane, which has the same normal as
         # this line's direction vector, and which contains the
         # given point
