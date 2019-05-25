@@ -1137,14 +1137,8 @@ class PlaneEquation(object):
             line1 = LineEquation.from_direction_and_point(v1_new, p0)
             line2 = LineEquation.from_direction_and_point(v2_new, p0)
 
-        info("line1: %s", line1)
-        info("line2: %s", line2)
-
         p1 = plane2.intersect_with_line(line1)
         p2 = plane2.intersect_with_line(line2)
-        print("{} => {}".format(v1, p1))
-        print("{} => {}".format(v2, p2))
-        print("Plane2: {}".format(plane2))
         return LineEquation.from_two_points(p1, p2)
 
     def is_parallel(self, other):
@@ -1347,6 +1341,18 @@ def linear_approximation(data):
     syz = sum(y*z for (y,z) in zip(ys,zs))
     
     n = len(data)
+
+    # This is not that trivial, one can show that
+    # eigenvalues and eigenvectors of a matrix composed
+    # this way will provide exactly the solutions of
+    # least squares problem for input vertices.
+    # The nice part is that by calculating these values
+    # we obtain both approximations - by line and by plane -
+    # at the same time. The eigenvector which corresponds to
+    # the minimal of eigenvalues will provide a normal for
+    # the approximating plane. The eigenvector which corresponds
+    # to the maximal of eigenvalues will provide a direction
+    # for the approximating line.
     
     matrix = np.array([
         [sx2, sxy, sxz],
