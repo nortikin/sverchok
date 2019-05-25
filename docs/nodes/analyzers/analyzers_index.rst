@@ -9,6 +9,7 @@ Analyzers
    bbox
    distance_pp
    distance_point_line
+   distance_point_plane
    deformation
    edge_angles
    kd_tree
