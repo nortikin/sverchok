@@ -61,6 +61,8 @@ class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_mode(context)
 
+        self.update_mode(context)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
 

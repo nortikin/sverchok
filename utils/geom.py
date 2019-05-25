@@ -976,6 +976,17 @@ class PlaneEquation(object):
 
         return PlaneEquation.from_normal_and_point((a, b, c), p1)
 
+    @classmethod
+    def from_coordinate_plane(cls, plane_name):
+        if plane_name == 'XY':
+            return PlaneEquation(0, 0, 1, 0)
+        elif plane_name == 'YZ':
+            return PlaneEquation(1, 0, 0, 0)
+        elif plane_name == 'XZ':
+            return PlaneEquation(0, 1, 0, 0)
+        else:
+            raise Exception("Unknown coordinate plane name")
+
     def normalized(self):
         """
         Return equation, which defines exactly the same plane, but with coefficients adjusted so that
@@ -985,6 +996,8 @@ class PlaneEquation(object):
         holds.
         """
         normal = self.normal.length
+        if abs(normal) < 1e-8:
+            raise Exception("Normal of the plane is (nearly) zero: ({}, {}, {})".format(self.a, self.b, self.c))
         return PlaneEquation(a/normal, b/normal, c/normal, d/normal)
     
     def check(self, point, eps=1e-6):
@@ -1132,6 +1145,17 @@ class LineEquation(object):
         c = z2 - z1
 
         return LineEquation(a, b, c, p1)
+
+    @classmethod
+    def from_coordinate_axis(cls, axis_name):
+        if axis_name == 'X':
+            return LineEquation(1, 0, 0, (0, 0, 0))
+        elif axis_name == 'Y':
+            return LineEquation(0, 1, 0, (0, 0, 0))
+        elif axis_name == 'Z':
+            return LineEquation(0, 0, 1, (0, 0, 0))
+        else:
+            raise Exception("Unknown axis name")
 
     def check(self, point, eps=1e-6):
         """
