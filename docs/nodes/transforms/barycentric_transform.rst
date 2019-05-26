@@ -18,6 +18,8 @@ Inputs / Parameters
 +======================+=============+======================================================================+
 | **Vertices**         | Vertices    | Points to calculate                                                  | 
 +----------------------+-------------+----------------------------------------------------------------------+
+| **Edg_Pol**          | Int Lists   | Edges or pols of the input Vertices (optional)                       | 
++----------------------+-------------+----------------------------------------------------------------------+
 | **Verts Tri Source** | Vertices    | It will get the first and last vertices's to define the line segment |
 +----------------------+-------------+----------------------------------------------------------------------+
 | **Verts Tri Target** | Float       | Minimal distance to accept one point is intersecting.                |
@@ -38,6 +40,8 @@ Outputs
 -------
 
 **Vertices**: Transformed vectors.
+
+**Edg_Pol**: A matched copy of the input Edg_Pol data.
 
 
 Example of usage

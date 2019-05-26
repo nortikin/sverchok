@@ -44,8 +44,9 @@ def matrix_def(tri0, tri1, tri2):
 def compute_barycentric_transform_np(params, result, out_numpy):
     '''NumPy Implementation of a barycentric transform'''
     verts = array(params[0])
-    tri_s = array(params[1])
-    tri_d = array(params[2])
+    egde_pol = params[1]
+    tri_s = array(params[2])
+    tri_d = array(params[3])
 
     transform_matrix_s, tri3_s = matrix_def(tri_s[0, :], tri_s[1, :], tri_s[2, :])
     transform_matrix_d, tri3_d = matrix_def(tri_d[0, :], tri_d[1, :], tri_d[2, :])
@@ -57,8 +58,9 @@ def compute_barycentric_transform_np(params, result, out_numpy):
 
 def compute_barycentric_transform_mu(params, result, out_numpy):
     '''Port to MathUtils barycentric transform function'''
-    tri_s = [V(v) for v in params[1]]
-    tri_d = [V(v) for v in params[2]]
+    edge_pol = params[1]
+    tri_s = [V(v) for v in params[2]]
+    tri_d = [V(v) for v in params[3]]
     sub_result = []
     for vert in params[0]:
         point = V(vert)
@@ -69,8 +71,8 @@ def compute_barycentric_transform_mu(params, result, out_numpy):
 
 class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
     '''
-    Triggers: Triangle based transform
-    Tooltip: Performs barycentric transformation between two triangles.
+    Triggers: Adaptive Triangles
+    Tooltip: Adaptive Triangles. Barycentric transformation between triangles.
     '''
     bl_idname = 'SvBarycentricTransformNode'
     bl_label = 'Barycentric Transform'
@@ -104,10 +106,12 @@ class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
         sinw = self.inputs.new
         sonw = self.outputs.new
         sinw('VerticesSocket', 'Vertices')
+        sinw('StringsSocket', 'Edg_Pol')
         sinw('VerticesSocket', 'Verts Tri Source')
         sinw('VerticesSocket', 'Verts Tri Target')
 
         sonw('VerticesSocket', 'Vertices')
+        sonw('StringsSocket', 'Edg_Pol')
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
@@ -131,19 +135,23 @@ class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
         '''main node function called every update'''
         outputs = self.outputs
         inputs = self.inputs
-        if not (outputs[0].is_linked and all(s.is_linked for s in inputs)):
+        if not (outputs[0].is_linked and all(s.is_linked for s in inputs[:1] + inputs[2:])):
             return
 
-        result = []
+        result = [[], []]
         group = self.get_data()
         func = self.compute_distances[self.implementation]
         out_numpy = self.output_numpy
-
+        edg_pol_data = inputs[1].is_linked and outputs[1].is_linked
+        
         for params in zip(*group):
-            func(params, result, out_numpy)
+            func(params, result[0], out_numpy)
+            if edg_pol_data:
+                result[1].append(params[1])
 
-
-        outputs[0].sv_set(result)
+        outputs[0].sv_set(result[0])
+        if edg_pol_data:
+            outputs[1].sv_set(result[1])
 
 
 
