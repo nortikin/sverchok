@@ -212,6 +212,7 @@
     SvInterpolationNode
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
+    SvLinearApproxNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
