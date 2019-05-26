@@ -1141,6 +1141,15 @@ class PlaneEquation(object):
         # with another plane.
         p0 = self.nearest_point_to_origin()
         v1, v2 = self.two_vectors()
+        # it might be that p0 belongs to plane2; in that case we choose
+        # another point in the same plane
+        if plane2.check(p0):
+            # Since v1 and v2 are orthogonal, it may not be that they are
+            # both parallel to plane2.
+            if not plane2.is_parallel(v1):
+                p0 = p0 + v1
+            else:
+                p0 = p0 + v2
         line1 = LineEquation.from_direction_and_point(v1, p0)
         line2 = LineEquation.from_direction_and_point(v2, p0)
 
@@ -1152,7 +1161,7 @@ class PlaneEquation(object):
         if plane2.is_parallel(line1) or plane2.is_parallel(line2):
             v1_new = v1 + v2
             v2_new = v1 - v2
-            debug("{}, {} => {}, {}".format(v1, v2, v1_new, v2_new))
+            info("{}, {} => {}, {}".format(v1, v2, v1_new, v2_new))
             line1 = LineEquation.from_direction_and_point(v1_new, p0)
             line2 = LineEquation.from_direction_and_point(v2_new, p0)
 
@@ -1283,7 +1292,8 @@ class LineEquation(object):
         output: float.
         """
         # TODO: there should be more effective way to do this
-        return self.projection_of_point(point).length
+        projection = self.projection_of_point(point)
+        return (mathutils.Vector(point) - projection).length
 
     def projection_of_point(self, point):
         """
