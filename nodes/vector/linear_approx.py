@@ -105,13 +105,12 @@ class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
 
                 projections = []
                 diffs = []
-                distances = []
+                distances = list(map(float, list(plane.distance_to_points(vertices))))
                 for vertex in vertices:
                     projection = plane.projection_of_point(vertex)
                     projections.append(tuple(projection))
                     diff = projection - Vector(vertex)
                     diffs.append(tuple(diff))
-                    distances.append(diff.length)
 
                 out_projections.append(projections)
                 out_diffs.append(diffs)

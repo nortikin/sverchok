@@ -1011,6 +1011,25 @@ class PlaneEquation(object):
         point_on_plane = self.nearest_point_to_origin()
         return mathutils.geometry.distance_point_to_plane(mathutils.Vector(point), point_on_plane, self.normal)
 
+    def distance_to_points(self, points):
+        """
+        Return distances from specified points to this plane.
+        input: list of 3-tuples, or numpy array of same shape
+        output: numpy array of floats.
+        """
+        # Distance from (x,y,z) to the plane is given by formula:
+        # 
+        #          | A x + B y + C z + D |
+        #   rho = -------------------------
+        #           sqrt(A^2 + B^2 + C^2)
+        #
+        points = np.array(points)
+        a, b, c, d = self.a, self.b, self.c, self.d
+        # (A x + B y + C z) is a scalar product of (x, y, z) and (A, B, C)
+        numerators = abs(points.dot([a, b, c]) + d)
+        denominator = math.sqrt(a*a + b*b + c*c)
+        return numerators / denominator
+
     def intersect_with_line(self, line):
         """
         Calculate intersection between this plane and specified line.
