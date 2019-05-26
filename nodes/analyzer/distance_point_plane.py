@@ -39,7 +39,6 @@ def compute_point_tri_dist(p, plane_origin, plane_a, plane_b, norm, tolerance):
 
 
 def compute_distances_mu(plane, pts, result, gates, tolerance):
-    '''redistribute data to use Mathutils functions'''
     plane_origin = V(plane[0])
     plane_a, plane_b = V(plane[1]), V(plane[2])
     norm = normal([plane_origin, plane_a, plane_b])
@@ -55,23 +54,27 @@ def compute_distances_mu(plane, pts, result, gates, tolerance):
         if gates[i]:
             res.append(local_result[i])
 
-def barycentric_mask_np(p_triang, edges, np_pol_v, coll_normals, ed_id, tolerance):
-    '''helper function to mask which points are inside the triangles'''
+def barycentric_mask_np(pts, edges, np_pol_v, pol_normals, ed_id, tolerance):
+    '''Helper function to mask which points are inside the triangles'''
+       
     edge = edges[ed_id, :]
-    v0 = np_pol_v[ed_id, :]
-    vp0 = p_triang - v0[np.newaxis, :]
-    cross = np.cross(edge[ np.newaxis, :], vp0)
-    return np.sum(coll_normals * cross, axis=1) > -tolerance
+    triangle_vert = np_pol_v[ed_id, :]
+    vert_pts = pts - triangle_vert[np.newaxis, :]
+    cross = np.cross(edge[ np.newaxis, :], vert_pts)
+    
+    return np.sum(pol_normals * cross, axis=1) > -tolerance
 
-def pts_in_tris_np(p_triang, edges, pol_v, coll_normals, tolerance):
+def pts_in_tris_np(pts, edges, pol_v, pol_normals, tolerance):
     '''calculate if points are inside the triangles'''
-    w = barycentric_mask_np(p_triang, edges, pol_v, coll_normals, 0, tolerance)
-    u = barycentric_mask_np(p_triang, edges, pol_v, coll_normals, 1, tolerance)
-    v = barycentric_mask_np(p_triang, edges, pol_v, coll_normals, 2, tolerance)
+    w = barycentric_mask_np(pts, edges, pol_v, pol_normals, 0, tolerance)
+    u = barycentric_mask_np(pts, edges, pol_v, pol_normals, 1, tolerance)
+    v = barycentric_mask_np(pts, edges, pol_v, pol_normals, 2, tolerance)
     return w * u * v 
     
 def compute_distances_np(plane, pts, result, gates, tolerance):
-    '''gets regular points and plane and calculates distance using Numpy'''
+    '''The theory of this function was taken from "Optimizing The Computation Of Barycentric Coordinates" in
+       https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates'''
+
     np_plane_v = np.array(plane)
     v1 = np_plane_v[1,:] - np_plane_v[0,:]
     v2 = np_plane_v[2,:] - np_plane_v[0,:]
@@ -87,16 +90,18 @@ def compute_distances_np(plane, pts, result, gates, tolerance):
     edges[ 2, :] = np_plane_v[ 0, :] - np_plane_v[ 2, :]
     plane_co = np_plane_v[ 0, :]
     np_pts = np.array(pts)
-    
-    vector_coll = np_pts - plane_co
-    coll_dist = np.sum(vector_coll * normals_n, axis=1)
 
-    closest = np_pts - normals_n[np.newaxis, :] * coll_dist[:,np.newaxis]
-    side = (coll_dist >=0 ) if gates[5] else []
-    dist_abs = np.abs(coll_dist)
+    vector_base = np_pts - plane_co
+    distance = np.sum(vector_base * normals_n, axis=1)
+
+    closest = np_pts - normals_n[np.newaxis, :] * distance[:,np.newaxis]
+    side = (distance >= 0 ) if gates[5] else []
+    dist_abs = np.abs(distance)
+    
     is_in_triangle = []
     is_in_plane = []
     closest_in_tri = []
+    
     if gates[4] or gates[1]:
         closest_in_tri = pts_in_tris_np(closest, edges, np_plane_v, normals_n, np_tolerance)
     if gates[1] or gates[2]:
@@ -178,8 +183,8 @@ class SvDistancePointPlaneNode(bpy.types.Node, SverchCustomTreeNode):
         if self.implementation == "NumPy":
             layout.prop(self, "output_numpy", toggle=False)
         layout.label(text="List Match:")
-        layout.prop(self, "list_match_global", text="Global Match", expand=False)
-        layout.prop(self, "list_match_local", text="Local Match", expand=False)
+        layout.prop(self, "list_match_global", expand=False)
+        layout.prop(self, "list_match_local", expand=False)
         
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
