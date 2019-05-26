@@ -27,8 +27,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 
 
-def matrix_def(tri0, tri1, tri2):
+def matrix_def(triangle):
     '''Creation of Transform matrix from triangle'''
+    tri0, tri1, tri2 = triangle[0, :], triangle[1, :], triangle[2, :]
     tri_normal = cross(tri1 - tri0, tri2 - tri0)
     magnitude = norm(tri_normal)
     tri_area = 0.5 * magnitude
@@ -41,31 +42,59 @@ def matrix_def(tri0, tri1, tri2):
 
     return transform_matrix, tri3
 
-def compute_barycentric_transform_np(params, result, out_numpy):
+def prepare_source_data(tri_src):
+    '''Create the inverted Transformation Matrix and 4th point of the tetrahedron'''
+    inverted_matrix_s = []
+    tri3_src = []
+    for tri in tri_src:
+        np_tri = array(tri)
+        matrix_trasform_s, tri3 = matrix_def(np_tri)
+        tri3_src.append(tri3)
+        inverted_matrix_s.append(inv(matrix_trasform_s).T)
+
+    return inverted_matrix_s, tri3_src
+
+
+def prepare_dest_data(tri_dest):
+    '''Create Transformation Matrix and 4th point of the tetrahedron'''
+    tri3_dest = []
+    matrix_transform_d = []
+    for tri in tri_dest:
+        np_tri = array(tri)
+        matrix_trasform, tri3 = matrix_def(np_tri)
+        matrix_transform_d.append(matrix_trasform)
+        tri3_dest.append(tri3)
+
+    return matrix_transform_d, tri3_dest
+
+def compute_barycentric_transform_np(params, matched_index, result, out_numpy, edg_pol_data):
     '''NumPy Implementation of a barycentric transform'''
-    verts = array(params[0])
-    egde_pol = params[1]
-    tri_s = array(params[2])
-    tri_d = array(params[3])
-
-    transform_matrix_s, tri3_s = matrix_def(tri_s[0, :], tri_s[1, :], tri_s[2, :])
-    transform_matrix_d, tri3_d = matrix_def(tri_d[0, :], tri_d[1, :], tri_d[2, :])
-
-    barycentric_co = dot(inv(transform_matrix_s).T, (verts - tri3_s).T)
-    cartesian = dot(barycentric_co.T, transform_matrix_d) + tri3_d
-    result.append(cartesian if out_numpy else cartesian.tolist())
+    verts, egde_pol, tri_src, tri_dest = params
+    np_verts = [array(v) for v in verts]
+    inverted_matrix_s, tri3_src = prepare_source_data(tri_src)
+    matrix_transform_d, tri3_dest = prepare_dest_data(tri_dest)
 
 
-def compute_barycentric_transform_mu(params, result, out_numpy):
+    for v_id, edge_id, tri_src_id, tri_dest_id in zip(*matched_index):
+    
+        barycentric_co = dot(inverted_matrix_s[tri_src_id], (np_verts[v_id] - tri3_src[tri_src_id]).T)       
+        cartesian_co = dot(barycentric_co.T, matrix_transform_d[tri_dest_id]) + tri3_dest[tri_dest_id]
+        
+        result[0].append(cartesian_co if out_numpy else cartesian_co.tolist())
+        if edg_pol_data:
+            result[1].append(egde_pol[edge_id])
+
+
+def compute_barycentric_transform_mu(params, result):
     '''Port to MathUtils barycentric transform function'''
-    edge_pol = params[1]
-    tri_s = [V(v) for v in params[2]]
-    tri_d = [V(v) for v in params[3]]
+
+    tri_src = [V(v) for v in params[2]]
+    tri_dest = [V(v) for v in params[3]]
     sub_result = []
     for vert in params[0]:
         point = V(vert)
-        transformed_vert = barycentric_transform(point, tri_s[0], tri_s[1], tri_s[2], tri_d[0], tri_d[1], tri_d[2])
-        sub_result.append(list(transformed_vert))
+        new_vert = barycentric_transform(point, tri_src[0], tri_src[1], tri_src[2], tri_dest[0], tri_dest[1], tri_dest[2])
+        sub_result.append(list(new_vert))
     result.append(sub_result)
 
 
@@ -81,10 +110,6 @@ class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
     implentation_modes = [
         ("NumPy", "NumPy", "Faster to transform heavy meshes", 0),
         ("MathUtils", "MathUtils", "Faster to transform light meshes", 1)]
-
-    compute_distances = {
-        "NumPy": compute_barycentric_transform_np,
-        "MathUtils": compute_barycentric_transform_mu}
 
     output_numpy = BoolProperty(
         name='Output NumPy', description='Output NumPy arrays',
@@ -129,7 +154,8 @@ class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_data(self):
         '''get all data from sockets'''
-        return list_match_func[self.list_match]([s.sv_get(default=[[]]) for s in self.inputs])
+        return [s.sv_get(default=[[]]) for s in self.inputs]
+
 
     def process(self):
         '''main node function called every update'''
@@ -139,15 +165,24 @@ class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         result = [[], []]
-        group = self.get_data()
-        func = self.compute_distances[self.implementation]
         out_numpy = self.output_numpy
         edg_pol_data = inputs[1].is_linked and outputs[1].is_linked
-        
-        for params in zip(*group):
-            func(params, result[0], out_numpy)
-            if edg_pol_data:
-                result[1].append(params[1])
+        params = self.get_data()
+
+        if self.implementation == 'NumPy':
+
+            matched_indexes = list_match_func[self.list_match]([list(range(len(p))) for p in params])
+
+            compute_barycentric_transform_np(params, matched_indexes, result, out_numpy, edg_pol_data)
+
+        else:
+
+            group = list_match_func[self.list_match](params)
+
+            for params in zip(*group):
+                compute_barycentric_transform_mu(params, result[0])
+                if edg_pol_data:
+                    result[1].append(params[1])
 
         outputs[0].sv_set(result[0])
         if edg_pol_data:

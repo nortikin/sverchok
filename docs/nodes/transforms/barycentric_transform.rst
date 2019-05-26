@@ -30,7 +30,7 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**Implementation**: Choose between MathUtils and NumPy (Usually faster)
+**Implementation**: Choose between MathUtils (Faster transforming light meshes) and NumPy (Faster transforming heavy meshes)
 
 **Output NumPy**: to get NumPy arrays in stead of regular lists (makes the node faster). Only in the NumPy implementation.
 
