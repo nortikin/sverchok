@@ -52,6 +52,45 @@ class PlaneTests(SverchokTestCase):
         distance = plane.distance_to_point(point)
         self.assertEquals(distance, 3)
 
+    def test_projection_1(self):
+        plane = PlaneEquation.from_coordinate_plane('XY')
+        point = (1, 2, 3)
+        result = plane.projection_of_point(point)
+        self.assert_sverchok_data_equal(tuple(result), (1, 2, 0))
+
+    def test_projection_2(self):
+        p1 = (1, 0, 0)
+        p2 = (0, 1, 0)
+        p3 = (0, 0, 1)
+        plane = PlaneEquation.from_three_points(p1, p2, p3)
+        point = (3, 3, 3)
+        result = plane.projection_of_point(point)
+        self.assert_sverchok_data_equal(tuple(result), (0.3333, 0.3333, 0.3333), precision=4)
+
+    def test_projection_3(self):
+        plane = PlaneEquation.from_coordinate_plane('XY')
+        point1 = (1, 2, 3)
+        point2 = (4, 5, 6)
+        point3 = (7, 8, 9)
+        point4 = (2, 5, 9)
+        result = plane.projection_of_points([point1, point2, point3, point4])
+        expected = np.array([[1, 2, 0], [4, 5, 0], [7, 8, 0], [2, 5, 0]])
+        self.assert_numpy_arrays_equal(result, expected)
+
+    def test_projection_4(self):
+        p1 = (1, 0, 0)
+        p2 = (0, 1, 0)
+        p3 = (0, 0, 1)
+        plane = PlaneEquation.from_three_points(p1, p2, p3)
+        point1 = (-3, -3, -3)
+        point2 = (2, 1, 1)
+        point3 = (1, 1, 2)
+        point4 = (1, 2, 1)
+        result = plane.projection_of_points([point1, point2, point3, point4])
+        expected = np.array([[0.3333, 0.3333, 0.3333], [1,0,0], [0, 0, 1], [0, 1, 0]])
+        info(result)
+        self.assert_numpy_arrays_equal(result, expected, precision=4)
+
     def test_distance_to_points(self):
         plane = PlaneEquation.from_coordinate_plane('XY')
         points = [(1, 2, 3), (4, 5, 6)]

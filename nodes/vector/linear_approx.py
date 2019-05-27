@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+import numpy as np
 from bpy.props import EnumProperty
 from mathutils import Vector
 
@@ -106,11 +107,11 @@ class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
                 projections = []
                 diffs = []
                 distances = list(map(float, list(plane.distance_to_points(vertices))))
-                for vertex in vertices:
-                    projection = plane.projection_of_point(vertex)
-                    projections.append(tuple(projection))
-                    diff = projection - Vector(vertex)
-                    diffs.append(tuple(diff))
+                projections_np = plane.projection_of_points(vertices)
+                vertices_np = np.array(vertices)
+                projections = list(map(tuple, list(projections_np)))
+                diffs_np = projections_np - vertices_np
+                diffs = list(map(tuple, list(diffs_np)))
 
                 out_projections.append(projections)
                 out_diffs.append(diffs)

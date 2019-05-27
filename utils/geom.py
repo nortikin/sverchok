@@ -973,7 +973,7 @@ class PlaneEquation(object):
         Orientation of UV coordinates system is undefined.
         Scale of UV coordinates system is defined by coordinates
         of self.normal. One can use plane.normalized().evaluate()
-        two make sure that the scale of UV coordinates system is 1:1.
+        to make sure that the scale of UV coordinates system is 1:1.
 
         input: two floats.
         output: Vector.
@@ -1112,18 +1112,67 @@ class PlaneEquation(object):
         x, y, z = result[0], result[1], result[2]
         return mathutils.Vector((x, y, z))
 
+    def side_of_point(self, point, eps=1e-8):
+        """
+        Determine the side on which the point is with relation to this plane.
+
+        input: Vector or 3-tuple or numpy array of same shape
+        output: +1 if the point is at one side of the plane; 
+                -1 if the point is at another side;
+                0 if the point belongs to the plane.
+                "Positive" side of the plane is defined by direction of
+                normal vector.
+        """
+        a, b, c, d = self.a, self.b, self.c, self.d
+        x, y, z = point[0], point[1], point[2]
+        value = a*x + b*y + c*z + d
+        if abs(value) < eps:
+            return 0
+        elif value > 0:
+            return +1
+        else:
+            return -1
+
+    def side_of_points(self, points):
+        """
+        For each point, determine the side on which the point is with relation to this plane.
+
+        input: numpy array of shape (n, 3)
+        output: numpy array of shape (n,):
+                +1 if the point is at one side of the plane; 
+                -1 if the point is at another side;
+                0 if the point belongs to the plane.
+                "Positive" side of the plane is defined by direction of
+                normal vector.
+        """
+        a, b, c, d = self.a, self.b, self.c, self.d
+        values = points.dot([a,b,c]) + d
+        return np.sign(values)
+
     def projection_of_point(self, point):
         """
         Return a projection of specified point to this plane.
-        input: Vector.
+        input: Vector or 3-tuple.
         output: Vector.
         """
-        # Draw a line, which has the same direction vector
-        # as this plane's normal, and which contains the
-        # given point.
-        line = LineEquation(self.a, self.b, self.c, point)
-        # Then find the intersection of this plane with that line.
-        return self.intersect_with_line(line)
+        normal = self.normal.normalized()
+        distance = self.distance_to_point(point)
+        sign = self.side_of_point(point)
+        return mathutils.Vector(point) - sign * distance * normal
+    
+    def projection_of_points(self, points):
+        """
+        Return projections of specified points to this plane.
+        input: list of Vector or list of 3-tuples or numpy array of shape (n, 3).
+        output: numpy array of shape (n, 3).
+        """
+        points = np.array(points)
+        normal = np.array(self.normal.normalized())
+        distances = self.distance_to_points(points)
+        signs = self.side_of_points(points)
+        signed_distances = np.multiply(signs, distances)
+        scaled_normals = np.outer(signed_distances, normal)
+        return points - scaled_normals
 
     def intersect_with_plane(self, plane2):
         """
