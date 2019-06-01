@@ -29,7 +29,10 @@ from sverchok.utils.geom import autorotate_householder, autorotate_track, autoro
 
 
 class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Fractal curve'''
+    """
+    Triggers: Fractal Curve
+    Tooltip: Generate fractal (self-repeating) curve
+    """
     bl_idname = 'SvFractalCurveNode'
     bl_label = 'Fractal Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -83,8 +86,7 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
         # rotation along Z axis only.
         if plane == 'XY':
             # Another unobvious hack: Vector.angle_signed method
-            # works with 2D vectors only (this is not stated in
-            # it's documentation!). Fortunately, in this particular
+            # works with 2D vectors only. Fortunately, in this particular
             # case our vectors are actually 2D.
             dst = Vector((dst[0], dst[1]))
             src = Vector((src[0], src[1]))
@@ -107,13 +109,13 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
         matrix = self.calc_rotation(curve, src, dst, plane)
         return [matrix * vertex for vertex in curve]
 
-    def substitute(self, recipient, donor, plane=None):
+    def substitute(self, recipient, donor, min_length, plane=None):
         line = donor[-1] - donor[0]
         result = []
         result.append(donor[0])
         for pair in zip(recipient, recipient[1:]):
             new_line = pair[1] - pair[0]
-            if new_line.length < self.min_length:
+            if new_line.length < min_length:
                 result.append(pair[1])
                 continue
             scaled = self.scale_to(donor, line.length, new_line.length)
@@ -124,24 +126,27 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             result = [Vector(v.to_tuple(self.precision)) for v in result]
         return result
 
-    def make_fractal(self, vertices):
+    def make_fractal(self, vertices, iterations, min_length):
         result = vertices
         plane = self.check_plane(vertices)
         print(plane)
-        for i in range(self.iterations):
-            result = self.substitute(result, vertices, plane)
+        for i in range(iterations):
+            result = self.substitute(result, vertices, min_length, plane)
         result = self.move_to(result, result[0], vertices[0])
         return result
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "iterations")
-        layout.prop(self, "min_length")
+        if 'Iterations' not in self.inputs:
+            layout.prop(self, "iterations")
+            layout.prop(self, "min_length")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, "precision")
 
     def sv_init(self, context):
+        self.inputs.new('StringsSocket', 'Iterations').prop_name = "iterations"
+        self.inputs.new('StringsSocket', 'MinLength').prop_name = "min_length"
         self.inputs.new('VerticesSocket', 'Vertices')
 
         self.outputs.new('VerticesSocket', 'Vertices')
@@ -151,11 +156,23 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         curves = Vector_generate(self.inputs['Vertices'].sv_get())
+        if 'Iterations' in self.inputs:
+            iterations_s = self.inputs['Iterations'].sv_get()[0]
+            min_length_s = self.inputs['MinLength'].sv_get()[0]
+        else:
+            iterations_s = [[self.iterations]]
+            min_length_s = [[self.min_length]]
 
         verts_out = []
 
-        for curve in curves:
-            curve_out = self.make_fractal(curve)
+        objects = match_long_repeat([curves, iterations_s, min_length_s])
+
+        for curve, iterations, min_length in zip(*objects):
+            if isinstance(iterations, (list, tuple)):
+                iterations = iterations[0]
+            if isinstance(min_length, (list, tuple)):
+                min_length = min_length[0]
+            curve_out = self.make_fractal(curve, iterations, min_length)
             verts_out.append([tuple(v) for v in curve_out])
 
         self.outputs['Vertices'].sv_set(verts_out)
