@@ -33,23 +33,42 @@ projectionItems = [
     ("ORTHOGRAPHIC", "ORTHOGRAPHIC", "Orthographic projection", 1)]
 
 
-def project_2d(vert3D, d):
+def project_2d(vert3D, m, d):
     """
     Project a 3D vector onto 2D space given the projection distance
     """
-    cx, cy, cz = [0.0, 0.0, 0.0]  # center (projection origin)
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
+
+    o = [ox, oy, oz]
+    n = [nx, ny, nz]
+
     x, y, z = vert3D
-    s = d / (d + z)
-    xx = x * s
-    yy = y * s
-    return [xx, yy, 0]
+
+    x = x - ox
+    y = y - oy
+    z = z - oz
+
+    an = x * nx + y * ny + z * nz
+
+    s = d / (d + an)
+
+    xa = s * (x - an * nx)
+    ya = s * (y - an * ny)
+    za = s * (z - an * nz)
+
+    px = ox + xa
+    py = oy + ya
+    pz = oz + za
+
+    return [px, py, pz]
 
 
-def project_3d_verts(verts3D, d):
+def project_3d_verts(verts3D, m, d):
     """
     Project the 3D verts onto 2D space given the projection distance
     """
-    verts2D = [project_2d(verts3D[i], d) for i in range(len(verts3D))]
+    verts2D = [project_2d(verts3D[i], m, d) for i in range(len(verts3D))]
     return verts2D
 
 
@@ -116,18 +135,17 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             input_p = [[]]
 
+        input_m = inputs["Matrix"].sv_get()
+
         input_d = inputs["D"].sv_get()[0]
 
-        # sanitize inputs
-        input_d = list(map(lambda d: max(0, d), input_d))
-
-        params = match_long_repeat([input_v, input_e, input_p, input_d])
+        params = match_long_repeat([input_v, input_e, input_p, input_m, input_d])
 
         vertList = []
         edgeList = []
         polyList = []
-        for v, e, p, d in zip(*params):
-            verts = project_3d_verts(v, d)
+        for v, e, p, m, d in zip(*params):
+            verts = project_3d_verts(v, m, d)
             vertList.append(verts)
             edgeList.append(e)
             polyList.append(p)
