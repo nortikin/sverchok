@@ -68,7 +68,6 @@ def make_node_cats():
 
         # final append
         node_cats[category] = temp_list
-    
     return node_cats
 
 

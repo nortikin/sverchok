@@ -120,8 +120,10 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
+        layout.menu("NODEVIEW_MT_AddCNC", **icon('MOD_BUILD'))
         layout.menu("NODEVIEW_MT_AddText")
         layout.menu("NODEVIEW_MT_AddScene", **icon('SCENE_DATA'))
+        layout.menu("NODEVIEW_MT_AddColor", **icon('COLOR'))
         layout.menu("NODEVIEW_MT_AddLayout", **icon("SV_LAYOUT"))
         layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
         layout.separator()
@@ -180,8 +182,10 @@ classes = [
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
     make_class('Viz', "Viz"),
+    make_class('CNC', "CNC"),
     make_class('Text', "Text"),
     make_class('Scene', "Scene"),
+    make_class('Color', "Color"),
     make_class('Layout', "Layout"),
     make_class('Listmain', "List Main"),
     make_class('Liststruct', "List Struct"),

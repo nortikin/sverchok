@@ -15,7 +15,6 @@
     SvNGonNode
     SvBoxNode
     SvCircleNode
-    CylinderNode
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
@@ -182,8 +181,6 @@
 
 ## Number
     SvNumberNode
-    FloatNode
-    IntegerNode
     Float2IntNode
     ScalarMathNode
     SvScalarMathNodeMK2
@@ -256,6 +253,9 @@
     SvTextureViewerNode
     Sv3DviewPropsNode
 
+## CNC
+    SvExportGcodeNode
+
 ## Text
     ViewerNodeTextMK3
     SvTextInNodeMK2
@@ -311,9 +311,6 @@
     WifiOutNode
     NodeReroute
     ConverterNode
-
-## CNC
-    SvExportGcodeNode
 
 ## Network
     SvUdpClientNodeMK2

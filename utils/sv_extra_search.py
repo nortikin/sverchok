@@ -104,7 +104,7 @@ def gather_items():
         for item in node_list:
             if item[0] in {'separator', 'NodeReroute'}:
                 continue
-            
+
             fx.append((str(idx), ensure_valid_show_string(item), '', idx))
             idx += 1
 
