@@ -22,9 +22,10 @@ import bpy
 import mathutils
 
 from mathutils import Vector
-from bpy.props import FloatProperty, FloatVectorProperty, IntProperty
+from bpy.props import FloatProperty, FloatVectorProperty, IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.utils.geom import calc_normal
 from sverchok.data_structure import (
     updateNode, Vector_generate,
     repeat_last, fullList)
@@ -33,7 +34,7 @@ from sverchok.data_structure import (
 ''' very non optimal routines. beware. I know this '''
 
 
-def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners):
+def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, normal_mode="Fast"):
 
     new_faces = []
     new_ignores = []
@@ -115,7 +116,10 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners)
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
 
         if distance:
-            local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
+            if normal_mode == 'Fast':
+                local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
+            else:
+                local_normal = calc_normal(new_verts_prime)
             new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]
 
         vertices.extend(new_verts_prime)
@@ -149,6 +153,11 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Inset Special'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
+    normal_modes = [
+            ("Fast", "Fast", "Fast algorithm", 0),
+            ("Exact", "Exact", "Slower, but exact algorithm", 1)
+        ]
+
     inset = FloatProperty(
         name='Inset',
         description='inset amount',
@@ -160,6 +169,12 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
     ignore = IntProperty(name='Ignore', description='skip polygons', default=0, update=updateNode)
     make_inner = IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
+
+    normal_mode = EnumProperty(name = "Normals",
+            description = "Normals calculation algorithm",
+            default = "Fast",
+            items = normal_modes,
+            update = updateNode)
 
     # axis = FloatVectorProperty(
     #   name='axis', description='axis relative to normal',
@@ -180,6 +195,8 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         o.new('StringsSocket', 'ignored')
         o.new('StringsSocket', 'inset')
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "normal_mode")
 
     def process(self):
         i = self.inputs
@@ -221,7 +238,8 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
                 'inset_rates': inset_rates,
                 'distances': distance_vals,
                 'make_inners': make_inners,
-                'ignores': ignores
+                'ignores': ignores,
+                'normal_mode': self.normal_mode
             }
 
             res = inset_special(**func_args)
