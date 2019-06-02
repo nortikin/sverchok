@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, calc_mask
 
 class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -51,27 +51,6 @@ class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('StringsSocket', "Set")
         self.outputs.new('StringsSocket', 'Mask')
 
-    def calc(self, subset_data, set_data, level):
-        if level == 0:
-            if not isinstance(subset_data, (tuple, list)):
-                raise Exception("Specified level is too high for given Subset")
-            if not isinstance(set_data, (tuple, list)):
-                raise Exception("Specified level is too high for given Set")
-
-            if self.ignore_order:
-                if self.negate:
-                    return [set(item) not in map(set, subset_data) for item in set_data]
-                else:
-                    return [set(item) in map(set, subset_data) for item in set_data]
-            else:
-                if self.negate:
-                    return [item not in subset_data for item in set_data]
-                else:
-                    return [item in subset_data for item in set_data]
-        else:
-            sub_objects = match_long_repeat([subset_data, set_data])
-            return [self.calc(subset_item, set_item, level - 1) for subset_item, set_item in zip(*sub_objects)]
-
     def process(self):
 
         if not any(output.is_linked for output in self.outputs):
@@ -83,7 +62,7 @@ class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
 
         objects = match_long_repeat([subset_s, set_s])
         for subset, set in zip(*objects):
-            mask = self.calc(subset, set, self.level)
+            mask = calc_mask(subset, set, level=self.level, negate=self.negate, ignore_order=self.ignore_order)
             out_masks.append(mask)
 
         self.outputs['Mask'].sv_set(out_masks)
