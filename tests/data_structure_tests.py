@@ -111,3 +111,10 @@ class CalcMaskTests(SverchokTestCase):
         expected = [[True, False, False], [False, False, False]]
         self.assertEquals(mask, expected)
 
+    def test_calc_mask_7(self):
+        subset = [[1, 2], [3, 4]]
+        set = [[2, 1], [5, 6]]
+        mask = calc_mask(subset, set, ignore_order=True)
+        expected = [True, False]
+        self.assertEquals(mask, expected)
+
