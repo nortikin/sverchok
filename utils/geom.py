@@ -907,6 +907,27 @@ def interpolate_quadratic_bezier(knot1, handle, knot2, resolution):
     handle2 = handle + (1.0/3.0) * (knot2 - handle)
     return interpolate_bezier(knot1, handle1, handle2, knot2, resolution)
 
+def calc_normal(vertices):
+    """
+    Calculate normal for a face defined by specified vertices.
+    For tris or quads, mathutils.geometry.normal() is used.
+    Ngon will be triangulated, and then the average normal of
+    all resulting tris will be returned.
+
+    input: list of 3-tuples or list of mathutils.Vector.
+    output: mathutils.Vector.
+    """
+    n = len(vertices)
+    vertices = list(map(mathutils.Vector, vertices))
+    if n <= 4:
+        return mathutils.geometry.normal(*vertices)
+    else:
+        # Triangluate
+        triangle_idxs = [[0, k, k+1] for k in range(1, n-1)]
+        triangles = [[vertices[i] for i in idxs] for idxs in triangle_idxs]
+        subnormals = [mathutils.geometry.normal(*triangle) for triangle in triangles]
+        return mathutils.Vector(center(subnormals))
+
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
 
