@@ -32,17 +32,21 @@
     SvBoxRoundedNode
     SvBricksNode
     SvPolygonGridNode
+    ---
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
+    ---
     SvProfileNodeMK2
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
     SvScriptNode
+    ---
     SvTorusKnotNode
     SvRingNode
     SvEllipseNode
+    SvSpiralNode
     SvSuperEllipsoidNode
     SvSmoothLines
     SvRegularSolid
@@ -97,11 +101,14 @@
     ---
     SvBevelNode
     SvSubdivideNode
+    SvSubdivideLiteNode
+    SvUnsubdivideNode
     SvSmoothNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvFillsHoleNode
     SvTriangulateNode
+    SvLimitedDissolveMK2
     ---
     SvFlipNormalsNode
     SvRecalcNormalsNode
@@ -110,6 +117,7 @@
     SvIterateNode
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
+    SvExtrudeSeparateLiteNode
     SvExtrudeRegionNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
@@ -222,6 +230,7 @@
     SvVectorFractal
     SvLacunarityNode
     SvTurbulenceNode
+    SvFormulaDeformMK2Node
 
 ## Matrix
     SvMatrixGenNodeMK2
@@ -283,9 +292,19 @@
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
 
+## Color
+    SvColorsInNodeMK1
+    SvColorInputNode
+    SvColorsOutNodeMK1
+    SvVertexColorNodeMK3
+    SvSampleUVColorNode
+    SvFormulaColorNode
+    SvMeshUVColorNode
+
 ## Objects
     SvVertexGroupNodeMK2
-    SvVertexColorNodeMK3
+    SvUVPointonMeshNode
+    SvSelectMeshVerts
 
 ## Layout
     WifiInNode
@@ -293,29 +312,20 @@
     NodeReroute
     ConverterNode
 
+## CNC
+    SvExportGcodeNode
+
 ## Network
     SvUdpClientNodeMK2
 
 ## Beta Nodes
     SvFormulaShapeNode
     SvHeavyTriangulateNode
-    SvFormulaDeformMK2Node
-    SvFormulaColorNode
-    SvMeshUVColorNode
-    SvUVPointonMeshNode
-    SvSampleUVColorNode
-    SvSubdivideLiteNode
-    SvExtrudeSeparateLiteNode
     SvBVHnearNewNode
-    SvUnsubdivideNode
-    SvLimitedDissolveMK2
     SvMetaballOutLiteNode
     SvArmaturePropsNode
     SvLatticePropsNode
-    ---
-    SvColorsInNodeMK1
-    SvColorInputNode
-    SvColorsOutNodeMK1
+
     ---
     SvMatrixNormalNode
     SvMatrixTrackToNode
@@ -324,11 +334,8 @@
     SvSculptMaskNode
     SvGreasePencilStrokes
     SvTextureViewerNodeLite
-    SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
-    SvSpiralNode
-    SvExportGcodeNode
     SvCombinatoricsNode
 
 ## Alpha Nodes
