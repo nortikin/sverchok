@@ -138,6 +138,7 @@
     SvMaskConvertNode
     SvMaskToIndexNode
     SvIndexToMaskNode
+    SvCalcMaskNode
 
 ## List Mutators
     SvListModifierNode
