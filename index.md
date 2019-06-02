@@ -58,6 +58,7 @@
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
+    SvIntersectLineSphereNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvBvhOverlapNodeNew
