@@ -140,6 +140,7 @@
     MaskListNode
     SvMaskJoinNode
     SvMaskConvertNode
+    SvCalcMaskNode
 
 ## List Mutators
     SvListModifierNode
