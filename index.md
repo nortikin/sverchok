@@ -82,6 +82,7 @@
     SvMirrorNode
     MatrixApplyNode
     SvSimpleDeformNode
+    SvBarycentricTransformNode
 
 ## Modifier Change
     SvDeleteLooseNode
