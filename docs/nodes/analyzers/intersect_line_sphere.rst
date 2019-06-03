@@ -4,7 +4,7 @@ Compass 3D
 Functionality
 -------------
 
-The node is designed to get the intersection between a sphere and one endless straight line. 
+The node is designed to get the intersection between a sphere and one endless straight line.
 
 This problem has three possible solutions:
 
@@ -20,11 +20,11 @@ Inputs / Parameters
 -------------------
 
 +---------------------+-------------+----------------------------------------------------------------------+
-| Param               | Type        | Description                                                          |  
+| Param               | Type        | Description                                                          |
 +=====================+=============+======================================================================+
-| **Vertices**        | Vector      | Points to calculate                                                  | 
+| **Vertices**        | Vector      | Points to calculate                                                  |
 +---------------------+-------------+----------------------------------------------------------------------+
-| **Edges**           | Int List    | Edges data to define the segments (to define the line)               | 
+| **Edges**           | Int List    | Edges data to define the segments (to define the line)               |
 +---------------------+-------------+----------------------------------------------------------------------+
 | **Center**          | Vectors     | It will get the first and last vertices's to define the line segment |
 +---------------------+-------------+----------------------------------------------------------------------+
@@ -35,8 +35,6 @@ Advanced Parameters
 -------------------
 
 In the N-Panel (and on the right-click menu) you can find:
-
-**Implementation**: Choose between MathUtils and NumPy (Usually faster)
 
 **Output NumPy**: to get NumPy arrays in stead of regular lists (makes the node faster). Only in the NumPy implementation.
 
@@ -50,9 +48,9 @@ Outputs
 
 **Intersect Line**: Returns True if the there is valid intersection.
 
-**Intersection A**: Returns the intersection nearer to the end point of the segment. In case of no intersection returns the closest point on the line
+**Intersection A**: Returns the intersection nearer to the end point of the segment. In case of no intersection returns the closest point on the line.
 
-**Intersection B**: Returns the intersection nearer to the start point of the segment. In case of no intersection returns the closest point on the line
+**Intersection B**: Returns the intersection nearer to the start point of the segment. In case of no intersection returns the closest point on the line.
 
 **Int. A in segment**: Returns True if A intersection is over the segment.
 
@@ -68,7 +66,7 @@ Outputs
 Example of usage
 ----------------
 
-Basic explanation of compass 3d intersections.
+Basic explanation of Compass 3d intersections.
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_example.png
   :alt: compass_3d_sverchok_blender_example.png
@@ -83,7 +81,7 @@ In this example the node is used find all intersections of one sphere over the e
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_all_intersections_sphere_cylinder.png
   :alt: all_intersections_sphere_cylinder.png
 
-In this example the node is used to simulate a mechanism. The yellow line keeps constant length while connects a moving point with a horizontal rail 
+In this example the node is used to simulate a mechanism. The yellow line keeps constant length while connects a moving point with a horizontal rail
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_line_sphere/compass_3d_sverchok_blender_mechanism.gif
   :alt: compass_3d_sverchok_blender_mechanism.gif
