@@ -192,14 +192,14 @@ class SvIntersectLineSphereNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
+        layout.prop(self, "output_numpy", toggle=False)
         layout.label(text="List Match:")
         layout.prop(self, "list_match_global", text="Global Match", expand=False)
         layout.prop(self, "list_match_local", text="Local Match", expand=False)
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
-        if self.implementation == "NumPy":
-            layout.prop(self, "output_numpy", toggle=False)
+        layout.prop(self, "output_numpy", toggle=False)
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
 
