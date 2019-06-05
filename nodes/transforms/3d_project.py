@@ -21,6 +21,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, Fl
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from mathutils import Matrix
 
 modeItems = [
     ("PLANE",  "PLANE",  "Project onto a plane", 0),
@@ -31,6 +32,8 @@ modeItems = [
 projectionItems = [
     ("PERSPECTIVE",  "PERSPECTIVE",  "Perspective projection", 0),
     ("ORTHOGRAPHIC", "ORTHOGRAPHIC", "Orthographic projection", 1)]
+
+idMat = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 
 def project_2d(vert3D, m, d):
@@ -69,7 +72,18 @@ def project_3d_verts(verts3D, m, d):
     Project the 3D verts onto 2D space given the projection distance
     """
     verts2D = [project_2d(verts3D[i], m, d) for i in range(len(verts3D))]
-    return verts2D
+
+    # xx yx zx tx         0      tx - d*zx
+    # xy yy zy ty   *     0   =  ty - d*zy
+    # xz yz zz tz       - d      tz - d*zz
+    # 0  0  0  1          1      1
+
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
+
+    focus = [[ox - d*nx, oy - d*ny, oz - d * nz]]
+
+    return verts2D, focus
 
 
 class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -78,7 +92,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltips: Perspective projection from 3D space to 2D space
     """
     bl_idname = 'Sv3DProjectNode'
-    bl_label = '3D Project'
+    bl_label = '3D-2D Projection'
 
     def update_mode(self, context):
         # if self.mode == self.last_mode:
@@ -93,8 +107,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
 
     distance = FloatProperty(
         name="Distance", description="Projection Distance",
-        default=2.0, min=0.0,
-        update=updateNode)
+        default=2.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Verts")
@@ -108,6 +121,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Verts")
         self.outputs.new('StringsSocket', "Edges")
         self.outputs.new('StringsSocket', "Polys")
+        self.outputs.new('VerticesSocket', "Focus")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode")
@@ -135,7 +149,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             input_p = [[]]
 
-        input_m = inputs["Matrix"].sv_get()
+        input_m = inputs["Matrix"].sv_get(default=idMat)
 
         input_d = inputs["D"].sv_get()[0]
 
@@ -144,11 +158,13 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         vertList = []
         edgeList = []
         polyList = []
+        focusList = []
         for v, e, p, m, d in zip(*params):
-            verts = project_3d_verts(v, m, d)
+            verts, focus = project_3d_verts(v, m, d)
             vertList.append(verts)
             edgeList.append(e)
             polyList.append(p)
+            focusList.append(focus)
 
         if outputs["Verts"].is_linked:
             outputs["Verts"].sv_set(vertList)
@@ -156,6 +172,8 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
             outputs["Edges"].sv_set(edgeList)
         if outputs["Polys"].is_linked:
             outputs["Polys"].sv_set(polyList)
+        if outputs["Focus"].is_linked:
+            outputs["Focus"].sv_set(focusList)
 
 
 def register():
