@@ -77,7 +77,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
                 'Matrix': obj.matrix_world
             }
             
-            bpy.data.meshes.remove(obj_data)
+            # bpy.data.meshes.remove(obj_data)
+            obj.to_mesh_clear()
+            
             self.currently_storing = True
 
         else:
