@@ -207,7 +207,6 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             return
             
         scene = bpy.context.scene
-        depsgraph = bpy.context.depsgraph
         data_objects = bpy.data.objects
         outputs = self.outputs
         

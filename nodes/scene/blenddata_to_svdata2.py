@@ -54,7 +54,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         o1,o2,o3,o4,o5,o6,o7,o8 = self.outputs
         vs,vn,es,ps,pa,pc,pn,ms = [],[],[],[],[],[],[],[]
         
-        depsgraph = bpy.context.depsgraph
+        # depsgraph = bpy.context.depsgraph
 
         ot = objs[0].type in ['MESH', 'CURVE', 'FONT', 'SURFACE', 'META']
         for obj in objs:
