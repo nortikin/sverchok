@@ -78,7 +78,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     pc.append([p.center[:] for p in obj_data.polygons])
                 if o7.is_linked:
                     pn.append([p.normal[:] for p in obj_data.polygons])
-                bpy.data.meshes.remove(obj_data)
+                obj.to_mesh_clear()
 
         for i,i2 in zip(self.outputs, [vs,vn,es,ps,pa,pc,pn,ms]):
             if i.is_linked:

@@ -27,14 +27,14 @@ from sverchok.data_structure import (updateNode, match_long_repeat)
 
 class FakeObj(object):
 
-    def __init__(self, OB):
-        self.matrix_local = OB.matrix_local
-        mesh_settings = (bpy.context.scene, True, 'RENDER')
-        data = OB.to_mesh() #*mesh_settings)
+    def __init__(self, obj):
+        self.matrix_local = obj.matrix_local
+        # mesh_settings = (bpy.context.scene, True, 'RENDER')
+        data = obj.to_mesh() #*mesh_settings)
         vertices = [vert.co[:] for vert in data.vertices]
         polygons = [poly.vertices[:] for poly in data.polygons]
         self.BVH = BVHTree.FromPolygons(vertices, polygons)
-        bpy.data.meshes.remove(data)
+        obj.to_mesh_clear()
 
     def ray_cast(self, a, b):
         # obj.ray_cast returns  Return (result, location, normal, index

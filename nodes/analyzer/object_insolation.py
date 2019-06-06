@@ -40,7 +40,7 @@ class FakeObj(object):
         polygons = [poly.vertices[:] for poly in data.polygons]
 
         self.BVH = BVHTree.FromPolygons(vertices, polygons)
-        bpy.data.meshes.remove(data)
+        obj.to_mesh_clear()
 
 
     def ray_cast(self, a, b):

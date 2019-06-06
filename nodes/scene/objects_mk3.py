@@ -249,7 +249,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
                         edgs = obj_data.edge_keys
-                        bpy.data.meshes.remove(obj_data, do_unlink=True)
+                        # bpy.data.meshes.remove(obj_data, do_unlink=True)
+                        obj.to_mesh_clear()
                 except:
                     print('failure in process between frozen area', self.name)
 
