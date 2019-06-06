@@ -62,7 +62,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 ms.append(obj.matrix_world)
             if ot:
                 # obj_data = obj.to_mesh(scene, mod, 'PREVIEW')
-                obj_data = obj.to_mesh(depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+                obj_data = obj.to_mesh() # depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
                 
                 if o1.is_linked:
                     vs.append([v.co[:] for v in obj_data.vertices])

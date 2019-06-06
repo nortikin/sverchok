@@ -244,7 +244,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         vers, edgs, pols = pydata_from_bmesh(bm)
                         del bm
                     else:
-                        obj_data = obj.to_mesh(depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+                        obj_data = obj.to_mesh() # depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)

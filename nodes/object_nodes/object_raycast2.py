@@ -30,7 +30,7 @@ class FakeObj(object):
     def __init__(self, OB):
         self.matrix_local = OB.matrix_local
         mesh_settings = (bpy.context.scene, True, 'RENDER')
-        data = OB.to_mesh(*mesh_settings)
+        data = OB.to_mesh() #*mesh_settings)
         vertices = [vert.co[:] for vert in data.vertices]
         polygons = [poly.vertices[:] for poly in data.polygons]
         self.BVH = BVHTree.FromPolygons(vertices, polygons)

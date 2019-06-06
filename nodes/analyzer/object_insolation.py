@@ -34,7 +34,7 @@ class FakeObj(object):
         
         # mesh_settings = (..., True, 'RENDER')
         # data = OB.to_mesh(*mesh_settings)
-        data = obj.to_mesh(bpy.context.depsgraph, apply_modifiers=True, calc_undeformed=False)
+        data = obj.to_mesh() # bpy.context.depsgraph, apply_modifiers=True, calc_undeformed=False)
 
         vertices = [vert.co[:] for vert in data.vertices] 
         polygons = [poly.vertices[:] for poly in data.polygons]

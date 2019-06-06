@@ -68,7 +68,8 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             obj = bpy.data.objects.get(obj_name)
 
         if obj:
-            obj_data = obj.to_mesh(bpy.context.depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+            # obj_data = obj.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+            obj_data = obj.to_mesh()
             self.node_dict[hash(self)] = {
                 'Vertices': list([v.co[:] for v in obj_data.vertices]),
                 'Edges': obj_data.edge_keys,
