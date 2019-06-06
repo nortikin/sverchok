@@ -56,7 +56,7 @@ def add_keymap():
         nodeview_keymaps.append((km, kmi))
 
         # Right Click   | show custom menu
-        kmi = km.keymap_items.new('wm.call_menu', 'RIGHTMOUSE', 'CLICK')
+        kmi = km.keymap_items.new('wm.call_menu', 'RIGHTMOUSE', 'RELEASE')
         kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"
         nodeview_keymaps.append((km, kmi))
 
