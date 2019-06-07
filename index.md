@@ -363,3 +363,4 @@
     SvQuaternionMathNode
     SvPulgaPhysicsNode
     SvProjectPointToLine
+    SvMaterialConnector
