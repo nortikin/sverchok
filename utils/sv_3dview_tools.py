@@ -28,14 +28,8 @@ from sverchok.utils.modules import geom_utils
 def get_matrix(socket):
     matrix_in_data = socket.sv_get()
     try:
-        # first_matrix = is_matrix(matrix_in_data[0])
-        # if first_matrix:
-        #     matrix = matrix_in_data[0]
-        # else:
-        #     matrix = matrix_in_data[0][0]
-        # return matrix
         matrix = matrix_in_data[0]
-        if isinstance(matrix, Matrix()):
+        if isinstance(matrix, Matrix):
             return matrix
         else:
             return matrix[0]
