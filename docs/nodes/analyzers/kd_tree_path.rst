@@ -42,15 +42,15 @@ Examples
 Creating paths in a random vector field.
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples.png
-  :alt: Distance_point_line_procedural.PNG
+  :alt: Blender_sverchok_KDT_closest_path_examples.png
 
 Find the best starting index to make the minimum path by starting at every vertex and comparing the path lengths and taking the shortest one.
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples1.png
-  :alt: Sverchok_Distance_point_line.PNG
+  :alt: procedural_sverchok_KDT_closest_path_examples1.png
 
 Find a coherent short path among shuffled vertices.
 
 .. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/kd_tree_path/KDT_closest_path_examples2.png
-  :alt: Blender_distance_point_line.PNG
+  :alt: parametric_sverchok_KDT_closest_path_examples2.png
 
