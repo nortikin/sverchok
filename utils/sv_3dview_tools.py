@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import sys
+
 import bpy
 from mathutils import Matrix, Vector
 
@@ -46,12 +48,9 @@ def get_center(self, context):
 
         # we must now pass the origin node/tree in 2.80  ( this code does not interpret that yet )
 
-        node = None
-        if hasattr(context, 'node'):
-            node = context.node
-        if not node:
-            node = context.active_node
-
+        node_group = bpy.data.node_groups[self.idtree]
+        node = node_group.nodes[self.idname]
+        print('node:', node)
 
         inputs = node.inputs 
 
@@ -80,8 +79,13 @@ def get_center(self, context):
         else:
             self.report({'INFO'}, 'viewer has no get_center function')
 
-    except:
+    except Exception as err:
         self.report({'INFO'}, 'no active node found')
+
+        sys.stderr.write('ERROR: %s\n' % str(err))
+        print(sys.exc_info()[-1].tb_frame.f_code)
+        print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+    
 
     return location
 
@@ -94,6 +98,16 @@ class Sv3DviewAlign(bpy.types.Operator):
 
     fn_name: bpy.props.StringProperty(default='')
 
+    idname: bpy.props.StringProperty(
+        name='idname',
+        description='name of parent node',
+        default='')
+
+    idtree: bpy.props.StringProperty(
+        name='idtree',
+        description='name of parent tree',
+        default='')    
+
     def execute(self, context):
 
         vector_3d = get_center(self, context)
@@ -101,7 +115,8 @@ class Sv3DviewAlign(bpy.types.Operator):
             print(vector_3d)
             return {'CANCELLED'}
 
-        context.scene.cursor.location = vector_3d
+        print(vector_3d)
+        context.scene.cursor.location = vector_3d[:]
 
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
