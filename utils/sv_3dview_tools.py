@@ -43,6 +43,9 @@ def get_center(self, context):
     matrix = None
     
     try:
+
+        # we must now pass the origin node/tree in 2.80  ( this code does not interpret that yet )
+
         node = None
         if hasattr(context, 'node'):
             node = context.node
