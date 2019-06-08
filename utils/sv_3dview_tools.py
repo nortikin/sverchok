@@ -98,7 +98,7 @@ class Sv3DviewAlign(bpy.types.Operator):
             print(vector_3d)
             return {'CANCELLED'}
 
-        context.scene.cursor_location = vector_3d
+        context.scene.cursor.location = vector_3d
 
         for area in bpy.context.screen.areas:
             if area.type == 'VIEW_3D':
