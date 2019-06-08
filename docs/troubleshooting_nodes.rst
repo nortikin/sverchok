@@ -14,7 +14,7 @@ Nodes that enter the error state do so because the internal algorithms of the no
 
 **Exceptions**
 
-A variety of reasons can cause exceptions, sometimes you have to solve a sequence of errors. Usually it leads you to understanding the data being sent through the node tree better. This is seriously a good thing, mostly for your productivity. We have tools to help you see the data coming out or going in to a node.
+Exceptions can occur for a variety of reasons, sometimes you have to solve a sequence of errors. Usually it leads you to understanding the data being sent through the node tree better. This is seriously a good thing, mostly for your productivity. We have tools to help you see the data coming out or going in to a node.
 
 **Causes**
 
