@@ -95,7 +95,7 @@ def juggle_and_join(node_cats):
         node_cats["List Main"].extend(node_refs)
 
     objects_cat = node_cats.pop('Objects')
-    node_cats['BPY Data'].extend(objects_cat)
+    node_cats['Blender'].extend(objects_cat)
 
     # add extended gens to Gens menu
     gen_ext = node_cats.pop("Generators Extended")

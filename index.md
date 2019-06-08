@@ -267,7 +267,7 @@
     SvDebugPrintNode
     SvStethoscopeNodeMK2
 
-## BPY Data
+## Blender
     SvGetPropNode
     SvSetPropNode
     SvObjRemoteNodeMK2
@@ -293,7 +293,7 @@
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
 
-## Color
+## Material
     SvColorsInNodeMK1
     SvColorInputNode
     SvColorsOutNodeMK1
