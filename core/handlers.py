@@ -84,7 +84,11 @@ def sv_update_handler(scene):
         except Exception as e:
             print('Failed to update:', str(e)) #name,
 
-    scene.update()
+    if scene.render:
+        print(f'is rendering frame {scene.frame_current}, updates missed?')
+        # ---- raise Exception("asserting error")
+
+    # scene.update()  <-- does not exist in 2.80 recent builds
 
 
 @persistent
