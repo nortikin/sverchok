@@ -52,9 +52,9 @@ def get_center(self, context):
 
         inputs = node.inputs 
 
-        if node.bl_idname in {'ViewerNode2'}:
+        if node.bl_idname in {'SvVDExperimental'}:
             matrix_socket = inputs['matrix'] 
-            vertex_socket = inputs['vertices']
+            vertex_socket = inputs['verts']
 
             # from this point the function is generic.
             vertex_links = vertex_socket.is_linked

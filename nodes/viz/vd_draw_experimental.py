@@ -428,9 +428,13 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             else:
                 colors_column.prop(self, "custom_shader_location", icon='TEXT', text='')
 
-        opera = layout.operator('node.sverchok_mesh_baker_mk3',icon='OUTLINER_OB_MESH', text="B A K E")
+        row = layout.row(align=True)
+        opera = row.operator('node.sverchok_mesh_baker_mk3',icon='OUTLINER_OB_MESH', text="B A K E")
         opera.idname = self.name
         opera.idtree = self.id_data.name
+
+        row.separator()
+        row.operator("node.view3d_align_from", text='', icon='CURSOR')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
