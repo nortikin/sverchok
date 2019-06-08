@@ -60,6 +60,7 @@
     VectorNormalNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
+    SvKDTreePathNode
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
