@@ -31,7 +31,7 @@ class Vertex(object):
         return self.index == other.index
 
     def __hash__(self):
-        return hash(self.index) + hash(tuple(self.co))
+        return self.index
 
     @property
     def x(self):
@@ -70,12 +70,10 @@ class Edge(object):
         self.vertices = [v1, v2]
 
     def __eq__(self, other):
-        u1, u2 = self.sorted()
-        v1, v2 = other.sorted()
-        return u1 == v1 and u2 == v2
+        return ((self.v1 == other.v1) and (self.v2 == other.v2)) or ((self.v1 == other.v2) and (self.v2 == other.v1))
 
     def __hash__(self):
-        return hash(self.v1) + hash(self.v2)
+        return self.v1.index + self.v2.index
 
     def __getitem__(self,key):
         return self.vertices[key]
@@ -123,7 +121,7 @@ class Face(object):
         return self_inds == other_inds
 
     def __hash__(self):
-        return sum(hash(v) for v in self.vertices)
+        return sum(v.index for v in self.vertices)
     
     def __iter__(self):
         for v in self.vertices:
@@ -135,7 +133,7 @@ class Face(object):
 class Mesh(object):
     def __init__(self):
         self.vertices = []
-        self.faces = set()
+        self.faces = []
         self.edges = set()
         self.next_index = 0
 
@@ -158,7 +156,7 @@ class Mesh(object):
         if isinstance(vertices[0], int):
             vertices = [self.vertices[i] for i in vertices]
         face = Face(vertices)
-        self.faces.add(face)
+        self.faces.append(face)
         for v1, v2 in zip(face, face[1:]):
             self.edges.add(Edge(v1, v2))
         self.edges.add(Edge(face[-1], face[0]))
