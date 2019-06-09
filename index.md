@@ -15,6 +15,7 @@
     SvNGonNode
     SvBoxNode
     SvCircleNode
+    SvCircleNodeMk2
     CylinderNode
     SvCylinderNodeMK2
     SphereNode
@@ -121,6 +122,7 @@
 ## Modifier Make
     LineConnectNodeMK2
     SvLatheNode
+    SvBevelCurveNode
     SvConvexHullNode
     SvConvexHullNodeMK2
     DelaunayTriangulation2DNode
