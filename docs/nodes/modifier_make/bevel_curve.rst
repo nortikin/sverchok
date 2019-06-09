@@ -144,7 +144,7 @@ Example with cyclic curve:
 
 Example of taper curve usage:
 
-.. image:: https://user-images.githubusercontent.com/284644/59157902-73118400-8acc-11e9-8291-266b683c8e10.png
+.. image:: https://user-images.githubusercontent.com/284644/59160367-83d2f180-8aee-11e9-8d3b-8ec704e9ff24.png
 
 Example of **Separate Scale** option usage:
 
