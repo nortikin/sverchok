@@ -70,7 +70,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
 
-    bevel_mode = EnumProperty(name='Bevel mode',
+    bevel_mode = EnumProperty(name='Curve mode',
         default="SPL", items=modes,
         update=updateNode)
 
@@ -141,8 +141,8 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Faces')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "algorithm")
         layout.prop(self, "orient_axis", expand=True)
+        layout.prop(self, "algorithm")
         if self.algorithm == 'track':
             layout.prop(self, "up_axis")
         layout.prop(self, "bevel_mode")
@@ -178,6 +178,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     def make_taper_spline(self, vertices):
         if len(vertices) == 0:
+            # if no taper object provided: use constant scale of 1.0
             def make_unit(z):
                 u = Vector((0,0,0))
                 u[self.orient_axis_idx] = z
