@@ -19,6 +19,11 @@
 from mathutils import Vector
 
 class Vertex(object):
+    """
+    Mesh vertex.
+    This class is mostly a wrapper around mathutils.Vector.
+    It only adds one property: index - index of the vertex in the mesh.
+    """
     def __init__(self, *args):
         self.index = 0
         if len(args) == 1:
@@ -66,6 +71,12 @@ class Vertex(object):
         yield self.z
 
 class Edge(object):
+    """
+    Mesh edge.
+    This is almost a wrapper around (v1, v2) tuple.
+    __hash__ and __eq__ methods are defined so that
+    Edge(v1, v2) == Edge(v2, v1).
+    """
     def __init__(self, v1, v2):
         self.vertices = [v1, v2]
 
@@ -108,6 +119,10 @@ class Edge(object):
         yield self.v2
 
 class Face(object):
+    """
+    Mesh face.
+    This is almost trivial wrapper around list of vertices.
+    """
     def __init__(self, vertices):
         self.vertices = vertices
 
@@ -131,6 +146,11 @@ class Face(object):
         return self.vertices[key]
 
 class Mesh(object):
+    """
+    Simple mesh representation class.
+    This class provides simple, but low-level API to generate meshes.
+    For complex manipulations with meshes, use bmesh API.
+    """
     def __init__(self):
         self.vertices = []
         self.faces = []
@@ -138,6 +158,10 @@ class Mesh(object):
         self.next_index = 0
 
     def new_vertex(self, co):
+        """
+        Create a new vertex and add it to the mesh.
+        Vertex will be assigned with a new index.
+        """
         vertex = Vertex(co)
         vertex.index = self.next_index
         self.next_index += 1
@@ -145,6 +169,10 @@ class Mesh(object):
         return vertex
 
     def add_vertex(self, vertex):
+        """
+        Add pre-constructed vertex to the mesh.
+        Vertex will be assigned with a new index.
+        """
         if not isinstance(vertex, Vertex):
             raise TypeError("add_vertex() argument must be a Vertex")
         vertex.index = self.next_index
@@ -153,6 +181,16 @@ class Mesh(object):
         return vertex
 
     def new_face(self, vertices, auto_edges=True):
+        """
+        Create a new face and add it to the mesh.
+        This does not check if such a face already exists.
+        If auto_edges == True, then this will also
+        add all edges of the face to mesh.
+
+        Note: auto_edges feature is relatively slow,
+        so if you have faster way of tracking edges,
+        then please add them manually with new_edge method.
+        """
         if isinstance(vertices[0], int):
             vertices = [self.vertices[i] for i in vertices]
         face = Face(vertices)
@@ -164,6 +202,10 @@ class Mesh(object):
         return face
 
     def new_edge(self, v1, v2):
+        """
+        Create a new edge and add it to the mesh.
+        Do nothing if such an edge already exists.
+        """
         if isinstance(v1, int):
             v1 = self.vertices[v1]
         if isinstance(v2, int):
@@ -174,6 +216,9 @@ class Mesh(object):
 
     @staticmethod
     def from_sv_data(vertices, edges, faces):
+        """
+        Generate a Mesh object from Sverchok's standard mesh representation.
+        """
         mesh = Mesh()
         for v in vertices:
             mesh.new_vertex(v)
