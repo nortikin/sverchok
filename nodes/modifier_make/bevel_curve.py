@@ -274,7 +274,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     mesh.new_face(list(reversed(first_level_vertices)))
                 else:
                     for face in bevel_faces:
-                        cap = [first_level_vertices[i] for i in face]
+                        cap = [first_level_vertices[i] for i in reversed(face)]
                         mesh.new_face(cap)
             if self.cap_end and prev_level_vertices is not None:
                 if not bevel_faces:
