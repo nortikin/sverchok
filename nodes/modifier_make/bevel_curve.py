@@ -28,6 +28,7 @@ from sverchok.data_structure import updateNode, match_long_repeat, Matrix_genera
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.mesh import Mesh
+from sverchok.utils.logging import info
 from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
 
 class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
@@ -263,7 +264,10 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
                     v2 = level_vertices[i]
                     v3 = level_vertices[j]
                     v4 = prev_level_vertices[j]
-                    mesh.new_face([v4, v3, v2, v1])
+                    mesh.new_face([v4, v3, v2, v1], auto_edges=False)
+                    mesh.new_edge(v4, v3)
+                    mesh.new_edge(v2, v3)
+
             if first_level_vertices is None:
                 first_level_vertices = level_vertices
             prev_level_vertices = level_vertices
@@ -271,18 +275,18 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.is_cyclic:
             if self.cap_start:
                 if not bevel_faces:
-                    mesh.new_face(list(reversed(first_level_vertices)))
+                    mesh.new_face(list(reversed(first_level_vertices)), auto_edges=False)
                 else:
                     for face in bevel_faces:
                         cap = [first_level_vertices[i] for i in reversed(face)]
-                        mesh.new_face(cap)
+                        mesh.new_face(cap, auto_edges=False)
             if self.cap_end and prev_level_vertices is not None:
                 if not bevel_faces:
-                    mesh.new_face(prev_level_vertices)
+                    mesh.new_face(prev_level_vertices, auto_edges=False)
                 else:
                     for face in bevel_faces:
                         cap = [prev_level_vertices[i] for i in face]
-                        mesh.new_face(cap)
+                        mesh.new_face(cap, auto_edges=False)
         else:
             for i,j in bevel_edges:
                 v1 = first_level_vertices[i]

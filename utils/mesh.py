@@ -73,7 +73,7 @@ class Edge(object):
         return ((self.v1 == other.v1) and (self.v2 == other.v2)) or ((self.v1 == other.v2) and (self.v2 == other.v1))
 
     def __hash__(self):
-        return self.v1.index + self.v2.index
+        return sum(v.index for v in self.vertices)
 
     def __getitem__(self,key):
         return self.vertices[key]
@@ -90,7 +90,7 @@ class Edge(object):
     def v2(self):
         return self.vertices[1]
 
-    @v1.setter
+    @v2.setter
     def v2(self, v2):
         self.vertices[1] = v2
 
@@ -152,14 +152,15 @@ class Mesh(object):
         self.vertices.append(vertex)
         return vertex
 
-    def new_face(self, vertices):
+    def new_face(self, vertices, auto_edges=True):
         if isinstance(vertices[0], int):
             vertices = [self.vertices[i] for i in vertices]
         face = Face(vertices)
         self.faces.append(face)
-        for v1, v2 in zip(face, face[1:]):
-            self.edges.add(Edge(v1, v2))
-        self.edges.add(Edge(face[-1], face[0]))
+        if auto_edges:
+            for v1, v2 in zip(face, face[1:]):
+                self.edges.add(Edge(v1, v2))
+            self.edges.add(Edge(face[-1], face[0]))
         return face
 
     def new_edge(self, v1, v2):
