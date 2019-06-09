@@ -123,6 +123,11 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update=updateNode)
 
+    separate_scale = BoolProperty(name = "Separate Scale",
+        description = "Allow different scales along X and Y for taper object",
+        default = False,
+        update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', "Curve")
         self.inputs.new('VerticesSocket', 'BevelVerts')
@@ -142,7 +147,9 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "up_axis")
         layout.prop(self, "bevel_mode")
         layout.prop(self, "taper_mode")
-        layout.prop(self, "is_cyclic", toggle=True)
+        row = layout.row(align=True)
+        row.prop(self, "is_cyclic", toggle=True)
+        row.prop(self, "separate_scale", toggle=True)
 
         if not self.is_cyclic:
             row = layout.row(align=True)
@@ -181,7 +188,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         return self.build_spline(vertices, self.taper_mode, False)
 
-    def get_matrix(self, tangent, scale):
+    def get_matrix(self, tangent, scale_x, scale_y):
         x = Vector((1.0, 0.0, 0.0))
         y = Vector((0.0, 1.0, 0.0))
         z = Vector((0.0, 0.0, 1.0))
@@ -193,7 +200,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             ax1, ax2, ax3 = z, x, y
 
-        scale_matrix = Matrix.Scale(1, 4, ax1) * Matrix.Scale(scale, 4, ax2) * Matrix.Scale(scale, 4, ax3)
+        scale_matrix = Matrix.Scale(1, 4, ax1) * Matrix.Scale(scale_x, 4, ax2) * Matrix.Scale(scale_y, 4, ax3)
 
         if self.algorithm == 'householder':
             rot = autorotate_householder(ax1, tangent).inverted()
@@ -208,8 +215,11 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_taper_scale(self, vertex):
         projection = Vector(vertex)
-        projection[self.orient_axis_idx] = 0
-        return projection.length
+        if self.separate_scale:
+            return abs(projection[(self.orient_axis_idx + 1) % 3]), abs(projection[(self.orient_axis_idx - 1) % 3])
+        else:
+            projection[self.orient_axis_idx] = 0
+            return projection.length, projection.length
     
     def make_bevel(self, curve, bevel_verts, bevel_edges, bevel_faces, taper, steps):
         spline = self.build_spline(curve, self.bevel_mode, self.is_cyclic)
@@ -240,7 +250,8 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         first_level_vertices = None
         for spline_vertex, spline_tangent, taper_value in zip(spline_vertices, spline_tangents, taper_values):
             # Scaling and rotation matrix
-            matrix = self.get_matrix(spline_tangent, taper_value)
+            scale_x, scale_y = taper_value
+            matrix = self.get_matrix(spline_tangent, scale_x, scale_y)
             level_vertices = []
             for bevel_vertex in bevel_verts:
                 new_vertex = matrix * Vector(bevel_vertex) + spline_vertex
