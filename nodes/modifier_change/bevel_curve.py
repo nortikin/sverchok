@@ -24,10 +24,11 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate
+from sverchok.data_structure import updateNode, match_long_repeat, Matrix_generate, Vector_generate, Vector_degenerate, ensure_nesting_level
 from sverchok.utils.geom import autorotate_householder, autorotate_track, autorotate_diff, diameter
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.mesh import Mesh
+from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
 
 class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -126,6 +127,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Curve")
         self.inputs.new('VerticesSocket', 'BevelVerts')
         self.inputs.new('StringsSocket', 'BevelEdges')
+        self.inputs.new('StringsSocket', 'BevelFaces')
         self.inputs.new('VerticesSocket', 'TaperVerts')
         self.inputs.new('StringsSocket', 'Steps').prop_name = "steps"
 
@@ -209,8 +211,9 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         projection[self.orient_axis_idx] = 0
         return projection.length
     
-    def make_bevel(self, curve, bevel_verts, bevel_edges, taper, steps):
+    def make_bevel(self, curve, bevel_verts, bevel_edges, bevel_faces, taper, steps):
         spline = self.build_spline(curve, self.bevel_mode, self.is_cyclic)
+
         t_values = np.linspace(0.0, 1.0, num = steps)
         if self.is_cyclic:
             t_values = t_values[:-1]
@@ -226,6 +229,11 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         spline_vertices = [Vector(v) for v in spline.eval(t_for_curve).tolist()]
         spline_tangents = [Vector(v) for v in spline.tangent(t_for_curve, h=self.tangent_precision).tolist()]
         taper_values = [self.get_taper_scale(v) for v in taper.eval(t_for_taper).tolist()]
+
+        if bevel_faces:
+            bevel_faces = ensure_nesting_level(bevel_faces, 2)
+        if not bevel_edges and bevel_faces:
+            bevel_edges = pols_edges([bevel_faces], True)[0]
 
         mesh = Mesh()
         prev_level_vertices = None
@@ -250,9 +258,19 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.is_cyclic:
             if self.cap_start:
-                mesh.new_face(list(reversed(first_level_vertices)))
+                if not bevel_faces:
+                    mesh.new_face(list(reversed(first_level_vertices)))
+                else:
+                    for face in bevel_faces:
+                        cap = [first_level_vertices[i] for i in face]
+                        mesh.new_face(cap)
             if self.cap_end and prev_level_vertices is not None:
-                mesh.new_face(prev_level_vertices)
+                if not bevel_faces:
+                    mesh.new_face(prev_level_vertices)
+                else:
+                    for face in bevel_faces:
+                        cap = [prev_level_vertices[i] for i in face]
+                        mesh.new_face(cap)
         else:
             for i,j in bevel_edges:
                 v1 = first_level_vertices[i]
@@ -269,17 +287,18 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         curves_s = self.inputs['Curve'].sv_get(default=[[]])
         bevel_verts_s = self.inputs['BevelVerts'].sv_get(default=[[]])
         bevel_edges_s = self.inputs['BevelEdges'].sv_get(default=[[]])
+        bevel_faces_s = self.inputs['BevelFaces'].sv_get(default=[[]])
         taper_verts_s = self.inputs['TaperVerts'].sv_get(default=[[]])
         steps_s = self.inputs['Steps'].sv_get()[0]
 
-        inputs = match_long_repeat([curves_s, bevel_verts_s, bevel_edges_s, taper_verts_s, steps_s])
+        inputs = match_long_repeat([curves_s, bevel_verts_s, bevel_edges_s, bevel_faces_s, taper_verts_s, steps_s])
 
         out_vertices = []
         out_edges = []
         out_faces = []
-        for curve, bevel_verts, bevel_edges, taper_verts, steps in zip(*inputs):
+        for curve, bevel_verts, bevel_edges, bevel_faces, taper_verts, steps in zip(*inputs):
             taper = self.make_taper_spline(taper_verts)
-            mesh = self.make_bevel(curve, bevel_verts, bevel_edges, taper, steps)
+            mesh = self.make_bevel(curve, bevel_verts, bevel_edges, bevel_faces, taper, steps)
             out_vertices.append(mesh.get_sv_vertices())
             out_edges.append(mesh.get_sv_edges())
             out_faces.append(mesh.get_sv_faces())
