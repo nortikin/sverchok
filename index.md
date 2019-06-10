@@ -55,6 +55,7 @@
     DistancePPNode
     SvDistancePointLineNode
     SvDistancePointPlaneNode
+    SvDistancetLineLineNode
     SvPathLengthNode
     CentersPolsNodeMK2
     CentersPolsNodeMK3
