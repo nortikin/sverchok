@@ -45,10 +45,15 @@ AGENT_NAME = 'Sverchok Agent'
 log_rename = logging.getLogger('Suffix changes')
 log_rename.setLevel(logging.WARNING)
 log_delmat = logging.getLogger('Deleting material')
-log_delmat.setLevel(logging.DEBUG)
+log_delmat.setLevel(logging.WARNING)
+
 
 def pick_blender_material(main_mat_name):
-    # O(n)
+    """
+    Get material from Blender if material with such name exists or create new material
+    :param main_mat_name: required name of material - str
+    :return: material - bpy.types.Material
+    """
     suffix = ''
     try:
         return bpy.data.materials[main_mat_name + suffix]
@@ -60,7 +65,16 @@ def pick_blender_material(main_mat_name):
 
 
 def update_material_list(parent_mat, length, suffix, to_update_children):
-    # add or delete materials
+    """
+    change dimension of list of copies of main material,
+    new materials creates with node tree equal to main material,
+    works with created data structure in material object
+    :param parent_mat: main material from which creates copies - bpy.types.Material
+    :param length: required dimension of list - int
+    :param suffix: for copies - str
+    :param to_update_children: replace node tree in created copies of material to node tree of main material - bool
+    :return: None
+    """
     name = parent_mat.name
     children = parent_mat.sv_props.children_branch[suffix].children
     length -= 1
@@ -86,7 +100,14 @@ def update_material_list(parent_mat, length, suffix, to_update_children):
 
 
 def set_values_to_agents(parent_mat, owner_id, suffix,  values):
-
+    """
+    apply input values to agent node
+    :param parent_mat: main material - bpy.types.Material
+    :param owner_id: id of current Sverchok node for searching appropriate agent node - str
+    :param suffix: name of current branch - str
+    :param values: for applying to agent nodes
+    :return: None
+    """
     def set_values(agent, input_values):
 
         for sock, val in zip(agent.inputs, input_values):
@@ -95,20 +116,24 @@ def set_values_to_agents(parent_mat, owner_id, suffix,  values):
             sock.default_value = val
 
     children = parent_mat.sv_props.children_branch[suffix].children
-    print(owner_id)
     for node in parent_mat.node_tree.nodes:
-        if del_suffix(node.name) == AGENT_NAME and node.owner == owner_id:
-            print(True)
+        if node.bl_idname == 'SvMaterialAgent' and node.owner == owner_id:
             set_values(node, values[0])
             break
     for child, val in zip(children, values[1:]):
         for node in child.mat.node_tree.nodes:
-            if del_suffix(node.name) == AGENT_NAME and node.owner == owner_id:
+            if node.bl_idname == 'SvMaterialAgent' and node.owner == owner_id:
                 set_values(node, val)
                 break
 
 
 def create_copy_shader_node(node, tree):
+    """
+    create copy of any node to required node tree
+    :param node: node for copy - bpy.types.Node
+    :param tree: node tree where node should be copied - bpy.types.NodeTree
+    :return: None
+    """
     attrs = dir(node)
     new_node = tree.nodes.new(node.bl_idname)
     for attr in attrs:
@@ -137,7 +162,12 @@ def create_copy_shader_node(node, tree):
 
 
 def create_copy_shader_tree(from_mat, to_mat):
-
+    """
+    create copy of node tree from one material to another
+    :param from_mat: material from which make copy - bpy.types.Material
+    :param to_mat: material for receiving copy - bpy.types.Material
+    :return: None
+    """
     def get_socket_index(sockets, socket):
         for i, sock in enumerate(sockets):
             if sock == socket:
@@ -164,13 +194,15 @@ def create_copy_shader_tree(from_mat, to_mat):
                           to_tree.nodes[node_name_to].inputs[sock_i_to])
 
 
-def del_suffix(name):
-    return name.rsplit('.')[0]
-
-
 def match_input_lists(input, combine_object=False):
-    # input [[[0], [1,2]], [[3,4], [5,6,7], [8]]]
-    # output [[[0,0], [3,4]], [[1,2,2], [5,6,7]], [[1,2], [8,8]]]
+    """
+    matching and transposition list of lists
+    input [[[0], [1,2]], [[3,4], [5,6,7], [8]]]
+    output [[[0,0], [3,4]], [[1,2,2], [5,6,7]], [[1,2], [8,8]]]
+    :param input: list of lists - list
+    :param combine_object: if transposition is required then True - bool
+    :return: modified list
+    """
     match_obj = zip(*match_long_repeat(input))
     output = []
     for obj in match_obj:
@@ -182,6 +214,12 @@ def match_input_lists(input, combine_object=False):
 
 
 def is_material_viewport_shade_in_screen(context):
+    """
+    search areas on screen, if there is area with 3D viewport editor
+     that has Material node of viewport shading returns True
+    :param context: bpy.context
+    :return: bool
+    """
     spaces = [area.spaces[0] for area in context.screen.areas]
     view_3d_spaces = [space for space in spaces if space.type == 'VIEW_3D']
     for space in view_3d_spaces:
@@ -191,16 +229,19 @@ def is_material_viewport_shade_in_screen(context):
 
 
 class SvMaterialList(bpy.types.PropertyGroup):
+    # storage of child of main material
     mat = PointerProperty(name='Material', type=bpy.types.Material)
 
 
 class SvMaterialConnectorNodeData(bpy.types.PropertyGroup):
+    # required number of children requested by connector node
     required_number = IntProperty(name='Required number',
                                   description='required number of instance of main material '
                                               'for current Sverchok \"material connector\" node')
 
 
 class SvMaterialChildrenBranches(bpy.types.PropertyGroup):
+    # store sets of Sverchok nodes properties and branch of children
     nodes_data = bpy.props.CollectionProperty(name='Data of connector nodes',
                                              type=SvMaterialConnectorNodeData,
                                              description='Data related with current branches '
@@ -211,6 +252,7 @@ class SvMaterialChildrenBranches(bpy.types.PropertyGroup):
 
 
 class SvMaterialProps(bpy.types.PropertyGroup):
+    # Flag that material was created by Sverchok and storage of keeping different branches of copies of main material
     sv_created = bpy.props.BoolProperty(name='SV created',
                                         default=False,
                                         description='Was material created by Sverchok')
@@ -218,7 +260,7 @@ class SvMaterialProps(bpy.types.PropertyGroup):
 
 
 class SvCreateAgent(bpy.types.Operator):
-
+    # initializing agent node and jump to it
     bl_idname = "node.sv_create_agent"
     bl_label = "Create Agent"
 
@@ -239,7 +281,6 @@ class SvCreateAgent(bpy.types.Operator):
 
         bpy.context.space_data.tree_type = 'ShaderNodeTree'
         cycle_node.select = True
-        # node.select = True
         bpy.ops.node.view_selected()
 
     def execute(self, context):
@@ -248,7 +289,6 @@ class SvCreateAgent(bpy.types.Operator):
         if not context.node.agent_node:
             cycle_node = mat.node_tree.nodes.new('SvMaterialAgent')
             cycle_node.owner = context.node.node_id
-            context.node.agent_node = cycle_node
 
         context.node.agent_node.switch_lose_yourself(False)
         self.zoom_to_shader_node(mat, context.node.agent_node)
@@ -257,7 +297,7 @@ class SvCreateAgent(bpy.types.Operator):
 
 
 class SvJumpBackToNode(bpy.types.Operator):
-
+    # jump from shader editor to Sverhok editor
     bl_idname = "node.sv_jump_back_to_node"
     bl_label = "Jump back to Sverchok cycle node"
 
@@ -278,7 +318,7 @@ class SvJumpBackToNode(bpy.types.Operator):
 
 
 class SvUpdateChildrenMaterials(bpy.types.Operator):
-
+    # Apply changes in Shader editor to copies of main material
     bl_idname = "node.sv_update_children_materials"
     bl_label = "Update all materials which was copied from main material"
 
@@ -292,7 +332,7 @@ class SvUpdateChildrenMaterials(bpy.types.Operator):
 
 
 class SvMaterialAgent(bpy.types.NodeCustomGroup):
-
+    # Node for shader editor which has connection with Sverchok node
     bl_name = 'SvMaterialAgent'
     bl_label = AGENT_NAME
 
@@ -301,10 +341,10 @@ class SvMaterialAgent(bpy.types.NodeCustomGroup):
 
     #custom_node_tree = bpy.props.PointerProperty(name='Sverchok shader node', type=bpy.types.NodeTree)
 
-    to_update_children = bpy.props.BoolProperty(default=True, description='switch to real time updating of children')
     lose_yourself = bpy.props.BoolProperty(description='True if can not find owner node')
 
     def create_node_group(self):
+        # Create custom shader node tree if file does not have it yet
         name = '.' + self.bl_name
         tree = bpy.data.node_groups.new(name, 'ShaderNodeTree')
         tree.outputs.new("NodeSocketColor", "Color")
@@ -318,11 +358,10 @@ class SvMaterialAgent(bpy.types.NodeCustomGroup):
         tree.links.new(node_in.outputs[0], node_out.inputs[0])
         tree.links.new(node_in.outputs[1], node_out.inputs[1])
         tree.links.new(node_in.outputs[2], node_out.inputs[2])
-        #self.custom_node_tree = tree
         return tree
 
-    # Setup the node - setup the node tree and add the group Input and Output nodes
     def init(self, context):
+        # Create node
         try:
             custom_node_group = bpy.data.node_groups['.' + self.bl_name]
         except KeyError:
@@ -331,33 +370,22 @@ class SvMaterialAgent(bpy.types.NodeCustomGroup):
         for sock in self.inputs:
             sock.hide = True
 
-        #self.node_tree = bpy.data.node_groups['SvShaderNodeTree']
-        #self.node_tree = bpy.data.node_groups.new('.' + self.bl_name, 'ShaderNodeTree')
-        #self.create_sockets()
-        #self.node_tree.nodes.new('NodeGroupOutput')
-
-    # Draw the node components
     def draw_buttons(self, context, layout):
+        # Check whether Sverchok node was lost
         col = layout.column(align=True)
         _, owner_tree_name, owner_node_name = self.owner.split('@')
         col.label(text=owner_tree_name, icon='NODETREE')
         col.label(text=owner_node_name, icon='RNA')
         col.operator('node.sv_jump_back_to_node', text='Edit in Sverchok', icon='FILE_PARENT')
-        #if self.to_update_children:
-        #    update_icon = 'OUTLINER_OB_LAMP'
-        #else:
-        #    update_icon = 'OUTLINER_DATA_LAMP'
-        #col.prop(self, 'to_update_children', text='update changes', icon=update_icon)
         if not self.lose_yourself:
             row = layout.row()
             row.scale_y = 3
             row.operator('node.sv_update_children_materials', text='Update children', icon='FILE_REFRESH')
 
-    def free(self):
-        pass
-
     @property
     def is_main_node_exist(self):
+        # Check whether Sverchok node was lost
+        # Should be rewritten after name independent approach
         _, owner_tree_name, owner_node_name = self.owner.split('@')
         try:
             bpy.data.node_groups[owner_tree_name].nodes[owner_node_name]
@@ -427,6 +455,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
     """
 
     def change_name_material(self, context):
+        # Logic of changing name of material
         log_rename.debug('```___Start to handle material name changing___```')
         if not self.material:
             log_rename.debug('Material was not created yet - nothing to change')
@@ -461,6 +490,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
         self.process()
 
     def change_name_suffix(self, context):
+        # Logic of changing name of suffix
         log_rename.debug('____````Starting change suffix````_____')
         if not self.material:
             log_rename.debug('Material was not created yet - cancel')
@@ -526,6 +556,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
     material = PointerProperty(name='Material', type=bpy.types.Material)
 
     def init(self, context):
+        # We have to call this method for keeping Blender database in actual condition
         super().init(context)
         try:
             self.main_material = bpy.data.materials[self.material_name]
@@ -534,6 +565,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             self.material.sv_props.sv_created = True
 
     def copy(self, node):
+        # We have to call this method for keeping Blender database in actual condition
         try:
             self.main_material = bpy.data.materials[self.material_name]
         except KeyError:
@@ -541,6 +573,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             self.material.sv_props.sv_created = True
 
     def free(self):
+        # We have to call this method for keeping Blender database in actual condition
         del self.main_material
 
     def sv_init(self, context):
@@ -606,18 +639,25 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def node_id(self):
+        # Method should give constant unique string for this node during all existing the Blender file.
+        # At present it does not work in this way
         return 'sv' + '@' + self.id_data.name + '@' + self.name
 
     @property
     def main_material(self):
-        # returns material, creates if need
-        # New instance of material
+        # Returns material, creates or pick material from Blender db if it was not attached to the node before
         if not self.material:
             self.material = pick_blender_material(self.material_name)
         return self.material
 
     @main_material.setter
     def main_material(self, new_material_or_name):
+        """
+        join new material to node or rename existing material, update db of Blender
+        :param new_material_or_name: if input is string the name material will be renamed only
+                                    (bpy.types.Material or str)
+        :return: None
+        """
         # material was renamed
         if isinstance(new_material_or_name, str):
             new_name = new_material_or_name
@@ -638,6 +678,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
 
     @main_material.deleter
     def main_material(self):
+        # Delete attached material or leave it, update db of Blender
         log_delmat.debug('___```Start deleting material```___')
         i_nodes_data = self.material.sv_props.children_branch[self.child_suffix].nodes_data.find(self.node_id)
         self.material.sv_props.children_branch[self.child_suffix].nodes_data.remove(i_nodes_data)
@@ -667,6 +708,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
                 self.material.sv_props.children_branch.remove(i_branch)
 
     def del_branch(self):
+        # Delete branch of children of materials or leave them, update db of Blender
         i_node_props = self.material.sv_props.children_branch[self.previous_suffix].nodes_data.find(self.node_id)
         self.material.sv_props.children_branch[self.previous_suffix].nodes_data.remove(i_node_props)
         if not self.get_number_branch_users():
@@ -675,19 +717,25 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             self.material.sv_props.children_branch.remove(i_branch)
 
     def join_branch(self):
+        # Join to existing branch of children of materials, update db of Blender
         self.material.sv_props.children_branch[self.child_suffix].nodes_data.add().name = self.node_id
 
     def rename_branch(self):
+        # Rename of existing branch of children of materials, update db of Blender
         self.del_children()
         self.material.sv_props.children_branch[self.previous_suffix].name = self.child_suffix
 
     def new_branch(self):
+        # Create new branch of children of materials, update db of Blender
         branch = self.material.sv_props.children_branch.add()
         branch.name = self.child_suffix
         branch.nodes_data.add().name = self.node_id
 
     def get_number_material_users(self):
-        # for current material
+        """
+        Search other connector nodes and check if they have the same name of main material
+        :return: number of connector nodes with the same name of main material of current node
+        """
         correct = 0
         if self.material.name == self.material_name:
             correct = 1
@@ -695,69 +743,56 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
                     if node.material_name == self.material.name]) - correct
 
     def get_number_branch_users(self):
+        """
+        check how many other connector nodes use the same branch as current node
+        :return: number of users
+        """
         if self.previous_suffix not in self.main_material.sv_props.children_branch:
             return 0
         else:
             return len(self.main_material.sv_props.children_branch[self.previous_suffix].nodes_data)
 
     def del_children(self):
+        # Delete all children of current node
         for child in self.material.sv_props.children_branch[self.previous_suffix].children:
             bpy.data.materials.remove(child.mat)
         self.material.sv_props.children_branch[self.previous_suffix].children.clear()
 
     @property
     def agent_node(self):
-        # Try find agent
+        # Return agent node or None if agent node was not created yet
         for node in self.main_material.node_tree.nodes:
             if node.bl_idname == 'SvMaterialAgent' and node.owner == self.node_id:
                 return node
         return None
 
-    @agent_node.setter
-    def agent_node(self, agent):
-        pass
-
     @agent_node.deleter
     def agent_node(self):
+        # Delete agent node, in instance if sv node is deleting
         agent = self.agent_node
         if agent:
             self.material.node_tree.nodes.remove(self.agent_node)
 
     def update_data_structure(self):
-        connector_nodes = self.get_all_connector_nodes()
-        for node in connector_nodes:
-            if node.child_suffix not in node.main_material.sv_props.children_branch:
-                node.main_material.sv_props.children_branch.add().name = node.child_suffix
-            branch = node.main_material.sv_props.children_branch[node.child_suffix]
-            if node.node_id not in branch.prop_nodes:
-                branch.prop_nodes.add().name = node.node_id
-
-
-        related_suffixes_with_current_mat = [node.child_suffix for node in connector_nodes if
-                                             node.material_name == self.material_name]
-        children_branch = self.main_material.sv_props.children_branch
-        for suffix in related_suffixes_with_current_mat:
-            if suffix not in children_branch:
-                branch = children_branch.add()
-                branch.name = suffix
-
-        for i, branch in enumerate(children_branch):
-            print(branch.name, '-', related_suffixes_with_current_mat)
-            if branch.name not in related_suffixes_with_current_mat:
-                children_branch.remove(i)
-
-        if self.node_id not in children_branch[self.child_suffix].nodes_data:
-            children_branch[self.child_suffix].nodes_data.add().name = self.node_id
+        # for future development
+        # there is sense to have function for checking whether all database is in correct condition
+        pass
 
     def get_required_number(self, current_request):
+        """
+        Several connector nodes can have deal with same main material and work in one branch,
+        in this case length of branch should be equal to longest input of this nodes
+        :param current_request: length of input of current node - int
+        :return: length of longest input
+        """
         mat_props = self.main_material.sv_props
-        print('mat_props.children_branch[{}].nodes_data[{}].required_number'.format(self.child_suffix, self.node_id))
         mat_props.children_branch[self.child_suffix].nodes_data[self.node_id].required_number = current_request
         return max([nodes_data.required_number for
                     nodes_data in mat_props.children_branch[self.child_suffix].nodes_data])
 
     @staticmethod
     def get_all_connector_nodes():
+        # Get all connector nodes from all layouts of Sverchok
         all_nodes = []
         for tree in bpy.data.node_groups:
             if tree.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
@@ -765,15 +800,6 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
                     if node.bl_idname == 'SvMaterialConnector':
                         all_nodes.append(node)
         return all_nodes
-
-    def has_material_other_agents(self):
-        for node in self.main_material.node_tree.nodes:
-            if node.bl_idname == 'SvMaterialAgent' and node.owner != self.node_id:
-                return True
-        return False
-
-    def rename_children(self):
-        self.main_material.sv_props.children_branch
 
 
 classes = [SvMaterialList,
@@ -790,6 +816,7 @@ classes = [SvMaterialList,
 def register():
     [bpy.utils.register_class(cl) for cl in classes]
 
+    # Probably this data structure shoude be located in separate file
     bpy.types.Material.sv_props = bpy.props.PointerProperty(type=SvMaterialProps)
 
 
