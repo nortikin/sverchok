@@ -97,7 +97,12 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
             c.prop(self, kind + '_max', text='max')
             c = layout.column()
             c.prop(self, 'show_limits', icon='SETTINGS', text='')
-            c.prop(self, 'to3d', icon='UI', text='')
+                
+            c.prop(self, 'to3d', icon='PLUGIN', text='')
+
+    def draw_buttons_ext(self, context, layout):
+        c = layout.column(align=True)
+        c.prop(self, 'to3d', icon='PLUGIN', text='to 3dview')
 
 
     def draw_label(self):

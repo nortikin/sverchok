@@ -188,9 +188,16 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
                 # variables
                 if tree.SvShowIn3D:
+                   
                     for item in tree.Sv3DProps:
                         no = item.node_name
                         ver = item.prop_name
+
+                        # properties are not automatically removed from Sv3DProps when a node is deleted.
+                        # temporary fix for ui.
+                        if no not in tree.nodes:
+                            continue
+
                         node = tree.nodes[no]
 
                         if node.label:
@@ -214,9 +221,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
                         elif node.bl_idname == 'SvBmeshViewerNodeMK2':
                             row = col.row(align=True)
                             row.prop(node, 'basemesh_name', text='')
-                            row.prop_search(
-                            node, 'material', bpy.data, 'materials', text='',
-                            icon='MATERIAL_DATA')
+                            row.prop_search(node, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
                             #row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
 
                         elif node.bl_idname == 'SvObjectsNodeMK3':
@@ -244,9 +249,11 @@ class SV_PT_3DPanel(bpy.types.Panel):
                             col.prop(node, ver, text='')
 
                         elif node.bl_idname in {"SvListInputNode"}:
+                            col.row(align=True).label(text=node.label or node.name)
+
                             if node.mode == 'vector':
                                 colum_list = col.column(align=True)
-                                for i in range(self.v_int):
+                                for i in range(node.v_int):
                                     row = colum_list.row(align=True)
                                     for j in range(3):
                                         row.prop(node, 'vector_list', index=i*3+j, text='XYZ'[j]+tex)
