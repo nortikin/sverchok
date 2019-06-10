@@ -122,6 +122,7 @@
 ## Modifier Make
     LineConnectNodeMK2
     SvLatheNode
+    SvBevelCurveNode
     SvConvexHullNode
     SvConvexHullNodeMK2
     DelaunayTriangulation2DNode
