@@ -35,57 +35,59 @@ class Sv3DPanelPropsExporter(bpy.types.Operator):
     def execute(self, context):
         if not self.filepath.endswith('.json') and not self.filepath.endswith('.JSON'):
             self.filepath += '.json'
-        file = open(self.filepath, 'w')
 
-        export = {'node': self.target_node, 'data': []}
+        with open(self.filepath, 'w') as file:
 
-        # Scan all node groups...
-        for tree in bpy.data.node_groups:
+            export = {'node': self.target_node, 'data': []}
 
-            # ...and searching for target node
-            if tree.name == self.target_node:
-                for item in tree.Sv3DProps:
+            # Scan all node groups...
+            for tree in bpy.data.node_groups:
 
-                    no = item.node_name
-                    prop = item.prop_name
-                    node = tree.nodes[no]
-                    row = {'type': node.bl_idname, 'prop': prop, 'id': no}
-                    if node.label:
-                        row['label'] = node.label
+                # ...and searching for target node
+                if tree.name == self.target_node:
+                    for item in tree.Sv3DProps:
 
-                    # Scalar
-                    if node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode"}:
-                        row['value'] = getattr(node, prop, None)
+                        no = item.node_name
+                        prop = item.prop_name
+                        node = tree.nodes[no]
+                        row = {'type': node.bl_idname, 'prop': prop, 'id': no}
+                        if node.label:
+                            row['label'] = node.label
 
-                    # BMesh
-                    elif node.bl_idname == "SvBmeshViewerNodeMK2":
-                        row['value'] = getattr(node, prop, None)
-                        row['material'] = node.material
+                        # Scalar
+                        if node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode"}:
+                            row['value'] = getattr(node, prop, None)
 
-                    # Lists
-                    elif node.bl_idname == "SvListInputNode":
-                        row['items'] = []
-                        row['mode'] = node.mode
-                        if node.mode == 'vector':
-                            for i in range(node.v_int):
-                                row['items'].append([node.vector_list[i * 3 + j] for j in range(3)])
-                        else:
-                            for i in range(node.int_):
-                                row['items'].append(getattr(node, node.mode)[i])
+                        # BMesh
+                        elif node.bl_idname == "SvBmeshViewerNodeMK2":
+                            row['value'] = getattr(node, prop, None)
+                            row['material'] = node.material
 
-                    # Color
-                    elif node.bl_idname == "SvColorInputNode":
-                        row['value'] = [c for c in getattr(node, prop, None)]
+                        # Lists
+                        elif node.bl_idname == "SvListInputNode":
+                            row['items'] = []
+                            row['mode'] = node.mode
+                            if node.mode == 'vector':
+                                for i in range(node.v_int):
+                                    row['items'].append([node.vector_list[i * 3 + j] for j in range(3)])
+                            else:
+                                for i in range(node.int_):
+                                    row['items'].append(getattr(node, node.mode)[i])
 
-                    # Objects
-                    elif node.bl_idname == "SvObjectsNodeMK3":
-                        row['value'] = [pg.items()[0][1] for pg in node.object_names]
+                        # Color
+                        elif node.bl_idname == "SvColorInputNode":
+                            row['value'] = [c for c in getattr(node, prop, None)]
 
-                    export['data'].append(row)
+                        # Objects
+                        elif node.bl_idname == "SvObjectsNodeMK3":
+                            row['value'] = [pg.items()[0][1] for pg in node.object_names]
 
-                # print(json.dumps(export, ensure_ascii=False, indent=2))
-                file.write(json.dumps(export, ensure_ascii=False, indent=2))
-                file.close()
+                        export['data'].append(row)
+
+                    # print(json.dumps(export, ensure_ascii=False, indent=2))
+                    file.write(json.dumps(export, ensure_ascii=False, indent=2))
+                    file.close()
+
         return {'FINISHED'}
 
     def invoke(self, context, event):
@@ -105,41 +107,40 @@ class Sv3DPanelPropsImporter(bpy.types.Operator):
     filter_glob = StringProperty(default="*.json", options={'HIDDEN'})
 
     def execute(self, context):
-        file = open(self.filepath, 'r')
-        imported = json.loads(file.read())
-        for tree in bpy.data.node_groups:
-            if tree.name == self.target_node:
-                for row in imported['data']:
-                    node = tree.nodes[row['id']]
+        with open(self.filepath, 'r') as file:
+            imported = json.loads(file.read())
+            for tree in bpy.data.node_groups:
+                if tree.name == self.target_node:
+                    for row in imported['data']:
+                        node = tree.nodes[row['id']]
 
-                    # Scalar
-                    if node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode", "SvBmeshViewerNodeMK2"}:
-                        setattr(node, row['prop'], row['value'])
-                        # BMesh
-                        if node.bl_idname == "SvBmeshViewerNodeMK2":
-                            node.material = row['material']
+                        # Scalar
+                        if node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode", "SvBmeshViewerNodeMK2"}:
+                            setattr(node, row['prop'], row['value'])
+                            # BMesh
+                            if node.bl_idname == "SvBmeshViewerNodeMK2":
+                                node.material = row['material']
 
-                    # Lists
-                    elif node.bl_idname == "SvListInputNode":
-                        for i in range(len(row['items'])):
-                            if row['mode'] == 'vector':
-                                for j in range(3):
-                                    getattr(node, row['prop'])[i * 3 + j] = row['items'][i][j]
-                            else:
-                                getattr(node, row['mode'])[i] = row['items'][i]
+                        # Lists
+                        elif node.bl_idname == "SvListInputNode":
+                            for i in range(len(row['items'])):
+                                if row['mode'] == 'vector':
+                                    for j in range(3):
+                                        getattr(node, row['prop'])[i * 3 + j] = row['items'][i][j]
+                                else:
+                                    getattr(node, row['mode'])[i] = row['items'][i]
 
-                    # Color
-                    elif node.bl_idname == "SvColorInputNode":
-                        for i in range(4):
-                            getattr(node, row['prop'])[i] = row['value'][i]
+                        # Color
+                        elif node.bl_idname == "SvColorInputNode":
+                            for i in range(4):
+                                getattr(node, row['prop'])[i] = row['value'][i]
 
-                    # Objects
-                    elif node.bl_idname == "SvObjectsNodeMK3":
-                        for obj_name in row['value']:
-                            print('- ', obj_name)
-                            # TODO: reassign objects
+                        # Objects
+                        elif node.bl_idname == "SvObjectsNodeMK3":
+                            for obj_name in row['value']:
+                                print('- ', obj_name)
+                                # TODO: reassign objects
 
-        file.close()
         return {'FINISHED'}
 
     def invoke(self, context, event):
