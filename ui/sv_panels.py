@@ -19,18 +19,15 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatProperty
 
-
 import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.core.update_system import process_from_nodes
 from sverchok.utils import profile
 
-
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
 
 class Sv3DViewObjInUpdater(bpy.types.Operator, object):
-
     """Operator which runs its self from a timer"""
     bl_idname = "wm.sv_obj_modal_update"
     bl_label = "start n stop obj updating"
@@ -177,6 +174,8 @@ class Sv3DPanel(bpy.types.Panel):
                     for item in tree.Sv3DProps:
                         no = item.node_name
                         ver = item.prop_name
+                        # BUG: item could be in tree.Sv3DProps for some reason, even if it is deleted from tree.nodes!
+                        if no not in tree.nodes: continue
                         node = tree.nodes[no]
 
                         if node.label:
@@ -184,7 +183,7 @@ class Sv3DPanel(bpy.types.Panel):
                         else:
                             tex = no
 
-                        #print(node.bl_idname, tex)
+                        # print(node.bl_idname, tex)
 
                         if node.bl_idname == "ObjectsNodeMK2":
                             row = col.row(align=True)
@@ -201,9 +200,9 @@ class Sv3DPanel(bpy.types.Panel):
                             row = col.row(align=True)
                             row.prop(node, 'basemesh_name', text='')
                             row.prop_search(
-                            node, 'material', bpy.data, 'materials', text='',
-                            icon='MATERIAL_DATA')
-                            #row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
+                                node, 'material', bpy.data, 'materials', text='',
+                                icon='MATERIAL_DATA')
+                        # row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
 
                         elif node.bl_idname == 'SvObjectsNodeMK3':
                             node.draw_sv3dpanel_ob3(col, little_width)
@@ -213,14 +212,14 @@ class Sv3DPanel(bpy.types.Panel):
                             row.prop(node, ver, text=tex)
                             colo = row.row(align=True)
                             colo.scale_x = little_width * 2.5
-                            
+
                             if node.bl_idname == 'SvNumberNode':
                                 min_name = node.selected_mode + '_min'
                                 max_name = node.selected_mode + '_max'
                             else:
                                 min_name = 'minim'
                                 max_name = 'maxim'
-                            
+
                             colo.prop(node, min_name, text='', slider=True, emboss=False)
                             colo.prop(node, max_name, text='', slider=True, emboss=False)
 
@@ -230,19 +229,27 @@ class Sv3DPanel(bpy.types.Panel):
                             col.prop(node, ver, text='')
 
                         elif node.bl_idname in {"SvListInputNode"}:
+                            col.row(align=True).label(text=node.label or node.name)
                             if node.mode == 'vector':
                                 colum_list = col.column(align=True)
-                                for i in range(self.v_int):
+                                for i in range(node.v_int):
                                     row = colum_list.row(align=True)
                                     for j in range(3):
-                                        row.prop(node, 'vector_list', index=i*3+j, text='XYZ'[j]+tex)
+                                        row.prop(node, 'vector_list', index=i * 3 + j,
+                                                 text='XYZ'[j])  # text='XYZ'[j] + tex)
                             else:
                                 colum_list = col.column(align=True)
                                 for i in range(node.int_):
                                     row = colum_list.row(align=True)
-                                    row.prop(node, node.mode, index=i, text=str(i)+tex)
+                                    row.prop(node, node.mode, index=i, text=str(i))
                                     row.scale_x = little_width * 2.5
 
+                    # Import/Export properties
+                    row = col.row(align=True)
+                    row.label(text='Export/Import:')
+                    row = col.row(align=True)
+                    row.operator('node.tree_props_exporter', text="Export", icon='EXPORT').target_node = tree.name
+                    row.operator('node.tree_props_importer', text="Import", icon='IMPORT').target_node = tree.name
 
 
 class SverchokToolsMenu(bpy.types.Panel):
@@ -383,13 +390,13 @@ def register():
         bpy.utils.register_class(class_name)
 
 
-
 def unregister():
     for class_name in reversed(sv_tools_classes):
         bpy.utils.unregister_class(class_name)
 
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
+
 
 if __name__ == '__main__':
     register()
