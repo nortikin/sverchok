@@ -86,7 +86,6 @@ class Sv3DPanelPropsExporter(bpy.types.Operator):
 
                     # print(json.dumps(export, ensure_ascii=False, indent=2))
                     file.write(json.dumps(export, ensure_ascii=False, indent=2))
-                    file.close()
 
         return {'FINISHED'}
 
