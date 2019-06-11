@@ -365,7 +365,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         name='vert color', size=4, update=updateNode)
 
     edge_color: FloatVectorProperty(
-        subtype='COLOR', min=0, max=1, default=(0.03, 0.24, 1.0, 1.0),
+        subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
         name='edge color', size=4, update=updateNode)
 
     face_color: FloatVectorProperty(

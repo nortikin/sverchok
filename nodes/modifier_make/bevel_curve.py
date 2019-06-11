@@ -194,7 +194,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             ax1, ax2, ax3 = z, x, y
 
-        scale_matrix = Matrix.Scale(1, 4, ax1) * Matrix.Scale(scale_x, 4, ax2) * Matrix.Scale(scale_y, 4, ax3)
+        scale_matrix = Matrix.Scale(1, 4, ax1) @ Matrix.Scale(scale_x, 4, ax2) @ Matrix.Scale(scale_y, 4, ax3)
 
         if self.algorithm == 'householder':
             rot = autorotate_householder(ax1, tangent).inverted()
@@ -205,7 +205,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             raise Exception("Unsupported algorithm")
 
-        return rot * scale_matrix
+        return rot @ scale_matrix
 
     def get_taper_scale(self, vertex):
         projection = Vector(vertex)
@@ -248,7 +248,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
             matrix = self.get_matrix(spline_tangent, scale_x, scale_y)
             level_vertices = []
             for bevel_vertex in bevel_verts:
-                new_vertex = matrix * Vector(bevel_vertex) + spline_vertex
+                new_vertex = matrix @ Vector(bevel_vertex) + spline_vertex
                 level_vertices.append(mesh.verts.new(new_vertex))
             if prev_level_vertices is not None:
                 for i,j in bevel_edges:
