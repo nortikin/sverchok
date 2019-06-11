@@ -275,6 +275,8 @@ class SvCreateAgent(bpy.types.Operator):
             bpy.context.scene.objects.link(temp_object)
         else:
             temp_object = bpy.data.objects[TEMP_OBJECT_NAME]
+        if bpy.context.active_object.mode == 'EDIT':
+            bpy.ops.object.mode_set(mode='OBJECT')
         bpy.context.scene.objects.active = temp_object
         temp_object.data.materials.clear()
         temp_object.data.materials.append(material)
