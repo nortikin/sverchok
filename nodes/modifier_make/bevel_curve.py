@@ -38,7 +38,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
             ("diff", "Rotation difference", "Use rotational difference calculation", 3)
         ]
 
-    algorithm = EnumProperty(name = "Algorithm",
+    algorithm: EnumProperty(name = "Algorithm",
         description = "Rotation calculation algorithm",
         default = "householder",
         items = algorithms, update=updateNode)
