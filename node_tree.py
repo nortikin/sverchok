@@ -427,6 +427,20 @@ class SverchCustomTreeNode:
         else:
             pass
 
+        
+        def free(self):
+            """
+            some nodes require  additional operations upon node removal
+            """
+
+            if hasattr(self, "has_3dview_props"):
+                print("about to remove this node's props from Sv3DProps")
+
+                # props = self.id_data.Sv3DProps
+                # if any(i.node_name==self.name for i in props):
+                    # props.remove(.. named ... )
+
+
 classes = [
     SverchCustomTree, 
     SvLinkNewNodeInput
