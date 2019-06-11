@@ -114,6 +114,7 @@
     DelaunayTriangulation2DNode
     Voronoi2DNode
     ---
+    SvBevelCurveNode
     SvAdaptiveEdgeNode
     AdaptivePolsNode
     SvDuplicateAlongEdgeNode
