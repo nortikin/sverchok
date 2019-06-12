@@ -64,6 +64,7 @@ input like:
     
     * Integer or floating literal (usual python syntax, such as 5 or 7.5)
     * Variable name, such as a or b or variable_name
+    * Negation sign and a variable name, such as `-a` or `-size`.
     * Expression enclosed in curly brackets, such as {a+1} or {sin(phi)}
 
 '''
