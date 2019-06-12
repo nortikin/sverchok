@@ -20,7 +20,7 @@ import re
 from itertools import chain
 import ast
 from math import *
-import io
+import os
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
@@ -33,6 +33,7 @@ from sverchok.data_structure import fullList, updateNode, dataCorrect, match_lon
 from sverchok.utils.parsec import *
 from sverchok.utils.logging import info, debug, warning
 from sverchok.utils.sv_curve_utils import Arc
+from sverchok.utils.sv_update_utils import sv_get_local_path
 
 '''
 input like:
@@ -361,6 +362,7 @@ class ArcTo(Statement):
             v0_index = v1_index
 
         interpreter.position = v1
+        interpreter.new_knot("A.#", *v1)
         if self.close:
             interpreter.new_edge(v1_index, interpreter.segment_start_index)
 
@@ -738,6 +740,36 @@ class SvPrifilizerMk3(bpy.types.Operator):
 
 
 #################################
+# Example Files Import
+#################################
+
+sv_path = os.path.dirname(sv_get_local_path()[0])
+profile_template_path = os.path.join(sv_path, 'profile_examples')
+
+class SvProfileImportMenu(bpy.types.Menu):
+    bl_label = "Profile templates"
+    bl_idname = "SvProfileImportMenu"
+
+    def draw(self, context):
+        if context.active_node:
+            node = context.active_node
+            self.path_menu([profile_template_path], "node.sv_profile_import_example")
+
+class SvProfileImportOperator(bpy.types.Operator):
+
+    bl_idname = "node.sv_profile_import_example"
+    bl_label = "Profile mk3 load"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    filepath = bpy.props.StringProperty()
+
+    def execute(self, context):
+        txt = bpy.data.texts.load(self.filepath)
+        context.node.filename = os.path.basename(txt.name)
+        updateNode(context.node, context)
+        return {'FINISHED'}
+
+#################################
 # Node class
 #################################
 
@@ -802,6 +834,9 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "x",text='x-affect', expand=True)
         row.prop(self, "y",text='y-affect', expand=True)
+
+        layout.label("Import Examples")
+        layout.menu(SvProfileImportMenu.bl_idname)
 
     def sv_init(self, context):
         self.inputs.new('StringsSocket', "a")
@@ -918,11 +953,18 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Knots'].sv_set(result_knots)
         self.outputs['KnotNames'].sv_set(result_names)
 
+classes = [
+        SvProfileImportMenu,
+        SvProfileImportOperator,
+        SvPrifilizerMk3,
+        SvProfileNodeMK3
+    ]
+
 def register():
-    bpy.utils.register_class(SvPrifilizerMk3)
-    bpy.utils.register_class(SvProfileNodeMK3)
+    for name in classes:
+        bpy.utils.register_class(name)
 
 def unregister():
-    bpy.utils.unregister_class(SvProfileNodeMK3)
-    bpy.utils.unregister_class(SvPrifilizerMk3)
+    for name in reversed(classes):
+        bpy.utils.unregister_class(name)
 
