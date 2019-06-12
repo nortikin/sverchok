@@ -21,7 +21,7 @@ import mathutils
 from bpy.props import FloatProperty, EnumProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat as mlr)
-from sverchok.utils.sv_KDT_utils import kdt_closest_verts, kdt_closest_verts_range, kdt_closest_verts_find_n
+from sverchok.utils.sv_KDT_utils import kdt_closest_verts_range, kdt_closest_verts_find_n
 
 class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''
