@@ -79,9 +79,10 @@ Our DSL has relatively simple BNF:
     <CurveTo> ::= ...
     <ArcTo> ::= ...
 
-    <Value> ::= "'" <Expression> "'" | <Variable> | <Const>
+    <Value> ::= "'" <Expression> "'" | <Variable> | <NegatedVariable> | <Const>
     <Expression> ::= Standard Python expression
     <Variable> ::= Python variable identifier
+    <NegatedVariable> ::= "-" <Variable>
     <Const> ::= Python integer or floating-point literal
 
 """
@@ -162,6 +163,26 @@ class Variable(Expression):
 
     def get_variables(self):
         return set([self.name])
+
+# In general, this does not have very much sense:
+# instead of -a one can write {-a}, then it will
+# be parsed as Expression and will work fine.
+# This is mostly implemented for compatibility
+# with older Profile node syntax.
+class NegatedVariable(Variable):
+    @classmethod
+    def from_string(cls, string):
+        return NegatedVariable(string)
+
+    def eval_(self, variables):
+        value = variables.get(self.name, None)
+        if value is not None:
+            return -value
+        else:
+            raise SyntaxError("Unknown variable: " + self.name)
+
+    def __repr__(self):
+        return "NegatedVariable({})".format(self.name)
 
 ############################################
 # Statement classes
@@ -406,8 +427,12 @@ def parse_identifier(src):
     for (name, _), rest in sequence(parse_regexp(identifier_regexp), parse_whitespace)(src):
         yield name, rest
 
+def parse_negated_variable(src):
+    for (_, name, _), rest in sequence(parse_word("-"), parse_regexp(identifier_regexp), parse_whitespace)(src):
+        yield NegatedVariable(name), rest
+
 def parse_value(src):
-    for smth, rest in one_of(parse_number, parse_identifier, parse_expr)(src):
+    for smth, rest in one_of(parse_number, parse_identifier, parse_negated_variable, parse_expr)(src):
         if isinstance(smth, (int, float)):
             yield Const(smth), rest
         elif isinstance(smth, str):
