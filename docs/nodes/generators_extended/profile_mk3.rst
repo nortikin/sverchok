@@ -54,6 +54,9 @@ Each integer or floating value may be represented as
 
 For examples, see "Examples of usage" section below, or `profile_examples` directory in Sverchok distribution.
 
+Statements may optionally be separated by semicolons (`;`).
+For some commands (namely: `H`/`h`, `V`/`v`) the trailing semicolon is **required**!
+
 Parameters
 ----------
 
