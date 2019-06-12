@@ -893,7 +893,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 input_values = [inputs[name] for name in var_names]
             except KeyError as e:
                 name = e.args[0]
-                raise SvNoDataError(self.inputs[name])
+                if name in self.inputs:
+                    raise SvNoDataError(self.inputs[name])
+                else:
+                    self.adjust_sockets()
+                    raise SvNoDataError(self.inputs[name])
             parameters = match_long_repeat(input_values)
         else:
             parameters = [[[]]]
