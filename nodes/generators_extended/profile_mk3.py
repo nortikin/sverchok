@@ -41,6 +41,7 @@ input like:
     M|m <2v coordinate>
     L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
     C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
+    S|s <2v control2> <2v knot2> <int num_segments> [z]
     A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
     H|h <x1> <x2> ... ;
     V|v <y1> <y2> ... ;
@@ -78,14 +79,15 @@ input like:
 Our DSL has relatively simple BNF:
 
     <Profile> ::= <Statement> *
-    <Statement> ::= <MoveTo> | <LineTo> | <CurveTo> | <ArcTo>
-                    | <HorLineTo> | <VertLineTo> | "X"
+    <Statement> ::= <MoveTo> | <LineTo> | <CurveTo> | <SmoothLineTo>
+                    | <ArcTo> | <HorLineTo> | <VertLineTo> | "X"
 
     <MoveTo> ::= ("M" | "m") <Value> "," <Value>
     <LineTo> ::= ...
     <CurveTo> ::= ...
+    <SmoothCurveTo> ::= ...
     <ArcTo> ::= ...
-   <HorLineTo> ::= ("H" | "h") <Value> * ";"
+    <HorLineTo> ::= ("H" | "h") <Value> * ";"
     <VertLineTo> ::= ("V" | "v") <Value> * ";"
 
     <Value> ::= "{" <Expression> "}" | <Variable> | <NegatedVariable> | <Const>
@@ -404,6 +406,8 @@ class CurveTo(Statement):
         interpreter.new_knot("C#.h2", *handle2)
         interpreter.new_knot("C#.k", *knot2)
 
+        interpreter.prev_curve_knot = handle2
+
         for point in points[1:]:
             v1_index = interpreter.new_vertex(point.x, point.y)
             interpreter.new_edge(v0_index, v1_index)
@@ -478,6 +482,84 @@ class ArcTo(Statement):
 
         interpreter.position = v1
         interpreter.new_knot("A.#", *v1)
+        if self.close:
+            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+
+        interpreter.has_last_vertex = True
+
+class SmoothCurveTo(Statement):
+    def __init__(self, is_abs, control2, knot2, num_segments, close):
+        self.is_abs = is_abs
+        self.control2 = control2
+        self.knot2 = knot2
+        self.num_segments = num_segments
+        self.close = close
+
+    def get_variables(self):
+        variables = set()
+        variables.update(self.control2[0].get_variables())
+        variables.update(self.control2[1].get_variables())
+        variables.update(self.knot2[0].get_variables())
+        variables.update(self.knot2[1].get_variables())
+        variables.update(self.num_segments.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = "S" if self.is_abs else "s"
+        return "{} {} {} {} {}".format(letter, self.control2, self.knot2, self.num_segments, self.close)
+
+    def interpret(self, interpreter, variables):
+        vec = lambda v: Vector((v[0], v[1], 0))
+
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        knot1 = interpreter.position
+
+        if interpreter.prev_curve_knot is None:
+            # If there is no previous command or if the previous command was
+            # not an C, c, S or s, assume the first control point is coincident
+            # with the current point.
+            handle1 = knot1
+        else:
+            # The first control point is assumed to be the reflection of the
+            # second control point on the previous command relative to the
+            # current point. 
+            prev_knot_x, prev_knot_y = interpreter.prev_curve_knot
+            x0, y0 = knot1
+            dx, dy = x0 - prev_knot_x, y0 - prev_knot_y
+            handle1 = x0 + dx, y0 + dy
+
+        # FIXME: it is not clear for me from SVG specification: for "s",
+        # should handle2 be calculated relatively to knot1 or relatively to handle1?
+        # I assume that it should be relative to knot1.
+        # interpreter.position = handle1
+        handle2 = interpreter.calc_vertex(self.is_abs, self.control2[0], self.control2[1], variables)
+        interpreter.position = handle2
+        knot2 = interpreter.calc_vertex(self.is_abs, self.knot2[0], self.knot2[1], variables)
+        interpreter.position = knot2
+
+        r = self.num_segments.eval_(variables)
+
+        points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
+
+        interpreter.new_knot("S#.h1", *handle1)
+        interpreter.new_knot("S#.h2", *handle2)
+        interpreter.new_knot("S#.k", *knot2)
+
+        interpreter.prev_curve_knot = handle2
+
+        for point in points[1:]:
+            v1_index = interpreter.new_vertex(point.x, point.y)
+            interpreter.new_edge(v0_index, v1_index)
+            v0_index = v1_index
+
         if self.close:
             interpreter.new_edge(v1_index, interpreter.segment_start_index)
 
@@ -571,10 +653,22 @@ def parse_CurveTo(src):
                 parse_value,
                 parse_value,
                 optional(parse_word("z")),
-                optional(parse_semicolon))
+                optional(parse_semicolon)
             )
     for (is_abs, control1, control2, knot2, num_segments, even_spread, z, _), rest in parser(src):
         yield CurveTo(is_abs, control1, control2, knot2, num_segments, even_spread, z is not None), rest
+
+def parse_SmoothCurveTo(src):
+    parser = sequence(
+                parse_letter("S", "s"),
+                parse_pair,
+                parse_pair,
+                parse_value,
+                optional(parse_word("z")),
+                optional(parse_semicolon)
+            )
+    for (is_abs, control2, knot2, num_segments, z, _), rest in parser(src):
+        yield SmoothCurveTo(is_abs, control2, knot2, num_segments, z is not None), rest
 
 def parse_ArcTo(src):
     parser = sequence(
@@ -586,7 +680,7 @@ def parse_ArcTo(src):
                 parse_pair,
                 parse_value,
                 optional(parse_word("z")),
-                optional(parse_semicolon))
+                optional(parse_semicolon)
             )
     for (is_abs, radii, rot, flag1, flag2, end, num_verts, z, _), rest in parser(src):
         yield ArcTo(is_abs, radii, rot, flag1, flag2, end, num_verts, z is not None), rest
@@ -615,6 +709,7 @@ parse_statement = one_of(
                     parse_HorLineTo,
                     parse_VertLineTo,
                     parse_CurveTo,
+                    parse_SmoothCurveTo,
                     parse_ArcTo,
                     parse_Close)
 
@@ -647,6 +742,7 @@ class Interpreter(object):
         self.segment_number = 0
         self.has_last_vertex = False
         self.closed = False
+        self.prev_curve_knot = None
         self.vertices = []
         self.edges = []
         self.knots = []
