@@ -42,6 +42,8 @@ input like:
     L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
     C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
     A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
+    H|h <x1> <x2> ... ;
+    V|v <y1> <y2> ... ;
     X
     #
     -----
@@ -66,6 +68,9 @@ input like:
     * Variable name, such as a or b or variable_name
     * Negation sign and a variable name, such as `-a` or `-size`.
     * Expression enclosed in curly brackets, such as {a+1} or {sin(phi)}
+    
+    Statements may optionally be separated by semicolons (;).
+    For some commands (namely: H/h, V/v) the trailing semicolon is *required*!
 
 '''
 
@@ -73,14 +78,17 @@ input like:
 Our DSL has relatively simple BNF:
 
     <Profile> ::= <Statement> *
-    <Statement> ::= <MoveTo> | <LineTo> | <CurveTo> | <ArcTo> | "X"
+    <Statement> ::= <MoveTo> | <LineTo> | <CurveTo> | <ArcTo>
+                    | <HorLineTo> | <VertLineTo> | "X"
 
     <MoveTo> ::= ("M" | "m") <Value> "," <Value>
     <LineTo> ::= ...
     <CurveTo> ::= ...
     <ArcTo> ::= ...
+    <HorLineTo> ::= ("H" | "h") <Value> *
+    <VertLineTo> ::= ("V" | "v") <Value> *
 
-    <Value> ::= "'" <Expression> "'" | <Variable> | <NegatedVariable> | <Const>
+    <Value> ::= "{" <Expression> "}" | <Variable> | <NegatedVariable> | <Const>
     <Expression> ::= Standard Python expression
     <Variable> ::= Python variable identifier
     <NegatedVariable> ::= "-" <Variable>
@@ -190,6 +198,15 @@ class NegatedVariable(Variable):
 # Classes for AST of our DSL
 ############################################
 
+# These classes are responsible for interpretation of specific DSL statements.
+# Each of these classes does the following:
+# 
+#  * Stores statement parameters (for example, MoveTo stores x and y).
+#  * defines get_variables() method, which should return a set of all
+#    variables used by all expressions in the statement.
+#  * defines interpret() method, which should calculate all vertices and
+#    edges according to statement parameters, and pass them to the interpreter.
+
 class Statement(object):
     pass
 
@@ -253,6 +270,82 @@ class LineTo(Statement):
 
         if self.close:
             interpreter.new_edge(v1_index, interpreter.segment_start_index)
+
+        interpreter.has_last_vertex = True
+
+class HorizontalLineTo(Statement):
+    def __init__(self, is_abs, xs):
+        self.is_abs = is_abs
+        self.xs = xs
+
+    def get_variables(self):
+        variables = set()
+        for x in self.xs:
+            variables.update(x.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = "H" if self.is_abs else "h"
+        return "{} {}".format(letter, self.xs)
+
+    def interpret(self, interpreter, variables):
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        for i, x_expr in enumerate(self.xs):
+            x0,y0 = interpreter.position
+            x = x_expr.eval_(variables)
+            if not self.is_abs:
+                x = x0 + x
+            v1 = (x, y0)
+            interpreter.position = v1
+            v1_index = interpreter.new_vertex(*v1)
+            interpreter.new_edge(v0_index, v1_index)
+            interpreter.new_knot("H#.{}".format(i), *v1)
+            v0_index = v1_index
+
+        interpreter.has_last_vertex = True
+
+class VerticalLineTo(Statement):
+    def __init__(self, is_abs, ys):
+        self.is_abs = is_abs
+        self.ys = ys
+
+    def get_variables(self):
+        variables = set()
+        for y in self.ys:
+            variables.update(y.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = "V" if self.is_abs else "v"
+        return "{} {}".format(letter, self.ys)
+
+    def interpret(self, interpreter, variables):
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        for i, y_expr in enumerate(self.ys):
+            x0,y0 = interpreter.position
+            y = y_expr.eval_(variables)
+            if not self.is_abs:
+                y = y0 + y
+            v1 = (x0, y)
+            interpreter.position = v1
+            v1_index = interpreter.new_vertex(*v1)
+            interpreter.new_edge(v0_index, v1_index)
+            interpreter.new_knot("V#.{}".format(i), *v1)
+            v0_index = v1_index
 
         interpreter.has_last_vertex = True
 
@@ -424,6 +517,8 @@ def parse_expr(src):
 
 identifier_regexp = re.compile(r"[a-zA-Z_][a-zA-Z0-9_]*")
 
+parse_semicolon = parse_word(";")
+
 def parse_identifier(src):
     for (name, _), rest in sequence(parse_regexp(identifier_regexp), parse_whitespace)(src):
         yield name, rest
@@ -454,13 +549,17 @@ def parse_letter(absolute, relative):
     return parser
 
 def parse_MoveTo(src):
-    parser = sequence(parse_letter("M", "m"), parse_pair)
-    for (is_abs, (x, y)), rest in parser(src):
+    parser = sequence(parse_letter("M", "m"), parse_pair, optional(parse_semicolon))
+    for (is_abs, (x, y), _), rest in parser(src):
         yield MoveTo(is_abs, x, y), rest
 
 def parse_LineTo(src):
-    parser = sequence(parse_letter("L", "l"), many(parse_pair), optional(parse_word("z")))
-    for (is_abs, pairs, z), rest in parser(src):
+    parser = sequence(
+                parse_letter("L", "l"),
+                many(parse_pair),
+                optional(parse_word("z")),
+                optional(parse_semicolon))
+    for (is_abs, pairs, z, _), rest in parser(src):
         yield LineTo(is_abs, pairs, z is not None), rest
 
 def parse_CurveTo(src):
@@ -471,9 +570,10 @@ def parse_CurveTo(src):
                 parse_pair,
                 parse_value,
                 parse_value,
-                optional(parse_word("z"))
+                optional(parse_word("z")),
+                optional(parse_semicolon))
             )
-    for (is_abs, control1, control2, knot2, num_segments, even_spread, z), rest in parser(src):
+    for (is_abs, control1, control2, knot2, num_segments, even_spread, z, _), rest in parser(src):
         yield CurveTo(is_abs, control1, control2, knot2, num_segments, even_spread, z is not None), rest
 
 def parse_ArcTo(src):
@@ -485,14 +585,38 @@ def parse_ArcTo(src):
                 parse_value,
                 parse_pair,
                 parse_value,
-                optional(parse_word("z"))
+                optional(parse_word("z")),
+                optional(parse_semicolon))
             )
-    for (is_abs, radii, rot, flag1, flag2, end, num_verts, z), rest in parser(src):
+    for (is_abs, radii, rot, flag1, flag2, end, num_verts, z, _), rest in parser(src):
         yield ArcTo(is_abs, radii, rot, flag1, flag2, end, num_verts, z is not None), rest
+
+def parse_HorLineTo(src):
+    # NB: H/h command MUST end with semicolon, otherwise we will not be able to
+    # understand where it ends, i.e. does the following letter begin a new statement
+    # or is it just next X value denoted by variable.
+    parser = sequence(parse_letter("H", "h"), many(parse_value), parse_semicolon)
+    for (is_abs, xs, _), rest in parser(src):
+        yield HorizontalLineTo(is_abs, xs), rest
+
+def parse_VertLineTo(src):
+    # NB: V/v command MUST end with semicolon, otherwise we will not be able to
+    # understand where it ends, i.e. does the following letter begin a new statement
+    # or is it just next X value denoted by variable.
+    parser = sequence(parse_letter("V", "v"), many(parse_value), parse_semicolon)
+    for (is_abs, ys, _), rest in parser(src):
+        yield VerticalLineTo(is_abs, ys), rest
 
 parse_Close = parse_word("X", Close())
 
-parse_statement = one_of(parse_MoveTo, parse_LineTo, parse_CurveTo, parse_ArcTo, parse_Close)
+parse_statement = one_of(
+                    parse_MoveTo,
+                    parse_LineTo,
+                    parse_HorLineTo,
+                    parse_VertLineTo,
+                    parse_CurveTo,
+                    parse_ArcTo,
+                    parse_Close)
 
 parse_definition = many(parse_statement)
 
@@ -507,6 +631,7 @@ def parse_profile(src):
         cleaned = cleaned + " " + line
     
     profile = parse(parse_definition, cleaned)
+    info(profile)
     return profile
 
 #################################
