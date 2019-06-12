@@ -391,9 +391,17 @@ class CurveTo(Statement):
 
         knot1 = interpreter.position
         handle1 = interpreter.calc_vertex(self.is_abs, self.control1[0], self.control1[1], variables)
-        interpreter.position = handle1
+
+        # In Profile mk2, for "c" handle2 was calculated relative to handle1,
+        # and knot2 was calculated relative to handle2.
+        # But in SVG specification, 
+        # >> ...  *At the end of the command*, the new current point becomes
+        # >> the final (x,y) coordinate pair used in the polybézier.
+        # This is also behaivour of browsers.
+
+        #interpreter.position = handle1
         handle2 = interpreter.calc_vertex(self.is_abs, self.control2[0], self.control2[1], variables)
-        interpreter.position = handle2
+        #interpreter.position = handle2
         knot2 = interpreter.calc_vertex(self.is_abs, self.knot2[0], self.knot2[1], variables)
         interpreter.position = knot2
 
@@ -536,12 +544,10 @@ class SmoothCurveTo(Statement):
             dx, dy = x0 - prev_knot_x, y0 - prev_knot_y
             handle1 = x0 + dx, y0 + dy
 
-        # FIXME: it is not clear for me from SVG specification: for "s",
-        # should handle2 be calculated relatively to knot1 or relatively to handle1?
-        # I assume that it should be relative to knot1.
+        # I assume that handle2 should be relative to knot1, not to handle1.
         # interpreter.position = handle1
         handle2 = interpreter.calc_vertex(self.is_abs, self.control2[0], self.control2[1], variables)
-        interpreter.position = handle2
+        # interpreter.position = handle2
         knot2 = interpreter.calc_vertex(self.is_abs, self.knot2[0], self.knot2[1], variables)
         interpreter.position = knot2
 
