@@ -62,7 +62,7 @@ class SvIntersectPlanePlaneNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvIntersectPlanePlaneNode'
     bl_label = 'Plane Intersection'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_DISTANCE'
+    sv_icon = 'SV_PLANE_INTERSECTION_ICON'
 
     plane_loc_a = FloatVectorProperty(
         name="Location A", description='First Plane point',
