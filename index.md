@@ -61,6 +61,7 @@
     GetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
+    SvIntersectPlanePlaneNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
     SvBvhOverlapNodeNew
