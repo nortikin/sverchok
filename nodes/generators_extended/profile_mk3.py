@@ -85,8 +85,8 @@ Our DSL has relatively simple BNF:
     <LineTo> ::= ...
     <CurveTo> ::= ...
     <ArcTo> ::= ...
-    <HorLineTo> ::= ("H" | "h") <Value> *
-    <VertLineTo> ::= ("V" | "v") <Value> *
+   <HorLineTo> ::= ("H" | "h") <Value> * ";"
+    <VertLineTo> ::= ("V" | "v") <Value> * ";"
 
     <Value> ::= "{" <Expression> "}" | <Variable> | <NegatedVariable> | <Const>
     <Expression> ::= Standard Python expression
