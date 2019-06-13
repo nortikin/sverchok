@@ -352,13 +352,12 @@ class VerticalLineTo(Statement):
         interpreter.has_last_vertex = True
 
 class CurveTo(Statement):
-    def __init__(self, is_abs, control1, control2, knot2, num_segments, even_spread, close):
+    def __init__(self, is_abs, control1, control2, knot2, num_segments, close):
         self.is_abs = is_abs
         self.control1 = control1
         self.control2 = control2
         self.knot2 = knot2
         self.num_segments = num_segments
-        self.even_spread = even_spread
         self.close = close
 
     def get_variables(self):
@@ -370,12 +369,11 @@ class CurveTo(Statement):
         variables.update(self.knot2[0].get_variables())
         variables.update(self.knot2[1].get_variables())
         variables.update(self.num_segments.get_variables())
-        variables.update(self.even_spread.get_variables())
         return variables
 
     def __repr__(self):
         letter = "C" if self.is_abs else "c"
-        return "{} {} {} {} {} {} {}".format(letter, self.control1, self.control2, self.knot2, self.num_segments, self.even_spread, self.close)
+        return "{} {} {} {} {} {}".format(letter, self.control1, self.control2, self.knot2, self.num_segments, self.close)
 
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
@@ -406,7 +404,6 @@ class CurveTo(Statement):
         interpreter.position = knot2
 
         r = self.num_segments.eval_(variables)
-        s = self.even_spread.eval_(variables) # not used yet
 
         points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
 
@@ -657,12 +654,11 @@ def parse_CurveTo(src):
                 parse_pair,
                 parse_pair,
                 parse_value,
-                parse_value,
                 optional(parse_word("z")),
                 optional(parse_semicolon)
             )
-    for (is_abs, control1, control2, knot2, num_segments, even_spread, z, _), rest in parser(src):
-        yield CurveTo(is_abs, control1, control2, knot2, num_segments, even_spread, z is not None), rest
+    for (is_abs, control1, control2, knot2, num_segments, z, _), rest in parser(src):
+        yield CurveTo(is_abs, control1, control2, knot2, num_segments, z is not None), rest
 
 def parse_SmoothCurveTo(src):
     parser = sequence(
@@ -913,7 +909,6 @@ class SvPrifilizerMk3(bpy.types.Operator):
                     values += self.stringadd(hl,ob_points[i].select_left_handle)
                     values += self.stringadd(co,ob_points[i].select_control_point)
                     values += self.curve_points_count()
-                    values += ' 0 '
                     if curve:
                         values += '\n'
                     out_points.append(hr[:])
