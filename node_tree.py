@@ -430,15 +430,20 @@ class SverchCustomTreeNode:
         
         def free(self):
             """
-            some nodes require  additional operations upon node removal
+            some nodes require additional operations upon node removal
             """
 
             if hasattr(self, "has_3dview_props"):
+
+                # this code seems to be a necessary evil
                 print("about to remove this node's props from Sv3DProps")
 
-                # props = self.id_data.Sv3DProps
-                # if any(i.node_name==self.name for i in props):
-                    # props.remove(.. named ... )
+                # find and remove a property stored in tree.sv3dprops for the node currently being deleted/freed
+                props = self.id_data.Sv3DProps
+                for index in range(len(props)):
+                    if props[index].node_name == self.name:
+                        props.remove(index)
+                        break
 
 
 classes = [

@@ -195,8 +195,10 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
                         # properties are not automatically removed from Sv3DProps when a node is deleted.
                         # temporary fix for ui.
-                        if no not in tree.nodes:
-                            continue
+                        warning = no not in tree.nodes
+                        if warning:
+                            col.alert = True
+                            col.label(icon='ERROR', text=f'missing: {no}')
 
                         node = tree.nodes[no]
 
@@ -209,6 +211,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
                         if node.bl_idname == "ObjectsNodeMK2":
                             row = col.row(align=True)
+                            # row.alert = warning
                             row.label(text=tex)
                             colo = row.row(align=True)
                             colo.scale_x = little_width * 5
@@ -220,6 +223,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
                         elif node.bl_idname == 'SvBmeshViewerNodeMK2':
                             row = col.row(align=True)
+                            # row.alert = warning
                             row.prop(node, 'basemesh_name', text='')
                             row.prop_search(node, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
                             #row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
@@ -229,6 +233,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
                         elif node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode"}:
                             row = col.row(align=True)
+                            # row.alert = warning
                             row.prop(node, ver, text=tex)
                             colo = row.row(align=True)
                             colo.scale_x = little_width * 2.5
