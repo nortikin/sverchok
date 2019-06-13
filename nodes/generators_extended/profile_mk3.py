@@ -43,6 +43,8 @@ input like:
     L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
     C|c <2v control1> <2v control2> <2v knot2> ["n = " num_segments] [z]
     S|s <2v control2> <2v knot2> ["n = " num_segments] [z]
+    Q|q <2v control> <2v knot2> ["n = " num_segments] [z]
+    T|t <2v knot2> ["n = " num_segments] [z]
     A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z]
     H|h <x1> <x2> ... ;
     V|v <y1> <y2> ... ;
@@ -80,12 +82,15 @@ Our DSL has relatively simple BNF:
 
     <Profile> ::= <Statement> *
     <Statement> ::= <MoveTo> | <LineTo> | <CurveTo> | <SmoothLineTo>
+                    | <QuadCurveTo> | <SmoothQuadCurveTo>
                     | <ArcTo> | <HorLineTo> | <VertLineTo> | "X"
 
     <MoveTo> ::= ("M" | "m") <Value> "," <Value>
     <LineTo> ::= ...
     <CurveTo> ::= ...
     <SmoothCurveTo> ::= ...
+    <QuadCurveTo> ::= ...
+    <SmoothQuadCurveTo> ::= ...
     <ArcTo> ::= ...
     <HorLineTo> ::= ("H" | "h") <Value> * ";"
     <VertLineTo> ::= ("V" | "v") <Value> * ";"
@@ -904,7 +909,7 @@ def parse_profile(src):
         cleaned = cleaned + " " + line
     
     profile = parse(parse_definition, cleaned)
-    info(profile)
+    debug(profile)
     return profile
 
 #################################
