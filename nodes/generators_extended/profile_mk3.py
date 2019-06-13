@@ -23,7 +23,7 @@ from math import *
 import os
 
 import bpy
-from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
+from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
 from mathutils.geometry import interpolate_bezier
 from mathutils import Vector
 
@@ -729,9 +729,19 @@ class Close(Statement):
         return set()
 
     def interpret(self, interpreter, variables):
+        interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
             info("X statement: no current point, do nothing")
             return
+
+        v0 = interpreter.vertices[0]
+        v1 = interpreter.vertices[-1]
+
+        distance = (Vector(v0) - Vector(v1)).length
+
+        if distance < interpreter.close_threshold:
+            interpreter.pop_last_vertex()
+
         v1_index = interpreter.get_last_vertex()
         interpreter.new_edge(v1_index, 0)
         interpreter.closed = True
@@ -916,6 +926,13 @@ def parse_profile(src):
 # DSL Interpreter
 #################################
 
+# This class does the following:
+#
+# * Stores the "drawing" state, such as "current pen position"
+# * Provides API for Statement classes to add vertices, edges to the current
+#   drawing
+# * Contains the interpret() method, which runs the whole interpretation process.
+
 class Interpreter(object):
     def __init__(self, node):
         self.position = (0, 0)
@@ -931,6 +948,7 @@ class Interpreter(object):
         self.knots = []
         self.knotnames = []
         self.dflt_num_verts = node.curve_points_count
+        self.close_threshold = node.close_threshold
 
     def assert_not_closed(self):
         if self.closed:
@@ -950,7 +968,8 @@ class Interpreter(object):
 
     def new_vertex(self, x, y):
         index = self.next_vertex_index
-        self.vertices.append((x, y))
+        vertex = (x, y)
+        self.vertices.append(vertex)
         self.next_vertex_index += 1
         return index
 
@@ -969,9 +988,15 @@ class Interpreter(object):
     def get_last_vertex(self):
         return self.next_vertex_index - 1
 
+    def pop_last_vertex(self):
+        self.vertices.pop()
+        self.next_vertex_index -= 1
+        is_not_last = lambda e: e[0] != self.next_vertex_index and e[1] != self.next_vertex_index
+        self.edges = list(filter(is_not_last, self.edges))
+
     def interpret(self, profile, variables):
         if not profile:
-            return [], []
+            return
         for statement in profile:
             statement.interpret(self, variables)
 
@@ -1243,6 +1268,10 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name="Curve points count", min=1, max=100, default=20, update=updateNode,
         description="Default number of points on curve segment")
 
+    close_threshold = FloatProperty(
+        name="X command threshold", min=0, max=1, default=0.0005, precision=6, update=updateNode,
+        description="If distance between first and last point is less than this, X command will remove the last point")
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'selected_axis', expand=True)
         layout.prop_search(self, 'filename', bpy.data, 'texts', text='', icon='TEXT')
@@ -1257,6 +1286,8 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+
+        layout.prop(self, "close_threshold")
 
         layout.label("Profile Generator settings")
         layout.prop(self, "precision")
