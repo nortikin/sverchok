@@ -32,6 +32,7 @@ from sverchok.core.socket_data import SvNoDataError
 from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
 from sverchok.utils.parsec import *
 from sverchok.utils.logging import info, debug, warning
+from sverchok.utils.geom import interpolate_quadratic_bezier
 from sverchok.utils.sv_curve_utils import Arc
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
@@ -51,7 +52,6 @@ input like:
     <>  : mandatory field
     []  : optional field
     2v  : two point vector `a,b`
-            - no space between ,
             - no backticks
             - a and b can be number literals or lowercase 1-character symbols for variables
     <int .. >
@@ -374,7 +374,7 @@ class CurveTo(Statement):
 
     def __repr__(self):
         letter = "C" if self.is_abs else "c"
-        return "{} {} {} {} {} {}".format(letter, self.control1, self.control2, self.knot2, self.num_segments, self.close)
+        return "{} {} {} {} n={} {}".format(letter, self.control1, self.control2, self.knot2, self.num_segments, self.close)
 
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
@@ -415,7 +415,7 @@ class CurveTo(Statement):
         interpreter.new_knot("C#.h2", *handle2)
         interpreter.new_knot("C#.k", *knot2)
 
-        interpreter.prev_curve_knot = handle2
+        interpreter.prev_bezier_knot = handle2
 
         for point in points[1:]:
             v1_index = interpreter.new_vertex(point.x, point.y)
@@ -453,7 +453,7 @@ class ArcTo(Statement):
 
     def __repr__(self):
         letter = "A" if self.is_abs else "a"
-        return "{} {} {} {} {} {} {} {}".format(letter, self.radii, self.rot, self.flag1, self.flag2, self.end, self.num_verts, self.close)
+        return "{} {} {} {} {} {} n={} {}".format(letter, self.radii, self.rot, self.flag1, self.flag2, self.end, self.num_verts, self.close)
 
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
@@ -520,7 +520,7 @@ class SmoothCurveTo(Statement):
 
     def __repr__(self):
         letter = "S" if self.is_abs else "s"
-        return "{} {} {} {} {}".format(letter, self.control2, self.knot2, self.num_segments, self.close)
+        return "{} {} {} n={} {}".format(letter, self.control2, self.knot2, self.num_segments, self.close)
 
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
@@ -536,7 +536,7 @@ class SmoothCurveTo(Statement):
 
         knot1 = interpreter.position
 
-        if interpreter.prev_curve_knot is None:
+        if interpreter.prev_bezier_knot is None:
             # If there is no previous command or if the previous command was
             # not an C, c, S or s, assume the first control point is coincident
             # with the current point.
@@ -545,7 +545,7 @@ class SmoothCurveTo(Statement):
             # The first control point is assumed to be the reflection of the
             # second control point on the previous command relative to the
             # current point. 
-            prev_knot_x, prev_knot_y = interpreter.prev_curve_knot
+            prev_knot_x, prev_knot_y = interpreter.prev_bezier_knot
             x0, y0 = knot1
             dx, dy = x0 - prev_knot_x, y0 - prev_knot_y
             handle1 = x0 + dx, y0 + dy
@@ -568,7 +568,140 @@ class SmoothCurveTo(Statement):
         interpreter.new_knot("S#.h2", *handle2)
         interpreter.new_knot("S#.k", *knot2)
 
-        interpreter.prev_curve_knot = handle2
+        interpreter.prev_bezier_knot = handle2
+
+        for point in points[1:]:
+            v1_index = interpreter.new_vertex(point.x, point.y)
+            interpreter.new_edge(v0_index, v1_index)
+            v0_index = v1_index
+
+        if self.close:
+            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+
+        interpreter.has_last_vertex = True
+
+class QuadraticCurveTo(Statement):
+    def __init__(self, is_abs, control, knot2, num_segments, close):
+        self.is_abs = is_abs
+        self.control = control
+        self.knot2 = knot2
+        self.num_segments = num_segments
+        self.close = close
+
+    def get_variables(self):
+        variables = set()
+        variables.update(self.control[0].get_variables())
+        variables.update(self.control[1].get_variables())
+        variables.update(self.knot2[0].get_variables())
+        variables.update(self.knot2[1].get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = "Q" if self.is_abs else "q"
+        return "{} {} {} n={} {}".format(letter, self.control, self.knot2, self.num_segments, self.close)
+
+    def interpret(self, interpreter, variables):
+        vec = lambda v: Vector((v[0], v[1], 0))
+
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        knot1 = interpreter.position
+        handle = interpreter.calc_vertex(self.is_abs, self.control[0], self.control[1], variables)
+        knot2 = interpreter.calc_vertex(self.is_abs, self.knot2[0], self.knot2[1], variables)
+        interpreter.position = knot2
+
+        if self.num_segments is not None:
+            r = self.num_segments.eval_(variables)
+        else:
+            r = interpreter.dflt_num_verts
+
+        points = interpolate_quadratic_bezier(vec(knot1), vec(handle), vec(knot2), r)
+
+        interpreter.new_knot("Q#.h", *handle)
+        interpreter.new_knot("Q#.k", *knot2)
+
+        interpreter.prev_quad_bezier_knot = handle
+
+        for point in points[1:]:
+            v1_index = interpreter.new_vertex(point.x, point.y)
+            interpreter.new_edge(v0_index, v1_index)
+            v0_index = v1_index
+
+        if self.close:
+            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+
+        interpreter.has_last_vertex = True
+
+class SmoothQuadraticCurveTo(Statement):
+    def __init__(self, is_abs, knot2, num_segments, close):
+        self.is_abs = is_abs
+        self.knot2 = knot2
+        self.num_segments = num_segments
+        self.close = close
+
+    def get_variables(self):
+        variables = set()
+        variables.update(self.knot2[0].get_variables())
+        variables.update(self.knot2[1].get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
+        return variables
+
+    def __repr__(self):
+        letter = "T" if self.is_abs else "t"
+        return "{} {} n={} {}".format(letter, self.knot2, self.num_segments, self.close)
+
+    def interpret(self, interpreter, variables):
+        vec = lambda v: Vector((v[0], v[1], 0))
+
+        interpreter.assert_not_closed()
+        interpreter.start_new_segment()
+
+        v0 = interpreter.position
+        if interpreter.has_last_vertex:
+            v0_index = interpreter.get_last_vertex()
+        else:
+            v0_index = interpreter.new_vertex(*v0)
+
+        knot1 = interpreter.position
+
+        if interpreter.prev_quad_bezier_knot is None:
+            # If there is no previous command or if the previous command was
+            # not a Q, q, T or t, assume the control point is coincident with
+            # the current point.
+            handle = knot1
+        else:
+            # The first control point is assumed to be the reflection of the
+            # second control point on the previous command relative to the
+            # current point. 
+            prev_knot_x, prev_knot_y = interpreter.prev_quad_bezier_knot
+            x0, y0 = knot1
+            dx, dy = x0 - prev_knot_x, y0 - prev_knot_y
+            handle = x0 + dx, y0 + dy
+
+        knot2 = interpreter.calc_vertex(self.is_abs, self.knot2[0], self.knot2[1], variables)
+        interpreter.position = knot2
+
+        if self.num_segments is not None:
+            r = self.num_segments.eval_(variables)
+        else:
+            r = interpreter.dflt_num_verts
+
+        points = interpolate_quadratic_bezier(vec(knot1), vec(handle), vec(knot2), r)
+
+        interpreter.new_knot("T#.h", *handle)
+        interpreter.new_knot("T#.k", *knot2)
+
+        interpreter.prev_quad_bezier_knot = handle
 
         for point in points[1:]:
             v1_index = interpreter.new_vertex(point.x, point.y)
@@ -690,6 +823,29 @@ def parse_SmoothCurveTo(src):
     for (is_abs, control2, knot2, num_segments, z, _), rest in parser(src):
         yield SmoothCurveTo(is_abs, control2, knot2, num_segments, z is not None), rest
 
+def parse_QuadCurveTo(src):
+    parser = sequence(
+                parse_letter("Q", "q"),
+                parse_pair,
+                parse_pair,
+                optional(parse_parameter("n")),
+                optional(parse_word("z")),
+                optional(parse_semicolon)
+            )
+    for (is_abs, control, knot2, num_segments, z, _), rest in parser(src):
+        yield QuadraticCurveTo(is_abs, control, knot2, num_segments, z is not None), rest
+
+def parse_SmoothQuadCurveTo(src):
+    parser = sequence(
+                parse_letter("T", "t"),
+                parse_pair,
+                optional(parse_parameter("n")),
+                optional(parse_word("z")),
+                optional(parse_semicolon)
+            )
+    for (is_abs, knot2, num_segments, z, _), rest in parser(src):
+        yield SmoothQuadraticCurveTo(is_abs, knot2, num_segments, z is not None), rest
+
 def parse_ArcTo(src):
     parser = sequence(
                 parse_letter("A", "a"),
@@ -730,6 +886,8 @@ parse_statement = one_of(
                     parse_VertLineTo,
                     parse_CurveTo,
                     parse_SmoothCurveTo,
+                    parse_QuadCurveTo,
+                    parse_SmoothQuadCurveTo,
                     parse_ArcTo,
                     parse_Close)
 
@@ -761,7 +919,8 @@ class Interpreter(object):
         self.segment_number = 0
         self.has_last_vertex = False
         self.closed = False
-        self.prev_curve_knot = None
+        self.prev_bezier_knot = None
+        self.prev_quad_bezier_knot = None
         self.vertices = []
         self.edges = []
         self.knots = []

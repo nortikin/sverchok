@@ -36,6 +36,7 @@ import bpy
 import bmesh
 import mathutils
 from mathutils import Matrix
+from mathutils.geometry import interpolate_bezier
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
@@ -1496,6 +1497,27 @@ def calc_normal(vertices):
         triangles = [[vertices[i] for i in idxs] for idxs in triangle_idxs]
         subnormals = [mathutils.geometry.normal(*triangle) for triangle in triangles]
         return mathutils.Vector(center(subnormals))
+
+def interpolate_quadratic_bezier(knot1, handle, knot2, resolution):
+    """
+    Interpolate a quadartic bezier spline segment.
+    Quadratic bezier curve is defined by two knots (at the beginning and at the
+    end of segment) and one handle.
+
+    Quadratic bezier curves is a special case of cubic bezier curves, which
+    are implemented in blender. So this function just converts input data
+    and calls for interpolate_bezier.
+    """
+    if not isinstance(knot1, mathutils.Vector):
+        knot1 = mathutils.Vector(knot1)
+    if not isinstance(knot2, mathutils.Vector):
+        knot2 = mathutils.Vector(knot2)
+    if not isinstance(handle, mathutils.Vector):
+        handle = mathutils.Vector(handle)
+
+    handle1 = knot1 + (2.0/3.0) * (handle - knot1)
+    handle2 = handle + (1.0/3.0) * (knot2 - handle)
+    return interpolate_bezier(knot1, handle1, handle2, knot2, resolution)
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
