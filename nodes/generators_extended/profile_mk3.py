@@ -40,9 +40,9 @@ input like:
 
     M|m <2v coordinate>
     L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
-    C|c <2v control1> <2v control2> <2v knot2> <int num_segments> [z]
-    S|s <2v control2> <2v knot2> <int num_segments> [z]
-    A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
+    C|c <2v control1> <2v control2> <2v knot2> ["n = " num_segments] [z]
+    S|s <2v control2> <2v knot2> ["n = " num_segments] [z]
+    A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z]
     H|h <x1> <x2> ... ;
     V|v <y1> <y2> ... ;
     X
