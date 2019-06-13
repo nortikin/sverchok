@@ -40,7 +40,7 @@ input like:
 
     M|m <2v coordinate>
     L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
-    C|c <2v control1> <2v control2> <2v knot2> <int num_segments> <int even_spread> [z]
+    C|c <2v control1> <2v control2> <2v knot2> <int num_segments> [z]
     S|s <2v control2> <2v knot2> <int num_segments> [z]
     A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> <int num_verts> [z]
     H|h <x1> <x2> ... ;
@@ -368,7 +368,8 @@ class CurveTo(Statement):
         variables.update(self.control2[1].get_variables())
         variables.update(self.knot2[0].get_variables())
         variables.update(self.knot2[1].get_variables())
-        variables.update(self.num_segments.get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
         return variables
 
     def __repr__(self):
@@ -403,7 +404,10 @@ class CurveTo(Statement):
         knot2 = interpreter.calc_vertex(self.is_abs, self.knot2[0], self.knot2[1], variables)
         interpreter.position = knot2
 
-        r = self.num_segments.eval_(variables)
+        if self.num_segments is not None:
+            r = self.num_segments.eval_(variables)
+        else:
+            r = interpreter.dflt_num_verts
 
         points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
 
@@ -443,7 +447,8 @@ class ArcTo(Statement):
         variables.update(self.flag2.get_variables())
         variables.update(self.end[0].get_variables())
         variables.update(self.end[1].get_variables())
-        variables.update(self.num_verts.get_variables())
+        if self.num_verts:
+            variables.update(self.num_verts.get_variables())
         return variables
 
     def __repr__(self):
@@ -470,7 +475,10 @@ class ArcTo(Statement):
         flag2 = self.flag2.eval_(variables)
 
         # numverts, requires -1 else it means segments (21 verts is 20 segments).
-        num_verts = self.num_verts.eval_(variables)
+        if self.num_verts is not None:
+            num_verts = self.num_verts.eval_(variables)
+        else:
+            num_verts = interpreter.dflt_num_verts
         num_verts -= 1
 
         end = interpreter.calc_vertex(self.is_abs, self.end[0], self.end[1], variables)
@@ -506,7 +514,8 @@ class SmoothCurveTo(Statement):
         variables.update(self.control2[1].get_variables())
         variables.update(self.knot2[0].get_variables())
         variables.update(self.knot2[1].get_variables())
-        variables.update(self.num_segments.get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
         return variables
 
     def __repr__(self):
@@ -548,7 +557,10 @@ class SmoothCurveTo(Statement):
         knot2 = interpreter.calc_vertex(self.is_abs, self.knot2[0], self.knot2[1], variables)
         interpreter.position = knot2
 
-        r = self.num_segments.eval_(variables)
+        if self.num_segments is not None:
+            r = self.num_segments.eval_(variables)
+        else:
+            r = interpreter.dflt_num_verts
 
         points = interpolate_bezier(vec(knot1), vec(handle1), vec(handle2), vec(knot2), r)
 
@@ -647,13 +659,19 @@ def parse_LineTo(src):
     for (is_abs, pairs, z, _), rest in parser(src):
         yield LineTo(is_abs, pairs, z is not None), rest
 
+def parse_parameter(name):
+    def parser(src):
+        for (_, _, value), rest in sequence(parse_word(name), parse_word("="), parse_value)(src):
+            yield value, rest
+    return parser
+
 def parse_CurveTo(src):
     parser = sequence(
                 parse_letter("C", "c"),
                 parse_pair,
                 parse_pair,
                 parse_pair,
-                parse_value,
+                optional(parse_parameter("n")),
                 optional(parse_word("z")),
                 optional(parse_semicolon)
             )
@@ -665,7 +683,7 @@ def parse_SmoothCurveTo(src):
                 parse_letter("S", "s"),
                 parse_pair,
                 parse_pair,
-                parse_value,
+                optional(parse_parameter("n")),
                 optional(parse_word("z")),
                 optional(parse_semicolon)
             )
@@ -680,7 +698,7 @@ def parse_ArcTo(src):
                 parse_value,
                 parse_value,
                 parse_pair,
-                parse_value,
+                optional(parse_parameter("n")),
                 optional(parse_word("z")),
                 optional(parse_semicolon)
             )
@@ -736,9 +754,8 @@ def parse_profile(src):
 #################################
 
 class Interpreter(object):
-    def __init__(self):
+    def __init__(self, node):
         self.position = (0, 0)
-        self.previous_position = (0, 0)
         self.next_vertex_index = 0
         self.segment_start_index = 0
         self.segment_number = 0
@@ -749,6 +766,7 @@ class Interpreter(object):
         self.edges = []
         self.knots = []
         self.knotnames = []
+        self.dflt_num_verts = node.curve_points_count
 
     def assert_not_closed(self):
         if self.closed:
@@ -1187,7 +1205,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
-            interpreter = Interpreter()
+            interpreter = Interpreter(self)
             interpreter.interpret(profile, variables)
             verts = self.extend_out_verts(interpreter.vertices)
             result_vertices.append(verts)
