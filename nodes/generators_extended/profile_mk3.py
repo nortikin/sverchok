@@ -1436,6 +1436,21 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Knots'].sv_set(result_knots)
         self.outputs['KnotNames'].sv_set(result_names)
 
+    def storage_set_data(self, storage):
+        profile = storage['profile']
+        filename = storage['params']['filename']
+
+        bpy.data.texts.new(filename)
+        bpy.data.texts[filename].clear()
+        bpy.data.texts[filename].write(profile)
+
+    def storage_get_data(self, storage):
+        if self.filename and self.filename in bpy.data.texts:
+            text = bpy.data.texts[self.filename].as_string()
+            storage['profile'] = text
+        else:
+            self.warning("Unknown filename: {}".format(self.filename))
+
 classes = [
         SvProfileImportMenu,
         SvProfileImportOperator,
