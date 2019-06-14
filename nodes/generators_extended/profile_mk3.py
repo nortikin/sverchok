@@ -25,7 +25,7 @@ import os
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
 from mathutils.geometry import interpolate_bezier
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.socket_data import SvNoDataError
@@ -103,6 +103,29 @@ Our DSL has relatively simple BNF:
 
 """
 
+def make_functions_dict(*functions):
+    return dict([(function.__name__, function) for function in functions])
+
+# Functions
+safe_names = make_functions_dict(
+        # From math module
+        acos, acosh, asin, asinh, atan, atan2,
+        atanh, ceil, copysign, cos, cosh, degrees,
+        erf, erfc, exp, expm1, fabs, factorial, floor,
+        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+        pow, radians, sin, sinh, sqrt, tan, tanh, trunc,
+        # Additional functions
+        abs,
+        # From mathutlis module
+        Vector, Matrix,
+        # Python type conversions
+        tuple, list, str
+    )
+# Constants
+safe_names['e'] = e
+safe_names['pi'] = pi
+
 ##########################################
 # Expression classes
 ##########################################
@@ -112,7 +135,6 @@ class Expression(object):
         self.expr = expr
         self.string = string
 
-    safe_names = dict(sin=sin, cos=cos, pi=pi, sqrt=sqrt)
 
     def __repr__(self):
         return "Expr({})".format(self.string)
@@ -130,14 +152,14 @@ class Expression(object):
 
     def eval_(self, variables):
         env = dict()
-        env.update(self.safe_names)
+        env.update(safe_names)
         env.update(variables)
         env["__builtins__"] = {}
         return eval(compile(self.expr, "<expression>", 'eval'), env)
 
     def get_variables(self):
         result = {node.id for node in ast.walk(self.expr) if isinstance(node, ast.Name)}
-        return result.difference(self.safe_names.keys())
+        return result.difference(safe_names.keys())
 
 class Const(Expression):
     def __init__(self, value):
