@@ -1,0 +1,5 @@
+H straight_len ;
+a radius,radius {degrees(phi)} 0 1
+  {(radius / tan(phi/2)) * (1 - cos(phi))}, {(radius / tan(phi/2)) * sin(phi)}
+  n = 10
+l {- straight_len * cos(phi)}, {straight_len * sin(phi)}
