@@ -1,0 +1,3 @@
+H straight_len ;
+q radius,0 {radius - radius * cos(phi)}, {radius * sin(phi)}
+l {- straight_len * cos(phi)}, {straight_len * sin(phi)}
