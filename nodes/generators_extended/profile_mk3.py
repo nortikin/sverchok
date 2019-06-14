@@ -1137,7 +1137,6 @@ class SvPrifilizerMk3(bpy.types.Operator):
                     values += self.stringadd(hr,ob_points[i-1].select_right_handle)
                     values += self.stringadd(hl,ob_points[i].select_left_handle)
                     values += self.stringadd(co,ob_points[i].select_control_point)
-                    values += self.curve_points_count()
                     if curve:
                         values += '\n'
                     out_points.append(hr[:])
@@ -1176,7 +1175,6 @@ class SvPrifilizerMk3(bpy.types.Operator):
                     values += self.stringadd(hr,ob_points[-1].select_right_handle)
                     values += self.stringadd(hl,ob_points[0].select_left_handle)
                     values += self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
-                    values += self.curve_points_count()
                     values += ' 0 '
                     values += '\n'
                     out_points.append(hr[:])
