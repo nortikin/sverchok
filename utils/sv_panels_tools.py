@@ -181,6 +181,30 @@ class Sv3dPropItem(bpy.types.PropertyGroup):
     prop_name: StringProperty()
 
 
+class Sv3dPropRemoveItem(bpy.types.Operator):
+    ''' remove item by node_name from tree.Sv3Dprops  '''
+
+    bl_idname = "node.sv_remove_3dviewpropitem"
+    bl_label = "remove item from Sv3Dprops - useful for removed nodes"
+
+    tree_name: StringProperty(description="store tree name")
+    node_name: StringProperty(description="store node name")
+
+    def execute(self, context):
+
+        tree = bpy.data.node_groups[self.tree_name]
+        props = tree.Sv3DProps
+
+        for index in range(len(props)):
+            if props[index].node_name == self.node_name:
+                props.remove(index)
+                return {'FINISHED'}
+
+        return {'CANCELLED'}
+
+
+
+
 class SvLayoutScanProperties(bpy.types.Operator):
     ''' scan layouts of sverchok for properties '''
 
@@ -256,6 +280,7 @@ sv_tools_classes = [
     SverchokPurgeCache,
     SverchokHome,
     Sv3dPropItem,
+    Sv3dPropRemoveItem,
     SvSwitchToLayout,
     SvLayoutScanProperties,
     SvClearNodesLayouts

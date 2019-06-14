@@ -197,8 +197,13 @@ class SV_PT_3DPanel(bpy.types.Panel):
                         # temporary fix for ui.
                         warning = no not in tree.nodes
                         if warning:
-                            col.alert = True
-                            col.label(icon='ERROR', text=f'missing: {no}')
+                            row = col.row()
+                            row.alert = True
+                            row.label(icon='ERROR', text=f'missing node: "{no}"')
+                            op = row.operator('node.sv_remove_3dviewpropitem', icon='CANCEL', text='')
+                            op.tree_name =  tree.name
+                            op.node_name = no
+                            continue
 
                         node = tree.nodes[no]
 
