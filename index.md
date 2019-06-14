@@ -341,6 +341,7 @@
     SvTypeViewerNode
     SvSkinViewerNodeMK1b
     SvMatrixViewer
+    SvMaterialConnector
     ---
     SvBManalyzinNode
     SvBMObjinputNode
