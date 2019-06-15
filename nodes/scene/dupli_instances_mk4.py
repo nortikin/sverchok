@@ -109,6 +109,8 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
             ob = bpy.data.objects.new(name, mesh)
             bpy.context.collections.objects.link(ob)
 
+        print(ob, ob.name)
+
         # at this point there's a reference to an ob, and the mesh is empty.
         child = self.inputs['child'].sv_get()[0]
         #print('checking',child)
