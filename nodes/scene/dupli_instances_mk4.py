@@ -98,7 +98,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
         # minimum requirements.
         if (not transforms) and (not objectsC):
             if ob:
-                ob.dupli_type = 'NONE'
+                ob.instance_type = 'NONE'
             return
 
         if not ob:
@@ -133,8 +133,8 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
                 faces = []
 
             ob.data.from_pydata(verts, [], faces)
-            ob.dupli_type = self.mode
-            ob.use_dupli_faces_scale = self.scale
+            ob.instance_type = self.mode
+            ob.instance_faces_scale = self.scale
             child.parent = ob
 
 
