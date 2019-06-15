@@ -58,9 +58,13 @@ class Expression(object):
         self.expr = expr
         self.string = string
 
-
     def __repr__(self):
         return "Expr({})".format(self.string)
+
+    def __eq__(self, other):
+        # Proper comparasion of ast.Expression would be too complex to implement
+        # (it is not implemented in the ast module).
+        return isinstance(other, Expression) and self.string == other.string
 
     @classmethod
     def from_string(cls, string):
@@ -98,6 +102,9 @@ class Const(Expression):
     def __repr__(self):
         return "Const({})".format(self.value)
 
+    def __eq__(self, other):
+        return isinstance(other,Const) and self.value == other.value
+
     def eval_(self, variables):
         return self.value
 
@@ -114,6 +121,9 @@ class Variable(Expression):
 
     def __repr__(self):
         return "Variable({})".format(self.name)
+
+    def __eq__(self, other):
+        return isinstance(other, Variable) and self.name == other.name
 
     def eval_(self, variables):
         value = variables.get(self.name, None)
@@ -144,6 +154,9 @@ class NegatedVariable(Variable):
 
     def __repr__(self):
         return "NegatedVariable({})".format(self.name)
+
+    def __eq__(self, other):
+        return isinstance(other, NegatedVariable) and self.name == other.name
 
 ############################################
 # Statement classes
@@ -180,6 +193,12 @@ class MoveTo(Statement):
         letter = "M" if self.is_abs else "m"
         return "{} {} {}".format(letter, self.x, self.y)
 
+    def __eq__(self, other):
+        return isinstance(other, MoveTo) and \
+                self.is_abs == other.is_abs and \
+                self.x == other.x and \
+                self.y == other.y
+
     def get_variables(self):
         variables = set()
         variables.update(self.x.get_variables())
@@ -211,6 +230,12 @@ class LineTo(Statement):
         letter = "L" if self.is_abs else "l"
         return "{} {} {}".format(letter, self.pairs, self.close)
     
+    def __eq__(self, other):
+        return isinstance(other, LineTo) and \
+                self.is_abs == other.is_abs and \
+                self.pairs == other.pairs and \
+                self.close == other.close
+
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         interpreter.start_new_segment()
@@ -247,6 +272,11 @@ class HorizontalLineTo(Statement):
     def __repr__(self):
         letter = "H" if self.is_abs else "h"
         return "{} {}".format(letter, self.xs)
+
+    def __eq__(self, other):
+        return isinstance(other, HorizontalLineTo) and \
+                self.is_abs == other.is_abs and \
+                self.xs == other.xs
 
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
@@ -286,6 +316,11 @@ class VerticalLineTo(Statement):
         letter = "V" if self.is_abs else "v"
         return "{} {}".format(letter, self.ys)
 
+    def __eq__(self, other):
+        return isinstance(other, VerticalLineTo) and \
+                self.is_abs == other.is_abs and \
+                self.ys == other.ys
+
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         interpreter.start_new_segment()
@@ -319,6 +354,11 @@ class CurveTo(Statement):
         def __repr__(self):
             return "{} {} {}".format(self.control1, self.control2, self.knot2)
 
+        def __eq__(self, other):
+            return self.control1 == other.control1 and \
+                    self.control2 == other.control2 and \
+                    self.knot2 == other.knot2
+
     def __init__(self, is_abs, segments, num_segments, close):
         self.is_abs = is_abs
         self.segments = segments
@@ -342,6 +382,13 @@ class CurveTo(Statement):
         letter = "C" if self.is_abs else "c"
         segments = " ".join(str(segment) for segment in self.segments)
         return "{} {} n={} {}".format(letter, segments, self.num_segments, self.close)
+
+    def __eq__(self, other):
+        return isinstance(other, CurveTo) and \
+                self.is_abs == other.is_abs and \
+                self.segments == other.segments and \
+                self.num_segments == other.num_segments and \
+                self.close == other.close
 
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
@@ -412,6 +459,10 @@ class SmoothCurveTo(Statement):
         def __repr__(self):
             return "{} {}".format(self.control2, self.knot2)
 
+        def __eq__(self, other):
+            return self.control2 == other.control2 and \
+                    self.knot2 == other.knot2
+
     def __init__(self, is_abs, segments, num_segments, close):
         self.is_abs = is_abs
         self.segments = segments
@@ -433,6 +484,13 @@ class SmoothCurveTo(Statement):
         letter = "S" if self.is_abs else "s"
         segments = " ".join(str(segment) for segment in self.segments)
         return "{} {} n={} {}".format(letter, segments, self.num_segments, self.close)
+
+    def __eq__(self, other):
+        return isinstance(other, SmoothCurveTo) and \
+                self.is_abs == other.is_abs and \
+                self.segments == other.segments and \
+                self.num_segments == other.num_segments and \
+                self.close == other.close
 
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
@@ -509,6 +567,10 @@ class QuadraticCurveTo(Statement):
         def __repr__(self):
             return "{} {}".format(self.control, self.knot2)
 
+        def __eq__(self, other):
+            return self.control == other.control and \
+                    self.knot2 == other.knot2
+
     def __init__(self, is_abs, segments, num_segments, close):
         self.is_abs = is_abs
         self.segments = segments
@@ -530,6 +592,13 @@ class QuadraticCurveTo(Statement):
         letter = "Q" if self.is_abs else "q"
         segments = " ".join(str(segment) for segment in self.segments)
         return "{} {} n={} {}".format(letter, segments, self.num_segments, self.close)
+
+    def __eq__(self, other):
+        return isinstance(other, QuadraticCurveTo) and \
+                self.is_abs == other.is_abs and \
+                self.segments == other.segments and \
+                self.num_segments == other.num_segments and \
+                self.close == other.close
 
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
@@ -587,6 +656,9 @@ class SmoothQuadraticCurveTo(Statement):
         def __repr__(self):
             return str(self.knot2)
 
+        def __eq__(self, other):
+            return self.knot2 == other.knot2
+
     def __init__(self, is_abs, segments, num_segments, close):
         self.is_abs = is_abs
         self.segments = segments
@@ -606,6 +678,13 @@ class SmoothQuadraticCurveTo(Statement):
         letter = "T" if self.is_abs else "t"
         segments = " ".join(str(segment) for segment in self.segments)
         return "{} {} n={} {}".format(letter, segments, self.num_segments, self.close)
+
+    def __eq__(self, other):
+        return isinstance(other, SmoothQuadraticCurveTo) and \
+                self.is_abs == other.is_abs and \
+                self.segments == other.segments and \
+                self.num_segments == other.num_segments and \
+                self.close == other.close
 
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
@@ -696,6 +775,17 @@ class ArcTo(Statement):
         letter = "A" if self.is_abs else "a"
         return "{} {} {} {} {} {} n={} {}".format(letter, self.radii, self.rot, self.flag1, self.flag2, self.end, self.num_verts, self.close)
 
+    def __eq__(self, other):
+        return isinstance(other, ArcTo) and \
+                self.is_abs == other.is_abs and \
+                self.radii == other.radii and \
+                self.rot == other.rot and \
+                self.flag1 == other.flag1 and \
+                self.flag2 == other.flag2 and \
+                self.end == other.end and \
+                self.num_verts == other.num_verts and \
+                self.close == other.close
+
     def interpret(self, interpreter, variables):
         interpreter.assert_not_closed()
         interpreter.start_new_segment()
@@ -748,6 +838,9 @@ class Close(Statement):
     def __repr__(self):
         return "X"
 
+    def __eq__(self, other):
+        return isinstance(other, Close)
+
     def get_variables(self):
         return set()
 
@@ -777,6 +870,11 @@ class Default(Statement):
     def __repr__(self):
         return "default {} = {}".format(self.name, self.value)
 
+    def __eq__(self, other):
+        return isinstance(other, Default) and \
+                self.name == other.name and \
+                self.value == other.value
+
     def get_variables(self):
         return self.value.get_variables()
 
@@ -793,6 +891,11 @@ class Default(Statement):
 class Assign(Default):
     def __repr__(self):
         return "let {} = {}".format(self.name, self.value)
+
+    def __eq__(self, other):
+        return isinstance(other, Assign) and \
+                self.name == other.name and \
+                self.value == other.value
 
     def get_hidden_inputs(self):
         return set([self.name])
