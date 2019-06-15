@@ -238,7 +238,15 @@ class NegatedVariable(Variable):
 #    edges according to statement parameters, and pass them to the interpreter.
 
 class Statement(object):
-    pass
+    
+    def get_variables(self):
+        return set()
+
+    def get_hidden_inputs(self):
+        return set()
+
+    def get_optional_inputs(self):
+        return set()
 
 class MoveTo(Statement):
     def __init__(self, is_abs, x, y):
@@ -329,7 +337,7 @@ class HorizontalLineTo(Statement):
 
         for i, x_expr in enumerate(self.xs):
             x0,y0 = interpreter.position
-            x = x_expr.eval_(variables)
+            x = interpreter.eval_(x_expr, variables)
             if not self.is_abs:
                 x = x0 + x
             v1 = (x, y0)
@@ -367,7 +375,7 @@ class VerticalLineTo(Statement):
 
         for i, y_expr in enumerate(self.ys):
             x0,y0 = interpreter.position
-            y = y_expr.eval_(variables)
+            y = interpreter.eval_(y_expr, variables)
             if not self.is_abs:
                 y = y0 + y
             v1 = (x0, y)
@@ -449,7 +457,7 @@ class CurveTo(Statement):
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
 
             if self.num_segments is not None:
-                r = self.num_segments.eval_(variables)
+                r = interpreter.eval_(self.num_segments, variables)
             else:
                 r = interpreter.dflt_num_verts
 
@@ -546,7 +554,7 @@ class SmoothCurveTo(Statement):
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
 
             if self.num_segments is not None:
-                r = self.num_segments.eval_(variables)
+                r = interpreter.eval_(self.num_segments, variables)
             else:
                 r = interpreter.dflt_num_verts
 
@@ -626,7 +634,7 @@ class QuadraticCurveTo(Statement):
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
 
             if self.num_segments is not None:
-                r = self.num_segments.eval_(variables)
+                r = interpreter.eval_(self.num_segments, variables)
             else:
                 r = interpreter.dflt_num_verts
 
@@ -715,7 +723,7 @@ class SmoothQuadraticCurveTo(Statement):
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
 
             if self.num_segments is not None:
-                r = self.num_segments.eval_(variables)
+                r = interpreter.eval_(self.num_segments, variables)
             else:
                 r = interpreter.dflt_num_verts
 
@@ -778,16 +786,16 @@ class ArcTo(Statement):
 
         start = complex(*v0)
         rad_x_expr, rad_y_expr = self.radii
-        rad_x = rad_x_expr.eval_(variables)
-        rad_y = rad_y_expr.eval_(variables)
+        rad_x = interpreter.eval_(rad_x_expr, variables)
+        rad_y = interpreter.eval_(rad_y_expr, variables)
         radius = complex(rad_x, rad_y)
-        xaxis_rot = self.rot.eval_(variables)
-        flag1 = self.flag1.eval_(variables)
-        flag2 = self.flag2.eval_(variables)
+        xaxis_rot = interpreter.eval_(self.rot, variables)
+        flag1 = interpreter.eval_(self.flag1, variables)
+        flag2 = interpreter.eval_(self.flag2, variables)
 
         # numverts, requires -1 else it means segments (21 verts is 20 segments).
         if self.num_verts is not None:
-            num_verts = self.num_verts.eval_(variables)
+            num_verts = interpreter.eval_(self.num_verts, variables)
         else:
             num_verts = interpreter.dflt_num_verts
         num_verts -= 1
@@ -838,6 +846,34 @@ class Close(Statement):
         v1_index = interpreter.get_last_vertex()
         interpreter.new_edge(v1_index, 0)
         interpreter.closed = True
+
+class Default(Statement):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
+
+    def __repr__(self):
+        return "default {} = {}".format(self.name, self.value)
+
+    def get_variables(self):
+        return self.value.get_variables()
+
+    def get_optional_inputs(self):
+        return set([self.name])
+
+    def interpret(self, interpreter, variables):
+        if self.name in interpreter.defaults:
+            raise Exception("Value for the `{}' variable has been already assigned!".format(self.name))
+        if self.name not in interpreter.input_names:
+            value = interpreter.eval_(self.value, variables)
+            interpreter.defaults[self.name] = value
+
+class Assign(Default):
+    def __repr__(self):
+        return "let {} = {}".format(self.name, self.value)
+
+    def get_hidden_inputs(self):
+        return set([self.name])
 
 #########################################
 # DSL parsing
@@ -1006,7 +1042,19 @@ def parse_VertLineTo(src):
 
 parse_Close = parse_word("X", Close())
 
+def parse_Default(src):
+    parser = sequence(parse_word("default"), parse_identifier, parse_word("="), parse_value, parse_semicolon)
+    for (_, name, _, value, _), rest in parser(src):
+        yield Default(name, value), rest
+
+def parse_Assign(src):
+    parser = sequence(parse_word("let"), parse_identifier, parse_word("="), parse_value, parse_semicolon)
+    for (_, name, _, value, _), rest in parser(src):
+        yield Assign(name, value), rest
+
 parse_statement = one_of(
+                    parse_Default,
+                    parse_Assign,
                     parse_MoveTo,
                     parse_LineTo,
                     parse_HorLineTo,
@@ -1046,7 +1094,7 @@ def parse_profile(src):
 # * Contains the interpret() method, which runs the whole interpretation process.
 
 class Interpreter(object):
-    def __init__(self, node):
+    def __init__(self, node, input_names):
         self.position = (0, 0)
         self.next_vertex_index = 0
         self.segment_start_index = 0
@@ -1061,6 +1109,8 @@ class Interpreter(object):
         self.knotnames = []
         self.dflt_num_verts = node.curve_points_count
         self.close_threshold = node.close_threshold
+        self.defaults = dict()
+        self.input_names = input_names
 
     def assert_not_closed(self):
         if self.closed:
@@ -1071,8 +1121,8 @@ class Interpreter(object):
         return x0+x, y0+y
 
     def calc_vertex(self, is_abs, x_expr, y_expr, variables):
-        x = x_expr.eval_(variables)
-        y = y_expr.eval_(variables)
+        x = self.eval_(x_expr, variables)
+        y = self.eval_(y_expr, variables)
         if is_abs:
             return x,y
         else:
@@ -1106,10 +1156,19 @@ class Interpreter(object):
         is_not_last = lambda e: e[0] != self.next_vertex_index and e[1] != self.next_vertex_index
         self.edges = list(filter(is_not_last, self.edges))
 
+    def eval_(self, expr, variables):
+        variables_ = self.defaults.copy()
+        for name in variables:
+            value = variables[name]
+            if value is not None:
+                variables_[name] = value
+        return expr.eval_(variables_)
+
     def interpret(self, profile, variables):
         if not profile:
             return
         for statement in profile:
+            debug("Interpret: %s", statement)
             statement.interpret(self, variables)
 
 #################################
@@ -1435,7 +1494,20 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             vs = statement.get_variables()
             variables.update(vs)
 
+        for statement in profile:
+            vs = statement.get_hidden_inputs()
+            variables.difference_update(vs)
+
         return list(sorted(list(variables)))
+    
+    def get_optional_inputs(self, profile):
+        result = set()
+        if not profile:
+            return result
+        for statement in profile:
+            vs = statement.get_optional_inputs()
+            result.update(vs)
+        return result
 
     def adjust_sockets(self):
         variables = self.get_variables()
@@ -1484,7 +1556,11 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         if not any(o.is_linked for o in self.outputs):
             return
 
+        profile = self.load_profile()
+        optional_inputs = self.get_optional_inputs(profile)
+
         var_names = self.get_variables()
+        self.debug("Var_names: %s; optional: %s", var_names, optional_inputs)
         inputs = self.get_input()
 
         result_vertices = []
@@ -1492,25 +1568,30 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         result_knots = []
         result_names = []
 
-        profile = self.load_profile()
-
         if var_names:
-            try:
-                input_values = [inputs[name] for name in var_names]
-            except KeyError as e:
-                name = e.args[0]
-                if name in self.inputs:
-                    raise SvNoDataError(self.inputs[name])
-                else:
-                    self.adjust_sockets()
-                    raise SvNoDataError(self.inputs[name])
+            input_values = []
+            for name in var_names:
+                try:
+                    input_values.append(inputs[name])
+                except KeyError as e:
+                    name = e.args[0]
+                    if name not in optional_inputs:
+                        if name in self.inputs:
+                            raise SvNoDataError(self.inputs[name])
+                        else:
+                            self.adjust_sockets()
+                            raise SvNoDataError(self.inputs[name])
+                    else:
+                        input_values.append([None])
             parameters = match_long_repeat(input_values)
         else:
             parameters = [[[]]]
 
+        input_names = [socket.name for socket in self.inputs if socket.is_linked]
+
         for values in zip(*parameters):
             variables = dict(zip(var_names, values))
-            interpreter = Interpreter(self)
+            interpreter = Interpreter(self, input_names)
             interpreter.interpret(profile, variables)
             verts = self.extend_out_verts(interpreter.vertices)
             result_vertices.append(verts)
