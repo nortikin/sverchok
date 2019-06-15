@@ -69,6 +69,8 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
     mode: EnumProperty(items=modes, default='VERTS', update=updateNode)
 
+    name_child: StringProperty(description="named child")
+
     def sv_init(self, context):
         #self.inputs.new("SvObjectSocket", "parent")
         self.inputs.new("SvObjectSocket", "child")
@@ -105,7 +107,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
             name = self.name_node_generated_parent
             mesh = bpy.data.meshes.new(name + '_mesh')
             ob = bpy.data.objects.new(name, mesh)
-            bpy.context.scene.objects.link(ob)
+            bpy.context.collections.objects.link(ob)
 
         # at this point there's a reference to an ob, and the mesh is empty.
         child = self.inputs['child'].sv_get()[0]
