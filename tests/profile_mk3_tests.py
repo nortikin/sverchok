@@ -69,6 +69,18 @@ class StatementParseTests(SverchokTestCase):
         expected = CurveTo(True, [CurveTo.Segment((Const(1), Const(2)), (Const(3), Const(4)), (Const(5), Const(6)))], None, False)
         self.assertEquals(result, expected)
 
+    def test_close_path(self):
+        string = "x"
+        result = parse(parse_statement, string)
+        expected = ClosePath()
+        self.assertEquals(result, expected)
+
+    def test_close_All(self):
+        string = "X"
+        result = parse(parse_statement, string)
+        expected = CloseAll()
+        self.assertEquals(result, expected)
+
     # Other statement types: to be implemented
 
 class ExamplesParseTests(SverchokTestCase):
