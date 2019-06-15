@@ -26,7 +26,7 @@ from sverchok.utils.modules.profile_mk3.interpreter import *
 # DSL parsing
 #########################################
 
-# Compare these definitions with BNF definition at the top
+# Compare these definitions with BNF definition at the top of profile_mk3.py.
 
 expr_regex = re.compile(r"({[^}]+})\s*", re.DOTALL)
 
