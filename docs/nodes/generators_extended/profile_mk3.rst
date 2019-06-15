@@ -7,7 +7,24 @@ Profile Parametric Node
 Used domain-specific language (DSL) is based on SVG specification, but does not exactly follow it,
 by adding some extensions and not supporting some features.
 
-Currently the following segment types are available:
+Profile definition consists of a series of statements (also called commands).
+
+Statements may optionally be separated by semicolons (`;`).
+For some commands (namely: `H`/`h`, `V`/`v`) the trailing semicolon is **required**!
+
+There are the following statements supported:
+
+* "default" statement: `default <name> = <value>`. Here `<name>` is any valid python variable identifier,
+  and `<value>` is a number or expression (see below). This statement declares a default value for the
+  variable; this value will be used if corresponding input of the node is not connected.
+* "let" statement: `let <name> = <value>`.  Here `<name>` is any valid python variable identifier,
+  and `<value>` is a number or expression (see below). This statement declares
+  a "name binding"; it may be used to calculate some value once and use it in
+  the following statements several times. Variables defined by "let" statements
+  will not appear as node inputs.
+* Line and curve segment commands - see the table below for details.
+
+The following segment types are available:
 
 +---------------+-------+--------------------------------------------------------------------------------+ 
 | name          | cmd   | parameters                                                                     | 
@@ -78,10 +95,12 @@ All curve segment types allow you to specify how many vertices are
 used to generate the segment. SVG doesn't let you specify such things, but it
 makes sense to allow it for the creation of geometry.
 
-For examples, see "Examples of usage" section below, or `profile_examples` directory in Sverchok distribution.
+**Note**: "default" and "let" definitions may use previously defined variables,
+or variables expected to be provided as inputs. Just note that these statements
+are evaluated in the same order as they follow in the input profile text.
 
-Statements may optionally be separated by semicolons (`;`).
-For some commands (namely: `H`/`h`, `V`/`v`) the trailing semicolon is **required**!
+For examples, see "Examples of usage" section below, or `profile_examples`
+directory in Sverchok distribution.
 
 .. _specification: https://www.w3.org/TR/SVG/paths.html
 
@@ -121,8 +140,9 @@ Inputs
 ------
 
 Set of inputs for this node depends on expressions used in the profile
-definition. Each variable used in profile becomes one input. If there are no
-variables used in profile, then this node will have no inputs.
+definition. Each variable used in profile (except ones declared with "let"
+statements) becomes one input. If there are no variables used in profile, then
+this node will have no inputs.
 
 Parameters
 ----------
@@ -210,8 +230,8 @@ or
     X
 
 
-More Info
----------
+Examples of usage
+-----------------
 
 The node started out as a thought experiment and turned into something quite
 useful, you can see how it evolved in the `initial github thread <https://github.com/nortikin/sverchok/issues/350>`_ ; 
@@ -242,12 +262,30 @@ Example usage:
       S 1,7 0,6 -1,-1 0,0 n=40
       X
 
+An example with use of "default" and "let" statements:
+
+.. image:: https://user-images.githubusercontent.com/284644/59552437-4237c000-8fa0-11e9-91ac-6fd41cae2d73.png
+
+:: 
+
+      default straight_len = 1;
+      default radius = 0.4;
+
+      let rem = {radius / tan(phi/2)};
+
+      H straight_len ;
+      a radius,radius 0 0 1
+        {rem * (1 - cos(phi))}, {rem * sin(phi)}
+        n = 10
+      l {- straight_len * cos(phi)}, {straight_len * sin(phi)}
+
 Gotchas
 -------
 
 The update mechanism doesn't process inputs or anything until the following conditions are satisfied:
 
- * Profile Node has at least one input socket connected
+ * All inputs have to be connected, except ones that have default values
+   declared by "default" statements.
  * The file field on the Node points to an existing Text File.
 
 
