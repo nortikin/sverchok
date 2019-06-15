@@ -187,7 +187,8 @@ def parse_VertLineTo(src):
     for (is_abs, ys, _), rest in parser(src):
         yield VerticalLineTo(is_abs, ys), rest
 
-parse_Close = parse_word("X", Close())
+parse_CloseAll = parse_word("X", CloseAll())
+parse_ClosePath = parse_word("x", ClosePath())
 
 def parse_Default(src):
     parser = sequence(
@@ -223,7 +224,9 @@ parse_statement = one_of(
                     parse_QuadCurveTo,
                     parse_SmoothQuadCurveTo,
                     parse_ArcTo,
-                    parse_Close)
+                    parse_ClosePath,
+                    parse_CloseAll
+                )
 
 parse_definition = many(parse_statement)
 
