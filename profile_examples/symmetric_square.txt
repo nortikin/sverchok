@@ -1,0 +1,5 @@
+default size = 3;
+let half = {size/2};
+
+M half,-half
+L -half,-half -half,half half,half z

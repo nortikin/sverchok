@@ -39,6 +39,9 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 '''
 input like:
 
+    default name = <value>
+    let name = <value>
+
     M|m <2v coordinate>
     L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
     C|c (<2v control1> <2v control2> <2v knot2>)+ ["n = " num_segments] [z]
@@ -72,6 +75,17 @@ input like:
     * Variable name, such as a or b or variable_name
     * Negation sign and a variable name, such as `-a` or `-size`.
     * Expression enclosed in curly brackets, such as {a+1} or {sin(phi)}
+
+    "default" statement declares a default value for variable: this value will be used
+    if corresponding input of the node is not connected.
+
+    "let" statement declares a "name binding"; it may be used to calculate some value once
+    and use it in the following definitions several times. Variable defined by "let" will
+    not appear as node input!
+
+    "default" and "let" definitions may use previously defined variables, or variables
+    expected to be provided as inputs. Just note that these statements are evaluated in
+    the same order as they follow in the input profile text.
     
     Statements may optionally be separated by semicolons (;).
     For some commands (namely: H/h, V/v) the trailing semicolon is *required*!
@@ -82,9 +96,13 @@ input like:
 Our DSL has relatively simple BNF:
 
     <Profile> ::= <Statement> *
-    <Statement> ::= <MoveTo> | <LineTo> | <CurveTo> | <SmoothLineTo>
+    <Statement> ::= <Default> | <Assign>
+                    | <MoveTo> | <LineTo> | <CurveTo> | <SmoothLineTo>
                     | <QuadCurveTo> | <SmoothQuadCurveTo>
                     | <ArcTo> | <HorLineTo> | <VertLineTo> | "X"
+
+    <Default> ::= "default" <Variable> "=" <Value>
+    <Assign> ::= "let" <Variable> "=" <Value>
 
     <MoveTo> ::= ("M" | "m") <Value> "," <Value>
     <LineTo> ::= ...
@@ -1043,12 +1061,24 @@ def parse_VertLineTo(src):
 parse_Close = parse_word("X", Close())
 
 def parse_Default(src):
-    parser = sequence(parse_word("default"), parse_identifier, parse_word("="), parse_value, parse_semicolon)
+    parser = sequence(
+                parse_word("default"),
+                parse_identifier,
+                parse_word("="),
+                parse_value,
+                optional(parse_semicolon)
+            )
     for (_, name, _, value, _), rest in parser(src):
         yield Default(name, value), rest
 
 def parse_Assign(src):
-    parser = sequence(parse_word("let"), parse_identifier, parse_word("="), parse_value, parse_semicolon)
+    parser = sequence(
+                parse_word("let"),
+                parse_identifier,
+                parse_word("="),
+                parse_value,
+                optional(parse_semicolon)
+            )
     for (_, name, _, value, _), rest in parser(src):
         yield Assign(name, value), rest
 
