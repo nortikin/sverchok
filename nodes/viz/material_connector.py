@@ -409,38 +409,24 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
     About renaming material:
     material - main material (parent)
     children - generated children of main material for current branch
-    children_branch - groups of children
-    nodes_data - data related with current branch per sv_node
     agent - material node of main material
-    [i] - item in sequence related with current node
 
     There are 5 possible events during renaming:
     1. del material -> if there are no more owners of the material
                        and if material was created by Sverchok
         del children
         del material
-    2. leave material -> remain 1 or more owners of the material
+    2. leave material -> remain 1 owner of the material (copy)
         del agent
-        del nodes_data[i]
-        if not nodes_data[current_branch]:
-            del children
-            del children_branch[i]
     3. rename material -> if there was only one owner
         rename children
     4. join to material -> if already there is material with such name
-        if current not in children_branch
-            new children_branch
-        new nodes_data
     5. new material -> if there are not material with such name
-        new children_branch
-        new nodes_data
 
     there are no commands of creating of new agents and children
     because this part of work take place in process method
     in current implementation first two events were putted in deleter
     rest of them were putted in setter
-
-    Something similar with renaming suffix (branch name)
     """
 
     @staticmethod
@@ -453,13 +439,6 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
         log_rename.debug('```___Start to handle material name changing___```')
         if not self.material_name:
             return
-        #if not self.material:
-        #    log_rename.debug('Material was not assigned to node yet')
-        #    try:
-        #        self.main_material = bpy.data.materials[self.material_name]
-        #    except KeyError:
-        #        self.main_material = bpy.data.materials.new(self.material_name)
-        #        self.material['sv_created'] = True
         if self.material and self.material.name == self.material_name:
             log_rename.debug('Name was not renamed - do nothing')
             self.process()
@@ -655,12 +634,13 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
         else:
             flattened_input = [sock.sv_get()[0] for sock in self.inputs]
 
-        if self.update_opengl:
-            set_values_to_agents(self.main_material, self.children, self.node_id,
-                                 self.child_suffix, list(zip(*flattened_input)))
-        elif not is_material_viewport_shade_in_screen(bpy.context):
-            set_values_to_agents(self.main_material, self.children, self.node_id,
-                                 self.child_suffix, list(zip(*flattened_input)))
+        if self.inputs:
+            if self.update_opengl:
+                set_values_to_agents(self.main_material, self.children, self.node_id,
+                                     self.child_suffix, list(zip(*flattened_input)))
+            elif not is_material_viewport_shade_in_screen(bpy.context):
+                set_values_to_agents(self.main_material, self.children, self.node_id,
+                                     self.child_suffix, list(zip(*flattened_input)))
 
         self.outputs['Materials'].sv_set([[self.main_material] + [child.mat for child in self.children]])
 
