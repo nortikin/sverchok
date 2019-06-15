@@ -107,7 +107,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
             name = self.name_node_generated_parent
             mesh = bpy.data.meshes.new(name + '_mesh')
             ob = bpy.data.objects.new(name, mesh)
-            bpy.context.collections.objects.link(ob)
+            bpy.context.scene.collection.objects.link(ob)
 
         print(ob, ob.name)
 
