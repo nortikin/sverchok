@@ -41,10 +41,10 @@ input like:
 
     M|m <2v coordinate>
     L|l <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]
-    C|c <2v control1> <2v control2> <2v knot2> ["n = " num_segments] [z]
-    S|s <2v control2> <2v knot2> ["n = " num_segments] [z]
-    Q|q <2v control> <2v knot2> ["n = " num_segments] [z]
-    T|t <2v knot2> ["n = " num_segments] [z]
+    C|c (<2v control1> <2v control2> <2v knot2>)+ ["n = " num_segments] [z]
+    S|s (<2v control2> <2v knot2>)+ ["n = " num_segments] [z]
+    Q|q (<2v control> <2v knot2>)+ ["n = " num_segments] [z]
+    T|t (<2v knot2>)+ ["n = " num_segments] [z]
     A|a <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z]
     H|h <x1> <x2> ... ;
     V|v <y1> <y2> ... ;
@@ -53,6 +53,7 @@ input like:
     -----
     <>  : mandatory field
     []  : optional field
+    (...)+ : something may appear several times
     2v  : two point vector `a,b`
             - no backticks
             - a and b can be number literals or lowercase 1-character symbols for variables

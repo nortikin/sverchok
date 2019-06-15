@@ -3,7 +3,10 @@ Profile Parametric Node
 =======================
 
 
-**Profile Node** implements a useful subset of the SVG path section commands.
+**Profile Node** implements a useful subset of the SVG path section commands (see SVG specification_).
+Used domain-specific language (DSL) is based on SVG specification, but does not exactly follow it,
+by adding some extensions and not supporting some features.
+
 Currently the following segment types are available:
 
 +---------------+-------+--------------------------------------------------------------------------------+ 
@@ -11,15 +14,19 @@ Currently the following segment types are available:
 +===============+=======+================================================================================+ 
 | MoveTo        | M,  m | <2v coordinate>                                                                |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| LineTo        | L,  l | <2v coordinate 1> <2v coordinate 2> <2v coordinate n> [z]                      |
+| LineTo        | L,  l | (<2v coordinate>)+ [z]                                                         |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| HorLineTo     | H,  h | <x1> <x2> ... ;                                                                |
+| HorLineTo     | H,  h | (<x>)+ ";"                                                                     |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| VertLineTo    | V,  v | <y1> <y2> ... ;                                                                |
+| VertLineTo    | V,  v | (<y>)+ ";"                                                                     |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| CurveTo       | C,  c | <2v control1> <2v control2> <2v knot2> ["n = " num_verts] [z]                  |
+| CurveTo       | C,  c | (<2v control1> <2v control2> <2v knot2>)+ ["n = " num_verts] [z]               |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| SmoothCurveTo | S,  s | <2v control2> <2v knot2> ["n = " num_verts] [z]                                |
+| SmoothCurveTo | S,  s | (<2v control2> <2v knot2>)+ ["n = " num_verts] [z]                             |
++---------------+-------+--------------------------------------------------------------------------------+ 
+| QuadCurveTo   | Q,  q | (<2v control> <2v knot2>)+ ["n = " num_segments] [z]                           |
++---------------+-------+--------------------------------------------------------------------------------+ 
+| SmthQuadCurve | T,  t | (<2v knot2>)+ ["n = " num_segments] [z]                                        |
 +---------------+-------+--------------------------------------------------------------------------------+ 
 | ArcTo         | A,  a | <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z] |
 +---------------+-------+--------------------------------------------------------------------------------+ 
@@ -37,8 +44,10 @@ Currently the following segment types are available:
             - a and b can be 
                 - number literals
                 - lowercase 1-character symbols for variables
+    (...)+ : this sequence may appear several times
     int : means the value will be cast as an int even if you input float
           flags generally are 0 or 1.
+    ["n = " num_verts] : for curve commands, number of subdivisions may be specified.
     z   : is optional for closing a line
     X   : as a final command to close the edges (cyclic) [-1, 0]
           in addition, if the first and last vertex share coordinate space
@@ -57,10 +66,63 @@ Each integer or floating value may be represented as
  * Negation sign and a variable name, such as `-a` or `-size`.
  * Expression enclosed in curly brackets, such as `{a+1}` or `{sin(phi)}`
 
+ArcTo only take enough parameters to complete one Arc, unlike real SVG command
+which take a whole sequence of chained ArcTo commands. The decision
+to keep it at one segment type per line is mainly to preserve readability.
+
+Other curve segments (C/c, S/s, Q/q, T/t) allow to draw several segments with
+one command, as well as in SVG; but still, in many cases it is a good idea to
+use one segment per command, for readability reasons.
+
+All curve segment types allow you to specify how many vertices are
+used to generate the segment. SVG doesn't let you specify such things, but it
+makes sense to allow it for the creation of geometry.
+
 For examples, see "Examples of usage" section below, or `profile_examples` directory in Sverchok distribution.
 
 Statements may optionally be separated by semicolons (`;`).
 For some commands (namely: `H`/`h`, `V`/`v`) the trailing semicolon is **required**!
+
+.. _specification: https://www.w3.org/TR/SVG/paths.html
+
+Expression syntax
+-----------------
+
+Syntax being used for formulas is standard Python's syntax for expressions. 
+For exact syntax definition, please refer to https://docs.python.org/3/reference/expressions.html.
+
+In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**` for power), numbers, variables, parenthesis, and function call, such as `sin(x)`.
+
+One difference with Python's syntax is that you can call only restricted number of Python's functions. Allowed are:
+
+- Functions from math module:
+  - acos, acosh, asin, asinh, atan, atan2,
+        atanh, ceil, copysign, cos, cosh, degrees,
+        erf, erfc, exp, expm1, fabs, factorial, floor,
+        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+- Constants from math module: pi, e;
+- Additional functions: abs;
+- From mathutlis module: Vector, Matrix;
+- Python type conversions: tuple, list.
+
+This restriction is for security reasons. However, Python's ecosystem does not guarantee that noone can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
+
+Examples of valid expressions are:
+
+* 1.0
+* x
+* x+1
+* 0.75*X + 0.25*Y
+* R * sin(phi)
+
+Inputs
+------
+
+Set of inputs for this node depends on expressions used in the profile
+definition. Each variable used in profile becomes one input. If there are no
+variables used in profile, then this node will have no inputs.
 
 Parameters
 ----------
@@ -74,13 +136,24 @@ This node has the following parameters:
 - **Precision**. Number of decimal places used for points coordinates when
   generating a profile by **from selection** operator. Default value is 8. This
   parameter is only available in the N panel.
-- **Curve points count**. Default number of points for curve segment commands,
-  generated by **from selection** operator (see num_verts in description
-  above). Default value is 20. This parameter is available only in the N panel.
+- **Curve points count**. Default number of points for curve segment commands.
+  Default value is 20. This parameter is available only in the N panel.
 - **X command threshold**. This parameter provides control over "remove
   doubles" functionality of the X command: if the distance between last and
   first points is less than this threshold, X command will remove the last
   point and connect pre-last point to the first instead.
+
+Outputs
+-------
+
+This node has the following outputs:
+
+* **Vertices**. Resulting curve vertices.
+* **Edges**. Edges of the resulting curve.
+* **Knots**. Knot points of all curve segments (C/c, S/s, Q/q, T/t commands) used in the profile.
+* **KnotNames**. Names of all knot points. This output in junction with
+  **Knots** may be used to display all knots in the 3D view by use of **Viewer
+  Index** node - this is very useful for debugging of your profile.
 
 Operators
 ---------
@@ -102,21 +175,15 @@ in the **N** panel of Profile node, see "Profile templates" menu.
 Examples
 --------
 
-If you have experience with SVG paths most of this will be familiar. The biggest difference is that only the
-LineTo command accepts many points, and we always start the profile with a M <pos>,<pos>.
+If you have experience with SVG paths most of this will be familiar. The
+biggest difference is that only the LineTo command accepts many points. It is a
+good idea to always start the profile with a M <pos>,<pos>.
 
 ::
 
     M 0,0
     L a,a b,0 c,0 d,d e,-e 
     
-
-CurveTo and ArcTo only take enough parameters to complete one Curve or Arc, 
-unlike real SVG commands which take a whole sequence of chained CurveTo or ArcTo commands. The decision to keep 
-it at one segment type per line is mainly to preserve readability.
-
-The CurveTo and ArcTo segment types allow you to specify how many vertices are used to generate the segment. SVG 
-doesn't let you specify such things, but it makes sense to allow it for the creation of geometry.
 
 the fun bit about this is that all these variables / components can be dynamic
 
@@ -146,15 +213,34 @@ or
 More Info
 ---------
 
-The node started out as a thought experiment and turned into something quite useful, you can see how it evolved in the `github thread <https://github.com/nortikin/sverchok/issues/350>`_
+The node started out as a thought experiment and turned into something quite
+useful, you can see how it evolved in the `initial github thread <https://github.com/nortikin/sverchok/issues/350>`_ ; 
+See also `last github thread <https://github.com/nortikin/sverchok/pull/2450>`_ and examples provided within Sverchok distribution (N panel of the node).
  
 Example usage:
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/3905771/193b5d86-22ec-11e4-93e5-724863a30bbc.png
+.. image:: https://user-images.githubusercontent.com/284644/59453976-8e60f400-8e2a-11e9-8a27-34be6e1fc037.png
+
+::
+
+      Q 3,H 6,0
+      t 6,0
+      t 6,0
+      t 0,-6
+      t -6,0
+      t -6,0
+      t -6,0
+      t 0,6
  
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/3895396/81f3b96c-224d-11e4-9ca7-f07756f40a0e.png
+.. image:: https://user-images.githubusercontent.com/284644/59548976-f4a35f00-8f6f-11e9-89cd-4c7257e3d753.png
 
+::
+
+      C 1,1 2,1 3,0 4,-1 5,-1 6,0
+      s 1,2 0,3 -1,5 0,6
+      S 1,7 0,6 -1,-1 0,0 n=40
+      X
 
 Gotchas
 -------
@@ -168,9 +254,10 @@ The update mechanism doesn't process inputs or anything until the following cond
 Keyboard Shortcut to refresh Profile Node
 -----------------------------------------
 
-Updates made to the profile path text file are not propagated automatically to any nodes that might be reading that file. 
-To refresh a Profile Node simply hit ``Ctrl+Enter`` In TextEditor while you are editing the file, or click one of the 
-inputs or output sockets of Profile Node. There are other ways to refresh (change a value on one of the incoming nodes, 
+Updates made to the profile path text file are not propagated automatically to
+any nodes that might be reading that file. 
+To refresh a Profile Node simply hit ``Ctrl+Enter`` In TextEditor while you are
+editing the file, or click one of the inputs or output sockets of Profile Node.
+There are other ways to refresh (change a value on one of the incoming nodes,
 or clicking the sockets of the incoming nodes)
-
 
