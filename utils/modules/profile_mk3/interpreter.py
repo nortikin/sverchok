@@ -206,7 +206,6 @@ class MoveTo(Statement):
         return variables
 
     def interpret(self, interpreter, variables):
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
         pos = interpreter.calc_vertex(self.is_abs, self.x, self.y, variables)
         interpreter.position = pos
@@ -237,7 +236,6 @@ class LineTo(Statement):
                 self.close == other.close
 
     def interpret(self, interpreter, variables):
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
         v0 = interpreter.position
         if interpreter.has_last_vertex:
@@ -279,7 +277,6 @@ class HorizontalLineTo(Statement):
                 self.xs == other.xs
 
     def interpret(self, interpreter, variables):
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
         v0 = interpreter.position
         if interpreter.has_last_vertex:
@@ -322,7 +319,6 @@ class VerticalLineTo(Statement):
                 self.ys == other.ys
 
     def interpret(self, interpreter, variables):
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
         v0 = interpreter.position
         if interpreter.has_last_vertex:
@@ -393,7 +389,6 @@ class CurveTo(Statement):
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
 
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
 
         v0 = interpreter.position
@@ -495,7 +490,6 @@ class SmoothCurveTo(Statement):
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
 
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
 
         v0 = interpreter.position
@@ -603,7 +597,6 @@ class QuadraticCurveTo(Statement):
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
 
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
 
         v0 = interpreter.position
@@ -689,7 +682,6 @@ class SmoothQuadraticCurveTo(Statement):
     def interpret(self, interpreter, variables):
         vec = lambda v: Vector((v[0], v[1], 0))
 
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
 
         v0 = interpreter.position
@@ -787,7 +779,6 @@ class ArcTo(Statement):
                 self.close == other.close
 
     def interpret(self, interpreter, variables):
-        interpreter.assert_not_closed()
         interpreter.start_new_segment()
 
         v0 = interpreter.position
@@ -845,7 +836,6 @@ class Close(Statement):
         return set()
 
     def interpret(self, interpreter, variables):
-        interpreter.assert_not_closed()
         if not interpreter.has_last_vertex:
             info("X statement: no current point, do nothing")
             return
@@ -859,8 +849,8 @@ class Close(Statement):
             interpreter.pop_last_vertex()
 
         v1_index = interpreter.get_last_vertex()
-        interpreter.new_edge(v1_index, 0)
-        interpreter.closed = True
+        interpreter.new_edge(v1_index, interpreter.close_first_index)
+        interpreter.close_first_index = interpreter.next_vertex_index
 
 class Default(Statement):
     def __init__(self, name, value):
@@ -918,7 +908,7 @@ class Interpreter(object):
         self.segment_start_index = 0
         self.segment_number = 0
         self.has_last_vertex = False
-        self.closed = False
+        self.close_first_index = 0
         self.prev_bezier_knot = None
         self.prev_quad_bezier_knot = None
         self.vertices = []
@@ -929,10 +919,6 @@ class Interpreter(object):
         self.close_threshold = node.close_threshold
         self.defaults = dict()
         self.input_names = input_names
-
-    def assert_not_closed(self):
-        if self.closed:
-            raise Exception("Path was already closed, will not process any further directives!")
 
     def relative(self, x, y):
         x0, y0 = self.position
