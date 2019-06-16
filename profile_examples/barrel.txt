@@ -1,0 +1,8 @@
+let handle_x = {width/2};
+let handle_y = {height/8};
+
+H {width/2};
+c handle_x,handle_y handle_x,{height-handle_y} 0,height
+h -width;
+c -handle_x,-handle_y -handle_x,{-height+handle_y} 0,-height
+X

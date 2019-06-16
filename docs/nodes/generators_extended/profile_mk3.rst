@@ -47,7 +47,9 @@ The following segment types are available:
 +---------------+-------+--------------------------------------------------------------------------------+ 
 | ArcTo         | A,  a | <2v rx,ry> <float rot> <int flag1> <int flag2> <2v x,y> ["n = " num_verts] [z] |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| Close         | X     |                                                                                |  
+| ClosePath     | x     |                                                                                |  
++---------------+-------+--------------------------------------------------------------------------------+ 
+| CloseAll      | X     |                                                                                |  
 +---------------+-------+--------------------------------------------------------------------------------+ 
 | comment       | #     | anything after # is a comment.                                                 |
 +---------------+-------+--------------------------------------------------------------------------------+ 
@@ -78,10 +80,10 @@ i.e. each coordinate is defined with relation to "current pen position".
 
 Each integer or floating value may be represented as
  
- * Integer or floating literal (usual python syntax, such as 5 or 7.5)
- * Variable name, such as `a` or `b` or `variable_name`
- * Negation sign and a variable name, such as `-a` or `-size`.
- * Expression enclosed in curly brackets, such as `{a+1}` or `{sin(phi)}`
+* Integer or floating literal (usual python syntax, such as 5 or 7.5)
+* Variable name, such as `a` or `b` or `variable_name`
+* Negation sign and a variable name, such as `-a` or `-size`.
+* Expression enclosed in curly brackets, such as `{a+1}` or `{sin(phi)}`
 
 ArcTo only take enough parameters to complete one Arc, unlike real SVG command
 which take a whole sequence of chained ArcTo commands. The decision
@@ -107,12 +109,15 @@ directory in Sverchok distribution.
 Expression syntax
 -----------------
 
-Syntax being used for formulas is standard Python's syntax for expressions. 
+Syntax being used in profile definitions is standard Python's syntax for expressions. 
 For exact syntax definition, please refer to https://docs.python.org/3/reference/expressions.html.
 
-In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**` for power), numbers, variables, parenthesis, and function call, such as `sin(x)`.
+In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**`
+for power), numbers, variables, parenthesis, and function call, such as
+`sin(x)`.
 
-One difference with Python's syntax is that you can call only restricted number of Python's functions. Allowed are:
+One difference with Python's syntax is that you can call only restricted number
+of Python's functions. Allowed are:
 
 - Functions from math module:
   - acos, acosh, asin, asinh, atan, atan2,
@@ -126,15 +131,19 @@ One difference with Python's syntax is that you can call only restricted number 
 - From mathutlis module: Vector, Matrix;
 - Python type conversions: tuple, list.
 
-This restriction is for security reasons. However, Python's ecosystem does not guarantee that noone can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
+This restriction is for security reasons. However, Python's ecosystem does not
+guarantee that noone can call some unsafe operations by using some sort of
+language-level hacks. So, please be warned that usage of this node with profile
+definition obtained from unknown or untrusted source can potentially harm your
+system or data.
 
 Examples of valid expressions are:
 
 * 1.0
 * x
-* x+1
-* 0.75*X + 0.25*Y
-* R * sin(phi)
+* {x+1}
+* {0.75*X + 0.25*Y}
+* {R * sin(phi)}
 
 Inputs
 ------
@@ -284,9 +293,9 @@ Gotchas
 
 The update mechanism doesn't process inputs or anything until the following conditions are satisfied:
 
- * All inputs have to be connected, except ones that have default values
-   declared by "default" statements.
- * The file field on the Node points to an existing Text File.
+* All inputs have to be connected, except ones that have default values
+  declared by "default" statements.
+* The file field on the Node points to an existing Text File.
 
 
 Keyboard Shortcut to refresh Profile Node
