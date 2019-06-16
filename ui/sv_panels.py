@@ -21,8 +21,9 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty
 
 import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
-from sverchok.core.update_system import process_from_nodes
+from sverchok.core.update_system import process_from_node
 from sverchok.utils import profile
+from sverchok.utils.context_managers import hard_freeze
 
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
@@ -59,9 +60,23 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
                         obj_nodes.append(nodes)
 
         ''' reaches here only if event is TIMER and self.active '''
-        for n in obj_nodes:
-            # print('calling process on:', n.name, n.id_data)
-            process_from_nodes(n)
+        for nodes in obj_nodes:
+            # Nodes of current node tree
+            for node in nodes:
+                for i in node.object_names:
+                    # object_names is collections of names of objects of SvObjectsNodeMK3
+                    try:
+                        obj = bpy.data.objects[i.name]
+                    except KeyError:
+                        continue
+                    if obj.is_updated or obj.is_updated_data or obj.data.is_updated:
+                        # check changes of object
+                        with hard_freeze(node):
+                            # freeze node tree for avoiding updating whole nodes of the tree
+                            # print('calling process on:', node.name, node.id_data)
+                            process_from_node(node)
+                        # calling process_from_node switch node tree condition to has changed, that is not true
+                        node.id_data.has_changed = False
 
         return {'PASS_THROUGH'}
 
