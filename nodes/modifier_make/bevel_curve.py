@@ -90,6 +90,14 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default="DISTANCE", items=metrics,
         update=updateNode)
 
+    taper_metrics = [("SAME", "Same as curve", "Use the same metric as for curve (Imprecise!)", 0),
+                     ("AXIS", "Orientation axis", "Use metric along orientation axis", 1)]
+
+    taper_metric = EnumProperty(name='Taper metric',
+        description = "Metric used for taper object interpolation",
+        default = "SAME", items=taper_metrics,
+        update=updateNode)
+
     is_cyclic = BoolProperty(name = "Cyclic",
         description = "Whether the spline is cyclic",
         default = False,
@@ -165,20 +173,28 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "flip_taper", toggle=True)
 
         layout.prop(self, 'metric')
+        layout.prop(self, 'taper_metric')
         layout.prop(self, 'tangent_precision')
 
     @property
     def orient_axis_idx(self):
         return 'XYZ'.index(self.orient_axis)
 
-    def build_spline(self, path, mode, is_cyclic):
+    def build_spline(self, path, mode, is_cyclic, metric=None):
+        if metric is None:
+            metric = self.metric
         if mode == 'LIN':
-            spline = LinearSpline(path, metric = self.metric, is_cyclic = is_cyclic)
+            spline = LinearSpline(path, metric = metric, is_cyclic = is_cyclic)
         else:  # SPL
-            spline = CubicSpline(path, metric = self.metric, is_cyclic = is_cyclic)
+            spline = CubicSpline(path, metric = metric, is_cyclic = is_cyclic)
         return spline
 
     def make_taper_spline(self, vertices):
+        if self.taper_metric == 'SAME':
+            metric = self.metric
+        else:
+            metric = self.orient_axis
+
         if len(vertices) == 0:
             # if no taper object provided: use constant scale of 1.0
             def make_unit(z):
@@ -187,9 +203,9 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 u[(self.orient_axis_idx+1) % 3] = 1
                 return u
             vertices = [make_unit(0), make_unit(1)]
-            return LinearSpline(vertices, metric = self.metric, is_cyclic = False)
+            return LinearSpline(vertices, metric = metric, is_cyclic = False)
 
-        return self.build_spline(vertices, self.taper_mode, False)
+        return self.build_spline(vertices, self.taper_mode, is_cyclic=False, metric=metric)
 
     def get_matrix(self, tangent, scale_x, scale_y):
         x = Vector((1.0, 0.0, 0.0))
