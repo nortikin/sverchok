@@ -424,6 +424,9 @@ class CurveTo(Statement):
             handle2 = interpreter.calc_vertex(self.is_abs, segment.control2[0], segment.control2[1], variables)
             #interpreter.position = handle2
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
+            # Judging by the behaivour of Inkscape and Firefox, by "end of command"
+            # SVG spec means "end of segment".
+            interpreter.position = knot2
 
             if self.num_segments is not None:
                 r = interpreter.eval_(self.num_segments, variables)
@@ -442,8 +445,6 @@ class CurveTo(Statement):
                 v1_index = interpreter.new_vertex(point.x, point.y)
                 interpreter.new_edge(v0_index, v1_index)
                 v0_index = v1_index
-
-        interpreter.position = knot2
 
         if self.close:
             interpreter.new_edge(v1_index, interpreter.segment_start_index)
@@ -532,6 +533,7 @@ class SmoothCurveTo(Statement):
             handle2 = interpreter.calc_vertex(self.is_abs, segment.control2[0], segment.control2[1], variables)
             # interpreter.position = handle2
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
+            interpreter.position = knot2
 
             if self.num_segments is not None:
                 r = interpreter.eval_(self.num_segments, variables)
@@ -550,8 +552,6 @@ class SmoothCurveTo(Statement):
                 v1_index = interpreter.new_vertex(point.x, point.y)
                 interpreter.new_edge(v0_index, v1_index)
                 v0_index = v1_index
-
-        interpreter.position = knot2
 
         if self.close:
             interpreter.new_edge(v1_index, interpreter.segment_start_index)
@@ -623,6 +623,7 @@ class QuadraticCurveTo(Statement):
 
             handle = interpreter.calc_vertex(self.is_abs, segment.control[0], segment.control[1], variables)
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
+            interpreter.position = knot2
 
             if self.num_segments is not None:
                 r = interpreter.eval_(self.num_segments, variables)
@@ -640,8 +641,6 @@ class QuadraticCurveTo(Statement):
                 v1_index = interpreter.new_vertex(point.x, point.y)
                 interpreter.new_edge(v0_index, v1_index)
                 v0_index = v1_index
-
-        interpreter.position = knot2
 
         if self.close:
             interpreter.new_edge(v1_index, interpreter.segment_start_index)
@@ -722,6 +721,7 @@ class SmoothQuadraticCurveTo(Statement):
                 handle = x0 + dx, y0 + dy
 
             knot2 = interpreter.calc_vertex(self.is_abs, segment.knot2[0], segment.knot2[1], variables)
+            interpreter.position = knot2
 
             if self.num_segments is not None:
                 r = interpreter.eval_(self.num_segments, variables)
@@ -739,8 +739,6 @@ class SmoothQuadraticCurveTo(Statement):
                 v1_index = interpreter.new_vertex(point.x, point.y)
                 interpreter.new_edge(v0_index, v1_index)
                 v0_index = v1_index
-
-        interpreter.position = knot2
 
         if self.close:
             interpreter.new_edge(v1_index, interpreter.segment_start_index)
