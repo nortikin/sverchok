@@ -116,6 +116,16 @@ This node has the following parameters:
   Manhattan, Chebyshev, Points. Default value is Euclidean. The default metric
   usually gives good results. If you do not like results, try other options.
   This parameter is available only in the N panel. 
+- **Taper Metric**. Defines the metric to use to calculate the spline for taper
+  object. Available values are:
+  * **Same as Curve** - use the same metric as for main curve. This is the
+    default value. In many cases, this algorithm may be very imprecise.
+  * **Orientation Axis** - use coordinates of taper object's vertices along the
+    orientation axis. This usually gives more precise result. This mode
+    assumes, that the taper object is oriented along that orientation axis: for
+    example, if orientation axis is Z, then each following vertex of taper
+    object must have Z coordinate bigger than previous vertex.
+
 - **Tangent precision**. Step to be used to calculate tangents of the spline.
   Lesser values correspond to better precision. In most cases, you will not
   have to change the default value. This parameter is available only in the N panel. 
