@@ -1,0 +1,10 @@
+default straight_len = 1;
+default radius = 0.4;
+
+let rem = {radius / tan(phi/2)};
+
+H straight_len ;
+a radius,radius 0 0 1
+  {rem * (1 - cos(phi))}, {rem * sin(phi)}
+  n = 10
+l {- straight_len * cos(phi)}, {straight_len * sin(phi)}
