@@ -215,7 +215,7 @@ class SvLayoutScanProperties(bpy.types.Operator):
                             debug("Node %s: first output is not linked or to3d == False", node.name)
                             continue
                     elif idname == 'SvCustomSwitcher':
-                        if not node.inputs[0].is_linked and not node.outputs[0].is_linked:
+                        if not node.inputs[0].is_linked and not node.outputs[0].is_linked or (node.to3d != True):
                             debug("Node %s: output or input are not linked", node.name)
                             continue
                     elif (node.to3d != True):
