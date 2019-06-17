@@ -244,6 +244,15 @@ class Sv3DPanel(bpy.types.Panel):
                                     row.prop(node, node.mode, index=i, text=str(i))
                                     row.scale_x = little_width * 2.5
 
+                        elif node.bl_idname in {'SvCustomSwitcher'}:
+                            row = col.row(align=True)
+                            switch_icon = 'DOWNARROW_HLT' if node.show_in_3d else 'RIGHTARROW'
+                            row.prop(node, 'show_in_3d', text='', icon=switch_icon)
+                            row.label(tex)
+                            if node.show_in_3d:
+                                col.column()
+                                col.prop(node, ver, text='')
+
                     # Import/Export properties
                     row = col.row(align=True)
                     row.label(text='Export/Import:')

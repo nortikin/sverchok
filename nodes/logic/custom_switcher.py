@@ -23,11 +23,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-test = [('1', 'Box', ''),
-        ('2', 'Circle', ''),
-        ('3', 'Plane', '')]
-
-
 class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: project point to line
@@ -39,9 +34,40 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Switcher'
     bl_icon = 'HAND'
 
-    user_list = bpy.props.EnumProperty(name='Custom list', items=test, update=updateNode)
+    def draw_items_test1(self, context):
+        if self.inputs['Data'].is_linked:
+            data = self.inputs['Data'].sv_get()
+            counter = 0
+            out = []
+            if isinstance(data[0], (list, tuple)):
+                data = [i for l in data for i in l]
+            #return [(str(i), str(i), '') for i in range(len(data)) if i < 32]
+            return [(str(i), str(val), '') for i, val in enumerate(data) if i < 32]
+            #for val in data:
+            #    if counter == 31:
+            #        break
+            #    if hasattr(val, 'name'):
+            #        val = val.name
+            #    if isinstance(val, str):
+            #        out.append(('{}'.format(counter), '{}'.format(val), ''))
+            #    counter += 1
+            #return out
+        else:
+            return [('1', 'link something', '')]
+
+    def draw_items(self, context):
+        if self.string_values:
+            return [(str(i), s.name, '') for i, s in enumerate(self.string_values)]
+        else:
+            return [('1', 'link something', '')]
+
+    string_values = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    user_list = bpy.props.EnumProperty(name='Custom list', items=draw_items, update=updateNode,  options={'ENUM_FLAG'})
+    show_in_3d = bpy.props.BoolProperty(name='show in panel', default=True,
+                                        description='Show properties in 3d panel or not')
 
     def sv_init(self, context):
+        self.inputs.new('StringsSocket', 'Data')
         self.outputs.new('StringsSocket', 'Item')
 
     def draw_buttons(self, context, layout):
@@ -49,7 +75,26 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, "user_list", expand=True)
 
     def process(self):
-        self.outputs['Item'].sv_set([[int(self.user_list) - 1]])
+        if self.inputs['Data'].is_linked:
+            data = self.inputs['Data'].sv_get()
+            if isinstance(data[0], (list, tuple)):
+                data = [i for l in data for i in l]
+            if len(data) != len(self.string_values):
+                self.string_values.clear()
+                for i, val in enumerate(data):
+                    if i == 32:
+                        break
+                    self.string_values.add().name = str(val)
+            else:
+                for val, str_val in zip(data, self.string_values):
+                    str_val.name = str(val)
+        else:
+            self.string_values.clear()
+
+        self.outputs['Item'].sv_set([sorted([int(i) for i in self.user_list])])
+
+    def process_test1(self):
+        self.outputs['Item'].sv_set([[int(i) for i in self.user_list]])
 
 
 def register():
