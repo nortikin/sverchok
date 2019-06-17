@@ -34,7 +34,8 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Switcher'
     bl_icon = 'HAND'
 
-    def update_mode(self,context):
+    def update_mode(self, context):
+        # Select only one item in non multiple selection mode
         if not self.multiple_selection:
             self['previous_user_list'] = [False for _ in range(32)]
             self.user_list = [True] + [False for _ in range(31)]
@@ -43,18 +44,21 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
         return self['user_list']
 
     def set_user_list(self, values):
+        # Implementation of single selection mode
         if not self.multiple_selection:
             values = [True if not old and new or old and not new else False
                       for old, new in zip(self['previous_user_list'], values)]
             self['previous_user_list'] = values
         self['user_list'] = values
 
-    to3d = bpy.props.BoolProperty(name='Show in 3d panel', default=True)
-    multiple_selection = bpy.props.BoolProperty(name='Multiple selection', default=True, update=update_mode)
+    to3d = bpy.props.BoolProperty(name='Show in 3d panel', default=True,
+                                  description='Show items of this node in 3d panel of 3d view screen')
+    multiple_selection = bpy.props.BoolProperty(name='Multiple selection', default=True, update=update_mode,
+                                                description='Selection several items simultaneously')
     ui_scale = bpy.props.FloatProperty(name='Size of buttons', default=1.0, min=0.5, max=5)
-    string_values = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
-    user_list = bpy.props.BoolVectorProperty(name="User selection", size=32, update=updateNode,
-                                             set=set_user_list, get=get_user_list)
+    string_values = bpy.props.CollectionProperty(type=bpy.types.PropertyGroup, description='Storage of items names')
+    user_list = bpy.props.BoolVectorProperty(name="User selection", size=32, update=updateNode, set=set_user_list,
+                                             get=get_user_list, description='Selection status of items')
     show_in_3d = bpy.props.BoolProperty(name='show in panel', default=True,
                                         description='Show properties in 3d panel or not')
 
@@ -78,21 +82,27 @@ class SvCustomSwitcher(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'ui_scale', text='Size of buttons')
 
     def draw_buttons_3dpanel(self, layout):
-        row = layout.row(align=True)
+        # I think it is moore appropriate place for coding layout of 3d panel
+        col = layout.column()
+        row = col.row(align=True)
         if self.label:
             name = self.label
         else:
             name = self.name
-        row.label(name)
-        row.prop(self, 'multiple_selection', toggle=True)
         switch_icon = 'DOWNARROW_HLT' if self.show_in_3d else 'RIGHTARROW'
-        row.prop(self, 'show_in_3d', text='', icon=switch_icon)
+        row.prop(self, 'show_in_3d', text=name, icon=switch_icon)
+        if self.multiple_selection:
+            mode_icon = 'COLLAPSEMENU'
+        else:
+            mode_icon = 'ZOOMOUT'
+        row.prop(self, 'multiple_selection', toggle=True, text='', icon=mode_icon)
         if self.show_in_3d:
             col = layout.column(align=True)
             for i, val in enumerate(self.string_values):
                 col.prop(self, "user_list", toggle=True, index=i, text=val.name)
 
     def process(self):
+        # Storing names of items
         if self.inputs['Data'].is_linked:
             data = self.inputs['Data'].sv_get()
             if isinstance(data[0], (list, tuple)):
