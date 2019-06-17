@@ -22,11 +22,12 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, Fl
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from mathutils import Matrix
+from math import sqrt
 
 modeItems = [
-    ("PLANE",  "PLANE",  "Project onto a plane", 0),
-    ("SPHERE", "SPHERE", "Project onto a sphere", 1),
-    ("CYLINDER", "CYLINDER", "Project onto a cylinder", 2)]
+    ("PLANAR",  "PLANAR",  "Project onto a plane", 0),
+    ("SPHERICAL", "SPHERICAL", "Project onto a sphere", 1),
+    ("CYLINDRICAL", "CYLINDRICAL", "Project onto a cylinder", 2)]
 
 
 projectionItems = [
@@ -34,6 +35,36 @@ projectionItems = [
     ("ORTHOGRAPHIC", "ORTHOGRAPHIC", "Orthographic projection", 1)]
 
 idMat = [[tuple(v) for v in Matrix()]]  # identity matrix
+
+EPSILON = 1e-10
+
+
+def projection_cylindrical(verts3D, m, d):
+    vertList = []
+    focusList = []
+    for vert in verts3D:
+        x, y, z = vert
+        r = sqrt(x*x + y*y) + EPSILON
+        xx = x * d/r
+        yy = y * d/r
+        zz = z
+        vertList.append([xx, yy, zz])
+
+    return vertList, focusList
+
+
+def projection_spherical(verts3D, m, d):
+    vertList = []
+    focusList = []
+    for vert in verts3D:
+        x, y, z = vert
+        r = sqrt(x*x + y*y + z*z) + EPSILON
+        xx = x * d/r
+        yy = y * d/r
+        zz = z * d/r
+        vertList.append([xx, yy, zz])
+
+    return vertList, focusList
 
 
 def project_2d(vert3D, m, d):
@@ -73,9 +104,10 @@ def project_3d_verts(verts3D, m, d):
     """
     verts2D = [project_2d(verts3D[i], m, d) for i in range(len(verts3D))]
 
-    # xx yx zx tx         0      tx - d*zx
-    # xy yy zy ty   *     0   =  ty - d*zy
-    # xz yz zz tz       - d      tz - d*zz
+    # Focus location
+    # xx yx zx tx         0      tx - d * zx
+    # xy yy zy ty   *     0   =  ty - d * zy
+    # xz yz zz tz       - d      tz - d * zz
     # 0  0  0  1          1      1
 
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
@@ -92,7 +124,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltips: Perspective projection from 3D space to 2D space
     """
     bl_idname = 'Sv3DProjectNode'
-    bl_label = '3D-2D Projection'
+    bl_label = '3D:2D Projection'
 
     def update_mode(self, context):
         # if self.mode == self.last_mode:
@@ -103,7 +135,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     mode = EnumProperty(
-        name="Mode", items=modeItems, default="PLANE", update=update_mode)
+        name="Mode", items=modeItems, default="PLANAR", update=update_mode)
 
     distance = FloatProperty(
         name="Distance", description="Projection Distance",
@@ -160,7 +192,9 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         polyList = []
         focusList = []
         for v, e, p, m, d in zip(*params):
-            verts, focus = project_3d_verts(v, m, d)
+            verts, focus = projection_spherical(v, m, d)
+            # verts, focus = projection_cylindrical(v, m, d)
+            # verts, focus = project_3d_verts(v, m, d)
             vertList.append(verts)
             edgeList.append(e)
             polyList.append(p)
