@@ -244,6 +244,9 @@ class Sv3DPanel(bpy.types.Panel):
                                     row.prop(node, node.mode, index=i, text=str(i))
                                     row.scale_x = little_width * 2.5
 
+                        elif node.bl_idname in {'SvCustomSwitcher'}:
+                            node.draw_buttons_3dpanel(col)
+
                     # Import/Export properties
                     row = col.row(align=True)
                     row.label(text='Export/Import:')

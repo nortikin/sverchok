@@ -243,6 +243,7 @@
     SvSwitchNode
     SvInputSwitchNode
     SvNeuroElman1LNode
+    SvCustomSwitcher
 
 ## Viz
     ViewerNode2
