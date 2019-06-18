@@ -183,6 +183,22 @@ class Statement(object):
     def get_optional_inputs(self):
         return set()
 
+    def _interpolate(self, v0, v1, num_segments):
+        if num_segments is None or num_segments <= 1:
+            return [v0, v1]
+        dx_total, dy_total = v1[0] - v0[0], v1[1] - v0[1]
+        dx, dy = dx_total / float(num_segments), dy_total / float(num_segments)
+        x, y = v0
+        dt = 1.0 / float(num_segments)
+        result = []
+        t = 0
+        for i in range(round(num_segments)):
+            result.append((x,y))
+            x = x + dx
+            y = y + dy
+        result.append(v1)
+        return result
+
 class MoveTo(Statement):
     def __init__(self, is_abs, x, y):
         self.is_abs = is_abs
