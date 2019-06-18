@@ -108,7 +108,7 @@ def one_of(*funcs):
             return
     return parser
 
-def many(func):
+def many(func, backtracking=False):
     """
     Parser combinator, that applies one parser as many times as it
     could be applied. For example, if parser_a parses "A", then
@@ -120,7 +120,8 @@ def many(func):
     def parser(src):
         for (value, values), rest in sequence(func, parser)(src):
             yield [value] + values, rest
-            return
+            if not backtracking:
+                return
         
         for value, rest in func(src):
             yield [value], rest

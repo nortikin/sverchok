@@ -183,6 +183,22 @@ class Statement(object):
     def get_optional_inputs(self):
         return set()
 
+    def _interpolate(self, v0, v1, num_segments):
+        if num_segments is None or num_segments <= 1:
+            return [v0, v1]
+        dx_total, dy_total = v1[0] - v0[0], v1[1] - v0[1]
+        dx, dy = dx_total / float(num_segments), dy_total / float(num_segments)
+        x, y = v0
+        dt = 1.0 / float(num_segments)
+        result = []
+        t = 0
+        for i in range(num_segments):
+            result.append((x,y))
+            x = x + dx
+            y = y + dy
+        result.append(v1)
+        return result
+
 class MoveTo(Statement):
     def __init__(self, is_abs, x, y):
         self.is_abs = is_abs
@@ -214,9 +230,10 @@ class MoveTo(Statement):
         interpreter.has_last_vertex = False
 
 class LineTo(Statement):
-    def __init__(self, is_abs, pairs, close):
+    def __init__(self, is_abs, pairs, num_segments, close):
         self.is_abs = is_abs
         self.pairs = pairs
+        self.num_segments = num_segments
         self.close = close
 
     def get_variables(self):
@@ -224,16 +241,19 @@ class LineTo(Statement):
         for x, y in self.pairs:
             variables.update(x.get_variables())
             variables.update(y.get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
         return variables
 
     def __repr__(self):
         letter = "L" if self.is_abs else "l"
-        return "{} {} {}".format(letter, self.pairs, self.close)
+        return "{} {} n={} {}".format(letter, self.pairs, self.num_segments, self.close)
     
     def __eq__(self, other):
         return isinstance(other, LineTo) and \
                 self.is_abs == other.is_abs and \
                 self.pairs == other.pairs and \
+                self.num_segments == other.num_segments and \
                 self.close == other.close
 
     def interpret(self, interpreter, variables):
@@ -241,41 +261,52 @@ class LineTo(Statement):
         interpreter.start_new_segment()
         v0 = interpreter.position
         if interpreter.has_last_vertex:
-            v0_index = interpreter.get_last_vertex()
+            prev_index = interpreter.get_last_vertex()
         else:
-            v0_index = interpreter.new_vertex(*v0)
+            prev_index = interpreter.new_vertex(*v0)
+
+        if self.num_segments is not None:
+            num_segments = interpreter.eval_(self.num_segments, variables)
+        else:
+            num_segments = None
 
         for i, (x_expr, y_expr) in enumerate(self.pairs):
             v1 = interpreter.calc_vertex(self.is_abs, x_expr, y_expr, variables)
             interpreter.position = v1
-            v1_index = interpreter.new_vertex(*v1)
-            interpreter.new_edge(v0_index, v1_index)
+            for vertex in self._interpolate(v0, v1, num_segments)[1:]:
+                v_index = interpreter.new_vertex(*vertex)
+                interpreter.new_edge(prev_index, v_index)
+                prev_index = v_index
+            v0 = v1
             interpreter.new_knot("L#.{}".format(i), *v1)
-            v0_index = v1_index
 
         if self.close:
-            interpreter.new_edge(v1_index, interpreter.segment_start_index)
+            interpreter.new_edge(v_index, interpreter.segment_start_index)
 
         interpreter.has_last_vertex = True
 
 class HorizontalLineTo(Statement):
-    def __init__(self, is_abs, xs):
+    def __init__(self, is_abs, xs, num_segments):
         self.is_abs = is_abs
         self.xs = xs
+        self.num_segments = num_segments
 
     def get_variables(self):
         variables = set()
         for x in self.xs:
             variables.update(x.get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
         return variables
 
     def __repr__(self):
         letter = "H" if self.is_abs else "h"
-        return "{} {}".format(letter, self.xs)
+        return "{} {} n={};".format(letter, self.xs, self.num_segments)
 
     def __eq__(self, other):
         return isinstance(other, HorizontalLineTo) and \
                 self.is_abs == other.is_abs and \
+                self.num_segments == other.num_segments and \
                 self.xs == other.xs
 
     def interpret(self, interpreter, variables):
@@ -283,9 +314,14 @@ class HorizontalLineTo(Statement):
         interpreter.start_new_segment()
         v0 = interpreter.position
         if interpreter.has_last_vertex:
-            v0_index = interpreter.get_last_vertex()
+            prev_index = interpreter.get_last_vertex()
         else:
-            v0_index = interpreter.new_vertex(*v0)
+            prev_index = interpreter.new_vertex(*v0)
+
+        if self.num_segments is not None:
+            num_segments = interpreter.eval_(self.num_segments, variables)
+        else:
+            num_segments = None
 
         for i, x_expr in enumerate(self.xs):
             x0,y0 = interpreter.position
@@ -294,31 +330,39 @@ class HorizontalLineTo(Statement):
                 x = x0 + x
             v1 = (x, y0)
             interpreter.position = v1
-            v1_index = interpreter.new_vertex(*v1)
-            interpreter.new_edge(v0_index, v1_index)
+            verts = self._interpolate(v0, v1, num_segments)
+            #debug("V0 %s, v1 %s, N %s => %s", v0, v1, num_segments, verts)
+            for vertex in verts[1:]:
+                v_index = interpreter.new_vertex(*vertex)
+                interpreter.new_edge(prev_index, v_index)
+                prev_index = v_index
+            v0 = v1
             interpreter.new_knot("H#.{}".format(i), *v1)
-            v0_index = v1_index
 
         interpreter.has_last_vertex = True
 
 class VerticalLineTo(Statement):
-    def __init__(self, is_abs, ys):
+    def __init__(self, is_abs, ys, num_segments):
         self.is_abs = is_abs
         self.ys = ys
+        self.num_segments = num_segments
 
     def get_variables(self):
         variables = set()
         for y in self.ys:
             variables.update(y.get_variables())
+        if self.num_segments:
+            variables.update(self.num_segments.get_variables())
         return variables
 
     def __repr__(self):
         letter = "V" if self.is_abs else "v"
-        return "{} {}".format(letter, self.ys)
+        return "{} {} n={};".format(letter, self.ys, self.num_segments)
 
     def __eq__(self, other):
         return isinstance(other, VerticalLineTo) and \
                 self.is_abs == other.is_abs and \
+                self.num_segments == other.num_segments and \
                 self.ys == other.ys
 
     def interpret(self, interpreter, variables):
@@ -326,9 +370,14 @@ class VerticalLineTo(Statement):
         interpreter.start_new_segment()
         v0 = interpreter.position
         if interpreter.has_last_vertex:
-            v0_index = interpreter.get_last_vertex()
+            prev_index = interpreter.get_last_vertex()
         else:
-            v0_index = interpreter.new_vertex(*v0)
+            prev_index = interpreter.new_vertex(*v0)
+
+        if self.num_segments is not None:
+            num_segments = interpreter.eval_(self.num_segments, variables)
+        else:
+            num_segments = None
 
         for i, y_expr in enumerate(self.ys):
             x0,y0 = interpreter.position
@@ -337,10 +386,12 @@ class VerticalLineTo(Statement):
                 y = y0 + y
             v1 = (x0, y)
             interpreter.position = v1
-            v1_index = interpreter.new_vertex(*v1)
-            interpreter.new_edge(v0_index, v1_index)
+            for vertex in self._interpolate(v0, v1, num_segments)[1:]:
+                v_index = interpreter.new_vertex(*vertex)
+                interpreter.new_edge(prev_index, v_index)
+                prev_index = v_index
+            v0 = v1
             interpreter.new_knot("V#.{}".format(i), *v1)
-            v0_index = v1_index
 
         interpreter.has_last_vertex = True
 
