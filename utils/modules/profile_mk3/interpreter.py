@@ -192,7 +192,7 @@ class Statement(object):
         dt = 1.0 / float(num_segments)
         result = []
         t = 0
-        for i in range(num_segments):
+        for i in range(round(num_segments)):
             result.append((x,y))
             x = x + dx
             y = y + dy
