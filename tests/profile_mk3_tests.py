@@ -48,19 +48,37 @@ class StatementParseTests(SverchokTestCase):
     def test_parse_lineto(self):
         string = "L 1,2 3,4"
         result = parse(parse_statement, string)
-        expected = LineTo(True, [(Const(1), Const(2)), (Const(3), Const(4))], False)
+        expected = LineTo(True, [(Const(1), Const(2)), (Const(3), Const(4))], None, False)
+        self.assertEquals(result, expected)
+
+    def test_parse_lineto_n(self):
+        string = "L 1,2 3,4 n=10"
+        result = parse(parse_statement, string)
+        expected = LineTo(True, [(Const(1), Const(2)), (Const(3), Const(4))], Const(10), False)
         self.assertEquals(result, expected)
 
     def test_parse_hor_lineto(self):
         string = "H 1 2;"
         result = parse(parse_statement, string)
-        expected = HorizontalLineTo(True, [Const(1), Const(2)])
+        expected = HorizontalLineTo(True, [Const(1), Const(2)], None)
+        self.assertEquals(result, expected)
+
+    def test_parse_hor_lineto_n(self):
+        string = "H 1 2 n=10;"
+        result = parse(parse_statement, string)
+        expected = HorizontalLineTo(True, [Const(1), Const(2)], Const(10))
         self.assertEquals(result, expected)
 
     def test_parse_vert_lineto(self):
         string = "V 1 2;"
         result = parse(parse_statement, string)
-        expected = VerticalLineTo(True, [Const(1), Const(2)])
+        expected = VerticalLineTo(True, [Const(1), Const(2)], None)
+        self.assertEquals(result, expected)
+
+    def test_parse_vert_lineto_n(self):
+        string = "V 1 2 n=10;"
+        result = parse(parse_statement, string)
+        expected = VerticalLineTo(True, [Const(1), Const(2)], Const(10))
         self.assertEquals(result, expected)
 
     def test_parse_curveto(self):
