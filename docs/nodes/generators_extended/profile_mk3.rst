@@ -31,11 +31,11 @@ The following segment types are available:
 +===============+=======+================================================================================+ 
 | MoveTo        | M,  m | <2v coordinate>                                                                |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| LineTo        | L,  l | (<2v coordinate>)+ [z]                                                         |
+| LineTo        | L,  l | (<2v coordinate>)+ ["n = " num_segments] [z]                                   |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| HorLineTo     | H,  h | (<x>)+ ";"                                                                     |
+| HorLineTo     | H,  h | (<x>)+ ["n = " num_segments] ";"                                               |
 +---------------+-------+--------------------------------------------------------------------------------+ 
-| VertLineTo    | V,  v | (<y>)+ ";"                                                                     |
+| VertLineTo    | V,  v | (<y>)+ ["n = " num_segments] ";"                                               |
 +---------------+-------+--------------------------------------------------------------------------------+ 
 | CurveTo       | C,  c | (<2v control1> <2v control2> <2v knot2>)+ ["n = " num_verts] [z]               |
 +---------------+-------+--------------------------------------------------------------------------------+ 
@@ -66,7 +66,9 @@ The following segment types are available:
     (...)+ : this sequence may appear several times
     int : means the value will be cast as an int even if you input float
           flags generally are 0 or 1.
-    ["n = " num_verts] : for curve commands, number of subdivisions may be specified.
+    ["n = " num_verts] : for curve and line commands, number of subdivisions may be specified.
+          For curve commands, default number of segments is specified in node settings (in the N panel).
+          For line commands, default number of segments is always 1.
     z   : is optional for closing a line
     X   : as a final command to close the edges (cyclic) [-1, 0]
           in addition, if the first and last vertex share coordinate space

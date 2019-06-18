@@ -116,10 +116,15 @@ def many(func, backtracking=False):
     This corresponds to
         <Parser> *
     in BNF notation.
+    If backtracking is set to False, then the parser will iterate
+    as far as it can, even if consequential parsers will fail then.
+    With backtracking set to True, the parser will be able to go back
+    if it sees that some of consequencing parsers will fail.
     """
     def parser(src):
         for (value, values), rest in sequence(func, parser)(src):
             yield [value] + values, rest
+            # Stop on first possible parsing variant?
             if not backtracking:
                 return
         
