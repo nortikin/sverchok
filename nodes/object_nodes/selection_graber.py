@@ -18,6 +18,7 @@
 
 
 import bpy
+import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -28,7 +29,57 @@ class SvCopySelectionFromObject(bpy.types.Operator):
     bl_idname = "node.copy_selection_from_object"
     bl_label = "Copy selection"
 
+    @staticmethod
+    def get_vertex_selection(selected_objs):
+        out = []
+        for obj in selected_objs:
+            if obj.mode == 'EDIT':
+                bm = bmesh.from_edit_mesh(obj.data)
+                selected_verts = [1 if vert.select else 0 for vert in bm.verts]
+                out.append(selected_verts)
+            else:
+                selected_verts = [0 for _ in obj.data.vertices]
+                obj.data.vertices.foreach_get('select', selected_verts)
+                out.append(selected_verts)
+        return out
+
+    @staticmethod
+    def get_edges_selection(selected_objs):
+        out = []
+        for obj in selected_objs:
+            if obj.mode == 'EDIT':
+                bm = bmesh.from_edit_mesh(obj.data)
+                selected_edges = [1 if edge.select else 0 for edge in bm.edges]
+                out.append(selected_edges)
+            else:
+                selected_edges = [0 for _ in obj.data.edges]
+                obj.data.edges.foreach_get('select', selected_edges)
+                out.append(selected_edges)
+        return out
+
+    @staticmethod
+    def get_faces_selection(selected_objs):
+        out = []
+        for obj in selected_objs:
+            if obj.mode == 'EDIT':
+                bm = bmesh.from_edit_mesh(obj.data)
+                selected_faces = [1 if face.select else 0 for face in bm.faces]
+                out.append(selected_faces)
+            else:
+                selected_faces = [0 for _ in obj.data.polygons]
+                obj.data.polygons.foreach_get('select', selected_faces)
+                out.append(selected_faces)
+        return out
+
     def execute(self, context):
+        selected_objs = context.selected_objects
+        if context.node.include_vertex:
+            context.node.vertex_mask = self.get_vertex_selection(selected_objs)
+        if context.node.include_edges:
+            context.node.edges_mask = self.get_edges_selection(selected_objs)
+        if context.node.include_faces:
+            context.node.faces_mask = self.get_faces_selection(selected_objs)
+        context.node.process_node(context)
         return {'FINISHED'}
 
 
@@ -41,15 +92,62 @@ class SvSelectionGraber(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvSelectionGraber'
     bl_label = 'Selection Graber'
-    bl_icon = 'FACESEL'
+    bl_icon = 'MOD_MASK'
+
+    include_vertex = bpy.props.BoolProperty(default=True)
+    include_edges = bpy.props.BoolProperty(default=True)
+    include_faces = bpy.props.BoolProperty(default=True)
 
     def sv_init(self, context):
+        self['vertex_mask'] = None
+        self['edges_mask'] = None
+        self['faces_mask'] = None
         self.outputs.new('StringsSocket', 'Vertex mask')
         self.outputs.new('StringsSocket', 'Edge mask')
         self.outputs.new('StringsSocket', 'Face mask')
 
     def draw_buttons(self, context, layout):
-        layout.operator('node.copy_selection_from_object', text='Get from selected', icon='EYEDROPPER')
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, 'include_vertex', text=' ', icon='VERTEXSEL')
+        row.prop(self, 'include_edges', text=' ', icon='EDGESEL')
+        row.prop(self, 'include_faces', text=' ', icon='FACESEL')
+        col.operator('node.copy_selection_from_object', text='Get from selected', icon='EYEDROPPER')
+
+    def process(self):
+        self.outputs['Vertex mask'].sv_set(self.vertex_mask)
+        self.outputs['Edge mask'].sv_set(self.edges_mask)
+        self.outputs['Face mask'].sv_set(self.faces_mask)
+
+    @property
+    def vertex_mask(self):
+        if self['vertex_mask']:
+            return [[i for i in l] for l in self['vertex_mask']]
+        return [[]]
+
+    @vertex_mask.setter
+    def vertex_mask(self, array):
+        self['vertex_mask'] = array
+
+    @property
+    def edges_mask(self):
+        if self['edges_mask']:
+            return [[i for i in l] for l in self['edges_mask']]
+        return [[]]
+
+    @edges_mask.setter
+    def edges_mask(self, array):
+        self['edges_mask'] = array
+
+    @property
+    def faces_mask(self):
+        if self['faces_mask']:
+            return [[i for i in l] for l in self['faces_mask']]
+        return [[]]
+
+    @faces_mask.setter
+    def faces_mask(self, array):
+        self['faces_mask'] = array
 
 
 classes = [SvCopySelectionFromObject, SvSelectionGraber]
