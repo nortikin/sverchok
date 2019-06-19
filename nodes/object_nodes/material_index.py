@@ -108,11 +108,12 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
                 obj.data.materials[i] = material
 
     def set_material_indices(self, obj, faces, materials):
-        material_indices = np.empty(len(obj.data.polygons), dtype=int)
-        obj.data.polygons.foreach_get("material_index", material_indices)
+        material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
+        #obj.data.polygons.foreach_get("material_index", material_indices)
         for face_index, material_index in zip(faces, materials):
             #self.info("[%s] = %s", face_index, material_index)
             material_indices[face_index] = material_index
+        #self.info("Materials: %s", material_indices)
         obj.data.polygons.foreach_set("material_index", material_indices)
 
     def process(self):
