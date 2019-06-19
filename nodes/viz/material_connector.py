@@ -22,7 +22,7 @@ import bpy
 from bpy.props import IntProperty, BoolProperty, FloatProperty, StringProperty, FloatVectorProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import match_long_repeat
+from sverchok.data_structure import match_long_repeat, updateNode
 from sverchok.utils.sv_viewer_utils import greek_alphabet
 
 
@@ -286,7 +286,7 @@ class SvJumpBackToNode(bpy.types.Operator):
 
             bpy.data.objects.remove(bpy.data.objects[TEMP_OBJECT_NAME])
             if sv_node:
-                sv_node.process(True)
+                sv_node.do_process_props(context, True)
 
         return {'FINISHED'}
 
@@ -301,7 +301,7 @@ class SvUpdateChildrenMaterials(bpy.types.Operator):
         if agent.is_main_node_exist:
             for node in agent.owner_ng.nodes:
                 if node.bl_idname == 'SvMaterialConnector' and node.node_id == agent.owner_id:
-                    node.process(True)
+                    node.do_process_props(context, True)
                     break
         return {'FINISHED'}
 
@@ -441,7 +441,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             return
         if self.material and self.material.name == self.material_name:
             log_rename.debug('Name was not renamed - do nothing')
-            self.process()
+            self.do_process(context)
             return
         if not self.is_valid_name:
             context.window_manager.popup_menu(self.draw_message, title="Repeated name", icon='INFO')
@@ -478,7 +478,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
                 log_rename.debug('new material was created')
                 self.material['sv_created'] = True
         log_rename.debug('Finish handle material name changing')
-        self.process()
+        self.do_process(context)
 
     def change_name_suffix(self, context):
         # Logic of changing name of suffix
@@ -488,7 +488,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             return
         self.del_children()
         log_rename.debug('Finish suffix changing')
-        self.process()
+        self.do_process(context)
 
     def change_number_of_sockets(self, context):
         links = [(link.from_socket, link.to_socket.name) for sock in self.inputs for link in sock.links]
@@ -528,10 +528,25 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             for sock1_name, sock2 in links:
                 if sock1_name in agent.outputs:
                     agent.id_data.links.new(agent.outputs[sock1_name], sock2)
-            self.process(upd_material_tree=True)
+            self.do_process_props(context, upd_material_tree=True)
+
+    def do_process_props(self, context, upd_material_tree=False):
+        """
+        Calling process method with parameters.
+        :param upd_material_tree: Should be switched on when main shader was changed nad updating children
+        """
+        self.update_materials_tree = upd_material_tree
+        self.do_process(context)
+        self.update_materials_tree = False
 
     def do_process(self, context):
-        self.process()
+        # Unfortunately current update system does not update node if there are no any links to it.
+        # It is not good approach of making update of node in bypass of update system but
+        # I don't see now another solution.
+        if True not in [link.is_linked for link in list(self.inputs) + list(self.outputs)]:
+            self.process()
+        else:
+            updateNode(self, context)
 
     material_name = StringProperty(default='', update=change_name_material, description="sets which base name the object will use, "
                                                "use N-panel to pick alternative random names")
@@ -544,10 +559,12 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
         value_name = 'value{}'.format(i)
         vector_name = 'vector{}'.format(i)
         locals()[color_name] = FloatVectorProperty(update=do_process, name='Color', default=(.3, .3, .2, 1.0),
-                                         size=4, min=0.0, max=1.0, subtype='COLOR')
+                                                   size=4, min=0.0, max=1.0, subtype='COLOR')
         locals()[value_name] = FloatProperty(update=do_process, name='Value', default=0.0)
         locals()[vector_name] = FloatVectorProperty(size=3, default=(0, 0, 0), name='Vector', update=do_process)
 
+    update_materials_tree = BoolProperty(name='Update shader node tree',
+                                         description="Should be switched on when main shader was changed")
     update_mode = BoolProperty(name='UPD', description='', default=True, update=do_process)
     update_opengl = BoolProperty(name='UPD', default=True, update=do_process,
                                  description='Does not update if there is screen in material shader node')
@@ -621,7 +638,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
         row_num.prop(self, 'number_value_parameters')
         row_num.prop(self, 'number_vector_parameters')
 
-    def process(self, upd_material_tree=False):
+    def process(self):
         if not self.material_name or not self.update_mode:
             return
 
@@ -630,7 +647,7 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             flattened_input = [i for l in matched_input for i in l]
             total_material_number = len(flattened_input[0])
             update_material_list(self.main_material, self.children, total_material_number,
-                                 self.child_suffix, upd_material_tree)
+                                 self.child_suffix, self.update_materials_tree)
         else:
             flattened_input = [sock.sv_get()[0] for sock in self.inputs]
 
@@ -710,7 +727,6 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             log_delmat.debug('Remove material')
             bpy.data.materials.remove(self.material)
             self.material = None
-
 
     def get_number_material_users(self):
         """
