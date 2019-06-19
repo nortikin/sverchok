@@ -21,7 +21,6 @@ import bpy
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
 
 
 class SvCopySelectionFromObject(bpy.types.Operator):
@@ -31,6 +30,11 @@ class SvCopySelectionFromObject(bpy.types.Operator):
 
     @staticmethod
     def get_vertex_selection(selected_objs):
+        """
+        Read selection mask from given objects
+        :param selected_objs: objects with mesh, bpy.types.Object
+        :return: bool mask of selected vertex, [[0 ,0 ,1 ,0 , ...], [1 ,1 ,0 ,1 , ...], ...]
+        """
         out = []
         for obj in selected_objs:
             if obj.mode == 'EDIT':
@@ -45,6 +49,11 @@ class SvCopySelectionFromObject(bpy.types.Operator):
 
     @staticmethod
     def get_edges_selection(selected_objs):
+        """
+        Read selection mask from given objects
+        :param selected_objs: objects with mesh, bpy.types.Object
+        :return: bool mask of selected edges, [[0 ,0 ,1 ,0 , ...], [1 ,1 ,0 ,1 , ...], ...]
+        """
         out = []
         for obj in selected_objs:
             if obj.mode == 'EDIT':
@@ -59,6 +68,11 @@ class SvCopySelectionFromObject(bpy.types.Operator):
 
     @staticmethod
     def get_faces_selection(selected_objs):
+        """
+        Read selection mask from given objects
+        :param selected_objs: objects with mesh, bpy.types.Object
+        :return: bool mask of selected faces, [[0 ,0 ,1 ,0 , ...], [1 ,1 ,0 ,1 , ...], ...]
+        """
         out = []
         for obj in selected_objs:
             if obj.mode == 'EDIT':
@@ -80,23 +94,24 @@ class SvCopySelectionFromObject(bpy.types.Operator):
         if context.node.include_faces:
             context.node.faces_mask = self.get_faces_selection(selected_objs)
         context.node.process_node(context)
+        self.report({'INFO'}, "Mask was baked")
         return {'FINISHED'}
 
 
 class SvSelectionGraber(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: name
-    tip
+    Triggers: Get selection from object
+    Node keeps selection independently of object
 
-    tip
+    Can take selection from several objects simultaneously
     """
     bl_idname = 'SvSelectionGraber'
     bl_label = 'Selection Graber'
     bl_icon = 'MOD_MASK'
 
-    include_vertex = bpy.props.BoolProperty(default=True)
-    include_edges = bpy.props.BoolProperty(default=True)
-    include_faces = bpy.props.BoolProperty(default=True)
+    include_vertex = bpy.props.BoolProperty(default=True, description='include vertex mask in baking')
+    include_edges = bpy.props.BoolProperty(default=True, description='include edges mask in baking')
+    include_faces = bpy.props.BoolProperty(default=True, description='include faces mask in baking')
 
     def sv_init(self, context):
         self['vertex_mask'] = None
