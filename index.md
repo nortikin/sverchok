@@ -83,6 +83,7 @@
     SvScaleNodeMK2
     SvMoveNodeMK2
     SvMirrorNode
+    SvMirrorNodeMk2
     MatrixApplyNode
     SvSimpleDeformNode
     SvBarycentricTransformNode
