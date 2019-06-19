@@ -19,13 +19,13 @@
 import numpy as np
 
 import bpy
-from bpy.props import StringProperty, IntProperty, CollectionProperty
+from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
 class SvMaterialEntry(bpy.types.PropertyGroup):
-    material = StringProperty()
+    material = PointerProperty(type = bpy.types.Material)
 
 class SvMaterialList(bpy.types.PropertyGroup):
     materials = CollectionProperty(type=SvMaterialEntry)
@@ -101,8 +101,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
     def assign_materials(self, obj):
         n_existing = len(obj.data.materials)
         for i, material_entry in enumerate(self.materials):
-            material_name = material_entry.material
-            material = bpy.data.materials[material_name]
+            material = material_entry.material
             if i >= n_existing:
                 obj.data.materials.append(material)
             else:
