@@ -24,16 +24,12 @@ from bpy.props import IntProperty, BoolProperty, FloatProperty, StringProperty, 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import match_long_repeat, updateNode
 from sverchok.utils.sv_viewer_utils import greek_alphabet
+from sverchok.utils.logging import debug
 
 
 TEMP_MESH_NAME = 'SV_Temp_mesh'
 TEMP_OBJECT_NAME = 'SV_Temp_object'
 AGENT_NAME = 'Sverchok Agent'
-
-log_rename = logging.getLogger('Suffix changes')
-log_rename.setLevel(logging.DEBUG)
-log_delmat = logging.getLogger('Deleting material')
-log_delmat.setLevel(logging.DEBUG)
 
 
 def pick_blender_material(main_mat_name):
@@ -436,58 +432,58 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
 
     def change_name_material(self, context):
         # Logic of changing name of material
-        log_rename.debug('```___Start to handle material name changing___```')
+        debug('```___Start to handle material name changing___```')
         if not self.material_name:
             return
         if self.material and self.material.name == self.material_name:
-            log_rename.debug('Name was not renamed - do nothing')
+            debug('Name was not renamed - do nothing')
             self.do_process(context)
             return
         if not self.is_valid_name:
             context.window_manager.popup_menu(self.draw_message, title="Repeated name", icon='INFO')
-            log_rename.debug('Name is node valid - auto renaming')
+            debug('Name is node valid - auto renaming')
             self.material_name = ''
             del self.main_material
             return
         # try to connect to existen material
         try:
-            log_rename.debug('try pick material from Blender with new name')
+            debug('try pick material from Blender with new name')
             existing_material = bpy.data.materials[self.material_name]
-            log_rename.debug('material with such name already exists')
+            debug('material with such name already exists')
             if self.material:
                 del self.main_material
-            log_rename.debug('last material was removed')
+            debug('last material was removed')
             self.main_material = existing_material
-            log_rename.debug('memoriz new material')
+            debug('memoriz new material')
         # create material if there is no with such name
         except KeyError:
-            log_rename.debug('material with such name was not found in Blender db')
+            debug('material with such name was not found in Blender db')
             if not self.material:
-                log_rename.debug('material was not created yet')
+                debug('material was not created yet')
                 self.main_material = bpy.data.materials.new(self.material_name)
-                log_rename.debug('new material was created')
+                debug('new material was created')
                 self.material['sv_created'] = True
             elif not self.get_number_material_users() and 'sv_created' in self.material.keys():
-                log_rename.debug('last material created by Sverchok and has not other users')
+                debug('last material created by Sverchok and has not other users')
                 self.main_material = self.material_name
-                log_rename.debug('material was just renamed')
+                debug('material was just renamed')
             else:
-                log_rename.debug('last material was created by Blender UI or has other users')
+                debug('last material was created by Blender UI or has other users')
                 del self.main_material
                 self.main_material = bpy.data.materials.new(self.material_name)
-                log_rename.debug('new material was created')
+                debug('new material was created')
                 self.material['sv_created'] = True
-        log_rename.debug('Finish handle material name changing')
+        debug('Finish handle material name changing')
         self.do_process(context)
 
     def change_name_suffix(self, context):
         # Logic of changing name of suffix
-        log_rename.debug('____````Starting change suffix````_____')
+        debug('____````Starting change suffix````_____')
         if not self.material:
-            log_rename.debug('Material was not created yet - cancel')
+            debug('Material was not created yet - cancel')
             return
         self.del_children()
-        log_rename.debug('Finish suffix changing')
+        debug('Finish suffix changing')
         self.do_process(context)
 
     def change_number_of_sockets(self, context):
@@ -718,13 +714,13 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
     @main_material.deleter
     def main_material(self):
         # Delete attached material or leave it, update db of Blender
-        log_delmat.debug('___```Start deleting material```___')
-        log_delmat.debug('Remove children')
+        debug('___```Start deleting material```___')
+        debug('Remove children')
         self.del_children()
         del self.agent_node
         if self.material and 'sv_created' in self.material.keys() and not self.get_number_material_users():
-            log_delmat.debug('Material was created by Sverchok and has not another user')
-            log_delmat.debug('Remove material')
+            debug('Material was created by Sverchok and has not another user')
+            debug('Remove material')
             bpy.data.materials.remove(self.material)
             self.material = None
 
