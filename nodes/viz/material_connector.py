@@ -215,6 +215,24 @@ def is_material_viewport_shade_in_screen(context):
     return False
 
 
+def add_alpha_channel(color_data):
+    """
+    add alpha channel to set of lists of colors if there is need
+    :param color_data: [[(R, G, B), (R , G, B), ...], [...]]
+    :return: [[(R, G, B, A), (R, G, B, A), ...], [...]]
+    """
+    out = []
+    for obj in color_data:
+        colors = []
+        for col in obj:
+            if len(col) == 3:
+                colors.append(tuple(list(col) + [1]))
+            else:
+                colors.append(col)
+        out.append(colors)
+    return out
+
+
 class SvMaterialList(bpy.types.PropertyGroup):
     # storage of child of main material
     mat = PointerProperty(name='Material', type=bpy.types.Material)
@@ -639,7 +657,9 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
             return
 
         if any([sock.is_linked for sock in self.inputs]):
-            matched_input = match_input_lists([socket_in.sv_get() for socket_in in self.inputs])
+            input_with_alpha = [add_alpha_channel(sock.sv_get()) if sock.bl_idname == 'SvColorSocket' else
+                                sock.sv_get() for sock in self.inputs]
+            matched_input = match_input_lists([socket_data for socket_data in input_with_alpha])
             flattened_input = [i for l in matched_input for i in l]
             total_material_number = len(flattened_input[0])
             update_material_list(self.main_material, self.children, total_material_number,
