@@ -591,6 +591,11 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
     number_value_parameters = IntProperty(name='Value', default=1, min=0, max=5, update=change_number_of_sockets)
     number_vector_parameters = IntProperty(name='Vector', default=1, min=0, max=5, update=change_number_of_sockets)
 
+    max_children_number = IntProperty(name='Maximum number of children', default=100, update=do_process,
+                                      description='Large number of children leads to big lags. '
+                                                  'I would not recommend to set this property '
+                                                  'bigger then 1 or 2 thousand')
+
     def copy(self, node):
         self.material_name = ''
         self.n_id = ''
@@ -651,6 +656,9 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
         row_num.prop(self, 'number_color_parameters')
         row_num.prop(self, 'number_value_parameters')
         row_num.prop(self, 'number_vector_parameters')
+        col_max = layout.column(align=True)
+        col_max.label(text='Max children number:')
+        col_max.prop(self, 'max_children_number', text='')
 
     def process(self):
         if not self.material_name or not self.update_mode:
@@ -659,7 +667,9 @@ class SvMaterialConnector(bpy.types.Node, SverchCustomTreeNode):
         if any([sock.is_linked for sock in self.inputs]):
             input_with_alpha = [add_alpha_channel(sock.sv_get()) if sock.bl_idname == 'SvColorSocket' else
                                 sock.sv_get() for sock in self.inputs]
-            matched_input = match_input_lists([socket_data for socket_data in input_with_alpha])
+            cut_input = [[obj[:self.max_children_number] if len(obj) > self.max_children_number else obj
+                          for obj in sock_data] for sock_data in input_with_alpha]
+            matched_input = match_input_lists([socket_data for socket_data in cut_input])
             flattened_input = [i for l in matched_input for i in l]
             total_material_number = len(flattened_input[0])
             update_material_list(self.main_material, self.children, total_material_number,
