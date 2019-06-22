@@ -131,6 +131,7 @@
     SvWafelNode
     CrossSectionNode
     SvBisectNode
+    SvBoolean2DNode
     ---
     SvAdaptiveEdgeNode
     AdaptivePolsNode

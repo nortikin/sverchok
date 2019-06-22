@@ -99,3 +99,4 @@ def pt_in_triangle(p_test, p0, p1, p2):
         return (  (s_p >= 0) and (t_p >= 0) and (s_p + t_p) <= D  )
     else:
         return (  (s_p <= 0) and (t_p <= 0) and (s_p + t_p) >= D  )
+
