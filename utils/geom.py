@@ -35,8 +35,10 @@ import time
 import bpy
 import bmesh
 import mathutils
+
 from mathutils import Matrix, Vector
-from mathutils.geometry import intersect_line_line, intersect_point_line
+from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
+
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 from sverchok.data_structure import match_long_repeat
@@ -463,6 +465,18 @@ class Spline(object):
         elif metric == "CHEBYSHEV":
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
             tknots = np.insert(tknots, 0, 0).cumsum()
+            tknots = tknots / tknots[-1]
+        elif metric == "X":
+            tknots = pts[:,0]
+            tknots = tknots - tknots[0]
+            tknots = tknots / tknots[-1]
+        elif metric == "Y":
+            tknots = pts[:,1]
+            tknots = tknots - tknots[0]
+            tknots = tknots / tknots[-1]
+        elif metric == "Z":
+            tknots = pts[:,2]
+            tknots = tknots - tknots[0]
             tknots = tknots / tknots[-1]
 
         return tknots
@@ -1484,6 +1498,27 @@ def calc_normal(vertices):
         triangles = [[vertices[i] for i in idxs] for idxs in triangle_idxs]
         subnormals = [mathutils.geometry.normal(*triangle) for triangle in triangles]
         return mathutils.Vector(center(subnormals))
+
+def interpolate_quadratic_bezier(knot1, handle, knot2, resolution):
+    """
+    Interpolate a quadartic bezier spline segment.
+    Quadratic bezier curve is defined by two knots (at the beginning and at the
+    end of segment) and one handle.
+
+    Quadratic bezier curves is a special case of cubic bezier curves, which
+    are implemented in blender. So this function just converts input data
+    and calls for interpolate_bezier.
+    """
+    if not isinstance(knot1, mathutils.Vector):
+        knot1 = mathutils.Vector(knot1)
+    if not isinstance(knot2, mathutils.Vector):
+        knot2 = mathutils.Vector(knot2)
+    if not isinstance(handle, mathutils.Vector):
+        handle = mathutils.Vector(handle)
+
+    handle1 = knot1 + (2.0/3.0) * (handle - knot1)
+    handle2 = handle + (1.0/3.0) * (knot2 - handle)
+    return interpolate_bezier(knot1, handle1, handle2, knot2, resolution)
 
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)

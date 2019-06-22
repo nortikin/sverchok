@@ -36,6 +36,7 @@
     Hilbert3dNode
     HilbertImageNode
     SvProfileNodeMK2
+    SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
@@ -64,6 +65,7 @@
     SvIntersectLineSphereNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
+    SvKDTreePathNode
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
@@ -123,6 +125,7 @@
 ## Modifier Make
     LineConnectNodeMK2
     SvLatheNode
+    SvBevelCurveNode
     SvConvexHullNode
     SvConvexHullNodeMK2
     DelaunayTriangulation2DNode
@@ -241,6 +244,7 @@
     SvSwitchNode
     SvInputSwitchNode
     SvNeuroElman1LNode
+    SvCustomSwitcher
 
 ## Viz
     ViewerNode2

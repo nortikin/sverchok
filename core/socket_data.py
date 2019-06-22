@@ -121,6 +121,8 @@ class SvNoDataError(LookupError):
     def get_message(self):
         if not self.node and not self.socket:
             return "SvNoDataError"
+        elif not self.socket:
+            return "No data passed for node {}".format(self.node.name)
         else:
             return "No data passed into socket `{}'".format(self.socket.name)
     

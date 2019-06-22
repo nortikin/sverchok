@@ -21,10 +21,14 @@ import mathutils
 from bpy.props import FloatProperty, EnumProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat as mlr)
-
+from sverchok.utils.sv_KDT_utils import kdt_closest_verts_range, kdt_closest_verts_find_n
 
 class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    '''Find nearest verts'''
+    '''
+    Triggers: Find nearest verts
+    Tooltip: Find nearest verts to another verts group
+    '''
+    
     bl_idname = 'SvKDTreeNodeMK2'
     bl_label = 'KDT Closest Verts MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -34,6 +38,11 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         ('find_range', 'find_range', 'find closest tree vectors in range', '', 1),
     ]
 
+    func_dict = {
+        'find_n': kdt_closest_verts_find_n,
+        'find_range': kdt_closest_verts_range
+        }
+        
     number = IntProperty(
         min=1, default=1, name='Number',
         description="find this amount", update=updateNode)
@@ -56,29 +65,32 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'mode', expand=True)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'insert')
-        self.inputs.new('VerticesSocket', 'find').use_prop = True
-        self.inputs.new('StringsSocket', 'number').prop_name = "number"
-        self.inputs.new('StringsSocket', 'radius').prop_name = "radius"
-        self.inputs['radius'].hide_safe = True
-        self.outputs.new('VerticesSocket', 'Co')
-        self.outputs.new('StringsSocket', 'index')
-        self.outputs.new('StringsSocket', 'distance')
+        
+        si = self.inputs
+        so = self.outputs
+        si.new('VerticesSocket', 'insert')
+        si.new('VerticesSocket', 'find').use_prop = True
+        si.new('StringsSocket', 'number').prop_name = "number"
+        si.new('StringsSocket', 'radius').prop_name = "radius"
+        si['radius'].hide_safe = True
+        so.new('VerticesSocket', 'Co')
+        so.new('StringsSocket', 'index')
+        so.new('StringsSocket', 'distance')
 
     def process(self):
-        V1, V2, N, R = [i.sv_get() for i in self.inputs]
+        '''main node function called every update'''
+        si = self.inputs
+        so = self.outputs
+        if not (any(s.is_linked for s in so) and si[0].is_linked):
+            return
+        V1, V2, N, R = mlr([i.sv_get() for i in si])
         out = []
-        Co, ind, dist = self.outputs
+        Co, ind, dist = so
         find_n = self.mode == "find_n"
+        func = self.func_dict[self.mode]
         for v, v2, k in zip(V1, V2, (N if find_n else R)):
-            kd = mathutils.kdtree.KDTree(len(v))
-            for idx, co in enumerate(v):
-                kd.insert(co, idx)
-            kd.balance()
-            if find_n:
-                out.extend([kd.find_n(vert, num) for vert, num in zip(*mlr([v2, k]))])
-            else:
-                out.extend([kd.find_range(vert, dist) for vert, dist in zip(*mlr([v2, k]))])
+            func(v, v2, k, out)
+
         if Co.is_linked:
             Co.sv_set([[i[0][:] for i in i2] for i2 in out])
         if ind.is_linked:
