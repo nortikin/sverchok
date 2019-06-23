@@ -77,6 +77,7 @@
     EvaluateImageNode
     SvDeformationNode
     SvLinkedVertsNode
+    SvAlignMeshByMesh
 
 ## Transforms
     SvRotationNode
