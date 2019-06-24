@@ -82,11 +82,14 @@ def sv_main_handler(scene):
 
 @persistent
 def sv_object_live_update(scene):
+    # This handler is created especially for objects in nodes. When live updated is enabled in 3d panel this handler
+    # detects user changes of objects and call process of appropriate objects in node.
     if not scene.SvShowIn3D_active:
         return
 
     obj_nodes = []
     for ng in bpy.data.node_groups:
+        # search of objects in nodes
         if ng.bl_idname == 'SverchCustomTreeType':
             if ng.sv_process:
                 nodes = []
