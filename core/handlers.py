@@ -6,6 +6,8 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, upgrade_group
+from sverchok.utils.context_managers import hard_freeze
+from sverchok.core.update_system import process_from_node
 
 from sverchok.ui import (
     viewer_draw,
@@ -17,7 +19,7 @@ from sverchok.ui import (
     color_def
 )
 
-
+objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 _state = {'frame': None}
 
 def sverchok_trees():
@@ -77,6 +79,40 @@ def sv_main_handler(scene):
             # print("Edit detected in {}".format(ng.name))
             ng.process()
 
+
+@persistent
+def sv_object_live_update(scene):
+    if not scene.SvShowIn3D_active:
+        return
+
+    obj_nodes = []
+    for ng in bpy.data.node_groups:
+        if ng.bl_idname == 'SverchCustomTreeType':
+            if ng.sv_process:
+                nodes = []
+                for n in ng.nodes:
+                    if n.bl_idname in objects_nodes_set:
+                        nodes.append(n)
+                if nodes:
+                    obj_nodes.append(nodes)
+
+    for nodes in obj_nodes:
+        # Nodes of current node tree
+        for node in nodes:
+            for i in node.object_names:
+                # object_names is collections of names of objects of SvObjectsNodeMK3
+                try:
+                    obj = bpy.data.objects[i.name]
+                except KeyError:
+                    continue
+                if obj.is_updated or obj.is_updated_data or obj.data.is_updated:
+                    # check changes of object
+                    with hard_freeze(node):
+                        # freeze node tree for avoiding updating whole nodes of the tree
+                        # print('calling process on:', node.name, node.id_data)
+                        process_from_node(node)
+                    # calling process_from_node switch node tree condition to has changed, that is not true
+                    node.id_data.has_changed = False
 
 @persistent
 def sv_clean(scene):
@@ -178,6 +214,7 @@ def register():
     bpy.app.handlers.load_pre.append(sv_clean)
     bpy.app.handlers.load_post.append(sv_post_load)
     bpy.app.handlers.scene_update_pre.append(sv_main_handler)
+    bpy.app.handlers.scene_update_post.append(sv_object_live_update)
     data_structure.setup_init()
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.user_preferences.addons.get(addon_name)
@@ -191,4 +228,5 @@ def unregister():
     bpy.app.handlers.load_pre.remove(sv_clean)
     bpy.app.handlers.load_post.remove(sv_post_load)
     bpy.app.handlers.scene_update_pre.remove(sv_main_handler)
+    bpy.app.handlers.scene_update_post.remove(sv_object_live_update)
     set_frame_change(None)

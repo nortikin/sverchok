@@ -21,90 +21,7 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty
 
 import sverchok
 from sverchok.utils.sv_update_utils import version_and_sha
-from sverchok.core.update_system import process_from_node
 from sverchok.utils import profile
-from sverchok.utils.context_managers import hard_freeze
-
-objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
-
-
-class Sv3DViewObjInUpdater(bpy.types.Operator, object):
-    """Operator which runs its self from a timer"""
-    bl_idname = "wm.sv_obj_modal_update"
-    bl_label = "start n stop obj updating"
-
-    _timer = None
-    mode = StringProperty(default='')
-    node_name = StringProperty(default='')
-    node_group = StringProperty(default='')
-    speed = FloatProperty(default=1 / 13)
-
-    def modal(self, context, event):
-
-        if not context.scene.SvShowIn3D_active:
-            self.cancel(context)
-            return {'FINISHED'}
-
-        if not (event.type == 'TIMER'):
-            return {'PASS_THROUGH'}
-
-        obj_nodes = []
-        for ng in bpy.data.node_groups:
-            if ng.bl_idname == 'SverchCustomTreeType':
-                if ng.sv_process:
-                    nodes = []
-                    for n in ng.nodes:
-                        if n.bl_idname in objects_nodes_set:
-                            nodes.append(n)
-                    if nodes:
-                        obj_nodes.append(nodes)
-
-        ''' reaches here only if event is TIMER and self.active '''
-        for nodes in obj_nodes:
-            # Nodes of current node tree
-            for node in nodes:
-                for i in node.object_names:
-                    # object_names is collections of names of objects of SvObjectsNodeMK3
-                    try:
-                        obj = bpy.data.objects[i.name]
-                    except KeyError:
-                        continue
-                    if obj.is_updated or obj.is_updated_data or obj.data.is_updated:
-                        # check changes of object
-                        with hard_freeze(node):
-                            # freeze node tree for avoiding updating whole nodes of the tree
-                            # print('calling process on:', node.name, node.id_data)
-                            process_from_node(node)
-                        # calling process_from_node switch node tree condition to has changed, that is not true
-                        node.id_data.has_changed = False
-
-        return {'PASS_THROUGH'}
-
-    def event_dispatcher(self, context, type_op):
-        if type_op == 'start':
-            context.scene.SvShowIn3D_active = True
-
-            # rate can only be set in event_timer_add (I think...)
-            # self.speed = 1 / context.node.updateRate
-
-            wm = context.window_manager
-            self._timer = wm.event_timer_add(self.speed, context.window)
-            wm.modal_handler_add(self)
-
-        if type_op == 'end':
-            context.scene.SvShowIn3D_active = False
-
-    def execute(self, context):
-        # n  = context.node
-        # self.node_name = context.node.name
-        # self.node_group = context.node.id_data.name
-
-        self.event_dispatcher(context, self.mode)
-        return {'RUNNING_MODAL'}
-
-    def cancel(self, context):
-        wm = context.window_manager
-        wm.event_timer_remove(self._timer)
 
 
 class Sv3DPanel(bpy.types.Panel):
@@ -120,16 +37,15 @@ class Sv3DPanel(bpy.types.Panel):
         layout = self.layout
         little_width = 0.12
 
-        addon = context.user_preferences.addons.get(sverchok.__name__)
-        if addon.preferences.enable_live_objin:
-
-            # Live Update Modal trigger.
-            row = layout.row()
-            OP = 'wm.sv_obj_modal_update'
-            if context.scene.SvShowIn3D_active:
-                row.operator(OP, text='Stop live update', icon='CANCEL').mode = 'end'
-            else:
-                row.operator(OP, text='Start live update', icon='EDIT').mode = 'start'
+        # Live Update Modal trigger.
+        row = layout.row()
+        if context.scene.SvShowIn3D_active:
+            text = 'Stop live update'
+            icon = 'CANCEL'
+        else:
+            text = 'Start live update'
+            icon = 'EDIT'
+        row.prop(context.scene, 'SvShowIn3D_active',  text=text, icon=icon)
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -384,7 +300,6 @@ class SverchokToolsMenu(bpy.types.Panel):
 
 
 sv_tools_classes = [
-    Sv3DViewObjInUpdater,
     SverchokToolsMenu,
     Sv3DPanel,
 ]

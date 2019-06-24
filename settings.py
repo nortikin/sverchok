@@ -160,9 +160,6 @@ class SverchokPreferences(AddonPreferences):
     over_sized_buttons = BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
 
-    enable_live_objin = BoolProperty(
-        description="Objects in edit mode will be updated in object-in Node")
-
     render_scale = FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default render scale')
 
@@ -234,7 +231,6 @@ class SverchokPreferences(AddonPreferences):
             col1.label(text="UI:")
             col1.prop(self, "show_icons")
             col1.prop(self, "over_sized_buttons")
-            col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
             col1.prop(self, "external_editor", text="Ext Editor")
             col1.prop(self, "real_sverchok_path", text="Src Directory")
 
