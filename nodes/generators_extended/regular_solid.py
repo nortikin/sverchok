@@ -36,7 +36,16 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Regular Solid'
     bl_icon = 'GRIP'
 
-    source : EnumProperty(
+
+    def reset_preset(self, context):
+        if self.changing_preset:
+            return
+        if self.preset != "0":
+            self.preset = "0"
+        else:
+            updateNode(self, context)
+
+    source: EnumProperty(
                     items=(("4", "Tetrahedron", ""),
                             ("6", "Hexahedron", ""),
                             ("8", "Octahedron", ""),
@@ -44,9 +53,9 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
                             ("20", "Icosahedron", "")),
                     name="Source",
                     description="Starting point of your solid",
-                    update=updateNode
+                    update=reset_preset
                     )
-    size : FloatProperty(
+    size: FloatProperty(
                     name="Size",
                     description="Radius of the sphere through the vertices",
                     min=0.01,
@@ -56,7 +65,7 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
                     default=1.0,
                     update=updateNode
                     )
-    vTrunc : FloatProperty(
+    vTrunc: FloatProperty(
                     name="Vertex Truncation",
                     description="Amount of vertex truncation",
                     min=0.0,
@@ -66,9 +75,9 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
                     default=0.0,
                     precision=3,
                     step=0.5,
-                    update=updateNode
+                    update=reset_preset
                     )
-    eTrunc : FloatProperty(
+    eTrunc: FloatProperty(
                     name="Edge Truncation",
                     description="Amount of edge truncation",
                     min=0.0,
@@ -78,57 +87,49 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
                     default=0.0,
                     precision=3,
                     step=0.2,
-                    update=updateNode
+                    update=reset_preset
                     )
-    snub : EnumProperty(
+    snub: EnumProperty(
                     items=(("None", "No Snub", ""),
                            ("Left", "Left Snub", ""),
                            ("Right", "Right Snub", "")),
                     name="Snub",
                     description="Create the snub version",
-                    update=updateNode
+                    update=reset_preset
                     )
-    dual : BoolProperty(
+    dual: BoolProperty(
                     name="Dual",
                     description="Create the dual of the current solid",
                     default=False,
-                    update=updateNode
+                    update=reset_preset
                     )
-    keepSize : BoolProperty(
+    keepSize: BoolProperty(
                     name="Keep Size",
                     description="Keep the whole solid at a constant size",
                     default=False,
                     update=updateNode
                     )
+    changing_preset: BoolProperty(
+                    name="changing_preset",
+                    description="changing_preset",
+                    default=False,
+                    )
     def updatePreset(self, context):
         if self.preset != "0":
             # if preset, set preset
             if self.previousSetting != self.preset:
+                self.changing_preset = True
                 using = self.p[self.preset]
                 self.source = using[0]
                 self.vTrunc = using[1]
                 self.eTrunc = using[2]
                 self.dual = using[3]
                 self.snub = using[4]
-            else:
-                using = self.p[self.preset]
-                result0 = self.source == using[0]
-                result1 = abs(self.vTrunc - using[1]) < 0.004
-                result2 = abs(self.eTrunc - using[2]) < 0.0015
-                result4 = using[4] == self.snub or ((using[4] == "Left") and
-                                                self.snub in ["Left", "Right"])
-                if (result0 and result1 and result2 and result4):
-                    if self.p[self.previousSetting][3] != self.dual:
-                        if self.preset[0] == "d":
-                            self.preset = self.preset[1:]
-                        else:
-                            self.preset = "d" + self.preset
-                else:
-                    self.preset = "0"
+
+        self.changing_preset = False
         updateNode(self, context)
 
-
-    preset = EnumProperty(
+    preset: EnumProperty(
                     items=(("0", "Custom", ""),
                            ("t4", "Truncated Tetrahedron", ""),
                            ("r4", "Cuboctahedron", ""),
@@ -211,21 +212,16 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "dual", toggle=True)
         row.prop(self, "keepSize", toggle=True)
 
-
     def get_data(self):
-
         size = self.inputs["size"].sv_get()
         vTrunc = self.inputs["vTrunc"].sv_get()
         eTrunc = self.inputs["eTrunc"].sv_get()
         params = [size, vTrunc, eTrunc]
         return match_long_repeat(params)
 
-
-
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
-
 
         verts_out, edges_out, polys_out = [], [], []
 
@@ -255,7 +251,6 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
                 polys_out.append(faces)
                 if get_edges:
                     edges_out.append(pols_edges([faces], unique_edges=True)[0])
-
 
         if self.outputs['Vertices'].is_linked:
             self.outputs['Vertices'].sv_set(verts_out)
