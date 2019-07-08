@@ -79,6 +79,7 @@
     EvaluateImageNode
     SvDeformationNode
     SvLinkedVertsNode
+    SvIntersectEdges2D
 
 ## Transforms
     SvRotationNode
