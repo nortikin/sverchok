@@ -34,7 +34,8 @@ import time
 import bpy
 import bmesh
 import mathutils
-from mathutils import Matrix
+from mathutils import Matrix, Vector
+from mathutils.geometry import interpolate_bezier, intersect_line_line, intersect_point_line
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
@@ -898,3 +899,41 @@ def multiply_vectors_deep(M, vlist):
         ))
 
     return nlist
+
+def point_in_segment(point, origin, end, tolerance):
+    '''Checks if the sum of lengths is greater than the length of the segment'''
+    dist_p_in_segment = (point - origin).length + (point - end).length - (origin - end).length
+    is_p_in_segment = abs(dist_p_in_segment) < tolerance
+    return is_p_in_segment
+
+def distance_line_line(line_a, line_b, result, gates, tolerance):
+    '''
+    Pass the data to the mathutils function
+    Deals with lines as endless objects defined by a AB segment
+    A and B will be the first and last vertices of the input list
+    In case of parallel lines it will return the origin of the first line as the closest point
+    '''
+    line_origin_a = Vector(line_a[0])
+    line_end_a = Vector(line_a[-1])
+    line_origin_b = Vector(line_b[0])
+    line_end_b = Vector(line_b[-1])
+
+    inter_p = intersect_line_line(line_origin_a, line_end_a, line_origin_b, line_end_b)
+    if inter_p:
+        dist = (inter_p[0] - inter_p[1]).length
+        intersect = dist < tolerance
+        is_a_in_segment = point_in_segment(inter_p[0], line_origin_a, line_end_a, tolerance)
+        is_b_in_segment = point_in_segment(inter_p[1], line_origin_b, line_end_b, tolerance)
+
+        local_result = [dist, intersect, list(inter_p[1]), list(inter_p[0]), is_a_in_segment, is_b_in_segment]
+    else:
+        inter_p = intersect_point_line(line_origin_a, line_origin_b, line_end_b)
+        dist = (inter_p[0] - line_origin_b).length
+        intersect = dist < tolerance
+        closest_in_segment = 0 <= inter_p[1] <= 1
+        local_result = [dist, intersect, line_a[0], list(inter_p[0]), True, closest_in_segment]
+
+
+    for i, res in enumerate(result):
+        if gates[i]:
+            res.append([local_result[i]])

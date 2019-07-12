@@ -207,10 +207,10 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         if scale is None:
             matrices = [Matrix.Translation(o)*rot*flip for o in origins]
         else:
-            matrices = [Matrix.Translation(o)*rot*scale*flip for o in origins]
+            matrices = [Matrix.Translation(o) @ rot @ scale @ flip for o in origins]
 
         if self.apply_matrices:
-            result_vertices = [[m * vertex for vertex in vertices] for m in matrices]
+            result_vertices = [[m @ vertex for vertex in vertices] for m in matrices]
         else:
             result_vertices = [vertices] * count
         return matrices, result_vertices

@@ -183,6 +183,23 @@ def sv_zip(*iterables):
         yield result
 
 
+list_match_modes = [
+    ("SHORT",  "Match Short",  "Match shortest List",    1),
+    ("CYCLE",  "Cycle",  "Match longest List by cycling",     2),
+    ("REPEAT", "Repeat Last", "Match longest List by repeating last item",     3),
+    ("XREF",   "X-Ref",  "Cross reference (fast cycle of long)",  4),
+    ("XREF2",  "X-Ref 2", "Cross reference (fast cycle of short)",  5),
+    ]
+
+list_match_func = {
+    "SHORT":  match_short,
+    "CYCLE":  match_long_cycle,
+    "REPEAT": match_long_repeat,
+    "XREF":   match_cross,
+    "XREF2":  match_cross2
+    }
+    
+
 #####################################################
 ################# list levels magic #################
 #####################################################

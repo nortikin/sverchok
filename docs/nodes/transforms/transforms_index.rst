@@ -11,3 +11,4 @@ Transforms
    rotation
    scale
    deform
+   barycentric_transform

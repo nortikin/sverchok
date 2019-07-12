@@ -14,6 +14,7 @@ Generators Extended
    hexa_grid_mk1
    image_components
    profile_mk2
+   regular_solid
    mesh_eval
    ring
    script
