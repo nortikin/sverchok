@@ -567,6 +567,7 @@ class AVLTree:
 x, y, z = 0, 1, 2
 test_hedge = []
 test_intersections = []
+test_event_point = []
 
 
 def is_ccw(a, b, c):
@@ -868,7 +869,7 @@ class EventPoint:
 
     def __str__(self):
         #return "({:.1f}, {:.1f})".format(self.co[x], self.co[y])
-        return "i - {}".format(self.i)
+        return "{}".format(self.i)
 
     def __lt__(self, other):
         # Sorting of points from upper left point to lowest right point
@@ -995,7 +996,7 @@ class Face:
 
 
 def create_half_edges(verts, faces):
-    # to do: self intersection polygons? double repeated polygons?
+    # todo: self intersection polygons? double repeated polygons?
     half_edges_list = dict()
     for i_face, face in enumerate(faces):
         face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
@@ -1149,6 +1150,7 @@ def find_intersections(half_edges):
     """
     status = AVLTree()
     event_queue = AVLTree()
+    test_event_point.clear()
     init_event_queue(event_queue, half_edges)
     out = []
     while event_queue:
@@ -1165,6 +1167,7 @@ def find_intersections(half_edges):
 def handle_event_point(status, event_queue, event_point, half_edges):
     # Read Computational Geometry by Mark de Berg
     EdgeSweepLine.global_event_point = event_point
+    test_event_point.append(event_point)
     out = []
     is_overlapping_points = False
     #print(event_point.i)
@@ -1260,19 +1263,19 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             edge.outer_hedge.subdivision |= sub_status
             sub_status |= on
             edge.inner_hedge.subdivision |= sub_status
-            #print('Edge {}, outer_subd {}, inner_subd {}'.format(edge, edge.outer_hedge, edge.inner_hedge))
+            #print('Marck edge {}, outer_subd {}, inner_subd {}'.format(edge, edge.outer_hedge, edge.inner_hedge))
     elif left_neighbor and left_neighbor.up_hedge.subdivision:
         for node in uc:
             edge = node.key
             if edge.subdivision != left_neighbor.up_hedge.subdivision:
                 #print('Mark edge {} by {}'.format(edge, left_neighbor.up_hedge))
-                off = edge.low_hedge.subdivision - edge.up_hedge.subdivision
-                sub_status = left_neighbor.up_hedge.subdivision - off
+                sub_status = left_neighbor.up_hedge.subdivision - edge.subdivision
                 edge.low_hedge.subdivision |= sub_status
                 edge.up_hedge.subdivision |= sub_status
                 #print('Result -', edge.low_hedge, edge.up_hedge)
 
     if c or len(set([node.key.up_i for node in u] + [node.key.low_i for node in l])) > 1:
+        #print('Intersection point -', event_point.co)
         point = tuple(list(event_point.co) + [0]) if len(event_point.co) == 2 else tuple(event_point.co)
         out.append(point)
 
@@ -1304,7 +1307,7 @@ def find_new_event(edge1, edge2, event_queue, event_point):
             new_event_point = EventPoint(intersection + [0], None)
             if new_event_point > event_point:
                 event_queue.insert(new_event_point)
-                #print('past new event point : \n', event_queue.out())
+                #print('past new event point {}: \n'.format(new_event_point.co), *event_queue.inorder_non_recursive())
 
 
 class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
