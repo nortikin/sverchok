@@ -28,6 +28,9 @@ def interp_v3_v3v3(a, b, t=0.5):
 def length(v):
     return math.sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]))
 
+def length_sq(v):
+    return ((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2])) 
+    
 def length_v2(v):
     return math.sqrt((v[0] * v[0]) + (v[1] * v[1]))
 
