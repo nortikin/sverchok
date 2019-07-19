@@ -133,6 +133,11 @@ class SvBoolean2DNode(bpy.types.Node, SverchCustomTreeNode):
         description="Mask tolerance",
         min=0, default=1.0e-5,
         step=0.02, update=updateNode)
+    minimum_area = FloatProperty(
+        name='Minimum Area',
+        description="Remove faces with smaller area ",
+        min=0, default=1.0e-4,
+        step=0.02, update=updateNode)
 
     mode_action = EnumProperty(
         name="Operation",
@@ -177,8 +182,8 @@ class SvBoolean2DNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'Polygon':
             if not self.mode_action == 'Union':
                 layout.prop(self, "partial_mode", expand=False)
-            if self.mode_action == 'Intersect' and self.partial_mode == 'Cut':
-                layout.prop(self, "exclude_cutter", text="Exclude cutter")
+            # if self.mode_action == 'Intersect' and self.partial_mode == 'Cut':
+                # layout.prop(self, "exclude_cutter", text="Exclude cutter")
 
 
         elif self.mode == 'Edge':
@@ -196,6 +201,7 @@ class SvBoolean2DNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "check_coincidences")
             layout.prop(self, "check_concavity")
         layout.prop(self, 'mask_t')
+        layout.prop(self, 'minimum_area')
 
         layout.prop(self, "list_match", expand=True)
 

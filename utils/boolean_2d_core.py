@@ -324,6 +324,7 @@ def filter_pols_inner(pols_or, mask, points_inside_p, edges_or, intersection_lib
     '''Discriminate if a polygon is inside, outside or both (special)'''
 
     pols_out = []
+    pols_in = []
     pols_out_specials = []
     specials_id = []
 
@@ -341,11 +342,13 @@ def filter_pols_inner(pols_or, mask, points_inside_p, edges_or, intersection_lib
         if not special:
             if s == len(p):
                 pols_out.append(p)
+            else:
+                pols_in.append(p)
         else:
             pols_out_specials.append(p)
             specials_id.append(i)
 
-    return pols_out, pols_out_specials, specials_id
+    return pols_out, pols_out_specials, specials_id , pols_in
 
 def filter_pols_inner_outside(pols_or, mask, points_inside_p, edges_or, intersection_lib):
     '''Discriminate if a polygon is inside, outside or both (special)'''
@@ -440,7 +443,7 @@ def replace_edges_indices(edges_out, coincidences):
         ed_out.append(e_f)
     return ed_out
 
-def fill_holes(vertices, edges, s, tolerance):
+def fill_holes(vertices, edges, s, minimum_area):
     '''create pols from edge-net'''
     if not edges and not vertices:
         return False
@@ -452,7 +455,7 @@ def fill_holes(vertices, edges, s, tolerance):
 
     bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
     verts, edges, faces = pydata_from_bmesh(bm)
-    faces =[f for i, f in enumerate(faces) if bm.faces[i].calc_area() > tolerance] #1e-4
+    faces =[f for i, f in enumerate(faces) if bm.faces[i].calc_area() > minimum_area] #1e-4
 
     bm.free()
     return (verts, edges, faces)
@@ -471,28 +474,28 @@ def recalc_normals(vertices, edges, faces):
         return vertices, edges, faces
 
 
-def build_fill_poly(verts_out, edges_affected_n, new_index, tolerance):
+def build_fill_poly(verts_out, edges_affected_n, new_index, minimum_area):
     '''Take edges and find a path between them'''
     new_pols = []
     for p in edges_affected_n:
         if len(p) < 3:
             continue
         sp = []
-        _, _, sp = fill_holes(verts_out, p, len(p), 10*tolerance)
+        _, _, sp = fill_holes(verts_out, p, len(p), minimum_area)
         sp = [[new_index[c] for c in pl]for pl in sp]
         new_pols += sp
 
     return new_pols
 
 
-def build_fill_poly_old_index(verts_out, edges_affected_n, tolerance):
+def build_fill_poly_old_index(verts_out, edges_affected_n, minimum_area):
     '''Take edges and find a path between them'''
     new_pols = []
     for p in edges_affected_n:
         if len(p) < 3:
             continue
         sp = []
-        _, _, sp = fill_holes(verts_out, p, len(p), tolerance)
+        _, _, sp = fill_holes(verts_out, p, len(p), minimum_area)
         # sp = [[new_index[c] for c in pl]for pl in sp]
         new_pols += sp
 
@@ -727,10 +730,12 @@ def geometry_full_pols(self, params, v_out_len, intersection_lib, intesection_in
     v_cut_len = len(verts_cut)
     mask, _, inside_pols_or, verts_cut_in_pols_or = create_mask_and_helpers_exclude(params, v_len, v_cut_len, v_out_len, intesection_indices, v_cut_new_index)
 
-    if self.mode_action == 'Difference':
-        mask = invert_mask_and_inner_pols(mask, verts_cut_in_pols_or, v_len, v_cut_len)
+    # if self.mode_action == 'Difference':
+        # mask = invert_mask_and_inner_pols(mask, verts_cut_in_pols_or, v_len, v_cut_len)
 
-    pols_out, specials_in, _ = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
+    pols_out, specials_in, _, pols_in = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
+    if self.mode_action == 'Difference':
+        pols_out = pols_in
     if self.partial_mode == "Include":
         pols_out += specials_in
     elif self.partial_mode == "Only":
@@ -862,7 +867,7 @@ def croped_pols(params, edges_out, intersection_lib, intesection_indices, verts_
         mask[v_len+i] = mask[v_len+i] and m
 
     new_index = create_new_indexes(verts_out, mask)
-    pols_out, specials_in, specials_id = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
+    pols_out, specials_in, specials_id, pols_in = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
     if not inside:
         pols_out, specials_in, specials_id = filter_pols_inner_outside(pols_or, mask_i, inside_pols_or, edges_or, intersection_lib)
     inside_pol_special = [inside_pols_or[i] for i in specials_id]
@@ -891,8 +896,8 @@ def croped_pols(params, edges_out, intersection_lib, intesection_indices, verts_
                     
     pols_out = new_pols + pols_out
         
-      # if check_concavity:
-        # verts_out_new, edges_out_masked, pols_out = filter_geometry_by_pol_data(pols_out, verts_out_new, edges_out_masked)
+    if check_concavity:
+        verts_out_new, edges_out_masked, pols_out = filter_geometry_by_pol_data(pols_out, verts_out_new, edges_out_masked)
 
     verts_out_new, edges_out_masked, pols_out = recalc_normals(verts_out_new, edges_out_masked, pols_out)
     return verts_out_new, e_out, pols_out, specials_in
@@ -924,7 +929,7 @@ def croped_pols_old2(params, edges_out, intersection_lib, intesection_indices, v
         mask[v_len+i] = mask[v_len+i] and m
 
     new_index = create_new_indexes(verts_out, mask)
-    pols_out, specials_in, specials_id = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
+    pols_out, specials_in, specials_id, pols_in = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
     if not inside:
         pols_out, specials_in, specials_id = filter_pols_inner_outside(pols_or, mask_i, inside_pols_or, edges_or, intersection_lib)
     inside_pol_special = [inside_pols_or[i] for i in specials_id]
@@ -977,7 +982,7 @@ def croped_pols_union(params, edges_out, intersection_lib, intesection_indices, 
         # mask[v_len+i] = mask[v_len+i] and m
 
     new_index = create_new_indexes(verts_out, mask)
-    pols_out, specials_in, specials_id = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
+    pols_out, specials_in, specials_id, pols_in = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
     # if not inside:
         # pols_out, specials_in, specials_id = filter_pols_inner_outside(pols_or, mask_i, inside_pols_or, edges_or, intersection_lib)
     inside_pol_special = [inside_pols_or[i] for i in specials_id]
@@ -1021,7 +1026,7 @@ def croped_pols_old(self, params, edges_out, intersection_lib, intesection_indic
     lib_pack = (original_edge, intersection_lib)
 
 
-    pols_out, specials_in, specials_id = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
+    pols_out, specials_in, specials_id, pols_in = filter_pols_inner(pols_or, mask, inside_pols_or, edges_or, intersection_lib)
     inside_pol_special = [inside_pols_or[i] for i in specials_id]
 
 
@@ -1059,7 +1064,7 @@ def croped_pols_old_reversed(self, params, edges_out, intersection_lib, intesect
     # mask_in_specials = [1]* v_cut_len
 
 
-    pols_out_cut, pols_cut_special, _ = filter_pols_inner(pols_cut, mask_in_specials, inside_pols_cut, edges_cut, intersection_lib[v_len:])
+    pols_out_cut, pols_cut_special, _ , pols_in = filter_pols_inner(pols_cut, mask_in_specials, inside_pols_cut, edges_cut, intersection_lib[v_len:])
 
     pols_cut_special_ai = update_pols_cut(pols_cut_special, v_len, coincidences)
     edges_affected_n_cut, _ = edges_affected(lib_pack, pols_cut_special_ai, [], edges_out, first_edge, mask)
@@ -1090,8 +1095,9 @@ def crop_pols(self, output_lists, params):
     else:
         edges_or = [sorted(e) for e in edges_or]
         params = [verts_or, edges_or, pols_or, verts_cut, pols_cut]
-    remove_inner_edges = self.mode_action == 'Difference' or (self.mode_action == 'Intersect' and self.exclude_cutter) or not self.partial_mode == "Cut"
-    edges_cut = create_edges_cut(pols_cut, remove_inner_edges) or self.mode_action == 'Union'
+    remove_inner_edges = self.mode_action == 'Difference' or (self.mode_action == 'Intersect' and self.exclude_cutter) or not self.partial_mode == "Cut" or self.mode_action == 'Union'
+    remove_inner_edges =True 
+    edges_cut = create_edges_cut(pols_cut, remove_inner_edges) 
     v_cut_new_index = []
     if remove_inner_edges:
         ec = flat_set(edges_cut)
@@ -1156,13 +1162,13 @@ def crop_pols(self, output_lists, params):
     if self.mode_action == 'Union':
         # verts_out_new, edges_out_masked, pols_out, _ = croped_pols_union(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, self.mode_action == 'Intersect', self.check_concavity, mask_cut, periemter_pols)
         # pols_out = croped_pols_old2(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, True, self.check_concavity, mask_cut, periemter_pols)
-        pols_out = croped_pols_old2(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, False, self.check_concavity, mask_cut, periemter_pols, self.mask_t)
-        pols_out2 = croped_pols_old2(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, True, self.check_concavity, mask_cut, periemter_pols, self.mask_t)
+        pols_out = croped_pols_old2(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, False, self.check_concavity, mask_cut, periemter_pols, self.minimum_area)
+        pols_out2 = croped_pols_old2(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, True, self.check_concavity, mask_cut, periemter_pols, self.minimum_area)
         print([p for p in pols_out])
         # print(pols_out2)
         remove_double_poly(pols_out2, pols_out)
         print("periemter_pols", periemter_pols)
-        # pols_out += pols_out2
+        pols_out += pols_out2
         # pols_out = croped_pols_old(self, params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, False)
         # pols_out2 = croped_pols_old(self, params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, True)
         # pols_out += pols_out2
@@ -1182,7 +1188,7 @@ def crop_pols(self, output_lists, params):
 
             verts_out_new, edges_out_masked, pols_out = geometry_full_pols(self, params, v_out_len, intersection_lib, intesection_indices, v_cut_new_index)
         else:
-            verts_out_new, edges_out_masked, pols_out, _ = croped_pols(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, self.mode_action == 'Intersect', self.check_concavity, mask_cut, periemter_pols, self.mask_t)
+            verts_out_new, edges_out_masked, pols_out, _ = croped_pols(params, edges_out, intersection_lib, intesection_indices, verts_out, original_edge, first_edge, coincidences, v_cut_len, self.mode_action == 'Intersect', self.check_concavity, mask_cut, periemter_pols, self.minimum_area)
 
     output_lists[0].append(verts_out_new)
     output_lists[1].append(edges_out_masked)
