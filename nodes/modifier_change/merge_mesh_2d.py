@@ -966,33 +966,38 @@ def get_upper_vert(verts, edge):
 
 class HalfEdge:
 
-    def __init__(self, origin, subdivision, i=None):
+    def __init__(self, origin, i=None, face=None):
         self.origin = origin
-        self.subdivision = set()
-        if subdivision is not None:
-            self.subdivision.update(subdivision)
         self.i = i
+        self.face = face
+        self.in_faces = {face} if face else set()
 
-        self.face = None
         self.twin = None
         self.next = None
         self.last = None
 
     def __str__(self):
-        return 'he-{}{}'.format((self.i, self.twin.i), self.subdivision)
+        return 'he-{}'.format((self.i, self.twin.i))
 
     def __repr__(self):
-        return repr('hedge - {}, subset - {}'.format((self.i, self.twin.i), self.subdivision))
+        return repr('hedge - {}'.format((self.i, self.twin.i)))
+
+    @property
+    def subdivision(self):
+        return {s for face in self.in_faces for s in face.subdivision}
 
 
 class Face:
-
-    def __init__(self, subdivision=None):
+    def __init__(self, i, subdivision=None):
+        self.i = i
         self.outer = None
         self.inners = []
         self.subdivision = set()
         if subdivision:
             self.subdivision = subdivision
+
+    def __str__(self):
+        return 'f{}{}'.format(self.i, self.subdivision)
 
 
 def create_half_edges(verts, faces):
@@ -1000,12 +1005,12 @@ def create_half_edges(verts, faces):
     half_edges_list = dict()
     for i_face, face in enumerate(faces):
         face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
+        f = Face(i_face, {0})
         loop = []
         for i in range(len(face)):
             origin_i = face[i]
             next_i = face[(i + 1) % len(face)]
-            half_edge = HalfEdge(verts[origin_i], {0}, origin_i)
-            half_edge.face = Face({0})
+            half_edge = HalfEdge(verts[origin_i], origin_i, f)
             loop.append(half_edge)
             half_edges_list[(origin_i, next_i)] = half_edge
         for i in range(len(face)):
@@ -1017,7 +1022,7 @@ def create_half_edges(verts, faces):
         if key[::-1] in half_edges_list:
             half_edge.twin = half_edges_list[key[::-1]]
         else:
-            outer_edge = HalfEdge(verts[key[1]], None, key[1])
+            outer_edge = HalfEdge(verts[key[1]], key[1])
             half_edge.twin = outer_edge
             outer_edge.twin = half_edge
             if key[::-1] in outer_half_edges:
@@ -1029,7 +1034,7 @@ def create_half_edges(verts, faces):
         next_edge = outer_edge.twin
         while next_edge:
             next_edge = next_edge.last.twin
-            if not next_edge.subdivision:
+            if not next_edge.face:
                 break
         outer_edge.next = next_edge
         next_edge.last = outer_edge
@@ -1038,14 +1043,16 @@ def create_half_edges(verts, faces):
 
 def merge_two_half_edges_list(a, b, len_verts_a=None):
     out = list(a)
+    faces = set()
     for half_edge in b:
         if len_verts_a:
             half_edge.i += len_verts_a
-        if half_edge.subdivision:
-            half_edge.subdivision = {v + 1 for v in half_edge.subdivision}
         if half_edge.face:
-            half_edge.face.subdivision = {v + 1 for v in half_edge.face.subdivision}
+            faces.add(half_edge.face)
         out.append(half_edge)
+    for face in faces:
+        face.subdivision = {v + 1 for v in face.subdivision}
+        #print('Update face sub', face)
     return out
 
 
@@ -1091,7 +1098,7 @@ def mesh_from_half_edge(half_edges):
     mask_a = []
     mask_b = []
     for hedge in half_edges:
-        if not hedge.subdivision or hedge in used:
+        if not hedge.in_faces or hedge in used:
             continue
         #print('Build face from -', hedge)
         used.add(hedge)
@@ -1171,7 +1178,6 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     out = []
     is_overlapping_points = False
     #print(event_point.i)
-    global_event_point = event_point.co
     left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x])
     c = [node for node in coincidence if node.key.is_c]
     l = [node for node in coincidence if not node.key.is_c]
@@ -1191,23 +1197,24 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             low_edge.up_hedge = edge.up_hedge
             up_edge.low_hedge = edge.low_hedge
             # copy pare of half edges from existing half edges and create appropriate links
-            up_hedge_twin = HalfEdge(event_point.co, edge.low_hedge.subdivision, event_point.i)
-            up_hedge_twin.face = edge.low_hedge.face
+            up_hedge_twin = HalfEdge(event_point.co, event_point.i, edge.low_hedge.face)
             up_hedge_twin.next = edge.low_hedge.next
             edge.low_hedge.next.last = up_hedge_twin
-            low_hedge_twin = HalfEdge(event_point.co, edge.up_hedge.subdivision, event_point.i)
-            low_hedge_twin.face = edge.up_hedge.face
+            low_hedge_twin = HalfEdge(event_point.co,event_point.i, edge.up_hedge.face)
             low_hedge_twin.next = edge.up_hedge.next
             edge.up_hedge.next.last = low_hedge_twin
+            # add information about belonging to other faces only for new half edge of low edge
+            # and delete outdate information about belonging for low half edge of up edge
+            up_hedge_twin.in_faces = set(edge.low_hedge.in_faces)
+            up_edge.low_hedge.in_faces = {up_edge.low_hedge.face} if up_edge.low_hedge.face else set()
+            # apply new half edges to new edges
             low_edge.low_hedge = up_hedge_twin
             up_edge.up_hedge = low_hedge_twin
+            # link half edges to each other
             low_edge.up_hedge.twin = low_edge.low_hedge
             low_edge.low_hedge.twin = low_edge.up_hedge
             up_edge.up_hedge.twin = up_edge.low_hedge
             up_edge.low_hedge.twin = up_edge.up_hedge
-            # turn back subdivision of half edges of up edge
-            up_edge.up_hedge.subdivision = set(up_edge.up_hedge.face.subdivision) if up_edge.up_hedge.face else set()
-            up_edge.low_hedge.subdivision = set(up_edge.low_hedge.face.subdivision) if up_edge.low_hedge.face else set()
             half_edges.extend([up_hedge_twin, low_hedge_twin])
             node.key = low_edge
             uc_edges.append(up_edge)
@@ -1254,25 +1261,23 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             #print('outer hedge {}, next {}, last {}'.format(edge.outer_hedge, edge.outer_hedge.next, edge.outer_hedge.last))
             #print('inner hedge {}, next {}, last {}'.format(edge.inner_hedge, edge.inner_hedge.next, edge.inner_hedge.last))
 
-        sub_status = set(rotation_nodes[-1].key.inner_hedge.subdivision)
-        for i in range(len(rotation_nodes) * 2):
-            edge = rotation_nodes[i % len(rotation_nodes)].key
-            off = edge.outer_hedge.subdivision - edge.inner_hedge.subdivision
-            on = edge.inner_hedge.subdivision - edge.outer_hedge.subdivision
-            sub_status -= off
-            edge.outer_hedge.subdivision |= sub_status
-            sub_status |= on
-            edge.inner_hedge.subdivision |= sub_status
-            #print('Marck edge {}, outer_subd {}, inner_subd {}'.format(edge, edge.outer_hedge, edge.inner_hedge))
-    elif left_neighbor and left_neighbor.up_hedge.subdivision:
+        sub_status = set(rotation_nodes[-1].key.inner_hedge.in_faces)
+        for i in range(len(rotation_nodes)):
+            edge = rotation_nodes[i].key
+            sub_status -= edge.outer_hedge.in_faces
+            edge.outer_hedge.in_faces |= sub_status
+            sub_status |= edge.inner_hedge.in_faces
+            edge.inner_hedge.in_faces |= sub_status
+            #print('Marck edge {}, outer_subd {}, inner_subd {}'.format(edge, edge.outer_hedge.subdivision, edge.inner_hedge.subdivision))
+    else:
+        sub_status = set(left_neighbor.up_hedge.in_faces) if left_neighbor else set()
         for node in uc:
             edge = node.key
-            if edge.subdivision != left_neighbor.up_hedge.subdivision:
-                #print('Mark edge {} by {}'.format(edge, left_neighbor.up_hedge))
-                sub_status = left_neighbor.up_hedge.subdivision - edge.subdivision
-                edge.low_hedge.subdivision |= sub_status
-                edge.up_hedge.subdivision |= sub_status
-                #print('Result -', edge.low_hedge, edge.up_hedge)
+            sub_status -= edge.outer_hedge.in_faces
+            edge.outer_hedge.in_faces |= sub_status
+            sub_status |= edge.inner_hedge.in_faces
+            edge.inner_hedge.in_faces |= sub_status
+            #print('Marck edge {}, outer_subd {}, inner_subd {}'.format(edge, edge.outer_hedge.subdivision, edge.inner_hedge.subdivision))
 
     if c or len(set([node.key.up_i for node in u] + [node.key.low_i for node in l])) > 1:
         #print('Intersection point -', event_point.co)
@@ -1285,8 +1290,6 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     else:
         leftmost_node = uc[0]
         rightmost_node = uc[-1]
-        #left_neighbor = leftmost_node.last
-        #right_neighbor = rightmost_node.next
         #print('leftmost_node', leftmost_node)
         #print('rightmost_node', rightmost_node)
         if left_neighbor:
