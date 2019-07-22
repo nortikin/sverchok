@@ -646,7 +646,7 @@ def dot_product(v1, v2):
     return out
 
 
-def almost_equal(v1, v2, epsilon=1e-5):
+def almost_equal(v1, v2, epsilon=1e-6):
     """
     Compare floating values
     :param v1: int, float
@@ -657,11 +657,11 @@ def almost_equal(v1, v2, epsilon=1e-5):
     return abs(v1 - v2) < epsilon
 
 
-def is_less(v1, v2, epsilon=1e-5):
+def is_less(v1, v2, epsilon=1e-6):
     return v2 - v1 > epsilon
 
 
-def is_more(v1, v2, epsilon=1e-5):
+def is_more(v1, v2, epsilon=1e-6):
     return v1 - v2 > epsilon
 
 
@@ -1177,7 +1177,7 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     test_event_point.append(event_point)
     out = []
     is_overlapping_points = False
-    #print(event_point.i)
+    #print(event_point.i, event_point.co)
     left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x])
     c = [node for node in coincidence if node.key.is_c]
     l = [node for node in coincidence if not node.key.is_c]
