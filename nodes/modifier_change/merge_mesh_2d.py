@@ -20,6 +20,7 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 
 
 class Node:
@@ -1086,6 +1087,7 @@ def mesh_from_half_edge(half_edges):
         verts.append(hedge.origin)
         next_edge = hedge.twin.next
         while next_edge != hedge:
+            #print('next_edge -', next_edge, next_edge.origin)
             next_edge.i = hedge.i
             used.add(next_edge)
             next_edge = next_edge.twin.next
@@ -1097,22 +1099,32 @@ def mesh_from_half_edge(half_edges):
     faces = []
     mask_a = []
     mask_b = []
+    temp_used_face = set()  # todo change this when algorithm hole detection will be implemented
+    mask_c_index_a = []
+    mask_c_index_b = []
     for hedge in half_edges:
         if not hedge.in_faces or hedge in used:
             continue
         #print('Build face from -', hedge)
         used.add(hedge)
         face = [hedge.i]
-        mask_a.append(1 if 0 in hedge.subdivision else 0)
-        mask_b.append(1 if 1 in hedge.subdivision else 0)
         next_edge = hedge.next
         while next_edge != hedge:
             face.append(next_edge.i)
             used.add(next_edge)
             next_edge = next_edge.next
-        faces.append(face)
+        if tuple(sorted(face)) not in temp_used_face:
+            faces.append(face)
+            temp_used_face.add(tuple(sorted(face)))
 
-    return verts, faces, mask_a, mask_b
+        mask_a.append(1 if 0 in hedge.subdivision else 0)
+        mask_b.append(1 if 1 in hedge.subdivision else 0)
+        indexes_a = [face.i for face in hedge.in_faces if 0 in face.subdivision]
+        indexes_b = [face.i for face in hedge.in_faces if 1 in face.subdivision]
+        mask_c_index_a.append(min(indexes_a) if indexes_a else -1)
+        mask_c_index_b.append(min(indexes_b) if indexes_b else -1)
+
+    return verts, faces, mask_a, mask_b, mask_c_index_a, mask_c_index_b
 
 
 def map_overlay(verts_a, faces_a, verts_b, faces_b):
@@ -1122,15 +1134,6 @@ def map_overlay(verts_a, faces_a, verts_b, faces_b):
     intersections = find_intersections(half_edges)
     test_hedge = half_edges
     return mesh_from_half_edge(half_edges)
-    #verts = verts_a + verts_b
-    #faces = faces_a + faces_b
-    #half_edges = merge_two_half_edges_list(create_half_edges(verts_a, faces_a), create_half_edges(verts_b, faces_b),
-    #                                       len(verts_a), len(faces_a))
-    #edges, subdivision_mask = create_edges(half_edges)
-    #intersections = find_intersections(verts, edges, subdivision_mask, half_edges)
-    #if intersections:
-    #    co, edg = zip(*intersections)
-    #    return list(co)
 
 
 def init_event_queue(event_queue, half_edges):
@@ -1324,6 +1327,30 @@ class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Merge mesh 2D'
     bl_icon = 'AUTOMERGE_ON'
 
+    def update_sockets(self, context):
+        links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+        [self.outputs.remove(sock) for sock in self.outputs[2:]]
+        new_socks = []
+        if self.simple_mask:
+            new_socks.append(self.outputs.new('StringsSocket', 'MaskA'))
+            new_socks.append(self.outputs.new('StringsSocket', 'MaskB'))
+        if self.index_mask:
+            new_socks.append(self.outputs.new('StringsSocket', 'MaskIndexA'))
+            new_socks.append(self.outputs.new('StringsSocket', 'MaskIndexB'))
+        [[self.id_data.links.new(sock, link) for link in links[sock.name]] for sock in new_socks if sock.name in links]
+        updateNode(self, context)
+
+    simple_mask = bpy.props.BoolProperty(name='Simple mask', description='Switching between two type of masks',
+                                         update=update_sockets, default=True)
+    index_mask = bpy.props.BoolProperty(name="Index mask",
+                                        description="Mask of output mesh represented indexes"
+                                                    " of faces from mesh A and Mesh B", update=update_sockets)
+
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column(align=True)
+        col.prop(self, 'simple_mask', toggle=True)
+        col.prop(self, 'index_mask', toggle=True)
+
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'VertsA')
         self.inputs.new('StringsSocket', 'FacesA')
@@ -1342,11 +1369,15 @@ class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
         faces_b = self.inputs['FacesB'].sv_get()[0]
         mesh = map_overlay(verts_a, faces_a, verts_b, faces_b)
         if mesh:
-            v, f, ma, mb = zip(mesh)
+            v, f, ma, mb, mia, mib = zip(mesh)
             self.outputs['Verts'].sv_set(v)
             self.outputs['Faces'].sv_set(f)
-            self.outputs['MaskA'].sv_set(ma)
-            self.outputs['MaskB'].sv_set(mb)
+            if self.simple_mask:
+                self.outputs['MaskA'].sv_set(ma)
+                self.outputs['MaskB'].sv_set(mb)
+            if self.index_mask:
+                self.outputs['MaskIndexA'].sv_set(mia)
+                self.outputs['MaskIndexB'].sv_set(mib)
 
 
 def register():
