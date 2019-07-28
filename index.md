@@ -374,3 +374,4 @@
     SvQuaternionMathNode
     SvPulgaPhysicsNode
     SvProjectPointToLine
+    SvSplitFaces
