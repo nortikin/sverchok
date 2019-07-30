@@ -323,7 +323,7 @@ def create_half_edges(verts):
     # todo: self intersection polygons? double repeated polygons?
     half_edges = []
     twin_hedges = []
-    points = [Point(v) for v in verts] if is_ccw_polygon([v for v in verts]) else [Point(v) for v in verts][::-1]
+    points = [Point(v) for v in verts] if is_ccw_polygon(verts) else [Point(v) for v in verts][::-1]
     super_face = Face()
     face = Face()
     for i in range(len(points)):
@@ -345,6 +345,74 @@ def create_half_edges(verts):
         half_edges[i].twin.last = next_hedge.twin
         half_edges[i].twin.next = last_hedge.twin
     return points, half_edges, [super_face, face]
+
+
+def create_hedges_from_faces(verts, sv_faces):
+    half_edges = dict()
+    points = [Point(v) for v in verts]
+    faces = []
+    for sv_face in sv_faces:
+        sv_face = sv_face if is_ccw_polygon([verts[i] for i in sv_face]) else sv_face[::-1]
+        face = Face()
+        faces.append(face)
+        loop = []
+        for i in range(len(sv_face)):
+            pi = sv_face[i]
+            next_pi = sv_face[(i + 1) % len(sv_face)]
+            hedge = HalfEdge(points[pi], face)
+            loop.append(hedge)
+            half_edges[(pi, next_pi)] = hedge
+        for i in range(len(loop)):
+            next_i = (i + 1) % len(loop)
+            loop[i].next = loop[next_i]
+            loop[next_i].last = loop[i]
+        face.outer = loop[0]
+    outer_hedges = dict()
+    for key in half_edges:
+        hedge = half_edges[key]
+        if key[::-1] in half_edges:
+            hedge.twin = half_edges[key[::-1]]
+        else:
+            outer_edge = HalfEdge(points[key[1]])
+            hedge.twin = outer_edge
+            outer_edge.twin = hedge
+            if key[::-1] in outer_hedges:
+                raise Exception("It looks like input mesh has adjacent faces with only one common point"
+                                "Handle such meshes does not implemented yet.")
+            outer_hedges[key[::-1]] = outer_edge
+    for key in outer_hedges:
+        outer_edge = outer_hedges[key]
+        next_edge = outer_edge.twin
+        count = 0
+        while next_edge:
+            next_edge = next_edge.last.twin
+            if not next_edge.face:
+                break
+            count += 1
+            if count > len(verts):
+                raise RecursionError('Edge-{} cannot find next edge'.format(key))
+        outer_edge.next = next_edge
+        next_edge.last = outer_edge
+        #print_he(outer_edge, 'outer')
+        #print_he(next_edge, 'next')
+    super_face = Face()
+    faces.append(super_face)
+    used = set()
+    for outer_hedge in outer_hedges.values():
+        if outer_hedge in used:
+            continue
+        used.add(outer_hedge)
+        super_face.inners.append(outer_hedge)
+        next_hedge = outer_hedge.next
+        count = 0
+        while next_hedge != outer_hedge:
+            used.add(next_hedge)
+            next_hedge = next_hedge.next
+            count += 1
+            if count > len(outer_hedges):
+                raise RecursionError('Edge - ({},{}) cannot make a loop'.format(outer_hedge.origin.co,
+                                                                                outer_hedge.twin.origin.co))
+    return points, list(half_edges.values()) + list(outer_hedges.values()), faces
 
 
 def to_sv_mesh_from_faces(points, faces):
@@ -387,6 +455,33 @@ def build_face_list(hedges):
     return faces
 
 
+def add_holes(polygon_mesh, hole_faces):
+    p, he, f = 0, 1, 2
+    points = polygon_mesh[p]
+    half_edges = polygon_mesh[he]
+    faces = polygon_mesh[f]
+    outer_face = polygon_mesh[f][0] if polygon_mesh[f][0].outer else polygon_mesh[f][1]
+    hole_super_face = [face for face in hole_faces if face.inners][0]
+    outer_face.inners.extend(hole_super_face.inners)
+    for hedge in outer_face.inners:
+        #print_he(hedge)
+        half_edges.append(hedge)
+        points.append(hedge.origin)
+        hedge.origin.hedge = hedge
+        hedge.twin.last = hedge.next.twin
+        hedge.next.twin.next = hedge.twin
+        next_hedge = hedge.next
+        while next_hedge != hedge:
+            #print_he(hedge, 'next')
+            next_hedge.twin.last = next_hedge.next.twin
+            next_hedge.next.twin.next = next_hedge.twin
+            half_edges.append(next_hedge)
+            points.append(next_hedge.origin)
+            next_hedge.origin.hedge = next_hedge
+            next_hedge = next_hedge.next
+    return points, half_edges, faces
+
+
 def insert_edge(up_p, low_p):
 
     up_hedge = HalfEdge(up_p)
@@ -407,7 +502,9 @@ def insert_edge(up_p, low_p):
             else:
                 up_next = up_ccw_hedges[0]
         else:
-            up_next = up_ccw_hedges[1] if up_ccw_hedges[1] < up_hedge else up_ccw_hedges[0]
+            #print('up_ccw[1] greater then up_hedge -', up_ccw_hedges[1] > up_hedge)
+            #print_he(up_ccw_hedges, 'ccw_hedges')
+            up_next = up_ccw_hedges[1] if up_ccw_hedges[0] < up_ccw_hedges[1] < up_hedge else up_ccw_hedges[0]
     else:
         raise Exception('Unexpected number of half edges in point {}'.format(up_p))
     low_ccw_hedges = low_p.get_ccw_hedges()
@@ -432,22 +529,25 @@ def insert_edge(up_p, low_p):
     up_next.last = low_hedge
     low_next.last.next = low_hedge
     low_next.last = up_hedge
-    print_he(up_hedge.next, 'up_next')
-    print_he(up_hedge.last, 'up_last')
+    #print_he(up_hedge.next, 'up_next')
+    #print_he(up_hedge.last, 'up_last')
 
     return [up_hedge, low_hedge]
 
 
-def make_monotone(verts):
+def make_monotone(verts, hole_v=None, hole_f=None):
     debug_data_clear()
     points, half_edges, faces = create_half_edges(verts)
+    if hole_f:
+        hole_v, hole_he, hole_f = create_hedges_from_faces(hole_v, hole_f)
+        points, half_edges, faces = add_holes((points, half_edges, faces), hole_f)
     status = AVLTree()
     q = sorted(points)[::-1]
     while q:
         event_point = q.pop()
         EdgeSweepLine.global_event_point = event_point
         #print([(i, p.type) for i, p in enumerate(points)])
-        print_p(event_point, 'event point {} - '.format(event_point.type))
+        #print_p(event_point, 'event point {} - '.format(event_point.type))
         new_hedges = handle_functions[event_point.type](event_point, status)
         if new_hedges:
             half_edges.extend(new_hedges)
@@ -541,11 +641,14 @@ def print_e(edge, msg=None):
         debug_data.append([e.hedge.origin.co, e.hedge.twin.origin.co])
 
 
-def print_he(hedge, msg=None):
+def print_he(hedges, msg=None):
     global debug_count
-    print('{} {}'.format(msg or 'Hedge', debug_count))
-    debug_count += 1
-    debug_data.append([hedge.origin.co, hedge.next.origin.co])
+    if not isinstance(hedges, list):
+        hedges = [hedges]
+    for hedge in hedges:
+        print('{} {}'.format(msg or 'Hedge', debug_count))
+        debug_count += 1
+        debug_data.append([hedge.origin.co, hedge.twin.origin.co])
 
 
 def print_f(points):
@@ -561,25 +664,32 @@ def debug_data_clear():
     debug_count = 0
 
 
-class SvSplitFaces(bpy.types.Node, SverchCustomTreeNode):
+class SvMakeMonotone(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Split face
     tip
 
     tip
     """
-    bl_idname = 'SvSplitFaces'
-    bl_label = 'Split face'
+    bl_idname = 'SvMakeMonotone'
+    bl_label = 'Make monotone'
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'Polygon')
+        self.inputs.new('VerticesSocket', 'Hole vectors')
+        self.inputs.new('StringsSocket', 'Hole polygons')
         self.outputs.new('VerticesSocket', 'Vertices')
         self.outputs.new('StringsSocket', 'Polygons')
 
     def process(self):
         verts = self.inputs['Polygon'].sv_get()[0]
+        is_holes = False
+        if self.inputs['Hole vectors'].is_linked and self.inputs['Hole polygons'].is_linked:
+            is_holes = True
+            hole_v = self.inputs['Hole vectors'].sv_get()[0]
+            hole_f = self.inputs['Hole polygons'].sv_get()[0]
 
-        mesh = make_monotone(verts)
+        mesh = make_monotone(verts, hole_v if is_holes else None, hole_f if is_holes else None)
         if mesh:
             v, f = zip(mesh)
             self.outputs['Vertices'].sv_set(v)
@@ -587,8 +697,8 @@ class SvSplitFaces(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvSplitFaces)
+    bpy.utils.register_class(SvMakeMonotone)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvSplitFaces)
+    bpy.utils.unregister_class(SvMakeMonotone)

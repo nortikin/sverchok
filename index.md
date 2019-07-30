@@ -95,6 +95,7 @@
     SvSeparateMeshNode
     SvLimitedDissolve
     SvMeshBeautify
+    SvMakeMonotone
     ---
     PolygonBoomNode
     Pols2EdgsNode
@@ -374,4 +375,3 @@
     SvQuaternionMathNode
     SvPulgaPhysicsNode
     SvProjectPointToLine
-    SvSplitFaces
