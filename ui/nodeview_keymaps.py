@@ -52,7 +52,7 @@ def add_keymap():
         nodeview_keymaps.append((km, kmi))
 
         # ctrl + Space  | enter extra search operator
-        kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', ctrl=True)
+        kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', alt=True)
         nodeview_keymaps.append((km, kmi))
 
         # Right Click   | show custom menu
