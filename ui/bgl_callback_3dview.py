@@ -64,12 +64,14 @@ def callback_disable_all():
 def restore_opengl_defaults():
     bgl.glLineWidth(1)
     bgl.glDisable(bgl.GL_BLEND)
+    bgl.glDisable(bgl.GL_DEPTH_TEST)
 
 
 def draw_callback_px(n_id, data):
     context = bpy.context
     drawing_func = data.get('custom_function')   # must accept 'context' first
     args = data.get('args', (None,))             # args does not need to be a tuple.
+    bgl.glEnable(bgl.GL_DEPTH_TEST)
     drawing_func(context, args)
     restore_opengl_defaults()
 
