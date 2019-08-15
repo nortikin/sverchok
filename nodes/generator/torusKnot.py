@@ -332,18 +332,18 @@ class SvTorusKnotNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "R").prop_name = 'torus_R'
-        self.inputs.new('StringsSocket', "r").prop_name = 'torus_r'
-        self.inputs.new('StringsSocket', "p").prop_name = 'torus_p'
-        self.inputs.new('StringsSocket', "q").prop_name = 'torus_q'
-        self.inputs.new('StringsSocket', "n").prop_name = 'torus_res'
-        self.inputs.new('StringsSocket', "rP").prop_name = 'torus_rP'
-        self.inputs.new('StringsSocket', "sP").prop_name = 'torus_sP'
+        self.inputs.new('SvStringsSocket', "R").prop_name = 'torus_R'
+        self.inputs.new('SvStringsSocket', "r").prop_name = 'torus_r'
+        self.inputs.new('SvStringsSocket', "p").prop_name = 'torus_p'
+        self.inputs.new('SvStringsSocket', "q").prop_name = 'torus_q'
+        self.inputs.new('SvStringsSocket', "n").prop_name = 'torus_res'
+        self.inputs.new('SvStringsSocket', "rP").prop_name = 'torus_rP'
+        self.inputs.new('SvStringsSocket', "sP").prop_name = 'torus_sP'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket',  "Edges")
-        self.outputs.new('VerticesSocket', "Normals")
-        self.outputs.new('VerticesSocket', "Tangents")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket',  "Edges")
+        self.outputs.new('SvVerticesSocket', "Normals")
+        self.outputs.new('SvVerticesSocket', "Tangents")
 
     def draw_buttons_ext(self, context, layout):
         layout.column().label(text="Curve")

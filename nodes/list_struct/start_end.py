@@ -37,10 +37,10 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data")
-        self.outputs.new('StringsSocket', "Middl")
-        self.outputs.new('StringsSocket', "First")
-        self.outputs.new('StringsSocket', "Last")
+        self.inputs.new('SvStringsSocket', "Data")
+        self.outputs.new('SvStringsSocket', "Middl")
+        self.outputs.new('SvStringsSocket', "First")
+        self.outputs.new('SvStringsSocket', "Last")
 
     def update(self):
         if self.inputs['Data'].links:

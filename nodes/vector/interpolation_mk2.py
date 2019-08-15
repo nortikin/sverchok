@@ -121,10 +121,10 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     mode: EnumProperty(name='Mode', default="SPL", items=modes, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'IntervalX').prop_name = 't_in_x'
-        self.inputs.new('StringsSocket', 'IntervalY').prop_name = 't_in_y'
-        self.outputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvStringsSocket', 'IntervalX').prop_name = 't_in_x'
+        self.inputs.new('SvStringsSocket', 'IntervalY').prop_name = 't_in_y'
+        self.outputs.new('SvVerticesSocket', 'Vertices')
 
     def draw_buttons(self, context, layout):
         #pass

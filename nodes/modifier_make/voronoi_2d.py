@@ -35,9 +35,9 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         default=1.0, min=0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "clip", text="Clipping")
@@ -111,8 +111,8 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
     def process(self):
 

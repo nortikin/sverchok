@@ -33,9 +33,9 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vectors")
-        self.inputs.new('MatrixSocket', "Matrixes")
-        self.outputs.new('VerticesSocket', "Vectors")
+        self.inputs.new('SvVerticesSocket', "Vectors")
+        self.inputs.new('SvMatrixSocket', "Matrixes")
+        self.outputs.new('SvVerticesSocket', "Vectors")
 
     def process(self):
         # inputs

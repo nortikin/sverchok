@@ -74,7 +74,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         #self.inputs.new("SvObjectSocket", "parent")
         self.inputs.new("SvObjectSocket", "child")
-        self.inputs.new("MatrixSocket", "matr/vert")
+        self.inputs.new("SvMatrixSocket", "matr/vert")
         self.name_node_generated_parent = 'parent'
 
     def draw_buttons(self, context, layout):

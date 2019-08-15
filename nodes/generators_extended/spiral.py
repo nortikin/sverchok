@@ -558,19 +558,19 @@ class SvSpiralNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 160
-        self.inputs.new('StringsSocket', "R").prop_name = 'eRadius'
-        self.inputs.new('StringsSocket', "r").prop_name = 'iRadius'
-        self.inputs.new('StringsSocket', "e").prop_name = 'exponent'
-        self.inputs.new('StringsSocket', "t").prop_name = 'turns'
-        self.inputs.new('StringsSocket', "n").prop_name = 'resolution'
-        self.inputs.new('StringsSocket', "s").prop_name = 'scale'
-        self.inputs.new('StringsSocket', "h").prop_name = 'height'
-        self.inputs.new('StringsSocket', "p").prop_name = 'phase'
-        self.inputs.new('StringsSocket', "a").prop_name = 'arms'
+        self.inputs.new('SvStringsSocket', "R").prop_name = 'eRadius'
+        self.inputs.new('SvStringsSocket', "r").prop_name = 'iRadius'
+        self.inputs.new('SvStringsSocket', "e").prop_name = 'exponent'
+        self.inputs.new('SvStringsSocket', "t").prop_name = 'turns'
+        self.inputs.new('SvStringsSocket', "n").prop_name = 'resolution'
+        self.inputs.new('SvStringsSocket', "s").prop_name = 'scale'
+        self.inputs.new('SvStringsSocket', "h").prop_name = 'height'
+        self.inputs.new('SvStringsSocket', "p").prop_name = 'phase'
+        self.inputs.new('SvStringsSocket', "a").prop_name = 'arms'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        # self.outputs.new('VerticesSocket', "Normals")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        # self.outputs.new('SvVerticesSocket', "Normals")
 
         self.presets = "ARCHIMEDEAN"
 

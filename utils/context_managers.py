@@ -47,12 +47,12 @@ def new_input(node, ident, name):
     '''
     use this to contextualize additional props on a socket. f.ex:
 
-        c1 = inew('StringsSocket', 'stroke color')
+        c1 = inew('SvStringsSocket', 'stroke color')
         c1.prop_name = 'unit_1_color'
 
         becomes
 
-        with new_input(self, 'StringsSocket', 'stroke color') as c1:
+        with new_input(self, 'SvStringsSocket', 'stroke color') as c1:
             c1.prop_name = 'unit_1_color'
 
     '''

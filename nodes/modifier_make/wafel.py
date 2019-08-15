@@ -45,17 +45,17 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
     def ext_draw_checking(self, context):
         # check for sockets to add
         if self.bindCircle and not ('radCircle' in self.inputs):
-            self.inputs.new('StringsSocket', 'radCircle').prop_name = 'circle_rad'
+            self.inputs.new('SvStringsSocket', 'radCircle').prop_name = 'circle_rad'
         elif not self.bindCircle and ('radCircle' in self.inputs):
             self.inputs.remove(self.inputs['radCircle'])
         if self.do_tube_sect and not any([('vecTube' in self.inputs), ('radTube' in self.inputs)]):
-            self.inputs.new('VerticesSocket', 'vecTube', 'vecTube')
-            self.inputs.new('StringsSocket', 'radTube').prop_name = 'tube_radius'
+            self.inputs.new('SvVerticesSocket', 'vecTube', 'vecTube')
+            self.inputs.new('SvStringsSocket', 'radTube').prop_name = 'tube_radius'
         elif not self.do_tube_sect and any([('vecTube' in self.inputs), ('radTube' in self.inputs)]):
             self.inputs.remove(self.inputs['vecTube'])
             self.inputs.remove(self.inputs['radTube'])
         if self.do_contra and not ('vecContr' in self.inputs):
-            self.inputs.new('VerticesSocket', 'vecContr')
+            self.inputs.new('SvVerticesSocket', 'vecContr')
         elif not self.do_contra and ('vecContr' in self.inputs):
             self.inputs.remove(self.inputs['vecContr'])
 
@@ -103,14 +103,14 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
         default = False, update=ext_draw_checking)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vecLine')
-        self.inputs.new('VerticesSocket', 'vecPlane')
-        self.inputs.new('StringsSocket', 'edgPlane')
-        self.inputs.new('StringsSocket', 'thick').prop_name = 'thick'
+        self.inputs.new('SvVerticesSocket', 'vecLine')
+        self.inputs.new('SvVerticesSocket', 'vecPlane')
+        self.inputs.new('SvStringsSocket', 'edgPlane')
+        self.inputs.new('SvStringsSocket', 'thick').prop_name = 'thick'
 
-        self.outputs.new('VerticesSocket', 'vert')
-        self.outputs.new('StringsSocket', 'edge')
-        self.outputs.new('VerticesSocket', 'centers')
+        self.outputs.new('SvVerticesSocket', 'vert')
+        self.outputs.new('SvStringsSocket', 'edge')
+        self.outputs.new('SvVerticesSocket', 'centers')
 
     def draw_main_ui_elements(self, context, layout):
         col = layout.column(align=True)

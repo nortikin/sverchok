@@ -463,13 +463,13 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         default=24, min=4, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Distance").prop_name = 'rad_'
-        self.inputs.new('StringsSocket', "Nº Vertices").prop_name = 'vert_'
-        self.inputs.new('VerticesSocket', "Verts_in")
-        self.inputs.new('StringsSocket', "Edges_in")
+        self.inputs.new('SvStringsSocket', "Distance").prop_name = 'rad_'
+        self.inputs.new('SvStringsSocket', "Nº Vertices").prop_name = 'vert_'
+        self.inputs.new('SvVerticesSocket', "Verts_in")
+        self.inputs.new('SvStringsSocket', "Edges_in")
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "modeI", expand=True)

@@ -34,9 +34,9 @@ class SvSuzanneNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = "MONKEY"
 
     def sv_init(self, context):
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket',  "Edges")
-        self.outputs.new('StringsSocket',  "Faces")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket',  "Edges")
+        self.outputs.new('SvStringsSocket',  "Faces")
 
     def process(self):
         # return if no outputs are connected

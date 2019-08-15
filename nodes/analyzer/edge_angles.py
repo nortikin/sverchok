@@ -90,11 +90,11 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
         return None
     
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Edges")
-        self.inputs.new('StringsSocket', "Polygons")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Polygons")
 
-        self.outputs.new('StringsSocket', "Angles")
+        self.outputs.new('SvStringsSocket', "Angles")
 
     def is_degenerated(self, edge):
         return (edge.is_wire or edge.is_boundary)

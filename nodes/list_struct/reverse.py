@@ -37,8 +37,8 @@ class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'data')
-        self.outputs.new('StringsSocket', 'data')
+        self.inputs.new('SvStringsSocket', 'data')
+        self.outputs.new('SvStringsSocket', 'data')
 
     def update(self):
         if 'data' in self.inputs and self.inputs['data'].links:

@@ -100,14 +100,14 @@ class SvIntersectPlanePlaneNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', 'Location A').prop_name = 'plane_loc_a'
-        sinw('VerticesSocket', 'Normal A').prop_name = 'plane_normal_a'
-        sinw('VerticesSocket', 'Location B').prop_name = 'plane_loc_b'
-        sinw('VerticesSocket', 'Normal B').prop_name = 'plane_normal_b'
+        sinw('SvVerticesSocket', 'Location A').prop_name = 'plane_loc_a'
+        sinw('SvVerticesSocket', 'Normal A').prop_name = 'plane_normal_a'
+        sinw('SvVerticesSocket', 'Location B').prop_name = 'plane_loc_b'
+        sinw('SvVerticesSocket', 'Normal B').prop_name = 'plane_normal_b'
 
-        sonw('StringsSocket', 'Intersect')
-        sonw('VerticesSocket', 'Origin')
-        sonw('VerticesSocket', 'Direction')
+        sonw('SvStringsSocket', 'Intersect')
+        sonw('SvVerticesSocket', 'Origin')
+        sonw('SvVerticesSocket', 'Direction')
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''

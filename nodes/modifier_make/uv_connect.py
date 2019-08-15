@@ -30,7 +30,7 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GRID'
 
     base_name = 'vertices '
-    multi_socket_type = 'VerticesSocket'
+    multi_socket_type = 'SvVerticesSocket'
 
     direction = [('U_dir', 'U', 'u direction'), ('V_dir', 'V', 'v direction')]
     polsORedges = [('Pols', 'Pols', 'Pols'), ('Edges', 'Edges', 'Edges')]
@@ -53,9 +53,9 @@ class LineConnectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     slice_check: BoolProperty(name='slice', description='slice polygon', default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('StringsSocket', 'data')
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'data')
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)

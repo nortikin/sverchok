@@ -196,13 +196,13 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.1, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vers')
-        self.inputs.new('StringsSocket', "Edgs")
-        self.inputs.new('StringsSocket', "Offset").prop_name = 'offset'
-        self.outputs.new('VerticesSocket', 'Vers')
-        self.outputs.new('StringsSocket', "Faces")
-        self.outputs.new('StringsSocket', "OuterEdges")
-        self.outputs.new('StringsSocket', "VersMask")
+        self.inputs.new('SvVerticesSocket', 'Vers')
+        self.inputs.new('SvStringsSocket', "Edgs")
+        self.inputs.new('SvStringsSocket', "Offset").prop_name = 'offset'
+        self.outputs.new('SvVerticesSocket', 'Vers')
+        self.outputs.new('SvStringsSocket', "Faces")
+        self.outputs.new('SvStringsSocket', "OuterEdges")
+        self.outputs.new('SvStringsSocket', "VersMask")
 
     def process(self):
 

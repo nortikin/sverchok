@@ -221,8 +221,8 @@ class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.outputs.new('StringsSocket', "Loop Idx")
-        self.outputs.new('StringsSocket', "Loop Total")
+        self.outputs.new('SvStringsSocket', "Loop Idx")
+        self.outputs.new('SvStringsSocket', "Loop Total")
 
         self.use_custom_color = True
         self.color = monad_def.MONAD_COLOR

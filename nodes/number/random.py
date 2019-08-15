@@ -35,10 +35,10 @@ class RandomNode(bpy.types.Node, SverchCustomTreeNode):
     seed: FloatProperty(name='Seed', default=0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
-        self.inputs.new('StringsSocket', "Seed").prop_name = 'seed'
+        self.inputs.new('SvStringsSocket', "Count").prop_name = 'count_inner'
+        self.inputs.new('SvStringsSocket', "Seed").prop_name = 'seed'
 
-        self.outputs.new('StringsSocket', "Random")
+        self.outputs.new('SvStringsSocket', "Random")
 
     def process(self):
         if not self.outputs[0].is_linked:

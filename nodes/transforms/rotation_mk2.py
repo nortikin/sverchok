@@ -85,15 +85,15 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
-            self.inputs.new('VerticesSocket', "centers")
-            self.inputs.new('VerticesSocket', "axis")
-            self.inputs.new('StringsSocket', "angle").prop_name = "angle_"
+            self.inputs.new('SvVerticesSocket', "centers")
+            self.inputs.new('SvVerticesSocket', "axis")
+            self.inputs.new('SvStringsSocket', "angle").prop_name = "angle_"
         elif mode == 'EULER' or mode == 'QUAT':
-            self.inputs.new('StringsSocket', "X").prop_name = "x_"
-            self.inputs.new('StringsSocket', "Y").prop_name = "y_"
-            self.inputs.new('StringsSocket', "Z").prop_name = "z_"
+            self.inputs.new('SvStringsSocket', "X").prop_name = "x_"
+            self.inputs.new('SvStringsSocket', "Y").prop_name = "y_"
+            self.inputs.new('SvStringsSocket', "Z").prop_name = "z_"
             if mode == 'QUAT':
-                self.inputs.new('StringsSocket', "W").prop_name = "w_"
+                self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
 
         self.current_mode = mode
         updateNode(self, context)
@@ -119,11 +119,11 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name="Order", description="Order", default="XYZ", items=orders, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "vertices")
-        self.inputs.new('VerticesSocket', "center")
-        self.inputs.new('VerticesSocket', "axis")
-        self.inputs.new('StringsSocket', "angle").prop_name = "angle_"
-        self.outputs.new('VerticesSocket', "vertices")
+        self.inputs.new('SvVerticesSocket', "vertices")
+        self.inputs.new('SvVerticesSocket', "center")
+        self.inputs.new('SvVerticesSocket', "axis")
+        self.inputs.new('SvStringsSocket', "angle").prop_name = "angle_"
+        self.outputs.new('SvVerticesSocket', "vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

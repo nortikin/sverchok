@@ -39,10 +39,10 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='separate', description='Separate UV coords', default=False, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "vertices")
-        self.inputs.new('VerticesSocket', "centers")
-        self.inputs.new('StringsSocket', "multiplier").prop_name = "factor_"
-        self.outputs.new('VerticesSocket', "vertices")
+        self.inputs.new('SvVerticesSocket', "vertices")
+        self.inputs.new('SvVerticesSocket', "centers")
+        self.inputs.new('SvStringsSocket', "multiplier").prop_name = "factor_"
+        self.outputs.new('SvVerticesSocket', "vertices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'separate')

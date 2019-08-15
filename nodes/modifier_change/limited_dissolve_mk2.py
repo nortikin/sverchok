@@ -36,18 +36,18 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
     delimit: IntProperty(update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'bmesh_list')
-        self.inputs.new('VerticesSocket', 'Verts')
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('StringsSocket', 'Polys')
-        self.inputs.new('StringsSocket', 'Vert index')
-        self.inputs.new('StringsSocket', 'Edge index')
-        self.inputs.new('StringsSocket', 'Angle Limit').prop_name = 'angle'
-        self.outputs.new('VerticesSocket', 'Verts')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polys')
-        self.outputs.new('StringsSocket', 'bm region')
-        self.outputs.new('StringsSocket', 'bmesh_list')
+        self.inputs.new('SvStringsSocket', 'bmesh_list')
+        self.inputs.new('SvVerticesSocket', 'Verts')
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Polys')
+        self.inputs.new('SvStringsSocket', 'Vert index')
+        self.inputs.new('SvStringsSocket', 'Edge index')
+        self.inputs.new('SvStringsSocket', 'Angle Limit').prop_name = 'angle'
+        self.outputs.new('SvVerticesSocket', 'Verts')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Polys')
+        self.outputs.new('SvStringsSocket', 'bm region')
+        self.outputs.new('SvStringsSocket', 'bmesh_list')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "use_dissolve_boundaries")

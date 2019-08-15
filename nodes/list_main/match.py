@@ -53,10 +53,10 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
     mode_final: EnumProperty(default='REPEAT', items=modes, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Data 0')
-        self.inputs.new('StringsSocket', 'Data 1')
-        self.outputs.new('StringsSocket', 'Data 0')
-        self.outputs.new('StringsSocket', 'Data 1')
+        self.inputs.new('SvStringsSocket', 'Data 0')
+        self.inputs.new('SvStringsSocket', 'Data 1')
+        self.outputs.new('SvStringsSocket', 'Data 0')
+        self.outputs.new('SvStringsSocket', 'Data 1')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="Level")
@@ -88,8 +88,8 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
         # socket handling
         if self.inputs[-1].links:
             name = 'Data '+str(len(self.inputs))
-            self.inputs.new('StringsSocket', name, name)
-            self.outputs.new('StringsSocket', name, name)
+            self.inputs.new('SvStringsSocket', name, name)
+            self.outputs.new('SvStringsSocket', name, name)
         else:
             while len(self.inputs) > 2 and not self.inputs[-2].links:
                 self.inputs.remove(self.inputs[-1])

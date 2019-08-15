@@ -27,10 +27,10 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data")
-        self.outputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('StringsSocket', 'data')
-        self.outputs.new('MatrixSocket', 'matrix')
+        self.inputs.new('SvStringsSocket', "data")
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'data')
+        self.outputs.new('SvMatrixSocket', 'matrix')
         self.outputs.new('SvObjectSocket', 'object')
 
     def process(self):

@@ -167,18 +167,18 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         i = self.inputs
-        i.new('StringsSocket', 'inset').prop_name = 'inset'
-        i.new('StringsSocket', 'distance').prop_name = 'distance'
-        i.new('VerticesSocket', 'vertices')
-        i.new('StringsSocket', 'polygons')
-        i.new('StringsSocket', 'ignore').prop_name = 'ignore'
-        i.new('StringsSocket', 'make_inner').prop_name = 'make_inner'
+        i.new('SvStringsSocket', 'inset').prop_name = 'inset'
+        i.new('SvStringsSocket', 'distance').prop_name = 'distance'
+        i.new('SvVerticesSocket', 'vertices')
+        i.new('SvStringsSocket', 'polygons')
+        i.new('SvStringsSocket', 'ignore').prop_name = 'ignore'
+        i.new('SvStringsSocket', 'make_inner').prop_name = 'make_inner'
 
         o = self.outputs
-        o.new('VerticesSocket', 'vertices')
-        o.new('StringsSocket', 'polygons')
-        o.new('StringsSocket', 'ignored')
-        o.new('StringsSocket', 'inset')
+        o.new('SvVerticesSocket', 'vertices')
+        o.new('SvStringsSocket', 'polygons')
+        o.new('SvStringsSocket', 'ignored')
+        o.new('SvStringsSocket', 'inset')
 
 
     def process(self):

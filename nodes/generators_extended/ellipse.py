@@ -133,18 +133,18 @@ class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 150
-        self.inputs.new('StringsSocket', "Major Radius").prop_name = "major_radius"
-        self.inputs.new('StringsSocket', "Minor Radius").prop_name = "minor_radius"
-        self.inputs.new('StringsSocket', "Num Verts").prop_name = "num_verts"
-        self.inputs.new('StringsSocket', "Phase").prop_name = "phase"
-        self.inputs.new('StringsSocket', "Rotation").prop_name = "rotation"
-        self.inputs.new('StringsSocket', "Scale").prop_name = "scale"
+        self.inputs.new('SvStringsSocket', "Major Radius").prop_name = "major_radius"
+        self.inputs.new('SvStringsSocket', "Minor Radius").prop_name = "minor_radius"
+        self.inputs.new('SvStringsSocket', "Num Verts").prop_name = "num_verts"
+        self.inputs.new('SvStringsSocket', "Phase").prop_name = "phase"
+        self.inputs.new('SvStringsSocket', "Rotation").prop_name = "rotation"
+        self.inputs.new('SvStringsSocket', "Scale").prop_name = "scale"
 
-        self.outputs.new('VerticesSocket', "Verts")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polys")
-        self.outputs.new('VerticesSocket', "F1")
-        self.outputs.new('VerticesSocket', "F2")
+        self.outputs.new('SvVerticesSocket', "Verts")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polys")
+        self.outputs.new('SvVerticesSocket', "F1")
+        self.outputs.new('SvVerticesSocket', "F2")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -153,13 +153,13 @@ class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode):
     def update_sockets(self):
         if self.mode == "AB":
             socket2 = self.inputs[1]
-            socket2.replace_socket("StringsSocket", "Minor Radius").prop_name = "minor_radius"
+            socket2.replace_socket("SvStringsSocket", "Minor Radius").prop_name = "minor_radius"
         elif self.mode == "AE":
             socket2 = self.inputs[1]
-            socket2.replace_socket("StringsSocket", "Eccentricity").prop_name = "eccentricity"
+            socket2.replace_socket("SvStringsSocket", "Eccentricity").prop_name = "eccentricity"
         else:  # AC
             socket2 = self.inputs[1]
-            socket2.replace_socket("StringsSocket", "Focal Length").prop_name = "focal_length"
+            socket2.replace_socket("SvStringsSocket", "Focal Length").prop_name = "focal_length"
 
     def make_ellipse(self, a, b, N, phase, rotation, scale):
         verts = []

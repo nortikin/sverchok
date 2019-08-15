@@ -188,9 +188,9 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     lC: IntProperty(name='lC', default=1, min = 0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data")
-        self.inputs.new('StringsSocket', "etalon")
-        self.outputs.new('StringsSocket', "result")
+        self.inputs.new('SvStringsSocket', "data")
+        self.inputs.new('SvStringsSocket', "etalon")
+        self.outputs.new('SvStringsSocket', "result")
 
     def draw_buttons(self, context, layout):
         handle_name = self.name + self.id_data.name

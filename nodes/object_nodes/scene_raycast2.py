@@ -29,14 +29,14 @@ class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
-        si('VerticesSocket', 'origin').use_prop = True
-        si('VerticesSocket', 'direction').use_prop = True
-        so('VerticesSocket', "HitP")
-        so('VerticesSocket', "HitNorm")
-        so('StringsSocket', "Succes")
-        so('StringsSocket', "FaceIndex")
+        si('SvVerticesSocket', 'origin').use_prop = True
+        si('SvVerticesSocket', 'direction').use_prop = True
+        so('SvVerticesSocket', "HitP")
+        so('SvVerticesSocket', "HitNorm")
+        so('SvStringsSocket', "Succes")
+        so('SvStringsSocket', "FaceIndex")
         so("SvObjectSocket", "Objects")
-        so("MatrixSocket", "hited object matrix")
+        so("SvMatrixSocket", "hited object matrix")
 
     def process(self):
         P,N,S,I,O,M = self.outputs

@@ -58,13 +58,13 @@ class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
         name='Seed', description='Random seed', default=0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "RandomX").prop_name = "random_x_"
-        self.inputs.new('StringsSocket', "RandomY").prop_name = "random_y_"
-        self.inputs.new('StringsSocket', "RandomZ").prop_name = "random_z_"
-        self.inputs.new('StringsSocket', "Seed").prop_name = "random_seed_"
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "RandomX").prop_name = "random_x_"
+        self.inputs.new('SvStringsSocket', "RandomY").prop_name = "random_y_"
+        self.inputs.new('SvStringsSocket', "RandomZ").prop_name = "random_z_"
+        self.inputs.new('SvStringsSocket', "Seed").prop_name = "random_seed_"
 
-        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('SvVerticesSocket', "Vertices")
 
     def process(self):
         # inputs

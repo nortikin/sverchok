@@ -33,9 +33,9 @@ class SvVolumeNode(bpy.types.Node, SverchCustomTreeNode):
         pass
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vers')
-        self.inputs.new('StringsSocket', "Pols")
-        self.outputs.new('StringsSocket', "Volume")
+        self.inputs.new('SvVerticesSocket', 'Vers')
+        self.inputs.new('SvStringsSocket', "Pols")
+        self.outputs.new('SvStringsSocket', "Volume")
 
     def process(self):
         verts_socket, polys_socket = self.inputs

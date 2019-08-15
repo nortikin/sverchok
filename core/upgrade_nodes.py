@@ -123,27 +123,27 @@ vertices_socket_upgrade = {
 
 new_socket_dict = {
     'SvWireframeNode':
-        [['inputs', 'StringsSocket', 'thickness', 0],
-         ['inputs', 'StringsSocket', 'Offset', 1]],
+        [['inputs', 'SvStringsSocket', 'thickness', 0],
+         ['inputs', 'SvStringsSocket', 'Offset', 1]],
     'SvSolidifyNode':
-        [['inputs', 'StringsSocket', 'thickness', 0]],
+        [['inputs', 'SvStringsSocket', 'thickness', 0]],
     'SvRemoveDoublesNode':
-        [['inputs', 'StringsSocket', 'Distance', 0]],
+        [['inputs', 'SvStringsSocket', 'Distance', 0]],
     'MaskListNode':
-        [['outputs', 'StringsSocket', 'mask', 0],
-         ['outputs', 'StringsSocket', 'ind_true', 1],
-         ['outputs', 'StringsSocket', 'ind_false', 2]],
+        [['outputs', 'SvStringsSocket', 'mask', 0],
+         ['outputs', 'SvStringsSocket', 'ind_true', 1],
+         ['outputs', 'SvStringsSocket', 'ind_false', 2]],
     'ListFLNode':
-        [['outputs', 'StringsSocket', 'Middl', 0]],
+        [['outputs', 'SvStringsSocket', 'Middl', 0]],
     'CentersPolsNode':
-        [['outputs', 'VerticesSocket', "Norm_abs", 1],
-         ['outputs', 'VerticesSocket', "Origins", 2]],
+        [['outputs', 'SvVerticesSocket', "Norm_abs", 1],
+         ['outputs', 'SvVerticesSocket', "Origins", 2]],
     'SvSolidifyNode':
-        [['outputs', 'StringsSocket', 'newpols', 3]],
+        [['outputs', 'SvStringsSocket', 'newpols', 3]],
     'IndexViewerNode':
-        [['inputs', 'StringsSocket', 'text', 4]],
+        [['inputs', 'SvStringsSocket', 'text', 4]],
     'SvIterateNode':
-        [['outputs', 'MatrixSocket', 'Matrices', 3]],
+        [['outputs', 'SvMatrixSocket', 'Matrices', 3]],
     'SvBmeshViewerNodeMK2':
         [['outputs', 'SvObjectSocket', 'Objects', 0]],
     }

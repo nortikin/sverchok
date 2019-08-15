@@ -133,26 +133,26 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         default="Emission", update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', 'Origin')
-        self.inputs.new('StringsSocket', 'Size').prop_name = 'size'
+        self.inputs.new('SvMatrixSocket', 'Origin')
+        self.inputs.new('SvStringsSocket', 'Size').prop_name = 'size'
 
-        i = self.inputs.new('StringsSocket', 'Size X')
+        i = self.inputs.new('SvStringsSocket', 'Size X')
         i.prop_name = 'size_x'
         i.hide_safe = True
 
-        i = self.inputs.new('StringsSocket', 'Size Y')
+        i = self.inputs.new('SvStringsSocket', 'Size Y')
         i.prop_name = 'size_y'
         i.hide_safe = True
 
-        i = self.inputs.new('StringsSocket', 'Spot Size')
+        i = self.inputs.new('SvStringsSocket', 'Spot Size')
         i.prop_name = 'spot_size'
         i.hide_safe = True
 
-        i = self.inputs.new('StringsSocket', 'Spot Blend')
+        i = self.inputs.new('SvStringsSocket', 'Spot Blend')
         i.prop_name = 'spot_blend'
         i.hide_safe = True
 
-        i = self.inputs.new('StringsSocket', 'Strength')
+        i = self.inputs.new('SvStringsSocket', 'Strength')
         i.prop_name = 'strength'
 
         color_socket = self.inputs.new('SvColorSocket', "Color")

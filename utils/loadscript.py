@@ -44,7 +44,7 @@ class SvValueType(SvBaseType):
     pass
 
 class Vertex(SvBaseType):
-    bl_idname = "VerticesSocket"
+    bl_idname = "SvVerticesSocket"
 
 class Int(SvBaseType):
     bl_idname = "SvIntSocket"
@@ -56,13 +56,13 @@ class Float(SvBaseType):
     bl_idname = "SvFloatSocket"
 
 class Matrix(SvBaseType):
-    bl_idname = "MatrixSocket"
+    bl_idname = "SvMatrixSocket"
 
 class Face():
-    bl_idname = "StringsSocket"
+    bl_idname = "SvStringsSocket"
 
 class Edge():
-    bl_idname = "StringsSocket"
+    bl_idname = "SvStringsSocket"
 
 # to allow Int instead Int() syntax
 socket_types = set(SvBaseType.__subclasses__())

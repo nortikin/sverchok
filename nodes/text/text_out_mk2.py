@@ -126,13 +126,13 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.clear()
 
         if self.text_mode == 'CSV':
-            self.inputs.new('StringsSocket', 'Col 0')
+            self.inputs.new('SvStringsSocket', 'Col 0')
             self.base_name = 'Col '
         elif self.text_mode == 'JSON':
-            self.inputs.new('StringsSocket', 'Data 0')
+            self.inputs.new('SvStringsSocket', 'Data 0')
             self.base_name = 'Data '
         elif self.text_mode == 'SV':
-            self.inputs.new('StringsSocket', 'Data')
+            self.inputs.new('SvStringsSocket', 'Data')
 
     text: StringProperty()
 
@@ -143,12 +143,12 @@ class SvTextOutNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     append: BoolProperty(default=False, description="Append to output file")
     base_name: StringProperty(name='base_name', default='Col ')
-    multi_socket_type: StringProperty(name='multi_socket_type', default='StringsSocket')
+    multi_socket_type: StringProperty(name='multi_socket_type', default='SvStringsSocket')
 
     autodump: BoolProperty(default=False, description="autodump", name="auto dump")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Col 0')
+        self.inputs.new('SvStringsSocket', 'Col 0')
 
     def draw_buttons(self, context, layout):
 

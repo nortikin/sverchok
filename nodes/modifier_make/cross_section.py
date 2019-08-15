@@ -176,13 +176,13 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.inputs.new('StringsSocket', 'edg_pol')
-        self.inputs.new('MatrixSocket', 'matrix')
-        self.inputs.new('MatrixSocket', 'cut_matrix')
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket', 'edg_pol')
+        self.inputs.new('SvMatrixSocket', 'matrix')
+        self.inputs.new('SvMatrixSocket', 'cut_matrix')
 
-        self.outputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('StringsSocket', 'edges')
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'edges')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "fill_check", text="Fill section")

@@ -98,9 +98,9 @@ class SvBendAlongPathNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.001, min=0.000001, max=0.1, precision=8, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('VerticesSocket', "Path")
-        self.outputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvVerticesSocket', "Path")
+        self.outputs.new('SvVerticesSocket', 'Vertices')
 
     def draw_buttons(self, context, layout):
         layout.label(text="Orientation:")

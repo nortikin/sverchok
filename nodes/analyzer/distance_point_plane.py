@@ -165,16 +165,16 @@ class SvDistancePointPlaneNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', "Verts")
-        sinw('VerticesSocket', "Verts Plane")
-        sinw('StringsSocket', "Tolerance").prop_name = 'tolerance'
+        sinw('SvVerticesSocket', "Verts")
+        sinw('SvVerticesSocket', "Verts Plane")
+        sinw('SvStringsSocket', "Tolerance").prop_name = 'tolerance'
 
-        sonw('StringsSocket', 'Distance')
-        sonw('StringsSocket', 'In Triangle')
-        sonw('StringsSocket', 'In Plane')
-        sonw('VerticesSocket', 'Closest Point')
-        sonw('StringsSocket', 'Closest in Triangle')
-        sonw('StringsSocket', 'Side')
+        sonw('SvStringsSocket', 'Distance')
+        sonw('SvStringsSocket', 'In Triangle')
+        sonw('SvStringsSocket', 'In Plane')
+        sonw('SvVerticesSocket', 'Closest Point')
+        sonw('SvStringsSocket', 'Closest in Triangle')
+        sonw('SvStringsSocket', 'Side')
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''

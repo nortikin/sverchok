@@ -112,14 +112,14 @@ class SvLinkedVertsNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', "Verts")
-        sinw('StringsSocket', "Edges")
-        sinw('StringsSocket', "Item").prop_name = 'item'
-        sinw('StringsSocket', "Distance").prop_name = 'distance'
+        sinw('SvVerticesSocket', "Verts")
+        sinw('SvStringsSocket', "Edges")
+        sinw('SvStringsSocket', "Item").prop_name = 'item'
+        sinw('SvStringsSocket', "Distance").prop_name = 'distance'
 
-        sonw('StringsSocket', "Verts Id")
-        sonw('VerticesSocket', "Verts")
-        sonw('StringsSocket', "Mask")
+        sonw('SvStringsSocket', "Verts Id")
+        sonw('SvVerticesSocket', "Verts")
+        sonw('SvStringsSocket', "Mask")
 
     def get_data(self):
         '''get all data from sockets'''

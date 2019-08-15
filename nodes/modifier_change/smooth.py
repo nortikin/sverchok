@@ -82,19 +82,19 @@ class SvSmoothNode(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('StringsSocket', 'Faces')
-        self.inputs.new('StringsSocket', 'VertMask')
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Faces')
+        self.inputs.new('SvStringsSocket', 'VertMask')
 
-        self.inputs.new('StringsSocket', 'Iterations').prop_name = "iterations"
-        self.inputs.new('StringsSocket', 'ClipDist').prop_name = "clip_dist"
-        self.inputs.new('StringsSocket', 'Factor').prop_name = "factor"
-        self.inputs.new('StringsSocket', 'BorderFactor').prop_name = "border_factor"
+        self.inputs.new('SvStringsSocket', 'Iterations').prop_name = "iterations"
+        self.inputs.new('SvStringsSocket', 'ClipDist').prop_name = "clip_dist"
+        self.inputs.new('SvStringsSocket', 'Factor').prop_name = "factor"
+        self.inputs.new('SvStringsSocket', 'BorderFactor').prop_name = "border_factor"
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Faces')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Faces')
 
         self.update_mode(context)
 

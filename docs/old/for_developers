@@ -81,7 +81,7 @@ Wellcome!
 	i.multi-socket multi_socket(node,min=1) - as used by ListJoin, List Zip, Connect UV 
                  multi_socket(node,min=1)  
                  base_name = 'data '
-                 multi_socket_type = 'StringsSocket'
+                 multi_socket_type = 'SvStringsSocket'
                  setup the fixed number of socket you need, the last of them is the first multi socket. 
                      minimum of one.
                  then in update(self):

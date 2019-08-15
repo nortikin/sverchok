@@ -313,17 +313,17 @@ class SvPolygonGridNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 170
-        self.inputs.new('StringsSocket', "Radius").prop_name = 'radius'
-        self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
-        self.inputs.new('StringsSocket', "Angle").prop_name = 'angle'
-        self.inputs.new('StringsSocket', "Level").prop_name = 'level'
-        self.inputs.new('StringsSocket', "NumX").prop_name = 'numx'
-        self.inputs.new('StringsSocket', "NumY").prop_name = 'numy'
+        self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
+        self.inputs.new('SvStringsSocket', "Scale").prop_name = 'scale'
+        self.inputs.new('SvStringsSocket', "Angle").prop_name = 'angle'
+        self.inputs.new('SvStringsSocket', "Level").prop_name = 'level'
+        self.inputs.new('SvStringsSocket', "NumX").prop_name = 'numx'
+        self.inputs.new('SvStringsSocket', "NumY").prop_name = 'numy'
 
-        self.outputs.new('VerticesSocket', "Centers")
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Centers")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
         self.update_layout(context)
 
@@ -336,13 +336,13 @@ class SvPolygonGridNode(bpy.types.Node, SverchCustomTreeNode):
             if "Level" in inputs:
                 inputs.remove(inputs["Level"])
             if "NumX" not in inputs:
-                inputs.new("StringsSocket", "NumX").prop_name = "numx"
+                inputs.new("SvStringsSocket", "NumX").prop_name = "numx"
             if "NumY" not in inputs:
-                inputs.new("StringsSocket", "NumY").prop_name = "numy"
+                inputs.new("SvStringsSocket", "NumY").prop_name = "numy"
 
         elif self.gridLayout in {"TRIANGLE", "DIAMOND", "HEXAGON"}:
             if "Level" not in inputs:
-                inputs.new("StringsSocket", "Level").prop_name = "level"
+                inputs.new("SvStringsSocket", "Level").prop_name = "level"
             for socket_name in named_sockets:
                 if socket_name in inputs:
                     inputs.remove(inputs[socket_name])

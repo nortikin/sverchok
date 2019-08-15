@@ -37,16 +37,16 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         si = self.inputs.new
         so = self.outputs.new
 
-        si('VerticesSocket', 'Verts')
-        si('StringsSocket', 'Faces')
-        si('VerticesSocket', 'Start').prop_name = 'start'
-        si('VerticesSocket', 'Direction').prop_name = 'direction'
+        si('SvVerticesSocket', 'Verts')
+        si('SvStringsSocket', 'Faces')
+        si('SvVerticesSocket', 'Start').prop_name = 'start'
+        si('SvVerticesSocket', 'Direction').prop_name = 'direction'
         
-        so('VerticesSocket', 'Location')
-        so('VerticesSocket', 'Normal')
-        so('StringsSocket', 'Index')
-        so('StringsSocket', 'Distance')
-        so('StringsSocket', 'Success')
+        so('SvVerticesSocket', 'Location')
+        so('SvVerticesSocket', 'Normal')
+        so('SvStringsSocket', 'Index')
+        so('SvStringsSocket', 'Distance')
+        so('SvStringsSocket', 'Success')
 
     @staticmethod
     def svmesh_to_bvh_lists(v, f):

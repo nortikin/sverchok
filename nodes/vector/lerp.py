@@ -49,10 +49,10 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
     )
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Factor").prop_name = 'factor_'
-        self.inputs.new('VerticesSocket', "Vertices A")
-        self.inputs.new('VerticesSocket', "Vertices B")
-        self.outputs.new('VerticesSocket', "EvPoint")
+        self.inputs.new('SvStringsSocket', "Factor").prop_name = 'factor_'
+        self.inputs.new('SvVerticesSocket', "Vertices A")
+        self.inputs.new('SvVerticesSocket', "Vertices B")
+        self.outputs.new('SvVerticesSocket', "EvPoint")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'process_mode', text='Evaluate', expand=True)

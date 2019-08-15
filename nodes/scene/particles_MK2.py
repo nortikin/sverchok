@@ -36,11 +36,11 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")
-        self.inputs.new('VerticesSocket', "Velocity")
-        self.inputs.new('VerticesSocket', "Location")
-        self.inputs.new('StringsSocket',  "Size")
-        self.outputs.new('VerticesSocket', "outLocation")
-        self.outputs.new('VerticesSocket', "outVelocity")
+        self.inputs.new('SvVerticesSocket', "Velocity")
+        self.inputs.new('SvVerticesSocket', "Location")
+        self.inputs.new('SvStringsSocket',  "Size")
+        self.outputs.new('SvVerticesSocket', "outLocation")
+        self.outputs.new('SvVerticesSocket', "outVelocity")
 
     def process(self):
         O, V, L, S = self.inputs

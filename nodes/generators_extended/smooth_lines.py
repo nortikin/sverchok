@@ -163,11 +163,11 @@ class SvSmoothLines(bpy.types.Node, SverchCustomTreeNode):
     weights: FloatProperty(default=0.0, name="weights", min=0.0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new("VerticesSocket", "vectors")
-        self.inputs.new("StringsSocket", "weights").prop_name = "weights"
-        self.inputs.new("StringsSocket", "attributes")
-        self.outputs.new("VerticesSocket", "verts")
-        self.outputs.new("StringsSocket", "edges")
+        self.inputs.new("SvVerticesSocket", "vectors")
+        self.inputs.new("SvStringsSocket", "weights").prop_name = "weights"
+        self.inputs.new("SvStringsSocket", "attributes")
+        self.outputs.new("SvVerticesSocket", "verts")
+        self.outputs.new("SvStringsSocket", "edges")
 
     def draw_buttons(self, context, layout):
 

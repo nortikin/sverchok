@@ -27,7 +27,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
-vsock, toposock = 'VerticesSocket', 'StringsSocket'
+vsock, toposock = 'SvVerticesSocket', 'SvStringsSocket'
 
 
 class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
@@ -66,7 +66,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         socket = self.inputs['Scale']
         if socket.is_linked:
             other = socket.other
-            if other.bl_idname == 'VerticesSocket':
+            if other.bl_idname == 'SvVerticesSocket':
                 print('connected a Vector Socket')
                 return True
         return False

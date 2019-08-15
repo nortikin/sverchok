@@ -273,11 +273,11 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     epsilon: bpy.props.FloatProperty(min=1.0e-5, default=1.0e-5, step=0.02, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts_in')
-        self.inputs.new('StringsSocket', 'Edges_in')
+        self.inputs.new('SvVerticesSocket', 'Verts_in')
+        self.inputs.new('SvStringsSocket', 'Edges_in')
 
-        self.outputs.new('VerticesSocket', 'Verts_out')
-        self.outputs.new('StringsSocket', 'Edges_out')
+        self.outputs.new('SvVerticesSocket', 'Verts_out')
+        self.outputs.new('SvStringsSocket', 'Edges_out')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

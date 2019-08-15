@@ -211,17 +211,17 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 150
-        self.inputs.new('StringsSocket', "SX").prop_name = 'scale_x'
-        self.inputs.new('StringsSocket', "SY").prop_name = 'scale_y'
-        self.inputs.new('StringsSocket', "SZ").prop_name = 'scale_z'
-        self.inputs.new('StringsSocket', "XP").prop_name = 'exponent_parallels'
-        self.inputs.new('StringsSocket', "XM").prop_name = 'exponent_meridians'
-        self.inputs.new('StringsSocket', "NP").prop_name = 'number_parallels'
-        self.inputs.new('StringsSocket', "NM").prop_name = 'number_meridians'
+        self.inputs.new('SvStringsSocket', "SX").prop_name = 'scale_x'
+        self.inputs.new('SvStringsSocket', "SY").prop_name = 'scale_y'
+        self.inputs.new('SvStringsSocket', "SZ").prop_name = 'scale_z'
+        self.inputs.new('SvStringsSocket', "XP").prop_name = 'exponent_parallels'
+        self.inputs.new('SvStringsSocket', "XM").prop_name = 'exponent_meridians'
+        self.inputs.new('SvStringsSocket', "NP").prop_name = 'number_parallels'
+        self.inputs.new('SvStringsSocket', "NM").prop_name = 'number_meridians'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
         self.presets = "ROUNDED CUBE"
 

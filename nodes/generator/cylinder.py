@@ -115,15 +115,15 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
                             update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "RadTop").prop_name = 'radTop_'
-        self.inputs.new('StringsSocket', "RadBot").prop_name = 'radBot_'
-        self.inputs.new('StringsSocket', "Vertices").prop_name = 'vert_'
-        self.inputs.new('StringsSocket', "Height").prop_name = 'height_'
-        self.inputs.new('StringsSocket', "Subdivisions").prop_name = 'subd_'
+        self.inputs.new('SvStringsSocket', "RadTop").prop_name = 'radTop_'
+        self.inputs.new('SvStringsSocket', "RadBot").prop_name = 'radBot_'
+        self.inputs.new('SvStringsSocket', "Vertices").prop_name = 'vert_'
+        self.inputs.new('SvStringsSocket', "Height").prop_name = 'height_'
+        self.inputs.new('SvStringsSocket', "Subdivisions").prop_name = 'subd_'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

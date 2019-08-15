@@ -37,9 +37,9 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
     up: EnumProperty(name="up", default=S[2], items=e(S), update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Location").use_prop = True
-        self.inputs.new('VerticesSocket', "Normal").use_prop = True
-        self.outputs.new('MatrixSocket', "Matrix")
+        self.inputs.new('SvVerticesSocket', "Location").use_prop = True
+        self.inputs.new('SvVerticesSocket', "Normal").use_prop = True
+        self.outputs.new('SvMatrixSocket', "Matrix")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "track", text="track")

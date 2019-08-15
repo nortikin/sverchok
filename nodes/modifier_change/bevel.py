@@ -91,19 +91,19 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
-        si('VerticesSocket', "Vertices")
-        si('StringsSocket', 'Edges')
-        si('StringsSocket', 'Polygons')
-        si('StringsSocket', 'BevelEdges')
+        si('SvVerticesSocket', "Vertices")
+        si('SvStringsSocket', 'Edges')
+        si('SvStringsSocket', 'Polygons')
+        si('SvStringsSocket', 'BevelEdges')
 
-        si('StringsSocket', "Offset").prop_name = "offset_"
-        si('StringsSocket', "Segments").prop_name = "segments_"
-        si('StringsSocket', "Profile").prop_name = "profile_"
+        si('SvStringsSocket', "Offset").prop_name = "offset_"
+        si('SvStringsSocket', "Segments").prop_name = "segments_"
+        si('SvStringsSocket', "Profile").prop_name = "profile_"
 
-        so('VerticesSocket', 'Vertices')
-        so('StringsSocket', 'Edges')
-        so('StringsSocket', 'Polygons')
-        so('StringsSocket', 'NewPolys')
+        so('SvVerticesSocket', 'Vertices')
+        so('SvStringsSocket', 'Edges')
+        so('SvStringsSocket', 'Polygons')
+        so('SvStringsSocket', 'NewPolys')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "vertexOnly")

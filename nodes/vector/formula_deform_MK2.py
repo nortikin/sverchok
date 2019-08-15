@@ -34,9 +34,9 @@ class SvFormulaDeformMK2Node(bpy.types.Node, SverchCustomTreeNode):
     ModeZ: StringProperty(name='formulaZ', default='z', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts(xyz)')
-        self.inputs.new('VerticesSocket', 'Verts(XYZ)')
-        self.outputs.new('VerticesSocket', 'Verts')
+        self.inputs.new('SvVerticesSocket', 'Verts(xyz)')
+        self.inputs.new('SvVerticesSocket', 'Verts(XYZ)')
+        self.outputs.new('SvVerticesSocket', 'Verts')
 
     def draw_buttons(self, context, layout):
         for element in 'XYZ':

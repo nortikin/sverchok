@@ -315,12 +315,12 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "maxmats", text="max mats")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
+        self.inputs.new('SvVerticesSocket', "Vertices")
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Faces")
-        self.outputs.new('MatrixSocket', "Matrices")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Faces")
+        self.outputs.new('SvMatrixSocket', "Matrices")
 
     def update(self):
         self.read_xml()
@@ -379,7 +379,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         # add new input sockets to node
         for s_name in sorted(socket_ids):
             if s_name not in self.inputs:
-                self.inputs.new('StringsSocket', s_name)
+                self.inputs.new('SvStringsSocket', s_name)
 
         # remove any sockets with no field_ids in xml
         old_sockets = [socket
@@ -394,7 +394,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
         # new output sockets
         for s_name in sorted(shape_names):
             if s_name not in self.outputs:
-                self.outputs.new('MatrixSocket', s_name)
+                self.outputs.new('SvMatrixSocket', s_name)
 
         # remove old output sockets
         old_sockets = [out_socket

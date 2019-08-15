@@ -93,13 +93,13 @@ class SphereNode(bpy.types.Node, SverchCustomTreeNode):
                             update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
-        self.inputs.new('StringsSocket', "U").prop_name = 'U_'
-        self.inputs.new('StringsSocket', "V").prop_name = 'V_'
+        self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'
+        self.inputs.new('SvStringsSocket', "U").prop_name = 'U_'
+        self.inputs.new('SvStringsSocket', "V").prop_name = 'V_'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")

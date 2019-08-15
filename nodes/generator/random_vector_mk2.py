@@ -43,10 +43,10 @@ class RandomVectorNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Count").prop_name = 'count_inner'
-        self.inputs.new('StringsSocket', "Seed").prop_name = 'seed'
-        self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
-        self.outputs.new('VerticesSocket', "Random")
+        self.inputs.new('SvStringsSocket', "Count").prop_name = 'count_inner'
+        self.inputs.new('SvStringsSocket', "Seed").prop_name = 'seed'
+        self.inputs.new('SvStringsSocket', "Scale").prop_name = 'scale'
+        self.outputs.new('SvVerticesSocket', "Random")
 
     def process(self):
 

@@ -48,12 +48,12 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
-        self.inputs.new('StringsSocket', 'element_index')
-        self.inputs.new('StringsSocket', 'element_mask')
-        self.inputs.new('StringsSocket', 'edges_polys')
-        self.inputs.new('StringsSocket', 'floattoboolexpr')
-        self.outputs.new('StringsSocket', 'selected_indx')
-        self.outputs.new('StringsSocket', 'selected_mask')
+        self.inputs.new('SvStringsSocket', 'element_index')
+        self.inputs.new('SvStringsSocket', 'element_mask')
+        self.inputs.new('SvStringsSocket', 'edges_polys')
+        self.inputs.new('SvStringsSocket', 'floattoboolexpr')
+        self.outputs.new('SvStringsSocket', 'selected_indx')
+        self.outputs.new('SvStringsSocket', 'selected_mask')
         self.outputs.new('SvObjectSocket', 'Objects')
 
     def process(self):

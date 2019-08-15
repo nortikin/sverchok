@@ -57,12 +57,12 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
             for i, s in enumerate(self.inputs):
                 s.name = "{0}[{1}]".format(self.var_name, i)
         else: #create first socket
-            self.inputs.new('StringsSocket', self.var_name+"[0]")
+            self.inputs.new('SvStringsSocket', self.var_name+"[0]")
         
     var_name: StringProperty(name='var_name', update=change_var_name)
 
     base_name: StringProperty(default='')
-    multi_socket_type: StringProperty(default='StringsSocket')
+    multi_socket_type: StringProperty(default='SvStringsSocket')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "var_name", text="Var")

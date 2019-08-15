@@ -41,10 +41,10 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
         name='Factor', description='Interpolation', default=0.5, min=0.0, max=1.0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Factor").prop_name = 'factor_'
-        self.inputs.new('MatrixSocket', "A")
-        self.inputs.new('MatrixSocket', "B")
-        self.outputs.new('MatrixSocket', "C")
+        self.inputs.new('SvStringsSocket', "Factor").prop_name = 'factor_'
+        self.inputs.new('SvMatrixSocket', "A")
+        self.inputs.new('SvMatrixSocket', "B")
+        self.outputs.new('SvMatrixSocket', "C")
 
     def process(self):
         # inputs

@@ -36,11 +36,11 @@ from sverchok.data_structure import (
     replace_socket)
 
 socket_colors = {
-    "StringsSocket": (0.6, 1.0, 0.6, 1.0),
-    "VerticesSocket": (0.9, 0.6, 0.2, 1.0),
+    "SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
+    "SvVerticesSocket": (0.9, 0.6, 0.2, 1.0),
     "SvQuaternionSocket": (0.9, 0.4, 0.7, 1.0),
     "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
-    "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
+    "SvMatrixSocket": (0.2, 0.8, 0.8, 1.0),
     "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
     "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
     "SvTextSocket": (0.68, 0.85, 0.90, 1)
@@ -119,7 +119,7 @@ class SvSocketCommon:
 
     def draw_expander_template(self, context, layout, prop_origin, prop_name="prop"):
 
-        if self.bl_idname == "StringsSocket":
+        if self.bl_idname == "SvStringsSocket":
             layout.prop(prop_origin, prop_name)
         else:
             if self.use_expander:
@@ -145,9 +145,9 @@ class SvSocketCommon:
     def draw_quick_link(self, context, layout, node):
 
         if self.use_quicklink:
-            if self.bl_idname == "MatrixSocket":
+            if self.bl_idname == "SvMatrixSocket":
                 new_node_idname = "SvMatrixGenNodeMK2"
-            elif self.bl_idname == "VerticesSocket":
+            elif self.bl_idname == "SvVerticesSocket":
                 new_node_idname = "GenVectorsNode"
             else:
                 return
@@ -163,7 +163,7 @@ class SvSocketCommon:
 
         # just handle custom draw..be it input or output.
         # hasattr may be excessive here
-        if self.bl_idname == 'StringsSocket':
+        if self.bl_idname == 'SvStringsSocket':
             if hasattr(self, 'custom_draw') and self.custom_draw:
 
                 # does the node have the draw function referred to by 
@@ -300,10 +300,10 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
         else:
             return default
 
-class MatrixSocket(NodeSocket, SvSocketCommon):
+class SvMatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
     
-    bl_idname = "MatrixSocket"
+    bl_idname = "SvMatrixSocket"
     bl_label = "Matrix Socket"
 
     prop_name: StringProperty(default='')
@@ -333,9 +333,9 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
             return default
 
 
-class VerticesSocket(NodeSocket, SvSocketCommon):
+class SvVerticesSocket(NodeSocket, SvSocketCommon):
     '''For vertex data'''
-    bl_idname = "VerticesSocket"
+    bl_idname = "SvVerticesSocket"
     bl_label ="Vertices Socket"
 
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
@@ -451,9 +451,9 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
         self = new_self
 
 
-class StringsSocket(NodeSocket, SvSocketCommon):
+class SvStringsSocket(NodeSocket, SvSocketCommon):
     '''Generic, mostly numbers, socket type'''
-    bl_idname = "StringsSocket"
+    bl_idname = "SvStringsSocket"
     bl_label = "Strings Socket"
 
     prop_name: StringProperty(default='')
@@ -494,17 +494,17 @@ class StringsSocket(NodeSocket, SvSocketCommon):
 type_map_to/from are used to get the bl_idname from a single letter
     
     sockets.type_map_to.get("v")
-    >>> "VerticesSocket"
+    >>> "SvVerticesSocket"
 
-    sockets.type_map_from.get("VerticesSocket")
+    sockets.type_map_from.get("SvVerticesSocket")
     >>> "v"
 
 """
 
 type_map_to = {
-    "v": VerticesSocket.bl_idname,
-    "m": MatrixSocket.bl_idname,
-    "s": StringsSocket.bl_idname,
+    "v": SvVerticesSocket.bl_idname,
+    "m": SvMatrixSocket.bl_idname,
+    "s": SvStringsSocket.bl_idname,
     "ob": SvObjectSocket.bl_idname,
     "co": SvColorSocket.bl_idname,
     "d": SvDummySocket.bl_idname,
@@ -517,7 +517,7 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 
 
 classes = [
-    VerticesSocket, MatrixSocket, StringsSocket,
+    SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket,
     SvTextSocket, SvObjectSocket
 ]

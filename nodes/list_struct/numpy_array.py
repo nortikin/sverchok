@@ -40,9 +40,9 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
     Cust: StringProperty(default='x[y.argsort()]', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'x')
-        self.inputs.new('StringsSocket', 'y')
-        self.outputs.new('StringsSocket', 'Value')
+        self.inputs.new('SvStringsSocket', 'x')
+        self.inputs.new('SvStringsSocket', 'y')
+        self.outputs.new('SvStringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Mod", text="Get")

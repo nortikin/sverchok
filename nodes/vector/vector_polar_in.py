@@ -78,11 +78,11 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
     angles_mode: EnumProperty(items=angle_modes, default="radians", update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "rho").prop_name = 'rho_'
-        self.inputs.new('StringsSocket', "phi").prop_name = 'phi_'
-        self.inputs.new('StringsSocket', "Z").prop_name = 'z_'
+        self.inputs.new('SvStringsSocket', "rho").prop_name = 'rho_'
+        self.inputs.new('SvStringsSocket', "phi").prop_name = 'phi_'
+        self.inputs.new('SvStringsSocket', "Z").prop_name = 'z_'
         self.width = 100
-        self.outputs.new('VerticesSocket', "Vectors")
+        self.outputs.new('SvVerticesSocket', "Vectors")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "coordinates", expand=True)

@@ -110,9 +110,9 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "listify", text='output as list')
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data1")
-        self.inputs.new('StringsSocket', "Data2")        
-        self.outputs.new('StringsSocket', "Result")
+        self.inputs.new('SvStringsSocket', "Data1")
+        self.inputs.new('SvStringsSocket', "Data2")        
+        self.outputs.new('SvStringsSocket', "Result")
 
     def draw_label(self):
         return self.func_

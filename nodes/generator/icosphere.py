@@ -117,12 +117,12 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self['subdivisions'] = 2
         
-        self.inputs.new('StringsSocket', 'Subdivisions').prop_name = 'subdivisions'
-        self.inputs.new('StringsSocket', 'Radius').prop_name = 'radius'
+        self.inputs.new('SvStringsSocket', 'Subdivisions').prop_name = 'subdivisions'
+        self.inputs.new('SvStringsSocket', 'Radius').prop_name = 'radius'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket',  "Edges")
-        self.outputs.new('StringsSocket',  "Faces")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket',  "Edges")
+        self.outputs.new('SvStringsSocket',  "Faces")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "subdivisions_max")

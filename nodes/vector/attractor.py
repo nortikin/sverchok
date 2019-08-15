@@ -86,21 +86,21 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         name="Coefficient", default=0.5, update=updateNode)
     
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        c = self.inputs.new('VerticesSocket', "Center")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        c = self.inputs.new('SvVerticesSocket', "Center")
         c.use_prop = True
         c.prop = (0.0, 0.0, 0.0)
 
-        d = self.inputs.new('VerticesSocket', "Direction")
+        d = self.inputs.new('SvVerticesSocket', "Direction")
         d.use_prop = True
         d.prop = (0.0, 0.0, 1.0)
 
-        self.inputs.new('StringsSocket', 'Amplitude').prop_name = 'amplitude'
-        self.inputs.new('StringsSocket', 'Coefficient').prop_name = 'coefficient'
+        self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
+        self.inputs.new('SvStringsSocket', 'Coefficient').prop_name = 'coefficient'
 
-        self.outputs.new('VerticesSocket', "Vectors")
-        self.outputs.new('VerticesSocket', "Directions")
-        self.outputs.new('StringsSocket', "Coeffs")
+        self.outputs.new('SvVerticesSocket', "Vectors")
+        self.outputs.new('SvVerticesSocket', "Directions")
+        self.outputs.new('SvStringsSocket', "Coeffs")
 
         self.update_type(context)
 

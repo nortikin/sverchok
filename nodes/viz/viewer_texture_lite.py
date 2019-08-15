@@ -76,7 +76,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 180
-        self.inputs.new('StringsSocket', "pixel value")
+        self.inputs.new('SvStringsSocket', "pixel value")
 
     def delete_texture(self):
         n_id = node_id(self)

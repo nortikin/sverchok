@@ -141,13 +141,13 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='Syncing', description='Syncing flag', default=False)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Num X").prop_name = 'numx'
-        self.inputs.new('StringsSocket', "Num Y").prop_name = 'numy'
-        self.inputs.new('StringsSocket', "Step X").prop_name = 'stepx'
-        self.inputs.new('StringsSocket', "Step Y").prop_name = 'stepy'
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.inputs.new('SvStringsSocket', "Num X").prop_name = 'numx'
+        self.inputs.new('SvStringsSocket', "Num Y").prop_name = 'numy'
+        self.inputs.new('SvStringsSocket', "Step X").prop_name = 'stepx'
+        self.inputs.new('SvStringsSocket', "Step Y").prop_name = 'stepy'
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "separate")

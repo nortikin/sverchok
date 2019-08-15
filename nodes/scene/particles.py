@@ -30,7 +30,7 @@ class SvParticlesNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")
-        self.outputs.new('VerticesSocket', "Vertices")
+        self.outputs.new('SvVerticesSocket', "Vertices")
 
     def avail_objects(self, context):
         items = [('','','')]

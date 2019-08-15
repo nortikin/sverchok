@@ -103,13 +103,13 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
         description="slice each object with all matrices, or match object and matrices individually")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.inputs.new('StringsSocket', 'edg_pol')
-        self.inputs.new('MatrixSocket', 'cut_matrix')
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket', 'edg_pol')
+        self.inputs.new('SvMatrixSocket', 'cut_matrix')
 
-        self.outputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('StringsSocket', 'edges')
-        self.outputs.new('StringsSocket', 'polygons')
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'edges')
+        self.outputs.new('SvStringsSocket', 'polygons')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

@@ -198,7 +198,7 @@ class DefaultMacros():
                     if len(node.outputs) > n:
                         links.new(node.outputs[n], join_nodes[j].inputs[i])
 
-            if all(node.outputs[0].bl_idname == "VerticesSocket" for node in sorted_nodes):
+            if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
                 viewer_node = nodes.new("SvVDExperimental")
                 viewer_node.location = join_nodes[0].location.x + join_nodes[0].width + 100, maxy
 
@@ -221,16 +221,16 @@ class DefaultMacros():
             # find out which sockets to connect
             operator = term.replace("math", "")
             sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.y, reverse=True)
-            is_vector = all(node.outputs[0].bl_idname == "VerticesSocket" for node in sorted_nodes)
+            is_vector = all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes)
             if operator == 'MUL':
                 if is_vector:
                     math_node = nodes.new('SvVectorMathNodeMK2')
                     math_node.current_op = 'CROSS'
                 else:
-                    if (sorted_nodes[0].outputs[0].bl_idname == "VerticesSocket"):
+                    if (sorted_nodes[0].outputs[0].bl_idname == "SvVerticesSocket"):
                         math_node = nodes.new('SvVectorMathNodeMK2')
                         math_node.current_op = 'SCALAR'
-                    elif (sorted_nodes[1].outputs[0].bl_idname == "VerticesSocket"):
+                    elif (sorted_nodes[1].outputs[0].bl_idname == "SvVerticesSocket"):
                         math_node = nodes.new('SvVectorMathNodeMK2')
                         math_node.current_op = 'SCALAR'
                         sorted_nodes =[sorted_nodes[1],sorted_nodes[0]]

@@ -146,18 +146,18 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         sin, son = self.inputs.new, self.outputs.new
-        sin('VerticesSocket', 'Vertices')
-        sin('StringsSocket',  'edg_pol')
-        sin('StringsSocket',  'Selection')
-        son('VerticesSocket', 'Vertices')
-        son('StringsSocket',  'Edges')
-        son('StringsSocket',  'Faces')
-        son('VerticesSocket', 'NewVertices')
-        son('StringsSocket',  'NewEdges')
-        son('StringsSocket',  'NewFaces')
-        son('VerticesSocket', 'OldVertices')
-        son('StringsSocket',  'OldEdges')
-        son('StringsSocket',  'OldFaces')
+        sin('SvVerticesSocket', 'Vertices')
+        sin('SvStringsSocket',  'edg_pol')
+        sin('SvStringsSocket',  'Selection')
+        son('SvVerticesSocket', 'Vertices')
+        son('SvStringsSocket',  'Edges')
+        son('SvStringsSocket',  'Faces')
+        son('SvVerticesSocket', 'NewVertices')
+        son('SvStringsSocket',  'NewEdges')
+        son('SvStringsSocket',  'NewFaces')
+        son('SvVerticesSocket', 'OldVertices')
+        son('SvStringsSocket',  'OldEdges')
+        son('SvStringsSocket',  'OldFaces')
         self.update_mode(context)
 
     def process(self):

@@ -90,14 +90,14 @@ class SvSimpleDeformNode(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "lock_y", toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('MatrixSocket', 'Origin')
-        self.inputs.new('StringsSocket', "Angle").prop_name = "angle"
-        self.inputs.new('StringsSocket', "Factor").prop_name = "factor"
-        self.inputs.new('StringsSocket', "LowLimit").prop_name = "low_limit"
-        self.inputs.new('StringsSocket', "HighLimit").prop_name = "hi_limit"
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvMatrixSocket', 'Origin')
+        self.inputs.new('SvStringsSocket', "Angle").prop_name = "angle"
+        self.inputs.new('SvStringsSocket', "Factor").prop_name = "factor"
+        self.inputs.new('SvStringsSocket', "LowLimit").prop_name = "low_limit"
+        self.inputs.new('SvStringsSocket', "HighLimit").prop_name = "hi_limit"
 
-        self.outputs.new('VerticesSocket', 'Vertices')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
 
         self.update_mode(context)
 

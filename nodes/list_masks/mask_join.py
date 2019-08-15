@@ -35,10 +35,10 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     newsock: BoolProperty(name='newsock', default=False)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Mask')
-        self.inputs.new('StringsSocket', 'Data True')
-        self.inputs.new('StringsSocket', 'Data False')
-        self.outputs.new('StringsSocket', 'Data')
+        self.inputs.new('SvStringsSocket', 'Mask')
+        self.inputs.new('SvStringsSocket', 'Data True')
+        self.inputs.new('SvStringsSocket', 'Data False')
+        self.outputs.new('SvStringsSocket', 'Data')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'level')

@@ -39,13 +39,13 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
         default=1.0, max=3.0, min=0.5, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "VersR")
-        self.inputs.new('StringsSocket', "PolsR")
-        self.inputs.new('VerticesSocket', "VersD")
-        self.inputs.new('StringsSocket', "PolsD")
-        self.inputs.new('StringsSocket', "Z_Coef")
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Poligons")
+        self.inputs.new('SvVerticesSocket', "VersR")
+        self.inputs.new('SvStringsSocket', "PolsR")
+        self.inputs.new('SvVerticesSocket', "VersD")
+        self.inputs.new('SvStringsSocket', "PolsD")
+        self.inputs.new('SvStringsSocket', "Z_Coef")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Poligons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "width_coef", text="donor width")

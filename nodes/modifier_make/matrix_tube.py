@@ -35,11 +35,11 @@ class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', "Matrices")
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Faces")
+        self.inputs.new('SvMatrixSocket', "Matrices")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Faces")
 
     def process(self):
         if not self.outputs['Vertices'].is_linked:

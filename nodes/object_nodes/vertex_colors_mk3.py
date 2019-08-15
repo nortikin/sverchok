@@ -135,7 +135,7 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         inew = self.inputs.new
         inew('SvObjectSocket', 'Object')
-        inew('StringsSocket', "Index")
+        inew('SvStringsSocket', "Index")
         color_socket = inew('SvColorSocket', "Color")
         color_socket.prop_name = 'unit_color'
 
@@ -154,7 +154,7 @@ class SvVertexColorNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         index_socket = self.inputs["Index"]
 
         # self upgrade, shall only be called once if encountered.
-        if color_socket.bl_idname == 'StringsSocket':
+        if color_socket.bl_idname == 'SvStringsSocket':
             color_socket.replace_socket('SvColorSocket')
 
         objects = self.inputs["Object"].sv_get()

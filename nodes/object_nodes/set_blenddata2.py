@@ -41,8 +41,8 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
-        self.inputs.new('StringsSocket', 'values')
-        self.outputs.new('StringsSocket', 'outvalues')
+        self.inputs.new('SvStringsSocket', 'values')
+        self.outputs.new('SvStringsSocket', 'outvalues')
         self.outputs.new('SvObjectSocket', 'Objects')
 
     def process(self):

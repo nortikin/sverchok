@@ -41,12 +41,12 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
 
         inew = self.inputs.new
-        inew('VerticesSocket', "Location").prop_name = 'l_'
-        inew('VerticesSocket', "Scale").prop_name = 's_'
-        inew('VerticesSocket', "Rotation").prop_name = 'r_'
-        inew('StringsSocket', "Angle").prop_name = 'a_'
+        inew('SvVerticesSocket', "Location").prop_name = 'l_'
+        inew('SvVerticesSocket', "Scale").prop_name = 's_'
+        inew('SvVerticesSocket', "Rotation").prop_name = 'r_'
+        inew('SvStringsSocket', "Angle").prop_name = 'a_'
 
-        self.outputs.new('MatrixSocket', "Matrix")
+        self.outputs.new('SvMatrixSocket', "Matrix")
     
     def process(self):
         L,S,R,A = self.inputs
@@ -60,10 +60,10 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         # ability to add vector & vector difference instead of only rotation values
         if A.is_linked:
-            if A.links[0].from_socket.bl_idname == 'VerticesSocket':
+            if A.links[0].from_socket.bl_idname == 'SvVerticesSocket':
                 rotA = Vector_generate(A.sv_get())
                 angle = [[]]
-            elif A.links[0].from_socket.bl_idname == 'StringsSocket':
+            elif A.links[0].from_socket.bl_idname == 'SvStringsSocket':
                 angle = A.sv_get()
                 rotA = [[]]
         else:

@@ -45,10 +45,10 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data")
-        self.inputs.new('StringsSocket', "Item").prop_name = 'item'
-        self.outputs.new('StringsSocket', "Item")
-        self.outputs.new('StringsSocket', "Other")
+        self.inputs.new('SvStringsSocket', "Data")
+        self.inputs.new('SvStringsSocket', "Item").prop_name = 'item'
+        self.outputs.new('SvStringsSocket', "Item")
+        self.outputs.new('SvStringsSocket', "Other")
 
     def update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:

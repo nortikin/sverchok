@@ -35,11 +35,11 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
     newsock: BoolProperty(name='newsock', default=False)
 
     base_name = 'data '
-    multi_socket_type = 'StringsSocket'
+    multi_socket_type = 'SvStringsSocket'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'data')
-        self.outputs.new('StringsSocket', 'data')
+        self.inputs.new('SvStringsSocket', 'data')
+        self.outputs.new('SvStringsSocket', 'data')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mix_check", text="mix")

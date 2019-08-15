@@ -31,7 +31,7 @@ class SvSculptMaskNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")
-        self.inputs.new('StringsSocket',  "Sculpt Mask")
+        self.inputs.new('SvStringsSocket',  "Sculpt Mask")
 
     def process(self):
         Objs, W = self.inputs

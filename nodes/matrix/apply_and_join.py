@@ -38,14 +38,14 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     do_join: BoolProperty(name='Join', default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Edges")
-        self.inputs.new('StringsSocket', "Faces")
-        self.inputs.new('MatrixSocket', "Matrices")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Faces")
+        self.inputs.new('SvMatrixSocket', "Matrices")
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Faces")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Faces")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "do_join")

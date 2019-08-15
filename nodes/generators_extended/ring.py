@@ -189,15 +189,15 @@ class SvRingNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 170
-        self.inputs.new('StringsSocket', "R").prop_name = 'ring_R'
-        self.inputs.new('StringsSocket', "r").prop_name = 'ring_r'
-        self.inputs.new('StringsSocket', "n1").prop_name = 'ring_n1'
-        self.inputs.new('StringsSocket', "n2").prop_name = 'ring_n2'
-        self.inputs.new('StringsSocket', "rP").prop_name = 'ring_rP'
+        self.inputs.new('SvStringsSocket', "R").prop_name = 'ring_R'
+        self.inputs.new('SvStringsSocket', "r").prop_name = 'ring_r'
+        self.inputs.new('SvStringsSocket', "n1").prop_name = 'ring_n1'
+        self.inputs.new('SvStringsSocket', "n2").prop_name = 'ring_n2'
+        self.inputs.new('SvStringsSocket', "rP").prop_name = 'ring_rP'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket',  "Edges")
-        self.outputs.new('StringsSocket',  "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket',  "Edges")
+        self.outputs.new('SvStringsSocket',  "Polygons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")

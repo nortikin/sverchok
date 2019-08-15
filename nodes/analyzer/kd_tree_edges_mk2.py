@@ -50,13 +50,13 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=0, min=0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts')
-        self.inputs.new('StringsSocket', 'mindist').prop_name = 'mindist'
-        self.inputs.new('StringsSocket', 'maxdist').prop_name = 'maxdist'
-        self.inputs.new('StringsSocket', 'maxNum').prop_name = 'maxNum'
-        self.inputs.new('StringsSocket', 'skip').prop_name = 'skip'
+        self.inputs.new('SvVerticesSocket', 'Verts')
+        self.inputs.new('SvStringsSocket', 'mindist').prop_name = 'mindist'
+        self.inputs.new('SvStringsSocket', 'maxdist').prop_name = 'maxdist'
+        self.inputs.new('SvStringsSocket', 'maxNum').prop_name = 'maxNum'
+        self.inputs.new('SvStringsSocket', 'skip').prop_name = 'skip'
 
-        self.outputs.new('StringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Edges')
 
     def process(self):
         inputs = self.inputs

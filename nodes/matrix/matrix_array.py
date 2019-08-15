@@ -30,15 +30,15 @@ class Svb28MatrixArrayNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('VerticesSocket', "Verts")
-        inew('StringsSocket', "Edges")
-        inew('StringsSocket', "Faces")
-        inew('MatrixSocket', "Matrices")
+        inew('SvVerticesSocket', "Verts")
+        inew('SvStringsSocket', "Edges")
+        inew('SvStringsSocket', "Faces")
+        inew('SvMatrixSocket', "Matrices")
 
         onew = self.outputs.new
-        onew('VerticesSocket', "Verts")
-        onew('StringsSocket', "Edges")
-        onew('StringsSocket', "Faces")
+        onew('SvVerticesSocket', "Verts")
+        onew('SvStringsSocket', "Edges")
+        onew('SvStringsSocket', "Faces")
 
     def draw_buttons(self, context, layout):
         r = layout.row(align=True)

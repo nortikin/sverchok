@@ -42,15 +42,15 @@ class SvBVHtreeNode(bpy.types.Node, SverchCustomTreeNode):
             inputs[0].hide= 0
         else:
             inputs[0].hide= 1
-            inputs.new('VerticesSocket', 'Verts')
-            inputs.new('StringsSocket', 'Polys')
+            inputs.new('SvVerticesSocket', 'Verts')
+            inputs.new('SvStringsSocket', 'Polys')
 
     Modes = ['FromObject','FromBMesh','FromSVdata']
     Mod: EnumProperty(name="getmodes", default=Modes[0], items=e(Modes), update=mode_change)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Objects')
-        self.outputs.new('StringsSocket', 'BVHtree_list')
+        self.inputs.new('SvStringsSocket', 'Objects')
+        self.outputs.new('SvStringsSocket', 'BVHtree_list')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Mod", text="Get")

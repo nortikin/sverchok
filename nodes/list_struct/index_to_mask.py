@@ -53,10 +53,10 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
             col.prop(self, "complex_data", toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Index')
-        self.inputs.new('StringsSocket', 'mask size').prop_name = "ML"
-        self.inputs.new('StringsSocket', 'data to mask').hide_safe = True
-        self.outputs.new('StringsSocket', 'mask')
+        self.inputs.new('SvStringsSocket', 'Index')
+        self.inputs.new('SvStringsSocket', 'mask size').prop_name = "ML"
+        self.inputs.new('SvStringsSocket', 'data to mask').hide_safe = True
+        self.outputs.new('SvStringsSocket', 'mask')
 
     def process(self):
         Inds, MaSi, Dat = self.inputs

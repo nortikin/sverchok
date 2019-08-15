@@ -52,13 +52,13 @@ class SvMapRangeNode(bpy.types.Node, SverchCustomTreeNode):
     clamp: BoolProperty(default=True, name='Clamp', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Value").prop_name = 'value'
-        self.inputs.new('StringsSocket', "Old Min").prop_name = 'old_min'
-        self.inputs.new('StringsSocket', "Old Max").prop_name = 'old_max'
-        self.inputs.new('StringsSocket', "New Min").prop_name = 'new_min'
-        self.inputs.new('StringsSocket', "New Max").prop_name = 'new_max'
+        self.inputs.new('SvStringsSocket', "Value").prop_name = 'value'
+        self.inputs.new('SvStringsSocket', "Old Min").prop_name = 'old_min'
+        self.inputs.new('SvStringsSocket', "Old Max").prop_name = 'old_max'
+        self.inputs.new('SvStringsSocket', "New Min").prop_name = 'new_min'
+        self.inputs.new('SvStringsSocket', "New Max").prop_name = 'new_max'
 
-        self.outputs.new('StringsSocket', "Value")
+        self.outputs.new('SvStringsSocket', "Value")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "clamp")

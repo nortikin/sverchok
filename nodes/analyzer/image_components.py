@@ -238,8 +238,8 @@ class SvImageComponentsNode(bpy.types.Node, SverchCustomTreeNode):
         self.node_dict[hash(self)]['node_image'] = {}
 
         xy, z, p = 'xy_spread', 'z_spread', 'polygons'
-        socket = 'StringsSocket'
-        vsocket = 'VerticesSocket'
+        socket = 'SvStringsSocket'
+        vsocket = 'SvVerticesSocket'
 
         new_in = self.inputs.new
         new_in(socket, xy).prop_name = xy

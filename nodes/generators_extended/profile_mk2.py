@@ -793,13 +793,13 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "a")
-        self.inputs.new('StringsSocket', "b")
+        self.inputs.new('SvStringsSocket', "a")
+        self.inputs.new('SvStringsSocket', "b")
 
-        self.outputs.new('VerticesSocket', "Verts")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('VerticesSocket', "Knots")
-        self.outputs.new('StringsSocket', "KnotsNames")
+        self.outputs.new('SvVerticesSocket', "Verts")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvVerticesSocket', "Knots")
+        self.outputs.new('SvStringsSocket', "KnotsNames")
 
 
     def adjust_inputs(self):
@@ -811,7 +811,7 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             new_index = len(inputs)
             new_letter = idx_map.get(new_index, None)
             if new_letter:
-                inputs.new('StringsSocket', new_letter, new_letter)
+                inputs.new('SvStringsSocket', new_letter, new_letter)
             else:
                 print('this implementation goes up to 26 chars only, use SN or EK')
                 print('- or contact Dealga')

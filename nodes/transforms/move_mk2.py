@@ -40,10 +40,10 @@ class SvMoveNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'separate')
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "vertices")
-        self.inputs.new('VerticesSocket', "vectors")
-        self.inputs.new('StringsSocket', "multiplier").prop_name = 'mult_'
-        self.outputs.new('VerticesSocket', "vertices")
+        self.inputs.new('SvVerticesSocket', "vertices")
+        self.inputs.new('SvVerticesSocket', "vectors")
+        self.inputs.new('SvStringsSocket', "multiplier").prop_name = 'mult_'
+        self.outputs.new('SvVerticesSocket', "vertices")
 
     def process(self):
         # inputs

@@ -194,11 +194,11 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
 
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.inputs.new('StringsSocket', 'edges')
-        self.inputs.new('MatrixSocket', 'matrix')
-        self.inputs.new('StringsSocket', 'radii_x').prop_name = "general_radius_x"
-        self.inputs.new('StringsSocket', 'radii_y').prop_name = "general_radius_y"
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket', 'edges')
+        self.inputs.new('SvMatrixSocket', 'matrix')
+        self.inputs.new('SvStringsSocket', 'radii_x').prop_name = "general_radius_x"
+        self.inputs.new('SvStringsSocket', 'radii_y').prop_name = "general_radius_y"
 
 
     def draw_buttons(self, context, layout):

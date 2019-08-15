@@ -37,9 +37,9 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data")
-        self.inputs.new('StringsSocket', "keys")
-        self.outputs.new('StringsSocket', "data")
+        self.inputs.new('SvStringsSocket', "data")
+        self.inputs.new('SvStringsSocket', "keys")
+        self.outputs.new('SvStringsSocket', "data")
 
     def update(self):
         if 'data' in self.outputs and self.inputs['data'].links:

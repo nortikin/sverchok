@@ -47,19 +47,19 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
         '''define input and output sockets'''
         sin = self.inputs.new
         son = self.outputs.new
-        sin('StringsSocket', "Mask")
-        sin('VerticesSocket', "Vertices")
-        sin('StringsSocket', "PolyEdge")
-        sin('MatrixSocket', "Matrix T")
-        sin('MatrixSocket', "Matrix F")
+        sin('SvStringsSocket', "Mask")
+        sin('SvVerticesSocket', "Vertices")
+        sin('SvStringsSocket', "PolyEdge")
+        sin('SvMatrixSocket', "Matrix T")
+        sin('SvMatrixSocket', "Matrix F")
 
-        son('VerticesSocket', "Vertices")
-        son('StringsSocket', "PolyEdge")
-        son('StringsSocket', "PolyEdge O")
-        son('VerticesSocket', "Vertices T")
-        son('StringsSocket', "PolyEdge T")
-        son('VerticesSocket', "Vertices F")
-        son('StringsSocket', "PolyEdge F")
+        son('SvVerticesSocket', "Vertices")
+        son('SvStringsSocket', "PolyEdge")
+        son('SvStringsSocket', "PolyEdge O")
+        son('SvVerticesSocket', "Vertices T")
+        son('SvStringsSocket', "PolyEdge T")
+        son('SvVerticesSocket', "Vertices F")
+        son('SvStringsSocket', "PolyEdge F")
 
     def get_data(self):
         '''get data from inputs and match it'''

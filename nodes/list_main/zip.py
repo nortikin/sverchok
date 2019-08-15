@@ -42,15 +42,15 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
     )
 
     base_name = 'data '
-    multi_socket_type = 'StringsSocket'
+    multi_socket_type = 'SvStringsSocket'
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="Level")
         layout.prop(self, "unwrap", text="UnWrap")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'data')
-        self.outputs.new('StringsSocket', 'data')
+        self.inputs.new('SvStringsSocket', 'data')
+        self.outputs.new('SvStringsSocket', 'data')
 
     def update(self):
         # inputs

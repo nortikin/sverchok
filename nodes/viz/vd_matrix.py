@@ -111,7 +111,7 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
     show_options: BoolProperty(name='options', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', 'Matrix')
+        self.inputs.new('SvMatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)

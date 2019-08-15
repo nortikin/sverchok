@@ -35,14 +35,14 @@ class SvRecalcNormalsNode(bpy.types.Node, SverchCustomTreeNode):
         name="Inside", description="Calculate inside normals", default=False, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons')
-        self.inputs.new('StringsSocket', 'Mask')
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Polygons')
+        self.inputs.new('SvStringsSocket', 'Mask')
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polygons')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "invert")

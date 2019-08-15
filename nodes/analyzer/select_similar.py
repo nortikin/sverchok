@@ -122,17 +122,17 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('VerticesSocket', "Vertices")
-        inew('StringsSocket', "Edges")
-        inew('StringsSocket', "Faces")
-        inew('StringsSocket', "Mask")
-        inew('StringsSocket', "Threshold").prop_name = "threshold"
+        inew('SvVerticesSocket', "Vertices")
+        inew('SvStringsSocket', "Edges")
+        inew('SvStringsSocket', "Faces")
+        inew('SvStringsSocket', "Mask")
+        inew('SvStringsSocket', "Threshold").prop_name = "threshold"
 
         onew = self.outputs.new
-        onew('StringsSocket', "Mask")
-        onew('VerticesSocket', "Vertices")
-        onew('StringsSocket', "Edges")
-        onew('StringsSocket', "Faces")
+        onew('SvStringsSocket', "Mask")
+        onew('SvVerticesSocket', "Vertices")
+        onew('SvStringsSocket', "Edges")
+        onew('SvStringsSocket', "Faces")
 
         self.update_mode(context)
 

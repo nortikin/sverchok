@@ -45,14 +45,14 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         snew = self.inputs.new
-        snew("StringsSocket", "xdim").prop_name='xdim__'
-        snew("StringsSocket", "ydim").prop_name='ydim__'
-        snew("StringsSocket", "zdim").prop_name='zdim__'
-        snew("StringsSocket", "size x").prop_name='sizex__'
-        snew("StringsSocket", "size y").prop_name='sizey__'
-        snew("StringsSocket", "size z").prop_name='sizez__'
+        snew("SvStringsSocket", "xdim").prop_name='xdim__'
+        snew("SvStringsSocket", "ydim").prop_name='ydim__'
+        snew("SvStringsSocket", "zdim").prop_name='zdim__'
+        snew("SvStringsSocket", "size x").prop_name='sizex__'
+        snew("SvStringsSocket", "size y").prop_name='sizey__'
+        snew("SvStringsSocket", "size z").prop_name='sizez__'
         
-        self.outputs.new("VerticesSocket", "verts")
+        self.outputs.new("SvVerticesSocket", "verts")
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
