@@ -45,12 +45,12 @@ class GetNormalsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'SNAP_NORMAL'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Edges")
-        self.inputs.new('StringsSocket', "Polygons")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Polygons")
 
-        self.outputs.new('VerticesSocket', "FaceNormals")
-        self.outputs.new('VerticesSocket', "VertexNormals")
+        self.outputs.new('SvVerticesSocket', "FaceNormals")
+        self.outputs.new('SvVerticesSocket', "VertexNormals")
 
     def process(self):
 

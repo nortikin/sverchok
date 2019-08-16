@@ -704,7 +704,7 @@ def get_other_socket(socket):
 #     create Fixed inputs socket, the multi socket will not change anything
 #     below min
 #     base_name = StringProperty(default='Data ')
-#     multi_socket_type = StringProperty(default='StringsSocket')
+#     multi_socket_type = StringProperty(default='SvStringsSocket')
 
 # the named argument min will be replaced soonish.
 

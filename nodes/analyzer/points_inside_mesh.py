@@ -113,11 +113,11 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     num_samples: bpy.props.IntProperty(min=1, max=6, default=3)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'verts')
-        self.inputs.new('StringsSocket', 'faces')
-        self.inputs.new('VerticesSocket', 'points')
-        self.outputs.new('StringsSocket', 'mask')
-        self.outputs.new('VerticesSocket', 'verts')
+        self.inputs.new('SvVerticesSocket', 'verts')
+        self.inputs.new('SvStringsSocket', 'faces')
+        self.inputs.new('SvVerticesSocket', 'points')
+        self.outputs.new('SvStringsSocket', 'mask')
+        self.outputs.new('SvVerticesSocket', 'verts')
 
     def draw_buttons(self, context, layout):
 

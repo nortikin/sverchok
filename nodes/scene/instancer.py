@@ -125,7 +125,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     has_instance: BoolProperty(default=False)
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', 'matrix')
+        self.inputs.new('SvMatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -176,7 +176,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         inputs = self.inputs
-        s_name, s_type = ['matrix', "MatrixSocket"]
+        s_name, s_type = ['matrix', "SvMatrixSocket"]
         matrices = []
         if s_name in inputs and inputs[s_name].is_linked:
             matrices = self.get_corrected_data(s_name, s_type)

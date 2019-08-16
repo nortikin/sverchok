@@ -87,7 +87,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         # updateNode(self, context)
         if self.gp_selected_frame_mode == 'active frame':
             if len(self.inputs) == 0:
-                self.inputs.new("StringsSocket", 'frame#')
+                self.inputs.new("SvStringsSocket", 'frame#')
         else:
             if len(self.inputs) > 0:
                 self.inputs.remove(self.inputs[-1])
@@ -176,7 +176,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.outputs.new('StringsSocket', "Objects")
+        self.outputs.new('SvStringsSocket', "Objects")
         self.width = 210
         self.Type = 'MESH'  # helps init the custom object prop_search
 

@@ -56,13 +56,13 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Size").prop_name = 'Size'
-        self.inputs.new('StringsSocket', "Divx").prop_name = 'Divx'
-        self.inputs.new('StringsSocket', "Divy").prop_name = 'Divy'
-        self.inputs.new('StringsSocket', "Divz").prop_name = 'Divz'
-        self.outputs.new('VerticesSocket', "Vers")
-        self.outputs.new('StringsSocket', "Edgs")
-        self.outputs.new('StringsSocket', "Pols")
+        self.inputs.new('SvStringsSocket', "Size").prop_name = 'Size'
+        self.inputs.new('SvStringsSocket', "Divx").prop_name = 'Divx'
+        self.inputs.new('SvStringsSocket', "Divy").prop_name = 'Divy'
+        self.inputs.new('SvStringsSocket', "Divz").prop_name = 'Divz'
+        self.outputs.new('SvVerticesSocket', "Vers")
+        self.outputs.new('SvStringsSocket', "Edgs")
+        self.outputs.new('SvStringsSocket', "Pols")
 
     def draw_buttons(self, context, layout):
         pass

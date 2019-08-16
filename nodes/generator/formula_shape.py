@@ -353,13 +353,13 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
         return [out]
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Count").prop_name = 'number'
-        self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
-        self.inputs.new('StringsSocket', "XX").prop_name = 'XX'
-        self.inputs.new('StringsSocket', "YY").prop_name = 'YY'
-        self.inputs.new('StringsSocket', "ZZ").prop_name = 'ZZ'
-        self.outputs.new('VerticesSocket', "Verts")
-        self.outputs.new('StringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Count").prop_name = 'number'
+        self.inputs.new('SvStringsSocket', "Scale").prop_name = 'scale'
+        self.inputs.new('SvStringsSocket', "XX").prop_name = 'XX'
+        self.inputs.new('SvStringsSocket', "YY").prop_name = 'YY'
+        self.inputs.new('SvStringsSocket', "ZZ").prop_name = 'ZZ'
+        self.outputs.new('SvVerticesSocket', "Verts")
+        self.outputs.new('SvStringsSocket', "Edges")
         self.width = 400
     
     def draw_buttons(self,context,layout):

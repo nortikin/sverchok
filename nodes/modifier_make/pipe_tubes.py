@@ -49,15 +49,15 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self,'shape',expand=True)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vers')
-        self.inputs.new('StringsSocket', "Edgs")
+        self.inputs.new('SvVerticesSocket', 'Vers')
+        self.inputs.new('SvStringsSocket', "Edgs")
 
-        s = self.inputs.new('VerticesSocket', "Size")
+        s = self.inputs.new('SvVerticesSocket', "Size")
         s.use_prop = True
         s.prop = (0.5,0.5,0.5)
-        #self.inputs.new('StringsSocket', "Extrude", "Extrude").prop_name = 'extrude'
-        self.outputs.new('VerticesSocket', 'Vers')
-        self.outputs.new('StringsSocket', "Pols")
+        #self.inputs.new('SvStringsSocket', "Extrude", "Extrude").prop_name = 'extrude'
+        self.outputs.new('SvVerticesSocket', 'Vers')
+        self.outputs.new('SvStringsSocket', "Pols")
 
     def process(self):
         

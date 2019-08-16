@@ -53,12 +53,12 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'vector':
             if 'Vector List' not in self.outputs:
                 self.outputs.remove(self.outputs[0])
-                self.outputs.new('VerticesSocket', 'Vector List')
+                self.outputs.new('SvVerticesSocket', 'Vector List')
                 return
         else:
             if 'List' not in self.outputs:
                 self.outputs.remove(self.outputs[0])
-                self.outputs.new('StringsSocket', 'List')
+                self.outputs.new('SvStringsSocket', 'List')
                 return
 
     modes = [
@@ -69,7 +69,7 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     mode: EnumProperty(items=modes, default='int_list', update=changeMode)
 
     def sv_init(self, context):
-        self.outputs.new('StringsSocket', "List")
+        self.outputs.new('SvStringsSocket', "List")
 
     def draw_buttons(self, context, layout):
         if self.mode == 'vector':

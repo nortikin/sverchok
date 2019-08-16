@@ -63,7 +63,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         showing_vg = 'Vers_grouped' in outs
 
         if self.vergroups and not showing_vg:
-            outs.new('StringsSocket', 'Vers_grouped')
+            outs.new('SvStringsSocket', 'Vers_grouped')
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
@@ -91,10 +91,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         new = self.outputs.new
-        new('VerticesSocket', "Vertices")
-        new('StringsSocket', "Edges")
-        new('StringsSocket', "Polygons")
-        new('MatrixSocket', "Matrixes")
+        new('SvVerticesSocket', "Vertices")
+        new('SvStringsSocket', "Edges")
+        new('SvStringsSocket', "Polygons")
+        new('SvMatrixSocket', "Matrixes")
         new('SvObjectSocket', "Object")
 
 

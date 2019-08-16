@@ -27,7 +27,7 @@ from sverchok.data_structure import Matrix_listing, Matrix_generate
 def cross_test_socket(self, A, B):
     """ A is origin type, B is destination type """
     other = get_other_socket(self)
-    get_type = {'v': 'VerticesSocket', 'm': 'MatrixSocket', 'q': "SvQuaternionSocket"}
+    get_type = {'v': 'SvVerticesSocket', 'm': 'SvMatrixSocket', 'q': "SvQuaternionSocket"}
     return other.bl_idname == get_type[A] and self.bl_idname == get_type[B]
 
 
@@ -179,7 +179,7 @@ class DefaultImplicitConversionPolicy(NoImplicitConversionPolicy):
         Return collection of bl_idnames of socket classes
         that are allowed to consume arbitrary data type.
         """
-        return ['StringsSocket', 'SvObjectSocket', 'SvColorSocket', 'VerticesSocket']
+        return ['SvStringsSocket', 'SvObjectSocket', 'SvColorSocket', 'SvVerticesSocket']
 
     @classmethod
     def vectors_to_matrices(cls, socket, source_data):

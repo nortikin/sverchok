@@ -73,7 +73,7 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
     execstr: StringProperty(default='', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'auto_convert')
+        self.inputs.new('SvVerticesSocket', 'auto_convert')
 
     def draw_buttons(self, context, layout):
         col = layout.column()

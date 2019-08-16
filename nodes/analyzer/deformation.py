@@ -186,15 +186,15 @@ class SvDeformationNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', "Rest Verts")
-        sinw('VerticesSocket', "Distort Verts")
-        sinw('StringsSocket', "Edges")
-        sinw('StringsSocket', "Pols")
+        sinw('SvVerticesSocket', "Rest Verts")
+        sinw('SvVerticesSocket', "Distort Verts")
+        sinw('SvStringsSocket', "Edges")
+        sinw('SvStringsSocket', "Pols")
 
-        sonw('StringsSocket', "Edges Def")
-        sonw('StringsSocket', "Pols Def")
-        sonw('StringsSocket', "Vert Edge Def")
-        sonw('StringsSocket', "Vert Pol Def")
+        sonw('SvStringsSocket', "Edges Def")
+        sonw('SvStringsSocket', "Pols Def")
+        sonw('SvStringsSocket', "Vert Edge Def")
+        sonw('SvStringsSocket', "Vert Pol Def")
 
     def get_data(self):
         '''get all data from sockets'''

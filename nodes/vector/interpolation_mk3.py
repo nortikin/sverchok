@@ -63,11 +63,11 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     infer_from_integer_input: BoolProperty(name="IntRange", default=False, update=wrapped_updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'Interval').prop_name = 't_in'
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('VerticesSocket', 'Tanget')
-        self.outputs.new('VerticesSocket', 'Unit Tanget')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvStringsSocket', 'Interval').prop_name = 't_in'
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvVerticesSocket', 'Tanget')
+        self.outputs.new('SvVerticesSocket', 'Unit Tanget')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode', expand=True)

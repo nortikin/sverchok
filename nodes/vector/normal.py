@@ -30,9 +30,9 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Polygons")
-        self.outputs.new('VerticesSocket', "Normals")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Normals")
 
     def process(self):
         vers = self.inputs['Vertices'].sv_get()

@@ -283,20 +283,20 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name="Updating", description="Flag to inhibit updating", default=False)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "RadiusT").prop_name = 'radius_t'
-        self.inputs.new('StringsSocket', "RadiusB").prop_name = 'radius_b'
-        self.inputs.new('StringsSocket', "Parallels").prop_name = 'parallels'
-        self.inputs.new('StringsSocket', "Meridians").prop_name = 'meridians'
-        self.inputs.new('StringsSocket', "Height").prop_name = 'height'
-        self.inputs.new('StringsSocket', "Twist").prop_name = 'twist'
-        self.inputs.new('StringsSocket', "Phase").prop_name = 'phase'
-        self.inputs.new('StringsSocket', "Scale").prop_name = 'scale'
-        self.inputs.new('StringsSocket', "Parallels Profile")
-        self.inputs.new('StringsSocket', "Meridians Profile")
+        self.inputs.new('SvStringsSocket', "RadiusT").prop_name = 'radius_t'
+        self.inputs.new('SvStringsSocket', "RadiusB").prop_name = 'radius_b'
+        self.inputs.new('SvStringsSocket', "Parallels").prop_name = 'parallels'
+        self.inputs.new('SvStringsSocket', "Meridians").prop_name = 'meridians'
+        self.inputs.new('SvStringsSocket', "Height").prop_name = 'height'
+        self.inputs.new('SvStringsSocket', "Twist").prop_name = 'twist'
+        self.inputs.new('SvStringsSocket', "Phase").prop_name = 'phase'
+        self.inputs.new('SvStringsSocket', "Scale").prop_name = 'scale'
+        self.inputs.new('SvStringsSocket', "Parallels Profile")
+        self.inputs.new('SvStringsSocket', "Meridians Profile")
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         column = layout.column(align=True)

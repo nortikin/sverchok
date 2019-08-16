@@ -29,10 +29,10 @@ class SvFixEmptyObjectsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data")
-        self.outputs.new('StringsSocket', "san data")
-        self.outputs.new('StringsSocket', "mask")
-        self.outputs.new('StringsSocket', "numpy mask")
+        self.inputs.new('SvStringsSocket', "data")
+        self.outputs.new('SvStringsSocket', "san data")
+        self.outputs.new('SvStringsSocket', "mask")
+        self.outputs.new('SvStringsSocket', "numpy mask")
 
     def process(self):
         sd, m, nm = self.outputs

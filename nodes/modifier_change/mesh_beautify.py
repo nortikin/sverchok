@@ -33,10 +33,10 @@ class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'beautify_mode', expand=True)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts')
-        self.inputs.new('StringsSocket', 'Faces')
-        self.outputs.new('VerticesSocket', 'Verts')
-        self.outputs.new('StringsSocket', 'Faces')
+        self.inputs.new('SvVerticesSocket', 'Verts')
+        self.inputs.new('SvStringsSocket', 'Faces')
+        self.outputs.new('SvVerticesSocket', 'Verts')
+        self.outputs.new('SvStringsSocket', 'Faces')
 
     def process(self):
 

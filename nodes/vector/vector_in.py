@@ -54,11 +54,11 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     show_3d_cursor_button: BoolProperty(name='show button', update=updateNode, default=False)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "X").prop_name = 'x_'
-        self.inputs.new('StringsSocket', "Y").prop_name = 'y_'
-        self.inputs.new('StringsSocket', "Z").prop_name = 'z_'
+        self.inputs.new('SvStringsSocket', "X").prop_name = 'x_'
+        self.inputs.new('SvStringsSocket', "Y").prop_name = 'y_'
+        self.inputs.new('SvStringsSocket', "Z").prop_name = 'z_'
         self.width = 100
-        self.outputs.new('VerticesSocket', "Vectors")
+        self.outputs.new('SvVerticesSocket', "Vectors")
 
     def draw_buttons(self, context, layout):
         # unfortunately, the mere fact that this function is present, will inject vertical space

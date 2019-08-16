@@ -50,8 +50,8 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "unique_edges")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "pols")
-        self.outputs.new('StringsSocket', "edgs")
+        self.inputs.new('SvStringsSocket', "pols")
+        self.outputs.new('SvStringsSocket', "edgs")
 
     def process(self):
         if not self.outputs[0].is_linked:

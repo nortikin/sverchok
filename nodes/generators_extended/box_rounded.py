@@ -370,15 +370,15 @@ class SvBoxRoundedNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         new = self.inputs.new
-        new('StringsSocket', "radius").prop_name = 'radius'
-        new('StringsSocket', "arcdiv").prop_name = 'arcdiv'
-        new('StringsSocket', "lindiv").prop_name = 'lindiv'
-        new('VerticesSocket', "vector_size").prop_name = 'vector_vsize'
-        new('StringsSocket', "div_type").prop_name = 'div_type'
-        new('StringsSocket', "odd_axis_align").prop_name = 'odd_axis_align'
+        new('SvStringsSocket', "radius").prop_name = 'radius'
+        new('SvStringsSocket', "arcdiv").prop_name = 'arcdiv'
+        new('SvStringsSocket', "lindiv").prop_name = 'lindiv'
+        new('SvVerticesSocket', "vector_size").prop_name = 'vector_vsize'
+        new('SvStringsSocket', "div_type").prop_name = 'div_type'
+        new('SvStringsSocket', "odd_axis_align").prop_name = 'odd_axis_align'
 
-        self.outputs.new('VerticesSocket', "Vers")
-        self.outputs.new('StringsSocket', "Pols")
+        self.outputs.new('SvVerticesSocket', "Vers")
+        self.outputs.new('SvStringsSocket', "Pols")
 
     def draw_buttons(self, context, layout):
         pass

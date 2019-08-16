@@ -91,9 +91,9 @@ class SvDatetimeStrings(bpy.types.Node, SverchCustomTreeNode):
     float_to_int: BoolProperty(name="Float to Int", update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "times")
-        self.inputs.new("StringsSocket", "time offset").prop_name = "time_offset"
-        self.outputs.new("StringsSocket", "times")
+        self.inputs.new("SvStringsSocket", "times")
+        self.inputs.new("SvStringsSocket", "time offset").prop_name = "time_offset"
+        self.outputs.new("SvStringsSocket", "times")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "date_pattern", text="", icon="SORTTIME")

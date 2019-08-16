@@ -29,10 +29,10 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         outputs = self.outputs
-        outputs.new('StringsSocket', "Current Frame")
-        outputs.new('StringsSocket', "Start Frame")
-        outputs.new('StringsSocket', "End Frame")
-        outputs.new('StringsSocket', "Evaluate")
+        outputs.new('SvStringsSocket', "Current Frame")
+        outputs.new('SvStringsSocket', "Start Frame")
+        outputs.new('SvStringsSocket', "End Frame")
+        outputs.new('SvStringsSocket', "Evaluate")
 
     def draw_buttons(self, context, layout):
         # almost verbatim copy of space_time.py time controls.

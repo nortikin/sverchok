@@ -38,9 +38,9 @@ MONAD_COLOR = (0.830819, 0.911391, 0.754562)
 
 
 socket_types = [
-    ("StringsSocket", "s", "Numbers, polygon data, generic"),
-    ("VerticesSocket", "v", "Vertices, point and vector data"),
-    ("MatrixSocket", "m", "Matrix")
+    ("SvStringsSocket", "s", "Numbers, polygon data, generic"),
+    ("SvVerticesSocket", "v", "Vertices, point and vector data"),
+    ("SvMatrixSocket", "m", "Matrix")
 ]
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}

@@ -51,15 +51,15 @@ class SverchokViewerMK1(bpy.types.Operator):
                     label = '; node ' + label.upper()
                 name = insert.name.upper()
                 # vertices socket
-                if insert.other.bl_idname == 'VerticesSocket':
+                if insert.other.bl_idname == 'SvVerticesSocket':
                     itype = '\n\nSocket ' + name + label + '; type VERTICES: \n'
 
                 # edges/faces socket
-                elif insert.other.bl_idname == 'StringsSocket':
+                elif insert.other.bl_idname == 'SvStringsSocket':
                     itype = '\n\nSocket ' + name + label + '; type EDGES/POLYGONS/OTHERS: \n'
 
                 # matrix socket
-                elif insert.other.bl_idname == 'MatrixSocket':
+                elif insert.other.bl_idname == 'SvMatrixSocket':
                     itype = '\n\nSocket ' + name + label + '; type MATRICES: \n'
 
                 # object socket
@@ -177,10 +177,10 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
     # multi sockets veriables
     newsock: BoolProperty(name='newsock', default=False)
     base_name = 'data'
-    multi_socket_type = 'StringsSocket'
+    multi_socket_type = 'SvStringsSocket'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'data0')
+        self.inputs.new('SvStringsSocket', 'data0')
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row()

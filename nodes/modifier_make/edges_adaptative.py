@@ -38,13 +38,13 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mesh_join")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'VersR')
-        self.inputs.new('StringsSocket', 'EdgeR')
-        self.inputs.new('VerticesSocket', 'VersD')
-        self.inputs.new('StringsSocket', 'EdgeD')
+        self.inputs.new('SvVerticesSocket', 'VersR')
+        self.inputs.new('SvStringsSocket', 'EdgeR')
+        self.inputs.new('SvVerticesSocket', 'VersD')
+        self.inputs.new('SvStringsSocket', 'EdgeD')
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
 
     def process(self):
         if not all(s.is_linked for s in self.inputs):

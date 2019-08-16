@@ -122,16 +122,16 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Curve")
-        self.inputs.new('VerticesSocket', 'BevelVerts')
-        self.inputs.new('StringsSocket', 'BevelEdges')
-        self.inputs.new('StringsSocket', 'BevelFaces')
-        self.inputs.new('VerticesSocket', 'TaperVerts')
-        self.inputs.new('StringsSocket', 'Steps').prop_name = "steps"
+        self.inputs.new('SvVerticesSocket', "Curve")
+        self.inputs.new('SvVerticesSocket', 'BevelVerts')
+        self.inputs.new('SvStringsSocket', 'BevelEdges')
+        self.inputs.new('SvStringsSocket', 'BevelFaces')
+        self.inputs.new('SvVerticesSocket', 'TaperVerts')
+        self.inputs.new('SvStringsSocket', 'Steps').prop_name = "steps"
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Faces')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Faces')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "orient_axis", expand=True)

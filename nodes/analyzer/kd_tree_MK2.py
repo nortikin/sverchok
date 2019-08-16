@@ -68,14 +68,14 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         
         si = self.inputs
         so = self.outputs
-        si.new('VerticesSocket', 'insert')
-        si.new('VerticesSocket', 'find').use_prop = True
-        si.new('StringsSocket', 'number').prop_name = "number"
-        si.new('StringsSocket', 'radius').prop_name = "radius"
+        si.new('SvVerticesSocket', 'insert')
+        si.new('SvVerticesSocket', 'find').use_prop = True
+        si.new('SvStringsSocket', 'number').prop_name = "number"
+        si.new('SvStringsSocket', 'radius').prop_name = "radius"
         si['radius'].hide_safe = True
-        so.new('VerticesSocket', 'Co')
-        so.new('StringsSocket', 'index')
-        so.new('StringsSocket', 'distance')
+        so.new('SvVerticesSocket', 'Co')
+        so.new('SvStringsSocket', 'index')
+        so.new('SvStringsSocket', 'distance')
 
     def process(self):
         '''main node function called every update'''

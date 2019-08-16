@@ -42,9 +42,9 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")
-        self.inputs.new('StringsSocket', "VertIND")
-        self.inputs.new('StringsSocket', "Weights")
-        self.outputs.new('StringsSocket', "OutWeights")
+        self.inputs.new('SvStringsSocket', "VertIND")
+        self.inputs.new('SvStringsSocket', "Weights")
+        self.outputs.new('SvStringsSocket', "OutWeights")
 
     def process(self):
         Objs, Ve, We = self.inputs

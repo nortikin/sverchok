@@ -45,11 +45,11 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data")
-        self.inputs.new('StringsSocket', "Start").prop_name = 'start'
-        self.inputs.new('StringsSocket', "Stop").prop_name = 'stop'
-        self.outputs.new('StringsSocket', "Slice")
-        self.outputs.new('StringsSocket', "Other")
+        self.inputs.new('SvStringsSocket', "Data")
+        self.inputs.new('SvStringsSocket', "Start").prop_name = 'start'
+        self.inputs.new('SvStringsSocket', "Stop").prop_name = 'stop'
+        self.outputs.new('SvStringsSocket', "Slice")
+        self.outputs.new('SvStringsSocket', "Other")
 
     def update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:

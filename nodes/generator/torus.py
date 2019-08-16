@@ -238,18 +238,18 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "R").prop_name = 'torus_R'
-        self.inputs.new('StringsSocket', "r").prop_name = 'torus_r'
-        self.inputs.new('StringsSocket', "n1").prop_name = 'torus_n1'
-        self.inputs.new('StringsSocket', "n2").prop_name = 'torus_n2'
-        self.inputs.new('StringsSocket', "rP").prop_name = 'torus_rP'
-        self.inputs.new('StringsSocket', "sP").prop_name = 'torus_sP'
-        self.inputs.new('StringsSocket', "sT").prop_name = 'torus_sT'
+        self.inputs.new('SvStringsSocket', "R").prop_name = 'torus_R'
+        self.inputs.new('SvStringsSocket', "r").prop_name = 'torus_r'
+        self.inputs.new('SvStringsSocket', "n1").prop_name = 'torus_n1'
+        self.inputs.new('SvStringsSocket', "n2").prop_name = 'torus_n2'
+        self.inputs.new('SvStringsSocket', "rP").prop_name = 'torus_rP'
+        self.inputs.new('SvStringsSocket', "sP").prop_name = 'torus_sP'
+        self.inputs.new('SvStringsSocket', "sT").prop_name = 'torus_sT'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket',  "Edges")
-        self.outputs.new('StringsSocket',  "Polygons")
-        self.outputs.new('VerticesSocket', "Normals")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket',  "Edges")
+        self.outputs.new('SvStringsSocket',  "Polygons")
+        self.outputs.new('SvVerticesSocket', "Normals")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Separate", text="Separate")

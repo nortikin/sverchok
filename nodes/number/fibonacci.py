@@ -62,12 +62,12 @@ class SvGenFibonacci(bpy.types.Node, SverchCustomTreeNode):
         default=0.0, min=0.0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "X1").prop_name = 'x1_'
-        self.inputs.new('StringsSocket', "X2").prop_name = 'x2_'
-        self.inputs.new('StringsSocket', "Count").prop_name = 'count_'
-        self.inputs.new('StringsSocket', "Maximum").prop_name = 'maxValue_'
+        self.inputs.new('SvStringsSocket', "X1").prop_name = 'x1_'
+        self.inputs.new('SvStringsSocket', "X2").prop_name = 'x2_'
+        self.inputs.new('SvStringsSocket', "Count").prop_name = 'count_'
+        self.inputs.new('SvStringsSocket', "Maximum").prop_name = 'maxValue_'
 
-        self.outputs.new('StringsSocket', "Sequence")
+        self.outputs.new('SvStringsSocket', "Sequence")
 
     def process(self):
         # inputs

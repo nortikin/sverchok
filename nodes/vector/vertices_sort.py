@@ -167,12 +167,12 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'DIST':
             while len(self.inputs) > 2:
                 self.inputs.remove(self.inputs[-1])
-            self.inputs.new('VerticesSocket', 'Base Point')
+            self.inputs.new('SvVerticesSocket', 'Base Point')
 
         if self.mode == 'AXIS':
             while len(self.inputs) > 2:
                 self.inputs.remove(self.inputs[-1])
-            self.inputs.new('MatrixSocket', 'Mat')
+            self.inputs.new('SvMatrixSocket', 'Mat')
 
         if self.mode == 'CONNEX':
             while len(self.inputs) > 2:
@@ -181,7 +181,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'USER':
             while len(self.inputs) > 2:
                 self.inputs.remove(self.inputs[-1])
-            self.inputs.new('StringsSocket', 'Index Data')
+            self.inputs.new('SvStringsSocket', 'Index Data')
 
         updateNode(self, [])
 
@@ -204,12 +204,12 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "limit_mode")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'PolyEdge')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvStringsSocket', 'PolyEdge')
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'PolyEdge')
-        self.outputs.new('StringsSocket', 'Item order')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'PolyEdge')
+        self.outputs.new('SvStringsSocket', 'Item order')
 
     def process(self):
         verts = self.inputs['Vertices'].sv_get()

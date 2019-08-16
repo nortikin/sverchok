@@ -199,10 +199,10 @@ class SvExecNodeMod(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'V1')
-        self.inputs.new('StringsSocket', 'V2')
-        self.inputs.new('StringsSocket', 'V3')
-        self.outputs.new('StringsSocket', 'out')
+        self.inputs.new('SvStringsSocket', 'V1')
+        self.inputs.new('SvStringsSocket', 'V2')
+        self.inputs.new('SvStringsSocket', 'V3')
+        self.outputs.new('SvStringsSocket', 'out')
 
         # add default strings
         self.dynamic_strings.add().line = lines[0]

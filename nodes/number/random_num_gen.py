@@ -164,21 +164,21 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si = self.inputs
-        si.new('StringsSocket', "Size").prop_name = 'size'
-        si.new('StringsSocket', "Seed").prop_name = 'seed'
-        si.new('StringsSocket', "Low").prop_name = 'low_i'
-        si.new('StringsSocket', "High").prop_name = 'high_i'
-        si.new('StringsSocket', 'Weights').hide_safe = not self.weighted
+        si.new('SvStringsSocket', "Size").prop_name = 'size'
+        si.new('SvStringsSocket', "Seed").prop_name = 'seed'
+        si.new('SvStringsSocket', "Low").prop_name = 'low_i'
+        si.new('SvStringsSocket', "High").prop_name = 'high_i'
+        si.new('SvStringsSocket', 'Weights').hide_safe = not self.weighted
 
         ssk = self.soket_opt
         func = self.func_dict[self.distribute_mode]
         m = self.type_selected_mode
         for i in range(1, 4):
-            si.new('StringsSocket', ssk[i-1][0]).prop_name = ssk[i-1][1]
+            si.new('SvStringsSocket', ssk[i-1][0]).prop_name = ssk[i-1][1]
             si[ssk[i-1][0]].hide_safe = ((m == "Int") or i not in func[2])
 
         so = self.outputs
-        so.new('StringsSocket', "Value")
+        so.new('SvStringsSocket', "Value")
 
     def buttons(self, layout):
         row = layout.row()

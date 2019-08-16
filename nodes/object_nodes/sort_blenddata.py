@@ -31,9 +31,9 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
     Modes: StringProperty(name='formula', default='location.x', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Objects')
-        self.inputs.new('StringsSocket', 'CustomValue')
-        self.outputs.new('StringsSocket', 'Objects')
+        self.inputs.new('SvStringsSocket', 'Objects')
+        self.inputs.new('SvStringsSocket', 'CustomValue')
+        self.outputs.new('SvStringsSocket', 'Objects')
 
     def draw_buttons(self, context, layout):
         if not self.inputs['CustomValue'].is_linked:

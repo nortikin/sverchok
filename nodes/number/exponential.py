@@ -93,13 +93,13 @@ class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
     func_dict = {'alpha_': exponential_e, 'base_': exponential_b }
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "X0").prop_name = 'x0_'
-        self.inputs.new('StringsSocket', "Alpha").prop_name = 'alpha_'
-        self.inputs.new('StringsSocket', "NMin").prop_name = 'nmin_'
-        self.inputs.new('StringsSocket', "NMax").prop_name = 'nmax_'
-        self.inputs.new('StringsSocket', "Maximum").prop_name = 'maxValue_'
+        self.inputs.new('SvStringsSocket', "X0").prop_name = 'x0_'
+        self.inputs.new('SvStringsSocket', "Alpha").prop_name = 'alpha_'
+        self.inputs.new('SvStringsSocket', "NMin").prop_name = 'nmin_'
+        self.inputs.new('SvStringsSocket', "NMax").prop_name = 'nmax_'
+        self.inputs.new('SvStringsSocket', "Maximum").prop_name = 'maxValue_'
 
-        self.outputs.new('StringsSocket', "Sequence")
+        self.outputs.new('SvStringsSocket', "Sequence")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

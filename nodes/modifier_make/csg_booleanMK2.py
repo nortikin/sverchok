@@ -87,14 +87,14 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=update_mode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts A')
-        self.inputs.new('StringsSocket',  'Polys A')
-        self.inputs.new('VerticesSocket', 'Verts B')
-        self.inputs.new('StringsSocket',  'Polys B')
-        self.inputs.new('VerticesSocket', 'Verts Nested').hide_safe = True
-        self.inputs.new('StringsSocket',  'Polys Nested').hide_safe = True
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Polygons')
+        self.inputs.new('SvVerticesSocket', 'Verts A')
+        self.inputs.new('SvStringsSocket',  'Polys A')
+        self.inputs.new('SvVerticesSocket', 'Verts B')
+        self.inputs.new('SvStringsSocket',  'Polys B')
+        self.inputs.new('SvVerticesSocket', 'Verts Nested').hide_safe = True
+        self.inputs.new('SvStringsSocket',  'Polys Nested').hide_safe = True
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
         row = layout.row()

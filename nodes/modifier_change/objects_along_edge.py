@@ -216,20 +216,20 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
         return matrices, result_vertices
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons')
-        self.inputs.new('VerticesSocket', "Vertex1")
-        self.inputs.new('VerticesSocket', "Vertex2")
-        self.inputs.new('VerticesSocket', "VerticesR")
-        self.inputs.new('StringsSocket', 'EdgesR')
-        self.inputs.new('StringsSocket', "Count").prop_name = "count_"
-        self.inputs.new('StringsSocket', "Padding").prop_name = "padding_"
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Polygons')
+        self.inputs.new('SvVerticesSocket', "Vertex1")
+        self.inputs.new('SvVerticesSocket', "Vertex2")
+        self.inputs.new('SvVerticesSocket', "VerticesR")
+        self.inputs.new('SvStringsSocket', 'EdgesR')
+        self.inputs.new('SvStringsSocket', "Count").prop_name = "count_"
+        self.inputs.new('SvStringsSocket', "Padding").prop_name = "padding_"
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polygons')
-        self.outputs.new('MatrixSocket', 'Matrices')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Polygons')
+        self.outputs.new('SvMatrixSocket', 'Matrices')
 
         self.input_mode_change(context)
   

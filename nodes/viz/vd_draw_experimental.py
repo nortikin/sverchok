@@ -400,10 +400,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('VerticesSocket', 'verts')
-        inew('StringsSocket', 'edges')
-        inew('StringsSocket', 'faces')
-        inew('MatrixSocket', 'matrix')
+        inew('SvVerticesSocket', 'verts')
+        inew('SvStringsSocket', 'edges')
+        inew('SvStringsSocket', 'faces')
+        inew('SvMatrixSocket', 'matrix')
         self.node_dict[hash(self)] = {}
 
     def draw_buttons(self, context, layout):

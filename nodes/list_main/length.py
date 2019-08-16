@@ -27,8 +27,8 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data")
-        self.outputs.new('StringsSocket', "Length")
+        self.inputs.new('SvStringsSocket', "Data")
+        self.outputs.new('SvStringsSocket', "Length")
 
     def process(self):
 

@@ -30,11 +30,11 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.outputs.new('VerticesSocket', "Location")
-        self.outputs.new('VerticesSocket', "Scale")
-        self.outputs.new('VerticesSocket', "Rotation")
-        self.outputs.new('StringsSocket', "Angle")
-        self.inputs.new('MatrixSocket', "Matrix")
+        self.outputs.new('SvVerticesSocket', "Location")
+        self.outputs.new('SvVerticesSocket', "Scale")
+        self.outputs.new('SvVerticesSocket', "Rotation")
+        self.outputs.new('SvStringsSocket', "Angle")
+        self.inputs.new('SvMatrixSocket', "Matrix")
 
     def process(self):
         L,S,R,A = self.outputs

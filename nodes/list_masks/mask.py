@@ -35,14 +35,14 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         default=1, min=1, max=10, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data")
-        self.inputs.new('StringsSocket', "mask")
+        self.inputs.new('SvStringsSocket', "data")
+        self.inputs.new('SvStringsSocket', "mask")
 
-        self.outputs.new('StringsSocket', "mask")
-        self.outputs.new('StringsSocket', "ind_true")
-        self.outputs.new('StringsSocket', "ind_false")
-        self.outputs.new('StringsSocket', 'dataTrue')
-        self.outputs.new('StringsSocket', 'dataFalse')
+        self.outputs.new('SvStringsSocket', "mask")
+        self.outputs.new('SvStringsSocket', "ind_true")
+        self.outputs.new('SvStringsSocket', "ind_false")
+        self.outputs.new('SvStringsSocket', 'dataTrue')
+        self.outputs.new('SvStringsSocket', 'dataFalse')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "Level", text="Level lists")

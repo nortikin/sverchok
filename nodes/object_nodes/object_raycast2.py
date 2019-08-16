@@ -59,12 +59,12 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
         si('SvObjectSocket', 'Objects')
-        si('VerticesSocket', 'origin').use_prop = True
-        si('VerticesSocket', 'direction').use_prop = True
-        so('StringsSocket', "succes")
-        so('VerticesSocket', "HitP")
-        so('VerticesSocket', "HitNorm")
-        so('StringsSocket', "FaceINDEX")
+        si('SvVerticesSocket', 'origin').use_prop = True
+        si('SvVerticesSocket', 'direction').use_prop = True
+        so('SvStringsSocket', "succes")
+        so('SvVerticesSocket', "HitP")
+        so('SvVerticesSocket', "HitNorm")
+        so('SvStringsSocket', "FaceINDEX")
         # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
 
     def draw_buttons_ext(self, context, layout):

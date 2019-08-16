@@ -155,17 +155,17 @@ class SvInterpolationStripesNode(bpy.types.Node, SverchCustomTreeNode):
     t_in_y: FloatProperty(name="tV", default=.5, min=0, max=1, precision=5, update=updateNode)
 
     def sv_init(self, context):
-        s = self.inputs.new('VerticesSocket', 'Vertices')
+        s = self.inputs.new('SvVerticesSocket', 'Vertices')
         s.use_prop = True
-        self.inputs.new('StringsSocket', 'IntervalX')
-        self.inputs.new('StringsSocket', 'IntervalY')
-        a = self.inputs.new('VerticesSocket', 'Attractor')
+        self.inputs.new('SvStringsSocket', 'IntervalX')
+        self.inputs.new('SvStringsSocket', 'IntervalY')
+        a = self.inputs.new('SvVerticesSocket', 'Attractor')
         a.use_prop = True
         s.prop = (0, 0, 1)   ## WTF
-        self.outputs.new('VerticesSocket', 'vStripesOut')
-        self.outputs.new('VerticesSocket', 'vStripesIn')
-        self.outputs.new('VerticesSocket', 'vShape')
-        self.outputs.new('StringsSocket',  'sCoefs')
+        self.outputs.new('SvVerticesSocket', 'vStripesOut')
+        self.outputs.new('SvVerticesSocket', 'vStripesIn')
+        self.outputs.new('SvVerticesSocket', 'vShape')
+        self.outputs.new('SvStringsSocket',  'sCoefs')
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)

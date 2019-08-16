@@ -42,13 +42,13 @@ class SvBVHnearNewNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         si = self.inputs.new
         so = self.outputs.new
-        si('VerticesSocket', 'Verts')
-        si('StringsSocket', 'Faces')
-        si('VerticesSocket', 'Points').use_prop = True
-        so('VerticesSocket', 'Location')
-        so('VerticesSocket', 'Normal')
-        so('StringsSocket', 'Index')
-        so('StringsSocket', 'Distance')
+        si('SvVerticesSocket', 'Verts')
+        si('SvStringsSocket', 'Faces')
+        si('SvVerticesSocket', 'Points').use_prop = True
+        so('SvVerticesSocket', 'Location')
+        so('SvVerticesSocket', 'Normal')
+        so('SvStringsSocket', 'Index')
+        so('SvStringsSocket', 'Distance')
 
     @staticmethod
     def svmesh_to_bvh_lists(vsock, fsock):

@@ -40,9 +40,9 @@ class SvAreaNode(bpy.types.Node, SverchCustomTreeNode):
     sum_faces: BoolProperty(name='sum faces', default=False, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Polygons")
-        self.outputs.new('StringsSocket', "Area")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Polygons")
+        self.outputs.new('SvStringsSocket', "Area")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "sum_faces", text="Sum Faces")

@@ -34,14 +34,14 @@ class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
-        self.outputs.new('StringsSocket', 'vert-hide')
-        self.outputs.new('StringsSocket', 'edge-hide')
-        self.outputs.new('StringsSocket', 'edge-seam')
-        self.outputs.new('StringsSocket', 'edge-smooth')
-        self.outputs.new('StringsSocket', 'face-hide')
-        self.outputs.new('StringsSocket', 'face-material indx')
-        self.outputs.new('StringsSocket', 'face-smooth')
-        self.outputs.new('StringsSocket', 'bmesh_list')
+        self.outputs.new('SvStringsSocket', 'vert-hide')
+        self.outputs.new('SvStringsSocket', 'edge-hide')
+        self.outputs.new('SvStringsSocket', 'edge-seam')
+        self.outputs.new('SvStringsSocket', 'edge-smooth')
+        self.outputs.new('SvStringsSocket', 'face-hide')
+        self.outputs.new('SvStringsSocket', 'face-material indx')
+        self.outputs.new('SvStringsSocket', 'face-smooth')
+        self.outputs.new('SvStringsSocket', 'bmesh_list')
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)

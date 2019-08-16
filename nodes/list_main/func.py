@@ -74,8 +74,8 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "wrap")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data")
-        self.outputs.new('StringsSocket', "Function")
+        self.inputs.new('SvStringsSocket', "Data")
+        self.outputs.new('SvStringsSocket', "Function")
 
     def process(self):
 

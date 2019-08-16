@@ -36,16 +36,16 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', 'Edg_Pol')
-        self.inputs.new('MatrixSocket', "Matrices")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', 'Edg_Pol')
+        self.inputs.new('SvMatrixSocket', "Matrices")
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polygons')
-        self.outputs.new('VerticesSocket', 'NewVertices')
-        self.outputs.new('StringsSocket', 'NewEdges')
-        self.outputs.new('StringsSocket', 'NewFaces')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Polygons')
+        self.outputs.new('SvVerticesSocket', 'NewVertices')
+        self.outputs.new('SvStringsSocket', 'NewEdges')
+        self.outputs.new('SvStringsSocket', 'NewFaces')
   
     def process(self):
         # inputs

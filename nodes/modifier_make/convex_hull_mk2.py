@@ -111,10 +111,10 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     sort_edges: BoolProperty(default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Polygons')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Polygons')
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)

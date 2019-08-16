@@ -37,13 +37,13 @@ class SvCircleNode(bpy.types.Node, SverchCustomTreeNode):
     degr_: FloatProperty(name='Degrees', description='Degrees', default=360.0, min=0, max=360.0,  update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
-        self.inputs.new('StringsSocket', "num Verts").prop_name = 'vert_'
-        self.inputs.new('StringsSocket', "Degrees").prop_name = 'degr_'
+        self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'
+        self.inputs.new('SvStringsSocket', "num Verts").prop_name = 'vert_'
+        self.inputs.new('SvStringsSocket', "Degrees").prop_name = 'degr_'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode_", text="Mode")

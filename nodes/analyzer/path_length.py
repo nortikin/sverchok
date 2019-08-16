@@ -84,10 +84,10 @@ class SvPathLengthNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', "Vertices")
-        sinw('StringsSocket', "Edges")
+        sinw('SvVerticesSocket', "Vertices")
+        sinw('SvStringsSocket', "Edges")
 
-        sonw('StringsSocket', "Length")
+        sonw('SvStringsSocket', "Length")
 
     def get_data(self):
         '''get all data from sockets'''

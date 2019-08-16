@@ -195,13 +195,13 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si = self.inputs
-        si.new('StringsSocket', "size").prop_name = 'size'
-        si.new('StringsSocket', "vTrunc").prop_name = 'vTrunc'
-        si.new('StringsSocket', "eTrunc").prop_name = 'eTrunc'
+        si.new('SvStringsSocket', "size").prop_name = 'size'
+        si.new('SvStringsSocket', "vTrunc").prop_name = 'vTrunc'
+        si.new('SvStringsSocket', "eTrunc").prop_name = 'eTrunc'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=False)

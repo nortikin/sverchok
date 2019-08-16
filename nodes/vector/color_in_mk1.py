@@ -76,10 +76,10 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.width = 110
         inew = self.inputs.new
-        inew('StringsSocket', "R").prop_name = 'r_'
-        inew('StringsSocket', "G").prop_name = 'g_'
-        inew('StringsSocket', "B").prop_name = 'b_'
-        inew('StringsSocket', "A").prop_name = 'a_'
+        inew('SvStringsSocket', "R").prop_name = 'r_'
+        inew('SvStringsSocket', "G").prop_name = 'g_'
+        inew('SvStringsSocket', "B").prop_name = 'b_'
+        inew('SvStringsSocket', "A").prop_name = 'a_'
         onew = self.outputs.new
         onew('SvColorSocket', "Colors")
 

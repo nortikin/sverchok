@@ -32,12 +32,12 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'NONE'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('VerticesSocket', 'Mean')
-        self.outputs.new('MatrixSocket', 'Center')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvVerticesSocket', 'Mean')
+        self.outputs.new('SvMatrixSocket', 'Center')
 
     def process(self):
         if not self.inputs['Vertices'].is_linked:

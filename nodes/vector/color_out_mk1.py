@@ -51,10 +51,10 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         inew = self.inputs.new
         inew('SvColorSocket', "Colors").prop_name = "unit_color"
         onew = self.outputs.new
-        onew('StringsSocket', "R")
-        onew('StringsSocket', "G")
-        onew('StringsSocket', "B")
-        onew('StringsSocket', "A")
+        onew('SvStringsSocket', "R")
+        onew('SvStringsSocket', "G")
+        onew('SvStringsSocket', "B")
+        onew('SvStringsSocket', "A")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'use_alpha')

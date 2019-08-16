@@ -41,7 +41,7 @@ class SvSampleUVColorNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop_search(self, 'image', bpy.data, "images", text="")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Point on mesh')
+        self.inputs.new('SvVerticesSocket', 'Point on mesh')
         self.outputs.new('SvColorSocket', 'Color on UV')
 
     def process(self):

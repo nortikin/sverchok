@@ -51,11 +51,11 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
         if self.out_mode == 'SCALAR':
             if 'Noise S' not in outputs:
-                outputs[0].replace_socket('StringsSocket', 'Noise S')
+                outputs[0].replace_socket('SvStringsSocket', 'Noise S')
                 return
         if self.out_mode == 'VECTOR':
             if 'Noise V' not in outputs:
-                outputs[0].replace_socket('VerticesSocket', 'Noise V')
+                outputs[0].replace_socket('SvVerticesSocket', 'Noise V')
                 return
 
     out_modes = [
@@ -77,9 +77,9 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     seed: IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
-        self.outputs.new('VerticesSocket', 'Noise V')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
+        self.outputs.new('SvVerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'out_mode', expand=True)

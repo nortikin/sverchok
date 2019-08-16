@@ -60,13 +60,13 @@ class ImageNode(bpy.types.Node, SverchCustomTreeNode):
         options={'ANIMATABLE'}, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "vecs X").prop_name = 'Xvecs'
-        self.inputs.new('StringsSocket', "vecs Y").prop_name = 'Yvecs'
-        self.inputs.new('StringsSocket', "Step X").prop_name = 'Xstep'
-        self.inputs.new('StringsSocket', "Step Y").prop_name = 'Ystep'
-        self.outputs.new('VerticesSocket', "vecs")
-        self.outputs.new('StringsSocket', "edgs")
-        self.outputs.new('StringsSocket', "pols")
+        self.inputs.new('SvStringsSocket', "vecs X").prop_name = 'Xvecs'
+        self.inputs.new('SvStringsSocket', "vecs Y").prop_name = 'Yvecs'
+        self.inputs.new('SvStringsSocket', "Step X").prop_name = 'Xstep'
+        self.inputs.new('SvStringsSocket', "Step Y").prop_name = 'Ystep'
+        self.outputs.new('SvVerticesSocket', "vecs")
+        self.outputs.new('SvStringsSocket', "edgs")
+        self.outputs.new('SvStringsSocket', "pols")
 
     def draw_buttons(self, context, layout):
         layout.prop_search(self, "name_image", bpy.data, 'images', text="image")

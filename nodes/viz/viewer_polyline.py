@@ -138,10 +138,10 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
 
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.inputs.new('MatrixSocket', 'matrix')
-        self.inputs.new('StringsSocket', 'radii').prop_name = 'radii'
-        self.inputs.new('StringsSocket', 'twist').prop_name = 'twist'
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvMatrixSocket', 'matrix')
+        self.inputs.new('SvStringsSocket', 'radii').prop_name = 'radii'
+        self.inputs.new('SvStringsSocket', 'twist').prop_name = 'twist'
         self.inputs.new('SvObjectSocket', 'bevel object')
         self.outputs.new('SvObjectSocket', "object")
 

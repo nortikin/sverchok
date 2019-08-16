@@ -36,15 +36,15 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
-        si('StringsSocket', 'bmesh_list')
-        si('VerticesSocket', 'Vert')
-        si('StringsSocket', 'Poly')
-        si('StringsSocket', 'Verts Index')
-        si('StringsSocket', 'iteration').prop_name = 'iter'
-        so('VerticesSocket', 'Verts')
-        so('StringsSocket', 'Edges')
-        so('StringsSocket', 'Faces')
-        so('StringsSocket', 'bmesh_list')
+        si('SvStringsSocket', 'bmesh_list')
+        si('SvVerticesSocket', 'Vert')
+        si('SvStringsSocket', 'Poly')
+        si('SvStringsSocket', 'Verts Index')
+        si('SvStringsSocket', 'iteration').prop_name = 'iter'
+        so('SvVerticesSocket', 'Verts')
+        so('SvStringsSocket', 'Edges')
+        so('SvStringsSocket', 'Faces')
+        so('SvStringsSocket', 'bmesh_list')
 
     def process(self):
         bmL, V, P, mask, Iterate = self.inputs

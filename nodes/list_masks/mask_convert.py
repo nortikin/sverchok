@@ -61,17 +61,17 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'include_partial', toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Edges")
-        self.inputs.new('StringsSocket', "Faces")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Faces")
 
-        self.inputs.new('StringsSocket', "VerticesMask")
-        self.inputs.new('StringsSocket', "EdgesMask")
-        self.inputs.new('StringsSocket', "FacesMask")
+        self.inputs.new('SvStringsSocket', "VerticesMask")
+        self.inputs.new('SvStringsSocket', "EdgesMask")
+        self.inputs.new('SvStringsSocket', "FacesMask")
 
-        self.outputs.new('StringsSocket', 'VerticesMask')
-        self.outputs.new('StringsSocket', 'EdgesMask')
-        self.outputs.new('StringsSocket', 'FacesMask')
+        self.outputs.new('SvStringsSocket', 'VerticesMask')
+        self.outputs.new('SvStringsSocket', 'EdgesMask')
+        self.outputs.new('SvStringsSocket', 'FacesMask')
 
         self.update_mode(context)
 

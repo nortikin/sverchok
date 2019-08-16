@@ -30,7 +30,7 @@ class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', 'matrices')
+        self.inputs.new('SvMatrixSocket', 'matrices')
         self.inputs.new('SvObjectSocket', 'objects')
         self.outputs.new('SvObjectSocket', 'objects')
 

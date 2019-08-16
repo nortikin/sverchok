@@ -386,7 +386,7 @@ class SvPulgaPhysicsNode(bpy.types.Node, SverchCustomTreeNode):
         self.width = 200
         si = self.inputs.new
         so = self.outputs.new
-        vs, ss = 'VerticesSocket', 'StringsSocket'
+        vs, ss = 'SvVerticesSocket', 'SvStringsSocket'
 
         for input_prop in self.sorted_props:
             input_type = vs if input_prop[1][2] == 'v' else ss

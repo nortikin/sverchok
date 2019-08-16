@@ -27,10 +27,10 @@ class PolygonBoomNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "vertices")
-        self.inputs.new('StringsSocket', 'edg_pol')
-        self.outputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('StringsSocket', 'edg_pol')
+        self.inputs.new('SvVerticesSocket', "vertices")
+        self.inputs.new('SvStringsSocket', 'edg_pol')
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'edg_pol')
 
     def process(self):
         # inputs

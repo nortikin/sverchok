@@ -57,16 +57,16 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
                         update=updateNode)             
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Radius").prop_name = 'rad_'
-        self.inputs.new('StringsSocket', "N Sides").prop_name = 'sides_'
-        self.inputs.new('StringsSocket', "RandomR").prop_name = 'rand_r_'
-        self.inputs.new('StringsSocket', "RandomPhi").prop_name = 'rand_phi_'
-        self.inputs.new('StringsSocket', "RandomSeed").prop_name = 'rand_seed_'
-        self.inputs.new('StringsSocket', "Shift").prop_name = 'shift_'
+        self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'
+        self.inputs.new('SvStringsSocket', "N Sides").prop_name = 'sides_'
+        self.inputs.new('SvStringsSocket', "RandomR").prop_name = 'rand_r_'
+        self.inputs.new('SvStringsSocket', "RandomPhi").prop_name = 'rand_phi_'
+        self.inputs.new('SvStringsSocket', "RandomSeed").prop_name = 'rand_seed_'
+        self.inputs.new('SvStringsSocket', "Shift").prop_name = 'shift_'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
 
 #     def draw_buttons(self, context, layout):
 #         layout.prop(self, "mode_", text="Mode")

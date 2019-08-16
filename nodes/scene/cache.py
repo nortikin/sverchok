@@ -39,8 +39,8 @@ class SvCacheNode(bpy.types.Node, SverchCustomTreeNode):
     node_dict = {}
     
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "Data")
-        self.outputs.new("StringsSocket", "Data")
+        self.inputs.new("SvStringsSocket", "Data")
+        self.outputs.new("SvStringsSocket", "Data")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "cache_offset")

@@ -131,9 +131,9 @@ class SvMultiInput(SvScript):
             length = len(inputs)
             name = self.base_name.format(str(length))
             socket_types = {
-                'v': 'VerticesSocket',
-                's': 'StringsSocket',
-                'm': 'MatrixSocket'
+                'v': 'SvVerticesSocket',
+                's': 'SvStringsSocket',
+                'm': 'SvMatrixSocket'
             }
             s_type = socket_types[self.multi_socket_type]    
             inputs.new(s_type, name)
@@ -208,9 +208,9 @@ class SvMultiInput(SvScript):
             length = len(inputs)
             name = self.base_name.format(str(length))
             socket_types = {
-                'v': 'VerticesSocket',
-                's': 'StringsSocket',
-                'm': 'MatrixSocket'
+                'v': 'SvVerticesSocket',
+                's': 'SvStringsSocket',
+                'm': 'SvMatrixSocket'
             }
             s_type = socket_types[self.multi_socket_type]    
             inputs.new(s_type, name)

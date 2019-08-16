@@ -66,7 +66,7 @@ You've probably got a fair idea already from the example script. SN1 has a few c
 Sockets
 -------
 
-Sverchok at present has 3 main socket types: VerticesSocket, StringsSocket and MatrixSocket. Script Nodes refer to these socket types with only their first letter in lowercase. 's','v','m'::
+Sverchok at present has 3 main socket types: SvVerticesSocket, SvStringsSocket and SvMatrixSocket. Script Nodes refer to these socket types with only their first letter in lowercase. 's','v','m'::
 
     's' to hold: floats, ints, edges, faces, strings
     'v' to hold: vertices, vectors, 3-tuples

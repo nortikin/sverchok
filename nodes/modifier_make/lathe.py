@@ -59,16 +59,16 @@ class SvLatheNode(bpy.types.Node, SverchCustomTreeNode):
     axis: FloatVectorProperty(name='axis', size=3, update=updateNode, default=(0, 0, 1))
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts')
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('VerticesSocket', 'cent').prop_name = 'cent'
-        self.inputs.new('VerticesSocket', 'axis').prop_name = 'axis'
-        self.inputs.new('VerticesSocket', 'dvec').prop_name = 'dvec'
-        self.inputs.new('StringsSocket', 'Degrees').prop_name = 'Degrees'
-        self.inputs.new('StringsSocket', 'Steps').prop_name = 'Steps'
+        self.inputs.new('SvVerticesSocket', 'Verts')
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvVerticesSocket', 'cent').prop_name = 'cent'
+        self.inputs.new('SvVerticesSocket', 'axis').prop_name = 'axis'
+        self.inputs.new('SvVerticesSocket', 'dvec').prop_name = 'dvec'
+        self.inputs.new('SvStringsSocket', 'Degrees').prop_name = 'Degrees'
+        self.inputs.new('SvStringsSocket', 'Steps').prop_name = 'Steps'
 
-        self.outputs.new('VerticesSocket', 'Verts')
-        self.outputs.new('StringsSocket', 'Poly')
+        self.outputs.new('SvVerticesSocket', 'Verts')
+        self.outputs.new('SvStringsSocket', 'Poly')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

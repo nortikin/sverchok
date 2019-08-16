@@ -46,7 +46,7 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si = self.inputs.new
-        si('VerticesSocket', 'Point on mesh')
+        si('SvVerticesSocket', 'Point on mesh')
         color_socket = si('SvColorSocket', 'Color on UV')
         color_socket.prop_name = 'unit_color'
 

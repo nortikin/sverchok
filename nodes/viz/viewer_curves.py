@@ -203,9 +203,9 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.inputs.new('StringsSocket', 'edges')
-        self.inputs.new('MatrixSocket', 'matrix')
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket', 'edges')
+        self.inputs.new('SvMatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
 

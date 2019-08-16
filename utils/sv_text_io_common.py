@@ -34,8 +34,8 @@ text_modes = [
 
 name_dict = {'m': 'Matrix', 's': 'Data', 'v': 'Vertices'}
 
-map_to_short = {'VerticesSocket': 'v', 'StringsSocket': 's', 'MatrixSocket': 'm'}
-map_from_short = {'v': 'VerticesSocket', 's': 'StringsSocket', 'm': 'MatrixSocket'}
+map_to_short = {'SvVerticesSocket': 'v', 'SvStringsSocket': 's', 'SvMatrixSocket': 'm'}
+map_from_short = {'v': 'SvVerticesSocket', 's': 'SvStringsSocket', 'm': 'SvMatrixSocket'}
 
 
 def get_socket_type(node, inputsocketname):
@@ -43,7 +43,7 @@ def get_socket_type(node, inputsocketname):
     return map_to_short.get(socket_type, 's')
 
 def new_output_socket(node, name, _type):
-    bl_idname = map_from_short.get(_type, 'StringsSocket')
+    bl_idname = map_from_short.get(_type, 'SvStringsSocket')
     node.outputs.new(bl_idname, name)
 
 

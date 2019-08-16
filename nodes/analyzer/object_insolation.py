@@ -69,14 +69,14 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new
-        #si('StringsSocket', 'Date')
+        #si('SvStringsSocket', 'Date')
         si('SvObjectSocket', 'Predator')
         si('SvObjectSocket', 'Victim')
-        si('VerticesSocket', 'SunRays').use_prop = True
+        si('SvVerticesSocket', 'SunRays').use_prop = True
         #so('SvColorSocket',  "Color")
-        so('VerticesSocket', "Centers")
-        #so('VerticesSocket', "HitP")
-        so('StringsSocket',  "Hours")
+        so('SvVerticesSocket', "Centers")
+        #so('SvVerticesSocket', "HitP")
+        so('SvStringsSocket',  "Hours")
         # self.inputs[2].prop[2] = -1  # z down   # <--- mayybe?
 
     def draw_buttons_ext(self, context, layout):

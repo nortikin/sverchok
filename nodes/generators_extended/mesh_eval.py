@@ -169,7 +169,7 @@ class SvJsonFromMesh(bpy.types.Operator):
 
         if isselected:
             if not 'Selected' in node.inputs.keys() and not node.outputs[0].is_linked:
-                node.outputs.new('StringsSocket', 'Selected')
+                node.outputs.new('SvStringsSocket', 'Selected')
                 if node.sample_tree:
                     selected_masks_adding(node)
         result['vertices'] = verts
@@ -234,11 +234,11 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "sample_tree")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "a")
+        self.inputs.new('SvStringsSocket', "a")
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Faces")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Faces")
 
     def load_json(self):
         internal_file = bpy.data.texts[self.filename]
@@ -314,7 +314,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         for v in variables:
             if v not in self.inputs:
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
-                self.inputs.new('StringsSocket', v)
+                self.inputs.new('SvStringsSocket', v)
 
         groups = self.get_group_names()
         for key in self.outputs.keys():
@@ -326,7 +326,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         for name in sorted(groups):
             if name not in self.outputs:
                 self.debug("Group {} not in outputs {}, add it".format(name, str(self.outputs.keys())))
-                self.outputs.new('StringsSocket', name)
+                self.outputs.new('SvStringsSocket', name)
 
 
     def update(self):

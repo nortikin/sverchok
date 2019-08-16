@@ -35,7 +35,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
 
     # two veriables for multi socket input
     base_name: StringProperty(default='data')
-    multi_socket_type: StringProperty(default='StringsSocket')
+    multi_socket_type: StringProperty(default='SvStringsSocket')
 
     def auto_count(self):
         data = self.inputs['data'].sv_get(default="not found")
@@ -72,8 +72,8 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
         op.fn_name = "auto_count"
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "data")
-        self.outputs.new('StringsSocket', "data[0]")
+        self.inputs.new('SvStringsSocket', "data")
+        self.outputs.new('SvStringsSocket', "data[0]")
 
 
     def update(self):

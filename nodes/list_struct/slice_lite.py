@@ -70,9 +70,9 @@ class SvListSliceLiteNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         new_in = self.inputs.new
         new_out = self.outputs.new
-        new_in('StringsSocket', 'Data')
-        new_in('StringsSocket', 'Slice Lengths').prop_name = 'num_slices'
-        new_out('StringsSocket', 'Sliced Data')
+        new_in('SvStringsSocket', 'Data')
+        new_in('SvStringsSocket', 'Slice Lengths').prop_name = 'num_slices'
+        new_out('SvStringsSocket', 'Sliced Data')
 
     def draw_buttons(self, context, layout):
         ...

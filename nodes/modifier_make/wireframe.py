@@ -75,14 +75,14 @@ class SvWireframeNode(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
-        self.inputs.new('StringsSocket', 'Offset').prop_name = 'offset'
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.inputs.new('StringsSocket', 'polygons')
+        self.inputs.new('SvStringsSocket', 'thickness').prop_name = 'thickness'
+        self.inputs.new('SvStringsSocket', 'Offset').prop_name = 'offset'
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket', 'polygons')
 
-        self.outputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('StringsSocket', 'edges')
-        self.outputs.new('StringsSocket', 'polygons')
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'edges')
+        self.outputs.new('SvStringsSocket', 'polygons')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'boundary', text="Boundary")

@@ -38,12 +38,12 @@ class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "Separate", text="Separate")
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Polygons")
-        self.outputs.new('VerticesSocket', "Normals")
-        self.outputs.new('VerticesSocket', "Norm_abs")
-        self.outputs.new('VerticesSocket', "Origins")
-        self.outputs.new('MatrixSocket', "Centers")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Normals")
+        self.outputs.new('SvVerticesSocket', "Norm_abs")
+        self.outputs.new('SvVerticesSocket', "Origins")
+        self.outputs.new('SvMatrixSocket', "Centers")
 
     def process(self):
         verts_socket, poly_socket = self.inputs

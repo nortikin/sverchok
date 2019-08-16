@@ -2,7 +2,7 @@
   "export_version": "0.072",
   "framed_nodes": {},
   "groups": {
-    "PulledCube": "{\"nodes\": {\"Box\": {\"bl_idname\": \"SvBoxNode\", \"hide\": false, \"params\": {\"Divz\": 6, \"Divy\": 6, \"Divx\": 6, \"Size\": 2.049999952316284}, \"width\": 140.0, \"color\": [0.0, 0.5, 0.5], \"use_custom_color\": true, \"location\": [-610.9833984375, 183.2154541015625], \"height\": 100.0, \"label\": \"\"}, \"Move\": {\"bl_idname\": \"SvMoveNodeMK2\", \"hide\": false, \"params\": {}, \"width\": 140.0, \"location\": [-124.36906433105469, 214.74810791015625], \"height\": 100.0, \"label\": \"\"}, \"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"hide\": false, \"params\": {\"node_kind\": \"outputs\"}, \"height\": 100.0, \"width\": 140.0, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"location\": [-922.61376953125, 148.81646728515625], \"outputs\": [[\"Size\", \"StringsSocket\"], [\"Divisions\", \"StringsSocket\"], [\"Center\", \"VerticesSocket\"], [\"Amplitude\", \"StringsSocket\"]], \"label\": \"\"}, \"Vector Attraction\": {\"bl_idname\": \"SvAttractorNode\", \"hide\": false, \"params\": {\"amplitude\": 0.5899999737739563}, \"height\": 100.0, \"width\": 140.0, \"location\": [-307.9356384277344, 100.5782241821289], \"custom_socket_props\": {\"1\": {\"prop\": [0.0, 0.0, 0.0], \"use_prop\": true}, \"2\": {\"prop\": [0.0, 0.0, 1.0], \"use_prop\": true}}, \"label\": \"\"}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"hide\": false, \"params\": {\"node_kind\": \"inputs\"}, \"width\": 140.0, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"inputs\": [[\"vertices\", \"VerticesSocket\"], [\"Pols\", \"StringsSocket\"]], \"use_custom_color\": true, \"location\": [55.63093566894531, 157.6631622314453], \"height\": 100.0, \"label\": \"\"}}, \"bl_idname\": \"SverchGroupTreeType\", \"groups\": {}, \"cls_bl_idname\": \"SvGroupNodeMonad_140558499339897\", \"update_lists\": [[\"Group Inputs Exp\", 0, \"Box\", 0], [\"Group Inputs Exp\", 1, \"Box\", 1], [\"Group Inputs Exp\", 1, \"Box\", 2], [\"Group Inputs Exp\", 1, \"Box\", 3], [\"Box\", 0, \"Vector Attraction\", 0], [\"Group Inputs Exp\", 2, \"Vector Attraction\", 1], [\"Group Inputs Exp\", 3, \"Vector Attraction\", 3], [\"Box\", 0, \"Move\", 0], [\"Vector Attraction\", 0, \"Move\", 1], [\"Move\", 0, \"Group Outputs Exp\", 0], [\"Box\", 2, \"Group Outputs Exp\", 1]], \"framed_nodes\": {}, \"export_version\": \"0.07\"}"
+    "PulledCube": "{\"nodes\": {\"Box\": {\"bl_idname\": \"SvBoxNode\", \"hide\": false, \"params\": {\"Divz\": 6, \"Divy\": 6, \"Divx\": 6, \"Size\": 2.049999952316284}, \"width\": 140.0, \"color\": [0.0, 0.5, 0.5], \"use_custom_color\": true, \"location\": [-610.9833984375, 183.2154541015625], \"height\": 100.0, \"label\": \"\"}, \"Move\": {\"bl_idname\": \"SvMoveNodeMK2\", \"hide\": false, \"params\": {}, \"width\": 140.0, \"location\": [-124.36906433105469, 214.74810791015625], \"height\": 100.0, \"label\": \"\"}, \"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"hide\": false, \"params\": {\"node_kind\": \"outputs\"}, \"height\": 100.0, \"width\": 140.0, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"location\": [-922.61376953125, 148.81646728515625], \"outputs\": [[\"Size\", \"SvStringsSocket\"], [\"Divisions\", \"SvStringsSocket\"], [\"Center\", \"SvVerticesSocket\"], [\"Amplitude\", \"SvStringsSocket\"]], \"label\": \"\"}, \"Vector Attraction\": {\"bl_idname\": \"SvAttractorNode\", \"hide\": false, \"params\": {\"amplitude\": 0.5899999737739563}, \"height\": 100.0, \"width\": 140.0, \"location\": [-307.9356384277344, 100.5782241821289], \"custom_socket_props\": {\"1\": {\"prop\": [0.0, 0.0, 0.0], \"use_prop\": true}, \"2\": {\"prop\": [0.0, 0.0, 1.0], \"use_prop\": true}}, \"label\": \"\"}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"hide\": false, \"params\": {\"node_kind\": \"inputs\"}, \"width\": 140.0, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"inputs\": [[\"vertices\", \"SvVerticesSocket\"], [\"Pols\", \"SvStringsSocket\"]], \"use_custom_color\": true, \"location\": [55.63093566894531, 157.6631622314453], \"height\": 100.0, \"label\": \"\"}}, \"bl_idname\": \"SverchGroupTreeType\", \"groups\": {}, \"cls_bl_idname\": \"SvGroupNodeMonad_140558499339897\", \"update_lists\": [[\"Group Inputs Exp\", 0, \"Box\", 0], [\"Group Inputs Exp\", 1, \"Box\", 1], [\"Group Inputs Exp\", 1, \"Box\", 2], [\"Group Inputs Exp\", 1, \"Box\", 3], [\"Box\", 0, \"Vector Attraction\", 0], [\"Group Inputs Exp\", 2, \"Vector Attraction\", 1], [\"Group Inputs Exp\", 3, \"Vector Attraction\", 3], [\"Box\", 0, \"Move\", 0], [\"Vector Attraction\", 0, \"Move\", 1], [\"Move\", 0, \"Group Outputs Exp\", 0], [\"Box\", 2, \"Group Outputs Exp\", 1]], \"framed_nodes\": {}, \"export_version\": \"0.07\"}"
   },
   "nodes": {
     "Monad": {
@@ -52,26 +52,26 @@
           "input_template": [
             [
               "Size",
-              "StringsSocket",
+              "SvStringsSocket",
               {
                 "prop_name": "Size"
               }
             ],
             [
               "Divisions",
-              "StringsSocket",
+              "SvStringsSocket",
               {
                 "prop_name": "Divx"
               }
             ],
             [
               "Center",
-              "VerticesSocket",
+              "SvVerticesSocket",
               {}
             ],
             [
               "Amplitude",
-              "StringsSocket",
+              "SvStringsSocket",
               {
                 "prop_name": "amplitude"
               }
@@ -80,11 +80,11 @@
           "output_template": [
             [
               "vertices",
-              "VerticesSocket"
+              "SvVerticesSocket"
             ],
             [
               "Pols",
-              "StringsSocket"
+              "SvStringsSocket"
             ]
           ]
         },

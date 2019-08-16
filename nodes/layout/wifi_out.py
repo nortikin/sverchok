@@ -119,7 +119,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
                     if socket.links:
                         s_type = socket.links[0].from_socket.bl_idname
                     else:
-                        s_type = 'StringsSocket'
+                        s_type = 'SvStringsSocket'
                     s_name = socket.name
                     outputs.new(s_type, s_name)
 

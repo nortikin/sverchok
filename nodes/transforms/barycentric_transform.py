@@ -130,13 +130,13 @@ class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', 'Vertices')
-        sinw('StringsSocket', 'Edg_Pol')
-        sinw('VerticesSocket', 'Verts Tri Source')
-        sinw('VerticesSocket', 'Verts Tri Target')
+        sinw('SvVerticesSocket', 'Vertices')
+        sinw('SvStringsSocket', 'Edg_Pol')
+        sinw('SvVerticesSocket', 'Verts Tri Source')
+        sinw('SvVerticesSocket', 'Verts Tri Target')
 
-        sonw('VerticesSocket', 'Vertices')
-        sonw('StringsSocket', 'Edg_Pol')
+        sonw('SvVerticesSocket', 'Vertices')
+        sonw('SvStringsSocket', 'Edg_Pol')
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''

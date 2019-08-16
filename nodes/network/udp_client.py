@@ -69,8 +69,8 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'timeout', text='Timeout')
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'send').prop_name = 'send'
-        self.outputs.new('StringsSocket', 'receive')
+        self.inputs.new('SvStringsSocket', 'send').prop_name = 'send'
+        self.outputs.new('SvStringsSocket', 'receive')
 
     @profile
     def process(self):

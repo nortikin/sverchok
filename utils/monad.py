@@ -29,9 +29,9 @@ from sverchok.core.monad import monad_make_unique
 
 
 socket_types = [
-    ("StringsSocket", "s", "Numbers, polygon data, generic"),
-    ("VerticesSocket", "v", "Vertices, point and vector data"),
-    ("MatrixSocket", "m", "Matrix")
+    ("SvStringsSocket", "s", "Numbers, polygon data, generic"),
+    ("SvVerticesSocket", "v", "Vertices, point and vector data"),
+    ("SvMatrixSocket", "m", "Matrix")
 ]
 
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
@@ -148,7 +148,7 @@ class SvEditSocketOpExp(Operator, MonadOpCommon):
     bl_label = "Edit Socket"
 
     socket_type: EnumProperty(
-        items=socket_types, default="StringsSocket")
+        items=socket_types, default="SvStringsSocket")
 
     def draw(self, context):
         layout = self.layout

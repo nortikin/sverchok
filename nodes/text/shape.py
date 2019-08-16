@@ -34,8 +34,8 @@ class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
     text: StringProperty(name='Text')
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Data")
-        self.outputs.new('StringsSocket', "Text Out")
+        self.inputs.new('SvStringsSocket', "Data")
+        self.outputs.new('SvStringsSocket', "Text Out")
 
     def draw_buttons(self, context, layout):
         layout.label(text=self.text)

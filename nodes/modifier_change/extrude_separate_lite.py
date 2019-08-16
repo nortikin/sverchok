@@ -41,15 +41,15 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         inew = self.inputs.new
         onew = self.outputs.new
-        inew('VerticesSocket', "Vertices")
-        inew('StringsSocket', 'Polygons')
-        inew('StringsSocket', 'Mask')
-        inew('MatrixSocket', 'Matrix')
-        onew('VerticesSocket', 'Vertices')
-        onew('StringsSocket', 'Edges')
-        onew('StringsSocket', 'Polygons')
-        onew('StringsSocket', 'ExtrudedPolys')
-        onew('StringsSocket', 'OtherPolys')
+        inew('SvVerticesSocket', "Vertices")
+        inew('SvStringsSocket', 'Polygons')
+        inew('SvStringsSocket', 'Mask')
+        inew('SvMatrixSocket', 'Matrix')
+        onew('SvVerticesSocket', 'Vertices')
+        onew('SvStringsSocket', 'Edges')
+        onew('SvStringsSocket', 'Polygons')
+        onew('SvStringsSocket', 'ExtrudedPolys')
+        onew('SvStringsSocket', 'OtherPolys')
 
     def process(self):
         outputs = self.outputs

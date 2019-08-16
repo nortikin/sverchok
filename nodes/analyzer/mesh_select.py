@@ -76,24 +76,24 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'include_partial')
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Edges")
-        self.inputs.new('StringsSocket', "Polygons")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Polygons")
 
-        d = self.inputs.new('VerticesSocket', "Direction")
+        d = self.inputs.new('SvVerticesSocket', "Direction")
         d.use_prop = True
         d.prop = (0.0, 0.0, 1.0)
 
-        c = self.inputs.new('VerticesSocket', "Center")
+        c = self.inputs.new('SvVerticesSocket', "Center")
         c.use_prop = True
         c.prop = (0.0, 0.0, 0.0)
 
-        self.inputs.new('StringsSocket', 'Percent').prop_name = 'percent'
-        self.inputs.new('StringsSocket', 'Radius').prop_name = 'radius'
+        self.inputs.new('SvStringsSocket', 'Percent').prop_name = 'percent'
+        self.inputs.new('SvStringsSocket', 'Radius').prop_name = 'radius'
 
-        self.outputs.new('StringsSocket', 'VerticesMask')
-        self.outputs.new('StringsSocket', 'EdgesMask')
-        self.outputs.new('StringsSocket', 'FacesMask')
+        self.outputs.new('SvStringsSocket', 'VerticesMask')
+        self.outputs.new('SvStringsSocket', 'EdgesMask')
+        self.outputs.new('SvStringsSocket', 'FacesMask')
 
         self.update_mode(context)
 

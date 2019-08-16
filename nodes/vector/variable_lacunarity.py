@@ -55,10 +55,10 @@ class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
     seed: IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
-        self.inputs.new('StringsSocket', 'Distrortion').prop_name = 'distortion'
-        self.outputs.new('StringsSocket', 'Value')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
+        self.inputs.new('SvStringsSocket', 'Distrortion').prop_name = 'distortion'
+        self.outputs.new('SvStringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'noise_type1', text="Type")

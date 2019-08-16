@@ -33,14 +33,14 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Objects")
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('VerticesSocket', "VertexNormals")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
-        self.outputs.new('StringsSocket', "PolygonAreas")
-        self.outputs.new('VerticesSocket', "PolygonCenters")
-        self.outputs.new('VerticesSocket', "PolygonNormals")
-        self.outputs.new('MatrixSocket', "Matrices")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvVerticesSocket', "VertexNormals")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
+        self.outputs.new('SvStringsSocket', "PolygonAreas")
+        self.outputs.new('SvVerticesSocket', "PolygonCenters")
+        self.outputs.new('SvVerticesSocket', "PolygonNormals")
+        self.outputs.new('SvMatrixSocket', "Matrices")
 
     def draw_buttons(self, context, layout):
         row = layout.row()

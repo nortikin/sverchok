@@ -28,7 +28,7 @@ from sverchok.data_structure import levelsOflist, updateNode
 
 # pylint: disable=C0326
 
-socket_type = {'s': 'StringsSocket', 'v': 'VerticesSocket'}
+socket_type = {'s': 'SvStringsSocket', 'v': 'SvVerticesSocket'}
 
 
 func_dict = {
@@ -120,9 +120,9 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "A").prop_name = 'v3_input_0'
-        self.inputs.new('VerticesSocket', "B").prop_name = 'v3_input_1'
-        self.outputs.new('VerticesSocket', "Out")
+        self.inputs.new('SvVerticesSocket', "A").prop_name = 'v3_input_0'
+        self.inputs.new('SvVerticesSocket', "B").prop_name = 'v3_input_1'
+        self.outputs.new('SvVerticesSocket', "Out")
 
 
     def update_sockets(self):
@@ -132,7 +132,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs[0].replace_socket(socket_type.get(t_outputs))
 
         if len(t_inputs) > len(self.inputs):
-            self.inputs.new('VerticesSocket', "dummy")
+            self.inputs.new('SvVerticesSocket', "dummy")
         elif len(t_inputs) < len(self.inputs):
             self.inputs.remove(self.inputs[-1])
 

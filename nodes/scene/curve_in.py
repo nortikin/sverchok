@@ -151,11 +151,11 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
         new_o_put = self.outputs.new
 
         new_i_put("SvObjectSocket", "objects")
-        new_o_put("VerticesSocket", "verts")
-        new_o_put("StringsSocket", "edges")
-        new_o_put("StringsSocket", "faces").hide_safe = True
-        new_o_put("StringsSocket", "radii")
-        new_o_put("MatrixSocket", "matrices")
+        new_o_put("SvVerticesSocket", "verts")
+        new_o_put("SvStringsSocket", "edges")
+        new_o_put("SvStringsSocket", "faces").hide_safe = True
+        new_o_put("SvStringsSocket", "radii")
+        new_o_put("SvMatrixSocket", "matrices")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'selected_mode', expand=True)

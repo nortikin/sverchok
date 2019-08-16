@@ -29,13 +29,13 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Armature Object')
-        self.inputs.new('StringsSocket', 'bone select mask')
-        self.outputs.new('VerticesSocket', 'Head')
-        self.outputs.new('VerticesSocket', 'Middle relative')
-        self.outputs.new('VerticesSocket', 'Tail')
-        self.outputs.new('VerticesSocket', 'Direction relative')
-        self.outputs.new('StringsSocket', 'Length of bone')
-        self.outputs.new('MatrixSocket', "local bone matrix")
+        self.inputs.new('SvStringsSocket', 'bone select mask')
+        self.outputs.new('SvVerticesSocket', 'Head')
+        self.outputs.new('SvVerticesSocket', 'Middle relative')
+        self.outputs.new('SvVerticesSocket', 'Tail')
+        self.outputs.new('SvVerticesSocket', 'Direction relative')
+        self.outputs.new('SvStringsSocket', 'Length of bone')
+        self.outputs.new('SvMatrixSocket', "local bone matrix")
         self.outputs.new('SvObjectSocket', "Armature Object")
 
     def process(self):

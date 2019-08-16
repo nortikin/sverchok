@@ -45,10 +45,10 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         if in_count < self.switch_count * 2 + 1:
             while len(self.inputs) != self.switch_count * 2 + 1:
                 n = int((len(self.inputs)-1) / 2)
-                self.inputs.new("StringsSocket", "T {}".format(n))
+                self.inputs.new("SvStringsSocket", "T {}".format(n))
                 self.inputs.move(len(self.inputs)-1, n+1)
-                self.inputs.new("StringsSocket", "F {}".format(n))
-                self.outputs.new("StringsSocket", "Out {}".format(n))
+                self.inputs.new("SvStringsSocket", "F {}".format(n))
+                self.outputs.new("SvStringsSocket", "Out {}".format(n))
         else:
             while len(self.inputs) != self.switch_count * 2 + 1:
                 n = int((len(self.inputs)-1) / 2)
@@ -66,10 +66,10 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         items=mode_options, update=wrapped_updateNode)
         
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "State").prop_name = 'switch_state'
-        self.inputs.new("StringsSocket", "T 0")
-        self.inputs.new("StringsSocket", "F 0")
-        self.outputs.new("StringsSocket", "Out 0")
+        self.inputs.new("SvStringsSocket", "State").prop_name = 'switch_state'
+        self.inputs.new("SvStringsSocket", "T 0")
+        self.inputs.new("SvStringsSocket", "F 0")
+        self.outputs.new("SvStringsSocket", "Out 0")
         
     def update(self):
         if not len(self.inputs) == self.switch_count*2+1:

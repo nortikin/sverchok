@@ -156,8 +156,8 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
-        self.inputs.new('StringsSocket', 'text')
-        self.inputs.new('MatrixSocket', 'matrix')
+        self.inputs.new('SvStringsSocket', 'text')
+        self.inputs.new('SvMatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
         self.draw_live_and_outliner(context, layout)

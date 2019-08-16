@@ -44,12 +44,12 @@ class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Edges")
-        self.inputs.new('StringsSocket', "Factor").prop_name = 'factor'
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Factor").prop_name = 'factor'
 
-        self.outputs.new('VerticesSocket',  "Vertices")
-        self.outputs.new('StringsSocket',  "Edges")
+        self.outputs.new('SvVerticesSocket',  "Vertices")
+        self.outputs.new('SvStringsSocket',  "Edges")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mirror')

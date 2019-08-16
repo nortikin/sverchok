@@ -66,11 +66,11 @@ class SvKDTreePathNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Verts')
-        self.inputs.new('StringsSocket', 'maxdist').prop_name = 'maxdist'
-        self.inputs.new('StringsSocket', 'start_index').prop_name = 'start_index'
+        self.inputs.new('SvVerticesSocket', 'Verts')
+        self.inputs.new('SvStringsSocket', 'maxdist').prop_name = 'maxdist'
+        self.inputs.new('SvStringsSocket', 'start_index').prop_name = 'start_index'
 
-        self.outputs.new('StringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Edges')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "cycle", toggle=False)

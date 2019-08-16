@@ -134,14 +134,14 @@ aliases = {
 }
 
 types = {
-    int: "StringsSocket",
-    float: "StringsSocket",
-    str: "StringsSocket", # I WANT A PROPER TEXT SOCKET!!!
-    mathutils.Vector: "VerticesSocket",
-    mathutils.Color: "VerticesSocket",
-    mathutils.Matrix: "MatrixSocket",
-    mathutils.Euler: "MatrixSocket",
-    mathutils.Quaternion: "MatrixSocket",
+    int: "SvStringsSocket",
+    float: "SvStringsSocket",
+    str: "SvStringsSocket", # I WANT A PROPER TEXT SOCKET!!!
+    mathutils.Vector: "SvVerticesSocket",
+    mathutils.Color: "SvVerticesSocket",
+    mathutils.Matrix: "SvMatrixSocket",
+    mathutils.Euler: "SvMatrixSocket",
+    mathutils.Quaternion: "SvMatrixSocket",
 }
 
 class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
@@ -220,7 +220,7 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
             socket.prop_name = p_name
         elif s_type:
             inputs.new(s_type, "Data").prop_name = p_name
-        if s_type == "VerticesSocket":
+        if s_type == "SvVerticesSocket":
             inputs[0].use_prop = True
         
     prop_name: StringProperty(name='', update=verify_prop)

@@ -72,9 +72,9 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.remove(self.inputs[-1])
         if n > len(self.inputs):
             if 'X' not in self.inputs:
-                self.inputs.new('StringsSocket', "X")
+                self.inputs.new('SvStringsSocket', "X")
             if 'Y' not in self.inputs and n == 2:
-                self.inputs.new('StringsSocket', "Y")
+                self.inputs.new('SvStringsSocket', "Y")
             self.change_prop_type(None)
 
 
@@ -167,9 +167,9 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "X").prop_name = 'x'
-        self.inputs.new('StringsSocket', "Y").prop_name = 'y'
-        self.outputs.new('StringsSocket', "Gate")
+        self.inputs.new('SvStringsSocket', "X").prop_name = 'x'
+        self.inputs.new('SvStringsSocket', "Y").prop_name = 'y'
+        self.outputs.new('SvStringsSocket', "Gate")
 
 
     def draw_label(self):

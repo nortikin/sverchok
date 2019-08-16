@@ -134,25 +134,25 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def set_size_socket(self):
-        size_socket = self.inputs.new('StringsSocket', "Size")
+        size_socket = self.inputs.new('SvStringsSocket', "Size")
         size_socket.prop_name = 'size'
         size_socket.hide_safe = not self.normalize
 
     def set_vector_sockets(self):
         si = self.inputs
-        si.new('VerticesSocket', "A").prop_name = 'v3_input_0'
-        si.new('VerticesSocket', "B").prop_name = 'v3_input_1'
+        si.new('SvVerticesSocket', "A").prop_name = 'v3_input_0'
+        si.new('SvVerticesSocket', "B").prop_name = 'v3_input_1'
         si[3].hide_safe = self.direction not in ["AB", " OD"]
         si[4].hide_safe = self.direction not in ["AB", " OD"]
 
     def sv_init(self, context):
         si = self.inputs
-        si.new('StringsSocket', "Num").prop_name = 'num'
-        si.new('StringsSocket', "Step").prop_name = 'step'
+        si.new('SvStringsSocket', "Num").prop_name = 'num'
+        si.new('SvStringsSocket', "Step").prop_name = 'step'
         self.set_size_socket()
         self.set_vector_sockets()
-        self.outputs.new('VerticesSocket', "Vertices", "Vertices")
-        self.outputs.new('StringsSocket', "Edges", "Edges")
+        self.outputs.new('SvVerticesSocket', "Vertices", "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges", "Edges")
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)

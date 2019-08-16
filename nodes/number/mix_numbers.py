@@ -181,11 +181,11 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.width = 180
-        self.inputs.new('StringsSocket', "v1").prop_name = 'value_float1'
-        self.inputs.new('StringsSocket', "v2").prop_name = 'value_float2'
-        self.inputs.new('StringsSocket', "f").prop_name = 'factor'
+        self.inputs.new('SvStringsSocket', "v1").prop_name = 'value_float1'
+        self.inputs.new('SvStringsSocket', "v2").prop_name = 'value_float2'
+        self.inputs.new('SvStringsSocket', "f").prop_name = 'factor'
 
-        self.outputs.new('StringsSocket', "Value")
+        self.outputs.new('SvStringsSocket', "Value")
 
 
     def draw_buttons(self, context, layout):

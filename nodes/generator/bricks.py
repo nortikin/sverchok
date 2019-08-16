@@ -301,21 +301,21 @@ class SvBricksNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "faces_mode")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "DU").prop_name = 'du_'
-        self.inputs.new('StringsSocket', "DV").prop_name = 'dv_'
-        self.inputs.new('StringsSocket', "SizeU").prop_name = 'sizeu_'
-        self.inputs.new('StringsSocket', "SizeV").prop_name = 'sizev_'
-        self.inputs.new('StringsSocket', "Toothing").prop_name = 'toothing_'
-        self.inputs.new('StringsSocket', "ToothingR").prop_name = 'toothing_r_'
-        self.inputs.new('StringsSocket', "RDU").prop_name = 'rdu_'
-        self.inputs.new('StringsSocket', "RDV").prop_name = 'rdv_'
-        self.inputs.new('StringsSocket', "Shift").prop_name = 'shift_'
-        self.inputs.new('StringsSocket', "RandomSeed").prop_name = 'rand_seed_'
+        self.inputs.new('SvStringsSocket', "DU").prop_name = 'du_'
+        self.inputs.new('SvStringsSocket', "DV").prop_name = 'dv_'
+        self.inputs.new('SvStringsSocket', "SizeU").prop_name = 'sizeu_'
+        self.inputs.new('SvStringsSocket', "SizeV").prop_name = 'sizev_'
+        self.inputs.new('SvStringsSocket', "Toothing").prop_name = 'toothing_'
+        self.inputs.new('SvStringsSocket', "ToothingR").prop_name = 'toothing_r_'
+        self.inputs.new('SvStringsSocket', "RDU").prop_name = 'rdu_'
+        self.inputs.new('SvStringsSocket', "RDV").prop_name = 'rdv_'
+        self.inputs.new('SvStringsSocket', "Shift").prop_name = 'shift_'
+        self.inputs.new('SvStringsSocket', "RandomSeed").prop_name = 'rand_seed_'
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('StringsSocket', "Polygons")
-        self.outputs.new('VerticesSocket', "Centers")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
+        self.outputs.new('SvVerticesSocket', "Centers")
 
     def build_lines(self, vs, toothing, toothing_r, sizeu, du, rdu, shift):
         ulines = [set() for v in vs]

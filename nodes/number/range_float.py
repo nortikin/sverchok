@@ -122,11 +122,11 @@ class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     mode: EnumProperty(items=modes, default='FRANGE', update=mode_change)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Start").prop_name = 'start_'
-        self.inputs.new('StringsSocket', "Step").prop_name = 'stop_'
-        self.inputs.new('StringsSocket', "Stop").prop_name = 'step_'
+        self.inputs.new('SvStringsSocket', "Start").prop_name = 'start_'
+        self.inputs.new('SvStringsSocket', "Step").prop_name = 'stop_'
+        self.inputs.new('SvStringsSocket', "Stop").prop_name = 'step_'
 
-        self.outputs.new('StringsSocket', "Range")
+        self.outputs.new('SvStringsSocket', "Range")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)

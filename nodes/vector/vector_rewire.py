@@ -49,9 +49,9 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     scalar: FloatProperty(default=0.0, update=updateNode)
     
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vectors")
-        self.inputs.new('StringsSocket', "Scalar").prop_name = "scalar"
-        self.outputs.new('VerticesSocket', "Vectors")
+        self.inputs.new('SvVerticesSocket', "Vectors")
+        self.inputs.new('SvStringsSocket', "Scalar").prop_name = "scalar"
+        self.outputs.new('SvVerticesSocket', "Vectors")
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)

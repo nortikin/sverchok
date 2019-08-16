@@ -66,7 +66,7 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
         mode_name = self.coordinates
         
         if mode_name in ['z', 'theta']:
-            replaceable_socket.replace_socket('StringsSocket', new_name = mode_name)
+            replaceable_socket.replace_socket('SvStringsSocket', new_name = mode_name)
         else:
             raise Exception ("Unexpected mode - {}".format(mode_name))
 
@@ -74,11 +74,11 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     angles_mode: EnumProperty(items=angle_modes, default="radians", update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new("VerticesSocket", "Vectors")
+        self.inputs.new("SvVerticesSocket", "Vectors")
         self.width = 100
-        self.outputs.new('StringsSocket', "rho")
-        self.outputs.new('StringsSocket', "phi")
-        self.outputs.new('StringsSocket', "z")
+        self.outputs.new('SvStringsSocket', "rho")
+        self.outputs.new('SvStringsSocket', "phi")
+        self.outputs.new('SvStringsSocket', "z")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "coordinates", expand=True)

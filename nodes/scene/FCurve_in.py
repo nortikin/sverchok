@@ -59,8 +59,8 @@ class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         self.object_name = empty.name
 
     def sv_init(self, context):
-        self.inputs.new("StringsSocket", "Frame")  # intentionally no propname, ask zeffii why.
-        self.outputs.new("StringsSocket", "Evaluated")
+        self.inputs.new("SvStringsSocket", "Frame")  # intentionally no propname, ask zeffii why.
+        self.outputs.new("SvStringsSocket", "Evaluated")
 
     def draw_buttons(self, context, layout):
 

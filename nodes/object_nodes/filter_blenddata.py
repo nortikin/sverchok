@@ -31,10 +31,10 @@ class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
     formula: StringProperty(name='formula', default='write name here', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Objects')
-        self.inputs.new('StringsSocket', 'mask')
-        self.outputs.new('StringsSocket', 'Objects(have)')
-        self.outputs.new('StringsSocket', 'Objects(not)')
+        self.inputs.new('SvStringsSocket', 'Objects')
+        self.inputs.new('SvStringsSocket', 'mask')
+        self.outputs.new('SvStringsSocket', 'Objects(have)')
+        self.outputs.new('SvStringsSocket', 'Objects(not)')
 
     def draw_buttons(self, context, layout):
         if not self.inputs['mask'].is_linked:

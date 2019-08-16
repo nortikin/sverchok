@@ -70,14 +70,14 @@ class SvSolidifyNode(bpy.types.Node, SverchCustomTreeNode):
         default=0.1, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'thickness').prop_name = 'thickness'
-        self.inputs.new('VerticesSocket', 'vertices')
-        self.inputs.new('StringsSocket', 'polygons')
+        self.inputs.new('SvStringsSocket', 'thickness').prop_name = 'thickness'
+        self.inputs.new('SvVerticesSocket', 'vertices')
+        self.inputs.new('SvStringsSocket', 'polygons')
 
-        self.outputs.new('VerticesSocket', 'vertices')
-        self.outputs.new('StringsSocket', 'edges')
-        self.outputs.new('StringsSocket', 'polygons')
-        self.outputs.new('StringsSocket', 'newpols')
+        self.outputs.new('SvVerticesSocket', 'vertices')
+        self.outputs.new('SvStringsSocket', 'edges')
+        self.outputs.new('SvStringsSocket', 'polygons')
+        self.outputs.new('SvStringsSocket', 'newpols')
 
 
     def process(self):

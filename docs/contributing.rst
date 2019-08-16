@@ -152,7 +152,7 @@ SOME RULES:
 
         * base_name = 'data'
 
-        * multi_socket_type = 'StringsSocket'
+        * multi_socket_type = 'SvStringsSocket'
 
         * setup the fixed number of socket you need, the last of them is the first multi socket.
           minimum of one.

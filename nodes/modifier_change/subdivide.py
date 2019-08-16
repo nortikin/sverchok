@@ -142,29 +142,29 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('VerticesSocket', "Vertices")
-        inew('StringsSocket', 'Edges')
-        inew('StringsSocket', 'Faces')
-        inew('StringsSocket', 'EdgeMask')
+        inew('SvVerticesSocket', "Vertices")
+        inew('SvStringsSocket', 'Edges')
+        inew('SvStringsSocket', 'Faces')
+        inew('SvStringsSocket', 'EdgeMask')
 
-        inew('StringsSocket', 'Cuts').prop_name = "cuts"
-        inew('StringsSocket', 'Smooth').prop_name = "smooth"
-        inew('StringsSocket', 'Fractal').prop_name = "fractal"
-        inew('StringsSocket', 'AlongNormal').prop_name = "along_normal"
-        inew('StringsSocket', 'Seed').prop_name = "seed"
+        inew('SvStringsSocket', 'Cuts').prop_name = "cuts"
+        inew('SvStringsSocket', 'Smooth').prop_name = "smooth"
+        inew('SvStringsSocket', 'Fractal').prop_name = "fractal"
+        inew('SvStringsSocket', 'AlongNormal').prop_name = "along_normal"
+        inew('SvStringsSocket', 'Seed').prop_name = "seed"
 
         onew = self.outputs.new
-        onew('VerticesSocket', 'Vertices')
-        onew('StringsSocket', 'Edges')
-        onew('StringsSocket', 'Faces')
+        onew('SvVerticesSocket', 'Vertices')
+        onew('SvStringsSocket', 'Edges')
+        onew('SvStringsSocket', 'Faces')
 
-        onew('VerticesSocket', 'NewVertices')
-        onew('StringsSocket', 'NewEdges')
-        onew('StringsSocket', 'NewFaces')
+        onew('SvVerticesSocket', 'NewVertices')
+        onew('SvStringsSocket', 'NewEdges')
+        onew('SvStringsSocket', 'NewFaces')
 
-        onew('VerticesSocket', 'OldVertices')
-        onew('StringsSocket', 'OldEdges')
-        onew('StringsSocket', 'OldFaces')
+        onew('SvVerticesSocket', 'OldVertices')
+        onew('SvStringsSocket', 'OldEdges')
+        onew('SvStringsSocket', 'OldFaces')
 
         self.update_mode(context)
 

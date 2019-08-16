@@ -83,7 +83,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     def mk_input_sockets(self, *sockets):
         for socket in sockets:
             print(socket.title())
-            self.inputs.new('StringsSocket', socket.title()).prop_name = socket
+            self.inputs.new('SvStringsSocket', socket.title()).prop_name = socket
 
     def rm_input_sockets(self, *sockets):
         for socket in sockets:
@@ -130,12 +130,12 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     seed: IntProperty(default=0, name='Seed', update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('StringsSocket', 'Seed').prop_name = 'seed'
-        self.inputs.new('StringsSocket', 'H Factor').prop_name = 'h_factor'
-        self.inputs.new('StringsSocket', 'Lacunarity').prop_name = 'lacunarity'
-        self.inputs.new('StringsSocket', 'Octaves').prop_name = 'octaves'
-        self.outputs.new('StringsSocket', 'Value')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
+        self.inputs.new('SvStringsSocket', 'H Factor').prop_name = 'h_factor'
+        self.inputs.new('SvStringsSocket', 'Lacunarity').prop_name = 'lacunarity'
+        self.inputs.new('SvStringsSocket', 'Octaves').prop_name = 'octaves'
+        self.outputs.new('SvStringsSocket', 'Value')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'fractal_type', text="Type")

@@ -176,19 +176,19 @@ class SvIntersectLineSphereNode(bpy.types.Node, SverchCustomTreeNode):
         '''create sockets'''
         sinw = self.inputs.new
         sonw = self.outputs.new
-        sinw('VerticesSocket', "Verts")
-        sinw('StringsSocket', "Edges")
-        sinw('VerticesSocket', "Center").prop_name = 'sphere_center'
-        sinw('StringsSocket', "Radius").prop_name = 'radius'
+        sinw('SvVerticesSocket', "Verts")
+        sinw('SvStringsSocket', "Edges")
+        sinw('SvVerticesSocket', "Center").prop_name = 'sphere_center'
+        sinw('SvStringsSocket', "Radius").prop_name = 'radius'
 
-        sonw('StringsSocket', "Intersect Line")
-        sonw('VerticesSocket', "Intersection A")
-        sonw('VerticesSocket', "Intersection B")
-        sonw('StringsSocket', "Int. A in segment")
-        sonw('StringsSocket', "Int. B in segment")
-        sonw('VerticesSocket', "First in segment")
-        sonw('StringsSocket', "Int. with segment")
-        sonw('VerticesSocket', "All Segment int.")
+        sonw('SvStringsSocket', "Intersect Line")
+        sonw('SvVerticesSocket', "Intersection A")
+        sonw('SvVerticesSocket', "Intersection B")
+        sonw('SvStringsSocket', "Int. A in segment")
+        sonw('SvStringsSocket', "Int. B in segment")
+        sonw('SvVerticesSocket', "First in segment")
+        sonw('SvStringsSocket', "Int. with segment")
+        sonw('SvVerticesSocket', "All Segment int.")
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''

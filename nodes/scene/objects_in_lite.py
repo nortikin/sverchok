@@ -88,10 +88,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         out = self.outputs.new
-        out('VerticesSocket', 'Vertices')
-        out('StringsSocket', 'Edges')
-        out('StringsSocket', 'Polygons')
-        out('MatrixSocket', 'Matrix')
+        out('SvVerticesSocket', 'Vertices')
+        out('SvStringsSocket', 'Edges')
+        out('SvStringsSocket', 'Polygons')
+        out('SvMatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
         addon = context.preferences.addons.get(sverchok.__name__)

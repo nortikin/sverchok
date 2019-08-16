@@ -44,7 +44,7 @@ def pack_monad(node, node_items, groups_dict, create_dict_of_tree):
         group_json = json.dumps(group_dict)
         groups_dict[name] = group_json
 
-    # [['Y', 'StringsSocket', {'prop_name': 'y'}], [....
+    # [['Y', 'SvStringsSocket', {'prop_name': 'y'}], [....
     for idx, (socket_name, socket_type, prop_dict) in enumerate(node.input_template):
         socket = node.inputs[idx]
         if not socket.is_linked and prop_dict:

@@ -31,9 +31,9 @@ from sverchok.core.update_system import make_tree_from_nodes, do_update
 import ast
 
 
-socket_types = [("StringsSocket", "s", "Numbers, polygon data, generic"),
-                ("VerticesSocket", "v", "Vertices, point and vector data"),
-                ("MatrixSocket", "m", "Matrix")]
+socket_types = [("SvStringsSocket", "s", "Numbers, polygon data, generic"),
+                ("SvVerticesSocket", "v", "Vertices, point and vector data"),
+                ("SvMatrixSocket", "m", "Matrix")]
 
 
 class SvRemoveSocketOperator(bpy.types.Operator):
@@ -82,13 +82,13 @@ class SvEditSocket(bpy.types.NodeSocket):
         pass
 
     socket_type: EnumProperty(items=socket_types, update=change_socket,
-                                default="StringsSocket")
+                                default="SvStringsSocket")
     old_name: StringProperty()
 
     def draw_color(self, context, node):
-        colors = {"StringsSocket": (0.6, 1.0, 0.6, 1.0),
-                  "VerticesSocket":(0.9, 0.6, 0.2, 1.0) ,
-                  "MatrixSocket":  (.2, .8, .8, 1.0)}
+        colors = {"SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
+                  "SvVerticesSocket":(0.9, 0.6, 0.2, 1.0) ,
+                  "SvMatrixSocket":  (.2, .8, .8, 1.0)}
         return colors[self.socket_type]
 
     def draw(self, context, layout, node, text):

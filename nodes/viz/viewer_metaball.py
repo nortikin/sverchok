@@ -112,11 +112,11 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         return bpy.data.objects.get(name)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'Types').prop_name = "meta_type"
-        self.inputs.new('MatrixSocket', 'Origins')
-        self.inputs.new('StringsSocket', "Radius").prop_name = "radius"
-        self.inputs.new('StringsSocket', "Stiffness").prop_name = "stiffness"
-        self.inputs.new('StringsSocket', 'Negation')
+        self.inputs.new('SvStringsSocket', 'Types').prop_name = "meta_type"
+        self.inputs.new('SvMatrixSocket', 'Origins')
+        self.inputs.new('SvStringsSocket', "Radius").prop_name = "radius"
+        self.inputs.new('SvStringsSocket', "Stiffness").prop_name = "stiffness"
+        self.inputs.new('SvStringsSocket', 'Negation')
         self.outputs.new('SvObjectSocket', "Objects")
 
     def draw_buttons(self, context, layout):

@@ -62,14 +62,14 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         items=e(TUM), default=TUM[0], update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Location").prop_name = "origin"  # L
-        self.inputs.new('VerticesSocket', "Scale").prop_name = "scale"  # S
-        self.inputs.new('VerticesSocket', "A").prop_name = "vA"  # A
-        self.inputs.new('VerticesSocket', "B").prop_name = "vB"  # B
-        self.outputs.new('MatrixSocket', "Matrix")
-        self.outputs.new('VerticesSocket', "X")
-        self.outputs.new('VerticesSocket', "Y")
-        self.outputs.new('VerticesSocket', "Z")
+        self.inputs.new('SvVerticesSocket', "Location").prop_name = "origin"  # L
+        self.inputs.new('SvVerticesSocket', "Scale").prop_name = "scale"  # S
+        self.inputs.new('SvVerticesSocket', "A").prop_name = "vA"  # A
+        self.inputs.new('SvVerticesSocket', "B").prop_name = "vB"  # B
+        self.outputs.new('SvMatrixSocket', "Matrix")
+        self.outputs.new('SvVerticesSocket', "X")
+        self.outputs.new('SvVerticesSocket', "Y")
+        self.outputs.new('SvVerticesSocket', "Z")
 
     def split_columns(self, panel, ratios, aligns):
         """

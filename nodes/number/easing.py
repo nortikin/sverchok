@@ -118,8 +118,8 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         l.prop(self, "selected_theme_mode")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Float").prop_name = 'in_float'
-        self.outputs.new('StringsSocket', "Float").custom_draw = 'custom_draw_socket'
+        self.inputs.new('SvStringsSocket', "Float").prop_name = 'in_float'
+        self.outputs.new('SvStringsSocket', "Float").custom_draw = 'custom_draw_socket'
 
     def get_drawing_attributes(self):
         """

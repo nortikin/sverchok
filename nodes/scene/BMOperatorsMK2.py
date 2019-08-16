@@ -64,9 +64,9 @@ class SvBMOpsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         si = self.inputs.new
-        si('StringsSocket', 'bmesh_list')
-        si('StringsSocket', 'BM_element(e)')
-        self.outputs.new('StringsSocket', 'bmesh_list')
+        si('SvStringsSocket', 'bmesh_list')
+        si('SvStringsSocket', 'BM_element(e)')
+        self.outputs.new('SvStringsSocket', 'bmesh_list')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "oper", text="Get")

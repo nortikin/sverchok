@@ -40,11 +40,11 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
         outputs = self.outputs
         if self.out_mode == 'SCALAR':
             if 'Noise S' not in outputs:
-                outputs[0].replace_socket('StringsSocket', 'Noise S')
+                outputs[0].replace_socket('SvStringsSocket', 'Noise S')
                 return
         if self.out_mode == 'VECTOR':
             if 'Noise V' not in outputs:
-                outputs[0].replace_socket('VerticesSocket', 'Noise V')
+                outputs[0].replace_socket('SvVerticesSocket', 'Noise V')
                 return
 
     out_modes = [
@@ -76,14 +76,14 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         inew = self.inputs.new
-        inew('VerticesSocket', 'Vertices')
-        inew('StringsSocket', 'Octaves').prop_name = 'octaves'
-        inew('StringsSocket', 'Hard').prop_name = 'hard'
-        inew('StringsSocket', 'Amplitude').prop_name = 'amp'
-        inew('StringsSocket', 'Frequency').prop_name = 'freq'
-        inew('StringsSocket', 'Random seed').prop_name = 'rseed'
+        inew('SvVerticesSocket', 'Vertices')
+        inew('SvStringsSocket', 'Octaves').prop_name = 'octaves'
+        inew('SvStringsSocket', 'Hard').prop_name = 'hard'
+        inew('SvStringsSocket', 'Amplitude').prop_name = 'amp'
+        inew('SvStringsSocket', 'Frequency').prop_name = 'freq'
+        inew('SvStringsSocket', 'Random seed').prop_name = 'rseed'
 
-        self.outputs.new('VerticesSocket', 'Noise V')
+        self.outputs.new('SvVerticesSocket', 'Noise V')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'out_mode', expand=True)

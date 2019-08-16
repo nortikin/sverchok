@@ -82,20 +82,20 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         name="Multiple extrude", description="Extrude the same region several times", default=False, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons')
-        self.inputs.new('StringsSocket', 'Mask')
-        self.inputs.new('MatrixSocket', 'Matrices')
-        self.inputs.new('StringsSocket', "Height").prop_name = "height_"
-        self.inputs.new('StringsSocket', "Scale").prop_name = "scale_"
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Polygons')
+        self.inputs.new('SvStringsSocket', 'Mask')
+        self.inputs.new('SvMatrixSocket', 'Matrices')
+        self.inputs.new('SvStringsSocket', "Height").prop_name = "height_"
+        self.inputs.new('SvStringsSocket', "Scale").prop_name = "scale_"
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polygons')
-        self.outputs.new('VerticesSocket', 'NewVertices')
-        self.outputs.new('StringsSocket', 'NewEdges')
-        self.outputs.new('StringsSocket', 'NewFaces')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Polygons')
+        self.outputs.new('SvVerticesSocket', 'NewVertices')
+        self.outputs.new('SvStringsSocket', 'NewEdges')
+        self.outputs.new('SvStringsSocket', 'NewFaces')
 
         self.update_mode(context)
 

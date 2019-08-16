@@ -95,9 +95,9 @@ class SvBendAlongSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         name="Swap U/V", description="Swap U and V directions in surface definition", default=False, update=updateNode)
     
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('VerticesSocket', "Surface")
-        self.outputs.new('VerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvVerticesSocket', "Surface")
+        self.outputs.new('SvVerticesSocket', 'Vertices')
 
     def draw_buttons(self, context, layout):
         layout.label(text="Orientation:")

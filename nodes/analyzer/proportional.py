@@ -71,11 +71,11 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
             update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Mask")
-        self.inputs.new('StringsSocket', "Radius").prop_name = 'radius'
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Mask")
+        self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
 
-        self.outputs.new('StringsSocket', "Coeffs")
+        self.outputs.new('SvStringsSocket', "Coeffs")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'falloff_type')

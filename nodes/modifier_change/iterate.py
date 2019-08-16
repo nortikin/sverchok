@@ -109,16 +109,16 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
         default=1, min=0, update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('MatrixSocket', "Matrix")
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', 'Edges')
-        self.inputs.new('StringsSocket', 'Polygons')
-        self.inputs.new('StringsSocket', "Iterations").prop_name = "count_"
+        self.inputs.new('SvMatrixSocket', "Matrix")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Polygons')
+        self.inputs.new('SvStringsSocket', "Iterations").prop_name = "count_"
 
-        self.outputs.new('VerticesSocket', 'Vertices')
-        self.outputs.new('StringsSocket', 'Edges')
-        self.outputs.new('StringsSocket', 'Polygons')
-        self.outputs.new('MatrixSocket', 'Matrices')
+        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Edges')
+        self.outputs.new('SvStringsSocket', 'Polygons')
+        self.outputs.new('SvMatrixSocket', 'Matrices')
 
     def process(self):
         # inputs

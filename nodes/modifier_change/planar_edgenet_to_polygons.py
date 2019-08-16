@@ -338,10 +338,10 @@ class SvPlanarEdgenetToPolygons(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vers')
-        self.inputs.new('StringsSocket', "Edgs")
-        self.outputs.new('VerticesSocket', 'Vers')
-        self.outputs.new('StringsSocket', "Faces")
+        self.inputs.new('SvVerticesSocket', 'Vers')
+        self.inputs.new('SvStringsSocket', "Edgs")
+        self.outputs.new('SvVerticesSocket', 'Vers')
+        self.outputs.new('SvStringsSocket', "Faces")
 
     def process(self):
 

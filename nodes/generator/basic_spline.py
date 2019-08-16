@@ -54,17 +54,17 @@ class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     knot_2: FloatVectorProperty(size=3, name='knot_2', description="k2", update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "num_verts").prop_name = 'num_verts'
+        self.inputs.new('SvStringsSocket', "num_verts").prop_name = 'num_verts'
 
-        self.inputs.new('VerticesSocket', "knot_1").prop_name = 'knot_1'
-        self.inputs.new('VerticesSocket', "ctrl_1").prop_name = 'ctrl_1'
-        self.inputs.new('VerticesSocket', "ctrl_2").prop_name = 'ctrl_2'
-        self.inputs.new('VerticesSocket', "knot_2").prop_name = 'knot_2'
+        self.inputs.new('SvVerticesSocket', "knot_1").prop_name = 'knot_1'
+        self.inputs.new('SvVerticesSocket', "ctrl_1").prop_name = 'ctrl_1'
+        self.inputs.new('SvVerticesSocket', "ctrl_2").prop_name = 'ctrl_2'
+        self.inputs.new('SvVerticesSocket', "knot_2").prop_name = 'knot_2'
 
-        self.outputs.new('VerticesSocket', "Verts")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('VerticesSocket', "hnd Verts")
-        self.outputs.new('StringsSocket', "hnd Edges")
+        self.outputs.new('SvVerticesSocket', "Verts")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvVerticesSocket', "hnd Verts")
+        self.outputs.new('SvStringsSocket', "hnd Edges")
 
     def draw_buttons(self, context, layout):
         pass

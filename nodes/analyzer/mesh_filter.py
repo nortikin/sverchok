@@ -29,13 +29,13 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class Vertices(object):
     outputs = [
-            ('VerticesSocket', 'YesVertices'),
-            ('VerticesSocket', 'NoVertices'),
-            ('StringsSocket', 'VerticesMask'),
-            ('StringsSocket', 'YesEdges'),
-            ('StringsSocket', 'NoEdges'),
-            ('StringsSocket', 'YesFaces'),
-            ('StringsSocket', 'NoFaces'),
+            ('SvVerticesSocket', 'YesVertices'),
+            ('SvVerticesSocket', 'NoVertices'),
+            ('SvStringsSocket', 'VerticesMask'),
+            ('SvStringsSocket', 'YesEdges'),
+            ('SvStringsSocket', 'NoEdges'),
+            ('SvStringsSocket', 'YesFaces'),
+            ('SvStringsSocket', 'NoFaces'),
         ]
 
     submodes = [
@@ -122,9 +122,9 @@ class Vertices(object):
 
 class Edges(object):
     outputs = [
-            ('StringsSocket', 'YesEdges'),
-            ('StringsSocket', 'NoEdges'),
-            ('StringsSocket', 'Mask'),
+            ('SvStringsSocket', 'YesEdges'),
+            ('SvStringsSocket', 'NoEdges'),
+            ('SvStringsSocket', 'Mask'),
         ]
     
     submodes = [
@@ -172,9 +172,9 @@ class Edges(object):
 
 class Faces(object):
     outputs = [
-            ('StringsSocket', 'Interior'),
-            ('StringsSocket', 'Boundary'),
-            ('StringsSocket', 'BoundaryMask'),
+            ('SvStringsSocket', 'Interior'),
+            ('SvStringsSocket', 'Boundary'),
+            ('SvStringsSocket', 'BoundaryMask'),
         ]
     
     @staticmethod
@@ -252,9 +252,9 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'submode', expand=False)
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', "Vertices")
-        self.inputs.new('StringsSocket', "Edges")
-        self.inputs.new('StringsSocket', "Polygons")
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Polygons")
 
         self.update_mode(context)
         self.update_submode(context)

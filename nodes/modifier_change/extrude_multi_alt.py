@@ -261,11 +261,11 @@ class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
     bl_label = 'MultiExtrude Alt from addons'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'verts')
-        self.inputs.new('StringsSocket', 'faces')
-        self.inputs.new('StringsSocket', 'face_masks')
-        self.outputs.new('VerticesSocket', 'verts')
-        self.outputs.new('StringsSocket', 'faces')
+        self.inputs.new('SvVerticesSocket', 'verts')
+        self.inputs.new('SvStringsSocket', 'faces')
+        self.inputs.new('SvStringsSocket', 'face_masks')
+        self.outputs.new('SvVerticesSocket', 'verts')
+        self.outputs.new('SvStringsSocket', 'faces')
 
     def draw_buttons(self, context, layout):
         draw_ui(self, context, layout)

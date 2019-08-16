@@ -29,10 +29,10 @@ class SvBMtoElementNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', 'bmesh_list')
-        self.outputs.new('StringsSocket', 'BM_verts')
-        self.outputs.new('StringsSocket', 'BM_edges')
-        self.outputs.new('StringsSocket', 'BM_faces')
+        self.inputs.new('SvStringsSocket', 'bmesh_list')
+        self.outputs.new('SvStringsSocket', 'BM_verts')
+        self.outputs.new('SvStringsSocket', 'BM_edges')
+        self.outputs.new('SvStringsSocket', 'BM_faces')
 
     def process(self):
         bmlist = self.inputs[0]

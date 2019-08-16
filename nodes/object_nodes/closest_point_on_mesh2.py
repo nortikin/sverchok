@@ -37,13 +37,13 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
         si('SvObjectSocket', 'Objects')
-        si('VerticesSocket', "point").use_prop = True
-        si('StringsSocket', "max_dist").prop_name = "Mdist"
+        si('SvVerticesSocket', "point").use_prop = True
+        si('SvStringsSocket', "max_dist").prop_name = "Mdist"
         
-        so('StringsSocket', "succes")
-        so('VerticesSocket', "Point_on_mesh")
-        so('VerticesSocket', "Normal_on_mesh")
-        so('StringsSocket', "FaceINDEX")
+        so('SvStringsSocket', "succes")
+        so('SvVerticesSocket', "Point_on_mesh")
+        so('SvVerticesSocket', "Normal_on_mesh")
+        so('SvStringsSocket', "FaceINDEX")
 
     def draw_buttons_ext(self, context, layout):
         row = layout.row(align=True)
