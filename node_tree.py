@@ -428,17 +428,17 @@ class SverchCustomTreeNode:
             pass
 
         
-        def free(self):
-            """
-            some nodes require additional operations upon node removal
-            """
+    def free(self):
+        """
+        some nodes require additional operations upon node removal
+        """
 
-            if hasattr(self, "has_3dview_props"):
-                print("about to remove this node's props from Sv3DProps")
-                try:
-                    bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
-                except:
-                    print(f'failed to remove {self.name} from tree={self.id_data.name}')
+        if hasattr(self, "has_3dview_props"):
+            print("about to remove this node's props from Sv3DProps")
+            try:
+                bpy.ops.node.sv_remove_3dviewpropitem(node_name=self.name, tree_name=self.id_data.name)
+            except:
+                print(f'failed to remove {self.name} from tree={self.id_data.name}')
 
 
 classes = [
