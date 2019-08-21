@@ -141,22 +141,22 @@ class DefaultMacros():
         if term == 'obj vd':
             obj_in_node = nodes.new('SvObjInLite')
             obj_in_node.dget()
-            vd_node = nodes.new('ViewerNode2')
+            vd_node = nodes.new('SvVDExperimental')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
             
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
-            links.new(obj_in_node.outputs[2], vd_node.inputs[1])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[2])
+            links.new(obj_in_node.outputs[2], vd_node.inputs[2])
+            links.new(obj_in_node.outputs[3], vd_node.inputs[3])
 
         elif term == 'objs vd':
             obj_in_node = nodes.new('SvObjectsNodeMK3')
             obj_in_node.get_objects_from_scene(operator)
-            vd_node = nodes.new('ViewerNode2')
+            vd_node = nodes.new('SvVDExperimental')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
             
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
-            links.new(obj_in_node.outputs[2], vd_node.inputs[1])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[2])            
+            links.new(obj_in_node.outputs[2], vd_node.inputs[2])
+            links.new(obj_in_node.outputs[3], vd_node.inputs[3])            
 
         elif term == 'zen':
             full_url_term = 'https://blenderpython.tumblr.com/post/91951323209/zen-of-sverchok'
@@ -268,7 +268,7 @@ class DefaultMacros():
                 ['SvGenFloatRange', (720, 90)],
                 ['SvInterpolationNodeMK3', (880, 40)],
                 ['LineConnectNodeMK2', (1060, -40)],
-                ['ViewerNode2', (1245, 50)],
+                ['SvVDExperimental', (1245, 50)],
             ]
       
             made_nodes = []
