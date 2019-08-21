@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from mathutils import Matrix
 from math import sqrt
 
-modeItems = [
+projection_type_items = [
     ("PLANAR",  "PLANAR",  "Project onto a plane", 0),
     ("SPHERICAL", "SPHERICAL", "Project onto a sphere", 1),
     ("CYLINDRICAL", "CYLINDRICAL", "Project onto a cylinder", 2)]
@@ -67,7 +67,7 @@ def projection_spherical(verts3D, m, d):
     return vertList, focusList
 
 
-def project_2d(vert3D, m, d):
+def projection_planar2D(vert3D, m, d):
     """
     Project a 3D vector onto 2D space given the projection distance
     """
@@ -98,11 +98,11 @@ def project_2d(vert3D, m, d):
     return [px, py, pz]
 
 
-def project_3d_verts(verts3D, m, d):
+def projection_planar(verts3D, m, d):
     """
     Project the 3D verts onto 2D space given the projection distance
     """
-    verts2D = [project_2d(verts3D[i], m, d) for i in range(len(verts3D))]
+    verts2D = [projection_planar2D(verts3D[i], m, d) for i in range(len(verts3D))]
 
     # Focus location
     # xx yx zx tx         0      tx - d * zx
@@ -120,22 +120,15 @@ def project_3d_verts(verts3D, m, d):
 
 class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: 3D Projection
-    Tooltips: Perspective projection from 3D space to 2D space
+    Triggers: 3D Projection, Perspective, Orthogonal
+    Tooltips: Projection from 3D space to 2D space
     """
     bl_idname = 'Sv3DProjectNode'
     bl_label = '3D:2D Projection'
 
-    def update_mode(self, context):
-        # if self.mode == self.last_mode:
-        #     return
 
-        # self.last_mode = self.mode
-        # self.update_sockets(context)
-        updateNode(self, context)
-
-    mode = EnumProperty(
-        name="Mode", items=modeItems, default="PLANAR", update=update_mode)
+    projection_type = EnumProperty(
+        name="Type", items=projection_type_items, default="PLANAR", update=updateNode)
 
     distance = FloatProperty(
         name="Distance", description="Projection Distance",
@@ -156,7 +149,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Focus")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "mode")
+        layout.prop(self, "projection_type", text="")
 
     def process(self):
         # return if no outputs are connected
@@ -187,14 +180,19 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
 
         params = match_long_repeat([input_v, input_e, input_p, input_m, input_d])
 
+        if self.projection_type == "PLANAR":
+            projector = projection_planar
+        elif self.projection_type == "CYLINDRICAL":
+            projector = projection_cylindrical
+        elif self.projection_type == "SPHERICAL":
+            projector = projection_spherical
+
         vertList = []
         edgeList = []
         polyList = []
         focusList = []
         for v, e, p, m, d in zip(*params):
-            verts, focus = projection_spherical(v, m, d)
-            # verts, focus = projection_cylindrical(v, m, d)
-            # verts, focus = project_3d_verts(v, m, d)
+            verts, focus = projector(v, m, d)
             vertList.append(verts)
             edgeList.append(e)
             polyList.append(p)
