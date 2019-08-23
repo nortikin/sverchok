@@ -39,9 +39,10 @@ from sverchok.utils.logging import debug, info, warning, error, exception
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.072'
+_EXPORTER_REVISION_ = '0.079'
 
 IO_REVISION_HISTORY = r"""
+0.079 only to suggest that exports will be compatible with socketnames currently in sv.
 0.072 export now stores the absolute node location (incase framed-n)
 0.072 new route for node.storage_get/set_data. no change to json format
 0.07  add initial support for socket properties.

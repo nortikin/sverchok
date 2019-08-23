@@ -98,7 +98,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     type_collection_name: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
     frame_collection_name: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
 
-    M = ['actions', 'brushes', 'filepath', 'grease_pencil', 'groups',
+    M = ['actions', 'brushes', 'filepath', 'grease_pencils', 'groups',
          'images', 'libraries', 'linestyles', 'masks', 'materials',
          'movieclips', 'node_groups', 'particles', 'scenes', 'screens', 'shape_keys',
          'sounds', 'speakers', 'texts', 'textures', 'worlds', 'objects']
