@@ -50,9 +50,15 @@ def find_projected_arc_center(p1, p2, b, radius=0.5):
         #  Vector.angle(other): zero length vectors have no valid angle
         return None
 
-    sideA = radius
-    sideB = sideA / tan(angleA)
-    sideC = sideA / sin(angleA)
+    # slightly undefined input handled ugly-er
+    try:
+        sideA = radius
+        sideB = sideA / tan(angleA)
+        sideC = sideA / sin(angleA)
+    except Exception as e:
+        print(e)
+        print("no idea why this input happens.. show me a shorter version of your input mesh")
+        return None
 
     try:
         ratio = (sideC - radius) / focal_length
