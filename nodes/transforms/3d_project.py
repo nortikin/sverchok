@@ -24,45 +24,83 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from mathutils import Matrix
 from math import sqrt
 
+from sverchok.utils.profile import profile
+
 projection_type_items = [
-    ("PLANAR",  "PLANAR",  "Project onto a plane", 0),
-    ("SPHERICAL", "SPHERICAL", "Project onto a sphere", 1),
-    ("CYLINDRICAL", "CYLINDRICAL", "Project onto a cylinder", 2)]
+    ("PLANAR",  "Planar",  "Project onto a plane", 0),
+    ("SPHERICAL", "Spherical", "Project onto a sphere", 1),
+    ("CYLINDRICAL", "Cylindrical", "Project onto a cylinder", 2)]
 
 
 projectionItems = [
-    ("PERSPECTIVE",  "PERSPECTIVE",  "Perspective projection", 0),
-    ("ORTHOGRAPHIC", "ORTHOGRAPHIC", "Orthographic projection", 1)]
+    ("PERSPECTIVE",  "Perspective",  "Perspective projection", 0),
+    ("ORTHOGRAPHIC", "Orthographic", "Orthographic projection", 1)]
 
 idMat = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 EPSILON = 1e-10
 
-
+@profile
 def projection_cylindrical(verts3D, m, d):
+    """
+
+    """
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection cylinder origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection cylinder axis
+
     vertList = []
     focusList = []
     for vert in verts3D:
         x, y, z = vert
-        r = sqrt(x*x + y*y) + EPSILON
-        xx = x * d/r
-        yy = y * d/r
-        zz = z
+        # vector relative to the center of the cylinder (V-O)
+        dx = x - ox
+        dy = y - oy
+        dz = z - oz
+        # magnitude of the vector projected parallel to the cylinder normal
+        vn = dx * nx + dy * ny + dz * nz
+        # vector projected perpendicular to the cylinder normal
+        xn = dx - vn * nx
+        yn = dy - vn * ny
+        zn = dz - vn * nz
+        # magnitude of the perpendicular projection
+        r = sqrt(xn * xn + yn * yn + zn * zn) + EPSILON
+        # factor to scale the vector to touch the cylinder
+        s = d / r
+        # extended vector touching the cylinder
+        xx = ox + dx * s
+        yy = oy + dy * s
+        zz = oz + dz * s
+
         vertList.append([xx, yy, zz])
+
+    focusList = [[ox, oy, oz]]
 
     return vertList, focusList
 
 
 def projection_spherical(verts3D, m, d):
+    """
+
+    """
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection sphere origin
+
     vertList = []
     focusList = []
     for vert in verts3D:
         x, y, z = vert
-        r = sqrt(x*x + y*y + z*z) + EPSILON
-        xx = x * d/r
-        yy = y * d/r
-        zz = z * d/r
+        dx = x - ox
+        dy = y - oy
+        dz = z - oz
+
+        r = sqrt(dx*dx + dy*dy + dz*dz) + EPSILON
+
+        xx = ox + dx * d/r
+        yy = oy + dy * d/r
+        zz = oz + dz * d/r
+
         vertList.append([xx, yy, zz])
+
+    focusList = [[ox, oy, oz]]
 
     return vertList, focusList
 
@@ -71,11 +109,8 @@ def projection_planar2D(vert3D, m, d):
     """
     Project a 3D vector onto 2D space given the projection distance
     """
-    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
-    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
-
-    o = [ox, oy, oz]
-    n = [nx, ny, nz]
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection screen origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection screen normal
 
     x, y, z = vert3D
 
@@ -83,9 +118,9 @@ def projection_planar2D(vert3D, m, d):
     y = y - oy
     z = z - oz
 
-    an = x * nx + y * ny + z * nz
+    an = x * nx + y * ny + z * nz  # v projection along the plane normal
 
-    s = d / (d + an)
+    s = d / (d + an)  # perspective factor
 
     xa = s * (x - an * nx)
     ya = s * (y - an * ny)
@@ -102,13 +137,54 @@ def projection_planar(verts3D, m, d):
     """
     Project the 3D verts onto 2D space given the projection distance
     """
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection screen origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection screen normal
+
+    vertList = []
+    focusList = []
+    for vert in verts3D:
+        x, y, z = vert
+
+        # Focus location
+        # Xx Yx Zx Tx        0     Tx - d * Zx
+        # Xy Yy Zy Ty   *    0  =  Ty - d * Zy
+        # Xz Yz Zz Tz      - d     Tz - d * Zz
+        # 0  0  0  1         1     1
+
+        dx = x - ox
+        dy = y - oy
+        dz = z - oz
+
+        an = dx * nx + dy * ny + dz * nz  # v projection along the plane normal
+
+        s = d / (d + an)  # perspective factor
+
+        xa = s * (dx - an * nx)
+        ya = s * (dy - an * ny)
+        za = s * (dz - an * nz)
+
+        px = ox + xa
+        py = oy + ya
+        pz = oz + za
+
+        vertList.append([px, py, pz])
+
+    focusList = [[ox - d*nx, oy - d*ny, oz - d * nz]]
+
+    return vertList, focusList
+
+
+def projection_planar2(verts3D, m, d):
+    """
+    Project the 3D verts onto 2D space given the projection distance
+    """
     verts2D = [projection_planar2D(verts3D[i], m, d) for i in range(len(verts3D))]
 
     # Focus location
-    # xx yx zx tx         0      tx - d * zx
-    # xy yy zy ty   *     0   =  ty - d * zy
-    # xz yz zz tz       - d      tz - d * zz
-    # 0  0  0  1          1      1
+    # Xx Yx Zx Tx        0     Tx - d * Zx
+    # Xy Yy Zy Ty   *    0  =  Ty - d * Zy
+    # Xz Yz Zz Tz      - d     Tz - d * Zz
+    # 0  0  0  1         1     1
 
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
     nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
@@ -124,8 +200,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltips: Projection from 3D space to 2D space
     """
     bl_idname = 'Sv3DProjectNode'
-    bl_label = '3D:2D Projection'
-
+    bl_label = '3D Projection'
 
     projection_type = EnumProperty(
         name="Type", items=projection_type_items, default="PLANAR", update=updateNode)
@@ -138,9 +213,9 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('VerticesSocket', "Verts")
         self.inputs.new('StringsSocket', "Edges")
         self.inputs.new('StringsSocket', "Polys")
-        # projection screen location
+        # projection screen location and orientation
         self.inputs.new('MatrixSocket', "Matrix")
-
+        # distance from the projection point to the projection screen
         self.inputs.new('StringsSocket', "D").prop_name = 'distance'
 
         self.outputs.new('VerticesSocket', "Verts")
@@ -151,6 +226,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "projection_type", text="")
 
+    @profile
     def process(self):
         # return if no outputs are connected
         outputs = self.outputs
