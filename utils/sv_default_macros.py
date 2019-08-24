@@ -283,7 +283,7 @@ class DefaultMacros():
             sn_loader(snlite, script_name='path_length.py')
 
             # ID Selector
-            made_nodes[0].Mode = 'grease_pencil'  # the rest must be user driven
+            made_nodes[0].Mode = 'grease_pencils'  # the rest must be user driven
             links.new(made_nodes[0].outputs[0], made_nodes[1].inputs[0])
 
             # Scalar Math node
