@@ -137,16 +137,16 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         # -- draw_cyclic
         #  --- / triangles (only set is useful...)
         
-        layout.prop_search(self, 'gp_name', bpy.data, 'grease_pencil', text='name')
+        layout.prop_search(self, 'gp_name', bpy.data, 'grease_pencils', text='name')
         if not self.gp_name:
             return
         
-        layout.prop_search(self, 'gp_layer', bpy.data.grease_pencil[self.gp_name], 'layers', text='layer')
+        layout.prop_search(self, 'gp_layer', bpy.data.grease_pencils[self.gp_name], 'layers', text='layer')
         if not self.gp_layer:
             return
 
         layout.prop(self, 'gp_selected_frame_mode', expand=True)
-        gp_layer = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer]
+        gp_layer = bpy.data.grease_pencils[self.gp_name].layers[self.gp_layer]
         frame_data = None
         if self.gp_selected_frame_mode == 'active frame':
             frame_data = gp_layer.active_frame
@@ -171,7 +171,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             if self.image_name:
                 layout.prop(self, 'pass_pixels', text='pixels')
                 # size ?  new socket outputting [w/h]
-        elif self.Mode == 'grease_pencil':
+        elif self.Mode == 'grease_pencils':
             self.draw_gp_options(context, layout)
 
 
@@ -210,7 +210,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             else:
                 output_socket.sv_set(data_list[:])
 
-        elif self.Mode == 'grease_pencil':
+        elif self.Mode == 'grease_pencils':
             # candidate for refactor
             if self.gp_name and self.gp_layer:
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
