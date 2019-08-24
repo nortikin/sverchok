@@ -40,6 +40,7 @@ idMat = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 EPSILON = 1e-10
 
+
 @profile
 def projection_cylindrical(verts3D, m, d):
     """
@@ -134,11 +135,11 @@ def projection_planar(verts3D, m, d):
 
         vertList.append([px, py, pz])
 
-    # Focus location
-    # Xx Yx Zx Tx        0     Tx - d * Zx
-    # Xy Yy Zy Ty   *    0  =  Ty - d * Zy
-    # Xz Yz Zz Tz      - d     Tz - d * Zz
-    # 0  0  0  1         1     1
+    # Focus location m * D:
+    #  Xx Yx Zx Tx        0     Tx - d * Zx
+    #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
+    #  Xz Yz Zz Tz      - d     Tz - d * Zz
+    #  0  0  0  1         1     1
     focusList = [[ox - d*nx, oy - d*ny, oz - d * nz]]
 
     return vertList, focusList
