@@ -52,13 +52,11 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
 
     level_: IntProperty(
         name='level', description='Level',
-        default=2, min=1, max=5,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=2, min=1, max=5, update=updateNode)
 
     size_: FloatProperty(
         name='size', description='Size',
-        default=1.0, min=0.1,
-        options={'ANIMATABLE'}, update=updateNode)
+        default=1.0, min=0.1, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Level").prop_name = 'level_'
@@ -74,22 +72,19 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
             Integer = level_socket.sv_get()[0]
             Step = size_socket.sv_get()[0]
 
-            Integer,Step = match_long_repeat((Integer,Step))
+            # make verts
+            Integer, Step = match_long_repeat((Integer, Step))
             verts = []
-            for lev,siz in zip(Integer, Step):
+            for lev, siz in zip(Integer, Step):
                 verts.append(hilbert(siz, int(lev)))
             verts_socket.sv_set(verts)
+
+            # make associated edge lists
             if edges_socket.is_linked:
                 listEdg = []
                 for ve in verts:
-                    listEdg_ = []
-                    r = len(ve[0])-1
-                    for i in range(r):
-                        listEdg_.append((i, i+1))
-
-                    listEdg.append(list(listEdg))
-                edg = listEdg
-                edges_socket.sv_set(edg)
+                    listEdg.append([(i, i+1) for i in range(len(ve) - 1)])
+                edges_socket.sv_set(listEdg)
 
 
 def register():
