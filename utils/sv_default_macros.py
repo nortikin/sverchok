@@ -307,7 +307,7 @@ class DefaultMacros():
                 for j, n in enumerate(socket_indices):
                     links.new(node.outputs[n], switch_node.inputs[label + " " + str(j+1)])
 
-            if all(node.outputs[0].bl_idname == "VerticesSocket" for node in sorted_nodes):
+            if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
                 viewer_node = nodes.new("SvVDExperimental")
                 viewer_node.location = switch_node.location.x + switch_node.width + 100, maxy
 
