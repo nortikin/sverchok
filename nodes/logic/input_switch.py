@@ -57,7 +57,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 out_label = "Data " + str(i + 1)
                 if out_label in outputs:
                     socket = outputs[out_label]
-                    socket.replace_socket("StringsSocket")
+                    socket.replace_socket("SvStringsSocket")
 
         else:  # set output socket types to match selected SET input socket types
             n = inputs["Selected"].sv_get()[0][0] % num_linked_sets
@@ -67,13 +67,13 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             for i in range(self.set_size):
                 in_label = selected_set_label + " " + str(i + 1)
                 out_label = "Data " + str(i + 1)
-                out_socket_type = "StringsSocket"
+                out_socket_type = "SvStringsSocket"
                 if in_label in inputs and inputs[in_label].is_linked:
                     link = inputs[in_label].links[0]
                     in_socket_type = link.from_socket.bl_idname
                     out_socket_type = in_socket_type
                 else:
-                    out_socket_type = "StringsSocket"
+                    out_socket_type = "SvStringsSocket"
 
                 if out_label in outputs:
                     socket = outputs[out_label]
@@ -132,7 +132,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 inputs.new("SvSeparatorSocket", self.label_of_set(n) + " 0")
             for i in range(self.set_size):  # create the first SET inputs
                 label = self.label_of_set(n) + " " + str(i + 1)
-                inputs.new("StringsSocket", label)
+                inputs.new("SvStringsSocket", label)
 
         # RECONNECT previously linked SET input sockets (if they still exist)
         for sn, from_socket_list in in_link_map.items():
@@ -157,7 +157,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         # CREATE new output sockets
         for i in range(self.set_size):  # create the SET outputs
             label = "Data " + str(i + 1)
-            outputs.new("StringsSocket", label)
+            outputs.new("SvStringsSocket", label)
 
         # RECONNECT previously linked SET output sockets (if they still exist)
         for sn, to_socket_list in out_link_map.items():
@@ -254,7 +254,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             if self.show_separators:
                 inputs.new("SvSeparatorSocket", new_set_label + " 0")
             for i in range(self.set_size):
-                inputs.new("StringsSocket", new_set_label + " " + str(i + 1))
+                inputs.new("SvStringsSocket", new_set_label + " " + str(i + 1))
 
         else:  # last set is unlinked ? => remove last unconnected sets except the last
             m = n - 1  # start with the last set
@@ -280,12 +280,12 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "greek_labels")
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Selected").prop_name = "selected"
+        self.inputs.new('SvStringsSocket', "Selected").prop_name = "selected"
         if self.show_separators:
             self.inputs.new("SvSeparatorSocket", self.label_of_set(0) + " 0")
         for i in range(self.set_size):  # create the first SET inputs & outputs
-            self.inputs.new("StringsSocket", self.label_of_set(0) + " " + str(i + 1))
-            self.outputs.new("StringsSocket", "Data " + str(i + 1))
+            self.inputs.new("SvStringsSocket", self.label_of_set(0) + " " + str(i + 1))
+            self.outputs.new("SvStringsSocket", "Data " + str(i + 1))
 
     def process(self):
 

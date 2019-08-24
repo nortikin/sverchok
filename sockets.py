@@ -303,7 +303,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
 
 class SvMatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
-    
+
     bl_idname = "SvMatrixSocket"
     bl_label = "Matrix Socket"
 
@@ -535,7 +535,7 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 
 classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
-    SvColorSocket, SvQuaternionSocket, SvDummySocket,
+    SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket
 ]
 
