@@ -105,34 +105,6 @@ def projection_spherical(verts3D, m, d):
     return vertList, focusList
 
 
-def projection_planar2D(vert3D, m, d):
-    """
-    Project a 3D vector onto 2D space given the projection distance
-    """
-    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection screen origin
-    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection screen normal
-
-    x, y, z = vert3D
-
-    x = x - ox
-    y = y - oy
-    z = z - oz
-
-    an = x * nx + y * ny + z * nz  # v projection along the plane normal
-
-    s = d / (d + an)  # perspective factor
-
-    xa = s * (x - an * nx)
-    ya = s * (y - an * ny)
-    za = s * (z - an * nz)
-
-    px = ox + xa
-    py = oy + ya
-    pz = oz + za
-
-    return [px, py, pz]
-
-
 def projection_planar(verts3D, m, d):
     """
     Project the 3D verts onto 2D space given the projection distance
@@ -144,13 +116,6 @@ def projection_planar(verts3D, m, d):
     focusList = []
     for vert in verts3D:
         x, y, z = vert
-
-        # Focus location
-        # Xx Yx Zx Tx        0     Tx - d * Zx
-        # Xy Yy Zy Ty   *    0  =  Ty - d * Zy
-        # Xz Yz Zz Tz      - d     Tz - d * Zz
-        # 0  0  0  1         1     1
-
         dx = x - ox
         dy = y - oy
         dz = z - oz
@@ -169,29 +134,14 @@ def projection_planar(verts3D, m, d):
 
         vertList.append([px, py, pz])
 
-    focusList = [[ox - d*nx, oy - d*ny, oz - d * nz]]
-
-    return vertList, focusList
-
-
-def projection_planar2(verts3D, m, d):
-    """
-    Project the 3D verts onto 2D space given the projection distance
-    """
-    verts2D = [projection_planar2D(verts3D[i], m, d) for i in range(len(verts3D))]
-
     # Focus location
     # Xx Yx Zx Tx        0     Tx - d * Zx
     # Xy Yy Zy Ty   *    0  =  Ty - d * Zy
     # Xz Yz Zz Tz      - d     Tz - d * Zz
     # 0  0  0  1         1     1
+    focusList = [[ox - d*nx, oy - d*ny, oz - d * nz]]
 
-    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
-    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
-
-    focus = [[ox - d*nx, oy - d*ny, oz - d * nz]]
-
-    return verts2D, focus
+    return vertList, focusList
 
 
 class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
