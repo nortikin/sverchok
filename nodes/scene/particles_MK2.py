@@ -45,7 +45,8 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         O, V, L, S = self.inputs
         outL, outV = self.outputs
-        listobj = [i.particle_systems.active.particles for i in O.sv_get() if i.particle_systems]
+        evalO = [i.evaluated_get(self.id_data.deps_graph) for i in O.sv_get()]
+        listobj = [i.particle_systems[0].particles for i in evalO if i.particle_systems]
         if V.is_linked:
             for i, i2 in zip(listobj, V.sv_get()):
                 i.foreach_set('velocity', np.array(safc(i, i2)).flatten())
