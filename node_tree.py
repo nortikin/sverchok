@@ -172,6 +172,18 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.tree_link_count = link_count
             return True
 
+    @property
+    def deps_graph(self):
+        if getattr(self, "_deps_graph", None) is None:
+            print('initializing depsgrah reference')
+            setattr(self, "_deps_graph", bpy.context.evaluated_depsgraph_get())
+        return self._deps_graph
+    
+    @deps_graph.setter
+    def deps_graph(self, value):
+        print('resetting depsgrah reference')
+        setattr(self, "_deps_graph", value)
+
     def update(self):
         '''
         Tags tree for update for handle

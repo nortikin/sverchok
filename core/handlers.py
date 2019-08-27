@@ -146,6 +146,8 @@ def sv_post_load(scene):
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
     for ng in sv_trees:
+        if hasattr(ng, "deps_graph"):
+            ng.deps_graph = bpy.context.evaluated_depsgraph_get()
         ng.freeze(True)
         try:
             old_nodes.load_old(ng)
