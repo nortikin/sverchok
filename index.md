@@ -136,6 +136,8 @@
     MaskListNode
     SvMaskJoinNode
     SvMaskConvertNode
+    SvMaskToIndexNode
+    SvIndexToMaskNode
 
 ## List Mutators
     SvListModifierNode
@@ -158,7 +160,8 @@
     ListSliceNode
     SvListSplitNode
     ListFLNode
-    ListItem2Node
+    SvListItemNode
+    SvListItemInsertNode
     ListReverseNode
     ListShuffleNode
     ListSortNodeMK2
@@ -349,7 +352,6 @@
     SvCacheNode
     SvUVtextureNode
     SvSeparateMeshNodeMK2
-    SvIndexToMaskNode
     SvMultiExtrudeAlt
     SvOffsetLineNode
     SvContourNode
