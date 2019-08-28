@@ -45,6 +45,7 @@
     SvEllipseNode
     SvSuperEllipsoidNode
     SvRegularSolid
+    SvPentagonTilerNode
 
 ## Analyzers
     SvBBoxNode
