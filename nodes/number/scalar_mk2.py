@@ -174,7 +174,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_menu_enum(self, "input_mode_one", text="Input 1 number type")
         if len(self.inputs) == 2:
             layout.prop_menu_enum(self, "input_mode_two", text="Input 2 number type")
-        #self.draw_buttons_ext(context, layout)
+
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "x").prop_name = 'x_'
         self.inputs.new('SvStringsSocket', "y").prop_name = 'y_'
