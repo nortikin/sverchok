@@ -1,6 +1,6 @@
 node name: Viewer text mk3
 
-Socket DATA0; type EDGES/POLYGONS/OTHERS:
+Socket DATA0; type EDGES/POLYGONS/OTHERS: 
 (1) object(s)
 =0=   (34)
 [0, 1, 33, 32]
