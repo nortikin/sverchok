@@ -20,549 +20,9 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
-
-
-class Node:
-    def __init__(self, key):
-        self.key = key
-        self.parent = None
-        self.leftChild = None
-        self.rightChild = None
-        self.height = 0
-
-    def __str__(self):
-        return str(self.key) + "(" + str(self.height) + ")"
-
-    @property
-    def next(self):
-        #print('Next -', self, self.leftChild, self.rightChild, self.parent)
-        if self.rightChild:
-            node = self.rightChild
-            while node.leftChild:
-                node = node.leftChild
-            return node
-        elif self.parent:
-            parent = self.parent
-            child = self
-            while True:
-                if parent.leftChild and not any([parent.leftChild.key < child.key, parent.leftChild.key > child.key]):  # <-fix??
-                    return parent
-                elif parent.parent:
-                    child = parent
-                    parent = parent.parent
-                else:
-                    return None
-
-    @property
-    def last(self):
-        if self.leftChild:
-            node = self.leftChild
-            while node.rightChild:
-                node = node.rightChild
-            return node
-        elif self.parent:
-            parent = self.parent
-            child = self
-            while True:
-                if parent.rightChild and not any([parent.rightChild.key < child.key, parent.rightChild.key > child.key]):  # <-fix??
-                    return parent
-                elif parent.parent:
-                    child = parent
-                    parent = parent.parent
-                else:
-                    return None
-
-    def is_leaf(self):
-        return (self.height == 0)
-
-    def max_children_height(self):
-        if self.leftChild and self.rightChild:
-            return max(self.leftChild.height, self.rightChild.height)
-        elif self.leftChild and not self.rightChild:
-            return self.leftChild.height
-        elif not self.leftChild and self.rightChild:
-            return self.rightChild.height
-        else:
-            return -1
-
-    def balance(self):
-        return (self.leftChild.height if self.leftChild else -1) - (self.rightChild.height if self.rightChild else -1)
-
-
-class AVLTree:
-    def __init__(self, *args):
-        self.rootNode = None
-        self.elements_count = 0
-        self.rebalance_count = 0
-        if len(args) == 1:
-            for i in args[0]:
-                self.insert(i)
-
-    def __bool__(self):
-        return bool(self.rootNode)
-
-    def height(self):
-        if self.rootNode:
-            return self.rootNode.height
-        else:
-            return 0
-
-    def max_len(self):
-        return sum([2 ** i for i in range(1, self.height())]) + 1
-
-    def rebalance(self, node_to_rebalance):
-        self.rebalance_count += 1
-        A = node_to_rebalance
-        F = A.parent  # allowed to be NULL
-        if node_to_rebalance.balance() == -2:
-            if node_to_rebalance.rightChild.balance() <= 0:
-                """Rebalance, case RRC """
-                B = A.rightChild
-                C = B.rightChild
-                assert (not A is None and not B is None and not C is None)
-                A.rightChild = B.leftChild
-                if A.rightChild:
-                    A.rightChild.parent = A
-                B.leftChild = A
-                A.parent = B
-                if F is None:
-                    self.rootNode = B
-                    self.rootNode.parent = None
-                else:
-                    if F.rightChild == A:
-                        F.rightChild = B
-                    else:
-                        F.leftChild = B
-                    B.parent = F
-                self.recompute_heights(A)
-                self.recompute_heights(B.parent)
-            else:
-                """Rebalance, case RLC """
-                B = A.rightChild
-                C = B.leftChild
-                assert (not A is None and not B is None and not C is None)
-                B.leftChild = C.rightChild
-                if B.leftChild:
-                    B.leftChild.parent = B
-                A.rightChild = C.leftChild
-                if A.rightChild:
-                    A.rightChild.parent = A
-                C.rightChild = B
-                B.parent = C
-                C.leftChild = A
-                A.parent = C
-                if F is None:
-                    self.rootNode = C
-                    self.rootNode.parent = None
-                else:
-                    if F.rightChild == A:
-                        F.rightChild = C
-                    else:
-                        F.leftChild = C
-                    C.parent = F
-                self.recompute_heights(A)
-                self.recompute_heights(B)
-        else:
-            assert (node_to_rebalance.balance() == +2)
-            if node_to_rebalance.leftChild.balance() >= 0:
-                B = A.leftChild
-                C = B.leftChild
-                """Rebalance, case LLC """
-                assert (not A is None and not B is None and not C is None)
-                A.leftChild = B.rightChild
-                if (A.leftChild):
-                    A.leftChild.parent = A
-                B.rightChild = A
-                A.parent = B
-                if F is None:
-                    self.rootNode = B
-                    self.rootNode.parent = None
-                else:
-                    if F.rightChild == A:
-                        F.rightChild = B
-                    else:
-                        F.leftChild = B
-                    B.parent = F
-                self.recompute_heights(A)
-                self.recompute_heights(B.parent)
-            else:
-                B = A.leftChild
-                C = B.rightChild
-                """Rebalance, case LRC """
-                assert (not A is None and not B is None and not C is None)
-                A.leftChild = C.rightChild
-                if A.leftChild:
-                    A.leftChild.parent = A
-                B.rightChild = C.leftChild
-                if B.rightChild:
-                    B.rightChild.parent = B
-                C.leftChild = B
-                B.parent = C
-                C.rightChild = A
-                A.parent = C
-                if F is None:
-                    self.rootNode = C
-                    self.rootNode.parent = None
-                else:
-                    if (F.rightChild == A):
-                        F.rightChild = C
-                    else:
-                        F.leftChild = C
-                    C.parent = F
-                self.recompute_heights(A)
-                self.recompute_heights(B)
-
-    def sanity_check(self, *args):
-        if len(args) == 0:
-            node = self.rootNode
-        else:
-            node = args[0]
-        if (node is None) or (node.is_leaf() and node.parent is None):
-            # trival - no sanity check needed, as either the tree is empty or there is only one node in the tree
-            pass
-        else:
-            if node.height != node.max_children_height() + 1:
-                raise Exception("Invalid height for node " + str(node) + ": " + str(node.height) + " instead of " + str(
-                    node.max_children_height() + 1) + "!")
-
-            balFactor = node.balance()
-            # Test the balance factor
-            if not (balFactor >= -1 and balFactor <= 1):
-                raise Exception("Balance factor for node " + str(node) + " is " + str(balFactor) + "!")
-            # Make sure we have no circular references
-            if not (node.leftChild != node):
-                raise Exception("Circular reference for node " + str(node) + ": node.leftChild is node!")
-            if not (node.rightChild != node):
-                raise Exception("Circular reference for node " + str(node) + ": node.rightChild is node!")
-
-            if (node.leftChild):
-                if not (node.leftChild.parent == node):
-                    raise Exception("Left child of node " + str(node) + " doesn't know who his father is!")
-                if not (node.leftChild.key <= node.key):
-                    raise Exception("Key of left child of node " + str(node) + " is greater than key of his parent!")
-                self.sanity_check(node.leftChild)
-
-            if (node.rightChild):
-                if not (node.rightChild.parent == node):
-                    raise Exception("Right child of node " + str(node) + " doesn't know who his father is!")
-                if not (node.rightChild.key >= node.key):
-                    raise Exception("Key of right child of node " + str(node) + " is less than key of his parent!")
-                self.sanity_check(node.rightChild)
-
-    def recompute_heights(self, start_from_node):
-        changed = True
-        node = start_from_node
-        while node and changed:
-            old_height = node.height
-            node.height = (node.max_children_height() + 1 if (node.rightChild or node.leftChild) else 0)
-            changed = node.height != old_height
-            node = node.parent
-
-    def add_as_child(self, parent_node, child_node):
-        node_to_rebalance = None
-        if child_node.key < parent_node.key:
-            if not parent_node.leftChild:
-                parent_node.leftChild = child_node
-                child_node.parent = parent_node
-                if parent_node.height == 0:
-                    node = parent_node
-                    while node:
-                        node.height = node.max_children_height() + 1
-                        if not node.balance() in [-1, 0, 1]:
-                            node_to_rebalance = node
-                            break  # we need the one that is furthest from the root
-                        node = node.parent
-            else:
-                child_node = self.add_as_child(parent_node.leftChild, child_node)
-        else:
-            if not parent_node.rightChild:
-                parent_node.rightChild = child_node
-                child_node.parent = parent_node
-                if parent_node.height == 0:
-                    node = parent_node
-                    while node:
-                        node.height = node.max_children_height() + 1
-                        if not node.balance() in [-1, 0, 1]:
-                            node_to_rebalance = node
-                            break  # we need the one that is furthest from the root
-                        node = node.parent
-            else:
-                child_node = self.add_as_child(parent_node.rightChild, child_node)
-
-        if node_to_rebalance:
-            self.rebalance(node_to_rebalance)
-
-        return child_node
-
-    def insert(self, key):
-        new_node = Node(key)
-        if not self.rootNode:
-            self.rootNode = new_node
-            return new_node
-        else:
-            exist_node = self.find(key)
-            if not exist_node:
-                self.elements_count += 1
-                new_node = self.add_as_child(self.rootNode, new_node)
-                return new_node
-            else:
-                return exist_node
-
-    def find_biggest(self, start_node=None):
-        if not start_node:
-            node = self.rootNode
-        else:
-            node = start_node
-        while node.rightChild:
-            node = node.rightChild
-        return node
-
-    def find_smallest(self, start_node=None):
-        if not start_node:
-            node = self.rootNode
-        else:
-            node = start_node
-        while node.leftChild:
-            node = node.leftChild
-        return node
-
-    def inorder_non_recursive(self):
-        node = self.rootNode
-        retlst = []
-        while node.leftChild:
-            node = node.leftChild
-        while (node):
-            retlst += [node.key]
-            if (node.rightChild):
-                node = node.rightChild
-                while node.leftChild:
-                    node = node.leftChild
-            else:
-                while ((node.parent) and (node == node.parent.rightChild)):
-                    node = node.parent
-                node = node.parent
-        return retlst
-
-    def preorder(self, node, retlst=None):
-        if retlst is None:
-            retlst = []
-        retlst += [node.key]
-        if node.leftChild:
-            retlst = self.preorder(node.leftChild, retlst)
-        if node.rightChild:
-            retlst = self.preorder(node.rightChild, retlst)
-        return retlst
-
-    def inorder(self, node, retlst=None):
-        if retlst is None:
-            retlst = []
-        if node.leftChild:
-            retlst = self.inorder(node.leftChild, retlst)
-        retlst += [node.key]
-        if node.rightChild:
-            retlst = self.inorder(node.rightChild, retlst)
-        return retlst
-
-    def postorder(self, node, retlst=None):
-        if retlst is None:
-            retlst = []
-        if node.leftChild:
-            retlst = self.postorder(node.leftChild, retlst)
-        if node.rightChild:
-            retlst = self.postorder(node.rightChild, retlst)
-        retlst += [node.key]
-        return retlst
-
-    def as_list(self, pre_in_post):
-        if not self.rootNode:
-            return []
-        if pre_in_post == 0:
-            return self.preorder(self.rootNode)
-        elif pre_in_post == 1:
-            return self.inorder(self.rootNode)
-        elif pre_in_post == 2:
-            return self.postorder(self.rootNode)
-        elif pre_in_post == 3:
-            return self.inorder_non_recursive()
-
-    def find(self, key):
-        return self.find_in_subtree(self.rootNode, key)
-
-    def find_in_subtree(self, node, key):
-        if node is None:
-            return None  # key not found
-        if key < node.key:
-            return self.find_in_subtree(node.leftChild, key)
-        elif key > node.key:
-            return self.find_in_subtree(node.rightChild, key)
-        else:  # key is equal to node key
-            return node
-
-    def remove(self, key):
-        # first find
-        node = self.find(key)
-
-        if not node is None:
-            self.elements_count -= 1
-
-            #     There are three cases:
-            #
-            #     1) The node is a leaf.  Remove it and return.
-            #
-            #     2) The node is a branch (has only 1 child). Make the pointer to this node
-            #        point to the child of this node.
-            #
-            #     3) The node has two children. Swap items with the successor
-            #        of the node (the smallest item in its right subtree) and
-            #        delete the successor from the right subtree of the node.
-            if node.is_leaf():
-                self.remove_leaf(node)
-            elif (bool(node.leftChild)) ^ (bool(node.rightChild)):
-                self.remove_branch(node)
-            else:
-                assert (node.leftChild) and (node.rightChild)
-                self.swap_with_successor_and_remove(node)
-
-    def remove_node(self, node):
-        if node.is_leaf():
-            self.remove_leaf(node)
-        elif (bool(node.leftChild)) ^ (bool(node.rightChild)):
-            self.remove_branch(node)
-        else:
-            assert (node.leftChild) and (node.rightChild)
-            self.swap_with_successor_and_remove(node)
-
-    def remove_leaf(self, node):
-        parent = node.parent
-        if (parent):
-            if parent.leftChild == node:
-                parent.leftChild = None
-            else:
-                assert (parent.rightChild == node)
-                parent.rightChild = None
-            self.recompute_heights(parent)
-        else:
-            self.rootNode = None
-        del node
-        # rebalance
-        node = parent
-        while (node):
-            if not node.balance() in [-1, 0, 1]:
-                self.rebalance(node)
-            node = node.parent
-
-    def remove_branch(self, node):
-        parent = node.parent
-        leftChild = node.leftChild
-        rightChild = node.rightChild
-
-        if (parent):
-            if parent.leftChild == node:
-                parent.leftChild = node.rightChild or node.leftChild
-            else:
-                assert (parent.rightChild == node)
-                parent.rightChild = node.rightChild or node.leftChild
-            if node.leftChild:
-                node.leftChild.parent = parent
-            else:
-                assert (node.rightChild)
-                node.rightChild.parent = parent
-            self.recompute_heights(parent)
-        del node
-        # rebalance
-        node = parent
-        if node:
-            while node:
-                if not node.balance() in [-1, 0, 1]:
-                    self.rebalance(node)
-                node = node.parent
-        else:
-            if leftChild:
-                self.rootNode = leftChild
-            else:
-                self.rootNode = rightChild
-
-            self.rootNode.parent = None
-
-    def swap_with_successor_and_remove(self, node):
-        successor = self.find_smallest(node.rightChild)
-        self.swap_nodes(node, successor)
-        assert (node.leftChild is None)
-        if node.height == 0:
-            self.remove_leaf(node)
-        else:
-            self.remove_branch(node)
-
-    def swap_nodes(self, node1, node2):
-        assert (node1.height > node2.height)
-        parent1 = node1.parent
-        leftChild1 = node1.leftChild
-        rightChild1 = node1.rightChild
-        parent2 = node2.parent
-        assert (not parent2 is None)
-        assert (parent2.leftChild == node2 or parent2 == node1)
-        leftChild2 = node2.leftChild
-        assert (leftChild2 is None)
-        rightChild2 = node2.rightChild
-
-        # swap heights
-        tmp = node1.height
-        node1.height = node2.height
-        node2.height = tmp
-
-        if parent1:
-            if parent1.leftChild == node1:
-                parent1.leftChild = node2
-            else:
-                assert (parent1.rightChild == node1)
-                parent1.rightChild = node2
-            node2.parent = parent1
-        else:
-            self.rootNode = node2
-            node2.parent = None
-
-        node2.leftChild = leftChild1
-        leftChild1.parent = node2
-        node1.leftChild = leftChild2  # None
-        node1.rightChild = rightChild2
-        if rightChild2:
-            rightChild2.parent = node1
-        if not (parent2 == node1):
-            node2.rightChild = rightChild1
-            rightChild1.parent = node2
-
-            parent2.leftChild = node1
-            node1.parent = parent2
-        else:
-            node2.rightChild = node1
-            node1.parent = node2
-
-            # use for debug only and only with small trees
-
-    def out(self, start_node=None):
-        if start_node == None:
-            start_node = self.rootNode
-        space_symbol = "*"
-        spaces_count = 80
-        out_string = ""
-        initial_spaces_string = space_symbol * spaces_count + "\n"
-        if not start_node:
-            return "AVLTree is empty"
-        else:
-            level = [start_node]
-            while (len([i for i in level if (not i is None)]) > 0):
-                level_string = initial_spaces_string
-                for i in range(len(level)):
-                    j = int((i + 1) * spaces_count / (len(level) + 1))
-                    level_string = level_string[:j] + (str(level[i]) if level[i] else space_symbol) + level_string[
-                                                                                                      j + 1:]
-                level_next = []
-                for i in level:
-                    level_next += ([i.leftChild, i.rightChild] if i else [None, None])
-                level = level_next
-                out_string += level_string
-        return out_string
+from sverchok.data_structure import updateNode, repeat_last
+from sverchok.utils.avl_tree import AVLTree
+from sverchok.utils.dcel import Debugger as D
 
 
 x, y, z = 0, 1, 2
@@ -582,9 +42,30 @@ def is_ccw(a, b, c):
     return (b[x] - a[x]) * (c[y] - a[y]) > (b[y] - a[y]) * (c[x] - a[x])
 
 
-def is_ccw_polygon(verts):
-    x_min = min(range(len(verts)), key=lambda i: verts[i][x])
-    return True if is_ccw(verts[(x_min - 1) % len(verts)], verts[x_min], verts[(x_min + 1) % len(verts)]) else False
+def is_ccw_polygon(all_verts=None, most_lefts=None):
+    """
+    The function get either all points or most left point and its two neighbours of the polygon
+    and returns True if order of points are in counterclockwise
+    :param all_verts: [(x, y, z) or (x, y), ...]
+    :param most_lefts: [(x, y, z) or (x, y), ...]
+    :return: bool
+    """
+    def is_vertical(points):
+        # is 3 most left points vertical
+        if points[0][x] == points[1][x] == points[2][x]:
+            return True
+        else:
+            return False
+    if all([all_verts, most_lefts]) or not any([all_verts, most_lefts]):
+        raise ValueError('The function get either all points or most left point and its two neighbours of the polygon.')
+    if all_verts:
+        x_min = min(range(len(all_verts)), key=lambda i: all_verts[i][x])
+        most_lefts = [all_verts[(x_min - 1) % len(all_verts)], all_verts[x_min], all_verts[(x_min + 1) % len(all_verts)]]
+    if is_vertical(most_lefts):
+        # here is handled corner case when most left points are vertical
+        return True if most_lefts[0][y] > most_lefts[1][y] else False
+    else:
+        return True if is_ccw(*most_lefts) else False
 
 
 def cross_product(v1, v2):
@@ -706,6 +187,8 @@ class EdgeSweepLine:
         self.up_hedge = None
         self.coincidence = []
 
+        self.helper = None
+
     def __str__(self):
         return 'Edge({}, {})({})'.format(self.i1, self.i2, self.subdivision)
 
@@ -715,7 +198,7 @@ class EdgeSweepLine:
         if isinstance(other, EdgeSweepLine):
             # if two edges intersect in one point less edge will be with bigger angle with X coordinate
             if almost_equal(self.intersection, other.intersection):
-                #debug("Edges are equal, self angle: {} < other angle: {}".format(self.product, other.product))
+                #Debugger.print_e([self, other], "Edges intersects in the same point")
                 if almost_equal(self.product, other.product):
                     # two edges are overlapping each other, there is no need of storing them together in tree
                     # longest edge should take place in tree with information of both overlapping edges
@@ -724,7 +207,8 @@ class EdgeSweepLine:
                 else:
                     return self.product < other.product
             else:
-                #debug("Self.intersection: {} < other.intersection: {}".format(self.intersection, other.intersection))
+                #Debugger.print_e(self, '{}-intersections'.format(self.intersection))
+                #Debugger.print_e(other, '{}-intersections'.format(other.intersection))
                 return self.intersection < other.intersection
         # this part is for searching edges by value of x coordinate of event point
         else:
@@ -742,7 +226,7 @@ class EdgeSweepLine:
         if isinstance(other, EdgeSweepLine):
             # if two edges intersect in one point bigger edge will be with less angle with X coordinate
             if almost_equal(self.intersection, other.intersection):
-                # debug("Edges are equal, self angle: {} > other angle: {}".format(self.product, other.product))
+                #Debugger.print_e([self, other], "Edges intersects in the same point")
                 if almost_equal(self.product, other.product):
                     # two edges are overlapping each other, there is no need of storing them together in tree
                     # longest edge should take place in tree with information of both overlapping edges
@@ -861,11 +345,15 @@ class EventPoint:
     # Special class for storing in queue data structure
 
     max_index = -1
+    monotone_current_face = None
 
     def __init__(self, co, index=None):
         self.co = co
         self.i = index
-        self.up_edges = []
+        self.up_edges = []  # this attribute for finding intersections algorithm
+        self.hedge = None  # this attribute for making monotone algorithm
+        self._type = None
+        self.last_monotone_face = None
         self.check_index()
 
     def __str__(self):
@@ -900,6 +388,38 @@ class EventPoint:
             self.i = EventPoint.max_index
         elif self.i > EventPoint.max_index:
             EventPoint.max_index = self.i
+
+    @property
+    def type(self):
+        # for partitioning algorithm
+        # the type should be updated each time when polygon is changed in partitioning algorithm
+        # during handle of polygon point does not change type
+        face = self.monotone_face
+        if not self._type:
+            for coin_hedge in self.hedge.ccw_hedges:
+                if coin_hedge.face == face:
+                    hedge = coin_hedge
+                    break
+            next_point = hedge.next.point  # hedge.twin does not have point because points are set for current face only
+            last_point = hedge.last.point
+            is_up_next = next_point < self  # the less point the upper it is
+            is_up_last = last_point < self
+            if not is_up_next and not is_up_last:
+                self._type = 'start' if self.hedge < self.hedge.last.twin else 'split'
+            elif is_up_last and is_up_next:
+                self._type = 'merge' if self.hedge > self.hedge.last.twin else 'end'
+            else:
+                self._type = 'regular'
+        return self._type
+
+    @property
+    def monotone_face(self):
+        if not EventPoint.monotone_current_face:
+            raise Exception('Which polygon is handling should be set before')
+        elif self.last_monotone_face != EventPoint.monotone_current_face:
+            self.last_monotone_face = EventPoint.monotone_current_face
+            self._type = None
+        return self.last_monotone_face
 
 
 def get_coincidence_edges(tree, x_position):
@@ -968,7 +488,7 @@ def get_upper_vert(verts, edge):
 class HalfEdge:
 
     def __init__(self, origin, i=None, face=None):
-        self.origin = origin
+        self.origin = origin  # This just coordinates now, should be point object later
         self.i = i
         self.face = face
         self.in_faces = {face} if face else set()
@@ -976,16 +496,83 @@ class HalfEdge:
         self.twin = None
         self.next = None
         self.last = None
+        self.left = None
+        self.point = None
+        self.cash_product = None
+        self.edge = None
 
     def __str__(self):
         return 'he-{}'.format((self.i, self.twin.i))
 
-    def __repr__(self):
-        return repr('hedge - {}'.format((self.i, self.twin.i)))
+    def __lt__(self, other):
+        # if self < other other it means that direction if closer to (-1, 0) direction
+        if isinstance(other, HalfEdge):
+            if almost_equal(self.product, other.product):
+                return False
+            else:
+                return self.product < other.product
+        else:
+            raise TypeError('unorderable types: {} < {}'.format(type(self), type(other)))
+
+    def __gt__(self, other):
+        if isinstance(other, HalfEdge):
+            if almost_equal(self.product, other.product):
+                return False
+            else:
+                return self.product > other.product
+        else:
+            raise TypeError('unorderable types: {} > {}'.format(type(self), type(other)))
+
+    @property
+    def product(self):
+        if not self.cash_product:
+            #Debugger.print_he(self)
+            #Debugger.print('is horizontal - ({})'.format(almost_equal(self.origin[y], self.twin.origin[y])),
+            #              'is left directed - ({})'.format(is_more(self.origin[x], self.twin.origin[x])))
+            if almost_equal(self.origin[y], self.twin.origin[y]):
+                if is_more(self.origin[x], self.twin.origin[x]):
+                    self.cash_product = 4
+                else:
+                    self.cash_product = 2
+            elif self.twin.cash_product:
+                self.cash_product = (self.twin.cash_product + 2) % 4
+            else:
+                vector = (self.twin.point.co[x] - self.point.co[x], self.twin.point.co[y] - self.point.co[y])
+                v_len = (vector[x] ** 2 + vector[y] ** 2) ** 0.5
+                norm_v = (vector[x] / v_len, vector[y] / v_len)
+                product = dot_product(norm_v, (1, 0))
+                product = product + 1 if self.point < self.twin.point else 3 - product
+                self.cash_product = product
+        return self.cash_product
 
     @property
     def subdivision(self):
         return {s for face in self.in_faces for s in face.subdivision}
+
+    @property
+    def ccw_hedges(self):
+        # returns hedges originated in one point
+        yield self
+        next_edge = self.last.twin
+        counter = 0
+        while next_edge != self:
+            yield next_edge
+            next_edge = next_edge.last.twin
+            counter += 1
+            if counter > EventPoint.max_index * 2:
+                raise RecursionError('Hedge - {} does not have a loop'.format(self.i))
+
+    @property
+    def loop_hedges(self):
+        yield self
+        next_edge = self.next
+        counter = 0
+        while next_edge != self:
+            yield next_edge
+            next_edge = next_edge.next
+            counter += 1
+            if counter > EventPoint.max_index * 2:
+                raise RecursionError('Hedge - {} does not have a loop'.format(self.i))
 
 
 class Face:
@@ -1000,10 +587,71 @@ class Face:
     def __str__(self):
         return 'f{}{}'.format(self.i, self.subdivision)
 
+    @property
+    def outer_hedges(self):
+        if not self.outer:
+            raise StopIteration
+        yield self.outer
+        next_hedge = self.outer.next
+        count = 0
+        while next_hedge != self.outer:
+            yield next_hedge
+            next_hedge = next_hedge.next
+            count += 1
+            if count > EventPoint.max_index * 2:
+                raise RecursionError('Face ({}), consists hedge '
+                                     'which has wrong links to other neighbours'.format(self.i))
+
+    @property
+    def inner_hedges(self):
+        if not self.inners:
+            raise StopIteration
+        for hedge in self.inners:
+            yield hedge
+            next_hedge = hedge.next
+            count = 0
+            while next_hedge != hedge:
+                yield next_hedge
+                next_hedge = next_hedge.next
+                count += 1
+                if count > EventPoint.max_index * 2:
+                    raise RecursionError('Face ({}), consists hedge '
+                                         'which has wrong links to other neighbours'.format(self.i))
+
+    @property
+    def all_hedges(self):
+        yield from self.outer_hedges
+        yield from self.inner_hedges
+
+
+class Debugger(D):
+
+    @staticmethod
+    def print_n(node, msg=None):
+        # print node of binary tree
+        def print_node(node, msg=None):
+            if not D.to_print:
+                return
+            print('{} - {}'.format(D.count, msg or 'Node'))
+            D.count += 1
+            D.data.append([node.key.v1, node.key.v2])
+        print_node(node, msg)
+        if node.leftChild:
+            print_node(node.leftChild, 'left child')
+        if node.rightChild:
+            print_node(node.rightChild, 'right child')
+
 
 def create_half_edges(verts, faces):
-    # todo: self intersection polygons? double repeated polygons?
+    # this function generates only outer faces
+    # this function should be accurate in generation half edges data
+    # it this implementation there is important parameter as total number of points
+    # this parameter responsible for raising errors during iteration via half edges
+    # it will be better to create separate module for DCEL data structure - http://www.holmes3d.net/graphics/dcel/
+    # where this issue will be encapsulated
+    # todo: self intersection polygons? double repeated polygons???
     half_edges_list = dict()
+    points = [EventPoint(co) for co in verts]
     for i_face, face in enumerate(faces):
         face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
         f = Face(i_face, {0})
@@ -1012,11 +660,14 @@ def create_half_edges(verts, faces):
             origin_i = face[i]
             next_i = face[(i + 1) % len(face)]
             half_edge = HalfEdge(verts[origin_i], origin_i, f)
+            half_edge.point = points[origin_i]
             loop.append(half_edge)
             half_edges_list[(origin_i, next_i)] = half_edge
         for i in range(len(face)):
             loop[i].last = loop[(i - 1) % len(face)]
             loop[i].next = loop[(i + 1) % len(face)]
+        f.outer = loop[0]
+        #Debugger.print_he(loop, 'face from sv edges', 'next')
     outer_half_edges = dict()
     for key in half_edges_list:
         half_edge = half_edges_list[key]
@@ -1024,6 +675,7 @@ def create_half_edges(verts, faces):
             half_edge.twin = half_edges_list[key[::-1]]
         else:
             outer_edge = HalfEdge(verts[key[1]], key[1])
+            outer_edge.point = points[key[1]]
             half_edge.twin = outer_edge
             outer_edge.twin = half_edge
             if key[::-1] in outer_half_edges:
@@ -1053,87 +705,133 @@ def merge_two_half_edges_list(a, b, len_verts_a=None):
         out.append(half_edge)
     for face in faces:
         face.subdivision = {v + 1 for v in face.subdivision}
-        #print('Update face sub', face)
+    if len_verts_a:
+        EventPoint.max_index += len_verts_a
     return out
 
 
-def create_edges(half_edges):
-    created_edges = set()
-    out_edges = []
-    out_subdivision_mask = []
-    for half_edge in half_edges.values():
-        if half_edge.twin_id not in created_edges:
-            created_edges.add(half_edge.self_id)
-            out_edges.append(half_edge.self_id)
-            if half_edge.subdivision:
-                out_subdivision_mask.append(list(half_edge.subdivision)[0])
-            elif half_edge.twin.subdivision:
-                out_subdivision_mask.append(list(half_edge.twin.subdivision)[0])
-            else:
-                out_subdivision_mask.append(None)
-    return out_edges, out_subdivision_mask
-
-
-def mesh_from_half_edge(half_edges):
-
+def to_sv_mesh_from_faces(hedges, faces):
     used = set()
-    verts = []
-    for hedge in half_edges:
+    sv_verts = []
+    for hedge in hedges:
         counter = 0
         if hedge in used:
             continue
-        used.add(hedge)
-        hedge.i = len(verts)
-        verts.append(hedge.origin)
-        next_edge = hedge.twin.next
-        while next_edge != hedge:
-            #print('next_edge -', next_edge, next_edge.origin)
-            next_edge.i = hedge.i
-            used.add(next_edge)
-            next_edge = next_edge.twin.next
-            counter += 1
-            if counter > len(half_edges):
-                raise TimeoutError('Hedge - {} does not have a loop'.format(hedge))
+        sv_verts.append(hedge.origin)
+        for h in hedge.ccw_hedges:
+            used.add(h)
+            h.i = len(sv_verts) - 1
 
-    used.clear()
-    faces = []
+    # This part of function creates faces in SV format.
+    # It ignores  boundless super face
+    sv_faces = []
     mask_a = []
     mask_b = []
-    temp_used_face = set()  # todo change this when algorithm hole detection will be implemented
     mask_c_index_a = []
     mask_c_index_b = []
-    for hedge in half_edges:
-        if not hedge.in_faces or hedge in used:
+    for face in faces:
+        #Debugger.print_f(face, 'build face')
+        if face.inners and face.outer:
+            print('Face ({}) has inner components! Make bug report please.'.format(face.i))
+        if not face.outer:
             continue
-        #print('Build face from -', hedge)
-        used.add(hedge)
-        face = [hedge.i]
-        next_edge = hedge.next
-        while next_edge != hedge:
-            face.append(next_edge.i)
-            used.add(next_edge)
-            next_edge = next_edge.next
-        if tuple(sorted(face)) not in temp_used_face:
-            faces.append(face)
-            temp_used_face.add(tuple(sorted(face)))
+        #Debugger.print_he(face.outer, 'build face from')
+        sv_faces.append([hedge.i for hedge in face.outer.loop_hedges])
 
-        mask_a.append(1 if 0 in hedge.subdivision else 0)
-        mask_b.append(1 if 1 in hedge.subdivision else 0)
-        indexes_a = [face.i for face in hedge.in_faces if 0 in face.subdivision]
-        indexes_b = [face.i for face in hedge.in_faces if 1 in face.subdivision]
+        mask_a.append(1 if 0 in face.outer.subdivision else 0)
+        mask_b.append(1 if 1 in face.outer.subdivision else 0)
+        indexes_a = [face.i for face in face.outer.in_faces if 0 in face.subdivision]
+        indexes_b = [face.i for face in face.outer.in_faces if 1 in face.subdivision]
         mask_c_index_a.append(min(indexes_a) if indexes_a else -1)
         mask_c_index_b.append(min(indexes_b) if indexes_b else -1)
 
-    return verts, faces, mask_a, mask_b, mask_c_index_a, mask_c_index_b
+    return sv_verts, sv_faces, mask_a, mask_b, mask_c_index_a, mask_c_index_b
+
+
+def build_faces_list(hedges):
+    used = set()
+    inner_hedges = []
+    super_face = Face(0)
+    faces = [super_face]
+
+    # build outer faces and detect inner faces (holes)
+    # if face is not ccw and there is no left neighbour it is boundless super face
+    # if there is left neighbour the face should be stored with only inner component,
+    # outer component will be find further
+    for hedge in hedges:
+        if hedge in used:
+            continue
+        min_hedge = min([hedge for hedge in hedge.loop_hedges], key=lambda hedge: (hedge.origin[x], hedge.origin[y]))
+        _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin, min_hedge.origin, min_hedge.next.origin])
+        # min hedge should be checked whether it look to the left or to the right
+        # if to the right previous hedge should be taken
+        # https://github.com/nortikin/sverchok/issues/2497#issuecomment-526096898
+        min_hedge = min_hedge if min_hedge.product > 2 else min_hedge.last
+        Debugger.print_he(min_hedge, 'min hedge has left component - {}'.format(bool(min_hedge.left)))
+        if _is_ccw:
+            face = Face(len(faces))
+            face.outer = hedge
+            faces.append(face)
+            for h in hedge.loop_hedges:
+                used.add(h)
+                h.face = face
+        elif not min_hedge.in_faces:
+            super_face.inners.append(min_hedge)
+            for h in min_hedge.loop_hedges:
+                used.add(h)
+                h.face = super_face
+        else:
+            if not min_hedge.left:
+                Debugger.print_he(min_hedge, 'where is left neighbour???')
+                raise AttributeError('One of inner hedges inside a outer polygon dose not have left neighbour')
+            inner_hedges.append(min_hedge)
+            [used.add(hedge) for hedge in hedge.loop_hedges]
+
+    used.clear()
+    # add inner component to faces
+    for hedge in inner_hedges:
+        Debugger.print_he(hedge, 'inner hedge')
+        if hedge in used:
+            continue
+        left_hedges = [hedge]
+        count = 0
+        # while most left hedge of inner polygon does not have left neighbour with outer face
+        # switch ot polygon of neighbour, search most left hedge and test whether it has neighbour with outer face
+        # left_hedges contains one hedge of all holes belonging to current outer face or boundless face
+        while not left_hedges[-1].left.face or not left_hedges[-1].left.face.outer:
+            for n, h in enumerate(left_hedges[-1].left.loop_hedges):
+                if h in inner_hedges:
+                    left_hedges.append(h)
+                    break
+            count += n
+            if count > len(hedges):
+                Debugger.print_he(hedge, 'Hedge of hole cant find outer face')
+                raise RecursionError('Hedge of hole cant find outer face')
+
+        outer_face = left_hedges[-1].left.face
+        for lh in left_hedges:
+            outer_face.inners.append(lh)
+            for h in lh.loop_hedges:
+                used.add(h)
+                h.face = outer_face
+
+    return faces
 
 
 def map_overlay(verts_a, faces_a, verts_b, faces_b):
-    global test_hedge
+    Debugger.clear(False)
     half_edges = merge_two_half_edges_list(create_half_edges(verts_a, faces_a), create_half_edges(verts_b, faces_b),
                                            len(verts_a))
-    intersections = find_intersections(half_edges)
-    test_hedge = half_edges
-    return mesh_from_half_edge(half_edges)
+    find_intersections(half_edges)
+    faces = build_faces_list(half_edges)
+    new_half_edges = []
+    for face in faces:
+        if face.outer and face.inners:
+            new_half_edges.extend(make_monotone(face))
+    if new_half_edges:
+        half_edges.extend(new_half_edges)
+        faces = rebuild_face_list(half_edges)
+    return to_sv_mesh_from_faces(half_edges, faces)
 
 
 def init_event_queue(event_queue, half_edges):
@@ -1180,7 +878,7 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     test_event_point.append(event_point)
     out = []
     is_overlapping_points = False
-    #print(event_point.i, event_point.co)
+    #Debugger.print_p(event_point, 'event_point')
     left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x])
     c = [node for node in coincidence if node.key.is_c]
     l = [node for node in coincidence if not node.key.is_c]
@@ -1201,15 +899,18 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             up_edge.low_hedge = edge.low_hedge
             # copy pare of half edges from existing half edges and create appropriate links
             up_hedge_twin = HalfEdge(event_point.co, event_point.i, edge.low_hedge.face)
+            up_hedge_twin.point = event_point
             up_hedge_twin.next = edge.low_hedge.next
             edge.low_hedge.next.last = up_hedge_twin
             low_hedge_twin = HalfEdge(event_point.co,event_point.i, edge.up_hedge.face)
+            low_hedge_twin.point = event_point
             low_hedge_twin.next = edge.up_hedge.next
             edge.up_hedge.next.last = low_hedge_twin
             # add information about belonging to other faces only for new half edge of low edge
             # and delete outdate information about belonging for low half edge of up edge
             up_hedge_twin.in_faces = set(edge.low_hedge.in_faces)
             up_edge.low_hedge.in_faces = {up_edge.low_hedge.face} if up_edge.low_hedge.face else set()
+            up_edge.low_hedge.left = None
             # apply new half edges to new edges
             low_edge.low_hedge = up_hedge_twin
             up_edge.up_hedge = low_hedge_twin
@@ -1219,6 +920,7 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             up_edge.up_hedge.twin = up_edge.low_hedge
             up_edge.low_hedge.twin = up_edge.up_hedge
             half_edges.extend([up_hedge_twin, low_hedge_twin])
+            #Debugger.print_he([up_hedge_twin, low_hedge_twin], 'new hedges')
             node.key = low_edge
             uc_edges.append(up_edge)
             #print('low edge {}, up_hedge {}, low hedge {}'.format(low_edge, low_edge.up_hedge, low_edge.low_hedge))
@@ -1252,6 +954,9 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     #print('left and right neighbors -', left_neighbor, right_neighbor)
 
     rotation_nodes = uc + lc[::-1]
+    if left_neighbor:
+        #Debugger.print_e(rotation_nodes[0].key, 'set left neighbour')
+        rotation_nodes[0].key.outer_hedge.left = left_neighbor.up_hedge
     if c or is_overlapping_points:
         #print('uc lc -', *rotation_nodes)
         for i in range(len(rotation_nodes)):
@@ -1316,6 +1021,210 @@ def find_new_event(edge1, edge2, event_queue, event_point):
                 #print('past new event point {}: \n'.format(new_event_point.co), *event_queue.inorder_non_recursive())
 
 
+# ======================== - partitioning to monotone pieces algorithm - ===========================
+def rebuild_face_list(hedges):
+    for hedge in hedges:
+        if hedge.face:
+            continue
+        face = Face(0)
+        face.outer = hedge
+        for h in hedge.loop_hedges:
+            h.face = face
+    used = set()
+    faces = []
+    for hedge in hedges:
+        if hedge not in used:
+            Debugger.print_he(hedge, 'hedge with face - rebuild')
+            Debugger.print_f(hedge.face, 'rebuild face')
+            faces.append(hedge.face)
+            [used.add(h) for h in hedge.loop_hedges]
+    return faces
+
+
+def build_points_list(hedges):
+    # build list of points for partitioning algorithm
+    # add links from hedges to point and from point to hedges
+    # for normal working twins of hedges of face with holes also should be assigned to new points
+    # point should have link to edge of polygon which is splitting to monotone pieces
+    used = set()
+    verts = []
+    for hedge in hedges:
+        if hedge in used:
+            continue
+        used.add(hedge)
+        point = EventPoint(hedge.origin, len(verts))
+        point.hedge = hedge
+        hedge.point = point
+        hedge.last.twin.point = point
+        verts.append(point)
+        for coin_hedge in hedge.ccw_hedges:
+            used.add(coin_hedge)
+    return verts
+
+
+def insert_edge(up_p, low_p):
+
+    up_hedge = HalfEdge(up_p.co, up_p.i)
+    up_hedge.point = up_p
+    low_hedge = HalfEdge(low_p.co, low_p.i)
+    low_hedge.point = low_p
+    up_hedge.twin = low_hedge
+    low_hedge.twin = up_hedge
+
+    up_ccw_hedges = []
+    status = 1
+    for h in up_p.hedge.ccw_hedges:
+        #Debugger.print_he(h, 'append to up_ccw_hedges')
+        up_ccw_hedges.append(h)
+        if h.twin.face and h.twin.face == up_p.hedge.face:
+            status -= 1
+            break
+    if status != 0:
+        raise Exception('Hedge ({}) does not have neighbour with the same face'.format(up_p.hedge.i))
+
+    if len(up_ccw_hedges) == 2:
+        up_next = up_ccw_hedges[0]
+    elif 2 < len(up_ccw_hedges) < 5:
+        if up_ccw_hedges[0] > up_hedge:
+            if ((up_ccw_hedges[2] < up_hedge and up_ccw_hedges[2] < up_ccw_hedges[0]) or
+                    (up_ccw_hedges[2] > up_hedge and up_ccw_hedges[2] > up_ccw_hedges[0])):
+                up_next = up_ccw_hedges[2]
+            elif ((up_ccw_hedges[1] < up_hedge and up_ccw_hedges[1] < up_ccw_hedges[0]) or
+                    (up_ccw_hedges[1] > up_hedge and up_ccw_hedges[1] > up_ccw_hedges[0])):
+                up_next = up_ccw_hedges[1]
+            else:
+                up_next = up_ccw_hedges[0]
+        else:
+            up_next = up_ccw_hedges[1] if up_ccw_hedges[0] < up_ccw_hedges[1] < up_hedge else up_ccw_hedges[0]
+    else:
+        raise Exception('Unexpected number of half edges in point {}'.format(up_p))
+
+    low_ccw_hedges = []
+    status = 1
+    for h in low_p.hedge.ccw_hedges:
+        #Debugger.print_he(h, 'append to low_ccw_hedges')
+        low_ccw_hedges.append(h)
+        if h.twin.face and h.twin.face == low_p.hedge.face:
+            status -= 1
+            break
+    if status != 0:
+        raise Exception('Hedge ({}) does not have neighbour with the same face'.format(low_p.hedge.i))
+
+    if len(low_ccw_hedges) == 2:
+        low_next = low_ccw_hedges[0]
+    elif len(low_ccw_hedges) == 3:
+        if low_ccw_hedges[0] > low_hedge:
+            if ((low_ccw_hedges[0] > low_ccw_hedges[1] < low_hedge) or
+                    (low_ccw_hedges[0] < low_ccw_hedges[1] > low_hedge)):
+                low_next = low_ccw_hedges[1]
+            else:
+                low_next = low_ccw_hedges[0]
+        else:
+            low_next = low_ccw_hedges[1] if low_ccw_hedges[0] < low_ccw_hedges[1] < low_hedge else low_ccw_hedges[0]
+    else:
+        raise Exception('Unexpected number of half edges in point {}'.format(low_p))
+    up_hedge.last = up_next.last
+    up_hedge.next = low_next
+    low_hedge.next = up_next
+    low_hedge.last = low_next.last
+    up_next.last.next = up_hedge
+    up_next.last = low_hedge
+    low_next.last.next = low_hedge
+    low_next.last = up_hedge
+    up_hedge.in_faces = set(up_hedge.next.in_faces)
+    low_hedge.in_faces = set(low_hedge.next.in_faces)
+
+    return [up_hedge, low_hedge]
+
+
+def make_monotone(face):
+    EventPoint.monotone_current_face = face
+    points = build_points_list(face.all_hedges)
+    new_hedges = []
+    status = AVLTree()
+    q = sorted(points)[::-1]
+    [Debugger.print_p(point, point.type) for point in q]
+    while q:
+        event_point = q.pop()
+        EdgeSweepLine.global_event_point = event_point  # Don't comment this string!!!!!!!
+        Debugger.print_p(event_point, 'event point - {}'.format(event_point.type))
+        Debugger.print_he(event_point.hedge, 'hedge of event point')
+        event_hedges = handle_functions[event_point.type](event_point, status)
+        #Debugger.print_e(status.as_list(0))
+        if event_hedges:
+            Debugger.print_he(event_hedges, 'new hedges')
+            new_hedges.extend(event_hedges)
+    return new_hedges
+
+
+def handle_start_point(point, status):
+    edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i)
+    point.hedge.edge = edge
+    point.hedge.twin.edge = edge
+    edge.helper = point
+    status.insert(edge)
+
+
+def handle_end_point(point, status):
+    status.remove(point.hedge.last.edge)
+    helper = point.hedge.last.edge.helper
+    if helper.type == 'merge':
+        return insert_edge(helper, point)
+
+
+def handle_split_point(point, status):
+    left_node = status.find_nearest_left(point.co[x])
+    #Debugger.print_e(left_node.key, 'nearest left edge')
+    #Debugger.print_p(left_node.key.helper, 'split helper')
+    new_hedges = insert_edge(left_node.key.helper, point)
+    left_node.key.helper = point
+    edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i)
+    point.hedge.edge = edge
+    point.hedge.twin.edge = edge
+    edge.helper = point
+    status.insert(edge)
+    return new_hedges
+
+
+def handle_merge_point(point, status):
+    right_helper = point.hedge.last.edge.helper
+    new_hedges = []
+    last_hedge = point.hedge.last
+    if right_helper.type == 'merge':
+        new_hedges.extend(insert_edge(right_helper, point))
+    status.remove(last_hedge.edge)
+    left_node = status.find_nearest_left(point.co[x])
+    left_helper = left_node.key.helper
+    if left_helper.type == 'merge':
+        new_hedges.extend(insert_edge(left_helper, point))
+    left_node.key.helper = point
+    return new_hedges
+
+
+def handle_regular_point(point, status):
+    if point < point.hedge.twin.point:
+        right_helper = point.hedge.last.edge.helper
+        status.remove(point.hedge.last.edge)
+        edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i)
+        point.hedge.edge = edge
+        point.hedge.twin.edge = edge
+        edge.helper = point
+        Debugger.print_e(edge, 'insert edge')
+        status.insert(edge)
+        if right_helper.type == 'merge':
+            return insert_edge(right_helper, point)
+    else:
+        left_node = status.find_nearest_left(point.co[x])
+        left_helper = left_node.key.helper
+        left_node.key.helper = point
+        if left_helper.type == 'merge':
+            return insert_edge(left_helper, point)
+
+
+handle_functions = {'start': handle_start_point, 'end': handle_end_point, 'split': handle_split_point,
+                    'merge': handle_merge_point, 'regular': handle_regular_point}
+
+
 class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: like boolean
@@ -1362,22 +1271,24 @@ class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'MaskB')
 
     def process(self):
-        global test
-        verts_a = self.inputs['VertsA'].sv_get()[0]
-        faces_a = self.inputs['FacesA'].sv_get()[0]
-        verts_b = self.inputs['VertsB'].sv_get()[0]
-        faces_b = self.inputs['FacesB'].sv_get()[0]
-        mesh = map_overlay(verts_a, faces_a, verts_b, faces_b)
-        if mesh:
-            v, f, ma, mb, mia, mib = zip(mesh)
-            self.outputs['Verts'].sv_set(v)
-            self.outputs['Faces'].sv_set(f)
-            if self.simple_mask:
-                self.outputs['MaskA'].sv_set(ma)
-                self.outputs['MaskB'].sv_set(mb)
-            if self.index_mask:
-                self.outputs['MaskIndexA'].sv_set(mia)
-                self.outputs['MaskIndexB'].sv_set(mib)
+        if not all([input.is_linked for input in self.inputs]):
+            return None
+        verts_a = self.inputs['VertsA'].sv_get()
+        faces_a = self.inputs['FacesA'].sv_get()
+        verts_b = self.inputs['VertsB'].sv_get()
+        faces_b = self.inputs['FacesB'].sv_get()
+        meshes = []
+        for va, fa, vb, fb in zip(verts_a, faces_a, repeat_last(verts_b), repeat_last(faces_b)):
+            meshes.append(map_overlay(va, fa, vb, fb))
+        v, f, ma, mb, mia, mib = zip(*meshes)
+        self.outputs['Verts'].sv_set(v)
+        self.outputs['Faces'].sv_set(f)
+        if self.simple_mask:
+            self.outputs['MaskA'].sv_set(ma)
+            self.outputs['MaskB'].sv_set(mb)
+        if self.index_mask:
+            self.outputs['MaskIndexA'].sv_set(mia)
+            self.outputs['MaskIndexB'].sv_set(mib)
 
 
 def register():
