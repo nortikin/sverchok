@@ -12,7 +12,7 @@ class TextViewerTest(EmptyTreeTestCase):
         viewer_text = create_node("ViewerNodeTextMK3")
 
         # Connect Cylinder -> Viewer
-        self.tree.links.new(cyl.outputs['Vertices'], viewer_text.inputs[0])
+        self.tree.links.new(cyl.outputs['Polygons'], viewer_text.inputs[0])
 
         # Trigger processing of Cylinder node
         cyl.process()
@@ -21,7 +21,7 @@ class TextViewerTest(EmptyTreeTestCase):
 
         # Read what the operator has written to the text buffer.
         text = bpy.data.texts['Sverchok_viewer'].as_string()
-        
+
         # Test that text in buffer equals exactly to the text saved
         # in the file from the first test run.
         with open(self.get_reference_file_path("text_viewer_out.txt"), "r") as f:
