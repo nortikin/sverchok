@@ -338,7 +338,7 @@ class SverchokTestCase(unittest.TestCase):
 
         compare([])
 
-    def assert_sverchok_data_equal(self, data1, data2, precision=None):
+    def assert_sverchok_data_equal(self, data1, data2, precision=None, message=None):
         """
         Assert that two arrays of Sverchok data (nested tuples or lists)
         are equal.
@@ -346,14 +346,21 @@ class SverchokTestCase(unittest.TestCase):
         """
         level1 = get_data_nesting_level(data1)
         level2 = get_data_nesting_level(data2)
+
+        def format_error(text):
+            if message is None:
+                return text
+            else:
+                return message + ": " + text
+
         if level1 != level2:
-            raise AssertionError("Nesting level of 1st data {} != nesting level of 2nd data {}".format(level1, level2))
+            raise AssertionError(format_error("Nesting level of 1st data {} != nesting level of 2nd data {}".format(level1, level2)))
         
         def do_assert(d1, d2, idxs):
             if precision is not None:
                 d1 = round(d1, precision)
                 d2 = round(d2, precision)
-            self.assertEqual(d1, d2, "Data 1 [{}] != Data 2 [{}]".format(idxs, idxs))
+            self.assertEqual(d1, d2, format_error("Data 1 [{}] != Data 2 [{}]".format(idxs, idxs)))
 
         if level1 == 0:
             do_assert(data1, data2, [])
@@ -364,14 +371,14 @@ class SverchokTestCase(unittest.TestCase):
             index = prev_indicies[-1]
             if step == level1:
                 if index >= len(item1):
-                    raise AssertionError("At {}: index {} >= length of Item 1: {}".format(prev_indicies, index, item1))
+                    raise AssertionError(format_error("At {}: index {} >= length of Item 1: {}".format(prev_indicies, index, item1)))
                 if index >= len(item2):
-                    raise AssertionError("At {}: index {} >= length of Item 2: {}".format(prev_indicies, index, item2))
+                    raise AssertionError(format_error("At {}: index {} >= length of Item 2: {}".format(prev_indicies, index, item2)))
                 do_assert(item1[index], item2[index], prev_indicies)
             else:
                 l1 = len(item1)
                 l2 = len(item2)
-                self.assertEquals(l1, l2, "Size of data 1 at level {} != size of data 2".format(step))
+                self.assertEquals(l1, l2, format_error("Size of data 1 at level {} != size of data 2".format(step)))
                 for next_idx in range(len(item1[index])):
                     new_indicies = prev_indicies[:]
                     new_indicies.append(next_idx)
@@ -543,15 +550,15 @@ class NodeProcessTestCase(EmptyTreeTestCase):
         except SvNoDataError:
             return None
     
-    def assert_output_data_equals(self, output_name, expected_data, message=None):
+    def assert_output_data_equals(self, output_name, expected_data, message=None, precision=None):
         """
         Assert that tested node has written expected_data to
         output socket output_name.
         """
         data = self.get_output_data(output_name)
-        self.assertEquals(data, expected_data, message)
+        self.assert_sverchok_data_equal(data, expected_data, message=message, precision=precision)
 
-    def assert_output_data_equals_file(self, output_name, expected_data_file_name, message=None):
+    def assert_output_data_equals_file(self, output_name, expected_data_file_name, message=None, precision=None):
         """
         Assert that tested node has written expected data to
         output socket output_name.
@@ -559,7 +566,7 @@ class NodeProcessTestCase(EmptyTreeTestCase):
         """
         data = self.get_output_data(output_name)
         expected_data = self.load_reference_sverchok_data(expected_data_file_name)
-        self.assert_sverchok_data_equal(data, expected_data, message)
+        self.assert_sverchok_data_equal(data, expected_data, message, precision=precision)
 
     def setUp(self):
         super().setUp()
