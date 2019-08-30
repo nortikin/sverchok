@@ -77,7 +77,6 @@
     EvaluateImageNode
     SvDeformationNode
     SvLinkedVertsNode
-    SvAlignMeshByMesh
 
 ## Transforms
     SvRotationNode
@@ -87,6 +86,7 @@
     MatrixApplyNode
     SvSimpleDeformNode
     SvBarycentricTransformNode
+    SvAlignMeshByMesh
 
 ## Modifier Change
     SvDeleteLooseNode
