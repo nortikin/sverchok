@@ -26,13 +26,13 @@ from math import sqrt
 
 from sverchok.utils.profile import profile
 
-projection_type_items = [
+projection_screen_items = [
     ("PLANAR",  "Planar",  "Project onto a plane", 0),
-    ("SPHERICAL", "Spherical", "Project onto a sphere", 1),
-    ("CYLINDRICAL", "Cylindrical", "Project onto a cylinder", 2)]
+    ("CYLINDRICAL", "Cylindrical", "Project onto a cylinder", 1),
+    ("SPHERICAL", "Spherical", "Project onto a sphere", 2)]
 
 
-projectionItems = [
+projection_type_items = [
     ("PERSPECTIVE",  "Perspective",  "Perspective projection", 0),
     ("ORTHOGRAPHIC", "Orthographic", "Orthographic projection", 1)]
 
@@ -41,9 +41,52 @@ idMat = [[tuple(v) for v in Matrix()]]  # identity matrix
 EPSILON = 1e-10
 
 
-@profile
-def projection_cylindrical(verts3D, m, d):
+def projection_planar(verts3D, m, d, perspective):
     """
+    Project the 3D verts onto a plane.
+     verts3D : vertices to project (perspective or ortographic)
+           m : transformation matrix of the projection plane (location & rotation)
+           d : distance between the projection point (focus) and the projection plane
+    """
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection screen origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection screen normal
+
+    d = d if perspective else 1e10
+
+    vertList = []
+    focusList = []
+    for vert in verts3D:
+        x, y, z = vert
+        dx = x - ox
+        dy = y - oy
+        dz = z - oz
+
+        an = dx * nx + dy * ny + dz * nz  # v projection along the plane normal
+
+        s = d / (d + an)  # perspective factor
+
+        px = ox + s * (dx - an * nx)
+        py = oy + s * (dy - an * ny)
+        pz = oz + s * (dz - an * nz)
+
+        vertList.append([px, py, pz])
+
+    # Focus location m * D:
+    #  Xx Yx Zx Tx        0     Tx - d * Zx
+    #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
+    #  Xz Yz Zz Tz      - d     Tz - d * Zz
+    #  0  0  0  1         1     1
+    focusList = [[ox - d * nx, oy - d * ny, oz - d * nz]]
+
+    return vertList, focusList
+
+
+def projection_cylindrical(verts3D, m, d, perspective):
+    """
+    Project the 3D verts onto a cylinder.
+     verts3D : vertices to project (perspective)
+           m : transformation matrix of the projection cylinder (location & rotation)
+           d : distance between the projection point (focus) and the projection cylinder (cylinder radius)
 
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection cylinder origin
@@ -79,9 +122,12 @@ def projection_cylindrical(verts3D, m, d):
     return vertList, focusList
 
 
-def projection_spherical(verts3D, m, d):
+def projection_spherical(verts3D, m, d, perspective):
     """
-
+    Project the 3D verts onto a sphere.
+     verts3D : vertices to project (perspective)
+           m : transformation matrix of the projection sphere (location & rotation)
+           d : distance between the projection point (focus and the projection sphere (sphere radius)
     """
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection sphere origin
 
@@ -106,61 +152,25 @@ def projection_spherical(verts3D, m, d):
     return vertList, focusList
 
 
-def projection_planar(verts3D, m, d):
-    """
-    Project the 3D verts onto 2D space given the projection distance
-    """
-    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection screen origin
-    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection screen normal
-
-    vertList = []
-    focusList = []
-    for vert in verts3D:
-        x, y, z = vert
-        dx = x - ox
-        dy = y - oy
-        dz = z - oz
-
-        an = dx * nx + dy * ny + dz * nz  # v projection along the plane normal
-
-        s = d / (d + an)  # perspective factor
-
-        xa = s * (dx - an * nx)
-        ya = s * (dy - an * ny)
-        za = s * (dz - an * nz)
-
-        px = ox + xa
-        py = oy + ya
-        pz = oz + za
-
-        vertList.append([px, py, pz])
-
-    # Focus location m * D:
-    #  Xx Yx Zx Tx        0     Tx - d * Zx
-    #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
-    #  Xz Yz Zz Tz      - d     Tz - d * Zz
-    #  0  0  0  1         1     1
-    focusList = [[ox - d*nx, oy - d*ny, oz - d * nz]]
-
-    return vertList, focusList
-
-
 class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: 3D Projection, Perspective, Orthogonal
+    Triggers: 3D Projection, Perspective, Orthographic
     Tooltips: Projection from 3D space to 2D space
     """
     bl_idname = 'Sv3DProjectNode'
     bl_label = '3D Projection'
 
+    projection_screen = EnumProperty(
+        name="Screen", items=projection_screen_items, default="PLANAR", update=updateNode)
+
     projection_type = EnumProperty(
-        name="Type", items=projection_type_items, default="PLANAR", update=updateNode)
+        name="Type", items=projection_type_items, default="PERSPECTIVE", update=updateNode)
 
     distance = FloatProperty(
-        name="Distance", description="Projection Distance",
-        default=2.0, update=updateNode)
+        name="Distance", description="Projection Distance", default=2.0, update=updateNode)
 
     def sv_init(self, context):
+        self.width = 160
         self.inputs.new('VerticesSocket', "Verts")
         self.inputs.new('StringsSocket', "Edges")
         self.inputs.new('StringsSocket', "Polys")
@@ -175,7 +185,10 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('VerticesSocket', "Focus")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "projection_type", text="")
+        layout.prop(self, "projection_screen", text="")
+
+        if self.projection_screen == "PLANAR":
+            layout.prop(self, "projection_type", expand=True)
 
     @profile
     def process(self):
@@ -207,19 +220,21 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
 
         params = match_long_repeat([input_v, input_e, input_p, input_m, input_d])
 
-        if self.projection_type == "PLANAR":
+        if self.projection_screen == "PLANAR":
             projector = projection_planar
-        elif self.projection_type == "CYLINDRICAL":
+        elif self.projection_screen == "CYLINDRICAL":
             projector = projection_cylindrical
-        elif self.projection_type == "SPHERICAL":
+        elif self.projection_screen == "SPHERICAL":
             projector = projection_spherical
+
+        perspective = self.projection_type == "PERSPECTIVE"
 
         vertList = []
         edgeList = []
         polyList = []
         focusList = []
         for v, e, p, m, d in zip(*params):
-            verts, focus = projector(v, m, d)
+            verts, focus = projector(v, m, d, perspective)
             vertList.append(verts)
             edgeList.append(e)
             polyList.append(p)
