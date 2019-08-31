@@ -85,7 +85,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
-            self.inputs.new('SvVerticesSocket', "centers")
+            self.inputs.new('SvVerticesSocket', "center")
             self.inputs.new('SvVerticesSocket', "axis")
             self.inputs.new('SvStringsSocket', "angle").prop_name = "angle_"
         elif mode == 'EULER' or mode == 'QUAT':
