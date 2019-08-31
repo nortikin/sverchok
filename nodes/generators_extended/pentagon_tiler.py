@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sqrt, sin, cos, radians
+from math import sqrt, sin, cos, radians,pi
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -37,7 +37,9 @@ grid_type_items = [
     ("TRIANGLE", "Triangle", "", custom_icon("SV_TRIANGLE"), 0),
     ("SQUARE", "Square", "", custom_icon("SV_SQUARE"), 1),
     ("HEXAGON", "Hexagon", "", custom_icon("SV_HEXAGON"), 2),
-    ("PENTAGON", "Pentagon", "", custom_icon("SV_HEXAGON"), 3)]
+    ("PENTAGON", "Pentagon", "", custom_icon("SV_HEXAGON"), 3),
+    ("PENTAGON1", "Pentagon 1", "", custom_icon("SV_HEXAGON"), 4),
+    ("PENTAGON2", "Pentagon 2", "", custom_icon("SV_HEXAGON"), 5)]
 size_mode_items = [
     ("RADIUS", "Radius", "Define polygon by its radius", custom_icon("SV_RAD"), 0),
     ("SIDE", "Side", "Define polygon by its side", custom_icon("SV_SIDE"), 1)]
@@ -121,7 +123,9 @@ def diamond_layout(settings, pol_type):
 
 def rect_layout(settings, pol_type):
     '''Define rectangular layout'''
-    _, _, numx, numy = settings
+    #_, _, numx, numy,_,_ = settings
+    numx = settings[2]
+    numy = settings[3]
     cols = numx
     rows = [numy] * numx
     tile_rotated = 0
@@ -129,11 +133,11 @@ def rect_layout(settings, pol_type):
     if pol_type in ['HEXAGON']:
         offset_y = [l % 2 for l in range(cols)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
-    elif pol_type in ['PENTAGON']:
+    elif pol_type in ['PENTAGON','PENTAGON1','PENTAGON2']:
         offset_y = [l  for l in range(cols)]
         offset_x = [l  for l in range(numy)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
-    elif pol_type == 'PENTAGON2':
+    elif pol_type == 'PENTAGON0':
         offset_y = [(l % 3)  for l in range(cols)]
         # offset_x = [l  for l in range(numy)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
@@ -152,7 +156,7 @@ def rect_layout(settings, pol_type):
 
 def generate_grid(center, layout, pol_type, settings):
     r = settings[0]   # radius
-    a = settings[1]   # angle
+    ang = settings[1]   # angle
 
     if pol_type in ['HEXAGON']:
         dx = r * 3 / 2    # distance between two consecutive points along X
@@ -164,7 +168,7 @@ def generate_grid(center, layout, pol_type, settings):
         dy = r * sqrt(3)/2
         off_base = dy
         off_base_x = 0
-    elif pol_type == 'SQUARE':
+    elif pol_type in ['PENTAGON7','SQUARE'] :
         dx = r * sqrt(2)
         dy = r * sqrt(2)
         off_base = dy / 2
@@ -174,11 +178,31 @@ def generate_grid(center, layout, pol_type, settings):
         dy = r+ r/3
         off_base = 2*r/3
         off_base_x = -2 * r/3
+    elif pol_type == 'PENTAGON1':
+        print(1,settings[4])
+        A = settings[4]
+        B = settings[5]
+        a = settings[8]
+        b = settings[9]
+        c = settings[10]
+        d = settings[11]
+        dy = sin(A)*c
+        dx = a+d-b*cos(B)
+        off_base = b*sin(B)
+        off_base_x = -a+d +cos(A)*c
     elif pol_type == 'PENTAGON2':
-        dx = 4*r/3
-        dy = 2*r+r+ r/3
-        off_base = 2 *r/3
-        off_base_x = -2 * r/3
+        print(1,settings[4])
+        A = settings[4]
+        B = settings[5]
+        a = settings[8]
+        b = settings[9]
+        c = settings[10]
+        d = settings[11]
+        dy = sin(A)*c
+        dx = a+d-b*cos(B)
+        off_base = b*sin(B)
+        off_base_x = -a+d +cos(A)*c
+
     '''
     cols : number of points along x
     rows : number of points along Y for each x location
@@ -209,7 +233,7 @@ def generate_grid(center, layout, pol_type, settings):
     else:
         grid = [(x * dx - cx - offset_x[y]* off_base_x, y * dy - offset_y[x] * off_base - cy, 0) for x in range(cols) for y in range(rows[x])]
 
-    angle = radians(a)
+    angle = radians(ang)
     cosa = cos(angle)
     sina = sin(angle)
 
@@ -220,7 +244,7 @@ def generate_grid(center, layout, pol_type, settings):
 
 def generate_tiles(tile_settings):
 
-    radius, angle, scale, separate, grid_list, sides = tile_settings
+    radius, angle, scale, separate, grid_list, sides, angles, sides_data = tile_settings
     vert_grid_list, edge_grid_list, poly_grid_list = [[], [], []]
 
     local_angle = 45 if sides == 4 else 30
@@ -234,12 +258,82 @@ def generate_tiles(tile_settings):
             [[0,1,2,3,4],[4,5,6,7,0], [7,8,9,10,0],[10,11,12,1,0]]
             ]
 
-        # tile[0]=[[v[0] * cos(radians(-angle)),v[1] * sin(radians(-angle)),0] for v in tile[0]]
         angle2 = radians(angle)
         cosa = cos(angle2)
         sina = sin(angle2)
         tile[0]=[[v[0] * cosa - v[1] * sina, v[0] * sina + v[1] * cosa, 0] for v in tile[0]]
+    if sides == 7:
+        A,B,C,D = angles
+        a,b,c,d = sides_data
+        a=a[0]
+        b=b[0]
+        c=c[0]
+        d = d[0]
+        A = pi - A[0]
+        B = B[0]
+        if a < d:
+            tile = [[
+                [0, 0, 0],
+                [a, 0, 0],
+                [a+cos(A)*c,0+sin(A)*c,0],
+                [a+cos(A)*c+(d-a)*cos(pi),0+sin(A)*c,0],
+                [a+cos(A)*c+d*cos(pi),0+sin(A)*c,0],
+                [b*cos(B),b*sin(B),0],
+                [a+d-a,0, 0],
+                [a+d,0, 0],
+                [a+cos(A)*c + a+b*cos(B-pi),sin(A)*c+b*sin(B-pi), 0],
+                [a+cos(A)*c + a,0+sin(A)*c,0]],
+                [(0,1),(1,2),(2,3),(3,4),(4,0)],
+                [[0,1,2,3,4,5],[1,6,7,8,9,2]]
+                ]
+        else:
+            tile = [[
+                [0, 0, 0],
+                [a+d-a, 0, 0],
+                [a, 0, 0],
+                [a+cos(A)*c,0+sin(A)*c,0],
+                [a+cos(A)*c+d*cos(pi),0 + sin(A)*c,0],
+                [b*cos(B),b*sin(B),0],
+                [a+d,0, 0],
+                [a+cos(A)*c + a+b*cos(B - pi), sin(A)*c+b*sin(B - pi), 0],
+                [a+cos(A)*c + a,0+sin(A)*c,0],
+                [a+cos(A)*c+(d-a)*cos(pi),0+sin(A)*c+(d-a)*sin(pi),0]
+                ],
+                [(0,1),(1,2),(2,3),(3,4),(4,0)],
+                [[0,1,2,3,4,5],[2,6,7,8,9,3]]
+                ]
             #v = [v[0]*cos(radians(angle)) ,v[1],0]
+    if sides == 9:
+        A,B,C,D = angles
+        a,b,c,d = sides_data
+        a=a[0]
+        b=b[0]
+        c=c[0]
+        d = d[0]
+        A = pi - A[0]
+        B = B[0]
+        C = C[0]
+        D = D[0]
+        tile = [[
+            [0, 0, 0],
+            [a, 0, 0],
+            [a+cos(A)*b,0+sin(A)*b,0],
+            #[a+cos(A)*b+ (d-a)*cos(pi),0+sin(A)*c,0],
+            #[a+cos(A)*b+c*cos(B+A),0+sin(A)*b+c*sin(B+A),0],
+            #[a+cos(A)*b+c*cos(B+A)+d*cos(C+B+A),0+sin(A)*b+c*sin(B+A)+d*sin(C+B+A),0],
+            #[b*cos(B),b*sin(B),0],
+            [c*cos(D)+d*cos(B+D+pi),c*sin(D)+d*sin(B+D+pi), 0],
+            [c*cos(D),c*sin(D), 0],
+            #[a+d,0, 0],
+            #[a+cos(A)*c + a+b*cos(B-pi),sin(A)*c+b*sin(B-pi), 0],
+            #[a+cos(A)*c + a,0+sin(A)*c,0]
+            ],
+            [(0,1),(1,2),(2,3),(3,4),(4,0)],
+            [[0,1,2,3,4],
+            #[1,6,7,8,9,2]
+            ]
+            ]
+    print(tile[0])
     for grid in grid_list:
         vert_list, edge_list, poly_list = [[], [], []]
 
@@ -343,7 +437,31 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
     separate: BoolProperty(
         name="Separate", description="Separate tiles",
         default=False, update=updateNode)
+    angle_a : FloatProperty(
+        name="A", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
+    angle_b : FloatProperty(
+        name="B", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
+    angle_c : FloatProperty(
+        name="C", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
+    angle_d : FloatProperty(
+        name="D", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
 
+    side_a : FloatProperty(
+        name="a", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
+    side_b : FloatProperty(
+        name="b", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
+    side_c : FloatProperty(
+        name="c", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
+    side_d : FloatProperty(
+        name="d", description="Scale of the polygon tile",
+        default=0.0, min=0.0, update=updateNode)
     distanceName = "Radius"   ### WTF
 
     def sv_init(self, context):
@@ -354,6 +472,14 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Level").prop_name = 'level'
         self.inputs.new('SvStringsSocket', "NumX").prop_name = 'numx'
         self.inputs.new('SvStringsSocket', "NumY").prop_name = 'numy'
+        self.inputs.new('SvStringsSocket', "A").prop_name = 'angle_a'
+        self.inputs.new('SvStringsSocket', "B").prop_name = 'angle_b'
+        self.inputs.new('SvStringsSocket', "C").prop_name = 'angle_c'
+        self.inputs.new('SvStringsSocket', "D").prop_name = 'angle_d'
+        self.inputs.new('SvStringsSocket', "a").prop_name = 'side_a'
+        self.inputs.new('SvStringsSocket', "b").prop_name = 'side_b'
+        self.inputs.new('SvStringsSocket', "c").prop_name = 'side_c'
+        self.inputs.new('SvStringsSocket', "d").prop_name = 'side_d'
 
         self.outputs.new('SvVerticesSocket', "Centers")
         self.outputs.new('SvVerticesSocket', "Vertices")
@@ -402,7 +528,11 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
             sides = 3
         elif self.gridType == 'SQUARE':
             sides = 4
-        elif self.gridType in ['PENTAGON','PENTAGON2']:
+        elif self.gridType == 'PENTAGON1':
+            sides = 7
+        elif self.gridType == 'PENTAGON2':
+            sides = 9
+        elif self.gridType in ['PENTAGON']:
             sides = 8
         radius_factor = 2 * sin(radians(180/sides)) if self.gridType != 'HEXAGON' and self.sizeMode == 'SIDE' else 1
 
@@ -414,7 +544,16 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         input_radius = inputs["Radius"].sv_get()[0]
         input_angle = inputs["Angle"].sv_get()[0]
         input_scale = inputs["Scale"].sv_get()[0]
-
+        input_angle_a = inputs["A"].sv_get()[0]
+        input_angle_b = inputs["B"].sv_get()[0]
+        input_angle_c = inputs["C"].sv_get()[0]
+        input_angle_d = inputs["D"].sv_get()[0]
+        side_a = inputs["a"].sv_get()[0]
+        side_b = inputs["b"].sv_get()[0]
+        side_c = inputs["c"].sv_get()[0]
+        side_d = inputs["d"].sv_get()[0]
+        angles = [input_angle_a, input_angle_b, input_angle_c, input_angle_d]
+        sides_data = [side_a, side_b, side_c, side_d]
         # sanitize the input values
         input_level = list(map(lambda x: max(1, x), input_level))
         input_numx = list(map(lambda x: max(1, x), input_numx))
@@ -426,6 +565,10 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         param_list = []
         if self.gridLayout == 'RECTANGLE':
             param_list.extend([input_radius, input_angle, input_numx, input_numy])
+            param_list+=angles
+            param_list+=sides_data
+            print(2,len(param_list))
+
         else:  # TRIANGLE, DIAMOND HEXAGON layouts
             param_list.extend([input_radius, input_angle, input_level])
         params = match_long_repeat(param_list)
@@ -441,7 +584,7 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
 
         vert_list, edge_list, poly_list = [[], [], []]
         for r, a, s, grid in zip(*params):
-            tile_settings = [r, a, s, self.separate, [grid], sides]
+            tile_settings = [r, a, s, self.separate, [grid], sides, angles, sides_data]
 
             verts, edges, polys = generate_tiles(tile_settings)
             vert_list.extend(verts)
