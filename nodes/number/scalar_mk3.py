@@ -18,7 +18,6 @@
 
 from math import *
 from fractions import gcd
-from itertools import zip_longest
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
@@ -73,6 +72,7 @@ func_dict = {
     "COSH":        (70,  cosh,                             ('s s'), "cosh"),
     "SINH":        (71,  sinh,                             ('s s'), "sinh"),
     "TANH":        (72,  tanh,                             ('s s'), "tanh"),
+    "ATAN2":       (79,  lambda x, y: atan2(y,x),         ('ss s'), "atan2"),
     "DEGREES":     (80,  degrees,                          ('s s'), "Degrees"),
     "RADIANS":     (82,  radians,                          ('s s'), "Radians"),
     "SINXY":       (83,  lambda x, y: sin(x*y),           ('ss s'), "sin(x*y)"),
@@ -112,9 +112,9 @@ def property_change(node, context, origin):
     updateNode(node, context)
 
 
-class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Scalar: Add, Sine... '''
-    bl_idname = 'SvScalarMathNodeMK2'
+    bl_idname = 'SvScalarMathNodeMK3'
     bl_label = 'Scalar Math'
     sv_icon = 'SV_FUNCTION'
 
@@ -174,6 +174,8 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_menu_enum(self, "input_mode_one", text="Input 1 number type")
         if len(self.inputs) == 2:
             layout.prop_menu_enum(self, "input_mode_two", text="Input 2 number type")
+    def migrate_from(self, old_node):
+        self.current_op = old_node.current_op
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "x").prop_name = 'x_'
@@ -228,5 +230,5 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[0].sv_set(result)
 
 
-classes = [SvScalarMathNodeMK2]
+classes = [SvScalarMathNodeMK3]
 register, unregister = bpy.utils.register_classes_factory(classes)

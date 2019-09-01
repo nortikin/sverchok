@@ -178,7 +178,7 @@
 
 ## Number
     SvNumberNode
-    SvScalarMathNodeMK2
+    SvScalarMathNodeMK3
     GenListRangeIntNode
     SvGenFloatRange
     SvListInputNode
