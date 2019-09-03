@@ -55,6 +55,9 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Item")
         self.outputs.new('SvStringsSocket', "Other")
 
+    def migrate_from(self, old_node):
+        self.index = old_node.item
+
     def update(self):
         '''adapt socket type to input type'''
         if 'Data' in self.inputs and self.inputs['Data'].links:
