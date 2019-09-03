@@ -38,8 +38,9 @@ def get_git_login_hash():
         with open(fullpath) as fx:
             return ''.join(fx).strip()
     except Exception as err:
-        print(err)
-        print('seeing this message means you need to generate an uptoken')
+        # print(err)
+        print('If you want to upload gists from the Sverchok UI, you need to make an "sv_fx.wad" file.')
+        print('See for instructions: https://github.com/nortikin/sverchok/pull/2197#issuecomment-419891718')
     
     return 
 
