@@ -48,23 +48,23 @@ def projection_planar(verts3D, m, d, perspective):
            m : transformation matrix of the projection plane (location & rotation)
            d : distance between the projection point (focus) and the projection plane
     """
-    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection screen origin
-    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection screen normal
+    ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection plane origin
+    nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection plane normal
 
-    d = d if perspective else 1e10
+    # d = d if perspective else 1e10
 
     vertList = []
-    focusList = []
     for vert in verts3D:
         x, y, z = vert
+        # vector relative to the plane origin (V-O)
         dx = x - ox
         dy = y - oy
         dz = z - oz
-
-        an = dx * nx + dy * ny + dz * nz  # v projection along the plane normal
-
-        s = d / (d + an)  # perspective factor
-
+        # magnitude of the vector projected parallel to the plane normal
+        an = dx * nx + dy * ny + dz * nz
+        # factor to scale the vector to touch the plane
+        s = d / (d + an)
+        # extended vector touching the plane
         px = ox + s * (dx - an * nx)
         py = oy + s * (dy - an * ny)
         pz = oz + s * (dz - an * nz)
@@ -76,9 +76,9 @@ def projection_planar(verts3D, m, d, perspective):
     #  Xy Yy Zy Ty   *    0  =  Ty - d * Zy
     #  Xz Yz Zz Tz      - d     Tz - d * Zz
     #  0  0  0  1         1     1
-    focusList = [[ox - d * nx, oy - d * ny, oz - d * nz]]
+    focus = [[ox - d * nx, oy - d * ny, oz - d * nz]]
 
-    return vertList, focusList
+    return vertList, focus
 
 
 def projection_cylindrical(verts3D, m, d, perspective):
@@ -93,10 +93,9 @@ def projection_cylindrical(verts3D, m, d, perspective):
     nx, ny, nz = [m[0][2], m[1][2], m[2][2]]  # projection cylinder axis
 
     vertList = []
-    focusList = []
     for vert in verts3D:
         x, y, z = vert
-        # vector relative to the center of the cylinder (V-O)
+        # vector relative to the cylinder origin (V-O)
         dx = x - ox
         dy = y - oy
         dz = z - oz
@@ -117,9 +116,9 @@ def projection_cylindrical(verts3D, m, d, perspective):
 
         vertList.append([xx, yy, zz])
 
-    focusList = [[ox, oy, oz]]
+    focus = [[ox, oy, oz]]
 
-    return vertList, focusList
+    return vertList, focus
 
 
 def projection_spherical(verts3D, m, d, perspective):
@@ -132,9 +131,9 @@ def projection_spherical(verts3D, m, d, perspective):
     ox, oy, oz = [m[0][3], m[1][3], m[2][3]]  # projection sphere origin
 
     vertList = []
-    focusList = []
     for vert in verts3D:
         x, y, z = vert
+        # vector relative to the sphere origin (V-O)
         dx = x - ox
         dy = y - oy
         dz = z - oz
@@ -147,9 +146,9 @@ def projection_spherical(verts3D, m, d, perspective):
 
         vertList.append([xx, yy, zz])
 
-    focusList = [[ox, oy, oz]]
+    focus = [[ox, oy, oz]]
 
-    return vertList, focusList
+    return vertList, focus
 
 
 class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
@@ -170,7 +169,7 @@ class Sv3DProjectNode(bpy.types.Node, SverchCustomTreeNode):
         name="Distance", description="Projection Distance", default=2.0, update=updateNode)
 
     def sv_init(self, context):
-        self.width = 160
+        self.width = 180
         self.inputs.new('VerticesSocket', "Verts")
         self.inputs.new('StringsSocket', "Edges")
         self.inputs.new('StringsSocket', "Polys")
