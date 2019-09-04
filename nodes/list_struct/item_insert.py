@@ -62,13 +62,13 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.label(text="List Match:")
 
-        layout.prop(self, "list_match_local", text="Local Match", expand=False)
+        layout.prop(self, "list_match_local", text="Item-Index", expand=False)
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
         layout.prop(self, "level", text="level")
         layout.prop(self, "replace", text="Replace")
-        layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
+        layout.prop_menu_enum(self, "list_match_local", text="List Match Item-Index")
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Data")
@@ -80,35 +80,25 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         if 'Data' in self.inputs and self.inputs['Data'].links:
             inputsocketname = 'Data'
-            outputsocketname = ['Item']
+            outputsocketname = ['Data']
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if self.inputs['Data'].is_linked:
-            OItem = self.outputs[0]
-            data = self.inputs['Data'].sv_get()
-            new_item = self.inputs['Item'].sv_get()
-            indexes = self.inputs['Index'].sv_get([[self.index]])
-            if OItem.is_linked:
-                # out = self.set_all_items(data, new_item, indexes)
+        out_socket = self.outputs[0]
+        si = self.inputs
+        if si['Data'].is_linked and out_socket.is_linked:
+
+            data = si['Data'].sv_get()
+            if si['Item'].is_linked:
+                new_item = si['Item'].sv_get()
+                indexes = si['Index'].sv_get([[self.index]])
                 if self.level-1:
                     out = self.get(data, new_item, self.level-1, indexes, self.set_items)
                 else:
                     out = self.set_items(data, new_item, indexes[0])
-                OItem.sv_set(out)
-
-
-    def set_all_items(self, data, new_item, indexes):
-        if type(indexes[0]) in [list, tuple]:
-            data_iter = repeat_last(data)
-            new_item_iter = repeat_last(new_item)
-            out = [self.set_all_items(next(data_iter), next(new_item_iter), index) for index in indexes]
-        else:
-            if self.level-1:
-                out = self.get(data, new_item, self.level-1, [indexes], self.set_items)
+                out_socket.sv_set(out)
             else:
-                out = self.set_items(data, new_item, indexes)
-        return out
+                out_socket.sv_set(data)
 
     def set_items(self, data, new_items, indexes):
         if type(data) in [list, tuple]:
@@ -120,26 +110,6 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
             return data
 
         return None
-
-    def get_other(self, data, items):
-        is_tuple = False
-        if type(data) == tuple:
-            data = list(data)
-            is_tuple = True
-        if type(data) == list:
-            m_items = items.copy()
-            for idx, item in enumerate(items):
-                if item < 0:
-                    m_items[idx] = len(data)-abs(item)
-            for i in sorted(set(m_items), reverse=True):
-                if -1 < i < len(data):
-                    del data[i]
-            if is_tuple:
-                return tuple(data)
-            else:
-                return data
-        else:
-            return None
 
     def get(self, data, new_items, level, items, f):
         if level == 1:

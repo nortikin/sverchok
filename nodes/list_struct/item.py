@@ -67,7 +67,7 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         '''main node function called every update'''
-        if self.inputs['Data'].is_linked:
+        if self.inputs['Data'].is_linked and self.inputs['Index'].is_linked:
             out_item, out_other = self.outputs
             data = self.inputs['Data'].sv_get()
             indexes = self.inputs['Index'].sv_get([[self.index]])
