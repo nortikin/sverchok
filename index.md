@@ -181,7 +181,7 @@
     SvScalarMathNodeMK2
     GenListRangeIntNode
     SvGenFloatRange
-    SvListInputNode
+    SvListInputNodeMK2
     SvRndNumGen
     RandomNode
     Float2IntNode
