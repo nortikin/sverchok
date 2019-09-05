@@ -109,6 +109,7 @@ def add_connection(tree, bl_idname_new_node, offset):
                 # connect_stethoscope to first visible output socket of active node
                 links.new(socket, inputs[0])
                 break
+            tree.update()   # without this the node won't show output until an update is triggered manually
 
         elif bl_idname_new_node == 'SvVDExperimental':
 
