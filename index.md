@@ -355,3 +355,4 @@
     SvContourNode
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
+    SvTopologySimple
