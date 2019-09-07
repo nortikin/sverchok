@@ -25,9 +25,9 @@ class SvTopologySimple(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Topology Simple'
     bl_icon = 'GREASEPENCIL'
 
-    _edges: StringProperty(default='', name='edges', update=updateNode)
-    _faces: StringProperty(default='', name='faces', update=updateNode)
-    simplified: BoolProperty(name="simplify input", update=updateNode)
+    prop_edges: StringProperty(default='', name='edges', update=updateNode)
+    prop_faces: StringProperty(default='', name='faces', update=updateNode)
+    simplified: BoolProperty(default=True, name="simplify input", update=updateNode)
     wrap: BoolProperty(default=True, name="wrap output", description="wraps outputs with a set of [  ]", update=updateNode)
 
     def sv_init(self, context):
@@ -35,14 +35,14 @@ class SvTopologySimple(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("SvStringsSocket", "Faces")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "_edges")
-        layout.prop(self, "_faces")
+        layout.row().prop(self, "prop_edges", icon="EDGESEL", text="")
+        layout.row().prop(self, "prop_faces", icon="FACESEL", text="")
         row = layout.row()
         row.prop(self, "simplified")
         row.prop(self, "wrap")
 
     def manipulate(self, socket):
-        data = getattr(self, '_' + socket.name.lower())
+        data = getattr(self, f"prop_{socket.name.lower()}")
 
         try:
 
