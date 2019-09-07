@@ -25,10 +25,10 @@ class SvTopologySimple(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Topology Simple'
     bl_icon = 'GREASEPENCIL'
 
-    _edges = StringProperty(default='', name='edges', update=updateNode)
-    _faces = StringProperty(default='', name='faces', update=updateNode)
-    simplified = BoolProperty(name="simplify input", update=updateNode)
-    wrap = BoolProperty(default=True, name="wrap output", description="wraps outputs with a set of [  ]", update=updateNode)
+    _edges: StringProperty(default='', name='edges', update=updateNode)
+    _faces: StringProperty(default='', name='faces', update=updateNode)
+    simplified: BoolProperty(name="simplify input", update=updateNode)
+    wrap: BoolProperty(default=True, name="wrap output", description="wraps outputs with a set of [  ]", update=updateNode)
 
     def sv_init(self, context):
         self.outputs.new("SvStringsSocket", "Edges")
