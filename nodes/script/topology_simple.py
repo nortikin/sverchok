@@ -23,7 +23,7 @@ class SvTopologySimple(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvTopologySimple'
     bl_label = 'Topology Simple'
-    bl_icon = 'GREASEPENCIL'
+    bl_icon = 'ALIGN_BOTTOM'
 
     prop_edges: StringProperty(default='', name='edges', update=updateNode)
     prop_faces: StringProperty(default='', name='faces', update=updateNode)
