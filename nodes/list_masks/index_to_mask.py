@@ -29,15 +29,16 @@ class SvIndexToMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvIndexToMaskNode'
     bl_label = 'Index To Mask'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_INDEX_TO_MASK'
 
     ML: IntProperty(name='Mask Length', default=10, min=2, update=updateNode)
-    
+
     def update_mode(self, context):
         self.inputs['mask size'].hide_safe = self.data_to_mask
         self.inputs['data to mask'].hide_safe = not self.data_to_mask
         updateNode(self, context)
 
-    data_to_mask: BoolProperty(name = "data masking",
+    data_to_mask: BoolProperty(name="data masking",
             description = "Use data to define mask length",
             default = False,
             update=update_mode)

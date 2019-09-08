@@ -4,7 +4,7 @@ List Item
 Functionality
 -------------
 
-Select items from list based on index. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It shoudld accepts any type of data native to Sverchok..
+Select items from list based on index. The node is *data type agnostic*, meaning it makes no assumptions about the data you feed it. It should accepts any type of data native to Sverchok..
 
 Inputs
 ------
@@ -12,9 +12,9 @@ Inputs
 +--------+--------------------------------------------------------------------------+
 | Input  | Description                                                              |
 +========+==========================================================================+
-| Data   | The data - can be anything                                               | 
+| Data   | The data - can be anything                                               |
 +--------+--------------------------------------------------------------------------+
-| item   | Item(s) to select, allows negative index python index                    |
+| Index  | Index of Item(s) to select, allows negative index python index           |
 +--------+--------------------------------------------------------------------------+
 
 Parameters
@@ -25,9 +25,9 @@ Parameters
 
 It is essentially how many chained element look-ups you do on a list. If ``SomeList`` has a considerable *nestedness* then you might access the most atomic element of the list doing ``SomeList[0][0][0][0]``. Levels in this case would be 4.
 
-**item**
+**Index**
 
-A list of items to select, allow negative index python indexing so that -1 the last element. The items doesn't have to be in order and a single item can be selected more than a single time.
+A list of indexes of the items to select, allow negative index python indexing so that -1 the last element. The items doesn't have to be in order and a single item can be selected more than a single time.
 
 Outputs
 -------
