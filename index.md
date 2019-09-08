@@ -8,7 +8,7 @@
 >
 > Failing to follow these points will break the node category parser.
 
-## Generator
+## Generate
     SvLineNodeMK3
     SvPlaneNodeMK2
     SvNGonNode
@@ -29,7 +29,7 @@
     SvSNFunctorB
     ImageNode
 
-## Generators Extended
+## Generate Extended
     SvBoxRoundedNode
     SvBricksNode
     SvPolygonGridNode
@@ -46,7 +46,7 @@
     SvSuperEllipsoidNode
     SvRegularSolid
 
-## Analyzers
+## Analyze
     SvBBoxNode
     SvVolumeNode
     SvAreaNode
@@ -59,6 +59,7 @@
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
+    Pols2EdgsNode
     SvIntersectLineSphereNode
     SvIntersectPlanePlaneNode
     SvKDTreeNodeMK2
@@ -76,61 +77,71 @@
     SvDeformationNode
     SvLinkedVertsNode
 
-## Transforms
-    SvRotationNodeMK2
-    SvScaleNodeMK2
-    SvMoveNodeMK2
-    SvMirrorNode
-    MatrixApplyNode
-    SvSimpleDeformNode
-    SvBarycentricTransformNode
-    ---
-    Svb28MatrixArrayNode
-
-## Modifier Change
+##  Sanitate
     SvDeleteLooseNode
     SvRemoveDoublesNode
     SvSeparateMeshNode
     SvLimitedDissolve
     SvMeshBeautify
     SvTriangulateNode
-    ---
-    PolygonBoomNode
-    Pols2EdgsNode
-    SvMeshJoinNode
-    ---
-    SvFillsHoleNode
     SvRecalcNormalsNode
     SvFlipNormalsNode
-    SvRandomizeVerticesNode
+    SvFillsHoleNode
+    SvVertMaskNode
+
+##  Change
+    SvRotationNodeMK2
+    SvScaleNodeMK2
+    SvMoveNodeMK2
+    SvMirrorNode
+    MatrixApplyNode
     ---
+    PolygonBoomNode
+    SvMeshJoinNode
+    ---
+    SvSmoothNode
     SvIterateNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
+    SvSimpleDeformNode
+    SvBarycentricTransformNode
+    SvRandomizeVerticesNode
+    SvTransformSelectNode
+
+##  Make
+    LineConnectNodeMK2
+    ---
+    SvBevelNode
+    SvSmoothLines    
+    SvOffsetNode
+    SvLatheNode
+    SvBevelCurveNode
+    ---
+    SvSubdivideNode
+    SvSplitEdgesNode
+    SvIntersectEdgesNodeMK2
+    CrossSectionNode
+    SvBisectNode
+    SvWafelNode
+    ---
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
-    SvBendAlongPathNode
-    SvBendAlongSurfaceNode
-    SvVertMaskNode
-    SvTransformSelectNode
-    SvSplitEdgesNode
-
-## Modifier Make
-    LineConnectNodeMK2
-    ---
-    SvConvexHullNode
-    SvConvexHullNodeMK2
-    SvSubdivideNode
-    DelaunayTriangulation2DNode
-    Voronoi2DNode
-    ---
-    SvBevelCurveNode
-    SvAdaptiveEdgeNode
-    AdaptivePolsNode
-    SvDuplicateAlongEdgeNode
     SvSolidifyNode
+    ---
     SvWireframeNode
     SvPipeNode
     SvMatrixTubeNode
+    ---
+    Svb28MatrixArrayNode
+    SvAdaptiveEdgeNode
+    AdaptivePolsNode
+    SvDuplicateAlongEdgeNode
+    ---
+    SvConvexHullNode
+    SvConvexHullNodeMK2
+    DelaunayTriangulation2DNode
+    Voronoi2DNode
 
 ## List Masks
     MaskListNode
@@ -166,18 +177,6 @@
     ListShuffleNode
     ListSortNodeMK2
     ListFlipNode
-
-## CAD
-    SvBevelNode
-    SvIntersectEdgesNodeMK2
-    SvOffsetNode
-    SvLatheNode
-    SvSmoothNode
-    SvSmoothLines
-    ---
-    CrossSectionNode
-    SvBisectNode
-    SvWafelNode
 
 ## Number
     SvNumberNode

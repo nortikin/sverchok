@@ -108,11 +108,11 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
 
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
-        layout.menu("NODEVIEW_MT_AddTransforms", **icon('ORIENTATION_LOCAL'))
-        layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
-        layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
-        layout.menu("NODEVIEW_MT_AddCAD", **icon('TOOL_SETTINGS'))
+        layout.menu("NODEVIEW_MT_AddGenerate", **icon('OBJECT_DATAMODE'))
+        layout.menu("NODEVIEW_MT_AddAnalyze", **icon('VIEWZOOM'))
+        layout.menu("NODEVIEW_MT_AddChange", **icon('ORIENTATION_LOCAL'))
+        layout.menu("NODEVIEW_MT_AddMake", **icon('MODIFIER'))
+        layout.menu("NODEVIEW_MT_AddSanitate", **icon('MOD_DECIM'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
@@ -129,18 +129,18 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddNetwork", **icon("SYSTEM"))
         layout.menu("NODEVIEW_MT_AddBetas", **icon("SV_BETA"))
         layout.menu("NODEVIEW_MT_AddAlphas", **icon("SV_ALPHA"))
-        layout.separator() 
+        layout.separator()
         layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
         layout.menu("NODEVIEW_MT_AddPresetOps", icon="SETTINGS")
 
 
-class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
-    bl_label = "Generator"
+class NODEVIEW_MT_AddGenerate(bpy.types.Menu):
+    bl_label = "Generate"
 
     def draw(self, context):
         layout = self.layout
         layout_draw_categories(self.layout, node_cats[self.bl_label])
-        layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
+        layout.menu("NODEVIEW_MT_AddGenerateExt", **icon('PLUGIN'))
 
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
@@ -150,6 +150,8 @@ class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
         layout = self.layout
         layout.menu("NODEVIEW_MT_AddModifierChange")
         layout.menu("NODEVIEW_MT_AddModifierMake")
+        layout.menu("NODEVIEW_MT_AddModifierSanitate")
+        layout.menu("NODEVIEW_MT_AddModifierMultiply")
 
 
 class NODEVIEW_MT_AddListOps(bpy.types.Menu):
@@ -173,13 +175,13 @@ classes = [
     NODEVIEW_MT_Dynamic_Menu,
     NODEVIEW_MT_AddListOps,
     NODEVIEW_MT_AddModifiers,
-    NODEVIEW_MT_AddGenerators,
+    NODEVIEW_MT_AddGenerate,
     NODEVIEW_MT_AddPresetOps,
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
-    make_class('GeneratorsExt', "Generators Extended"),
+    make_class('GenerateExt', "Generate Extended"),
     make_class('Transforms', "Transforms"),
-    make_class('Analyzers', "Analyzers"),
+    make_class('Analyze', "Analyze"),
     make_class('Viz', "Viz"),
     make_class('Text', "Text"),
     make_class('Scene', "Scene"),
@@ -189,9 +191,9 @@ classes = [
     make_class('Number', "Number"),
     make_class('Vector', "Vector"),
     make_class('Matrix', "Matrix"),
-    make_class('CAD', "CAD"),
-    make_class('ModifierChange', "Modifier Change"),
-    make_class('ModifierMake', "Modifier Make"),
+    make_class('Change', "Change"),
+    make_class('Make', "Make"),
+    make_class('Sanitate', "Sanitate"),
     make_class('Logic', "Logic"),
     make_class('Network', "Network"),
     make_class('Betas', "Beta Nodes"),

@@ -68,7 +68,7 @@ def make_node_cats():
 
         # final append
         node_cats[category] = temp_list
-    
+
     return node_cats
 
 
@@ -99,8 +99,8 @@ def juggle_and_join(node_cats):
     node_cats['BPY Data'].extend(objects_cat)
 
     # add extended gens to Gens menu
-    gen_ext = node_cats.pop("Generators Extended")
-    node_cats["Generator"].extend(gen_ext)
+    gen_ext = node_cats.pop("Generate Extended")
+    node_cats["Generate"].extend(gen_ext)
 
     return node_cats
 
@@ -143,12 +143,12 @@ class SverchNodeItem(object):
     def make_add_operator(self):
         """
         Create operator class which adds specific type of node.
-        Tooltip (docstring) for that operator is copied from 
+        Tooltip (docstring) for that operator is copied from
         node class docstring.
         """
 
         global node_add_operators
-        
+
         class SverchNodeAddOperator(bl_operators.node.NodeAddOperator, bpy.types.Operator):
             """Wrapper for node.add_node operator to add specific node"""
 
@@ -230,7 +230,7 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
         params.update(**node_icon(node_rna))
 
     add = layout.operator("node.sv_add_" + get_node_idname_for_operator(nodetype), **params)
-                            
+
     add.type = nodetype
     add.use_transform = True
 
@@ -314,7 +314,7 @@ def reload_menu():
         unregister_node_add_operators()
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
     register_node_add_operators()
-    
+
     build_help_remap(original_categories)
     print("Reload complete, press update")
 
@@ -342,4 +342,3 @@ def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     unregister_node_add_operators()
-
