@@ -112,7 +112,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddAnalyze", **icon('VIEWZOOM'))
         layout.menu("NODEVIEW_MT_AddChange", **icon('ORIENTATION_LOCAL'))
         layout.menu("NODEVIEW_MT_AddMake", **icon('MODIFIER'))
-        layout.menu("NODEVIEW_MT_AddSanitate", **icon('MOD_DECIM'))
+        layout.menu("NODEVIEW_MT_AddSanitize", **icon('MOD_DECIM'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNumber")
         layout.menu("NODEVIEW_MT_AddVector")
@@ -193,7 +193,7 @@ classes = [
     make_class('Matrix', "Matrix"),
     make_class('Change', "Change"),
     make_class('Make', "Make"),
-    make_class('Sanitate', "Sanitate"),
+    make_class('Sanitize', "Sanitize"),
     make_class('Logic', "Logic"),
     make_class('Network', "Network"),
     make_class('Betas', "Beta Nodes"),

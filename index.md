@@ -77,7 +77,7 @@
     SvDeformationNode
     SvLinkedVertsNode
 
-##  Sanitate
+##  Sanitize
     SvDeleteLooseNode
     SvRemoveDoublesNode
     SvSeparateMeshNode
