@@ -17,7 +17,7 @@ supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
 common_nodes = [
     ['GenVectorsNode', 'VectorsOutNode'],
     ['SvNumberNode', 'GenListRangeIntNode', 'SvGenFloatRange'],
-    ['SvScalarMathNodeMK2', 'SvVectorMathNodeMK2']
+    ['SvScalarMathNodeMK3', 'SvVectorMathNodeMK2']
 ]
 
 
