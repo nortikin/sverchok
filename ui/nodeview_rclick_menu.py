@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -75,7 +75,7 @@ def get_verts_edge_poly_output_sockets(node):
     return output_map
 
 def offset_node_location(existing_node, new_node, offset):
-    new_node.location = existing_node.location.x + offset[0], existing_node.location.y  + offset[1]
+    new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y  + offset[1]
 
 def add_connection(tree, bl_idname_new_node, offset):
 
@@ -114,14 +114,12 @@ def add_connection(tree, bl_idname_new_node, offset):
         elif bl_idname_new_node == 'SvVDExperimental':
 
             if 'verts' in output_map:
-
+                links.new(outputs[output_map['verts']], inputs[0])
                 if 'faces' in output_map:
-                    links.new(outputs[output_map['verts']], inputs[0])
                     links.new(outputs[output_map['faces']], inputs[2])
                 if 'edges' in output_map:
-                    links.new(outputs[output_map['verts']], inputs[0])
                     links.new(outputs[output_map['edges']], inputs[1])
-                
+
                 tree.update()
 
         else:
@@ -143,13 +141,13 @@ class SvGenericDeligationOperator(bpy.types.Operator):
         tree = context.space_data.edit_tree
 
         if self.fn == 'vdmk2':
-            add_connection(tree, bl_idname_new_node="SvVDExperimental", offset=[180, 0])
+            add_connection(tree, bl_idname_new_node="SvVDExperimental", offset=[60, 0])
         elif self.fn == 'vdmk2 + idxv':
             add_connection(tree, bl_idname_new_node=["ViewerNode2", "IndexViewerNode"], offset=[180, 0])
         elif self.fn == '+idxv':
             add_connection(tree, bl_idname_new_node="IndexViewerNode", offset=[180, 0])
         elif self.fn == 'stethoscope':
-            add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[180, 0])
+            add_connection(tree, bl_idname_new_node="SvStethoscopeNodeMK2", offset=[60, 0])
 
         return {'FINISHED'}
 
@@ -165,7 +163,7 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         tree = context.space_data.edit_tree
-        
+
         try:
             nodes = tree.nodes
         except:
@@ -225,4 +223,3 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvNodeviewRClickMenu)
     bpy.utils.unregister_class(SvGenericDeligationOperator)
-
