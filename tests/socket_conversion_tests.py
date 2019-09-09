@@ -5,7 +5,7 @@ from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info, error
 
 class SocketConversionTests(EmptyTreeTestCase):
-    
+
     def test_vertices_to_matrices(self):
         """
         Test that vertices -> matrices conversion work correctly.
@@ -76,7 +76,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                 'ZipNode': ["data", "data 1"],
                 'MaskListNode': ["data"],
                 'ListFlipNode': ["data"],
-                'ListItem2Node': ["Data"],
+                'SvListItemNode': ["Data"],
                 'ListRepeaterNode': ["Data"],
                 'ListReverseNode': ["data"],
                 'ListSliceNode': ["Data"],
@@ -105,7 +105,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                         with self.subTest(input_name = input_name):
                             # Read the data from input.
                             # We do not actually care about the data
-                            # itself, it is only important that there 
+                            # itself, it is only important that there
                             # was no exception.
                             data = node.inputs[input_name].sv_get()
                 except ImplicitConversionProhibited as e:
@@ -115,4 +115,3 @@ class SocketConversionTests(EmptyTreeTestCase):
                 finally:
                     self.tree.nodes.remove(node)
                     self.tree.nodes.remove(ngon)
-

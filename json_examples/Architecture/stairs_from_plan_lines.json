@@ -633,7 +633,7 @@
       "width": 140.0
     },
     "Math MK2": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -704,7 +704,7 @@
       "width": 140.0
     },
     "Matrix View": {
-      "bl_idname": "SvMatrixViewer",
+      "bl_idname": "SvMatrixViewer28",
       "height": 100.0,
       "hide": false,
       "label": "",

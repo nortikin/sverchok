@@ -32,7 +32,7 @@
       "width": 140.0
     },
     "Math MK2": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -47,7 +47,7 @@
       "width": 140.0
     },
     "Math MK2.001": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -62,7 +62,7 @@
       "width": 140.0
     },
     "Math MK2.002": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",

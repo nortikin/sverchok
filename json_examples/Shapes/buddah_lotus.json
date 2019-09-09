@@ -225,7 +225,7 @@
       "width": 150.0882568359375
     },
     "Math MK2": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -239,7 +239,7 @@
       "width": 140.0
     },
     "Math MK2.001": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -255,7 +255,7 @@
       "width": 140.0
     },
     "Math MK2.002": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -271,7 +271,7 @@
       "width": 140.0
     },
     "Math MK2.003": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -287,7 +287,7 @@
       "width": 140.0
     },
     "Math MK2.004": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -303,7 +303,7 @@
       "width": 140.0
     },
     "Math MK2.005": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -320,7 +320,7 @@
       "width": 140.0
     },
     "Math MK2.006": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -336,7 +336,7 @@
       "width": 140.0
     },
     "Math MK2.007": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -352,7 +352,7 @@
       "width": 140.0
     },
     "Math MK2.008": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
