@@ -19,6 +19,25 @@ class SvTopologySimple(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: manually supply topolgy for simple meshes
     
     sometimes you want to just create a simple polygon or mesh
+
+    The most simplified way to input a list of edges or faces (or both) is to 
+    use "simplified mode" (default) with wrapping enabled. This mode lets you 
+    create a single mesh output by writing
+
+       (edges field)   0 1, 2 3, 4 5
+       (faces field)   0 1 2, 2 3 4, 4 5 6
+    
+    that converts these strings automatically to proper python lists that sverchok
+    well recognize as topology
+
+        edges = [
+                   [  [0,1],[2,3],[4,5]  ]
+                ]
+    
+        faces = [
+                   [  [0,1,2],[2,3,4],[4,5,6]  ]
+                ]
+
     """
 
     bl_idname = 'SvTopologySimple'
