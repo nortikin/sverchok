@@ -18,7 +18,6 @@
 
 from math import *
 from fractions import gcd
-from itertools import zip_longest
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
@@ -34,51 +33,52 @@ from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 #     2) only add new function with unique number
 
 func_dict = {
-    "--------------TRIG" : "#-------------------------------------------------#",
-    "SINCOS":      (0,   lambda x: (sin(x), cos(x)),      ('s ss'), "Sin & Cos"),
-    "SINE":        (1,   sin,                              ('s s'), "Sine"),
-    "COSINE":      (2,   cos,                              ('s s'), "Cosine"),
-    "TANGENT":     (3,   tan,                              ('s s'), "Tangent"),
-    "ARCSINE":     (4,   asin,                             ('s s'), "Arcsine"),
-    "ARCCOSINE":   (5,   acos,                             ('s s'), "Arccosine"),
-    "ARCTANGENT":  (6,   atan,                             ('s s'), "Arctangent"),
-    "ACOSH":       (7,   acosh,                            ('s s'), "acosh"),
-    "ASINH":       (8,   asinh,                            ('s s'), "asinh"),
-    "ATANH":       (9,   atanh,                            ('s s'), "atanh"),
-    "COSH":        (10,  cosh,                             ('s s'), "cosh"),
-    "SINH":        (11,  sinh,                             ('s s'), "sinh"),
-    "TANH":        (12,  tanh,                             ('s s'), "tanh"),
-    "DEGREES":     (20,  degrees,                          ('s s'), "Degrees"),
-    "RADIANS":     (22,  radians,                          ('s s'), "Radians"),
-    "SINXY":       (23,  lambda x, y: sin(x*y),           ('ss s'), "sin(x*y)"),
-    "COSXY":       (24,  lambda x, y: cos(x*y),           ('ss s'), "cos(x*y)"),
-    "YSINX":       (25,  lambda x, y: y * sin(x),         ('ss s'), "y * sin(x)"),
-    "YCOSX":       (26,  lambda x, y: y * cos(x),         ('ss s'), "y * cos(x)"),
     "---------------OPS" : "#---------------------------------------------------#",
-    "ADD":         (30,  lambda x, y: x+y,                ('ss s'), "Add"),
-    "SUB":         (31,  lambda x, y: x-y,                ('ss s'), "Sub"),
-    "MUL":         (32,  lambda x, y: x*y,                ('ss s'), "Multiply"),
-    "DIV":         (33,  lambda x, y: x/y,                ('ss s'), "Divide"),
-    "INTDIV":      (34,  lambda x, y: x//y,               ('ss s'), "Int Division"),
-    "SQRT":        (40,  lambda x: sqrt(fabs(x)),          ('s s'), "Squareroot"),
-    "EXP":         (41,  exp,                              ('s s'), "Exponent"),
-    "POW":         (42,  lambda x, y: x**y,               ('ss s'), "Power y"),
-    "POW2":        (43,  lambda x: x*x,                    ('s s'), "Power 2"),
-    "LN":          (44,  log,                              ('s s'), "log"),
-    "LOG10":       (50,  log10,                            ('s s'), "log10"),
-    "LOG1P":       (51,  log1p,                            ('s s'), "log1p"),
-    "ABS":         (60,  fabs,                             ('s s'), "Absolute"),
-    "NEG":         (61,  lambda x: -x,                     ('s s'), "Negate"),
-    "CEIL":        (62,  ceil,                             ('s s'), "Ceiling"),
-    "FLOOR":       (63,  floor,                            ('s s'), "floor"),
-    "MIN":         (70,  min,                             ('ss s'), "min"),
-    "MAX":         (72,  max,                             ('ss s'), "max"),
-    "ROUND":       (80,  round,                            ('s s'), "Round"),
-    "ROUND-N":     (81,  lambda x, y: round(x, int(y)),   ('ss s'), "Round N",),
-    "FMOD":        (82,  fmod,                            ('ss s'), "Fmod"),
-    "MODULO":      (83,  lambda x, y: (x % y),            ('ss s'), "modulo"),
-    "MEAN":        (84,  lambda x, y: 0.5*(x + y),        ('ss s'), "mean"),
-    "GCD":         (85,  gcd,                             ('ss s'), "gcd"),
+    "ADD":         (0,  lambda x, y: x+y,                ('ss s'), "Add"),
+    "SUB":         (1,  lambda x, y: x-y,                ('ss s'), "Sub"),
+    "MUL":         (2,  lambda x, y: x*y,                ('ss s'), "Multiply"),
+    "DIV":         (3,  lambda x, y: x/y,                ('ss s'), "Divide"),
+    "INTDIV":      (4,  lambda x, y: x//y,               ('ss s'), "Int Division"),
+    "SQRT":        (10,  lambda x: sqrt(fabs(x)),          ('s s'), "Squareroot"),
+    "EXP":         (11,  exp,                              ('s s'), "Exponent"),
+    "POW":         (12,  lambda x, y: x**y,               ('ss s'), "Power y"),
+    "POW2":        (13,  lambda x: x*x,                    ('s s'), "Power 2"),
+    "LN":          (14,  log,                              ('s s'), "log"),
+    "LOG10":       (20,  log10,                            ('s s'), "log10"),
+    "LOG1P":       (21,  log1p,                            ('s s'), "log1p"),
+    "ABS":         (30,  fabs,                             ('s s'), "Absolute"),
+    "NEG":         (31,  lambda x: -x,                     ('s s'), "Negate"),
+    "CEIL":        (32,  ceil,                             ('s s'), "Ceiling"),
+    "FLOOR":       (33,  floor,                            ('s s'), "floor"),
+    "MIN":         (40,  min,                             ('ss s'), "min"),
+    "MAX":         (42,  max,                             ('ss s'), "max"),
+    "ROUND":       (50,  round,                            ('s s'), "Round"),
+    "ROUND-N":     (51,  lambda x, y: round(x, int(y)),   ('ss s'), "Round N",),
+    "FMOD":        (52,  fmod,                            ('ss s'), "Fmod"),
+    "MODULO":      (53,  lambda x, y: (x % y),            ('ss s'), "modulo"),
+    "MEAN":        (54,  lambda x, y: 0.5*(x + y),        ('ss s'), "mean"),
+    "GCD":         (55,  gcd,                             ('ss s'), "gcd"),
+    "--------------TRIG" : "#-------------------------------------------------#",
+    "SINCOS":      (60,   lambda x: (sin(x), cos(x)),      ('s ss'), "Sin & Cos"),
+    "SINE":        (61,   sin,                              ('s s'), "Sine"),
+    "COSINE":      (62,   cos,                              ('s s'), "Cosine"),
+    "TANGENT":     (63,   tan,                              ('s s'), "Tangent"),
+    "ARCSINE":     (64,   asin,                             ('s s'), "Arcsine"),
+    "ARCCOSINE":   (65,   acos,                             ('s s'), "Arccosine"),
+    "ARCTANGENT":  (66,   atan,                             ('s s'), "Arctangent"),
+    "ACOSH":       (67,   acosh,                            ('s s'), "acosh"),
+    "ASINH":       (68,   asinh,                            ('s s'), "asinh"),
+    "ATANH":       (69,   atanh,                            ('s s'), "atanh"),
+    "COSH":        (70,  cosh,                             ('s s'), "cosh"),
+    "SINH":        (71,  sinh,                             ('s s'), "sinh"),
+    "TANH":        (72,  tanh,                             ('s s'), "tanh"),
+    "ATAN2":       (79,  lambda x, y: atan2(y,x),         ('ss s'), "atan2"),
+    "DEGREES":     (80,  degrees,                          ('s s'), "Degrees"),
+    "RADIANS":     (82,  radians,                          ('s s'), "Radians"),
+    "SINXY":       (83,  lambda x, y: sin(x*y),           ('ss s'), "sin(x*y)"),
+    "COSXY":       (84,  lambda x, y: cos(x*y),           ('ss s'), "cos(x*y)"),
+    "YSINX":       (85,  lambda x, y: y * sin(x),         ('ss s'), "y * sin(x)"),
+    "YCOSX":       (86,  lambda x, y: y * cos(x),         ('ss s'), "y * cos(x)"),
     "-------------CONST" : "#---------------------------------------------------#",
     "PI":          (90,  lambda x: pi * x,                 ('s s'), "pi * x"),
     "TAU":         (100, lambda x: pi * 2 * x,             ('s s'), "tau * x"),
@@ -112,9 +112,9 @@ def property_change(node, context, origin):
     updateNode(node, context)
 
 
-class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Scalar: Add, Sine... '''
-    bl_idname = 'SvScalarMathNodeMK2'
+    bl_idname = 'SvScalarMathNodeMK3'
     bl_label = 'Scalar Math'
     sv_icon = 'SV_FUNCTION'
 
@@ -164,9 +164,18 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons_ext(self, ctx, layout):
+        layout.row().prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
         layout.row().prop(self, 'input_mode_one', text="input 1")
         if len(self.inputs) == 2:
             layout.row().prop(self, 'input_mode_two', text="input 2")
+
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "current_op", text="Function")
+        layout.prop_menu_enum(self, "input_mode_one", text="Input 1 number type")
+        if len(self.inputs) == 2:
+            layout.prop_menu_enum(self, "input_mode_two", text="Input 2 number type")
+    def migrate_from(self, old_node):
+        self.current_op = old_node.current_op
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "x").prop_name = 'x_'
@@ -221,5 +230,5 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[0].sv_set(result)
 
 
-classes = [SvScalarMathNodeMK2]
+classes = [SvScalarMathNodeMK3]
 register, unregister = bpy.utils.register_classes_factory(classes)
