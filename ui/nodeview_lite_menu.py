@@ -27,6 +27,7 @@ class SvPopulateLiteMenu(bpy.types.Operator):
         for k in short_menu.keys():
             item = menu_headers.add()
             item.heading = k
+        return {'FINISHED'}
 
 
 class SvLiteMenuItems(bpy.types.PropertyGroup):
@@ -49,7 +50,7 @@ class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
         for item in context.space_data.node_tree.sv_lite_menu_headers:
             row = layout.row()
             row.context_pointer_set("sv_menu_key", item)
-            row.menu(NODEVIEW_MT_SvLiteSubmenu.bl_idname, text=item.heading)
+            row.menu("NODEVIEW_MT_SvLiteSubmenu", text=item.heading)
 
 def register():
     bpy.utils.register_class(SvPopulateLiteMenu)
