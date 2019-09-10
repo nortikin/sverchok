@@ -199,46 +199,10 @@ classes = [
 ]
 
 
-class SvLiteMenuItems(bpy.types.PropertyGroup):
-    heading: bpy.props.StringProperty(name="heading to show", default="")
-
-
-class NODEVIEW_MT_SvLiteSubmenu(bpy.types.Menu):
-    bl_label = "Camera Properties"
-
-    def draw(self, context):
-        layout = self.layout
-        for item in short_menu[context.sv_menu_key]:
-            layout.row().label(text=item)
-
-class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
-    bl_label = "Sv Nodes"
-
-    def draw(self, context):
-        layout = self.layout
-        for key_name in short_menu.keys():
-            row = layout.row()
-            row.context_pointer_set("sv_menu_key", key_name)
-            row.menu(NODEVIEW_MT_SvLiteSubmenu.bl_idname, text=key_name)
-
-def register_litemenu():
-    bpy.types.NodeTree.sv_lite_menu_headers = bpy.props.CollectionProperty(type=SvLiteMenuItems)
-    bpy.utils.register_class(NODEVIEW_MT_SvLiteSubmenu) 
-    bpy.utils.register_class(NODEVIEW_MT_SvLiteMenu)
-
-def unregister_litemenu():
-    bpy.utils.unregister_class(NODEVIEW_MT_SvLiteSubmenu)
-    bpy.utils.unregister_class(NODEVIEW_MT_SvLiteMenu)
-    del bpy.types.NodeTree.sv_lite_menu_headers
-
-
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
-    register_litemenu()
-
 
 def unregister():
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
-    unregister_litemenu()
