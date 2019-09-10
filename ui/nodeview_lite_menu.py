@@ -22,6 +22,7 @@ class SvPopulateLiteMenu(bpy.types.Operator):
 
     def execute(self, context):
         menu_headers = context.space_data.node_tree.sv_lite_menu_headers
+        menu_headers.clear()
         for k in short_menu.keys():
             item = menu_headers.add()
             item.heading = k
