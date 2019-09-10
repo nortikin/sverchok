@@ -19,6 +19,7 @@ short_menu = {
 
 class SvPopulateLiteMenu(bpy.types.Operator):
     bl_label = "Populate Lite Menu"
+    bl_idname = "node.sv_populate_lite_menu"
 
     def execute(self, context):
         menu_headers = context.space_data.node_tree.sv_lite_menu_headers
