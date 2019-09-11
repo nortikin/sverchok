@@ -38,6 +38,8 @@ def parse_lite_menu(filename_to_parse):
     return {}  # just in case
 
 
+# this may not respond to attempts to repopulate the dict. we
+# would need to move this external to this file and import... i think.
 short_menu = parse_lite_menu("lite_menu.md")
 
 
@@ -70,12 +72,7 @@ class NODEVIEW_MT_SvLiteSubmenu(bpy.types.Menu):
             
             node_add_operator = node_add_operators.get(item.lower())
             if node_add_operator:
-
                 node_ref = get_node_class_reference(item)
-
-                if not node_ref:
-                    print('000000', item, 'not found')
-
                 layout.operator(node_add_operator.bl_idname, text=node_ref.bl_label)
             else:
                 layout.row().label(text=item)
