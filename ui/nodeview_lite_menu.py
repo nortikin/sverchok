@@ -6,12 +6,13 @@
 # License-Filename: LICENSE
 
 import bpy
+from sverchok.menu import node_add_operators
 
 short_menu = {
-    "input": "SvNumber SvFloatRange SvIntRange SvRandomNumber SvRandomVector SvFieldVector".split(),
-    "generator": "SvLine SvPlane SvCircle SvCube SvSphere SvRoundedCube".split(), 
-    "effect": "SvInset SvApplyNoise SvApplyRandom SvSmooth".split(),
-    "topology": "SvSeparate SvUVConnection SvMergeMesh SvBoolean".split(),
+    "input": "SvNumberNode SvGenFloatRange GenListRangeIntNode SvRndNumGen GenVectorsNode SvHomogenousVectorField".split(),
+    "generator": "SvLineNodeMK3 SvPlaneNodeMK2 SvCircleNode SvCube SvSphere SvRoundedCube".split(), 
+    "effect": "SvInsetSpecial SvApplyNoise SvApplyRandom SvSmooth".split(),
+    "topology": "SvSeparate SvUVConnection SvMergeMesh SvCSGBooleanNodeMK2".split(),
     "analyze": "SvStethoscope SvIndexViewer".split(),
     "output": "SvVDExperimental SvBmeshViewer SvCurveViewer".split()
 }
@@ -40,7 +41,10 @@ class NODEVIEW_MT_SvLiteSubmenu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         for item in short_menu[context.sv_menu_key.heading]:
-            layout.row().label(text=item)
+            if item.lower() in node_add_operators:
+                layout.operator(node_add_operators[item.lower()].bl_idname, text=item)
+            else:
+                layout.row().label(text=item)
 
 class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
     bl_label = "Sv Nodes"
