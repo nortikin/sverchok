@@ -5,21 +5,40 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import os
+from os.path import dirname
+from collections import defaultdict
+
 import bpy
 from sverchok.menu import node_add_operators
 from sverchok.utils import get_node_class_reference
 
-short_menu = {
-    "input": "SvNumberNode SvGenFloatRange GenListRangeIntNode SvRndNumGen GenVectorsNode SvHomogenousVectorField SvListInputNode".split(),
-    "gen primitive": "SvLineNodeMK3 SvPlaneNodeMK2 SvCircleNode SvBoxNode SvSphere SvCylinderNodeMK2 SvRegularSolid".split(),
-    "gen complex": "SvRoundedCube BasicSplineNode svBasicArcNode SvTorusNode SvProfileNodeMK2".split(), 
-    "effect": "SvInsetSpecial SvApplyNoise SvApplyRandom SvSmooth".split(),
-    "topology": "SvSeparate SvUVConnection SvMergeMesh SvCSGBooleanNodeMK2".split(),
-    "list manipulation": "SvListStruct SvListModifierNode ListFuncNode SvListDecomposeNode ZipNode ListLevelsNode".split(),
-    "scripting": "SvScriptNodeLite SvSNFunctorB SvExecNodeMod".split(),
-    "analyze": "SvPointInside SvBBoxNode SvVolumeNode SvAreaNode DistancePPNode SvDistancePointLineNode SvDistancePointPlaneNode SvDistancetLineLineNode".split(),
-    "output": "SvVDExperimental SvBmeshViewerNodeV28 SvCurveViewerNodeV28 SvPolylineViewerNodeV28 --- SvStethoscopeNodeMK2 SvIDXViewer28".split()
-}
+
+def parse_lite_menu(filename_to_parse):
+
+    lite_menu_path = os.path.join(dirname(__file__), filename_to_parse)
+
+    with open(lite_menu_path) as _file:
+        categories = defaultdict(list)
+        current_category = ""
+        for line in _file:
+            if line.strip().startswith("# "):
+                current_category = line.strip().replace("# ", "").title()
+                continue
+            if not current_category:
+                break
+
+            text_on_line = line.strip()
+            if text_on_line:
+                categories[current_category].append(text_on_line)
+
+        return categories
+
+    print('failed to parse lite menu')
+    return {}  # just in case
+
+
+short_menu = parse_lite_menu("lite_menu.md")
 
 
 class SvPopulateLiteMenu(bpy.types.Operator):
