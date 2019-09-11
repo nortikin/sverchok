@@ -42,12 +42,15 @@ class NODEVIEW_MT_SvLiteSubmenu(bpy.types.Menu):
     def draw(self, context):
         layout = self.layout
         for item in short_menu[context.sv_menu_key.heading]:
-            if item.lower() in node_add_operators:
-                # obtain bl_label from item string
+            
+            node_add_operator = node_add_operators.get(item.lower())
+            if node_add_operator:
                 node_ref = get_node_class_reference(item)
-                layout.operator(node_add_operators[item.lower()].bl_idname, text=node_ref.bl_label)
+                layout.operator(node_add_operator.bl_idname, text=node_ref.bl_label)
             else:
                 layout.row().label(text=item)
+
+
 
 class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
     bl_label = "Sv Nodes"
