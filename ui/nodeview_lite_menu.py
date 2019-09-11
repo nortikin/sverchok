@@ -7,6 +7,7 @@
 
 import bpy
 from sverchok.menu import node_add_operators
+from sverchok.utils import get_node_class_reference
 
 short_menu = {
     "input": "SvNumberNode SvGenFloatRange GenListRangeIntNode SvRndNumGen GenVectorsNode SvHomogenousVectorField".split(),
@@ -42,7 +43,9 @@ class NODEVIEW_MT_SvLiteSubmenu(bpy.types.Menu):
         layout = self.layout
         for item in short_menu[context.sv_menu_key.heading]:
             if item.lower() in node_add_operators:
-                layout.operator(node_add_operators[item.lower()].bl_idname, text=item)
+                # obtain bl_label from item string
+                node_ref = get_node_class_reference(item)
+                layout.operator(node_add_operators[item.lower()].bl_idname, text=node_ref.bl_label)
             else:
                 layout.row().label(text=item)
 
