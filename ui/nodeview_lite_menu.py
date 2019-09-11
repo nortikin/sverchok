@@ -10,12 +10,15 @@ from sverchok.menu import node_add_operators
 from sverchok.utils import get_node_class_reference
 
 short_menu = {
-    "input": "SvNumberNode SvGenFloatRange GenListRangeIntNode SvRndNumGen GenVectorsNode SvHomogenousVectorField".split(),
-    "generator": "SvLineNodeMK3 SvPlaneNodeMK2 SvCircleNode SvCube SvSphere SvRoundedCube".split(), 
+    "input": "SvNumberNode SvGenFloatRange GenListRangeIntNode SvRndNumGen GenVectorsNode SvHomogenousVectorField SvListInputNode".split(),
+    "gen primitive": "SvLineNodeMK3 SvPlaneNodeMK2 SvCircleNode SvBoxNode SvSphere SvCylinderNodeMK2 SvRegularSolid".split(),
+    "gen complex": "SvRoundedCube BasicSplineNode svBasicArcNode SvTorusNode SvProfileNodeMK2".split(), 
     "effect": "SvInsetSpecial SvApplyNoise SvApplyRandom SvSmooth".split(),
     "topology": "SvSeparate SvUVConnection SvMergeMesh SvCSGBooleanNodeMK2".split(),
-    "analyze": "SvStethoscope SvIndexViewer".split(),
-    "output": "SvVDExperimental SvBmeshViewer SvCurveViewer".split()
+    "list manipulation": "SvListStruct SvListModifierNode ListFuncNode SvListDecomposeNode ZipNode ListLevelsNode".split(),
+    "scripting": "SvScriptNodeLite SvSNFunctorB SvExecNodeMod".split(),
+    "analyze": "SvPointInside SvBBoxNode SvVolumeNode SvAreaNode DistancePPNode SvDistancePointLineNode SvDistancePointPlaneNode SvDistancetLineLineNode".split(),
+    "output": "SvVDExperimental SvBmeshViewerNodeV28 SvCurveViewerNodeV28 SvPolylineViewerNodeV28 --- SvStethoscopeNodeMK2 SvIDXViewer28".split()
 }
 
 
@@ -37,15 +40,23 @@ class SvLiteMenuItems(bpy.types.PropertyGroup):
 
 
 class NODEVIEW_MT_SvLiteSubmenu(bpy.types.Menu):
-    bl_label = "Camera Properties"
+    bl_label = "Sv Nodes submenu"
 
     def draw(self, context):
         layout = self.layout
         for item in short_menu[context.sv_menu_key.heading]:
+            if item == "---":
+                layout.row().separator()
+                continue
             
             node_add_operator = node_add_operators.get(item.lower())
             if node_add_operator:
+
                 node_ref = get_node_class_reference(item)
+
+                if not node_ref:
+                    print('000000', item, 'not found')
+
                 layout.operator(node_add_operator.bl_idname, text=node_ref.bl_label)
             else:
                 layout.row().label(text=item)
