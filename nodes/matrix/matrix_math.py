@@ -23,8 +23,7 @@ from mathutils import Matrix
 from functools import reduce
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat,
-                                     Matrix_listing, Matrix_generate)
+from sverchok.data_structure import (updateNode, match_long_repeat)
 
 operationItems = [
     ("MULTIPLY", "Multiply", "Multiply two matrices", 0),

@@ -21,7 +21,7 @@ from bpy.props import EnumProperty, FloatProperty
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, Matrix_listing
+from sverchok.data_structure import updateNode, fullList
 
 
 class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):

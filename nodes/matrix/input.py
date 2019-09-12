@@ -20,7 +20,7 @@ import bpy
 from bpy.props import FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Matrix_listing
+from sverchok.data_structure import updateNode
 
 
 class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
