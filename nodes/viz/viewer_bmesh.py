@@ -19,6 +19,8 @@
 # MK2
 
 import itertools
+import random
+from random import random as rnd_float
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, BoolVectorProperty
@@ -27,26 +29,66 @@ from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.sv_viewer_utils import (
-    #matrix_sanitizer,
-    natural_plus_one,
-    greek_alphabet
-)
+from sverchok.utils.sv_viewer_utils import natural_plus_one, greek_alphabet
 from sverchok.utils.sv_obj_helper import SvObjHelper, CALLBACK_OP, get_random_init_v2
+from sverchok.utils.modules.sv_bmesh_ops import find_islands_treemap
+
+# this implements a customized version of this import
+# from sverchok.nodes.object_nodes.vertex_colors_mk3 import set_vertices
+
+def get_random_colors(n):
+    return [(rnd_float(),)*3 for i in range(n)]
+
+def set_vertices(obj, islands):
+
+    vcols = obj.data.vertex_colors
+    loops = obj.data.loops
+    loop_count = len(loops)
+
+    # [x] generate random colors set for each island
+    num_colors = len(islands)
+
+    # [ ] set seed here
+    random_colors = get_random_colors(num_colors)
+
+    # [x] acquire vertex color layer from object
+    vertex_color = ...
+
+    # [x] generate mapping from index to island color
+    # this is the slower part
+    islands_lookup = {}
+    for isle_num, isle_set in islands.items():
+        for vert_idx in isle_set:
+            islands_lookup[vert_idx] = isle_num
+
+    vertex_index = np.zeros(loop_count, dtype=int)
+    loops.foreach_get("vertex_index", vertex_index)
+
+    num_components = 3  # ( r g b , not a )
+    colors = np.empty(loop_count * num_components, dtype=np.float32)
+    colors.shape = (loop_count, num_components)
+
+    idx_lookup = collections.defaultdict(list)
+    for idx, v_idx in enumerate(vertex_index):
+        idx_lookup[v_idx].append(idx)
+
+    for idx, island in islands_lookup.items():
+        colors[idx_lookup[idx]] = random_colors[island]
+
+    colors.shape = (loop_count * num_components,)
+    vertex_color.data.foreach_set("color", colors)
+    obj.data.update()
 
 
 def default_mesh(name):
-    # verts, faces = [(1, 1, -1), (1, -1, -1), (-1, -1, -1)], [(0, 1, 2)]
-    mesh_data = bpy.data.meshes.new(name)
-    # mesh_data.from_pydata(verts, [], faces)
-    # mesh_data.update()
-    return mesh_data
+    return bpy.data.meshes.new(name)
 
 
 def make_bmesh_geometry(node, obj_index, context, verts, *topology):
     collection = context.scene.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
+    islands = None
 
     edges, faces, matrix = topology
     name = node.basedata_name + '.' + str("%04d" % obj_index)
@@ -85,9 +127,14 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
         ''' get bmesh, write bmesh to obj, free bmesh'''
         bm = bmesh_from_pydata(verts, edges, faces, normal_update=node.calc_normals)
         bm.to_mesh(sv_object.data)
+        if node.randomize_vcol_islands:
+            islands = find_islands_treemap(bm)
         bm.free()
 
         sv_object.hide_select = False
+
+    if node.randomize_vcol_islands:
+        set_vertices(sv_object, islands)
 
     if matrix:
         # matrix = matrix_sanitizer(matrix)
@@ -180,6 +227,10 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
 
+    randomize_vcol_islands: BoolProperty(
+        default=False,
+        description="experimental option to find islands in the outputmesh and colour them randomly")
+
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
 
@@ -209,12 +260,13 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         col = layout.column(align=True)
         box = col.box()
         if box:
-            box.label(text="Beta options")
-            box.prop(self, "extended_matrix", text="Extended Matrix")
-            box.prop(self, "fixed_verts", text="Fixed vert count")
+            box.label(text='Beta options')
+            box.prop(self, 'extended_matrix', text='Extended Matrix')
+            box.prop(self, 'fixed_verts', text='Fixed vert count')
             box.prop(self, 'autosmooth', text='smooth shade')
             box.prop(self, 'calc_normals', text='calculate normals')
             box.prop(self, 'layer_choice', text='layer')
+            box.prop(self, 'randomize_vcol_islands', text='randomize vcol islands')
 
     def get_geometry_from_sockets(self):
 
@@ -300,7 +352,6 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if self.autosmooth:
                 self.set_autosmooth(objs)
 
-
             if self.outputs[0].is_linked:
                 self.outputs[0].sv_set(objs)
 
@@ -316,7 +367,6 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             smooth_states = [True] * len(mesh.polygons)
             mesh.polygons.foreach_set('use_smooth', smooth_states)
             mesh.update()
-
 
     def add_material(self):
 
