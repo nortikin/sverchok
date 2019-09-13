@@ -36,6 +36,13 @@ from sverchok.utils.modules.sv_bmesh_ops import find_islands_treemap
 # this implements a customized version of this import
 # from sverchok.nodes.object_nodes.vertex_colors_mk3 import set_vertices
 
+def get_vertex_color_layer(self, obj):
+    vcols = obj.data.vertex_colors
+
+    vertex_color = vcols.get('SvCol')
+    return vertex_color or vcols.new(name='SvCol')
+
+
 def get_random_colors(n):
     return [(rnd_float(),)*3 for i in range(n)]
 
