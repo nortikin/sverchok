@@ -35,6 +35,7 @@ class MatrixInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'MatrixInterpolationNode'
     bl_label = 'Matrix Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_INTERPOLATION'
 
     factor_: bpy.props.FloatProperty(
         name='Factor', description='Interpolation', default=0.5, min=0.0, max=1.0, update=updateNode)

@@ -26,6 +26,7 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'MatrixDeformNode'
     bl_label = 'Matrix Deform'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_DEFORM'
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', "Original")

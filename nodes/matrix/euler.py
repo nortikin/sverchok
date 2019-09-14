@@ -32,6 +32,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixEulerNode'
     bl_label = 'Matrix Euler'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_EULER'
 
     X: FloatProperty(name='X', description='X rotation', default=0.0, update=updateNode)
     Y: FloatProperty(name='Y', description='Y rotation', default=0.0, update=updateNode)

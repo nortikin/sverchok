@@ -29,11 +29,12 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     M * verts (optional join)  ///
 
     Multiply vectors on matrices with several objects in output,
-    and process edges & faces too 
+    and process edges & faces too
     '''
     bl_idname = 'SvMatrixApplyJoinNode'
     bl_label = 'Matrix Apply'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_APPLY_JOIN'
 
     do_join: BoolProperty(name='Join', default=True, update=updateNode)
 

@@ -28,6 +28,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixGenNodeMK2'
     bl_label = 'Matrix in'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_IN'
 
     l_: FloatVectorProperty(
         name='L', default=(0.0,0.0,0.0), description='Location', precision=3, update=updateNode)
