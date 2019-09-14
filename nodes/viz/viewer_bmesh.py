@@ -49,8 +49,6 @@ def get_random_colors(n):
 
 def set_vertices(obj, islands):
 
-    print('called')
-
     vcols = obj.data.vertex_colors
     loops = obj.data.loops
     loop_count = len(loops)
