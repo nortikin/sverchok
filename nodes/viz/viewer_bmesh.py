@@ -17,8 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # MK2
-
+import numpy as np
 import itertools
+import collections
 import random
 from random import random as rnd_float
 
@@ -36,7 +37,7 @@ from sverchok.utils.modules.sv_bmesh_ops import find_islands_treemap
 # this implements a customized version of this import
 # from sverchok.nodes.object_nodes.vertex_colors_mk3 import set_vertices
 
-def get_vertex_color_layer(self, obj):
+def get_vertex_color_layer(obj):
     vcols = obj.data.vertex_colors
 
     vertex_color = vcols.get('SvCol')
@@ -44,9 +45,11 @@ def get_vertex_color_layer(self, obj):
 
 
 def get_random_colors(n):
-    return [(rnd_float(),)*3 for i in range(n)]
+    return [[rnd_float(),]*3 + [1.0] for i in range(n)]
 
 def set_vertices(obj, islands):
+
+    print('called')
 
     vcols = obj.data.vertex_colors
     loops = obj.data.loops
@@ -59,7 +62,7 @@ def set_vertices(obj, islands):
     random_colors = get_random_colors(num_colors)
 
     # [x] acquire vertex color layer from object
-    vertex_color = ...
+    vertex_color = get_vertex_color_layer(obj)
 
     # [x] generate mapping from index to island color
     # this is the slower part
@@ -71,7 +74,7 @@ def set_vertices(obj, islands):
     vertex_index = np.zeros(loop_count, dtype=int)
     loops.foreach_get("vertex_index", vertex_index)
 
-    num_components = 3  # ( r g b , not a )
+    num_components = 4  # ( r g b , not a )
     colors = np.empty(loop_count * num_components, dtype=np.float32)
     colors.shape = (loop_count, num_components)
 
@@ -362,8 +365,9 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if self.outputs[0].is_linked:
                 self.outputs[0].sv_set(objs)
 
-        except:
-             ... # self.id_data.unfreeze(hard=True)
+        except Exception as err:
+            print('something weird happened', err)
+            ... # self.id_data.unfreeze(hard=True)
 
         self.id_data.unfreeze(hard=True)
 
