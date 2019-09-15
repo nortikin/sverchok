@@ -37,6 +37,7 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVectorLerp'
     bl_label = 'Vector Lerp'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EVALUATE'
 
     factor_: FloatProperty(
         name='factor', description='Step length',
@@ -83,7 +84,7 @@ class SvVectorLerp(bpy.types.Node, SverchCustomTreeNode):
             temp_points = []
             temp_append = temp_points.append
             temp_extend = temp_points.extend
-            
+
             if self.process_mode == 'Evaluate':
                 # this matches the old Evaluate Line's code
                 for j in range(max_l):

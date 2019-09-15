@@ -30,19 +30,20 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvListInputNode'
     bl_label = 'List Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_INPUT'
 
     defaults = [0 for i in range(32)]
     to3d: BoolProperty(name='to3d', description='show in 3d panel', default=True)
-    
+
     int_: IntProperty(
         name='int_', description='integer number', default=1, min=1, max=32, update=updateNode)
 
     v_int: IntProperty(
         name='int_', description='integer number', default=1, min=1, max=10, update=updateNode)
-    
+
     int_list: IntVectorProperty(
         name='int_list', description="Integer list", default=defaults, size=32,update=updateNode)
-    
+
     float_list: FloatVectorProperty(
         name='float_list', description="Float list", default=defaults, size=32, update=updateNode)
 

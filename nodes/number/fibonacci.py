@@ -29,7 +29,7 @@ def fibonacci(x1, x2, count, maxValue):
         result.append(r)
         x1 = x2
         x2 = r
-    
+
     if maxValue:
         actualMax = max(map(abs, result))
         if actualMax == 0.0:
@@ -44,6 +44,7 @@ class SvGenFibonacci(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGenFibonacci'
     bl_label = 'Fibonacci sequence'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_PHI'
 
     x1_: FloatProperty(
         name='x1', description='First sequence value',

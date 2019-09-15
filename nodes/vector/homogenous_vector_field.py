@@ -31,6 +31,7 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
     ''' hv evenly spaced vfield '''
     bl_idname = 'SvHomogenousVectorField'
     bl_label = 'Vector P Field'
+    sv_icon = 'SV_VECTOR_P_FIELD'
 
     xdim__: IntProperty(default=2, min=1, update=updateNode)
     ydim__: IntProperty(default=3, min=1, update=updateNode)
@@ -51,7 +52,7 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
         snew("SvStringsSocket", "size x").prop_name='sizex__'
         snew("SvStringsSocket", "size y").prop_name='sizey__'
         snew("SvStringsSocket", "size z").prop_name='sizez__'
-        
+
         self.outputs.new("SvVerticesSocket", "verts")
 
     def draw_buttons(self, context, layout):

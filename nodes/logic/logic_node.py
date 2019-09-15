@@ -33,6 +33,7 @@ class SvLogicNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvLogicNode'
     bl_label = 'Logic functions'
     bl_icon = 'NONE' #'LOGIC'
+    sv_icon = 'SV_LOGIC'
 
     # Math functions from http://docs.python.org/3.3/library/math.html
     # maybe this should be distilled to most common with the others available via Formula2 Node

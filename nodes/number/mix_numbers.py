@@ -58,6 +58,7 @@ class SvMixNumbersNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMixNumbersNode'
     bl_label = 'Mix Numbers'
     bl_icon = 'NONE' #'IPO'
+    sv_icon = 'SV_MIX_NUMBERS'
 
     # SV easing based interpolator
     def getInterpolator(self):

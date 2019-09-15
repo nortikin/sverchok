@@ -54,6 +54,7 @@ class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGenExponential'
     bl_label = 'Exponential sequence'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EXPONENTIAL'
 
     x0_: FloatProperty(
         name='x0', description='Value for n = 0',
@@ -66,11 +67,11 @@ class SvGenExponential(bpy.types.Node, SverchCustomTreeNode):
     alpha_: FloatProperty(
         name='alpha', description='Coefficient in exp(alpha*n)',
         default=0.1, update=updateNode)
-    
+
     base_: FloatProperty(
         name='base', description='Base of exponent - in base^n',
         default=2.0, update=updateNode)
-    
+
     nmin_: IntProperty(
         name='N from', description='Minimal value of N',
         default=0, update=updateNode)
