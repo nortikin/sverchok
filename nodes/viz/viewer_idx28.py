@@ -228,9 +228,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                         concat_vert((idx, vpos))
                     if geom.text:
                         # autolong text_items to final_verts...
-                        text_items = []
+                        text_items = geom.text[obj_index]
                         for text_item, vpos in zip(text_items, final_verts):
-                            concat_text((text_item, vpos))
+                            concat_text(text_item)
 
                 if self.display_edge_index and obj_index < len(geom.edges):
                     for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
