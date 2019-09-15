@@ -123,7 +123,7 @@ def draw_indices_2D(context, args):
         x = region_mid_width + region_mid_width * (vec_4d.x / vec_4d.w)
         y = region_mid_height + region_mid_height * (vec_4d.y / vec_4d.w)
 
-        # ''' draw text '''
+        # ---- draw text ----
         index_str = str(index)
         txt_width, txt_height = blf.dimensions(0, index_str)
         blf.position(0, x - (txt_width / 2), y - (txt_height / 2), 0)
@@ -132,8 +132,12 @@ def draw_indices_2D(context, args):
     if draw_bface:
 
         blf.color(font_id, *vert_idx_color)
-        for vidx in geom.vert_data:
-            draw_index(*vidx)
+        if geom.vert_data and geom.text_data:
+            for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
+                draw_index(text_item, location)
+        else:
+            for vidx in geom.vert_data:
+                draw_index(*vidx)
     
         blf.color(font_id, *edge_idx_color)
         for eidx in geom.edge_data:
