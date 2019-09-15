@@ -58,9 +58,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    draw_bg: BoolProperty(
-        name='draw_bg', description='draw background poly?',
-        default=False, update=updateNode)
+    # draw_bg: BoolProperty(
+    #     name='draw_bg', description='draw background poly?',
+    #     default=False, update=updateNode)
 
     draw_bface: BoolProperty(
         name='draw_bface', description='draw backfacing indices?',
