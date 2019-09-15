@@ -132,8 +132,12 @@ def draw_indices_2D(context, args):
     if draw_bface:
 
         blf.color(font_id, *vert_idx_color)
-        for vidx in geom.vert_data:
-            draw_index(*vidx)
+        if geom.vert_data and geom.text_data:
+            for text_item, (idx, location) in zip(geom.text_data, geom.vert_data):
+                draw_index(text_item, location)
+        else:
+            for vidx in geom.vert_data:
+                draw_index(*vidx)
     
         blf.color(font_id, *edge_idx_color)
         for eidx in geom.edge_data:

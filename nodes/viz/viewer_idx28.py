@@ -58,9 +58,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         default=True,
         update=updateNode)
 
-    # draw_bg: BoolProperty(
-    #     name='draw_bg', description='draw background poly?',
-    #     default=False, update=updateNode)
+    draw_bg: BoolProperty(
+        name='draw_bg', description='draw background poly?',
+        default=False, update=updateNode)
 
     draw_bface: BoolProperty(
         name='draw_bface', description='draw backfacing indices?',
@@ -87,6 +87,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
+        inew('SvStringsSocket', 'text')
 
 
     def draw_buttons(self, context, layout):
@@ -187,7 +188,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         geom = lambda: None
 
-        for socket in ['matrix', 'verts', 'edges', 'faces']:
+        for socket in ['matrix', 'verts', 'edges', 'faces', 'text']:
             input_stream = inputs[socket].sv_get(default=[])
             if socket == 'verts' and input_stream:
                 
@@ -212,6 +213,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             display_topology.vert_data = []
             display_topology.edge_data = []
             display_topology.face_data = []
+            display_topology.text_data = []
 
             concat_vert = display_topology.vert_data.append
             concat_edge = display_topology.edge_data.append
@@ -233,6 +235,8 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                         poly_verts = [final_verts[idx] for idx in f]
                         median = calc_median(poly_verts)
                         concat_face((face_index, median))
+
+                # .......
 
             return display_topology
 
