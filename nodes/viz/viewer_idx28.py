@@ -227,8 +227,8 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                     for idx, vpos in enumerate(final_verts):
                         concat_vert((idx, vpos))
                     if geom.text:
-                        # autolong text_items to final_verts...
-                        text_items = geom.text[obj_index]
+                        
+                        text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
                         for text_item, vpos in zip(text_items, final_verts):
                             concat_text(text_item)
 
@@ -243,9 +243,24 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
                         median = calc_median(poly_verts)
                         concat_face((face_index, median))
 
-                # .......
-
             return display_topology
+
+    def get_text_of_correct_length(self, obj_index, geom, num_elements_to_fill):
+        """ get text elements, and extend if needed"""
+        if obj_index < len(geom.text):
+            text_items = geom.text[obj_index]
+        else:
+            text_items = geom.text[len(geom.text)-1]
+
+        if not (len(text_items) == num_elements_to_fill):
+            # for now... there is no auto extending...
+            pass  #text_items
+
+        return text_items
+
+ 
+
+
 
     def process(self):
         n_id = node_id(self)
