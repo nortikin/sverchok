@@ -218,9 +218,11 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             concat_vert = display_topology.vert_data.append
             concat_edge = display_topology.edge_data.append
             concat_face = display_topology.face_data.append
+            concat_text = display_topology.text_data.append
             
             for obj_index, final_verts in enumerate(geom.verts):
 
+                # can't display vert idx and text simultaneously - ...
                 if self.display_vert_index:
                     for idx, vpos in enumerate(final_verts):
                         concat_vert((idx, vpos))
