@@ -256,9 +256,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             
             # ---- this doesn't touch the data, but returns a copy, or a modified copy -----
             if len(text_items) < num_elements_to_fill:
-                return text_items[:num_elements_to_fill]
-            else:
                 return text_items + [text_items[-1], ] * (num_elements_to_fill - len(text_items))
+            else:
+                return text_items[:num_elements_to_fill]
 
         return text_items
 
