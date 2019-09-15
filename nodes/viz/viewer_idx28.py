@@ -253,15 +253,16 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             text_items = geom.text[len(geom.text)-1]
 
         if not (len(text_items) == num_elements_to_fill):
-            # for now... there is no auto extending...
-            pass  #text_items
+            
+            # ---- this doesn't touch the data, but returns a copy, or a modified copy -----
+            if len(text_items) < num_elements_to_fill:
+                return text_items[:num_elements_to_fill]
+            else:
+                return text_items + [text_items[-1], ] * (num_elements_to_fill - len(text_items))
 
         return text_items
 
  
-
-
-
     def process(self):
         n_id = node_id(self)
         callback_disable(n_id)
