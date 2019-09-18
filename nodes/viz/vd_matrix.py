@@ -30,7 +30,10 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 
-smooth_2d_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+if not bpy.app.background:
+    smooth_2d_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+else:
+    smooth_2d_shader = None
 
 def screen_v3d_batch_matrix(context, args):
     cdat, simple, plane, grid = args
