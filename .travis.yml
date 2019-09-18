@@ -3,7 +3,8 @@ sudo: enabled
 
 branches:
   only:
-    master
+    - master
+    - b28_prelease_master
 
 install:
   - |
