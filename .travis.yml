@@ -11,10 +11,10 @@ install:
     if [ $TRAVIS_BRANCH = "b28_prelease_master" ]
     then BLENDER_VERSION=2.80
          BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2
-         SVERCHOK_DIR=scripts/addons/sverchok
+         SVERCHOK_DIR=scripts/addons_contrib/sverchok
     else BLENDER_VERSION=2.79
          BLENDER_URL=https://www.blend4web.com/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2
-         SVERCHOK_DIR=scripts/addons_contrib/sverchok
+         SVERCHOK_DIR=scripts/addons/sverchok
     fi
     BLENDER_TAR=$(basename $BLENDER_URL)
     BLENDER_DIR=$(basename $BLENDER .tar.bz2)
@@ -23,7 +23,7 @@ install:
         mkdir -p installation
         cd installation
         wget $BLENDER_URL
-        tar xf $BLENDER_TAR
+        tar xvf $BLENDER_TAR
         if [ -d blender ]
         then rm -rf blender
         fi
@@ -33,6 +33,7 @@ install:
         cd ..
     fi
 
+    mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
     ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
     mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
     ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
