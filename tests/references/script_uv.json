@@ -3,7 +3,7 @@
   "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Scripted Node Lite.001": {
+    "Scripted Node Lite": {
       "bl_idname": "SvScriptNodeLite",
       "color": [
         0.0,
@@ -95,7 +95,7 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "UV Connection.001": {
+    "UV Connection": {
       "bl_idname": "LineConnectNodeMK2",
       "height": 100.0,
       "hide": false,
@@ -109,7 +109,7 @@
       },
       "width": 140.0
     },
-    "VD Experimental": {
+    "Viewer Draw": {
       "bl_idname": "SvVDExperimental",
       "color": [
         1.0,
@@ -132,21 +132,21 @@
   },
   "update_lists": [
     [
-      "Scripted Node Lite.001",
+      "Scripted Node Lite",
       0,
-      "UV Connection.001",
+      "UV Connection",
       0
     ],
     [
-      "UV Connection.001",
+      "UV Connection",
       0,
-      "VD Experimental",
+      "Viewer Draw",
       0
     ],
     [
-      "UV Connection.001",
+      "UV Connection",
       1,
-      "VD Experimental",
+      "Viewer Draw",
       1
     ]
   ]
