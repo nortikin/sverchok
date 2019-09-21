@@ -129,11 +129,11 @@ class SvPrifilizerMk3(bpy.types.Operator):
     bl_label = "SvPrifilizer"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
-    nodename = StringProperty(name='nodename')
-    treename = StringProperty(name='treename')
-    knotselected = BoolProperty(description='if selected knots than use extended parsing in PN', default=False)
-    x = BoolProperty(default=True)
-    y = BoolProperty(default=True)
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+    knotselected : BoolProperty(description='if selected knots than use extended parsing in PN', default=False)
+    x : BoolProperty(default=True)
+    y : BoolProperty(default=True)
 
 
     def stringadd(self, x,selected=False):
@@ -330,7 +330,7 @@ class SvProfileImportOperator(bpy.types.Operator):
     bl_label = "Profile mk3 load"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
-    filepath = bpy.props.StringProperty()
+    filepath : bpy.props.StringProperty()
 
     def execute(self, context):
         txt = bpy.data.texts.load(self.filepath)
@@ -361,7 +361,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     axis_options = [("X", "X", "", 0), ("Y", "Y", "", 1), ("Z", "Z", "", 2)]
 
-    selected_axis = EnumProperty(
+    selected_axis : EnumProperty(
         items=axis_options, update=updateNode, name="Type of axis",
         description="offers basic axis output vectors X|Y|Z", default="Z")
 
@@ -369,20 +369,20 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    filename = StringProperty(default="", update=on_update)
+    filename : StringProperty(default="", update=on_update)
 
-    x = BoolProperty(default=True)
-    y = BoolProperty(default=True)
+    x : BoolProperty(default=True)
+    y : BoolProperty(default=True)
 
-    precision = IntProperty(
+    precision : IntProperty(
         name="Precision", min=0, max=10, default=8, update=updateNode,
         description="decimal precision of coordinates when generating profile from selection")
 
-    curve_points_count = IntProperty(
+    curve_points_count : IntProperty(
         name="Curve points count", min=1, max=100, default=20, update=updateNode,
         description="Default number of points on curve segment")
 
-    close_threshold = FloatProperty(
+    close_threshold : FloatProperty(
         name="X command threshold", min=0, max=1, default=0.0005, precision=6, update=updateNode,
         description="If distance between first and last point is less than this, X command will remove the last point")
 
@@ -403,23 +403,23 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         layout.prop(self, "close_threshold")
 
-        layout.label("Profile Generator settings")
+        layout.label(text="Profile Generator settings")
         layout.prop(self, "precision")
         layout.prop(self, "curve_points_count")
         row = layout.row(align=True)
         row.prop(self, "x",text='x-affect', expand=True)
         row.prop(self, "y",text='y-affect', expand=True)
 
-        layout.label("Import Examples")
+        layout.label(text="Import Examples")
         layout.menu(SvProfileImportMenu.bl_idname)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "a")
+        self.inputs.new('SvStringsSocket', "a")
 
-        self.outputs.new('VerticesSocket', "Vertices")
-        self.outputs.new('StringsSocket', "Edges")
-        self.outputs.new('VerticesSocket', "Knots")
-        self.outputs.new('StringsSocket', "KnotNames")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvVerticesSocket', "Knots")
+        self.outputs.new('SvStringsSocket', "KnotNames")
 
     def load_profile(self):
         if not self.filename:
@@ -465,7 +465,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         for v in variables:
             if v not in self.inputs:
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
-                self.inputs.new('StringsSocket', v)
+                self.inputs.new('SvStringsSocket', v)
 
     def update(self):
         '''
