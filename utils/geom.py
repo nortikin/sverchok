@@ -464,6 +464,18 @@ class Spline(object):
             tknots = np.max(np.absolute(pts[1:] - pts[:-1]), 1)
             tknots = np.insert(tknots, 0, 0).cumsum()
             tknots = tknots / tknots[-1]
+        elif metric == "X":
+            tknots = pts[:,0]
+            tknots = tknots - tknots[0]
+            tknots = tknots / tknots[-1]
+        elif metric == "Y":
+            tknots = pts[:,1]
+            tknots = tknots - tknots[0]
+            tknots = tknots / tknots[-1]
+        elif metric == "Z":
+            tknots = pts[:,2]
+            tknots = tknots - tknots[0]
+            tknots = tknots / tknots[-1]
 
         return tknots
 
