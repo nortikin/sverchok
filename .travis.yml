@@ -8,7 +8,7 @@ branches:
 
 install:
   - |
-    set -x
+    #set -x
     set -e
     if [ $TRAVIS_BRANCH = "b28_prelease_master" ]
     then BLENDER_VERSION=2.80
