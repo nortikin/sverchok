@@ -35,9 +35,9 @@ class SvDiameterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'ARROW_LEFTRIGHT'
 
     def sv_init(self, context):
-        self.inputs.new('VerticesSocket', 'Vertices')
-        self.inputs.new('VerticesSocket', 'Direction')
-        self.outputs.new('StringsSocket', 'Diameter')
+        self.inputs.new('SvVerticesSocket', 'Vertices')
+        self.inputs.new('SvVerticesSocket', 'Direction')
+        self.outputs.new('SvStringsSocket', 'Diameter')
 
     def process(self):
         if not self.inputs['Vertices'].is_linked:
