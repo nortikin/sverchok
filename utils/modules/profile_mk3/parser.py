@@ -78,10 +78,11 @@ def parse_LineTo(src):
     parser = sequence(
                 parse_letter("L", "l"),
                 many(parse_pair),
+                optional(parse_parameter("n")),
                 optional(parse_word("z")),
                 optional(parse_semicolon))
-    for (is_abs, pairs, z, _), rest in parser(src):
-        yield LineTo(is_abs, pairs, z is not None), rest
+    for (is_abs, pairs, num_segments, z, _), rest in parser(src):
+        yield LineTo(is_abs, pairs, num_segments, z is not None), rest
 
 def parse_parameter(name):
     def parser(src):
@@ -175,17 +176,23 @@ def parse_HorLineTo(src):
     # NB: H/h command MUST end with semicolon, otherwise we will not be able to
     # understand where it ends, i.e. does the following letter begin a new statement
     # or is it just next X value denoted by variable.
-    parser = sequence(parse_letter("H", "h"), many(parse_value), parse_semicolon)
-    for (is_abs, xs, _), rest in parser(src):
-        yield HorizontalLineTo(is_abs, xs), rest
+    parser = sequence(parse_letter("H", "h"),
+                many(parse_value, backtracking=True),
+                optional(parse_parameter("n")),
+                parse_semicolon)
+    for (is_abs, xs, num_segments, _), rest in parser(src):
+        yield HorizontalLineTo(is_abs, xs, num_segments), rest
 
 def parse_VertLineTo(src):
     # NB: V/v command MUST end with semicolon, otherwise we will not be able to
     # understand where it ends, i.e. does the following letter begin a new statement
     # or is it just next X value denoted by variable.
-    parser = sequence(parse_letter("V", "v"), many(parse_value), parse_semicolon)
-    for (is_abs, ys, _), rest in parser(src):
-        yield VerticalLineTo(is_abs, ys), rest
+    parser = sequence(parse_letter("V", "v"),
+                many(parse_value, backtracking=True),
+                optional(parse_parameter("n")),
+                parse_semicolon)
+    for (is_abs, ys, num_segments, _), rest in parser(src):
+        yield VerticalLineTo(is_abs, ys, num_segments), rest
 
 parse_CloseAll = parse_word("X", CloseAll())
 parse_ClosePath = parse_word("x", ClosePath())
