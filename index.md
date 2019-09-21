@@ -49,6 +49,7 @@
 
 ## Analyzers
     SvBBoxNode
+    SvDiameterNode
     SvVolumeNode
     SvAreaNode
     DistancePPNode

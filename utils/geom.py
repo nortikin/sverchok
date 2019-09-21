@@ -879,13 +879,36 @@ def diameter(vertices, axis):
     Calculate diameter of set of vertices along specified axis.
     
     vertices: list of mathutils.Vector or of 3-tuples of floats.
-    axis: 0, 1 or 2.
+    axis: either
+        * integer: 0, 1 or 2 for X, Y or Z
+        * string: 'X', 'Y' or 'Z'
+        * 3-tuple of floats or Vector: any direction
+        * None: calculate diameter regardless of direction
     returns float.
     """
-    xs = [vertex[axis] for vertex in vertices]
-    M = max(xs)
-    m = min(xs)
-    return (M-m)
+    if axis is None:
+        distances = [(mathutils.Vector(v1) - mathutils.Vector(v2)).length for v1 in vertices for v2 in vertices]
+        return max(distances)
+    elif isinstance(axis, tuple) or isinstance(axis, Vector):
+        axis = mathutils.Vector(axis).normalized()
+        ds = [mathutils.Vector(vertex).dot(axis) for vertex in vertices]
+        M = max(ds)
+        m = min(ds)
+        return (M-m)
+    else:
+        if axis == 'X':
+            axis == 0
+        elif axis == 'Y':
+            axis == 1
+        elif axis == 'Z':
+            axis = 2
+        elif isinstance(axis, str):
+            raise Exception("Unknown axis: {}".format(axis))
+
+        xs = [vertex[axis] for vertex in vertices]
+        M = max(xs)
+        m = min(xs)
+        return (M-m)
 
 def center(data):
     """
