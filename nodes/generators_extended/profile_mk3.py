@@ -317,7 +317,7 @@ profile_template_path = os.path.join(sv_path, 'profile_examples')
 
 class SvProfileImportMenu(bpy.types.Menu):
     bl_label = "Profile templates"
-    bl_idname = "SvProfileImportMenu"
+    bl_idname = "SV_MT_ProfileImportMenu"
 
     def draw(self, context):
         if context.active_node:
