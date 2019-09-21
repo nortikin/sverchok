@@ -18,7 +18,7 @@
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, IntProperty
-from sverchok.node_tree import SverchCustomTreeNode, StringsSocket, VerticesSocket
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList, calc_mask
 
 class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
@@ -30,14 +30,14 @@ class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Calculate Mask'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
-    level = IntProperty(name = 'Level',
+    level : IntProperty(name = 'Level',
                 description = "List level to operate on",
                 min = 0, default = 0, update=updateNode)
     
-    negate = BoolProperty(name = 'Negate',
+    negate : BoolProperty(name = 'Negate',
                 description = 'Negate mask', update=updateNode)
 
-    ignore_order = BoolProperty(name = 'Ignore order',
+    ignore_order : BoolProperty(name = 'Ignore order',
                     description = "Ignore items order while comparing lists",
                     default = True, update=updateNode)
 
@@ -47,9 +47,9 @@ class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'ignore_order')
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "Subset")
-        self.inputs.new('StringsSocket', "Set")
-        self.outputs.new('StringsSocket', 'Mask')
+        self.inputs.new('SvStringsSocket', "Subset")
+        self.inputs.new('SvStringsSocket', "Set")
+        self.outputs.new('SvStringsSocket', 'Mask')
 
     def process(self):
 
