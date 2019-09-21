@@ -86,7 +86,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
     taper_metric : EnumProperty(name='Taper metric',
         description = "Metric used for taper object interpolation",
-        default = "SAME", items=taper_metrics,
+        default = "AXIS", items=taper_metrics,
         update=updateNode)
 
     is_cyclic : BoolProperty(name = "Cyclic",
