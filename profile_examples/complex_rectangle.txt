@@ -1,0 +1,24 @@
+default width = 4
+default height = 3
+default radius = 0.5
+default b_width = 2;
+default b_height = 0.5
+
+let w2 = {width/2 - radius}
+let w = {width - 2*radius}
+let h = {height - 2*radius}
+let dw = {(w - b_width)/2}
+
+H w2;
+q radius,0 radius,radius
+v h ;
+q 0,radius -radius,radius
+h -dw ;
+v -b_height ;
+h -b_width ;
+v b_height ;
+h -dw;
+q -radius,0 -radius,-radius
+v -h;
+q 0,-radius radius,-radius
+X

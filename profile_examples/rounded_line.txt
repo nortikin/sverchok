@@ -1,0 +1,10 @@
+let dr = {R - r}
+let straight_len = {length - 2*dr}
+
+v r;
+a dr,dr 0 0 0
+  dr,dr
+h straight_len;
+a dr,dr 0 0 0
+  dr,-dr
+v -r;
