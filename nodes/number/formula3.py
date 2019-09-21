@@ -196,15 +196,15 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.adjust_sockets()
         updateNode(self, context)
 
-    dimensions = IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
+    dimensions : IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 
-    formula1 = StringProperty(default = "x+y", update=on_update)
-    formula2 = StringProperty(update=on_update)
-    formula3 = StringProperty(update=on_update)
-    formula4 = StringProperty(update=on_update)
+    formula1 : StringProperty(default = "x+y", update=on_update)
+    formula2 : StringProperty(update=on_update)
+    formula3 : StringProperty(update=on_update)
+    formula4 : StringProperty(update=on_update)
 
-    separate = BoolProperty(name="Separate", default=False, update=updateNode)
-    wrap = BoolProperty(name="Wrap", default=False, update=updateNode)
+    separate : BoolProperty(name="Separate", default=False, update=updateNode)
+    wrap : BoolProperty(name="Wrap", default=False, update=updateNode)
 
     def formulas(self):
         return [self.formula1, self.formula2, self.formula3, self.formula4]
@@ -229,9 +229,9 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons(context, layout)
 
     def sv_init(self, context):
-        self.inputs.new('StringsSocket', "x")
+        self.inputs.new('SvStringsSocket', "x")
 
-        self.outputs.new('StringsSocket', "Result")
+        self.outputs.new('SvStringsSocket', "Result")
 
     def get_variables(self):
         variables = set()
@@ -253,7 +253,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         for v in variables:
             if v not in self.inputs:
                 self.debug("Variable {} not in inputs {}, add it".format(v, str(self.inputs.keys())))
-                self.inputs.new('StringsSocket', v)
+                self.inputs.new('SvStringsSocket', v)
 
     def update(self):
         '''
