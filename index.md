@@ -196,6 +196,7 @@
     SvEasingNode
     SvMixNumbersNode
     Formula2Node
+    SvFormulaNodeMk3
     ---
     SvGenFibonacci
     SvGenExponential
