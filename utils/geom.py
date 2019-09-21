@@ -885,6 +885,15 @@ def diameter(vertices, axis):
     m = min(xs)
     return (M-m)
 
+def center(data):
+    """
+    input: data - a list of 3-tuples or numpy array of same shape
+    output: 3-tuple - arithmetical average of input vertices (barycenter)
+    """
+    array = np.array(data)
+    n = array.shape[0]
+    center = array.sum(axis=0) / n
+    return tuple(center)
 
 def interpolate_quadratic_bezier(knot1, handle, knot2, resolution):
     """
