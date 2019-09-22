@@ -53,6 +53,29 @@ This node has the following inputs:
 * **TaperVerts**. List of vertices, which define the taper curve. This input is
   optional. If it is not connected, then scale of the bevel object will be
   constant.
+* **Twist**. Data that define rotation of the bevel object around the
+  orientation axis during extrusion. The following types of data are supported:
+
+  - List of `(t, twist)` pairs, where `t` is a number between 0 and 1 and
+    `twist` is an angle (in radians, growing counterclockwise). Each of these
+    pairs defines what angle should bevel object rotated by at point `t`; `t =
+    0` means the beginning of the curve and `t = 1` denotes the end of the
+    curve. For example, if `[(0, 0), (1, 6.28)]` is passed into this input,
+    this will mean that at the beginning of the curve the bevel object should
+    not be rotated, and at the end of the curve the bevel object should be
+    rotated by one full turn (`2*pi`).
+  - List of numbers. In this case, numbers passed are interpreted as twist
+    angles; `t` values are supposed to be evenly growing from 0 to 1. For
+    example, you may pass `[0, 3.14, 0]` into this input, and it will mean
+    exactly the same as `[(0, 0), (0.5, 3.14), (1.0, 0)]`.
+
+  Between points defined in this input, twist angles can be interpolated either
+  by linear or by cubic spline.
+  If this input is not connected, it will mean that no additional twist is
+  added.
+  Note that twist is added to rotation defined by rotation calculation
+  algorithm (see below).
+
 * **Steps**. Number of subdivisions (steps) in which the curve must be
   evaluated. Default value is 10.
 
@@ -83,6 +106,8 @@ This node has the following parameters:
   Default value is Cubic.
 - **Taper Mode**. Taper curve interpolation mode. Available values are Linear
   and Cubic. Default value is Cubic.
+- **Twist Mode**. Twist angles interpolation mode. Available values are Linear
+  and Cubic. Default value is Linear.
 - **Cyclic**. Indicate whether the path is cyclic. Default value is false.
 - **Separate Scale**. Whether the scale of bevel object defined by taper object
   should be the same along both axes, or it may differ:
@@ -111,6 +136,9 @@ This node has the following parameters:
 - **Flip Taper**.  This parameter is available only in the N panel. If checked,
   then direction of the taper curve is inverted comparing to the order of path
   vertices provided. Unchecked by default.
+- **Flip Twist**.  This parameter is available only in the N panel. If checked,
+  then direction of the twist data is inverted comparing to the order of path
+  vertices provided. Unchecked by default.
 - **Metric**. The metric to use to compute argument values of the spline, which
   correspond to path vertices provided. Available values are: Euclidean,
   Manhattan, Chebyshev, Points. Default value is Euclidean. The default metric
@@ -118,13 +146,14 @@ This node has the following parameters:
   This parameter is available only in the N panel. 
 - **Taper Metric**. Defines the metric to use to calculate the spline for taper
   object. Available values are:
-  * **Same as Curve** - use the same metric as for main curve. This is the
-    default value. In many cases, this algorithm may be very imprecise.
+  * **Same as Curve** - use the same metric as for main curve. In many cases,
+    this algorithm may be very imprecise.
   * **Orientation Axis** - use coordinates of taper object's vertices along the
     orientation axis. This usually gives more precise result. This mode
     assumes, that the taper object is oriented along that orientation axis: for
     example, if orientation axis is Z, then each following vertex of taper
-    object must have Z coordinate bigger than previous vertex.
+    object must have Z coordinate bigger than previous vertex. This value is
+    the default one.
 
 - **Tangent precision**. Step to be used to calculate tangents of the spline.
   Lesser values correspond to better precision. In most cases, you will not
@@ -163,6 +192,10 @@ Example of **Separate Scale** option usage:
 The same setup with **Separate Scale** disabled:
 
 .. image:: https://user-images.githubusercontent.com/284644/59159605-c17f4c80-8ae5-11e9-8290-a3487e1d5277.png
+
+Example of the **Twist** input use:
+
+.. image:: https://user-images.githubusercontent.com/284644/65392001-50f4f680-dd89-11e9-99ce-e3b1ab8f0c12.png
 
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2442>`_.
 
