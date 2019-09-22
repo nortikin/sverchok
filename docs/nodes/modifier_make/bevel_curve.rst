@@ -193,5 +193,9 @@ The same setup with **Separate Scale** disabled:
 
 .. image:: https://user-images.githubusercontent.com/284644/59159605-c17f4c80-8ae5-11e9-8290-a3487e1d5277.png
 
+Example of the **Twist** input use:
+
+.. image:: https://user-images.githubusercontent.com/284644/65392001-50f4f680-dd89-11e9-99ce-e3b1ab8f0c12.png
+
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2442>`_.
 
