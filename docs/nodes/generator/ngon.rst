@@ -107,3 +107,8 @@ Sides=7, Shift=1, RandomR=0.24, RandomPhi=0.15:
 Sides=29, Shift=9, RandomR=0, RandomPhi=0:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5680575/bd1095e8-9830-11e4-8942-a281b6ab8a8d.png
+
+Example of use of **Divisions** input:
+
+.. image:: https://user-images.githubusercontent.com/284644/65439024-f66aa180-de3f-11e9-8d40-bcaeb20bfa3c.png
+
