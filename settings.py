@@ -186,6 +186,11 @@ class SverchokPreferences(AddonPreferences):
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
 
+    node_panels: BoolProperty(
+        name = "Display node category panels",
+        description = "Will show panels with node categories in the N panel. Restart Blender to apply changes.",
+        default = False)
+
     enable_live_objin: BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
 
@@ -264,6 +269,7 @@ class SverchokPreferences(AddonPreferences):
             col1 = col_split.column()
             col1.label(text="UI:")
             col1.prop(self, "show_icons")
+            col1.prop(self, "node_panels")
             col1.prop(self, "over_sized_buttons")
             col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
             col1.prop(self, "external_editor", text="Ext Editor")

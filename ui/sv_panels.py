@@ -281,7 +281,7 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
     bl_label = "SV " + version_and_sha
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    # bl_category = 'Sverchok'
+    bl_category = 'Sverchok'
     use_pin = True
 
     @classmethod

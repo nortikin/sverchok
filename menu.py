@@ -30,6 +30,7 @@ import sverchok
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
+from sverchok.utils.context_managers import sv_preferences
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
@@ -107,6 +108,8 @@ def juggle_and_join(node_cats):
 # We are creating and registering node adding operators dynamically.
 # So, we have to remember them in order to unregister them when needed.
 node_add_operators = {}
+
+node_panels = []
 
 class SverchNodeItem(object):
     """
@@ -306,13 +309,44 @@ def make_categories():
 
     return node_categories, node_count, original_categories
 
+def register_node_panels(identifier, cat_list):
+    with sv_preferences() as prefs:
+        if not prefs.node_panels:
+            return
+
+    def draw_node_item(self, context):
+        layout = self.layout
+        col = layout.column()
+        for item in self.category.items(context):
+            item.draw(item, col, context)
+
+    global node_panels
+    for category in cat_list:
+        panel_type = type("NODE_PT_category_sv_" + category.identifier, (bpy.types.Panel,), {
+                "bl_space_type": "NODE_EDITOR",
+                "bl_region_type": "UI",
+                "bl_label": category.name,
+                "bl_category": category.name,
+                "category": category,
+                "poll": category.poll,
+                "draw": draw_node_item,
+            })
+        node_panels.append(panel_type)
+        bpy.utils.register_class(panel_type)
+
+def unregister_node_panels():
+    global node_panels
+    for panel_type in reversed(node_panels):
+        bpy.utils.unregister_class(panel_type)
 
 def reload_menu():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
+        unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
         unregister_node_add_operators()
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+    register_node_panels("SVERCHOK", menu)
     register_node_add_operators()
     
     build_help_remap(original_categories)
@@ -331,8 +365,10 @@ def unregister_node_add_operators():
 def register():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
+        unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+    register_node_panels("SVERCHOK", menu)
 
     build_help_remap(original_categories)
     print(f"sv: {node_count} nodes.")
@@ -340,6 +376,7 @@ def register():
 
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
+        unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     unregister_node_add_operators()
 
