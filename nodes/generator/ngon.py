@@ -43,6 +43,9 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
     sides_: IntProperty(name='N Sides', description='Number of polygon sides',
                         default=5, min=3,
                         update=updateNode)
+    divisions : IntProperty(name='Divisions', description = "Number of divisions to divide each side to",
+                        default=1, min=1,
+                        update=updateNode)
     rand_seed_: FloatProperty(name='Seed', description='Random seed',
                         default=0.0,
                         update=updateNode)
@@ -59,6 +62,7 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'rad_'
         self.inputs.new('SvStringsSocket', "N Sides").prop_name = 'sides_'
+        self.inputs.new('SvStringsSocket', "Divisions").prop_name = 'divisions'
         self.inputs.new('SvStringsSocket', "RandomR").prop_name = 'rand_r_'
         self.inputs.new('SvStringsSocket', "RandomPhi").prop_name = 'rand_phi_'
         self.inputs.new('SvStringsSocket', "RandomSeed").prop_name = 'rand_seed_'
@@ -71,12 +75,14 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
 #     def draw_buttons(self, context, layout):
 #         layout.prop(self, "mode_", text="Mode")
 
-    def make_verts(self, nsides, radius, rand_r, rand_phi, rand_seed):
+    def make_verts(self, nsides, radius, rand_r, rand_phi, rand_seed, divs):
         if rand_r or rand_phi:
             random.seed(rand_seed)
 
         vertices = []
         dphi = (2*pi)/nsides
+        prev_vertex = None
+        first_vertex = None
         for i in range(nsides):
             phi = dphi * i
             # randomize radius if necessary
@@ -89,21 +95,36 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
                 phi = random.uniform(phi - rand_phi, phi + rand_phi)
             x = rr*cos(phi)
             y = rr*sin(phi)
-            v = (x, y, 0)
-            vertices.append(v)
+            next_vertex = (x, y, 0)
+            if prev_vertex is not None and divs > 1:
+                prev_x, prev_y, prev_z = prev_vertex
+                alphas = [float(i)/divs for i in range(1, divs)]
+                mid_vertices = [((1-alpha)*prev_x + alpha*x, (1-alpha)*prev_y + alpha*y, 0) for alpha in alphas]
+                vertices.extend(mid_vertices)
+            vertices.append(next_vertex)
+            prev_vertex = next_vertex
+            if first_vertex is None:
+                first_vertex = next_vertex
+
+        if divs > 1 and first_vertex is not None and prev_vertex is not None:
+            x, y, z = first_vertex
+            prev_x, prev_y, prev_z = prev_vertex
+            alphas = [float(i)/divs for i in range(1, divs)]
+            mid_vertices = [((1-alpha)*prev_x + alpha*x, (1-alpha)*prev_y + alpha*y, 0) for alpha in alphas]
+            vertices.extend(mid_vertices)
         return vertices
 
-    def make_edges(self, nsides, shift):
-        vs = range(nsides)
+    def make_edges(self, nsides, shift, divs):
+        vs = range(nsides*divs)
         edges = list( zip( vs, rotate(vs, shift+1) ) )
         return edges
 
-    def make_faces(self, nsides, shift):
+    def make_faces(self, nsides, shift, divs):
         # for now, do not return faces if star factor
         # is not zero - the face obviously would be degraded.
         if shift:
             return []
-        vs = range(nsides)
+        vs = range(nsides*divs)
         face = list(vs)
         return [face]
 
@@ -121,19 +142,24 @@ class SvNGonNode(bpy.types.Node, SverchCustomTreeNode):
 
         shift = self.inputs['Shift'].sv_get()[0]
 
-        parameters = match_long_repeat([radius, nsides, seed, rand_r, rand_phi, shift])
+        if 'Divisions' in self.inputs:
+            divisions = self.inputs['Divisions'].sv_get()[0]
+        else:
+            divisions = [1]
+
+        parameters = match_long_repeat([radius, nsides, seed, rand_r, rand_phi, shift, divisions])
 
         # outputs
         if self.outputs['Vertices'].is_linked:
-            vertices = [self.make_verts(n, r, dr, dphi, s) for r, n, s, dr, dphi, shift in zip(*parameters)]
+            vertices = [self.make_verts(n, r, dr, dphi, s, divs) for r, n, s, dr, dphi, shift, divs in zip(*parameters)]
             self.outputs['Vertices'].sv_set(vertices)
 
         if self.outputs['Edges'].is_linked:
-            edges = [self.make_edges(n, shift) for r, n, s, dr, dphi, shift in zip(*parameters)]
+            edges = [self.make_edges(n, shift, divs) for r, n, s, dr, dphi, shift, divs in zip(*parameters)]
             self.outputs['Edges'].sv_set(edges)
 
         if self.outputs['Polygons'].is_linked:
-            faces = [self.make_faces(n, shift) for r, n, s, dr, dphi, shift in zip(*parameters)]
+            faces = [self.make_faces(n, shift, divs) for r, n, s, dr, dphi, shift, divs in zip(*parameters)]
             self.outputs['Polygons'].sv_set(faces)
 
 

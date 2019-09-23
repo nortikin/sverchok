@@ -26,6 +26,7 @@ This node has the following inputs:
 
 - **Radius**
 - **N Sides**
+- **Divisions**
 - **RandomR**
 - **RandomPhi**
 - **Seed**
@@ -52,6 +53,10 @@ All parameters can be given by the node or an external input.
 | **N Sides**    | Int           | 5           | Number of sides of polygon to generate. With higher         |
 |                |               |             | values and ``Shift`` = 0, ``RandomR`` = 0, ``RandomPhi``    |
 |                |               |             | = 0, you will get the same output as from Circle node.      |
++----------------+---------------+-------------+-------------------------------------------------------------+
+| **Divisions**  | Int           | 1           | Divide each side of the polygon to specified number of      |
+|                |               |             | segments. For example, with ``Divisions`` = 2, there will   |
+|                |               |             | be an additional vertex at the middle of each side.         |
 +----------------+---------------+-------------+-------------------------------------------------------------+
 | **RandomR**    | Float         | 0.0         | Amplitude of randomization of vertices along radius.        |
 +----------------+---------------+-------------+-------------------------------------------------------------+
