@@ -180,6 +180,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # print('svtree update', self.timestamp)
         self.has_changed = True
         self.has_link_count_changed
+
+        print('going to do nodetree.process()')
         self.process()
 
     def process_ani(self):
