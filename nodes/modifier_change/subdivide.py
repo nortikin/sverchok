@@ -26,10 +26,11 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
     '''Subdivide'''
-    
+
     bl_idname = 'SvSubdivideNode'
     bl_label = 'Subdivide'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SUBDIVIDE'
 
     falloff_types = [
         ("SMOOTH", "Smooth", "", 'SMOOTHCURVE', 0),
@@ -64,35 +65,35 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
     cuts: IntProperty(
         description="Specifies the number of cuts per edge to make",
         name="Number of Cuts", min=1, default=1, update=updateNode)
-    
+
     smooth: FloatProperty(
         description="Displaces subdivisions to maintain approximate curvature",
         name="Smooth", min=0.0, max=1.0, default=0.0, update=updateNode)
-    
+
     fractal: FloatProperty(
         description="Displaces the vertices in random directions after the mesh is subdivided",
         name="Fractal", min=0.0, max=1.0, default=0.0, update=updateNode)
-    
+
     along_normal: FloatProperty(
         description="Causes the vertices to move along the their normals, instead of random directions",
         name="Along normal", min=0.0, max=1.0, default=0.0, update=updateNode)
-    
+
     seed: IntProperty(
-        description="Random seed", 
+        description="Random seed",
         name="Seed", default=0, update=updateNode)
-    
+
     grid_fill: BoolProperty(
         description="fill in fully-selected faces with a grid",
         name="Grid fill", default=True, update=updateNode)
-    
+
     single_edge: BoolProperty(
         description="tessellate the case of one edge selected in a quad or triangle",
         name="Single edge", default=False, update=updateNode)
-    
+
     only_quads: BoolProperty(
         description="only subdivide quads (for loopcut)",
         name="Only Quads", default=False, update=updateNode)
-    
+
     smooth_even: BoolProperty(
         description="maintain even offset when smoothing",
         name="Even smooth", default=False, update=updateNode)
@@ -100,11 +101,11 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
     show_new: BoolProperty(
         description="Show outputs with new geometry",
         name="Show New", default=False, update=update_mode)
-    
+
     show_old: BoolProperty(
         description="Show outputs with old geometry",
         name="Show Old", default=False, update=update_mode)
-    
+
     show_options: BoolProperty(
         description="Show options on the node",
         name="Show Options", default=False, update=updateNode)

@@ -35,6 +35,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExtrudeSeparateNode'
     bl_label = 'Extrude Separate Faces'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EXTRUDE_FACE'
 
     height_: FloatProperty(name="Height", description="Extrusion amount", default=0.0, update=updateNode)
     scale_: FloatProperty(name="Scale", description="Extruded faces scale", default=1.0, min=0.0, update=updateNode)
@@ -47,14 +48,14 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         inew = self.inputs.new
         onew = self.outputs.new
-        
+
         inew(vsock, "Vertices")
         inew(toposock, 'Edges')
         inew(toposock, 'Polygons')
         inew(toposock, 'Mask')
         inew(toposock, "Height").prop_name = "height_"
         inew(toposock, "Scale").prop_name = "scale_"
-        
+
         onew(vsock, 'Vertices')
         onew(toposock, 'Edges')
         onew(toposock, 'Polygons')
@@ -70,7 +71,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 print('connected a Vector Socket')
                 return True
         return False
-  
+
     def process(self):
 
         inputs = self.inputs
@@ -120,10 +121,10 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 vec = scale if vector_in else (scale, scale, scale)
 
                 # preparing matrix
-                normal = face.normal    
+                normal = face.normal
                 if normal[0] == 0 and normal[1] == 0:
                     m_r = Matrix() if normal[2] >= 0 else Matrix.Rotation(pi, 4, 'X')
-                else:    
+                else:
                     z_axis = normal
                     x_axis = (Vector((z_axis[1] * -1, z_axis[0], 0))).normalized()
                     y_axis = (z_axis.cross(x_axis)).normalized()
@@ -133,7 +134,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 center = face.calc_center_median()
                 translation = Matrix.Translation(center)
                 m = (translation @ m_r).inverted()
-                
+
                 # inset, scale and push operations
                 bmesh.ops.scale(bm, vec=vec, space=m, verts=face.verts)
                 bmesh.ops.translate(bm, verts=face.verts, vec=dr)

@@ -47,7 +47,7 @@ def get_points_in_mesh(points, verts, faces, eps=0.0, num_samples=3):
     for direction in directions[:num_samples]:
         samples = []
         mask = samples.append
-        
+
         for point in points:
             hit = bvh.ray_cast(point, direction)
             if hit[0]:
@@ -57,7 +57,7 @@ def get_points_in_mesh(points, verts, faces, eps=0.0, num_samples=3):
                 mask(False)
 
         mask_inside.append(samples)
-    
+
     if len(mask_inside) == 1:
         return mask_inside[0]
     else:
@@ -79,21 +79,21 @@ def get_points_in_mesh(points, verts, faces, eps=0.0, num_samples=3):
                 oversample(fsum >= 4)
             elif num_samples == 6:
                 oversample(fsum >= 4)
-        return mask_totals       
+        return mask_totals
 
 
 def are_inside(points, bm):
     mask_inside = []
     mask = mask_inside.append
     bvh = BVHTree.FromBMesh(bm, epsilon=0.0001)
- 
+
     # return points on polygons
     for point in points:
         fco, normal, _, _ = bvh.find_nearest(point)
         p2 = fco - Vector(point)
         v = p2.dot(normal)
         mask(not v < 0.0)  # addp(v >= 0.0) ?
-    
+
     return mask_inside
 
 
@@ -101,9 +101,10 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     ''' pin get points inside mesh '''
     bl_idname = 'SvPointInside'
     bl_label = 'Points Inside Mesh'
+    sv_icon = 'SV_POINTS_INSIDE_MESH'
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["algo 1", "algo 2"])]
-    
+
     selected_algo: bpy.props.EnumProperty(
         items=mode_options,
         description="offers different approaches to finding internal points",

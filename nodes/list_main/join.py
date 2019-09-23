@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -18,6 +18,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListJoinNode'
     bl_label = 'List Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_JOIN'
 
     JoinLevel: IntProperty(
         name='JoinLevel', description='Choose join level of data (see help)',
@@ -26,7 +27,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
     mix_check: BoolProperty(
         name='mix', description='Grouping similar to zip()',
         default=False, update=updateNode)
-    
+
     wrap_check: BoolProperty(
         name='wrap', description='Grouping similar to append(list)',
         default=False, update=updateNode)
@@ -57,7 +58,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         if not self.outputs['data'].is_linked:
-            return 
+            return
 
         slots = []
         for socket in self.inputs:

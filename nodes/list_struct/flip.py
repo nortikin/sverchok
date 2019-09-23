@@ -51,6 +51,7 @@ class ListFlipNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListFlipNode'
     bl_label = 'List Flip'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_FLIP'
 
     level: IntProperty(name='level_to_count', default=2, min=0, max=4, update=updateNode)
     typ: StringProperty(name='typ', default='')

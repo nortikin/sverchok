@@ -29,6 +29,7 @@ class ZipNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ZipNode'
     bl_label = 'List Zip'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_ZIP'
 
     level: IntProperty(name='level', default=1, min=1, update=updateNode)
     typ: StringProperty(name='typ', default='')

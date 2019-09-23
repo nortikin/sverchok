@@ -41,6 +41,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDupliInstancesMK4'
     bl_label = 'Dupli instancer mk4'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DUPLI_INSTANCER'
 
     def set_child_quota(self, context):
         # was used for string child property

@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -20,6 +20,7 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListLengthNode'
     bl_label = 'List Length'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_LEN'
 
     level: IntProperty(name='level_to_count', default=1, min=0, update=updateNode)
 

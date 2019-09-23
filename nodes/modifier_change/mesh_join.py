@@ -27,6 +27,7 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMeshJoinNode'
     bl_label = 'Mesh Join'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MESH_JOIN'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
@@ -49,7 +50,7 @@ class SvMeshJoinNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 verts_out = []
                 _ = [verts_out.extend(vlist) for vlist in verts]
-                
+
             Vertices_out.sv_set([verts_out])
 
 

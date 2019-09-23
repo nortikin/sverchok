@@ -28,6 +28,7 @@ class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvObjRemoteNodeMK2'
     bl_label = 'Object Remote (Control) mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_REMOTE_OBJECT'
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', 'matrices')

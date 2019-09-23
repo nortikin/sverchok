@@ -44,6 +44,7 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListFuncNode'
     bl_label = 'List Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_MATH'
 
     mode_items = [
         ("MIN",         "Minimum",        "", 1),

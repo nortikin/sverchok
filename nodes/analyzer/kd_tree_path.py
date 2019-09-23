@@ -32,6 +32,7 @@ class SvKDTreePathNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvKDTreePathNode'
     bl_label = 'KDT Closest Path'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_KDT_PATH'
 
     mindist : FloatProperty(
         name='mindist', description='Minimum dist', min=0.0,
@@ -52,13 +53,13 @@ class SvKDTreePathNode(bpy.types.Node, SverchCustomTreeNode):
     cycle : BoolProperty(
         name='Cyclic', description='Join first and last vertices',
         default=False, update=updateNode)
-        
+
     list_match_global : EnumProperty(
         name="Match Global",
         description="Behavior on different list lengths, multiple objects level",
         items=list_match_modes, default="REPEAT",
         update=updateNode)
-        
+
     list_match_local : EnumProperty(
         name="Match Local",
         description="Behavior on different list lengths, object level",
@@ -87,14 +88,14 @@ class SvKDTreePathNode(bpy.types.Node, SverchCustomTreeNode):
         '''right click sv_menu items'''
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
-        
+
     def get_data(self):
         '''get all data from sockets and match lengths'''
         si = self.inputs
         return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in si])
 
     def process(self):
-    
+
         inputs = self.inputs
         outputs = self.outputs
         so = self.outputs
@@ -104,16 +105,16 @@ class SvKDTreePathNode(bpy.types.Node, SverchCustomTreeNode):
 
         result = []
         group = self.get_data()
-        
+
         match_func = list_match_func[self.list_match_local]
-        
+
         for verts, radius, start_indexes in zip(*group):
             verts, radius = match_func([verts, radius])
             for st in start_indexes:
                 kdt_closest_path(verts, radius, st%len(verts), result, self.cycle)
 
         so[0].sv_set(result)
-        
+
 
 def register():
     bpy.utils.register_class(SvKDTreePathNode)

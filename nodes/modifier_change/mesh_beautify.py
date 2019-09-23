@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -17,14 +17,15 @@ class SvMeshBeautify(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: beauty existing fill
     Tooltip: rearrange faces with bmesh operator
-    
+
     useful for typography converted to geometry.
     """
 
     bl_idname = 'SvMeshBeautify'
     bl_label = 'Mesh Beautify'
     bl_icon = 'OUTLINER_OB_EMPTY'
-   
+    sv_icon = 'SV_MESH_BEAUTIFY'
+
     beautify_mode: bpy.props.EnumProperty(
         name='Beautify', items=enum_item_4(['AREA', 'ANGLE']), default="AREA", update=updateNode
     )

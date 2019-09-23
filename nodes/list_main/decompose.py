@@ -32,6 +32,7 @@ class SvListDecomposeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvListDecomposeNode'
     bl_label = 'List Decompose'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_COMBINE_OUT'
 
     # two veriables for multi socket input
     base_name: StringProperty(default='data')

@@ -25,7 +25,7 @@ class SvFrameInfoNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Frame Info '''
     bl_idname = 'SvFrameInfoNodeMK2'
     bl_label = 'Frame info'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'TIME'
 
     def sv_init(self, context):
         outputs = self.outputs
