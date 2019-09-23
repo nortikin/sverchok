@@ -61,6 +61,18 @@ class DataStructureTests(SverchokTestCase):
     def test_transpose_list(self):
         self.subtest_assert_equals(transpose_list([[1,2], [3,4]]), [[1,3], [2, 4]])
 
+    def test_rotate_list_1(self):
+        input = [1, 2, 3]
+        expected_output = [2, 3, 1]
+        output = rotate_list(input)
+        self.assertEquals(output, expected_output)
+
+    def test_rotate_list_2(self):
+        input = [1, 2, 3]
+        expected_output = [3, 1, 2]
+        output = rotate_list(input, 2)
+        self.assertEquals(output, expected_output)
+
     def test_describe_data_shape(self):
         self.subtest_assert_equals(describe_data_shape(None), 'Level 0: NoneType')
         self.subtest_assert_equals(describe_data_shape(1), 'Level 0: int')

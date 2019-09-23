@@ -403,6 +403,19 @@ def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
         sub_objects = match_long_repeat([subset_data, set_data])
         return [calc_mask(subset_item, set_item, level - 1, negate, ignore_order) for subset_item, set_item in zip(*sub_objects)]
 
+def rotate_list(l, y=1):
+    """
+    "Rotate" list by shifting it's items towards the end and putting last items to the beginning.
+    For example,
+
+    rotate_list([1, 2, 3]) = [2, 3, 1]
+    rotate_list([1, 2, 3], y=2) = [3, 1, 2]
+    """
+    if len(l) == 0:
+        return l
+    y = y % len(l)
+    return list(l[y:]) + list(l[:y])
+
 #####################################################
 ################### matrix magic ####################
 #####################################################
