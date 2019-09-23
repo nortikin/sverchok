@@ -53,6 +53,9 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         for i in range(MAX_SET_SIZE):
             self.outputs[i].hide_safe = (i > (self.num_sockets_per_set-1))
 
+        # [ ] for any input set that doesn't make self.num_sockets_per_set, insert n.
+        pass
+
 
     num_sockets_per_set: IntProperty(
         name="Num Sockets per set", description="Number of inputs in a set",
@@ -131,7 +134,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
         # make all output sockets, and hide non used
         for i in range(MAX_SET_SIZE):
-            sock = onew(GENERIC_SOCKET, "Data " + str(i + 1))
+            sock = onew(GENERIC_SOCKET, f"Data {i + 1}")
             if i > 1:
                 sock.hide_safe = True
 
