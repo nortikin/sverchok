@@ -141,8 +141,6 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         print('doing', inspect.stack()[0][3])
-
-        # [x] if any of the connected input sockets don't match the output socket type, replace bl_idname
         self.adjust_input_socket_bl_idname_to_match_linked_input()
         
         # [ ] match the output socket types with the input sockets being passed through.
