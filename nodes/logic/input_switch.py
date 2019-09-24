@@ -1,20 +1,10 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import inspect
 
@@ -54,6 +44,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[i].hide_safe = (i > (self.num_sockets_per_set-1))
 
         # [ ] for any input set that doesn't make self.num_sockets_per_set, insert n.
+        #     do this from highest to lowest set, so insert will be stable
         pass
 
 
@@ -138,11 +129,22 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             if i > 1:
                 sock.hide_safe = True
 
+    def replace_socket_if_needed(self, input_socket):
+        if (input_socket.bl_idname == input_socket.other.bl_idname):
+            return
+        input_socket.replace_socket(input_socket.other.bl_idname)
+
+    def adjust_input_socket_bl_idname_to_match_linked_input(self):
+        for input_socket in self.inputs:
+            if input_socket.is_linked:
+                self.replace_socket_if_needed(input_socket)
 
     def process(self):
         print('doing', inspect.stack()[0][3])
 
-        # [ ] if any of the connected input sockets don't match the output socket type, replace bl_idname
+        # [x] if any of the connected input sockets don't match the output socket type, replace bl_idname
+        self.adjust_input_socket_bl_idname_to_match_linked_input()
+        
         # [ ] match the output socket types with the input sockets being passed through.
         # [ ] make mapping of input sockets, associated with each switch
         # [ ] 
