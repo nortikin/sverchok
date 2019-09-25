@@ -26,7 +26,7 @@ class SvSortObjsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Sort Objects '''
     bl_idname = 'SvSortObjsNode'
     bl_label = 'Object ID Sort'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'SORTSIZE'
 
     Modes: StringProperty(name='formula', default='location.x', update=updateNode)
 

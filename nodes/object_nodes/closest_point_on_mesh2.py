@@ -29,6 +29,7 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPointOnMeshNodeMK2'
     bl_label = 'Object ID Point on Mesh MK2' #new is pointless name
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_POINT_ON_MESH'
 
     Mdist: FloatProperty(name='Max_Distance', default=10, update=updateNode)
     mode: BoolProperty(name='for in points', default=False, update=updateNode)
@@ -39,7 +40,7 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         si('SvObjectSocket', 'Objects')
         si('SvVerticesSocket', "point").use_prop = True
         si('SvStringsSocket', "max_dist").prop_name = "Mdist"
-        
+
         so('SvStringsSocket', "succes")
         so('SvVerticesSocket', "Point_on_mesh")
         so('SvVerticesSocket', "Normal_on_mesh")
@@ -63,7 +64,7 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 Out.append([i.closest_point_on_mesh(i.matrix_local.inverted() @ Vector(p), i2) for p in point])
             else:
                 Out.append([i.closest_point_on_mesh(p, i2) for p in point])
-        
+
         if P.is_linked:
             if sm2:
                 out = []
@@ -72,7 +73,7 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 P.sv_set(out)
             else:
                 P.sv_set([[i2[1][:] for i2 in o] for o in Out])
-        
+
         if S.is_linked:
             S.sv_set([[i2[0] for i2 in o] for o in Out])
         if N.is_linked:

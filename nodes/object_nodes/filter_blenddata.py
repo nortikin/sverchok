@@ -26,7 +26,7 @@ class SvFilterObjsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Filter Objects '''
     bl_idname = 'SvFilterObjsNode'
     bl_label = 'Object ID Filter'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'FILTER'
 
     formula: StringProperty(name='formula', default='write name here', update=updateNode)
 
