@@ -42,16 +42,13 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     def update_node_sockets_per_set(self, context):
         print('doing', inspect.stack()[0][3])
         for i in range(MAX_SET_SIZE):
-            # test for no op.
-            if self.outputs[i].hide == (i > (self.num_sockets_per_set-1)):
-                continue
-
-            self.outputs[i].hide_safe = (i > (self.num_sockets_per_set-1))
+            socket = self.outputs[i]
+            desired_state = (i > (self.num_sockets_per_set - 1))
+            if socket.hide != desired_state:
+                socket.hide_safe = desired_state
 
         # [ ] for any input set that doesn't make self.num_sockets_per_set, insert n.
         #     do this from highest to lowest set, so insert will be stable
-        pass
-
 
     num_sockets_per_set: IntProperty(
         name="Num Sockets per set", description="Number of inputs in a set",
@@ -60,6 +57,9 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     num_switches: IntProperty(
         name="Num Switches", description="Number of switch items",
         default=2, min=2, max=MAX_NUM_SWITCHES)
+
+    num_available_switches: IntProperty(
+        default=2, min=2, description='keep track of current state (no update associated)')
 
     selected: IntProperty(
         name="Selected", description="Selected Set",
@@ -91,10 +91,10 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     def not_already_maxed_out(self):
         return self.num_switches < MAX_NUM_SWITCHES
 
-    def hide_extraneous_input_sockets_in_all_sets(self):
+    def hide_extraneous_input_sockets_in_all_visible_sets(self):
         pass
 
-    def unhide_necessary_input_sockets_in_all_sets(self):
+    def unhide_necessary_input_sockets_in_all_visible_sets(self):
         pass
 
     def update(self):
