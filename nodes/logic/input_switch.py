@@ -16,10 +16,9 @@ from sverchok.data_structure import updateNode
 from collections import OrderedDict
 
 GREEK_LABELS = [
-    "Alpha", "Beta", "Gamma", "Delta", "Epsilon",
-    "Zeta", "Eta", "Theta", "Iota", "Kappa", "Lambda",
-    "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma",
-    "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega"]
+    "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta",
+    "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho",
+    "Sigma", "Tau", "Upsilon", "Phi", "Chi", "Psi", "Omega"]
 
 GENERIC_SOCKET = "SvStringsSocket"
 SEPARATOR_SOCKET = "SvSeparatorSocket"
@@ -68,7 +67,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         default=0, min=0, update=updateNode)
 
 
-    def add_new_sockets_for_new_empty_set(self):
+    def unhide_sockets_for_new_empty_set(self):
         inew = self.inputs.new
         onew = self.outputs.new
         
@@ -108,9 +107,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
         # the extend the outputs
         if any(self.last_setnum_input_sockets_connected()) and self.not_already_maxed_out():
-            self.add_new_sockets_for_new_empty_set()
-            self.num_switches += 1
-            return
+            self.unhide_sockets_for_new_empty_set()
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_sockets_per_set")
@@ -118,12 +115,11 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     def initialize_input_sockets(self):
         inew = self.inputs.new
         inew(GENERIC_SOCKET, "Selected").prop_name = "selected"
-        inew(SEPARATOR_SOCKET, "Separator main")
         for j in range(self.num_switches):
-            for i in range(self.num_sockets_per_set):
-                inew(GENERIC_SOCKET, f"{self.label_of_set(j)} {i + 1}")
-            if j < (self.num_switches - 1):
+            if j < (self.num_switches):
                 inew(SEPARATOR_SOCKET, f"Separator {j}")
+            for i in range(self.num_sockets_per_set):
+                inew(GENERIC_SOCKET, f"{self.label_of_set(j)} {i}")
 
     def initialize_output_sockets(self):
         """ create all needed output sockets, but hide beyond set size """
