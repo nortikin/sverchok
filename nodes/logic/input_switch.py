@@ -31,6 +31,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     Triggers: Sets, Switch, Select
     Tooltip: Switch among multiple input sets
     """
+
     bl_idname = 'SvInputSwitchNode'
     bl_label = 'Input Switch'
     sv_icon = 'SV_INPUT_SWITCH'
@@ -41,6 +42,10 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     def update_node_sockets_per_set(self, context):
         print('doing', inspect.stack()[0][3])
         for i in range(MAX_SET_SIZE):
+            # test for no op.
+            if self.outputs[i].hide == (i > (self.num_sockets_per_set-1)):
+                continue
+
             self.outputs[i].hide_safe = (i > (self.num_sockets_per_set-1))
 
         # [ ] for any input set that doesn't make self.num_sockets_per_set, insert n.
@@ -99,7 +104,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         if not len(self.outputs) == MAX_SET_SIZE:
             return
 
-        # should the extend the outputs
+        # the extend the outputs
         if any(self.last_setnum_input_sockets_connected()) and self.not_already_maxed_out():
             self.add_new_sockets_for_new_empty_set()
             return
@@ -107,49 +112,53 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_sockets_per_set")
 
-    def sv_init(self, context):
+    def initialize_input_sockets(self):
         inew = self.inputs.new
-        onew = self.outputs.new
-        
         inew(GENERIC_SOCKET, "Selected").prop_name = "selected"
         inew(SEPARATOR_SOCKET, "Separator main")
-
         for j in range(self.num_switches):
             for i in range(self.num_sockets_per_set):
                 inew(GENERIC_SOCKET, f"{self.label_of_set(j)} {i + 1}")
             if j < (self.num_switches - 1):
                 inew(SEPARATOR_SOCKET, f"Separator {j}")
 
-        # make all output sockets, and hide non used
+    def initialize_output_sockets(self):
+        """ create all needed output sockets, but hide beyond set size """
+        onew = self.outputs.new
         for i in range(MAX_SET_SIZE):
             sock = onew(GENERIC_SOCKET, f"Data {i + 1}")
-            if i > 1:
+            if i >= self.num_sockets_per_set:
                 sock.hide_safe = True
 
+    def sv_init(self, context):
+        self.initialize_input_sockets()
+        self.initialize_output_sockets()
+
     def replace_socket_if_needed(self, input_socket):
-        if (input_socket.bl_idname == input_socket.other.bl_idname):
-            return
-        input_socket.replace_socket(input_socket.other.bl_idname)
+        if input_socket.bl_idname != input_socket.other.bl_idname:
+            input_socket.replace_socket(input_socket.other.bl_idname)
+
+    def collect_input_indices_to_map(self):
+        """ which input socket indices are associated with the selected set """
+        print('doing', inspect.stack()[0][3])
+        return [2, 3]
 
     def adjust_input_socket_bl_idname_to_match_linked_input(self):
         for input_socket in self.inputs:
             if input_socket.is_linked:
                 self.replace_socket_if_needed(input_socket)
 
-    def adjust_output_sockets_bl_idname_to_match_selected_set(self):
-        # [ ] find which sockets are associated with the selected set
-        #     f.ex:  [13, 14, 15, 16, 17]
-        # [ ] make sure the output sockets [0, 1, 2, 3, 4] match bl_idnames of above input indices
-        #     
-        #  will return the "selected set" indices, rather than needing them to be recalculated again
-        return [2, 3]
+    def adjust_output_sockets_bl_idname_to_match_selected_set(self, remap_indices):
+        for out_idx, in_idx in enumerate(remap_indices):
+            input_bl_idname = self.inputs[in_idx].bl_idname
+            if input_bl_idname != self.outputs[out_idx].bl_idname:
+                self.outputs[out_idx].replace_socket(input_bl_idname)
 
     def process(self):
-        print('doing', inspect.stack()[0][3])
-        
+        remap_indices = self.collect_input_indices_to_map() 
         self.adjust_input_socket_bl_idname_to_match_linked_input()
-        remap_indices = self.adjust_output_sockets_bl_idname_to_match_selected_set()
-        
+        self.adjust_output_sockets_bl_idname_to_match_selected_set(remap_indices)
+
         for output_idx, input_idx in enumerate(remap_indices):
             input_socket = self.inputs[input_idx]
             if input_socket.is_linked:
