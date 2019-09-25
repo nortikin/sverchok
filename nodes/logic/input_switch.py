@@ -41,21 +41,23 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update_node_sockets_per_set(self, context):
         print('doing', inspect.stack()[0][3])
+
+        # reconfigure _ output _ sockets
         for i in range(MAX_SET_SIZE):
             socket = self.outputs[i]
             desired_state = (i > (self.num_sockets_per_set - 1))
             if socket.hide != desired_state:
                 socket.hide_safe = desired_state
 
-        # [ ] for any input set that doesn't make self.num_sockets_per_set, insert n.
-        #     do this from highest to lowest set, so insert will be stable
+        # reconfigure _ input _ sockets
+        pass
 
     num_sockets_per_set: IntProperty(
         name="Num Sockets per set", description="Number of inputs in a set",
         default=2, min=1, max=MAX_SET_SIZE, update=update_node_sockets_per_set)
 
     num_switches: IntProperty(
-        name="Num Switches", description="Number of switch items",
+        name="Num Switches", description="Number of switch items (no update associated)",
         default=2, min=2, max=MAX_NUM_SWITCHES)
 
     num_available_switches: IntProperty(
@@ -107,6 +109,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         # the extend the outputs
         if any(self.last_setnum_input_sockets_connected()) and self.not_already_maxed_out():
             self.add_new_sockets_for_new_empty_set()
+            self.num_switches += 1
             return
 
     def draw_buttons(self, context, layout):
@@ -155,6 +158,8 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs[out_idx].replace_socket(input_bl_idname)
 
     def process(self):
+        print('num_switches (from process func)', self.num_switches)
+
         remap_indices = self.collect_input_indices_to_map() 
         self.adjust_input_socket_bl_idname_to_match_linked_input()
         self.adjust_output_sockets_bl_idname_to_match_selected_set(remap_indices)
