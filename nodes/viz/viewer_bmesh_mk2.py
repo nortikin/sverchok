@@ -427,7 +427,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.set_autosmooth(objs)
 
         if self.outputs[0].is_linked:
-            self.outputs[0].sv_set(objs)
+            sorted_objs = sorted(objs, key=lambda x: x['idx'])
+            self.outputs[0].sv_set(sorted_objs)
 
     def get_children(self):
         objects = bpy.data.objects

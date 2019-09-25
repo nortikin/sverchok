@@ -88,6 +88,7 @@
     MatrixApplyNode
     SvSimpleDeformNode
     SvBarycentricTransformNode
+    SvAlignMeshByMesh
 
 ## Modifier Change
     SvDeleteLooseNode

@@ -14,9 +14,9 @@ Inputs
 Outputs
 -------
 
-**x** - velue or series of values
-**y** - velue or series of values
-**z** - velue or series of values
+**x** - value or series of values
+**y** - value or series of values
+**z** - value or series of values
 
 Examples
 --------
