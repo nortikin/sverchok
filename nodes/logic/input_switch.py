@@ -86,10 +86,10 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     def not_already_maxed_out(self):
         return self.num_switches < MAX_NUM_SWITCHES
 
-    def insert_input_sockets_to_all_sets(self):
+    def hide_extraneous_input_sockets_in_all_sets(self):
         pass
 
-    def remove_input_sockets_from_all_sets(self):
+    def unhide_necessary_input_sockets_in_all_sets(self):
         pass
 
     def update(self):
@@ -103,9 +103,6 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         if any(self.last_setnum_input_sockets_connected()) and self.not_already_maxed_out():
             self.add_new_sockets_for_new_empty_set()
             return
-
-        # [ ] if none of the last two sets are connected, then drop the last set
-        pass
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_sockets_per_set")
@@ -139,15 +136,25 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             if input_socket.is_linked:
                 self.replace_socket_if_needed(input_socket)
 
+    def adjust_output_sockets_bl_idname_to_match_selected_set(self):
+        # [ ] find which sockets are associated with the selected set
+        #     f.ex:  [13, 14, 15, 16, 17]
+        # [ ] make sure the output sockets [0, 1, 2, 3, 4] match bl_idnames of above input indices
+        #     
+        #  will return the "selected set" indices, rather than needing them to be recalculated again
+        return [2, 3]
+
     def process(self):
         print('doing', inspect.stack()[0][3])
-        self.adjust_input_socket_bl_idname_to_match_linked_input()
         
-        # [ ] match the output socket types with the input sockets being passed through.
-        # [ ] make mapping of input sockets, associated with each switch
-        # [ ] 
-
-        pass
+        self.adjust_input_socket_bl_idname_to_match_linked_input()
+        remap_indices = self.adjust_output_sockets_bl_idname_to_match_selected_set()
+        
+        for output_idx, input_idx in enumerate(remap_indices):
+            input_socket = self.inputs[input_idx]
+            if input_socket.is_linked:
+                A = input_socket.sv_get()
+                self.outputs[output_idx].sv_set(A)
 
 
 def register(): bpy.utils.register_class(SvInputSwitchNode)
