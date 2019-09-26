@@ -7,13 +7,14 @@
 
 
 import inspect
+from collections import OrderedDict
 
 import bpy
 from bpy.props import IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from collections import OrderedDict
+from sverchok.utils.context_managers import hard_freeze
 
 GREEK_LABELS = [
     "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta",
@@ -36,8 +37,8 @@ def get_indices_that_should_be_visible(max_groups, num_visible_groups, max_items
             node[socket_index] = (group_index < num_visible_groups and set_item < num_items_per_group) 
             socket_index += 1
 
-    g = "".join(["01"[k] for k in node.values()])
-    print(g)
+    # g = "".join(["01"[k] for k in node.values()])
+    # print(g)
     return node
 
 class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
@@ -58,7 +59,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             input_socket.replace_socket(input_socket.other.bl_idname)
 
     def update_node_sockets_per_set(self, context):
-        print('doing', inspect.stack()[0][3])
+        # print('doing', inspect.stack()[0][3])
 
         # reconfigure _ output _ sockets
         for i in range(MAX_SET_SIZE):
@@ -68,7 +69,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 socket.hide_safe = desired_state
 
         # reconfigure _ input _ sockets
-        pass
+        self.unhide_sockets_to_cope_with_switchnum()
 
     def adjust_input_socket_bl_idname_to_match_linked_input(self):
         for input_socket in self.inputs:
@@ -161,9 +162,10 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         # self.interface_unhide_inputs_to_handle_new_set_if_needed()
 
     def sv_init(self, context):
-        self.initialize_input_sockets()
-        self.unhide_sockets_to_cope_with_switchnum()
-        self.initialize_output_sockets()
+        with hard_freeze(self) as node:
+            self.initialize_input_sockets()
+            self.unhide_sockets_to_cope_with_switchnum()
+            self.initialize_output_sockets()
 
     def process(self):
         print('num_switches (from process func)', self.num_switches)
