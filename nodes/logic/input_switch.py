@@ -35,9 +35,6 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Input Switch'
     sv_icon = 'SV_INPUT_SWITCH'
 
-    def label_of_set(self, index):
-        return GREEK_LABELS[index]
-
     def update_node_sockets_per_set(self, context):
         print('doing', inspect.stack()[0][3])
 
@@ -72,9 +69,19 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         onew = self.outputs.new
         
         self.num_switches += 1
-        inew(SEPARATOR_SOCKET, f"Separator {self.num_switches}")
-        for i in range(self.num_sockets_per_set):
-            inew(GENERIC_SOCKET, f"{self.label_of_set(self.num_switches)} {i + 1}")
+        ## old # inew(SEPARATOR_SOCKET, f"Separator {self.num_switches}")
+        ## old # for i in range(self.num_sockets_per_set):
+        ## old #     inew(GENERIC_SOCKET, f"{self.label_of_set(self.num_switches)} {i + 1}")
+
+
+    def hide_extraneous_input_sockets_in_all_visible_sets(self):
+        pass
+
+    def unhide_necessary_input_sockets_in_all_visible_sets(self):
+        pass
+
+    def interface_fully_initialized(self):
+        return len(self.outputs) == MAX_SET_SIZE
 
     @property
     def any_sockets_of_last_input_set_connected(self):
@@ -90,22 +97,11 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         first_index = last_index - self.num_sockets_per_set
         # [ ] get indices of last visible input set
 
-
-
         return any([self.inputs[idx].is_linked for idx in range(first_index, last_index)])
 
     @property
     def not_already_maxed_out(self):
         return self.num_switches < MAX_NUM_SWITCHES
-
-    def hide_extraneous_input_sockets_in_all_visible_sets(self):
-        pass
-
-    def unhide_necessary_input_sockets_in_all_visible_sets(self):
-        pass
-
-    def interface_fully_initialized(self):
-        return len(self.outputs) == MAX_SET_SIZE
 
     def interface_unhide_inputs_to_handle_new_set_if_needed():
         if self.not_already_maxed_out and self.any_sockets_of_last_input_set_connected:
@@ -115,7 +111,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.interface_fully_initialized():
             return
 
-        self.interface_unhide_inputs_to_handle_new_set_if_needed()
+        # self.interface_unhide_inputs_to_handle_new_set_if_needed()
       
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_sockets_per_set")
@@ -123,11 +119,19 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     def initialize_input_sockets(self):
         inew = self.inputs.new
         inew(GENERIC_SOCKET, "Selected").prop_name = "selected"
-        for j in range(self.num_switches):
-            if j < (self.num_switches):
-                inew(SEPARATOR_SOCKET, f"Separator {j}")
-            for i in range(self.num_sockets_per_set):
-                inew(GENERIC_SOCKET, f"{self.label_of_set(j)} {i}")
+
+        # the idea here is to add all sockets in advance, and hide the extraneous ones to begin with.
+
+        for group in range(MAX_NUM_SWITCHES):
+            separator_socket = inew(SEPARATOR_SOCKET, f"Separator {group}")
+            if group >= self.num_switches:
+                separator_socket.hide_safe = True
+
+            for set_item in range(MAX_SET_SIZE):
+                socket = inew(GENERIC_SOCKET, f"{GREEK_LABELS[group]} {set_item}")
+                if (set_item >= self.num_sockets_per_set) or (group >= self.num_switches):
+                    socket.hide_safe = True
+
 
     def initialize_output_sockets(self):
         """ create all needed output sockets, but hide beyond set size """
