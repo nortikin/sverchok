@@ -14,7 +14,6 @@ from bpy.props import IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.context_managers import hard_freeze
 
 GREEK_LABELS = [
     "Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta",
@@ -40,6 +39,12 @@ def get_indices_that_should_be_visible(max_groups, num_visible_groups, max_items
     # g = "".join(["01"[k] for k in node.values()])
     # print(g)
     return node
+
+def get_indices_for_groupnum(max_groups, num_visible_groups, max_items_per_group, num_items_per_group, group_lookup):
+    idx = 2
+    idx += ((max_items_per_group * group_lookup) + group_lookup)
+    return list(range(idx, idx+num_items_per_group))
+
 
 class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -96,11 +101,8 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
             gamma 1
             gamma 2
         """
-        last_index = len(self.inputs)  # should reflect 
-        first_index = last_index - self.num_sockets_per_set
-        # [ ] get indices of last visible input set
-
-        return any([self.inputs[idx].is_linked for idx in range(first_index, last_index)])
+        indices = get_indices_for_groupnum(MAX_NUM_SWITCHES, self.num_switches, MAX_SET_SIZE, self.num_sockets_per_set, self.num_switches-1)
+        return any([self.inputs[idx].is_linked for idx in indices])
 
     def initialize_input_sockets(self):
         inew = self.inputs.new
@@ -120,8 +122,7 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
     def collect_input_indices_to_map(self):
         """ which input socket indices are associated with the selected set """
-        print('doing', inspect.stack()[0][3])
-        return [2, 3]
+        return get_indices_for_groupnum(MAX_NUM_SWITCHES, self.num_switches, MAX_SET_SIZE, self.num_sockets_per_set, self.selected)
 
     def unhide_sockets_to_cope_with_switchnum(self):
         tndict = get_indices_that_should_be_visible(MAX_NUM_SWITCHES, self.num_switches, MAX_SET_SIZE, self.num_sockets_per_set)
@@ -159,17 +160,14 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.interface_fully_initialized():
             return
 
-        # self.interface_unhide_inputs_to_handle_new_set_if_needed()
+        self.interface_unhide_inputs_to_handle_new_set_if_needed()
 
     def sv_init(self, context):
-        with hard_freeze(self) as node:
-            self.initialize_input_sockets()
-            self.unhide_sockets_to_cope_with_switchnum()
-            self.initialize_output_sockets()
+        self.initialize_input_sockets()
+        self.unhide_sockets_to_cope_with_switchnum()
+        self.initialize_output_sockets()
 
     def process(self):
-        print('num_switches (from process func)', self.num_switches)
-
         remap_indices = self.collect_input_indices_to_map() 
         self.adjust_input_socket_bl_idname_to_match_linked_input()
         self.adjust_output_sockets_bl_idname_to_match_selected_set(remap_indices)
