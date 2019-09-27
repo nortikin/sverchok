@@ -84,12 +84,12 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def node_state(self):
-        node_state = lambda: None
-        node_state.max_groups = MAX_NUM_SWITCHES
-        node_state.num_visible_groups = self.num_switches
-        node_state.max_items_per_group = MAX_SET_SIZE
-        node_state.num_items_per_group = self.num_sockets_per_set
-        return node_state
+        state = lambda: None
+        state.max_groups = MAX_NUM_SWITCHES
+        state.num_visible_groups = self.num_switches
+        state.max_items_per_group = MAX_SET_SIZE
+        state.num_items_per_group = self.num_sockets_per_set
+        return state
 
     def configure_sockets_for_switchnum(self, context):
         """ called when user adjust num sockets per set slider """
