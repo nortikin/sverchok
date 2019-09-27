@@ -29,6 +29,7 @@ class UdpClientNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'UdpClientNode'
     bl_label = 'UDP Client'
+    sv_icon = 'SV_UDP_CLIENT'
 
 
     def send_msg(self, context):

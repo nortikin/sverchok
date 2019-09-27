@@ -28,6 +28,7 @@ class SvFormulaColorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvFormulaColorNode'
     bl_label = 'Color by formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_COLOR_BY_FORMULA'
 
     ModeR: StringProperty(name='formulaR', default='r', update=updateNode)
     ModeG: StringProperty(name='formulaG', default='g', update=updateNode)

@@ -51,7 +51,7 @@ class SvCSGBooleanNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     '''CSG Boolean Node MK2'''
     bl_idname = 'SvCSGBooleanNodeMK2'
     bl_label = 'CSG Boolean 2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_BOOLEAN'
 
     mode_options = [
         ("ITX", "Intersect", "", 0),

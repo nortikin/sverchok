@@ -28,7 +28,7 @@ class SvSelectMeshVerts(bpy.types.Node, SverchCustomTreeNode):
     ''' Select vertices of mesh objects '''
     bl_idname = 'SvSelectMeshVerts'
     bl_label = 'Select Object Vertices'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'EDITMODE_HLT'
 
     formula: StringProperty(name='formula', default='val == 0', update=updateNode)
     deselect_all: BoolProperty(name='deselect', default=False, update=updateNode)

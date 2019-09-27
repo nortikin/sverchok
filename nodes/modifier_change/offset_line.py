@@ -190,6 +190,7 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvOffsetLineNode'
     bl_label = 'Offset line'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OFFSET_LINE'
 
     offset: FloatProperty(
         name='offset', description='distance of offset',
