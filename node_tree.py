@@ -180,8 +180,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # print('svtree update', self.timestamp)
         self.has_changed = True
         self.has_link_count_changed
-
-        print('going to do nodetree.process()')
         self.process()
 
     def process_ani(self):
@@ -196,12 +194,13 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         process the Sverchok tree upon editor changes from handler
         """
+
         if self.has_changed:
-            print('processing build list: because has_changed==True')
+            # print('processing build list: because has_changed==True')
             self.build_update_list()
             self.has_changed = False
         if self.is_frozen():
-            print('not processing: because self/tree.is_frozen') 
+            # print('not processing: because self/tree.is_frozen') 
             return
         if self.sv_process:
             process_tree(self)
