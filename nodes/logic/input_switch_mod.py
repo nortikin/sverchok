@@ -124,11 +124,6 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
         """ create all needed output sockets, but hide beyond set size """
         for i in range(MAX_SET_SIZE): self.outputs.new(GENERIC_SOCKET, f"Data {i}")
 
-
-    def collect_input_indices_to_map(self):
-        """ which input socket indices are associated with the selected set """
-        return get_indices_for_groupnum(self.node_state, self.selected)
-
     def replace_socket_if_needed(self, input_socket):
         if input_socket.bl_idname != input_socket.other.bl_idname:
             input_socket.replace_socket(input_socket.other.bl_idname)
@@ -179,7 +174,7 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
         self.set_hidestate_output_sockets_to_cope_with_switchnum()
 
     def process(self):
-        remap_indices = self.collect_input_indices_to_map() 
+        remap_indices = self.get_indices_for_groupnum(self.node_state, self.selected)
         self.adjust_input_socket_bl_idname_to_match_linked_input()
         self.adjust_output_sockets_bl_idname_to_match_selected_set(remap_indices)
 
