@@ -6,9 +6,6 @@
 # License-Filename: LICENSE
 
 
-import inspect
-from collections import OrderedDict
-
 import bpy
 from bpy.props import IntProperty, BoolProperty
 
@@ -25,67 +22,56 @@ SEPARATOR_SOCKET = "SvSeparatorSocket"
 MAX_SET_SIZE = 9
 MAX_NUM_SWITCHES = 9
 
-def get_indices_that_should_be_visible(max_groups, num_visible_groups, max_items_per_group, num_items_per_group):
+def get_indices_that_should_be_visible(node):
     socket_index = 1
-    node = {}
-    node[0] = True # selector always visible, first socket
-    for group_index in range(max_groups):
-        node[socket_index] = group_index < num_visible_groups
+    vis_dict = {}
+    vis_dict[0] = True # selector always visible, first socket
+    for group_index in range(node.max_groups):
+        vis_dict[socket_index] = group_index < node.num_visible_groups
         socket_index += 1
-        for set_item in range(max_items_per_group):
-            node[socket_index] = (group_index < num_visible_groups and set_item < num_items_per_group) 
+        for set_item in range(node.max_items_per_group):
+            vis_dict[socket_index] = (group_index < node.num_visible_groups and set_item < node.num_items_per_group) 
             socket_index += 1
 
     # g = "".join(["01"[k] for k in node.values()])
     # print(g)
-    return node
+    return vis_dict
 
-def get_indices_for_groupnum(max_groups, num_visible_groups, max_items_per_group, num_items_per_group, group_lookup):
-    idx = 2
-    idx += ((max_items_per_group * group_lookup) + group_lookup)
-    return list(range(idx, idx+num_items_per_group))
+def get_indices_for_groupnum(node, group_lookup):
+    idx = 2 + ((node.max_items_per_group * group_lookup) + group_lookup)
+    return list(range(idx, idx + node.num_items_per_group))
 
 
 class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Sets, Switch, Select
     Tooltip: Switch among multiple input sets
+
+    auto expanding feature:
+        determined by "any_sockets_of_last_input_set_connected" till last visble is max groups
+        
+        if the node looks like:
+            alpha 1
+            alpha 2
+            beta 1   <-   if any of these gets a linked socket, the next socket set is automatically generated
+            beta 2   <-
+            gamma 1
+            gamma 2
+
+    debug tools:   
+
+        # (import inspect)
+        # stick this line of code at the top of a function, and it will print the name of the function when called
+        # print('doing', inspect.stack()[0][3])
     """
 
     bl_idname = 'SvInputSwitchNode'
     bl_label = 'Input Switch'
     sv_icon = 'SV_INPUT_SWITCH'
 
+    @property
     def interface_fully_initialized(self):
         return len(self.outputs) == MAX_SET_SIZE
-
-    def replace_socket_if_needed(self, input_socket):
-        if input_socket.bl_idname != input_socket.other.bl_idname:
-            input_socket.replace_socket(input_socket.other.bl_idname)
-
-    def update_node_sockets_per_set(self, context):
-        # print('doing', inspect.stack()[0][3])
-
-        # reconfigure _ output _ sockets
-        for i in range(MAX_SET_SIZE):
-            socket = self.outputs[i]
-            desired_state = (i > (self.num_sockets_per_set - 1))
-            if socket.hide != desired_state:
-                socket.hide_safe = desired_state
-
-        # reconfigure _ input _ sockets
-        self.unhide_sockets_to_cope_with_switchnum()
-
-    def adjust_input_socket_bl_idname_to_match_linked_input(self):
-        for input_socket in self.inputs:
-            if input_socket.is_linked:
-                self.replace_socket_if_needed(input_socket)
-
-    def adjust_output_sockets_bl_idname_to_match_selected_set(self, remap_indices):
-        for out_idx, in_idx in enumerate(remap_indices):
-            input_bl_idname = self.inputs[in_idx].bl_idname
-            if input_bl_idname != self.outputs[out_idx].bl_idname:
-                self.outputs[out_idx].replace_socket(input_bl_idname)
 
     @property
     def not_already_maxed_out(self):
@@ -93,53 +79,26 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def any_sockets_of_last_input_set_connected(self):
-        """ if the node looks like:
-            alpha 1
-            alpha 2
-            beta 1   <-   if any of these gets a linked socket, the next socket set is automatically generated
-            beta 2   <-
-            gamma 1
-            gamma 2
-        """
-        indices = get_indices_for_groupnum(MAX_NUM_SWITCHES, self.num_switches, MAX_SET_SIZE, self.num_sockets_per_set, self.num_switches-1)
+        indices = get_indices_for_groupnum(self.node_state, self.num_switches-1)
         return any([self.inputs[idx].is_linked for idx in indices])
 
-    def initialize_input_sockets(self):
-        inew = self.inputs.new
-        inew(GENERIC_SOCKET, "Selected").prop_name = "selected"
-        for group in range(MAX_NUM_SWITCHES):
-            socket = inew(SEPARATOR_SOCKET, f"Separator {group}")
-            for set_item in range(MAX_SET_SIZE):
-                inew(GENERIC_SOCKET, f"{GREEK_LABELS[group]} {set_item}")
-        
-    def initialize_output_sockets(self):
-        """ create all needed output sockets, but hide beyond set size """
-        onew = self.outputs.new
-        for i in range(MAX_SET_SIZE):
-            sock = onew(GENERIC_SOCKET, f"Data {i}")
-            if i >= self.num_sockets_per_set:
-                sock.hide_safe = True
+    @property
+    def node_state(self):
+        node_state = lambda: None
+        node_state.max_groups = MAX_NUM_SWITCHES
+        node_state.num_visible_groups = self.num_switches
+        node_state.max_items_per_group = MAX_SET_SIZE
+        node_state.num_items_per_group = self.num_sockets_per_set
+        return node_state
 
-    def collect_input_indices_to_map(self):
-        """ which input socket indices are associated with the selected set """
-        return get_indices_for_groupnum(MAX_NUM_SWITCHES, self.num_switches, MAX_SET_SIZE, self.num_sockets_per_set, self.selected)
-
-    def unhide_sockets_to_cope_with_switchnum(self):
-        tndict = get_indices_that_should_be_visible(MAX_NUM_SWITCHES, self.num_switches, MAX_SET_SIZE, self.num_sockets_per_set)
-        for key, value in tndict.items():
-            socket = self.inputs[key]
-            desired_hide_state = not(value)
-            if not socket.hide == desired_hide_state:
-                socket.hide_safe = desired_hide_state
-
-    def interface_unhide_inputs_to_handle_new_set_if_needed(self):
-        if self.not_already_maxed_out and self.any_sockets_of_last_input_set_connected:
-            self.num_switches += 1
-            self.unhide_sockets_to_cope_with_switchnum()
+    def configure_sockets_for_switchnum(self, context):
+        """ called when user adjust num sockets per set slider """
+        self.set_hidestate_output_sockets_to_cope_with_switchnum()
+        self.set_hidestate_input_sockets_to_cope_with_switchnum()
 
     num_sockets_per_set: IntProperty(
         name="Num Sockets per set", description="Number of inputs in a set",
-        default=2, min=1, max=MAX_SET_SIZE, update=update_node_sockets_per_set)
+        default=2, min=1, max=MAX_SET_SIZE, update=configure_sockets_for_switchnum)
 
     num_switches: IntProperty(
         name="Num Switches", description="Number of switch items (no update associated)",
@@ -153,19 +112,71 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         default=0, min=0, update=updateNode)
 
 
+    def initialize_input_sockets(self):
+        inew = self.inputs.new
+        inew(GENERIC_SOCKET, "Selected").prop_name = "selected"
+        for group in range(MAX_NUM_SWITCHES):
+            socket = inew(SEPARATOR_SOCKET, f"Separator {group}")
+            for set_item in range(MAX_SET_SIZE):
+                inew(GENERIC_SOCKET, f"{GREEK_LABELS[group]} {set_item}")
+
+    def initialize_output_sockets(self):
+        """ create all needed output sockets, but hide beyond set size """
+        for i in range(MAX_SET_SIZE): self.outputs.new(GENERIC_SOCKET, f"Data {i}")
+
+
+    def collect_input_indices_to_map(self):
+        """ which input socket indices are associated with the selected set """
+        return get_indices_for_groupnum(self.node_state, self.selected)
+
+    def replace_socket_if_needed(self, input_socket):
+        if input_socket.bl_idname != input_socket.other.bl_idname:
+            input_socket.replace_socket(input_socket.other.bl_idname)
+
+    def adjust_input_socket_bl_idname_to_match_linked_input(self):
+        for input_socket in self.inputs:
+            if input_socket.is_linked:
+                self.replace_socket_if_needed(input_socket)
+
+    def adjust_output_sockets_bl_idname_to_match_selected_set(self, remap_indices):
+        for out_idx, in_idx in enumerate(remap_indices):
+            input_bl_idname = self.inputs[in_idx].bl_idname
+            if input_bl_idname != self.outputs[out_idx].bl_idname:
+                self.outputs[out_idx].replace_socket(input_bl_idname)
+
+    def set_hidestate_input_sockets_to_cope_with_switchnum(self):
+        tndict = get_indices_that_should_be_visible(self.node_state)
+        for key, value in tndict.items():
+            socket = self.inputs[key]
+            desired_hide_state = not(value)
+            if not socket.hide == desired_hide_state:
+                socket.hide_safe = desired_hide_state
+
+    def set_hidestate_output_sockets_to_cope_with_switchnum(self):
+        for i in range(MAX_SET_SIZE):
+            socket = self.outputs[i]
+            desired_state = (i > (self.num_sockets_per_set - 1))
+            if socket.hide != desired_state:
+                socket.hide_safe = desired_state
+
+    def interface_unhide_inputs_to_handle_new_set_if_needed(self):
+        if self.not_already_maxed_out and self.any_sockets_of_last_input_set_connected:
+            self.num_switches += 1
+            self.set_hidestate_input_sockets_to_cope_with_switchnum()
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_sockets_per_set")
 
     def update(self):
-        if not self.interface_fully_initialized():
+        if not self.interface_fully_initialized:
             return
-
         self.interface_unhide_inputs_to_handle_new_set_if_needed()
 
     def sv_init(self, context):
         self.initialize_input_sockets()
-        self.unhide_sockets_to_cope_with_switchnum()
+        self.set_hidestate_input_sockets_to_cope_with_switchnum()
         self.initialize_output_sockets()
+        self.set_hidestate_output_sockets_to_cope_with_switchnum()
 
     def process(self):
         remap_indices = self.collect_input_indices_to_map() 
@@ -178,6 +189,5 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 A = input_socket.sv_get()
                 self.outputs[output_idx].sv_set(A)
 
-
-def register(): bpy.utils.register_class(SvInputSwitchNode)
-def unregister(): bpy.utils.unregister_class(SvInputSwitchNode)
+classes = [SvInputSwitchNode]
+register, unregister = bpy.utils.register_classes_factory(classes)
