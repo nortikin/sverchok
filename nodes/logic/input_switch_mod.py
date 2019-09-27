@@ -97,7 +97,7 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
         self.set_hidestate_input_sockets_to_cope_with_switchnum()
 
     num_sockets_per_set: IntProperty(
-        name="Num Sockets per set", description="Number of inputs in a set",
+        name="Num Sockets per set", description="Num sockets per set",
         default=2, min=1, max=MAX_SET_SIZE, update=configure_sockets_for_switchnum)
 
     num_switches: IntProperty(
@@ -121,7 +121,6 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
                 inew(GENERIC_SOCKET, f"{GREEK_LABELS[group]} {set_item}")
 
     def initialize_output_sockets(self):
-        """ create all needed output sockets, but hide beyond set size """
         for i in range(MAX_SET_SIZE): self.outputs.new(GENERIC_SOCKET, f"Data {i}")
 
     def replace_socket_if_needed(self, input_socket):
