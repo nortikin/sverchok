@@ -42,7 +42,7 @@ def get_indices_for_groupnum(node, group_lookup):
     return list(range(idx, idx + node.num_items_per_group))
 
 
-class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
+class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Sets, Switch, Select
     Tooltip: Switch among multiple input sets
@@ -65,8 +65,8 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
         # print('doing', inspect.stack()[0][3])
     """
 
-    bl_idname = 'SvInputSwitchNode'
-    bl_label = 'Input Switch'
+    bl_idname = 'SvInputSwitchNodeMOD'
+    bl_label = 'Input Switch MOD'
     sv_icon = 'SV_INPUT_SWITCH'
 
     @property
@@ -189,5 +189,5 @@ class SvInputSwitchNode(bpy.types.Node, SverchCustomTreeNode):
                 A = input_socket.sv_get()
                 self.outputs[output_idx].sv_set(A)
 
-classes = [SvInputSwitchNode]
+classes = [SvInputSwitchNodeMOD]
 register, unregister = bpy.utils.register_classes_factory(classes)
