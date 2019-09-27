@@ -244,7 +244,7 @@
 ## Logic
     SvLogicNode
     SvSwitchNode
-    SvInputSwitchNode
+    SvInputSwitchNodeMOD
     SvNeuroElman1LNode
 
 ## Viz
