@@ -412,8 +412,7 @@ class SverchCustomTreeNode:
                 print(sys.exc_info()[-1].tb_frame.f_code)
                 print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 
-            ng.configuring_new_node = False
-
+        ng.configuring_new_node = False
         self.set_color()
         ng.unfreeze()
 
