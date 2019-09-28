@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import inspect
 import operator
 from math import sqrt
 
@@ -35,9 +34,7 @@ def deepnoise(v, noise_basis=PERLIN_ORIGINAL):
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
 
-# noise_dict = {t[0]: t[0] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
-
 noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
 
 
