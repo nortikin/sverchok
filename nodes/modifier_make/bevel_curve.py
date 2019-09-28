@@ -216,17 +216,17 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         if data is None or len(data) == 0:
             # if no twist object provided, use constant twist of 0.0
             vertices = [Vector((0,0,0)), Vector((0,0,1))]
-            return LinearSpline(vertices, metric = self.metric, is_cyclic = False)
+            return LinearSpline(vertices, metric = self.metric, is_cyclic = self.is_cyclic)
         
         elif type(data[0]) in (list, tuple) and len(data[0]) == 2:
             vertices = [Vector((twist, 0, t)) for t, twist in data]
-            return self.build_spline(vertices, self.twist_mode, is_cyclic=False, metric = self.metric)
+            return self.build_spline(vertices, self.twist_mode, is_cyclic=self.is_cyclic, metric = self.metric)
         
         else:
             n = len(data)
             ts = [i / (n-1) for i in range(n)]
             vertices = [Vector((twist, 0, t)) for t, twist in zip(ts, data)]
-            return self.build_spline(vertices, self.twist_mode, is_cyclic=False, metric = self.metric)
+            return self.build_spline(vertices, self.twist_mode, is_cyclic=self.is_cyclic, metric = self.metric)
 
     def get_matrix(self, tangent, twist_value, scale_x, scale_y):
         x = Vector((1.0, 0.0, 0.0))
