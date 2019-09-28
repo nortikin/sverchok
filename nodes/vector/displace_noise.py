@@ -10,7 +10,7 @@ import operator
 from math import sqrt
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
 from mathutils import noise
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -53,8 +53,9 @@ class SvNoiseDisplace(bpy.types.Node, SverchCustomTreeNode):
                 return
 
     def set_sockets_associated_with_displacemode(self, context):
-        self.inputs["Rescale"].hide_safe = self.displace
-        self.inputs["Amp"].hide_safe = self.displace
+        # this will disconnect links. fix that.
+        self.inputs["Rescale"].hide_safe = not self.displace
+        self.inputs["Amplify"].hide_safe = not self.displace
         # self.process()
 
     out_modes = [
