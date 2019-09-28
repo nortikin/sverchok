@@ -197,7 +197,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
 
         if self.configuring_new_node:
-            print('skipping global process during node init')
+            # print('skipping global process during node init')
             return
 
         if self.has_changed:
