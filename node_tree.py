@@ -168,7 +168,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def has_link_count_changed(self):
         link_count = len(self.links)
         if not link_count == self.tree_link_count: 
-            print('update event: link count changed', self.timestamp)
+            # print('update event: link count changed', self.timestamp)
             self.tree_link_count = link_count
             return True
 
