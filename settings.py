@@ -185,11 +185,18 @@ class SverchokPreferences(AddonPreferences):
 
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
+    
+    node_panel_modes = [
+            ("X", "Do not show", "Do not show node buttons", 0),
+            ("T", "T panel", "Show node buttons under the T panel", 1),
+            ("N", "N panel", "Show node under the N panel", 2)
+        ]
 
-    node_panels: BoolProperty(
-        name = "Display node category panels",
-        description = "Will show panels with node categories in the N panel. Restart Blender to apply changes.",
-        default = False)
+    node_panels: EnumProperty(
+        items = node_panel_modes,
+        name = "Display node buttons",
+        description = "Where to show node insertion buttons. Restart Blender to apply changes.",
+        default = "X")
 
     enable_live_objin: BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")

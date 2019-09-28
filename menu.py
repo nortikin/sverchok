@@ -310,29 +310,54 @@ def make_categories():
     return node_categories, node_count, original_categories
 
 def register_node_panels(identifier, cat_list):
-    with sv_preferences() as prefs:
-        if not prefs.node_panels:
-            return
-
-    def draw_node_item(self, context):
-        layout = self.layout
-        col = layout.column()
-        for item in self.category.items(context):
-            item.draw(item, col, context)
-
     global node_panels
-    for category in cat_list:
-        panel_type = type("NODE_PT_category_sv_" + category.identifier, (bpy.types.Panel,), {
-                "bl_space_type": "NODE_EDITOR",
-                "bl_region_type": "UI",
-                "bl_label": category.name,
-                "bl_category": category.name,
-                "category": category,
-                "poll": category.poll,
-                "draw": draw_node_item,
-            })
-        node_panels.append(panel_type)
-        bpy.utils.register_class(panel_type)
+    with sv_preferences() as prefs:
+        if prefs.node_panels == "N":
+
+            def draw_node_item(self, context):
+                layout = self.layout
+                col = layout.column()
+                for item in self.category.items(context):
+                    item.draw(item, col, context)
+
+            for category in cat_list:
+                panel_type = type("NODE_PT_category_sv_" + category.identifier, (bpy.types.Panel,), {
+                        "bl_space_type": "NODE_EDITOR",
+                        "bl_region_type": "UI",
+                        "bl_label": category.name,
+                        "bl_category": category.name,
+                        "category": category,
+                        "poll": category.poll,
+                        "draw": draw_node_item,
+                    })
+                node_panels.append(panel_type)
+                bpy.utils.register_class(panel_type)
+
+        elif prefs.node_panels == "T":
+
+            class SV_PT_NodesTPanel(bpy.types.Panel):
+                """Nodes panel under the T panel"""
+
+                bl_space_type = "NODE_EDITOR"
+                bl_region_type = "TOOLS"
+                bl_label = "Sverchok Nodes"
+
+                @classmethod
+                def poll(cls, context):
+                    return context.space_data.tree_type == 'SverchCustomTreeType'
+
+                def draw(self, context):
+                    layout = self.layout
+                    layout.prop(context.scene, "sv_selected_category", text="")
+
+                    for category in cat_list:
+                        if category.identifier != context.scene.sv_selected_category:
+                            continue
+                        for item in category.items(context):
+                            item.draw(item, layout, context)
+
+            node_panels.append(SV_PT_NodesTPanel)
+            bpy.utils.register_class(SV_PT_NodesTPanel)
 
 def unregister_node_panels():
     global node_panels
@@ -368,6 +393,13 @@ def register():
         unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
+    categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
+    bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
+                        name = "Category",
+                        items = categories
+                    )
+
     register_node_panels("SVERCHOK", menu)
 
     build_help_remap(original_categories)
@@ -379,4 +411,5 @@ def unregister():
         unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     unregister_node_add_operators()
+    del bpy.types.Scene.sv_selected_category
 
