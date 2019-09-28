@@ -303,7 +303,7 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
             if profile.have_gathered_stats():
                 row = profile_col.row(align=True)
                 row.operator("node.sverchok_profile_dump", text="Dump data", icon="TEXT")
-                row.operator("node.sverchok_profile_save", text="Save data", icon="SAVE_AS")
+                row.operator("node.sverchok_profile_save", text="Save data", icon="FILE_TICK")
                 profile_col.operator("node.sverchok_profile_reset", text="Reset data", icon="X")
 
     def draw_interaction_template(self, layout):
