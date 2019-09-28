@@ -39,9 +39,15 @@ noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
 
 
 class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector Noise node'''
+    """
+    Triggers: Vector Noise
+    Tooltip: Affect input verts with a noise function.
+    
+    A short description for reader of node code
+    """
+
     bl_idname = 'SvNoiseNodeMK2'
-    bl_label = 'Vector Noise MK2'
+    bl_label = 'Vector Noise'
     bl_icon = 'FORCE_TURBULENCE'
 
     def changeMode(self, context):
@@ -121,10 +127,6 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             return self.label or self.name
 
+classes = [SvNoiseNodeMK2]
+register, unregister = bpy.utils.register_classes_factory(classes)
 
-def register():
-    bpy.utils.register_class(SvNoiseNodeMK2)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvNoiseNodeMK2)
