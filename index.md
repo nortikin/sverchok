@@ -227,6 +227,7 @@
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
+    SvNoiseDisplace
     SvVectorFractal
     SvLacunarityNode
     SvTurbulenceNode
