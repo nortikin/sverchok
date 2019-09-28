@@ -181,7 +181,10 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
             input_socket = self.inputs[input_idx]
             if input_socket.is_linked:
                 A = input_socket.sv_get()
-                self.outputs[output_idx].sv_set(A)
+            else:
+                A = [None]
+            self.outputs[output_idx].sv_set(A)
+
 
 classes = [SvInputSwitchNodeMOD]
 register, unregister = bpy.utils.register_classes_factory(classes)
