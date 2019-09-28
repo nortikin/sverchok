@@ -316,7 +316,7 @@ def register_node_panels(identifier, cat_list):
 
             def draw_node_item(self, context):
                 layout = self.layout
-                col = layout.column()
+                col = layout.column(align=True)
                 for item in self.category.items(context):
                     item.draw(item, col, context)
 
@@ -349,12 +349,13 @@ def register_node_panels(identifier, cat_list):
                 def draw(self, context):
                     layout = self.layout
                     layout.prop(context.scene, "sv_selected_category", text="")
+                    col = layout.column(align=True)
 
                     for category in cat_list:
                         if category.identifier != context.scene.sv_selected_category:
                             continue
                         for item in category.items(context):
-                            item.draw(item, layout, context)
+                            item.draw(item, col, context)
 
             node_panels.append(SV_PT_NodesTPanel)
             bpy.utils.register_class(SV_PT_NodesTPanel)
