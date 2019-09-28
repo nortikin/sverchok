@@ -159,6 +159,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_user_colors: StringProperty(default="")
 
     tree_link_count: IntProperty(name='keep track of current link count', default=0)
+    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
 
     @property
     def timestamp(self):
@@ -194,6 +195,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         process the Sverchok tree upon editor changes from handler
         """
+
+        if self.configuring_new_node:
+            # print('skipping global process during node init')
+            return
 
         if self.has_changed:
             # print('processing build list: because has_changed==True')
@@ -395,8 +400,19 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
+        
         if hasattr(self, "sv_init"):
-            self.sv_init(context)
+
+            try:
+                ng.configuring_new_node = True
+                self.sv_init(context)
+            except Exception as err:
+                print('nodetree.node.init failure - enjoy the error message below')
+                sys.stderr.write('ERROR: %s\n' % str(err))
+                print(sys.exc_info()[-1].tb_frame.f_code)
+                print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
+
+        ng.configuring_new_node = False
         self.set_color()
         ng.unfreeze()
 
