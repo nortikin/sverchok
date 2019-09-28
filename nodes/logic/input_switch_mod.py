@@ -23,6 +23,7 @@ MAX_SET_SIZE = 9
 MAX_NUM_SWITCHES = 9
 
 def get_indices_that_should_be_visible(node):
+    """ instead this could be composed of multiple calls to 'get_indices_from_groupnum' function """
     socket_index = 1
     vis_dict = {}
     vis_dict[0] = True # selector always visible, first socket
