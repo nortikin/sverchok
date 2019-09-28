@@ -46,6 +46,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvNoiseNodeMK2'
     bl_label = 'Vector Noise MK2'
     bl_icon = 'FORCE_TURBULENCE'
+    sv_icon = 'SV_VECTOR_NOISE'
 
     def changeMode(self, context):
         outputs = self.outputs

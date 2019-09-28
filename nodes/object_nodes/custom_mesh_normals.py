@@ -28,6 +28,7 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSetCustomMeshNormals'
     bl_label = 'Set Custom Normals'
     bl_icon = 'SNAP_NORMAL'
+    sv_icon = 'SV_CUSTOM_NORMALS'
 
     modes = [
         ("per Vert", "per Vert", "", 1),

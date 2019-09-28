@@ -38,6 +38,7 @@ class SvLacunarityNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvLacunarityNode'
     bl_label = 'Variable Lacunarity'
     bl_icon = 'FORCE_TURBULENCE'
+    sv_icon = 'SV_VECTOR_LACUNARITY'
 
     noise_type1: EnumProperty(
         items=avail_noise,

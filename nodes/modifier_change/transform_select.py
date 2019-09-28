@@ -34,6 +34,7 @@ class SvTransformSelectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTransformSelectNode'
     bl_label = 'Transform Select'
     bl_icon = 'EDITMODE_HLT'
+    sv_icon = 'SV_TRANSFORM_SELECT'
 
     maskType : EnumProperty(
         name="Mask Type", description="Mask various mesh components",

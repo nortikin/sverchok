@@ -29,6 +29,7 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDebugPrintNode'
     bl_label = 'Debug print'
     bl_icon = 'CONSOLE'
+    sv_icon = 'SV_DEBUG_PRINT'
 
     base_name = 'Data '
     multi_socket_type = 'SvStringsSocket'

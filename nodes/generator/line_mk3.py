@@ -59,6 +59,7 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvLineNodeMK3'
     bl_label = 'Line'
     bl_icon = 'GRIP'
+    sv_icon = 'SV_LINE'
 
     def update_size_socket(self, context):
         """ need to do UX transformation before updating node"""

@@ -66,6 +66,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGetAssetProperties'
     bl_label = 'Object ID Selector'
     bl_icon = 'SELECT_SET'
+    sv_icon = 'SV_OBJECT_ID_SELECTOR'
 
     def pre_updateNode(self, context):
         ''' must rebuild for each update'''

@@ -28,7 +28,7 @@ import bpy
 
 from sverchok.menu import make_node_cats, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
-from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch
+from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
 # from nodeitems_utils import _node_categories
 
@@ -61,7 +61,7 @@ def layout_draw_categories(layout, node_details):
         if hasattr(node_ref, "bl_label"):
             layout_params = dict(text=node_ref.bl_label, **node_icon(node_ref))
         elif bl_idname == 'NodeReroute':
-            layout_params = dict(text='Reroute')
+            layout_params = dict(text='Reroute',icon_value=custom_icon('SV_REROUTE'))
         else:
             continue
 
