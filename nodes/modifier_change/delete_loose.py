@@ -27,6 +27,7 @@ class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDeleteLooseNode'
     bl_label = 'Delete Loose'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DELETE_LOOSE'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')

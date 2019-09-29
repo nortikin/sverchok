@@ -54,6 +54,7 @@ class SvJoinTrianglesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvJoinTrianglesNode'
     bl_label = 'Join Triangles'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_JOIN_TRIANGLES'
 
     face_threshold: FloatProperty(
         min=0.0, step=0.1,

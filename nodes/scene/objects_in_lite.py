@@ -46,6 +46,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvObjInLite'
     bl_label = 'Objects in Lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OBJECT_IN_LITE'
 
     modifiers: BoolProperty(
         description='Apply modifier geometry to import (original untouched)',
@@ -76,10 +77,10 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
                 'Polygons': [list(p.vertices) for p in obj_data.polygons],
                 'Matrix': obj.matrix_world
             }
-            
+
             # bpy.data.meshes.remove(obj_data)
             obj.to_mesh_clear()
-            
+
             self.currently_storing = True
 
         else:
@@ -101,7 +102,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.scale_y = 4.0 if prefs.over_sized_buttons else 1
-        
+
         if not self.currently_storing:
             row.operator(callback, text='G E T').cmd = 'dget'
             row.prop(self, 'modifiers', text='', icon='MODIFIER')
@@ -120,9 +121,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             else:
                 print('ending early, no node_dict')
                 return
-        
+
         mesh_data = self.node_dict.get(hash(self))
-        
+
         for socket in self.outputs:
             if socket.is_linked:
                 socket.sv_set([mesh_data[socket.name]])
@@ -161,7 +162,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         if not obj:
             print('failed to obtain local geometry, can not add to json')
             return
-        
+
         storage['geom'] = json.dumps(flatten(obj))
 
 

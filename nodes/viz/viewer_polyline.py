@@ -109,6 +109,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     bl_idname = 'SvPolylineViewerNodeV28'
     bl_label = 'Polyline Viewer'
     bl_icon = 'MOD_CURVE'
+    sv_icon = 'SV_POLYLINE_VIEWER'
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["Multi", "Single"])]
     selected_mode: bpy.props.EnumProperty(

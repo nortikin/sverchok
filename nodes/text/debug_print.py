@@ -28,17 +28,18 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
     ''' print socket data to terminal '''
     bl_idname = 'SvDebugPrintNode'
     bl_label = 'Debug print'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'CONSOLE'
+    sv_icon = 'SV_DEBUG_PRINT'
 
     base_name = 'Data '
     multi_socket_type = 'SvStringsSocket'
-    
+
     # I wanted to show the bool so you could turn off and on individual sockets
     # but needs changes in node_s, want to think a bit more before adding an index option to
     # stringsockets, for now draw_button_ext
     print_socket: BoolVectorProperty(
         name='Print', default=defaults, size=32, update=updateNode)
-    
+
     print_data: BoolProperty(
         name='Active', description='Turn on/off printing to stdout',
         default=True, update=updateNode)

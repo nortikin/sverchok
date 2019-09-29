@@ -176,6 +176,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_idname = 'SvCurveViewerNodeV28'
     bl_label = 'Curve Viewer'
     bl_icon = 'MOD_CURVE'
+    sv_icon = 'SV_CURVE_VIEWER'
 
     selected_mode: bpy.props.EnumProperty(
         items=mode_options,

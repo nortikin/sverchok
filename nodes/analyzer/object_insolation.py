@@ -31,12 +31,12 @@ class FakeObj(object):
 
     def __init__(self, obj):
         self.matrix_local = obj.matrix_local
-        
+
         # mesh_settings = (..., True, 'RENDER')
         # data = OB.to_mesh(*mesh_settings)
         data = obj.to_mesh() # bpy.context.depsgraph, apply_modifiers=True, calc_undeformed=False)
 
-        vertices = [vert.co[:] for vert in data.vertices] 
+        vertices = [vert.co[:] for vert in data.vertices]
         polygons = [poly.vertices[:] for poly in data.polygons]
 
         self.BVH = BVHTree.FromPolygons(vertices, polygons)
@@ -47,7 +47,7 @@ class FakeObj(object):
         # obj.ray_cast returns  Return (result, location, normal, index
         # bvh.ray_cast returns: Vector location, Vector normal, int index, float distance
         #         ^--- therefor needs adjusting
-        
+
         tv = self.BVH.ray_cast(a, b)
         if tv[0] == None:
             return [False, (0, 0, 0), (1, 0, 0), -1]
@@ -61,6 +61,7 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvOBJInsolationNode'
     bl_label = 'Object ID Insolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_INSOLATION'
 
     mode: BoolProperty(name='input mode', default=False, update=updateNode)
     #mode2 = BoolProperty(name='output mode', default=False, update=updateNode)

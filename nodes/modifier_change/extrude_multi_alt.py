@@ -259,6 +259,7 @@ class SvMultiExtrudeAlt(bpy.types.Node, SverchCustomTreeNode, SvMExtrudeProps):
     ''' a SvMultiExtrudeAlt f '''
     bl_idname = 'SvMultiExtrudeAlt'
     bl_label = 'MultiExtrude Alt from addons'
+    sv_icon = 'SV_MULTI_EXTRUDE'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'verts')

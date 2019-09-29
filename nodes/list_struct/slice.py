@@ -36,6 +36,7 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListSliceNode'
     bl_label = 'List Slice'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_SLICE'
 
     level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
     start: IntProperty(name='Start', default=0, update=updateNode)

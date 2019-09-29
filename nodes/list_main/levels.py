@@ -31,6 +31,7 @@ class ListLevelsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListLevelsNode'
     bl_label = 'List Del Levels'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_DEL_LEVELS'
 
     typ: StringProperty(name='typ', default='')
     newsock: BoolProperty(name='newsock', default=False)

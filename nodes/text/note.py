@@ -40,11 +40,11 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Note '''
     bl_idname = 'NoteNode'
     bl_label = 'Note'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'INFO'
 
     text_cache = {}
     n_id: StringProperty(default='')
-    
+
     def update_text(self, context):
         self.format_text()
         # recursion protection, should be solved with better structure
@@ -52,7 +52,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             updateNode(self, context)
 
     text: StringProperty(name='text', default='your text here', update=update_text)
-    
+
     show_text: BoolProperty(default=False, name="Show text", description="Show text box in node")
 
     def format_text(self):

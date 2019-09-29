@@ -172,9 +172,10 @@ class SvNeuroElman1LNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvNeuroElman1LNode'
     bl_label = '*Neuro Elman 1 Layer'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_NEURO'
 
     Elman = SvNeuro_Elman()
-    
+
     k_learning: FloatProperty(name='k_learning', default=0.1, update=updateNode)
     gisterezis: FloatProperty(name='gisterezis', default=0.1, min=0.0, update=updateNode)
     maximum: FloatProperty(name='maximum', default=3.0, update=updateNode)

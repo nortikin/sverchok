@@ -28,6 +28,7 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'MatrixOutNode'
     bl_label = 'Matrix out'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_OUT'
 
     def sv_init(self, context):
         self.outputs.new('SvVerticesSocket', "Location")

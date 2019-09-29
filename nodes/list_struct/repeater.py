@@ -28,6 +28,7 @@ class ListRepeaterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListRepeaterNode'
     bl_label = 'List Repeater'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_REPEATER'
 
     level: IntProperty(name='level', default=1, min=0, update=updateNode)
     number: IntProperty(name='number', default=1, min=1, update=updateNode)

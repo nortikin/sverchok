@@ -54,7 +54,7 @@ class SvUVPointonMeshNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Transform vectors from UV space to Object space '''
     bl_idname = 'SvUVPointonMeshNode'
     bl_label = 'Find UV Coord on Surface'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'GROUP_UVS'
 
     object_ref: StringProperty(default='', update=updateNode)
 

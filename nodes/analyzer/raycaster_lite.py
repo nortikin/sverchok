@@ -29,6 +29,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRaycasterLiteNode'
     bl_label = 'Raycaster'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_RAYCASTER'
 
     start: bpy.props.FloatVectorProperty(default=(0,0,0), size=3, update=updateNode)
     direction: bpy.props.FloatVectorProperty(default=(0,0,-1), size=3, update=updateNode)
@@ -41,7 +42,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         si('SvStringsSocket', 'Faces')
         si('SvVerticesSocket', 'Start').prop_name = 'start'
         si('SvVerticesSocket', 'Direction').prop_name = 'direction'
-        
+
         so('SvVerticesSocket', 'Location')
         so('SvVerticesSocket', 'Normal')
         so('SvStringsSocket', 'Index')
@@ -58,7 +59,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         RL = []
 
         vert_in, face_in, start_in, direction_in = C([sock.sv_get() for sock in self.inputs])
-        
+
         for bvh, st, di in zip(*[self.svmesh_to_bvh_lists(vert_in, face_in), start_in, direction_in]):
             st, di = C([st, di])
             RL.append([bvh.ray_cast(i, i2) for i, i2 in zip(st, di)])
@@ -72,7 +73,7 @@ class SvRaycasterLiteNode(bpy.types.Node, SverchCustomTreeNode):
         if D.is_linked:
             D.sv_set([[r[3] if r[3] else 0 for r in L] for L in RL])
         if S.is_linked:
-            S.sv_set([[r[2] != None for r in L] for L in RL])    
+            S.sv_set([[r[2] != None for r in L] for L in RL])
 
 
 def register():

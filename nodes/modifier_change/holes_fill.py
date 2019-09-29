@@ -32,7 +32,7 @@ def fill_holes(vertices, edges, s):
 
     if len(edges[0]) != 2:
         return False
-    
+
     bm = bmesh_from_pydata(vertices, edges, [])
 
     bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=s)
@@ -45,6 +45,7 @@ class SvFillHolesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvFillsHoleNode'
     bl_label = 'Fill Holes'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FILL_HOLES'
 
     sides: IntProperty(
         name='Sides', description='Side to fill',

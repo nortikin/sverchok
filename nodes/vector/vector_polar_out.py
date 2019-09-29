@@ -47,9 +47,10 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'VectorPolarOutNode'
     bl_label = 'Vector polar output'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VECTOR_POLAR_OUT'
 
     func_dict = {'z': cylindrical, 'theta': spherical}
-    
+
     coord_modes = [
         ("z", "Cylinder", "Use cylindrical coordinates", 1),
         ("theta",  "Sphere", "Use spherical coordinates", 2),
@@ -64,7 +65,7 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
         # changing name of third output socket
         replaceable_socket = self.outputs[2]
         mode_name = self.coordinates
-        
+
         if mode_name in ['z', 'theta']:
             replaceable_socket.replace_socket('SvStringsSocket', new_name = mode_name)
         else:
@@ -83,7 +84,7 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "coordinates", expand=True)
         layout.prop(self, "angles_mode", expand=True)
-    
+
     def process(self):
         if not (self.outputs['rho'].is_linked or self.outputs['phi'].is_linked or self.outputs[self.coordinates].is_linked):
             return
@@ -112,7 +113,7 @@ class VectorPolarOutNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['phi'].sv_set(result_phis)
         if self.outputs[self.coordinates].is_linked:
             self.outputs[self.coordinates].sv_set(result_zs)
-    
+
 def register():
     bpy.utils.register_class(VectorPolarOutNode)
 

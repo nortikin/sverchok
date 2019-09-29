@@ -50,6 +50,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvAttractorNode'
     bl_label = 'Vector Attraction'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VECTOR_ATTRACTION'
 
     types = [
             ("Point", "Point", "Attraction to single or multiple points", 0),
@@ -64,7 +65,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             ("inverse_exp", "Inverse exponent - Exp(-R)", "", 3),
             ("gauss", "Gauss - Exp(-R^2/2)", "", 4)
         ]
-    
+
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type == 'Point')
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])
@@ -72,7 +73,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
 
     attractor_type: EnumProperty(
         name="Attractor type", items=types, default='Point', update=update_type)
-    
+
     falloff_type: EnumProperty(
         name="Falloff type", items=falloff_types, default='inverse_square', update=update_type)
 
@@ -84,7 +85,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
 
     coefficient: FloatProperty(
         name="Coefficient", default=0.5, update=updateNode)
-    
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         c = self.inputs.new('SvVerticesSocket', "Center")
@@ -151,7 +152,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
         projection = center - to_center_projection
         vector = projection - vertex
         return self.falloff(amplitude, coefficient, vector.length), vector.normalized()
-    
+
     def to_plane(self, amplitude, coefficient, vertex, centers, direction):
         center = Vector(centers[0])
         direction = Vector(direction)

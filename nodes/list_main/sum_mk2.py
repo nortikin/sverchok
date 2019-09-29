@@ -28,6 +28,7 @@ class ListSumNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListSumNodeMK2'
     bl_label = 'List Sum'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_SUM'
 
     level: IntProperty(name='level_to_count', default=1, min=1, update=updateNode)
 

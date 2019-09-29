@@ -49,6 +49,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExtrudeRegionNode'
     bl_label = 'Extrude Region'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EXTRUDE_REGION'
 
     keep_original: BoolProperty(
         name="Keep original", description="Keep original geometry",
@@ -103,11 +104,11 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "transform_mode")
         if self.transform_mode == "Matrix":
             layout.prop(self, "multiple", toggle=True)
-  
+
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         layout.prop(self, "keep_original", toggle=True)
-  
+
     def process(self):
         # inputs
         if not self.inputs['Vertices'].is_linked:
@@ -195,8 +196,8 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     height = height_per_iteration[idx]
                     scale = scale_per_iteration[idx]
-                    
-                    normal = get_avg_normal(extruded_faces) 
+
+                    normal = get_avg_normal(extruded_faces)
                     dr = normal * height
                     center = get_faces_center(extruded_faces)
                     translation = Matrix.Translation(center)

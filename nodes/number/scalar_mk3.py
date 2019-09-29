@@ -116,7 +116,7 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Scalar: Add, Sine... '''
     bl_idname = 'SvScalarMathNodeMK3'
     bl_label = 'Scalar Math'
-    sv_icon = 'SV_FUNCTION'
+    sv_icon = 'SV_SCALAR_MATH'
 
     def mode_change(self, context):
         self.update_sockets()

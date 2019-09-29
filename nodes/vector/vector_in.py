@@ -44,12 +44,12 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator vectors '''
     bl_idname = 'GenVectorsNode'
     bl_label = 'Vector in'
-    sv_icon = 'SV_COMBINE_IN'
+    sv_icon = 'SV_VECTOR_IN'
 
     x_: FloatProperty(name='X', description='X', default=0.0, precision=3, update=updateNode)
     y_: FloatProperty(name='Y', description='Y', default=0.0, precision=3, update=updateNode)
     z_: FloatProperty(name='Z', description='Z', default=0.0, precision=3, update=updateNode)
-    
+
     advanced_mode: BoolProperty(name='deep copy', update=updateNode, default=True)
     show_3d_cursor_button: BoolProperty(name='show button', update=updateNode, default=False)
 
@@ -71,7 +71,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.row().prop(self, 'advanced_mode')
-        
+
     def rclick_menu(self, context, layout):
         layout.prop(self, "advanced_mode", text="use deep copy")
         layout.prop(self, "show_3d_cursor_button", text="show 3d cursor button")
@@ -80,7 +80,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
             get_cursor = layout.operator(opname, text='Vector from 3D Cursor', icon='PIVOT_CURSOR')
             get_cursor.nodename = self.name
             get_cursor.treename = self.id_data.name
-            
+
     def process(self):
         if not self.outputs['Vectors'].is_linked:
             return
@@ -90,12 +90,12 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         Z_ = inputs['Z'].sv_get()
         series_vec = []
         max_obj = max(map(len, (X_, Y_, Z_)))
-        
+
         fullList_main = fullList_deep_copy if self.advanced_mode else fullList
         fullList_main(X_, max_obj)
         fullList_main(Y_, max_obj)
         fullList_main(Z_, max_obj)
-            
+
         for i in range(max_obj):
 
             max_v = max(map(len, (X_[i], Y_[i], Z_[i])))

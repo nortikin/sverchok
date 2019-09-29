@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -96,9 +96,9 @@ factor_buffer_dict = {
 
 vertex_shader = '''
     uniform mat4 ModelViewProjectionMatrix;
-    
+
     /* Keep in sync with intern/opencolorio/gpu_shader_display_transform_vertex.glsl */
-    
+
     in vec2 texCoord;
     in vec2 pos;
 
@@ -188,12 +188,14 @@ def simple_screen(x, y, args):
 
 class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Texture Viewer node 
+    Triggers: Texture Viewer node
     Tooltip: Generate textures and images from inside Sverchok
     """
 
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
+    bl_icon = 'IMAGE'
+    sv_icon = 'SV_TEXTURE_VIEWER'
     texture = {}
 
     def wrapped_update(self, context):
@@ -342,7 +344,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         width_socket = inew('SvStringsSocket', "Width")
         width_socket.prop_name = 'width_custom_tex'
         width_socket.hide_safe = True
-        
+
         height_socket = inew('SvStringsSocket', "Height")
         height_socket.prop_name = 'height_custom_tex'
         height_socket.hide_safe = True
@@ -385,7 +387,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             x, y = self.xy_offset
             gl_color_constant = gl_color_dict.get(self.color_mode)
 
-        
+
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
@@ -415,7 +417,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     def get_preferences(self):
         # supplied with default, forces at least one value :)
         props = get_params({
-            'render_scale': 1.0, 
+            'render_scale': 1.0,
             'render_location_xy_multiplier': 1.0})
         return props.render_scale, props.render_location_xy_multiplier
 
@@ -478,7 +480,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             text += f'{width} x {height}'
         else:
             text += str(size_tex_dict.get(self.selected_mode)) + "^2"
-        
+
         return text
 
 

@@ -30,6 +30,7 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListShuffleNode'
     bl_label = 'List Shuffle'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_SHUFFLE'
 
     level: IntProperty(name='level_to_Shuffle', default=2, min=1, update=updateNode)
     seed: IntProperty(name='Seed', default=0, update=updateNode)

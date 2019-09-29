@@ -29,6 +29,7 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'MatrixApplyNode'
     bl_label = 'Matrix Apply (verts)'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_APPLY'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vectors")

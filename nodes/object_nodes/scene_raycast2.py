@@ -26,6 +26,7 @@ class SvSCNRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSCNRayCastNodeMK2'
     bl_label = 'Scene Raycast MK2' #new is nonsense name
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_RAYCASTER_SCENE'
 
     def sv_init(self, context):
         si,so = self.inputs.new,self.outputs.new

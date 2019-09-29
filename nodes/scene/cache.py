@@ -30,6 +30,7 @@ class SvCacheNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvCacheNode'
     bl_label = 'Cache'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CACHE'
 
 
     n_id: StringProperty()

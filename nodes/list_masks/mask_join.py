@@ -28,6 +28,7 @@ class SvMaskJoinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMaskJoinNode'
     bl_label = 'List Mask Join (in)'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_COMBINE_IN'
 
     level: IntProperty(name="Level", default=1, min=1, update=updateNode)
     choice: BoolProperty(name="Choice", default=False, update=updateNode)

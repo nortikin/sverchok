@@ -34,6 +34,7 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvListSplitNode'
     bl_label = 'List Split'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_SPLIT'
 
     def change_mode(self, context):
         if self.unwrap:

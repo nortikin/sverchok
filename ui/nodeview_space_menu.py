@@ -28,7 +28,7 @@ import bpy
 
 from sverchok.menu import make_node_cats, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
-from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch
+from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
 # from nodeitems_utils import _node_categories
 
@@ -61,7 +61,7 @@ def layout_draw_categories(layout, node_details):
         if hasattr(node_ref, "bl_label"):
             layout_params = dict(text=node_ref.bl_label, **node_icon(node_ref))
         elif bl_idname == 'NodeReroute':
-            layout_params = dict(text='Reroute')
+            layout_params = dict(text='Reroute',icon_value=custom_icon('SV_REROUTE'))
         else:
             continue
 
@@ -114,22 +114,22 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
         layout.menu("NODEVIEW_MT_AddCAD", **icon('TOOL_SETTINGS'))
         layout.separator()
-        layout.menu("NODEVIEW_MT_AddNumber")
-        layout.menu("NODEVIEW_MT_AddVector")
+        layout.menu("NODEVIEW_MT_AddNumber", **icon("SV_NUMBER"))
+        layout.menu("NODEVIEW_MT_AddVector", **icon("SV_VECTOR"))
         layout.menu("NODEVIEW_MT_AddMatrix", **icon('EMPTY_AXIS'))
         layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
-        layout.menu("NODEVIEW_MT_AddText")
+        layout.menu("NODEVIEW_MT_AddText", icon='TEXT')
         layout.menu("NODEVIEW_MT_AddScene", **icon('SCENE_DATA'))
-        layout.menu("NODEVIEW_MT_AddLayout", **icon("SV_LAYOUT"))
+        layout.menu("NODEVIEW_MT_AddLayout", icon='NODETREE')
         layout.menu("NODE_MT_category_SVERCHOK_BPY_Data", icon="BLENDER")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNetwork", **icon("SYSTEM"))
         layout.menu("NODEVIEW_MT_AddBetas", **icon("SV_BETA"))
         layout.menu("NODEVIEW_MT_AddAlphas", **icon("SV_ALPHA"))
-        layout.separator() 
+        layout.separator()
         layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
         layout.menu("NODEVIEW_MT_AddPresetOps", icon="SETTINGS")
 

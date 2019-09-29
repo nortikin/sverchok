@@ -39,6 +39,7 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvEdgeAnglesNode'
     bl_label = 'Angles at the edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_ANGLES_AT_EDGES'
 
     signed: BoolProperty(name="Signed",
         description="Return negative angle for concave edges",
@@ -88,7 +89,7 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.degenerated_mode == "default":
             return angle
         return None
-    
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Edges")

@@ -227,9 +227,10 @@
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
-    SvVectorFractal
-    SvLacunarityNode
     SvTurbulenceNode
+    SvLacunarityNode
+    SvVectorFractal
+
 
 ## Matrix
     SvMatrixGenNodeMK2

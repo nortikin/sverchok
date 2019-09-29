@@ -29,10 +29,11 @@ class SvMatrixNormalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixNormalNode'
     bl_label = 'Matrix normal'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_NORMAL'
 
     F = ['X', 'Y', 'Z', '-X', '-Y', '-Z']
     S = ['X', 'Y', 'Z']
-    
+
     track: EnumProperty(name="track", default=F[4], items=e(F), update=updateNode)
     up: EnumProperty(name="up", default=S[2], items=e(S), update=updateNode)
 

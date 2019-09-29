@@ -52,6 +52,7 @@ class SvOBJRayCastNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvOBJRayCastNodeMK2'
     bl_label = 'Object ID Raycast MK2'  # new is nonsense name
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_RAYCASTER_OBJECT_ID'
 
     mode: BoolProperty(name='input mode', default=False, update=updateNode)
     mode2: BoolProperty(name='output mode', default=False, update=updateNode)

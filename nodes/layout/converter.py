@@ -25,6 +25,7 @@ class ConverterNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ConverterNode'
     bl_label = 'Socket Converter'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SOCKET_CONVERTER'
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "data")

@@ -100,16 +100,17 @@ class SvInterpolationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvInterpolationNodeMK2'
     bl_label = 'Vector Interpolation mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_INTERPOLATE_UV'
 
     t_in_x: FloatProperty(name="tU", default=.5, min=0, max=1, precision=5, update=updateNode)
     t_in_y: FloatProperty(name="tV", default=.5, min=0, max=1, precision=5, update=updateNode)
     defgrid: BoolProperty(name='default_grid', default=True, update=updateNode)
-    
+
     regimes = [
         ('P', 'Pattern', "Pattern", 0),
         ('G', 'Grid', "Grid", 1)]
     regime: EnumProperty(name='regime', default='G', items=regimes, update=updateNode)
-    
+
     directions = [
         ('UV', 'UV', "Two directions", 0),
         ('U', 'U', "One direction", 1)]

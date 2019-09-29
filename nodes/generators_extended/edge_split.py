@@ -31,6 +31,7 @@ class SvSplitEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Split Edges '''
     bl_idname = 'SvSplitEdgesNode'
     bl_label = 'Split Edges'
+    sv_icon = 'SV_SPLIT_EDGES'
     # sv_icon = 'SV_EDGE_SPLIT'
 
     factor: FloatProperty(
