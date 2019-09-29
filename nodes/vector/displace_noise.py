@@ -11,7 +11,7 @@ from math import sqrt
 
 import bpy
 from bpy.props import EnumProperty, IntProperty, FloatProperty, BoolProperty
-from mathutils import noise
+from mathutils import noise, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_degenerate, match_long_repeat
@@ -63,8 +63,8 @@ class SvNoiseDisplace(bpy.types.Node, SverchCustomTreeNode):
 
         #    self.inputs["Rescale"].hide != self.displace:
 
-        #    self.inputs["Rescale"].hide_safe = not self.displace
-        #    self.inputs["Amplify"].hide_safe = not self.displace
+        self.inputs["Rescale"].hide_safe = not self.displace
+        self.inputs["Amplify"].hide_safe = not self.displace
         #    # self.process()
         pass
 
@@ -131,13 +131,19 @@ class SvNoiseDisplace(bpy.types.Node, SverchCustomTreeNode):
 
             noise.seed_set(seed_val)
 
-            if not self.inputs['Amplify'].hide:
+            if not self.inputs['Amplify'].hide and self.displace:
                 
                 # doesn't handle reading inputs yet.
                 reamp = self.amplify
                 vrescale = self.rescale
+                vec_scale = lambda v, scale: (v[0] * scale, v[1] * scale, v[2] * scale)
 
-                out.append([(((vrescale * noise_function(v, noise_basis=self.noise_type))*1/vrescale)*reamp) + Vector(v) for v in obj])
+                strict_evaluation = []
+                strict_obtain = strict_evaluation.append
+                premultiplied_v = [vec_scale(v, vrescale) for v in obj]
+                for v, original_v in zip(premultiplied_v, obj):
+                    strict_obtain((noise_function(v, noise_basis=self.noise_type) / vrescale * reamp) + Vector(original_v))
+                out.append(strict_evaluation)
             else:
                 out.append([noise_function(v, noise_basis=self.noise_type) for v in obj])
 
