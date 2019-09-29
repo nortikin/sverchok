@@ -211,6 +211,32 @@ class SverchSeparator(object):
     def poll(cls, context):
         return context.space_data.tree_type == 'SverchCustomTreeType'
 
+class SvPackedLayout(object):
+    def __init__(self, parent, columns=4):
+        self.parent = parent
+        self.columns = columns
+        self._column = 0
+        self._row = None
+
+    def separator(self):
+        self.parent.separator()
+
+    def operator(self, operator_name, **params):
+        if 'icon_value' in params or 'icon' in params:
+            if self._row is None:
+                self._row = self.parent.row(align=True)
+                self._row.scale_x = self._row.scale_y = 1.5
+            params['text'] = ""
+            op = self._row.operator(operator_name, **params)
+            self._column = (self._column + 1) % self.columns
+            if self._column == 0:
+                self._row = None
+            return op
+        else:
+            self._row = None
+            self._column = 0
+            return self.parent.operator(operator_name, **params)
+
 def get_node_idname_for_operator(nodetype):
     """Select valid bl_idname for node to create node adding operator bl_idname."""
     rna = get_node_class_reference(nodetype)
@@ -332,7 +358,7 @@ def register_node_panels(identifier, cat_list):
 
             def draw_node_item(self, context):
                 layout = self.layout
-                col = layout.column(align=True)
+                col = SvPackedLayout(layout.column(align=True))
                 for item in self.category.items(context):
                     item.draw(item, col, context)
 
@@ -365,7 +391,7 @@ def register_node_panels(identifier, cat_list):
                 def draw(self, context):
                     layout = self.layout
                     layout.prop(context.scene, "sv_selected_category", text="")
-                    col = layout.column(align=True)
+                    col = SvPackedLayout(layout.column(align=True))
 
                     for category in cat_list:
                         if category.identifier != context.scene.sv_selected_category:
