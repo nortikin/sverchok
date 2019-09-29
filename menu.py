@@ -30,6 +30,7 @@ import sverchok
 from sverchok.utils import get_node_class_reference
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
+from sverchok.utils.context_managers import sv_preferences
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
@@ -108,6 +109,8 @@ def juggle_and_join(node_cats):
 # So, we have to remember them in order to unregister them when needed.
 node_add_operators = {}
 
+node_panels = []
+
 class SverchNodeItem(object):
     """
     A local replacement of nodeitems_utils.NodeItem.
@@ -126,6 +129,13 @@ class SverchNodeItem(object):
         self.poll = poll
 
         self.make_add_operator()
+
+    @staticmethod
+    def new(name):
+        if name == 'separator':
+            return SverchSeparator()
+        else:
+            return SverchNodeItem(name)
 
     @property
     def label(self):
@@ -191,6 +201,48 @@ class SverchNodeItem(object):
             ops = add.settings.add()
             ops.name = setting[0]
             ops.value = setting[1]
+
+class SverchSeparator(object):
+    @staticmethod
+    def draw(self, layout, context):
+        layout.separator()
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'SverchCustomTreeType'
+
+class SvPackedLayout(object):
+    def __init__(self, parent, columns=4):
+        self.parent = parent
+        self.columns = columns
+        self._column = 0
+        self._row = None
+
+    @staticmethod
+    def get(icons_only, parent, columns):
+        if icons_only:
+            return SvPackedLayout(parent, columns)
+        else:
+            return parent
+
+    def separator(self):
+        self.parent.separator()
+
+    def operator(self, operator_name, **params):
+        if 'icon_value' in params or 'icon' in params:
+            if self._row is None:
+                self._row = self.parent.row(align=True)
+                self._row.scale_x = self._row.scale_y = 1.5
+            params['text'] = ""
+            op = self._row.operator(operator_name, **params)
+            self._column = (self._column + 1) % self.columns
+            if self._column == 0:
+                self._row = None
+            return op
+        else:
+            self._row = None
+            self._column = 0
+            return self.parent.operator(operator_name, **params)
 
 def get_node_idname_for_operator(nodetype):
     """Select valid bl_idname for node to create node adding operator bl_idname."""
@@ -300,19 +352,76 @@ def make_categories():
             SverchNodeCategory(
                 name_big,
                 category,
-                items=[SverchNodeItem(props[0]) for props in nodes if not props[0] == 'separator']))
+                items=[SverchNodeItem.new(props[0]) for props in nodes]))
         node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 
     return node_categories, node_count, original_categories
 
+def register_node_panels(identifier, cat_list):
+    global node_panels
+    with sv_preferences() as prefs:
+        if prefs.node_panels == "N":
+
+            def draw_node_item(self, context):
+                layout = self.layout
+                col = SvPackedLayout.get(prefs.node_panels_icons_only, layout.column(align=True), prefs.node_panels_columns)
+                for item in self.category.items(context):
+                    item.draw(item, col, context)
+
+            for category in cat_list:
+                panel_type = type("NODE_PT_category_sv_" + category.identifier, (bpy.types.Panel,), {
+                        "bl_space_type": "NODE_EDITOR",
+                        "bl_region_type": "UI",
+                        "bl_label": category.name,
+                        "bl_category": category.name,
+                        "category": category,
+                        "poll": category.poll,
+                        "draw": draw_node_item,
+                    })
+                node_panels.append(panel_type)
+                bpy.utils.register_class(panel_type)
+
+        elif prefs.node_panels == "T":
+
+            class SV_PT_NodesTPanel(bpy.types.Panel):
+                """Nodes panel under the T panel"""
+
+                bl_space_type = "NODE_EDITOR"
+                bl_region_type = "TOOLS"
+                bl_label = "Sverchok Nodes"
+
+                @classmethod
+                def poll(cls, context):
+                    return context.space_data.tree_type == 'SverchCustomTreeType'
+
+                def draw(self, context):
+                    layout = self.layout
+                    layout.prop(context.scene, "sv_selected_category", text="")
+                    col = SvPackedLayout.get(prefs.node_panels_icons_only, layout.column(align=True), prefs.node_panels_columns)
+
+                    for category in cat_list:
+                        if category.identifier != context.scene.sv_selected_category:
+                            continue
+                        for item in category.items(context):
+                            item.draw(item, col, context)
+
+            node_panels.append(SV_PT_NodesTPanel)
+            bpy.utils.register_class(SV_PT_NodesTPanel)
+
+def unregister_node_panels():
+    global node_panels
+    for panel_type in reversed(node_panels):
+        bpy.utils.unregister_class(panel_type)
 
 def reload_menu():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
+        unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
         unregister_node_add_operators()
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+    register_node_panels("SVERCHOK", menu)
     register_node_add_operators()
     
     build_help_remap(original_categories)
@@ -331,8 +440,17 @@ def unregister_node_add_operators():
 def register():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
+        unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     nodeitems_utils.register_node_categories("SVERCHOK", menu)
+
+    categories = [(category.identifier, category.name, category.name, i) for i, category in enumerate(menu)]
+    bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
+                        name = "Category",
+                        items = categories
+                    )
+
+    register_node_panels("SVERCHOK", menu)
 
     build_help_remap(original_categories)
     print(f"sv: {node_count} nodes.")
@@ -340,6 +458,8 @@ def register():
 
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
+        unregister_node_panels()
         nodeitems_utils.unregister_node_categories("SVERCHOK")
     unregister_node_add_operators()
+    del bpy.types.Scene.sv_selected_category
 
