@@ -37,6 +37,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvIDXViewer28'
     bl_label = 'Viewer Index+'
     bl_icon = 'INFO'
+    sv_icon = 'SV_INDEX_VIEWER'
 
     def get_scale(self):
         try:

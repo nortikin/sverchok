@@ -100,6 +100,7 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixViewer28'
     bl_label = 'Matrix View'
     bl_icon = 'EMPTY_AXIS'
+    sv_icon = 'SV_MATRIX_VIEWER'
 
 
     color_start: FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)

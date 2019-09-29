@@ -159,10 +159,15 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
 
 
 class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
-
+    """
+    Triggers: Output Skin Mesh
+    Tooltip: Outputs Blender Edges + Skin Modifier + Subdivision Surface
+    
+    """
     bl_idname = 'SvSkinViewerNodeV28'
     bl_label = 'Skin Mesher'
     bl_icon = 'MOD_SKIN'
+    sv_icon = 'SV_SKIN_MESHER'
 
     general_radius_x: FloatProperty(
         name='general_radius_x',

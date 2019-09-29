@@ -34,6 +34,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextureViewerNodeLite'
     bl_label = 'Texture viewer lite'
     bl_icon = 'IMAGE'
+    sv_icon = 'SV_TEXTURE_VIEWER_LITE'
     texture = {}
 
     n_id: StringProperty(default='')

@@ -195,6 +195,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTextureViewerNode'
     bl_label = 'Texture viewer'
     bl_icon = 'IMAGE'
+    sv_icon = 'SV_TEXTURE_VIEWER'
     texture = {}
 
     def wrapped_update(self, context):

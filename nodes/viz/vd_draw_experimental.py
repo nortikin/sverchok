@@ -330,6 +330,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVDExperimental'
     bl_label = 'VD Experimental'
     bl_icon = 'GREASEPENCIL'
+    sv_icon = 'SV_DRAW_VIEWER'
 
     node_dict = {}
 
