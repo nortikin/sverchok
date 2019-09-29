@@ -218,6 +218,13 @@ class SvPackedLayout(object):
         self._column = 0
         self._row = None
 
+    @staticmethod
+    def get(icons_only, parent, columns):
+        if icons_only:
+            return SvPackedLayout(parent, columns)
+        else:
+            return parent
+
     def separator(self):
         self.parent.separator()
 
@@ -358,7 +365,7 @@ def register_node_panels(identifier, cat_list):
 
             def draw_node_item(self, context):
                 layout = self.layout
-                col = SvPackedLayout(layout.column(align=True))
+                col = SvPackedLayout.get(prefs.node_panels_icons_only, layout.column(align=True), prefs.node_panels_columns)
                 for item in self.category.items(context):
                     item.draw(item, col, context)
 
@@ -391,7 +398,7 @@ def register_node_panels(identifier, cat_list):
                 def draw(self, context):
                     layout = self.layout
                     layout.prop(context.scene, "sv_selected_category", text="")
-                    col = SvPackedLayout(layout.column(align=True))
+                    col = SvPackedLayout.get(prefs.node_panels_icons_only, layout.column(align=True), prefs.node_panels_columns)
 
                     for category in cat_list:
                         if category.identifier != context.scene.sv_selected_category:

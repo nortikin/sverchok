@@ -197,6 +197,19 @@ class SverchokPreferences(AddonPreferences):
         name = "Display node buttons",
         description = "Where to show node insertion buttons. Restart Blender to apply changes.",
         default = "X")
+    
+    node_panels_icons_only : BoolProperty(
+            name = "Display icons only",
+            description = "Show node icon only when icon has an icon, otherwise show it's name",
+            default = True
+        )
+
+    node_panels_columns : IntProperty(
+            name = "Columns",
+            description = "Number of icon panels per row",
+            default = 4,
+            min = 2, max = 12
+        )
 
     enable_live_objin: BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
@@ -276,7 +289,15 @@ class SverchokPreferences(AddonPreferences):
             col1 = col_split.column()
             col1.label(text="UI:")
             col1.prop(self, "show_icons")
-            col1.prop(self, "node_panels")
+
+            toolbar_box = col1.box()
+            toolbar_box.label(text="Node toolbars")
+            toolbar_box.prop(self, "node_panels")
+            if self.node_panels != "X":
+                toolbar_box.prop(self, "node_panels_icons_only")
+                if self.node_panels_icons_only:
+                    toolbar_box.prop(self, "node_panels_columns")
+
             col1.prop(self, "over_sized_buttons")
             col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
             col1.prop(self, "external_editor", text="Ext Editor")
