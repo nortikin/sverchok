@@ -130,6 +130,13 @@ class SverchNodeItem(object):
 
         self.make_add_operator()
 
+    @staticmethod
+    def new(name):
+        if name == 'separator':
+            return SverchSeparator()
+        else:
+            return SverchNodeItem(name)
+
     @property
     def label(self):
         if self._label:
@@ -194,6 +201,15 @@ class SverchNodeItem(object):
             ops = add.settings.add()
             ops.name = setting[0]
             ops.value = setting[1]
+
+class SverchSeparator(object):
+    @staticmethod
+    def draw(self, layout, context):
+        layout.separator()
+
+    @classmethod
+    def poll(cls, context):
+        return context.space_data.tree_type == 'SverchCustomTreeType'
 
 def get_node_idname_for_operator(nodetype):
     """Select valid bl_idname for node to create node adding operator bl_idname."""
@@ -303,7 +319,7 @@ def make_categories():
             SverchNodeCategory(
                 name_big,
                 category,
-                items=[SverchNodeItem(props[0]) for props in nodes if not props[0] == 'separator']))
+                items=[SverchNodeItem.new(props[0]) for props in nodes]))
         node_count += len(nodes)
     node_categories.append(SverchNodeCategory("SVERCHOK_GROUPS", "Groups", items=sv_group_items))
 
