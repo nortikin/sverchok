@@ -37,12 +37,17 @@ class SvNoiseDisplace(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvNoiseDisplace'
-    bl_label = 'Vector Noise'
+    bl_label = 'Vector Noise Displace'
     bl_icon = 'FORCE_TURBULENCE'
 
     def changeMode(self, context):
         outputs = self.outputs
-        self.set_sockets_associated_with_displacemode(context)
+        
+        #if self.displace and not self.out_mode == 'Vector':
+        #    self.displace = False
+        
+        #self.set_sockets_associated_with_displacemode(context)
+
         if self.out_mode == 'SCALAR':
             if 'Noise S' not in outputs:
                 outputs[0].replace_socket('SvStringsSocket', 'Noise S')
@@ -54,9 +59,14 @@ class SvNoiseDisplace(bpy.types.Node, SverchCustomTreeNode):
 
     def set_sockets_associated_with_displacemode(self, context):
         # this will disconnect links. fix that.
-        self.inputs["Rescale"].hide_safe = not self.displace
-        self.inputs["Amplify"].hide_safe = not self.displace
-        # self.process()
+        # if self.out_mode == 'Vector':
+
+        #    self.inputs["Rescale"].hide != self.displace:
+
+        #    self.inputs["Rescale"].hide_safe = not self.displace
+        #    self.inputs["Amplify"].hide_safe = not self.displace
+        #    # self.process()
+        pass
 
     out_modes = [
         ('SCALAR', 'Scalar', 'Scalar output', '', 1),
@@ -85,10 +95,10 @@ class SvNoiseDisplace(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
-        R = self.inputs.new('SvStringsSocket', 'Rescale').prop_name = 'rescale'
-        A = self.inputs.new('SvStringsSocket', 'Amplify').prop_name = 'amplify'
-        R.hide_safe = True
-        A.hide_safe = True
+        self.inputs.new('SvStringsSocket', 'Rescale').prop_name = 'rescale'
+        self.inputs.new('SvStringsSocket', 'Amplify').prop_name = 'amplify'
+        self.inputs['Rescale'].hide_safe = True
+        self.inputs['Amplify'].hide_safe = True
 
         self.outputs.new('SvVerticesSocket', 'Noise V')
 
@@ -121,9 +131,12 @@ class SvNoiseDisplace(bpy.types.Node, SverchCustomTreeNode):
 
             noise.seed_set(seed_val)
 
-            if self.out_mode == 'Vector' and self.displace:
+            if not self.inputs['Amplify'].hide:
+                
+                # doesn't handle reading inputs yet.
                 reamp = self.amplify
                 vrescale = self.rescale
+
                 out.append([(((vrescale * noise_function(v, noise_basis=self.noise_type))*1/vrescale)*reamp) + Vector(v) for v in obj])
             else:
                 out.append([noise_function(v, noise_basis=self.noise_type) for v in obj])

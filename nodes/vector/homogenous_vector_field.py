@@ -32,13 +32,13 @@ class SvHomogenousVectorField(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvHomogenousVectorField'
     bl_label = 'Vector P Field'
 
-    xdim__: IntProperty(default=2, min=1, update=updateNode)
-    ydim__: IntProperty(default=3, min=1, update=updateNode)
-    zdim__: IntProperty(default=4, min=1, update=updateNode)
-    sizex__: FloatProperty(default=1.0, min=.01, update=updateNode)
-    sizey__: FloatProperty(default=1.0, min=.01, update=updateNode)
-    sizez__: FloatProperty(default=1.0, min=.01, update=updateNode)
-    seed: IntProperty(default=0, min=0, update=updateNode)
+    xdim__: IntProperty(name='x dim', default=2, min=1, update=updateNode)
+    ydim__: IntProperty(name='y dim', default=3, min=1, update=updateNode)
+    zdim__: IntProperty(name='z dim', default=4, min=1, update=updateNode)
+    sizex__: FloatProperty(name='size x', default=1.0, min=.01, update=updateNode)
+    sizey__: FloatProperty(name='size y', default=1.0, min=.01, update=updateNode)
+    sizez__: FloatProperty(name='size z', default=1.0, min=.01, update=updateNode)
+    seed: IntProperty(name='seed', default=0, min=0, update=updateNode)
 
     randomize_factor: FloatProperty(name='randomize', default=0.0, min=0.0, update=updateNode)
     rm_doubles_distance: FloatProperty(name='rm distance', default=0.0, update=updateNode)
