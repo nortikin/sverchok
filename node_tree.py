@@ -407,10 +407,8 @@ class SverchCustomTreeNode:
                 ng.configuring_new_node = True
                 self.sv_init(context)
             except Exception as err:
-                print('nodetree.node.init failure - enjoy the error message below')
+                print('nodetree.node.sv_init failure - stare at the error message below')
                 sys.stderr.write('ERROR: %s\n' % str(err))
-                print(sys.exc_info()[-1].tb_frame.f_code)
-                print('Error on line {}'.format(sys.exc_info()[-1].tb_lineno))
 
         ng.configuring_new_node = False
         self.set_color()
