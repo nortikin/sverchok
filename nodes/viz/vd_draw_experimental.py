@@ -26,6 +26,7 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
+from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.sv_obj_baker import cache_viewer_baker
 
@@ -301,6 +302,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     extended_matrix : BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
+
     # glGet with argument GL_POINT_SIZE_RANGE
     point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=4.0, min=1.0, max=15.0)
     line_width: IntProperty(description="glLineWidth( GLfloat width)", update=updateNode, default=1, min=1, max=5)
@@ -313,7 +315,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
-    custom_shader_location: StringProperty(update=wrapped_update)
+    custom_shader_location: StringProperty(update=wrapped_update, name='custom shader location')
 
     selected_draw_mode: EnumProperty(
         items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
@@ -321,12 +323,18 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         default="flat", update=updateNode
     )
 
+    def configureAttrSocket(self, context):
+        self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
+
+    node_ui_show_attrs_socket: BoolProperty(default=False, name='show attrs socket', update=configureAttrSocket)
+
     def sv_init(self, context):
         inew = self.inputs.new
         inew('SvVerticesSocket', 'verts')
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
+        inew('SvStringsSocket', 'attrs').hide = True
         self.node_dict[hash(self)] = {}
 
     def draw_buttons(self, context, layout):
@@ -370,7 +378,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.prop(self, 'draw_gl_wireframe')
         layout.prop(self, 'draw_gl_polygonoffset')
-    
+        layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
+
     def fill_config(self):
 
         config = lambda: None
@@ -455,6 +464,20 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             config.batch = batch_for_shader(config.shader, 'TRIS', {"position": geom.verts}, indices=geom.faces)
 
     def process(self):
+
+        if self.node_ui_show_attrs_socket and not self.inputs['attrs'].hide and self.inputs['attrs'].is_linked:
+            socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
+
+            if socket_acquired_attrs:
+                try:
+                    with hard_freeze(self) as node:
+                        for k, new_value in socket_acquired_attrs[0].items():
+                            print(f"setattr(node, {k}, {new_value})")
+                            setattr(node, k, new_value)
+                except Exception as err:
+                    print('error inside socket_acquired_attrs: ', err)
+                    self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
+
         if not (self.id_data.sv_show and self.activate):
             callback_disable(node_id(self))
             return
