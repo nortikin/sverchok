@@ -192,7 +192,7 @@ def draw_fragment(context, args):
 def draw_faces(context, args):
     geom, config = args
 
-    bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
     if config.display_edges:
         draw_uniform('LINES', geom.verts, geom.edges, config.line4f, config.line_width)
 
@@ -201,8 +201,8 @@ def draw_faces(context, args):
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
-        bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-        bgl.glPolygonOffset(1.0, 1.0)
+        # bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        # bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade == "flat":
             draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
@@ -223,7 +223,7 @@ def draw_faces(context, args):
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
-    bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
 def get_shader_data(named_shader=None):
     source = bpy.data.texts[named_shader].as_string()
