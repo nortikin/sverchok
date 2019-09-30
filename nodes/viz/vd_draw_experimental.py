@@ -352,14 +352,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 colors_column.prop(self, "custom_shader_location", icon='TEXT', text='')
 
         row = layout.row(align=True)
-        op1 = row.operator('node.sverchok_mesh_baker_mk3',icon='OUTLINER_OB_MESH', text="B A K E")
-        op1.idname = self.name
-        op1.idtree = self.id_data.name
-
+        self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
         row.separator()
-        op2 = row.operator("node.view3d_align_from", text='', icon='CURSOR')
-        op2.idname = self.name
-        op2.idtree = self.id_data.name
+        self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
