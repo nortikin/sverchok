@@ -463,8 +463,14 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             config.batch = batch_for_shader(config.shader, 'TRIS', {"position": geom.verts}, indices=geom.faces)
 
-    def process(self):
+    def handle_attr_socket(self):
+        """
+        this socket expects input wrapped. once.
 
+            [  {attr: attr_vale, attr2: attr2_value } ]
+
+        """
+ 
         if self.node_ui_show_attrs_socket and not self.inputs['attrs'].hide and self.inputs['attrs'].is_linked:
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
@@ -477,6 +483,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 except Exception as err:
                     print('error inside socket_acquired_attrs: ', err)
                     self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
+
+    def process(self):
+
+        self.handle_attr_socket()
 
         if not (self.id_data.sv_show and self.activate):
             callback_disable(node_id(self))
