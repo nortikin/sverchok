@@ -27,6 +27,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 from sverchok.utils.sv_mesh_utils import mesh_join
+from sverchok.utils.sv_obj_baker import cache_viewer_baker
 
 default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -51,96 +52,6 @@ default_fragment_shader = '''
         gl_FragColor = vec4(pos * brightness, 1.0);
     }
 '''
-
-cache_viewer_baker = {}
-
-
-class SvObjBakeMK3(bpy.types.Operator):
-    """ B A K E   OBJECTS """
-    bl_idname = "node.sverchok_mesh_baker_mk3"
-    bl_label = "Sverchok mesh baker mk3"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    idname: StringProperty(
-        name='idname',
-        description='name of parent node',
-        default='')
-
-    idtree: StringProperty(
-        name='idtree',
-        description='name of parent tree',
-        default='')
-
-    def execute(self, context):
-        global cache_viewer_baker
-
-        node_group = bpy.data.node_groups[self.idtree]
-        node = node_group.nodes[self.idname]
-        nid = node_id(node)
-
-        matrix_cache = cache_viewer_baker[nid + 'm']
-        vertex_cache = cache_viewer_baker[nid + 'v']
-        edg_cache = cache_viewer_baker[nid + 'e']
-        pol_cache = cache_viewer_baker[nid + 'p']
-
-        if matrix_cache and not vertex_cache:
-            return {'CANCELLED'}
-
-        v = dataCorrect(vertex_cache)
-        e = self.dataCorrect3(edg_cache)
-        p = self.dataCorrect3(pol_cache)
-        m = self.dataCorrect2(matrix_cache, v)
-        self.config = node
-        self.makeobjects(v, e, p, m)
-        return {'FINISHED'}
-
-    def dataCorrect2(self, destination, obj):
-        if destination:
-            return destination
-        return [Matrix() for v in obj]
-
-    def dataCorrect3(self, destination, fallback=[]):
-        if destination:
-            return dataCorrect(destination)
-        return fallback
-
-    def makeobjects(self, vers, edg, pol, mats):
-        objects = {}
-        for i, m in enumerate(mats):
-            v, e, p = vers[i], edg[i], pol[i]
-            objects[str(i)] = self.makemesh(i, v, e, p, m)
-
-        for ob, me in objects.values():
-            bpy.context.scene.collection.objects.link(ob)
-
-    def validate_indices(self, ident_num, v, idx_list, kind_list):
-        outlist = []
-        n = len(v)
-        for idx, sublist in enumerate(idx_list):
-            tlist = sublist
-            if min(sublist) < 0:
-                tlist = [(i if i >= 0 else n + i) for i in sublist]
-                print('vdmk2 input fixing, converted negative indices to positive')
-                print(sublist, ' ---> ', tlist)
-
-            outlist.append(tlist)
-        return outlist
-
-    def makemesh(self, i, v, e, p, m):
-        name = 'Sv_' + str(i)
-        me = bpy.data.meshes.new(name)
-        e = self.validate_indices(i, v, e, "edges")
-        p = self.validate_indices(i, v, p, "polygons")
-        me.from_pydata(v, e, p)
-        ob = bpy.data.objects.new(name, me)
-        if self.config.extended_matrix:
-            ob.data.transform(m)
-        else:
-            ob.matrix_world = m
-        ob.show_name = False
-        ob.hide_select = False
-        return ob, me
-
 
 def edges_from_faces(indices):
     """ we don't want repeat edges, ever.."""
@@ -281,7 +192,7 @@ def draw_fragment(context, args):
 def draw_faces(context, args):
     geom, config = args
 
-    bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
     if config.display_edges:
         draw_uniform('LINES', geom.verts, geom.edges, config.line4f, config.line_width)
 
@@ -290,8 +201,8 @@ def draw_faces(context, args):
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
-        bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-        bgl.glPolygonOffset(1.0, 1.0)
+        # bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        # bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade == "flat":
             draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
@@ -312,7 +223,7 @@ def draw_faces(context, args):
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
-    bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
 def get_shader_data(named_shader=None):
     source = bpy.data.texts[named_shader].as_string()
@@ -639,11 +550,5 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         callback_disable(node_id(self))
 
 
-def register():
-    bpy.utils.register_class(SvVDExperimental)
-    bpy.utils.register_class(SvObjBakeMK3)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvVDExperimental)
-    bpy.utils.unregister_class(SvObjBakeMK3)
+classes = [SvVDExperimental]
+register, unregister = bpy.utils.register_classes_factory(classes)
