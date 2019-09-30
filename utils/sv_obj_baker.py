@@ -7,6 +7,7 @@
 
 
 import bpy
+from bpy.props import StringProperty
 from mathutils import Vector, Matrix
 
 from sverchok.data_structure import node_id, dataCorrect
