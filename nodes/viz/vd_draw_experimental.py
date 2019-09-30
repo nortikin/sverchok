@@ -358,13 +358,19 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        self.draw_additional_props(context, layout)
+
+    def rclick_menu(self, context, layout):
+        self.draw_additional_props(context, layout)
+
+    def draw_additional_props(self, context, layout):
         layout.prop(self, 'vector_light', text='')
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
         layout.separator()
         layout.prop(self, 'draw_gl_wireframe')
         layout.prop(self, 'draw_gl_polygonoffset')
-
+    
     def fill_config(self):
 
         config = lambda: None

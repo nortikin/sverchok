@@ -174,6 +174,7 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_menu_enum(self, "input_mode_one", text="Input 1 number type")
         if len(self.inputs) == 2:
             layout.prop_menu_enum(self, "input_mode_two", text="Input 2 number type")
+    
     def migrate_from(self, old_node):
         self.current_op = old_node.current_op
 
