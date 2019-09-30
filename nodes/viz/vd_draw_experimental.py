@@ -192,7 +192,9 @@ def draw_fragment(context, args):
 def draw_faces(context, args):
     geom, config = args
 
-    # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    if config.draw_gl_polygonoffset:
+        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    
     if config.display_edges:
         draw_uniform('LINES', geom.verts, geom.edges, config.line4f, config.line_width)
 
@@ -201,8 +203,9 @@ def draw_faces(context, args):
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
-        # bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-        # bgl.glPolygonOffset(1.0, 1.0)
+        if config.draw_gl_polygonoffset:
+            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+            bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade == "flat":
             draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
@@ -223,7 +226,9 @@ def draw_faces(context, args):
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
-    # bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    if config.draw_gl_polygonoffset:
+        # or restore to the state found when entering this function. TODO!
+        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
 def get_shader_data(named_shader=None):
     source = bpy.data.texts[named_shader].as_string()
@@ -304,6 +309,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
     draw_gl_wireframe: BoolProperty(default=False, update=updateNode, name="draw gl wireframe")
+    draw_gl_polygonoffset: BoolProperty(default=False, update=updateNode, name="draw gl polygon offset")
 
     custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
@@ -360,6 +366,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'vector_light', text='')
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
+        layout.separator()
+        layout.prop(self, 'draw_gl_wireframe')
+        layout.prop(self, 'draw_gl_polygonoffset')
 
     def fill_config(self):
 
@@ -373,6 +382,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         config.display_faces = self.display_faces
         config.shade = self.selected_draw_mode
         config.draw_gl_wireframe = self.draw_gl_wireframe
+        config.draw_gl_polygonoffset = self.draw_gl_polygonoffset
         config.point_size = self.point_size
         config.line_width = self.line_width
         config.extended_matrix = self.extended_matrix
