@@ -458,6 +458,22 @@ class SverchCustomTreeNode:
                 print(f'failed to remove {self.name} from tree={self.id_data.name}')
 
 
+    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+        """
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the idname and idtree of the tree.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
+        """
+        op = layout_element.operator(operator_idname, **keywords)
+        op.idname = self.name
+        op.idtree = self.id_data.name      
+
+
 classes = [
     SverchCustomTree, 
     SvLinkNewNodeInput
