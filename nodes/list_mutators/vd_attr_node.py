@@ -13,6 +13,22 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
+maximum_spec_vd_dict = dict(
+    vector_light="light direction (3f)",
+    vert_color="points rgba (4f)",
+    edge_color="edge rgba (4f)",
+    face_color="face rgba (4f)",
+    display_verts="display verts (b)",
+    display_edges="edges verts (b)",
+    display_faces="faces verts (b)",
+    selected_draw_mode="shade mode (enum)",
+    draw_gl_wireframe="wireframe (b)",
+    draw_gl_polygonoffset="fix zfighting (b)",
+    point_size="point size (i)",
+    line_width="line width (i)",
+    extended_matrix="extended matrix (b)"
+)
+
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' a SvVDAttrsNode f '''
     bl_idname = 'SvVDAttrsNode'
@@ -29,7 +45,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         inew("SvStringsSocket", "display verts (b)")
         inew("SvStringsSocket", "edges verts (b)")
         inew("SvStringsSocket", "faces verts (b)")
-        inew("SvStringsSocket", "shade mode (0..2)")
+        inew("SvStringsSocket", "shade mode (enum)")
         inew("SvStringsSocket", "wireframe (b)")
         inew("SvStringsSocket", "fix zfighting (b)")
         inew("SvStringsSocket", "point size (i)")
