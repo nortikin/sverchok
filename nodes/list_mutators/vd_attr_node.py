@@ -19,8 +19,8 @@ maximum_spec_vd_dict = dict(
     edge_color="edge rgba (4f)",
     face_color="face rgba (4f)",
     display_verts="display verts (b)",
-    display_edges="edges verts (b)",
-    display_faces="faces verts (b)",
+    display_edges="display edges (b)",
+    display_faces="display faces (b)",
     selected_draw_mode="shade mode (enum)",
     draw_gl_wireframe="wireframe (b)",
     draw_gl_polygonoffset="fix zfighting (b)",
@@ -43,8 +43,8 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         inew("SvStringsSocket", "edge rgba (4f)")
         inew("SvStringsSocket", "face rgba (4f)")
         inew("SvStringsSocket", "display verts (b)")
-        inew("SvStringsSocket", "edges verts (b)")
-        inew("SvStringsSocket", "faces verts (b)")
+        inew("SvStringsSocket", "display edges (b)")
+        inew("SvStringsSocket", "display faces (b)")
         inew("SvStringsSocket", "shade mode (enum)")
         inew("SvStringsSocket", "wireframe (b)")
         inew("SvStringsSocket", "fix zfighting (b)")
