@@ -86,7 +86,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items()
-            item = vd_items_group.new()
+            item = self.vd_items_group.new()
             item.attr_name = key
             item.show_socket = False
             item.default_type = value[1]
@@ -101,9 +101,15 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         # maybe offer to show here..
 
     def draw_buttons_ext(self, context, layout):
-        ...
-        ...
-        ...
+        self.draw_group(context, layout)
+
+    def draw_group(self, context, layout):
+        box = layout.box()
+        for item in self.vd_items_group:
+            row = box.row()
+            row.label(text=item.attr_name)
+            row.prop(item, "show_socket", text="Show Socket")
+            row.prop(item, "use_default", text="Use Default")
 
     def process(self):
 
