@@ -14,12 +14,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 """
-items:
-    attr_name | show_socket | use_default | default 
-                                            (default type, default_property)
-
 https://gist.github.com/zeffii/06e2b5f6ccda02b2854e004afe039f8f
-
 """
 
 sock_str = lambda: None
