@@ -13,24 +13,43 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
+sock_str = lambda: None
+sock_str._enum = "SvStringsSocket"
+sock_str._3f = "SvVerticesSocket"
+sock_str._4f = "SvColorSocket"
+sock_str._i = "SvStringsSocket"
+sock_str._b = "SvStringsSocket"
+
 maximum_spec_vd_dict = dict(
-    vector_light="light direction (3f)",
-    vert_color="points rgba (4f)",
-    edge_color="edge rgba (4f)",
-    face_color="face rgba (4f)",
-    display_verts="display verts (b)",
-    display_edges="display edges (b)",
-    display_faces="display faces (b)",
-    selected_draw_mode="shade mode (enum)",
-    draw_gl_wireframe="wireframe (b)",
-    draw_gl_polygonoffset="fix zfighting (b)",
-    point_size="point size (i)",
-    line_width="line width (i)",
-    extended_matrix="extended matrix (b)"
+    vector_light=["light direction", "3f"],
+    vert_color=["points rgba", "4f"],
+    edge_color=["edge rgba", "4f"],
+    face_color=["face rgba", "4f"],
+    display_verts=["display verts", "b"],
+    display_edges=["display edges", "b"],
+    display_faces=["display faces", "b"],
+    selected_draw_mode=["shade mode", "enum"],
+    draw_gl_wireframe=["wireframe", "b"],
+    draw_gl_polygonoffset=["fix zfighting", "b"],
+    point_size=["point size", "i"],
+    line_width=["line width", "i"],
+    extended_matrix=["extended matrix", "b"]
 )
 
+get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
+
+
+
+
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' a SvVDAttrsNode f '''
+    """
+    Triggers: vd attr 
+    Tooltip: Attribute Node for Viewer Draw Experimental
+    
+    Allows access to VD Experimental's attributes which control how the
+    node draws faces/edges. It can also switch off the node.
+    """
+
     bl_idname = 'SvVDAttrsNode'
     bl_label = 'VD Attributes'
     bl_icon = 'GREASEPENCIL'
@@ -38,21 +57,8 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
         inew = self.inputs.new
-        inew("SvVerticesSocket", "light direction (3f)")
-        inew("SvColorSocket", "points rgba (4f)")
-        inew("SvStringsSocket", "edge rgba (4f)")
-        inew("SvStringsSocket", "face rgba (4f)")
-        inew("SvStringsSocket", "display verts (b)")
-        inew("SvStringsSocket", "display edges (b)")
-        inew("SvStringsSocket", "display faces (b)")
-        inew("SvStringsSocket", "shade mode (enum)")
-        inew("SvStringsSocket", "wireframe (b)")
-        inew("SvStringsSocket", "fix zfighting (b)")
-        inew("SvStringsSocket", "point size (i)")
-        inew("SvStringsSocket", "line width (i)")
-        inew("SvStringsSocket", "extended matrix (b)")
-        for input_socket in self.inputs:
-            input_socket.hide = True
+        for prop_name, (socket_name, socket_type) in maximum_spec_vd_dict.items():
+            inew(get_socket_str(socket_type), socket_name).hide = True
 
     def draw_buttons(self, context, layout):
         ...
