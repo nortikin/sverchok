@@ -28,7 +28,7 @@ from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.utils.sv_obj_baker import cache_viewer_baker
+
 
 default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -235,7 +235,6 @@ def get_shader_data(named_shader=None):
     source = bpy.data.texts[named_shader].as_string()
     exec(source)
     local_vars = vars().copy()
-    # print(local_vars)
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
 
@@ -424,18 +423,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             verts = coords
         return match_long_repeat([coords, edge_indices, face_indices, verts, matrix])
 
-    def fill_cache(self, data):
-        n_id = node_id(self)
-        global cache_viewer_baker
-        vertex_ref = n_id + 'v'
-        edg_ref = n_id + 'e'
-        pol_ref = n_id + 'p'
-        matrix_ref = n_id + 'm'
-        cache_viewer_baker[vertex_ref] = data[3]
-        cache_viewer_baker[edg_ref] = data[1]
-        cache_viewer_baker[pol_ref] = data[2]
-        cache_viewer_baker[matrix_ref] = data[4]
-
     def faces_diplay(self, geom, config):
 
         if self.selected_draw_mode == 'facet' and self.display_faces:
@@ -507,7 +494,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             config = self.fill_config()
             data = self.get_data()
-            self.fill_cache(data)
             coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
 
             geom = lambda: None

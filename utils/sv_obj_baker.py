@@ -14,6 +14,19 @@ from sverchok.data_structure import node_id, dataCorrect
 
 cache_viewer_baker = {}
 
+def fill_cache(node):
+    n_id = node_id(node)
+    data = node.get_data()
+
+    vertex_ref = n_id + 'v'
+    edg_ref = n_id + 'e'
+    pol_ref = n_id + 'p'
+    matrix_ref = n_id + 'm'
+    cache_viewer_baker[vertex_ref] = data[3]
+    cache_viewer_baker[edg_ref] = data[1]
+    cache_viewer_baker[pol_ref] = data[2]
+    cache_viewer_baker[matrix_ref] = data[4]
+
 
 class SvObjBakeMK3(bpy.types.Operator):
     """ B A K E   OBJECTS """
@@ -32,12 +45,12 @@ class SvObjBakeMK3(bpy.types.Operator):
         default='')
 
     def execute(self, context):
-        global cache_viewer_baker
 
         node_group = bpy.data.node_groups[self.idtree]
         node = node_group.nodes[self.idname]
         nid = node_id(node)
 
+        node.fill_cache()
         matrix_cache = cache_viewer_baker[nid + 'm']
         vertex_cache = cache_viewer_baker[nid + 'v']
         edg_cache = cache_viewer_baker[nid + 'e']
