@@ -7,9 +7,9 @@
 
 
 import bpy
-# import mathutils
-# from mathutils import Vector
-# from bpy.props import FloatProperty, BoolProperty
+from bpy.props import (
+    FloatProperty, BoolProperty, StringProperty, 
+    FloatVectorProperty, IntProperty)
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -53,12 +53,15 @@ class SvVDMK3Item(bpy.types.PropertyGroup):
     show_socket = bpy.props.BoolProperty(default=False)
     use_default = bpy.props.BoolProperty(default=False)
     default_type = bpy.props.StringProperty()
-    # default_3f = ...
-    # default_4f = ...
-    # default_i = ...
-    # default_b = bpy.props.BoolProperty(default=False)
-    # default_enum = bpy.props.IntProperty(min=0, max=) ..?
-
+    default_3f =  bpy.props.FloatVectorProperty(
+        name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
+        default=(0.2, 0.6, 0.4)) #, update=updateNode)
+    default_4f = bpy.props.FloatVectorProperty(
+        subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
+        name='color', size=4) #, update=updateNode)
+    default_i = bpy.props.IntProperty(min=0)
+    default_b = bpy.props.BoolProperty(default=False)
+    default_enum = bpy.props.IntProperty(min=0, default=0)
 
 
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
