@@ -60,7 +60,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         ...
 
-        self.outputs['attrs'].sv_set([{'activate': True, 'display_verts': False}])
+        self.outputs['attrs'].sv_set([{'activate': True, 'display_verts': False, 'draw_gl_polygonoffset': True}])
 
 
 classes = [SvVDAttrsNode]
