@@ -48,6 +48,18 @@ https://gist.github.com/zeffii/06e2b5f6ccda02b2854e004afe039f8f
 """
 
 
+class SvVDMK3Item(bpy.types.PropertyGroup):
+    attr_name = bpy.props.StringProperty() 
+    show_socket = bpy.props.BoolProperty(default=False)
+    use_default = bpy.props.BoolProperty(default=False)
+    default_type = bpy.props.StringProperty()
+    # default_3f = ...
+    # default_4f = ...
+    # default_i = ...
+    # default_b = bpy.props.BoolProperty(default=False)
+    # default_enum = bpy.props.IntProperty(min=0, max=) ..?
+
+
 
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -61,6 +73,8 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVDAttrsNode'
     bl_label = 'VD Attributes'
     bl_icon = 'MOD_HUE_SATURATION'
+
+    vd_items_group: bpy.props.CollectionProperty(name="vd attrs", type=SvVDMK3Item)
 
     def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
@@ -91,5 +105,5 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['attrs'].sv_set([testing_default])
 
 
-classes = [SvVDAttrsNode]
+classes = [SvVDMK3Item, SvVDAttrsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
