@@ -38,6 +38,13 @@ maximum_spec_vd_dict = dict(
 
 get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
 
+"""
+items:
+    attr_name | show_socket | use_default | default 
+                                            (default type, default_property)
+
+
+"""
 
 
 
@@ -52,7 +59,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvVDAttrsNode'
     bl_label = 'VD Attributes'
-    bl_icon = 'GREASEPENCIL'
+    bl_icon = 'MOD_HUE_SATURATION'
 
     def sv_init(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
@@ -61,6 +68,11 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             inew(get_socket_str(socket_type), socket_name).hide = True
 
     def draw_buttons(self, context, layout):
+        ...
+
+    def draw_buttons_ext(self, context, layout):
+        ...
+        ...
         ...
 
     def process(self):
