@@ -62,14 +62,23 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'VD Attributes'
     bl_icon = 'MOD_HUE_SATURATION'
 
-    def sv_init(self, context):
+    def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
         inew = self.inputs.new
         for prop_name, (socket_name, socket_type) in maximum_spec_vd_dict.items():
             inew(get_socket_str(socket_type), socket_name).hide = True
+  
+    def vd_init_uilayout_data(self, context):
+        ...
+ 
+
+    def sv_init(self, context):
+        self.vd_init_sockets(context)
+        self.vd_init_uilayout_data(context)
 
     def draw_buttons(self, context, layout):
         ...
+        # maybe offer to show here..
 
     def draw_buttons_ext(self, context, layout):
         ...
