@@ -465,7 +465,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def handle_attr_socket(self):
         """
-        this socket expects input wrapped. once.
+        this socket expects input dictionary wrapped. once.
 
             [  {attr: attr_vale, attr2: attr2_value } ]
 
