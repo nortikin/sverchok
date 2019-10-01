@@ -13,31 +13,6 @@ from bpy.props import (
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
-sock_str = lambda: None
-sock_str._enum = "SvStringsSocket"
-sock_str._3f = "SvVerticesSocket"
-sock_str._4f = "SvColorSocket"
-sock_str._i = "SvStringsSocket"
-sock_str._b = "SvStringsSocket"
-
-maximum_spec_vd_dict = dict(
-    vector_light=["light direction", "3f"],
-    vert_color=["points rgba", "4f"],
-    edge_color=["edge rgba", "4f"],
-    face_color=["face rgba", "4f"],
-    display_verts=["display verts", "b"],
-    display_edges=["display edges", "b"],
-    display_faces=["display faces", "b"],
-    selected_draw_mode=["shade mode", "enum"],
-    draw_gl_wireframe=["wireframe", "b"],
-    draw_gl_polygonoffset=["fix zfighting", "b"],
-    point_size=["point size", "i"],
-    line_width=["line width", "i"],
-    extended_matrix=["extended matrix", "b"]
-)
-
-get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
-
 """
 items:
     attr_name | show_socket | use_default | default 
@@ -47,6 +22,30 @@ https://gist.github.com/zeffii/06e2b5f6ccda02b2854e004afe039f8f
 
 """
 
+sock_str = lambda: None
+sock_str._enum = "SvStringsSocket"
+sock_str._3f = "SvVerticesSocket"
+sock_str._4f = "SvColorSocket"
+sock_str._i = "SvStringsSocket"
+sock_str._b = "SvStringsSocket"
+
+maximum_spec_vd_dict = dict(
+    vector_light=dict(name="light direction", kind="3f"),
+    vert_color=dict(name="points rgba", kind="4f"),
+    edge_color=dict(name="edge rgba", kind="4f"),
+    face_color=dict(name="face rgba", kind="4f"),
+    display_verts=dict(name="display verts", kind="b"),
+    display_edges=dict(name="display edges", kind="b"),
+    display_faces=dict(name="display faces", kind="b"),
+    selected_draw_mode=dict(name="shade mode", kind="enum"),
+    draw_gl_wireframe=dict(name="wireframe", kind="b"),
+    draw_gl_polygonoffset=dict(name="fix zfighting", kind="b"),
+    point_size=dict(name="point size", kind="i"),
+    line_width=dict(name="line width", kind="i"),
+    extended_matrix=dict(name="extended matrix", kind="b")
+)
+
+get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
     attr_name = bpy.props.StringProperty() 
@@ -54,7 +53,7 @@ class SvVDMK3Item(bpy.types.PropertyGroup):
     use_default = bpy.props.BoolProperty(default=False)
     default_type = bpy.props.StringProperty()
     default_3f =  bpy.props.FloatVectorProperty(
-        name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
+        name='normal', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4)) #, update=updateNode)
     default_4f = bpy.props.FloatVectorProperty(
         subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
@@ -82,12 +81,16 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
         inew = self.inputs.new
-        for prop_name, (socket_name, socket_type) in maximum_spec_vd_dict.items():
-            inew(get_socket_str(socket_type), socket_name).hide = True
+        for prop_name, socket in maximum_spec_vd_dict.items():
+            inew(get_socket_str(socket.kind), socket.name).hide = True
   
     def vd_init_uilayout_data(self, context):
-        ...
- 
+        for key, value in maximum_spec_vd_dict.items()
+            item = vd_items_group.new()
+            item.attr_name = key
+            item.show_socket = False
+            item.default_type = value[1]
+
 
     def sv_init(self, context):
         self.vd_init_sockets(context)
