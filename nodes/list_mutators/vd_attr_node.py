@@ -29,38 +29,44 @@ sock_str._4f = "SvColorSocket"
 sock_str._i = "SvStringsSocket"
 sock_str._b = "SvStringsSocket"
 
+def props(**x):
+    prop = lambda: None
+    prop.name = x['name']
+    prop.kind = x['kind']
+    return prop
+
 maximum_spec_vd_dict = dict(
-    vector_light=dict(name="light direction", kind="3f"),
-    vert_color=dict(name="points rgba", kind="4f"),
-    edge_color=dict(name="edge rgba", kind="4f"),
-    face_color=dict(name="face rgba", kind="4f"),
-    display_verts=dict(name="display verts", kind="b"),
-    display_edges=dict(name="display edges", kind="b"),
-    display_faces=dict(name="display faces", kind="b"),
-    selected_draw_mode=dict(name="shade mode", kind="enum"),
-    draw_gl_wireframe=dict(name="wireframe", kind="b"),
-    draw_gl_polygonoffset=dict(name="fix zfighting", kind="b"),
-    point_size=dict(name="point size", kind="i"),
-    line_width=dict(name="line width", kind="i"),
-    extended_matrix=dict(name="extended matrix", kind="b")
+    vector_light=props(name="light direction", kind="3f"),
+    vert_color=props(name="points rgba", kind="4f"),
+    edge_color=props(name="edge rgba", kind="4f"),
+    face_color=props(name="face rgba", kind="4f"),
+    display_verts=props(name="display verts", kind="b"),
+    display_edges=props(name="display edges", kind="b"),
+    display_faces=props(name="display faces", kind="b"),
+    selected_draw_mode=props(name="shade mode", kind="enum"),
+    draw_gl_wireframe=props(name="wireframe", kind="b"),
+    draw_gl_polygonoffset=props(name="fix zfighting", kind="b"),
+    point_size=props(name="point size", kind="i"),
+    line_width=props(name="line width", kind="i"),
+    extended_matrix=props(name="extended matrix", kind="b")
 )
 
 get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
-    attr_name = bpy.props.StringProperty() 
-    show_socket = bpy.props.BoolProperty(default=False)
-    use_default = bpy.props.BoolProperty(default=False)
-    default_type = bpy.props.StringProperty()
-    default_3f =  bpy.props.FloatVectorProperty(
+    attr_name: bpy.props.StringProperty() 
+    show_socket: bpy.props.BoolProperty(default=False)
+    use_default: bpy.props.BoolProperty(default=False)
+    default_type: bpy.props.StringProperty()
+    default_3f: bpy.props.FloatVectorProperty(
         name='normal', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4)) #, update=updateNode)
-    default_4f = bpy.props.FloatVectorProperty(
+    default_4f: bpy.props.FloatVectorProperty(
         subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
         name='color', size=4) #, update=updateNode)
-    default_i = bpy.props.IntProperty(min=0)
-    default_b = bpy.props.BoolProperty(default=False)
-    default_enum = bpy.props.IntProperty(min=0, default=0)
+    default_i: bpy.props.IntProperty(min=0)
+    default_b: bpy.props.BoolProperty(default=False)
+    default_enum: bpy.props.IntProperty(min=0, default=0)
 
 
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -85,11 +91,11 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             inew(get_socket_str(socket.kind), socket.name).hide = True
   
     def vd_init_uilayout_data(self, context):
-        for key, value in maximum_spec_vd_dict.items()
-            item = self.vd_items_group.new()
+        for key, value in maximum_spec_vd_dict.items():
+            item = self.vd_items_group.add()
             item.attr_name = key
             item.show_socket = False
-            item.default_type = value[1]
+            item.default_type = value.kind
 
 
     def sv_init(self, context):
@@ -108,8 +114,8 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         for item in self.vd_items_group:
             row = box.row()
             row.label(text=item.attr_name)
-            row.prop(item, "show_socket", text="Show Socket")
-            row.prop(item, "use_default", text="Use Default")
+            row.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
+            row.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
 
     def process(self):
 
