@@ -48,10 +48,13 @@ maximum_spec_vd_dict = dict(
 
 get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
 
+# def property_change(self, context, socket_name, attr_name):
+#    self.inputs[socket_name].hide = 
+
 class SvVDMK3Item(bpy.types.PropertyGroup):
     attr_name: bpy.props.StringProperty() 
     show_socket: bpy.props.BoolProperty(default=False)
-    use_default: bpy.props.BoolProperty(default=False)
+    use_default: bpy.props.BoolProperty(default=False) #, lambda s, c: property_change(s, c, 'input_mode_one'))
     default_type: bpy.props.StringProperty()
     default_3f: bpy.props.FloatVectorProperty(
         name='normal', subtype='DIRECTION', min=0, max=1, size=3,
