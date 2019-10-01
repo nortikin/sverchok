@@ -36,7 +36,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GREASEPENCIL'
 
     def sv_init(self, context):
-        self.outputs.new("SvStringsSocket", name="attrs dict")
+        self.outputs.new("SvStringsSocket", name="attrs")
         inew = self.inputs.new
         inew("SvVerticesSocket", "light direction (3f)")
         inew("SvColorSocket", "points rgba (4f)")
