@@ -14,7 +14,7 @@ from sverchok.data_structure import node_id, dataCorrect
 
 cache_viewer_baker = {}
 
-def fill_cache(node):
+def fill_cache_from_node_reference(node):
     n_id = node_id(node)
     data = node.get_data()
 
@@ -50,7 +50,7 @@ class SvObjBakeMK3(bpy.types.Operator):
         node = node_group.nodes[self.idname]
         nid = node_id(node)
 
-        node.fill_cache()
+        fill_cache_from_node_reference(node)
         matrix_cache = cache_viewer_baker[nid + 'm']
         vertex_cache = cache_viewer_baker[nid + 'v']
         edg_cache = cache_viewer_baker[nid + 'e']
