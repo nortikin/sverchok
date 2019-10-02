@@ -48,24 +48,43 @@ maximum_spec_vd_dict = dict(
 
 get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
 
-# def property_change(self, context, socket_name, attr_name):
-#    self.inputs[socket_name].hide = 
+def property_change(self, context):
+    #    self.inputs[socket_name].hide = 
+    print(self.index)
+    print(self, dir(self))
+
+    # self here is not node, but SvVDMK3Item instance
+    # self.process_node(context)
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
+    index: bpy.props.IntProperty(min=0)
     attr_name: bpy.props.StringProperty() 
     show_socket: bpy.props.BoolProperty(default=False)
-    use_default: bpy.props.BoolProperty(default=False) #, lambda s, c: property_change(s, c, 'input_mode_one'))
+    use_default: bpy.props.BoolProperty(default=False, update=property_change)
     default_type: bpy.props.StringProperty()
-    default_3f: bpy.props.FloatVectorProperty(
-        name='normal', subtype='DIRECTION', min=0, max=1, size=3,
-        default=(0.2, 0.6, 0.4)) #, update=updateNode)
-    default_4f: bpy.props.FloatVectorProperty(
-        subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
-        name='color', size=4) #, update=updateNode)
+
     default_i: bpy.props.IntProperty(min=0)
     default_b: bpy.props.BoolProperty(default=False)
     default_enum: bpy.props.IntProperty(min=0, default=0)
+    default_3f: bpy.props.FloatVectorProperty(
+        name='normal', subtype='DIRECTION', min=0, max=1, size=3,
+        default=(0.2, 0.6, 0.4)) #, update=updateNode)
 
+    default_4f: bpy.props.FloatVectorProperty(
+        subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
+        name='color', size=4) #, update=updateNode)
+
+
+class SvVDMK3ItemList(bpy.types.UIList):
+
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        row = layout
+        
+        row.label(text=item.attr_name)
+        postfix = item.default_type
+        row.prop(item, "default_"+postfix, text="")
+        row.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
+        row.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
 
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -80,7 +99,12 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'VD Attributes'
     bl_icon = 'MOD_HUE_SATURATION'
 
+    property_index: IntProperty(name='index', default=0)
     vd_items_group: bpy.props.CollectionProperty(name="vd attrs", type=SvVDMK3Item)
+
+    def draw_group(self, context, layout):
+        if self.vd_items_group:
+            layout.template_list("SvVDMK3ItemList", "", self, "vd_items_group", self, "property_index")
 
     def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
@@ -95,7 +119,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             item.show_socket = False
             item.default_type = value.kind
 
-
     def sv_init(self, context):
         self.vd_init_sockets(context)
         self.vd_init_uilayout_data(context)
@@ -107,19 +130,13 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_group(context, layout)
 
-    def draw_group(self, context, layout):
-        box = layout.box()
-        for item in self.vd_items_group:
-            row = box.row()
-            row.label(text=item.attr_name)
-            row.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
-            row.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
 
     def process(self):
+        print('here')
 
         testing_default = {'activate': True, 'display_verts': False, 'draw_gl_polygonoffset': True}
         self.outputs['attrs'].sv_set([testing_default])
 
 
-classes = [SvVDMK3Item, SvVDAttrsNode]
+classes = [SvVDMK3Item, SvVDMK3ItemList, SvVDAttrsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
