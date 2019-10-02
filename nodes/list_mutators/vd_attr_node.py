@@ -47,9 +47,12 @@ def property_change(self, context, changed_attr):
     """ self here is not node, but SvVDMK3Item instance """
 
     # seems link to the node is lost, but not the nodetree
-    # self.inputs[socket_name].hide = 
     print(self.attr_name, '---', changed_attr)
-    print('nodetree:', self.id_data)
+    ng = self.id_data
+    node = ng.nodes[self.origin_node_name]
+    socket_name = maximum_spec_vd_dict[self.attr_name].name
+    if changed_attr == 'show_socket':
+        node.inputs[socket_name].hide_safe = not getattr(self, changed_attr) 
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
     attr_name: StringProperty() 
