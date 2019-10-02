@@ -298,7 +298,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
 
-    extended_matrix : BoolProperty(
+    extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
 

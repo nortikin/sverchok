@@ -9,13 +9,9 @@
 import bpy
 from bpy.props import (
     FloatProperty, BoolProperty, StringProperty, 
-    FloatVectorProperty, IntProperty)
+    FloatVectorProperty, IntProperty, CollectionProperty)
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
-"""
-https://gist.github.com/zeffii/06e2b5f6ccda02b2854e004afe039f8f
-"""
 
 sock_str = lambda: None
 sock_str._enum = "SvStringsSocket"
@@ -26,8 +22,7 @@ sock_str._b = "SvStringsSocket"
 
 def props(**x):
     prop = lambda: None
-    prop.name = x['name']
-    prop.kind = x['kind']
+    _ = [setattr(prop, k, v) for k, v in x.items()]
     return prop
 
 maximum_spec_vd_dict = dict(
@@ -48,43 +43,44 @@ maximum_spec_vd_dict = dict(
 
 get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
 
-def property_change(self, context):
-    #    self.inputs[socket_name].hide = 
-    print(self.index)
-    print(self, dir(self))
+def property_change(self, context, changed_attr):
+    """ self here is not node, but SvVDMK3Item instance """
 
-    # self here is not node, but SvVDMK3Item instance
-    # self.process_node(context)
+    # seems link to the node is lost, but not the nodetree
+    # self.inputs[socket_name].hide = 
+    print(self.attr_name, '---', changed_attr)
+    print('nodetree:', self.id_data)
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
-    index: bpy.props.IntProperty(min=0)
-    attr_name: bpy.props.StringProperty() 
-    show_socket: bpy.props.BoolProperty(default=False)
-    use_default: bpy.props.BoolProperty(default=False, update=property_change)
-    default_type: bpy.props.StringProperty()
+    attr_name: StringProperty() 
+    show_socket: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'show_socket'))
+    use_default: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'use_default'))
+    default_type: StringProperty()
 
-    default_i: bpy.props.IntProperty(min=0)
-    default_b: bpy.props.BoolProperty(default=False)
-    default_enum: bpy.props.IntProperty(min=0, default=0)
-    default_3f: bpy.props.FloatVectorProperty(
+    default_i: IntProperty(min=0)
+    default_b: BoolProperty(default=False)
+    default_enum: IntProperty(min=0, default=0)
+    default_3f: FloatVectorProperty(
         name='normal', subtype='DIRECTION', min=0, max=1, size=3,
-        default=(0.2, 0.6, 0.4)) #, update=updateNode)
+        default=(0.2, 0.6, 0.4))
 
-    default_4f: bpy.props.FloatVectorProperty(
+    default_4f: FloatVectorProperty(
         subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
-        name='color', size=4) #, update=updateNode)
+        name='color', size=4)
+
+# class SvVDMK3Properties(bpy.types.PropertyGroup):
+#     from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
+#     for item in SvVDExperimental.__annotations__:
+    
 
 
-class SvVDMK3ItemList(bpy.types.UIList):
 
+class SV_UL_VDMK3ItemList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
-        row = layout
-        
-        row.label(text=item.attr_name)
-        postfix = item.default_type
-        row.prop(item, "default_"+postfix, text="")
-        row.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
-        row.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
+        layout.label(text=item.attr_name)
+        layout.prop(item, "default_" + item.default_type, text="")
+        layout.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
+        layout.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
 
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -100,11 +96,11 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_HUE_SATURATION'
 
     property_index: IntProperty(name='index', default=0)
-    vd_items_group: bpy.props.CollectionProperty(name="vd attrs", type=SvVDMK3Item)
+    vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
 
     def draw_group(self, context, layout):
         if self.vd_items_group:
-            layout.template_list("SvVDMK3ItemList", "", self, "vd_items_group", self, "property_index")
+            layout.template_list("SV_UL_VDMK3ItemList", "", self, "vd_items_group", self, "property_index")
 
     def vd_init_sockets(self, context):
         self.outputs.new("SvStringsSocket", name="attrs")
@@ -125,18 +121,15 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         ...
-        # maybe offer to show here..
 
     def draw_buttons_ext(self, context, layout):
         self.draw_group(context, layout)
 
-
     def process(self):
         print('here')
-
         testing_default = {'activate': True, 'display_verts': False, 'draw_gl_polygonoffset': True}
         self.outputs['attrs'].sv_set([testing_default])
 
 
-classes = [SvVDMK3Item, SvVDMK3ItemList, SvVDAttrsNode]
+classes = [SvVDMK3Item, SV_UL_VDMK3ItemList, SvVDAttrsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
