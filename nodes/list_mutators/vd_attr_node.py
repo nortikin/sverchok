@@ -8,10 +8,10 @@
 
 import bpy
 from bpy.props import (
-    FloatProperty, BoolProperty, StringProperty, 
+    FloatProperty, BoolProperty, StringProperty, EnumProperty,
     FloatVectorProperty, IntProperty, CollectionProperty)
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, enum_item_5
 
 sock_str = lambda: None
 sock_str._enum = "SvStringsSocket"
@@ -55,30 +55,58 @@ class SvVDMK3Item(bpy.types.PropertyGroup):
     attr_name: StringProperty() 
     show_socket: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'show_socket'))
     use_default: BoolProperty(default=False, update=lambda s, c: property_change(s, c, 'use_default'))
-    default_type: StringProperty()
+    origin_node_name: StringProperty()
 
-    default_i: IntProperty(min=0)
-    default_b: BoolProperty(default=False)
-    default_enum: IntProperty(min=0, default=0)
-    default_3f: FloatVectorProperty(
-        name='normal', subtype='DIRECTION', min=0, max=1, size=3,
+class SvVDMK3Properties(bpy.types.PropertyGroup):
+    
+    # these props should be totally possible to obtain from 
+    # SvVDExperimental.__annotations__  , and drop any update=function
+    # for now i'm reduplicating.
+
+    activate: BoolProperty(name='Show', description='Activate', default=True)
+
+    vert_color: FloatVectorProperty(
+        subtype='COLOR', min=0, max=1, default=(0.8, 0.8, 0.8, 1.0),
+        name='vert color', size=4)
+
+    edge_color: FloatVectorProperty(
+        subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
+        name='edge color', size=4)
+
+    face_color: FloatVectorProperty(
+        subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 1.0),
+        name='face color', size=4)
+
+    vector_light: FloatVectorProperty(
+        name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4))
 
-    default_4f: FloatVectorProperty(
-        subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
-        name='color', size=4)
+    extended_matrix: BoolProperty(
+        default=False, description='Allows mesh.transform(matrix) operation, quite fast!')
 
-# class SvVDMK3Properties(bpy.types.PropertyGroup):
-#     from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
-#     for item in SvVDExperimental.__annotations__:
-    
+    point_size: FloatProperty(description="glPointSize( GLfloat size)", default=4.0, min=1.0, max=15.0)
+    line_width: IntProperty(description="glLineWidth( GLfloat width)", default=1, min=1, max=5)
 
+    display_verts: BoolProperty(default=True, name="display verts")
+    display_edges: BoolProperty(default=True, name="display edges")
+    display_faces: BoolProperty(default=True, name="display faces")
+    draw_gl_wireframe: BoolProperty(default=False, name="draw gl wireframe")
+    draw_gl_polygonoffset: BoolProperty(default=False, name="draw gl polygon offset")
 
+    selected_draw_mode: EnumProperty(
+        items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
+        description="pick how the node will draw faces",
+        default="flat")    
 
 class SV_UL_VDMK3ItemList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
+        
+        # is there a nicer way to do this?
+        # can be use  .active_node ?
+        node = context.space_data.edit_tree.nodes[item.origin_node_name]
+        
         layout.label(text=item.attr_name)
-        layout.prop(item, "default_" + item.default_type, text="")
+        layout.prop(node.vd_items_props[0], item.attr_name, text='') 
         layout.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
         layout.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
 
@@ -97,6 +125,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     property_index: IntProperty(name='index', default=0)
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
+    vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
 
     def draw_group(self, context, layout):
         if self.vd_items_group:
@@ -113,7 +142,9 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             item = self.vd_items_group.add()
             item.attr_name = key
             item.show_socket = False
-            item.default_type = value.kind
+            item.origin_node_name = self.name
+
+        self.vd_items_props.add()
 
     def sv_init(self, context):
         self.vd_init_sockets(context)
@@ -125,11 +156,15 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_group(context, layout)
 
-    def process(self):
-        print('here')
+    def process(self):  
+        #if self.vd_items_group:
+        #    if not self.vd_items_group.item[0].origin_node_name == self.name:
+        #        for item in self.vd_items_group:
+        #            item.origin_node_name = self.name
+
         testing_default = {'activate': True, 'display_verts': False, 'draw_gl_polygonoffset': True}
         self.outputs['attrs'].sv_set([testing_default])
 
 
-classes = [SvVDMK3Item, SV_UL_VDMK3ItemList, SvVDAttrsNode]
+classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
