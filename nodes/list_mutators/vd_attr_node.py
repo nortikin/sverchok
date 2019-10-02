@@ -12,6 +12,7 @@ from bpy.props import (
     FloatVectorProperty, IntProperty, CollectionProperty)
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
+from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
 
 sock_str = lambda: None
 sock_str._enum = "SvStringsSocket"
@@ -46,8 +47,13 @@ get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type)
 def property_change(self, context, changed_attr):
     """ self here is not node, but SvVDMK3Item instance """
 
+    # prior to node initialization this function will be called, but will generate errors until
+    # the vd mk 3 item group is also fully initialized.
+    if not self.origin_node_name:
+        return
+
     # seems link to the node is lost, but not the nodetree
-    print(self.attr_name, '---', changed_attr)
+    # print(self.attr_name, '---', changed_attr)
     ng = self.id_data
     node = ng.nodes[self.origin_node_name]
     socket_name = maximum_spec_vd_dict[self.attr_name].name
@@ -61,45 +67,17 @@ class SvVDMK3Item(bpy.types.PropertyGroup):
     origin_node_name: StringProperty()
 
 class SvVDMK3Properties(bpy.types.PropertyGroup):
-    
-    # these props should be totally possible to obtain from 
-    # SvVDExperimental.__annotations__  , and drop any update=function
-    # for now i'm reduplicating.
+    # if for whatever reason you are reading this, this dynamically fills a propgroup
+    # from the vd experimental node's annotations - this in an attempt to not just avoid
+    # duplication, but also to avoid having to keep these values synced.
+    # -----  let me know if that failed :)  ...actually,   don't.      :)
+    __annotations__ = {}
 
-    activate: BoolProperty(name='Show', description='Activate', default=True)
+    for key, v in maximum_spec_vd_dict.items():
+        prop_func, kw_args = SvVDExperimental.__annotations__[key]
+        kw_args.pop('update', None)
+        __annotations__[key] = prop_func(**kw_args)
 
-    vert_color: FloatVectorProperty(
-        subtype='COLOR', min=0, max=1, default=(0.8, 0.8, 0.8, 1.0),
-        name='vert color', size=4)
-
-    edge_color: FloatVectorProperty(
-        subtype='COLOR', min=0, max=1, default=(0.5, 1.0, 0.5, 1.0),
-        name='edge color', size=4)
-
-    face_color: FloatVectorProperty(
-        subtype='COLOR', min=0, max=1, default=(0.14, 0.54, 0.81, 1.0),
-        name='face color', size=4)
-
-    vector_light: FloatVectorProperty(
-        name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
-        default=(0.2, 0.6, 0.4))
-
-    extended_matrix: BoolProperty(
-        default=False, description='Allows mesh.transform(matrix) operation, quite fast!')
-
-    point_size: FloatProperty(description="glPointSize( GLfloat size)", default=4.0, min=1.0, max=15.0)
-    line_width: IntProperty(description="glLineWidth( GLfloat width)", default=1, min=1, max=5)
-
-    display_verts: BoolProperty(default=True, name="display verts")
-    display_edges: BoolProperty(default=True, name="display edges")
-    display_faces: BoolProperty(default=True, name="display faces")
-    draw_gl_wireframe: BoolProperty(default=False, name="draw gl wireframe")
-    draw_gl_polygonoffset: BoolProperty(default=False, name="draw gl polygon offset")
-
-    selected_draw_mode: EnumProperty(
-        items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
-        description="pick how the node will draw faces",
-        default="flat")    
 
 class SV_UL_VDMK3ItemList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
