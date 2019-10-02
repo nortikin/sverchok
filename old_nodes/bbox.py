@@ -32,6 +32,8 @@ class SvBBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'NONE'
     sv_icon = 'SV_BOUNDING_BOX'
 
+    replacement_nodes = [('SvBBoxNodeMk2', None, None)]
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
 
