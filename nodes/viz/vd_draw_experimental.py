@@ -298,7 +298,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
 
-    extended_matrix: BoolProperty(
+    extended_matrix : BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
 
@@ -322,16 +322,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         default="flat", update=updateNode
     )
 
-    @staticmethod
-    def draw_basic_attr_qlink(socket, context, layout, node):
-        visible_socket_index = socket.infer_visible_location_of_socket(node)
-        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-        op.socket_index = socket.index
-        op.origin = node.name
-        op.new_node_idname = "SvVDAttrsNode"
-        op.new_node_offsetx = -200 - 40 * visible_socket_index
-        op.new_node_offsety = -30 * visible_socket_index
-
     def configureAttrSocket(self, context):
         self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
 
@@ -343,11 +333,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
-        
-        attr_socket = inew('SvStringsSocket', 'attrs')
-        attr_socket.hide = True
-        attr_socket.quicklink_func_name = "draw_basic_attr_qlink"
-
+        inew('SvStringsSocket', 'attrs').hide = True
         self.node_dict[hash(self)] = {}
 
     def draw_buttons(self, context, layout):
