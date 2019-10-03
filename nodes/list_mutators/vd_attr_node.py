@@ -104,6 +104,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     @staticmethod
     def draw_basic_lightnormal_qlink(socket, context, layout, node):
         visible_socket_index = socket.infer_visible_location_of_socket(node)
+        print('visible socket index', visible_socket_index)
         new_node_idname = "GenVectorsNode"
 
         op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
