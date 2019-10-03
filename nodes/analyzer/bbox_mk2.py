@@ -52,7 +52,7 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     max_list: BoolVectorProperty(
         name='Max', description="Show Maximun values sockets", size=3, update=update_sockets)
     size_list: BoolVectorProperty(
-        name='Size', description="Show Size values sockets",  size=3, update=update_sockets)
+        name='Size', description="Show Size values sockets", size=3, update=update_sockets)
     implentation_modes = [
         ("2D", "2D", "2D", 0),
         ("3D", "3D", "3D", 1)]
@@ -87,9 +87,27 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         titles = ['Min', 'Max', 'Size']
         for j in range(3):
             for i in range(3):
-                son('SvStringsSocket', titles[j] + ' ' + 'XYZ'[i] )
+                son('SvStringsSocket', titles[j] + ' ' + 'XYZ'[i])
 
         self.update_sockets(context)
+
+    def generate_matrix(self, maxmin, dims, to_2d):
+        center = [(u+v)*.5 for u, v in maxmin[:dims]]
+        scale = [(u-v) for u, v in maxmin[:dims]]
+        if to_2d:
+            center += [0]
+            scale += [1]
+        mat = Matrix.Translation(center)
+        for i, sca in enumerate(scale):
+            mat[i][i] = sca
+        return mat
+
+    def generate_mean(self, verts, dims, to_2d):
+        avr = list(map(sum, zip(*verts)))
+        avr = [n/len(verts) for n in avr[:dims]]
+        if to_2d:
+            avr += [0]
+        return [avr]
 
     def process(self):
         if not self.inputs['Vertices'].is_linked:
@@ -100,10 +118,10 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         has_mean = bool(self.outputs['Mean'].is_linked)
         has_vert_out = bool(self.outputs['Vertices'].is_linked)
 
-        vert = self.inputs['Vertices'].sv_get(deepcopy=False)
-        vert = dataCorrect(vert, nominal_dept=2)
+        verts = self.inputs['Vertices'].sv_get(deepcopy=False)
+        verts = dataCorrect(verts, nominal_dept=2)
         has_limits = any(s.is_linked for s in self.outputs[4:])
-        if vert:
+        if verts:
             verts_out = []
             edges_out = []
             edges = [
@@ -120,9 +138,9 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             to_2d = self.dimensions == '2D'
             dims = int(self.dimensions[0])
 
-            for v in vert:
+            for vec in verts:
                 if has_mat_out or has_vert_out or has_limits:
-                    maxmin = list(zip(map(max, *v), map(min, *v)))
+                    maxmin = list(zip(map(max, *vec), map(min, *vec)))
                     out = list(product(*reversed(maxmin)))
                     v_out = [l[::-1] for l in out[::-1]]
                     if to_2d:
@@ -133,21 +151,11 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     edges_out.append(edges)
 
                 if has_mat_out:
-                    center = [(u+v)*.5 for u, v in maxmin[:dims]]
-                    scale = [(u-v) for u, v in maxmin[:dims]]
-                    if to_2d:
-                        center += [0]
-                        scale += [1]
-                    mat = Matrix.Translation(center)
-                    for i, sca in enumerate(scale):
-                        mat[i][i] = sca
-                    mat_out.append(mat)
+                    mat_out.append(self.generate_matrix(maxmin, dims, to_2d))
+
                 if has_mean:
-                    avr = list(map(sum, zip(*v)))
-                    avr = [n/len(v) for n in avr[:dims]]
-                    if to_2d:
-                        avr += [0]
-                    mean_out.append([avr])
+                    mean_out.append(self.generate_mean(v, dims, to_2d))
+
                 if has_limits:
                     for i in range(dims):
                         min_vals[i].append([maxmin[i][1]])
