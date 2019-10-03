@@ -7,27 +7,26 @@
 
 
 import bpy
-from bpy.props import (
-    FloatProperty, BoolProperty, StringProperty, EnumProperty,
-    FloatVectorProperty, IntProperty, CollectionProperty)
+from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
 from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
 
-sock_str = lambda: None
-sock_str._enum = "SvStringsSocket"
-sock_str._3f = "SvVerticesSocket"
-sock_str._4f = "SvColorSocket"
-sock_str._i = "SvStringsSocket"
-sock_str._b = "SvStringsSocket"
+sock_str = {
+    'enum': "SvStringsSocket",
+    '3f': "SvVerticesSocket",
+    '4f': "SvColorSocket",
+    'i': "SvStringsSocket",
+    'b': "SvStringsSocket"
+}
 
 def props(**x):
     prop = lambda: None
     _ = [setattr(prop, k, v) for k, v in x.items()]
     return prop
 
+# this dict (ordered by default as per python 3.7 ?..) determines the order of sockets
 maximum_spec_vd_dict = dict(
-    vector_light=props(name="light direction", kind="3f"),
     vert_color=props(name="points rgba", kind="4f"),
     edge_color=props(name="edge rgba", kind="4f"),
     face_color=props(name="face rgba", kind="4f"),
@@ -39,26 +38,22 @@ maximum_spec_vd_dict = dict(
     draw_gl_polygonoffset=props(name="fix zfighting", kind="b"),
     point_size=props(name="point size", kind="i"),
     line_width=props(name="line width", kind="i"),
-    extended_matrix=props(name="extended matrix", kind="b")
+    extended_matrix=props(name="extended matrix", kind="b"),
+    vector_light=props(name="light direction", kind="3f")
 )
 
-get_socket_str = lambda socket_type: getattr(sock_str, '_' + socket_type) 
-
-def property_change(self, context, changed_attr):
-    """ self here is not node, but SvVDMK3Item instance """
-
+def property_change(item, context, changed_attr):
     # prior to node initialization this function will be called, but will generate errors until
     # the vd mk 3 item group is also fully initialized.
-    if not self.origin_node_name:
+    if not item.origin_node_name:
         return
 
     # seems link to the node is lost, but not the nodetree
-    # print(self.attr_name, '---', changed_attr)
-    ng = self.id_data
-    node = ng.nodes[self.origin_node_name]
-    socket_name = maximum_spec_vd_dict[self.attr_name].name
+    ng = item.id_data
+    node = ng.nodes[item.origin_node_name]
+    socket_name = maximum_spec_vd_dict[item.attr_name].name
     if changed_attr == 'show_socket':
-        node.inputs[socket_name].hide_safe = not getattr(self, changed_attr) 
+        node.inputs[socket_name].hide_safe = not getattr(item, changed_attr) 
 
 class SvVDMK3Item(bpy.types.PropertyGroup):
     attr_name: StringProperty() 
@@ -67,23 +62,17 @@ class SvVDMK3Item(bpy.types.PropertyGroup):
     origin_node_name: StringProperty()
 
 class SvVDMK3Properties(bpy.types.PropertyGroup):
-    # if for whatever reason you are reading this, this dynamically fills a propgroup
-    # from the vd experimental node's annotations - this in an attempt to not just avoid
-    # duplication, but also to avoid having to keep these values synced.
-    # -----  let me know if that failed :)  ...actually,   don't.      :)
+    # this populates a property-group using VDExperimental.__annotations__ as the source -
     __annotations__ = {}
-
     for key, v in maximum_spec_vd_dict.items():
         prop_func, kw_args = SvVDExperimental.__annotations__[key]
         kw_args.pop('update', None)
         __annotations__[key] = prop_func(**kw_args)
 
-
 class SV_UL_VDMK3ItemList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
         
-        # is there a nicer way to do this?
-        # can be use  .active_node ?
+        # is there a nicer way to do this? can we use  .active_node ?
         node = context.space_data.edit_tree.nodes[item.origin_node_name]
         
         layout.label(text=item.attr_name)
@@ -99,7 +88,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     Allows access to VD Experimental's attributes which control how the
     node draws faces/edges. It can also switch off the node.
     """
-
     bl_idname = 'SvVDAttrsNode'
     bl_label = 'VD Attributes'
     bl_icon = 'MOD_HUE_SATURATION'
@@ -116,7 +104,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("SvStringsSocket", name="attrs")
         inew = self.inputs.new
         for prop_name, socket in maximum_spec_vd_dict.items():
-            inew(get_socket_str(socket.kind), socket.name).hide = True
+            inew(socket_types[socket.kind], socket.name).hide = True
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
@@ -137,14 +125,20 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_group(context, layout)
 
-    def process(self):  
-        #if self.vd_items_group:
-        #    if not self.vd_items_group.item[0].origin_node_name == self.name:
-        #        for item in self.vd_items_group:
-        #            item.origin_node_name = self.name
+    def ensure_correct_origin_node_name(self):
+        if self.vd_items_group:
+           if not self.vd_items_group.item[0].origin_node_name == self.name:
+               for item in self.vd_items_group:
+                   item.origin_node_name = self.name
 
+    @property
+    def attrdict_from_state(self):
         testing_default = {'activate': True, 'display_verts': False, 'draw_gl_polygonoffset': True}
-        self.outputs['attrs'].sv_set([testing_default])
+        return testing_default
+
+    def process(self):
+        self.ensure_correct_origin_node_name()
+        self.outputs['attrs'].sv_set([self.attrdict_from_state])
 
 
 classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]
