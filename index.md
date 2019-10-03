@@ -147,6 +147,7 @@
     SvListModifierNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
+    SvVDAttrsNode
 
 ## List Main
     ListJoinNode
