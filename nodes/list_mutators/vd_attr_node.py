@@ -142,7 +142,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.vd_init_uilayout_data(context)
 
     def draw_buttons(self, context, layout):
-        ...
+        layout.prop(context.space_data, "show_region_ui", toggle=True)
 
     def draw_buttons_ext(self, context, layout):
         self.draw_group(context, layout)
