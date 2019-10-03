@@ -104,7 +104,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("SvStringsSocket", name="attrs")
         inew = self.inputs.new
         for prop_name, socket in maximum_spec_vd_dict.items():
-            inew(socket_types[socket.kind], socket.name).hide = True
+            inew(sock_str[socket.kind], socket.name).hide = True
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
