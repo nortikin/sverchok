@@ -104,7 +104,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     @staticmethod
     def draw_basic_lightnormal_qlink(socket, context, layout, node):
         visible_socket_index = socket.infer_visible_location_of_socket(node)
-        print('visible socket index', visible_socket_index)
+        # print('visible socket index', visible_socket_index)
         new_node_idname = "GenVectorsNode"
 
         op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
@@ -155,13 +155,42 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def attrdict_from_state(self):
-        testing_default = {'activate': True, 'display_verts': False, 'draw_gl_polygonoffset': True}
-        return testing_default
+
+        current_attr_dict = {}        
+        if self.vd_items_group and self.vd_items_props:
+            for item in self.vd_items_group:
+                attr = item.attr_name
+                if item.use_default or not item.show_socket:
+                    value = self.vd_items_props[attr]
+                else
+                    value = self.get_attr_from_input(item)
+                current_attr_dict[attr] = value
+
+        return current_attr_dict
 
     def process(self):
         self.ensure_correct_origin_node_name()
         self.outputs['attrs'].sv_set([self.attrdict_from_state])
 
+    # ---- storage copied from multi_exec for now. 
+
+    def storage_set_data(self, storage):
+        # strings_json = storage['string_storage']
+        # lines_list = json.loads(strings_json)['lines']
+        # self.id_data.freeze(hard=True)
+        # self.dynamic_strings.clear()
+        # for line in lines_list:
+        #     self.dynamic_strings.add().line = line
+
+        # self.id_data.unfreeze(hard=True)
+        ...
+
+    def storage_get_data(self, node_dict):
+        # local_storage = {'lines': []}
+        # for item in self.dynamic_strings:
+        #     local_storage['lines'].append(item.line)
+        # node_dict['string_storage'] = json.dumps(local_storage)
+        ...
 
 classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
