@@ -19,7 +19,7 @@
 from itertools import product
 
 import bpy
-from bpy.props import BoolVectorProperty
+from bpy.props import BoolVectorProperty, EnumProperty
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -34,14 +34,16 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_BOUNDING_BOX'
     def update_sockets(self, context):
         bools = [self.min_list, self.max_list, self.size_list]
+        dims = int(self.dimensions[0])
         for i in range(3):
             for j in range(3):
-                hidden = self.outputs[4+j+3*i].hide_safe
-                if bools[i][j]:
+                out_index = 4 + j + 3*i
+                hidden = self.outputs[out_index].hide_safe
+                if bools[i][j] and j < dims:
                     if hidden:
-                        self.outputs[4+j+3*i].hide_safe = False
-                else :
-                    self.outputs[4+j+3*i].hide_safe = True
+                        self.outputs[out_index].hide_safe = False
+                else:
+                    self.outputs[out_index].hide_safe = True
 
             updateNode(self, context)
 
@@ -51,18 +53,27 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         name='Max', description="Show Maximun values sockets", size=3, update=update_sockets)
     size_list: BoolVectorProperty(
         name='Size', description="Show Size values sockets",  size=3, update=update_sockets)
+    implentation_modes = [
+        ("2D", "2D", "2D", 0),
+        ("3D", "3D", "3D", 1)]
+    dimensions: EnumProperty(
+        name='Implementation', items=implentation_modes,
+        description='Choose calculation method',
+        default="3D", update=update_sockets)
 
 
 
     def draw_buttons(self, context, layout):
+        layout .prop(self, 'dimensions', expand=True)
         col = layout.column(align=True)
         titles = ["Min", "Max", "Size"]
         prop = ['min_list', 'max_list', 'size_list']
+        dims = int(self.dimensions[0])
         for i in range(3):
             row = col.row(align=True)
             row.label(text=titles[i])
             row2 = row.row(align=True)
-            for j in range(3):
+            for j in range(dims):
                 row2 .prop(self, prop[i], index=j, text='XYZ'[j], toggle=True)
 
     def sv_init(self, context):
@@ -106,27 +117,39 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             min_vals = [[], [], []]
             max_vals = [[], [], []]
             size_vals = [[], [], []]
+            to_2d = self.dimensions == '2D'
+            dims = int(self.dimensions[0])
 
             for v in vert:
                 if has_mat_out or has_vert_out or has_limits:
                     maxmin = list(zip(map(max, *v), map(min, *v)))
-
                     out = list(product(*reversed(maxmin)))
-                    verts_out.append([l[::-1] for l in out[::-1]])
-                edges_out.append(edges)
+                    v_out = [l[::-1] for l in out[::-1]]
+                    if to_2d:
+                        verts_out.append([[v[0], v[1], 0] for v in v_out[:4]])
+                        edges = edges[:4]
+                    else:
+                        verts_out.append(v_out)
+                    edges_out.append(edges)
+
                 if has_mat_out:
-                    center = [(u+v)*.5 for u, v in maxmin]
+                    center = [(u+v)*.5 for u, v in maxmin[:dims]]
+                    scale = [(u-v) for u, v in maxmin[:dims]]
+                    if to_2d:
+                        center += [0]
+                        scale += [1]
                     mat = Matrix.Translation(center)
-                    scale = [(u-v) for u, v in maxmin]
                     for i, sca in enumerate(scale):
                         mat[i][i] = sca
                     mat_out.append(mat)
                 if has_mean:
                     avr = list(map(sum, zip(*v)))
-                    avr = [n/len(v) for n in avr]
+                    avr = [n/len(v) for n in avr[:dims]]
+                    if to_2d:
+                        avr += [0]
                     mean_out.append([avr])
                 if has_limits:
-                    for i in range(3):
+                    for i in range(dims):
                         min_vals[i].append([maxmin[i][1]])
                         max_vals[i].append([maxmin[i][0]])
                         size_vals[i].append([maxmin[i][0] - maxmin[i][1]])
