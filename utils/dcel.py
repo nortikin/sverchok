@@ -94,7 +94,10 @@ class HalfEdge:
         counter = 0
         while next_edge != self:
             yield next_edge
-            next_edge = next_edge.next
+            try:
+                next_edge = next_edge.next
+            except AttributeError:
+                raise AttributeError(' Some of half edges has incomplete data (does not have link to next half edge)')
             counter += 1
             if counter > self.mesh.hedges:
                 raise RecursionError('Hedge - {} does not have a loop'.format(self))
@@ -220,21 +223,48 @@ which can be visualized by Sverchok via SN light.
 
 Example of script node code:
 
+
 '''
 in _ s d=[] n=0
 in i s d=0 n=2
 out out_v v
+out out_e s
+out arrow_v v
+out arrow_f s
 '''
+from mathutils import Vector, Matrix
 from sverchok.nodes.modifier_change.merge_mesh_2d import Debugger as debug
-out_v = [debug.data[i] if debug.data else [[0,0,0],[0,0,0]]]
+
+def get_arrow(hedge, scale=1):
+    nor = Vector(hedge[1]) - Vector(hedge[0])
+    nor = nor.to_track_quat('X', 'Z')
+    m = Matrix.Translation(Vector(hedge[1])) * nor.to_matrix().to_4x4()
+    tri = [Vector((1, 0, 0))*scale, Vector((-1, 1, 0))*scale, Vector((-1, -1, 0))*scale]
+    return [[(m*v)[:] for v in tri]], [[(0,1,2)]]
+
+if debug.data:
+    if i > len(debug.data) - 1:
+        out_v = [[0,0,0]]
+    else:
+        out_v = [debug.data[i]]
+        if len(debug.data[i]) == 2:
+            out_e = [[[0,1]]]
+            arrow_v, arrow_f = get_arrow(debug.data[i], 0.1)
+        elif len(debug.data[i]) > 2:
+            out_e = [list(range(len(debug.data[i])))]
+else:
+    out_v = [[0,0,0]]
+
 
 Output of this node will be all that is printed via Debug class available by index.
 """
 
 
 class Debugger:
-    data = []
-    count = 0
+    data = []  # all print methods put data here
+    msg = []  # all print methods put messages here
+    half_edges = []
+    _count = 0
     to_print = True
 
     @staticmethod
@@ -244,8 +274,8 @@ class Debugger:
         if not face.outer:
             print('This is probably super boundless face')
             return
-        print('{} - {}'.format(Debugger.count, msg or 'Face'))
-        Debugger.count += 1
+        print('{} - {}'.format(Debugger._count, msg or 'Face'))
+        Debugger._count += 1
         loop = [face.outer.origin]
         next_hedge = face.outer.next
         count = 0
@@ -257,6 +287,7 @@ class Debugger:
                 print('Face ({}) does not ave a loop'.format(face.i))
                 break
         Debugger.data.append(loop)
+        Debugger.msg.append(msg or 'Face')
 
     @staticmethod
     def print_he(hedge, msg=None, gen_type='twin'):
@@ -265,12 +296,13 @@ class Debugger:
         if not isinstance(hedge, list):
             hedge = [hedge]
         for h in hedge:
-            print('{} - {}'.format(Debugger.count, msg or "Hedge"))
-            Debugger.count += 1
+            print('{} - {}'.format(Debugger._count, msg or "Hedge"))
+            Debugger._count += 1
             if gen_type == 'twin':
                 Debugger.data.append([h.origin, h.twin.origin])
             else:
                 Debugger.data.append([h.origin, h.next.origin])
+            Debugger.msg.append(msg or "Hedge")
 
     @staticmethod
     def print_e(edge, msg=None):
@@ -279,17 +311,19 @@ class Debugger:
         if not isinstance(edge, list):
             edge = [edge]
         for e in edge:
-            print('{} - {}'.format(Debugger.count, msg or "Edge"))
-            Debugger.count += 1
+            print('{} - {}'.format(Debugger._count, msg or "Edge"))
+            Debugger._count += 1
             Debugger.data.append([e.v1, e.v2])
+            Debugger.msg.append([msg or "Edge"])
 
     @staticmethod
     def print_p(point, msg=None):
         if not Debugger.to_print:
             return
-        print('{} - {}'.format(Debugger.count, msg or 'Point'))
-        Debugger.count += 1
+        print('{} - {}'.format(Debugger._count, msg or 'Point'))
+        Debugger._count += 1
         Debugger.data.append([point.co])
+        Debugger.msg.append(msg or "Point")
 
     @staticmethod
     def print(*msg):
@@ -297,10 +331,14 @@ class Debugger:
             return
         print(msg)
 
-
     @staticmethod
     def clear(to_print=True):
         # Should be called before using the class
         Debugger.data.clear()
-        Debugger.count = 0
+        Debugger.msg.clear()
+        Debugger._count = 0
         Debugger.to_print = to_print
+
+    @staticmethod
+    def set_dcel_data(half_edges):
+        Debugger.half_edges = list(half_edges)

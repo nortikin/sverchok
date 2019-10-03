@@ -52,7 +52,7 @@ def is_ccw_polygon(all_verts=None, most_lefts=None):
     """
     def is_vertical(points):
         # is 3 most left points vertical
-        if points[0][x] == points[1][x] == points[2][x]:
+        if almost_equal(points[0][x], points[1][x]) and almost_equal(points[0][x], points[2][x]):
             return True
         else:
             return False
@@ -183,9 +183,9 @@ class EdgeSweepLine:
         self.is_horizontal = almost_equal(self.up_v[y], self.low_v[y])
         self.direction = self.get_direction()
 
-        self.low_hedge = None
-        self.up_hedge = None
-        self.coincidence = []
+        self.low_hedge = None  # half edge which origin is lower then origin of twin
+        self.up_hedge = None  # half edge which origin is upper then origin of twin
+        self.coincidence = []  # just a list of overlapping edges
 
         self.helper = None
 
@@ -488,9 +488,11 @@ def get_upper_vert(verts, edge):
 class HalfEdge:
 
     def __init__(self, origin, i=None, face=None):
-        self.origin = origin  # This just coordinates now, should be point object later
+        self.origin = origin  # todo This just coordinates now, should be point object later
         self.i = i
-        self.face = face
+        self.face = face  # initial face should be keep separately for extracting one from status when overlapping is over
+        self.faces = {face} if face else set()  # keeps initial face and all faces of overlapping half edges with the same length
+        self.lap_faces = {face} if face else set()  # faces from overlapping edges, for keeping status of overlapping edges
         self.in_faces = {face} if face else set()
 
         self.twin = None
@@ -499,6 +501,10 @@ class HalfEdge:
         self.left = None
         self.point = None
         self.cash_product = None
+
+        # This need for find intersection algorithm for detection unused half edges
+        # Also this need for make monotone algorithm, don't remember how
+        # todo if any troubles with make monotone algorithm this parameter should be checked
         self.edge = None
 
     def __str__(self):
@@ -569,7 +575,10 @@ class HalfEdge:
         counter = 0
         while next_edge != self:
             yield next_edge
-            next_edge = next_edge.next
+            try:
+                next_edge = next_edge.next
+            except AttributeError:
+                raise AttributeError(' Some of half edges has incomplete data (does not have link to next half edge)')
             counter += 1
             if counter > EventPoint.max_index * 2:
                 raise RecursionError('Hedge - {} does not have a loop'.format(self.i))
@@ -632,8 +641,8 @@ class Debugger(D):
         def print_node(node, msg=None):
             if not D.to_print:
                 return
-            print('{} - {}'.format(D.count, msg or 'Node'))
-            D.count += 1
+            print('{} - {}'.format(D._count, msg or 'Node'))
+            D._count += 1
             D.data.append([node.key.v1, node.key.v2])
         print_node(node, msg)
         if node.leftChild:
@@ -717,6 +726,7 @@ def to_sv_mesh_from_faces(hedges, faces):
         counter = 0
         if hedge in used:
             continue
+        Debugger.print_he(hedge, 'get vert from hedge')
         sv_verts.append(hedge.origin)
         for h in hedge.ccw_hedges:
             used.add(h)
@@ -761,13 +771,15 @@ def build_faces_list(hedges):
     for hedge in hedges:
         if hedge in used:
             continue
+        Debugger.print_he(hedge, 'Build face from this hedge')
         min_hedge = min([hedge for hedge in hedge.loop_hedges], key=lambda hedge: (hedge.origin[x], hedge.origin[y]))
+        Debugger.print_he(min_hedge, 'min hedge')
         _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin, min_hedge.origin, min_hedge.next.origin])
         # min hedge should be checked whether it look to the left or to the right
         # if to the right previous hedge should be taken
         # https://github.com/nortikin/sverchok/issues/2497#issuecomment-526096898
         min_hedge = min_hedge if min_hedge.product > 2 else min_hedge.last
-        Debugger.print_he(min_hedge, 'min hedge has left component - {}'.format(bool(min_hedge.left)))
+        #Debugger.print_he(min_hedge, 'min hedge has left component - {}'.format(bool(min_hedge.left)))
         if _is_ccw:
             face = Face(len(faces))
             face.outer = hedge
@@ -819,10 +831,12 @@ def build_faces_list(hedges):
 
 
 def map_overlay(verts_a, faces_a, verts_b, faces_b):
-    Debugger.clear(False)
+    Debugger.clear()
     half_edges = merge_two_half_edges_list(create_half_edges(verts_a, faces_a), create_half_edges(verts_b, faces_b),
                                            len(verts_a))
     find_intersections(half_edges)
+    half_edges = [he for he in half_edges if he.edge]  # ignore half edges without "users"
+    Debugger.set_dcel_data(half_edges)
     faces = build_faces_list(half_edges)
     new_half_edges = []
     for face in faces:
@@ -831,6 +845,7 @@ def map_overlay(verts_a, faces_a, verts_b, faces_b):
     if new_half_edges:
         half_edges.extend(new_half_edges)
         faces = rebuild_face_list(half_edges)
+    #Debugger.set_dcel_data(half_edges)
     return to_sv_mesh_from_faces(half_edges, faces)
 
 
@@ -843,6 +858,7 @@ def init_event_queue(event_queue, half_edges):
             continue
         edge = EdgeSweepLine(hedge.origin, hedge.twin.origin, hedge.i, hedge.twin.i)
         edge.up_hedge, edge.low_hedge = (hedge, hedge.twin) if hedge.i == edge.up_i else (hedge.twin, hedge)
+        hedge.edge, hedge.twin.edge = edge, edge
         up_node = event_queue.insert(EventPoint(edge.up_v, edge.up_i))
         up_node.key.up_edges += [edge]
         event_queue.insert(EventPoint(edge.low_v, edge.low_i))
@@ -878,15 +894,19 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     test_event_point.append(event_point)
     out = []
     is_overlapping_points = False
-    #Debugger.print_p(event_point, 'event_point')
+    Debugger.print_p(event_point, 'event_point')
     left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x])
     c = [node for node in coincidence if node.key.is_c]
     l = [node for node in coincidence if not node.key.is_c]
     [status.remove_node(node) for node in c]
     [status.remove_node(node) for node in l]
 
-    lc = []
+    lc = []  # is ordered in cw direction low edges
     uc_edges = []
+    # In this bloke of code  edges which go through event point are splitting in to edges upper and lower of event point
+    # Also in this bloke of code coincidence of ends of edges are detected
+    # Also there is need in checking has "l" edges overlapping or not
+    # if so the overlapping edges should be carefully repack
     for node in coincidence:
         edge = node.key
         #print('edge {}, up hedge {}, low hedge {}'.format(edge, edge.up_hedge, edge.low_hedge))
@@ -894,32 +914,40 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             # split edge on low und up sides
             low_edge = EdgeSweepLine(edge.up_v, event_point.co, edge.up_i, event_point.i)
             up_edge = EdgeSweepLine(event_point.co, edge.low_v, event_point.i, edge.low_i)
+            # Add information about overlapping edges
+            up_edge.coincidence = list(edge.coincidence)
             # assign to new edges existing half edges of initial edge
             low_edge.up_hedge = edge.up_hedge
             up_edge.low_hedge = edge.low_hedge
+            low_edge.up_hedge.edge = low_edge  # new "user" of half edge should be replace
+            up_edge.low_hedge.edge = up_edge  # the same
             # copy pare of half edges from existing half edges and create appropriate links
-            up_hedge_twin = HalfEdge(event_point.co, event_point.i, edge.low_hedge.face)
-            up_hedge_twin.point = event_point
-            up_hedge_twin.next = edge.low_hedge.next
-            edge.low_hedge.next.last = up_hedge_twin
-            low_hedge_twin = HalfEdge(event_point.co,event_point.i, edge.up_hedge.face)
-            low_hedge_twin.point = event_point
-            low_hedge_twin.next = edge.up_hedge.next
-            edge.up_hedge.next.last = low_hedge_twin
+            low_edge.low_hedge = HalfEdge(event_point.co, event_point.i, edge.low_hedge.face)
+            low_edge.low_hedge.point = event_point
+            low_edge.low_hedge.next = edge.low_hedge.next
+            edge.low_hedge.next.last = low_edge.low_hedge
+            up_edge.up_hedge = HalfEdge(event_point.co, event_point.i, edge.up_hedge.face)
+            up_edge.up_hedge.faces = set(edge.up_hedge.faces)
+            up_edge.up_hedge.point = event_point
+            up_edge.up_hedge.next = edge.up_hedge.next
+            edge.up_hedge.next.last = up_edge.up_hedge
             # add information about belonging to other faces only for new half edge of low edge
+            # https://github.com/nortikin/sverchok/issues/2497#issuecomment-536862680
             # and delete outdate information about belonging for low half edge of up edge
-            up_hedge_twin.in_faces = set(edge.low_hedge.in_faces)
-            up_edge.low_hedge.in_faces = {up_edge.low_hedge.face} if up_edge.low_hedge.face else set()
+            low_edge.low_hedge.in_faces = set(edge.low_hedge.in_faces)
+            up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)
+            up_edge.up_hedge.in_faces = set(low_edge.up_hedge.lap_faces)
+            up_edge.up_hedge.lap_faces = set(low_edge.up_hedge.lap_faces)
+            #up_edge.low_hedge.in_faces = {up_edge.low_hedge.face} if up_edge.low_hedge.face else set()
             up_edge.low_hedge.left = None
-            # apply new half edges to new edges
-            low_edge.low_hedge = up_hedge_twin
-            up_edge.up_hedge = low_hedge_twin
+            low_edge.low_hedge.edge = low_edge  # "user" of half edge should be set
+            up_edge.up_hedge.edge = up_edge  # the same
             # link half edges to each other
             low_edge.up_hedge.twin = low_edge.low_hedge
             low_edge.low_hedge.twin = low_edge.up_hedge
             up_edge.up_hedge.twin = up_edge.low_hedge
             up_edge.low_hedge.twin = up_edge.up_hedge
-            half_edges.extend([up_hedge_twin, low_hedge_twin])
+            half_edges.extend([low_edge.low_hedge, up_edge.up_hedge])
             #Debugger.print_he([up_hedge_twin, low_hedge_twin], 'new hedges')
             node.key = low_edge
             uc_edges.append(up_edge)
@@ -933,20 +961,91 @@ def handle_event_point(status, event_queue, event_point, half_edges):
         lc.append(node)
     #print('lc -', *lc)
 
+    up_overlapping = []
+    # As sooner low edges keeps overlapping edges inside itself
+    # the overlapping edges should be extract before handling up edges
+    for node in coincidence:
+        if not node.key.is_c and node.key.coincidence:
+            print('There is overlapping!!!')
+            # if length of list of overlapping edges is longest then one
+            # only shortest edge (between event point and low end of an edge) should be extracted
+            if len(node.key.coincidence) > 1:
+                print('coincidence edges -', node.key.coincidence)
+                i_min_edge = min([(edge.low_dot_length, i) for i, edge in enumerate(node.key.coincidence)])[1]
+                min_edge = node.key.coincidence.pop(i_min_edge)
+                min_edge.coincidence = list(node.key.coincidence)
+                nested_edge = min_edge
+            else:
+                nested_edge = node.key.coincidence[0]
+            # All part of nested edge upper event point should be removed according this part was already calculated
+            is_overlapping_points = True  # just enabled relinking half edges of edges around event point
+            # It looks like instead of editing existing edge it is better to create new one
+            up_edge = EdgeSweepLine(event_point.co, nested_edge.low_v, event_point.i, nested_edge.low_i)
+            # Newer the less new half edges for new edge can't be created
+            # because all half edges are stored in the list and deleting old half edges will take linear time
+            # instead of that more appropriate to modify old half edges
+            up_edge.low_hedge = nested_edge.low_hedge
+            up_edge.up_hedge = nested_edge.up_hedge
+            up_edge.up_hedge.origin = event_point.co
+            up_edge.up_hedge.point = event_point
+            up_edge.up_hedge.edge = up_edge
+            up_edge.low_hedge.edge = up_edge
+            # Add in_faces status, also faces of half edges of low edge should be remove from in_faces
+            Debugger.print('End point uphedge status (sub, i):{}'.format([(f.subdivision, f.i) for f in node.key.up_hedge.lap_faces]))
+            up_edge.low_hedge.lap_faces = node.key.low_hedge.lap_faces - node.key.low_hedge.faces
+            up_edge.up_hedge.lap_faces = node.key.up_hedge.lap_faces - node.key.up_hedge.faces
+            up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)
+            up_edge.up_hedge.in_faces = set(up_edge.up_hedge.lap_faces)
+            # there is no need in relinking last hedge for up_hedge and next hedge for low_hedge
+            # because this will be done father
+            up_overlapping.append(up_edge)
+
     u = []
-    for edge in event_point.up_edges + uc_edges:
+    # Here the edges below of the event point are inserted in status tree
+    # Also it detects overlapping of points in case if two edges has two different start points
+    # Also it store overlapping edges to each other
+    for edge in event_point.up_edges + uc_edges + up_overlapping:
         if edge.up_i != event_point.i:
             # check overlapping points
             edge.set_up_i(event_point.i)
             is_overlapping_points = True
         node = status.insert(edge)
+        # actually it does not insert new edge if status already has edge with the same slap
+        # and returns node with edge which was already insert before
         if edge != node.key:
-            if edge.low_dot_length > node.key.low_dot_length:
+            # Store overlapping edges
+            if almost_equal(edge.low_dot_length, node.key.low_dot_length):
+                # if there are two equal edges one of them just ignored
+                # but initial coincidence faces of ignored edge should be take in account
+                node.key.up_hedge.faces |= edge.up_hedge.faces
+                node.key.low_hedge.faces |= edge.low_hedge.faces
+                edge.up_hedge.edge = None  # this means that the hedge does not use any more and should be deleted
+                edge.low_hedge.edge = None  # the same
+                is_overlapping_points = True  # also the relinking of hedges in this event point should be done
+            elif edge.low_dot_length < node.key.low_dot_length:
+                # if tow overlapping edges are detected then edge with shortest distance between event point and its end
+                # include other overlapping edges inside itself
+                edge.coincidence.extend(list(node.key.coincidence))
+                node.key.coincidence.clear()
                 edge.coincidence.append(node.key)
-                node.key = edge
+                node.key, edge = edge, node.key
             else:
                 node.key.coincidence.append(edge)
-        u.append(node)
+            # Combine information about relations half edges with faces
+            # Only current edge can keep actual information about in_faces status
+            node.key.low_hedge.in_faces |= edge.low_hedge.in_faces
+            node.key.up_hedge.in_faces |= edge.up_hedge.in_faces
+            node.key.low_hedge.lap_faces |= edge.low_hedge.lap_faces
+            node.key.up_hedge.lap_faces |= edge.up_hedge.lap_faces
+            Debugger.print('Start point uphedge status (sub, i):{}'.format([(f.subdivision, f.i) for f in node.key.up_hedge.lap_faces]))
+            Debugger.print('fsdfsdfs (sub, i):{}'.format([(f.subdivision, f.i) for f in edge.up_hedge.lap_faces]))
+        else:
+            # store only unique nodes with upper edges
+            u.append(node)
+
+    # After new up edges (created be dividing intersected event point edges) was insert in status
+    # The order of edges should be taken from status again
+    # Don't remember why left and right neighbour should be recheck :/
     left_u_candidate, uc, right_u_candidate = get_coincidence_edges(status, event_point.co[x])
     left_neighbor = left_l_candidate if left_l_candidate else left_u_candidate
     right_neighbor = right_l_candidate if right_l_candidate else right_u_candidate
@@ -954,6 +1053,7 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     #print('left and right neighbors -', left_neighbor, right_neighbor)
 
     rotation_nodes = uc + lc[::-1]
+    # Here new connections between intersected edges are creating
     if left_neighbor:
         #Debugger.print_e(rotation_nodes[0].key, 'set left neighbour')
         rotation_nodes[0].key.outer_hedge.left = left_neighbor.up_hedge
@@ -970,13 +1070,19 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             #print('inner hedge {}, next {}, last {}'.format(edge.inner_hedge, edge.inner_hedge.next, edge.inner_hedge.last))
 
         sub_status = set(rotation_nodes[-1].key.inner_hedge.in_faces)
+        #Debugger.print('Status1 (sub, i):{}'.format(sorted([(f.subdivision, f.i) for f in sub_status])))
         for i in range(len(rotation_nodes)):
             edge = rotation_nodes[i].key
+            Debugger.print_he(edge.outer_hedge, 'Before (sub, i):{}'.format([(f.subdivision, f.i) for f in edge.outer_hedge.in_faces]))
+            Debugger.print_he(edge.inner_hedge, 'Before (sub, i):{}'.format([(f.subdivision, f.i) for f in edge.inner_hedge.in_faces]))
             sub_status -= edge.outer_hedge.in_faces
+            #Debugger.print('Status2 (sub, i):{}'.format(sorted([(f.subdivision, f.i) for f in sub_status])))
             edge.outer_hedge.in_faces |= sub_status
             sub_status |= edge.inner_hedge.in_faces
+            #Debugger.print('Status3 (sub, i):{}'.format(sorted([(f.subdivision, f.i) for f in sub_status])))
             edge.inner_hedge.in_faces |= sub_status
-            #print('Marck edge {}, outer_subd {}, inner_subd {}'.format(edge, edge.outer_hedge.subdivision, edge.inner_hedge.subdivision))
+            Debugger.print_he(edge.outer_hedge, 'Faces (sub, i):{}'.format([(f.subdivision, f.i) for f in edge.outer_hedge.in_faces]))
+            Debugger.print_he(edge.inner_hedge, 'Faces (sub, i):{}'.format([(f.subdivision, f.i) for f in edge.inner_hedge.in_faces]))
     else:
         sub_status = set(left_neighbor.up_hedge.in_faces) if left_neighbor else set()
         for node in uc:
