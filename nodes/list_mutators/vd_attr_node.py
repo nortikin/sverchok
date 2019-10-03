@@ -101,6 +101,18 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
     vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
 
+    # @staticmethod
+    # def draw_basic_arc_qlink(socket, context, layout, node):
+    #     if socket.use_quicklink:
+    #         new_node_idname = "GenVectorsNode"
+
+    #         op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+    #         op.socket_index = socket.index
+    #         op.origin = node.name
+    #         op.new_node_idname = new_node_idname
+    #         op.new_node_offsetx = -200 - 40 * socket.index
+    #         op.new_node_offsety = -30 * socket.index    
+
     def draw_group(self, context, layout):
         if self.vd_items_group:
             layout.template_list("SV_UL_VDMK3ItemList", "", self, "vd_items_group", self, "property_index")
@@ -110,6 +122,8 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         inew = self.inputs.new
         for prop_name, socket in maximum_spec_vd_dict.items():
             inew(sock_str[socket.kind], socket.name).hide = True
+
+        # for light vector:   socket.quicklink_func_name = "draw_basic_arc_qlink"
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
