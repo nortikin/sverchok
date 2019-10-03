@@ -143,6 +143,20 @@ class SvSocketCommon:
             else:
                 layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
+    def infer_visible_location_of_socket(self, node):
+        # currently only handles inputs.
+        if self.is_output:
+            return 0
+
+        counter = 0
+        for socket in node.inputs:
+            if not socket.hide:
+                if socket == self:
+                    break
+                counter += 1
+
+        return counter
+
     def draw_quick_link(self, context, layout, node):
 
         if self.use_quicklink:
@@ -154,11 +168,11 @@ class SvSocketCommon:
                 return
 
             op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = self.index
+            op.socket_index = self.index 
             op.origin = node.name
             op.new_node_idname = new_node_idname
-            op.new_node_offsetx = -200 - 40 * self.index
-            op.new_node_offsety = -30 * self.index
+            op.new_node_offsetx = -200 - 40 * self.index  ## this is not so useful, we should infer visible socket location
+            op.new_node_offsety = -30 * self.index  ## this is not so useful, we should infer visible socket location
 
     def draw(self, context, layout, node, text):
 
