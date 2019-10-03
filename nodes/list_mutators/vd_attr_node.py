@@ -11,6 +11,7 @@ from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionPrope
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_5
 from sverchok.nodes.viz.vd_draw_experimental import SvVDExperimental
+from sverchok.sockets import socket_colors
 
 sock_str = {
     'enum': "SvStringsSocket",
@@ -39,7 +40,8 @@ maximum_spec_vd_dict = dict(
     point_size=props(name="point size", kind="i"),
     line_width=props(name="line width", kind="i"),
     extended_matrix=props(name="extended matrix", kind="b"),
-    vector_light=props(name="light direction", kind="3f")
+    vector_light=props(name="light direction", kind="3f"),
+    activate=props(name="activate", kind="b")
 )
 
 def property_change(item, context, changed_attr):
@@ -75,10 +77,13 @@ class SV_UL_VDMK3ItemList(bpy.types.UIList):
         # is there a nicer way to do this? can we use  .active_node ?
         node = context.space_data.edit_tree.nodes[item.origin_node_name]
         
-        layout.label(text=item.attr_name)
-        layout.prop(node.vd_items_props[0], item.attr_name, text='') 
+        attr_name = item.attr_name
+        socket_string_name = sock_str[maximum_spec_vd_dict[attr_name].kind]
+        layout.template_node_socket(color=socket_colors[socket_string_name])
         layout.prop(item, "show_socket", text="", icon='TRACKING', toggle=True)
         layout.prop(item, "use_default", text="", icon='SETTINGS', toggle=True)
+        layout.label(text=attr_name)
+        layout.prop(node.vd_items_props[0], attr_name, text='') 
 
 class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -127,7 +132,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def ensure_correct_origin_node_name(self):
         if self.vd_items_group:
-           if not self.vd_items_group.item[0].origin_node_name == self.name:
+           if not self.vd_items_group[0].origin_node_name == self.name:
                for item in self.vd_items_group:
                    item.origin_node_name = self.name
 
