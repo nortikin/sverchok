@@ -154,7 +154,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
                    item.origin_node_name = self.name
 
     def get_attr_from_input(self, item):
-        attr = item.attr
+        attr = item.attr_name
         socket_repr = maximum_spec_vd_dict[attr]
         associated_socket = self.inputs[socket_repr.name]
         if associated_socket.is_linked:
@@ -168,7 +168,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
                 prop_signature = self.vd_items_props.__annotations__[attr][1]
                 enum_index = data[0][0]
                 enum_item = prop_signature['items'][enum_index]
-                return enum_item[1]
+                return enum_item[0]
         else:
             return None
 
@@ -183,8 +183,10 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
                     # apprently no desired to pass this attr 
                     continue
                 if item.use_default or not item.show_socket:
-                    value = self.vd_items_props[attr]
-                else
+                    value = getattr(self.vd_items_props[0], attr)
+                    if maximum_spec_vd_dict[attr].kind in {'3f', '4f'}:
+                        value = value[:]
+                else:
                     value = self.get_attr_from_input(item)
                     if value is None:
                         continue
