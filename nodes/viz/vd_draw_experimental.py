@@ -322,6 +322,16 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         default="flat", update=updateNode
     )
 
+    @staticmethod
+    def draw_basic_attr_qlink(socket, context, layout, node):
+        visible_socket_index = socket.infer_visible_location_of_socket(node)
+        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+        op.socket_index = socket.index
+        op.origin = node.name
+        op.new_node_idname = "SvVDAttrsNode"
+        op.new_node_offsetx = -200 - 40 * visible_socket_index
+        op.new_node_offsety = -30 * visible_socket_index
+
     def configureAttrSocket(self, context):
         self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
 
@@ -333,7 +343,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
-        inew('SvStringsSocket', 'attrs').hide = True
+        
+        attr_socket = inew('SvStringsSocket', 'attrs')
+        attr_socket.hide = True
+        attr_socket.quicklink_func_name = "draw_basic_attr_qlink"
+
         self.node_dict[hash(self)] = {}
 
     def draw_buttons(self, context, layout):

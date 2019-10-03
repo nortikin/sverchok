@@ -101,17 +101,17 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
     vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
 
-    # @staticmethod
-    # def draw_basic_arc_qlink(socket, context, layout, node):
-    #     if socket.use_quicklink:
-    #         new_node_idname = "GenVectorsNode"
+    @staticmethod
+    def draw_basic_lightnormal_qlink(socket, context, layout, node):
+        visible_socket_index = socket.infer_visible_location_of_socket(node)
+        new_node_idname = "GenVectorsNode"
 
-    #         op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-    #         op.socket_index = socket.index
-    #         op.origin = node.name
-    #         op.new_node_idname = new_node_idname
-    #         op.new_node_offsetx = -200 - 40 * socket.index
-    #         op.new_node_offsety = -30 * socket.index    
+        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+        op.socket_index = socket.index
+        op.origin = node.name
+        op.new_node_idname = new_node_idname
+        op.new_node_offsetx = -200 - 40 * visible_socket_index
+        op.new_node_offsety = -30 * visible_socket_index
 
     def draw_group(self, context, layout):
         if self.vd_items_group:
@@ -121,9 +121,10 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new("SvStringsSocket", name="attrs")
         inew = self.inputs.new
         for prop_name, socket in maximum_spec_vd_dict.items():
-            inew(sock_str[socket.kind], socket.name).hide = True
-
-        # for light vector:   socket.quicklink_func_name = "draw_basic_arc_qlink"
+            socket = inew(sock_str[socket.kind], socket.name)
+            socket.hide = True
+            if prop_name == 'light_vector':
+                socket.quicklink_func_name = "draw_basic_lightnormal_qlink"
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
