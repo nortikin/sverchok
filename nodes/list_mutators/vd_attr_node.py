@@ -124,8 +124,9 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         for prop_name, socket in maximum_spec_vd_dict.items():
             socket = inew(sock_str[socket.kind], socket.name)
             socket.hide = True
-            if prop_name == 'light_vector':
+            if prop_name == 'vector_light':
                 socket.quicklink_func_name = "draw_basic_lightnormal_qlink"
+                socket.use_quicklink = False # we manually define the quicklink for now
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
