@@ -170,8 +170,8 @@ class SverchNodeItem(object):
         else:
             tooltip = ""
 
-        if hasattr(node_class, "label"):
-            label = item.label
+        if hasattr(node_class, "bl_label"):
+            label = node_class.bl_label
         else:
             label = ""
 
@@ -489,7 +489,7 @@ def register_node_panels(identifier, cat_list):
                                     continue
                                 if not item.search_match(needle):
                                     continue
-                            if isinstance(item, SverchNodeItem):
+                            if not isinstance(item, SverchSeparator):
                                 has_nodes = True
                             if not (check_search and isinstance(item, SverchSeparator)):
                                 items_to_draw.append(item)
