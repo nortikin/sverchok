@@ -223,7 +223,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         # for all sockets that need to be shown, unhide
         for attr_name, attr_details in attrs_dict.items():
             socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(attr_name)
-            if attr_details.show_socket:
+            if attr_details['show_socket']:
                 associated_socket.hide = False
 
         # self.vd_items_group
