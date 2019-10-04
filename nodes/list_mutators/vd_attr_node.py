@@ -102,6 +102,10 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
     vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
 
+    @property
+    def properties_to_skip_iojson(self):
+        return {'vd_items_props', 'vd_items_group'}
+
     @staticmethod
     def draw_basic_lightnormal_qlink(socket, context, layout, node):
         visible_socket_index = socket.infer_visible_location_of_socket(node)
