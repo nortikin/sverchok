@@ -171,6 +171,11 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return None
 
+    def make_value_serializable(self, attr, value):
+        if maximum_spec_vd_dict[attr].kind in {'3f', '4f'}:
+            value = value[:]
+        return value
+
     @property
     def attrdict_from_state(self):
 
@@ -183,8 +188,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
                     continue
                 if item.use_default or not item.show_socket:
                     value = getattr(self.vd_items_props[0], attr)
-                    if maximum_spec_vd_dict[attr].kind in {'3f', '4f'}:
-                        value = value[:]
+                    value = self.make_value_serializable(attr, value)
                 else:
                     value = self.get_attr_from_input(item)
                     if value is None:
@@ -221,8 +225,10 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             data_to_store_for_attr = dict(show_socket=item.show_socket, use_default=item.use_default)
             local_storage['attrs'][item.attr_name] = data_to_store_for_attr
         
-        # for item in self.vd_items_props[0]:
-        #    local_storage['state'][ ] = 
+        for attr, item in maximum_spec_vd_dict.items():
+            value = getattr(self.vd_items_props[0], attr)
+            value = self.make_value_serializable(attr, value)
+            local_storage['state'][attr] = value
 
         node_dict['attr_storage'] = json.dumps(local_storage)
 
