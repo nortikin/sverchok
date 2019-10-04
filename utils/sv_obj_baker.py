@@ -105,6 +105,7 @@ class SvObjBakeMK3(bpy.types.Operator):
         e = self.validate_indices(i, v, e, "edges")
         p = self.validate_indices(i, v, p, "polygons")
         me.from_pydata(v, e, p)
+        me.update(calc_edges = True)
         ob = bpy.data.objects.new(name, me)
         if self.config.extended_matrix:
             ob.data.transform(m)
