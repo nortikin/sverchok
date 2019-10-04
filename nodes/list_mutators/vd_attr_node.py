@@ -157,10 +157,14 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
                for item in self.vd_items_group:
                    item.origin_node_name = self.name
 
+    def get_repr_and_socket_from_attr_name(self, attr_name):
+        socket_repr = maximum_spec_vd_dict[attr_name]
+        return socket_repr, self.inputs[socket_repr.name]
+
     def get_attr_from_input(self, item):
-        attr = item.attr_name
-        socket_repr = maximum_spec_vd_dict[attr]
-        associated_socket = self.inputs[socket_repr.name]
+        
+        socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
+
         if associated_socket.is_linked:
             data = associated_socket.sv_get()
 
@@ -169,7 +173,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             elif socket_repr.kind in {'b'}:
                 return bool(data[0][0])
             elif socket_repr.kind in {'enum'}:
-                prop_signature = self.vd_items_props.__annotations__[attr][1]
+                prop_signature = self.vd_items_props.__annotations__[item.attr_name][1]
                 enum_index = data[0][0]
                 enum_item = prop_signature['items'][enum_index]
                 return enum_item[0]
@@ -215,6 +219,13 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         state_dict = json.loads(strings_json)['state']
         
         self.id_data.freeze(hard=True)
+
+        # for all sockets that need to be shown, unhide
+        for attr_name, attr_details in attrs_dict.items():
+            socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(attr_name)
+            if attr_details.show_socket:
+                associated_socket.hide = False
+
         # self.vd_items_group
         # self.vd_items_props
         # self.dynamic_strings.clear()
