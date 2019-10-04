@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import json
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
