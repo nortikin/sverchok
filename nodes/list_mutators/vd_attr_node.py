@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import json
+import copy
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
@@ -69,8 +70,9 @@ class SvVDMK3Properties(bpy.types.PropertyGroup):
     __annotations__ = {}
     for key, v in maximum_spec_vd_dict.items():
         prop_func, kw_args = SvVDExperimental.__annotations__[key]
-        kw_args.pop('update', None)
-        __annotations__[key] = prop_func(**kw_args)
+        copy_kw_args = copy.deepcopy(kw_args)
+        copy_kw_args.pop('update', None)
+        __annotations__[key] = prop_func(**copy_kw_args)
 
 class SV_UL_VDMK3ItemList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index):
