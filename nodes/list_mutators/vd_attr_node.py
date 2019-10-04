@@ -220,18 +220,18 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         
         self.id_data.freeze(hard=True)
 
-        # for all sockets that need to be shown, unhide
-        for attr_name, attr_details in attrs_dict.items():
-            socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(attr_name)
+        for item in self.vd_items_group:
+            attr_details = attrs_dict[item.attr_name]
+            socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
             if attr_details['show_socket']:
-                associated_socket.hide = False
+                item.show_socket = True
+            if attr_details['use_default']:
+                item.use_default = True
 
-        # self.vd_items_group
-        # self.vd_items_props
-        # self.dynamic_strings.clear()
-        # for line in attrs_list:
-        #     self.dynamic_strings.add().line = line
 
+        for item, value in state_dict.items():
+            setattr(self.vd_items_props[0], item, value)
+       
         self.id_data.unfreeze(hard=True)
 
     def storage_get_data(self, node_dict):
