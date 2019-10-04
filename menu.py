@@ -251,6 +251,10 @@ class SverchSeparator(object):
         return True
 
 class SvOperatorLayout(object):
+    """
+    Abstract layout class for operator buttons.
+    Wraps standard Blender's UILayout.
+    """
     def __init__(self, parent):
         self.parent = parent
         self._prev_is_separator = False
@@ -271,6 +275,11 @@ class SvOperatorLayout(object):
             return SvNamedButtonsLayout(parent)
     
 class SvIconsLayout(SvOperatorLayout):
+    """
+    Layout class that shows operator buttons
+    with icons only (or with text if the operator does not have icon),
+    in the specified number of columns.
+    """
     def __init__(self, parent, columns=4):
         super().__init__(parent)
         self.columns = columns
@@ -305,6 +314,10 @@ class SvIconsLayout(SvOperatorLayout):
             return self.parent.operator(operator_name, **params)
 
 class SvNamedButtonsLayout(SvOperatorLayout):
+    """
+    Layout class that shows operator buttons in a standard way
+    (icon and text).
+    """
     def operator(self, operator_name, **params):
         self._prev_is_separator = False
         return self.parent.operator(operator_name, **params)
@@ -471,6 +484,8 @@ def register_node_panels(identifier, cat_list):
                     col = SvOperatorLayout.get(prefs.node_panels_icons_only, layout.column(align=True), prefs.node_panels_columns)
 
                     needle = context.scene.sv_node_search
+                    # We will search either by category selected in the popup menu,
+                    # or by search term.
                     check_search = needle != ""
                     check_category = not check_search
                     category_is_first = True
@@ -491,9 +506,13 @@ def register_node_panels(identifier, cat_list):
                                     continue
                             if not isinstance(item, SverchSeparator):
                                 has_nodes = True
+                            # Do not show separators if we are searching by text -
+                            # otherwise search results would take too much vertical space.
                             if not (check_search and isinstance(item, SverchSeparator)):
                                 items_to_draw.append(item)
 
+                        # Show category only if it has some nodes to display
+                        # according to search terms.
                         if has_nodes:
                             if check_search:
                                 if not category_is_first:
