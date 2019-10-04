@@ -220,6 +220,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         
         self.id_data.freeze(hard=True)
 
+        # repopulate vd_items_group
         for item in self.vd_items_group:
             attr_details = attrs_dict[item.attr_name]
             socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
@@ -228,7 +229,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             if attr_details['use_default']:
                 item.use_default = True
 
-
+        # repopulate vd_items_props
         for item, value in state_dict.items():
             setattr(self.vd_items_props[0], item, value)
        
