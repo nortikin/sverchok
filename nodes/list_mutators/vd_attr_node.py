@@ -201,6 +201,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     # ---- storage copied from multi_exec for now. 
 
     def storage_set_data(self, storage):
+        """ this gets triggered by IOJSON to populate this node from json """
         strings_json = storage['attr_storage']
         attrs_list = json.loads(strings_json)['attrs']
         
@@ -212,6 +213,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.id_data.unfreeze(hard=True)
 
     def storage_get_data(self, node_dict):
+        """ this is triggered by IOJSON to gather all serializable data for json storage """
         local_storage = {'attrs': []}
         # for item in self.dynamic_strings:
         #     local_storage['lines'].append(item.line)
