@@ -54,8 +54,8 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     size_list: BoolVectorProperty(
         name='Size', description="Show Size values sockets", size=3, update=update_sockets)
     implentation_modes = [
-        ("2D", "2D", "2D", 0),
-        ("3D", "3D", "3D", 1)]
+        ("2D", "2D", "Outputs Rectangle over XY plane", 0),
+        ("3D", "3D", "Outputs standard bounding box", 1)]
     dimensions: EnumProperty(
         name='Implementation', items=implentation_modes,
         description='Choose calculation method',
@@ -141,6 +141,7 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             for vec in verts:
                 if has_mat_out or has_vert_out or has_limits:
                     maxmin = list(zip(map(max, *vec), map(min, *vec)))
+                if has_vert_out:
                     out = list(product(*reversed(maxmin)))
                     v_out = [l[::-1] for l in out[::-1]]
                     if to_2d:
