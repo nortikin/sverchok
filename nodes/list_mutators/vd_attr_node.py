@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import json
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, IntProperty, CollectionProperty
@@ -101,6 +102,10 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     vd_items_group: CollectionProperty(name="vd attrs", type=SvVDMK3Item)
     vd_items_props: CollectionProperty(name="vd props", type=SvVDMK3Properties)
 
+    @property
+    def properties_to_skip_iojson(self):
+        return {'vd_items_props', 'vd_items_group'}
+
     @staticmethod
     def draw_basic_lightnormal_qlink(socket, context, layout, node):
         visible_socket_index = socket.infer_visible_location_of_socket(node)
@@ -126,7 +131,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             socket.hide = True
             if prop_name == 'vector_light':
                 socket.quicklink_func_name = "draw_basic_lightnormal_qlink"
-                # socket.use_quicklink = False # we manually define the quicklink for now
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
@@ -153,10 +157,14 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
                for item in self.vd_items_group:
                    item.origin_node_name = self.name
 
+    def get_repr_and_socket_from_attr_name(self, attr_name):
+        socket_repr = maximum_spec_vd_dict[attr_name]
+        return socket_repr, self.inputs[socket_repr.name]
+
     def get_attr_from_input(self, item):
-        attr = item.attr_name
-        socket_repr = maximum_spec_vd_dict[attr]
-        associated_socket = self.inputs[socket_repr.name]
+        
+        socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
+
         if associated_socket.is_linked:
             data = associated_socket.sv_get()
 
@@ -165,12 +173,17 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             elif socket_repr.kind in {'b'}:
                 return bool(data[0][0])
             elif socket_repr.kind in {'enum'}:
-                prop_signature = self.vd_items_props.__annotations__[attr][1]
+                prop_signature = self.vd_items_props.__annotations__[item.attr_name][1]
                 enum_index = data[0][0]
                 enum_item = prop_signature['items'][enum_index]
                 return enum_item[0]
         else:
             return None
+
+    def make_value_serializable(self, attr, value):
+        if maximum_spec_vd_dict[attr].kind in {'3f', '4f'}:
+            value = value[:]
+        return value
 
     @property
     def attrdict_from_state(self):
@@ -184,8 +197,7 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
                     continue
                 if item.use_default or not item.show_socket:
                     value = getattr(self.vd_items_props[0], attr)
-                    if maximum_spec_vd_dict[attr].kind in {'3f', '4f'}:
-                        value = value[:]
+                    value = self.make_value_serializable(attr, value)
                 else:
                     value = self.get_attr_from_input(item)
                     if value is None:
@@ -198,25 +210,45 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.ensure_correct_origin_node_name()
         self.outputs['attrs'].sv_set([self.attrdict_from_state])
 
-    # ---- storage copied from multi_exec for now. 
+    ## ---- UI JSON STORAGE SECTION BELOW THIS LINE
 
     def storage_set_data(self, storage):
-        # strings_json = storage['string_storage']
-        # lines_list = json.loads(strings_json)['lines']
-        # self.id_data.freeze(hard=True)
-        # self.dynamic_strings.clear()
-        # for line in lines_list:
-        #     self.dynamic_strings.add().line = line
+        """ this gets triggered by IOJSON to populate this node from json """
+        strings_json = storage['attr_storage']
+        attrs_dict = json.loads(strings_json)['attrs']
+        state_dict = json.loads(strings_json)['state']
+        
+        self.id_data.freeze(hard=True)
 
-        # self.id_data.unfreeze(hard=True)
-        ...
+        # repopulate vd_items_group
+        for item in self.vd_items_group:
+            attr_details = attrs_dict[item.attr_name]
+            socket_repr, associated_socket = self.get_repr_and_socket_from_attr_name(item.attr_name)
+            if attr_details['show_socket']:
+                item.show_socket = True
+            if attr_details['use_default']:
+                item.use_default = True
+
+        # repopulate vd_items_props
+        for item, value in state_dict.items():
+            setattr(self.vd_items_props[0], item, value)
+       
+        self.id_data.unfreeze(hard=True)
 
     def storage_get_data(self, node_dict):
-        # local_storage = {'lines': []}
-        # for item in self.dynamic_strings:
-        #     local_storage['lines'].append(item.line)
-        # node_dict['string_storage'] = json.dumps(local_storage)
-        ...
+        """ this is triggered by IOJSON to gather all serializable data for json storage """
+        local_storage = {'attrs': {}, 'state': {}}
+        for item in self.vd_items_group:
+            data_to_store_for_attr = dict(show_socket=item.show_socket, use_default=item.use_default)
+            local_storage['attrs'][item.attr_name] = data_to_store_for_attr
+        
+        for attr, item in maximum_spec_vd_dict.items():
+            value = getattr(self.vd_items_props[0], attr)
+            value = self.make_value_serializable(attr, value)
+            local_storage['state'][attr] = value
+
+        node_dict['attr_storage'] = json.dumps(local_storage)
+
 
 classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
