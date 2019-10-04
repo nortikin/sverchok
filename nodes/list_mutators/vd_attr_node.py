@@ -126,7 +126,6 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
             socket.hide = True
             if prop_name == 'vector_light':
                 socket.quicklink_func_name = "draw_basic_lightnormal_qlink"
-                # socket.use_quicklink = False # we manually define the quicklink for now
   
     def vd_init_uilayout_data(self, context):
         for key, value in maximum_spec_vd_dict.items():
@@ -198,14 +197,17 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         self.ensure_correct_origin_node_name()
         self.outputs['attrs'].sv_set([self.attrdict_from_state])
 
-    # ---- storage copied from multi_exec for now. 
+    ## ---- UI JSON STORAGE SECTION BELOW THIS LINE
 
     def storage_set_data(self, storage):
         """ this gets triggered by IOJSON to populate this node from json """
         strings_json = storage['attr_storage']
-        attrs_list = json.loads(strings_json)['attrs']
+        attrs_dict = json.loads(strings_json)['attrs']
+        state_dict = json.loads(strings_json)['state']
         
         self.id_data.freeze(hard=True)
+        # self.vd_items_group
+        # self.vd_items_props
         # self.dynamic_strings.clear()
         # for line in attrs_list:
         #     self.dynamic_strings.add().line = line
@@ -214,9 +216,13 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def storage_get_data(self, node_dict):
         """ this is triggered by IOJSON to gather all serializable data for json storage """
-        local_storage = {'attrs': []}
-        # for item in self.dynamic_strings:
-        #     local_storage['lines'].append(item.line)
+        local_storage = {'attrs': {}, 'state': {}}
+        for item in self.vd_items_group:
+            local_storage['attrs'][ ] = ...
+        
+        for item in self.vd_items_props[0]:
+            local_storage['state'][ ] = ...
+
         node_dict['attr_storage'] = json.dumps(local_storage)
 
 
