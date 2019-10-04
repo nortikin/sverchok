@@ -23,7 +23,7 @@ import bmesh
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.utils.module import sv_bmesh
+from sverchok.utils.modules import sv_bmesh
 
 class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -59,9 +59,6 @@ class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(out_verts)
         self.outputs['Faces'].sv_set(out_faces)
 
-def register():
-    bpy.utils.register_class(SvCricketNode)
 
-def unregister():
-    bpy.utils.unregister_class(SvCricketNode)
-
+classes = [SvCricketNode]
+register, unregister = bpy.utils.register_classes_factory(classes)
