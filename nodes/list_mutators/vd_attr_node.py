@@ -201,22 +201,22 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
     # ---- storage copied from multi_exec for now. 
 
     def storage_set_data(self, storage):
-        # strings_json = storage['string_storage']
-        # lines_list = json.loads(strings_json)['lines']
-        # self.id_data.freeze(hard=True)
+        strings_json = storage['attr_storage']
+        attrs_list = json.loads(strings_json)['attrs']
+        
+        self.id_data.freeze(hard=True)
         # self.dynamic_strings.clear()
-        # for line in lines_list:
+        # for line in attrs_list:
         #     self.dynamic_strings.add().line = line
 
-        # self.id_data.unfreeze(hard=True)
-        ...
+        self.id_data.unfreeze(hard=True)
 
     def storage_get_data(self, node_dict):
-        # local_storage = {'lines': []}
+        local_storage = {'attrs': []}
         # for item in self.dynamic_strings:
         #     local_storage['lines'].append(item.line)
-        # node_dict['string_storage'] = json.dumps(local_storage)
-        ...
+        node_dict['attr_storage'] = json.dumps(local_storage)
+
 
 classes = [SvVDMK3Item, SvVDMK3Properties, SV_UL_VDMK3ItemList, SvVDAttrsNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
