@@ -218,10 +218,11 @@ class SvVDAttrsNode(bpy.types.Node, SverchCustomTreeNode):
         """ this is triggered by IOJSON to gather all serializable data for json storage """
         local_storage = {'attrs': {}, 'state': {}}
         for item in self.vd_items_group:
-            local_storage['attrs'][ ] = ...
+            data_to_store_for_attr = dict(show_socket=item.show_socket, use_default=item.use_default)
+            local_storage['attrs'][item.attr_name] = data_to_store_for_attr
         
-        for item in self.vd_items_props[0]:
-            local_storage['state'][ ] = ...
+        # for item in self.vd_items_props[0]:
+        #    local_storage['state'][ ] = 
 
         node_dict['attr_storage'] = json.dumps(local_storage)
 
