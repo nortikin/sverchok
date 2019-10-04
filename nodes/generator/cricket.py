@@ -22,7 +22,6 @@ import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.modules import sv_bmesh
 
 class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
@@ -36,7 +35,10 @@ class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Cricket"
     bl_icon = "GHOST_ENABLED"
 
+    cricket_scale = bpy.props.FloatProperty(name='scale', default=4.0, update=updateNode)
+
     def sv_init(self, context):
+        self.inputs.new('SvStringsSocket', "Scale").prop_name = "cricket_scale"
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket',  "Faces")
 
@@ -48,11 +50,9 @@ class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
         out_verts = []
         out_faces = []
 
-        bm = bmesh.new()
-        sv_bmesh.ops.create_cricket(bm)
-        verts, edges, faces = pydata_from_bmesh(bm)
-        bm.free()
-
+        in_scale = self.inputs['Scale'].sv_get(default=[[self.cricket_scale]])
+        
+        verts, _, faces = sv_bmesh.create_cricket(as_pydata=True, scale=in_scale[0][0])
         out_verts.append(verts)
         out_faces.append(faces)
 
