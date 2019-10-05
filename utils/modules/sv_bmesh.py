@@ -6,8 +6,6 @@
 # License-Filename: LICENSE
 
 # pylint: disable=c0301
-import ast
-from pathlib import Path
 
 import bmesh
 from mathutils import Matrix, Vector
@@ -15,9 +13,6 @@ from mathutils import Matrix, Vector
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.utils.modules.geom_cricket import cricket
 
-
-base_mesh_dict = {}
-base_mesh_dict['cricket'] = cricket
 
 
 def create_cricket(as_pydata=False, scale=4.0):
