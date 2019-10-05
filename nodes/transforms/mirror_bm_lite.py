@@ -47,11 +47,17 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "recalc_normals", toggle=True)
 
+
     def compose_objects_from_inputs(self):
         if not self.inputs[0].is_linked:
             objects = []
         else:
             objects = []
+            vert_data = self.inputs[0].sv_get(default=[])
+            edge_data = self.inputs[1].sv_get(default=[])
+            face_data = self.inputs[2].sv_get(default=[])
+            merge_data = self.inputs[3].sv_get(default=[])
+            matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
             # for .. in sockets:
             #     verts =
             #     edges =
@@ -59,7 +65,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             #     obj = lambda: None
             #     obj.geom = verts, edges, faces
             #     obj.merge_distance = ...
-            #     obj.matrix = yield self.inputs['Plane'].sv_get(default=[Matrix()])
+            #     obj.matrix = 
             #     objects.append(obj)
         return objects
 
@@ -68,8 +74,9 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         for idx, obj in enumerate(self.compose_objects_from_inputs()):
 
             bm = bmesh_from_pydata(*obj.geom)
-            # all parans:   (bm, geom=[], matrix=Matrix(), merge_dist=0.0, axis='X', mirror_u=False, mirror_v=False)
             geom = (bm.verts[:] + bm.faces[:])
+
+            # all parans:   (bm, geom=[], matrix=Matrix(), merge_dist=0.0, axis='X', mirror_u=False, mirror_v=False)
             bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, axis='X')
             if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
