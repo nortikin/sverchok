@@ -36,6 +36,10 @@ def create_cricket(as_pydata=False, scale=4.0):
 
     cricket = base_mesh_dict.get('cricket')
 
+    if as_pydata and not cricket:
+        print('something seriously failed during the acquisition of cricket mascotte geometry...')
+        return [], [], []
+
     bm = bmesh_from_pydata(cricket['vert_list'], [], cricket['face_list'])
     bmesh.ops.mirror(bm, geom=(bm.verts[:] + bm.faces[:]), matrix=Matrix(), merge_dist=0.0, axis='X')
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
