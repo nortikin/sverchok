@@ -50,6 +50,10 @@ class SvObjBakeMK3(bpy.types.Operator):
         node = node_group.nodes[self.idname]
         nid = node_id(node)
 
+        if not node.inputs[0].is_linked:
+            self.report({"WARNING"}, "Vertex socket of Draw node must be connected")
+            return {'CANCELLED'}
+
         fill_cache_from_node_reference(node)
         matrix_cache = cache_viewer_baker[nid + 'm']
         vertex_cache = cache_viewer_baker[nid + 'v']
