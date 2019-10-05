@@ -25,6 +25,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import levelsOflist, updateNode
+from sverchok.ui.sv_icons import custom_icon
 
 # pylint: disable=C0326
 
@@ -120,7 +121,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, ctx, layout):
-        layout.prop(self, "current_op", text="F (x)")
+        layout.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
 
 
     def sv_init(self, context):
