@@ -11,7 +11,7 @@ from mathutils import Matrix, Vector
 
 from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, enum_item_4
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
@@ -33,6 +33,10 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         name='merge distance', default=0.0, update=updateNode,
         description='distance over which the mirror will join two meshes')
 
+    axis: EnumProperty(
+        name="axis to mirror over", update=updateNode,
+        default='X', items=enum_item_4(['X', 'Y', 'Z']))
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Edges")
@@ -47,26 +51,27 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "recalc_normals", toggle=True)
 
-
     def compose_objects_from_inputs(self):
+        objects = []
+
         if not self.inputs[0].is_linked:
-            objects = []
+            pass
         else:
-            objects = []
+
             vert_data = self.inputs[0].sv_get(default=[])
             edge_data = self.inputs[1].sv_get(default=[])
             face_data = self.inputs[2].sv_get(default=[])
             merge_data = self.inputs[3].sv_get(default=[[self.merge_distance]])
             matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
-            # for .. in sockets:
-            #     verts =
-            #     edges =
-            #     faces =
-            #     obj = lambda: None
-            #     obj.geom = verts, edges, faces
-            #     obj.merge_distance = ...
-            #     obj.matrix = 
-            #     objects.append(obj)
+
+            params = match_long_repeat([vert_data, edge_data, face_data])
+            for idx, geom in enumerate(zip(params)):
+                obj = lambda: None
+                obj.geom = geom
+                obj.merge_distance = merge_data[0][idx if idx < len(merge_data[0]) else -1]
+                obj.matrix = matrix_data[idx if idx < len(matrix_data) else -1]
+                objects.append(obj)
+
         return objects
 
     def process(self):
@@ -77,7 +82,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             geom = (bm.verts[:] + bm.faces[:])
 
             # all parans:   (bm, geom=[], matrix=Matrix(), merge_dist=0.0, axis='X', mirror_u=False, mirror_v=False)
-            bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, axis='X')
+            bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, axis=self.axis)
             if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
             verts, edges, faces = pydata_from_bmesh(bm)
