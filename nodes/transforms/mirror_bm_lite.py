@@ -26,12 +26,12 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GREASEPENCIL'
 
     recalc_normals: BoolProperty(
-        name='recalc face normals', default=True, 
-        description='mirror will invert faces, this will correct that, usually..', update=updateNode)
+        name='recalc face normals', default=True, update=updateNode, 
+        description='mirror will invert faces, this will correct that, usually..')
     
     merge_distance: FloatProperty(
-        name='merge distance', default=0.0,
-        description='distance over which the mirror will join two meshes', update=updateNode)
+        name='merge distance', default=0.0, update=updateNode,
+        description='distance over which the mirror will join two meshes')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -45,7 +45,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Faces")
 
     def draw_buttons(self, context, layout):
-        ...
+        layout.prop(self, "recalc_normals", toggle=True)
 
     def compose_objects_from_inputs(self):
         if not self.inputs[0].is_linked:
@@ -59,15 +59,17 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             #     obj = lambda: None
             #     obj.geom = verts, edges, faces
             #     obj.merge_distance = ...
+            #     obj.matrix = yield self.inputs['Plane'].sv_get(default=[Matrix()])
             #     objects.append(obj)
         return objects
 
     def process(self):
         
-        for obj in self.compose_objects_from_inputs():
+        for idx, obj in enumerate(self.compose_objects_from_inputs()):
+            matrix = 
             bm = bmesh_from_pydata(*obj.geom)
             # all parans:   (bm, geom=[], matrix=Matrix(), merge_dist=0.0, axis='X', mirror_u=False, mirror_v=False)
-            bmesh.ops.mirror(bm, geom=(bm.verts[:] + bm.faces[:]), matrix=Matrix(), merge_dist=obj.merge_distance, axis='X')
+            bmesh.ops.mirror(bm, geom=(bm.verts[:] + bm.faces[:]), matrix=obj.matrix, merge_dist=obj.merge_distance, axis='X')
             if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
             verts, edges, faces = pydata_from_bmesh(bm)
