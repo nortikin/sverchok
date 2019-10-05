@@ -67,7 +67,6 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
             params = match_long_repeat([vert_data, edge_data, face_data])
             for idx, geom in enumerate(zip(*params)):
-                print(geom)
                 obj = lambda: None
                 obj.geom = geom
                 obj.merge_distance = merge_data[0][idx if idx < len(merge_data[0]) else -1]
