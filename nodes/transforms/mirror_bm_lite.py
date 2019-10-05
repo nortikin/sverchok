@@ -67,6 +67,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
 
             params = match_long_repeat([vert_data, edge_data, face_data])
+            # print(params)
             for idx, geom in enumerate(zip(*params)):
                 obj = lambda: None
                 obj.geom = geom
