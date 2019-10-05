@@ -68,7 +68,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(*obj.geom)
             # all parans:   (bm, geom=[], matrix=Matrix(), merge_dist=0.0, axis='X', mirror_u=False, mirror_v=False)
             bmesh.ops.mirror(bm, geom=(bm.verts[:] + bm.faces[:]), matrix=Matrix(), merge_dist=obj.merge_distance, axis='X')
-            if self.recalc_normals
+            if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
             verts, edges, faces = pydata_from_bmesh(bm)
             bm.free()
