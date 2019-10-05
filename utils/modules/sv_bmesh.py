@@ -29,7 +29,7 @@ def load_from_geom_modules(filename):
 
 
 base_mesh_dict = {}
-base_mesh_dict['cricket'] = load_from_geom_modules("geom_cricket.json")
+base_mesh_dict['cricket'] = load_from_geom_modules("geom_cricket.dict")
 
 
 def create_cricket(as_pydata=False, scale=4.0):
