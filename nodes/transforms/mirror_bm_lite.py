@@ -9,7 +9,7 @@ import bpy
 import bmesh
 from mathutils import Matrix, Vector
 
-# from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
