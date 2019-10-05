@@ -113,7 +113,10 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_label(self):
-        return self.current_op
+        text = self.current_op
+        if text in {'SCALAR', '1/SCALAR'}:
+           text = f'A * {text}'
+        return text
 
 
     def draw_buttons(self, ctx, layout):
