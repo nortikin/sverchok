@@ -35,7 +35,7 @@ class SvCricketNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Cricket"
     bl_icon = "GHOST_ENABLED"
 
-    cricket_scale = bpy.props.FloatProperty(name='scale', default=4.0, update=updateNode)
+    cricket_scale: bpy.props.FloatProperty(name='scale', default=4.0, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Scale").prop_name = "cricket_scale"
