@@ -9,9 +9,9 @@ import bpy
 import bmesh
 from mathutils import Matrix, Vector
 
-from bpy.props import FloatProperty, BoolProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, enum_item_4
+from sverchok.data_structure import updateNode, enum_item_4, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
@@ -50,6 +50,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "recalc_normals", toggle=True)
+        layout.prop(self, "axis", expand=True)
 
     def compose_objects_from_inputs(self):
         objects = []
@@ -65,7 +66,8 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
 
             params = match_long_repeat([vert_data, edge_data, face_data])
-            for idx, geom in enumerate(zip(params)):
+            for idx, geom in enumerate(zip(*params)):
+                print(geom)
                 obj = lambda: None
                 obj.geom = geom
                 obj.merge_distance = merge_data[0][idx if idx < len(merge_data[0]) else -1]
@@ -76,6 +78,8 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
         
+        vert_data_out, edge_data_out, face_data_out = [], [], []
+
         for idx, obj in enumerate(self.compose_objects_from_inputs()):
 
             bm = bmesh_from_pydata(*obj.geom)
@@ -87,6 +91,15 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
             verts, edges, faces = pydata_from_bmesh(bm)
             bm.free()
+
+            vert_data_out.append(verts)
+            edge_data_out.append(edges)
+            face_data_out.append(faces)
+
+        self.outputs[0].sv_set(vert_data_out)
+        self.outputs[1].sv_set(edge_data_out)
+        self.outputs[2].sv_set(face_data_out)
+
 
 
 classes = [SvMirrorLiteBMeshNode]
