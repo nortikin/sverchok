@@ -56,7 +56,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             vert_data = self.inputs[0].sv_get(default=[])
             edge_data = self.inputs[1].sv_get(default=[])
             face_data = self.inputs[2].sv_get(default=[])
-            merge_data = self.inputs[3].sv_get(default=[])
+            merge_data = self.inputs[3].sv_get(default=[[self.merge_distance]])
             matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
             # for .. in sockets:
             #     verts =
