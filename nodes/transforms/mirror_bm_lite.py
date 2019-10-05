@@ -25,11 +25,11 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mirror Lite (bm.ops)'
     bl_icon = 'GREASEPENCIL'
 
-    recalc_normals = BoolProperty(
+    recalc_normals: BoolProperty(
         name='recalc face normals', default=True, 
         description='mirror will invert faces, this will correct that, usually..', update=updateNode)
     
-    merge_distance = FloatProperty(
+    merge_distance: FloatProperty(
         name='merge distance', default=0.0,
         description='distance over which the mirror will join two meshes', update=updateNode)
 
