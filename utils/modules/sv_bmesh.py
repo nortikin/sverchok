@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+# pylint: disable=c0301
+
 import bmesh
 from mathutils import Matrix, Vector
 
