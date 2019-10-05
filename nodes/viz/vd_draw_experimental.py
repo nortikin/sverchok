@@ -575,7 +575,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def fully_enabled(self):
-        return "matrix" in self.inputs
+        return "attrs" in self.inputs
 
     def update(self):
         if not self.fully_enabled:
