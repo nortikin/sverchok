@@ -38,7 +38,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Edges")
         self.inputs.new('SvStringsSocket', "Faces")
         self.inputs.new('SvStringsSocket', "Merge Distance").prop_name = 'merge_distance'
-        self.inputs.new('SvMatricesSocket', "Mirror Matrix")
+        self.inputs.new('SvMatrixSocket', "Mirror Matrix")
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
@@ -66,7 +66,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         
         for idx, obj in enumerate(self.compose_objects_from_inputs()):
-            matrix = 
+
             bm = bmesh_from_pydata(*obj.geom)
             # all parans:   (bm, geom=[], matrix=Matrix(), merge_dist=0.0, axis='X', mirror_u=False, mirror_v=False)
             bmesh.ops.mirror(bm, geom=(bm.verts[:] + bm.faces[:]), matrix=obj.matrix, merge_dist=obj.merge_distance, axis='X')
