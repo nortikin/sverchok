@@ -6,11 +6,13 @@
 # License-Filename: LICENSE
 
 import bpy
-# import mathutils
-# from mathutils import Vector
+import bmesh
+from mathutils import Matrix, Vector
+
 # from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -23,14 +25,55 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mirror Lite (bm.ops)'
     bl_icon = 'GREASEPENCIL'
 
+    recalc_normals = BoolProperty(
+        name='recalc face normals', default=True, 
+        description='mirror will invert faces, this will correct that, usually..', update=updateNode)
+    
+    merge_distance = FloatProperty(
+        name='merge distance', default=0.0,
+        description='distance over which the mirror will join two meshes', update=updateNode)
+
     def sv_init(self, context):
-        ...
+        self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', "Edges")
+        self.inputs.new('SvStringsSocket', "Faces")
+        self.inputs.new('SvStringsSocket', "Merge Distance").prop_name = 'merge_distance'
+        self.inputs.new('SvMatricesSocket', "Mirror Matrix")
+
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Faces")
 
     def draw_buttons(self, context, layout):
         ...
 
+    def compose_objects(self):
+        if not self.inputs[0].is_linked:
+            objects = []
+        else:
+            objects = []
+            # for .. in sockets:
+            #     verts =
+            #     edges =
+            #     faces =
+            #     obj = lambda: None
+            #     obj.geom = verts, edges, faces
+            #     obj.merge_distance = ...
+            #     objects.append(obj)
+        return objects
+
     def process(self):
-        ...
+        
+        for obj in self.compose_objects():
+
+            # .mirror(bmesh, geom=[], matrix=Matrix(), merge_dist=0.0, axis='X', mirror_u=False, mirror_v=False)
+
+            bm = bmesh_from_pydata(*obj.geom)
+            bmesh.ops.mirror(bm, geom=(bm.verts[:] + bm.faces[:]), matrix=Matrix(), merge_dist=obj.merge_distance, axis='X')
+            if self.recalc_normals
+                bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            verts, edges, faces = pydata_from_bmesh(bm)
+            bm.free()
 
 
 classes = [SvMirrorLiteBMeshNode]
