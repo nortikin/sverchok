@@ -14,6 +14,9 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, enum_item_4, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
+axis_dict = {'X': (1, 0, 0), 'Y': (0, 1, 0), 'Z': (0, 0, 1)} 
+
+
 class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: mirror lite
@@ -61,6 +64,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "recalc_normals", toggle=True)
         layout.prop(self, "axis", expand=True)
+        layout.prop(self, "bisect_first", expand=True)
         # row = layout.row(align=True)
         # row.prop(self, "mirror_u"); row.prop(self, "mirror_v")
     
@@ -83,7 +87,6 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             # matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
 
             params = match_long_repeat([vert_data, edge_data, face_data])
-            # print(params)
             for idx, geom in enumerate(zip(*params)):
                 obj = lambda: None
                 obj.geom = geom
@@ -99,20 +102,19 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
         for idx, obj in enumerate(self.compose_objects_from_inputs()):
 
-            bm = bmesh_from_pydata(*obj.geom)
-            geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
+            bm = bmesh_from_pydata(*obj.geom, normal_update=True)
 
+            # bisect over the axis and obj.matrix first.
             if self.bisect_first:
-                # pp = cut_mat.to_translation()
-                # pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
-                # bisect over the axis and obj.matrix first.
-                # bisect - copy some code from : SvBisectNode
-                # geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
-                # res = bmesh.ops.bisect_plane(
-                #     bm, geom=geom_in, dist=0.00001, plane_co=pp, plane_no=pno, 
-                #     use_snap_center=False, clear_outer=outer, clear_inner=inner)
-                pass
+                bisect_geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
+                pp = obj.matrix.to_translation()
+                axis_tuple = axis_dict[self.axis]
+                pno = Vector(axis_tuple) @ obj.matrix.to_3x3().transposed()
+                res = bmesh.ops.bisect_plane(
+                    bm, geom=bisect_geom, dist=0.00001, plane_co=pp, plane_no=pno, 
+                    use_snap_center=False, clear_outer=False, clear_inner=True)
 
+            geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
             extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
             bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, **extra_params)
             if self.recalc_normals:
