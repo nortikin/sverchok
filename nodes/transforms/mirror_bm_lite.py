@@ -51,7 +51,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Faces")
 
     def draw_buttons(self, context, layout):
-        row = layout.row()
+        row = layout.row(align=True)
         row.prop(self, "recalc_normals", toggle=True)
         row.separator()
         row.prop(self, "axis", expand=True)
