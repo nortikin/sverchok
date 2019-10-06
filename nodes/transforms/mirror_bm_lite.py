@@ -104,21 +104,26 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
             bm = bmesh_from_pydata(*obj.geom, normal_update=True)
 
-            # bisect over the axis and obj.matrix first.
-            if self.bisect_first:
-                bisect_geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
-                pp = obj.matrix.to_translation()
-                axis_tuple = axis_dict[self.axis]
-                pno = Vector(axis_tuple) @ obj.matrix.to_3x3().transposed()
-                res = bmesh.ops.bisect_plane(
-                    bm, geom=bisect_geom, dist=0.00001, plane_co=pp, plane_no=pno, 
-                    use_snap_center=False, clear_outer=False, clear_inner=True)
+            # # bisect over the axis and obj.matrix first.
+            # if self.bisect_first:
+            #     bisect_geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
+            #     pp = obj.matrix.to_translation()
+            #     axis_tuple = axis_dict[self.axis]
+            #     pno = Vector(axis_tuple) @ obj.matrix.to_3x3().transposed()
+            #     res = bmesh.ops.bisect_plane(
+            #         bm, geom=bisect_geom, dist=0.00001, plane_co=pp, plane_no=pno, 
+            #         use_snap_center=False, clear_outer=False, clear_inner=True)
 
+            # geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
+            # extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
+            # bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, **extra_params)
+            
             geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
-            extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
-            bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, **extra_params)
+            bmesh.ops.symmetrize(bm, input=geom, direction=self.axis, dist=obj.merge_distance)
+
             if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
+            
             verts, edges, faces = pydata_from_bmesh(bm)
             bm.free()
 
