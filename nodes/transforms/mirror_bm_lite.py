@@ -37,6 +37,12 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         name="axis to mirror over", update=updateNode,
         default='X', items=enum_item_4(['X', 'Y', 'Z']))
 
+    # mirror_u: BoolProperty(
+    #     name="Mirror U", update=updateNode, description='')
+
+    # mirror_v: BoolProperty(
+    #     name="Mirror V", update=updateNode, description='')    
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Edges")
@@ -51,6 +57,8 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "recalc_normals", toggle=True)
         layout.prop(self, "axis", expand=True)
+        # row = layout.row(align=True)
+        # row.prop(self, "mirror_u"); row.prop(self, "mirror_v")
 
     def compose_objects_from_inputs(self):
         objects = []
@@ -86,8 +94,8 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(*obj.geom)
             geom = (bm.verts[:] + bm.faces[:])
 
-            # all parans:   not sure what these do, mirror_u=False, mirror_v=False)
-            bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, axis=self.axis)
+            extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
+            bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, **extra_params)
             if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
             verts, edges, faces = pydata_from_bmesh(bm)
