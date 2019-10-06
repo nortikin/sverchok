@@ -101,6 +101,8 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
 
             if self.bisect_first:
+                # pp = cut_mat.to_translation()
+                # pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
                 # bisect over the axis and obj.matrix first.
                 # bisect - copy some code from : SvBisectNode
                 # geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
