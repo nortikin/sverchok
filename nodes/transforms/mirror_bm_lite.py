@@ -27,7 +27,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
     bisect_first: BoolProperty(
         update=updateNode, name='bisect first',
-        description='drop geometry outside of the mirror axis, better results when mirror is in mesh')
+        description='drop geometry outside of the mirror axis, bisect the overlapping geometry')
 
     recalc_normals: BoolProperty(
         name='recalc face normals', default=True, update=updateNode, 
@@ -96,9 +96,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         for idx, obj in enumerate(self.compose_objects_from_inputs()):
 
             bm = bmesh_from_pydata(*obj.geom)
-            geom = (bm.verts[:] + bm.faces[:])
-
-            extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
+            geom = (bm.verts[:] + bm.edges[:] + bm.faces[:])
 
             if self.bisect_first:
                 # pp = cut_mat.to_translation()
@@ -111,6 +109,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
                 #     use_snap_center=False, clear_outer=outer, clear_inner=inner)
                 pass
 
+            extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
             bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, **extra_params)
             if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
