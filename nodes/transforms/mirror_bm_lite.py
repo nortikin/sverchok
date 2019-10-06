@@ -52,7 +52,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Edges")
         self.inputs.new('SvStringsSocket', "Faces")
         self.inputs.new('SvStringsSocket', "Merge Distance").prop_name = 'merge_distance'
-        self.inputs.new('SvMatrixSocket', "Mirror Matrix")
+        # self.inputs.new('SvMatrixSocket', "Mirror Matrix").hide = True
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
@@ -63,6 +63,10 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "axis", expand=True)
         # row = layout.row(align=True)
         # row.prop(self, "mirror_u"); row.prop(self, "mirror_v")
+    
+    #def rclick_menu(self, context, layout):
+    #    if "Mirror Matrix" in self.inputs:
+    #        layout.prop(self.inputs["Mirror Matrix"], 'hide', text="Matrix Socket (optional)")
 
     def compose_objects_from_inputs(self):
         objects = []
@@ -76,7 +80,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             edge_data = self.inputs[1].sv_get(default=[[]])
             face_data = self.inputs[2].sv_get(default=[[]])
             merge_data = self.inputs[3].sv_get(default=[[self.merge_distance]])
-            matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
+            # matrix_data  = self.inputs[4].sv_get(default=[Matrix()])
 
             params = match_long_repeat([vert_data, edge_data, face_data])
             # print(params)
@@ -84,7 +88,7 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
                 obj = lambda: None
                 obj.geom = geom
                 obj.merge_distance = merge_data[0][idx if idx < len(merge_data[0]) else -1]
-                obj.matrix = matrix_data[idx if idx < len(matrix_data) else -1]
+                obj.matrix = Matrix() # matrix_data[idx if idx < len(matrix_data) else -1]
                 objects.append(obj)
 
         return objects
