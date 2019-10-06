@@ -25,6 +25,10 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mirror Lite (bm.ops)'
     bl_icon = 'GREASEPENCIL'
 
+    bisect_first: BoolProperty(
+        update=updateNode, name='bisect first',
+        description='drop geometry outside of the mirror axis, better results when mirror is in mesh')
+
     recalc_normals: BoolProperty(
         name='recalc face normals', default=True, update=updateNode, 
         description='mirror will invert faces, this will correct that, usually..')
@@ -95,6 +99,16 @@ class SvMirrorLiteBMeshNode(bpy.types.Node, SverchCustomTreeNode):
             geom = (bm.verts[:] + bm.faces[:])
 
             extra_params = dict(axis=self.axis) #, mirror_u=self.mirror_u, mirror_v=self.mirror_v)
+
+            if self.bisect_first:
+                # bisect over the axis and obj.matrix first.
+                # bisect - copy some code from : SvBisectNode
+                # geom_in = bm.verts[:] + bm.edges[:] + bm.faces[:]
+                # res = bmesh.ops.bisect_plane(
+                #     bm, geom=geom_in, dist=0.00001, plane_co=pp, plane_no=pno, 
+                #     use_snap_center=False, clear_outer=outer, clear_inner=inner)
+                pass
+
             bmesh.ops.mirror(bm, geom=geom, matrix=obj.matrix, merge_dist=obj.merge_distance, **extra_params)
             if self.recalc_normals:
                 bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
