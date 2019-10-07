@@ -49,7 +49,7 @@
     SvRegularSolid
 
 ## Analyzers
-    SvBBoxNode
+    SvBBoxNodeMk2
     SvDiameterNode
     SvVolumeNode
     SvAreaNode
