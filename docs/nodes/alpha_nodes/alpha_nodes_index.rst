@@ -10,4 +10,5 @@ Alpha Nodes
    lattice_analyzer
    offset_line
    planar_edgenet_to_polygons
+   switch_MK2
    pulga_physics
