@@ -42,7 +42,7 @@ def is_ccw(a, b, c):
     return (b[x] - a[x]) * (c[y] - a[y]) > (b[y] - a[y]) * (c[x] - a[x])
 
 
-def is_ccw_polygon(all_verts=None, most_lefts=None):
+def is_ccw_polygon(all_verts=None, most_lefts=None, accuracy=1e-6):
     """
     The function get either all points or most left point and its two neighbours of the polygon
     and returns True if order of points are in counterclockwise
@@ -50,9 +50,9 @@ def is_ccw_polygon(all_verts=None, most_lefts=None):
     :param most_lefts: [(x, y, z) or (x, y), ...]
     :return: bool
     """
-    def is_vertical(points):
+    def is_vertical(points, accuracy=1e-6):
         # is 3 most left points vertical
-        if almost_equal(points[0][x], points[1][x]) and almost_equal(points[0][x], points[2][x]):
+        if almost_equal(points[0][x], points[1][x], accuracy) and almost_equal(points[0][x], points[2][x], accuracy):
             return True
         else:
             return False
@@ -61,7 +61,7 @@ def is_ccw_polygon(all_verts=None, most_lefts=None):
     if all_verts:
         x_min = min(range(len(all_verts)), key=lambda i: all_verts[i][x])
         most_lefts = [all_verts[(x_min - 1) % len(all_verts)], all_verts[x_min], all_verts[(x_min + 1) % len(all_verts)]]
-    if is_vertical(most_lefts):
+    if is_vertical(most_lefts, accuracy):
         # here is handled corner case when most left points are vertical
         return True if most_lefts[0][y] > most_lefts[1][y] else False
     else:
@@ -165,11 +165,12 @@ class EdgeSweepLine:
     # Special class for storing in status data structure
     global_event_point = None
 
-    def __init__(self, v1, v2, i1, i2):
+    def __init__(self, v1, v2, i1, i2, accuracy=1e-6):
         self.v1 = v1
         self.v2 = v2
         self.i1 = i1
         self.i2 = i2
+        self.accuracy = accuracy
 
         self.last_event = None
         self.last_intersection = None
@@ -180,7 +181,7 @@ class EdgeSweepLine:
         self.low_i = self.i2 if self.up_i == self.i1 else self.i1
         self.up_v = self.v1 if self.get_low_index() == 1 else self.v2
         self.low_v = self.v1 if self.get_low_index() == 0 else self.v2
-        self.is_horizontal = almost_equal(self.up_v[y], self.low_v[y])
+        self.is_horizontal = almost_equal(self.up_v[y], self.low_v[y], self.accuracy)
         self.direction = self.get_direction()
 
         self.low_hedge = None  # half edge which origin is lower then origin of twin
@@ -197,9 +198,9 @@ class EdgeSweepLine:
         # when edge are inserting to the three
         if isinstance(other, EdgeSweepLine):
             # if two edges intersect in one point less edge will be with bigger angle with X coordinate
-            if almost_equal(self.intersection, other.intersection):
+            if almost_equal(self.intersection, other.intersection, self.accuracy):
                 #Debugger.print_e([self, other], "Edges intersects in the same point")
-                if almost_equal(self.product, other.product):
+                if almost_equal(self.product, other.product, self.accuracy):
                     # two edges are overlapping each other, there is no need of storing them together in tree
                     # longest edge should take place in tree with information of both overlapping edges
                     # input can have equal edges, such cases should be handled externally
@@ -213,7 +214,7 @@ class EdgeSweepLine:
         # this part is for searching edges by value of x coordinate of event point
         else:
             #debug("Edge is compared with value {}, intersection: {} < {}".format(self, self.intersection, other))
-            if almost_equal(self.intersection, other):
+            if almost_equal(self.intersection, other, self.accuracy):
                 #debug("Edge and value are equal")
                 return False
             else:
@@ -225,9 +226,9 @@ class EdgeSweepLine:
         # when edge are inserting to the three
         if isinstance(other, EdgeSweepLine):
             # if two edges intersect in one point bigger edge will be with less angle with X coordinate
-            if almost_equal(self.intersection, other.intersection):
+            if almost_equal(self.intersection, other.intersection, self.accuracy):
                 #Debugger.print_e([self, other], "Edges intersects in the same point")
-                if almost_equal(self.product, other.product):
+                if almost_equal(self.product, other.product, self.accuracy):
                     # two edges are overlapping each other, there is no need of storing them together in tree
                     # longest edge should take place in tree with information of both overlapping edges
                     # input can have equal edges, such cases should be handled externally
@@ -240,7 +241,7 @@ class EdgeSweepLine:
         # this part is for searching edges by value of x coordinate of event point
         else:
             #debug("Edge is compared with value {}, intersection: {} > {}".format(self, self.intersection, other))
-            if almost_equal(self.intersection, other):
+            if almost_equal(self.intersection, other, self.accuracy):
                 #debug("Edge and value are equal")
                 return False
             else:
@@ -274,12 +275,12 @@ class EdgeSweepLine:
 
     def get_low_index(self):
         # find index in edge of index of lowest point
-        if is_more(self.v1[y], self.v2[y]):
+        if is_more(self.v1[y], self.v2[y], self.accuracy):
             out = 1
-        elif is_less(self.v1[y], self.v2[y]):
+        elif is_less(self.v1[y], self.v2[y], self.accuracy):
             out = 0
         else:
-            if is_less(self.v1[x], self.v2[x]):
+            if is_less(self.v1[x], self.v2[x], self.accuracy):
                 out = 1
             else:
                 out = 0  # Исправить в алгоритме пересечений отрезков !!!
@@ -288,8 +289,8 @@ class EdgeSweepLine:
     @property
     def is_c(self):
         # returns True if current event point is intersection point of current edge
-        return not (almost_equal(self.low_v[x], self.event_point.co[x]) and
-                    almost_equal(self.low_v[y], self.event_point.co[y]))
+        return not (almost_equal(self.low_v[x], self.event_point.co[x], self.accuracy) and
+                    almost_equal(self.low_v[y], self.event_point.co[y], self.accuracy))
 
     @property
     def event_point(self):
@@ -347,9 +348,10 @@ class EventPoint:
     max_index = -1
     monotone_current_face = None
 
-    def __init__(self, co, index=None):
+    def __init__(self, co, index=None, accuracy=1e-6):
         self.co = co
         self.i = index
+        self.accuracy = accuracy
         self.up_edges = []  # this attribute for finding intersections algorithm
         self.hedge = None  # this attribute for making monotone algorithm
         self._type = None
@@ -362,22 +364,22 @@ class EventPoint:
 
     def __lt__(self, other):
         # Sorting of points from upper left point to lowest right point
-        if is_less(-self.co[y], -other.co[y]):
+        if is_less(-self.co[y], -other.co[y], self.accuracy):
             return True
-        elif is_more(-self.co[y], -other.co[y]):
+        elif is_more(-self.co[y], -other.co[y], self.accuracy):
             return False
-        elif is_less(self.co[x], other.co[x]):
+        elif is_less(self.co[x], other.co[x], self.accuracy):
             return True
         else:
             return False
 
     def __gt__(self, other):
         # Sorting of points from upper left point to lowest right point
-        if is_more(-self.co[y], -other.co[y]):
+        if is_more(-self.co[y], -other.co[y], self.accuracy):
             return True
-        elif is_less(-self.co[y], -other.co[y]):
+        elif is_less(-self.co[y], -other.co[y], self.accuracy):
             return False
-        elif is_more(self.co[x], other.co[x]):
+        elif is_more(self.co[x], other.co[x], self.accuracy):
             return True
         else:
             return False
@@ -422,7 +424,7 @@ class EventPoint:
         return self.last_monotone_face
 
 
-def get_coincidence_edges(tree, x_position):
+def get_coincidence_edges(tree, x_position, accuracy=1e-6):
     """
     Get from status all edges and their neighbours which go through event point
     :param tree: status data structure - AVLTree
@@ -441,7 +443,7 @@ def get_coincidence_edges(tree, x_position):
     next_node = start_node
     while next_node:
         next_node = next_node.next
-        if next_node and almost_equal(next_node.key.intersection, x_position):
+        if next_node and almost_equal(next_node.key.intersection, x_position, accuracy):
             right_part.append(next_node)
         elif next_node:
             adjacent_right = next_node.key
@@ -454,7 +456,7 @@ def get_coincidence_edges(tree, x_position):
     last_node = start_node
     while last_node:
         last_node = last_node.last
-        if last_node and almost_equal(last_node.key.intersection, x_position):
+        if last_node and almost_equal(last_node.key.intersection, x_position, accuracy):
             left_part.append(last_node)
         elif last_node:
             adjacent_left = last_node.key
@@ -487,9 +489,10 @@ def get_upper_vert(verts, edge):
 
 class HalfEdge:
 
-    def __init__(self, origin, i=None, face=None):
+    def __init__(self, origin, i=None, face=None, accuracy=1e-6):
         self.origin = origin  # todo This just coordinates now, should be point object later
         self.i = i
+        self.accuracy = accuracy
         self.face = face  # initial face should be keep separately for extracting one from status when overlapping is over
         self.lap_faces = {face} if face else set()  # faces from overlapping edges, for keeping status of overlapping edges
         self.in_faces = {face} if face else set()
@@ -512,7 +515,7 @@ class HalfEdge:
     def __lt__(self, other):
         # if self < other other it means that direction if closer to (-1, 0) direction
         if isinstance(other, HalfEdge):
-            if almost_equal(self.product, other.product):
+            if almost_equal(self.product, other.product, self.accuracy):
                 return False
             else:
                 return self.product < other.product
@@ -521,7 +524,7 @@ class HalfEdge:
 
     def __gt__(self, other):
         if isinstance(other, HalfEdge):
-            if almost_equal(self.product, other.product):
+            if almost_equal(self.product, other.product, self.accuracy):
                 return False
             else:
                 return self.product > other.product
@@ -534,8 +537,8 @@ class HalfEdge:
             #Debugger.print_he(self)
             #Debugger.print('is horizontal - ({})'.format(almost_equal(self.origin[y], self.twin.origin[y])),
             #              'is left directed - ({})'.format(is_more(self.origin[x], self.twin.origin[x])))
-            if almost_equal(self.origin[y], self.twin.origin[y]):
-                if is_more(self.origin[x], self.twin.origin[x]):
+            if almost_equal(self.origin[y], self.twin.origin[y], self.accuracy):
+                if is_more(self.origin[x], self.twin.origin[x], self.accuracy):
                     self.cash_product = 4
                 else:
                     self.cash_product = 2
@@ -650,7 +653,7 @@ class Debugger(D):
             print_node(node.rightChild, 'right child')
 
 
-def create_half_edges(verts, faces):
+def create_half_edges(verts, faces, accuracy=1e-6):
     # this function generates only outer faces
     # this function should be accurate in generation half edges data
     # it this implementation there is important parameter as total number of points
@@ -659,15 +662,15 @@ def create_half_edges(verts, faces):
     # where this issue will be encapsulated
     # todo: self intersection polygons? double repeated polygons???
     half_edges_list = dict()
-    points = [EventPoint(co) for co in verts]
+    points = [EventPoint(co, accuracy=accuracy) for co in verts]
     for i_face, face in enumerate(faces):
-        face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
+        face = face if is_ccw_polygon([verts[i] for i in face], accuracy=accuracy) else face[::-1]
         f = Face(i_face, {0})
         loop = []
         for i in range(len(face)):
             origin_i = face[i]
             next_i = face[(i + 1) % len(face)]
-            half_edge = HalfEdge(verts[origin_i], origin_i, f)
+            half_edge = HalfEdge(verts[origin_i], origin_i, f, accuracy=accuracy)
             half_edge.point = points[origin_i]
             loop.append(half_edge)
             half_edges_list[(origin_i, next_i)] = half_edge
@@ -682,7 +685,7 @@ def create_half_edges(verts, faces):
         if key[::-1] in half_edges_list:
             half_edge.twin = half_edges_list[key[::-1]]
         else:
-            outer_edge = HalfEdge(verts[key[1]], key[1])
+            outer_edge = HalfEdge(verts[key[1]], key[1], accuracy=accuracy)
             outer_edge.point = points[key[1]]
             half_edge.twin = outer_edge
             outer_edge.twin = half_edge
@@ -757,7 +760,7 @@ def to_sv_mesh_from_faces(hedges, faces):
     return sv_verts, sv_faces, mask_a, mask_b, mask_c_index_a, mask_c_index_b
 
 
-def build_faces_list(hedges):
+def build_faces_list(hedges, accuracy=1e-6):
     used = set()
     inner_hedges = []
     super_face = Face(0)
@@ -773,7 +776,8 @@ def build_faces_list(hedges):
         Debugger.print_he(hedge, 'Build face from this hedge')
         min_hedge = min([hedge for hedge in hedge.loop_hedges], key=lambda hedge: (hedge.origin[x], hedge.origin[y]))
         Debugger.print_he(min_hedge, 'min hedge')
-        _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin, min_hedge.origin, min_hedge.next.origin])
+        _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin, min_hedge.origin, min_hedge.next.origin],
+                                 accuracy=accuracy)
         # min hedge should be checked whether it look to the left or to the right
         # if to the right previous hedge should be taken
         # https://github.com/nortikin/sverchok/issues/2497#issuecomment-526096898
@@ -829,18 +833,18 @@ def build_faces_list(hedges):
     return faces
 
 
-def map_overlay(verts_a, faces_a, verts_b, faces_b):
+def map_overlay(verts_a, faces_a, verts_b, faces_b, accuracy=1e-6):
     Debugger.clear(False)
-    half_edges = merge_two_half_edges_list(create_half_edges(verts_a, faces_a), create_half_edges(verts_b, faces_b),
-                                           len(verts_a))
-    find_intersections(half_edges)
+    half_edges = merge_two_half_edges_list(create_half_edges(verts_a, faces_a, accuracy),
+                                           create_half_edges(verts_b, faces_b, accuracy), len(verts_a))
+    find_intersections(half_edges, accuracy)
     half_edges = [he for he in half_edges if he.edge]  # ignore half edges without "users"
     Debugger.set_dcel_data(half_edges)
-    faces = build_faces_list(half_edges)
+    faces = build_faces_list(half_edges, accuracy)
     new_half_edges = []
     for face in faces:
         if face.outer and face.inners:
-            new_half_edges.extend(make_monotone(face))
+            new_half_edges.extend(make_monotone(face, accuracy))
     if new_half_edges:
         half_edges.extend(new_half_edges)
         faces = rebuild_face_list(half_edges)
@@ -848,23 +852,23 @@ def map_overlay(verts_a, faces_a, verts_b, faces_b):
     return to_sv_mesh_from_faces(half_edges, faces)
 
 
-def init_event_queue(event_queue, half_edges):
+def init_event_queue(event_queue, half_edges, accuracy=1e-6):
     EventPoint.max_index = -1
     EdgeSweepLine.global_event_point = None
     used = set()
     for hedge in half_edges:
         if hedge.twin in used:
             continue
-        edge = EdgeSweepLine(hedge.origin, hedge.twin.origin, hedge.i, hedge.twin.i)
+        edge = EdgeSweepLine(hedge.origin, hedge.twin.origin, hedge.i, hedge.twin.i, accuracy=accuracy)
         edge.up_hedge, edge.low_hedge = (hedge, hedge.twin) if hedge.i == edge.up_i else (hedge.twin, hedge)
         hedge.edge, hedge.twin.edge = edge, edge
-        up_node = event_queue.insert(EventPoint(edge.up_v, edge.up_i))
+        up_node = event_queue.insert(EventPoint(edge.up_v, edge.up_i, accuracy))
         up_node.key.up_edges += [edge]
-        event_queue.insert(EventPoint(edge.low_v, edge.low_i))
+        event_queue.insert(EventPoint(edge.low_v, edge.low_i, accuracy))
         used.add(hedge)
 
 
-def find_intersections(half_edges):
+def find_intersections(half_edges, accuracy=1e-6):
     """
     Initializing of searching intersection algorithm, read Computational Geometry by Mark de Berg
     :param verts: [(x, y) or (x, y, z), ...]
@@ -874,11 +878,11 @@ def find_intersections(half_edges):
     status = AVLTree()
     event_queue = AVLTree()
     test_event_point.clear()
-    init_event_queue(event_queue, half_edges)
+    init_event_queue(event_queue, half_edges, accuracy)
     out = []
     while event_queue:
         event_node = event_queue.find_smallest()
-        intersection = handle_event_point(status, event_queue, event_node.key, half_edges)
+        intersection = handle_event_point(status, event_queue, event_node.key, half_edges, accuracy)
         if intersection:
             out.append(intersection)
         event_queue.remove_node(event_node)
@@ -887,14 +891,14 @@ def find_intersections(half_edges):
     return out
 
 
-def handle_event_point(status, event_queue, event_point, half_edges):
+def handle_event_point(status, event_queue, event_point, half_edges, accuracy=1e-6):
     # Read Computational Geometry by Mark de Berg
     EdgeSweepLine.global_event_point = event_point
     test_event_point.append(event_point)
     out = []
     is_overlapping_points = False
     Debugger.print_p(event_point, 'event_point')
-    left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x])
+    left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x], accuracy)
     c = [node for node in coincidence if node.key.is_c]
     l = [node for node in coincidence if not node.key.is_c]
     [status.remove_node(node) for node in c]
@@ -911,8 +915,8 @@ def handle_event_point(status, event_queue, event_point, half_edges):
         #print('edge {}, up hedge {}, low hedge {}'.format(edge, edge.up_hedge, edge.low_hedge))
         if edge.is_c:
             # split edge on low und up sides
-            low_edge = EdgeSweepLine(edge.up_v, event_point.co, edge.up_i, event_point.i)
-            up_edge = EdgeSweepLine(event_point.co, edge.low_v, event_point.i, edge.low_i)
+            low_edge = EdgeSweepLine(edge.up_v, event_point.co, edge.up_i, event_point.i, accuracy)
+            up_edge = EdgeSweepLine(event_point.co, edge.low_v, event_point.i, edge.low_i, accuracy)
             # Add information about overlapping edges
             up_edge.coincidence = list(edge.coincidence)
             # assign to new edges existing half edges of initial edge
@@ -921,11 +925,11 @@ def handle_event_point(status, event_queue, event_point, half_edges):
             low_edge.up_hedge.edge = low_edge  # new "user" of half edge should be replace
             up_edge.low_hedge.edge = up_edge  # the same
             # copy pare of half edges from existing half edges and create appropriate links
-            low_edge.low_hedge = HalfEdge(event_point.co, event_point.i, edge.low_hedge.face)
+            low_edge.low_hedge = HalfEdge(event_point.co, event_point.i, edge.low_hedge.face, accuracy=accuracy)
             low_edge.low_hedge.point = event_point
             low_edge.low_hedge.next = edge.low_hedge.next
             edge.low_hedge.next.last = low_edge.low_hedge
-            up_edge.up_hedge = HalfEdge(event_point.co, event_point.i, edge.up_hedge.face)
+            up_edge.up_hedge = HalfEdge(event_point.co, event_point.i, edge.up_hedge.face, accuracy=accuracy)
             up_edge.up_hedge.point = event_point
             up_edge.up_hedge.next = edge.up_hedge.next
             edge.up_hedge.next.last = up_edge.up_hedge
@@ -972,7 +976,7 @@ def handle_event_point(status, event_queue, event_point, half_edges):
                 i_min_edge = min([(edge.low_dot_length, i) for i, edge in enumerate(node.key.coincidence)])[1]
                 min_edge = node.key.coincidence.pop(i_min_edge)
                 #Debugger.print_e(min_edge, 'Min edge coincidence - {}'.format(min_edge.coincidence))
-                if all([almost_equal(x1, x2) for x1, x2 in zip(min_edge.low_v, event_point.co)]):
+                if all([almost_equal(x1, x2, accuracy) for x1, x2 in zip(min_edge.low_v, event_point.co)]):
                     # it means the end point of the overlapping edge coincident with end point of main edge
                     # in this case the status of overlapping faces should updated
                     # and next overlapping edge should be founded if such edge exists
@@ -986,7 +990,7 @@ def handle_event_point(status, event_queue, event_point, half_edges):
                 else:
                     # All part of nested edge upper event point should be removed according this part was already calculated
                     # It looks like instead of editing existing edge it is better to create new one
-                    up_edge = EdgeSweepLine(event_point.co, min_edge.low_v, event_point.i, min_edge.low_i)
+                    up_edge = EdgeSweepLine(event_point.co, min_edge.low_v, event_point.i, min_edge.low_i, accuracy)
                     # Newer the less new half edges for new edge can't be created
                     # because all half edges are stored in the list and deleting old half edges will take linear time
                     # instead of that more appropriate to modify old half edges
@@ -1049,7 +1053,7 @@ def handle_event_point(status, event_queue, event_point, half_edges):
     # After new up edges (created be dividing intersected event point edges) was insert in status
     # The order of edges should be taken from status again
     # Don't remember why left and right neighbour should be recheck :/
-    left_u_candidate, uc, right_u_candidate = get_coincidence_edges(status, event_point.co[x])
+    left_u_candidate, uc, right_u_candidate = get_coincidence_edges(status, event_point.co[x], accuracy)
     left_neighbor = left_l_candidate if left_l_candidate else left_u_candidate
     right_neighbor = right_l_candidate if right_l_candidate else right_u_candidate
     #print('uc -', *uc)
@@ -1103,28 +1107,28 @@ def handle_event_point(status, event_queue, event_point, half_edges):
 
     if not uc:
         if left_neighbor and right_neighbor:
-            find_new_event(left_neighbor, right_neighbor, event_queue, event_point)
+            find_new_event(left_neighbor, right_neighbor, event_queue, event_point, accuracy)
     else:
         leftmost_node = uc[0]
         rightmost_node = uc[-1]
         #print('leftmost_node', leftmost_node)
         #print('rightmost_node', rightmost_node)
         if left_neighbor:
-            find_new_event(leftmost_node.key, left_neighbor, event_queue, event_point)
+            find_new_event(leftmost_node.key, left_neighbor, event_queue, event_point, accuracy)
         if right_neighbor:
-            find_new_event(rightmost_node.key, right_neighbor, event_queue, event_point)
+            find_new_event(rightmost_node.key, right_neighbor, event_queue, event_point, accuracy)
     #print(status.out())
     if out:
         return out
 
 
-def find_new_event(edge1, edge2, event_queue, event_point):
+def find_new_event(edge1, edge2, event_queue, event_point, accuracy=1e-6):
     # Read Computational Geometry by Mark de Berg
     #print('intersection test -', edge1, edge2)
     if is_edges_intersect_2d(edge1.v1, edge1.v2, edge2.v1, edge2.v2):
         intersection = intersect_lines_2d(edge1.v1, edge1.v2, edge2.v1, edge2.v2)
         if intersection:
-            new_event_point = EventPoint(intersection + [0], None)
+            new_event_point = EventPoint(intersection + [0], None, accuracy)
             if new_event_point > event_point:
                 event_queue.insert(new_event_point)
                 #print('past new event point {}: \n'.format(new_event_point.co), *event_queue.inorder_non_recursive())
@@ -1150,7 +1154,7 @@ def rebuild_face_list(hedges):
     return faces
 
 
-def build_points_list(hedges):
+def build_points_list(hedges, accuracy=1e-6):
     # build list of points for partitioning algorithm
     # add links from hedges to point and from point to hedges
     # for normal working twins of hedges of face with holes also should be assigned to new points
@@ -1161,7 +1165,7 @@ def build_points_list(hedges):
         if hedge in used:
             continue
         used.add(hedge)
-        point = EventPoint(hedge.origin, len(verts))
+        point = EventPoint(hedge.origin, len(verts), accuracy)
         point.hedge = hedge
         hedge.point = point
         hedge.last.twin.point = point
@@ -1171,11 +1175,11 @@ def build_points_list(hedges):
     return verts
 
 
-def insert_edge(up_p, low_p):
+def insert_edge(up_p, low_p, accuracy=1e-6):
 
-    up_hedge = HalfEdge(up_p.co, up_p.i)
+    up_hedge = HalfEdge(up_p.co, up_p.i, accuracy=accuracy)
     up_hedge.point = up_p
-    low_hedge = HalfEdge(low_p.co, low_p.i)
+    low_hedge = HalfEdge(low_p.co, low_p.i, accuracy=accuracy)
     low_hedge.point = low_p
     up_hedge.twin = low_hedge
     low_hedge.twin = up_hedge
@@ -1246,9 +1250,9 @@ def insert_edge(up_p, low_p):
     return [up_hedge, low_hedge]
 
 
-def make_monotone(face):
+def make_monotone(face, accuracy=1e-6):
     EventPoint.monotone_current_face = face
-    points = build_points_list(face.all_hedges)
+    points = build_points_list(face.all_hedges, accuracy)
     new_hedges = []
     status = AVLTree()
     q = sorted(points)[::-1]
@@ -1258,7 +1262,7 @@ def make_monotone(face):
         EdgeSweepLine.global_event_point = event_point  # Don't comment this string!!!!!!!
         Debugger.print_p(event_point, 'event point - {}'.format(event_point.type))
         Debugger.print_he(event_point.hedge, 'hedge of event point')
-        event_hedges = handle_functions[event_point.type](event_point, status)
+        event_hedges = handle_functions[event_point.type](event_point, status, accuracy)
         #Debugger.print_e(status.as_list(0))
         if event_hedges:
             Debugger.print_he(event_hedges, 'new hedges')
@@ -1266,28 +1270,28 @@ def make_monotone(face):
     return new_hedges
 
 
-def handle_start_point(point, status):
-    edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i)
+def handle_start_point(point, status, accuracy=1e-6):
+    edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i, accuracy)
     point.hedge.edge = edge
     point.hedge.twin.edge = edge
     edge.helper = point
     status.insert(edge)
 
 
-def handle_end_point(point, status):
+def handle_end_point(point, status, accuracy=None):
     status.remove(point.hedge.last.edge)
     helper = point.hedge.last.edge.helper
     if helper.type == 'merge':
         return insert_edge(helper, point)
 
 
-def handle_split_point(point, status):
+def handle_split_point(point, status, accuracy=1e-6):
     left_node = status.find_nearest_left(point.co[x])
     #Debugger.print_e(left_node.key, 'nearest left edge')
     #Debugger.print_p(left_node.key.helper, 'split helper')
     new_hedges = insert_edge(left_node.key.helper, point)
     left_node.key.helper = point
-    edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i)
+    edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i, accuracy)
     point.hedge.edge = edge
     point.hedge.twin.edge = edge
     edge.helper = point
@@ -1295,7 +1299,7 @@ def handle_split_point(point, status):
     return new_hedges
 
 
-def handle_merge_point(point, status):
+def handle_merge_point(point, status, accuracy=None):
     right_helper = point.hedge.last.edge.helper
     new_hedges = []
     last_hedge = point.hedge.last
@@ -1310,11 +1314,11 @@ def handle_merge_point(point, status):
     return new_hedges
 
 
-def handle_regular_point(point, status):
+def handle_regular_point(point, status, accuracy=1e-6):
     if point < point.hedge.twin.point:
         right_helper = point.hedge.last.edge.helper
         status.remove(point.hedge.last.edge)
-        edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i)
+        edge = EdgeSweepLine(point.co, point.hedge.twin.point.co, point.i, point.hedge.twin.point.i, accuracy)
         point.hedge.edge = edge
         point.hedge.twin.edge = edge
         edge.helper = point
@@ -1363,11 +1367,15 @@ class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     index_mask = bpy.props.BoolProperty(name="Index mask",
                                         description="Mask of output mesh represented indexes"
                                                     " of faces from mesh A and Mesh B", update=update_sockets)
+    accuracy = bpy.props.IntProperty(name='Accuaracy', description='Some errors of the node '
+                                                                   'can be fixed by changing this value',
+                                     update=updateNode, default=5, min=3, max=12)
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
         col.prop(self, 'simple_mask', toggle=True)
         col.prop(self, 'index_mask', toggle=True)
+        col.prop(self, 'accuracy')
 
     def sv_init(self, context):
         self.inputs.new('VerticesSocket', 'VertsA')
@@ -1388,7 +1396,7 @@ class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
         faces_b = self.inputs['FacesB'].sv_get()
         meshes = []
         for va, fa, vb, fb in zip(verts_a, faces_a, repeat_last(verts_b), repeat_last(faces_b)):
-            meshes.append(map_overlay(va, fa, vb, fb))
+            meshes.append(map_overlay(va, fa, vb, fb, 1 / 10 ** self.accuracy))
         v, f, ma, mb, mia, mib = zip(*meshes)
         self.outputs['Verts'].sv_set(v)
         self.outputs['Faces'].sv_set(f)
