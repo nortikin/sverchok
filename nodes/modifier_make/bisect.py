@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty
 import bmesh
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Matrix_generate, Vector_generate
@@ -123,7 +123,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if not all([s.is_linked for s in self.inputs]):
+        if not all([s.is_linked for s in self.inputs[:2]]):
             return
 
         if not self.outputs['vertices'].is_linked:
@@ -131,7 +131,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
         verts_ob = Vector_generate(self.inputs['vertices'].sv_get())
         edg_pols = self.inputs['edg_pol'].sv_get()
-        cut_mats = self.inputs['cut_matrix'].sv_get()
+        cut_mats = self.inputs['cut_matrix'].sv_get(default=[Matrix()])
         verts_out = []
         edges_out = []
         polys_out = []

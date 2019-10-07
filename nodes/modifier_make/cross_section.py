@@ -87,13 +87,13 @@ def section(cut_me_vertices, cut_me_edges, mx, pp, pno, FILL=False, TRI=True):
         # first apply transformation matrix so we get the real section
 
         vert1 = ed.vertices[0]
-        v1 = new_me.vertices[vert1].co * mx.transposed()
+        v1 = new_me.vertices[vert1].co @ mx.transposed()
 
         vert2 = ed.vertices[1]
-        v2 = new_me.vertices[vert2].co * mx.transposed()
+        v2 = new_me.vertices[vert2].co @ mx.transposed()
 
         vec = v2-v1
-        mul = vec * pno
+        mul = vec @ pno
         if mul == 0.0:
             if not point_on_plane(v1, ep):
                 # parallel and not on plane
@@ -209,8 +209,8 @@ class CrossSectionNode(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         edges_out = []
         for cut_mat in cut_mats:
-            pp = Vector((0.0, 0.0, 0.0)) * cut_mat.transposed()
-            pno = Vector((0.0, 0.0, 1.0)) * cut_mat.to_3x3().transposed()
+            pp = Vector((0.0, 0.0, 0.0)) @ cut_mat.transposed()
+            pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
 
             verts_pre_out = []
             edges_pre_out = []
