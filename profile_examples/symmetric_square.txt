@@ -1,0 +1,7 @@
+default size = 3;
+default n = 4
+let half = {size/2};
+
+M half,-half
+L -half,-half -half,half half,half half,-half n=n
+X

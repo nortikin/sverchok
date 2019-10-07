@@ -24,6 +24,7 @@ from bpy.props import EnumProperty, StringProperty, IntProperty
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
+from sverchok.utils.context_managers import sv_preferences
 
 
 gl_color_list = [
@@ -153,11 +154,25 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_dict.get(colm))
+
+            # adjust render location based on preference multiplier setting
+            try:
+                with sv_preferences() as prefs:
+                    multiplier = prefs.render_location_xy_multiplier
+                    scale = prefs.render_scale
+            except:
+                # print('did not find preferences - you need to save user preferences')
+                multiplier = 1.0
+                scale = 1.0
+
+            x, y = [self.location[0] * multiplier, self.location[1] * multiplier]
+            width, height =[width * scale, height * scale]
+
             draw_data = {
                 'tree_name': self.id_data.name,
                 'mode': 'custom_function',
                 'custom_function': simple_screen,
-                'loc': (self.location[0] + self.width + 20, self.location[1]),
+                'loc': (x + self.width*scale + 20, y),
                 'args': (texture, self.texture[n_id], width, height)
             }
             nvBGL2.callback_enable(n_id, draw_data)

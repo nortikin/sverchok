@@ -118,10 +118,14 @@ class SvEdgeAnglesNode(bpy.types.Node, SverchCustomTreeNode):
             bm.normal_update()
             for edge in bm.edges:
 
+                #if not edge.is_boundary:
                 if self.signed:
-                    angle = edge.calc_face_angle_signed()
+                    angle = edge.calc_face_angle_signed(180)
                 else:
-                    angle = edge.calc_face_angle()
+                    angle = edge.calc_face_angle(180)
+                #else:
+                #    angle = 0
+                #print(angle)
 
                 if self.complement:
                     angle = math.copysign(math.pi, angle) - angle
@@ -147,3 +151,5 @@ def register():
 def unregister():
     bpy.utils.unregister_class(SvEdgeAnglesNode)
 
+if __name__ == '__main__':
+    register()

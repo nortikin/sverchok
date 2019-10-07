@@ -22,11 +22,13 @@ import mathutils
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.sv_KDT_utils import kdt_closest_edges
 
-
-# documentation/blender_python_api_2_70_release/mathutils.kdtree.html
 class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    '''Create Edges by distance'''
+    '''
+    Triggers: Create Edges by distance
+    Tooltip: Join verts pairs by defining distance range and number of connections
+    '''
     bl_idname = 'SvKDTreeEdgesNodeMK2'
     bl_label = 'KDT Closest Edges MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -63,6 +65,8 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         try:
             verts = inputs['Verts'].sv_get()[0]
             linked = outputs['Edges'].is_linked
+            if not linked:
+                return            
         except (IndexError, KeyError) as e:
             return
 
@@ -80,51 +84,7 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 sock_input = s_default_value
             socket_inputs.append(sock_input)
 
-        self.run_kdtree(verts, socket_inputs)
-
-    def run_kdtree(self, verts, socket_inputs):
-        mindist, maxdist, maxNum, skip = socket_inputs
-
-        # make kdtree
-        # documentation/blender_python_api_2_78_release/mathutils.kdtree.html
-        size = len(verts)
-        kd = mathutils.kdtree.KDTree(size)
-
-        for i, xyz in enumerate(verts):
-            kd.insert(xyz, i)
-        kd.balance()
-
-        # set minimum values
-        maxNum = max(maxNum, 1)
-        skip = max(skip, 0)
-
-        # makes edges
-        e = set()
-
-        for i, vtx in enumerate(verts):
-            num_edges = 0
-
-            # this always returns closest first followed by next closest, etc.
-            #              co  index  dist
-            for edge_idx, (_, index, dist) in enumerate(kd.find_range(vtx, abs(maxdist))):
-
-                if skip > 0:
-                    if edge_idx < skip:
-                        continue
-
-                if (dist <= abs(mindist)) or (i == index):
-                    continue
-
-                edge = tuple(sorted([i, index]))
-                if not edge in e:
-                    e.add(edge)
-                    num_edges += 1
-
-                if num_edges == maxNum:
-                    break
-
-
-        self.outputs['Edges'].sv_set([list(e)])
+        kdt_closest_edges(verts, socket_inputs, outputs['Edges'])
 
 
 def register():

@@ -155,7 +155,7 @@ class SCA:
                     if p not in finished:
                         process.insert(0, p)    
                         
-        mats= []
+        mats_out= []
         for edge in edges:           
             if ends[edge[1]]:
                 #calculate leaf directions
@@ -171,10 +171,8 @@ class SCA:
                 m[2][0:3] = dir3
                 m[3][0:3] = v1
                 m.transpose()
-                mats.append(m)
+                mats_out.append(m)
 
-        mats_out =  Matrix_listing(mats)
-     
         return verts, edges, ends, br, mats_out
         
 def sv_main(npoints=100 , dist=0.05, min_dist=0.05, max_dist=2.0, tip_radius=0.01, trop=[], verts_in=[], verts_start=[]):

@@ -245,7 +245,7 @@ def handle_enum_property(node, k, v, node_items, node_enums):
         node_items[k] = v
 
 
-def create_dict_of_tree(ng, skip_set={}, selected=False):
+def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
     nodes = ng.nodes
     layout_dict = {}
     nodes_dict = {}
@@ -256,6 +256,10 @@ def create_dict_of_tree(ng, skip_set={}, selected=False):
 
     if selected:
         nodes = list(filter(lambda n: n.select, nodes))
+
+    if identified_node:
+        # this mode will import one node only.
+        nodes = [identified_node]
 
     # get nodes and params
     for node in nodes:

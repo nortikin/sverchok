@@ -10,3 +10,4 @@ Scene
    getsetprop
    objects_mk3
    obj_remote
+   FCurve_in

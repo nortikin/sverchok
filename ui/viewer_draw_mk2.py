@@ -168,7 +168,7 @@ def get_color_from_normal(dvk, pol, num_verts, vectorlight, colo):
     if num_verts <= 4:
         normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]])
     else:
-        normal_no = normal(dvk[pol[0]], dvk[pol[1]], dvk[pol[2]], dvk[pol[3]])
+        normal_no = normal(*[dvk[ip] for ip in pol])
 
     normal_no = (normal_no.angle(vectorlight, 0)) / pi
 
@@ -411,7 +411,7 @@ def draw_callback_view(n_id, cached_view, options):
                 data_polygons = sl2
 
         if sl3:
-            data_matrix = sl3[1]
+            data_matrix = sl3
         else:
             data_matrix = [Matrix() for i in range(verlen+1)]
 

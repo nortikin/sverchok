@@ -25,7 +25,8 @@ from bpy.types import Node, NodeTree
 from bpy.props import StringProperty, FloatProperty, IntProperty, BoolProperty, CollectionProperty
 
 import sverchok
-from sverchok.utils import get_node_class_reference
+from sverchok.utils import get_node_class_reference, sv_IO_monad_helpers
+from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree, import_tree
 from sverchok.utils.logging import info, error
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
@@ -46,7 +47,6 @@ reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
 
-
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
     while name and not name[0].isalpha():
@@ -54,6 +54,75 @@ def make_valid_identifier(name):
     if not name:
         return "generic"
     return "".join(ch for ch in name if ch.isalnum() or ch == "_")
+
+
+def make_new_classname(monad_node_group):
+    monad_base_name = make_valid_identifier(monad_node_group.name)
+    monad_itentifier = id(monad_node_group) ^ random.randint(0, 4294967296)
+
+    cls_name = "SvGroupNode{}_{}".format(monad_base_name, monad_itentifier)
+    return cls_name
+
+
+def monad_make_unique(node):
+
+    """
+    Create a new version of the monad class (duplicate but unique)
+
+    This will attempt to store the duplicate in a json using create_dict_of_tree (from the Gist IO).
+    The upside is that this will test the pack/unpack routine continuously. 
+    The downside is that this will likely expose all the shortcommings that we don't know 
+    about because it wasn't being tested extensively.
+    """
+
+    node_tree = node.id_data
+    nodes = node_tree.nodes
+
+    # generate a new copy of monad group node. using ( copy? ) 
+    monad_group = bpy.data.node_groups[node.monad.name]
+    new_monad_group = monad_group.copy()
+    new_cls_name = make_new_classname(new_monad_group) 
+
+    # the new tree dict will contain information about 1 node only, and 
+    # the node_group too (at the moment) but the node_group data can be ignored.
+    layout_json = create_dict_of_tree(ng=node_tree, identified_node=node)
+
+    # do not restore links this way. wipe this entry and restore at a later stage.
+    layout_json['update_lists'] = []
+
+    # massage content of node_items, to correspond with the new desired name.
+    node_ref = layout_json['nodes'][node.name]
+    node_items = node_ref['params']
+    node_items['all_props']['name'] = new_monad_group.name
+    node_items['all_props']['cls_bl_idname'] = new_cls_name
+    node_items['monad'] = new_monad_group.name
+    node_items['cls_dict']['cls_bl_idname'] = new_cls_name
+
+    pre_nodes = set(nodes)
+
+    # place new empty version of the monad node
+    import_tree(node_tree, nodes_json=layout_json)
+
+    """
+    notions..:
+    
+        if (original instance has no connections) then 
+            replace it outright.
+        else
+            if mode=='replace':
+                store connections
+                replace instance with new unique instance
+                reconnect old connections
+            elif mode=='dupe_translate':
+                generate unique instance
+                attache node to transform operator.
+
+
+    """
+
+    # return newly generated node!
+    return (set(node_tree.nodes) ^ pre_nodes).pop() 
+
 
 
 def get_socket_data(socket):
@@ -301,6 +370,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         sverchok.utils.register_node_class(cls_ref)
 
         return cls_ref
+
+
 
     def make_props(self, cls_dict):
         for s in self.float_props:

@@ -18,6 +18,7 @@ Modifier Change
    iterate
    mesh_join
    mesh_separate
+   mesh_switch
    objects_along_edge
    bend_along_path
    bend_along_surface
@@ -27,5 +28,6 @@ Modifier Change
    randomize
    recalc_normals
    remove_doubles
+   transform_select
    triangulate
    vertices_mask

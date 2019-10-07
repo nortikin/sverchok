@@ -132,7 +132,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             try:
                 with sv_preferences() as prefs:
                     scale = prefs.stethoscope_view_scale
-                    location_theta = prefs.stethoscope_view_xy_multiplier
+                    location_theta = prefs.render_location_xy_multiplier
             except:
                 # print('did not find preferences - you need to save user preferences')
                 scale = 1.0
@@ -141,7 +141,6 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             # gather vertices from input
             data = inputs[0].sv_get(deepcopy=False)
             self.num_elements = len(data)
-
 
             if self.selected_mode == 'text-based':
                 props = lambda: None
@@ -190,7 +189,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             return
         try:
             if not self.inputs[0].other:
-                nvBGL.callback_disable(node_id(self))        
+                nvBGL.callback_disable(node_id(self))
         except:
             print('stethoscope update holdout (not a problem)')
 

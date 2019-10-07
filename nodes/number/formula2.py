@@ -49,6 +49,8 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     base_name = 'n'
     multi_socket_type = 'StringsSocket'
 
+    replacement_nodes = [('SvFormulaNodeMk3', None, None)]
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="")
 

@@ -86,10 +86,16 @@ This node has the following parameters:
 Operators
 ---------
 
-This node has one operator button: **from selection**. This operator takes an
-active Curve object, generates profile description from it and sets up the node
-to use this generated profile. You can adjust the profile by editing created
-Blender's text bufrfer.
+As you know there are three types of curves in Blender - Polylines, Bezier curves and NURBS curves.
+This node has one operator button: **from selection**. This operator works only with Bezier curves.
+It takes an active Curve object, generates profile description from it and sets up the node
+to use this generated profile. You can adjust the profile by editing created Blender's text bufrfer.
+
+If you want to import other type of curve you have to convert one to Bezier type. 
+Fortunately it is possible to do in edit mode with button *Set Spline Type* in the *T* panel.
+More information about conversion looks `here <https://docs.blender.org/manual/en/dev/modeling/curves/editing/introduction.html#set-spline-type>`_.
+
+.. image:: https://user-images.githubusercontent.com/28003269/41649336-67dc2d1c-748c-11e8-9989-5b7d8d212b1c.png
 
 Examples
 --------

@@ -1,0 +1,10 @@
+default caps_divisions = 4
+let handle_x = {width/2};
+let handle_y = {height/8};
+
+M {-width/2},0
+h width n=caps_divisions;
+c handle_x,handle_y handle_x,{height-handle_y} 0,height
+h -width n=caps_divisions;
+c -handle_x,-handle_y -handle_x,{-height+handle_y} 0,-height
+X

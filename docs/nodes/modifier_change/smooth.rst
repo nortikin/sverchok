@@ -13,7 +13,7 @@ This node has the following inputs:
 
 - **Vertices**
 - **Edges**
-- **Faces**
+- **Faces** - Only triangles and quads poligons.
 - **VertMask**. Selected vertices to be smoothed.
 - **Iterations**
 - **Clip threshold**
@@ -26,7 +26,7 @@ Parameters
 This node has the following parameters:
 
 - **X**, **Y**, **Z**. Toggle axes vertices will be smoothed along. By default mesh is smoothed along all axes.
-- **Laplacian Smooth**. Toggles smoothing algorithm: when checked, Laplacian smoothing is used; otherwise, simple averaging scheme will be used. By default not checked.
+- **Laplacian Smooth**. Toggles smoothing algorithm: when checked, Laplacian smoothing is used; otherwise, simple averaging scheme will be used. By default not checked. **Deal only with tris and quads, not N-gons**.
 - **Clip X**, **Clip Y**, **Clip Z**. Toggle axes along which "Mirror Clipping" procedure will be applied. This procedure merges vertices that have X/Y/Z coordinate near zero, withing specified threshold. For example, it can merge vertices `(0.01, 3, 5)` and `(- 0.01, 3, 5)` into one vertex `(0, 3, 5)`. These parameters are available only when **Laplacian Smooth** is off. Not checked by default.
 - **Preserve volume**. If checked, the mesh will be "blown" a bit after smoothing, to preserve its volume. Available only when **Laplacian Smooth** is on. Checked by default.
 - **Iterations**. Number of smoothing operation iterations. Default value is 1. This parameter can also be provided as input.

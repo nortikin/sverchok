@@ -1,0 +1,1023 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "3pt Arc": {
+      "bl_idname": "svBasicArcNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "custom_socket_props": {
+        "1": {
+          "use_expander": false
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        771.2139892578125,
+        -768.0457763671875
+      ],
+      "params": {
+        "num_verts": 128
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        774.5885009765625,
+        -906.98291015625
+      ],
+      "params": {
+        "float_": 1.0099999904632568,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "Line.002": {
+      "bl_idname": "SvLineNodeMK3",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1869.468017578125,
+        -227.23074340820312
+      ],
+      "params": {
+        "direction": "OD",
+        "step": 12.069986343383789
+      },
+      "use_custom_color": true,
+      "width": 152.5849609375
+    },
+    "List Input": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Pin List",
+      "location": [
+        -207.8728485107422,
+        -217.38880920410156
+      ],
+      "params": {
+        "int_": 6,
+        "int_list": [
+          0,
+          1,
+          2,
+          5,
+          6,
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.001": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Pin split",
+      "location": [
+        -207.8728485107422,
+        -475.57794189453125
+      ],
+      "params": {
+        "int_": 6,
+        "int_list": [
+          0,
+          1,
+          1,
+          0,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.002": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        421.470703125,
+        -856.1739501953125
+      ],
+      "params": {
+        "int_": 3,
+        "int_list": [
+          0,
+          1,
+          3,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Input.003": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        979.9804077148438,
+        -928.244384765625
+      ],
+      "params": {
+        "int_": 2,
+        "int_list": [
+          0,
+          180,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "width": 140.0
+    },
+    "List Item": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        16.375446319580078,
+        -278.7489318847656
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Item.001": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        609.845703125,
+        -766.492919921875
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Item.002": {
+      "bl_idname": "ListItem2Node",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        393.3372497558594,
+        472.56988525390625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Mask (out).001": {
+      "bl_idname": "MaskListNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1008.141357421875,
+        -423.2999572753906
+      ],
+      "params": {
+        "Level": 2
+      },
+      "width": 140.0
+    },
+    "List Mask (out).002": {
+      "bl_idname": "MaskListNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1017.4197998046875,
+        -340.83056640625
+      ],
+      "params": {
+        "Level": 2
+      },
+      "width": 140.0
+    },
+    "Math MK2": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        550.5531005859375,
+        472.56988525390625
+      ],
+      "params": {
+        "y_": 0.5800000429153442
+      },
+      "width": 140.0
+    },
+    "Math MK2.001": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1506.8905029296875,
+        -60.17683410644531
+      ],
+      "params": {
+        "current_op": "SINE",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Math MK2.002": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1680.4859619140625,
+        -106.64553833007812
+      ],
+      "params": {
+        "current_op": "DIV",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Matrix in": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "Elevated Pins Matrix",
+      "location": [
+        -207.8728485107422,
+        -723.6800537109375
+      ],
+      "params": {
+        "l_": [
+          0.0,
+          0.0,
+          10.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Matrix in.001": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        229.70703125,
+        -572.1517944335938
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in.003": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "custom_socket_props": {
+        "2": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1129.7581787109375,
+        -894.1826171875
+      ],
+      "params": {
+        "a_": 90.0,
+        "r_": [
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Path Length": {
+      "bl_idname": "SvPathLengthNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        214.44064331054688,
+        472.56988525390625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Polygon Grid": {
+      "bl_idname": "SvPolygonGridNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Base Polygon Grid",
+      "location": [
+        -211.82144165039062,
+        132.7971954345703
+      ],
+      "params": {
+        "gridType": "TRIANGLE",
+        "numx": 2,
+        "numy": 3,
+        "radius": 8.0
+      },
+      "width": 170.0
+    },
+    "Pulga Physics.001": {
+      "bl_idname": "SvPulgaPhysicsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        734.7672729492188,
+        281.56048583984375
+      ],
+      "params": {
+        "drag_M": 1,
+        "drag_force": 0.029999999329447746,
+        "iterations": 224,
+        "max_vel": 0.0,
+        "pins_M": 1,
+        "spring_k": 0.019999999552965164,
+        "springs_M": 1
+      },
+      "width": 200.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        625.296142578125,
+        -511.2069396972656
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.002": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        958.3682861328125,
+        315.803955078125
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.003": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        233.83367919921875,
+        315.803955078125
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Subdivide": {
+      "bl_idname": "SvSubdivideNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        18.563705444335938,
+        256.0939025878906
+      ],
+      "params": {
+        "cuts": 8
+      },
+      "width": 140.0
+    },
+    "Transform Select": {
+      "bl_idname": "SvTransformSelectNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        356.117919921875,
+        -162.89027404785156
+      ],
+      "params": {
+        "maskType": "VERTICES"
+      },
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1052.89990234375,
+        -627.4869384765625
+      ],
+      "params": {
+        "dir_check": "V_dir",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector Math": {
+      "bl_idname": "SvVectorMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1338.8482666015625,
+        -41.62611389160156
+      ],
+      "params": {
+        "current_op": "ANGLE RAD"
+      },
+      "width": 140.0
+    },
+    "Vector Math.001": {
+      "bl_idname": "SvVectorMathNodeMK2",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        937.04638671875,
+        -873.6484375
+      ],
+      "params": {
+        "amount": 1.0099999904632568,
+        "current_op": "SCALAR"
+      },
+      "width": 140.0
+    },
+    "Vector Rewire": {
+      "bl_idname": "SvVectorRewire",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1169.88916015625,
+        -35.26878356933594
+      ],
+      "params": {
+        "scalar": -0.1600002497434616,
+        "selected_mode_from": "Scalar"
+      },
+      "width": 140.0
+    },
+    "Vector Rewire.001": {
+      "bl_idname": "SvVectorRewire",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1162.1392822265625,
+        -176.45098876953125
+      ],
+      "params": {
+        "scalar": 0.0,
+        "selected_mode_from": "Scalar"
+      },
+      "width": 140.0
+    },
+    "Vector out": {
+      "bl_idname": "VectorsOutNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1494.76171875,
+        -176.2838134765625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        995.3924560546875,
+        291.8858642578125
+      ],
+      "params": {
+        "activate": 1,
+        "face_colors": [
+          0.011294033378362656,
+          0.02265758253633976,
+          0.8990001082420349
+        ],
+        "shading": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.002": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2078.14404296875,
+        -103.44867706298828
+      ],
+      "params": {
+        "activate": 1,
+        "edge_colors": [
+          0.33089834451675415,
+          0.8990001082420349,
+          0.395736426115036
+        ],
+        "edge_width": 4,
+        "vertex_colors": [
+          0.08003409206867218,
+          0.9480001330375671,
+          0.0
+        ],
+        "vertex_size": 9.984001159667969
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.005": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1234.7142333984375,
+        -620.2259521484375
+      ],
+      "params": {
+        "activate": 1,
+        "edge_colors": [
+          0.8990001082420349,
+          0.0031109414994716644,
+          0.010177122429013252
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Polygon Grid",
+      1,
+      "List Item",
+      0
+    ],
+    [
+      "List Input",
+      0,
+      "List Item",
+      1
+    ],
+    [
+      "List Input.001",
+      "List",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Polygon Grid",
+      1,
+      "Subdivide",
+      0
+    ],
+    [
+      "Polygon Grid",
+      2,
+      "Subdivide",
+      1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Subdivide",
+      2
+    ],
+    [
+      "Subdivide",
+      0,
+      "Path Length",
+      0
+    ],
+    [
+      "Subdivide",
+      1,
+      "Path Length",
+      1
+    ],
+    [
+      "Path Length",
+      0,
+      "List Item.002",
+      0
+    ],
+    [
+      "List Item.002",
+      0,
+      "Math MK2",
+      0
+    ],
+    [
+      "List Input.001",
+      0,
+      "Transform Select",
+      0
+    ],
+    [
+      "List Item",
+      0,
+      "Transform Select",
+      1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Transform Select",
+      2
+    ],
+    [
+      "Matrix in",
+      0,
+      "Transform Select",
+      3
+    ],
+    [
+      "Matrix in.001",
+      0,
+      "Transform Select",
+      4
+    ],
+    [
+      "Subdivide",
+      0,
+      "Pulga Physics.001",
+      0
+    ],
+    [
+      "Subdivide",
+      1,
+      "Pulga Physics.001",
+      2
+    ],
+    [
+      "Math MK2",
+      0,
+      "Pulga Physics.001",
+      3
+    ],
+    [
+      "List Input",
+      0,
+      "Pulga Physics.001",
+      5
+    ],
+    [
+      "Transform Select",
+      0,
+      "Pulga Physics.001",
+      6
+    ],
+    [
+      "Pulga Physics.001",
+      3,
+      "List Mask (out).002",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).002",
+      "mask"
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "Vector Rewire.001",
+      0
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "Vector Rewire.001",
+      0,
+      "Vector Math",
+      1
+    ],
+    [
+      "Vector Math",
+      0,
+      "Math MK2.001",
+      0
+    ],
+    [
+      "Transform Select",
+      0,
+      "List Mask (out).001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).001",
+      "mask"
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Vector out",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Math MK2.002",
+      0
+    ],
+    [
+      "Math MK2.001",
+      0,
+      "Math MK2.002",
+      1
+    ],
+    [
+      "Math MK2.002",
+      0,
+      "Line.002",
+      1
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Line.002",
+      3
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Line.002",
+      4
+    ],
+    [
+      "Transform Select",
+      0,
+      "List Item.001",
+      0
+    ],
+    [
+      "List Input.002",
+      0,
+      "List Item.001",
+      1
+    ],
+    [
+      "Subdivide",
+      "Faces",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "List Input.003",
+      0,
+      "Matrix in.003",
+      3
+    ],
+    [
+      "List Item.001",
+      0,
+      "3pt Arc",
+      1
+    ],
+    [
+      "3pt Arc",
+      0,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math.001",
+      1
+    ],
+    [
+      "3pt Arc",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "UV Connection",
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw.005",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw.005",
+      1
+    ],
+    [
+      "Matrix in.003",
+      0,
+      "Viewer Draw.005",
+      2
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Line.002",
+      0,
+      "Viewer Draw.002",
+      0
+    ],
+    [
+      "Line.002",
+      1,
+      "Viewer Draw.002",
+      1
+    ],
+    [
+      "Pulga Physics.001",
+      0,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Viewer Draw.001",
+      "edg_pol"
+    ]
+  ]
+}

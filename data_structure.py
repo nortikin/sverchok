@@ -25,6 +25,8 @@ import bpy
 from mathutils import Vector, Matrix
 import numpy as np
 
+from sverchok.utils.logging import info
+
 DEBUG_MODE = False
 HEAT_MAP = False
 RELOAD_EVENT = False
@@ -180,7 +182,22 @@ def sv_zip(*iterables):
             result.append(elem)
         yield result
 
-
+list_match_modes = [
+    ("SHORT",  "Match Short",  "Match shortest List",    1),
+    ("CYCLE",  "Cycle",  "Match longest List by cycling",     2),
+    ("REPEAT", "Repeat Last", "Match longest List by repeating last item",     3),
+    ("XREF",   "X-Ref",  "Cross reference (fast cycle of long)",  4),
+    ("XREF2",  "X-Ref 2", "Cross reference (fast cycle of short)",  5),
+    ]
+    
+list_match_func = {
+    "SHORT":  match_short,
+    "CYCLE":  match_long_cycle,
+    "REPEAT": match_long_repeat,
+    "XREF":   match_cross,
+    "XREF2":  match_cross2
+    }
+    
 #####################################################
 ################# list levels magic #################
 #####################################################
@@ -197,7 +214,7 @@ def dataCorrect(data, nominal_dept=2):
     if not dept: # for empty lists
         return []
     if dept < 2:
-        return [dept, data]
+        return data #[dept, data]
     else:
         output = dataStandart(data, dept, nominal_dept)
         return output
@@ -347,6 +364,42 @@ def describe_data_shape(data):
 
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
+
+def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
+    """
+    Calculate mask: for each item in set_data, return True if it is present in subset_data.
+    The function can work at any specified level.
+
+    subset_data: subset, for example [1]
+    set_data: set, for example [1, 2, 3]
+    level: 0 to check immediate members of set and subset; 1 to work with lists of lists and so on.
+    negate: if True, then result will be negated (True if item of set is not present in subset).
+    ignore_order: when comparing lists, ignore items order.
+
+    Raises an exception if nesting level of input sets is less than specified level parameter.
+
+    calc_mask([1], [1,2,3]) == [True, False, False])
+    calc_mask([1], [1,2,3], negate=True) == [False, True, True]
+    """
+    if level == 0:
+        if not isinstance(subset_data, (tuple, list)):
+            raise Exception("Specified level is too high for given Subset")
+        if not isinstance(set_data, (tuple, list)):
+            raise Exception("Specified level is too high for given Set")
+
+        if ignore_order and get_data_nesting_level(subset_data) > 1:
+            if negate:
+                return [set(item) not in map(set, subset_data) for item in set_data]
+            else:
+                return [set(item) in map(set, subset_data) for item in set_data]
+        else:
+            if negate:
+                return [item not in subset_data for item in set_data]
+            else:
+                return [item in subset_data for item in set_data]
+    else:
+        sub_objects = match_long_repeat([subset_data, set_data])
+        return [calc_mask(subset_item, set_item, level - 1, negate, ignore_order) for subset_item, set_item in zip(*sub_objects)]
 
 #####################################################
 ################### matrix magic ####################
@@ -576,6 +629,12 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
     '''
+    if not inputsocketname in node.inputs:
+        # - node not initialized in sv_init yet, 
+        # - or socketname incorrect
+        info("changable_socket was called on node (%s) with a socket named \"%s\", this socket does not exist" % (node.name, inputsocketname))
+        return 
+
     in_socket = node.inputs[inputsocketname]
     ng = node.id_data
     if in_socket.links:
@@ -919,3 +978,52 @@ def std_links_processing(matcher):
         return real_process
 
     return decorator
+
+
+# EDGE CACHE settings : used to accellerate the (linear) edge list generation
+_edgeCache = {}
+_edgeCache["main"] = []  # e.g. [[0, 1], [1, 2], ... , [N-1, N]] (extended as needed)
+
+
+def update_edge_cache(n):
+    """
+    Extend the edge list cache to contain at least n edges.
+
+    NOTE: This is called by the get_edge_list to make sure the edge cache is large
+    enough, but it can also be called preemptively by the nodes prior to making
+    multiple calls to get_edge_list in order to pre-augment the cache to a known
+    size and thus accellearate the subsequent calls to get_edge_list as they
+    will not have to augment the cache with every call.
+    """
+    m = len(_edgeCache["main"])  # current number of edges in the edge cache
+    if n > m: # requested #edges < cached #edges ? => extend the cache
+        _edgeCache["main"].extend([[m + i, m + i + 1] for i in range(n - m)])
+
+
+def get_edge_list(n):
+    """
+    Get the list of n edges connecting n+1 vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-1, n]]
+
+    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    """
+    update_edge_cache(n) # make sure the edge cache is large enough
+    return _edgeCache["main"][:n] # return a subset list of the edge cache
+
+
+def get_edge_loop(n):
+    """
+    Get the loop list of n edges connecting n vertices.
+
+    e.g. [[0, 1], [1, 2], ... , [n-2, n-1], [n-1, 0]]
+
+    NOTE: This uses an "edge cache" to accellerate the edge list generation.
+    The cache is extended automatically as needed to satisfy the largest number
+    of edges within the node tree and it is shared by all nodes using this method.
+    """
+    nn = n - 1
+    update_edge_cache(nn) # make sure the edge cache is large enough
+    return _edgeCache["main"][:nn] + [[nn, 0]]

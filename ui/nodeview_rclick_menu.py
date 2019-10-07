@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -95,7 +95,12 @@ def add_connection(tree, bl_idname_new_node, offset):
         elif bl_idname_new_node == 'SvStethoscopeNodeMK2':
             # we can't determin thru cursor location which socket was nearest the rightclick
             # maybe in the future.. or if someone does know :)
-            links.new(outputs[0], inputs[0])
+            for socket in outputs:
+                if socket.hide:
+                    continue
+                # connect_stethoscope to first visible output socket of active node
+                links.new(socket, inputs[0])
+                break
 
         elif bl_idname_new_node == 'ViewerNode2':
 
@@ -157,16 +162,14 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             else:
                 if has_outputs(node):
                     layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw").fn = "vdmk2"
-                    # layout.operator("node.sv_deligate_operator", text="Connect ViewerDraw + IDX").fn="vdmk2 + idxv"
+                    layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
             if hasattr(node, "rclick_menu"):
+                layout.separator()
                 node.rclick_menu(context, layout)
 
         else:
             layout.menu("NODEVIEW_MT_Dynamic_Menu", text='node menu')
-
-        if node and len(node.outputs):
-            layout.operator("node.sv_deligate_operator", text="Connect stethoscope").fn = "stethoscope"
 
         if node and node.bl_idname == 'NodeFrame':
             # give options for Frame nodes..
@@ -178,6 +181,8 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
             col.prop(node, 'label_size', slider=True)
             col.prop(node, 'shrink')
 
+        if node and hasattr(node, 'monad'):
+            layout.operator("node.sv_monad_make_unique", icon="RNA_ADD").use_transform=True
 
 
 def register():

@@ -1,0 +1,210 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -588.2735595703125,
+        -67.8362045288086
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 8,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Cylinder": {
+      "bl_idname": "CylinderNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -343.4754333496094,
+        124.85123443603516
+      ],
+      "params": {
+        "cap_": 0,
+        "height_": 0.0,
+        "radBot_": 4.090000152587891,
+        "subd_": 4,
+        "vert_": 12
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Math MK2": {
+      "bl_idname": "SvScalarMathNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -328.9543151855469,
+        -134.1206817626953
+      ],
+      "params": {
+        "current_op": "+1",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Scripted Node Lite.001": {
+      "bl_idname": "SvScriptNodeLite",
+      "color": [
+        0.0,
+        0.800000011920929,
+        0.949999988079071
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -138.8275146484375,
+        15.688911437988281
+      ],
+      "params": {
+        "inject_params": 0,
+        "injected_state": 0,
+        "int_list": [
+          0,
+          5,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "script_name": "flip_polygons.py",
+        "script_str": "\"\"\"\nin   pols    s   .=[[]]   n=0\nin   U     s   .=1    n=2\nout  pols_out   s\n\"\"\"\n\nimport numpy as np\nfrom numpy import array as ar\n\nif pols:\n    po = ar(pols)\n    sha = np.shape(po)\n    sh = [sha[0],U,int(sha[1]/U),sha[2]]\n    pols_after = np.reshape(po,sh)\n    pols_out = np.reshape(pols_after.transpose(0,2,1,3),sha).tolist()\nelse:\n    pols_out = [[None]]"
+      },
+      "snlite_ui": [],
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        105.67729949951172,
+        351.3473815917969
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Index": {
+      "bl_idname": "IndexViewerNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        100.19208526611328,
+        59.13590621948242
+      ],
+      "params": {
+        "display_face_index": 1,
+        "display_vert_index": 0,
+        "draw_bg": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number",
+      0,
+      "Cylinder",
+      4
+    ],
+    [
+      "A Number",
+      0,
+      "Math MK2",
+      0
+    ],
+    [
+      "Cylinder",
+      2,
+      "Scripted Node Lite.001",
+      0
+    ],
+    [
+      "Math MK2",
+      0,
+      "Scripted Node Lite.001",
+      1
+    ],
+    [
+      "Cylinder",
+      0,
+      "Viewer Index",
+      0
+    ],
+    [
+      "Scripted Node Lite.001",
+      0,
+      "Viewer Index",
+      2
+    ],
+    [
+      "Cylinder",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Scripted Node Lite.001",
+      0,
+      "Viewer Draw",
+      1
+    ]
+  ]
+}

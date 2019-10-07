@@ -181,7 +181,7 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
             if self.outputs['Polygons'].is_linked:
                 self.outputs['Polygons'].sv_set([result_faces])
             if self.outputs['Matrices'].is_linked:
-                self.outputs['Matrices'].sv_set(Matrix_degenerate(result_matrices))
+                self.outputs['Matrices'].sv_set(result_matrices)
 
 
 def register():

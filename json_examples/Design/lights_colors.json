@@ -1,0 +1,369 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Color in MK1": {
+      "bl_idname": "SvColorsInNodeMK1",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -263.6081848144531,
+        -63.2236328125
+      ],
+      "params": {
+        "b_": 1.0,
+        "g_": 0.0,
+        "use_alpha": 1
+      },
+      "width": 110.0
+    },
+    "Lamp.001": {
+      "bl_idname": "SvLampOutNode",
+      "color": [
+        0.0,
+        0.5,
+        0.20000000298023224
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        149.39559936523438,
+        75.6929931640625
+      ],
+      "params": {
+        "strength": 20.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Line MK2": {
+      "bl_idname": "SvLineNodeMK3",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -453.1287841796875,
+        122.67803192138672
+      ],
+      "params": {
+        "num": 4
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "List Input": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -478.80035400390625,
+        -61.24577713012695
+      ],
+      "params": {
+        "float_list": [
+          0.800000011920929,
+          0.20000000298023224,
+          0.5,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "int_": 4,
+        "mode": "float_list"
+      },
+      "width": 140.0
+    },
+    "List Input.001": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -469.916259765625,
+        -466.7041320800781
+      ],
+      "params": {
+        "float_list": [
+          0.20000000298023224,
+          1.0,
+          0.800000011920929,
+          0.4000000059604645,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "int_": 4,
+        "mode": "float_list"
+      },
+      "width": 140.0
+    },
+    "List Input.002": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -476.82611083984375,
+        -251.11892700195312
+      ],
+      "params": {
+        "float_list": [
+          0.5,
+          0.10000000149011612,
+          0.8999999761581421,
+          -0.019999980926513672,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "int_": 4,
+        "mode": "float_list"
+      },
+      "width": 140.0
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -45.85816192626953,
+        -97.12240600585938
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        151.29238891601562,
+        -544.519287109375
+      ],
+      "params": {
+        "l_": [
+          0.0,
+          0.0,
+          -0.5
+        ]
+      },
+      "width": 140.0
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -19.285037994384766,
+        -462.94927978515625
+      ],
+      "params": {
+        "center": 1,
+        "linkSizes": 1,
+        "normalize": 1,
+        "sizeRatio": 1.0,
+        "sizex": 20.0,
+        "sizey": 20.0,
+        "syncing": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer BMesh": {
+      "bl_idname": "SvBmeshViewerNodeMK2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        352.01837158203125,
+        -431.6375427246094
+      ],
+      "params": {
+        "basemesh_name": "Alpha",
+        "lp": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Plane MK2",
+      0,
+      "Viewer BMesh",
+      0
+    ],
+    [
+      "Plane MK2",
+      2,
+      "Viewer BMesh",
+      2
+    ],
+    [
+      "Matrix in",
+      0,
+      "Viewer BMesh",
+      3
+    ],
+    [
+      "List Input",
+      0,
+      "Color in MK1",
+      0
+    ],
+    [
+      "List Input.002",
+      0,
+      "Color in MK1",
+      1
+    ],
+    [
+      "List Input.001",
+      0,
+      "Color in MK1",
+      2
+    ],
+    [
+      "Color in MK1",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "Line MK2",
+      0,
+      "Lamp.001",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Lamp.001",
+      7
+    ]
+  ]
+}

@@ -305,7 +305,6 @@ class SvDuplicateAlongEdgeNode(bpy.types.Node, SverchCustomTreeNode):
                 result_matrices.extend( new_matrices )
 
             result_vertices = Vector_degenerate(result_vertices)
-            result_matrices = Matrix_degenerate(result_matrices)
             self.outputs['Vertices'].sv_set(result_vertices)
             if self.outputs['Edges'].is_linked:
                 self.outputs['Edges'].sv_set(result_edges)

@@ -26,6 +26,7 @@ from bpy.props import (
     FloatProperty, EnumProperty, StringProperty, BoolProperty, IntProperty
 )
 
+from sverchok.utils.context_managers import sv_preferences
 from sverchok.data_structure import updateNode, node_id
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.ui import nodeview_bgl_viewer_draw_mk2 as nvBGL2
@@ -383,6 +384,18 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
             bgl.glGenTextures(1, name)
             self.texture[n_id] = name[0]
             init_texture(width, height, name[0], texture, gl_color_constant)
+
+            # adjust render location based on preference multiplier setting
+            try:
+                with sv_preferences() as prefs:
+                    multiplier = prefs.render_location_xy_multiplier
+                    scale = prefs.render_scale
+            except:
+                # print('did not find preferences - you need to save user preferences')
+                multiplier = 1.0
+                scale = 1.0
+            x, y = [x * multiplier, y * multiplier]
+            width, height =[width * scale, height * scale]
 
             draw_data = {
                 'tree_name': self.id_data.name[:],

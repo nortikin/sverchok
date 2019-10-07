@@ -1,0 +1,375 @@
+{
+  "export_version": "0.072",
+  "framed_nodes": {
+    "A Number": "Frame.003",
+    "A Number.001": "Frame.003",
+    "A Number.002": "Frame.003",
+    "A Number.003": "Frame.003",
+    "Frame.003": "Frame.004",
+    "Generative Art": "Frame",
+    "Generative Art.001": "Frame.002",
+    "Scripted Node": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -180.4723415374756,
+        -460.5156497955322
+      ],
+      "params": {
+        "float_": -0.17999982833862305,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -179.12401390075684,
+        -538.8636722564697
+      ],
+      "params": {
+        "float_": 27.749998092651367,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -173.7305202484131,
+        -629.3691654205322
+      ],
+      "params": {
+        "float_": 58.97999954223633,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -176.42723655700684,
+        -710.4190921783447
+      ],
+      "params": {
+        "float_": 5.380000114440918,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 275.72314453125,
+      "hide": false,
+      "label": "INSERT TEXT XML EXAMPLES",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 200.35293579101562
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 183.62693786621094,
+      "hide": false,
+      "label": "LOAD EXAMPLES FROM DOCS",
+      "location": [
+        191.31785583496094,
+        153.6009063720703
+      ],
+      "params": {},
+      "width": 200.35296630859375
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 356.630859375,
+      "hide": false,
+      "label": "INSERT TEXT XML EXAMPLES",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 200.3529510498047
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "height": 378.0726623535156,
+      "hide": false,
+      "label": "<call transforms=\"rx {rx2_const} rule=\"CURL1\"/>",
+      "location": [
+        260.8977756500244,
+        -644.2574710845947
+      ],
+      "params": {},
+      "width": 207.09475708007812
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "height": 438.42559814453125,
+      "hide": false,
+      "label": "FOR EXAMPLE",
+      "location": [
+        -12.579458236694336,
+        -8.053003311157227
+      ],
+      "params": {},
+      "width": 267.4477233886719
+    },
+    "Generative Art": {
+      "bl_idname": "SvGenerativeArtNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        60.27728271484375,
+        301.1349182128906
+      ],
+      "params": {
+        "filename": "GA-xml"
+      },
+      "width": 140.0
+    },
+    "Generative Art.001": {
+      "bl_idname": "SvGenerativeArtNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        82.39188385009766,
+        -92.31033325195312
+      ],
+      "params": {
+        "filename": "GA-xml-fern"
+      },
+      "width": 140.0
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -143.3333282470703,
+        308.3421630859375
+      ],
+      "params": {
+        "center": 1,
+        "normalize": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Plane MK2.001": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -160.85939025878906,
+        -99.17095947265625
+      ],
+      "params": {
+        "center": 1,
+        "normalize": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Scripted Node": {
+      "bl_idname": "SvScriptNode",
+      "color": [
+        0.0,
+        0.800000011920929,
+        0.949999988079071
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "ui_ops_test.py",
+      "location": [
+        -367.1687774658203,
+        296.9210662841797
+      ],
+      "params": {
+        "button_names": "go to URL",
+        "files_popup": "ui_ops_test.py",
+        "has_buttons": 1,
+        "int_list": [
+          0,
+          1500,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31
+        ],
+        "script_name": "ui_ops_test.py",
+        "script_str": "def sv_main(text=[]):\n\n    in_sockets = [\n        ['s', 'text', text]]\n\n    def func1():\n        'EXEC_DEFAULT'\n        bpy.ops.wm.url_open(url='http://nikitron.cc.ua/sverch/html/nodes/generators_extended/generative_art.html')\n\n    ui_operators = [\n        ['go to URL', func1]\n    ]    \n    out_sockets = [\n        ['s', 'text2', text]\n    ]\n\n    return in_sockets, out_sockets, ui_operators",
+        "user_name": "zeffii"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        337.89190673828125,
+        -72.91622924804688
+      ],
+      "params": {
+        "display_edges": 0,
+        "display_verts": 0,
+        "face_colors": [
+          0.8990006446838379,
+          0.21919982135295868,
+          0.13378995656967163
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw.001": {
+      "bl_idname": "ViewerNode2",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        322.0526123046875,
+        315.9989929199219
+      ],
+      "params": {
+        "display_edges": 0,
+        "display_verts": 0,
+        "shading": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Plane MK2.001",
+      0,
+      "Generative Art.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Generative Art.001",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Generative Art.001",
+      2
+    ],
+    [
+      "A Number.002",
+      0,
+      "Generative Art.001",
+      3
+    ],
+    [
+      "A Number.003",
+      0,
+      "Generative Art.001",
+      4
+    ],
+    [
+      "Generative Art.001",
+      0,
+      "Viewer Draw",
+      0
+    ],
+    [
+      "Generative Art.001",
+      2,
+      "Viewer Draw",
+      1
+    ],
+    [
+      "Plane MK2",
+      0,
+      "Generative Art",
+      0
+    ],
+    [
+      "Generative Art",
+      0,
+      "Viewer Draw.001",
+      0
+    ],
+    [
+      "Generative Art",
+      2,
+      "Viewer Draw.001",
+      1
+    ]
+  ]
+}

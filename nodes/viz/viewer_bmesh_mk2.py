@@ -228,6 +228,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for obj in self.get_children():
             obj.layers = self.layer_choice[:]
 
+    to3d = BoolProperty(default=True)
+
     material = StringProperty(default='', update=updateNode)
     grouping = BoolProperty(default=False)
     merge = BoolProperty(default=False, update=updateNode)
@@ -342,6 +344,7 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             box.prop(self, "fixed_verts", text="Fixed vert count")
             box.prop(self, 'autosmooth', text='smooth shade')
             box.prop(self, 'calc_normals', text='calculate normals')
+            box.prop(self, 'to3d', text='to3d')
             box.prop(self, 'layer_choice', text='layer')
 
     def get_geometry_from_sockets(self):
@@ -424,7 +427,8 @@ class SvBmeshViewerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.set_autosmooth(objs)
 
         if self.outputs[0].is_linked:
-            self.outputs[0].sv_set(objs)
+            sorted_objs = sorted(objs, key=lambda x: x['idx'])
+            self.outputs[0].sv_set(sorted_objs)
 
     def get_children(self):
         objects = bpy.data.objects

@@ -63,6 +63,14 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
     auto_release = BoolProperty(update=set_child_quota)
 
+    modes = [
+        ("VERTS", "Verts", "On vertices", "", 1),
+        ("FACES", "Polys", "On polygons", "", 2)]
+
+    mode = EnumProperty(items=modes,
+                        default='VERTS',
+                        update=updateNode)
+
     def sv_init(self, context):
         #self.inputs.new("SvObjectSocket", "parent")
         self.inputs.new("SvObjectSocket", "child")
@@ -70,6 +78,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
         self.name_node_generated_parent = 'parant'
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "mode", expand=True)
         col = layout.column(align=True)
         col.prop(self, 'name_node_generated_parent', text='', icon='LOOPSEL')
         #col.prop_search(self, 'name_child', bpy.data, 'objects', text='')
@@ -102,47 +111,33 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
         # at this point there's a reference to an ob, and the mesh is empty.
         child = self.inputs['child'].sv_get()[0]
-        #print('проверка',child)
-
+        #print('checking',child)
 
         if transforms and transforms[0]:
-            # -- this mode will face duplicate --
-            # i expect this can be done faster using numpy
-            # please view this only as exploratory
+            sin, cos = math.sin, math.cos
 
-            if self.inputs['matr/vert'].links[0].from_socket.bl_idname == 'VerticesSocket':
-                transforms = transforms[0]
-                # -- this mode will vertex duplicate --
-                ob.data.from_pydata(transforms, [], [])
-                ob.dupli_type = 'VERTS'
-                child.parent = ob
+            theta = 2 * math.pi / 3
+            thetb = theta * 2
+            ofs = 0.5 * math.pi + theta
 
-            elif self.inputs['matr/vert'].links[0].from_socket.bl_idname == 'MatrixSocket':
-                sin, cos = math.sin, math.cos
+            A = Vector((cos(0 + ofs), sin(0 + ofs), 0))
+            B = Vector((cos(theta + ofs), sin(theta + ofs), 0))
+            C = Vector((cos(thetb + ofs), sin(thetb + ofs), 0))
 
-                theta = 2 * math.pi / 3
-                thetb = theta * 2
-                ofs = 0.5 * math.pi + theta
-
-                A = Vector((cos(0 + ofs), sin(0 + ofs), 0))
-                B = Vector((cos(theta + ofs), sin(theta + ofs), 0))
-                C = Vector((cos(thetb + ofs), sin(thetb + ofs), 0))
-
+            if self.mode == "FACES":
                 verts = []
                 add_verts = verts.extend
+                for M in transforms:
+                    add_verts([(M * A), (M * B), (M * C)])
+                faces = [[i, i + 1, i + 2] for i in range(0, len(transforms) * 3, 3)]
+            elif self.mode == "VERTS":
+                verts = [M.to_translation() for M in transforms]
+                faces = []
 
-                num_matrices = len(transforms)
-                for m in transforms:
-                    M = matrix_sanitizer(m)
-                    add_verts([(M * A)[:], (M * B)[:], (M * C)[:]])
-
-                strides = range(0, num_matrices * 3, 3)
-                faces = [[i, i + 1, i + 2] for i in strides]
-
-                ob.data.from_pydata(verts, [], faces)
-                ob.dupli_type = 'FACES'
-                ob.use_dupli_faces_scale = self.scale
-                child.parent = ob
+            ob.data.from_pydata(verts, [], faces)
+            ob.dupli_type = self.mode
+            ob.use_dupli_faces_scale = self.scale
+            child.parent = ob
 
 
 def register():

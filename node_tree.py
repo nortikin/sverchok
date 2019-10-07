@@ -50,7 +50,7 @@ from sverchok.core.update_system import (
 from sverchok.core.socket_conversions import (
     DefaultImplicitConversionPolicy,
     is_vector_to_matrix
-    )
+)
 
 from sverchok.core.node_defaults import set_defaults_if_defined
 
@@ -71,6 +71,7 @@ socket_colors = {
     "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
     "MatrixSocket": (0.2, 0.8, 0.8, 1.0),
     "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
+    "SvSeparatorSocket": (0.0, 0.0, 0.0, 0.0),
     "ObjectSocket": (0.69, 0.74, 0.73, 1.0),
     "TextSocket": (0.68, 0.85, 0.90, 1),
 }
@@ -88,6 +89,8 @@ class SvSocketCommon:
     use_expander = BoolProperty(default=True)
     use_quicklink = BoolProperty(default=True)
     expanded = BoolProperty(default=False)
+
+    quicklink_func_name = StringProperty(default="", name="quicklink_func_name")
 
     @property
     def other(self):
@@ -181,13 +184,12 @@ class SvSocketCommon:
             op.new_node_offsety = -30 * self.index
 
     def draw(self, context, layout, node, text):
-
         # just handle custom draw..be it input or output.
         # hasattr may be excessive here
         if self.bl_idname == 'StringsSocket':
             if hasattr(self, 'custom_draw') and self.custom_draw:
 
-                # does the node have the draw function referred to by 
+                # does the node have the draw function referred to by
                 # the string stored in socket's custom_draw attribute
                 if hasattr(node, self.custom_draw):
                     getattr(node, self.custom_draw)(self, context, layout)
@@ -202,7 +204,7 @@ class SvSocketCommon:
             t = text
             if not self.is_output:
                 if self.prop_name:
-                    prop = node.rna_type.properties.get(self.prop_name, None) 
+                    prop = node.rna_type.properties.get(self.prop_name, None)
                     t = prop.name if prop else text
             info_text = t + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
@@ -217,6 +219,13 @@ class SvSocketCommon:
 
             elif self.use_prop:  # no property but use default prop
                 self.draw_expander_template(context, layout, prop_origin=self)
+
+            elif self.quicklink_func_name:
+                try:
+                    getattr(node, self.quicklink_func_name)(self, context, layout, node)
+                except Exception as e:
+                    self.draw_quick_link(context, layout, node)
+                layout.label(text)
 
             else:  # no property and not use default prop
                 self.draw_quick_link(context, layout, node)
@@ -237,6 +246,7 @@ class SvSocketCommon:
             policy = self.node.get_implicit_conversions(self.name, implicit_conversions)
             self.node.debug("Trying to convert data for input socket %s by %s", self.name, policy)
             return policy.convert(self, source_data)
+
 
 class MatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
@@ -260,7 +270,7 @@ class MatrixSocket(NodeSocket, SvSocketCommon):
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         self.num_matrices = 0
         if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
         elif default is sentinel:
@@ -289,7 +299,7 @@ class VerticesSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
         if self.prop_name:
@@ -322,7 +332,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
-            source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
         if self.prop_name:
@@ -385,6 +395,23 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
 
     def sv_type_conversion(self, new_self):
         self = new_self
+
+
+class SvSeparatorSocket(NodeSocket, SvSocketCommon):
+    ''' Separator Socket used to separate groups of sockets '''
+    bl_idname = "SvSeparatorSocket"
+    bl_label = "Separator Socket"
+
+    prop_name = StringProperty(default='')
+
+    def draw(self, context, layout, node, text):
+        # layout.label("")
+        layout.label("——————")
+
+    def remove_links(self):
+        # print("separator sockets removing links")
+        for link in self.links:
+            self.id_data.links.remove(link)
 
 
 class StringsSocket(NodeSocket, SvSocketCommon):
@@ -795,7 +822,7 @@ class SverchCustomTreeNode:
 classes = [
     SverchCustomTree,
     VerticesSocket, MatrixSocket, StringsSocket,
-    SvColorSocket, SvQuaternionSocket, SvDummySocket,
+    SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvLinkNewNodeInput,
 ]
 
