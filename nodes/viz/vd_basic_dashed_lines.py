@@ -37,13 +37,14 @@ vertex_shader = '''
 
 fragment_shader = '''
     uniform float u_Scale;
+    uniform vec4 m_color
 
     in float v_ArcLength;
 
     void main()
     {
         if (step(sin(v_ArcLength * u_Scale), 0.5) == 1) discard;
-        gl_FragColor = vec4(1.0);
+        gl_FragColor = m_color;
     }
 '''
 
@@ -62,8 +63,11 @@ def screen_v3dBGL(context, args):
     line4f = args[2]
 
     # bgl.glLineWidth(3)
+    matrix = context.region_data.perspective_matrix
     shader.bind()
     shader.uniform_float("color", line4f)
+    shader.uniform_float("u_ViewProjectionMatrix", matrix)
+    shader.uniform_float("u_Scale", 10)    
     batch.draw(shader)
     # bgl.glLineWidth(1)
 
@@ -122,8 +126,15 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
       
             coords = propv[0]
             indices = prope[0]
-            shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-            batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=indices)
+            # shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+
+            arc_lengths = []
+            for a, b in indices:
+                arc_lengths.append(arc_lengths[-1] + (Vector(coords[a]) - Vector(coords[b])).length)
+
+            shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+            shade_data_dict = {"pos" : coords, "arcLength": arc_lengths}
+            batch = batch_for_shader(shader, 'LINES', shade_data_dict, indices=indices)
 
             line4f = self.edge_color[:]
 
