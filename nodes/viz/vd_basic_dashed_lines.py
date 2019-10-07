@@ -13,7 +13,7 @@ from gpu_extras.batch import batch_for_shader
 # import mathutils
 from mathutils import Vector, Matrix
 import sverchok
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, FloatProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
@@ -23,7 +23,7 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 vertex_shader = '''
     uniform mat4 u_ViewProjectionMatrix;
 
-    in vec3 position;
+    in vec3 pos;
     in float arcLength;
 
     out float v_ArcLength;
@@ -31,13 +31,13 @@ vertex_shader = '''
     void main()
     {
         v_ArcLength = arcLength;
-        gl_Position = u_ViewProjectionMatrix * vec4(position, 1.0f);
+        gl_Position = u_ViewProjectionMatrix * vec4(pos, 1.0f);
     }
 '''
 
 fragment_shader = '''
     uniform float u_Scale;
-    uniform vec4 m_color
+    uniform vec4 m_color;
 
     in float v_ArcLength;
 
@@ -61,13 +61,14 @@ def screen_v3dBGL(context, args):
     shader = args[0]
     batch = args[1]
     line4f = args[2]
+    w_scale = args[3]
 
     # bgl.glLineWidth(3)
     matrix = context.region_data.perspective_matrix
     shader.bind()
-    shader.uniform_float("color", line4f)
+    shader.uniform_float("m_color", line4f)
     shader.uniform_float("u_ViewProjectionMatrix", matrix)
-    shader.uniform_float("u_Scale", 10)    
+    shader.uniform_float("u_Scale", w_scale)    
     batch.draw(shader)
     # bgl.glLineWidth(1)
 
@@ -93,6 +94,8 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR', min=0, max=1,
         default=(0.3, 0.3, 0.3, 1.0), name='edge color', size=4, update=updateNode)
 
+    world_scale: FloatProperty(default=1.0, min=0.0001, name="huh", update=updateNode)
+
     @property
     def fully_enabled(self):
         return "edges" in self.inputs
@@ -108,6 +111,7 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
         r1 = layout.row(align=True)
         r1.label(icon="UV_EDGESEL")
         r1.prop(self, "edge_color", text='')
+        layout.prop(self, "world_scale")
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
@@ -129,19 +133,21 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
             # shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
 
             arc_lengths = []
-            for a, b in indices:
-                arc_lengths.append(arc_lengths[-1] + (Vector(coords[a]) - Vector(coords[b])).length)
+            for v in coords:
+                dist = Vector(v).length
+                arc_lengths.append(dist)
 
             shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
             shade_data_dict = {"pos" : coords, "arcLength": arc_lengths}
             batch = batch_for_shader(shader, 'LINES', shade_data_dict, indices=indices)
 
             line4f = self.edge_color[:]
+            w_scale = self.world_scale
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'custom_function': screen_v3dBGL,
-                'args': (shader, batch, line4f)
+                'args': (shader, batch, line4f, w_scale)
             }            
 
             callback_enable(n_id, draw_data)
