@@ -76,6 +76,8 @@ class SvLinkNewNodeInput(bpy.types.Operator):
             locx, locy = recursive_framed_location_finder(new_node, loc_xy)
             new_node.location = locx, locy
 
+        new_node.process_node(context)
+
         return {'FINISHED'}
 
 

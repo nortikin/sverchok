@@ -96,6 +96,7 @@ def add_connection(tree, bl_idname_new_node, offset):
         outputs = existing_node.outputs
         inputs = new_node.inputs
 
+        # first scenario not handelled in b28 yet.
         if existing_node.bl_idname in supported_mesh_viewers and bl_idname_new_node == 'IndexViewerNode':
             new_node.draw_bg = True
             connect_idx_viewer(tree, existing_node, new_node)
@@ -109,7 +110,9 @@ def add_connection(tree, bl_idname_new_node, offset):
                 # connect_stethoscope to first visible output socket of active node
                 links.new(socket, inputs[0])
                 break
+            
             tree.update()   # without this the node won't show output until an update is triggered manually
+            # existing_node.process_node(None)
 
         elif bl_idname_new_node == 'SvVDExperimental':
 
@@ -120,7 +123,8 @@ def add_connection(tree, bl_idname_new_node, offset):
                 if 'edges' in output_map:
                     links.new(outputs[output_map['edges']], inputs[1])
 
-                tree.update()
+            tree.update()
+            # existing_node.process_node(None)
 
         else:
             ...
