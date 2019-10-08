@@ -21,7 +21,6 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.avl_tree import AVLTree
-from sverchok.utils.logging import debug
 
 
 x, y, z = 0, 1, 2
