@@ -13,12 +13,12 @@ from gpu_extras.batch import batch_for_shader
 # import mathutils
 from mathutils import Vector, Matrix
 import sverchok
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, FloatProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
-
+from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader, screen_v3dBGL_dashed
 
 vertex_shader = '''
     uniform mat4 u_ViewProjectionMatrix;
@@ -73,7 +73,6 @@ def screen_v3dBGL(context, args):
     # bgl.glLineWidth(1)
 
 
-
 class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: basic dashed lines
@@ -94,7 +93,15 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR', min=0, max=1,
         default=(0.3, 0.3, 0.3, 1.0), name='edge color', size=4, update=updateNode)
 
-    world_scale: FloatProperty(default=1.0, min=0.0001, name="huh", update=updateNode)
+    world_scale: FloatProperty(default=1.0, min=0.0001, name="world scale", update=updateNode)
+    u_dash_size: FloatProperty(default=0.03, min=0.0001, name="dash size", update=updateNode)
+    u_gap_size: FloatProperty(default=0.18, min=0.0001, name="gap size", update=updateNode)
+
+    mode_options = [(k, k, '', i) for i, k in enumerate(["dev", "default"])]
+    selected_gl_mode: EnumProperty(
+        items=mode_options, description="offers....", default="dev", update=updateNode)
+
+    u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
 
     @property
     def fully_enabled(self):
@@ -111,7 +118,19 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
         r1 = layout.row(align=True)
         r1.label(icon="UV_EDGESEL")
         r1.prop(self, "edge_color", text='')
-        layout.prop(self, "world_scale")
+        
+        col = layout.column()
+        row = col.row()
+        row.prop(self, "selected_gl_mode", expand=True)
+
+        if self.selected_gl_mode == 'dev':
+            row = col.row()
+            row.prop(self, "u_dash_size"); row.prop(self, "u_gap_size")
+            row = col.row()
+            row.prop(self, "u_resolution", text='')
+
+        else:
+            col.prop(self, "world_scale")
 
     def process(self):
         if not (self.id_data.sv_show and self.activate):
@@ -132,25 +151,51 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
             indices = prope[0]
             # shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
 
-            arc_lengths = []
-            for v in coords:
-                dist = Vector(v).length
-                arc_lengths.append(dist)
 
-            shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-            shade_data_dict = {"pos" : coords, "arcLength": arc_lengths}
-            batch = batch_for_shader(shader, 'LINES', shade_data_dict, indices=indices)
+            if self.selected_gl_mode == 'default':
+    
+                arc_lengths = []
+                for v in coords:
+                    dist = Vector(v).length
+                    arc_lengths.append(dist)
 
-            line4f = self.edge_color[:]
-            w_scale = self.world_scale
+                shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+                shade_data_dict = {"pos" : coords, "arcLength": arc_lengths}
+                batch = batch_for_shader(shader, 'LINES', shade_data_dict, indices=indices)
 
-            draw_data = {
-                'tree_name': self.id_data.name[:],
-                'custom_function': screen_v3dBGL,
-                'args': (shader, batch, line4f, w_scale)
-            }            
+                line4f = self.edge_color[:]
+                w_scale = self.world_scale
 
-            callback_enable(n_id, draw_data)
+                draw_data = {
+                    'tree_name': self.id_data.name[:],
+                    'custom_function': screen_v3dBGL,
+                    'args': (shader, batch, line4f, w_scale)
+                }            
+
+                callback_enable(n_id, draw_data)
+
+            elif self.selected_gl_mode == 'dev':
+    
+                shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
+                shade_data_dict = {"inPos" : coords}
+                batch = batch_for_shader(shader, 'LINES', shade_data_dict, indices=indices)
+
+                args = lambda: None
+                args.shader = shader
+                args.batch = batch
+                args.line4f = self.edge_color[:]
+                args.u_dash_size = self.u_dash_size
+                args.u_gap_size = self.u_gap_size
+                args.u_resolution = self.u_resolution[:]
+
+                draw_data = {
+                    'tree_name': self.id_data.name[:],
+                    'custom_function': screen_v3dBGL_dashed,
+                    'args': args
+                }            
+
+                callback_enable(n_id, draw_data)
+
             return
 
         matrix_socket = self.inputs['matrix']
