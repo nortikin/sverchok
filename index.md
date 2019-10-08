@@ -79,6 +79,7 @@
     EvaluateImageNode
     SvDeformationNode
     SvLinkedVertsNode
+    SvIntersectEdges2D
 
 ## Transforms
     SvRotationNode
@@ -88,6 +89,7 @@
     MatrixApplyNode
     SvSimpleDeformNode
     SvBarycentricTransformNode
+    SvAlignMeshByMesh
 
 ## Modifier Change
     SvDeleteLooseNode
@@ -279,6 +281,7 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
+    SvSelectionGraber
 
 ## Scene
     SvObjectsNodeMK3
@@ -369,6 +372,7 @@
     SvOffsetLineNode
     SvContourNode
     SvPlanarEdgenetToPolygons
+    SvSwitchNodeMK2
     ---
     SvQuaternionOutNode
     SvQuaternionInNode

@@ -16,6 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# source of code: https://github.com/pgrafov/python-avl-tree
+# usage:
+# tree = AVLTree(list(range(20))
+# node = tree.find(10)
+# node.next -> return 11
+# tree.insert(30)
+# tree.find_biggest() -> return 30
+# tree.remove(1)
+# tree.out() -> print tree
+
 
 class Node:
     def __init__(self, key):
@@ -30,7 +40,6 @@ class Node:
 
     @property
     def next(self):
-        #print('Next -', self, self.leftChild, self.rightChild, self.parent)
         if self.rightChild:
             node = self.rightChild
             while node.leftChild:

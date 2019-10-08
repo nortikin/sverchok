@@ -144,7 +144,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == 'AXIS':
             Vertices = self.inputs['vertices'].sv_get()
             Angle = self.inputs['angle'].sv_get()
-            Center = self.inputs['center'].sv_get(default=[[[0.0, 0.0, 0.0]]])
+            Center = self.inputs['centers'].sv_get(default=[[[0.0, 0.0, 0.0]]])
             Axis = self.inputs['axis'].sv_get(default=[[[0.0, 0.0, 1.0]]])
             parameters = match_long_repeat([Vertices, Center, Axis, Angle])
 
