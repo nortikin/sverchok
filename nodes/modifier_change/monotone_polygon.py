@@ -17,10 +17,12 @@
 # ##### END GPL LICENSE BLOCK #####
 
 
+from itertools import zip_longest
+
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.avl_tree import Node, AVLTree
+from sverchok.utils.avl_tree import AVLTree
 
 
 x, y, z = 0, 1, 2
@@ -38,6 +40,11 @@ def is_ccw(a, b, c):
 
 
 def is_ccw_polygon(verts):
+    """
+    Returns True if order of points are in counterclockwise
+    :param all_verts: [(x, y, z) or (x, y), ...]
+    :return: bool
+    """
     x_min = min(range(len(verts)), key=lambda i: verts[i][x])
     return True if is_ccw(verts[(x_min - 1) % len(verts)], verts[x_min], verts[(x_min + 1) % len(verts)]) else False
 
@@ -81,10 +88,24 @@ def almost_equal(v1, v2, epsilon=1e-6):
 
 
 def is_less(v1, v2, epsilon=1e-6):
+    """
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param epsilon: value of accuracy
+    :return: True if v1 is less then v2
+    """
     return v2 - v1 > epsilon
 
 
 def is_more(v1, v2, epsilon=1e-6):
+    """
+    Compare floating values
+    :param v1: float
+    :param v2: float
+    :param epsilon: value of accuracy
+    :return: True if v1 is more then v2
+    """
     return v1 - v2 > epsilon
 
 
@@ -188,6 +209,7 @@ class Point:
 
     @property
     def type(self):
+        # returns type of point according the algorithm
         #print_p(self, 'center')
         if not self._type:
             next_point = self.hedge.next.origin
@@ -203,6 +225,7 @@ class Point:
         return self._type
 
     def get_ccw_hedges(self):
+        # returns half edges around the point in counterclockwise direction
         hedges = [self.hedge]
         last_hedge = self.hedge.last.twin
         count = 0
@@ -216,6 +239,7 @@ class Point:
         return hedges
 
     def get_next_hedge(self):
+        # returns next half edges according the algorithm
         if self.hedge.face and self.hedge.face.outer:
             return self.hedge
         next_hedge = self.hedge.twin.next
@@ -230,6 +254,7 @@ class Point:
         raise LookupError('There is no hedge with face')
 
     def get_last_hedge(self):
+        # returns last half edges according the algorithm
         if self.hedge.last.face and self.hedge.last.face.outer:
             return self.hedge.last
         last_hedge = self.hedge.last.twin.last
@@ -245,7 +270,7 @@ class Point:
 
 
 class HalfEdge:
-
+    # http://www.holmes3d.net/graphics/dcel/
     def __init__(self, point, face=None):
         self.origin = point
         self.face = face
@@ -320,6 +345,7 @@ class Face:
 
 
 def create_half_edges(verts):
+    # Creates half edge data structure from list ov vertices
     # todo: self intersection polygons? double repeated polygons?
     half_edges = []
     twin_hedges = []
@@ -348,6 +374,7 @@ def create_half_edges(verts):
 
 
 def create_hedges_from_faces(verts, sv_faces):
+    # Creates half edge data structure from vertices and faces of Sverchok data structure
     half_edges = dict()
     points = [Point(v) for v in verts]
     faces = []
@@ -416,7 +443,7 @@ def create_hedges_from_faces(verts, sv_faces):
 
 
 def to_sv_mesh_from_faces(points, faces):
-
+    # Crete Sverchok data structure from half edge data structure based on list of vertices and faces
     indexes = {point: i for i, point in enumerate(points)}
     sv_faces = []
     sv_verts = [point.co for point in points]
@@ -431,6 +458,7 @@ def to_sv_mesh_from_faces(points, faces):
 
 
 def build_face_list(hedges):
+    # Generate face list from list of half edges
     used = set()
     faces = []
 
@@ -456,6 +484,7 @@ def build_face_list(hedges):
 
 
 def add_holes(polygon_mesh, hole_faces):
+    # Combine base polygon with holes
     p, he, f = 0, 1, 2
     points = polygon_mesh[p]
     half_edges = polygon_mesh[he]
@@ -483,7 +512,7 @@ def add_holes(polygon_mesh, hole_faces):
 
 
 def insert_edge(up_p, low_p):
-
+    # insert new edge in half edge data structure during working of the partitioning algorithm
     up_hedge = HalfEdge(up_p)
     low_hedge = HalfEdge(low_p)
     up_hedge.twin = low_hedge
@@ -536,7 +565,14 @@ def insert_edge(up_p, low_p):
 
 
 def make_monotone(verts, hole_v=None, hole_f=None):
-    debug_data_clear()
+    """
+    Splits polygon on monotone pieces optionally with holes
+    :param verts: [[x1, y2, z1], [x2, y2, z2], ...]
+    :param hole_v: [[x1, y2, z1], [x2, y2, z2], ...]
+    :param hole_f: [[index1, index2, ....], [...], ...]
+    :return (vertices of main polygon and vertices of holes, faces of new polygons) - in SV format
+    """
+    #debug_data_clear()
     points, half_edges, faces = create_half_edges(verts)
     if hole_f:
         hole_v, hole_he, hole_f = create_hedges_from_faces(hole_v, hole_f)
@@ -556,6 +592,7 @@ def make_monotone(verts, hole_v=None, hole_f=None):
 
 
 def handle_start_point(point, status):
+    # Read Computational Geometry by Mark de Berg
     edge = EdgeSweepLine(point.hedge)
     point.hedge.edge = edge
     point.hedge.twin.edge = edge
@@ -564,6 +601,7 @@ def handle_start_point(point, status):
 
 
 def handle_end_point(point, status):
+    # Read Computational Geometry by Mark de Berg
     status.remove(point.hedge.last.edge)
     helper = point.hedge.last.edge.helper
     if helper.type == 'merge':
@@ -571,6 +609,7 @@ def handle_end_point(point, status):
 
 
 def handle_split_point(point, status):
+    # Read Computational Geometry by Mark de Berg
     left_node = status.find_nearest_left(point.co[x])
     new_hedges = insert_edge(left_node.key.helper, point)
     left_node.key.helper = point
@@ -583,6 +622,7 @@ def handle_split_point(point, status):
 
 
 def handle_merge_point(point, status):
+    # Read Computational Geometry by Mark de Berg
     #print_p(point, 'merge point')
     right_helper = point.hedge.last.edge.helper
     new_hedges = []
@@ -598,6 +638,7 @@ def handle_merge_point(point, status):
 
 
 def handle_regular_point(point, status):
+    # Read Computational Geometry by Mark de Berg
     if point < point.hedge.twin.origin:
         right_helper = point.hedge.last.edge.helper
         status.remove(point.hedge.last.edge)
@@ -666,10 +707,10 @@ def debug_data_clear():
 
 class SvMakeMonotone(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Split face
-    tip
+    Triggers: Split face into monotone pieces
+    Can spilt face with holes
 
-    tip
+    One object - one polygon
     """
     bl_idname = 'SvMakeMonotone'
     bl_label = 'Make monotone'
@@ -682,16 +723,18 @@ class SvMakeMonotone(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('StringsSocket', 'Polygons')
 
     def process(self):
-        verts = self.inputs['Polygon'].sv_get()[0]
-        is_holes = False
+        verts = self.inputs['Polygon'].sv_get()
+        mesh = []
         if self.inputs['Hole vectors'].is_linked and self.inputs['Hole polygons'].is_linked:
-            is_holes = True
-            hole_v = self.inputs['Hole vectors'].sv_get()[0]
-            hole_f = self.inputs['Hole polygons'].sv_get()[0]
-
-        mesh = make_monotone(verts, hole_v if is_holes else None, hole_f if is_holes else None)
+            hole_v = self.inputs['Hole vectors'].sv_get()
+            hole_f = self.inputs['Hole polygons'].sv_get()
+            for vs, hvs, hfs in zip_longest(verts, hole_v, hole_f, fillvalue=None):
+                mesh.append(make_monotone(vs, hvs, hfs))
+        else:
+            for vs in verts:
+                mesh.append(make_monotone(vs))
         if mesh:
-            v, f = zip(mesh)
+            v, f = zip(*mesh)
             self.outputs['Vertices'].sv_set(v)
             self.outputs['Polygons'].sv_set(f)
 
