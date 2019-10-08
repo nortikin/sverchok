@@ -94,8 +94,8 @@ class SvVDBasicDashedLines(bpy.types.Node, SverchCustomTreeNode):
         default=(0.3, 0.3, 0.3, 1.0), name='edge color', size=4, update=updateNode)
 
     world_scale: FloatProperty(default=1.0, min=0.0001, name="world scale", update=updateNode)
-    u_dash_size: FloatProperty(default=0.03, min=0.0001, name="dash size", update=updateNode)
-    u_gap_size: FloatProperty(default=0.18, min=0.0001, name="gap size", update=updateNode)
+    u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
+    u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["dev", "default"])]
     selected_gl_mode: EnumProperty(
