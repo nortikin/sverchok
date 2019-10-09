@@ -46,6 +46,11 @@ def is_ccw(a, b, c):
 
 
 def is_ccw_polygon(verts):
+    """
+    Returns True if order of points are in counterclockwise
+    :param verts: [(x, y, z) or (x, y), ...]
+    :return: bool
+    """
     x_min = min(range(len(verts)), key=lambda i: verts[i][x])
     return True if is_ccw(verts[(x_min - 1) % len(verts)], verts[x_min], verts[(x_min + 1) % len(verts)]) else False
 
@@ -111,6 +116,7 @@ class Face:
 
     @property
     def is_unbounded(self):
+        # returns true if face is boundless - includes all other faces of a mesh
         return not self.outer
 
 
@@ -269,6 +275,7 @@ class Debugger:
 
     @staticmethod
     def print_f(face, msg=None):
+        # prints faces
         if not Debugger.to_print:
             return
         if not face.outer:
@@ -291,6 +298,7 @@ class Debugger:
 
     @staticmethod
     def print_he(hedge, msg=None, gen_type='twin'):
+        # prints half edges
         if not Debugger.to_print:
             return
         if not isinstance(hedge, list):
@@ -306,6 +314,7 @@ class Debugger:
 
     @staticmethod
     def print_e(edge, msg=None):
+        # prints edges
         if not Debugger.to_print:
             return
         if not isinstance(edge, list):
@@ -318,6 +327,7 @@ class Debugger:
 
     @staticmethod
     def print_p(point, msg=None):
+        # prints points
         if not Debugger.to_print:
             return
         print('{} - {}'.format(Debugger._count, msg or 'Point'))
@@ -327,13 +337,14 @@ class Debugger:
 
     @staticmethod
     def print(*msg):
+        # equal to standard print function
         if not Debugger.to_print:
             return
         print(msg)
 
     @staticmethod
     def clear(to_print=True):
-        # Should be called before using the class
+        # clear all recoded data, should be coled before each iteration of a node
         Debugger.data.clear()
         Debugger.msg.clear()
         Debugger._count = 0
@@ -341,4 +352,5 @@ class Debugger:
 
     @staticmethod
     def set_dcel_data(half_edges):
+        # for visualization all DCEL data
         Debugger.half_edges = list(half_edges)

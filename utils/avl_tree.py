@@ -40,6 +40,7 @@ class Node:
 
     @property
     def next(self):
+        # returns next greater element or None if such does not exist
         if self.rightChild:
             node = self.rightChild
             while node.leftChild:
@@ -59,6 +60,7 @@ class Node:
 
     @property
     def last(self):
+        # returns next smaller element or None if such does not exist
         if self.leftChild:
             node = self.leftChild
             while node.rightChild:
@@ -94,6 +96,11 @@ class Node:
 
 
 class AVLTree:
+    """
+    https://en.wikipedia.org/wiki/AVL_tree
+    https://www.cs.usfca.edu/~galles/visualization/AVLtree.html
+    can be used in conditions like this: if AVLTree(): - if is empty returns false
+    """
     def __init__(self, *args):
         self.rootNode = None
         self.elements_count = 0
@@ -112,6 +119,7 @@ class AVLTree:
             return 0
 
     def max_len(self):
+        # returns approximate number of elements of a tree based on information about tree height
         return sum([2 ** i for i in range(1, self.height())]) + 1
 
     def rebalance(self, node_to_rebalance):
@@ -299,6 +307,8 @@ class AVLTree:
         return child_node
 
     def insert(self, key):
+        # inserts new element to a tree, does not make warnings if element with equal value already was inserted
+        # returns node any way
         new_node = Node(key)
         if not self.rootNode:
             self.rootNode = new_node
@@ -313,6 +323,7 @@ class AVLTree:
                 return exist_node
 
     def find_biggest(self, start_node=None):
+        # returns node with biggest value
         if not start_node:
             node = self.rootNode
         else:
@@ -322,6 +333,7 @@ class AVLTree:
         return node
 
     def find_smallest(self, start_node=None):
+        # returns node with smallest value
         if not start_node:
             node = self.rootNode
         else:
@@ -390,6 +402,7 @@ class AVLTree:
             return self.inorder_non_recursive()
 
     def find(self, key):
+        # returns node or None if node with such value does not exist
         return self.find_in_subtree(self.rootNode, key)
 
     def find_in_subtree(self, node, key):
@@ -403,6 +416,7 @@ class AVLTree:
             return node
 
     def find_nearest_left(self, key):
+        # returns next smaller to input value node
         if not self.rootNode.rightChild and self.rootNode.key < key:
             return self.rootNode
         else:
@@ -423,6 +437,7 @@ class AVLTree:
             return node  # probably node.last ???
 
     def remove(self, key):
+        # removes node from a tree equal to input value if such node exists
         # first find
         node = self.find(key)
 
@@ -448,6 +463,7 @@ class AVLTree:
                 self.swap_with_successor_and_remove(node)
 
     def remove_node(self, node):
+        # removes node from a tree
         if node.is_leaf():
             self.remove_leaf(node)
         elif (bool(node.leftChild)) ^ (bool(node.rightChild)):
@@ -564,6 +580,7 @@ class AVLTree:
             # use for debug only and only with small trees
 
     def out(self, start_node=None):
+        # prints a tree in suitable for reading form
         if start_node == None:
             start_node = self.rootNode
         space_symbol = "*"
