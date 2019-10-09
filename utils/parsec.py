@@ -221,6 +221,6 @@ def parse(func, s):
         raise ValueError("invalid syntax: " + str(match))
     result, rest = match[0]
     if rest.strip():
-        raise ValueError("leftover: " + rest)
+        raise ValueError("parsed: {}\nleftover: {}".format(result, rest))
     return result
 
