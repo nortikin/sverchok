@@ -572,7 +572,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 return
 
             if edges_socket.is_linked and not faces_socket.is_linked:
-                self.add_gl_stuff_to_config(config)
+                if self.use_dashed:
+                    self.add_gl_stuff_to_config(config)
 
                 geom.edges = edge_indices
                 draw_data = {
@@ -593,8 +594,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     geom.faces = ensure_triangles(coords, face_indices)
 
                 if self.display_edges:
-                    
-                    self.add_gl_stuff_to_config(config)
+                    if self.use_dashed:    
+                        self.add_gl_stuff_to_config(config)
 
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
