@@ -255,7 +255,6 @@
     ---
     SvMatrixViewer28
     SvVDBasicLines
-    SvVDBasicDashedLines
     SvVDExperimental
     ---
     SvIDXViewer28
