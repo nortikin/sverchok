@@ -185,15 +185,19 @@ def draw_verts(context, args):
     geom, config = args
     draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
+def pack_dashed_config(config):
+    dashed_config = lambda: None
+    dashed_config.matrix = config.matrix
+    dashed_config.u_resolution = config.u_resolution
+    dashed_config.u_dash_size = config.u_dash_size
+    dashed_config.u_gap_size = config.u_gap_size
+    dashed_config.m_color = config.line4f
+    dashed_config.shader = config.shader
+    return dashed_config
+
 def draw_lines_uniform(config, coords, indices, line_color, line_width):
     if config.draw_dashed:
-        dashed_config = lambda: None
-        dashed_config.matrix = config.matrix
-        dashed_config.u_resolution = config.u_resolution
-        dashed_config.u_dash_size = config.u_dash_size
-        dashed_config.u_gap_size = config.u_gap_size
-        dashed_config.m_color = config.line4f
-        dashed_config.shader = config.shader
+        dashed_config = pack_dashed_config(config)
         draw_uniform('LINES', coords, indices, config.line4f, config.line_width, dashed_data=dashed_config)
     else:
         draw_uniform('LINES', coords, indices, config.line4f, config.line_width)
