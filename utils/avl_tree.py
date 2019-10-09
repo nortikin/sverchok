@@ -16,6 +16,16 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+# source of code: https://github.com/pgrafov/python-avl-tree
+# usage:
+# tree = AVLTree(list(range(20))
+# node = tree.find(10)
+# node.next -> return 11
+# tree.insert(30)
+# tree.find_biggest() -> return 30
+# tree.remove(1)
+# tree.out() -> print tree
+
 
 class Node:
     def __init__(self, key):
@@ -30,7 +40,6 @@ class Node:
 
     @property
     def next(self):
-        #print('Next -', self, self.leftChild, self.rightChild, self.parent)
         if self.rightChild:
             node = self.rightChild
             while node.leftChild:
@@ -394,17 +403,12 @@ class AVLTree:
             return node
 
     def find_nearest_left(self, key):
-        from sverchok.nodes.modifier_change.merge_mesh_2d import Debugger
-        if self.rootNode:
-            Debugger.print_n(self.rootNode, 'root node')
         if not self.rootNode.rightChild and self.rootNode.key < key:
             return self.rootNode
         else:
             return self.find_nearest_in_subtree(self.rootNode, key)
 
     def find_nearest_in_subtree(self, node, key):
-        from sverchok.nodes.modifier_change.merge_mesh_2d import Debugger
-        Debugger.print_n(node, 'search nearest in node')
         if key < node.key:
             if node.leftChild:
                 return self.find_nearest_in_subtree(node.leftChild, key)

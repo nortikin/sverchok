@@ -79,6 +79,7 @@
     EvaluateImageNode
     SvDeformationNode
     SvLinkedVertsNode
+    SvIntersectEdges2D
 
 ## Transforms
     SvRotationNode
@@ -96,6 +97,7 @@
     SvSeparateMeshNode
     SvLimitedDissolve
     SvMeshBeautify
+    SvMakeMonotone
     ---
     PolygonBoomNode
     Pols2EdgsNode
@@ -280,6 +282,7 @@
     SvPointOnMeshNodeMK2
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
+    SvSelectionGraber
 
 ## Scene
     SvObjectsNodeMK3
@@ -370,6 +373,7 @@
     SvOffsetLineNode
     SvContourNode
     SvPlanarEdgenetToPolygons
+    SvSwitchNodeMK2
     ---
     SvQuaternionOutNode
     SvQuaternionInNode
