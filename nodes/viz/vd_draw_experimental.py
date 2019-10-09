@@ -163,8 +163,6 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
     
         batch.draw(shader)
 
-
-
     if GL_KIND == 'LINES':
         bgl.glLineWidth(1)
     elif GL_KIND == 'POINTS':
@@ -174,7 +172,6 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 def draw_smooth(coords, vcols, indices=None):
     shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
     if indices:
-        # print(len(coords), len(vcols))
         batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, indices=indices)
     else:
         batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
@@ -195,8 +192,9 @@ def pack_dashed_config(config):
     dashed_config.shader = config.shader
     return dashed_config
 
-def draw_lines_uniform(config, coords, indices, line_color, line_width):
+def draw_lines_uniform(context, config, coords, indices, line_color, line_width):
     if config.draw_dashed:
+        config.matrix = context.region_data.perspective_matrix
         dashed_config = pack_dashed_config(config)
         draw_uniform('LINES', coords, indices, config.line4f, config.line_width, dashed_data=dashed_config)
     else:
@@ -207,8 +205,7 @@ def draw_edges(context, args):
     coords, indices = geom.verts, geom.edges
 
     if config.display_edges:
-        config.matrix = context.region_data.perspective_matrix
-        draw_lines_uniform(config, coords, indices, config.line4f, config.line_width)
+        draw_lines_uniform(context, config, coords, indices, config.line4f, config.line_width)
     if config.display_verts:
         draw_verts(context, args)
 
@@ -223,7 +220,6 @@ def draw_fragment(context, args):
     shader.uniform_float("brightness", 0.5)
     batch.draw(shader)
 
-
 def draw_faces(context, args):
     geom, config = args
 
@@ -231,8 +227,7 @@ def draw_faces(context, args):
         bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
     
     if config.display_edges:
-        config.matrix = context.region_data.perspective_matrix
-        draw_lines_uniform(config, geom.verts, geom.edges, config.line4f, config.line_width)
+        draw_lines_uniform(context, config, geom.verts, geom.edges, config.line4f, config.line_width)
 
     if config.display_faces:
 
