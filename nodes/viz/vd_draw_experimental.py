@@ -227,8 +227,8 @@ def draw_faces(context, args):
 
     if config.display_faces:
 
-        # if config.draw_gl_wireframe:
-        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
         if config.draw_gl_polygonoffset:
             bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
@@ -246,8 +246,8 @@ def draw_faces(context, args):
             else:
                 draw_fragment(context, args)
 
-        # if config.draw_gl_wireframe:
-        #     bgl.glPolygonMode(bgl.GL_FRONT, bgl.GL_FILL)
+        if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
 
 
     if config.display_verts:
@@ -427,7 +427,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
         layout.separator()
-        # layout.prop(self, 'draw_gl_wireframe', toggle=True)
+        layout.prop(self, 'draw_gl_wireframe', toggle=True)
         layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
         layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
         layout.separator()
