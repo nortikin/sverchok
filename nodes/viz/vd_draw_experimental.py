@@ -138,11 +138,12 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
     elif GL_KIND == 'POINTS':
         bgl.glPointSize(width)
 
+    params = dict(indices=indices) if indices else {}
+
     if GL_KIND == 'LINES' and dashed_data:
 
         shader = dashed_data.shader
-        batch = batch_for_shader(shader, 'LINES', {"inPos" : coords}, indices=indices)
-
+        batch = batch_for_shader(shader, 'LINES', {"inPos" : coords}, **params)
         shader.bind()
         shader.uniform_float("u_mvp", dashed_data.matrix)
         shader.uniform_float("u_resolution", dashed_data.u_resolution)
@@ -152,12 +153,9 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         batch.draw(shader)
 
     else:
-    
+
         shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-        if indices:
-            batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, indices=indices)
-        else:
-            batch = batch_for_shader(shader, GL_KIND, {"pos" : coords})
+        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, **params)
         shader.bind()
         shader.uniform_float("color", color)
     
@@ -171,10 +169,8 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
 def draw_smooth(coords, vcols, indices=None):
     shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
-    if indices:
-        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, indices=indices)
-    else:
-        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
+    params = dict(indices=indices) if indices else {}
+    batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, **params)
     batch.draw(shader)
 
 
@@ -196,9 +192,9 @@ def draw_lines_uniform(context, config, coords, indices, line_color, line_width)
     if config.draw_dashed:
         config.matrix = context.region_data.perspective_matrix
         dashed_config = pack_dashed_config(config)
-        draw_uniform('LINES', coords, indices, config.line4f, config.line_width, dashed_data=dashed_config)
-    else:
-        draw_uniform('LINES', coords, indices, config.line4f, config.line_width)
+
+    params = dict(dashed_data=dashed_config) if config.draw_dashed else {}
+    draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
 
 def draw_edges(context, args):
     geom, config = args
