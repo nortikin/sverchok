@@ -344,6 +344,7 @@
     SvSetCustomMeshNormals
     ---
     SvSpiralNode
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvBManalyzinNode
