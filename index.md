@@ -254,9 +254,10 @@
 
 ## Viz
     Sv3DviewPropsNode
+    ---
+    SvMatrixViewer28
     SvVDBasicLines
     SvVDExperimental
-    SvMatrixViewer28
     ---
     SvIDXViewer28
     ---
