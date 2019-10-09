@@ -97,6 +97,7 @@
     SvSeparateMeshNode
     SvLimitedDissolve
     SvMeshBeautify
+    SvMakeMonotone
     ---
     PolygonBoomNode
     Pols2EdgsNode

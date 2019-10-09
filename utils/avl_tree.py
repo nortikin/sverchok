@@ -49,7 +49,7 @@ class Node:
             parent = self.parent
             child = self
             while True:
-                if parent.leftChild and parent.leftChild == child:
+                if parent.leftChild and not any([parent.leftChild.key < child.key, parent.leftChild.key > child.key]):  # <-fix??
                     return parent
                 elif parent.parent:
                     child = parent
@@ -68,7 +68,7 @@ class Node:
             parent = self.parent
             child = self
             while True:
-                if parent.rightChild and parent.rightChild == child:
+                if parent.rightChild and not any([parent.rightChild.key < child.key, parent.rightChild.key > child.key]):  # <-fix??
                     return parent
                 elif parent.parent:
                     child = parent
@@ -110,6 +110,9 @@ class AVLTree:
             return self.rootNode.height
         else:
             return 0
+
+    def max_len(self):
+        return sum([2 ** i for i in range(1, self.height())]) + 1
 
     def rebalance(self, node_to_rebalance):
         self.rebalance_count += 1
@@ -399,6 +402,33 @@ class AVLTree:
         else:  # key is equal to node key
             return node
 
+    def find_nearest_left(self, key):
+        #if self.rootNode:
+        #    print_e(self.rootNode.key, 'root node')
+        #    if self.rootNode.leftChild:
+        #        print_e(self.rootNode.leftChild.key, 'left')
+        #    if self.rootNode.rightChild:
+        #        print_e(self.rootNode.rightChild.key, 'right')
+        if not self.rootNode.rightChild and self.rootNode.key < key:
+            return self.rootNode
+        else:
+            return self.find_nearest_in_subtree(self.rootNode, key)
+
+    def find_nearest_in_subtree(self, node, key):
+        #print('find nearest node-', node)
+        if key < node.key:
+            if node.leftChild:
+                return self.find_nearest_in_subtree(node.leftChild, key)
+            else:
+                return node.last
+        elif key > node.key:
+            if node.rightChild:
+                return self.find_nearest_in_subtree(node.rightChild, key)
+            else:
+                return node  # without last because the node already is left neighbour
+        else:
+            return node  # probably node.last ???
+
     def remove(self, key):
         # first find
         node = self.find(key)
@@ -563,5 +593,3 @@ class AVLTree:
                 level = level_next
                 out_string += level_string
         return out_string
-
-
