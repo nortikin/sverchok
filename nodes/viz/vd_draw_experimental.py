@@ -208,7 +208,7 @@ def draw_edges(context, args):
 
     if config.display_edges:
         config.matrix = context.region_data.perspective_matrix
-        draw_lines_uniform(config, coords, indices, line_color, line_width)
+        draw_lines_uniform(config, coords, indices, config.line4f, config.line_width)
     if config.display_verts:
         draw_verts(context, args)
 
