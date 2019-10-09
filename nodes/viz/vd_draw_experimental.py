@@ -227,8 +227,8 @@ def draw_faces(context, args):
 
     if config.display_faces:
 
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        # if config.draw_gl_wireframe:
+        #     bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
         if config.draw_gl_polygonoffset:
             bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
@@ -246,8 +246,8 @@ def draw_faces(context, args):
             else:
                 draw_fragment(context, args)
 
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT, bgl.GL_FILL)
+        # if config.draw_gl_wireframe:
+        #     bgl.glPolygonMode(bgl.GL_FRONT, bgl.GL_FILL)
 
 
     if config.display_verts:
@@ -413,6 +413,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         self.draw_additional_props(context, layout)
+        layout.prop(self, "use_dashed")
+        if self.use_dashed:
+            layout.prop(self, "u_dash_size")
+            layout.prop(self, "u_gap_size")
+            layout.row().prop(self, "u_resolution")
 
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
@@ -422,15 +427,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
         layout.separator()
-        layout.prop(self, 'draw_gl_wireframe', toggle=True)
+        # layout.prop(self, 'draw_gl_wireframe', toggle=True)
         layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
         layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
         layout.separator()
-        layout.prop(self, "use_dashed")
-        if self.use_dashed:
-            layout.prop(self, "u_dash_size")
-            layout.prop(self, "u_gap_size")
-            layout.row().prop(self, "u_resolution")
 
     def add_gl_stuff_to_config(self, config):
         config.shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
