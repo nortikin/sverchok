@@ -40,6 +40,12 @@ This node has the following parameters:
     - If one point `(0, 0, 0)` is passed, and Radius = 1, then the node will select all vertices that have `-1 <= X <= 1`, `-1 <= Y <= 1`, `-1 <= Z <= 1`.
     - If points `(0, 0, 0)`, `(1, 2, 3)` are passed, and Radius = 0.5, then the node will select all vertices that have `-0.5 <= X <= 1.5`, `-0.5 <= Y <= 2.5`, `-0.5 <= Z <= 3.5`.
 - **Include partial selection**. Not available in **By normal** mode. All other modes select vertices first. This parameter controls either we need to select edges and faces that have **any** of vertices selected (Include partial = True), or only edges and faces that have **all** vertices selected (Include partial = False).
+- **Level**. Data nesting level to work with. Default (and minimum) value is 2,
+  which means that the node's **Vertices** input will expect a list of lists of
+  vertices, and the node will output list of lists of booleans; i.e. node will
+  process a list of meshes, as most of nodes usually do. With **Level** of 3,
+  the node will expect a list of lists of meshes, and output a list of lists of
+  lists of booleans; and so on.
 
 Outputs
 -------
