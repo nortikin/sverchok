@@ -204,6 +204,10 @@
     NodeReroute
     ConverterNode
     UdpClientNode
+    ---
+    SvLogicNode
+    SvSwitchNode
+    SvInputSwitchNodeMOD
 
 ==== OBSERVATIONS
 
@@ -225,6 +229,8 @@
     SvMeshSelectNode
     SvRaycasterLiteNode
     SvOBJInsolationNode
+    ---
+    SvNeuroElman1LNode
 
 # Analyze Relationship {CON_CHILDOF}
 
@@ -276,13 +282,6 @@
     SvMaskToIndexNode
     SvIndexToMaskNode
     SvCalcMaskNode
-
-# Logic {SV_LOGIC}
-
-    SvLogicNode
-    SvSwitchNode
-    SvInputSwitchNodeMOD
-    SvNeuroElman1LNode
 
 ==== OUTPUT
 
