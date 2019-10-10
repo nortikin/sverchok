@@ -28,13 +28,14 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Similar Sel
     Tooltip: Select vertices, edges, faces similar to selected ones
-    
+
     Like Blender's Shift+G
     """
 
     bl_idname = 'SvSelectSimilarNode'
     bl_label = 'Select similar'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SELECT_SIMILAR'
 
     modes = [
         ("verts", "Vertices", "Select similar vertices", 0),

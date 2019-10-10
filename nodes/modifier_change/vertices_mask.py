@@ -29,6 +29,7 @@ class SvVertMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVertMaskNode'
     bl_label = 'Mask Vertices'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MASK_VERTICES'
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Mask')

@@ -26,6 +26,8 @@ Maximum             Maximum value of the list
 Minimum             Minimum value of the list
 =================== ======================================
 
+**Warp:** Adds one level of warping (output becomes [output])
+
 Outputs
 -------
 

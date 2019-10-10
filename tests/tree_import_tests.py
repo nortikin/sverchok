@@ -21,11 +21,11 @@ class ScriptUvImportTest(ReferenceTreeTestCase):
 
             # Check links
             self.assert_nodes_linked("ImportedTree", "Scripted Node Lite", "verts", "UV Connection", "vertices")
-            self.assert_nodes_linked("ImportedTree", "UV Connection", "vertices", "Viewer Draw", "vertices")
-            self.assert_nodes_linked("ImportedTree", "UV Connection", "data", "Viewer Draw", "edg_pol")
+            self.assert_nodes_linked("ImportedTree", "UV Connection", "vertices", "Viewer Draw", "verts")
+            self.assert_nodes_linked("ImportedTree", "UV Connection", "data", "Viewer Draw", "edges")
 
             # Check random node properties
-            self.assert_node_property_equals("ImportedTree", "UV Connection", "cup_U", False)
+            self.assert_node_property_equals("ImportedTree", "UV Connection", "cap_U", False)
             self.assert_node_property_equals("ImportedTree", "UV Connection", "polygons", 'Edges')
             self.assert_node_property_equals("ImportedTree", "UV Connection", "dir_check", 'U_dir')
 

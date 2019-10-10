@@ -70,6 +70,10 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default="SPL", items=modes,
         update=updateNode)
 
+    twist_mode: EnumProperty(name='Twist mode',
+        default="LIN", items=modes,
+        update=updateNode)
+
     metrics = [
         ('MANHATTAN', 'Manhattan', "Manhattan distance metric", 0),
         ('DISTANCE', 'Euclidan', "Eudlcian distance metric", 1),
@@ -81,7 +85,15 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default="DISTANCE", items=metrics,
         update=updateNode)
 
-    is_cyclic: BoolProperty(name = "Cyclic",
+    taper_metrics = [("SAME", "Same as curve", "Use the same metric as for curve (Imprecise!)", 0),
+                     ("AXIS", "Orientation axis", "Use metric along orientation axis", 1)]
+
+    taper_metric : EnumProperty(name='Taper metric',
+        description = "Metric used for taper object interpolation",
+        default = "AXIS", items=taper_metrics,
+        update=updateNode)
+
+    is_cyclic : BoolProperty(name = "Cyclic",
         description = "Whether the spline is cyclic",
         default = False,
         update=updateNode)
@@ -106,6 +118,11 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update=updateNode)
 
+    flip_twist: BoolProperty(name = "Flip Twist",
+        description = "Invert twist direction - not from lesser coordinate values to greater, but vice versa",
+        default = False,
+        update=updateNode)
+
     cap_start: BoolProperty(name = "Cap Start",
         description = "Make cap at the beginning of curve",
         default = False,
@@ -127,6 +144,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'BevelEdges')
         self.inputs.new('SvStringsSocket', 'BevelFaces')
         self.inputs.new('SvVerticesSocket', 'TaperVerts')
+        self.inputs.new('SvStringsSocket', 'Twist')
         self.inputs.new('SvStringsSocket', 'Steps').prop_name = "steps"
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
@@ -154,22 +172,34 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "flip_curve", toggle=True)
         row.prop(self, "flip_taper", toggle=True)
+        if hasattr(self, 'flip_twist'):
+            row.prop(self, "flip_twist", toggle=True)
 
         layout.prop(self, 'metric')
+        layout.prop(self, 'taper_metric')
         layout.prop(self, 'tangent_precision')
+        if hasattr(self, 'twist_mode'):
+            layout.prop(self, 'twist_mode')
 
     @property
     def orient_axis_idx(self):
         return 'XYZ'.index(self.orient_axis)
 
-    def build_spline(self, path, mode, is_cyclic):
+    def build_spline(self, path, mode, is_cyclic, metric=None):
+        if metric is None:
+            metric = self.metric
         if mode == 'LIN':
-            spline = LinearSpline(path, metric = self.metric, is_cyclic = is_cyclic)
+            spline = LinearSpline(path, metric = metric, is_cyclic = is_cyclic)
         else:  # SPL
-            spline = CubicSpline(path, metric = self.metric, is_cyclic = is_cyclic)
+            spline = CubicSpline(path, metric = metric, is_cyclic = is_cyclic)
         return spline
 
     def make_taper_spline(self, vertices):
+        if self.taper_metric == 'SAME':
+            metric = self.metric
+        else:
+            metric = self.orient_axis
+
         if len(vertices) == 0:
             # if no taper object provided: use constant scale of 1.0
             def make_unit(z):
@@ -178,11 +208,27 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 u[(self.orient_axis_idx+1) % 3] = 1
                 return u
             vertices = [make_unit(0), make_unit(1)]
-            return LinearSpline(vertices, metric = self.metric, is_cyclic = False)
+            return LinearSpline(vertices, metric = metric, is_cyclic = False)
 
-        return self.build_spline(vertices, self.taper_mode, False)
+        return self.build_spline(vertices, self.taper_mode, is_cyclic=False, metric=metric)
+    
+    def make_twist_spline(self, data):
+        if data is None or len(data) == 0:
+            # if no twist object provided, use constant twist of 0.0
+            vertices = [Vector((0,0,0)), Vector((0,0,1))]
+            return LinearSpline(vertices, metric = self.metric, is_cyclic = self.is_cyclic)
+        
+        elif type(data[0]) in (list, tuple) and len(data[0]) == 2:
+            vertices = [Vector((twist, 0, t)) for t, twist in data]
+            return self.build_spline(vertices, self.twist_mode, is_cyclic=self.is_cyclic, metric = self.metric)
+        
+        else:
+            n = len(data)
+            ts = [i / (n-1) for i in range(n)]
+            vertices = [Vector((twist, 0, t)) for t, twist in zip(ts, data)]
+            return self.build_spline(vertices, self.twist_mode, is_cyclic=self.is_cyclic, metric = self.metric)
 
-    def get_matrix(self, tangent, scale_x, scale_y):
+    def get_matrix(self, tangent, twist_value, scale_x, scale_y):
         x = Vector((1.0, 0.0, 0.0))
         y = Vector((0.0, 1.0, 0.0))
         z = Vector((0.0, 0.0, 1.0))
@@ -196,6 +242,8 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
         scale_matrix = Matrix.Scale(1, 4, ax1) @ Matrix.Scale(scale_x, 4, ax2) @ Matrix.Scale(scale_y, 4, ax3)
 
+        twist_matrix = Matrix.Rotation(twist_value, 4, ax1)
+
         if self.algorithm == 'householder':
             rot = autorotate_householder(ax1, tangent).inverted()
         elif self.algorithm == 'track':
@@ -205,7 +253,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             raise Exception("Unsupported algorithm")
 
-        return rot @ scale_matrix
+        return rot @ scale_matrix @ twist_matrix
 
     def get_taper_scale(self, vertex):
         projection = Vector(vertex)
@@ -214,8 +262,12 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             projection[self.orient_axis_idx] = 0
             return projection.length, projection.length
+
+    def get_twist_value(self, vertex):
+        projection = Vector(vertex)
+        return projection.x
     
-    def make_bevel(self, curve, bevel_verts, bevel_edges, bevel_faces, taper, steps):
+    def make_bevel(self, curve, bevel_verts, bevel_edges, bevel_faces, taper, twist, steps):
         spline = self.build_spline(curve, self.bevel_mode, self.is_cyclic)
 
         t_values = np.linspace(0.0, 1.0, num = steps)
@@ -229,10 +281,15 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
             t_for_taper = 1.0 - t_values
         else:
             t_for_taper = t_values
+        if self.flip_twist:
+            t_for_twist = 1.0 - t_values
+        else:
+            t_for_twist = t_values
 
         spline_vertices = [Vector(v) for v in spline.eval(t_for_curve).tolist()]
         spline_tangents = [Vector(v) for v in spline.tangent(t_for_curve, h=self.tangent_precision).tolist()]
         taper_values = [self.get_taper_scale(v) for v in taper.eval(t_for_taper).tolist()]
+        twist_values = [self.get_twist_value(v) for v in twist.eval(t_for_twist).tolist()]
 
         if bevel_faces:
             bevel_faces = ensure_nesting_level(bevel_faces, 2)
@@ -242,10 +299,10 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         mesh = bmesh.new()
         prev_level_vertices = None
         first_level_vertices = None
-        for spline_vertex, spline_tangent, taper_value in zip(spline_vertices, spline_tangents, taper_values):
+        for spline_vertex, spline_tangent, taper_value, twist_value in zip(spline_vertices, spline_tangents, taper_values, twist_values):
             # Scaling and rotation matrix
             scale_x, scale_y = taper_value
-            matrix = self.get_matrix(spline_tangent, scale_x, scale_y)
+            matrix = self.get_matrix(spline_tangent, twist_value, scale_x, scale_y)
             level_vertices = []
             for bevel_vertex in bevel_verts:
                 new_vertex = matrix @ Vector(bevel_vertex) + spline_vertex
@@ -301,16 +358,21 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         bevel_edges_s = self.inputs['BevelEdges'].sv_get(default=[[]])
         bevel_faces_s = self.inputs['BevelFaces'].sv_get(default=[[]])
         taper_verts_s = self.inputs['TaperVerts'].sv_get(default=[[]])
+        if 'Twist' in self.inputs:
+            twist_data_s = self.inputs['Twist'].sv_get(default = [[]])
+        else:
+            twist_data_s = [[]]
         steps_s = self.inputs['Steps'].sv_get()[0]
 
-        inputs = match_long_repeat([curves_s, bevel_verts_s, bevel_edges_s, bevel_faces_s, taper_verts_s, steps_s])
+        inputs = match_long_repeat([curves_s, bevel_verts_s, bevel_edges_s, bevel_faces_s, taper_verts_s, twist_data_s, steps_s])
 
         out_vertices = []
         out_edges = []
         out_faces = []
-        for curve, bevel_verts, bevel_edges, bevel_faces, taper_verts, steps in zip(*inputs):
+        for curve, bevel_verts, bevel_edges, bevel_faces, taper_verts, twist_data, steps in zip(*inputs):
             taper = self.make_taper_spline(taper_verts)
-            mesh = self.make_bevel(curve, bevel_verts, bevel_edges, bevel_faces, taper, steps)
+            twist = self.make_twist_spline(twist_data)
+            mesh = self.make_bevel(curve, bevel_verts, bevel_edges, bevel_faces, taper, twist, steps)
             new_verts, new_edges, new_faces = pydata_from_bmesh(mesh)
             out_vertices.append(new_verts)
             out_edges.append(new_edges)

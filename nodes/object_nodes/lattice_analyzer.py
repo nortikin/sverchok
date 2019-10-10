@@ -25,7 +25,7 @@ class SvLatticePropsNode(bpy.types.Node, SverchCustomTreeNode):
     '''Lattice object props'''
     bl_idname = 'SvLatticePropsNode'
     bl_label = 'Lattice Props'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_LATTICE'
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Lattice Object')

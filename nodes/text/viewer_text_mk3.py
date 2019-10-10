@@ -28,6 +28,7 @@ class SverchokViewerMK1(bpy.types.Operator):
     """Sverchok viewerMK1"""
     bl_idname = "node.sverchok_viewer_buttonmk1"
     bl_label = "Sverchok viewer.mk1"
+    bl_icon = 'TEXT'
     bl_options = {'INTERNAL', 'UNDO'}
 
     nodename: StringProperty(name='nodename')
@@ -161,13 +162,13 @@ class SverchokViewerMK1(bpy.types.Operator):
 class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Viewer Node text MK3
-    Tooltip: Inspecting data from sockets in terms 
+    Tooltip: Inspecting data from sockets in terms
     of levels and structure by types
     multisocket lets you insert many outputs
     """
     bl_idname = 'ViewerNodeTextMK3'
     bl_label = 'Viewer text mk3'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'FILE_TEXT'
 
     autoupdate: BoolProperty(name='update', default=False)
     frame: BoolProperty(name='frame', default=True)
@@ -193,11 +194,11 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
         do_text.nodename = self.name
         do_text.treename = self.id_data.name
         do_text.lines = self.lines
-        
+
         col = layout.column(align=True)
         col.prop(self, "autoupdate", text="autoupdate")
         col.prop(self, "frame", text="frame")
-        
+
 
     def update(self):
         # inputs

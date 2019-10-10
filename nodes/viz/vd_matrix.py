@@ -30,7 +30,10 @@ from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.data_structure import node_id, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 
-smooth_2d_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+if not bpy.app.background:
+    smooth_2d_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+else:
+    smooth_2d_shader = None
 
 def screen_v3d_batch_matrix(context, args):
     cdat, simple, plane, grid = args
@@ -44,7 +47,7 @@ def screen_v3d_batch_matrix_overlay(context, args):
     cdat, alpha = args[0], args[1]
     if not alpha > 0.0:
         return
-    
+
     pt = 0.5
     G = -0.001  # to z offset the plane from the axis
     coords = (-pt, pt, G), (pt, pt, G), (pt ,-pt, G), (-pt,-pt, G)
@@ -73,7 +76,7 @@ def screen_v3d_batch_matrix_overlay(context, args):
         indices=indices_shifted)
 
     # smooth_2d_shader.bind()
-    batch.draw(smooth_2d_shader) 
+    batch.draw(smooth_2d_shader)
 
 
 def match_color_to_matrix(node):
@@ -99,6 +102,9 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
     ''' mv - View Matrices '''
     bl_idname = 'SvMatrixViewer28'
     bl_label = 'Matrix View'
+    bl_icon = 'EMPTY_AXIS'
+    sv_icon = 'SV_MATRIX_VIEWER'
+
 
     color_start: FloatVectorProperty(subtype='COLOR', default=(1, 1, 1), min=0, max=1, size=3, update=updateNode)
     color_end: FloatVectorProperty(subtype='COLOR', default=(1, 0.02, 0.02), min=0, max=1, size=3, update=updateNode)

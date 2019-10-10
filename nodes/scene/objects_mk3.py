@@ -57,6 +57,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvObjectsNodeMK3'
     bl_label = 'Objects in mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OBJECTS_IN'
 
     def hide_show_versgroups(self, context):
         outs = self.outputs
@@ -130,7 +131,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no object associated with the obj in Node")
-         
+
 
     def draw_obj_names(self, layout):
         # display names currently being tracked, stop at the first 5..
@@ -155,7 +156,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         row = col.row()
         op_text = "Get selection"  # fallback
-    
+
         try:
             addon = context.preferences.addons.get(sverchok.__name__)
             if addon.preferences.over_sized_buttons:
@@ -175,7 +176,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         row = col.row(align=True)
         row.operator(callback, text="Select Objects").fn_name = 'select_objs'
-        
+
         self.draw_obj_names(layout)
 
 
@@ -205,11 +206,11 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.object_names:
             return
-            
+
         scene = bpy.context.scene
         data_objects = bpy.data.objects
         outputs = self.outputs
-        
+
         edgs_out = []
         vers_out = []
         vers_out_grouped = []
@@ -228,7 +229,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             pols = []
             mtrx = []
 
-            with hard_freeze(self) as _: 
+            with hard_freeze(self) as _:
 
                 mtrx = obj.matrix_world
                 if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
@@ -284,4 +285,3 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(c) for c in classes]
-

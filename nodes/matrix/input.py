@@ -20,7 +20,7 @@ import bpy
 from bpy.props import FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Matrix_listing
+from sverchok.data_structure import updateNode
 
 
 class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
@@ -28,6 +28,7 @@ class SvMatrixValueIn(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixValueIn'
     bl_label = 'Matrix Input'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_INPUT'
 
     id_matrix = (1.0, 0.0, 0.0, 0.0,
                  0.0, 1.0, 0.0, 0.0,

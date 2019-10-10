@@ -35,6 +35,7 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRegularSolid'
     bl_label = 'Regular Solid'
     bl_icon = 'GRIP'
+    sv_icon = 'SV_REGULAR_SOLID'
 
 
     def reset_preset(self, context):

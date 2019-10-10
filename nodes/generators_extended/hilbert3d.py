@@ -49,6 +49,7 @@ class Hilbert3dNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'Hilbert3dNode'
     bl_label = 'Hilbert3d'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_HILBERT_3D'
 
     level_: IntProperty(
         name='level', description='Level',

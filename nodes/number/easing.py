@@ -60,7 +60,7 @@ palette_dict = {
 
 def simple28_grid_xy(x, y, args):
     """ x and y are passed by default so you could add font content """
-    
+
     geom, config = args
     back_color, grid_color, line_color = config.palette
 
@@ -69,7 +69,7 @@ def simple28_grid_xy(x, y, args):
     batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
     shader.bind()
     shader.uniform_float("color", back_color)
-    batch.draw(shader)    
+    batch.draw(shader)
 
     # draw grid and graph
     config.batch.draw(config.shader)
@@ -80,9 +80,10 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     '''Curved interpolation'''
     bl_idname = 'SvEasingNode'
     bl_label = 'Easing 0..1'
+    sv_icon = 'SV_EASING'
 
     n_id: StringProperty(default='')
-    
+
     activate: BoolProperty(
         name='Show', description='Activate drawing',
         default=True, update=updateNode
@@ -239,7 +240,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
                 'loc': (x, y),
                 'custom_function': simple28_grid_xy,
                 'args': (geom, config)
-            }             
+            }
             nvBGL.callback_enable(n_id, draw_data)
 
     def free(self):
@@ -255,7 +256,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
             return
         try:
             if not self.inputs[0].other:
-                nvBGL.callback_disable(node_id(self))        
+                nvBGL.callback_disable(node_id(self))
         except:
             print('Easing node update holdout (not a problem)')
 

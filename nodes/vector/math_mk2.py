@@ -25,6 +25,7 @@ from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import levelsOflist, updateNode
+from sverchok.ui.sv_icons import custom_icon
 
 # pylint: disable=C0326
 
@@ -35,7 +36,7 @@ func_dict = {
     "DOT":            (1,  lambda u, v: Vector(u).dot(v),                          ('vv s'),        "Dot product"),
     "DISTANCE":       (5,  lambda u, v: (Vector(u) - Vector(v)).length,            ('vv s'),           "Distance"),
     "ANGLE DEG":      (12, lambda u, v: degrees(Vector(u).angle(v, 0)),            ('vv s'),      "Angle Degrees"),
-    "ANGLE RAD":      (17, lambda u, v: Vector(u).angle(v, 0),                     ('vv s'),      "Angle Radians"), 
+    "ANGLE RAD":      (17, lambda u, v: Vector(u).angle(v, 0),                     ('vv s'),      "Angle Radians"),
 
     "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
     "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
@@ -61,7 +62,7 @@ func_dict = {
 
 mode_items = [(k, descr, '', ident) for k, (ident, _, _, descr) in sorted(func_dict.items(), key=lambda k: k[1][0])]
 
- 
+
 # apply f to all values recursively
 # - fx and fxy do full list matching by length
 
@@ -94,6 +95,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVectorMathNodeMK2'
     bl_label = 'Vector Math'
     bl_icon = 'THREE_DOTS'
+    sv_icon = 'SV_VECTOR_MATH'
 
     def mode_change(self, context):
         self.update_sockets()
@@ -112,11 +114,14 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_label(self):
-        return self.current_op
+        text = self.current_op
+        if text in {'SCALAR', '1/SCALAR'}:
+           text = f'A * {text}'
+        return text
 
 
     def draw_buttons(self, ctx, layout):
-        layout.prop(self, "current_op", text="F (x)")
+        layout.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
 
 
     def sv_init(self, context):
@@ -153,7 +158,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         # get either input data, or socket default
         input_one = inputs[0].sv_get(deepcopy=True)
-        
+
         level = levelsOflist(input_one) - 1
         if num_inputs == 1:
             result = recurse_fx(input_one, func, level)

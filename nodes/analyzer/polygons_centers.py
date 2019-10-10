@@ -28,9 +28,10 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'CentersPolsNodeMK2'
     bl_label = 'Centers polygons 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CENTER_POLYGONS'
 
     Separate: BoolProperty(
-        name="Separate", description="separate by objects", 
+        name="Separate", description="separate by objects",
         default=True, update=updateNode)
 
     def draw_buttons(self, context, layout):
@@ -57,7 +58,7 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         pols_ = poly_socket.sv_get()
         vers_tupls = verts_socket.sv_get()
         vers_vects = Vector_generate(vers_tupls)
-        
+
         # make mesh temp утилитарно - удалить в конце
         mat_collect = []
         normals_out = []
@@ -71,7 +72,7 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             norm_abs = []
             for p in pols:
                 # medians
-                # it calcs middle point of opposite edges, 
+                # it calcs middle point of opposite edges,
                 # than finds length vector between this two points
                 v0 = versv[p[0]]
                 v1 = versv[p[1]]
@@ -100,13 +101,13 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 # normal absolute !!!
                 # это совершенно нормально!!! ;-)
                 norm_abs.append(current_center+norm)
-                
+
             if self.Separate:
-                norm_abs_out.append(norm_abs)    
+                norm_abs_out.append(norm_abs)
                 origins.append(centrs)
                 normals_out.append(normals)
             else:
-                norm_abs_out.extend(norm_abs)    
+                norm_abs_out.extend(norm_abs)
                 origins.extend(centrs)
                 normals_out.extend(normals)
             mat_collect_ = []
@@ -126,7 +127,7 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 mat_collect_.append(M)
             mat_collect.extend(mat_collect_)
 
-        
+
         if not self.Separate:
             norm_abs_out = [norm_abs_out]
             origins = [origins]

@@ -20,7 +20,7 @@ import bpy
 import mathutils
 from bpy.props import FloatProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (matrixdef, Matrix_listing, Vector_generate, updateNode)
+from sverchok.data_structure import (matrixdef, Vector_generate, updateNode)
 
 
 class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -28,6 +28,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixGenNodeMK2'
     bl_label = 'Matrix in'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_IN'
 
     l_: FloatVectorProperty(
         name='L', default=(0.0,0.0,0.0), description='Location', precision=3, update=updateNode)
@@ -47,7 +48,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', "Angle").prop_name = 'a_'
 
         self.outputs.new('SvMatrixSocket', "Matrix")
-    
+
     def process(self):
         L,S,R,A = self.inputs
         Ma = self.outputs[0]
@@ -69,7 +70,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             angle = A.sv_get()
             rotA = [[]]
-            
+
         max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
         orig = []
         for l in range(max_l):

@@ -18,8 +18,7 @@
 
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (Vector_generate, matrixdef, Matrix_listing,
-                            Matrix_generate, updateNode)
+from sverchok.data_structure import (Vector_generate, matrixdef, updateNode)
 
 
 class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
@@ -27,6 +26,7 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'MatrixDeformNode'
     bl_label = 'Matrix Deform'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_DEFORM'
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', "Original")
@@ -41,7 +41,7 @@ class MatrixDeformNode(bpy.types.Node, SverchCustomTreeNode):
         Om = self.outputs[0]
         if Om.is_linked:
             orig = O.sv_get()
-            
+
             if L.is_linked:
                 loc = Vector_generate(L.sv_get())
             else:

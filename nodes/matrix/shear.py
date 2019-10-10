@@ -21,7 +21,7 @@ from bpy.props import EnumProperty, FloatProperty
 from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, Matrix_listing
+from sverchok.data_structure import updateNode, fullList
 
 
 class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
@@ -29,6 +29,7 @@ class MatrixShearNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'MatrixShearNode'
     bl_label = 'Matrix Shear'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_SHEAR'
 
     # select Shear plane
 

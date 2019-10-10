@@ -28,6 +28,7 @@ class SvFormulaDeformMK2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvFormulaDeformMK2Node'
     bl_label = 'Deform by formula MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DEFORM_BY_FORMULA'
 
     ModeX: StringProperty(name='formulaX', default='x', update=updateNode)
     ModeY: StringProperty(name='formulaY', default='y', update=updateNode)

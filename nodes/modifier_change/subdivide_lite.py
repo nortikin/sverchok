@@ -32,6 +32,7 @@ class SvSubdivideLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSubdivideLiteNode'
     bl_label = 'Subdivide lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SUBDIVIDE_LITE'
 
     falloff_types = [
             ("SMOOTH", "Smooth", "", 'SMOOTHCURVE', 0),

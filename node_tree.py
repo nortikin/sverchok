@@ -76,6 +76,8 @@ class SvLinkNewNodeInput(bpy.types.Operator):
             locx, locy = recursive_framed_location_finder(new_node, loc_xy)
             new_node.location = locx, locy
 
+        new_node.process_node(context)
+
         return {'FINISHED'}
 
 
@@ -159,6 +161,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_user_colors: StringProperty(default="")
 
     tree_link_count: IntProperty(name='keep track of current link count', default=0)
+    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
 
     @property
     def timestamp(self):
@@ -168,7 +171,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def has_link_count_changed(self):
         link_count = len(self.links)
         if not link_count == self.tree_link_count: 
-            print('update event: link count changed', self.timestamp)
+            # print('update event: link count changed', self.timestamp)
             self.tree_link_count = link_count
             return True
 
@@ -194,10 +197,17 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         process the Sverchok tree upon editor changes from handler
         """
+
+        if self.configuring_new_node:
+            # print('skipping global process during node init')
+            return
+
         if self.has_changed:
+            # print('processing build list: because has_changed==True')
             self.build_update_list()
             self.has_changed = False
         if self.is_frozen():
+            # print('not processing: because self/tree.is_frozen') 
             return
         if self.sv_process:
             process_tree(self)
@@ -392,8 +402,17 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
+        
         if hasattr(self, "sv_init"):
-            self.sv_init(context)
+
+            try:
+                ng.configuring_new_node = True
+                self.sv_init(context)
+            except Exception as err:
+                print('nodetree.node.sv_init failure - stare at the error message below')
+                sys.stderr.write('ERROR: %s\n' % str(err))
+
+        ng.configuring_new_node = False
         self.set_color()
         ng.unfreeze()
 
@@ -441,17 +460,26 @@ class SverchCustomTreeNode:
                 print(f'failed to remove {self.name} from tree={self.id_data.name}')
 
 
+    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+        """
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the idname and idtree of the tree.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
+        """
+        op = layout_element.operator(operator_idname, **keywords)
+        op.idname = self.name
+        op.idtree = self.id_data.name      
+
+
 classes = [
     SverchCustomTree, 
     SvLinkNewNodeInput
 ]
 
 
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-
-def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+register, unregister = bpy.utils.register_classes_factory(classes)

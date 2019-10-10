@@ -28,6 +28,7 @@ class SvBMObjinputNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBMObjinputNode'
     bl_label = 'BMesh Obj in'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OBJECT_IN_BMESH'
 
     UseSKey: BoolProperty(name='with_shapekey', default=False, update=updateNode)
     keyIND: IntProperty(name='SHKey_ind', default=0, update=updateNode)

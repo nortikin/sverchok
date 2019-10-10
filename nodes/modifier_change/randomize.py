@@ -41,6 +41,7 @@ class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRandomizeVerticesNode'
     bl_label = 'Randomize input vertices'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_RANDOMIZE_INPUT_VERTICES'
 
     random_x_: FloatProperty(
         name='X amplitude', description='Amplitude of randomization along X axis',
@@ -49,11 +50,11 @@ class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
     random_y_: FloatProperty(
         name='Y amplitude', description='Amplitude of randomization along Y axis',
         default=0.0, min=0.0, update=updateNode)
-    
+
     random_z_: FloatProperty(
         name='Z amplitude', description='Amplitude of randomization along Z axis',
         default=0.0, min=0.0, update=updateNode)
-    
+
     random_seed_: IntProperty(
         name='Seed', description='Random seed', default=0, update=updateNode)
 

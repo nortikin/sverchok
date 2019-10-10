@@ -30,7 +30,7 @@ from bpy.props import IntProperty, StringProperty
 import mathutils as mu
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Vector_generate, Matrix_listing
+from sverchok.data_structure import updateNode, Vector_generate
 
 
 """
@@ -291,6 +291,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGenerativeArtNode'
     bl_label = 'Generative Art'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_GENERATIVE_ART'
 
     def updateNode_filename(self, context):
         self.process_node(context)
@@ -404,14 +405,14 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.remove(socket)
 
     def process(self):
-      
+
         self.read_xml()
         self.make_sockets()
         self.xml_text_format()
 
         if not hasattr(self, 'xml_tree'):
             return
-        
+
         if not any(output.is_linked for output in self.outputs):
             return
 
@@ -447,7 +448,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                             faces_out.append(f)
 
                 mat_sublist = []
-        
+
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)

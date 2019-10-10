@@ -28,6 +28,7 @@ class HilbertImageNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'HilbertImageNode'
     bl_label = 'Hilbert image'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_HILBERT_IMAGE'
 
     name_image: StringProperty(
         name='image_name', description='image name', update=updateNode)

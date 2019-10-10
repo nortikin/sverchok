@@ -28,6 +28,7 @@ class SvBVHnearNewNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBVHnearNewNode'
     bl_label = 'bvh_nearest'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_POINT_ON_MESH'
 
     modes = [
             ("find_nearest", "nearest", "", 0),

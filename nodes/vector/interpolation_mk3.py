@@ -38,6 +38,7 @@ class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvInterpolationNodeMK3'
     bl_label = 'Vector Interpolation mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_INTERPOLATION'
 
     def wrapped_updateNode(self, context):
         self.inputs['Interval'].prop_name = 'int_in' if self.infer_from_integer_input else 't_in'

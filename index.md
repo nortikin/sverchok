@@ -20,6 +20,7 @@
     SvIcosphereNode
     SvTorusNode
     SvSuzanneNode
+    SvCricketNode
     ---
     BasicSplineNode
     svBasicArcNode
@@ -37,6 +38,7 @@
     Hilbert3dNode
     HilbertImageNode
     SvProfileNodeMK2
+    SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
@@ -47,7 +49,8 @@
     SvRegularSolid
 
 ## Analyzers
-    SvBBoxNode
+    SvBBoxNodeMk2
+    SvDiameterNode
     SvVolumeNode
     SvAreaNode
     DistancePPNode
@@ -127,6 +130,7 @@
     SvAdaptiveEdgeNode
     AdaptivePolsNode
     SvDuplicateAlongEdgeNode
+    SvFractalCurveNode
     SvSolidifyNode
     SvWireframeNode
     SvPipeNode
@@ -138,11 +142,14 @@
     SvMaskConvertNode
     SvMaskToIndexNode
     SvIndexToMaskNode
+    SvCalcMaskNode
 
 ## List Mutators
     SvListModifierNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
+    SvVDAttrsNode
+    SvPolygonSortNode
 
 ## List Main
     ListJoinNode
@@ -153,6 +160,7 @@
     ListMatchNode
     ListFuncNode
     SvListDecomposeNode
+    SvListStatisticsNode
 
 ## List Struct
     ShiftNodeMK2
@@ -181,7 +189,7 @@
 
 ## Number
     SvNumberNode
-    SvScalarMathNodeMK2
+    SvScalarMathNodeMK3
     GenListRangeIntNode
     SvGenFloatRange
     SvListInputNode
@@ -194,6 +202,7 @@
     SvEasingNode
     SvMixNumbersNode
     Formula2Node
+    SvFormulaNodeMk3
     ---
     SvGenFibonacci
     SvGenExponential
@@ -218,12 +227,14 @@
     SvInterpolationNode
     SvInterpolationNodeMK2
     SvInterpolationNodeMK3
+    SvLinearApproxNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
-    SvVectorFractal
-    SvLacunarityNode
     SvTurbulenceNode
+    SvLacunarityNode
+    SvVectorFractal
+
 
 ## Matrix
     SvMatrixGenNodeMK2
@@ -238,13 +249,15 @@
 ## Logic
     SvLogicNode
     SvSwitchNode
+    SvInputSwitchNodeMOD
     SvNeuroElman1LNode
 
 ## Viz
     Sv3DviewPropsNode
+    ---
+    SvMatrixViewer28
     SvVDBasicLines
     SvVDExperimental
-    SvMatrixViewer28
     ---
     SvIDXViewer28
     ---
@@ -334,6 +347,7 @@
     SvSetCustomMeshNormals
     ---
     SvSpiralNode
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvBManalyzinNode

@@ -28,6 +28,7 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'VectorNormalNode'
     bl_label = 'Vertex Normal'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VERTEX_NORMALS'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -43,7 +44,7 @@ class VectorNormalNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(obj, [], pols[i], normal_update=True)
             normalsFORout.append([v.normal[:] for v in bm.verts])
             bm.free()
-        
+
         self.outputs['Normals'].sv_set(normalsFORout)
 
 

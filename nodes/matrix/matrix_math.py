@@ -23,8 +23,7 @@ from mathutils import Matrix
 from functools import reduce
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat,
-                                     Matrix_listing, Matrix_generate)
+from sverchok.data_structure import (updateNode, match_long_repeat)
 
 operationItems = [
     ("MULTIPLY", "Multiply", "Multiply two matrices", 0),
@@ -47,6 +46,7 @@ class SvMatrixMathNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixMathNode'
     bl_label = 'Matrix Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_MATH'
 
     def update_operation(self, context):
         self.label = "Matrix " + self.operation.title()

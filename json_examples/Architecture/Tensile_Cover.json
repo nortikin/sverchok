@@ -1,5 +1,5 @@
 {
-  "export_version": "0.072",
+  "export_version": "0.079",
   "framed_nodes": {},
   "groups": {},
   "nodes": {
@@ -279,19 +279,7 @@
       "width": 140.0
     },
     "List Item": {
-      "bl_idname": "ListItem2Node",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        16.375446319580078,
-        -278.7489318847656
-      ],
-      "params": {},
-      "width": 140.0
-    },
-    "List Item.001": {
-      "bl_idname": "ListItem2Node",
+      "bl_idname": "SvListItemNode",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -299,11 +287,27 @@
         609.845703125,
         -766.492919921875
       ],
-      "params": {},
+      "params": {
+        "index": 0
+      },
       "width": 140.0
     },
     "List Item.002": {
-      "bl_idname": "ListItem2Node",
+      "bl_idname": "SvListItemNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        16.375446319580078,
+        -278.7489318847656
+      ],
+      "params": {
+        "index": 0
+      },
+      "width": 140.0
+    },
+    "List Item.003": {
+      "bl_idname": "SvListItemNode",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -311,7 +315,9 @@
         393.3372497558594,
         472.56988525390625
       ],
-      "params": {},
+      "params": {
+        "index": 0
+      },
       "width": 140.0
     },
     "List Mask (out).001": {
@@ -343,7 +349,7 @@
       "width": 140.0
     },
     "Math MK2": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -357,7 +363,7 @@
       "width": 140.0
     },
     "Math MK2.001": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -372,7 +378,7 @@
       "width": 140.0
     },
     "Math MK2.002": {
-      "bl_idname": "SvScalarMathNodeMK2",
+      "bl_idname": "SvScalarMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -701,13 +707,13 @@
     [
       "Polygon Grid",
       1,
-      "List Item",
+      "List Item.002",
       0
     ],
     [
       "List Input",
       0,
-      "List Item",
+      "List Item.002",
       1
     ],
     [
@@ -717,7 +723,7 @@
       0
     ],
     [
-      "List Item",
+      "List Item.002",
       0,
       "Transform Select",
       1
@@ -741,6 +747,48 @@
       4
     ],
     [
+      "Transform Select",
+      0,
+      "List Item",
+      0
+    ],
+    [
+      "List Input.002",
+      0,
+      "List Item",
+      1
+    ],
+    [
+      "List Item",
+      0,
+      "3pt Arc",
+      1
+    ],
+    [
+      "3pt Arc",
+      0,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math.001",
+      1
+    ],
+    [
+      "3pt Arc",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "UV Connection",
+      1
+    ],
+    [
       "Polygon Grid",
       1,
       "Subdivide",
@@ -760,6 +808,18 @@
     ],
     [
       "Subdivide",
+      "Faces",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "List Input.001",
+      "List",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Subdivide",
       0,
       "Path Length",
       0
@@ -773,11 +833,11 @@
     [
       "Path Length",
       0,
-      "List Item.002",
+      "List Item.003",
       0
     ],
     [
-      "List Item.002",
+      "List Item.003",
       0,
       "Math MK2",
       0
@@ -813,12 +873,6 @@
       6
     ],
     [
-      "List Input.001",
-      "List",
-      "Reroute",
-      "Input"
-    ],
-    [
       "Pulga Physics.001",
       3,
       "List Mask (out).002",
@@ -833,13 +887,13 @@
     [
       "List Mask (out).002",
       3,
-      "Vector Rewire.001",
+      "Vector Rewire",
       0
     ],
     [
       "List Mask (out).002",
       3,
-      "Vector Rewire",
+      "Vector Rewire.001",
       0
     ],
     [
@@ -855,12 +909,6 @@
       1
     ],
     [
-      "Vector Math",
-      0,
-      "Math MK2.001",
-      0
-    ],
-    [
       "Transform Select",
       0,
       "List Mask (out).001",
@@ -871,6 +919,12 @@
       "Output",
       "List Mask (out).001",
       "mask"
+    ],
+    [
+      "Vector Math",
+      0,
+      "Math MK2.001",
+      0
     ],
     [
       "List Mask (out).001",
@@ -909,46 +963,22 @@
       4
     ],
     [
-      "Transform Select",
+      "Line.002",
       0,
-      "List Item.001",
+      "Curve Viewer",
       0
     ],
     [
-      "List Input.002",
-      0,
-      "List Item.001",
+      "Line.002",
+      1,
+      "Curve Viewer",
       1
     ],
     [
-      "List Item.001",
+      "List Input.003",
       0,
-      "3pt Arc",
-      1
-    ],
-    [
-      "3pt Arc",
-      0,
-      "Vector Math.001",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Vector Math.001",
-      1
-    ],
-    [
-      "3pt Arc",
-      0,
-      "UV Connection",
-      0
-    ],
-    [
-      "Vector Math.001",
-      0,
-      "UV Connection",
-      1
+      "Matrix in.003",
+      3
     ],
     [
       "UV Connection",
@@ -961,12 +991,6 @@
       1,
       "Solidify",
       2
-    ],
-    [
-      "List Input.003",
-      0,
-      "Matrix in.003",
-      3
     ],
     [
       "Solidify",
@@ -987,12 +1011,6 @@
       3
     ],
     [
-      "Subdivide",
-      "Faces",
-      "Reroute.003",
-      "Input"
-    ],
-    [
       "Reroute.003",
       "Output",
       "Reroute.002",
@@ -1009,18 +1027,6 @@
       "Output",
       "Viewer BMesh",
       "faces"
-    ],
-    [
-      "Line.002",
-      0,
-      "Curve Viewer",
-      0
-    ],
-    [
-      "Line.002",
-      1,
-      "Curve Viewer",
-      1
     ]
   ]
 }

@@ -32,7 +32,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVectorRewire'
     bl_label = 'Vector Rewire'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_REWIRE'
+    sv_icon = 'SV_VECTOR_REWIRE'
 
     selected_mode_from: EnumProperty(
         items=mode_options,
@@ -47,7 +47,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
     )
 
     scalar: FloatProperty(default=0.0, update=updateNode)
-    
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vectors")
         self.inputs.new('SvStringsSocket', "Scalar").prop_name = "scalar"
@@ -67,7 +67,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
             if self.selected_mode_from == 'Scalar':
                 if not self.inputs[1].is_linked:
                     val = self.scalar
-            
+
             if isinstance(val, (str, int)):
                 dlabel = "{0} > {1}"
             elif isinstance(val, float):
@@ -85,7 +85,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
 
         if not all([vectors_out.is_linked, vectors_in.is_linked]):
             return
-        
+
         xyz = vectors_in.sv_get(deepcopy=False)
 
         index_from = options.index(self.selected_mode_from)
@@ -99,7 +99,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
 
         sorted_tuple = tuple(sorted(switching))
         rewire_dict = {(0, 1): (1, 0, 2), (0, 2): (2, 1, 0), (1, 2): (0, 2, 1)}
-        
+
         series_vec = []
         for idx, obj in enumerate(xyz):
 
@@ -134,7 +134,7 @@ class SvVectorRewire(bpy.types.Node, SverchCustomTreeNode):
                 series_vec.append(list(coords))
 
 
-        vectors_out.sv_set(series_vec)                    
+        vectors_out.sv_set(series_vec)
 
 
 def register():

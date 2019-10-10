@@ -28,6 +28,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixTrackToNode'
     bl_label = 'Matrix Track To'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_TRACK_TO'
 
     TUA = ["X Y", "X Z", "Y X", "Y Z", "Z X", "Z Y"]
     tu_axes: EnumProperty(

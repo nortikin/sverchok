@@ -232,6 +232,14 @@ class SverchokTestCase(unittest.TestCase):
             data = f.read()
             return ast.literal_eval(data)
 
+    def store_reference_sverchok_data(self, file_name, data):
+        """
+        Store reference data in Sverchok format
+        (plain Python syntax of nested lists).
+        """
+        with open(self.get_reference_file_path(file_name), 'w') as f:
+            f.write(repr(data))
+
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.

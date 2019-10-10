@@ -42,6 +42,7 @@ socket_colors = {
     "SvColorSocket": (0.9, 0.8, 0.0, 1.0),
     "SvMatrixSocket": (0.2, 0.8, 0.8, 1.0),
     "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
+    "SvSeparatorSocket": (0.0, 0.0, 0.0, 0.0),
     "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
     "SvTextSocket": (0.68, 0.85, 0.90, 1)
 }
@@ -59,7 +60,7 @@ class SvSocketCommon:
     use_quicklink: BoolProperty(default=True)
     expanded: BoolProperty(default=False)
 
-    quicklink_func_name: StringProperty(default="", name="quicklink_func_name")    
+    quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
     @property
     def other(self):
@@ -142,6 +143,20 @@ class SvSocketCommon:
             else:
                 layout.template_component_menu(prop_origin, prop_name, name=self.name)
 
+    def infer_visible_location_of_socket(self, node):
+        # currently only handles inputs.
+        if self.is_output:
+            return 0
+
+        counter = 0
+        for socket in node.inputs:
+            if not socket.hide:
+                if socket == self:
+                    break
+                counter += 1
+
+        return counter
+
     def draw_quick_link(self, context, layout, node):
 
         if self.use_quicklink:
@@ -153,11 +168,11 @@ class SvSocketCommon:
                 return
 
             op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = self.index
+            op.socket_index = self.index 
             op.origin = node.name
             op.new_node_idname = new_node_idname
-            op.new_node_offsetx = -200 - 40 * self.index
-            op.new_node_offsety = -30 * self.index
+            op.new_node_offsetx = -200 - 40 * self.index  ## this is not so useful, we should infer visible socket location
+            op.new_node_offsety = -30 * self.index  ## this is not so useful, we should infer visible socket location
 
     def draw(self, context, layout, node, text):
 
@@ -166,7 +181,7 @@ class SvSocketCommon:
         if self.bl_idname == 'SvStringsSocket':
             if hasattr(self, 'custom_draw') and self.custom_draw:
 
-                # does the node have the draw function referred to by 
+                # does the node have the draw function referred to by
                 # the string stored in socket's custom_draw attribute
                 if hasattr(node, self.custom_draw):
                     getattr(node, self.custom_draw)(self, context, layout)
@@ -185,7 +200,7 @@ class SvSocketCommon:
             t = text
             if not self.is_output:
                 if self.prop_name:
-                    prop = node.rna_type.properties.get(self.prop_name, None) 
+                    prop = node.rna_type.properties.get(self.prop_name, None)
                     t = prop.name if prop else text
             info_text = t + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
@@ -302,7 +317,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
 
 class SvMatrixSocket(NodeSocket, SvSocketCommon):
     '''4x4 matrix Socket type'''
-    
+
     bl_idname = "SvMatrixSocket"
     bl_label = "Matrix Socket"
 
@@ -450,6 +465,22 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
     def sv_type_conversion(self, new_self):
         self = new_self
 
+class SvSeparatorSocket(NodeSocket, SvSocketCommon):
+    ''' Separator Socket used to separate groups of sockets '''
+    bl_idname = "SvSeparatorSocket"
+    bl_label = "Separator Socket"
+
+    prop_name: StringProperty(default='')
+
+    def draw(self, context, layout, node, text):
+        # layout.label("")
+        layout.label(text="——————")
+
+    def remove_links(self):
+        # print("separator sockets removing links")
+        for link in self.links:
+            self.id_data.links.remove(link)
+
 
 class SvStringsSocket(NodeSocket, SvSocketCommon):
     '''Generic, mostly numbers, socket type'''
@@ -492,7 +523,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
 """
 type_map_to/from are used to get the bl_idname from a single letter
-    
+
     sockets.type_map_to.get("v")
     >>> "SvVerticesSocket"
 
@@ -518,7 +549,7 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 
 classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
-    SvColorSocket, SvQuaternionSocket, SvDummySocket,
+    SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
     SvTextSocket, SvObjectSocket
 ]
 

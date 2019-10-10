@@ -79,6 +79,7 @@ class SvVectorFractal(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVectorFractal'
     bl_label = 'Vector Fractal'
     bl_icon = 'FORCE_TURBULENCE'
+    sv_icon = 'SV_VECTOR_FRACTAL'
 
     def mk_input_sockets(self, *sockets):
         for socket in sockets:

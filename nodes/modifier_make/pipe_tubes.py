@@ -29,16 +29,17 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPipeNode'
     bl_label = 'Pipe'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_PIPE'
 
     diameter: FloatProperty(
         name='diameter', description='diameter', default=1.0, update=updateNode)
 
     shape_prop = [('Square','Square','Square'),('Round','Round','Round')]
     shape: EnumProperty(items=shape_prop, name='shape',default='Square', update=updateNode)
-    
+
     close: BoolProperty(
         name='close', description='close ends', default=True, update=updateNode)
-    
+
     cup_fill: BoolProperty(
         name='close', description='close ends', default=True, update=updateNode)
 
@@ -60,7 +61,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Pols")
 
     def process(self):
-        
+
         if self.outputs['Vers'].is_linked and self.inputs['Vers'].is_linked:
             Vecs = self.inputs['Vers'].sv_get()
             Edgs = self.inputs['Edgs'].sv_get()
@@ -78,7 +79,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
                 self.outputs['Vers'].sv_set(outv)
             if self.outputs['Pols'].is_linked:
                 self.outputs['Pols'].sv_set(outp)
-    
+
 
     def Do_vecs(self, Vecs,Edgs,Diameter,Shape,Size,Cup): #Offset,Extrude):
         if Shape == 'Square':
@@ -103,7 +104,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
 
                 circle = [ (Vector((sin(radians(i))*S0, cos(radians(i))*S1, 0)) * Diameter) for i in range(45, 405, Sides)]
                 v2,v1 = Vector(V[e[1]]), Vector(V[e[0]])
-                
+
                 vecdi = v2-v1
                 matrix_rot = vecdi.rotation_difference(Vector((0,0,1))).to_matrix().to_4x4()
                 verts1 = [ (ve@matrix_rot+v1-vecdi*S2)[:] for ve in circle ]
@@ -117,7 +118,7 @@ class SvPipeNode(bpy.types.Node, SverchCustomTreeNode):
                     p2 = [ k+i for i in range(0,Nsides,1) ]
                     pols.append(p1)
                     pols.append(p2)
-                    
+
                 if self.close and k!=0:
                     p = [ [k+i+0-Nsides,k+i-1-Nsides,k+i-1,k+i] for i in range(1,Nsides,1) ]
                     pols.extend(p)

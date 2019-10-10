@@ -47,6 +47,7 @@ class SvConvexHullNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvConvexHullNode'
     bl_label = 'Convex Hull'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CONVEX_HULL'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')

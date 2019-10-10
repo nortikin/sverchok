@@ -26,24 +26,24 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 
 macros = {
     "> obj vd": {
-        'display_name': "active_obj into objlite + vdmk2", 
-        'file': 'macro', 
+        'display_name': "active_obj into objlite + vdmk2",
+        'file': 'macro',
         'ident': ['verbose_macro_handler', 'obj vd']},
     "> objs vd": {
         'display_name': "multi obj in + vdmk2",
-        'file': 'macro', 
+        'file': 'macro',
         'ident': ['verbose_macro_handler', 'objs vd']},
     "> zen": {
         'display_name': "zen of Sverchok",
-        'file': 'macro', 
+        'file': 'macro',
         'ident': ['verbose_macro_handler', 'zen']},
     "> sn petal": {
         'display_name': "load snlite w/ petalsine",
-        'file': 'macro', 
+        'file': 'macro',
         'ident': ['verbose_macro_handler', 'sn petal']},
     "> monad info": {
         'display_name': "output current idx / total",
-        'file': 'macro', 
+        'file': 'macro',
         'ident': ['verbose_macro_handler', 'monad info']},
     "> multiply *": {
         'display_name': "multiply selected nodes",
@@ -73,9 +73,25 @@ macros = {
         'display_name': "selected nodes to List Join",
         'file': 'macro',
         'ident': ['verbose_macro_handler', 'join13']},
+    "> sw1": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch1']},
+    "> sw12": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch12']},
+    "> sw13": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch13']},
+    "> sw123": {
+        'display_name': "connect nodes to switch",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'switch123']},
     "> gp +": {
         'display_name': "grease pencil setup",
-        'file': 'macro', 
+        'file': 'macro',
         'ident': ['verbose_macro_handler', 'gp +']}
 }
 
@@ -88,7 +104,7 @@ def sn_loader(snlite, script_name=None):
     sv_path = os.path.dirname(sv_get_local_path()[0])
     snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
     fullpath = os.path.join(snlite_template_path, script_name)
-    
+
     txt = bpy.data.texts.load(fullpath)
     snlite.script_name = os.path.basename(txt.name)
     snlite.load()
@@ -128,7 +144,7 @@ class DefaultMacros():
             ng = bpy.data.node_groups.new(**ng_params)
             ng.use_fake_user = True
             context.space_data.node_tree = ng
-            operator.report({"WARNING"}, msg_two)        
+            operator.report({"WARNING"}, msg_two)
 
     @classmethod
     def verbose_macro_handler(cls, operator, context, term):
@@ -143,7 +159,7 @@ class DefaultMacros():
             obj_in_node.dget()
             vd_node = nodes.new('SvVDExperimental')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
-            
+
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
             links.new(obj_in_node.outputs[3], vd_node.inputs[3])
@@ -153,10 +169,10 @@ class DefaultMacros():
             obj_in_node.get_objects_from_scene(operator)
             vd_node = nodes.new('SvVDExperimental')
             vd_node.location = obj_in_node.location.x + 180, obj_in_node.location.y
-            
+
             links.new(obj_in_node.outputs[0], vd_node.inputs[0])
             links.new(obj_in_node.outputs[2], vd_node.inputs[2])
-            links.new(obj_in_node.outputs[3], vd_node.inputs[3])            
+            links.new(obj_in_node.outputs[3], vd_node.inputs[3])
 
         elif term == 'zen':
             full_url_term = 'https://blenderpython.tumblr.com/post/91951323209/zen-of-sverchok'
@@ -224,26 +240,26 @@ class DefaultMacros():
             is_vector = all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes)
             if operator == 'MUL':
                 if is_vector:
-                    math_node = nodes.new('SvVectorMathNodeMK2')
+                    math_node = nodes.new('SvScalarMathNodeMK3')
                     math_node.current_op = 'CROSS'
                 else:
                     if (sorted_nodes[0].outputs[0].bl_idname == "SvVerticesSocket"):
-                        math_node = nodes.new('SvVectorMathNodeMK2')
+                        math_node = nodes.new('SvScalarMathNodeMK3')
                         math_node.current_op = 'SCALAR'
                     elif (sorted_nodes[1].outputs[0].bl_idname == "SvVerticesSocket"):
-                        math_node = nodes.new('SvVectorMathNodeMK2')
+                        math_node = nodes.new('SvScalarMathNodeMK3')
                         math_node.current_op = 'SCALAR'
                         sorted_nodes =[sorted_nodes[1],sorted_nodes[0]]
                     else:
-                        math_node = nodes.new('SvScalarMathNodeMK2')
+                        math_node = nodes.new('SvScalarMathNodeMK3')
                         math_node.location = maxx + 100, maxy
                         math_node.current_op = operator
             else:
                 if is_vector:
-                    math_node = nodes.new('SvVectorMathNodeMK2')
+                    math_node = nodes.new('SvScalarMathNodeMK3')
                     math_node.current_op = operator
                 else:
-                    math_node = nodes.new('SvScalarMathNodeMK2')
+                    math_node = nodes.new('SvScalarMathNodeMK3')
                     math_node.current_op = operator
 
             math_node.location = maxx + 100, maxy
@@ -258,19 +274,59 @@ class DefaultMacros():
                 # link the output math node to the ViewerDraw node
                 links.new(math_node.outputs[0], viewer_node.inputs[0])
 
+        elif "switch" in term:
+            selected_nodes = context.selected_nodes
+            # get bounding box of all selected nodes
+            minx = +1e10
+            maxx = -1e10
+            miny = +1e10
+            maxy = -1e10
+            for node in selected_nodes:
+                minx = min(minx, node.location.x)
+                maxx = max(maxx, node.location.x + node.width)
+                miny = min(miny, node.location.y - node.height)
+                maxy = max(maxy, node.location.y)
+
+            switch_node = nodes.new('SvInputSwitchNode')
+            switch_node.location = maxx + 100, maxy
+
+            # find out which sockets to connect
+            socket_numbers = term.replace("switch", "")
+            if len(socket_numbers) == 1: # one socket
+                socket_indices = [0]
+            else: # multiple sockets
+                socket_indices = [int(n) - 1 for n in socket_numbers]
+
+            switch_node.set_size = len(socket_indices)
+
+            sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.y, reverse=True)
+
+            # link the nodes to InputSwitch node
+            for i, node in enumerate(sorted_nodes):
+                label = switch_node.label_of_set(i)
+                for j, n in enumerate(socket_indices):
+                    links.new(node.outputs[n], switch_node.inputs[label + " " + str(j+1)])
+
+            if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
+                viewer_node = nodes.new("SvVDExperimental")
+                viewer_node.location = switch_node.location.x + switch_node.width + 100, maxy
+
+                # link the input switch node to the ViewerDraw node
+                for n, i in enumerate(socket_indices):
+                    links.new(switch_node.outputs[n], viewer_node.inputs[i])
 
         elif term == 'gp +':
             needed_nodes = [
                 ['SvGetAssetProperties', (0.00, 0.00)],
                 ['SvScriptNodeLite', (250, 55)],
-                ['SvScalarMathNodeMK2', (430, 115)],
+                ['SvScalarMathNodeMK3', (430, 115)],
                 ['Float2IntNode', (600, 50)],
                 ['SvGenFloatRange', (720, 90)],
                 ['SvInterpolationNodeMK3', (880, 40)],
                 ['LineConnectNodeMK2', (1060, -40)],
                 ['SvVDExperimental', (1245, 50)],
             ]
-      
+
             made_nodes = []
             x, y = context.space_data.cursor_location[:]
             for node_bl_idname, node_location in needed_nodes:

@@ -33,6 +33,7 @@ class WifiOutNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'WifiOutNode'
     bl_label = 'Wifi out'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_WIFI_OUT'
 
     var_name: StringProperty(name='var_name', default='')
 

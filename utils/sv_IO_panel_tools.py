@@ -204,6 +204,10 @@ def can_skip_property(node, k):
         # these are CollectionProperties, populated later.
         return True
 
+    elif node.bl_idname == 'SvVDAttrsNode' and k in node.properties_to_skip_iojson:
+        # these are serialized in storage_get_data
+        return True
+
     elif node.bl_idname == 'ObjectsNode' and (k == "objects_local"):
         # this silences the import error when items not found.
         return True

@@ -22,10 +22,12 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode, enum_item_4, enum_item_5, match_long_repeat, dataCorrect
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
+from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
 
 default_vertex_shader = '''
@@ -51,96 +53,6 @@ default_fragment_shader = '''
         gl_FragColor = vec4(pos * brightness, 1.0);
     }
 '''
-
-cache_viewer_baker = {}
-
-
-class SvObjBakeMK3(bpy.types.Operator):
-    """ B A K E   OBJECTS """
-    bl_idname = "node.sverchok_mesh_baker_mk3"
-    bl_label = "Sverchok mesh baker mk3"
-    bl_options = {'REGISTER', 'UNDO'}
-
-    idname: StringProperty(
-        name='idname',
-        description='name of parent node',
-        default='')
-
-    idtree: StringProperty(
-        name='idtree',
-        description='name of parent tree',
-        default='')
-
-    def execute(self, context):
-        global cache_viewer_baker
-
-        node_group = bpy.data.node_groups[self.idtree]
-        node = node_group.nodes[self.idname]
-        nid = node_id(node)
-
-        matrix_cache = cache_viewer_baker[nid + 'm']
-        vertex_cache = cache_viewer_baker[nid + 'v']
-        edg_cache = cache_viewer_baker[nid + 'e']
-        pol_cache = cache_viewer_baker[nid + 'p']
-
-        if matrix_cache and not vertex_cache:
-            return {'CANCELLED'}
-
-        v = dataCorrect(vertex_cache)
-        e = self.dataCorrect3(edg_cache)
-        p = self.dataCorrect3(pol_cache)
-        m = self.dataCorrect2(matrix_cache, v)
-        self.config = node
-        self.makeobjects(v, e, p, m)
-        return {'FINISHED'}
-
-    def dataCorrect2(self, destination, obj):
-        if destination:
-            return destination
-        return [Matrix() for v in obj]
-
-    def dataCorrect3(self, destination, fallback=[]):
-        if destination:
-            return dataCorrect(destination)
-        return fallback
-
-    def makeobjects(self, vers, edg, pol, mats):
-        objects = {}
-        for i, m in enumerate(mats):
-            v, e, p = vers[i], edg[i], pol[i]
-            objects[str(i)] = self.makemesh(i, v, e, p, m)
-
-        for ob, me in objects.values():
-            bpy.context.scene.collection.objects.link(ob)
-
-    def validate_indices(self, ident_num, v, idx_list, kind_list):
-        outlist = []
-        n = len(v)
-        for idx, sublist in enumerate(idx_list):
-            tlist = sublist
-            if min(sublist) < 0:
-                tlist = [(i if i >= 0 else n + i) for i in sublist]
-                print('vdmk2 input fixing, converted negative indices to positive')
-                print(sublist, ' ---> ', tlist)
-
-            outlist.append(tlist)
-        return outlist
-
-    def makemesh(self, i, v, e, p, m):
-        name = 'Sv_' + str(i)
-        me = bpy.data.meshes.new(name)
-        e = self.validate_indices(i, v, e, "edges")
-        p = self.validate_indices(i, v, p, "polygons")
-        me.from_pydata(v, e, p)
-        ob = bpy.data.objects.new(name, me)
-        if self.config.extended_matrix:
-            ob.data.transform(m)
-        else:
-            ob.matrix_world = m
-        ob.show_name = False
-        ob.hide_select = False
-        return ob, me
-
 
 def edges_from_faces(indices):
     """ we don't want repeat edges, ever.."""
@@ -170,7 +82,7 @@ def ensure_triangles(coords, indices):
         else:
             subcoords = [Vector(coords[idx]) for idx in idxset]
             for pol in tessellate([subcoords]):
-                concat([idxset[i] for i in pol])
+                concat([idxset[i] for i in reversed(pol)])
     return new_indices
 
 
@@ -220,20 +132,34 @@ def draw_matrix(context, args):
         mdraw.draw_matrix(matrix)
 
 
-def draw_uniform(GL_KIND, coords, indices, color, width=1):
+def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
     if GL_KIND == 'LINES':
         bgl.glLineWidth(width)
     elif GL_KIND == 'POINTS':
         bgl.glPointSize(width)
 
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    if indices:
-        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, indices=indices)
+    params = dict(indices=indices) if indices else {}
+
+    if GL_KIND == 'LINES' and dashed_data:
+
+        shader = dashed_data.shader
+        batch = batch_for_shader(shader, 'LINES', {"inPos" : coords}, **params)
+        shader.bind()
+        shader.uniform_float("u_mvp", dashed_data.matrix)
+        shader.uniform_float("u_resolution", dashed_data.u_resolution)
+        shader.uniform_float("u_dashSize", dashed_data.u_dash_size)    
+        shader.uniform_float("u_gapSize", dashed_data.u_gap_size)
+        shader.uniform_float("m_color", dashed_data.m_color)
+        batch.draw(shader)
+
     else:
-        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords})
-    shader.bind()
-    shader.uniform_float("color", color)
-    batch.draw(shader)
+
+        shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, **params)
+        shader.bind()
+        shader.uniform_float("color", color)
+    
+        batch.draw(shader)
 
     if GL_KIND == 'LINES':
         bgl.glLineWidth(1)
@@ -243,11 +169,8 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1):
 
 def draw_smooth(coords, vcols, indices=None):
     shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
-    if indices:
-        # print(len(coords), len(vcols))
-        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, indices=indices)
-    else:
-        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
+    params = dict(indices=indices) if indices else {}
+    batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, **params)
     batch.draw(shader)
 
 
@@ -255,16 +178,32 @@ def draw_verts(context, args):
     geom, config = args
     draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
+def pack_dashed_config(config):
+    dashed_config = lambda: None
+    dashed_config.matrix = config.matrix
+    dashed_config.u_resolution = config.u_resolution
+    dashed_config.u_dash_size = config.u_dash_size
+    dashed_config.u_gap_size = config.u_gap_size
+    dashed_config.m_color = config.line4f
+    dashed_config.shader = config.shader
+    return dashed_config
+
+def draw_lines_uniform(context, config, coords, indices, line_color, line_width):
+    if config.draw_dashed:
+        config.matrix = context.region_data.perspective_matrix
+        dashed_config = pack_dashed_config(config)
+
+    params = dict(dashed_data=dashed_config) if config.draw_dashed else {}
+    draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
 
 def draw_edges(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.edges
 
     if config.display_edges:
-        draw_uniform('LINES', coords, indices, config.line4f, config.line_width)
+        draw_lines_uniform(context, config, coords, indices, config.line4f, config.line_width)
     if config.display_verts:
         draw_verts(context, args)
-
 
 def draw_fragment(context, args):
     geom, config = args
@@ -277,14 +216,23 @@ def draw_fragment(context, args):
     shader.uniform_float("brightness", 0.5)
     batch.draw(shader)
 
-
 def draw_faces(context, args):
     geom, config = args
+
+    if config.draw_gl_polygonoffset:
+        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
+    
+    if config.display_edges:
+        draw_lines_uniform(context, config, geom.verts, geom.edges, config.line4f, config.line_width)
 
     if config.display_faces:
 
         if config.draw_gl_wireframe:
             bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+
+        if config.draw_gl_polygonoffset:
+            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+            bgl.glPolygonOffset(1.0, 1.0)
 
         if config.shade == "flat":
             draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
@@ -299,21 +247,20 @@ def draw_faces(context, args):
                 draw_fragment(context, args)
 
         if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT, bgl.GL_FILL)
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
 
 
-    if config.display_edges:
-        draw_uniform('LINES', geom.verts, geom.edges, config.line4f, config.line_width)
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
-
+    if config.draw_gl_polygonoffset:
+        # or restore to the state found when entering this function. TODO!
+        bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
 
 def get_shader_data(named_shader=None):
     source = bpy.data.texts[named_shader].as_string()
     exec(source)
     local_vars = vars().copy()
-    # print(local_vars)
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
 
@@ -330,6 +277,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVDExperimental'
     bl_label = 'VD Experimental'
     bl_icon = 'GREASEPENCIL'
+    sv_icon = 'SV_DRAW_VIEWER'
 
     node_dict = {}
 
@@ -376,9 +324,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         name='vector light', subtype='DIRECTION', min=0, max=1, size=3,
         default=(0.2, 0.6, 0.4), update=updateNode)
 
-    extended_matrix : BoolProperty(
+    extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
+
     # glGet with argument GL_POINT_SIZE_RANGE
     point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=4.0, min=1.0, max=15.0)
     line_width: IntProperty(description="glLineWidth( GLfloat width)", update=updateNode, default=1, min=1, max=5)
@@ -387,10 +336,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     display_edges: BoolProperty(default=True, update=updateNode, name="display edges")
     display_faces: BoolProperty(default=True, update=updateNode, name="display faces")
     draw_gl_wireframe: BoolProperty(default=False, update=updateNode, name="draw gl wireframe")
+    draw_gl_polygonoffset: BoolProperty(default=False, update=updateNode, name="draw gl polygon offset")
 
     custom_vertex_shader: StringProperty(default=default_vertex_shader, name='vertex shader')
     custom_fragment_shader: StringProperty(default=default_fragment_shader, name='fragment shader')
-    custom_shader_location: StringProperty(update=wrapped_update)
+    custom_shader_location: StringProperty(update=wrapped_update, name='custom shader location')
 
     selected_draw_mode: EnumProperty(
         items=enum_item_5(["flat", "facet", "smooth", "fragment"], ['SNAP_VOLUME', 'ALIASED', 'ANTIALIASED', 'SCRIPTPLUGINS']),
@@ -398,12 +348,39 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         default="flat", update=updateNode
     )
 
+    # dashed line props
+    use_dashed: BoolProperty(name='use dashes', update=updateNode)
+    u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
+    u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
+    u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
+
+
+    @staticmethod
+    def draw_basic_attr_qlink(socket, context, layout, node):
+        visible_socket_index = socket.infer_visible_location_of_socket(node)
+        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
+        op.socket_index = socket.index
+        op.origin = node.name
+        op.new_node_idname = "SvVDAttrsNode"
+        op.new_node_offsetx = -200 - 40 * visible_socket_index
+        op.new_node_offsety = -30 * visible_socket_index
+
+    def configureAttrSocket(self, context):
+        self.inputs['attrs'].hide_safe = not self.node_ui_show_attrs_socket
+
+    node_ui_show_attrs_socket: BoolProperty(default=False, name='show attrs socket', update=configureAttrSocket)
+
     def sv_init(self, context):
         inew = self.inputs.new
         inew('SvVerticesSocket', 'verts')
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
+        
+        attr_socket = inew('SvStringsSocket', 'attrs')
+        attr_socket.hide = True
+        attr_socket.quicklink_func_name = "draw_basic_attr_qlink"
+
         self.node_dict[hash(self)] = {}
 
     def draw_buttons(self, context, layout):
@@ -429,20 +406,34 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 colors_column.prop(self, "custom_shader_location", icon='TEXT', text='')
 
         row = layout.row(align=True)
-        op1 = row.operator('node.sverchok_mesh_baker_mk3',icon='OUTLINER_OB_MESH', text="B A K E")
-        op1.idname = self.name
-        op1.idtree = self.id_data.name
-
+        self.wrapper_tracked_ui_draw_op(row, "node.sverchok_mesh_baker_mk3", icon='OUTLINER_OB_MESH', text="B A K E")
         row.separator()
-        op2 = row.operator("node.view3d_align_from", text='', icon='CURSOR')
-        op2.idname = self.name
-        op2.idtree = self.id_data.name
+        self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
+        self.draw_additional_props(context, layout)
+        layout.prop(self, "use_dashed")
+        if self.use_dashed:
+            layout.prop(self, "u_dash_size")
+            layout.prop(self, "u_gap_size")
+            layout.row().prop(self, "u_resolution")
+
+    def rclick_menu(self, context, layout):
+        self.draw_additional_props(context, layout)
+
+    def draw_additional_props(self, context, layout):
         layout.prop(self, 'vector_light', text='')
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
+        layout.separator()
+        layout.prop(self, 'draw_gl_wireframe', toggle=True)
+        layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
+        layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
+        layout.separator()
+
+    def add_gl_stuff_to_config(self, config):
+        config.shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
 
     def fill_config(self):
 
@@ -456,9 +447,14 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         config.display_faces = self.display_faces
         config.shade = self.selected_draw_mode
         config.draw_gl_wireframe = self.draw_gl_wireframe
+        config.draw_gl_polygonoffset = self.draw_gl_polygonoffset
         config.point_size = self.point_size
         config.line_width = self.line_width
         config.extended_matrix = self.extended_matrix
+        config.draw_dashed = self.use_dashed
+        config.u_dash_size = self.u_dash_size
+        config.u_gap_size = self.u_gap_size
+        config.u_resolution = self.u_resolution[:]
 
         return config
 
@@ -487,18 +483,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             verts = coords
         return match_long_repeat([coords, edge_indices, face_indices, verts, matrix])
 
-    def fill_cache(self, data):
-        n_id = node_id(self)
-        global cache_viewer_baker
-        vertex_ref = n_id + 'v'
-        edg_ref = n_id + 'e'
-        pol_ref = n_id + 'p'
-        matrix_ref = n_id + 'm'
-        cache_viewer_baker[vertex_ref] = data[3]
-        cache_viewer_baker[edg_ref] = data[1]
-        cache_viewer_baker[pol_ref] = data[2]
-        cache_viewer_baker[matrix_ref] = data[4]
-
     def faces_diplay(self, geom, config):
 
         if self.selected_draw_mode == 'facet' and self.display_faces:
@@ -526,7 +510,31 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             config.batch = batch_for_shader(config.shader, 'TRIS', {"position": geom.verts}, indices=geom.faces)
 
+    def handle_attr_socket(self):
+        """
+        this socket expects input dictionary wrapped. once.
+
+            [  {attr: attr_vale, attr2: attr2_value } ]
+
+        """
+ 
+        if self.node_ui_show_attrs_socket and not self.inputs['attrs'].hide and self.inputs['attrs'].is_linked:
+            socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
+
+            if socket_acquired_attrs:
+                try:
+                    with hard_freeze(self) as node:
+                        for k, new_value in socket_acquired_attrs[0].items():
+                            print(f"setattr(node, {k}, {new_value})")
+                            setattr(node, k, new_value)
+                except Exception as err:
+                    print('error inside socket_acquired_attrs: ', err)
+                    self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
+
     def process(self):
+
+        self.handle_attr_socket()
+
         if not (self.id_data.sv_show and self.activate):
             callback_disable(node_id(self))
             return
@@ -546,7 +554,6 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             config = self.fill_config()
             data = self.get_data()
-            self.fill_cache(data)
             coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
 
             geom = lambda: None
@@ -562,6 +569,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 return
 
             if edges_socket.is_linked and not faces_socket.is_linked:
+                if self.use_dashed:
+                    self.add_gl_stuff_to_config(config)
+
                 geom.edges = edge_indices
                 draw_data = {
                     'tree_name': self.id_data.name[:],
@@ -581,6 +591,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     geom.faces = ensure_triangles(coords, face_indices)
 
                 if self.display_edges:
+                    if self.use_dashed:    
+                        self.add_gl_stuff_to_config(config)
+
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
@@ -614,7 +627,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def fully_enabled(self):
-        return "matrix" in self.inputs
+        return "attrs" in self.inputs
 
     def update(self):
         if not self.fully_enabled:
@@ -633,11 +646,5 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         callback_disable(node_id(self))
 
 
-def register():
-    bpy.utils.register_class(SvVDExperimental)
-    bpy.utils.register_class(SvObjBakeMK3)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvVDExperimental)
-    bpy.utils.unregister_class(SvObjBakeMK3)
+classes = [SvVDExperimental]
+register, unregister = bpy.utils.register_classes_factory(classes)

@@ -28,6 +28,7 @@ class ListSortNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListSortNodeMK2'
     bl_label = 'List Sort'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_SORT'
 
     level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
     typ: StringProperty(name='typ', default='')

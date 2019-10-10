@@ -28,10 +28,11 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     Triggers: Find nearest verts
     Tooltip: Find nearest verts to another verts group
     '''
-    
+
     bl_idname = 'SvKDTreeNodeMK2'
     bl_label = 'KDT Closest Verts MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_KDT_VERTS'
 
     modes = [
         ('find_n', 'find_n', 'find certain number of closest tree vectors', '', 0),
@@ -42,7 +43,7 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         'find_n': kdt_closest_verts_find_n,
         'find_range': kdt_closest_verts_range
         }
-        
+
     number : IntProperty(
         min=1, default=1, name='Number',
         description="find this amount", update=updateNode)
@@ -65,7 +66,7 @@ class SvKDTreeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, 'mode', expand=True)
 
     def sv_init(self, context):
-        
+
         si = self.inputs
         so = self.outputs
         si.new('SvVerticesSocket', 'insert')

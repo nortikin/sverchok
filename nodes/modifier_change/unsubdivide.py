@@ -31,6 +31,7 @@ class SvUnsubdivideNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvUnsubdivideNode'
     bl_label = 'Unsubdivide'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_UNSUBDIVIDE'
 
     iter: IntProperty(name='itr', default=1, min=1, update=updateNode)
 

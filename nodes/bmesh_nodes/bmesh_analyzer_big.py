@@ -29,6 +29,7 @@ class SvBManalyzinNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBManalyzinNode'
     bl_label = 'BMesh Analyze In'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_ANALYZE_BMESH'
 
     mode1: BoolProperty(name='normal_update', default=True, update=updateNode)
 

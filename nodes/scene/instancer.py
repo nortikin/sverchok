@@ -89,6 +89,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvInstancerNode'
     bl_label = 'Mesh instancer'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_INSTANCER'
 
     def obj_available(self, context):
         if not bpy.data.meshes:

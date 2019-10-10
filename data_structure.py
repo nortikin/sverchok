@@ -367,6 +367,55 @@ def describe_data_shape(data):
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
 
+def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
+    """
+    Calculate mask: for each item in set_data, return True if it is present in subset_data.
+    The function can work at any specified level.
+
+    subset_data: subset, for example [1]
+    set_data: set, for example [1, 2, 3]
+    level: 0 to check immediate members of set and subset; 1 to work with lists of lists and so on.
+    negate: if True, then result will be negated (True if item of set is not present in subset).
+    ignore_order: when comparing lists, ignore items order.
+
+    Raises an exception if nesting level of input sets is less than specified level parameter.
+
+    calc_mask([1], [1,2,3]) == [True, False, False])
+    calc_mask([1], [1,2,3], negate=True) == [False, True, True]
+    """
+    if level == 0:
+        if not isinstance(subset_data, (tuple, list)):
+            raise Exception("Specified level is too high for given Subset")
+        if not isinstance(set_data, (tuple, list)):
+            raise Exception("Specified level is too high for given Set")
+
+        if ignore_order and get_data_nesting_level(subset_data) > 1:
+            if negate:
+                return [set(item) not in map(set, subset_data) for item in set_data]
+            else:
+                return [set(item) in map(set, subset_data) for item in set_data]
+        else:
+            if negate:
+                return [item not in subset_data for item in set_data]
+            else:
+                return [item in subset_data for item in set_data]
+    else:
+        sub_objects = match_long_repeat([subset_data, set_data])
+        return [calc_mask(subset_item, set_item, level - 1, negate, ignore_order) for subset_item, set_item in zip(*sub_objects)]
+
+def rotate_list(l, y=1):
+    """
+    "Rotate" list by shifting it's items towards the end and putting last items to the beginning.
+    For example,
+
+    rotate_list([1, 2, 3]) = [2, 3, 1]
+    rotate_list([1, 2, 3], y=2) = [3, 1, 2]
+    """
+    if len(l) == 0:
+        return l
+    y = y % len(l)
+    return list(l[y:]) + list(l[:y])
+
 #####################################################
 ################### matrix magic ####################
 #####################################################

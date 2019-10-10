@@ -103,6 +103,7 @@ class SvIterateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvIterateNode'
     bl_label = 'Iterate matrix transformation'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_ITERATIVE_MATRIX'
 
     count_: IntProperty(
         name='Iterations', description='Number of iterations',

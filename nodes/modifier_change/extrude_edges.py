@@ -34,6 +34,7 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExtrudeEdgesNode'
     bl_label = 'Extrude Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EXTRUDE_EDGES'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -46,7 +47,7 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'NewVertices')
         self.outputs.new('SvStringsSocket', 'NewEdges')
         self.outputs.new('SvStringsSocket', 'NewFaces')
-  
+
     def process(self):
         # inputs
         if not (self.inputs['Vertices'].is_linked):
@@ -70,7 +71,7 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
         result_ext_faces = []
 
         meshes = match_long_repeat([vertices_s, edges_s, matrices_s]) #, extrude_edges_s])
-        
+
         for vertices, edges, matrices in zip(*meshes):
             if len(edges[0]) == 2:
                 faces = []
@@ -79,7 +80,7 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
                 edges = []
             if not matrices:
                 matrices = [Matrix()]
-            
+
             bm = bmesh_from_pydata(vertices, edges, faces)
             # better to do it in separate node, not integrate by default.
             #if extrude_edges:
@@ -135,4 +136,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvExtrudeEdgesNode)
-

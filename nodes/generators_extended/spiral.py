@@ -457,6 +457,7 @@ class SvSpiralNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Spiral '''
     bl_idname = 'SvSpiralNode'
     bl_label = 'Spiral'
+    bl_icon = 'FORCE_VORTEX'
 
     def update_spiral(self, context):
         if self.updating:

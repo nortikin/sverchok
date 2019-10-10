@@ -32,7 +32,7 @@ class SvColorsOutNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     ''' color ---> rgb(a) /// Generator for Color data'''
     bl_idname = 'SvColorsOutNodeMK1'
     bl_label = 'Color Out MK1'
-    sv_icon = 'SV_COMBINE_OUT'
+    sv_icon = 'SV_COLOR_OUT'
 
     def psuedo_update(self, context):
         for idx, socket in enumerate(self.selected_mode):

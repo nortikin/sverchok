@@ -29,6 +29,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'Voronoi2DNode'
     bl_label = 'Voronoi 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VORONOI'
 
     clip: FloatProperty(
         name='clip', description='Clipping Distance',
@@ -109,6 +110,7 @@ class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'DelaunayTriangulation2DNode'
     bl_label = 'Delaunay 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DELAUNAY'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")

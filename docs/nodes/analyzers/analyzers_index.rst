@@ -7,6 +7,7 @@ Analyzers
 
    area
    bbox
+   diameter
    distance_pp
    distance_point_line
    distance_point_plane

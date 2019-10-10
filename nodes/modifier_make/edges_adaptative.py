@@ -31,6 +31,7 @@ class SvAdaptiveEdgeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvAdaptiveEdgeNode'
     bl_label = 'Adaptive Edges'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_ADAPTATIVE_EDGES'
 
     mesh_join: BoolProperty(name="Join meshes", default=True, update=updateNode)
 

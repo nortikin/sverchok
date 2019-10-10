@@ -32,6 +32,7 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExtrudeSeparateLiteNode'
     bl_label = 'Extrude Separate Faces Lite'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EXTRUDE_FACE'
 
     replacement_nodes = [
         ('SvInsetSpecial',
