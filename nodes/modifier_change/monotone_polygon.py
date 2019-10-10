@@ -306,7 +306,12 @@ class HalfEdge:
     @property
     def product(self):
         if not self.cash_product:
-            if self.twin.cash_product:
+            if almost_equal(self.origin.co[y], self.twin.origin.co[y]):
+                if is_more(self.origin.co[x], self.twin.origin.co[x]):
+                    self.cash_product = 4
+                else:
+                    self.cash_product = 2
+            elif self.twin.cash_product:
                 self.cash_product = (self.twin.cash_product + 2) % 4
             else:
                 vector = (self.twin.origin.co[x] - self.origin.co[x], self.twin.origin.co[y] - self.origin.co[y])
