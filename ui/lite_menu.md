@@ -1,3 +1,5 @@
+==== INPUT
+
 # Generator {OBJECT_DATAMODE}
 
     SvLineNodeMK3
@@ -95,6 +97,8 @@
     SvMatrixTrackToNode
     SvMatrixMathNode
 
+==== THROUGHPUT
+
 # Transforms {EMPTY_ARROWS}
 
     SvRotationNodeMK2
@@ -178,6 +182,31 @@
     DelaunayTriangulation2DNode
     Voronoi2DNode
 
+# List Iteration {NLA}
+
+    ListMatchNode
+    ZipNode
+    ShiftNodeMK2
+    ListRepeaterNode
+    ListJoinNode
+    ListSliceNode
+    SvListSliceLiteNode
+    SvListSplitNode
+    ListFLNode
+    ListReverseNode
+    ListFlipNode
+    ListShuffleNode
+    ListSortNodeMK2
+
+# Data Routing {NETWORK_DRIVE}
+    WifiInNode
+    WifiOutNode
+    NodeReroute
+    ConverterNode
+    UdpClientNode
+
+==== OBSERVATIONS
+
 # Analyze Entity {VIEWZOOM}
 
     SvBBoxNode
@@ -212,15 +241,17 @@
     SvBvhOverlapNodeNew
     SvLinkedVertsNode
 
-# Masks {MOD_MASK}
+# List Introspection {VIEWZOOM}
 
-    SvVertMaskNode
-    MaskListNode
-    SvMaskJoinNode
-    SvMaskConvertNode
-    SvMaskToIndexNode
-    SvIndexToMaskNode
-    SvCalcMaskNode
+    SvListModifierNode
+    SvFixEmptyObjectsNode
+    ListLevelsNode
+    ListLengthNode
+    ListSumNodeMK2
+    SvListItemNode
+    SvListItemInsertNode
+    ---
+    SvDataShapeNode
 
 # Data Formatting {SYSTEM}
 
@@ -236,34 +267,15 @@
     SvTextInNodeMK2
     SvTextOutNodeMK2
 
-# List Introspection {VIEWZOOM}
+# Masks {MOD_MASK}
 
-    SvListModifierNode
-    SvFixEmptyObjectsNode
-    ListLevelsNode
-    ListLengthNode
-    ListSumNodeMK2
-    SvListItemNode
-    SvListItemInsertNode
-    ---
-    SvDataShapeNode
-
-# List Iteration {NLA}
-
-    ListMatchNode
-    ZipNode
-    ShiftNodeMK2
-    ListRepeaterNode
-    ListJoinNode
-    ListSliceNode
-    SvListSliceLiteNode
-    SvListSplitNode
-    ListFLNode
-    ListReverseNode
-    ListFlipNode
-    ListShuffleNode
-    ListSortNodeMK2
-
+    SvVertMaskNode
+    MaskListNode
+    SvMaskJoinNode
+    SvMaskConvertNode
+    SvMaskToIndexNode
+    SvIndexToMaskNode
+    SvCalcMaskNode
 
 # Logic {SV_LOGIC}
 
@@ -271,6 +283,8 @@
     SvSwitchNode
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
+
+==== OUTPUT
 
 # Viz {RESTRICT_VIEW_OFF}
 
@@ -327,12 +341,7 @@
     SvVertexGroupNodeMK2
     SvVertexColorNodeMK3
 
-# Data Routing {NETWORK_DRIVE}
-    WifiInNode
-    WifiOutNode
-    NodeReroute
-    ConverterNode
-    UdpClientNode
+==== PERGATORY
 
 # Unsorted A {SV_ALPHA}
 

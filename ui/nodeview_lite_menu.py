@@ -23,11 +23,21 @@ def parse_lite_menu(filename_to_parse):
         categories = defaultdict(list)
         current_category = ""
         for line in _file:
+
+            if line.strip().startswith("===="):
+                current_category = line.strip()
+                continue
+
             if line.strip().startswith("# "):
                 current_category = line.strip().replace("# ", "")
                 continue
+
             if not current_category:
                 break
+
+            if current_category.startswith("===="):
+                categories[current_category].append("separator")
+                continue
 
             text_on_line = line.strip()
             if text_on_line:
@@ -92,6 +102,11 @@ class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
         layout = self.layout
         for item in context.space_data.node_tree.sv_lite_menu_headers:
             row = layout.row()
+
+            if item.heading.startswith("===="):
+                row.separator()
+                continue
+
             row.context_pointer_set("sv_menu_key", item)
             header, icon_str = header_sliced(item.heading)
             row.menu("NODEVIEW_MT_SvLiteSubmenu", text=header, **icon(icon_str))
