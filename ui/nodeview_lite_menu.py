@@ -23,7 +23,7 @@ def parse_lite_menu(filename_to_parse):
         current_category = ""
         for line in _file:
             if line.strip().startswith("# "):
-                current_category = line.strip().replace("# ", "").title()
+                current_category = line.strip().replace("# ", "")
                 continue
             if not current_category:
                 break

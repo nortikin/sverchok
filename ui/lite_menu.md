@@ -143,7 +143,7 @@
     SvIndexToMaskNode
     SvCalcMaskNode
 
-# Data formatting
+# Data Formatting
 
     SvListInputNode
     SvDatetimeStrings
@@ -166,6 +166,8 @@
     ListSumNodeMK2
     SvListItemNode
     SvListItemInsertNode
+    ---
+    SvDataShapeNode
 
 # List Iteration
 
@@ -279,8 +281,8 @@
     ---
     SvStethoscopeNodeMK2
     SvIDXViewer28
-    SvDataShapeNode
     SvDebugPrintNode
+    ---
     ViewerNodeTextMK3
     NoteNode
     ---
