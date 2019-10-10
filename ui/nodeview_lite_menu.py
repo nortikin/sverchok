@@ -10,7 +10,7 @@ from os.path import dirname
 from collections import defaultdict
 
 import bpy
-from sverchok.menu import node_add_operators
+from sverchok.menu import node_add_operators, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
 
 
@@ -72,8 +72,9 @@ class NODEVIEW_MT_SvLiteSubmenu(bpy.types.Menu):
             
             node_add_operator = node_add_operators.get(item.lower())
             if node_add_operator:
-                node_ref = get_node_class_reference(item)
-                layout.operator(node_add_operator.bl_idname, text=node_ref.bl_label)
+                # node_ref = get_node_class_reference(item)
+                # layout.operator(node_add_operator.bl_idname, text=node_ref.bl_label)
+                draw_add_node_operator(layout, item, label=None, icon_name=None, params=None)
             else:
                 layout.row().label(text=item)
 
