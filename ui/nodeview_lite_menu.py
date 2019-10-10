@@ -43,6 +43,10 @@ def parse_lite_menu(filename_to_parse):
 # would need to move this external to this file and import... i think.
 short_menu = parse_lite_menu("lite_menu.md")
 
+def header_sliced(header):
+    """ assumes lite_menu.md items are ABC XYZ {ICONNAME} """
+    return header.replace('}', '').split(' {')
+
 
 class SvPopulateLiteMenu(bpy.types.Operator):
     bl_label = "Populate Lite Menu"
@@ -53,8 +57,7 @@ class SvPopulateLiteMenu(bpy.types.Operator):
         menu_headers.clear()
         for k in short_menu.keys():
             item = menu_headers.add()
-            item.heading = k  # parse_heading(k)
-            # item.icon = parse_icon(k)
+            item.heading = k
         return {'FINISHED'}
 
 
@@ -90,7 +93,8 @@ class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
         for item in context.space_data.node_tree.sv_lite_menu_headers:
             row = layout.row()
             row.context_pointer_set("sv_menu_key", item)
-            row.menu("NODEVIEW_MT_SvLiteSubmenu", text=item.heading)  # **icon(item.icon)
+            header, icon_str = header_sliced(item.heading)
+            row.menu("NODEVIEW_MT_SvLiteSubmenu", text=header, **icon(icon_str))
 
 def register():
     bpy.utils.register_class(SvPopulateLiteMenu)
