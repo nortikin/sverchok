@@ -1,4 +1,4 @@
-# Generator
+# Generator {OBJECT_DATAMODE}
 
     SvLineNodeMK3
     SvPlaneNodeMK2
@@ -18,7 +18,7 @@
     SvProfileNodeMK3
     SvMeshEvalNode
 
-# Generators Extended
+# Generators Extended {PLUGIN}
 
     SvBoxRoundedNode
     SvBricksNode
@@ -34,7 +34,7 @@
     HilbertNode
     SvRegularSolid
 
-# Analyze Entity
+# Analyze Entity {VIEWZOOM}
 
     SvBBoxNode
     SvDiameterNode
@@ -53,7 +53,7 @@
     SvRaycasterLiteNode
     SvOBJInsolationNode
 
-# Analyze Relationship
+# Analyze Relationship {CON_CHILDOF}
 
     SvSelectSimilarNode
     DistancePPNode
@@ -68,7 +68,7 @@
     SvBvhOverlapNodeNew
     SvLinkedVertsNode
 
-# Transforms
+# Transforms {EMPTY_ARROWS}
 
     SvRotationNodeMK2
     SvScaleNodeMK2
@@ -82,7 +82,7 @@
     Svb28MatrixArrayNode
     SvIterateNode
 
-# Topology
+# Topology {MOD_EXPLODE} 
 
     LineConnectNodeMK2
     SvTopologySimple
@@ -107,7 +107,7 @@
     DelaunayTriangulation2DNode
     Voronoi2DNode
 
-# Modifier
+# Modifier {MODIFIER}
 
     SvRemoveDoublesNode
     VertsDelDoublesNode
@@ -133,7 +133,7 @@
     SvBevelCurveNode
     SvMatrixTubeNode
 
-# Masks
+# Masks {MOD_MASK}
 
     SvVertMaskNode
     MaskListNode
@@ -143,7 +143,7 @@
     SvIndexToMaskNode
     SvCalcMaskNode
 
-# Data Formatting
+# Data Formatting {SYSTEM}
 
     SvListInputNode
     SvDatetimeStrings
@@ -157,7 +157,7 @@
     SvTextInNodeMK2
     SvTextOutNodeMK2
 
-# List Introspection
+# List Introspection {VIEWZOOM}
 
     SvListModifierNode
     SvFixEmptyObjectsNode
@@ -169,7 +169,7 @@
     ---
     SvDataShapeNode
 
-# List Iteration
+# List Iteration {NLA}
 
     ListMatchNode
     ZipNode
@@ -185,7 +185,7 @@
     ListShuffleNode
     ListSortNodeMK2
 
-# CAD
+# CAD {TOOL_SETTINGS}
 
     SvBevelNode
     SvIntersectEdgesNodeMK2
@@ -203,7 +203,7 @@
     ---
     SvSubdivideLiteNode
 
-# Number
+# Number {SV_NUMBER}
 
     SvNumberNode
     SvScalarMathNodeMK3
@@ -220,7 +220,7 @@
     SvGenFibonacci
     SvGenExponential
 
-# Vector
+# Vector {SV_VECTOR}
 
     GenVectorsNode
     VectorsOutNode
@@ -249,7 +249,7 @@
     SvLacunarityNode
     SvVectorFractal
 
-# Matrix
+# Matrix {EMPTY_AXIS}
 
     SvMatrixGenNodeMK2
     MatrixOutNode
@@ -264,14 +264,14 @@
     SvMatrixTrackToNode
     SvMatrixMathNode
 
-# Logic
+# Logic {SV_LOGIC}
 
     SvLogicNode
     SvSwitchNode
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
 
-# Viz
+# Viz {RESTRICT_VIEW_OFF}
 
     Sv3DviewPropsNode
     ---
@@ -296,7 +296,8 @@
     SvTextureViewerNode
     SvTextureViewerNodeLite
 
-# BPY Data
+# BPY Data {FILE_BACKUP}
+
     SvGetPropNode
     SvSetPropNode
     SvObjRemoteNodeMK2
@@ -310,7 +311,8 @@
     SvOBJRayCastNodeMK2
     SvSCNRayCastNodeMK2
 
-# Scene
+# Scene {FILE_IMAGE}
+
     SvObjectsNodeMK3
     SvObjInLite
     SvCurveInputNode
@@ -324,14 +326,15 @@
     SvVertexGroupNodeMK2
     SvVertexColorNodeMK3
 
-# Data Routing
+# Data Routing {NETWORK_DRIVE}
     WifiInNode
     WifiOutNode
     NodeReroute
     ConverterNode
     UdpClientNode
 
-# Unsorted A
+# Unsorted A {SV_ALPHA}
+
     SvFormulaShapeNode
     SvHeavyTriangulateNode
     SvFormulaDeformMK2Node
@@ -355,7 +358,8 @@
     ---
     SvSpiralNode
 
-# Unsorted B
+# Unsorted B {SV_BETA}
+
     SvBManalyzinNode
     SvBMObjinputNode
     SvBMoutputNode

@@ -12,6 +12,7 @@ from collections import defaultdict
 import bpy
 from sverchok.menu import node_add_operators, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
+from sverchok.ui.sv_icons import icon
 
 
 def parse_lite_menu(filename_to_parse):
@@ -52,7 +53,8 @@ class SvPopulateLiteMenu(bpy.types.Operator):
         menu_headers.clear()
         for k in short_menu.keys():
             item = menu_headers.add()
-            item.heading = k
+            item.heading = k  # parse_heading(k)
+            # item.icon = parse_icon(k)
         return {'FINISHED'}
 
 
@@ -88,7 +90,7 @@ class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
         for item in context.space_data.node_tree.sv_lite_menu_headers:
             row = layout.row()
             row.context_pointer_set("sv_menu_key", item)
-            row.menu("NODEVIEW_MT_SvLiteSubmenu", text=item.heading)
+            row.menu("NODEVIEW_MT_SvLiteSubmenu", text=item.heading)  # **icon(item.icon)
 
 def register():
     bpy.utils.register_class(SvPopulateLiteMenu)
