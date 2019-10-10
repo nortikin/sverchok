@@ -340,7 +340,7 @@
     SvVertexGroupNodeMK2
     SvVertexColorNodeMK3
 
-==== PERGATORY
+==== PURGATORY
 
 # Unsorted A {SV_ALPHA}
 
