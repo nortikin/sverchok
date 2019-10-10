@@ -34,175 +34,6 @@
     HilbertNode
     SvRegularSolid
 
-# Analyze Entity {VIEWZOOM}
-
-    SvBBoxNode
-    SvDiameterNode
-    SvVolumeNode
-    SvAreaNode
-    SvPathLengthNode
-    CentersPolsNodeMK2
-    CentersPolsNodeMK3
-    GetNormalsNode
-    VectorNormalNode
-    SvEdgeAnglesNode
-    ---
-    SvMeshFilterNode
-    SvPointInside
-    SvMeshSelectNode
-    SvRaycasterLiteNode
-    SvOBJInsolationNode
-
-# Analyze Relationship {CON_CHILDOF}
-
-    SvSelectSimilarNode
-    DistancePPNode
-    SvIntersectLineSphereNode
-    SvIntersectPlanePlaneNode
-    SvDistancePointLineNode
-    SvDistancePointPlaneNode
-    SvDistancetLineLineNode
-    SvKDTreeNodeMK2
-    SvKDTreeEdgesNodeMK2
-    SvKDTreePathNode
-    SvBvhOverlapNodeNew
-    SvLinkedVertsNode
-
-# Transforms {EMPTY_ARROWS}
-
-    SvRotationNodeMK2
-    SvScaleNodeMK2
-    SvMoveNodeMK2
-    SvMirrorNode
-    MatrixApplyNode
-    SvSimpleDeformNode
-    SvBarycentricTransformNode
-    ---
-    SvTransformSelectNode
-    Svb28MatrixArrayNode
-    SvIterateNode
-
-# Topology {MOD_EXPLODE} 
-
-    LineConnectNodeMK2
-    SvTopologySimple
-    ---
-    SvMeshJoinNode
-    Pols2EdgsNode
-    SvSeparateMeshNodeMK2
-    PolygonBoomNode
-    SvDeleteLooseNode
-    ---
-    SvMeshBeautify
-    SvTriangulateNode
-    SvJoinTrianglesNode
-    SvFillsHoleNode
-    SvPlanarEdgenetToPolygons
-    ---
-    SvRecalcNormalsNode
-    SvFlipNormalsNode
-    ---
-    SvConvexHullNodeMK2
-    SvSubdivideNode
-    DelaunayTriangulation2DNode
-    Voronoi2DNode
-
-# Modifier {MODIFIER}
-
-    SvRemoveDoublesNode
-    VertsDelDoublesNode
-    SvLimitedDissolve
-    SvRandomizeVerticesNode
-    ---
-    SvExtrudeEdgesNode
-    SvExtrudeSeparateNode
-    SvExtrudeRegionNode
-    SvBendAlongPathNode
-    SvBendAlongSurfaceNode
-    SvSplitEdgesNode
-    SvProportionalEditNode
-    SvDeformationNode
-    ---
-    SvAdaptiveEdgeNode
-    AdaptivePolsNode
-    SvDuplicateAlongEdgeNode
-    SvFractalCurveNode
-    SvSolidifyNode
-    SvWireframeNode
-    SvPipeNode
-    SvBevelCurveNode
-    SvMatrixTubeNode
-
-# Masks {MOD_MASK}
-
-    SvVertMaskNode
-    MaskListNode
-    SvMaskJoinNode
-    SvMaskConvertNode
-    SvMaskToIndexNode
-    SvIndexToMaskNode
-    SvCalcMaskNode
-
-# Data Formatting {SYSTEM}
-
-    SvListInputNode
-    SvDatetimeStrings
-    SvVDAttrsNode
-    SvListDecomposeNode
-    SvExecNodeMod
-    ListFuncNode
-    Formula2Node
-    SvFormulaNodeMk3
-    ---
-    SvTextInNodeMK2
-    SvTextOutNodeMK2
-
-# List Introspection {VIEWZOOM}
-
-    SvListModifierNode
-    SvFixEmptyObjectsNode
-    ListLevelsNode
-    ListLengthNode
-    ListSumNodeMK2
-    SvListItemNode
-    SvListItemInsertNode
-    ---
-    SvDataShapeNode
-
-# List Iteration {NLA}
-
-    ListMatchNode
-    ZipNode
-    ShiftNodeMK2
-    ListRepeaterNode
-    ListJoinNode
-    ListSliceNode
-    SvListSliceLiteNode
-    SvListSplitNode
-    ListFLNode
-    ListReverseNode
-    ListFlipNode
-    ListShuffleNode
-    ListSortNodeMK2
-
-# CAD {TOOL_SETTINGS}
-
-    SvBevelNode
-    SvIntersectEdgesNodeMK2
-    SvOffsetNode
-    SvInsetSpecial
-    SvLatheNode
-    SvSmoothNode
-    SvSmoothLines
-    ---
-    CrossSectionNode
-    SvBisectNode
-    SvWafelNode
-    SvOffsetLineNode
-    SvContourNode
-    ---
-    SvSubdivideLiteNode
-
 # Number {SV_NUMBER}
 
     SvNumberNode
@@ -263,6 +94,176 @@
     SvMatrixNormalNode
     SvMatrixTrackToNode
     SvMatrixMathNode
+
+# Transforms {EMPTY_ARROWS}
+
+    SvRotationNodeMK2
+    SvScaleNodeMK2
+    SvMoveNodeMK2
+    SvMirrorNode
+    MatrixApplyNode
+    SvSimpleDeformNode
+    SvBarycentricTransformNode
+    ---
+    SvTransformSelectNode
+    Svb28MatrixArrayNode
+    SvIterateNode
+
+# CAD {TOOL_SETTINGS}
+
+    SvBevelNode
+    SvIntersectEdgesNodeMK2
+    SvOffsetNode
+    SvInsetSpecial
+    SvLatheNode
+    SvSmoothNode
+    SvSmoothLines
+    ---
+    CrossSectionNode
+    SvBisectNode
+    SvWafelNode
+    SvOffsetLineNode
+    SvContourNode
+    ---
+    SvSubdivideLiteNode
+
+# Modifier {MODIFIER}
+
+    SvRemoveDoublesNode
+    VertsDelDoublesNode
+    SvLimitedDissolve
+    SvRandomizeVerticesNode
+    ---
+    SvExtrudeEdgesNode
+    SvExtrudeSeparateNode
+    SvExtrudeRegionNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
+    SvSplitEdgesNode
+    SvProportionalEditNode
+    SvDeformationNode
+    ---
+    SvAdaptiveEdgeNode
+    AdaptivePolsNode
+    SvDuplicateAlongEdgeNode
+    SvFractalCurveNode
+    SvSolidifyNode
+    SvWireframeNode
+    SvPipeNode
+    SvBevelCurveNode
+    SvMatrixTubeNode
+
+# Topology {MOD_EXPLODE} 
+
+    LineConnectNodeMK2
+    SvTopologySimple
+    ---
+    SvMeshJoinNode
+    Pols2EdgsNode
+    SvSeparateMeshNodeMK2
+    PolygonBoomNode
+    SvDeleteLooseNode
+    ---
+    SvMeshBeautify
+    SvTriangulateNode
+    SvJoinTrianglesNode
+    SvFillsHoleNode
+    SvPlanarEdgenetToPolygons
+    ---
+    SvRecalcNormalsNode
+    SvFlipNormalsNode
+    ---
+    SvConvexHullNodeMK2
+    SvSubdivideNode
+    DelaunayTriangulation2DNode
+    Voronoi2DNode
+
+# Analyze Entity {VIEWZOOM}
+
+    SvBBoxNode
+    SvDiameterNode
+    SvVolumeNode
+    SvAreaNode
+    SvPathLengthNode
+    CentersPolsNodeMK2
+    CentersPolsNodeMK3
+    GetNormalsNode
+    VectorNormalNode
+    SvEdgeAnglesNode
+    ---
+    SvMeshFilterNode
+    SvPointInside
+    SvMeshSelectNode
+    SvRaycasterLiteNode
+    SvOBJInsolationNode
+
+# Analyze Relationship {CON_CHILDOF}
+
+    SvSelectSimilarNode
+    DistancePPNode
+    SvIntersectLineSphereNode
+    SvIntersectPlanePlaneNode
+    SvDistancePointLineNode
+    SvDistancePointPlaneNode
+    SvDistancetLineLineNode
+    SvKDTreeNodeMK2
+    SvKDTreeEdgesNodeMK2
+    SvKDTreePathNode
+    SvBvhOverlapNodeNew
+    SvLinkedVertsNode
+
+# Masks {MOD_MASK}
+
+    SvVertMaskNode
+    MaskListNode
+    SvMaskJoinNode
+    SvMaskConvertNode
+    SvMaskToIndexNode
+    SvIndexToMaskNode
+    SvCalcMaskNode
+
+# Data Formatting {SYSTEM}
+
+    SvListInputNode
+    SvDatetimeStrings
+    SvVDAttrsNode
+    SvListDecomposeNode
+    SvExecNodeMod
+    ListFuncNode
+    Formula2Node
+    SvFormulaNodeMk3
+    ---
+    SvTextInNodeMK2
+    SvTextOutNodeMK2
+
+# List Introspection {VIEWZOOM}
+
+    SvListModifierNode
+    SvFixEmptyObjectsNode
+    ListLevelsNode
+    ListLengthNode
+    ListSumNodeMK2
+    SvListItemNode
+    SvListItemInsertNode
+    ---
+    SvDataShapeNode
+
+# List Iteration {NLA}
+
+    ListMatchNode
+    ZipNode
+    ShiftNodeMK2
+    ListRepeaterNode
+    ListJoinNode
+    ListSliceNode
+    SvListSliceLiteNode
+    SvListSplitNode
+    ListFLNode
+    ListReverseNode
+    ListFlipNode
+    ListShuffleNode
+    ListSortNodeMK2
+
 
 # Logic {SV_LOGIC}
 
