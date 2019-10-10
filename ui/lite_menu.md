@@ -249,22 +249,23 @@
 
 # List Introspection {VIEWZOOM}
 
+    SvDataShapeNode
+    ---
     SvListModifierNode
     SvFixEmptyObjectsNode
-    ListLevelsNode
     ListLengthNode
     ListSumNodeMK2
     SvListItemNode
     SvListItemInsertNode
-    ---
-    SvDataShapeNode
 
 # Data Formatting {SYSTEM}
 
     SvListInputNode
+    SvListDecomposeNode
+    ListLevelsNode
+    ---
     SvDatetimeStrings
     SvVDAttrsNode
-    SvListDecomposeNode
     SvExecNodeMod
     ListFuncNode
     Formula2Node
