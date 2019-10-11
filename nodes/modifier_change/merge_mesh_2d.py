@@ -1423,7 +1423,7 @@ class MergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     index_mask = bpy.props.BoolProperty(name="Index mask",
                                         description="Mask of output mesh represented indexes"
                                                     " of faces from mesh A and Mesh B", update=update_sockets)
-    accuracy = bpy.props.IntProperty(name='Accuaracy', description='Some errors of the node '
+    accuracy = bpy.props.IntProperty(name='Accuracy', description='Some errors of the node '
                                                                    'can be fixed by changing this value',
                                      update=updateNode, default=5, min=3, max=12)
 
