@@ -23,6 +23,8 @@ import bpy
 
 from sverchok.utils.sv_update_utils import sv_get_local_path
 
+# pylint: disable=c0301
+
 
 macros = {
     "> obj vd": {
@@ -110,6 +112,10 @@ def sn_loader(snlite, script_name=None):
     snlite.load()
 
 def nodes_bounding_box(selected_nodes):
+    """
+    usage:
+    minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
+    """
     minx = +1e10
     maxx = -1e10
     miny = +1e10
@@ -249,7 +255,7 @@ class DefaultMacros():
                     elif (sorted_nodes[1].outputs[0].bl_idname == "SvVerticesSocket"):
                         math_node = nodes.new('SvScalarMathNodeMK3')
                         math_node.current_op = 'SCALAR'
-                        sorted_nodes =[sorted_nodes[1],sorted_nodes[0]]
+                        sorted_nodes =[sorted_nodes[1], sorted_nodes[0]]
                     else:
                         math_node = nodes.new('SvScalarMathNodeMK3')
                         math_node.location = maxx + 100, maxy
@@ -276,36 +282,28 @@ class DefaultMacros():
 
         elif "switch" in term:
             selected_nodes = context.selected_nodes
-            # get bounding box of all selected nodes
-            minx = +1e10
-            maxx = -1e10
-            miny = +1e10
-            maxy = -1e10
-            for node in selected_nodes:
-                minx = min(minx, node.location.x)
-                maxx = max(maxx, node.location.x + node.width)
-                miny = min(miny, node.location.y - node.height)
-                maxy = max(maxy, node.location.y)
+            minx, maxx, miny, maxy = nodes_bounding_box(selected_nodes)
 
-            switch_node = nodes.new('SvInputSwitchNode')
+            switch_node = nodes.new('SvInputSwitchNodeMOD')
             switch_node.location = maxx + 100, maxy
 
             # find out which sockets to connect
             socket_numbers = term.replace("switch", "")
-            if len(socket_numbers) == 1: # one socket
+            if len(socket_numbers) == 1:
                 socket_indices = [0]
-            else: # multiple sockets
+            else:
                 socket_indices = [int(n) - 1 for n in socket_numbers]
 
-            switch_node.set_size = len(socket_indices)
-
+            switch_node.num_sockets_per_set = len(socket_indices)
             sorted_nodes = sorted(selected_nodes, key=lambda n: n.location.y, reverse=True)
 
             # link the nodes to InputSwitch node
+            get_indices_for_groupnum = switch_node.get_local_function("get_indices_for_groupnum")
             for i, node in enumerate(sorted_nodes):
-                label = switch_node.label_of_set(i)
+                destination_indices = get_indices_for_groupnum(switch_node.node_state, i)
                 for j, n in enumerate(socket_indices):
-                    links.new(node.outputs[n], switch_node.inputs[label + " " + str(j+1)])
+                    remapped_index = destination_indices[j]
+                    links.new(node.outputs[n], switch_node.inputs[remapped_index])
 
             if all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes):
                 viewer_node = nodes.new("SvVDExperimental")
@@ -314,6 +312,10 @@ class DefaultMacros():
                 # link the input switch node to the ViewerDraw node
                 for n, i in enumerate(socket_indices):
                     links.new(switch_node.outputs[n], viewer_node.inputs[i])
+
+                switch_node.process_node(context)
+
+            # tree.update()
 
         elif term == 'gp +':
             needed_nodes = [
