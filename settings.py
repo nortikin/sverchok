@@ -276,6 +276,9 @@ class SverchokPreferences(AddonPreferences):
     dload_archive_name: StringProperty(name="archive name", default="b28_prelease_master") # default = "master"
     dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
 
+    # lite menu filename
+    lite_menu_filename: StringProperty(name="lite menu filename", description=f"markdown filename, located in {datafiles}")
+
 
     def draw(self, context):
 
@@ -302,6 +305,10 @@ class SverchokPreferences(AddonPreferences):
             col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
             col1.prop(self, "external_editor", text="Ext Editor")
             col1.prop(self, "real_sverchok_path", text="Src Directory")
+            col1.separator()
+            col1_row = col1.row()
+            col1_row.prop(self, "lite_menu_filename", text="Lite Menu name")
+            col1_row.operator("node.sv_populate_lite_menu", text="", icon="SCREEN_BACK")
 
             col2 = col_split.split().column()
             col2.label(text="Frame change handler:")

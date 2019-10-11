@@ -13,11 +13,15 @@ import bpy
 from sverchok.menu import node_add_operators, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
 from sverchok.ui.sv_icons import icon
+from sverchok.utils.sv_prefs import get_val
 
+short_menu = {}
 
 def parse_lite_menu(filename_to_parse):
 
-    lite_menu_path = os.path.join(dirname(__file__), filename_to_parse)
+    # lite_menu_path = os.path.join(dirname(__file__), filename_to_parse)
+    datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
+    lite_menu_path = os.path.join(datafiles, filename_to_parse)
 
     with open(lite_menu_path) as _file:
         categories = defaultdict(list)
@@ -49,10 +53,6 @@ def parse_lite_menu(filename_to_parse):
     return {}  # just in case
 
 
-# this may not respond to attempts to repopulate the dict. we
-# would need to move this external to this file and import... i think.
-short_menu = parse_lite_menu("lite_menu.md")
-
 def header_sliced(header):
     """ assumes lite_menu.md items are ABC XYZ {ICONNAME} """
     return header.replace('}', '').split(' {')
@@ -63,7 +63,14 @@ class SvPopulateLiteMenu(bpy.types.Operator):
     bl_idname = "node.sv_populate_lite_menu"
 
     def execute(self, context):
-        menu_headers = context.space_data.node_tree.sv_lite_menu_headers
+        import sverchok
+
+        filename_to_parse = get_val("lite_menu_filename")
+
+        n = sverchok.ui.nodeview_lite_menu
+        n.short_menu = parse_lite_menu(filename_to_parse)
+
+        menu_headers = context.scene.sv_lite_menu_headers
         menu_headers.clear()
         for k in short_menu.keys():
             item = menu_headers.add()
@@ -100,7 +107,7 @@ class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
 
     def draw(self, context):
         layout = self.layout
-        for item in context.space_data.node_tree.sv_lite_menu_headers:
+        for item in context.scene.sv_lite_menu_headers:
             row = layout.row()
 
             if item.heading.startswith("===="):
@@ -114,7 +121,7 @@ class NODEVIEW_MT_SvLiteMenu(bpy.types.Menu):
 def register():
     bpy.utils.register_class(SvPopulateLiteMenu)
     bpy.utils.register_class(SvLiteMenuItems)
-    bpy.types.NodeTree.sv_lite_menu_headers = bpy.props.CollectionProperty(type=SvLiteMenuItems)
+    bpy.types.Scene.sv_lite_menu_headers = bpy.props.CollectionProperty(type=SvLiteMenuItems)
     bpy.utils.register_class(NODEVIEW_MT_SvLiteSubmenu) 
     bpy.utils.register_class(NODEVIEW_MT_SvLiteMenu)
 
@@ -123,4 +130,4 @@ def unregister():
     bpy.utils.unregister_class(NODEVIEW_MT_SvLiteMenu)
     bpy.utils.unregister_class(SvLiteMenuItems)
     bpy.utils.unregister_class(SvPopulateLiteMenu)
-    del bpy.types.NodeTree.sv_lite_menu_headers
+    del bpy.types.Scene.sv_lite_menu_headers
