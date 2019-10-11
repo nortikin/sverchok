@@ -186,6 +186,10 @@ class SvInputSwitchNodeMOD(bpy.types.Node, SverchCustomTreeNode):
                 A = [None]
             self.outputs[output_idx].sv_set(A)
 
+    def get_local_function(self, named_function):
+        if named_function in globals():
+            return globals()[named_function]
+
 
 classes = [SvInputSwitchNodeMOD]
 register, unregister = bpy.utils.register_classes_factory(classes)
