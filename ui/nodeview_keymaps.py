@@ -60,6 +60,10 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"
         nodeview_keymaps.append((km, kmi))
 
+        # ctrl + shift + ]
+        kmi = km.keymap_items.new('wm.call_menu', 'A', 'PRESS', shift=True, ctrl=True)
+        kmi.properties.name = "NODEVIEW_MT_SvLiteMenu"
+        nodeview_keymaps.append((km, kmi))
 
 def remove_keymap():
 
