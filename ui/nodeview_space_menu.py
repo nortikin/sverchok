@@ -199,9 +199,11 @@ classes = [
 ]
 
 
+
 def register():
     for class_name in classes:
         bpy.utils.register_class(class_name)
+
 
 def unregister():
     for class_name in classes:
