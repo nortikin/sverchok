@@ -13,6 +13,7 @@
     SvPlaneNodeMK2
     SvNGonNode
     SvBoxNode
+    SvCircleNode
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
