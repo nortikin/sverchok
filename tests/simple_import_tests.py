@@ -15,17 +15,6 @@ class ImportSingleSimpleNode(EmptyTreeTestCase):
 
         self.assert_node_equals_file(node, "Box", "box.json")
 
-    def test_cylinder_import(self):
-        node = create_node("CylinderNode", self.tree.name)
-        node.Separate = 1
-        node.cap_ = 0
-        node.radTop_ = 1.0299999713897705
-        node.radBot_ = 1.0299999713897705
-        node.vert_ = 33
-        node.height_ = 2.0299999713897705
-        node.subd_ = 1
-
-        self.assert_node_equals_file(node, "Cylinder", "cylinder.json")
 
     def test_torus_import(self):
         node = create_node("SvTorusNode", self.tree.name)
