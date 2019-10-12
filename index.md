@@ -104,7 +104,6 @@
     SvFlipNormalsNode
     SvRandomizeVerticesNode
     ---
-    SvIterateNode
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
@@ -231,6 +230,7 @@
     SvMatrixGenNodeMK2
     MatrixOutNode
     SvMatrixApplyJoinNode
+    SvIterateNode
     MatrixDeformNode
     SvMatrixValueIn
     SvMatrixEulerNode
