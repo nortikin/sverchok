@@ -73,8 +73,8 @@ def get_point_by_angle(vector1, vector2, angle, len_new_v, mode='left and right'
     mat_left  = Matrix.Rotation(angle,2,'X') #hope it left turn
     mat_right = Matrix.Rotation(angle * -1,2,'X')
     v = vector1 - vector2
-    new_v_left  = (v * mat_left ).normalized() * len_new_v + vector2
-    new_v_right = (v * mat_right).normalized() * len_new_v + vector2
+    new_v_left  = (v @ mat_left ).normalized() * len_new_v + vector2
+    new_v_right = (v @ mat_right).normalized() * len_new_v + vector2
     mode_words = mode.split(' ')
     if 'left' in mode_words and 'right' in mode_words:
         if mode_words.index('left') < mode_words.index('right'):
