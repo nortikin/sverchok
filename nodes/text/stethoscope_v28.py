@@ -160,7 +160,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
             # adjust proposed text location in case node is framed.
             # take into consideration the hidden state
-            node_width = (self.width_hidden + 30.0) if self.hide else self.width
+            node_width = self.width
             _x, _y = recursive_framed_location_finder(self, self.location[:])
             _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
 

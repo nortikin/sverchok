@@ -22,13 +22,13 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode, enum_item_4, enum_item_5, match_long_repeat, dataCorrect
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
+from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
-
 
 default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -132,20 +132,34 @@ def draw_matrix(context, args):
         mdraw.draw_matrix(matrix)
 
 
-def draw_uniform(GL_KIND, coords, indices, color, width=1):
+def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
     if GL_KIND == 'LINES':
         bgl.glLineWidth(width)
     elif GL_KIND == 'POINTS':
         bgl.glPointSize(width)
 
-    shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-    if indices:
-        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, indices=indices)
+    params = dict(indices=indices) if indices else {}
+
+    if GL_KIND == 'LINES' and dashed_data:
+
+        shader = dashed_data.shader
+        batch = batch_for_shader(shader, 'LINES', {"inPos" : coords}, **params)
+        shader.bind()
+        shader.uniform_float("u_mvp", dashed_data.matrix)
+        shader.uniform_float("u_resolution", dashed_data.u_resolution)
+        shader.uniform_float("u_dashSize", dashed_data.u_dash_size)    
+        shader.uniform_float("u_gapSize", dashed_data.u_gap_size)
+        shader.uniform_float("m_color", dashed_data.m_color)
+        batch.draw(shader)
+
     else:
-        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords})
-    shader.bind()
-    shader.uniform_float("color", color)
-    batch.draw(shader)
+
+        shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
+        batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, **params)
+        shader.bind()
+        shader.uniform_float("color", color)
+    
+        batch.draw(shader)
 
     if GL_KIND == 'LINES':
         bgl.glLineWidth(1)
@@ -155,11 +169,8 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1):
 
 def draw_smooth(coords, vcols, indices=None):
     shader = gpu.shader.from_builtin('3D_SMOOTH_COLOR')
-    if indices:
-        # print(len(coords), len(vcols))
-        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, indices=indices)
-    else:
-        batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols})
+    params = dict(indices=indices) if indices else {}
+    batch = batch_for_shader(shader, 'TRIS', {"pos" : coords, "color": vcols}, **params)
     batch.draw(shader)
 
 
@@ -167,16 +178,32 @@ def draw_verts(context, args):
     geom, config = args
     draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
+def pack_dashed_config(config):
+    dashed_config = lambda: None
+    dashed_config.matrix = config.matrix
+    dashed_config.u_resolution = config.u_resolution
+    dashed_config.u_dash_size = config.u_dash_size
+    dashed_config.u_gap_size = config.u_gap_size
+    dashed_config.m_color = config.line4f
+    dashed_config.shader = config.shader
+    return dashed_config
+
+def draw_lines_uniform(context, config, coords, indices, line_color, line_width):
+    if config.draw_dashed:
+        config.matrix = context.region_data.perspective_matrix
+        dashed_config = pack_dashed_config(config)
+
+    params = dict(dashed_data=dashed_config) if config.draw_dashed else {}
+    draw_uniform('LINES', coords, indices, config.line4f, config.line_width, **params)
 
 def draw_edges(context, args):
     geom, config = args
     coords, indices = geom.verts, geom.edges
 
     if config.display_edges:
-        draw_uniform('LINES', coords, indices, config.line4f, config.line_width)
+        draw_lines_uniform(context, config, coords, indices, config.line4f, config.line_width)
     if config.display_verts:
         draw_verts(context, args)
-
 
 def draw_fragment(context, args):
     geom, config = args
@@ -189,7 +216,6 @@ def draw_fragment(context, args):
     shader.uniform_float("brightness", 0.5)
     batch.draw(shader)
 
-
 def draw_faces(context, args):
     geom, config = args
 
@@ -197,7 +223,7 @@ def draw_faces(context, args):
         bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
     
     if config.display_edges:
-        draw_uniform('LINES', geom.verts, geom.edges, config.line4f, config.line_width)
+        draw_lines_uniform(context, config, geom.verts, geom.edges, config.line4f, config.line_width)
 
     if config.display_faces:
 
@@ -221,7 +247,7 @@ def draw_faces(context, args):
                 draw_fragment(context, args)
 
         if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT, bgl.GL_FILL)
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
 
 
     if config.display_verts:
@@ -322,6 +348,13 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         default="flat", update=updateNode
     )
 
+    # dashed line props
+    use_dashed: BoolProperty(name='use dashes', update=updateNode)
+    u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
+    u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
+    u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
+
+
     @staticmethod
     def draw_basic_attr_qlink(socket, context, layout, node):
         visible_socket_index = socket.infer_visible_location_of_socket(node)
@@ -380,6 +413,11 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         self.draw_additional_props(context, layout)
+        layout.prop(self, "use_dashed")
+        if self.use_dashed:
+            layout.prop(self, "u_dash_size")
+            layout.prop(self, "u_gap_size")
+            layout.row().prop(self, "u_resolution")
 
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
@@ -389,9 +427,13 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
         layout.separator()
-        layout.prop(self, 'draw_gl_wireframe')
-        layout.prop(self, 'draw_gl_polygonoffset')
+        layout.prop(self, 'draw_gl_wireframe', toggle=True)
+        layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
         layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
+        layout.separator()
+
+    def add_gl_stuff_to_config(self, config):
+        config.shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
 
     def fill_config(self):
 
@@ -409,6 +451,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         config.point_size = self.point_size
         config.line_width = self.line_width
         config.extended_matrix = self.extended_matrix
+        config.draw_dashed = self.use_dashed
+        config.u_dash_size = self.u_dash_size
+        config.u_gap_size = self.u_gap_size
+        config.u_resolution = self.u_resolution[:]
 
         return config
 
@@ -523,6 +569,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                 return
 
             if edges_socket.is_linked and not faces_socket.is_linked:
+                if self.use_dashed:
+                    self.add_gl_stuff_to_config(config)
+
                 geom.edges = edge_indices
                 draw_data = {
                     'tree_name': self.id_data.name[:],
@@ -542,6 +591,9 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     geom.faces = ensure_triangles(coords, face_indices)
 
                 if self.display_edges:
+                    if self.use_dashed:    
+                        self.add_gl_stuff_to_config(config)
+
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)

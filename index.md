@@ -149,6 +149,7 @@
     SvFixEmptyObjectsNode
     SvDatetimeStrings
     SvVDAttrsNode
+    SvPolygonSortNode
 
 ## List Main
     ListJoinNode
@@ -159,6 +160,7 @@
     ListMatchNode
     ListFuncNode
     SvListDecomposeNode
+    SvListStatisticsNode
 
 ## List Struct
     ShiftNodeMK2
@@ -252,9 +254,10 @@
 
 ## Viz
     Sv3DviewPropsNode
+    ---
+    SvMatrixViewer28
     SvVDBasicLines
     SvVDExperimental
-    SvMatrixViewer28
     ---
     SvIDXViewer28
     ---
@@ -344,6 +347,7 @@
     SvSetCustomMeshNormals
     ---
     SvSpiralNode
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvBManalyzinNode
