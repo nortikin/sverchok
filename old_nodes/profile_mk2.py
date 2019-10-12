@@ -730,7 +730,8 @@ class SvProfileNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvProfileNodeMK2'
     bl_label = 'Profile Parametric'
     bl_icon = 'SYNTAX_ON'
-
+    
+    replacement_nodes = [('SvProfileNodeMK3', None, None)]
     SvLists: bpy.props.CollectionProperty(type=SvListGroup)
     SvSubLists: bpy.props.CollectionProperty(type=SvSublistGroup)
 

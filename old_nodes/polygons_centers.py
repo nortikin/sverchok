@@ -30,6 +30,8 @@ class CentersPolsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CENTER_POLYGONS'
 
+    replacement_nodes = [('CentersPolsNodeMK3', None, None)]
+    
     Separate: BoolProperty(
         name="Separate", description="separate by objects",
         default=True, update=updateNode)

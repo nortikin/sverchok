@@ -25,11 +25,13 @@ from sverchok.data_structure import (fullList, updateNode)
 
 class EvaluateLine(bpy.types.Node, SverchCustomTreeNode):
     ''' EvaluateLine '''
-    bl_idname = 'EvaluateLineNode'
+    bl_idname = 'EvaluateLine'
     bl_label = 'Vector Evaluate'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EVALUATE'
 
+    replacement_nodes = [('SvVectorLerp', None, None)]
+    
     factor_: FloatProperty(
         name='factor', description='Step length', default=0.5, min=0.0, max=1.0, update=updateNode)
 

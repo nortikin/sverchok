@@ -13,8 +13,6 @@
     SvPlaneNodeMK2
     SvNGonNode
     SvBoxNode
-    SvCircleNode
-    CylinderNode
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
@@ -37,7 +35,6 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvProfileNodeMK2
     SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
@@ -58,7 +55,6 @@
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
     SvPathLengthNode
-    CentersPolsNodeMK2
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
@@ -120,7 +116,6 @@
 ## Modifier Make
     LineConnectNodeMK2
     ---
-    SvConvexHullNode
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
@@ -199,7 +194,6 @@
     SvMapRangeNode
     SvEasingNode
     SvMixNumbersNode
-    Formula2Node
     SvFormulaNodeMk3
     ---
     SvGenFibonacci
@@ -219,12 +213,10 @@
     VectorPolarOutNode
     SvAttractorNode
     ---
-    EvaluateLineNode
     SvVectorLerp
     SvInterpolationStripesNode
-    SvInterpolationNode
-    SvInterpolationNodeMK2
     SvInterpolationNodeMK3
+    SvInterpolationNodeMK2
     SvLinearApproxNode
     ---
     SvHomogenousVectorField
@@ -237,12 +229,15 @@
 ## Matrix
     SvMatrixGenNodeMK2
     MatrixOutNode
+    SvMatrixApplyJoinNode
     MatrixDeformNode
     SvMatrixValueIn
     SvMatrixEulerNode
     MatrixShearNode
+    SvMatrixNormalNode
+    SvMatrixTrackToNode
+    SvMatrixMathNode
     MatrixInterpolationNode
-    SvMatrixApplyJoinNode
 
 ## Logic
     SvLogicNode
@@ -334,10 +329,6 @@
     SvColorsInNodeMK1
     SvColorInputNode
     SvColorsOutNodeMK1
-    ---
-    SvMatrixNormalNode
-    SvMatrixTrackToNode
-    SvMatrixMathNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts

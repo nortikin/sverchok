@@ -92,6 +92,8 @@ class CylinderNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Cylinder'
     bl_icon = 'MESH_CYLINDER'
 
+    replacement_nodes = [('SvCylinderNodeMK2', dict(RadTop='RadiusT', RadBot='RadiusB', Vertices='Meridians'), None)]
+
     radTop_: FloatProperty(name='Radius Top',
                             default=1.0,
                             options={'ANIMATABLE'}, update=updateNode)

@@ -33,6 +33,7 @@ class SvLinearApproxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvLinearApproxNode'
     bl_label = 'Linear Approximation'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LINEAR_APPROXIMATION'
 
     modes = [
             ("Line", "Line", "Straight line", 1),
