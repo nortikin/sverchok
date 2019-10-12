@@ -1,1 +1,51 @@
-{"nodes": {"Cylinder": {"params": {"Separate": 1}, "bl_idname": "SvCylinderNodeMK2", "height": 100.0, "width": 140.0, "label": "", "hide": false, "location": [-352.99407958984375, 72.6220932006836], "color": [0.800000011920929, 0.0, 0.0], "use_custom_color": true}, "Viewer text mk3": {"params": {}, "bl_idname": "ViewerNodeTextMK3", "height": 100.0, "width": 140.0, "label": "", "hide": false, "location": [-185.2489471435547, 72.90972900390625], "color": [1.0, 0.8993440270423889, 0.9742509722709656], "use_custom_color": true}}, "groups": {}, "framed_nodes": {}, "update_lists": [["Cylinder", "Vertices", "Viewer text mk3", "data0"]], "export_version": "0.079"}
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Cylinder.001": {
+      "bl_idname": "SvCylinderNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 2.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -535.2488403320312,
+        69.4483413696289
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer text mk3.001": {
+      "bl_idname": "ViewerNodeTextMK3",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -326.97442626953125,
+        67.59381103515625
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Cylinder.001",
+      0,
+      "Viewer text mk3.001",
+      0
+    ]
+  ]
+}
