@@ -18,7 +18,7 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
 
         self.assert_json_equals_file(export_result, "box.json")
 
-    def test_cylinder_import(self):
+    def test_cylinder_export(self):
         node = create_node("SvCylinderNodeMK2", self.tree.name)
         node.separate = False
         node.cap_bottom = 1
