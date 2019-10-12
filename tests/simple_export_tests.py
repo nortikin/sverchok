@@ -18,6 +18,26 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
 
         self.assert_json_equals_file(export_result, "box.json")
 
+    def test_cylinder_import(self):
+        node = create_node("SvCylinderNodeMK2", self.tree.name)
+        node.separate = False
+        node.cap_bottom = 1
+        node.cap_top = 1
+        node.center = 0
+        node.angle_units = 'RAD'
+        node.radius_t = 1.0299999713897705
+        node.radius_b = 1.0299999713897705
+        node.parallels = 2
+        node.meridians = 33
+        node.height = 2.0299999713897705
+        node.twist = 1.0299999713897705
+        node.phase = 1.0299999713897705
+        node.scale = 1.0299999713897705
+        
+        export_result = create_dict_of_tree(self.tree)
+        
+        self.assert_json_equals_file(export_result, "cylinder.json")
+        
     def test_torus_export(self):
         node = create_node("SvTorusNode", self.tree.name)
         node.mode = "MAJOR_MINOR"
