@@ -94,7 +94,7 @@ def node_show_branch(self, context):
         return
     if BRANCH:
         layout = self.layout
-        layout.label(text="GIT: {}".format(BRANCH))
+        layout.label(icon='CON_CHILDOF', text=BRANCH)
 
 class SvCopyIDName(bpy.types.Operator):
     ''' Copy node's ID name to clipboard to use in code '''
