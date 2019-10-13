@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 class SvDeleteLooseNode(bpy.types.Node, SverchCustomTreeNode):
     '''Delete vertices not used in face or edge'''
     bl_idname = 'SvDeleteLooseNode'
-    bl_label = 'Delete Loose Verts'
+    bl_label = 'Delete Loose'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_DELETE_LOOSE'
 

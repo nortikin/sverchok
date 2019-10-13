@@ -6,16 +6,9 @@ Transforms
    :maxdepth: 2
 
    apply
-   barycentric_transform
-   bend_along_path
-   bend_along_surface
-   deform
-   iterate
    mirror
-   move_mk2
-   randomize
+   move
    rotation
-   scale_mk2
+   scale
+   deform
    barycentric_transform
-   transform_select
-

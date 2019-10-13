@@ -10,7 +10,6 @@ Matrix
    euler
    input
    interpolation
-   iterate
    matrix_in_mk2
    matrix_out
    matrix_math

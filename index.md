@@ -81,50 +81,55 @@
     SvScaleNodeMK2
     SvMoveNodeMK2
     SvMirrorNode
+    MatrixApplyNode
+    SvSimpleDeformNode
     SvBarycentricTransformNode
     ---
-    MatrixApplyNode
     Svb28MatrixArrayNode
-    SvIterateNode
-    ---
-    SvTransformSelectNode
-    SvSimpleDeformNode
-    SvRandomizeVerticesNode
-    SvBendAlongPathNode
-    SvBendAlongSurfaceNode
 
 ## Modifier Change
     SvDeleteLooseNode
     SvRemoveDoublesNode
+    SvSeparateMeshNode
     SvLimitedDissolve
     SvMeshBeautify
     SvTriangulateNode
-    SvRecalcNormalsNode
-    SvFlipNormalsNode
-    SvVertMaskNode
     ---
-    SvSeparateMeshNode
     PolygonBoomNode
     Pols2EdgsNode
-    SvFillsHoleNode
     SvMeshJoinNode
+    ---
+    SvFillsHoleNode
+    SvRecalcNormalsNode
+    SvFlipNormalsNode
+    SvRandomizeVerticesNode
+    ---
+    SvExtrudeEdgesNode
+    SvExtrudeSeparateNode
+    SvExtrudeRegionNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
+    SvVertMaskNode
+    SvTransformSelectNode
+    SvSplitEdgesNode
 
 ## Modifier Make
     LineConnectNodeMK2
     ---
     SvConvexHullNodeMK2
+    SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
     ---
+    SvBevelCurveNode
     SvAdaptiveEdgeNode
     AdaptivePolsNode
     SvDuplicateAlongEdgeNode
     SvFractalCurveNode
-    ---
-    SvBevelCurveNode
+    SvSolidifyNode
+    SvWireframeNode
     SvPipeNode
     SvMatrixTubeNode
-    SvWireframeNode
 
 ## List Masks
     MaskListNode
@@ -164,27 +169,12 @@
     ListFlipNode
 
 ## CAD
-    SvIntersectEdgesNodeMK2
-    ---
-    SvOffsetNode
-    SvInsetSpecial
-    SvOffsetLineNode
-    SvContourNode
-    ---
     SvBevelNode
+    SvIntersectEdgesNodeMK2
+    SvOffsetNode
+    SvLatheNode
     SvSmoothNode
     SvSmoothLines
-    ---
-    SvLatheNode
-    SvExtrudeEdgesNode
-    SvExtrudeSeparateNode
-    SvExtrudeRegionNode
-    SvSolidifyNode
-    ---
-    SvSubdivideNode
-    SvSubdivideLiteNode
-    SvUnsubdivideNode
-    SvSplitEdgesNode
     ---
     CrossSectionNode
     SvBisectNode
@@ -240,6 +230,7 @@
     SvMatrixGenNodeMK2
     MatrixOutNode
     SvMatrixApplyJoinNode
+    SvIterateNode
     MatrixDeformNode
     SvMatrixValueIn
     SvMatrixEulerNode
@@ -328,8 +319,10 @@
     SvMeshUVColorNode
     SvUVPointonMeshNode
     SvSampleUVColorNode
+    SvSubdivideLiteNode
     SvExtrudeSeparateLiteNode
     SvBVHnearNewNode
+    SvUnsubdivideNode
     SvLimitedDissolveMK2
     SvArmaturePropsNode
     SvLatticePropsNode
@@ -351,6 +344,7 @@
     SvBMtoElementNode
     SvBMOpsNodeMK2
     ---
+    SvInsetSpecial
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
     SvParticlesNode
@@ -361,6 +355,8 @@
     SvUVtextureNode
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
+    SvOffsetLineNode
+    SvContourNode
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
     SvTopologySimple
