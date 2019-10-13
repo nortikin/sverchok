@@ -172,6 +172,7 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
+    SvInsetSpecial
     SvLatheNode
     SvSmoothNode
     SvSmoothLines
@@ -344,7 +345,6 @@
     SvBMtoElementNode
     SvBMOpsNodeMK2
     ---
-    SvInsetSpecial
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
     SvParticlesNode
