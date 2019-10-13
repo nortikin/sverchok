@@ -264,7 +264,7 @@ def remove_doubles_from_edgenet(verts_in, edges_in, distance):
 class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvIntersectEdgesNodeMK2'
-    bl_label = 'Intersect Edges MK2'
+    bl_label = 'Intersect Edges'
     sv_icon = 'SV_XALL'
 
     mode: bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)

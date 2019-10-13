@@ -26,7 +26,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode, match_long_cycle)
 from sverchok.utils.modules.geom_utils import (pt_in_triangle, length_v2)
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.nodes.modifier_change.edges_intersect_mk2 import (remove_doubles_from_edgenet, intersect_edges_2d)
+from sverchok.nodes.CAD.edges_intersect_mk2 import (remove_doubles_from_edgenet, intersect_edges_2d)
 
 
 mode_items = [
