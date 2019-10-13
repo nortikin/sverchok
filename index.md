@@ -14,7 +14,6 @@
     SvNGonNode
     SvBoxNode
     SvCircleNode
-    CylinderNode
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
@@ -37,7 +36,6 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvProfileNodeMK2
     SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
@@ -58,7 +56,6 @@
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
     SvPathLengthNode
-    CentersPolsNodeMK2
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
@@ -85,10 +82,15 @@
     SvMoveNodeMK2
     SvMirrorNode
     MatrixApplyNode
-    SvSimpleDeformNode
     SvBarycentricTransformNode
     ---
     Svb28MatrixArrayNode
+    ---
+    SvTransformSelectNode
+    SvSimpleDeformNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
+    SvRandomizeVerticesNode
 
 ## Modifier Change
     SvDeleteLooseNode
@@ -105,26 +107,22 @@
     SvFillsHoleNode
     SvRecalcNormalsNode
     SvFlipNormalsNode
-    SvRandomizeVerticesNode
     ---
-    SvIterateNode
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
-    SvBendAlongPathNode
-    SvBendAlongSurfaceNode
     SvVertMaskNode
-    SvTransformSelectNode
     SvSplitEdgesNode
 
 ## Modifier Make
     LineConnectNodeMK2
     ---
-    SvConvexHullNode
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
+    SvOffsetLineNode
+    SvContourNode
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
@@ -179,6 +177,7 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
+    SvInsetSpecial
     SvLatheNode
     SvSmoothNode
     SvSmoothLines
@@ -201,7 +200,6 @@
     SvMapRangeNode
     SvEasingNode
     SvMixNumbersNode
-    Formula2Node
     SvFormulaNodeMk3
     ---
     SvGenFibonacci
@@ -221,12 +219,10 @@
     VectorPolarOutNode
     SvAttractorNode
     ---
-    EvaluateLineNode
     SvVectorLerp
     SvInterpolationStripesNode
-    SvInterpolationNode
-    SvInterpolationNodeMK2
     SvInterpolationNodeMK3
+    SvInterpolationNodeMK2
     SvLinearApproxNode
     ---
     SvHomogenousVectorField
@@ -239,12 +235,16 @@
 ## Matrix
     SvMatrixGenNodeMK2
     MatrixOutNode
+    SvMatrixApplyJoinNode
+    SvIterateNode
     MatrixDeformNode
     SvMatrixValueIn
     SvMatrixEulerNode
     MatrixShearNode
+    SvMatrixNormalNode
+    SvMatrixTrackToNode
+    SvMatrixMathNode
     MatrixInterpolationNode
-    SvMatrixApplyJoinNode
 
 ## Logic
     SvLogicNode
@@ -338,10 +338,6 @@
     SvColorInputNode
     SvColorsOutNodeMK1
     ---
-    SvMatrixNormalNode
-    SvMatrixTrackToNode
-    SvMatrixMathNode
-    ---
     SvSculptMaskNode
     SvSelectMeshVerts
     SvSetCustomMeshNormals
@@ -356,7 +352,6 @@
     SvBMtoElementNode
     SvBMOpsNodeMK2
     ---
-    SvInsetSpecial
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
     SvParticlesNode
@@ -367,8 +362,6 @@
     SvUVtextureNode
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
-    SvOffsetLineNode
-    SvContourNode
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
     SvTopologySimple

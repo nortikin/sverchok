@@ -4,10 +4,10 @@ from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info
 
 class TextViewerTest(EmptyTreeTestCase):
-    
+
     def test_text_viewer(self):
 
-        cyl = create_node("CylinderNode")
+        cyl = create_node("SvCylinderNodeMK2")
         cyl.Separate = True
         viewer_text = create_node("ViewerNodeTextMK3")
 
@@ -21,11 +21,9 @@ class TextViewerTest(EmptyTreeTestCase):
 
         # Read what the operator has written to the text buffer.
         text = bpy.data.texts['Sverchok_viewer'].as_string()
-        
+
         # Test that text in buffer equals exactly to the text saved
         # in the file from the first test run.
         with open(self.get_reference_file_path("text_viewer_out.txt"), "r") as f:
             expected_text = f.read()
             self.assertEquals(text, expected_text)
-
-

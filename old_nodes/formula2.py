@@ -42,15 +42,14 @@ class Formula2Node(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
-
+    replacement_nodes = [('SvFormulaNodeMk3', dict(X='x'), None)]
+    
     formula: StringProperty(name='formula', default='x+n[0]', update=updateNode)
     newsock: BoolProperty(name='newsock', default=False)
     typ: StringProperty(name='typ', default='')
 
     base_name = 'n'
     multi_socket_type = 'SvStringsSocket'
-
-    replacement_nodes = [('SvFormulaNodeMk3', None, None)]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula", text="")

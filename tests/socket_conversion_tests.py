@@ -85,7 +85,7 @@ class SocketConversionTests(EmptyTreeTestCase):
                 'ListSortNodeMK2': ['data'],
                 'SvListSplitNode': ['Data'],
                 'ListFLNode': ['Data'],
-                'Formula2Node': ["X", "n[0]"],
+                'SvFormulaNodeMk3': ["x", "y"],
                 'SvSetDataObjectNodeMK2': ["Objects"]
             }
         for bl_idname in tested_nodes.keys():

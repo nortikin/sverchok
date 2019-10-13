@@ -103,6 +103,8 @@ class SvInterpolationNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INTERPOLATION'
 
+    replacement_nodes = [('SvInterpolationNodeMK3', None, None)]
+    
     t_in: FloatProperty(name="t", default=.5, min=0, max=1, precision=5, update=updateNode)
 
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),

@@ -72,7 +72,7 @@ class VariableCollector(ast.NodeVisitor):
     there can be local-only variables.
 
     For example, in
-        
+
         [g*g for g in lst]
 
     only "lst" should be considered as a free variable, "g" should be not,
@@ -178,8 +178,9 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Calculate by custom formula.
     """
     bl_idname = 'SvFormulaNodeMk3'
-    bl_label = 'Formula Mk3'
+    bl_label = 'Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FORMULA'
 
     def on_update(self, context):
         self.adjust_sockets()
@@ -241,7 +242,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             variables.update(vs)
 
         return list(sorted(list(variables)))
-    
+
     def adjust_sockets(self):
         variables = self.get_variables()
         #self.debug("adjust_sockets:" + str(variables))
@@ -326,7 +327,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 results.append(vector)
             else:
                 results.extend(vector)
-        
+
         if self.wrap:
             results = [results]
 
@@ -339,4 +340,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvFormulaNodeMk3)
-

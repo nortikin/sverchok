@@ -29,6 +29,7 @@ class SvCalcMaskNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvCalcMaskNode'
     bl_label = 'Calculate Mask'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CALCULATE_MASK'
 
     level : IntProperty(name = 'Level',
                 description = "List level to operate on",

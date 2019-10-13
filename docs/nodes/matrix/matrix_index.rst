@@ -15,3 +15,4 @@ Matrix
    matrix_math
    matrix_track_to
    shear
+   matrix_normal

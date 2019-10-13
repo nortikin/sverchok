@@ -27,7 +27,7 @@ from sverchok.data_structure import Vector_generate, Vector_degenerate, updateNo
 class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     ''' Centers of polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
     bl_idname = 'CentersPolsNodeMK3'
-    bl_label = 'Centers polygons 3'
+    bl_label = 'Centers polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_CENTER_POLYGONS'
 
