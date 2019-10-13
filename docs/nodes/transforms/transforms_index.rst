@@ -12,3 +12,4 @@ Transforms
    scale
    deform
    barycentric_transform
+   transform_select
