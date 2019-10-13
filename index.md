@@ -121,6 +121,8 @@
     SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
+    SvOffsetLineNode
+    SvContourNode
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
@@ -356,8 +358,6 @@
     SvUVtextureNode
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
-    SvOffsetLineNode
-    SvContourNode
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
     SvTopologySimple
