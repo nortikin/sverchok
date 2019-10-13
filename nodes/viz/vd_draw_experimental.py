@@ -142,7 +142,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
     if GL_KIND == 'LINES' and dashed_data:
 
-        shader = dashed_data.shader
+        shader = dashed_data.dashed_shader
         batch = batch_for_shader(shader, 'LINES', {"inPos" : coords}, **params)
         shader.bind()
         shader.uniform_float("u_mvp", dashed_data.matrix)
@@ -185,7 +185,7 @@ def pack_dashed_config(config):
     dashed_config.u_dash_size = config.u_dash_size
     dashed_config.u_gap_size = config.u_gap_size
     dashed_config.m_color = config.line4f
-    dashed_config.shader = config.shader
+    dashed_config.dashed_shader = config.dashed_shader
     return dashed_config
 
 def draw_lines_uniform(context, config, coords, indices, line_color, line_width):
@@ -434,7 +434,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
 
     def add_gl_stuff_to_config(self, config):
-        config.shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
+        config.dashed_shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
 
     def fill_config(self):
 
