@@ -216,7 +216,32 @@ def draw_fragment(context, args):
     shader.uniform_float("brightness", 0.5)
     batch.draw(shader)
 
-def draw_faces(context, args):
+def draw_faces_uniform(context, args):
+    geom, config = args
+
+    if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+
+    if config.draw_gl_polygonoffset:
+        bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        bgl.glPolygonOffset(1.0, 1.0)
+
+    if config.shade == "flat":
+        draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
+    elif config.shade == "facet":
+        draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
+    elif config.shade == "smooth":
+        draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
+    elif config.shade == 'fragment':
+        if config.draw_fragment_function:
+            config.draw_fragment_function(context, args)
+        else:
+            draw_fragment(context, args)
+
+    if config.draw_gl_wireframe:
+        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
+def draw_complex(context, args):
     geom, config = args
 
     if config.draw_gl_polygonoffset:
@@ -224,32 +249,8 @@ def draw_faces(context, args):
     
     if config.display_edges:
         draw_lines_uniform(context, config, geom.verts, geom.edges, config.line4f, config.line_width)
-
     if config.display_faces:
-
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
-
-        if config.draw_gl_polygonoffset:
-            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-            bgl.glPolygonOffset(1.0, 1.0)
-
-        if config.shade == "flat":
-            draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
-        elif config.shade == "facet":
-            draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
-        elif config.shade == "smooth":
-            draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
-        elif config.shade == 'fragment':
-            if config.draw_fragment_function:
-                config.draw_fragment_function(context, args)
-            else:
-                draw_fragment(context, args)
-
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-
-
+        draw_faces_uniform(context, args)
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
@@ -531,6 +532,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     print('error inside socket_acquired_attrs: ', err)
                     self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
 
+    def format_draw_data(self, func=None, args=None):
+        return {
+            'tree_name': self.id_data.name[:],
+            'custom_function': func,
+            'args': args}
+
     def process(self):
 
         self.handle_attr_socket()
@@ -560,12 +567,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             geom.verts = coords
 
             if self.display_verts and not any([display_edges, display_faces]):
-                draw_data = {
-                    'tree_name': self.id_data.name[:],
-                    'custom_function': draw_verts,
-                    'args': (geom, config)
-                }
-                callback_enable(n_id, draw_data)
+                gl_instructions = self.format_draw_data(func=draw_verts, args=(geom, config))
+                callback_enable(n_id, gl_instructions)
                 return
 
             if edges_socket.is_linked and not faces_socket.is_linked:
@@ -573,20 +576,13 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     self.add_gl_stuff_to_config(config)
 
                 geom.edges = edge_indices
-                draw_data = {
-                    'tree_name': self.id_data.name[:],
-                    'custom_function': draw_edges,
-                    'args': (geom, config)
-                }
-                callback_enable(n_id, draw_data)
+                gl_instructions = self.format_draw_data(func=draw_edges, args=(geom, config))
+                callback_enable(n_id, gl_instructions)
                 return
 
             if faces_socket.is_linked:
 
-                # we could offer different optimizations, like
-                #  -expecting only tris as input, then no processing
-                #  -expecting only quads, then minimal processing needed
-                #  -expecting mixed bag, then ensure_triangles (current default)
+                #  expecting mixed bag of tris/quads/ngons
                 if self.display_faces:
                     geom.faces = ensure_triangles(coords, face_indices)
 
@@ -597,30 +593,20 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
-                if self.display_faces:
 
+                if self.display_faces:
                     self.faces_diplay(geom, config)
 
-                draw_data = {
-                    'tree_name': self.id_data.name[:],
-                    'custom_function': draw_faces,
-                    'args': (geom, config)
-                }
-                callback_enable(n_id, draw_data)
+                gl_instructions = self.format_draw_data(func=draw_complex, args=(geom, config))
+                callback_enable(n_id, gl_instructions)
                 return
 
             return
 
         elif matrix_socket.is_linked:
             matrices = matrix_socket.sv_get(deepcopy=False, default=[Matrix()])
-
-            draw_data = {
-                'tree_name': self.id_data.name[:],
-                'custom_function': draw_matrix,
-                'args': (matrices,)
-            }
-
-            callback_enable(n_id, draw_data)
+            gl_instructions = self.format_draw_data(func=draw_matrix, args=(matrices, ))
+            callback_enable(n_id, gl_instructions)
 
     def copy(self, node):
         self.n_id = ''
