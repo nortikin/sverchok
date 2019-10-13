@@ -82,10 +82,15 @@
     SvMoveNodeMK2
     SvMirrorNode
     MatrixApplyNode
-    SvSimpleDeformNode
     SvBarycentricTransformNode
     ---
     Svb28MatrixArrayNode
+    ---
+    SvTransformSelectNode
+    SvSimpleDeformNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
+    SvRandomizeVerticesNode
 
 ## Modifier Change
     SvDeleteLooseNode
@@ -102,15 +107,11 @@
     SvFillsHoleNode
     SvRecalcNormalsNode
     SvFlipNormalsNode
-    SvRandomizeVerticesNode
     ---
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
-    SvBendAlongPathNode
-    SvBendAlongSurfaceNode
     SvVertMaskNode
-    SvTransformSelectNode
     SvSplitEdgesNode
 
 ## Modifier Make
