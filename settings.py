@@ -36,6 +36,16 @@ def get_params(settings_and_fallbacks):
             setattr(props, k, value)
     return props
 
+# getDpiFactor and getDpi are lifted from Animation Nodes :)
+
+def get_dpi_factor():
+    return get_dpi() / 72
+
+def get_dpi():
+    systemPreferences = bpy.context.preferences.system
+    retinaFactor = getattr(systemPreferences, "pixel_size", 1)
+    return systemPreferences.dpi * retinaFactor
+
 
 class SverchokPreferences(AddonPreferences):
 
@@ -228,6 +238,11 @@ class SverchokPreferences(AddonPreferences):
     
     index_viewer_scale: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default index viewer scale')
+
+    def set_nodeview_render_params(self, context):
+        # i think these are both the same..
+        self.render_scale = get_dpi_factor()
+        self.render_location_xy_multiplier = get_dpi_factor()
 
     ##
 
