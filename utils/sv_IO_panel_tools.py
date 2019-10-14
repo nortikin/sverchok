@@ -23,7 +23,6 @@ import zipfile
 import json
 import re
 import urllib
-from urllib.request import urlopen
 from itertools import chain
 
 import bpy
@@ -32,6 +31,7 @@ from sverchok import old_nodes
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
+from sverchok.utils.sv_requests import urlopen
 
 # pylint: disable=w0621
 

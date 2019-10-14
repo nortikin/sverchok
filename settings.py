@@ -8,8 +8,8 @@ from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools, logging
+from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
-
 
 def get_params(settings_and_fallbacks):
     """
@@ -236,6 +236,10 @@ class SverchokPreferences(AddonPreferences):
     external_editor: StringProperty(description='which external app to invoke to view sources')
     real_sverchok_path: StringProperty(description='use with symlinked to get correct src->dst')
 
+    github_token : StringProperty(name = "GitHub API Token",
+                    description = "GitHub API access token. Should have 'gist' OAuth scope.",
+                    subtype="PASSWORD")
+
     # Logging settings
 
     def update_log_level(self, context):
@@ -302,6 +306,13 @@ class SverchokPreferences(AddonPreferences):
             col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
             col1.prop(self, "external_editor", text="Ext Editor")
             col1.prop(self, "real_sverchok_path", text="Src Directory")
+
+            box = col1.box()
+            box.label(text="Export to Gist")
+            box.prop(self, "github_token")
+            box.label(text="To export node trees to gists, you have to create a GitHub API access token.")
+            box.label(text="For more information, visit " + TOKEN_HELP_URL)
+            box.operator("node.sv_github_api_token_help", text="Visit documentation page")
 
             col2 = col_split.split().column()
             col2.label(text="Frame change handler:")
