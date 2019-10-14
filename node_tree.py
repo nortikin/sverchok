@@ -487,8 +487,8 @@ class SverchCustomTreeNode:
             from sverchok.utils.context_managers import sv_preferences
             with sv_preferences() as prefs:
                 getattr(prefs, 'set_nodeview_render_params')(None)
-        except:
-            print('failed to get gl scale info')
+        except Exception as err:
+            print('failed to get gl scale info', err)
 
 
 classes = [
