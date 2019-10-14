@@ -243,6 +243,8 @@ class SverchokPreferences(AddonPreferences):
         # i think these are both the same..
         self.render_scale = get_dpi_factor()
         self.render_location_xy_multiplier = get_dpi_factor()
+        print(f'set render_scale to: {self.render_scale}')
+        print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
 
     ##
 
