@@ -5,14 +5,9 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-#
-#  shader hoisted from https://stackoverflow.com/questions/52928678/dashed-line-in-opengl3
-#
-
-import sverchok
 
 
-dashed_vertex_shader = '''
+vertex_shader = '''
     layout (location = 0) in vec3 inPos;
 
     flat out vec3 startPos;
@@ -29,7 +24,14 @@ dashed_vertex_shader = '''
     }
 '''
 
-dashed_fragment_shader = '''
+geometry_shader = '''
+
+
+
+
+'''
+
+fragment_shader = '''
     flat in vec3 startPos;
     in vec3 vertPos;
 
@@ -51,28 +53,15 @@ dashed_fragment_shader = '''
     }
 '''
 
-def screen_v3dBGL_dashed(context, args):
-    # region = context.region
-    # region3d = context.space_data.region_3d
-    matrix = context.region_data.perspective_matrix
-    
-    shader = args.shader
-    batch = args.batch
-
-    shader.bind()
-    shader.uniform_float("u_mvp", matrix)
-    shader.uniform_float("u_resolution", args.u_resolution)
-    shader.uniform_float("u_dashSize", args.u_dash_size)    
-    shader.uniform_float("u_gapSize", args.u_gap_size)
-    shader.uniform_float("m_color", args.line4f)
-
-    batch.draw(shader)
+def draw_function(context, args):
+    ...
 
 
-##### -----------------------------------------------------------------------
-#
-#     line thickness shader   .woohooo! 
-#
-##### -----------------------------------------------------------------------
+def get_shader():
+    shader = lambda: None
+    shader.vertex_shader = vertex_shader
+    shader.geometry_shader = geometry_shader
+    shader.fragment_shader = fragment_shader
+    shader.draw_function = draw_function
+    return shader
 
-line_shader = sverchok.utils.modules.line_shader.get_shader()
