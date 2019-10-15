@@ -78,4 +78,4 @@ def screen_v3dBGL_dashed(context, args):
 ##### -----------------------------------------------------------------------
 
 
-line_shader = sverchok.utils.modules.line_shader.get_shader()
+line_shader_config = sverchok.utils.modules.line_shader.get_shader_config()

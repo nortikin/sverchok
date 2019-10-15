@@ -77,7 +77,7 @@ def draw_function(context, args):
     batch.draw(shader)
 
 
-def get_shader():
+def get_shader_config():
     shader = lambda: None
     shader.vertex_shader = vertex_shader
     shader.geometry_shader = geometry_shader
