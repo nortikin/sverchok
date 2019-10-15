@@ -17,13 +17,7 @@ from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
-from sverchok.utils.sv_batch_primitives import MatrixDraw28
 
-
-def screen_v3dMatrix(context, args):
-    mdraw = MatrixDraw28()
-    for matrix in args[0]:
-        mdraw.draw_matrix(matrix)
 
 def screen_v3dBGL(context, args):
     # region = context.region
@@ -69,7 +63,6 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
         inew = self.inputs.new
         inew('SvVerticesSocket', 'verts')
         inew('SvStringsSocket', 'edges')
-        inew('SvMatrixSocket', 'matrix')
 
     def draw_buttons(self, context, layout):
         layout.row().prop(self, "activate", text="ACTIVATE")
@@ -105,20 +98,6 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
                 'args': (shader, batch, line4f)
             }            
 
-            callback_enable(n_id, draw_data)
-            return
-
-        matrix_socket = self.inputs['matrix']
-        if matrix_socket.is_linked:
-            matrices = matrix_socket.sv_get(deepcopy=False, default=[Matrix()])
-
-            draw_data = {
-                'tree_name': self.id_data.name[:],
-                'custom_function': screen_v3dMatrix,
-                'args': (matrices,)
-            }            
-
-            callback_enable(n_id, draw_data)
 
     def copy(self, node):
         self.n_id = ''
