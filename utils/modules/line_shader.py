@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import gpu
+
 
 
 vertex_shader = '''
@@ -53,8 +55,26 @@ fragment_shader = '''
     }
 '''
 
+
+# gpu.types.GPUShader(vertexcode, fragcode, geocode=None, libcode=None, defines=None)
+# gpu.types.GPUShader(vertexcode, fragcode, geocode=None)
+#      batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=indices)
+
+
 def draw_function(context, args):
-    ...
+    matrix = context.region_data.perspective_matrix
+    
+    shader = args.shader
+    batch = args.batch
+
+    shader.bind()
+    shader.uniform_float("u_mvp", matrix)
+    shader.uniform_float("u_resolution", args.u_resolution)
+    shader.uniform_float("u_dashSize", args.u_dash_size)    
+    shader.uniform_float("u_gapSize", args.u_gap_size)
+    shader.uniform_float("m_color", args.line4f)
+
+    batch.draw(shader)
 
 
 def get_shader():

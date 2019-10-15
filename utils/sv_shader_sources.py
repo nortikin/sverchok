@@ -73,6 +73,9 @@ def screen_v3dBGL_dashed(context, args):
 #
 #     line thickness shader   .woohooo! 
 #
+#     https://docs.blender.org/api/blender2.8/gpu.types.html#gpu.types.GPUShader
+#
 ##### -----------------------------------------------------------------------
+
 
 line_shader = sverchok.utils.modules.line_shader.get_shader()
