@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 import gpu
-
+from gpu_extras.batch import batch_for_shader
 
 
 vertex_shader = '''
@@ -56,18 +56,13 @@ fragment_shader = '''
 '''
 
 
-# gpu.types.GPUShader(vertexcode, fragcode, geocode=None, libcode=None, defines=None)
-# gpu.types.GPUShader(vertexcode, fragcode, geocode=None)
-#      batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=indices)
-
-
 def draw_function(context, args):
-    matrix = context.region_data.perspective_matrix
     
-    shader = args.shader
-    batch = args.batch
+    shader = gpu.types.GPUShader(args.v_shader, args.f_shader, geocode=args.g_shader)
+    batch = batch_for_shader(shader, 'LINES', {"pos" : args.coords}, indices=args.indices)
 
     shader.bind()
+    matrix = context.region_data.perspective_matrix
     shader.uniform_float("u_mvp", matrix)
     shader.uniform_float("u_resolution", args.u_resolution)
     shader.uniform_float("u_dashSize", args.u_dash_size)    
@@ -79,9 +74,9 @@ def draw_function(context, args):
 
 def get_shader_config():
     shader = lambda: None
-    shader.vertex_shader = vertex_shader
-    shader.geometry_shader = geometry_shader
-    shader.fragment_shader = fragment_shader
+    shader.v_shader = vertex_shader
+    shader.g_shader = geometry_shader
+    shader.f_shader = fragment_shader
     shader.draw_function = draw_function
     return shader
 
