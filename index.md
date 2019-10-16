@@ -60,6 +60,7 @@
     GetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
+    SvIntersectCircleCircleNode
     SvIntersectPlanePlaneNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
