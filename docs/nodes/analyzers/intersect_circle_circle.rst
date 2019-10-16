@@ -55,7 +55,7 @@ Example of usage
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/analyzer/intersect_circle_circle/intersect_circle_circle_example.png
   :alt: circle_intersection_procedural.png
 
-Using the node to calculate and extensible scissors-like structure
+Using the node to calculate an extensible scissors-like structure
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/analyzer/intersect_circle_circle/intersect_circle_circle_example_scissors_structure.png
   :alt: Sverchok_Distance_point_line.PNG
