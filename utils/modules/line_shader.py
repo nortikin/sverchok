@@ -27,7 +27,25 @@ vertex_shader = '''
 '''
 
 geometry_shader = '''
+    /* 
 
+    takes an edge
+    takes a quantity "number of segments"
+
+    returns several perpendicular edges, to thicken lines
+
+    */
+
+    layout(lines) in;
+    layout(line_strip, max_vertices = 2) out;
+
+    void main() {
+      for(int i = 0; i < 2; i++) {
+        gl_Position = gl_in[i].gl_Position + vec4(1.0, 0.0, 0.0, 0.0);
+        EmitVertex();
+      }
+      EndPrimitive();
+    }
 
 
 
@@ -57,8 +75,9 @@ fragment_shader = '''
 
 
 def draw_function(context, args):
+    args, config = args
     
-    shader = gpu.types.GPUShader(args.v_shader, args.f_shader, geocode=args.g_shader)
+    shader = gpu.types.GPUShader(config.v_shader, config.f_shader, geocode=config.g_shader)
     batch = batch_for_shader(shader, 'LINES', {"pos" : args.coords}, indices=args.indices)
 
     shader.bind()
@@ -68,15 +87,17 @@ def draw_function(context, args):
     shader.uniform_float("u_dashSize", args.u_dash_size)    
     shader.uniform_float("u_gapSize", args.u_gap_size)
     shader.uniform_float("m_color", args.line4f)
+    # shader.uniform_float("u_offset", args.u_offset)
+    # shader.uniform_float("u_num_segs", args.u_num_segs)
 
     batch.draw(shader)
 
 
 def get_shader_config():
-    shader = lambda: None
-    shader.v_shader = vertex_shader
-    shader.g_shader = geometry_shader
-    shader.f_shader = fragment_shader
-    shader.draw_function = draw_function
-    return shader
+    config = lambda: None
+    config.v_shader = vertex_shader
+    config.g_shader = geometry_shader
+    config.f_shader = fragment_shader
+    config.draw_function = draw_function
+    return config
 

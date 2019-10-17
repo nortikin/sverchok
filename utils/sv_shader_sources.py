@@ -10,7 +10,7 @@
 #
 
 import sverchok
-
+from sverchok.utils.modules import line_shader
 
 dashed_vertex_shader = '''
     layout (location = 0) in vec3 inPos;
@@ -78,4 +78,4 @@ def screen_v3dBGL_dashed(context, args):
 ##### -----------------------------------------------------------------------
 
 
-line_shader_config = sverchok.utils.modules.line_shader.get_shader_config()
+line_shader_config = sverchok.utils.modules.line_shader.get_shader_config

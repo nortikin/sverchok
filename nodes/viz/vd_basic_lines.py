@@ -13,11 +13,11 @@ from gpu_extras.batch import batch_for_shader
 # import mathutils
 from mathutils import Vector, Matrix
 import sverchok
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, FloatProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import node_id, updateNode
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
-
+from sverchok.utils.sv_shader_sources import line_shader_config
 
 def screen_v3dBGL(context, args):
     # region = context.region
@@ -55,6 +55,13 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
         subtype='COLOR', min=0, max=1,
         default=(0.3, 0.3, 0.3, 1.0), name='edge color', size=4, update=updateNode)
 
+    u_dash_size: FloatProperty(default=0.12, min=0.0001, name="dash size", update=updateNode)
+    u_gap_size: FloatProperty(default=0.19, min=0.0001, name="gap size", update=updateNode)
+    u_resolution: FloatVectorProperty(default=(25.0, 18.0), size=2, min=0.01, name="resolution", update=updateNode)
+
+    u_num_segs: IntProperty(default=2, name='num segs', update=updateNode)
+    u_offset: FloatProperty(default=0.2, name='offset', update=updateNode)
+
     @property
     def fully_enabled(self):
         return "edges" in self.inputs
@@ -85,18 +92,24 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
             propv = verts_socket.sv_get(deepcopy=False, default=[])
             prope = edges_socket.sv_get(deepcopy=False, default=[])
       
-            coords = propv[0]
-            indices = prope[0]
-            shader = gpu.shader.from_builtin('3D_UNIFORM_COLOR')
-            batch = batch_for_shader(shader, 'LINES', {"pos" : coords}, indices=indices)
+            args = lambda: None
+            args.coords = propv[0]
+            args.indices = prope[0]
+            args.line4f = self.edge_color[:]
+            args.u_resolution = self.u_resolution[:]
+            args.u_dash_size = self.u_dash_size
+            args.u_gap_size = self.u_gap_size
+            args.u_offset = self.u_offset
+            args.u_num_segs = self.u_num_segs
+            
+            config = line_shader_config()
 
-            line4f = self.edge_color[:]
-
-            draw_data = {
+            gl_instructions = {
                 'tree_name': self.id_data.name[:],
-                'custom_function': screen_v3dBGL,
-                'args': (shader, batch, line4f)
-            }            
+                'custom_function': config.draw_function,
+                'args': (args, config)
+            }
+            callback_enable(n_id, gl_instructions)
 
 
     def copy(self, node):
