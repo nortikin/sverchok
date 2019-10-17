@@ -1,4 +1,4 @@
-Intersect Line Line
+Circle Intersection
 ===================
 
 Functionality

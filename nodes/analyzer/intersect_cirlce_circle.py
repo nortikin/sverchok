@@ -143,7 +143,7 @@ class SvIntersectCircleCircleNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     define_plane: EnumProperty(
-        name='Plane defined by', description='Howto define intersection plane',
+        name='Plane defined by', description='How to define intersection plane',
         items=modes, default='Point',
         update=change_mode)
 
