@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 
-from .lin_alg import almost_equal, is_more, dot_product, is_ccw_polygon
+from .lin_alg import almost_equal, is_more, dot_product, is_ccw_polygon, cross_product
 
 
 """
@@ -50,8 +50,11 @@ class Point:
         return self.__class__(None, tuple(co1 - co2 for co1, co2 in zip(self.co, other.co)))
 
     def __mul__(self, other):
-        # returns dot product
-        return dot_product(self.co, other.co)
+        # returns dot product or multiplication vector to scalar
+        if isinstance(other, self.__class__):
+            return dot_product(self.co, other.co)
+        else:
+            return self.__class__(None, [co * other for co in self.co])
 
     def length(self):
         # returns length as vector
@@ -63,12 +66,15 @@ class Point:
         self.co = tuple(co / mem_len for co in list(self.co))
         return self
 
+    def cross_product(self, other):
+        return self.__class__(None, cross_product(self.co, other.co))
+
 
 class HalfEdge:
     accuracy = 1e-5
 
     def __init__(self, mesh, point, face=None):
-        self.mesh = mesh
+        self.mesh = mesh  # can be just None but in this case some method weren't be available
         self.origin = point
         self.face = face
 
@@ -84,6 +90,10 @@ class HalfEdge:
     @property
     def ccw_hedges(self):
         # returns hedges originated in one point
+        if not self.mesh:
+            raise AttributeError("This method doesn't work with hedges({}) without link to a mesh."
+                                 "Besides, mesh object should have proper number of half edges "
+                                 "in hedges list".format(self))
         yield self
         next_edge = self.last.twin
         counter = 0
@@ -97,6 +107,10 @@ class HalfEdge:
     @property
     def loop_hedges(self):
         # returns hedges bounding face
+        if not self.mesh:
+            raise AttributeError("This method doesn't work with hedges({}) without link to a mesh."
+                                 "Besides, mesh object should have proper number of half edges "
+                                 "in hedges list".format(self))
         yield self
         next_edge = self.next
         counter = 0
@@ -140,6 +154,7 @@ class Face:
         self.mesh = mesh
         self.outer = None
         self.inners = []
+        self.select = False
 
     @property
     def is_unbounded(self):
@@ -158,7 +173,7 @@ class DCELMesh:
         self.hedges = []
         self.faces = []
 
-    def from_sv_faces(self, verts, faces):
+    def from_sv_faces(self, verts, faces, face_mask=None):
         # todo: self intersection polygons? double repeated polygons???
         half_edges_list = dict()
         unbounded_face = self.Face(self)
@@ -167,9 +182,10 @@ class DCELMesh:
         self.points.extend([self.Point(self, co) for co in verts])
 
         # Generate outer faces and there hedges
-        for face in faces:
+        for face, fm in zip(faces, face_mask):
             face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
             f = self.Face(self)
+            f.select = bool(fm)
             loop = []
             for i in range(len(face)):
                 origin_i = face[i]
@@ -332,6 +348,61 @@ class DCELMesh:
 
         return sv_verts, sv_edges
 
+    def dissolve_selected_faces(self):
+
+        # mark unused hedges and faces
+        boundary_hedges = []
+        un_used_hedges = set()
+        for face in self.faces:
+            if face.select:
+                for hedge in face.outer.loop_hedges:
+                    if hedge.twin.face.select:
+                        un_used_hedges.add(hedge)
+                    else:
+                        boundary_hedges.append(hedge)
+        Debugger.add_hedges(boundary_hedges)
+        # create new faces
+        used = set()
+        new_faces = []
+        for hedge in boundary_hedges:
+            if hedge in used:
+                continue
+            used.add(hedge)
+            face = self.Face(self)
+            new_faces.append(face)
+            face.select = True
+            face.outer = hedge
+            hedge.face = face
+            for ccw_hedge in hedge.ccw_hedges:
+                if id(ccw_hedge) != id(hedge) and not ccw_hedge.face.select:
+                    break
+            last_hedge = ccw_hedge.twin
+            hedge.last = last_hedge
+            last_hedge.next = hedge
+            used.add(last_hedge)
+            last_hedge.face = face
+            count = 0
+            current_hedge = last_hedge
+            while id(current_hedge) != id(hedge):
+                for ccw_hedge in current_hedge.ccw_hedges:
+                    if id(ccw_hedge) != id(hedge) and not ccw_hedge.face.select:
+                        break
+                last_hedge = ccw_hedge.twin
+                used.add(last_hedge)
+                last_hedge.face = face
+                current_hedge.last = last_hedge
+                last_hedge.next = current_hedge
+                current_hedge = last_hedge
+                count += 1
+                if count > len(self.hedges):
+                    raise RecursionError("Dissolve face algorithm can't built a loop from hedge - {}".format(hedge))
+        # update faces
+        self.faces = [face for face in self.faces if not face.select]
+        self.faces.extend(new_faces)
+        # update hedges
+        self.hedges = [hedge for hedge in self.hedges if hedge not in un_used_hedges]
+        # todo how to rebuilt points list
+
 
 """
 The sooner the DCEL does not have any indexes of its elements
@@ -461,8 +532,60 @@ class Debugger:
         Debugger.msg.clear()
         Debugger._count = 0
         Debugger.to_print = to_print
+        Debugger.half_edges.clear()
+
+    # #########__for draw function__#######
 
     @staticmethod
-    def set_dcel_data(half_edges):
+    def add_hedges(hedges):
+        if isinstance(hedges, list):
+            Debugger.half_edges.extend(hedges)
+        else:
+            Debugger.half_edges.append(hedges)
+
+    @staticmethod
+    def _rotate_by_direction(points, normal):
+        # https://habr.com/ru/post/131931/
+        x_axis = normal
+        y_axis = normal.cross_product(Point(None,(0, 0, 1)))
+        return [x_axis * p.co[x] + y_axis * p.co[y] for p in points]
+
+    @staticmethod
+    def _get_arrow(edge, scale=1.0):
+        nor = (edge[1] - edge[0]).normalize()
+        tri = [Point(None, (1, 0, 0)) * scale, Point(None, (-1, 1, 0)) * scale, Point(None, (-1, -1, 0)) * scale]
+        tri = Debugger._rotate_by_direction(tri, nor)
+        tri = [p + edge[1] for p in tri]
+        return tri, (4, 5, 6)
+
+    @staticmethod
+    def _shift_hedge(hedge, scale=1.0):
+        v1 = (hedge.origin - hedge.twin.origin).normalize()
+        v2 = Point(None, (0, 0, 1))
+        nor = v1.cross_product(v2) * scale
+        edge = ((hedge.origin - (v1 * (scale * 2))), hedge.twin.origin + (v1 * (scale * 2)))
+        return [p + nor for p in edge]
+
+    @staticmethod
+    def _edge_to_face(edge):
+        return [*edge, edge[1] + Point(None, (0, 0, 0.1)), edge[0] + Point(None,(0, 0, 0.1))], (0, 1, 2, 3)
+
+    @staticmethod
+    def _hedge_to_sv(hedge, scale=1.0):
+        edge_co = Debugger._shift_hedge(hedge, scale)
+        hedge_face, hedge_i = Debugger._edge_to_face(edge_co)
+        arrow_v, arrow_i = Debugger._get_arrow(edge_co, scale)
+        return [p.co for p in hedge_face] + [p.co for p in arrow_v], [hedge_i, arrow_i]
+
+    @staticmethod
+    def hedges_to_sv_mesh(scale=0.1, clear=False):
         # for visualization all DCEL data
-        Debugger.half_edges = list(half_edges)
+        if not Debugger.half_edges:
+            print("DCEL DEBUGER: You should record your half edges into the class before calling the method")
+        out = []
+        for i, hedge in enumerate(Debugger.half_edges):
+            v, f = Debugger._hedge_to_sv(hedge, scale)
+            out.append([v, f])
+        if clear:
+            Debugger.half_edges.clear()
+        return out
