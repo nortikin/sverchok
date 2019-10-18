@@ -35,7 +35,16 @@ env:
 
 # Actually run all tests.
 script:
+  - |
+    CHANGES=$(git log --stat $TRAVIS_COMMIT_RANGE docs .travis.yml build_docs.sh | wc -l)
+    if [ $CHANGES -gt 0 ]
+    then DOCS_UPDATED=Y
+    else DOCS_UPDATED=N
+    fi
+    export DOCS_UPDATED
   - bash ./run_tests.sh
+
+before_deploy:
   - bash ./build_docs.sh
 
 deploy:
@@ -43,10 +52,10 @@ deploy:
   skip_cleanup: true
   api_key: $GITHUB_TOKEN
   keep_history: true
-  file: docs/_build/html.tar.bz2
+  file: docs/_build/sverchok_documentation.tar.bz2
   draft: true
   on:
-    tags: true
+    condition: $DOCS_UPDATED = Y
     branch: b28_prelease_master
 
 cache:
