@@ -6,7 +6,7 @@ Analyzers
    :maxdepth: 2
 
    area
-   bbox
+   bbox_mk2
    diameter
    distance_pp
    distance_point_line
@@ -15,6 +15,7 @@ Analyzers
    deformation
    edge_angles
    intersect_line_sphere
+   intersect_circle_circle
    intersect_plane_plane
    kd_tree
    kd_tree_edges_mk2
