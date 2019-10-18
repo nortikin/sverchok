@@ -6,6 +6,11 @@ branches:
     - master
     - b28_prelease_master
 
+addons:
+  apt:
+    packages:
+      - python3-sphinx
+
 install:
   - |
     #set -x
