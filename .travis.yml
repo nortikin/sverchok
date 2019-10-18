@@ -55,7 +55,7 @@ script:
   - bash ./run_tests.sh
 
 before_deploy:
-  - sudo apt-get install python-sphinx3
+  - sudo apt-get update && sudo apt-get install -y python-sphinx3
   - bash ./build_docs.sh
 
 deploy:
