@@ -30,6 +30,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.cad_module_class import CAD_ops
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.geom_2d.intersections import intersect_sv_edges
 
 modeItems = [("2D", "2D", "", 0), ("3D", "3D", "", 1)]
 
@@ -267,10 +268,13 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Intersect Edges MK2'
     sv_icon = 'SV_XALL'
 
+    mode_items_2d = [("Alg 1", "Alg 1", "", 0), ("Sweep line", "Sweep line", "", 1)]
+
     mode: bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)
     rm_switch: bpy.props.BoolProperty(update=updateNode)
     rm_doubles: bpy.props.FloatProperty(min=0.0, default=0.0001, step=0.1, update=updateNode)
     epsilon: bpy.props.FloatProperty(min=1.0e-5, default=1.0e-5, step=0.02, update=updateNode)
+    alg_mode_2d: bpy.props.EnumProperty(items=mode_items_2d, default="Alg 1", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts_in')
@@ -280,7 +284,10 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Edges_out')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "mode", expand=True)
+        row = layout.column(align=True)
+        row.row(align=True).prop(self, "mode", expand=True)
+        if self.mode == "2D":
+            row.row(align=True).prop(self, "alg_mode_2d", expand=True)
         r = layout.row(align=True)
         r1 = r.split(factor=0.32)
         r1.prop(self, 'rm_switch', text='doubles', toggle=True)
@@ -304,8 +311,10 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         if self.mode == "3D":
             verts_out, edges_out = intersect_edges_3d(verts_in, edges_in, self.epsilon)
-        else:
+        elif self.alg_mode_2d == "Alg 1":
             verts_out, edges_out = intersect_edges_2d(verts_in, edges_in, self.epsilon)
+        else:
+            verts_out, edges_out = intersect_sv_edges(verts_in, edges_in, self.epsilon)
 
         # post processing step to remove doubles
         if self.rm_switch:

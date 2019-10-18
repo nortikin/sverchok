@@ -180,6 +180,34 @@ def run_all_tests():
     finally:
         logging.getLogger().removeHandler(log_handler)
 
+
+def run_test_from_file(file_name):
+    """
+    Run test from file given by name. File should be places in tests folder
+    :param file_name: sting like avl_tree_tests.py
+    :return: result
+    """
+    tests_path = get_tests_path()
+    log_handler = logging.FileHandler(join(tests_path, "sverchok_tests.log"), mode='w')
+    logging.getLogger().addHandler(log_handler)
+    try:
+        loader = unittest.TestLoader()
+        suite = loader.discover(start_dir=tests_path, pattern=file_name)
+        buffer = StringIO()
+        runner = unittest.TextTestRunner(stream=buffer, verbosity=2)
+        result = runner.run(suite)
+        info("Test cases result:\n%s", buffer.getvalue())
+        return result
+    finally:
+        logging.getLogger().removeHandler(log_handler)
+
+
+""" using:
+from sverchok.utils.testing import run_test_from_file
+run_test_from_file("avl_tree_tests.py")
+"""
+
+
 ##############################################
 # Base test case classes
 ##############################################
