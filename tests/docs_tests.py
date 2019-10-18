@@ -1,12 +1,17 @@
 
 from os.path import basename, splitext, dirname, join, exists
 from os import walk
+from glob import glob
 
 import sverchok
 from sverchok.utils.testing import *
 from sverchok.utils.logging import debug, info, error
 
 class DocumentationTests(SverchokTestCase):
+
+    def get_nodes_docs_directory(self):
+        sv_init = sverchok.__file__
+        return join(dirname(sv_init), "docs", "nodes")
 
     def test_all_node_docs_in_trees(self):
         """
@@ -38,8 +43,7 @@ class DocumentationTests(SverchokTestCase):
                 error("The following files are not mentioned in %s:\n%s", index_name, "\n".join(bad_files))
                 self.fail("Not all node documentation files are mentioned in their corresponding indexes.")
 
-        sv_init = sverchok.__file__
-        docs_dir = join(dirname(sv_init), "docs", "nodes")
+        docs_dir = self.get_nodes_docs_directory()
 
         for directory, subdirs, fnames in walk(docs_dir):
             with self.subTest(directory=basename(directory)):
@@ -74,10 +78,37 @@ class DocumentationTests(SverchokTestCase):
                     error("The following files, which are referenced from %s, do not exist:\n%s", index_name, "\n".join(bad_files))
                     self.fail("Not all node documentation referenced from index files exist.")
 
-        sv_init = sverchok.__file__
-        docs_dir = join(dirname(sv_init), "docs", "nodes")
+        docs_dir = self.get_nodes_docs_directory()
 
         for directory, subdirs, fnames in walk(docs_dir):
             with self.subTest(directory=basename(directory)):
                 check_dir(directory)
+
+    def test_node_docs_existance(self):
+        sv_init = sverchok.__file__
+        nodes_dir = join(dirname(sv_init), "nodes")
+        docs_dir = self.get_nodes_docs_directory()
+
+        def check_category(directory):
+            dir_name = basename(directory)
+            bad_files = []
+
+            for module_path in glob(join(directory, "*.py")):
+                module_file = basename(module_path)
+                if module_file == "__init__.py":
+                    continue
+                module_name, ext = splitext(module_file)
+                doc_name = module_name + ".rst"
+                doc_path = join(docs_dir, dir_name, doc_name)
+                if not exists(doc_path):
+                    bad_files.append(module_file)
+
+            if bad_files:
+                error("The following nodes do not have corresponding documentation files:\n%s", "\n".join(bad_files))
+                self.fail("Not all nodes have corresponding documentation.")
+
+        for directory, subdirs, fnames in walk(docs_dir):
+            with self.subTest(directory=basename(directory)):
+                check_category(directory)
+
 
