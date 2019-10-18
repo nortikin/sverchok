@@ -46,6 +46,18 @@ env:
 # Actually run all tests.
 script:
   - bash ./run_tests.sh
+  - bash ./build_docs.sh
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  api_key: $GITHUB_TOKEN
+  keep_history: true
+  file: docs/_build/html.tar.bz2
+  draft: true
+  on:
+    tags: true
+    branch: b28_prelease_master
 
 cache:
   directories:
