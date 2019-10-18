@@ -160,18 +160,21 @@ def get_tests_path():
     tests_dir = join(dirname(sv_init), "tests")
     return tests_dir
 
-def run_all_tests():
+def run_all_tests(pattern=None):
     """
     Run all existing test cases.
     Test cases are looked up under tests/ directory.
     """
+    
+    if pattern is None:
+        pattern = "*_tests.py"
 
     tests_path = get_tests_path()
     log_handler = logging.FileHandler(join(tests_path, "sverchok_tests.log"), mode='w')
     logging.getLogger().addHandler(log_handler)
     try:
         loader = unittest.TestLoader()
-        suite = loader.discover(start_dir = tests_path, pattern = "*_tests.py")
+        suite = loader.discover(start_dir = tests_path, pattern = pattern)
         buffer = StringIO()
         runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
         result = runner.run(suite)

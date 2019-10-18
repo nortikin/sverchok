@@ -19,3 +19,7 @@ Modifier Make
    voronoi_2d
    wafel
    wireframe
+   offset_line
+   bevel_curve
+   contour2D
+   fractal_curve
