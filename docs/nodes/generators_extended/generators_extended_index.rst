@@ -11,9 +11,10 @@ Generators Extended
    hilbert
    hilbert3d
    hilbert_image
-   hexa_grid_mk1
+   polygon_grid
    image_components
    profile_mk2
+   profile_mk3
    regular_solid
    mesh_eval
    ring
@@ -22,4 +23,6 @@ Generators Extended
    scripted_intro
    script_mk2
    smooth_lines
+   ellipse
+   super_ellipsoid
    

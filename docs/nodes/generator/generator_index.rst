@@ -11,8 +11,9 @@ Generators
    bricks
    circle
    cylinder
+   cylinder_mk2
    image
-   line_mk2
+   line_mk3
    ngon
    plane_mk2
    random_vector_mk2
