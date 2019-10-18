@@ -45,7 +45,30 @@ env:
 
 # Actually run all tests.
 script:
+  - |
+    CHANGES=$(git log --stat $TRAVIS_COMMIT_RANGE docs .travis.yml build_docs.sh | wc -l)
+    if [ $CHANGES -gt 0 ]
+    then DOCS_UPDATED=Y
+    else DOCS_UPDATED=N
+    fi
+    export DOCS_UPDATED
   - bash ./run_tests.sh
+
+before_deploy:
+  - sudo apt-get update && sudo apt-get install -y python3-sphinx
+  - bash ./build_docs.sh
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key: $GITHUB_TOKEN
+  github_token: $GITHUB_TOKEN
+  keep_history: true
+  file: docs/_build/sverchok_documentation.tar.bz2
+  draft: true
+  on:
+    condition: $DOCS_UPDATED = Y
+    branch: master
 
 cache:
   directories:
