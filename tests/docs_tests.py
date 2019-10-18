@@ -188,35 +188,9 @@ triangulate_heavy.py
 symmetrize.py
 vd_attr_node.py
 filter_empty_lists.py
-volume.py
-linked_verts.py
-distance_point_plane.py
-raycaster_lite.py
-distance_point_line.py
-distance_line_line.py
-kd_tree_edges_mk2.py
-deformation.py
-bvh_overlap_polys.py
-intersect_line_sphere.py
-diameter.py
-mesh_select.py
-intersect_plane_plane.py
-mesh_filter.py
 image_components.py
 bvh_nearest_new.py
-edge_angles.py
-normals.py
-kd_tree_path.py
-points_inside_mesh.py
-bbox_mk2.py
-distance_pp.py
 kd_tree_MK2.py
-path_length.py
-proportional.py
-area.py
-object_insolation.py
-select_similar.py
-polygons_centers_mk3.py
 """.split("\n")
 
         def check_category(directory):
