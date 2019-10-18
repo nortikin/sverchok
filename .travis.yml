@@ -5,6 +5,11 @@ branches:
   only:
     master
 
+addons:
+  apt:
+    packages:
+      - python3-sphinx
+
 install:
   - |
     if [ ! -f installation/blender/blender ]
