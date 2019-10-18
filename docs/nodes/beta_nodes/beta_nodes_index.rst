@@ -12,4 +12,8 @@ Beta Nodes
    sample_uv_color
    color_by_formula
    spiralNode
+   unsubdivide
+   deform_by_formula
+   extrude_separate_lite
+   subdivide_lite
 

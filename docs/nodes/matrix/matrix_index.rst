@@ -16,3 +16,4 @@ Matrix
    matrix_track_to
    shear
    matrix_normal
+   iterate
