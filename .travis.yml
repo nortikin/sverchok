@@ -44,7 +44,7 @@ before_deploy:
   - bash ./build_docs.sh
 
 deploy:
-  provider: pages
+  provider: releases
   skip_cleanup: true
   api_key: $GITHUB_TOKEN
   github_token: $GITHUB_TOKEN
