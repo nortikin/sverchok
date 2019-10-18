@@ -6,11 +6,6 @@ branches:
     - master
     - b28_prelease_master
 
-addons:
-  apt:
-    packages:
-      - python3-sphinx
-
 install:
   - |
     #set -x
@@ -60,6 +55,7 @@ script:
   - bash ./run_tests.sh
 
 before_deploy:
+  - sudo apt-get install python-sphinx3
   - bash ./build_docs.sh
 
 deploy:
@@ -71,7 +67,7 @@ deploy:
   draft: true
   on:
     condition: $DOCS_UPDATED = Y
-    branch: b28_prelease_master
+    branch: master
 
 cache:
   directories:
