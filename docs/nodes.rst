@@ -28,5 +28,3 @@ Nodes
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
 
-   Beta Nodes <nodes/beta_nodes/beta_nodes_index>
-   Alpha Nodes <nodes/alpha_nodes/alpha_nodes_index>
