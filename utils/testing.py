@@ -273,6 +273,11 @@ class SverchokTestCase(unittest.TestCase):
         actual_value = getattr(node, property_name)
         self.assertEqual(actual_value, expected_value)
 
+    def assert_node_input_equals(self, tree_name, node_name, input_name, expected_value):
+        node = get_node(node_name, tree_name)
+        actual_value = node.inputs[input_name].sv_get()
+        self.assertEqual(actual_value, expected_value)
+
     def assert_nodes_linked(self, tree_name, node1_name, node1_output_name, node2_name, node2_input_name):
         """
         Assert that certain output of node1 is linked to certain input of node2.

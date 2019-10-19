@@ -48,7 +48,7 @@ class MonadImportTest(SverchokTestCase):
         with self.temporary_node_tree("ImportedTree") as new_tree:
             with self.assert_logs_no_errors():
                 import_tree(new_tree, self.get_reference_file_path("monad_1.json"))
-            #self.assert_node_property_equals("ImportedTree", "Monad", "numx", 4)
+            self.assert_node_input_equals("ImportedTree", "Monad", "Num X", [[4]])
 
 
 # to keep automated tests from breaking, i've collected a list of examples that need to be skipped
