@@ -16,8 +16,9 @@ class UpdateSystemTests(ReferenceTreeTestCase):
         result = make_dep_dict(tree)
         #info(result)
 
-        expected_result = {'Move': {'Vector in', 'Bevel.001'}, 'Extrude Separate Faces': {'Box'}, 'Bevel': {'Box'}, 'Bevel.001': {'Extrude Separate Faces'}, 'Viewer2': {'Move', 'Bevel.001'}, 'Viewer1': {'Bevel'}}
+        expected_result = {'Bevel': {'Box'}, 'VD Experimental': {'Bevel'}, 'Extrude Separate Faces': {'Box'}, 'Bevel.001': {'Extrude Separate Faces'}, 'Move': {'Bevel.001', 'Vector in'}, 'VD Experimental.001': {'Move', 'Bevel.001'}}
 
+        #info("Dict: %s", result)
         self.assertEqual(result, expected_result)
 
     def test_make_update_list(self):

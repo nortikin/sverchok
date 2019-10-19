@@ -193,6 +193,9 @@ class SverchokTestCase(unittest.TestCase):
     Base class for Sverchok test cases.
     """
 
+    def setUp(self):
+        debug("Starting test: %s", self.__class__.__name__)
+
     @contextmanager
     def temporary_node_tree(self, new_tree_name):
         """
@@ -450,9 +453,11 @@ class SverchokTestCase(unittest.TestCase):
         logging.getLogger().addHandler(handler)
 
         try:
+            debug("=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
             yield handler
             self.assertFalse(has_errors, "There were some errors logged")
         finally:
+            debug("=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
             logging.getLogger().handlers.remove(handler)
 
     def subtest_assert_equals(self, value1, value2, message=None):
@@ -475,10 +480,12 @@ class EmptyTreeTestCase(SverchokTestCase):
     """
 
     def setUp(self):
+        super().setUp()
         self.tree = get_or_create_node_tree()
 
     def tearDown(self):
         remove_node_tree()
+        super().tearDown()
 
 class ReferenceTreeTestCase(SverchokTestCase):
     """
@@ -512,15 +519,18 @@ class ReferenceTreeTestCase(SverchokTestCase):
         link_text_block(self.get_reference_file_path(), block_name)
 
     def setUp(self):
+        super().setUp()
         if self.reference_file_name is None:
             raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
         if self.reference_tree_name is None:
             self.reference_tree_name = "TestingTree"
         
-        self.tree = self.link_node_tree()
+        with self.assert_logs_no_errors():
+            self.tree = self.link_node_tree()
 
     def tearDown(self):
         remove_node_tree()
+        super().tearDown()
 
 class NodeProcessTestCase(EmptyTreeTestCase):
     """

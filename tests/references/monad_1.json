@@ -1,10 +1,26 @@
 {
-  "export_version": "0.072",
+  "export_version": "0.079",
   "framed_nodes": {},
   "groups": {
-    "PulledCube": "{\"nodes\": {\"Box\": {\"bl_idname\": \"SvBoxNode\", \"hide\": false, \"params\": {\"Divz\": 6, \"Divy\": 6, \"Divx\": 6, \"Size\": 2.049999952316284}, \"width\": 140.0, \"color\": [0.0, 0.5, 0.5], \"use_custom_color\": true, \"location\": [-610.9833984375, 183.2154541015625], \"height\": 100.0, \"label\": \"\"}, \"Move\": {\"bl_idname\": \"SvMoveNodeMK2\", \"hide\": false, \"params\": {}, \"width\": 140.0, \"location\": [-124.36906433105469, 214.74810791015625], \"height\": 100.0, \"label\": \"\"}, \"Group Inputs Exp\": {\"bl_idname\": \"SvGroupInputsNodeExp\", \"hide\": false, \"params\": {\"node_kind\": \"outputs\"}, \"height\": 100.0, \"width\": 140.0, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true, \"location\": [-922.61376953125, 148.81646728515625], \"outputs\": [[\"Size\", \"SvStringsSocket\"], [\"Divisions\", \"SvStringsSocket\"], [\"Center\", \"SvVerticesSocket\"], [\"Amplitude\", \"SvStringsSocket\"]], \"label\": \"\"}, \"Vector Attraction\": {\"bl_idname\": \"SvAttractorNode\", \"hide\": false, \"params\": {\"amplitude\": 0.5899999737739563}, \"height\": 100.0, \"width\": 140.0, \"location\": [-307.9356384277344, 100.5782241821289], \"custom_socket_props\": {\"1\": {\"prop\": [0.0, 0.0, 0.0], \"use_prop\": true}, \"2\": {\"prop\": [0.0, 0.0, 1.0], \"use_prop\": true}}, \"label\": \"\"}, \"Group Outputs Exp\": {\"bl_idname\": \"SvGroupOutputsNodeExp\", \"hide\": false, \"params\": {\"node_kind\": \"inputs\"}, \"width\": 140.0, \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"inputs\": [[\"vertices\", \"SvVerticesSocket\"], [\"Pols\", \"SvStringsSocket\"]], \"use_custom_color\": true, \"location\": [55.63093566894531, 157.6631622314453], \"height\": 100.0, \"label\": \"\"}}, \"bl_idname\": \"SverchGroupTreeType\", \"groups\": {}, \"cls_bl_idname\": \"SvGroupNodeMonad_140558499339897\", \"update_lists\": [[\"Group Inputs Exp\", 0, \"Box\", 0], [\"Group Inputs Exp\", 1, \"Box\", 1], [\"Group Inputs Exp\", 1, \"Box\", 2], [\"Group Inputs Exp\", 1, \"Box\", 3], [\"Box\", 0, \"Vector Attraction\", 0], [\"Group Inputs Exp\", 2, \"Vector Attraction\", 1], [\"Group Inputs Exp\", 3, \"Vector Attraction\", 3], [\"Box\", 0, \"Move\", 0], [\"Vector Attraction\", 0, \"Move\", 1], [\"Move\", 0, \"Group Outputs Exp\", 0], [\"Box\", 2, \"Group Outputs Exp\", 1]], \"framed_nodes\": {}, \"export_version\": \"0.07\"}"
+    "Monad": "{\"nodes\": {\"Group Inputs Exp\": {\"params\": {\"node_kind\": \"outputs\"}, \"bl_idname\": \"SvGroupInputsNodeExp\", \"outputs\": [[\"Num X\", \"SvStringsSocket\"]], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [-19.0225830078125, 252.48233032226562], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"Group Outputs Exp\": {\"params\": {\"node_kind\": \"inputs\"}, \"bl_idname\": \"SvGroupOutputsNodeExp\", \"inputs\": [[\"vertices\", \"SvVerticesSocket\"], [\"polygons\", \"SvStringsSocket\"]], \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [590.9774169921875, 252.48233032226562], \"color\": [0.8308190107345581, 0.911391019821167, 0.7545620203018188], \"use_custom_color\": true}, \"Plane MK2\": {\"params\": {\"center\": 1, \"numx\": 3, \"numy\": 3}, \"bl_idname\": \"SvPlaneNodeMK2\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [190.9774169921875, 234.9845428466797], \"color\": [0.0, 0.5, 0.5], \"use_custom_color\": true}, \"Inset Special\": {\"params\": {\"distance\": 1.46999990940094, \"inset\": 0.6700000166893005, \"make_inner\": 0}, \"bl_idname\": \"SvInsetSpecial\", \"height\": 100.0, \"width\": 140.0, \"label\": \"\", \"hide\": false, \"location\": [410.9774169921875, 269.9801025390625]}}, \"groups\": {}, \"framed_nodes\": {}, \"update_lists\": [[\"Group Inputs Exp\", 0, \"Plane MK2\", 0], [\"Group Inputs Exp\", 0, \"Plane MK2\", 1], [\"Plane MK2\", 0, \"Inset Special\", 2], [\"Plane MK2\", 2, \"Inset Special\", 3], [\"Inset Special\", 0, \"Group Outputs Exp\", 0], [\"Inset Special\", 1, \"Group Outputs Exp\", 1]], \"export_version\": \"0.079\", \"bl_idname\": \"SverchGroupTreeType\", \"cls_bl_idname\": \"SvGroupNodeMonad_140482759202207\"}"
   },
   "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -17.99714469909668,
+        125.99751281738281
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 4,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
     "Monad": {
       "bl_idname": "SvMonadGenericNode",
       "color": [
@@ -16,64 +32,31 @@
       "hide": false,
       "label": "",
       "location": [
-        -347.7626953125,
-        166.18060302734375
+        300.9774169921875,
+        252.48233032226562
       ],
       "params": {
-        "Divx": 6,
-        "Size": 2.2300000190734863,
         "all_props": {
-          "cls_bl_idname": "SvGroupNodeMonad_140558499339897",
-          "float_props": {
-            "Size": {
-              "default": 2.049999952316284,
-              "description": "Size",
-              "name": "Size"
-            },
-            "amplitude": {
-              "default": 0.5899999737739563,
-              "min": 0.0,
-              "name": "Amplitude"
-            }
-          },
+          "cls_bl_idname": "SvGroupNodeMonad_140482759202207",
+          "float_props": {},
           "int_props": {
-            "Divx": {
-              "default": 6,
-              "description": "divisions x",
-              "min": 1,
-              "name": "Divisions"
+            "numx": {
+              "default": 3,
+              "description": "Number of vertices along X",
+              "min": 2,
+              "name": "N Verts X"
             }
           },
-          "name": "PulledCube"
+          "name": "Monad"
         },
-        "amplitude": 0.6199999451637268,
         "cls_dict": {
-          "cls_bl_idname": "SvGroupNodeMonad_140558499339897",
+          "cls_bl_idname": "SvGroupNodeMonad_140482759202207",
           "input_template": [
             [
-              "Size",
+              "Num X",
               "SvStringsSocket",
               {
-                "prop_name": "Size"
-              }
-            ],
-            [
-              "Divisions",
-              "SvStringsSocket",
-              {
-                "prop_name": "Divx"
-              }
-            ],
-            [
-              "Center",
-              "SvVerticesSocket",
-              {}
-            ],
-            [
-              "Amplitude",
-              "SvStringsSocket",
-              {
-                "prop_name": "amplitude"
+                "prop_name": "numx"
               }
             ]
           ],
@@ -83,33 +66,19 @@
               "SvVerticesSocket"
             ],
             [
-              "Pols",
+              "polygons",
               "SvStringsSocket"
             ]
           ]
         },
         "loops": 0,
-        "monad": "PulledCube"
+        "monad": "Monad"
       },
       "use_custom_color": true,
       "width": 140.0
     },
-    "Vector in": {
-      "bl_idname": "GenVectorsNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -627.7626953125,
-        106.18060302734375
-      ],
-      "params": {
-        "x_": 0.0
-      },
-      "width": 100.0
-    },
-    "Viewer Draw": {
-      "bl_idname": "ViewerNode2",
+    "VD Experimental": {
+      "bl_idname": "SvVDExperimental",
       "color": [
         1.0,
         0.30000001192092896,
@@ -119,11 +88,11 @@
       "hide": false,
       "label": "",
       "location": [
-        143.612548828125,
-        199.5254669189453
+        630.9774169921875,
+        281.08734130859375
       ],
       "params": {
-        "shading": 1
+        "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
       "width": 140.0
@@ -131,22 +100,22 @@
   },
   "update_lists": [
     [
-      "Vector in",
+      "A Number",
       0,
       "Monad",
-      2
+      0
     ],
     [
       "Monad",
       0,
-      "Viewer Draw",
+      "VD Experimental",
       0
     ],
     [
       "Monad",
       1,
-      "Viewer Draw",
-      1
+      "VD Experimental",
+      2
     ]
   ]
 }
