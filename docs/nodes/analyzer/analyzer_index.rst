@@ -15,6 +15,7 @@ Analyzers
    deformation
    edge_angles
    intersect_line_sphere
+   intersect_circle_circle
    intersect_plane_plane
    kd_tree
    kd_tree_edges_mk2

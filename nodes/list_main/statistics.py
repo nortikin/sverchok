@@ -59,6 +59,7 @@ class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvListStatisticsNode'
     bl_label = 'List Statistics'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_STADISTICS'
 
     def update_function(self, context):
         if self.function == "ALL STATISTICS":

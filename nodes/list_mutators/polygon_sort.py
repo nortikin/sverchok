@@ -140,6 +140,7 @@ class SvPolygonSortNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvPolygonSortNode'
     bl_label = 'Polygon Sort'
+    sv_icon = 'SV_POLYGON_SORT'
 
     def sort_polygons(self, verts, polys, V):
         ''' Sort polygons and return sorted polygons indices, poly & quantities '''
