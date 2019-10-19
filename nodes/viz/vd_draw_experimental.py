@@ -265,6 +265,40 @@ def get_shader_data(named_shader=None):
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
 
+vd_exp_help = """\
+## VD Experimental
+
+This is the defacto visualizer of Sverchok, it is reasonably well tested on various machines, and
+appears to be reliable. It is called Experimental because we are not professional graphics programmers,
+and wish to recognize our ignorance.
+
+# How to get at node options?
+
+This node has a right click menu with options. Most options are listed there and in the N panel 
+menu node/properties.
+
+# features:
+
+- draw to 3d view / multiple 3d views
+- Draw Points
+- Draw Edges  (optional: > Dashed Lines, > offset from faces)
+- Draw Faces
+- Draw any combination of Points/Edges/Faces
+- Draw Edges if they can be inferred from Faces
+- Draw Matrices
+- Manipulate and duplicate Drawing Geometry using the input Matrices
+- Define colors of Points, Edges, Faces
+- Set Face color to Flat, Facet and Smooth shading
+- In Facet and Smooth shading mode the Light Vector attribute can be used to adjust the direction of light
+- Use a user defined fragment shader (loaded from bpy.data.texts )
+- Pass these properties via the Attributes socket
+
+# Attributes socket
+
+This seems like a good idea, but i'm not sure anymore.
+
+
+"""
 
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
@@ -281,6 +315,19 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_DRAW_VIEWER'
 
     node_dict = {}
+
+    @property
+    def help(self):
+        if bpy.context.area.type == 'CONSOLE':
+            from console_python import add_scrollback, get_console
+            # history_append = bpy.ops.console.history_append
+
+            # history_append(text=m, remove_duplicates=True)
+            add_scrollback(vd_exp_help, 'INFO')
+            return
+        
+        # fallback behaviour
+        return vd_exp_help
 
     def populate_node_with_custom_shader_from_text(self):
         if self.custom_shader_location in bpy.data.texts:
