@@ -15,6 +15,7 @@ Modifier Make
    solidify
    uv_connect
    voronoi_2d
+   delaunay_2d
    wafel
    wireframe
    offset_line
