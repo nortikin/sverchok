@@ -10,7 +10,6 @@ Generators
    box
    bricks
    circle
-   cylinder
    cylinder_mk2
    image
    line_mk3

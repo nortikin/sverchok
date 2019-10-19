@@ -25,7 +25,6 @@ Nodes
    Text <nodes/text/text_index>
    Scene <nodes/scene/scene_index>
    Object <nodes/object_nodes/object_nodes_index>
-   BPY data <nodes/bpy_data/bpy_data_index>
    Layout <nodes/layout/layout_index>
    Network <nodes/network/network_index>
 

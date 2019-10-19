@@ -7,7 +7,7 @@ List Masks
 
    mask
    mask_join
-   mask_converter
+   mask_convert
    mask_to_index
    index_to_mask
    calc_mask

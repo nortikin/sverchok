@@ -23,7 +23,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation
 
-
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     ''' vr Voronoi 2d line '''
     bl_idname = 'Voronoi2DNode'
@@ -103,44 +102,9 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(pts_out)
         self.outputs['Edges'].sv_set(edges_out)
 
-
-# computeDelaunayTriangulation
-class DelaunayTriangulation2DNode(bpy.types.Node, SverchCustomTreeNode):
-    '''dea Verts. Triangulation '''
-    bl_idname = 'DelaunayTriangulation2DNode'
-    bl_label = 'Delaunay 2D'
-    bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_DELAUNAY'
-
-    def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', "Vertices")
-        self.outputs.new('SvStringsSocket', "Polygons")
-
-    def process(self):
-
-        if not self.inputs['Vertices'].is_linked:
-            return
-        if not self.outputs['Polygons'].is_linked:
-            return
-
-        tris_out = []
-        points_in = []
-        points_in = self.inputs['Vertices'].sv_get()
-
-        for obj in points_in:
-            pt_list = [Site(pt[0], pt[1]) for pt in obj]
-            res = computeDelaunayTriangulation(pt_list)
-            tris_out.append([tri for tri in res if -1 not in tri])
-
-
-        self.outputs['Polygons'].sv_set(tris_out)
-
-
 def register():
     bpy.utils.register_class(Voronoi2DNode)
-    bpy.utils.register_class(DelaunayTriangulation2DNode)
-
 
 def unregister():
     bpy.utils.unregister_class(Voronoi2DNode)
-    bpy.utils.unregister_class(DelaunayTriangulation2DNode)
+

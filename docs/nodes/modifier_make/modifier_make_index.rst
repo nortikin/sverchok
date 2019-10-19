@@ -6,9 +6,7 @@ Modifier Make
    :maxdepth: 2
 
    bisect
-   convex_hull
    cross_section
-   delaunay
    edges_adaptative
    lathe
    matrix_tube
@@ -17,9 +15,11 @@ Modifier Make
    solidify
    uv_connect
    voronoi_2d
+   delaunay_2d
    wafel
    wireframe
    offset_line
    bevel_curve
    contour2D
    fractal_curve
+   convex_hull_mk2
