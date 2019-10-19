@@ -315,15 +315,21 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_DRAW_VIEWER'
 
     node_dict = {}
+    console_help = vd_exp_help
 
     @property
     def help(self):
         if bpy.context.area.type == 'CONSOLE':
-            from console_python import add_scrollback, get_console
-            # history_append = bpy.ops.console.history_append
-
+            from console_python import add_scrollback #, get_console
+            history_append = bpy.ops.console.history_append
+            
+            # get line in console, add to history to show it as 'handled'
+            # m = bpy.context.space_data.history[-1].body
+            # m = m.strip()            
             # history_append(text=m, remove_duplicates=True)
-            add_scrollback(vd_exp_help, 'INFO')
+
+            # print the lines to the console
+            add_scrollback(self.console_help, 'INFO')
             return
         
         # fallback behaviour
