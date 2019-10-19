@@ -44,6 +44,7 @@ class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvCombinatoricsNode'
     bl_label = 'Combinatorics'
+    sv_icon = 'SV_COMBINATRONICS'
 
     def update_operation(self, context):
         self.label = self.operation.title()
