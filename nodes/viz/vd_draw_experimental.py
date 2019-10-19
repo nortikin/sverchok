@@ -300,6 +300,13 @@ This seems like a good idea, but i'm not sure anymore.
 
 """
 
+def custom_add_scrollback(area, text, type):
+    # https://blender.stackexchange.com/questions/6101/
+    override = bpy.context.copy()
+    override['area'] = area
+    for line in text.split('\n'):
+        bpy.ops.console.scrollback_append(override, text=line, type='INFO')
+
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -316,6 +323,27 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     node_dict = {}
     console_help = vd_exp_help
+
+
+    
+    def find_console_to_print_to(self, context):
+        
+        # break on first found console, could test for size and display on largest console.
+        AREA = 'CONSOLE'
+        for window in bpy.context.window_manager.windows:
+            for area in window.screen.areas:
+                if not area.type == AREA: continue
+
+                for s in area.spaces:
+                    if s.type == AREA:
+                        custom_add_scrollback(area, self.console_help, type='INFO')
+                        break
+
+    # i am just using this as a proto operator
+    selected_help: bpy.props.EnumProperty(
+        items=enum_item_5(["help"], ["QUESTION"]),
+        description="offers....", default="help", update=find_console_to_print_to
+    )
 
     @property
     def help(self):
@@ -475,6 +503,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         self.draw_additional_props(context, layout)
+        layout.prop(self, 'selected_help', icon='QUESTION', expand=True)
 
     def draw_additional_props(self, context, layout):
         layout.prop(self, 'vector_light', text='')
