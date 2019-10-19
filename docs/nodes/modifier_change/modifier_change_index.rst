@@ -7,12 +7,14 @@ Modifier Change
 
    bevel
    subdivide
+   subdivide_lite
+   unsubdivide
    smooth
    delete_loose
    edges_intersect_mk2
    extrude_edges
-   extrude_edges_old
    extrude_separate
+   extrude_separate_lite
    extrude_region
    holes_fill
    mesh_join
@@ -25,3 +27,5 @@ Modifier Change
    remove_doubles
    triangulate
    vertices_mask
+   planar_edgenet_to_polygons
+   pulga_physics

@@ -6,9 +6,7 @@ Modifier Make
    :maxdepth: 2
 
    bisect
-   convex_hull
    cross_section
-   delaunay
    edges_adaptative
    lathe
    matrix_tube
@@ -23,3 +21,4 @@ Modifier Make
    bevel_curve
    contour2D
    fractal_curve
+   convex_hull_mk2

@@ -85,6 +85,32 @@ class DocumentationTests(SverchokTestCase):
             with self.subTest(directory=basename(directory)):
                 check_dir(directory)
 
+    def test_unused_docs(self):
+        sv_init = sverchok.__file__
+        nodes_dir = join(dirname(sv_init), "nodes")
+        docs_dir = self.get_nodes_docs_directory()
+
+        def check_dir(directory):
+            dir_name = basename(directory)
+            bad_files = []
+            for doc_path in glob(join(directory, "*.rst")):
+                if doc_path.endswith("_index.rst"):
+                    continue
+                doc_file = basename(doc_path)
+                doc_name, ext = splitext(doc_file)
+                py_name = doc_name + ".py"
+                py_path = join(nodes_dir, dir_name, py_name)
+                if not exists(py_path):
+                    bad_files.append(doc_file)
+
+            if bad_files:
+                error("Category %s: The following documentation files do not have respective python modules:\n%s", dir_name, "\n".join(bad_files))
+                self.fail("There are excessive documentation files.")
+
+        for directory, subdirs, fnames in walk(docs_dir):
+            with self.subTest(directory=basename(directory)):
+                check_dir(directory)
+
     def test_node_docs_existance(self):
         sv_init = sverchok.__file__
         nodes_dir = join(dirname(sv_init), "nodes")
@@ -95,21 +121,14 @@ vd_matrix.py
 viewer_typography.py
 viewer_skin.py
 vd_basic_lines.py
-viewer_bmesh.py
 viewer_idx28.py
 viewer_texture.py
 viewer_curves.py
 vd_draw_experimental.py
 viewer_texture_lite.py
 viewer_polyline.py
-viewer_metaball.py
 lamp_out.py
-stethoscope_v28.py
 text_out_mk2.py
-scale_mk2.py
-move_mk2.py
-rotation_mk2.py
-input_switch_mod.py
 blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
@@ -117,51 +136,36 @@ cache.py
 objects_in_lite.py
 particles.py
 group.py
-dupli_instances_mk4.py
 monad.py
 curve_in.py
-obj_remote_mk2.py
 uv_texture.py
 instancer.py
-3dview_props.py
 create_bvh_tree.py
 particles_MK2.py
 node_remote.py
-mask_convert.py
 join_tris.py
 csg_booleanMK2.py
-convex_hull_mk2.py
 udp_client.py
 cricket.py
-lattice_analyzer.py
 vertex_colors_mk3.py
 sort_blenddata.py
 object_raycast2.py
 closest_point_on_mesh2.py
-sample_uv_color.py
-select_mesh_verts.py
 scene_raycast2.py
 sculpt_mask.py
-weightsmk2.py
 set_blenddata2.py
 points_from_uv_to_mesh.py
 custom_mesh_normals.py
-getsetprop.py
-get_asset_properties.py
 color_uv_texture.py
-armature_analyzer.py
 filter_blenddata.py
 matrix_array.py
-scalar_mk3.py
 easing.py
-spiral.py
 edge_split.py
 multi_exec.py
 sn_functor_b.py
 topology_simple.py
 sn_functor.py
 color_in_mk1.py
-normal.py
 formula_deform_MK2.py
 color_out_mk1.py
 interpolation_mk2.py
@@ -179,19 +183,12 @@ limited_dissolve.py
 pulga_physics.py
 extrude_multi_alt.py
 limited_dissolve_mk2.py
-extrude_separate_lite.py
 mesh_separate_mk2.py
-planar_edgenet_to_polygons.py
-subdivide_lite.py
-unsubdivide.py
 triangulate_heavy.py
 symmetrize.py
 vd_attr_node.py
 filter_empty_lists.py
-image_components.py
-bvh_nearest_new.py
-kd_tree_MK2.py
-""".split("\n")
+bvh_nearest_new.py""".split("\n")
 
         def check_category(directory):
             dir_name = basename(directory)
