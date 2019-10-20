@@ -24,9 +24,8 @@ from math import sin, cos, pi, sqrt
 from collections import namedtuple
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (match_long_repeat, updateNode, apply_mask)
+from sverchok.data_structure import (match_long_repeat, updateNode)
 from sverchok.utils.geom import rotate_vector_around_vector, PlaneEquation, LineEquation, CubicSpline, LinearSpline
-from sverchok.utils.topo import stable_topo_sort
 
 SectionData = namedtuple('SectionData', ['verts', 'branch_mask', 'side_mask', 'get_branch', 'get_side', 'breaks'])
 
