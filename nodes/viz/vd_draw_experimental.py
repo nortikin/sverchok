@@ -82,7 +82,7 @@ def ensure_triangles(node, coords, indices):
         else:
             subcoords = [Vector(coords[idx]) for idx in idxset]
             for pol in tessellate([subcoords]):
-                concat([idxset[i] for i in reversed(pol)])
+                concat([idxset[i] for i in pol])
     return new_indices
 
 
