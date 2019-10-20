@@ -258,36 +258,38 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
 
         objects = match_long_repeat([apexes_s, conedirs_s, alphas_s, conegens_s, counts_s, plane_centers_s, plane_dirs_s, max_ds_s])
         for apexes, conedirs, alphas, conegens, counts, plane_centers, plane_dirs, max_ds in zip(*objects):
-            section_data = self.make_section(apexes[0], conedirs[0], alphas[0], conegens[0], counts[0], plane_centers[0], plane_dirs[0], max_ds[0])
+            sub_objects = match_long_repeat([apexes, conedirs, alphas, conegens, counts, plane_centers, plane_dirs, max_ds])
+            for apex, conedir, alpha, conegen, count, plane_center, plane_dir, max_d in zip(*sub_objects):
+                section_data = self.make_section(apex, conedir, alpha, conegen, count, plane_center, plane_dir, max_d)
 
-            verts = section_data.verts
-            branch_mask = section_data.branch_mask
-            side_mask = section_data.side_mask
-            breaks = section_data.breaks
+                verts = section_data.verts
+                branch_mask = section_data.branch_mask
+                side_mask = section_data.side_mask
+                breaks = section_data.breaks
 
-            v1idxs, v2idxs, edges1, edges2 = self.make_edges(branch_mask, breaks)
+                v1idxs, v2idxs, edges1, edges2 = self.make_edges(branch_mask, breaks)
 
-            if self.evenly:
-                verts1 = [verts[i] for i in v1idxs]
-                verts2 = [verts[i] for i in v2idxs]
-                is_cyclic = len(breaks) == 0
-                verts1, edges1 = self.interpolate(verts1, counts[0], is_cyclic)
-                verts2, edges2 = self.interpolate(verts2, counts[0], is_cyclic)
-                verts = verts1 + verts2
-                n1 = len(verts1)
-                edges2 = [[i+n1, j+n1] for i,j in edges2]
+                if self.evenly:
+                    verts1 = [verts[i] for i in v1idxs]
+                    verts2 = [verts[i] for i in v2idxs]
+                    is_cyclic = len(breaks) == 0
+                    verts1, edges1 = self.interpolate(verts1, counts[0], is_cyclic)
+                    verts2, edges2 = self.interpolate(verts2, counts[0], is_cyclic)
+                    verts = verts1 + verts2
+                    n1 = len(verts1)
+                    edges2 = [[i+n1, j+n1] for i,j in edges2]
 
-            edges = edges1 + edges2
+                edges = edges1 + edges2
 
-            if any(v is None for v in verts):
-                print(verts)
-            branch_mask = [section_data.get_branch(v) for v in verts]
-            side_mask = [section_data.get_side(v) for v in verts]
+                if any(v is None for v in verts):
+                    print(verts)
+                branch_mask = [section_data.get_branch(v) for v in verts]
+                side_mask = [section_data.get_side(v) for v in verts]
 
-            out_verts.append(verts)
-            out_edges.append(edges)
-            out_branch_masks.append(branch_mask)
-            out_side_masks.append(side_mask)
+                out_verts.append(verts)
+                out_edges.append(edges)
+                out_branch_masks.append(branch_mask)
+                out_side_masks.append(side_mask)
 
         self.outputs['Vertices'].sv_set(out_verts)
         self.outputs['Edges'].sv_set(out_edges)
