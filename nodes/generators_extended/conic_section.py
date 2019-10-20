@@ -21,11 +21,14 @@ from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 from mathutils import Vector
 import numpy
 from math import sin, cos, pi, sqrt
+from collections import namedtuple
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (match_long_repeat, updateNode, apply_mask)
-from sverchok.utils.geom import rotate_vector_around_vector, PlaneEquation, LineEquation, CubicSpline
+from sverchok.utils.geom import rotate_vector_around_vector, PlaneEquation, LineEquation, CubicSpline, LinearSpline
 from sverchok.utils.topo import stable_topo_sort
+
+SectionData = namedtuple('SectionData', ['verts', 'branch_mask', 'side_mask', 'get_branch', 'get_side', 'breaks'])
 
 class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -42,6 +45,9 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
             ("VECTOR", "Generating Vector", "Define the cone by apex, direction and generating vector", 1)
         ]
 
+    spline_modes = [('SPL', 'Cubic', "Cubic Spline", 0),
+             ('LIN', 'Linear', "Linear Interpolation", 1)]
+
     def update_mode(self, context):
         self.inputs['Alpha'].hide_safe = self.cone_mode != 'ANGLE'
         self.inputs['Generatrix'].hide_safe = self.cone_mode != 'VECTOR'
@@ -51,6 +57,8 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
                     items = cone_modes,
                     default = "ANGLE",
                     update = update_mode)
+
+    spline_mode: EnumProperty(name='Interpolation Mode', default="LIN", items=spline_modes, update=updateNode)
 
     alpha: FloatProperty(name = "Cone Angle",
                 description = "Cone Angle (Radians)",
@@ -106,7 +114,12 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "cone_mode")
-        layout.prop(self, "evenly")
+        layout.prop(self, "evenly", toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        if self.evenly:
+            layout.prop(self, "spline_mode")
 
     def make_section(self, apex, cone_dir, alpha, cone_gen, count, plane_center, plane_dir, maxd):
         apex = Vector(apex)
@@ -123,6 +136,9 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
 
         plane = PlaneEquation.from_normal_and_point(plane_dir, plane_center)
         cone_ort_plane = PlaneEquation.from_normal_and_point(cone_dir, apex)
+
+        def get_branch(v):
+            return cone_ort_plane.side_of_point(v) > 0
 
         if plane.side_of_point(apex) == 0 or (plane_dir.cross(cone_dir)).length < 1e-10:
             def get_side(v):
@@ -144,7 +160,7 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
             vertex = plane.intersect_with_line(cone_line, min_det = 1e-10)
             if vertex is not None and (vertex - apex).length <= maxd:
                 vertices.append(tuple(vertex))
-                branch = cone_ort_plane.side_of_point(vertex) > 0
+                branch = get_branch(vertex)
                 side = get_side(vertex)
                 branch_mask.append(branch)
                 side_mask.append(side)
@@ -155,7 +171,7 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
             cone_vector = rotate_vector_around_vector(cone_vector, cone_dir, theta)
             angle += theta
 
-        return vertices, branch_mask, side_mask, breaks
+        return SectionData(vertices, branch_mask, side_mask, get_branch, get_side, breaks)
     
     def make_edges(self, branch_mask, breaks):
         verts11, verts12 = [], []
@@ -213,7 +229,10 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
         if len(verts) < 3:
             edges = [[i,i+1] for i in range(len(verts)-1)]
             return verts, edges
-        spline = CubicSpline(verts, metric='DISTANCE', is_cyclic = is_cyclic)
+        if self.spline_mode == 'SPL':
+            spline = CubicSpline(verts, metric='DISTANCE', is_cyclic = is_cyclic)
+        else:
+            spline = LinearSpline(verts, metric='DISTANCE', is_cyclic = is_cyclic)
         ts = numpy.linspace(0, 1, n)
         verts = [tuple(v) for v in spline.eval(ts).tolist()]
         edges = [[i,i+1] for i in range(len(verts)-1)]
@@ -239,7 +258,13 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
 
         objects = match_long_repeat([apexes_s, conedirs_s, alphas_s, conegens_s, counts_s, plane_centers_s, plane_dirs_s, max_ds_s])
         for apexes, conedirs, alphas, conegens, counts, plane_centers, plane_dirs, max_ds in zip(*objects):
-            verts, branch_mask, side_mask, breaks = self.make_section(apexes[0], conedirs[0], alphas[0], conegens[0], counts[0], plane_centers[0], plane_dirs[0], max_ds[0])
+            section_data = self.make_section(apexes[0], conedirs[0], alphas[0], conegens[0], counts[0], plane_centers[0], plane_dirs[0], max_ds[0])
+
+            verts = section_data.verts
+            branch_mask = section_data.branch_mask
+            side_mask = section_data.side_mask
+            breaks = section_data.breaks
+
             v1idxs, v2idxs, edges1, edges2 = self.make_edges(branch_mask, breaks)
 
             if self.evenly:
@@ -253,6 +278,11 @@ class SvConicSectionNode(bpy.types.Node, SverchCustomTreeNode):
                 edges2 = [[i+n1, j+n1] for i,j in edges2]
 
             edges = edges1 + edges2
+
+            if any(v is None for v in verts):
+                print(verts)
+            branch_mask = [section_data.get_branch(v) for v in verts]
+            side_mask = [section_data.get_side(v) for v in verts]
 
             out_verts.append(verts)
             out_edges.append(edges)
