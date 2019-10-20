@@ -25,7 +25,6 @@
     svBasicArcNode
     RandomVectorNodeMK2
     SvScriptNodeLite
-    SvSNFunctor
     SvSNFunctorB
     ImageNode
 
