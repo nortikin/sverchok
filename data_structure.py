@@ -403,6 +403,15 @@ def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
         sub_objects = match_long_repeat([subset_data, set_data])
         return [calc_mask(subset_item, set_item, level - 1, negate, ignore_order) for subset_item, set_item in zip(*sub_objects)]
 
+def apply_mask(mask, lst):
+    good, bad = [], []
+    for m, item in zip(mask, lst):
+        if m:
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad
+
 def rotate_list(l, y=1):
     """
     "Rotate" list by shifting it's items towards the end and putting last items to the beginning.
@@ -415,6 +424,15 @@ def rotate_list(l, y=1):
         return l
     y = y % len(l)
     return list(l[y:]) + list(l[:y])
+
+def partition(p, lst):
+    good, bad = [], []
+    for item in lst:
+        if p(item):
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad
 
 #####################################################
 ################### matrix magic ####################

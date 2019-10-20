@@ -27,6 +27,7 @@ only for speed, never for aesthetics or line count or cleverness.
 '''
 
 import math
+from math import sin, cos
 import numpy as np
 from numpy import linalg
 from functools import wraps
@@ -1001,6 +1002,11 @@ class PlaneEquation(object):
         return PlaneEquation.from_normal_and_point((a, b, c), p1)
 
     @classmethod
+    def from_point_and_two_vectors(cls, point, v1, v2):
+        normal = v1.cross(v2)
+        return PlaneEquation.from_normal_and_point(normal, point)
+
+    @classmethod
     def from_coordinate_plane(cls, plane_name):
         if plane_name == 'XY':
             return PlaneEquation(0, 0, 1, 0)
@@ -1109,7 +1115,7 @@ class PlaneEquation(object):
         denominator = math.sqrt(a*a + b*b + c*c)
         return numerators / denominator
 
-    def intersect_with_line(self, line):
+    def intersect_with_line(self, line, min_det=1e-8):
         """
         Calculate intersection between this plane and specified line.
         input: line - an instance of LineEquation.
@@ -1184,8 +1190,10 @@ class PlaneEquation(object):
         else:
             raise Exception("Invalid plane: all coefficients are (nearly) zero: {}, {}, {}".format(a, b, c))
 
-        if abs(linalg.det(matrix)) < 1e-8:
-            raise Exception("Plane: {}, line: {}".format(self, line))
+        det = linalg.det(matrix)
+        if abs(det) < min_det:
+            return None
+            #raise Exception("Plane: {}, line: {}, det: {}".format(self, line, det))
 
         result = np.linalg.solve(matrix, free)
         x, y, z = result[0], result[1], result[2]
@@ -1584,3 +1592,17 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
     for i, res in enumerate(result):
         if gates[i]:
             res.append([local_result[i]])
+
+def rotate_vector_around_vector(v, k, theta):
+    if not isinstance(v, Vector):
+        v = Vector(v)
+    if not isinstance(k, Vector):
+        k = Vector(k)
+    k = k.normalized()
+
+    ct, st = cos(theta), sin(theta)
+
+    return ct * v + st * (k.cross(v)) + (1 - ct) * (k.dot(v)) * k
+
+
+
