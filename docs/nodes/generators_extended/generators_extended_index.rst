@@ -17,6 +17,7 @@ Generators Extended
    ring
    smooth_lines
    ellipse
+   conic_section
    super_ellipsoid
    spiral
    

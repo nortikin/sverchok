@@ -20,7 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 from mathutils import Vector
 import numpy
-from math import sin, cos, pi, sqrt
+from math import pi
 from collections import namedtuple
 
 from sverchok.node_tree import SverchCustomTreeNode

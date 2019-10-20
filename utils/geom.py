@@ -1594,6 +1594,13 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
             res.append([local_result[i]])
 
 def rotate_vector_around_vector(v, k, theta):
+    """
+    Rotate vector v around vector k by theta angle.
+    input: v, k - 3-tuples or Vectors; theta - float, in radians.
+    output: Vector.
+
+    This implements Rodrigues' formula: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+    """
     if not isinstance(v, Vector):
         v = Vector(v)
     if not isinstance(k, Vector):
@@ -1603,6 +1610,4 @@ def rotate_vector_around_vector(v, k, theta):
     ct, st = cos(theta), sin(theta)
 
     return ct * v + st * (k.cross(v)) + (1 - ct) * (k.dot(v)) * k
-
-
 
