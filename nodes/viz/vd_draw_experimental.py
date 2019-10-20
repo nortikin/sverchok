@@ -64,7 +64,7 @@ def edges_from_faces(indices):
     return list(out)
 
 
-def ensure_triangles(coords, indices):
+def ensure_triangles(node, coords, indices):
     """
     this fully tesselates the incoming topology into tris,
     not optimized for meshes that don't contain ngons
@@ -76,7 +76,7 @@ def ensure_triangles(coords, indices):
         num_verts = len(idxset)
         if num_verts == 3:
             concat(tuple(idxset))
-        elif num_verts == 4:
+        elif num_verts == 4 and not node.handle_concave_quads:
             # a b c d  ->  [a, b, c], [a, c, d]
             concat2([(idxset[0], idxset[1], idxset[2]), (idxset[0], idxset[2], idxset[3])])
         else:
@@ -329,6 +329,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
 
+    handle_concave_quads: BoolProperty(
+        name='Handle Concave Quads', default=False, update=updateNode,
+        description='tessellate quads using geometry.tessellate_polygon, expect some speed impact')
+
     # glGet with argument GL_POINT_SIZE_RANGE
     point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=4.0, min=1.0, max=15.0)
     line_width: IntProperty(description="glLineWidth( GLfloat width)", update=updateNode, default=1, min=1, max=5)
@@ -428,6 +432,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
         layout.separator()
+        layout.prop(self, 'handle_concave_quads', toggle=True)
         layout.prop(self, 'draw_gl_wireframe', toggle=True)
         layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
         layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
@@ -584,7 +589,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
                 #  expecting mixed bag of tris/quads/ngons
                 if self.display_faces:
-                    geom.faces = ensure_triangles(coords, face_indices)
+                    geom.faces = ensure_triangles(self, coords, face_indices)
 
                 if self.display_edges:
                     if self.use_dashed:    
