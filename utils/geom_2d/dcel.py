@@ -5,8 +5,10 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from itertools import cycle
 
 from .lin_alg import almost_equal, is_more, dot_product, is_ccw_polygon, cross_product
+from .dcel_debugger import Debugger
 
 
 """
@@ -149,17 +151,48 @@ class HalfEdge:
 
 
 class Face:
+    accuracy = 1e-5
 
     def __init__(self, mesh):
         self.mesh = mesh
-        self.outer = None
-        self.inners = []
+        self._outer = None  # hedge of boundary loop
+        self._inners = []  # hedges of hole loops
+
         self.select = False
+        self.sv_data = dict()  # for any data which we would like to keep with face
 
     @property
     def is_unbounded(self):
         # returns true if face is boundless - includes all other faces of a mesh
         return not self.outer
+
+    @property
+    def outer(self):
+        return self._outer
+
+    @outer.setter
+    def outer(self, value):
+        if not self.mesh:
+            raise AttributeError("This attribute is not available till the face does have link to a mesh")
+        if not isinstance(value, self.mesh.HalfEdge):
+            raise ValueError("HalfEdge type of object only can be set to outer attribute, "
+                             "({}) was given".format(type(value)))
+        self._outer = value
+
+    @property
+    def inners(self):
+        # it would be nice to check whether all element of a list are correct, don't know how to do
+        return self._inners
+
+    @inners.setter
+    def inners(self, value):
+        if not self.mesh:
+            raise AttributeError("This attribute is not available till the face does have link to a mesh")
+        if not isinstance(value, self.mesh.HalfEdge):
+            raise ValueError("HalfEdge type of object only can be set to outer attribute, "
+                             "({}) was given".format(type(value)))
+        self._outer = value
+
 
 
 class DCELMesh:
@@ -168,13 +201,39 @@ class DCELMesh:
     Face = Face
     accuracy = 1e-5
 
-    def __init__(self):
+    def __init__(self, accuracy=None):
         self.points = []
         self.hedges = []
         self.faces = []
+        if accuracy:
+            self.set_accuracy(accuracy)
 
-    def from_sv_faces(self, verts, faces, face_mask=None):
+    @classmethod
+    def set_accuracy(cls, accuracy):
+        # This value is using for comparing float figures
+        if isinstance(accuracy, int):
+            accuracy = 1 / 10 ** accuracy
+        if not (1e-1 > accuracy > 1e-15):
+            raise ValueError("Accuracy should between 1^-1 and 1^-15, {} value was given".format(accuracy))
+        cls.Point.accuracy = accuracy
+        cls.HalfEdge.accuracy = accuracy
+        cls.Face.accuracy = accuracy
+        cls.accuracy = accuracy
+
+    def from_sv_faces(self, verts, faces, face_mask=None, face_data=None):
         # todo: self intersection polygons? double repeated polygons???
+        # face_data = {name of data: [value 1, val2, .., value n]} - number of values should be equal to number of faces
+        # I'm not going use zip longest or  something else with face mask and face data inputs
+        # Because I think it can lead to unexpected behaviour of algorithms, which will be difficult to debug
+        if face_mask and len(face_mask) != len(faces):
+            raise IndexError("Length of face_mask({}) input should be equal to"
+                             " length of input faces({})".format(len(face_mask), len(faces)))
+        if face_data and any([len(val) != len(faces) for val in face_data.values()]):
+            bad_key, length = [(key, len(val)) for key, val in face_data.items() if len(val) != len(faces)][0]
+            raise IndexError("Face data should be a dictionary."
+                             "Each value should be a list with length equal to length of input faces"
+                             "At list with key({}) length of input list({}) is not equal to "
+                             "length of input faces({})".format(bad_key, length, len(faces)))
         half_edges_list = dict()
         unbounded_face = self.Face(self)
         self.faces.append(unbounded_face)
@@ -182,10 +241,27 @@ class DCELMesh:
         self.points.extend([self.Point(self, co) for co in verts])
 
         # Generate outer faces and there hedges
-        for face, fm in zip(faces, face_mask):
+        # face_data_iter is tricky iterator for distributing custom properties among faces, example:
+        # d = {'a': [1, 2], 'b': [3, 4]}
+        # >>> for names, values in zip(cycle([d.keys()]), zip(*d.values())):
+        # ...     print('Next Face')
+        # ...     for n, v in zip(names, values):
+        # ...         print(n, v)
+        # ...
+        # Next Face
+        # a 1
+        # b 3
+        # Next Face
+        # a 2
+        # b 4
+        face_data_iter = zip(cycle([face_data.keys()]), zip(*face_data.values())) if face_data else cycle([None])
+        for face, fm, fd in zip(faces, face_mask or cycle([False]), face_data_iter):
             face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
             f = self.Face(self)
             f.select = bool(fm)
+            if fd:
+                for property_name, value in zip(*fd):
+                    f.sv_data[property_name] = value
             loop = []
             for i in range(len(face)):
                 origin_i = face[i]
@@ -402,190 +478,3 @@ class DCELMesh:
         # update hedges
         self.hedges = [hedge for hedge in self.hedges if hedge not in un_used_hedges]
         # todo how to rebuilt points list
-
-
-"""
-The sooner the DCEL does not have any indexes of its elements
-the difficulties to debug algorithm which run with such data structure.
-The class below can be used for recording any element of DCEL in class variable
-which can be visualized by Sverchok via SN light.
-
-Example of script node code:
-
-
-'''
-in _ s d=[] n=0
-in i s d=0 n=2
-out out_v v
-out out_e s
-out arrow_v v
-out arrow_f s
-'''
-from mathutils import Vector, Matrix
-from sverchok.nodes.modifier_change.merge_mesh_2d import Debugger as debug
-
-def get_arrow(hedge, scale=1):
-    nor = Vector(hedge[1]) - Vector(hedge[0])
-    nor = nor.to_track_quat('X', 'Z')
-    m = Matrix.Translation(Vector(hedge[1])) * nor.to_matrix().to_4x4()
-    tri = [Vector((1, 0, 0))*scale, Vector((-1, 1, 0))*scale, Vector((-1, -1, 0))*scale]
-    return [[(m*v)[:] for v in tri]], [[(0,1,2)]]
-
-if debug.data:
-    if i > len(debug.data) - 1:
-        out_v = [[0,0,0]]
-    else:
-        out_v = [debug.data[i]]
-        if len(debug.data[i]) == 2:
-            out_e = [[[0,1]]]
-            arrow_v, arrow_f = get_arrow(debug.data[i], 0.1)
-        elif len(debug.data[i]) > 2:
-            out_e = [list(range(len(debug.data[i])))]
-else:
-    out_v = [[0,0,0]]
-
-
-Output of this node will be all that is printed via Debug class available by index.
-"""
-
-
-class Debugger:
-    data = []  # all print methods put data here
-    msg = []  # all print methods put messages here
-    half_edges = []
-    _count = 0
-    to_print = True
-
-    @staticmethod
-    def print_f(face, msg=None):
-        # prints faces
-        if not Debugger.to_print:
-            return
-        if not face.outer:
-            print('This is probably super boundless face')
-            return
-        print('{} - {}'.format(Debugger._count, msg or 'Face'))
-        Debugger._count += 1
-        loop = [face.outer.origin]
-        next_hedge = face.outer.next
-        count = 0
-        while next_hedge != face.outer:
-            loop.append(next_hedge.origin)
-            next_hedge = next_hedge.next
-            count += 1
-            if count > 1000:
-                print('Face ({}) does not ave a loop'.format(face.i))
-                break
-        Debugger.data.append(loop)
-        Debugger.msg.append(msg or 'Face')
-
-    @staticmethod
-    def print_he(hedge, msg=None, gen_type='twin'):
-        # prints half edges
-        if not Debugger.to_print:
-            return
-        if not isinstance(hedge, list):
-            hedge = [hedge]
-        for h in hedge:
-            print('{} - {}'.format(Debugger._count, msg or "Hedge"))
-            Debugger._count += 1
-            if gen_type == 'twin':
-                Debugger.data.append([h.origin, h.twin.origin])
-            else:
-                Debugger.data.append([h.origin, h.next.origin])
-            Debugger.msg.append(msg or "Hedge")
-
-    @staticmethod
-    def print_e(edge, msg=None):
-        # prints edges
-        if not Debugger.to_print:
-            return
-        if not isinstance(edge, list):
-            edge = [edge]
-        for e in edge:
-            print('{} - {}'.format(Debugger._count, msg or "Edge"))
-            Debugger._count += 1
-            Debugger.data.append([e.v1, e.v2])
-            Debugger.msg.append([msg or "Edge"])
-
-    @staticmethod
-    def print_p(point, msg=None):
-        # prints points
-        if not Debugger.to_print:
-            return
-        print('{} - {}'.format(Debugger._count, msg or 'Point'))
-        Debugger._count += 1
-        Debugger.data.append([point.co])
-        Debugger.msg.append(msg or "Point")
-
-    @staticmethod
-    def print(*msg):
-        # equal to standard print function
-        if not Debugger.to_print:
-            return
-        print(msg)
-
-    @staticmethod
-    def clear(to_print=True):
-        # clear all recoded data, should be coled before each iteration of a node
-        Debugger.data.clear()
-        Debugger.msg.clear()
-        Debugger._count = 0
-        Debugger.to_print = to_print
-        Debugger.half_edges.clear()
-
-    # #########__for draw function__#######
-
-    @staticmethod
-    def add_hedges(hedges):
-        if isinstance(hedges, list):
-            Debugger.half_edges.extend(hedges)
-        else:
-            Debugger.half_edges.append(hedges)
-
-    @staticmethod
-    def _rotate_by_direction(points, normal):
-        # https://habr.com/ru/post/131931/
-        x_axis = normal
-        y_axis = normal.cross_product(Point(None,(0, 0, 1)))
-        return [x_axis * p.co[x] + y_axis * p.co[y] for p in points]
-
-    @staticmethod
-    def _get_arrow(edge, scale=1.0):
-        nor = (edge[1] - edge[0]).normalize()
-        tri = [Point(None, (1, 0, 0)) * scale, Point(None, (-1, 1, 0)) * scale, Point(None, (-1, -1, 0)) * scale]
-        tri = Debugger._rotate_by_direction(tri, nor)
-        tri = [p + edge[1] for p in tri]
-        return tri, (4, 5, 6)
-
-    @staticmethod
-    def _shift_hedge(hedge, scale=1.0):
-        v1 = (hedge.origin - hedge.twin.origin).normalize()
-        v2 = Point(None, (0, 0, 1))
-        nor = v1.cross_product(v2) * scale
-        edge = ((hedge.origin - (v1 * (scale * 2))), hedge.twin.origin + (v1 * (scale * 2)))
-        return [p + nor for p in edge]
-
-    @staticmethod
-    def _edge_to_face(edge):
-        return [*edge, edge[1] + Point(None, (0, 0, 0.1)), edge[0] + Point(None,(0, 0, 0.1))], (0, 1, 2, 3)
-
-    @staticmethod
-    def _hedge_to_sv(hedge, scale=1.0):
-        edge_co = Debugger._shift_hedge(hedge, scale)
-        hedge_face, hedge_i = Debugger._edge_to_face(edge_co)
-        arrow_v, arrow_i = Debugger._get_arrow(edge_co, scale)
-        return [p.co for p in hedge_face] + [p.co for p in arrow_v], [hedge_i, arrow_i]
-
-    @staticmethod
-    def hedges_to_sv_mesh(scale=0.1, clear=False):
-        # for visualization all DCEL data
-        if not Debugger.half_edges:
-            print("DCEL DEBUGER: You should record your half edges into the class before calling the method")
-        out = []
-        for i, hedge in enumerate(Debugger.half_edges):
-            v, f = Debugger._hedge_to_sv(hedge, scale)
-            out.append([v, f])
-        if clear:
-            Debugger.half_edges.clear()
-        return out

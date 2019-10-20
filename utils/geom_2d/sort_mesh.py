@@ -8,6 +8,8 @@
 
 from .lin_alg import almost_equal, is_less, is_more, cross_product, dot_product
 
+from .dcel import Debugger
+
 
 x, y, z = 0, 1, 2
 

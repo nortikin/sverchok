@@ -10,6 +10,8 @@ from sverchok.utils.avl_tree import AVLTree
 from .dcel import Point as Point_template, HalfEdge as HalfEdge_template, DCELMesh as DCELMesh_template
 from .sort_mesh import SortPointsUpDown, SortHalfEdgesCCW, SortEdgeSweepingAlgorithm
 
+from .dcel import Debugger
+
 
 def monotone_sv_face_with_holes(vert_face, vert_holes=None, face_holes=None, accuracy=1e-5):
     """
@@ -24,11 +26,25 @@ def monotone_sv_face_with_holes(vert_face, vert_holes=None, face_holes=None, acc
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: vertices in Sverchok format, faces in Sverchok format
     """
-    mesh = DCELMesh()
-    mesh.from_sv_faces(vert_face, [list(range(len(vert_face)))])
+    Debugger.clear()
+    mesh = DCELMesh(accuracy)
+    mesh.from_sv_faces(vert_face, [list(range(len(vert_face)))], face_data={'main polygon': [True]})
+    main_face = [face for face in mesh.faces if face.sv_data.get('main polygon', False)][0]
     if vert_holes and face_holes:
-        mesh.from_sv_faces(vert_holes, face_holes)
-    make_monotone(mesh.faces[1], accuracy)  # fist face is boundless face
+        mesh.from_sv_faces(vert_holes, face_holes, face_data={'hole': [True for _ in range(len(face_holes))]})
+        for face in mesh.faces:
+            if face.is_unbounded and face.inners[0].face.sv_data.get('hole', False):
+                unbounded_face = face
+                break
+            if face.sv_data.get('hole', False):
+                unbounded_face = face.outer.twin.face
+                break
+        print(unbounded_face)
+        Debugger.print(unbounded_face, 'Unbounded face')
+        main_face.inners = list(unbounded_face.inners)
+        for face_hole_hedge in main_face.inners:
+            face_hole_hedge.face.outer = main_face
+    make_monotone(main_face)
     rebuild_face_list(mesh)
     return mesh.to_sv_mesh()
 
@@ -122,19 +138,17 @@ class Edge(SortEdgeSweepingAlgorithm):
         self.helper = None
 
 
-def make_monotone(face, accuracy=1e-6):
+def make_monotone(face):
     """
     Splits polygon into monotone pieces optionally with holes
     :param face: face of half edge data structure
-    :param accuracy: number of figures after coma which should be taken in to account while floats are compared
     :return new half edges
     """
+    Debugger.print(face.inners, 'inners')
     face.mesh.Point.monotone_current_face = face
-    face.mesh.Point.accuracy = accuracy
-    face.mesh.HalfEdge.accuracy = accuracy
-    face.mesh.accuracy = accuracy
     status = AVLTree()
     q = sorted(build_points_list(face))[::-1]
+    print([p.type for p in q])
     while q:
         event_point = q.pop()
         Edge.global_event_point = event_point
@@ -275,7 +289,7 @@ def handle_split_point(point, status, hedge):
     left_node = status.find_nearest_left(point.co[x])
     insert_edge(left_node.key.helper, point)
     left_node.key.helper = point
-    edge = Edge(point, hedge.twin.point)
+    edge = Edge(point, hedge.twin.origin)
     hedge.edge = edge
     hedge.twin.edge = edge
     edge.helper = point
@@ -298,10 +312,10 @@ def handle_merge_point(point, status, hedge):
 
 def handle_regular_point(point, status, hedge):
     # Read Computational Geometry by Mark de Berg
-    if point < hedge.twin.point:
+    if point < hedge.twin.origin:
         right_helper = hedge.last.edge.helper
         status.remove(point.hedge.last.edge)
-        edge = Edge(point, hedge.twin.point)
+        edge = Edge(point, hedge.twin.origin)
         hedge.edge = edge
         hedge.twin.edge = edge
         edge.helper = point
