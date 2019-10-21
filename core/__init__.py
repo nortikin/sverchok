@@ -6,7 +6,7 @@ reload_event = False
 
 root_modules = [
     "menu", "node_tree", "data_structure", "core",
-    "utils", "ui", "nodes", "old_nodes", "sockets",
+    "utils", "ui", "nodes", "old_nodes"
 ]
 
 core_modules = [
