@@ -10,7 +10,7 @@ root_modules = [
 ]
 
 core_modules = [
-    "monad_properties", "sv_custom_exceptions",
+    "monad_properties", "sv_custom_exceptions", "sockets",
     "handlers", "update_system", "upgrade_nodes", "upgrade_group",
     "monad", "node_defaults"
 ]
