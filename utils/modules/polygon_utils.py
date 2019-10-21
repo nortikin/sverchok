@@ -37,3 +37,18 @@ def areas_from_polygons(verts, polygons, sum_faces=False):
         areas = [sum(areas)]
 
     return areas
+    
+def perimeters_from_polygons(verts, polygons):
+
+    perimeters = []
+    concat_perimeters = perimeters.append
+
+    for polygon in polygons:
+        perimeter = 0
+        for v_id, v_id2 in zip(polygon,polygon[1:]+[polygon[0]]):
+            perimeter += (Vector(verts[v_id]) - Vector(verts[v_id2])).magnitude
+        concat_perimeters(perimeter)    
+        num = len(polygon)
+        
+
+    return perimeters

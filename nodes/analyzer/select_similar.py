@@ -19,11 +19,39 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
-
+from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.modules.polygon_utils import areas_from_polygons, perimeters_from_polygons
 
+def equals(val, orig_val, threshold):
+    return orig_val - threshold <= val <= orig_val + threshold
+    
+
+def less_or_equal(val, orig_val, threshold):
+    return val <= orig_val + threshold
+    
+    
+def more_or_equal(val, orig_val, threshold):
+    return orig_val - threshold <= val
+    
+    
+def equal_vectors(val, orig_val, threshold):
+    are_equal = True
+    for v, ov in zip(val, orig_val):
+        are_equal = are_equal and (ov - threshold <= v <= ov + threshold)
+    return are_equal
+    
+def coplanar_pols(val, orig_val, threshold):
+    equal_normals = equal_vectors(val[0],orig_val[0], threshold)
+    if equal_normals:
+        vector_base = Vector(val[1])- Vector(orig_val[1])
+        distance = vector_base.dot(Vector(val[0]))
+        return (abs(distance) < threshold)
+    else:
+        return False
+            
 class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Similar Sel
@@ -78,7 +106,8 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
     def update_mode(self, context):
         self.outputs['Vertices'].hide_safe = (self.mode != "verts")
         self.outputs['Edges'].hide_safe = (self.mode != "edges")
-        self.outputs['Faces'].hide_safe = (self.mode != "faces")
+        if self.mode != "faces" and self.outputs['Faces'].hide_safe:
+            self.outputs['Faces'].hide_safe = True
 
         updateNode(self, context)
 
@@ -159,6 +188,8 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
         result_mask = []
 
         meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, thresholds])
+        compare_funcs =[equals, more_or_equal, less_or_equal]
+        compare_func = compare_funcs[int(self.compare)]
         for vertices, edges, faces, masks, threshold in zip(*meshes):
             if self.mode == "verts":
                 fullList(masks,  len(vertices))
@@ -209,28 +240,84 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
 
             elif self.mode == "faces":
                 selected_faces = []
-                for m, face in zip(masks, faces):
+                selected_faces2 = []
+                out_mask = []
+                # if int(self.face_mode) == 203:
+                    # areas = areas_from_polygons(vertices, faces, sum_faces=False)
+                    # selected_areas = []
+                    # for m, face, area in zip(masks, faces, areas):
+                        # if not m:
+                            # continue
+                        # selected_areas.append(area)
+                    # for m, face, area in zip(masks, faces, areas):
+                        # if m:
+                            # selected_faces2.append(face)
+                            # out_mask.append(True)
+                        # else:
+                            # select = False
+                            # for area_s in selected_areas:
+                                # if compare_func(area, area_s, threshold): 
+                                    # selected_faces2.append(face)
+                                    # out_mask.append(True)
+                                    # select = True
+                                    # break
+                            # if not select:
+                                # out_mask.append(False)
+                if int(self.face_mode) == 203:
+                    vals= areas_from_polygons(vertices, faces, sum_faces=False)
+                elif int(self.face_mode) == 204:
+                    vals = [len(p) for p in faces]
+                elif int(self.face_mode) == 205:
+                    vals = perimeters_from_polygons(vertices, faces)
+                elif  int(self.face_mode) == 206:
+                    vals =[tuple(face.normal) for face in bm.faces]
+                    compare_func = equal_vectors
+                elif  int(self.face_mode) == 207:
+                    vals =[[tuple(bm_face.normal),vertices[face[0]]] for bm_face, face in zip(bm.faces,faces)]
+                    compare_func = coplanar_pols
+                selected_vals = []
+                for m, face, val in zip(masks, faces, vals):
                     if not m:
                         continue
-                    found = False
-                    for bmesh_face in bm.faces:
-                        if set(v.index for v in bmesh_face.verts) == set(face):
-                            #print("Found: " + str(face))
-                            found = True
-                            break
-                    if found:
-                        selected_faces.append(bmesh_face)
+                    selected_vals.append(val)
+                for m, face, val in zip(masks, faces, vals):
+                    if m:
+                        selected_faces2.append(face)
+                        out_mask.append(True)
                     else:
-                        print("Cant find face: " + str(face))
+                        select = False
+                        for val_s in selected_vals:
+                            if compare_func(val, val_s, threshold): 
+                                selected_faces2.append(face)
+                                out_mask.append(True)
+                                select = True
+                                break
+                        if not select:
+                            out_mask.append(False)
+                
+                # for m, face in zip(masks, faces):
+                    # if not m:
+                        # continue
+                    # found = False
+                    # for bmesh_face in bm.faces:
+                        # if set(v.index for v in bmesh_face.verts) == set(face):
+                            ##print("Found: " + str(face))
+                            # found = True
+                            # break
+                    # if found:
+                        # selected_faces.append(bmesh_face)
+                    # else:
+                        # print("Cant find face: " + str(face))
 
-                geom = bmesh.ops.similar_faces(bm, faces = selected_faces,
-                        type = int(self.face_mode),
-                        thresh = threshold,
-                        compare = int(self.compare))
-                s_faces = [[v.index for v in f.verts] for f in geom['faces']]
-                f_mask = self.get_mask(geom['faces'], bm.faces)
-                result_faces.append(s_faces)
-                result_mask.append(f_mask)
+                # geom = bmesh.ops.similar_faces(bm, faces = selected_faces,
+                        # type = int(self.face_mode),
+                        # thresh = threshold,
+                        # compare = int(self.compare))
+                # s_faces = [[v.index for v in f.verts] for f in geom['faces']]
+                # f_mask = self.get_mask(geom['faces'], bm.faces)
+                result_faces.append(selected_faces2)
+                result_mask.append(out_mask)
+                result_verts.append(vertices)
 
             else:
                 raise NotImplementedError("Unsupported mode: " + self.mode)
