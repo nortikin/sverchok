@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sqrt
+from math import sqrt, atan2
 from collections import defaultdict
 
 import bpy
@@ -316,6 +316,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             # clipping box to bounding box.
             verts_to_remove = set()
             edges_to_remove = set()
+            bounding_verts = []
 
             for vert_idx, vert in enumerate(bm.verts[:]):
                 x, y = tuple(vert)
@@ -328,8 +329,9 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                             x2, y2 = tuple(other_vert)
                             intersection = bounds.segment_intersection((x,y), (x2,y2))
                             if intersection is not None:
-                                x_i, y_i = tuple(intersection)
-                                new_vert_idx = bm.new_vert((x_i, y_i))
+                                intersection = tuple(intersection)
+                                new_vert_idx = bm.new_vert(intersection)
+                                bounding_verts.append(new_vert_idx)
                                 #info("CLIP: Added point: %s => %s", (x_i, y_i), new_vert_idx)
                                 bm.new_edge(other_vert_idx, new_vert_idx)
 
@@ -339,8 +341,9 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                 if vert_index not in verts_to_remove:
                     for line in rays[vert_index]:
                         intersection = bounds.ray_intersection(vert, line)
-                        x_i, y_i = tuple(intersection)
-                        new_vert_idx = bm.new_vert((x_i, y_i))
+                        intersection = tuple(intersection)
+                        new_vert_idx = bm.new_vert(intersection)
+                        bounding_verts.append(new_vert_idx)
                         #info("INF: Added point: %s: %s => %s", (x,y), (x_i, y_i), new_vert_idx)
                         bm.new_edge(vert_index, new_vert_idx)
 
@@ -350,9 +353,16 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                     v1, v2 = intersections
                     new_vert_1_idx = bm.new_vert(tuple(v1))
                     new_vert_2_idx = bm.new_vert(tuple(v2))
+                    bounding_verts.append(new_vert_1_idx)
+                    bounding_verts.append(new_vert_2_idx)
                     bm.new_edge(new_vert_1_idx, new_vert_2_idx)
                 else:
                     self.error("unexpected number of intersections of infinite line %s with area bounds: %s", eqn, intersections)
+
+            bounding_verts.sort(key = lambda idx: atan2(bm.verts[idx][1], bm.verts[idx][0]))
+            for i, j in zip(bounding_verts, bounding_verts[1:]):
+                bm.new_edge(i, j)
+            bm.new_edge(bounding_verts[-1], bounding_verts[0])
 
             for i, j in edges_to_remove:
                 bm.remove_edge(i, j)
