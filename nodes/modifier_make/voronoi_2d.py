@@ -242,6 +242,12 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
+    draw_hangs: BoolProperty(
+        name = "Draw Tails",
+        description = "Draw lines that end outside of clipping area",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvVerticesSocket', "Vertices")
@@ -250,6 +256,8 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "bound_mode")
         layout.prop(self, "draw_bounds")
+        if not self.draw_bounds:
+            layout.prop(self, "draw_hangs")
         layout.prop(self, "clip", text="Clipping")
 
     def process(self):
@@ -297,22 +305,6 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             finite_edges = [(edge[1], edge[2]) for edge in all_edges if -1 not in edge]
             bm = Mesh2D.from_pydata(verts, finite_edges)
 
-            # Diagram lines that go infinitely from one side of diagram to another
-            infinite_lines = []
-            # Lines that start at the one vertex of the diagram and go to infinity
-            rays = defaultdict(list)
-            for line_index, i1, i2 in all_edges:
-                if i1 == -1 or i2 == -1:
-                    line = lines[line_index]
-                    a, b, c = line
-                    eqn = LineEquation2D(a, b, -c)
-                    if i1 == -1 and i2 != -1:
-                        rays[i2].append(eqn)
-                    elif i2 == -1 and i1 != -1:
-                        rays[i1].append(eqn)
-                    elif i1 == -1 and i2 == -1:
-                        infinite_lines.append(eqn)
-
             # clipping box to bounding box.
             verts_to_remove = set()
             edges_to_remove = set()
@@ -324,42 +316,60 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                     verts_to_remove.add(vert_idx)
                     for other_vert_idx in list(bm.linked_verts[vert_idx]):
                         edges_to_remove.add((vert_idx, other_vert_idx))
-                        other_vert = bm.verts[other_vert_idx]
-                        if other_vert is not None:
-                            x2, y2 = tuple(other_vert)
-                            intersection = bounds.segment_intersection((x,y), (x2,y2))
-                            if intersection is not None:
-                                intersection = tuple(intersection)
-                                new_vert_idx = bm.new_vert(intersection)
-                                bounding_verts.append(new_vert_idx)
-                                #info("CLIP: Added point: %s => %s", (x_i, y_i), new_vert_idx)
-                                bm.new_edge(other_vert_idx, new_vert_idx)
+                        if self.draw_hangs or self.draw_bounds:
+                            other_vert = bm.verts[other_vert_idx]
+                            if other_vert is not None:
+                                x2, y2 = tuple(other_vert)
+                                intersection = bounds.segment_intersection((x,y), (x2,y2))
+                                if intersection is not None:
+                                    intersection = tuple(intersection)
+                                    new_vert_idx = bm.new_vert(intersection)
+                                    bounding_verts.append(new_vert_idx)
+                                    #info("CLIP: Added point: %s => %s", (x_i, y_i), new_vert_idx)
+                                    bm.new_edge(other_vert_idx, new_vert_idx)
 
-            for vert_index in rays.keys():
-                x,y = bm.verts[vert_index]
-                vert = Vector((x,y))
-                if vert_index not in verts_to_remove:
-                    for line in rays[vert_index]:
-                        intersection = bounds.ray_intersection(vert, line)
-                        intersection = tuple(intersection)
-                        new_vert_idx = bm.new_vert(intersection)
-                        bounding_verts.append(new_vert_idx)
-                        #info("INF: Added point: %s: %s => %s", (x,y), (x_i, y_i), new_vert_idx)
-                        bm.new_edge(vert_index, new_vert_idx)
+            # Diagram lines that go infinitely from one side of diagram to another
+            infinite_lines = []
+            # Lines that start at the one vertex of the diagram and go to infinity
+            rays = defaultdict(list)
+            if self.draw_hangs or self.draw_bounds:
+                for line_index, i1, i2 in all_edges:
+                    if i1 == -1 or i2 == -1:
+                        line = lines[line_index]
+                        a, b, c = line
+                        eqn = LineEquation2D(a, b, -c)
+                        if i1 == -1 and i2 != -1:
+                            rays[i2].append(eqn)
+                        elif i2 == -1 and i1 != -1:
+                            rays[i1].append(eqn)
+                        elif i1 == -1 and i2 == -1:
+                            infinite_lines.append(eqn)
 
-            for eqn in infinite_lines:
-                intersections = bounds.line_intersection(eqn)
-                if len(intersections) == 2:
-                    v1, v2 = intersections
-                    new_vert_1_idx = bm.new_vert(tuple(v1))
-                    new_vert_2_idx = bm.new_vert(tuple(v2))
-                    bounding_verts.append(new_vert_1_idx)
-                    bounding_verts.append(new_vert_2_idx)
-                    bm.new_edge(new_vert_1_idx, new_vert_2_idx)
-                else:
-                    self.error("unexpected number of intersections of infinite line %s with area bounds: %s", eqn, intersections)
+                for vert_index in rays.keys():
+                    x,y = bm.verts[vert_index]
+                    vert = Vector((x,y))
+                    if vert_index not in verts_to_remove:
+                        for line in rays[vert_index]:
+                            intersection = bounds.ray_intersection(vert, line)
+                            intersection = tuple(intersection)
+                            new_vert_idx = bm.new_vert(intersection)
+                            bounding_verts.append(new_vert_idx)
+                            #info("INF: Added point: %s: %s => %s", (x,y), (x_i, y_i), new_vert_idx)
+                            bm.new_edge(vert_index, new_vert_idx)
 
-            if self.draw_bounds:
+                for eqn in infinite_lines:
+                    intersections = bounds.line_intersection(eqn)
+                    if len(intersections) == 2:
+                        v1, v2 = intersections
+                        new_vert_1_idx = bm.new_vert(tuple(v1))
+                        new_vert_2_idx = bm.new_vert(tuple(v2))
+                        bounding_verts.append(new_vert_1_idx)
+                        bounding_verts.append(new_vert_2_idx)
+                        bm.new_edge(new_vert_1_idx, new_vert_2_idx)
+                    else:
+                        self.error("unexpected number of intersections of infinite line %s with area bounds: %s", eqn, intersections)
+
+            if self.draw_bounds and bounding_verts:
                 bounding_verts.sort(key = lambda idx: atan2(bm.verts[idx][1], bm.verts[idx][0]))
                 for i, j in zip(bounding_verts, bounding_verts[1:]):
                     bm.new_edge(i, j)
