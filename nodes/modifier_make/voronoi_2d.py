@@ -52,7 +52,7 @@ class Bounds(object):
 class Mesh2D(object):
     def __init__(self):
         self.verts = []
-        self.all_edges = []
+        self.all_edges = set()
         self.linked_verts = defaultdict(set)
         self._next_vert = 0
 
@@ -78,7 +78,7 @@ class Mesh2D(object):
     def new_edge(self, i, j):
         v1, v2 = self.verts[i], self.verts[j]
         #info("Add: %s (%s) => %s (%s)", i, v1, j, v2)
-        self.all_edges.append((v1, v2))
+        self.all_edges.add((v1, v2))
         self.linked_verts[i].add(j)
         self.linked_verts[j].add(i)
 
@@ -114,13 +114,9 @@ class BoxBounds(Bounds):
     def contains(self, p):
         x, y = tuple(p)
         return (self.x_min <= x <= self.x_max) and (self.y_min <= y <= self.y_max)
-
-    def segment_intersection(self, p1, p2):
-        if not isinstance(p1, Vector):
-            p1 = Vector(p1)
-        if not isinstance(p2, Vector):
-            p2 = Vector(p2)
-
+    
+    @property
+    def edges(self):
         v1 = (self.x_min, self.y_min)
         v2 = (self.x_min, self.y_max)
         v3 = (self.x_max, self.y_max)
@@ -131,10 +127,18 @@ class BoxBounds(Bounds):
         e3 = (v3, v4)
         e4 = (v4, v1)
 
+        return [e1, e2, e3, e4]
+
+    def segment_intersection(self, p1, p2):
+        if not isinstance(p1, Vector):
+            p1 = Vector(p1)
+        if not isinstance(p2, Vector):
+            p2 = Vector(p2)
+
         min_r = BIG_FLOAT
         nearest = None
 
-        for v_i, v_j in [e1, e2, e3, e4]:
+        for v_i, v_j in self.edges:
             intersection = intersect_line_line_2d(p1, p2, v_i, v_j)
             if intersection is not None:
                 r = (p1 - intersection).length
@@ -144,24 +148,14 @@ class BoxBounds(Bounds):
 
         return nearest
 
-    def line_intersection(self, p, line):
+    def ray_intersection(self, p, line):
         if not isinstance(p, Vector):
             p = Vector(p)
-
-        v1 = (self.x_min, self.y_min)
-        v2 = (self.x_min, self.y_max)
-        v3 = (self.x_max, self.y_max)
-        v4 = (self.x_max, self.y_min)
-
-        e1 = (v1, v2)
-        e2 = (v2, v3)
-        e3 = (v3, v4)
-        e4 = (v4, v1)
 
         min_r = BIG_FLOAT
         nearest = None
 
-        for v_i, v_j in [e1, e2, e3, e4]:
+        for v_i, v_j in self.edges:
             bound = LineEquation2D.from_two_points(v_i, v_j)
             intersection = bound.intersect_with_line(line)
             if intersection is not None:
@@ -172,6 +166,18 @@ class BoxBounds(Bounds):
                     min_r = r
 
         return nearest
+
+    def line_intersection(self, line):
+        result = []
+        eps = 1e-8
+        for v_i, v_j in self.edges:
+            bound = LineEquation2D.from_two_points(v_i, v_j)
+            intersection = bound.intersect_with_line(line)
+            if intersection is not None:
+                x,y = tuple(intersection)
+                if (self.x_min-eps <= x <= self.x_max+eps) and (self.y_min-eps <= y <= self.y_max+eps):
+                    result.append(intersection)
+        return result
 
 class CircleBounds(Bounds):
 
@@ -193,7 +199,7 @@ class CircleBounds(Bounds):
         if r[1] is not None:
             return r[1]
 
-    def line_intersection(self, p, line):
+    def ray_intersection(self, p, line):
         intersection = self.circle.intersect_with_line(line)
         if intersection is None:
             return None
@@ -205,6 +211,10 @@ class CircleBounds(Bounds):
                 return v1
             else:
                 return v2
+
+    def line_intersection(self, line):
+        intersection = self.circle.intersect_with_line(line)
+        return intersection
 
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
     ''' vr Voronoi 2d line '''
@@ -281,16 +291,19 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             finite_edges = [(edge[1], edge[2]) for edge in all_edges if -1 not in edge]
             bm = Mesh2D.from_pydata(verts, finite_edges)
 
-            infinite_lines = defaultdict(list)
+            infinite_lines = []
+            rays = defaultdict(list)
             for line_index, i1, i2 in all_edges:
-                line = lines[line_index]
-                a, b, c = line
-                if i1 == -1:
+                if i1 == -1 or i2 == -1:
+                    line = lines[line_index]
+                    a, b, c = line
                     eqn = LineEquation2D(a, b, -c)
-                    infinite_lines[i2].append(eqn)
-                elif i2 == -1:
-                    eqn = LineEquation2D(a, b, -c)
-                    infinite_lines[i1].append(eqn)
+                    if i1 == -1 and i2 != -1:
+                        rays[i2].append(eqn)
+                    elif i2 == -1 and i1 != -1:
+                        rays[i1].append(eqn)
+                    elif i1 == -1 and i2 == -1:
+                        infinite_lines.append(eqn)
 
             delta = self.clip
             bounds.x_max = bounds.x_max + delta
@@ -321,16 +334,26 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                                 #info("CLIP: Added point: %s => %s", (x_i, y_i), new_vert_idx)
                                 bm.new_edge(other_vert_idx, new_vert_idx)
 
-            for vert_index in infinite_lines.keys():
+            for vert_index in rays.keys():
                 x,y = bm.verts[vert_index]
                 vert = Vector((x,y))
                 if vert_index not in verts_to_remove:
-                    for line in infinite_lines[vert_index]:
-                        intersection = bounds.line_intersection(vert, line)
+                    for line in rays[vert_index]:
+                        intersection = bounds.ray_intersection(vert, line)
                         x_i, y_i = tuple(intersection)
                         new_vert_idx = bm.new_vert((x_i, y_i))
                         #info("INF: Added point: %s: %s => %s", (x,y), (x_i, y_i), new_vert_idx)
                         bm.new_edge(vert_index, new_vert_idx)
+
+            for eqn in infinite_lines:
+                intersections = bounds.line_intersection(eqn)
+                if len(intersections) == 2:
+                    v1, v2 = intersections
+                    new_vert_1_idx = bm.new_vert(tuple(v1))
+                    new_vert_2_idx = bm.new_vert(tuple(v2))
+                    bm.new_edge(new_vert_1_idx, new_vert_2_idx)
+                else:
+                    self.error("unexpected number of intersections of infinite line %s with area bounds: %s", eqn, intersections)
 
             for i, j in edges_to_remove:
                 bm.remove_edge(i, j)
