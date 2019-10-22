@@ -1,12 +1,16 @@
 from typing import Tuple, List, Dict, Union, ClassVar, Iterable
 
+TSVPoint = Tuple[float, float, float]
+TSVEdge = Tuple[int, int]
+TSVFace = List[int]
+
 class Point:
     accuracy: float
     mesh: 'DCELMesh'
-    co: Tuple[float, float, float]
+    co: TSVPoint
     hedge: Union[None, 'HalfEdge']
 
-    def __init__(self, mesh: 'DCELMesh', co: Tuple[float, float, float]) -> None: ...
+    def __init__(self, mesh: 'DCELMesh', co: TSVPoint) -> None: ...
 
 class HalfEdge:
     accuracy: float
@@ -23,7 +27,6 @@ class HalfEdge:
         self.ccw_hedges: List['HalfEdge'] = None
         self.slop: float = None
         ...
-
 
 class Face:
     accuracy: float
@@ -51,9 +54,9 @@ class DCELMesh:
     
     def set_accuracy(cls, accuracy: Union[float, int]) -> None: ...
     
-    def from_sv_faces(self, verts: List[Tuple[float, float, float]], 
-                      faces: List[List[int]], 
+    def from_sv_faces(self, verts: List[TSVPoint], 
+                      faces: List[TSVFace], 
                       face_mask: List[Union[bool, int]] = ...,
                       face_data: Dict[str, list] = ...) -> None: ...
     
-    def to_sv_mesh(self) -> Tuple[List[Tuple[float, float, float]], List[List[int]]]: ...
+    def to_sv_mesh(self) -> Tuple[List[TSVPoint], List[TSVFace]]: ...

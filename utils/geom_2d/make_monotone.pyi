@@ -1,12 +1,12 @@
 from typing import Tuple, List, Union
 
-TSVPoint: Tuple[float, float, float]
-TSVEdge: Tuple[int, int]
-TSVFace: List[int]
+TSVPoint = Tuple[float, float, float]
+TSVEdge = Tuple[int, int]
+TSVFace = List[int]
 
 
-def monotone_sv_face_with_holes(vert_face: List[Tuple[float, float, float]], 
-                                vert_holes: List[Tuple[float, float, float]] = ...,
-                                face_holes: List[List[int]] = ..., 
+def monotone_sv_face_with_holes(vert_face: List[TSVPoint], 
+                                vert_holes: List[TSVPoint] = ...,
+                                face_holes: List[TSVFace] = ..., 
                                 accuracy: Union[float, int] = ...)\
-                                -> Tuple[List[Tuple[float, float, float]], List[List[int]]]: ...
+                                -> Tuple[List[TSVPoint], List[TSVFace]]: ...
