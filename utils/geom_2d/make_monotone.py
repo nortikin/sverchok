@@ -28,17 +28,17 @@ def monotone_sv_face_with_holes(vert_face, vert_holes = None, face_holes=None, a
     :return: vertices in Sverchok format, faces in Sverchok format
     """
     Debugger.clear()
-    mesh = DCELMesh(accuracy)  # type: DCELMesh
+    mesh = DCELMesh(accuracy)
     mesh.from_sv_faces(vert_face, [list(range(len(vert_face)))], face_data={'main polygon': [True]})
-    main_face = [face for face in mesh.faces if face.sv_data.get('main polygon', False)][0]  # type: Face
+    main_face = [face for face in mesh.faces if face.sv_data.get('main polygon', False)][0]
     if vert_holes and face_holes:
         mesh.from_sv_faces(vert_holes, face_holes, face_data={'hole': [True for _ in range(len(face_holes))]})
-        for face in mesh.faces:  # type: Face
+        for face in mesh.faces:
             if face.is_unbounded and face.inners[0].face.sv_data.get('hole', False):
                 unbounded_face = face
                 break
             if face.sv_data.get('hole', False):
-                unbounded_face = face.outer.twin.face  # type: Face
+                unbounded_face = face.outer.twin.face
                 break
         print(unbounded_face)
         Debugger.print(unbounded_face, 'Unbounded face')
