@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -37,7 +37,8 @@ def areas_from_polygons(verts, polygons, sum_faces=False):
         areas = [sum(areas)]
 
     return areas
-    
+
+
 def perimeters_from_polygons(verts, polygons):
 
     perimeters = []
@@ -47,8 +48,8 @@ def perimeters_from_polygons(verts, polygons):
         perimeter = 0
         for v_id, v_id2 in zip(polygon,polygon[1:]+[polygon[0]]):
             perimeter += (Vector(verts[v_id]) - Vector(verts[v_id2])).magnitude
-        concat_perimeters(perimeter)    
-        num = len(polygon)
-        
+        concat_perimeters(perimeter)
+
+
 
     return perimeters
