@@ -44,6 +44,7 @@
     SvEllipseNode
     SvSuperEllipsoidNode
     SvRegularSolid
+    SvConicSectionNode
 
 ## Analyzers
     SvBBoxNodeMk2
