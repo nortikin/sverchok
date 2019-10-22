@@ -791,7 +791,7 @@ def computeVoronoiDiagram(points):
     context  = Context()
     context.triangulate = True
     voronoi(siteList,context)
-    return (context.vertices,context.polygons,context.edges)
+    return (context.vertices,context.lines,context.edges)
 
 #------------------------------------------------------------------
 def computeDelaunayTriangulation(points):
