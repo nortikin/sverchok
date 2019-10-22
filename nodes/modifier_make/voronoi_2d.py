@@ -92,9 +92,6 @@ class Mesh2D(object):
         if i in self.linked_verts[j]:
             self.linked_verts[j].remove(i)
 
-    def remove_vert(self, vert):
-        self.verts.remove(vert)
-
     def to_pydata(self):
         verts = [vert for vert in self.verts if vert is not None]
         lut = dict((vert, idx) for idx, vert in enumerate(verts))
@@ -287,11 +284,22 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                 bounds.y_min = min(x, bounds.x_min)
                 pt_list.append(Site(x, y))
 
+            delta = self.clip
+            bounds.x_max = bounds.x_max + delta
+            bounds.y_max = bounds.y_max + delta
+
+            bounds.x_min = bounds.x_min - delta
+            bounds.y_min = bounds.y_min - delta
+
+            bounds.r_max = bounds.r_max + delta
+
             verts, lines, all_edges = computeVoronoiDiagram(pt_list)
             finite_edges = [(edge[1], edge[2]) for edge in all_edges if -1 not in edge]
             bm = Mesh2D.from_pydata(verts, finite_edges)
 
+            # Diagram lines that go infinitely from one side of diagram to another
             infinite_lines = []
+            # Lines that start at the one vertex of the diagram and go to infinity
             rays = defaultdict(list)
             for line_index, i1, i2 in all_edges:
                 if i1 == -1 or i2 == -1:
@@ -304,15 +312,6 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                         rays[i1].append(eqn)
                     elif i1 == -1 and i2 == -1:
                         infinite_lines.append(eqn)
-
-            delta = self.clip
-            bounds.x_max = bounds.x_max + delta
-            bounds.y_max = bounds.y_max + delta
-
-            bounds.x_min = bounds.x_min - delta
-            bounds.y_min = bounds.y_min - delta
-
-            bounds.r_max = bounds.r_max + delta
 
             # clipping box to bounding box.
             verts_to_remove = set()
