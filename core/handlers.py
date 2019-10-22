@@ -137,6 +137,11 @@ def sv_post_load(scene):
     Upgrade nodes, apply preferences and do an update.
     """
 
+    # ensure current nodeview view scale / location parameters reflect users' system settings
+    from sverchok import node_tree
+    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
+
+
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:
             monad.update_cls()

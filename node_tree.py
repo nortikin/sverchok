@@ -476,12 +476,14 @@ class SverchCustomTreeNode:
         op.idtree = self.id_data.name
 
 
-    def get_and_set_gl_scale_info(self):
+    def get_and_set_gl_scale_info(self, origin=None):
         """
         This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
+        print('get_and_set_gl_scale_info called from', origin or self.name)
+
         try:
             print('getting gl scale params')
             from sverchok.utils.context_managers import sv_preferences
