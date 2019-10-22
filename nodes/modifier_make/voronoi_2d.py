@@ -20,7 +20,7 @@ from math import sqrt, atan2
 from collections import defaultdict
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 from mathutils import Vector
 from mathutils.geometry import intersect_line_line_2d
 
@@ -236,6 +236,12 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         default = 'BOX',
         update = updateNode)
 
+    draw_bounds: BoolProperty(
+        name = "Draw Bounds",
+        description = "Draw bounding edges",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvVerticesSocket', "Vertices")
@@ -243,14 +249,8 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "bound_mode")
+        layout.prop(self, "draw_bounds")
         layout.prop(self, "clip", text="Clipping")
-
-    def lines_from_polygons(self, polygons):
-        result = set()
-        for idx in polygons.keys():
-            for line in polygons[idx]:
-                result.add(line)
-        return list(result)
 
     def process(self):
 
@@ -359,10 +359,11 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     self.error("unexpected number of intersections of infinite line %s with area bounds: %s", eqn, intersections)
 
-            bounding_verts.sort(key = lambda idx: atan2(bm.verts[idx][1], bm.verts[idx][0]))
-            for i, j in zip(bounding_verts, bounding_verts[1:]):
-                bm.new_edge(i, j)
-            bm.new_edge(bounding_verts[-1], bounding_verts[0])
+            if self.draw_bounds:
+                bounding_verts.sort(key = lambda idx: atan2(bm.verts[idx][1], bm.verts[idx][0]))
+                for i, j in zip(bounding_verts, bounding_verts[1:]):
+                    bm.new_edge(i, j)
+                bm.new_edge(bounding_verts[-1], bounding_verts[0])
 
             for i, j in edges_to_remove:
                 bm.remove_edge(i, j)
