@@ -49,6 +49,9 @@ class Bounds(object):
         else:
             raise Exception("Unknown bounds type")
 
+    def __repr__(self):
+        return f"Bounds[C: {self.center}, R: {self.r_max}, X: {self.x_min} - {self.x_max}, Y: {self.y_min} - {self.y_max}]"
+
 class Mesh2D(object):
     def __init__(self):
         self.verts = []
@@ -276,10 +279,10 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         for obj in points_in:
             bounds = Bounds.new(self.bound_mode)
             pt_list = []
-            bounds.x_max = obj[0][0]
-            bounds.x_min = obj[0][0]
-            bounds.y_min = obj[0][1]
-            bounds.y_max = obj[0][1]
+            bounds.x_max = -BIG_FLOAT
+            bounds.x_min = BIG_FLOAT
+            bounds.y_min = BIG_FLOAT
+            bounds.y_max = -BIG_FLOAT
             x0, y0, z0 = center(obj)
             bounds.center = (x0, y0)
             # creates points in format for voronoi library, throwing away z
@@ -289,7 +292,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                 bounds.x_max = max(x, bounds.x_max)
                 bounds.x_min = min(x, bounds.x_min)
                 bounds.y_max = max(y, bounds.y_max)
-                bounds.y_min = min(x, bounds.x_min)
+                bounds.y_min = min(y, bounds.y_min)
                 pt_list.append(Site(x, y))
 
             delta = self.clip
