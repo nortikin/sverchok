@@ -5,15 +5,16 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from typing import Tuple, List, Union
 
 from sverchok.utils.avl_tree import AVLTree
-from .dcel import Point as Point_template, HalfEdge as HalfEdge_template, DCELMesh as DCELMesh_template
+from .dcel import Point as Point_template, HalfEdge as HalfEdge_template, DCELMesh as DCELMesh_template, Face
 from .sort_mesh import SortPointsUpDown, SortHalfEdgesCCW, SortEdgeSweepingAlgorithm
 
-from .dcel import Debugger
+from .dcel_debugger import Debugger
 
 
-def monotone_sv_face_with_holes(vert_face, vert_holes=None, face_holes=None, accuracy=1e-5):
+def monotone_sv_face_with_holes(vert_face, vert_holes = None, face_holes=None, accuracy=1e-5):
     """
     Get one face in Sverhok format and splitting it into monotone pieces
     Vertices of face should be given in ordered along face indexes order
@@ -27,17 +28,17 @@ def monotone_sv_face_with_holes(vert_face, vert_holes=None, face_holes=None, acc
     :return: vertices in Sverchok format, faces in Sverchok format
     """
     Debugger.clear()
-    mesh = DCELMesh(accuracy)
+    mesh = DCELMesh(accuracy)  # type: DCELMesh
     mesh.from_sv_faces(vert_face, [list(range(len(vert_face)))], face_data={'main polygon': [True]})
-    main_face = [face for face in mesh.faces if face.sv_data.get('main polygon', False)][0]
+    main_face = [face for face in mesh.faces if face.sv_data.get('main polygon', False)][0]  # type: Face
     if vert_holes and face_holes:
         mesh.from_sv_faces(vert_holes, face_holes, face_data={'hole': [True for _ in range(len(face_holes))]})
-        for face in mesh.faces:
+        for face in mesh.faces:  # type: Face
             if face.is_unbounded and face.inners[0].face.sv_data.get('hole', False):
                 unbounded_face = face
                 break
             if face.sv_data.get('hole', False):
-                unbounded_face = face.outer.twin.face
+                unbounded_face = face.outer.twin.face  # type: Face
                 break
         print(unbounded_face)
         Debugger.print(unbounded_face, 'Unbounded face')

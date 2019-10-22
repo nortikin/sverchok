@@ -65,7 +65,7 @@ class Point:
     def normalize(self):
         # making the length of the vector 1.0
         mem_len = self.length()
-        self.co = tuple(co / mem_len for co in list(self.co))
+        self.co = (self.co[0] / mem_len, self.co[1] / mem_len, self.co[2] / mem_len)
         return self
 
     def cross_product(self, other):
@@ -192,7 +192,6 @@ class Face:
             raise ValueError("HalfEdge type of object only can be set to outer attribute, "
                              "({}) was given".format(type(value)))
         self._outer = value
-
 
 
 class DCELMesh:
