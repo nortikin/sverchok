@@ -358,8 +358,10 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col = box_sub1.column(align=True)
             
             box_sub1_col.label(text='Render Scale & Location')
-            box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-            box_sub1_col.prop(self, 'render_scale', text='scale')
+            # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
+            # box_sub1_col.prop(self, 'render_scale', text='scale')
+            box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
+            box_sub1_col.label(text=f'render_scale : {self.render_scale}')
             
             box_sub1_col.label(text='Stethoscope')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
