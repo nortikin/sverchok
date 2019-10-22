@@ -74,3 +74,32 @@ The node has the following outputs:
   belong ("right" or "left"). For cases when sides of the curve can not be
   distinguished (for circles, for example), this output will contain all 1s.
 
+Examples of Usage
+-----------------
+
+Classic parabola is defined by a cone and a plane which is parallel to cone's generatrix:
+
+.. image:: https://user-images.githubusercontent.com/284644/67162280-e3ce8400-f37b-11e9-9825-c81698e256a2.png
+
+The same parabola but with "even distribution" turned on:
+
+.. image:: https://user-images.githubusercontent.com/284644/67162281-e3ce8400-f37b-11e9-8a46-fd3face4738d.png
+
+Classic elipse is defined by a cone and a plane which intersects the cone at some random angle:
+
+.. image:: https://user-images.githubusercontent.com/284644/67162287-e4671a80-f37b-11e9-967d-f45fa43c40af.png
+
+One can generate a series of curves by intersecting one cone with a series of planes at different angles:
+
+.. image:: https://user-images.githubusercontent.com/284644/67210489-9eb95900-f432-11e9-8b9e-6590361c2001.png
+
+One can generate a hyperbola (2-branched curve) and then use it to generate 1-sheet hyperboloid
+
+.. image:: https://user-images.githubusercontent.com/284644/67162347-8dae1080-f37c-11e9-8ac1-06b849c13fd4.png
+
+or 2-sheet hyperboloid
+
+.. image:: https://user-images.githubusercontent.com/284644/67162282-e3ce8400-f37b-11e9-87c3-5cdcc27f007e.png
+
+There are more examples `in the original thread <https://github.com/nortikin/sverchok/pull/2636>`_.
+
