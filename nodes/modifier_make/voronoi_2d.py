@@ -149,8 +149,7 @@ class BoxBounds(Bounds):
         return nearest
 
     def ray_intersection(self, p, line):
-        if not isinstance(p, Vector):
-            p = Vector(p)
+        p = Vector(center(line.sites))
 
         min_r = BIG_FLOAT
         nearest = None
@@ -200,7 +199,9 @@ class CircleBounds(Bounds):
             return r[1]
 
     def ray_intersection(self, p, line):
+        p = Vector(center(line.sites))
         intersection = self.circle.intersect_with_line(line)
+        #info("RI: {line} X {self.circle} => {intersection}")
         if intersection is None:
             return None
         else:
@@ -217,7 +218,10 @@ class CircleBounds(Bounds):
         return intersection
 
 class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' vr Voronoi 2d line '''
+    """
+    Triggers: Voronoi vr
+    Tooltip: Generate 2D Voronoi diagram for a set of vertices.
+    """
     bl_idname = 'Voronoi2DNode'
     bl_label = 'Voronoi 2D'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -278,7 +282,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         edges_out = []
         for obj in points_in:
             bounds = Bounds.new(self.bound_mode)
-            pt_list = []
+            source_sites = []
             bounds.x_max = -BIG_FLOAT
             bounds.x_min = BIG_FLOAT
             bounds.y_min = BIG_FLOAT
@@ -293,7 +297,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                 bounds.x_min = min(x, bounds.x_min)
                 bounds.y_max = max(y, bounds.y_max)
                 bounds.y_min = min(y, bounds.y_min)
-                pt_list.append(Site(x, y))
+                source_sites.append(Site(x, y))
 
             delta = self.clip
             bounds.x_max = bounds.x_max + delta
@@ -304,7 +308,11 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
 
             bounds.r_max = bounds.r_max + delta
 
-            verts, lines, all_edges = computeVoronoiDiagram(pt_list)
+            voronoi_data = computeVoronoiDiagram(source_sites)
+            verts = voronoi_data.vertices
+            lines = voronoi_data.lines
+            all_edges = voronoi_data.edges
+
             finite_edges = [(edge[1], edge[2]) for edge in all_edges if -1 not in edge]
             bm = Mesh2D.from_pydata(verts, finite_edges)
 
@@ -313,6 +321,10 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             edges_to_remove = set()
             bounding_verts = []
 
+            # For each diagram vertex that is outside of the bounds,
+            # cut each edge connected with that vertex by bounding line.
+            # Remove such vertices, remove such edges, and instead add
+            # vertices lying on the bounding line and corresponding edges.
             for vert_idx, vert in enumerate(bm.verts[:]):
                 x, y = tuple(vert)
                 if not bounds.contains((x,y)):
@@ -336,18 +348,36 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             # Lines that start at the one vertex of the diagram and go to infinity
             rays = defaultdict(list)
             if self.draw_hangs or self.draw_bounds:
+                sites_by_line = defaultdict(list)
+
+                for site_idx in voronoi_data.polygons.keys():
+                    for line_index, i1, i2 in voronoi_data.polygons[site_idx]:
+                        if i1 == -1 or i2 == -1:
+                            site = source_sites[site_idx]
+                            sites_by_line[line_index].append((site.x, site.y))
+
                 for line_index, i1, i2 in all_edges:
                     if i1 == -1 or i2 == -1:
                         line = lines[line_index]
                         a, b, c = line
                         eqn = LineEquation2D(a, b, -c)
                         if i1 == -1 and i2 != -1:
+                            eqn.sites = sites_by_line[line_index]
                             rays[i2].append(eqn)
                         elif i2 == -1 and i1 != -1:
+                            eqn.sites = sites_by_line[line_index]
                             rays[i1].append(eqn)
                         elif i1 == -1 and i2 == -1:
                             infinite_lines.append(eqn)
 
+                # For each (half-infinite) ray, calculate it's intersection
+                # with the bounding line and draw an edge from ray's beginning to
+                # the bounding line.
+                # NB: The data returned from voronoi.py for such lines
+                # is a vertex and a line equation. The line obviously intersects
+                # the bounding line in two points; which one should we choose?
+                # Let's choose that one which is closer to site points which the
+                # line is dividing.
                 for vert_index in rays.keys():
                     x,y = bm.verts[vert_index]
                     vert = Vector((x,y))
@@ -360,6 +390,9 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                             #info("INF: Added point: %s: %s => %s", (x,y), (x_i, y_i), new_vert_idx)
                             bm.new_edge(vert_index, new_vert_idx)
 
+                # For each infinite (in two directions) line,
+                # calculate two it's intersections with the bounding
+                # line and connect them by an edge.
                 for eqn in infinite_lines:
                     intersections = bounds.line_intersection(eqn)
                     if len(intersections) == 2:

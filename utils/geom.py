@@ -1453,7 +1453,7 @@ class LineEquation2D(object):
         self.b = b
         self.c = c
 
-    def __str__(self):
+    def __repr__(self):
         return f"{self.a}*x + {self.b}*y + {self.c} = 0"
 
     @classmethod

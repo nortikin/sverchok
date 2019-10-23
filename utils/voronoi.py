@@ -769,29 +769,24 @@ class SiteList(object):
 #------------------------------------------------------------------
 def computeVoronoiDiagram(points):
     """ Takes a list of point objects (which must have x and y fields).
-        Returns a 3-tuple of:
+        Returns a Context object.
 
-           (1) a list of 2-tuples, which are the x,y coordinates of the 
-               Voronoi diagram vertices
-           (2) a list of 3-tuples (a,b,c) which are the equations of the
-               lines in the Voronoi diagram: a*x + b*y = c
-           (3) a list of 3-tuples, (l, v1, v2) representing edges of the 
+           (1) context.vertices: a list of 2-tuples, which are the x,y
+               coordinates of the Voronoi diagram vertices
+           (2) context.lines: a list of 3-tuples (a,b,c) which are the
+               equations of the lines in the Voronoi diagram: a*x + b*y = c
+           (3) context.edges: a list of 3-tuples, (l, v1, v2) representing edges of the 
                Voronoi diagram.  l is the index of the line, v1 and v2 are
                the indices of the vetices at the end of the edge.  If 
                v1 or v2 is -1, the line extends to infinity.
+           (4) context.polygons: a dict of site:[edges] pairs
     """
-
-#    siteList = SiteList(points)
-#     context  = Context()
-#     voronoi(siteList,context)
-#     return (context.vertices,context.lines,context.edges)
-
 
     siteList = SiteList(points)
     context  = Context()
     context.triangulate = True
     voronoi(siteList,context)
-    return (context.vertices,context.lines,context.edges)
+    return context
 
 #------------------------------------------------------------------
 def computeDelaunayTriangulation(points):
