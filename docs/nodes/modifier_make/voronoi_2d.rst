@@ -51,3 +51,16 @@ This node has the following outputs:
 
 It is possible to use **Fill Holes** node to generate polygons for the diagram.
 
+Examples of usage
+-----------------
+
+Simple example:
+
+.. image:: https://user-images.githubusercontent.com/284644/67318730-4a42d600-f525-11e9-88bf-1ec882cfdb2e.png
+
+Circular clipping:
+
+.. image:: https://user-images.githubusercontent.com/284644/67318729-4a42d600-f525-11e9-9909-2dce4218f89b.png
+
+.. image:: https://user-images.githubusercontent.com/284644/67318728-4a42d600-f525-11e9-961c-26f2f72e749a.png
+
