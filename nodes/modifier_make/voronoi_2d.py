@@ -405,6 +405,14 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
                     else:
                         self.error("unexpected number of intersections of infinite line %s with area bounds: %s", eqn, intersections)
 
+                # TODO: there could be (finite) edges, which have both ends
+                # outside of the bounding line. We could detect such edges and
+                # process similarly to infinite lines - calculate two intersections
+                # with the bounding line and connect them by an edge.
+                # Currently I consider such cases as rare, so this is a low priority issue.
+                # Btw, such edges do not fall under definition of either "bounding edge"
+                # or "hanging edge"; so should we add a separate checkbox for such edges?...
+
             if self.draw_bounds and bounding_verts:
                 bounding_verts.sort(key = lambda idx: atan2(bm.verts[idx][1], bm.verts[idx][0]))
                 for i, j in zip(bounding_verts, bounding_verts[1:]):
