@@ -5,49 +5,33 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from typing import Tuple, List, Union
-
 from sverchok.utils.avl_tree import AVLTree
-from .dcel import Point as Point_template, HalfEdge as HalfEdge_template, DCELMesh as DCELMesh_template, Face
+from .dcel import Point as Point_template, HalfEdge as HalfEdge_template, DCELMesh as DCELMesh_template
 from .sort_mesh import SortPointsUpDown, SortHalfEdgesCCW, SortEdgeSweepingAlgorithm
 
 from .dcel_debugger import Debugger
 
 
-def monotone_sv_face_with_holes(vert_face, vert_holes = None, face_holes=None, accuracy=1e-5):
+def monotone_sv_face_with_holes(vert_face, vert_holes=None, face_holes=None, accuracy=1e-5):
     """
     Get one face in Sverhok format and splitting it into monotone pieces
     Vertices of face should be given in ordered along face indexes order
     Also it is possible to create holes in input face
     Mesh of holes should be inside face without any intersection
     :param vert_face: 
-    :param face_face: 
     :param vert_holes: 
     :param face_holes: 
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: vertices in Sverchok format, faces in Sverchok format
     """
-    Debugger.clear()
     mesh = DCELMesh(accuracy)
-    mesh.from_sv_faces(vert_face, [list(range(len(vert_face)))], face_data={'main polygon': [True]})
-    main_face = [face for face in mesh.faces if face.sv_data.get('main polygon', False)][0]
+    mesh.from_sv_faces(vert_face, [list(range(len(vert_face)))])
+    main_face = mesh.faces[0]  # once this will be broken
     if vert_holes and face_holes:
-        mesh.from_sv_faces(vert_holes, face_holes, face_data={'hole': [True for _ in range(len(face_holes))]})
-        for face in mesh.faces:
-            if face.is_unbounded and face.inners[0].face.sv_data.get('hole', False):
-                unbounded_face = face
-                break
-            if face.sv_data.get('hole', False):
-                unbounded_face = face.outer.twin.face
-                break
-        print(unbounded_face)
-        Debugger.print(unbounded_face, 'Unbounded face')
-        main_face.inners = list(unbounded_face.inners)
-        for face_hole_hedge in main_face.inners:
-            face_hole_hedge.face.outer = main_face
+        main_face.insert_holes(vert_holes, face_holes)
     make_monotone(main_face)
     rebuild_face_list(mesh)
-    return mesh.to_sv_mesh()
+    return mesh.to_sv_mesh(only_select=True)
 
 
 def monotone_faces_with_holes(dcel_mesh, accuracy=1e-5):
@@ -91,18 +75,22 @@ class Point(Point_template, SortPointsUpDown):
         # during handle of polygon point does not change type
         face = self.monotone_face
         if not self._type:
+            hedge = None  # is hedge wit origin in the point and belonging to current monotone face
             for coin_hedge in self.hedge.ccw_hedges:
                 if coin_hedge.face == face:
                     hedge = coin_hedge
                     break
+            if not hedge:
+                raise LookupError("This mean that either monotone face is marked incorrect or "
+                                  "coincidence half edges are marked incorrect or something else")
             next_point = hedge.next.origin
             last_point = hedge.last.origin
             is_up_next = next_point < self  # the less point the upper it is
             is_up_last = last_point < self
             if not is_up_next and not is_up_last:
-                self._type = 'start' if self.hedge < self.hedge.last.twin else 'split'
+                self._type = 'start' if hedge < hedge.last.twin else 'split'
             elif is_up_last and is_up_next:
-                self._type = 'merge' if self.hedge > self.hedge.last.twin else 'end'
+                self._type = 'merge' if hedge > hedge.last.twin else 'end'
             else:
                 self._type = 'regular'
         return self._type
@@ -144,12 +132,12 @@ def make_monotone(face):
     Splits polygon into monotone pieces optionally with holes
     :param face: face of half edge data structure
     :return new half edges
+    Probably approach of implemetation of monotone algorithm should be reconsidered according new DCEL data structure
     """
-    Debugger.print(face.inners, 'inners')
     face.mesh.Point.monotone_current_face = face
     status = AVLTree()
     q = sorted(build_points_list(face))[::-1]
-    print([p.type for p in q])
+    _ = [p.type for p in q]  # not very cool but this will set type for all points before main algorithm
     while q:
         event_point = q.pop()
         Edge.global_event_point = event_point
@@ -181,6 +169,7 @@ def rebuild_face_list(dcel_mesh):
         if hedge.face:
             continue
         face = dcel_mesh.Face(dcel_mesh)
+        face.select = True
         face.outer = hedge
         for h in hedge.loop_hedges:
             h.face = face
@@ -315,7 +304,7 @@ def handle_regular_point(point, status, hedge):
     # Read Computational Geometry by Mark de Berg
     if point < hedge.twin.origin:
         right_helper = hedge.last.edge.helper
-        status.remove(point.hedge.last.edge)
+        status.remove(hedge.last.edge)
         edge = Edge(point, hedge.twin.origin)
         hedge.edge = edge
         hedge.twin.edge = edge

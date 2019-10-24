@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from itertools import cycle
+from itertools import cycle, chain
 
 from .lin_alg import almost_equal, is_more, dot_product, is_ccw_polygon, cross_product
 from .dcel_debugger import Debugger
@@ -158,7 +158,7 @@ class Face:
         self._outer = None  # hedge of boundary loop
         self._inners = []  # hedges of hole loops
 
-        self.select = False
+        self.select = False  # actually should be careful with this parameter, some algorithm can use it or not
         self.sv_data = dict()  # for any data which we would like to keep with face
 
     @property
@@ -172,8 +172,7 @@ class Face:
 
     @outer.setter
     def outer(self, value):
-        if not self.mesh:
-            raise AttributeError("This attribute is not available till the face does have link to a mesh")
+        self.check_mesh()
         if not isinstance(value, self.mesh.HalfEdge):
             raise ValueError("HalfEdge type of object only can be set to outer attribute, "
                              "({}) was given".format(type(value)))
@@ -186,12 +185,29 @@ class Face:
 
     @inners.setter
     def inners(self, value):
+        self.check_mesh()
+        if not isinstance(value, list) and not isinstance(value[0], self.mesh.HalfEdge):
+            raise ValueError("List of HalfEdge(s) only can be set to inners attribute, "
+                             "({}) was given".format(type(value)))
+        self._inners = value
+
+    def insert_holes(self, sv_verts, sv_faces, face_selection=None, face_data=None):
+        # not sure super useful, holes should not intersect with the face
+        self.check_mesh()
+        hole_mesh = generate_dcel_mesh(self.mesh, sv_verts, sv_faces, face_selection, face_data,  new_mesh=True)
+        self.inners.extend(hole_mesh.unbounded.inners)
+        [setattr(obj, 'mesh', self.mesh) for obj in chain(hole_mesh.points, hole_mesh.hedges, hole_mesh.faces)]
+        self.mesh.points.extend(hole_mesh.points)
+        self.mesh.hedges.extend(hole_mesh.hedges)
+        self.mesh.faces.extend(hole_mesh.faces)
+        for start_hedge in hole_mesh.unbounded.inners:
+            for hedge in start_hedge.loop_hedges:
+                hedge.face = self
+
+    def check_mesh(self):
+        # Ensure that the face belongs to a mesh
         if not self.mesh:
             raise AttributeError("This attribute is not available till the face does have link to a mesh")
-        if not isinstance(value, self.mesh.HalfEdge):
-            raise ValueError("HalfEdge type of object only can be set to outer attribute, "
-                             "({}) was given".format(type(value)))
-        self._outer = value
 
 
 class DCELMesh:
@@ -204,6 +220,7 @@ class DCELMesh:
         self.points = []
         self.hedges = []
         self.faces = []
+        self.unbounded = self.Face(self)
         if accuracy:
             self.set_accuracy(accuracy)
 
@@ -219,103 +236,9 @@ class DCELMesh:
         cls.Face.accuracy = accuracy
         cls.accuracy = accuracy
 
-    def from_sv_faces(self, verts, faces, face_mask=None, face_data=None):
-        # todo: self intersection polygons? double repeated polygons???
+    def from_sv_faces(self, verts, faces, face_selection=None, face_data=None):
         # face_data = {name of data: [value 1, val2, .., value n]} - number of values should be equal to number of faces
-        # I'm not going use zip longest or  something else with face mask and face data inputs
-        # Because I think it can lead to unexpected behaviour of algorithms, which will be difficult to debug
-        if face_mask and len(face_mask) != len(faces):
-            raise IndexError("Length of face_mask({}) input should be equal to"
-                             " length of input faces({})".format(len(face_mask), len(faces)))
-        if face_data and any([len(val) != len(faces) for val in face_data.values()]):
-            bad_key, length = [(key, len(val)) for key, val in face_data.items() if len(val) != len(faces)][0]
-            raise IndexError("Face data should be a dictionary."
-                             "Each value should be a list with length equal to length of input faces"
-                             "At list with key({}) length of input list({}) is not equal to "
-                             "length of input faces({})".format(bad_key, length, len(faces)))
-        half_edges_list = dict()
-        unbounded_face = self.Face(self)
-        self.faces.append(unbounded_face)
-        len_added_points = len(self.points)
-        self.points.extend([self.Point(self, co) for co in verts])
-
-        # Generate outer faces and there hedges
-        # face_data_iter is tricky iterator for distributing custom properties among faces, example:
-        # d = {'a': [1, 2], 'b': [3, 4]}
-        # >>> for names, values in zip(cycle([d.keys()]), zip(*d.values())):
-        # ...     print('Next Face')
-        # ...     for n, v in zip(names, values):
-        # ...         print(n, v)
-        # ...
-        # Next Face
-        # a 1
-        # b 3
-        # Next Face
-        # a 2
-        # b 4
-        face_data_iter = zip(cycle([face_data.keys()]), zip(*face_data.values())) if face_data else cycle([None])
-        for face, fm, fd in zip(faces, face_mask or cycle([False]), face_data_iter):
-            face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
-            f = self.Face(self)
-            f.select = bool(fm)
-            if fd:
-                for property_name, value in zip(*fd):
-                    f.sv_data[property_name] = value
-            loop = []
-            for i in range(len(face)):
-                origin_i = face[i]
-                next_i = face[(i + 1) % len(face)]
-                half_edge = self.HalfEdge(self, self.points[origin_i + len_added_points], f)
-                self.points[origin_i + len_added_points].hedge = half_edge  # this should be overrode several times
-                loop.append(half_edge)
-                half_edges_list[(origin_i, next_i)] = half_edge
-            for i in range(len(face)):
-                loop[i].last = loop[(i - 1) % len(face)]
-                loop[i].next = loop[(i + 1) % len(face)]
-            f.outer = loop[0]
-            self.faces.append(f)
-        self.hedges.extend(list(half_edges_list.values()))
-
-        # to twin hedges and create hedges of unbounded face
-        outer_half_edges = dict()
-        for key in half_edges_list:
-            half_edge = half_edges_list[key]
-            if key[::-1] in half_edges_list:
-                half_edge.twin = half_edges_list[key[::-1]]
-                half_edges_list[key[::-1]].twin = half_edge
-            else:
-                outer_edge = self.HalfEdge(self, self.points[key[1] + len_added_points])
-                outer_edge.face = unbounded_face
-                half_edge.twin = outer_edge
-                outer_edge.twin = half_edge
-                if key[::-1] in outer_half_edges:
-                    raise Exception("It looks like input mesh has adjacent faces with only one common point"
-                                    "Handle such meshes does not implemented yet.")
-                outer_half_edges[key[::-1]] = outer_edge
-        self.hedges.extend(list(outer_half_edges.values()))
-
-        # link hedges of unbounded face in loops
-        for key in outer_half_edges:
-            outer_edge = outer_half_edges[key]
-            next_edge = outer_edge.twin
-            count = 0
-            while next_edge:
-                next_edge = next_edge.last.twin
-                if next_edge.face.is_unbounded:
-                    break
-                count += 1
-                if count > len(half_edges_list):
-                    raise RecursionError("The hedge ({}) cant find next neighbour".format(outer_edge))
-            outer_edge.next = next_edge
-            next_edge.last = outer_edge
-
-        # link unbounded face to loops of edges of unbounded face
-        used = set()
-        for outer_hedge in outer_half_edges.values():
-            if outer_hedge in used:
-                continue
-            unbounded_face.inners.append(outer_hedge)
-            [used.add(hedge) for hedge in outer_hedge.loop_hedges]
+        generate_dcel_mesh(self, verts, faces, face_selection, face_data, False)
 
     def from_sv_edges(self, verts, edges):
         points = [self.Point(self, co) for co in verts]
@@ -346,8 +269,7 @@ class DCELMesh:
         # Generate face list from half edge list
         # Output will be wrong if there are tales of edge net
         used = set()
-        super_face = self.Face(self)
-        faces = [super_face]
+        faces = []
 
         # build outer faces and detect inner faces (holes)
         # if face is not ccw and there is no left neighbour it is boundless super face
@@ -371,14 +293,15 @@ class DCELMesh:
                     used.add(h)
                     h.face = face
             else:
-                super_face.inners.append(min_hedge)
+                self.unbounded.inners.append(min_hedge)
                 for h in min_hedge.loop_hedges:
                     used.add(h)
-                    h.face = super_face
+                    h.face = self.unbounded
         self.faces = faces
 
-    def to_sv_mesh(self):
+    def to_sv_mesh(self, only_select=False):
         # all elements of mesh should have correct links
+        # will create only selected faces if only_select is True
         used = set()
         point_index = dict()
         sv_verts = []
@@ -397,6 +320,8 @@ class DCELMesh:
             if face.inners and face.outer:
                 'Face ({}) has inner components! Sverchok cant show polygons with holes.'.format(i)
             if not face.outer:
+                continue
+            if only_select and not face.select:
                 continue
             sv_faces.append([point_index[hedge.origin] for hedge in face.outer.loop_hedges])
 
@@ -477,3 +402,111 @@ class DCELMesh:
         # update hedges
         self.hedges = [hedge for hedge in self.hedges if hedge not in un_used_hedges]
         # todo how to rebuilt points list
+
+    def del_face(self, face):
+        # does not remove face from self.faces, only switch link from face to unbounded face
+        # not sure that this is good idea, probably should not be used
+        # this can lead to wrong topology, difficult to predict
+        if face.is_unbounded:
+            raise ValueError('Unbounded face can not be deleted')
+        for start_hedge in chain([face.outer] if face.outer else [], face.inners):
+            self.unbounded.inners.append(start_hedge)
+            for hedge in start_hedge.loop_hedges:
+                hedge.face = self.unbounded
+        face.mesh = None
+
+
+def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_data=None, new_mesh=False):
+    # todo: self intersection polygons? double repeated polygons???
+    # face_data = {name of data: [value 1, val2, .., value n]} - number of values should be equal to number of faces
+    # I'm not going use zip longest or  something else with face mask and face data inputs
+    # Because I think it can lead to unexpected behaviour of algorithms, which will be difficult to debug
+    # If mesh is None all will be bind to new instent
+    if face_selection and len(face_selection) != len(faces):
+        raise IndexError("Length of face_mask({}) input should be equal to"
+                         " length of input faces({})".format(len(face_selection), len(faces)))
+    if face_data and any([len(val) != len(faces) for val in face_data.values()]):
+        bad_key, length = [(key, len(val)) for key, val in face_data.items() if len(val) != len(faces)][0]
+        raise IndexError("Face data should be a dictionary."
+                         "Each value should be a list with length equal to length of input faces"
+                         "At list with key({}) length of input list({}) is not equal to "
+                         "length of input faces({})".format(bad_key, length, len(faces)))
+    if new_mesh:
+        mesh = type(mesh)(mesh.accuracy)  # can bring trouble with isinstance, not sure
+    half_edges_list = dict()
+    len_added_points = len(mesh.points)
+    mesh.points.extend([mesh.Point(mesh, co) for co in verts])
+
+    # Generate outer faces and there hedges
+    # face_data_iter is tricky iterator for distributing custom properties among faces, example:
+    # d = {'a': [1, 2], 'b': [3, 4]}
+    # >>> for names, values in zip(cycle([d.keys()]), zip(*d.values())):
+    # ...     print('Next Face')
+    # ...     for n, v in zip(names, values):
+    # ...         print(n, v)
+    # ...
+    # Next Face  # a 1  # b 3  # Next Face  # a 2  # b 4
+    face_data_iter = zip(cycle([face_data.keys()]), zip(*face_data.values())) if face_data else cycle([None])
+    for face, fm, fd in zip(faces, face_selection or cycle([False]), face_data_iter):
+        face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
+        f = mesh.Face(mesh)
+        f.select = bool(fm)
+        if fd:
+            for property_name, value in zip(*fd):
+                f.sv_data[property_name] = value
+        loop = []
+        for i in range(len(face)):
+            origin_i = face[i]
+            next_i = face[(i + 1) % len(face)]
+            half_edge = mesh.HalfEdge(mesh, mesh.points[origin_i + len_added_points], f)
+            mesh.points[origin_i + len_added_points].hedge = half_edge  # this should be overrode several times
+            loop.append(half_edge)
+            half_edges_list[(origin_i, next_i)] = half_edge
+        for i in range(len(face)):
+            loop[i].last = loop[(i - 1) % len(face)]
+            loop[i].next = loop[(i + 1) % len(face)]
+        f.outer = loop[0]
+        mesh.faces.append(f)
+    mesh.hedges.extend(list(half_edges_list.values()))
+
+    # to twin hedges and create hedges of unbounded face
+    outer_half_edges = dict()
+    for key in half_edges_list:
+        half_edge = half_edges_list[key]
+        if key[::-1] in half_edges_list:
+            half_edge.twin = half_edges_list[key[::-1]]
+            half_edges_list[key[::-1]].twin = half_edge
+        else:
+            outer_edge = mesh.HalfEdge(mesh, mesh.points[key[1] + len_added_points])
+            outer_edge.face = mesh.unbounded
+            half_edge.twin = outer_edge
+            outer_edge.twin = half_edge
+            if key[::-1] in outer_half_edges:
+                raise Exception("It looks like input mesh has adjacent faces with only one common point"
+                                "Handle such meshes does not implemented yet.")
+            outer_half_edges[key[::-1]] = outer_edge
+    mesh.hedges.extend(list(outer_half_edges.values()))
+
+    # link hedges of unbounded face in loops
+    for key in outer_half_edges:
+        outer_edge = outer_half_edges[key]
+        next_edge = outer_edge.twin
+        count = 0
+        while next_edge:
+            next_edge = next_edge.last.twin
+            if next_edge.face.is_unbounded:
+                break
+            count += 1
+            if count > len(half_edges_list):
+                raise RecursionError("The hedge ({}) cant find next neighbour".format(outer_edge))
+        outer_edge.next = next_edge
+        next_edge.last = outer_edge
+
+    # link unbounded face to loops of edges of unbounded face
+    used = set()
+    for outer_hedge in outer_half_edges.values():
+        if outer_hedge in used:
+            continue
+        mesh.unbounded.inners.append(outer_hedge)
+        [used.add(hedge) for hedge in outer_hedge.loop_hedges]
+    return mesh

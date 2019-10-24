@@ -41,6 +41,11 @@ class Face:
 
     def __init__(self, mesh: 'DCELMesh') -> None: ...
 
+    def insert_holes(self, sv_verts: List[TSVPoint], sv_faces: List[TSVFace],
+                     face_selection: List[Union[bool, int]] = ..., face_data: Dict[str, list] = ...) -> None: ...
+
+    def check_mesh(self) -> None: ...
+
 class DCELMesh:
     Point: ClassVar['Point']
     HalfEdge: ClassVar['HalfEdge']
@@ -49,6 +54,7 @@ class DCELMesh:
     points: List['Point']
     hedges: List['HalfEdge']
     faces: List['Face']
+    unbounded: 'Face'
     
     def __init__(self, accuracy: Union[float, int]) -> None: ...
     
@@ -56,7 +62,16 @@ class DCELMesh:
     
     def from_sv_faces(self, verts: List[TSVPoint], 
                       faces: List[TSVFace], 
-                      face_mask: List[Union[bool, int]] = ...,
+                      face_selection: List[Union[bool, int]] = ...,
                       face_data: Dict[str, list] = ...) -> None: ...
     
-    def to_sv_mesh(self) -> Tuple[List[TSVPoint], List[TSVFace]]: ...
+    def to_sv_mesh(self, only_select: bool) -> Tuple[List[TSVPoint], List[TSVFace]]: ...
+
+    def del_face(self, face: 'Face') -> None: ...
+
+def generate_dcel_mesh(mesh: 'DCELMesh',
+                       verts: List[TSVPoint],
+                       faces: List[TSVFace],
+                       face_selection: List[Union[bool, int]] = ...,
+                       face_data: Dict[str, list] = ...,
+                       new_mesh: bool = ...) -> 'DCELMesh': ...
