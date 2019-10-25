@@ -37,7 +37,10 @@ def generate_bezier(verts=None, num_verts=20):
 
 
 class BasicSplineNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Bezier Curve '''
+    """
+    Triggers: Bezier Cubic Curve Spline
+    Tooltip: Generate cubic Bezier curve by two end points and two control points.
+    """
     bl_idname = 'BasicSplineNode'
     bl_label = '2pt Spline'
     bl_icon = 'CURVE_BEZCURVE'

@@ -22,6 +22,7 @@
     SvCricketNode
     ---
     BasicSplineNode
+    SvQuadraticSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
     SvScriptNodeLite
