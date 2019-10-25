@@ -87,6 +87,15 @@ class SortEdgeSweepingAlgorithm:
         self.is_horizontal = almost_equal(self.up_p.co[y], self.low_p.co[y], self.accuracy)
         self.direction = (self.low_p - self.up_p).normalize()  # set downward direction of edge, Point object
 
+    @classmethod
+    def set_accuracy(cls, accuracy):
+        # This value is using for comparing float figures
+        if isinstance(accuracy, int):
+            accuracy = 1 / 10 ** accuracy
+        if not (1e-1 > accuracy > 1e-15):
+            raise ValueError("Accuracy should between 1^-1 and 1^-15, {} value was given".format(accuracy))
+        cls.accuracy = accuracy
+
     def __lt__(self, other):
         # when edge are inserting to the three
         if isinstance(other, self.__class__):

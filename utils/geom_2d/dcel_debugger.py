@@ -8,7 +8,6 @@
 
 from itertools import chain
 from functools import wraps
-from sys import modules
 
 
 x, y, z = 0, 1, 2
@@ -62,10 +61,10 @@ class Debugger:
             dcel_object = [dcel_object]
         for db in dcel_object:
             cls.data.append(db)
-            msg = '  {}  '.format(msg)
-            print('{} - {:*^50}'.format(cls._count, msg if msg is not None else db))
-            cls._count += 1
             cls.msg.append(msg if msg is not None else db)
+            blank_msg = '  {}  '.format(msg)
+            print('{} - {:*^50}'.format(cls._count, blank_msg if msg is not None else db))
+            cls._count += 1
 
     @classmethod
     def print_function(cls, func):
@@ -164,9 +163,11 @@ class Debugger:
     def hedges_to_sv_mesh(cls, scale=0.1, clear=False):
         # for visualization all DCEL data
         cls.init_dcel_classes()
+        empty_mesh = ([[(0, 0, 0), (0.01, 0, 0), (0, 0.01, 0)]], [[(0, 1, 2)]])
         if not cls.half_edges:
             print("DCEL DEBUGER: You should record your half edges into the class before"
                   " calling the method ({})".format(cls.hedges_to_sv_mesh.__name__))
+            return empty_mesh
         out = []
         for i, hedge in enumerate(cls.half_edges):
             v, f = cls._hedge_to_sv(hedge, scale)
@@ -191,7 +192,10 @@ class Debugger:
             return empty_mesh
         elif type(item).__name__ == 'HalfEdge':
             v, f = cls._hedge_to_sv(item, scale)
-            print(msg)
+            check_attrs = {'mesh', 'origin', 'face', 'next', 'last', 'twin'}
+            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(item, attr) is None])
+            warning = ' WARNING - ' + warning
+            print(msg + warning)
             return [v], [f]
         elif type(item).__name__ == 'Point':
             v, f = cls._point_to_sv(item, scale)

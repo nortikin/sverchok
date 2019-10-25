@@ -241,6 +241,10 @@ class DCELMesh:
         generate_dcel_mesh(self, verts, faces, face_selection, face_data, False)
 
     def from_sv_edges(self, verts, edges):
+        # Probably it is worth take in account such cases as: edge with 0 length at least
+        edges = [edge for edge in edges if
+                 not all([almost_equal(co1, co2, self.accuracy) for co1, co2 in zip(verts[edge[0]], verts[edge[1]])])]
+
         points = [self.Point(self, co) for co in verts]
         self.points.extend(points)
         coincidence_hedges = [[] for _ in range(len(points))]  # hedges coincident to points
@@ -343,7 +347,12 @@ class DCELMesh:
         # This part of function creates faces in SV format
         # It ignores  boundless super face
         sv_edges = []
+        used.clear()
         for hedge in self.hedges:
+            if hedge in used:
+                continue
+            used.add(hedge)
+            used.add(hedge.twin)
             sv_edges.append((point_index[hedge.origin], point_index[hedge.twin.origin]))
 
         return sv_verts, sv_edges

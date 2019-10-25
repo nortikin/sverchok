@@ -7,9 +7,11 @@
 
 
 from .dcel import DCELMesh as DCELMesh_template, Point as Point_template, HalfEdge as HalfEdge_template
-from .lin_alg import almost_equal, cross_product, dot_product, is_edges_intersect, intersect_edges
+from .lin_alg import almost_equal, is_edges_intersect, intersect_edges
 from .sort_mesh import SortPointsUpDown, SortEdgeSweepingAlgorithm
 from sverchok.utils.avl_tree import AVLTree
+
+from .dcel_debugger import Debugger
 
 
 def intersect_sv_edges(sv_verts, sv_edges, accuracy=1e-5):
@@ -20,7 +22,7 @@ def intersect_sv_edges(sv_verts, sv_edges, accuracy=1e-5):
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: vertices in SV format, edges in SV format
     """
-    mesh = DCELMesh()
+    mesh = DCELMesh(accuracy)
     mesh.from_sv_edges(sv_verts, sv_edges)
     find(mesh, accuracy)
     return mesh.to_sv_edges()
@@ -95,15 +97,17 @@ def find(dcel_mesh, accuracy=1e-6):
     """
     status = AVLTree()
     event_queue = AVLTree()
-    Edge.accuracy = accuracy
-    init_event_queue(event_queue, dcel_mesh, accuracy)
+    accuracy = accuracy if isinstance(accuracy, float) else 1 / 10 ** accuracy
+    Edge.set_accuracy(accuracy)
+    init_event_queue(event_queue, dcel_mesh)
     while event_queue:
         event_node = event_queue.find_smallest()
         handle_event_point(status, event_queue, event_node.key, dcel_mesh, accuracy)
         event_queue.remove_node(event_node)
+    dcel_mesh.hedges = [hedge for hedge in dcel_mesh.hedges if hedge.edge]
 
 
-def init_event_queue(event_queue, dcel_mesh, accuracy=1e-6):
+def init_event_queue(event_queue, dcel_mesh):
     # preparation to finding intersection algorithm
     Edge.global_event_point = None
     used = set()
@@ -131,9 +135,10 @@ def handle_event_point(status, event_queue, event_point, dcel_mesh, accuracy=1e-
     [status.remove_node(node) for node in c]
     [status.remove_node(node) for node in l]
 
-    lc, uc_edges, is_overlapping = split_crossed_edge(coincidence, event_point, dcel_mesh, accuracy)
-    up_overlapping, is_overlapping = extract_overlapping_edges(coincidence, event_point, accuracy)
-    u, is_overlapping = insert_edges_in_status(status, event_point, uc_edges, up_overlapping)
+    lc, uc_edges, is_lapp_1 = split_crossed_edge(coincidence, event_point, dcel_mesh)
+    up_overlapping, is_lapp_2 = extract_overlapping_edges(coincidence, event_point)
+    u, is_lapp_3 = insert_edges_in_status(status, event_point, uc_edges, up_overlapping)
+    is_overlapping = any([is_lapp_1, is_lapp_2, is_lapp_3])
 
     # After new up edges (created be dividing intersected event point edges) was insert in status
     # The order of edges should be taken from status again
@@ -200,7 +205,7 @@ def get_coincidence_edges(tree, x_position, accuracy=1e-6):
     return adjacent_left, left_part[::-1] + right_part, adjacent_right
 
 
-def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh, accuracy=1e-5):
+def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh):
     """
     In this bloke of code  edges which go through event point are splitting in to edges upper and lower of event point
     Also in this bloke of code coincidence of ends of edges are detected
@@ -265,13 +270,12 @@ def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh, accuracy=1e-5)
     return lc, uc_edges, is_overlapping
 
 
-def extract_overlapping_edges(coincidence_nodes, event_point, accuracy=1e-5):
+def extract_overlapping_edges(coincidence_nodes, event_point):
     """
     As sooner low edges keeps overlapping edges inside itself
     the overlapping edges should be extract before handling up edges
     :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
     :param event_point: event point of intersection algorithm, Point
-    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: list of extracted edges below event point, flag of overlapping detection
     """
     up_overlapping = []
