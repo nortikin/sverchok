@@ -34,6 +34,7 @@ class SvQuadraticSplineNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvQuadraticSplineNode'
     bl_label = '2pt Quadratic Spline'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_QUAD_SPLINE'
 
     num_verts: IntProperty(
             name = "Divisions",
