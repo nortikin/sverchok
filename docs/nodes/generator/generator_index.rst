@@ -7,6 +7,7 @@ Generators
 
    basic_3pt_arc
    basic_spline
+   quad_spline
    box
    bricks
    circle

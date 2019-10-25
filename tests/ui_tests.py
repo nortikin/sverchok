@@ -14,7 +14,8 @@ class UiTests(SverchokTestCase):
     def test_all_nodes_have_icons(self):
         def has_icon(node_class):
             has_sv_icon = hasattr(node_class, "sv_icon") 
-            has_bl_icon = hasattr(node_class, "bl_icon") and node_class.bl_icon != 'OUTLINER_OB_EMPTY'
+            has_bl_icon = hasattr(node_class, "bl_icon") and node_class.bl_icon and node_class.bl_icon != 'OUTLINER_OB_EMPTY'
+            #debug("Icon: %s: BL %s, SV %s", node_class.__name__, getattr(node_class, 'bl_icon', None), getattr(node_class, 'sv_icon', None))
             return has_sv_icon or has_bl_icon
 
         ignore_list = [
@@ -34,6 +35,7 @@ class UiTests(SverchokTestCase):
 
         def check_category(directory):
             category = basename(directory)
+            from sverchok.node_tree import SverchCustomTreeNode
             for py_path in glob(join(directory, "*.py")):
                 py_file = basename(py_path)
                 py_name, ext = splitext(py_file)
@@ -43,6 +45,7 @@ class UiTests(SverchokTestCase):
                         continue
                     if node_class_name in ignore_list:
                         continue
+                    debug("Check: %s: %s: %s", node_class, node_class.__bases__, SverchCustomTreeNode in node_class.__bases__)
                     if SverchCustomTreeNode in node_class.mro():
                         with self.subTest(node = node_class_name):
                             if not has_icon(node_class):
