@@ -9,24 +9,41 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.dcel import DCELMesh
 
 
 class SvEdgesToFaces2D(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Planar edgenet to polygons
-    Tooltip: Something like fill holes node
+    Triggers: create polygons from given edges
+    Tooltip: can generate holes in mesh
 
     Only X and Y dimensions of input points will be taken for work.
     """
     bl_idname = 'SvEdgesToFaces2D'
     bl_label = 'Edges to faces 2D'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MESH_GRID'
+
+    do_intersect: bpy.props.BoolProperty(name="Self intersect", default=True, update=updateNode,
+                                         description="Activate an algorithm of finding self intersections")
+    fill_holes: bpy.props.BoolProperty(name="Fill holes", default=True, update=updateNode,
+                                       description="Fills faces which are within another face and "
+                                                   "does not intersect with one")
+
+    def draw_buttons(self, context, layout):
+        pass
+        row = layout.column(align=True)
+        row.prop(self, 'do_intersect', icon='SORTBYEXT', toggle=1)
+        if self.fill_holes:
+            row.prop(self, 'fill_holes', icon='PROP_ON', toggle=1)
+        else:
+            row.prop(self, 'fill_holes', icon='PROP_CON', toggle=1)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
         self.inputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvVerticesSocket', 'Verts')
+        self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
 
     def process(self):
