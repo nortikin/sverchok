@@ -36,6 +36,16 @@ def get_params(settings_and_fallbacks):
             setattr(props, k, value)
     return props
 
+# getDpiFactor and getDpi are lifted from Animation Nodes :)
+
+def get_dpi_factor():
+    return get_dpi() / 72
+
+def get_dpi():
+    systemPreferences = bpy.context.preferences.system
+    retinaFactor = getattr(systemPreferences, "pixel_size", 1)
+    return systemPreferences.dpi * retinaFactor
+
 
 class SverchokPreferences(AddonPreferences):
 
@@ -229,6 +239,13 @@ class SverchokPreferences(AddonPreferences):
     index_viewer_scale: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default index viewer scale')
 
+    def set_nodeview_render_params(self, context):
+        # i think these are both the same..
+        self.render_scale = get_dpi_factor()
+        self.render_location_xy_multiplier = get_dpi_factor()
+        print(f'set render_scale to: {self.render_scale}')
+        print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
+
     ##
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
@@ -352,8 +369,10 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col = box_sub1.column(align=True)
             
             box_sub1_col.label(text='Render Scale & Location')
-            box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-            box_sub1_col.prop(self, 'render_scale', text='scale')
+            # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
+            # box_sub1_col.prop(self, 'render_scale', text='scale')
+            box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
+            box_sub1_col.label(text=f'render_scale : {self.render_scale}')
             
             box_sub1_col.label(text='Stethoscope')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
