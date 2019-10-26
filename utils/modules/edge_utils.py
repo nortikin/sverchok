@@ -47,7 +47,7 @@ def edges_direction(vertices, edges, out_numpy=False):
 
     vect = np_verts[np_edges[:, 1], :] - np_verts[np_edges[:, 0], :]
     dist = np_norm(vect, axis=1)
-    vect_norm =vect/dist[:, np.newaxis]
+    vect_norm = vect/dist[:, np.newaxis]
     return vect_norm if out_numpy else vect_norm.tolist()
 
 def adjacent_faces(edges, pols):
@@ -73,9 +73,9 @@ def faces_angle(normals, edges, pols):
                 idx = e_sorted.index(e_s)
                 ad_faces[idx].append(idp)
     angles = []
-    for ed in ad_faces:
-        if len(ed) > 1:
-            dot_p = Vector(normals[ed[0]]).dot(Vector(normals[ed[1]]))
+    for edg in ad_faces:
+        if len(edg) > 1:
+            dot_p = Vector(normals[edg[0]]).dot(Vector(normals[edg[1]]))
             ang = acos(dot_p)
         else:
             ang = 2*pi
