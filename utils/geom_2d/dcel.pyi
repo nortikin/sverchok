@@ -21,6 +21,7 @@ class HalfEdge:
     next: Union[None, 'HalfEdge']
     last: Union[None, 'HalfEdge']
     _slop: Union[None, float]
+    flags: set
 
     def __init__(self, mesh: 'DCELMesh', point: 'Point', face: 'Face' = ...) -> None: 
         self.loop_hedges: List['HalfEdge'] = None
@@ -74,7 +75,7 @@ class DCELMesh:
 
     def generate_faces_from_hedges(self) -> None: ...
 
-    def del_loose_hedges(self) -> None: ...
+    def del_loose_hedges(self, flag: str) -> None: ...
 
 def generate_dcel_mesh(mesh: 'DCELMesh',
                        verts: List[TSVPoint],

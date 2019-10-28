@@ -86,6 +86,8 @@ class HalfEdge:
         self.next = None
         self.last = None
 
+        self.left = None  # Information about nearest left neighbour for hole detection, intersection algorithm user
+        self.flags = set()  # For any value wich an algorithm would like to keep with object, only add or remove
         self._slop = None  # Should be recalculated if origin ot origin of twin are changed
 
     def __str__(self):
@@ -277,7 +279,8 @@ class DCELMesh:
 
     def generate_faces_from_hedges(self):
         # Generate face list from half edge list
-        # Output will be wrong if there are tails of edge net
+        # Tail edges will be dissolving
+        # Left component of hedges is taken in account
         used = set()
         faces = []  # type: List[Face]
         rebuild = False  # if there are tails some points and half edges can be loosed
@@ -290,6 +293,7 @@ class DCELMesh:
             if hedge in used:
                 continue
             # will detect tails first
+            # https://github.com/nortikin/sverchok/pull/2623#issuecomment-546570210
             hedge_tail = {}  # type: Dict[HalfEdge, bool]
             for loop_hedge in hedge.loop_hedges:
                 if loop_hedge.twin not in hedge_tail:
@@ -311,7 +315,7 @@ class DCELMesh:
                     last_hedge.next = next_hedge
             for loop_hedge in hedge_tail:
                 if hedge_tail[loop_hedge]:
-                    loop_hedge.mesh = None  # this is tail, useless
+                    loop_hedge.flags.add('tail')  # this is tail, useless, for del method
 
             # detect new loops
             new_loops = []  # type: List[HalfEdge]  # only first hedge in loop
@@ -364,7 +368,7 @@ class DCELMesh:
         self.faces = faces
 
         if rebuild:
-            self.del_loose_hedges()
+            self.del_loose_hedges('tail')
 
     def to_sv_mesh(self, edges=True, faces=True, only_select=False):
         # all elements of mesh should have correct links
@@ -436,8 +440,12 @@ class DCELMesh:
         self.hedges = [hedge for hedge in self.hedges if hedge not in un_used_hedges]
         # todo how to rebuilt points list
 
-    def del_loose_hedges(self):
-        self.hedges = [hedge for hedge in self.hedges if hedge.mesh]
+    def del_loose_hedges(self, flag=None):
+        # flag means that half edges with the value will be deleted
+        if flag:
+            self.hedges = [hedge for hedge in self.hedges if flag not in hedge.flags]
+        else:
+            self.hedges = [hedge for hedge in self.hedges if hedge.mesh]
         used = set()
         points = []
         for hedge in self.hedges:

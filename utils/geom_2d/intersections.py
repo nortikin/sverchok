@@ -92,6 +92,8 @@ class Edge(SortEdgeSweepingAlgorithm):
 def find_intersections(dcel_mesh, accuracy=1e-6):
     """
     Initializing of searching intersection algorithm, read Computational Geometry by Mark de Berg
+    Only half edges have correct data after the algorithm.
+    Use build faces from half edges method for updating faces if necessary.
     :param dcel_mesh: inner DCELMesh data structure
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     """
