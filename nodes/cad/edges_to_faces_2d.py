@@ -10,7 +10,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.geom_2d.dcel import DCELMesh
+from sverchok.utils.geom_2d.merge_mesh import edges_to_faces
 
 
 class SvEdgesToFaces2D(bpy.types.Node, SverchCustomTreeNode):
@@ -29,6 +29,8 @@ class SvEdgesToFaces2D(bpy.types.Node, SverchCustomTreeNode):
     fill_holes: bpy.props.BoolProperty(name="Fill holes", default=True, update=updateNode,
                                        description="Fills faces which are within another face and "
                                                    "does not intersect with one")
+    accuracy: bpy.props.IntProperty(name='Accuracy', update=updateNode, default=5, min=3, max=12,
+                                    description='Some errors of the node can be fixed by changing this value')
 
     def draw_buttons(self, context, layout):
         pass
@@ -39,22 +41,21 @@ class SvEdgesToFaces2D(bpy.types.Node, SverchCustomTreeNode):
         else:
             row.prop(self, 'fill_holes', icon='PROP_CON', toggle=1)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'accuracy')
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
         self.inputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvVerticesSocket', 'Verts')
-        self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Faces")
 
     def process(self):
-        if not any([soc.is_linked for soc in self.inputs]):
+        if not all([soc.is_linked for soc in self.inputs]):
             return
         out = []
         for vs, es in zip(self.inputs['Verts'].sv_get(), self.inputs['Edges'].sv_get()):
-            mesh = DCELMesh()
-            mesh.from_sv_edges(vs, es)
-            mesh.faces_from_hedges()
-            out.append(mesh.to_sv_mesh())
+            out.append(edges_to_faces(vs, es, self.do_intersect, self.fill_holes, self.accuracy))
         sv_verts, sv_faces = zip(*out)
         self.outputs['Verts'].sv_set(sv_verts)
         self.outputs['Faces'].sv_set(sv_faces)

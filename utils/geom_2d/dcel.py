@@ -6,8 +6,10 @@
 # License-Filename: LICENSE
 
 from itertools import cycle, chain
+from typing import Dict, List, Union
 
 from .lin_alg import almost_equal, is_more, dot_product, is_ccw_polygon, cross_product
+
 from .dcel_debugger import Debugger
 
 
@@ -39,7 +41,7 @@ class Point:
         self.hedge = None
 
     def __str__(self):
-        return "".join(["{:.2f}, ".format(co) for co in self.co])
+        return "Point"
 
     def __add__(self, other):
         # should returns object with class of inputs object
@@ -87,11 +89,12 @@ class HalfEdge:
         self._slop = None  # Should be recalculated if origin ot origin of twin are changed
 
     def __str__(self):
-        return "Hedg({}, {})".format(self.origin, self.twin.origin if self.twin else self.next.origin)
+        return "Hedge"
 
     @property
     def ccw_hedges(self):
         # returns hedges originated in one point
+        Debugger.print(self, 'ccw')
         if not self.mesh:
             raise AttributeError("This method doesn't work with hedges({}) without link to a mesh."
                                  "Besides, mesh object should have proper number of half edges "
@@ -160,6 +163,9 @@ class Face:
 
         self.select = False  # actually should be careful with this parameter, some algorithm can use it or not
         self.sv_data = dict()  # for any data which we would like to keep with face
+
+    def __str__(self):
+        return 'Face'
 
     @property
     def is_unbounded(self):
@@ -269,11 +275,12 @@ class DCELMesh:
                 hedges[i].last = hedges[i_next].twin
                 hedges[i_next].twin.next = hedges[i]
 
-    def faces_from_hedges(self):
+    def generate_faces_from_hedges(self):
         # Generate face list from half edge list
-        # Output will be wrong if there are tales of edge net
+        # Output will be wrong if there are tails of edge net
         used = set()
-        faces = []
+        faces = []  # type: List[Face]
+        rebuild = False  # if there are tails some points and half edges can be loosed
 
         # build outer faces and detect inner faces (holes)
         # if face is not ccw and there is no left neighbour it is boundless super face
@@ -282,80 +289,97 @@ class DCELMesh:
         for hedge in self.hedges:
             if hedge in used:
                 continue
-            min_hedge = min([hedge for hedge in hedge.loop_hedges], key=lambda he: (he.origin.co[x], he.origin.co[y]))
-            _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin.co, min_hedge.origin.co,
-                                                 min_hedge.next.origin.co], accuracy=self.accuracy)
+            # will detect tails first
+            hedge_tail = {}  # type: Dict[HalfEdge, bool]
+            for loop_hedge in hedge.loop_hedges:
+                if loop_hedge.twin not in hedge_tail:
+                    hedge_tail[loop_hedge] = False
+                else:
+                    hedge_tail[loop_hedge] = True
+                    hedge_tail[loop_hedge.twin] = True
+                    rebuild = True
+            # mark tails as unused, relink half edges
+            for loop_hedge in hedge_tail:
+                if hedge_tail[loop_hedge] and not hedge_tail[loop_hedge.next]:
+                    next_hedge = loop_hedge.next  # origin of next hedge is in place where tail connects with a face
+                    for ccw_hedge in next_hedge.ccw_hedges:
+                        if id(ccw_hedge) != id(next_hedge) and not hedge_tail[ccw_hedge.twin]:
+                            # check either there are other tails in the point
+                            last_hedge = ccw_hedge.twin
+                            break
+                    next_hedge.last = last_hedge
+                    last_hedge.next = next_hedge
+            for loop_hedge in hedge_tail:
+                if hedge_tail[loop_hedge]:
+                    loop_hedge.mesh = None  # this is tail, useless
+
+            # detect new loops
+            new_loops = []  # type: List[HalfEdge]  # only first hedge in loop
+            for loop_hedge in hedge_tail:
+                if hedge_tail[loop_hedge]:
+                    used.add(loop_hedge)
+                    continue
+                if loop_hedge not in used:
+                    new_loops.append(loop_hedge)
+                    for lh in loop_hedge.loop_hedges:
+                        used.add(lh)
+
+            # figure out weather loop is ccw or cw
+            new_outer = None  # type: Union[None, HalfEdge]
+            new_inners = []  # type: List[HalfEdge]
+            for start_hedge in new_loops:
+                min_hedge = min([hedge for hedge in start_hedge.loop_hedges],
+                                key=lambda he: (he.origin.co[x], he.origin.co[y]))
+                _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin.co, min_hedge.origin.co,
+                                                     min_hedge.next.origin.co], accuracy=self.accuracy)
+                Debugger.print(min_hedge, _is_ccw)
+                if not _is_ccw:
+                    new_inners.append(start_hedge)
+                elif _is_ccw and new_outer is not None:
+                    raise ValueError("During dissolving edges algorithm only one ccw face can be created")
+                else:
+                    new_outer = start_hedge
+
             # min hedge should be checked whether it look to the left or to the right
             # if to the right previous hedge should be taken
             # https://github.com/nortikin/sverchok/issues/2497#issuecomment-526096898
-            min_hedge = min_hedge if min_hedge.slop > 2 else min_hedge.last
-            if _is_ccw:
+            # min_hedge = min_hedge if min_hedge.slop > 2 else min_hedge.last  # this string should be restore later
+            if new_outer:
+                Debugger.print(new_outer, 'new_outer')
                 face = self.Face(self)
-                face.outer = hedge
+                face.outer = new_outer
                 faces.append(face)
-                for h in hedge.loop_hedges:
-                    used.add(h)
+                for h in new_outer.loop_hedges:
                     h.face = face
+                for start_hedge in new_inners:
+                    face.inners.append(start_hedge)
+                    for h in start_hedge.loop_hedges:
+                        h.face = face
             else:
-                self.unbounded.inners.append(min_hedge)
-                for h in min_hedge.loop_hedges:
-                    used.add(h)
-                    h.face = self.unbounded
+                for start_hedge in new_inners:
+                    self.unbounded.inners.append(start_hedge)
+                    for h in start_hedge.loop_hedges:
+                        h.face = self.unbounded
+        Debugger.print(faces, 'inners')
         self.faces = faces
 
-    def to_sv_mesh(self, only_select=False):
+        if rebuild:
+            self.del_loose_hedges()
+
+    def to_sv_mesh(self, edges=True, faces=True, only_select=False):
         # all elements of mesh should have correct links
         # will create only selected faces if only_select is True
-        used = set()
-        point_index = dict()
-        sv_verts = []
-        for hedge in self.hedges:
-            if hedge in used:
-                continue
-            point_index[hedge.origin] = len(sv_verts)
-            sv_verts.append(hedge.origin.co)
-            for h in hedge.ccw_hedges:
-                used.add(h)
-
-        # This part of function creates faces in SV format
-        # It ignores  boundless super face
-        sv_faces = []
-        for i, face in enumerate(self.faces):
-            if face.inners and face.outer:
-                'Face ({}) has inner components! Sverchok cant show polygons with holes.'.format(i)
-            if not face.outer:
-                continue
-            if only_select and not face.select:
-                continue
-            sv_faces.append([point_index[hedge.origin] for hedge in face.outer.loop_hedges])
-
-        return sv_verts, sv_faces
-
-    def to_sv_edges(self):
-        # Half edges data should be correct
-        used = set()
-        point_index = dict()
-        sv_verts = []
-        for hedge in self.hedges:
-            if hedge in used:
-                continue
-            point_index[hedge.origin] = len(sv_verts)
-            sv_verts.append(hedge.origin.co)
-            for h in hedge.ccw_hedges:
-                used.add(h)
-
-        # This part of function creates faces in SV format
-        # It ignores  boundless super face
-        sv_edges = []
-        used.clear()
-        for hedge in self.hedges:
-            if hedge in used:
-                continue
-            used.add(hedge)
-            used.add(hedge.twin)
-            sv_edges.append((point_index[hedge.origin], point_index[hedge.twin.origin]))
-
-        return sv_verts, sv_edges
+        sv_points, point_index = generate_sv_points(self)
+        if edges and not faces:
+            sv_edges = generate_sv_edges(self, point_index)
+            return sv_points, sv_edges
+        elif faces and not edges:
+            sv_faces = generate_sv_faces(self, point_index, only_select)
+            return sv_points, sv_faces
+        else:
+            sv_edges = generate_sv_edges(self, point_index)
+            sv_faces = generate_sv_faces(self, point_index, only_select)
+            return sv_points, sv_edges, sv_faces
 
     def dissolve_selected_faces(self):
 
@@ -411,6 +435,17 @@ class DCELMesh:
         # update hedges
         self.hedges = [hedge for hedge in self.hedges if hedge not in un_used_hedges]
         # todo how to rebuilt points list
+
+    def del_loose_hedges(self):
+        self.hedges = [hedge for hedge in self.hedges if hedge.mesh]
+        used = set()
+        points = []
+        for hedge in self.hedges:
+            if hedge.origin not in used:
+                used.add(hedge.origin)
+                points.append(hedge.origin)
+                hedge.origin.hedge = hedge  # point can have link to not existing half edge
+        self.points = points
 
     def del_face(self, face):
         # does not remove face from self.faces, only switch link from face to unbounded face
@@ -519,3 +554,44 @@ def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_data=None, 
         mesh.unbounded.inners.append(outer_hedge)
         [used.add(hedge) for hedge in outer_hedge.loop_hedges]
     return mesh
+
+
+def generate_sv_points(dcel_mesh):
+    used = set()
+    point_index = dict()
+    sv_verts = []
+    for hedge in dcel_mesh.hedges:
+        if hedge in used:
+            continue
+        point_index[hedge.origin] = len(sv_verts)
+        sv_verts.append(hedge.origin.co)
+        for h in hedge.ccw_hedges:
+            used.add(h)
+    return sv_verts, point_index
+
+
+def generate_sv_edges(dcel_mesh, point_index):
+    sv_edges = []
+    used = set()
+    for hedge in dcel_mesh.hedges:
+        if hedge in used:
+            continue
+        used.add(hedge)
+        used.add(hedge.twin)
+        sv_edges.append((point_index[hedge.origin], point_index[hedge.twin.origin]))
+    return sv_edges
+
+
+def generate_sv_faces(dcel_mesh, point_index, only_select=False):
+    # This part of function creates faces in SV format
+    # It ignores  boundless super face
+    sv_faces = []
+    for i, face in enumerate(dcel_mesh.faces):
+        if face.inners and face.outer:
+            'Face ({}) has inner components! Sverchok cant show polygons with holes.'.format(i)
+        if not face.outer:
+            continue
+        if only_select and not face.select:
+            continue
+        sv_faces.append([point_index[hedge.origin] for hedge in face.outer.loop_hedges])
+    return sv_faces

@@ -25,14 +25,18 @@ Example of script node code:
 '''
 in _ s
 in index s d=0 n=2
+in number s d=0 n=2
+in mode s d=0 n=2
 in scale s d=0.1 n=2
 out v v
 out f s
+out sv v
+out sf s
 '''
 
 from sverchok.utils.geom_2d.dcel import Debugger as D
-v, f = D.printed_to_sv_mesh(index, scale=scale)
-#v, f = D.hedges_to_sv_mesh(scale=scale, clear=True)
+v, f, sv, sf = D.printed_to_sv_mesh(index, scale=scale)
+#v, f, sv, sf = D.hedges_to_sv_mesh(index, number, mode, scale=scale, clear=True)
 
 
 Output of this node will be all that is printed via Debug class available by index.
@@ -44,6 +48,7 @@ class Debugger:
     HalfEdge = None
     Face = None
     Edge = None
+    DCELMesh = None
     data = []  # all print methods put data here
     msg = []  # all print methods put messages here
     half_edges = []
@@ -63,7 +68,7 @@ class Debugger:
             cls.data.append(db)
             cls.msg.append(msg if msg is not None else db)
             blank_msg = '  {}  '.format(msg)
-            print('{} - {:*^50}'.format(cls._count, blank_msg if msg is not None else db))
+            print('{} - {:*^50}'.format(cls._count, blank_msg if msg is not None else str(db)))
             cls._count += 1
 
     @classmethod
@@ -100,6 +105,15 @@ class Debugger:
         print("{:!^50}".format(msg))
 
     # #########__for draw function__#######
+
+    @staticmethod
+    def _ccw_hedges(hedge):
+        # returns hedges originated in one point
+        yield hedge
+        next_edge = hedge.last.twin
+        while next_edge != hedge:
+            yield next_edge
+            next_edge = next_edge.last.twin
 
     @classmethod
     def _rotate_by_direction(cls, points, normal):
@@ -160,26 +174,45 @@ class Debugger:
         return zip(*out)
 
     @classmethod
-    def hedges_to_sv_mesh(cls, scale=0.1, clear=False):
+    def hedges_to_sv_mesh(cls, selection_index=None, number=0, mode=None, scale=0.1, clear=False):
         # for visualization all DCEL data
+        # modes: 0 - ccw hedges, 1 - loop hedges
         cls.init_dcel_classes()
-        empty_mesh = ([[(0, 0, 0), (0.01, 0, 0), (0, 0.01, 0)]], [[(0, 1, 2)]])
+        empty_mesh = [[[(0, 0, 0), (0.01, 0, 0), (0, 0.01, 0)]], [[(0, 1, 2)]]]
         if not cls.half_edges:
             print("DCEL DEBUGER: You should record your half edges into the class before"
                   " calling the method ({})".format(cls.hedges_to_sv_mesh.__name__))
             return empty_mesh
-        out = []
+        out = dict()
+        select_out = dict()
         for i, hedge in enumerate(cls.half_edges):
+            if selection_index and selection_index == i:
+                continue
             v, f = cls._hedge_to_sv(hedge, scale)
-            out.append((v, f))
+            out[hedge] = (v, f)
+
+        if selection_index is not None:
+            if not len(cls.half_edges) > selection_index:
+                if clear:
+                    cls.half_edges.clear()
+                print('{:~^50}'.format('Nothing to print. Try to lessen the index'))
+                return list(zip(*[out[key] for key in out if key not in select_out])) + empty_mesh
+            select_hedge = cls.half_edges[selection_index]
+            if mode == 0:
+                for i, ccw_hedge in enumerate(cls._ccw_hedges(select_hedge)):
+                    if i > number:
+                        break
+                    v, f = cls._hedge_to_sv(ccw_hedge, scale)
+                    select_out[ccw_hedge] = (v, f)
+
         if clear:
             cls.half_edges.clear()
-        return zip(*out)
+        return list(zip(*[out[key] for key in out if key not in select_out])) + list(zip(*select_out.values()))
 
     @classmethod
     def printed_to_sv_mesh(cls, index, scale=0.1):
         cls.init_dcel_classes()
-        empty_mesh = ([[(0, 0, 0), (0.01, 0, 0), (0, 0.01, 0)]], [[(0, 1, 2)]])
+        empty_mesh = [[[(0, 0, 0), (0.01, 0, 0), (0, 0.01, 0)]], [[(0, 1, 2)]]]
         is_index = len(cls.data) > index
         item = cls.data[index] if is_index else None
         msg = 'print {:~^50} - {}'.format(item.__class__.__name__, cls.msg[index]) if is_index else ''
@@ -189,25 +222,31 @@ class Debugger:
                       " calling the method ({})".format(cls.printed_to_sv_mesh.__name__))
             else:
                 print('{:~^50}'.format('Nothing to print. Try to lessen the index'))
-            return empty_mesh
+            return empty_mesh + empty_mesh
         elif type(item).__name__ == 'HalfEdge':
             v, f = cls._hedge_to_sv(item, scale)
             check_attrs = {'mesh', 'origin', 'face', 'next', 'last', 'twin'}
             warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(item, attr) is None])
-            warning = ' WARNING - ' + warning
+            warning = ' WARNING - ' + warning if warning else ''
             print(msg + warning)
-            return [v], [f]
+            return [v], [f], empty_mesh[0], empty_mesh[1]
         elif type(item).__name__ == 'Point':
             v, f = cls._point_to_sv(item, scale)
-            print(msg)
-            return [v], [f]
+            check_attrs = {'mesh', 'co', 'hedge'}
+            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(item, attr) is None])
+            warning = ' WARNING - ' + warning if warning else ''
+            print(msg + warning)
+            return [v], [f], empty_mesh[0], empty_mesh[1]
         elif type(item).__name__ == 'Face':
-            print(msg)
-            return cls._face_to_sv(item, scale)
+            check_attrs = {'mesh', 'outer'}
+            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(item, attr) is None])
+            warning = ' WARNING - ' + warning if warning else ''
+            print(msg + warning)
+            return list(cls._face_to_sv(item, scale)) + empty_mesh
         elif type(item).__name__ == 'Edge':
             v, f = cls._edge_to_sv(item)
             print(msg)
-            return [v], [f]
+            return [v], [f], empty_mesh[0], empty_mesh[1]
         else:
             cls.print_warning("Can't print object with such name - {}".format(item.__class__.__name__))
             return empty_mesh
@@ -217,10 +256,11 @@ class Debugger:
         # this function does not work properly
         # after pressing F8 button isinstance can't recognize equal objects came from different parts of the code
 
-        from .dcel import Point, HalfEdge, Face
+        from .dcel import Point
         # from sverchok.utils.geom_2d.sort_mesh import SortEdgeSweepingAlgorithm
 
         cls.Point = Point
+        # cls.DCELMesh = DCELMesh
         # cls.HalfEdge = HalfEdge
         # cls.Face = Face
         # cls.Edge = SortEdgeSweepingAlgorithm

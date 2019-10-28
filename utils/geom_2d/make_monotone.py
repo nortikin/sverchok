@@ -31,25 +31,26 @@ def monotone_sv_face_with_holes(vert_face, vert_holes=None, face_holes=None, acc
         main_face.insert_holes(vert_holes, face_holes)
     make_monotone(main_face)
     rebuild_face_list(mesh)
-    return mesh.to_sv_mesh(only_select=True)
+    return mesh.to_sv_mesh(edges=False, only_select=True)
 
 
-def monotone_faces_with_holes(dcel_mesh, accuracy=1e-5):
+def monotone_faces_with_holes(dcel_mesh):
     """
     Split polygons with holes into monotone pieces of DCEL mesh data structure
     Faces already should have actual information about inner component
     :param dcel_mesh: DCELMesh
-    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: DCELMesh with split faces
     """
     is_inners = False
     for face in dcel_mesh.faces:
+        Debugger.print(face, (bool(face.outer), bool(face.inners)))
         if face.outer and face.inners:
             is_inners = True
-            make_monotone(face, accuracy)
+            print("5-{:!^50}".format("  " + str(all(['type' in dir(point) for point in dcel_mesh.points])) + "  "))
+            make_monotone(face)
     if is_inners:
         rebuild_face_list(dcel_mesh)
-    return dcel_mesh.to_sv_mesh()
+    return dcel_mesh
 
 
 # #############################################################################

@@ -24,8 +24,8 @@ def intersect_sv_edges(sv_verts, sv_edges, accuracy=1e-5):
     """
     mesh = DCELMesh(accuracy)
     mesh.from_sv_edges(sv_verts, sv_edges)
-    find(mesh, accuracy)
-    return mesh.to_sv_edges()
+    find_intersections(mesh, accuracy)
+    return mesh.to_sv_mesh(faces=False)
 
 
 # #############################################################################
@@ -89,7 +89,7 @@ class Edge(SortEdgeSweepingAlgorithm):
         return self.low_hedge if self.low_hedge.origin != self.event_point else self.up_hedge
 
 
-def find(dcel_mesh, accuracy=1e-6):
+def find_intersections(dcel_mesh, accuracy=1e-6):
     """
     Initializing of searching intersection algorithm, read Computational Geometry by Mark de Berg
     :param dcel_mesh: inner DCELMesh data structure
@@ -234,14 +234,15 @@ def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh):
             low_edge.up_hedge.edge = low_edge  # new "user" of half edge should be replace
             up_edge.low_hedge.edge = up_edge  # the same
             # copy pare of half edges from existing half edges and create appropriate links
-            low_edge.low_hedge = HalfEdge(dcel_mesh, event_point, edge.low_hedge.face)
+            low_edge.low_hedge = dcel_mesh.HalfEdge(dcel_mesh, event_point, edge.low_hedge.face)
             dcel_mesh.hedges.append(low_edge.low_hedge)
             low_edge.low_hedge.next = edge.low_hedge.next
             edge.low_hedge.next.last = low_edge.low_hedge
-            up_edge.up_hedge = HalfEdge(dcel_mesh, event_point, edge.up_hedge.face)
+            up_edge.up_hedge = dcel_mesh.HalfEdge(dcel_mesh, event_point, edge.up_hedge.face)
             dcel_mesh.hedges.append(up_edge.up_hedge)
             up_edge.up_hedge.next = edge.up_hedge.next
             edge.up_hedge.next.last = up_edge.up_hedge
+            event_point.hedge = up_edge.up_hedge
             if not "This is for marking faces algorithm for future implementation":
                 # add information about belonging to other faces only for new half edge of low edge
                 # https://github.com/nortikin/sverchok/issues/2497#issuecomment-536862680
@@ -431,6 +432,6 @@ def find_new_event(edge1, edge2, event_queue, event_point, dcel_mesh, accuracy=1
     if is_edges_intersect(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co):
         intersection = intersect_edges(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co)
         if intersection:  # strange checking
-            new_event_point = Point(dcel_mesh, intersection + [0], accuracy)
+            new_event_point = dcel_mesh.Point(dcel_mesh, intersection + [0], accuracy)
             if new_event_point > event_point:
                 event_queue.insert(new_event_point)
