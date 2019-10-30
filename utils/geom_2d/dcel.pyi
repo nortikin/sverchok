@@ -22,10 +22,12 @@ class HalfEdge:
     last: Union[None, 'HalfEdge']
     _slop: Union[None, float]
     flags: set
+    left: Union[None, 'HalfEdge']
 
     def __init__(self, mesh: 'DCELMesh', point: 'Point', face: 'Face' = ...) -> None: 
         self.loop_hedges: List['HalfEdge'] = None
         self.ccw_hedges: List['HalfEdge'] = None
+        self.cw_hedges: List['HalfEdge'] = None
         self.slop: float = None
         ...
 

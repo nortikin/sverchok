@@ -43,10 +43,8 @@ def monotone_faces_with_holes(dcel_mesh):
     """
     is_inners = False
     for face in dcel_mesh.faces:
-        Debugger.print(face, (bool(face.outer), bool(face.inners)))
         if face.outer and face.inners:
             is_inners = True
-            print("5-{:!^50}".format("  " + str(all(['type' in dir(point) for point in dcel_mesh.points])) + "  "))
             make_monotone(face)
     if is_inners:
         rebuild_face_list(dcel_mesh)

@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 from itertools import cycle, chain
-from typing import Dict, List, Union
+from typing import List, Union, Set
 
 from .lin_alg import almost_equal, is_more, dot_product, is_ccw_polygon, cross_product
 
@@ -96,7 +96,6 @@ class HalfEdge:
     @property
     def ccw_hedges(self):
         # returns hedges originated in one point
-        Debugger.print(self, 'ccw')
         if not self.mesh:
             raise AttributeError("This method doesn't work with hedges({}) without link to a mesh."
                                  "Besides, mesh object should have proper number of half edges "
@@ -112,6 +111,23 @@ class HalfEdge:
                 raise RecursionError('Hedge - {} does not have a loop'.format(self))
 
     @property
+    def cw_hedges(self):
+        # returns hedges originated in one point
+        if not self.mesh:
+            raise AttributeError("This method doesn't work with hedges({}) without link to a mesh."
+                                 "Besides, mesh object should have proper number of half edges "
+                                 "in hedges list".format(self))
+        yield self
+        next_edge = self.twin.next
+        counter = 0
+        while next_edge != self:
+            yield next_edge
+            next_edge = next_edge.twin.next
+            counter += 1
+            if counter > len(self.mesh.hedges):
+                raise RecursionError('Hedge - {} does not have a loop'.format(self))
+
+    @property
     def loop_hedges(self):
         # returns hedges bounding face
         if not self.mesh:
@@ -121,7 +137,7 @@ class HalfEdge:
         yield self
         next_edge = self.next
         counter = 0
-        while next_edge != self:
+        while id(next_edge) != id(self):
             yield next_edge
             try:
                 next_edge = next_edge.next
@@ -141,8 +157,10 @@ class HalfEdge:
         Angle 360 or 0 from -X direction in ccw order returns 4.0
         :return: float
         """
-        if self.twin._slop:
-            self._slop = (self.twin._slop + 2) % 4
+        if self._slop:
+            pass
+        elif self.twin._slop:
+            self._slop = (self.twin._slop + 2) % 4 if self.twin._slop != 2 else 4  # corner case for horizontal
         elif almost_equal(self.origin.co[y], self.twin.origin.co[y], self.accuracy):  # is horizontal
             if is_more(self.origin.co[x], self.twin.origin.co[x], self.accuracy):
                 self._slop = 4.0
@@ -250,6 +268,7 @@ class DCELMesh:
 
     def from_sv_edges(self, verts, edges):
         # Probably it is worth take in account such cases as: edge with 0 length at least
+        # Interesting that this method makes next attribute of end of an edge linked to a twin
         edges = [edge for edge in edges if
                  not all([almost_equal(co1, co2, self.accuracy) for co1, co2 in zip(verts[edge[0]], verts[edge[1]])])]
 
@@ -281,75 +300,95 @@ class DCELMesh:
         # Generate face list from half edge list
         # Tail edges will be dissolving
         # Left component of hedges is taken in account
-        used = set()
-        faces = []  # type: List[Face]
-        rebuild = False  # if there are tails some points and half edges can be loosed
-
         # build outer faces and detect inner faces (holes)
         # if face is not ccw and there is no left neighbour it is boundless super face
         # if there is left neighbour the face should be stored with only inner component,
         # outer component will be find further
+
+        # will detect tails first
+        used = set()  # type: Set[HalfEdge]
+        tail_key = 'tail'
+        rebuild = False  # if there are tails some points and half edges can be loosed
         for hedge in self.hedges:
             if hedge in used:
                 continue
-            # will detect tails first
             # https://github.com/nortikin/sverchok/pull/2623#issuecomment-546570210
-            hedge_tail = {}  # type: Dict[HalfEdge, bool]
+            used_in_loop = set()  # type: Set[HalfEdge]
             for loop_hedge in hedge.loop_hedges:
-                if loop_hedge.twin not in hedge_tail:
-                    hedge_tail[loop_hedge] = False
+                if loop_hedge.twin not in used_in_loop:
+                    used_in_loop.add(loop_hedge)
                 else:
-                    hedge_tail[loop_hedge] = True
-                    hedge_tail[loop_hedge.twin] = True
+                    # this is tail, useless, for del method but not only
+                    loop_hedge.flags.add(tail_key)
+                    loop_hedge.twin.flags.add(tail_key)
                     rebuild = True
-            # mark tails as unused, relink half edges
-            for loop_hedge in hedge_tail:
-                if hedge_tail[loop_hedge] and not hedge_tail[loop_hedge.next]:
-                    next_hedge = loop_hedge.next  # origin of next hedge is in place where tail connects with a face
-                    for ccw_hedge in next_hedge.ccw_hedges:
-                        if id(ccw_hedge) != id(next_hedge) and not hedge_tail[ccw_hedge.twin]:
+
+        faces = []  # type: List[Face]
+        min_hedges = set()  # type: Set[HalfEdge]  # all detected leftmost half edges of evry loop, not tails
+        inner_hedges = []  # type: List[List[HalfEdge]]  # multiple loops can be produced be desolving tails algorithm
+        # relink half edges
+        # after this process it will be possible to get from tail to loop but impossible from loop to tail
+        # actually this process lead to loosing information which it could be useful
+        # dissolving algorithm can create several loops from one but they are related with each other:
+        # - if at least one of them is outer loop so the rest are inner components of this one
+        # - or if they all are inner so they either belong to boundless face or are inside some another face
+        # Also left attribute can have links to tails what make the situation more complicated
+        used.clear()
+        for hedge in self.hedges:
+            if hedge in used:
+                continue
+            if tail_key in hedge.flags:
+                # avoid start form tails
+                continue
+
+            # Start handling a loop
+            loop_hedges = []  # type: List[HalfEdge]
+            for loop_hedge in hedge.loop_hedges:
+                loop_hedges.append(loop_hedge)
+                # links can be changed only when sub loop is left
+                if tail_key in loop_hedge.flags and tail_key not in loop_hedge.last.flags:
+                    # this case about when previous step was from sub loop to tail
+                    last_hedge = loop_hedge.last  # origin of next hedge is in place where tail connects with a face
+                    for cw_hedge in loop_hedge.cw_hedges:
+                        # Try to find last normal half edge for next normal half edge
+                        if id(cw_hedge) != id(loop_hedge) and tail_key not in cw_hedge.flags:
                             # check either there are other tails in the point
-                            last_hedge = ccw_hedge.twin
+                            next_hedge = cw_hedge
                             break
                     next_hedge.last = last_hedge
                     last_hedge.next = next_hedge
-            for loop_hedge in hedge_tail:
-                if hedge_tail[loop_hedge]:
-                    loop_hedge.flags.add('tail')  # this is tail, useless, for del method
 
-            # detect new loops
-            new_loops = []  # type: List[HalfEdge]  # only first hedge in loop
-            for loop_hedge in hedge_tail:
-                if hedge_tail[loop_hedge]:
-                    used.add(loop_hedge)
-                    continue
-                if loop_hedge not in used:
-                    new_loops.append(loop_hedge)
-                    for lh in loop_hedge.loop_hedges:
-                        used.add(lh)
-
-            # figure out weather loop is ccw or cw
+            # detect new sub loops, figure out weather loop is ccw or cw
+            # after code above loop_hedges attribute returns new sub loops according start hedge
             new_outer = None  # type: Union[None, HalfEdge]
             new_inners = []  # type: List[HalfEdge]
-            for start_hedge in new_loops:
-                min_hedge = min([hedge for hedge in start_hedge.loop_hedges],
-                                key=lambda he: (he.origin.co[x], he.origin.co[y]))
-                _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin.co, min_hedge.origin.co,
-                                                     min_hedge.next.origin.co], accuracy=self.accuracy)
-                Debugger.print(min_hedge, _is_ccw)
-                if not _is_ccw:
-                    new_inners.append(start_hedge)
-                elif _is_ccw and new_outer is not None:
-                    raise ValueError("During dissolving edges algorithm only one ccw face can be created")
+            for loop_hedge in loop_hedges:
+                if tail_key in loop_hedge.flags:
+                    used.add(loop_hedge)
+                    # just ignore tail
+                    continue
+                elif loop_hedge in used:
+                    # avoid reconsidering sub loop
+                    continue
                 else:
-                    new_outer = start_hedge
-
-            # min hedge should be checked whether it look to the left or to the right
-            # if to the right previous hedge should be taken
-            # https://github.com/nortikin/sverchok/issues/2497#issuecomment-526096898
-            # min_hedge = min_hedge if min_hedge.slop > 2 else min_hedge.last  # this string should be restore later
+                    # the start edge for sub loop is found
+                    # mark all hedges of the sub loop for avoiding them later
+                    [used.add(hedge) for hedge in loop_hedge.loop_hedges]
+                    min_hedge = min([hedge for hedge in loop_hedge.loop_hedges],
+                                    key=lambda he: (he.origin.co[x], he.origin.co[y]))
+                    min_hedges.add(min_hedge)  # avoiding extra calculation later
+                    _is_ccw = is_ccw_polygon(most_lefts=[min_hedge.last.origin.co, min_hedge.origin.co,
+                                                         min_hedge.next.origin.co], accuracy=self.accuracy)
+                    if not _is_ccw:
+                        new_inners.append(min_hedge)
+                    elif _is_ccw and new_outer is not None:
+                        raise ValueError("During dissolving edges algorithm only one ccw face can be created")
+                    else:
+                        new_outer = loop_hedge
+            Debugger.print(new_outer, 'new outer')
+            Debugger.print(new_inners, 'new inners')
+            # handle case when after dissolving tails there are at list one outer face
             if new_outer:
-                Debugger.print(new_outer, 'new_outer')
                 face = self.Face(self)
                 face.outer = new_outer
                 faces.append(face)
@@ -359,16 +398,155 @@ class DCELMesh:
                     face.inners.append(start_hedge)
                     for h in start_hedge.loop_hedges:
                         h.face = face
+
+            # case when only inners loops was found
+            # if left neighbour is None this mean that the inner face is a hole of boundless face in either way
+            # if left is not None it is impossible to say which face inner faces belongs at this stage
+            # if at list one left neighbour of inner start half edge is None then
+            # all inner loops belong to boundless face
+            elif new_inners:
+                # new inners should be also check because after dissolving half edges some loops can produce nothing
+                belong_to_boundless = any([start_hedge.left is None for start_hedge in new_inners])
+                if belong_to_boundless:
+                    for start_hedge in new_inners:
+                        self.unbounded.inners.append(start_hedge)
+                        for loop_hedge in start_hedge.loop_hedges:
+                            loop_hedge.face = self.unbounded
+                else:
+                    # it impossible to say to which face the inner loops belong at this stage
+                    # it is also possible that they belong to boundless face
+                    inner_hedges.append(new_inners)
+
+        Debugger.print([l for loop in inner_hedges for l in loop], 'inner hedges')
+        used.clear()  # only for start half edges which are leftmost half edges
+        # This part about holes detection
+        for start_hedges in inner_hedges:
+
+            # check first probably some of the loops already was assigned to a face
+            # it is possible if some disjoint loop lies to the right of one sub loop face
+            # in this case during ahndling the loop sub loop also will be assigned to face
+            assigned_face = None  # type: Union[None, Face]
+            for start_hedge in start_hedges:
+                if start_hedge.face and start_hedge.face.outer:
+                    assigned_face = start_hedge.face  # this can be weather boundless face or outer face
+                    break  # this means that hedge loops can belongs only one face
+            if assigned_face:
+                for start_hedge in start_hedges:
+                    if start_hedge not in used:
+                        used.add(start_hedge)
+                        assigned_face.inners.append(start_hedge)  # repeat of half edges should be avoided
+                        for hedge in start_hedge.loop_hedges:
+                            hedge.face = assigned_face
+
+            # Well, we have bad luck and no one loop was already marked in given sequence
+            # initialisation of walk to leftward direction should be done
+            # choose a hedge for start, does not matter which from the set
+            left_hedges = [start_hedges[0]]  # type: List[HalfEdge] # list of start hedges of evry inner loop detected
+            count = 0
+            while not left_hedges[-1].left or not left_hedges[-1].left.face or not left_hedges[-1].left.face.outer:
+                Debugger.print(left_hedges[-1], 'left hedges')
+                # At first check can be next jump done
+                if not left_hedges[-1].left:
+                    break
+
+                # First of all try to find next loop
+                start_loop = None  # type: Union[None, HalfEdge]
+                # It is necessary to know what is coming next, whether it tail half edge or normal half edge
+                if tail_key in left_hedges[-1].left.flags:
+                    # it looks that iterate over tail half edges is not a good idea
+                    # it is possible to get into endless loop,
+                    # when leftmost point of a loop has left attribute with tail
+                    # which leis right from left side of the loop and joined to it
+                    # it will be batter to make next jump immediately
+                    # but if one of ccw half edges of tail has outer face it means it is boundary face
+                    # or if it is inner component then next hole is found and should be iterated
+                    # or if twin of one of ccw half edges of tail ahs outer face it means we also het into next hole
+                    jump = True  # True if boundary face or next hole in ccw hedges was not found
+                    for ccw_hedge in left_hedges[-1].left.ccw_hedges:
+                        if ccw_hedge.face and ccw_hedge.face.outer:
+                            # the boundary face is found and should be linked to last left half edge
+                            # it will be probably better to relink left half edge to half edge with boundary face
+                            left_hedges[-1].left = ccw_hedge  # probably not vary nice to do
+                            jump = Face
+                            break  # todo check the end of while
+                        elif ccw_hedge.face and ccw_hedge.face.inners:
+                            # new next hole is found
+                            start_loop = ccw_hedge
+                            jump = False
+                            break
+                        elif ccw_hedge.twin.face:
+                            # this also mean that next hole is found
+                            start_loop = ccw_hedge
+                            jump = False
+                            break
+                    if jump:
+                        left_hedges.append(left_hedges[-1].left)
+                    # start_tail = left_hedges[-1].left
+                    # tail_hedges = [start_tail]
+                    # next_tail = start_tail
+                    # while True:
+                    #     if tail_key in next_tail.next.flags:
+                    #         # everything okay we are still in tail loop
+                    #         next_tail = next_tail.next
+                    #         tail_hedges.append(next_tail)
+                    #     else:
+                    #         # we step out from tail loop, switch to another side
+                    #         # so it is possible move further in normal way
+                    #         start_loop = next_tail.next
+                    #         break
+                    #     if id(next_tail) == id(start_tail):
+                    #         # this is the end of the loop
+                    #         break
+                    #     count += 1
+                    #     if count > len(self.hedges):
+                    #         raise RecursionError('Tail loop can not find the edn of its tail')
+                    # # We found tail loop it means inner face without twin outer face
+                    # min_tail_hedge = min(tail_hedges, key=lambda he: (he.origin.co[x], he.origin.co[y]))
+                    # left_hedges.append(min_tail_hedge)  # next left half edge was found
+                else:
+                    # we are in a normal loop
+                    start_loop = left_hedges[-1].left
+                if start_loop:
+                    # this means we have jumped to a normal loop or via tail joined to normal loop
+                    # will find leftmost half edge
+                    for hedge in start_loop.loop_hedges:
+                        if hedge in min_hedges:
+                            left_hedges.append(hedge)
+                            break
+                count += 1
+                if count > len(self.hedges):
+                    raise RecursionError('Hedge of hole cant find outer face')
+
+            # all left half edges was found and last left half edge keeps information about boundary face
+            # interesting thing about left hedges is the list can include tails which are useless in face creating
+            # set boundary face
+            if not left_hedges[-1].left:
+                face = self.unbounded
             else:
-                for start_hedge in new_inners:
-                    self.unbounded.inners.append(start_hedge)
-                    for h in start_hedge.loop_hedges:
-                        h.face = self.unbounded
-        Debugger.print(faces, 'inners')
+                face = left_hedges[-1].left.face
+            # make links between boundary face and inner loops
+            for start_hedge in left_hedges:
+                if tail_key in start_hedge.flags:
+                    continue
+                if start_hedge in used:
+                    continue
+                face.inners.append(start_hedge)
+                used.add(start_hedge)  # this should be enuff
+                for hedge in start_hedge.loop_hedges:
+                    hedge.face = face
+            # all sub loops also can be assigned to founded face
+            for start_hedge in start_hedges:
+                if start_hedge in used:
+                    continue
+                face.inners.append(start_hedge)
+                used.add(start_hedge)
+                for hedge in start_hedge.loop_hedges:
+                    hedge.face = face
+
         self.faces = faces
 
         if rebuild:
-            self.del_loose_hedges('tail')
+            self.del_loose_hedges(tail_key)
 
     def to_sv_mesh(self, edges=True, faces=True, only_select=False):
         # all elements of mesh should have correct links
@@ -443,7 +621,13 @@ class DCELMesh:
     def del_loose_hedges(self, flag=None):
         # flag means that half edges with the value will be deleted
         if flag:
-            self.hedges = [hedge for hedge in self.hedges if flag not in hedge.flags]
+            hedges = []
+            for hedge in self.hedges:
+                if flag in hedge.flags:
+                    hedge.mesh = None
+                else:
+                    hedges.append(hedge)
+            self.hedges = hedges
         else:
             self.hedges = [hedge for hedge in self.hedges if hedge.mesh]
         used = set()

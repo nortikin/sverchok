@@ -8,6 +8,9 @@
 
 from itertools import chain
 from functools import wraps
+from copy import copy
+
+from .lin_alg import almost_equal
 
 
 x, y, z = 0, 1, 2
@@ -35,7 +38,7 @@ out sf s
 '''
 
 from sverchok.utils.geom_2d.dcel import Debugger as D
-v, f, sv, sf = D.printed_to_sv_mesh(index, scale=scale)
+v, f, sv, sf = D.printed_to_sv_mesh(index, number, mode, scale=scale)
 #v, f, sv, sf = D.hedges_to_sv_mesh(index, number, mode, scale=scale, clear=True)
 
 
@@ -62,7 +65,7 @@ class Debugger:
             return
         if not dcel_object:
             return cls.print_warning('You have tried to print nothing')
-        if not isinstance(dcel_object, list):
+        if not isinstance(dcel_object, (list, set, tuple)):
             dcel_object = [dcel_object]
         for db in dcel_object:
             cls.data.append(db)
@@ -87,9 +90,9 @@ class Debugger:
     @classmethod
     def add_hedges(cls, hedges):
         if isinstance(hedges, list):
-            cls.half_edges.extend(hedges)
+            [cls.half_edges.append(copy(hedge)) for hedge in hedges]
         else:
-            cls.half_edges.append(hedges)
+            cls.half_edges.append(copy(hedges))
 
     @classmethod
     def clear(cls, to_print=True):
@@ -115,6 +118,19 @@ class Debugger:
             yield next_edge
             next_edge = next_edge.last.twin
 
+    @staticmethod
+    def _loop_hedges(hedge):
+        # returns hedges bounding face
+        yield hedge
+        next_edge = hedge.next
+        while next_edge != hedge:
+            yield next_edge
+            next_edge = next_edge.next
+
+    @staticmethod
+    def _hedges_is_equal(hedge1, hedge2):
+        return all([almost_equal(v1, v2) for v1, v2 in zip(hedge1.origin.co, hedge2.origin.co)])
+
     @classmethod
     def _rotate_by_direction(cls, points, normal):
         # https://habr.com/ru/post/131931/
@@ -133,10 +149,13 @@ class Debugger:
 
     @classmethod
     def _shift_hedge(cls, hedge, scale=1.0):
-        v1 = (hedge.origin - hedge.twin.origin).normalize()
+        v1 = hedge.origin - hedge.twin.origin
+        hedge_length = v1.length()
+        v1 = v1.normalize()
         v2 = cls.Point(None, (0, 0, 1))
         nor = v1.cross_product(v2) * scale
-        edge = ((hedge.origin - (v1 * (scale * 2))), hedge.twin.origin + (v1 * (scale * 2)))
+        shift_v = (v1 * (scale * 2)) if scale * 4 < hedge_length else (v1 * (hedge_length * 0.49))
+        edge = (hedge.origin - shift_v, hedge.twin.origin + shift_v)
         return [p + nor for p in edge]
 
     @classmethod
@@ -174,6 +193,49 @@ class Debugger:
         return zip(*out)
 
     @classmethod
+    def _get_next_hedges(cls, start_hedge, number, mode, scale=0.1):
+        out = []
+        if mode == 0:
+            for i, ccw_hedge in enumerate(cls._ccw_hedges(start_hedge)):
+                if i > number:
+                    break
+                v, f = cls._hedge_to_sv(ccw_hedge, scale)
+                out.append((v, f))
+        elif mode == 1:
+            for i, loop_hedge in enumerate(cls._loop_hedges(start_hedge)):
+                if i > number:
+                    break
+                v, f = cls._hedge_to_sv(loop_hedge, scale)
+                out.append((v, f))
+        elif mode == 2:
+            v, f = cls._hedge_to_sv(start_hedge, scale)
+            out.append((v, f))
+            v, f = cls._hedge_to_sv(start_hedge.twin, scale)
+            out.append((v, f))
+        return out
+
+    @staticmethod
+    def check_correct_data(obj):
+        # return '' if data have all links and warning if there are some loosed links
+        if type(obj).__name__ == 'HalfEdge':
+            check_attrs = {'mesh', 'origin', 'face', 'next', 'last', 'twin'}
+            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(obj, attr) is None])
+            warning = ' WARNING - ' + warning if warning else ''
+        elif type(obj).__name__ == 'Point':
+            check_attrs = {'mesh', 'co', 'hedge'}
+            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(obj, attr) is None])
+            warning = ' WARNING - ' + warning if warning else ''
+        elif type(obj).__name__ == 'Face':
+            check_attrs = {'mesh', 'outer'}
+            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(obj, attr) is None])
+            warning = ' WARNING - ' + warning if warning else ''
+        elif type(obj).__name__ == 'Edge':
+            warning = ''
+        else:
+            raise ValueError(f'Unknown type of given object - {type(obj).__name__}')
+        return warning
+
+    @classmethod
     def hedges_to_sv_mesh(cls, selection_index=None, number=0, mode=None, scale=0.1, clear=False):
         # for visualization all DCEL data
         # modes: 0 - ccw hedges, 1 - loop hedges
@@ -183,34 +245,31 @@ class Debugger:
             print("DCEL DEBUGER: You should record your half edges into the class before"
                   " calling the method ({})".format(cls.hedges_to_sv_mesh.__name__))
             return empty_mesh
-        out = dict()
-        select_out = dict()
+        out = []
+        select_out = []
         for i, hedge in enumerate(cls.half_edges):
             if selection_index and selection_index == i:
                 continue
             v, f = cls._hedge_to_sv(hedge, scale)
-            out[hedge] = (v, f)
+            out.append((v, f))
 
         if selection_index is not None:
             if not len(cls.half_edges) > selection_index:
                 if clear:
                     cls.half_edges.clear()
                 print('{:~^50}'.format('Nothing to print. Try to lessen the index'))
-                return list(zip(*[out[key] for key in out if key not in select_out])) + empty_mesh
+                return list(zip(*out)) + empty_mesh
             select_hedge = cls.half_edges[selection_index]
-            if mode == 0:
-                for i, ccw_hedge in enumerate(cls._ccw_hedges(select_hedge)):
-                    if i > number:
-                        break
-                    v, f = cls._hedge_to_sv(ccw_hedge, scale)
-                    select_out[ccw_hedge] = (v, f)
+            print('Loose links of selection - ' + (cls.check_correct_data(select_hedge) or 'all good') +
+                  (str(select_hedge.flags) if select_hedge.flags else ''))
+            select_out = cls._get_next_hedges(select_hedge, number, mode, scale)
 
         if clear:
             cls.half_edges.clear()
-        return list(zip(*[out[key] for key in out if key not in select_out])) + list(zip(*select_out.values()))
+        return list(zip(*out)) + list(zip(*select_out))
 
     @classmethod
-    def printed_to_sv_mesh(cls, index, scale=0.1):
+    def printed_to_sv_mesh(cls, index, number=0, mode=0, scale=0.1):
         cls.init_dcel_classes()
         empty_mesh = [[[(0, 0, 0), (0.01, 0, 0), (0, 0.01, 0)]], [[(0, 1, 2)]]]
         is_index = len(cls.data) > index
@@ -219,37 +278,32 @@ class Debugger:
         if not is_index:
             if not cls.data:
                 print("DCEL DEBUGER: You should record your data into the class before"
-                      " calling the method ({})".format(cls.printed_to_sv_mesh.__name__))
+                      " calling the method ({}) or switch on printing".format(cls.printed_to_sv_mesh.__name__))
             else:
                 print('{:~^50}'.format('Nothing to print. Try to lessen the index'))
             return empty_mesh + empty_mesh
         elif type(item).__name__ == 'HalfEdge':
-            v, f = cls._hedge_to_sv(item, scale)
-            check_attrs = {'mesh', 'origin', 'face', 'next', 'last', 'twin'}
-            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(item, attr) is None])
-            warning = ' WARNING - ' + warning if warning else ''
-            print(msg + warning)
-            return [v], [f], empty_mesh[0], empty_mesh[1]
+            if number > 0:
+                out = cls._get_next_hedges(item, number, mode, scale)
+            else:
+                v, f = cls._hedge_to_sv(item, scale)
+                out = [(v, f)]
+            print(msg + cls.check_correct_data(item))
+            return list(zip(*out)) + empty_mesh
         elif type(item).__name__ == 'Point':
             v, f = cls._point_to_sv(item, scale)
-            check_attrs = {'mesh', 'co', 'hedge'}
-            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(item, attr) is None])
-            warning = ' WARNING - ' + warning if warning else ''
-            print(msg + warning)
+            print(msg + cls.check_correct_data(item))
             return [v], [f], empty_mesh[0], empty_mesh[1]
         elif type(item).__name__ == 'Face':
-            check_attrs = {'mesh', 'outer'}
-            warning = ''.join(['{} is None, '.format(attr) for attr in check_attrs if getattr(item, attr) is None])
-            warning = ' WARNING - ' + warning if warning else ''
-            print(msg + warning)
+            print(msg + cls.check_correct_data(item))
             return list(cls._face_to_sv(item, scale)) + empty_mesh
         elif type(item).__name__ == 'Edge':
             v, f = cls._edge_to_sv(item)
-            print(msg)
+            print(msg + cls.check_correct_data(item))
             return [v], [f], empty_mesh[0], empty_mesh[1]
         else:
             cls.print_warning("Can't print object with such name - {}".format(item.__class__.__name__))
-            return empty_mesh
+            return empty_mesh + empty_mesh
 
     @classmethod
     def init_dcel_classes(cls):

@@ -216,7 +216,6 @@ def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh):
     :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
     :param event_point: event point of intersection algorithm, Point
     :param dcel_mesh: for new half edges recording, DCELMesh
-    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: list of nodes with edges above event point, list of edges below event point, flag of overlapping detection
     """
     lc = []  # is ordered in cw direction low edges
@@ -391,7 +390,10 @@ def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping):
     """
     rotation_nodes = uc + lc[::-1]
     if left_neighbor:
-        rotation_nodes[0].key.outer_hedge.left = left_neighbor.up_hedge  # for hole detection
+        for node in rotation_nodes:
+            # for hole detection
+            # In this case for all half edges left neighbour will lay regarding origin
+            node.key.inner_hedge.left = left_neighbor.up_hedge
     if c or is_overlapping:
         for i in range(len(rotation_nodes)):
             edge = rotation_nodes[i].key

@@ -31,8 +31,8 @@ def edges_to_faces(sv_verts, sv_edges, do_intersect=True, fill_holes=True, accur
     if do_intersect:
         find_intersections(mesh, accuracy)
     mesh.generate_faces_from_hedges()
+    Debugger.print([hedge for hedge in mesh.hedges])
     Debugger.add_hedges(mesh.hedges)
-    Debugger.print([p.hedge for p in mesh.points], 'phedge')
     monotone_faces_with_holes(mesh)
     return mesh.to_sv_mesh(edges=False)
 
