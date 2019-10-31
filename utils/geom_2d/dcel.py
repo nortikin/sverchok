@@ -182,6 +182,7 @@ class Face:
         self._inners = []  # hedges of hole loops
 
         self.select = False  # actually should be careful with this parameter, some algorithm can use it or not
+        self.flags = set()  # For any value wich an algorithm would like to keep with object, only add or remove
         self.sv_data = dict()  # for any data which we would like to keep with face
 
     def __str__(self):
@@ -385,8 +386,6 @@ class DCELMesh:
                         raise ValueError("During dissolving edges algorithm only one ccw face can be created")
                     else:
                         new_outer = loop_hedge
-            Debugger.print(new_outer, 'new outer')
-            Debugger.print(new_inners, 'new inners')
             # handle case when after dissolving tails there are at list one outer face
             if new_outer:
                 face = self.Face(self)
@@ -417,7 +416,6 @@ class DCELMesh:
                     # it is also possible that they belong to boundless face
                     inner_hedges.append(new_inners)
 
-        Debugger.print([l for loop in inner_hedges for l in loop], 'inner hedges')
         used.clear()  # only for start half edges which are leftmost half edges
         # This part about holes detection
         for start_hedges in inner_hedges:
@@ -444,7 +442,6 @@ class DCELMesh:
             left_hedges = [start_hedges[0]]  # type: List[HalfEdge] # list of start hedges of evry inner loop detected
             count = 0
             while not left_hedges[-1].left or not left_hedges[-1].left.face or not left_hedges[-1].left.face.outer:
-                Debugger.print(left_hedges[-1], 'left hedges')
                 # At first check can be next jump done
                 if not left_hedges[-1].left:
                     break
@@ -548,7 +545,7 @@ class DCELMesh:
         if rebuild:
             self.del_loose_hedges(tail_key)
 
-    def to_sv_mesh(self, edges=True, faces=True, only_select=False):
+    def to_sv_mesh(self, edges=True, faces=True, only_select=False, del_face_flag=None):
         # all elements of mesh should have correct links
         # will create only selected faces if only_select is True
         sv_points, point_index = generate_sv_points(self)
@@ -556,11 +553,11 @@ class DCELMesh:
             sv_edges = generate_sv_edges(self, point_index)
             return sv_points, sv_edges
         elif faces and not edges:
-            sv_faces = generate_sv_faces(self, point_index, only_select)
+            sv_faces = generate_sv_faces(self, point_index, only_select, del_face_flag)
             return sv_points, sv_faces
         else:
             sv_edges = generate_sv_edges(self, point_index)
-            sv_faces = generate_sv_faces(self, point_index, only_select)
+            sv_faces = generate_sv_faces(self, point_index, only_select, del_face_flag)
             return sv_points, sv_edges, sv_faces
 
     def dissolve_selected_faces(self):
@@ -575,7 +572,6 @@ class DCELMesh:
                         un_used_hedges.add(hedge)
                     else:
                         boundary_hedges.append(hedge)
-        Debugger.add_hedges(boundary_hedges)
         # create new faces
         used = set()
         new_faces = []
@@ -774,14 +770,14 @@ def generate_sv_edges(dcel_mesh, point_index):
     return sv_edges
 
 
-def generate_sv_faces(dcel_mesh, point_index, only_select=False):
+def generate_sv_faces(dcel_mesh, point_index, only_select=False, del_flag=None):
     # This part of function creates faces in SV format
     # It ignores  boundless super face
     sv_faces = []
     for i, face in enumerate(dcel_mesh.faces):
         if face.inners and face.outer:
             'Face ({}) has inner components! Sverchok cant show polygons with holes.'.format(i)
-        if not face.outer:
+        if not face.outer or del_flag in face.flags:
             continue
         if only_select and not face.select:
             continue

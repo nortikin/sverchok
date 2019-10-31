@@ -41,6 +41,7 @@ class Face:
     inners: List[HalfEdge]
     outer: 'HalfEdge'
     is_unbounded = bool
+    flags: set
 
     def __init__(self, mesh: 'DCELMesh') -> None: ...
 
@@ -68,7 +69,7 @@ class DCELMesh:
                       face_selection: List[Union[bool, int]] = ...,
                       face_data: Dict[str, list] = ...) -> None: ...
     
-    def to_sv_mesh(self, edges: bool = ..., faces: bool = ..., only_select: bool = ...) -> \
+    def to_sv_mesh(self, edges: bool = ..., faces: bool = ..., only_select: bool = ..., del_face_flag: str = ...) -> \
             Tuple[List[TSVPoint], List[TSVEdge], List[TSVFace]]: ...
 
     def del_face(self, face: 'Face') -> None: ...

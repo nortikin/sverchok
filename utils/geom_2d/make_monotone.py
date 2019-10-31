@@ -43,7 +43,9 @@ def monotone_faces_with_holes(dcel_mesh):
     """
     is_inners = False
     for face in dcel_mesh.faces:
-        if face.outer and face.inners:
+        if 'del' in face.flags:
+            continue
+        elif face.outer and face.inners:
             is_inners = True
             make_monotone(face)
     if is_inners:

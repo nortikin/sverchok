@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from typing import Set, List
+
 from .intersections import Point as InterPoint, HalfEdge as InterHalfEdge, DCELMesh as InterDCELMesh, find_intersections
 from .make_monotone import Point as MonPoint, HalfEdge as MonHalfEdge, DCELMesh as MonDCELMesh, \
                            monotone_faces_with_holes
@@ -25,16 +27,15 @@ def edges_to_faces(sv_verts, sv_edges, do_intersect=True, fill_holes=True, accur
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: list of SV points, list of SV faces
     """
-    Debugger.clear(False)
     mesh = DCELMesh(accuracy=accuracy)
     mesh.from_sv_edges(sv_verts, sv_edges)
     if do_intersect:
         find_intersections(mesh, accuracy)
     mesh.generate_faces_from_hedges()
-    Debugger.print([hedge for hedge in mesh.hedges])
-    Debugger.add_hedges(mesh.hedges)
+    if not fill_holes:
+        del_holes(mesh)
     monotone_faces_with_holes(mesh)
-    return mesh.to_sv_mesh(edges=False)
+    return mesh.to_sv_mesh(edges=False, del_face_flag='del')
 
 
 def from_sv_faces(sv_verts, sv_faces, accuracy=1e-6):
@@ -80,3 +81,41 @@ class HalfEdge(InterHalfEdge, MonHalfEdge):
 class DCELMesh(InterDCELMesh, MonDCELMesh):
     Point = Point
     HalfEdge = HalfEdge
+
+
+def del_holes(dcel_mesh):
+
+    del_flag = 'del'
+
+    def del_hole(face):
+        used_del = set()  # type: Set['Face']
+        stack_del = [hedge.twin for hedge in face.inners]
+        while stack_del:
+            next_del_face = stack_del.pop().face
+            if next_del_face in used_del:
+                continue
+            if id(next_del_face) == id(face):
+                continue
+            used_del.add(next_del_face)
+            next_del_face.flags.add(del_flag)
+            for loop_del_hedge in next_del_face.outer.loop_hedges:
+                stack_del.append(loop_del_hedge.twin)
+            if next_del_face.inners:
+                add_hole(next_del_face)
+
+    def add_hole(face):
+        used = set()  # type: Set['Face']
+        stack = [hedge.twin for hedge in face.inners]
+        while stack:
+            next_face = stack.pop().face
+            if next_face in used:
+                continue
+            if id(face) == id(next_face):
+                continue
+            used.add(next_face)
+            for loop_hedge in next_face.outer.loop_hedges:
+                stack.append(loop_hedge.twin)
+            if next_face.inners:
+                del_hole(next_face)
+
+    add_hole(dcel_mesh.unbounded)
