@@ -112,7 +112,7 @@ def with_bmesh(method):
 
 
 def bmesh_join(list_of_bmeshes, normal_update=False):
-    """ takes as input a list of bm references and outputs a single merged bmesh 
+    """ takes as input a list of bm references and outputs a single merged bmesh
 
     allows an additional 'normal_update=True' (default False) to force normal calculations
 
@@ -149,5 +149,15 @@ def bmesh_join(list_of_bmeshes, normal_update=False):
 
     if normal_update:
         bm.normal_update()
-    
+
     return bm
+
+def remove_doubles(vertices, edges, faces, d):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=d)
+    bm.verts.index_update()
+    bm.edges.index_update()
+    bm.faces.index_update()
+    v, e, p =pydata_from_bmesh(bm)
+    bm.free()
+    return v, e, p
