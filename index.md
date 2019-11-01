@@ -204,6 +204,7 @@
     SvMapRangeNode
     SvEasingNode
     SvMixNumbersNode
+    SvMixInputsNode
     SvFormulaNodeMk3
     ---
     SvGenFibonacci
