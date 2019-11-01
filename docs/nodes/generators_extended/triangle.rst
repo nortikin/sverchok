@@ -70,9 +70,17 @@ Outputs
 Example of usage
 ----------------
 
-.. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_plane_plane/sverchok_intersect_plane_plane_example1.png
-  :alt: sverchok_intersect_plane_plane_example1.png
+Three ways of getting the same triangle from different inputs
 
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators_extended/Triangle/triangle_node_sverchok_example.png
+  :alt: sverchok_triangle_node_example.png
 
-.. image:: https://github.com/vicdoval/sverchok/raw/docs_images/images_for_docs/analyzer/intersect_plane_plane/sverchok_intersect_plane_plane_example.png
-  :alt: sverchok_intersect_plane_plane_example1.png
+The node can be used to generate more complex shapes, note that "join last level" is activated the N-Panel
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators_extended/Triangle/triangle_node_sverchok_example01.png
+  :alt: sverchok_triangle_node_example1.png
+
+Advanced example using the node to generate structural ribbons
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators_extended/Triangle/triangle_node_sverchok_example02.png
+  :alt: sverchok_triangle_node_example2.png

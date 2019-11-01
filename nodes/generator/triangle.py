@@ -28,10 +28,10 @@ class SvTriangleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Triangle"
     bl_icon = "GHOST_ENABLED"
     sv_icon = "SV_TRIANGLE_NODE"
-    triangle_modes = [("A_c_Alpha_Beta", "A_c_alpha_beta", "", custom_icon("SV_TRIANGLE_ACALPHABETA"), 0),
-                      ("A_Bv_Alpha_Beta", "A_B_alpha_beta", "", custom_icon("SV_TRIANGLE_ABALPHABETA"), 1),
-                      ("A_b_c_Alpha", "A_b_c_alpha", "", custom_icon("SV_TRIANGLE_ABCALPHA"), 2),
-                      ("A_Bv_b_Alpha", "A_B_b_alpha", "", custom_icon("SV_TRIANGLE_ABBALPHA"), 3),
+    triangle_modes = [("A_c_Alpha_Beta", "A_c_Alpha_Beta", "", custom_icon("SV_TRIANGLE_ACALPHABETA"), 0),
+                      ("A_Bv_Alpha_Beta", "A_B_Alpha_Beta", "", custom_icon("SV_TRIANGLE_ABALPHABETA"), 1),
+                      ("A_b_c_Alpha", "A_b_c_Alpha", "", custom_icon("SV_TRIANGLE_ABCALPHA"), 2),
+                      ("A_Bv_b_Alpha", "A_B_b_Alpha", "", custom_icon("SV_TRIANGLE_ABBALPHA"), 3),
                       ("A_as_b_c", "A_a_b_c", "", custom_icon("SV_TRIANGLE_AABC"), 4),
                       ("A_Bv_as_b", "A_B_a_b", "", custom_icon("SV_TRIANGLE_ABAB"), 5),
                       ("A_Bv_C", "A_B_C", "", custom_icon("SV_TRIANGLE_ABC"), 6)]
