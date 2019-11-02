@@ -19,7 +19,7 @@
 from math import sin, cos, pi
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 import bmesh
 from mathutils import Vector
 from mathutils.geometry import barycentric_transform
@@ -29,6 +29,7 @@ from sverchok.data_structure import (updateNode, Vector_generate,
                                      Vector_degenerate, match_long_repeat, fullList)
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.geom import diameter, LineEquation2D
 from sverchok.utils.logging import info, debug
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
@@ -92,6 +93,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = normal_modes, default = "MAP",
         update = updateNode)
 
+    join : BoolProperty(
+        name = "Join",
+        description = "Output one joined mesh",
+        default = False,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "VersR")
         self.inputs.new('SvStringsSocket', "PolsR")
@@ -106,6 +113,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "normal_mode")
         if self.normal_mode == 'MAP':
             layout.prop(self, "normal_interp_mode")
+        layout.prop(self, "join")
 
     def interpolate_quad_2d(self, v1, v2, v3, v4, v, x_coef, y_coef):
         v12 = v1 + (v2-v1)*v[0]*x_coef + ((v2-v1)/2)
@@ -220,6 +228,11 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             faces_out.extend(new_faces)
 
             verts_out = Vector_degenerate(verts_out)
+            if self.join:
+                verts_out, _, faces_out = mesh_join(verts_out, [], faces_out)
+                verts_out = [verts_out]
+                faces_out = [faces_out]
+
             self.outputs['Vertices'].sv_set(verts_out)
             self.outputs['Polygons'].sv_set(faces_out)
 
