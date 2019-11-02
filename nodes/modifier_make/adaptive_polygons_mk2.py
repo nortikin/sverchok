@@ -171,6 +171,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "join")
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+
+        layout.label(text = "Normal axis:")
         layout.prop(self, "normal_axis", expand=True)
         layout.prop(self, "z_scale")
         layout.prop(self, "normal_mode")
@@ -180,7 +186,6 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "map_mode")
         layout.prop(self, "mask_mode")
         layout.prop(self, "ngon_mode")
-        layout.prop(self, "join")
 
     def get_triangle_directions(self):
         triangle_direction_1 = Vector((cos_pi_6, sin_pi_6, 0))
