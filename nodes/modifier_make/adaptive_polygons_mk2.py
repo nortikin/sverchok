@@ -97,6 +97,17 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         description = "Normals mapping mode",
         items = normal_modes, default = "MAP",
         update = updateNode)
+    
+    z_scale_modes = [
+            ("PROP", "Proportional", "Scale along normal proportionally with the donor object", 0),
+            ("CONST", "Constant", "Constant scale along normal", 1)
+        ]
+
+    z_scale : EnumProperty(
+        name = "Z Scale",
+        description = "Mode of scaling along the normals",
+        items = z_scale_modes, default = "PROP",
+        update = updateNode)
 
     join : BoolProperty(
         name = "Join",
@@ -117,6 +128,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "z_scale")
         layout.prop(self, "normal_mode")
         if self.normal_mode == 'MAP':
             layout.prop(self, "normal_interp_mode")
@@ -175,12 +187,19 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
         x_size = diameter(verts_donor, 'X')
         y_size = diameter(verts_donor, 'Y')
+        z_size = diameter(verts_donor, 'Z')
 
         verts_out = []
         faces_out = []
 
         for recpt_face, recpt_face_bm, zcoef, zoffset, wcoef in zip(faces_recpt, bm.faces, zcoefs, zoffsets, wcoefs):
             recpt_face_vertices_bm = [bm.verts[i] for i in recpt_face]
+            if self.z_scale == 'CONST':
+                if abs(z_size) < 1e-6:
+                    zcoef = 0
+                else:
+                    zcoef = zcoef / z_size
+
             if len(recpt_face) == 3:
                 new_verts = []
                 for v in verts_donor:
