@@ -109,6 +109,17 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = z_scale_modes, default = "PROP",
         update = updateNode)
 
+    map_modes = [
+            ("QUADTRI", "Quads / Tris Auto", "Use Quads or Tris mapping automatically", 0),
+            ("QUADS", "Quads Always", "Use Quads mapping even for the Tris", 1)
+        ]
+
+    map_mode : EnumProperty(
+        name = "Mapping mode",
+        description = "Donor object mapping mode",
+        items = map_modes, default = "QUADTRI",
+        update = updateNode)
+
     join : BoolProperty(
         name = "Join",
         description = "Output one joined mesh",
@@ -132,6 +143,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "normal_mode")
         if self.normal_mode == 'MAP':
             layout.prop(self, "normal_interp_mode")
+        layout.prop(self, "map_mode")
         layout.prop(self, "join")
 
     def interpolate_quad_2d(self, v1, v2, v3, v4, v, x_coef, y_coef):
@@ -200,7 +212,15 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     zcoef = zcoef / z_size
 
-            if len(recpt_face) == 3:
+            if self.map_mode == 'QUADTRI':
+                if len(recpt_face) == 3:
+                    map_mode = 'TRI'
+                else:
+                    map_mode = 'QUAD'
+            else:
+                map_mode = 'QUAD'
+
+            if map_mode == 'TRI':
                 new_verts = []
                 for v in verts_donor:
                     new_verts.append(self.interpolate_tri_3d(
@@ -211,7 +231,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         recpt_face_bm.normal,
                                         Vector(v), zcoef, zoffset))
                 verts_out.append(new_verts)
-            elif len(recpt_face) >= 4:
+            elif map_mode == 'QUAD':
                 new_verts = []
                 for v in verts_donor:
                     new_verts.append(self.interpolate_quad_3d(
