@@ -243,15 +243,15 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         dst_vert_1, dst_vert_2, dst_vert_3)
 
     def interpolate_tri_3d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, face_normal, v, z_coef, z_offset):
-        v_at_triangle = interpolate_tri_2d(dst_vert_1.co, dst_vert_2.co, dst_vert_3.co,
+        v_at_triangle = self.interpolate_tri_2d(dst_vert_1.co, dst_vert_2.co, dst_vert_3.co,
                                             src_vert_1, src_vert_2, src_vert_3, v)
         if self.normal_mode == 'MAP':
             if self.normal_interp_mode == 'SMOOTH':
-                normal = interpolate_tri_2d(dst_vert_1.normal, dst_vert_2.normal, dst_vert_3.normal,
+                normal = self.interpolate_tri_2d(dst_vert_1.normal, dst_vert_2.normal, dst_vert_3.normal,
                                              src_vert_1, src_vert_2, src_vert_3, v)
                 normal.normalize()
             else:
-                normal = interpolate_tri_2d(dst_vert_1.co + dst_vert_1.normal, dst_vert_2.co + dst_vert_2.normal,
+                normal = self.interpolate_tri_2d(dst_vert_1.co + dst_vert_1.normal, dst_vert_2.co + dst_vert_2.normal,
                                             dst_vert_3.co + dst_vert_3.normal,
                                             src_vert_1, src_vert_2, src_vert_3, v)
                 normal = normal - v_at_triangle
