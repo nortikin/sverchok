@@ -276,7 +276,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         return loc + normal*(v[Z]*z_coef + z_offset)
 
     def interpolate_tri_2d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, v):
-        v = self.from2d(v.x, v.y)
+        X, Y = self.get_other_axes()
+        v = self.from2d(v[X], v[Y])
         return barycentric_transform(v, src_vert_1, src_vert_2, src_vert_3,
                                         dst_vert_1, dst_vert_2, dst_vert_3)
 
