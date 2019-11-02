@@ -70,15 +70,26 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         name='Z coeff',
         default=1.0, max=3.0, min=0.0, update=updateNode)
 
-    normal_modes = [
+    normal_interp_modes = [
             ("LINEAR", "Linear", "Exact / linear normals interpolation", 0),
             ("SMOOTH", "Unit length", "Use normals of unit length", 1)
         ]
 
-    normal_mode : EnumProperty(
-        name = "Normals",
+    normal_interp_mode : EnumProperty(
+        name = "Interpolate normals",
         description = "Normals interpolation mode",
-        items = normal_modes, default = "LINEAR",
+        items = normal_interp_modes, default = "LINEAR",
+        update = updateNode)
+
+    normal_modes = [
+            ("MAP", "Map", "Interpolate from donor vertex normals", 0),
+            ("FACE", "Face", "Use donor face normals", 1)
+        ]
+
+    normal_mode : EnumProperty(
+        name = "Use normals",
+        description = "Normals mapping mode",
+        items = normal_modes, default = "MAP",
         update = updateNode)
 
     def sv_init(self, context):
@@ -93,22 +104,28 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "normal_mode")
+        if self.normal_mode == 'MAP':
+            layout.prop(self, "normal_interp_mode")
 
     def interpolate_quad_2d(self, v1, v2, v3, v4, v, x_coef, y_coef):
         v12 = v1 + (v2-v1)*v[0]*x_coef + ((v2-v1)/2)
         v43 = v4 + (v3-v4)*v[0]*x_coef + ((v3-v4)/2)
         return v12 + (v43-v12)*v[1]*y_coef + ((v43-v12)/2)
 
-    def interpolate_quad_3d(self, v1, v2, v3, v4, v, x_coef, y_coef, z):
+    def interpolate_quad_3d(self, v1, v2, v3, v4, face_normal, v, x_coef, y_coef, z):
         loc = interpolate_quad_2d(v1.co, v2.co, v3.co, v4.co, v, x_coef, y_coef)
-        if self.normal_mode == 'SMOOTH':
-            normal = interpolate_quad_2d(v1.normal, v2.normal, v3.normal, v4.normal, v, x_coef, y_coef)
-            normal.normalize()
+        if self.normal_mode == 'MAP':
+            if self.normal_interp_mode == 'SMOOTH':
+                normal = interpolate_quad_2d(v1.normal, v2.normal, v3.normal, v4.normal, v, x_coef, y_coef)
+                normal.normalize()
+            else:
+                normal = interpolate_quad_2d(v1.co + v1.normal, v2.co + v2.normal,
+                                             v3.co + v3.normal, v4.co + v4.normal,
+                                             v, x_coef, y_coef)
+                normal = normal - loc
         else:
-            normal = interpolate_quad_2d(v1.co + v1.normal, v2.co + v2.normal,
-                                         v3.co + v3.normal, v4.co + v4.normal,
-                                         v, x_coef, y_coef)
-            normal = normal - loc
+            #normal = (v1.normal + v2.normal + v3.normal + v4.normal) * 0.25
+            normal = face_normal
         return loc + normal*v[2]*z
 
     def interpolate_tri_2d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, v):
@@ -116,18 +133,22 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         return barycentric_transform(v, src_vert_1, src_vert_2, src_vert_3,
                                         dst_vert_1, dst_vert_2, dst_vert_3)
 
-    def interpolate_tri_3d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, v, z_coef):
+    def interpolate_tri_3d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, face_normal, v, z_coef):
         v_at_triangle = interpolate_tri_2d(dst_vert_1.co, dst_vert_2.co, dst_vert_3.co,
                                             src_vert_1, src_vert_2, src_vert_3, v)
-        if self.normal_mode == 'SMOOTH':
-            normal = interpolate_tri_2d(dst_vert_1.normal, dst_vert_2.normal, dst_vert_3.normal,
-                                         src_vert_1, src_vert_2, src_vert_3, v)
-            normal.normalize()
+        if self.normal_mode == 'MAP':
+            if self.normal_interp_mode == 'SMOOTH':
+                normal = interpolate_tri_2d(dst_vert_1.normal, dst_vert_2.normal, dst_vert_3.normal,
+                                             src_vert_1, src_vert_2, src_vert_3, v)
+                normal.normalize()
+            else:
+                normal = interpolate_tri_2d(dst_vert_1.co + dst_vert_1.normal, dst_vert_2.co + dst_vert_2.normal,
+                                            dst_vert_3.co + dst_vert_3.normal,
+                                            src_vert_1, src_vert_2, src_vert_3, v)
+                normal = normal - v_at_triangle
         else:
-            normal = interpolate_tri_2d(dst_vert_1.co + dst_vert_1.normal, dst_vert_2.co + dst_vert_2.normal,
-                                        dst_vert_3.co + dst_vert_3.normal,
-                                        src_vert_1, src_vert_2, src_vert_3, v)
-            normal = normal - v_at_triangle
+            #normal = (dst_vert_1.normal + dst_vert_2.normal + dst_vert_3.normal) * 0.333333333
+            normal = face_normal
         return v_at_triangle + normal * v.z * z_coef
 
     def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, wcoefs):
@@ -143,7 +164,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         faces_out = []
 
-        for recpt_face, zcoef, wcoef in zip(faces_recpt, zcoefs, wcoefs):
+        for recpt_face, recpt_face_bm, zcoef, wcoef in zip(faces_recpt, bm.faces, zcoefs, wcoefs):
             recpt_face_vertices_bm = [bm.verts[i] for i in recpt_face]
             if len(recpt_face) == 3:
                 new_verts = []
@@ -153,7 +174,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         recpt_face_vertices_bm[1],
                                         recpt_face_vertices_bm[2],
                                         tri_vert_1/wcoef, tri_vert_2/wcoef, tri_vert_3/wcoef,
-                                        Vector(v), zcoef, self.normal_mode))
+                                        recpt_face_bm.normal,
+                                        Vector(v), zcoef))
                 verts_out.append(new_verts)
             elif len(recpt_face) >= 4:
                 new_verts = []
@@ -163,9 +185,9 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         recpt_face_vertices_bm[1],
                                         recpt_face_vertices_bm[2],
                                         recpt_face_vertices_bm[-1],
+                                        recpt_face_bm.normal,
                                         v,
-                                        wcoef/x_size, wcoef/y_size, zcoef,
-                                        self.normal_mode))
+                                        wcoef/x_size, wcoef/y_size, zcoef))
 
                 verts_out.append(new_verts)
             faces_out.append(faces_donor)
