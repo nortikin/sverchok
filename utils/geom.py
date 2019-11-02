@@ -898,9 +898,9 @@ def diameter(vertices, axis):
         return (M-m)
     else:
         if axis == 'X':
-            axis == 0
+            axis = 0
         elif axis == 'Y':
-            axis == 1
+            axis = 1
         elif axis == 'Z':
             axis = 2
         elif isinstance(axis, str):
