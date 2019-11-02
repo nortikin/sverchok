@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi
+from math import sin, cos, pi, sqrt
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty
@@ -109,13 +109,24 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = z_scale_modes, default = "PROP",
         update = updateNode)
 
+    xy_modes = [
+            ("BOUNDS", "Bounds", "Map donor object bounds to recipient face", 0),
+            ("PLAIN", "As Is", "Map donor object's coordinate space to recipient face as-is", 1)
+        ]
+
+    xy_mode : EnumProperty(
+        name = "Coordinates",
+        description = "Donor object coordinates mapping",
+        items = xy_modes, default = "BOUNDS",
+        update = updateNode)
+
     map_modes = [
             ("QUADTRI", "Quads / Tris Auto", "Use Quads or Tris mapping automatically", 0),
             ("QUADS", "Quads Always", "Use Quads mapping even for the Tris", 1)
         ]
 
     map_mode : EnumProperty(
-        name = "Mapping mode",
+        name = "Faces mode",
         description = "Donor object mapping mode",
         items = map_modes, default = "QUADTRI",
         update = updateNode)
@@ -143,6 +154,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "normal_mode")
         if self.normal_mode == 'MAP':
             layout.prop(self, "normal_interp_mode")
+        layout.prop(self, "xy_mode")
         layout.prop(self, "map_mode")
         layout.prop(self, "join")
 
@@ -190,15 +202,28 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             normal = face_normal
         return v_at_triangle + normal * (v.z * z_coef + z_offset)
 
+    def map_bounds(self, min, max, x):
+        c = (min + max) / 2.0
+        k = 1.0 / (max - min)
+        return (x - c) * k
+
     def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, zoffsets, wcoefs):
         bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
         donor_verts_v = [Vector(v) for v in verts_donor]
 
-        tri_vert_1, tri_vert_2, tri_vert_3 = bounding_triangle(donor_verts_v)
+        if self.xy_mode == 'BOUNDS':
+            max_x = max(v[0] for v in verts_donor)
+            min_x = min(v[0] for v in verts_donor)
+            max_y = max(v[1] for v in verts_donor)
+            min_y = min(v[1] for v in verts_donor)
 
-        x_size = diameter(verts_donor, 'X')
-        y_size = diameter(verts_donor, 'Y')
+            tri_vert_1, tri_vert_2, tri_vert_3 = bounding_triangle(donor_verts_v)
+        else:
+            tri_vert_1 = Vector((0, sqrt(3)/3, 0))
+            tri_vert_2 = Vector((0.5, -sqrt(3)/6, 0))
+            tri_vert_3 = Vector((-0.5, -sqrt(3)/6, 0))
+
         z_size = diameter(verts_donor, 'Z')
 
         verts_out = []
@@ -234,6 +259,13 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             elif map_mode == 'QUAD':
                 new_verts = []
                 for v in verts_donor:
+                    v = Vector(v)
+                    if self.xy_mode == 'BOUNDS':
+                        x = self.map_bounds(min_x, max_x, v.x)
+                        y = self.map_bounds(min_y, max_y, v.y)
+                        #self.info("(%s, %s) / [%s, %s - %s, %s] => (%s, %s)", 
+                        #        v.x, v.y, min_x, min_y, max_x, max_y, x, y)
+                        v = Vector((x, y, v.z))
                     new_verts.append(self.interpolate_quad_3d(
                                         recpt_face_vertices_bm[0],
                                         recpt_face_vertices_bm[1],
@@ -241,7 +273,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         recpt_face_vertices_bm[-1],
                                         recpt_face_bm.normal,
                                         v,
-                                        wcoef/x_size, wcoef/y_size,
+                                        wcoef, wcoef,
                                         zcoef, zoffset))
 
                 verts_out.append(new_verts)
