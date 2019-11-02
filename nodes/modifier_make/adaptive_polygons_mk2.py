@@ -195,6 +195,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "ngon_mode")
 
     def get_triangle_directions(self):
+        """
+        Three normal of unit triangle's edges.
+        This is not constant just because the normal can be X or Y or Z.
+        """
         triangle_direction_1 = Vector((cos_pi_6, sin_pi_6, 0))
         triangle_direction_2 = Vector((-cos_pi_6, sin_pi_6, 0))
         triangle_direction_3 = Vector((0, -1, 0))
@@ -207,6 +211,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             return triangle_direction_1, triangle_direction_2, triangle_direction_3
 
     def to2d(self, v):
+        """
+        Convert vector to 2D.
+        Remove the coordinate which is responsible for normal axis.
+        """
         if self.normal_axis == 'X':
             return v.yz
         elif self.normal_axis == 'Y':
@@ -215,6 +223,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             return v.xy
 
     def from2d(self, x, y):
+        """
+        Make 3D vector from X and Y.
+        Add zero for the coordinate which is responsible for normal axis.
+        """
         if self.normal_axis == 'X':
             return Vector((0, x, y))
         elif self.normal_axis == 'Y':
@@ -222,15 +234,11 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         else:
             return Vector((x, y, 0))
 
-    def remap3d(self, x, y, z):
-        if self.normal_axis == 'X':
-            return Vector((z, x, y))
-        elif self.normal_axis == 'Y':
-            return Vector((x, z, y))
-        else:
-            return Vector((x, y, z))
-
     def bounding_triangle(self, vertices):
+        """
+        Return three vertices of a triangle with equal sides,
+        which contains all provided vertices.
+        """
         X, Y = self.get_other_axes()
 
         triangle_direction_1, triangle_direction_2, triangle_direction_3 = self.get_triangle_directions()
@@ -252,36 +260,55 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
         return p1, p2, p3
 
-    def interpolate_quad_2d(self, v1, v2, v3, v4, v, x_coef, y_coef):
+    def interpolate_quad_2d(self, dst_vert_1, dst_vert_2, dst_vert_3, dst_vert_4, v, x_coef, y_coef):
+        """
+        Map the provided `v` vertex, considering only two of it's coordinates,
+        from the [-1/2; 1/2] x [-1/2; 1/2] square to the face defined by
+        four `dst_vert_n` vertices.
+        """
         X, Y = self.get_other_axes()
-        v12 = v1 + (v2-v1)*v[X]*x_coef + ((v2-v1)/2)
-        v43 = v4 + (v3-v4)*v[X]*x_coef + ((v3-v4)/2)
+        v12 = dst_vert_1 + (dst_vert_2-dst_vert_1)*v[X]*x_coef + ((dst_vert_2-dst_vert_1)/2)
+        v43 = dst_vert_4 + (dst_vert_3-dst_vert_4)*v[X]*x_coef + ((dst_vert_3-dst_vert_4)/2)
         return v12 + (v43-v12)*v[Y]*y_coef + ((v43-v12)/2)
 
-    def interpolate_quad_3d(self, v1, v2, v3, v4, face_normal, v, x_coef, y_coef, z_coef, z_offset):
-        loc = self.interpolate_quad_2d(v1.co, v2.co, v3.co, v4.co, v, x_coef, y_coef)
+    def interpolate_quad_3d(self, dst_vert_1, dst_vert_2, dst_vert_3, dst_vert_4, face_normal, v, x_coef, y_coef, z_coef, z_offset):
+        """
+        Map the provided `v` vertex from the source
+        [-1/2; 1/2] x [-1/2; 1/2] x [-1/2; 1/2] cube
+        to the space defined by `dst_vert_n` vertices.
+        """
+        loc = self.interpolate_quad_2d(dst_vert_1.co, dst_vert_2.co, dst_vert_3.co, dst_vert_4.co, v, x_coef, y_coef)
         if self.normal_mode == 'MAP':
             if self.normal_interp_mode == 'SMOOTH':
-                normal = self.interpolate_quad_2d(v1.normal, v2.normal, v3.normal, v4.normal, v, x_coef, y_coef)
+                normal = self.interpolate_quad_2d(dst_vert_1.normal, dst_vert_2.normal, dst_vert_3.normal, dst_vert_4.normal, v, x_coef, y_coef)
                 normal.normalize()
             else:
-                normal = self.interpolate_quad_2d(v1.co + v1.normal, v2.co + v2.normal,
-                                             v3.co + v3.normal, v4.co + v4.normal,
+                normal = self.interpolate_quad_2d(dst_vert_1.co + dst_vert_1.normal, dst_vert_2.co + dst_vert_2.normal,
+                                             dst_vert_3.co + dst_vert_3.normal, dst_vert_4.co + dst_vert_4.normal,
                                              v, x_coef, y_coef)
                 normal = normal - loc
         else:
-            #normal = (v1.normal + v2.normal + v3.normal + v4.normal) * 0.25
+            #normal = (dst_vert_1.normal + dst_vert_2.normal + dst_vert_3.normal + dst_vert_4.normal) * 0.25
             normal = face_normal
         Z = self.normal_axis_idx()
         return loc + normal*(v[Z]*z_coef + z_offset)
 
     def interpolate_tri_2d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, v):
+        """
+        Map the provided `v` vertex, considering only two of it's coordinates,
+        from the source triangle (defined by `src_vert_n` vertices) to the face defined by
+        three `dst_vert_n` vertices.
+        """
         X, Y = self.get_other_axes()
         v = self.from2d(v[X], v[Y])
         return barycentric_transform(v, src_vert_1, src_vert_2, src_vert_3,
                                         dst_vert_1, dst_vert_2, dst_vert_3)
 
     def interpolate_tri_3d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, face_normal, v, z_coef, z_offset):
+        """
+        Map the provided `v` vertex from the source triangle
+        to the space defined by `dst_vert_n` vertices.
+        """
         v_at_triangle = self.interpolate_tri_2d(dst_vert_1.co, dst_vert_2.co, dst_vert_3.co,
                                             src_vert_1, src_vert_2, src_vert_3, v)
         if self.normal_mode == 'MAP':
@@ -329,15 +356,21 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, zoffsets, zrotations, wcoefs, mask):
         bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
+        # Original (unrotated) donor vertices
         donor_verts_o = [Vector(v) for v in verts_donor]
 
         X, Y = self.get_other_axes()
         Z = self.normal_axis_idx()
 
+        # Vertices of the unit triangle.
+        # In case xy_mode != BOUNDS, we will never
+        # have to recalculate these.
         tri_vert_1 = self.from2d(0, sqrt_3_3)
         tri_vert_2 = self.from2d(0.5, -sqrt_3_6)
         tri_vert_3 = self.from2d(-0.5, -sqrt_3_6)
 
+        # We will be rotating the donor object around Z axis,
+        # so it's size along Z is not going to change.
         z_size = diameter(donor_verts_o, Z)
 
         verts_out = []
@@ -348,6 +381,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             recpt_face_vertices_bm = [bm.verts[i] for i in recpt_face]
 
+            # We have to recalculate rotated vertices only if
+            # the rotation angle have changed.
             if prev_angle is None or angle != prev_angle:
                 donor_verts_v = self.rotate_z(donor_verts_o, angle)
 
@@ -361,13 +396,14 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             prev_angle = angle
 
-            n = len(recpt_face)
             if self.z_scale == 'CONST':
                 if abs(z_size) < 1e-6:
                     zcoef = 0
                 else:
                     zcoef = zcoef / z_size
 
+            # Define TRI/QUAD mode based on node settings.
+            n = len(recpt_face)
             if not m:
                 map_mode = self.mask_mode
             else:
@@ -387,11 +423,20 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                         map_mode = 'SKIP'
 
             if map_mode == 'SKIP':
+                # Skip this recipient's face - do not produce any vertices/faces for it
                 continue
+
             elif map_mode == 'ASIS':
+                # Leave this recipient's face as it was - as a single face.
                 verts_out.append([verts_recpt[i] for i in recpt_face])
                 faces_out.append([list(range(n))])
+
             elif map_mode == 'TRI':
+                # Tris processing mode.
+                #
+                # As interpolate_tri_3d is based on barycentric_transform,
+                # here we do not have to manually map donor vertices to the
+                # unit triangle.
                 new_verts = []
                 for v in donor_verts_v:
                     new_verts.append(self.interpolate_tri_3d(
@@ -403,10 +448,26 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         v, zcoef, zoffset))
                 verts_out.append(new_verts)
                 faces_out.append(faces_donor)
+
             elif map_mode == 'QUAD':
+                # Quads processing mode.
+                #
+                # It can process Tris, but it will look strange:
+                # triangle will be processed as degenerated Quad,
+                # where third and fourth vertices coincide.
+                # In Tissue addon, this is the only mode possible for Quads.
+                # Someone may like that behaivour, so we allow it with setting...
+                #
+                # This can process NGons in even worse way:
+                # it will take first three vertices and the last one
+                # and consider that as a Quad.
                 new_verts = []
                 for v in donor_verts_v:
                     if self.xy_mode == 'BOUNDS':
+                        # Map the `v` vertex's X, Y coordinates
+                        # from it's bounding square to
+                        # [-1/2; 1/2] square.
+                        # Leave Z coordinate as it was.
                         x = self.map_bounds(min_x, max_x, v[X])
                         y = self.map_bounds(min_y, max_y, v[Y])
                         z = v[Z]
