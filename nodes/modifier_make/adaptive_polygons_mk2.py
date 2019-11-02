@@ -34,34 +34,31 @@ from sverchok.utils.geom import diameter, LineEquation2D
 from sverchok.utils.logging import info, debug
 # "coauthor": "Alessandro Zomparelli (sketchesofcode)"
 
-triangle_direction_1 = Vector((cos(pi/6), sin(pi/6), 0))
-triangle_direction_2 = Vector((-cos(pi/6), sin(pi/6), 0))
-triangle_direction_3 = Vector((0, -1, 0))
-
-def bounding_triangle(vertices):
-    max_1 = max(vertices, key = lambda vertex: triangle_direction_1.dot(vertex)).xy
-    max_2 = max(vertices, key = lambda vertex: triangle_direction_2.dot(vertex)).xy
-    max_3 = min(vertices, key = lambda vertex: vertex.y).xy
-
-    side_1 = LineEquation2D.from_normal_and_point(triangle_direction_1.xy, max_1)
-    side_2 = LineEquation2D.from_normal_and_point(triangle_direction_2.xy, max_2)
-    side_3 = LineEquation2D.from_normal_and_point(triangle_direction_3.xy, max_3)
-
-    p1 = side_1.intersect_with_line(side_2)
-    p2 = side_2.intersect_with_line(side_3)
-    p3 = side_3.intersect_with_line(side_1)
-
-    p1 = Vector((p1.x, p1.y, 0))
-    p2 = Vector((p2.x, p2.y, 0))
-    p3 = Vector((p3.x, p3.y, 0))
-
-    return p1, p2, p3
+cos_pi_6 = cos(pi/6)
+sin_pi_6 = sin(pi/6)
+sqrt_3 = sqrt(3)
+sqrt_3_6 = sqrt_3/6
+sqrt_3_3 = sqrt_3/3
+sqrt_3_2 = sqrt_3/2
 
 class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvAdaptivePolygonsNodeMk2'
     bl_label = 'Adaptive Polygons Mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ADAPTATIVE_POLS'
+
+    axes = [
+            ("X", "X", "Orient donor's X axis along normal", 0),
+            ("Y", "Y", "Orient donor's Y axis along normal", 1),
+            ("Z", "Z", "Orient donor's Z axis along normal", 2)
+        ]
+
+    normal_axis: EnumProperty(
+        name = "Normal axis",
+        description = "Donor object axis to be oriented along recipient face normal",
+        items = axes,
+        default = 'Z',
+        update = updateNode)
 
     width_coef: FloatProperty(
         name='Width coeff', description='with coefficient for sverchok adaptivepols donors size',
@@ -150,6 +147,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Polygons")
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "normal_axis", expand=True)
         layout.prop(self, "z_scale")
         layout.prop(self, "normal_mode")
         if self.normal_mode == 'MAP':
@@ -158,29 +156,89 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "map_mode")
         layout.prop(self, "join")
 
+    def get_triangle_directions(self):
+        triangle_direction_1 = Vector((cos_pi_6, sin_pi_6, 0))
+        triangle_direction_2 = Vector((-cos_pi_6, sin_pi_6, 0))
+        triangle_direction_3 = Vector((0, -1, 0))
+
+        if self.normal_axis == 'X':
+            return triangle_direction_1.zxy, triangle_direction_2.zxy, triangle_direction_3.zxy
+        elif self.normal_axis == 'Y':
+            return triangle_direction_1.xzy, triangle_direction_2.xzy, triangle_direction_3.xzy
+        else:
+            return triangle_direction_1, triangle_direction_2, triangle_direction_3
+
+    def to2d(self, v):
+        if self.normal_axis == 'X':
+            return v.yz
+        elif self.normal_axis == 'Y':
+            return v.xz
+        else:
+            return v.xy
+
+    def from2d(self, x, y):
+        if self.normal_axis == 'X':
+            return Vector((0, x, y))
+        elif self.normal_axis == 'Y':
+            return Vector((x, 0, y))
+        else:
+            return Vector((x, y, 0))
+
+    def remap3d(self, x, y, z):
+        if self.normal_axis == 'X':
+            return Vector((z, x, y))
+        elif self.normal_axis == 'Y':
+            return Vector((x, z, y))
+        else:
+            return Vector((x, y, z))
+
+    def bounding_triangle(self, vertices):
+        X, Y = self.get_other_axes()
+
+        triangle_direction_1, triangle_direction_2, triangle_direction_3 = self.get_triangle_directions()
+        max_1 = self.to2d(max(vertices, key = lambda vertex: triangle_direction_1.dot(vertex)))
+        max_2 = self.to2d(max(vertices, key = lambda vertex: triangle_direction_2.dot(vertex)))
+        max_3 = self.to2d(min(vertices, key = lambda vertex: vertex[Y]))
+
+        side_1 = LineEquation2D.from_normal_and_point(self.to2d(triangle_direction_1), max_1)
+        side_2 = LineEquation2D.from_normal_and_point(self.to2d(triangle_direction_2), max_2)
+        side_3 = LineEquation2D.from_normal_and_point(self.to2d(triangle_direction_3), max_3)
+
+        p1 = side_1.intersect_with_line(side_2)
+        p2 = side_2.intersect_with_line(side_3)
+        p3 = side_3.intersect_with_line(side_1)
+
+        p1 = self.from2d(p1[0], p1[1])
+        p2 = self.from2d(p2[0], p2[1])
+        p3 = self.from2d(p3[0], p3[1])
+
+        return p1, p2, p3
+
     def interpolate_quad_2d(self, v1, v2, v3, v4, v, x_coef, y_coef):
-        v12 = v1 + (v2-v1)*v[0]*x_coef + ((v2-v1)/2)
-        v43 = v4 + (v3-v4)*v[0]*x_coef + ((v3-v4)/2)
-        return v12 + (v43-v12)*v[1]*y_coef + ((v43-v12)/2)
+        X, Y = self.get_other_axes()
+        v12 = v1 + (v2-v1)*v[X]*x_coef + ((v2-v1)/2)
+        v43 = v4 + (v3-v4)*v[X]*x_coef + ((v3-v4)/2)
+        return v12 + (v43-v12)*v[Y]*y_coef + ((v43-v12)/2)
 
     def interpolate_quad_3d(self, v1, v2, v3, v4, face_normal, v, x_coef, y_coef, z_coef, z_offset):
-        loc = interpolate_quad_2d(v1.co, v2.co, v3.co, v4.co, v, x_coef, y_coef)
+        loc = self.interpolate_quad_2d(v1.co, v2.co, v3.co, v4.co, v, x_coef, y_coef)
         if self.normal_mode == 'MAP':
             if self.normal_interp_mode == 'SMOOTH':
-                normal = interpolate_quad_2d(v1.normal, v2.normal, v3.normal, v4.normal, v, x_coef, y_coef)
+                normal = self.interpolate_quad_2d(v1.normal, v2.normal, v3.normal, v4.normal, v, x_coef, y_coef)
                 normal.normalize()
             else:
-                normal = interpolate_quad_2d(v1.co + v1.normal, v2.co + v2.normal,
+                normal = self.interpolate_quad_2d(v1.co + v1.normal, v2.co + v2.normal,
                                              v3.co + v3.normal, v4.co + v4.normal,
                                              v, x_coef, y_coef)
                 normal = normal - loc
         else:
             #normal = (v1.normal + v2.normal + v3.normal + v4.normal) * 0.25
             normal = face_normal
-        return loc + normal*(v[2]*z_coef + z_offset)
+        Z = self.normal_axis_idx()
+        return loc + normal*(v[Z]*z_coef + z_offset)
 
     def interpolate_tri_2d(self, dst_vert_1, dst_vert_2, dst_vert_3, src_vert_1, src_vert_2, src_vert_3, v):
-        v = Vector((v.x, v.y, 0))
+        v = self.from2d(v.x, v.y)
         return barycentric_transform(v, src_vert_1, src_vert_2, src_vert_3,
                                         dst_vert_1, dst_vert_2, dst_vert_3)
 
@@ -200,7 +258,19 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         else:
             #normal = (dst_vert_1.normal + dst_vert_2.normal + dst_vert_3.normal) * 0.333333333
             normal = face_normal
-        return v_at_triangle + normal * (v.z * z_coef + z_offset)
+        Z = self.normal_axis_idx()
+        return v_at_triangle + normal * (v[Z] * z_coef + z_offset)
+
+    def get_other_axes(self):
+        if self.normal_axis == 'X':
+            return 1, 2
+        elif self.normal_axis == 'Y':
+            return 0, 2
+        else:
+            return 0, 1
+
+    def normal_axis_idx(self):
+        return "XYZ".index(self.normal_axis)
 
     def map_bounds(self, min, max, x):
         c = (min + max) / 2.0
@@ -212,19 +282,22 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         bm.verts.ensure_lookup_table()
         donor_verts_v = [Vector(v) for v in verts_donor]
 
+        X, Y = self.get_other_axes()
+        Z = self.normal_axis_idx()
+
         if self.xy_mode == 'BOUNDS':
-            max_x = max(v[0] for v in verts_donor)
-            min_x = min(v[0] for v in verts_donor)
-            max_y = max(v[1] for v in verts_donor)
-            min_y = min(v[1] for v in verts_donor)
+            max_x = max(v[X] for v in verts_donor)
+            min_x = min(v[X] for v in verts_donor)
+            max_y = max(v[Y] for v in verts_donor)
+            min_y = min(v[Y] for v in verts_donor)
 
-            tri_vert_1, tri_vert_2, tri_vert_3 = bounding_triangle(donor_verts_v)
+            tri_vert_1, tri_vert_2, tri_vert_3 = self.bounding_triangle(donor_verts_v)
         else:
-            tri_vert_1 = Vector((0, sqrt(3)/3, 0))
-            tri_vert_2 = Vector((0.5, -sqrt(3)/6, 0))
-            tri_vert_3 = Vector((-0.5, -sqrt(3)/6, 0))
+            tri_vert_1 = self.from2d(0, sqrt_3_3)
+            tri_vert_2 = self.from2d(0.5, -sqrt_3_6)
+            tri_vert_3 = self.from2d(-0.5, -sqrt_3_6)
 
-        z_size = diameter(verts_donor, 'Z')
+        z_size = diameter(verts_donor, Z)
 
         verts_out = []
         faces_out = []
@@ -261,11 +334,15 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 for v in verts_donor:
                     v = Vector(v)
                     if self.xy_mode == 'BOUNDS':
-                        x = self.map_bounds(min_x, max_x, v.x)
-                        y = self.map_bounds(min_y, max_y, v.y)
-                        #self.info("(%s, %s) / [%s, %s - %s, %s] => (%s, %s)", 
-                        #        v.x, v.y, min_x, min_y, max_x, max_y, x, y)
-                        v = Vector((x, y, v.z))
+                        x = self.map_bounds(min_x, max_x, v[X])
+                        y = self.map_bounds(min_y, max_y, v[Y])
+                        z = v[Z]
+
+                        v = Vector((0, 0, 0))
+                        v[X] = x
+                        v[Y] = y
+                        v[Z] = z
+
                     new_verts.append(self.interpolate_quad_3d(
                                         recpt_face_vertices_bm[0],
                                         recpt_face_vertices_bm[1],
