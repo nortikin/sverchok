@@ -26,7 +26,7 @@ from mathutils.geometry import barycentric_transform
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_generate,
-                                     Vector_degenerate, match_long_repeat, fullList)
+                                     Vector_degenerate, match_long_repeat, fullList, cycle_for_length)
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_mesh_utils import mesh_join
@@ -128,6 +128,29 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = map_modes, default = "QUADTRI",
         update = updateNode)
 
+    skip_modes = [
+            ("SKIP", "Skip", "Do not output anything", 0),
+            ("ASIS", "As Is", "Output these faces as is", 1)
+        ]
+
+    mask_mode: EnumProperty(
+        name = "Mask mode",
+        description = "What to do with masked out faces",
+        items = skip_modes, default = "SKIP",
+        update = updateNode)
+
+    ngon_modes = [
+            ("QUADS", "As Quads", "Try to process as Quads", 0),
+            ("SKIP", "Skip", "Do not output anything", 1),
+            ("ASIS", "As Is", "Output these faces as is", 2)
+        ]
+
+    ngon_mode: EnumProperty(
+        name = "NGons",
+        description = "What to do with NGons",
+        items = ngon_modes, default = "QUADS",
+        update = updateNode)
+
     join : BoolProperty(
         name = "Join",
         description = "Output one joined mesh",
@@ -142,6 +165,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "W_Coef").prop_name = 'width_coef'
         self.inputs.new('SvStringsSocket', "Z_Coef").prop_name = 'z_coef'
         self.inputs.new('SvStringsSocket', "Z_Offset").prop_name = 'z_offset'
+        self.inputs.new('SvStringsSocket', "PolyMask")
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Polygons")
@@ -154,6 +178,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "normal_interp_mode")
         layout.prop(self, "xy_mode")
         layout.prop(self, "map_mode")
+        layout.prop(self, "mask_mode")
+        layout.prop(self, "ngon_mode")
         layout.prop(self, "join")
 
     def get_triangle_directions(self):
@@ -277,7 +303,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         k = 1.0 / (max - min)
         return (x - c) * k
 
-    def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, zoffsets, wcoefs):
+    def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, zoffsets, wcoefs, mask):
         bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
         donor_verts_v = [Vector(v) for v in verts_donor]
@@ -302,23 +328,39 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         faces_out = []
 
-        for recpt_face, recpt_face_bm, zcoef, zoffset, wcoef in zip(faces_recpt, bm.faces, zcoefs, zoffsets, wcoefs):
+        for recpt_face, recpt_face_bm, zcoef, zoffset, wcoef, m in zip(faces_recpt, bm.faces, zcoefs, zoffsets, wcoefs, mask):
             recpt_face_vertices_bm = [bm.verts[i] for i in recpt_face]
+            n = len(recpt_face)
             if self.z_scale == 'CONST':
                 if abs(z_size) < 1e-6:
                     zcoef = 0
                 else:
                     zcoef = zcoef / z_size
 
-            if self.map_mode == 'QUADTRI':
-                if len(recpt_face) == 3:
-                    map_mode = 'TRI'
-                else:
-                    map_mode = 'QUAD'
+            if not m:
+                map_mode = self.mask_mode
             else:
-                map_mode = 'QUAD'
+                if n == 3:
+                    if self.map_mode == 'QUADTRI':
+                        map_mode = 'TRI'
+                    else:
+                        map_mode = 'QUAD'
+                elif n == 4:
+                    map_mode = 'QUAD'
+                else:
+                    if self.ngon_mode == 'QUADS':
+                        map_mode = 'QUAD'
+                    elif self.ngon_mode == 'ASIS':
+                        map_mode = 'ASIS'
+                    else:
+                        map_mode = 'SKIP'
 
-            if map_mode == 'TRI':
+            if map_mode == 'SKIP':
+                continue
+            elif map_mode == 'ASIS':
+                verts_out.append([verts_recpt[i] for i in recpt_face])
+                faces_out.append([list(range(n))])
+            elif map_mode == 'TRI':
                 new_verts = []
                 for v in verts_donor:
                     new_verts.append(self.interpolate_tri_3d(
@@ -329,6 +371,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         recpt_face_bm.normal,
                                         Vector(v), zcoef, zoffset))
                 verts_out.append(new_verts)
+                faces_out.append(faces_donor)
             elif map_mode == 'QUAD':
                 new_verts = []
                 for v in verts_donor:
@@ -354,7 +397,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         zcoef, zoffset))
 
                 verts_out.append(new_verts)
-            faces_out.append(faces_donor)
+                faces_out.append(faces_donor)
 
         bm.free()
 
@@ -371,19 +414,21 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         zcoefs_s = self.inputs['Z_Coef'].sv_get()
         zoffsets_s = self.inputs['Z_Offset'].sv_get()
         wcoefs_s = self.inputs['W_Coef'].sv_get()
+        mask_s = self.inputs['PolyMask'].sv_get(default = [[1]])
 
         verts_out = []
         faces_out = []
 
-        objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, zcoefs_s, zoffsets_s, wcoefs_s])
-        for verts_donor, faces_donor, verts_recpt, faces_recpt, zcoefs, zoffsets, wcoefs, in zip(*objects):
+        objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, zcoefs_s, zoffsets_s, wcoefs_s, mask_s])
+        for verts_donor, faces_donor, verts_recpt, faces_recpt, zcoefs, zoffsets, wcoefs, mask in zip(*objects):
             fullList(zcoefs, len(faces_recpt))
             fullList(zoffsets, len(faces_recpt))
             fullList(wcoefs, len(faces_recpt))
+            mask = cycle_for_length(mask, len(faces_recpt))
 
             new_verts, new_faces = self._process(verts_recpt, faces_recpt,
                                                  verts_donor, faces_donor,
-                                                 zcoefs, zoffsets, wcoefs)
+                                                 zcoefs, zoffsets, wcoefs, mask)
             verts_out.extend(new_verts)
             faces_out.extend(new_faces)
 
