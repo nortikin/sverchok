@@ -63,7 +63,7 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def lerp3(self, v1, v2, v3, v4, v, x, y, z):
         loc = self.lerp2(v1.co, v2.co, v3.co, v4.co, v, x, y)
-        nor = self.lerp(v1.normal, v2.normal, v3.normal, v4.normal, v)
+        nor = self.lerp2(v1.normal, v2.normal, v3.normal, v4.normal, v, x, y)
         nor.normalize()
         #print (loc, nor, v[2], z)
         return loc + nor*v[2]*z
