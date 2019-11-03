@@ -65,7 +65,7 @@ class SvQuaternionOutNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvQuaternionOutNode'
     bl_label = 'Quaternion Out'
-    sv_icon = 'SV_COMBINE_OUT'
+    sv_icon = 'SV_QUATERNION_OUT'
 
     def update_mode(self, context):
 

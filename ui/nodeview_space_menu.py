@@ -117,7 +117,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddNumber", **icon("SV_NUMBER"))
         layout.menu("NODEVIEW_MT_AddVector", **icon("SV_VECTOR"))
         layout.menu("NODEVIEW_MT_AddMatrix", **icon('EMPTY_AXIS'))
-        layout.menu("NODEVIEW_MT_AddQuaternion", **icon('EMPTY_AXIS'))
+        layout.menu("NODEVIEW_MT_AddQuaternion", **icon('SV_QUATERNION'))
         layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
         layout.separator()

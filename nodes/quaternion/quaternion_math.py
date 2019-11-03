@@ -78,7 +78,7 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvQuaternionMathNode'
     bl_label = 'Quaternion Math'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_QUATERNION_MATH'
 
     def update_operation(self, context):
         self.label = "Quaternion " + self.operation.title()
