@@ -34,7 +34,7 @@ from sverchok.data_structure import (
 ''' very non optimal routines. beware. I know this '''
 
 
-def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, normal_mode="Fast"):
+def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, normal_mode="Exact", zero_mode="SKIP"):
 
     new_faces = []
     new_ignores = []
@@ -112,6 +112,17 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         verts = [vertices[i] for i in face]
         avg_vec = get_average_vector(verts, n)
 
+        if abs(inset_by) < 1e-6:
+            normal = calc_normal(verts)
+            new_vertex = avg_vec.lerp(avg_vec + normal, distance)
+            vertices.append(new_vertex)
+            new_vertex_idx = current_verts_idx
+            new_faces
+            for i, j in zip(face, face[1:]):
+                new_faces.append([i, j, new_vertex_idx])
+            new_faces.append([face[-1], face[0], new_vertex_idx])
+            return
+
         # lerp and add to vertices immediately
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
 
@@ -133,7 +144,8 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
     for idx, face in enumerate(faces):
         inset_by = inset_rates[idx]
 
-        if (inset_by > 0) and (not ignores[idx]):
+        good_inset = (inset_by > 0) or (zero_mode == 'FAN')
+        if good_inset and (not ignores[idx]):
             new_inner_from(face, inset_by, distances[idx], make_inners[idx])
         else:
             new_faces.append(face)
@@ -162,6 +174,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     inset : FloatProperty(
         name='Inset',
         description='inset amount',
+        min = 0.0,
         default=0.1, update=updateNode)
     distance: FloatProperty(
         name='Distance',
@@ -173,8 +186,19 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
     normal_mode : EnumProperty(name = "Normals",
             description = "Normals calculation algorithm",
-            default = "Fast",
+            default = "Exact",
             items = normal_modes,
+            update = updateNode)
+
+    zero_modes = [
+            ("SKIP", "Skip", "Do not process such faces", 0),
+            ("FAN", "Fan", "Make a fan-like structure from such faces", 1)
+        ]
+
+    zero_mode : EnumProperty(name = "Zero inset faces",
+            description = "What to do with faces when inset is equal to zero",
+            default = "SKIP",
+            items = zero_modes,
             update = updateNode)
 
     # axis = FloatVectorProperty(
@@ -198,6 +222,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "normal_mode")
+        layout.prop(self, "zero_mode")
 
     def process(self):
         i = self.inputs
@@ -240,7 +265,8 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
                 'distances': distance_vals,
                 'make_inners': make_inners,
                 'ignores': ignores,
-                'normal_mode': self.normal_mode
+                'normal_mode': self.normal_mode,
+                'zero_mode': self.zero_mode
             }
 
             res = inset_special(**func_args)
