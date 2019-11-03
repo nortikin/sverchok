@@ -370,7 +370,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             dst_lens.append((v1 - v2).length)
         dst_lens.append((dst_verts[-1] - dst_verts[0]).length)
 
-        scales = [dst_len / src_len for src_len,dst_len in zip(src_lens, dst_lens) if abs(src_len) > 1e-6]
+        scales = [dst_len / src_len for src_len,dst_len in zip(src_lens, dst_lens) if abs(src_len) > 1e-6 and abs(dst_len) > 1e-6]
         n = len(scales)
         prod = reduce(lambda x,y: x*y, scales, 1.0)
         return pow(prod, 1.0/n)
@@ -408,12 +408,13 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             if prev_angle is None or angle != prev_angle:
                 donor_verts_v = self.rotate_z(donor_verts_o, angle)
 
-                if self.xy_mode == 'BOUNDS':
+                if self.xy_mode == 'BOUNDS' or self.z_scale == 'AUTO' :
                     max_x = max(v[X] for v in donor_verts_v)
                     min_x = min(v[X] for v in donor_verts_v)
                     max_y = max(v[Y] for v in donor_verts_v)
                     min_y = min(v[Y] for v in donor_verts_v)
 
+                if self.xy_mode == 'BOUNDS':
                     tri_vert_1, tri_vert_2, tri_vert_3 = self.bounding_triangle(donor_verts_v)
 
             prev_angle = angle
@@ -496,7 +497,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     corner1 = self.from2d(min_x, min_y)
                     corner2 = self.from2d(min_x, max_y)
                     corner3 = self.from2d(max_x, max_y)
-                    corner4 = self.from2d(min_x, max_y)
+                    corner4 = self.from2d(max_x, min_y)
 
                     zcoef = self.calc_z_scale(
                                     [recpt_face_vertices_bm[0].co,
