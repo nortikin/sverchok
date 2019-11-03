@@ -47,14 +47,14 @@ Generating basic waves:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_01.png
 
-The "Wave" mode allows you to use a custom wave shape :
+The "Wave" mode allows you to use a custom wave shape:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_02.png
 
-As with the musical synths you can create complex waves out of mixing the basics
+As with the musical synths you can create complex waves out of mixing the basics:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_03.png
 
-Surface modeled by a combination of Oscillator nodes
+Surface modeled by a combination of Oscillator nodes.
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/number/Oscillator/Oscillator_example_04.png
