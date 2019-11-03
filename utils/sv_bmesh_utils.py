@@ -163,6 +163,8 @@ def remove_doubles(vertices, edges, faces, d):
     return v, e, p
 
 def dual_mesh(bm, recalc_normals=True):
+    # Make vertices of dual mesh by finding
+    # centers of original mesh faces.
     new_verts = dict()
     for face in bm.faces:
         new_verts[face.index] = face.calc_center_median()
@@ -170,6 +172,13 @@ def dual_mesh(bm, recalc_normals=True):
     #new_edges = []
     new_faces = []
 
+    # For each vertex of original mesh,
+    # find all connected faces and connect
+    # corresponding vertices of the dual mesh
+    # with a face.
+    # The problem is, that the order of edges in
+    # vert.link_edges (or faces in vert.link_faces)
+    # is undefined, so we have to sort them somehow.
     for vert in bm.verts:
         if not vert.link_faces:
             continue
@@ -197,6 +206,10 @@ def dual_mesh(bm, recalc_normals=True):
             new_faces.append(new_face)
 
     vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
+    # We cannot guarantee that our sorting above gave us faces
+    # of original mesh in counterclockwise order each time.
+    # So if we want normals of dual mesh to be consistent,
+    # we have to call bmesh.ops.recalc_face_normals.
     if not recalc_normals:
         return vertices, new_faces
     else:
