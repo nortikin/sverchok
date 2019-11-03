@@ -235,7 +235,6 @@
     SvLacunarityNode
     SvVectorFractal
 
-
 ## Matrix
     SvMatrixGenNodeMK2
     MatrixOutNode
@@ -249,6 +248,11 @@
     SvMatrixTrackToNode
     SvMatrixMathNode
     MatrixInterpolationNode
+
+## Quaternion
+    SvQuaternionInNode
+    SvQuaternionOutNode
+    SvQuaternionMathNode
 
 ## Logic
     SvLogicNode
