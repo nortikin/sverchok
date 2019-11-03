@@ -46,6 +46,10 @@ This node has the following inputs:
 - **Z Rotation**. Rotation of donor objects along the normal of recipient
   object face, in radians. Default value is 0.0. The input expects one number
   per each recipient object face.
+- **PolyRotation**. Rotation of each recipient object face indexes. The default
+  value is 0. For example, if recipient face definition is `[3, 4, 5, 6]`, and
+  *PolyRotation* is set to 1, then the face will be interpreted as `[4, 5, 6,
+  3]`. This will affect the orientation of donor object.
 - **PolyMask**. Mask for recipient object faces processing. What exactly will
   be done with faces which are masked out is defined by **Mask Mode** parameter
   (see below).
