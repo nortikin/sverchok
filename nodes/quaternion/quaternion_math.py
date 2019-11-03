@@ -52,7 +52,7 @@ operations = {
     "MAGNITUDE": (51, "Q", "S", "Magnitude of a quaternion"),
 }
 
-operationItems = [(k, k.title(), s[3], "", s[0]) for k, s in sorted(operations.items(), key=lambda k: k[1][0])]
+operation_items = [(k, k.title(), s[3], "", s[0]) for k, s in sorted(operations.items(), key=lambda k: k[1][0])]
 
 # cache various operation categories
 NQ_operations = [n for n in operations if operations[n][1] == "NQ"]
@@ -60,9 +60,9 @@ QQ_operations = [n for n in operations if operations[n][1] == "QQ"]
 Q_operations = [n for n in operations if operations[n][1] in {"Q", "QS"}]
 QS_operations = [n for n in operations if operations[n][1] == "QS"]
 output_S_operations = [n for n in operations if operations[n][2] == "S"]
-prepost_operations = {"SUB", "MULTIPLY", "DIVIDE", "ROTATE"}
+pre_post_operations = {"SUB", "MULTIPLY", "DIVIDE", "ROTATE"}
 
-prePostItems = [
+pre_post_items = [
     ("PRE", "Pre", "Calculate A op B", 0),
     ("POST", "Post", "Calculate B op A", 1)
 ]
@@ -85,15 +85,15 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
         self.update_sockets()
         updateNode(self, context)
 
-    prePost : EnumProperty(
+    pre_post : EnumProperty(
         name='Pre Post',
         description='Order of operations PRE = A op B vs POST = B op A)',
-        items=prePostItems, default="PRE", update=updateNode)
+        items=pre_post_items, default="PRE", update=updateNode)
 
     operation : EnumProperty(
         name="Operation",
         description="Operation to apply on the given quaternions",
-        items=operationItems, default="MULTIPLY", update=update_operation)
+        items=operation_items, default="MULTIPLY", update=update_operation)
 
     scale : FloatProperty(
         name="Scale",
@@ -171,8 +171,8 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "operation", text="")
-        if self.operation in prepost_operations:
-            layout.prop(self, "prePost", expand=True)
+        if self.operation in pre_post_operations:
+            layout.prop(self, "pre_post", expand=True)
         if self.operation == "SCALE":
             row = layout.row(align=True)
             row.prop(self, "scales", text="", toggle=True)
@@ -233,8 +233,8 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
         # collect the quaternion inputs from all connected AZ sockets
         I = [s.sv_get(default=id_quat) for s in connected_AZ_sockets]
 
-        if self.operation in prepost_operations:
-            if self.prePost == "POST":  # A op B : keep input order
+        if self.operation in pre_post_operations:
+            if self.pre_post == "POST":  # A op B : keep input order
                 I = I[::-1]
 
         other_sockets = list(filter(lambda s: s.name not in ABC and not s.hide, inputs))
@@ -254,26 +254,26 @@ class SvQuaternionMathNode(bpy.types.Node, SverchCustomTreeNode):
 
         if self.operation in NQ_operations:
             parameters = match_long_repeat(I)
-            quaternionList = [operation(params) for params in zip(*parameters)]
+            quaternion_list = [operation(params) for params in zip(*parameters)]
 
         elif self.operation in QQ_operations:
             parameters = match_long_repeat(I)
-            quaternionList = [operation(*params) for params in zip(*parameters)]
+            quaternion_list = [operation(*params) for params in zip(*parameters)]
 
         elif self.operation == "SCALE":
             parameters = match_long_repeat(I)
-            quaternionList = [operation(*params) for params in zip(*parameters)]
+            quaternion_list = [operation(*params) for params in zip(*parameters)]
 
         else:  # single input operations
             parameters = I[0]  # just quaternion values
-            quaternionList = [operation(a) for a in parameters]
+            quaternion_list = [operation(a) for a in parameters]
 
         if self.operation in output_S_operations:
             if outputs['Value'].is_linked:
-                outputs['Value'].sv_set([quaternionList])
+                outputs['Value'].sv_set([quaternion_list])
         else:  # output quaternions
             if outputs['Quaternion'].is_linked:
-                outputs['Quaternion'].sv_set(quaternionList)
+                outputs['Quaternion'].sv_set(quaternion_list)
 
 
 def register():

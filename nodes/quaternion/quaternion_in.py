@@ -24,7 +24,7 @@ from mathutils import Quaternion, Matrix, Euler
 from math import pi
 
 
-modeItems = [
+mode_items = [
     ("WXYZ", "WXYZ", "Convert components into quaternion", 0),
     ("SCALARVECTOR", "Scalar Vector", "Convert Scalar & Vector into quaternion", 1),
     ("EULER", "Euler Angles", "Convert Euler angles into quaternion", 2),
@@ -32,7 +32,7 @@ modeItems = [
     ("MATRIX", "Matrix", "Convert Rotation Matrix into quaternion", 4),
 ]
 
-eulerOrderItems = [
+euler_order_items = [
     ('XYZ', "XYZ", "", 0),
     ('XZY', 'XZY', "", 1),
     ('YXZ', 'YXZ', "", 2),
@@ -41,15 +41,15 @@ eulerOrderItems = [
     ('ZYX', 'ZYX', "", 5)
 ]
 
-angleUnitItems = [
+angle_unit_items = [
     ("RAD", "Rad", "Radians", "", 0),
     ("DEG", "Deg", 'Degrees', "", 1),
     ("UNI", "Uni", 'Unities', "", 2)
 ]
 
-angleConversion = {"RAD": 1.0, "DEG": pi / 180.0, "UNI": 2 * pi}
+angle_conversion = {"RAD": 1.0, "DEG": pi / 180.0, "UNI": 2 * pi}
 
-idMat = [[tuple(v) for v in Matrix()]]  # identity matrix
+id_mat = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 input_sockets = {
     "WXYZ": ["W", "X", "Y", "Z"],
@@ -84,15 +84,15 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
 
     mode : EnumProperty(
         name='Mode', description='The input component format of the quaternion',
-        items=modeItems, default="WXYZ", update=update_mode)
+        items=mode_items, default="WXYZ", update=update_mode)
 
-    eulerOrder : EnumProperty(
+    euler_order : EnumProperty(
         name="Euler Order", description="Order of the Euler rotations",
-        default="XYZ", items=eulerOrderItems, update=updateNode)
+        default="XYZ", items=euler_order_items, update=updateNode)
 
-    angleUnits : EnumProperty(
+    angle_units : EnumProperty(
         name="Angle Units", description="Angle units (radians/degrees/unities)",
-        default="RAD", items=angleUnitItems, update=updateNode)
+        default="RAD", items=angle_unit_items, update=updateNode)
 
     component_w : FloatProperty(
         name='W', description='W component',
@@ -163,10 +163,10 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "mode", expand=False, text="")
         if self.mode == "EULER":
             col = layout.column(align=True)
-            col.prop(self, "eulerOrder", text="")
+            col.prop(self, "euler_order", text="")
         if self.mode in {"EULER", "AXISANGLE"}:
             row = layout.row(align=True)
-            row.prop(self, "angleUnits", expand=True)
+            row.prop(self, "angle_units", expand=True)
         if self.mode in {"WXYZ", "SCALARVECTOR"}:
             layout.prop(self, "normalize", toggle=True)
 
@@ -176,7 +176,7 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
 
         inputs = self.inputs
 
-        quaternionList = []
+        quaternion_list = []
 
         if self.mode == "WXYZ":
             I = [inputs[n].sv_get()[0] for n in "WXYZ"]
@@ -185,7 +185,7 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
                 q = Quaternion(wxyz)
                 if self.normalize:
                     q.normalize()
-                quaternionList.append(q)
+                quaternion_list.append(q)
 
         elif self.mode == "SCALARVECTOR":
             I = [inputs[n].sv_get()[0] for n in ["Scalar", "Vector"]]
@@ -194,38 +194,38 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
                 q = Quaternion([scalar, *vector])
                 if self.normalize:
                     q.normalize()
-                quaternionList.append(q)
+                quaternion_list.append(q)
 
         elif self.mode == "EULER":
             I = [inputs["Angle " + n].sv_get()[0] for n in "XYZ"]
             params = match_long_repeat(I)
-            au = angleConversion[self.angleUnits]
+            au = angle_conversion[self.angle_units]
             for angleX, angleY, angleZ in zip(*params):
-                euler = Euler((angleX * au, angleY * au, angleZ * au), self.eulerOrder)
+                euler = Euler((angleX * au, angleY * au, angleZ * au), self.euler_order)
                 q = euler.to_quaternion()
                 if self.normalize:
                     q.normalize()
-                quaternionList.append(q)
+                quaternion_list.append(q)
 
         elif self.mode == "AXISANGLE":
             I = [inputs[n].sv_get()[0] for n in ["Axis", "Angle"]]
             params = match_long_repeat(I)
-            au = angleConversion[self.angleUnits]
+            au = angle_conversion[self.angle_units]
             for axis, angle in zip(*params):
                 q = Quaternion(axis, angle * au)
                 if self.normalize:
                     q.normalize()
-                quaternionList.append(q)
+                quaternion_list.append(q)
 
         elif self.mode == "MATRIX":
-            input_M = inputs["Matrix"].sv_get(default=idMat)
+            input_M = inputs["Matrix"].sv_get(default=id_mat)
             for m in input_M:
                 q = Matrix(m).to_quaternion()
                 if self.normalize:
                     q.normalize()
-                quaternionList.append(q)
+                quaternion_list.append(q)
 
-        self.outputs['Quaternions'].sv_set(quaternionList)
+        self.outputs['Quaternions'].sv_set(quaternion_list)
 
 
 def register():
