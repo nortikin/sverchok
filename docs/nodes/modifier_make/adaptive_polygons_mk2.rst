@@ -119,8 +119,10 @@ This node has some number of parameters, and most of them are accessible only in
 
   The **As Is** mode allows one to manually transform the donor object before
   passing it to this node; interesting results may be achieved by making the
-  donor object smaller than *source area**, or bigger than it, or even outside
+  donor object smaller than *source area*, or bigger than it, or even outside
   of it.
+
+  The default value is **Bounds**.
 
 - **Faces mode**. This defines how deformations of donor object will be
   calculated for Quad and Tris recipient faces. Available values are:

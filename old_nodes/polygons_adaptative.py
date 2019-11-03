@@ -35,6 +35,8 @@ class AdaptivePolsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_ADAPTATIVE_POLS'
 
+    replacement_nodes = [('SvAdaptivePolygonsNodeMk2', None, dict(Poligons='Polygons'))]
+
     width_coef: FloatProperty(
         name='width_coef', description='with coefficient for sverchok adaptivepols donors size',
         default=1.0, max=3.0, min=0.5, update=updateNode)
