@@ -20,4 +20,4 @@ Generators Extended
    conic_section
    super_ellipsoid
    spiral
-   
+   triangle

@@ -79,7 +79,7 @@ def mean(verts):
 
 
 def is_reasonably_opposite(n, normal_one):
-    return dot_v3v3(normalized(n), normalized(normal_one)) < 0.0
+    return dot_v3v3(normalize(n), normalize(normal_one)) < 0.0
 
 
 def pt_in_triangle(p_test, p0, p1, p2):
