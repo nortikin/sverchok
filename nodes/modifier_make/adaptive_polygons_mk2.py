@@ -16,7 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, pi, sqrt
+from math import sin, cos, pi, sqrt, pow
+from functools import reduce
 
 import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty
@@ -101,7 +102,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     
     z_scale_modes = [
             ("PROP", "Proportional", "Scale along normal proportionally with the donor object", 0),
-            ("CONST", "Constant", "Constant scale along normal", 1)
+            ("CONST", "Constant", "Constant scale along normal", 1),
+            ("AUTO", "Auto", "Try to calculate the correct scale automatically", 2)
         ]
 
     z_scale : EnumProperty(
@@ -357,6 +359,22 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         result = [(rot @ (v - c)) + c for v in verts]
         return result
 
+    def calc_z_scale(self, dst_verts, src_verts):
+        src_lens = []
+        for v1, v2 in zip(src_verts, src_verts[1:]):
+            src_lens.append((v1 - v2).length)
+        src_lens.append((src_verts[-1] - src_verts[0]).length)
+
+        dst_lens = []
+        for v1, v2 in zip(dst_verts, dst_verts[1:]):
+            dst_lens.append((v1 - v2).length)
+        dst_lens.append((dst_verts[-1] - dst_verts[0]).length)
+
+        scales = [dst_len / src_len for src_len,dst_len in zip(src_lens, dst_lens) if abs(src_len) > 1e-6]
+        n = len(scales)
+        prod = reduce(lambda x,y: x*y, scales, 1.0)
+        return pow(prod, 1.0/n)
+
     def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, zoffsets, zrotations, wcoefs, mask):
         bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
@@ -441,6 +459,14 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 # As interpolate_tri_3d is based on barycentric_transform,
                 # here we do not have to manually map donor vertices to the
                 # unit triangle.
+
+                if self.z_scale == 'AUTO':
+                    zcoef = self.calc_z_scale(
+                                        [recpt_face_vertices_bm[0].co,
+                                         recpt_face_vertices_bm[1].co,
+                                         recpt_face_vertices_bm[2].co],
+                                        [tri_vert_1/wcoef, tri_vert_2/wcoef, tri_vert_3/wcoef]
+                                    ) * zcoef
                 new_verts = []
                 for v in donor_verts_v:
                     new_verts.append(self.interpolate_tri_3d(
@@ -465,6 +491,21 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 # This can process NGons in even worse way:
                 # it will take first three vertices and the last one
                 # and consider that as a Quad.
+
+                if self.z_scale == 'AUTO':
+                    corner1 = self.from2d(min_x, min_y)
+                    corner2 = self.from2d(min_x, max_y)
+                    corner3 = self.from2d(max_x, max_y)
+                    corner4 = self.from2d(min_x, max_y)
+
+                    zcoef = self.calc_z_scale(
+                                    [recpt_face_vertices_bm[0].co,
+                                     recpt_face_vertices_bm[1].co,
+                                     recpt_face_vertices_bm[2].co,
+                                     recpt_face_vertices_bm[-1].co],
+                                    [corner1, corner2, corner3, corner4]
+                                ) * zcoef
+
                 new_verts = []
                 for v in donor_verts_v:
                     if self.xy_mode == 'BOUNDS':
