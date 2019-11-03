@@ -176,7 +176,11 @@ def dual_mesh(bm):
         face0 = vert.link_faces[0]
         new_face = [face0.index]
         other_faces = set(vert.link_faces[:])
+        n = len(vert.link_faces)
         while other_faces:
+            n = n-1
+            if n <= 0:
+                break
             for edge in vert.link_edges:
                 if face0 in edge.link_faces:
                     fcs = [face for face in edge.link_faces if face != face0]

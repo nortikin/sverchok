@@ -49,7 +49,7 @@ class SvDualMeshNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         verts_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edges'].sv_get()
+        edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Faces'].sv_get()
 
         verts_out = []
