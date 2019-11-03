@@ -162,7 +162,7 @@ def remove_doubles(vertices, edges, faces, d):
     bm.free()
     return v, e, p
 
-def dual_mesh(bm):
+def dual_mesh(bm, recalc_normals=True):
     new_verts = dict()
     for face in bm.faces:
         new_verts[face.index] = face.calc_center_median()
@@ -190,10 +190,18 @@ def dual_mesh(bm):
                     if other_face in other_faces:
                         face0 = other_face
                         other_faces.remove(face0)
-                        new_face.append(face0.index)
+                        if face0.index not in new_face:
+                            new_face.append(face0.index)
 
         new_faces.append(new_face)
 
     vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
-    return vertices, new_faces
+    if not recalc_normals:
+        return vertices, new_faces
+    else:
+        bm2 = bmesh_from_pydata(vertices, [], new_faces, normal_update=True)
+        bmesh.ops.recalc_face_normals(bm2, faces=bm2.faces)
+        new_vertices, new_edges, new_faces = pydata_from_bmesh(bm2)
+        bm2.free()
+        return new_vertices, new_faces
 
