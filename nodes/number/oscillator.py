@@ -137,6 +137,7 @@ class SvOscillatorNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Wave")
         self.outputs.new('SvStringsSocket', "Out")
         self.inputs["Wave"].hide_safe = True
+
     def update_sockets(self):
         if self.current_op == "WAVE":
             if self.inputs["Wave"].hide_safe == True:

@@ -16,7 +16,7 @@ This node has the following parameters:
 +----------------+----------+-----------------------------------------------------------------------+
 | Parameter      | Type     | Description                                                           |
 +================+==========+=======================================================================+
-| **Mode**       | Enum     | Sine, Square, Saw, Inverted Saw, Triangle, Wave, Absolute, Negate     |
+| **Mode**       | Enum     | Sine, Square, Saw, Triangle, Wave, Absolute, Negate                   |
 +----------------+----------+-----------------------------------------------------------------------+
 | **Value**      | Float    | Point(s) in time to evaluate                                          |
 +----------------+----------+-----------------------------------------------------------------------+
@@ -35,7 +35,7 @@ This node has the following parameters:
 Outputs
 -------
 
-This node has one output: **Output**.
+This node has one output: **Out**.
 
 Inputs and outputs are vectorized, so if series of values is passed to one of
 inputs, then this node will produce several sequences.
