@@ -12,6 +12,7 @@ Modifier Make
    matrix_tube
    pipe_tubes
    polygons_adaptative
+   adaptive_polygons_mk2
    solidify
    uv_connect
    voronoi_2d

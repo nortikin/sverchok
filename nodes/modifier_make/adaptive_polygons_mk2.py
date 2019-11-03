@@ -42,6 +42,10 @@ sqrt_3_3 = sqrt_3/3
 sqrt_3_2 = sqrt_3/2
 
 class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+    """
+    Triggers: Adaptive Polygons Tessellate Tissue
+    Tooltip: Generate an adapted copy of donor object along each face of recipient object.
+    """
     bl_idname = 'SvAdaptivePolygonsNodeMk2'
     bl_label = 'Adaptive Polygons Mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -501,7 +505,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         verts_donor_s = self.inputs['VersR'].sv_get()
         faces_donor_s = self.inputs['PolsR'].sv_get()
         verts_recpt_s = self.inputs['VersD'].sv_get()
-        faces_recpt_s = self.inputs['PolsD'].sv_get()
+        faces_recpt_s = self.inputs['PolsD'].sv_get(default=[[]])
         zcoefs_s = self.inputs['Z_Coef'].sv_get()
         zoffsets_s = self.inputs['Z_Offset'].sv_get()
         zrotations_s = self.inputs['Z_Rotation'].sv_get()
