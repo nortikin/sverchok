@@ -67,6 +67,9 @@ This node has some number of parameters, and most of them are accessible only in
     axis** parameter) multiplyed by value from **Z coeff** input.
   - **Constant**. Donor object size along recipient face normal is taken from
     **Z Coeff** input.
+  - **Auto**. Calculate donor object scale along normal automatically, based on
+    it's scale along two other axes. Multiply that automatically calculated
+    value to the value taken from **Z Coeff** input.
 
   The default value is **Proportional**.
 
