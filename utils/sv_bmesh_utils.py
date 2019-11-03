@@ -193,7 +193,8 @@ def dual_mesh(bm, recalc_normals=True):
                         if face0.index not in new_face:
                             new_face.append(face0.index)
 
-        new_faces.append(new_face)
+        if len(new_face) > 2:
+            new_faces.append(new_face)
 
     vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
     if not recalc_normals:
