@@ -23,3 +23,5 @@ Modifier Make
    contour2D
    fractal_curve
    convex_hull_mk2
+   dual_mesh
+

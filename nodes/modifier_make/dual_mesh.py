@@ -35,6 +35,7 @@ class SvDualMeshNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDualMeshNode'
     bl_label = "Dual Mesh"
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_DUAL_MESH'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
