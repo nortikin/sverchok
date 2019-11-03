@@ -161,3 +161,61 @@ def remove_doubles(vertices, edges, faces, d):
     v, e, p =pydata_from_bmesh(bm)
     bm.free()
     return v, e, p
+
+def dual_mesh(bm, recalc_normals=True):
+    # Make vertices of dual mesh by finding
+    # centers of original mesh faces.
+    new_verts = dict()
+    for face in bm.faces:
+        new_verts[face.index] = face.calc_center_median()
+
+    #new_edges = []
+    new_faces = []
+
+    # For each vertex of original mesh,
+    # find all connected faces and connect
+    # corresponding vertices of the dual mesh
+    # with a face.
+    # The problem is, that the order of edges in
+    # vert.link_edges (or faces in vert.link_faces)
+    # is undefined, so we have to sort them somehow.
+    for vert in bm.verts:
+        if not vert.link_faces:
+            continue
+        face0 = vert.link_faces[0]
+        new_face = [face0.index]
+        other_faces = set(vert.link_faces[:])
+        n = len(vert.link_faces)
+        while other_faces:
+            n = n-1
+            if n <= 0:
+                break
+            for edge in vert.link_edges:
+                if face0 in edge.link_faces:
+                    fcs = [face for face in edge.link_faces if face != face0]
+                    if not fcs:
+                        continue
+                    other_face = fcs[0]
+                    if other_face in other_faces:
+                        face0 = other_face
+                        other_faces.remove(face0)
+                        if face0.index not in new_face:
+                            new_face.append(face0.index)
+
+        if len(new_face) > 2:
+            new_faces.append(new_face)
+
+    vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
+    # We cannot guarantee that our sorting above gave us faces
+    # of original mesh in counterclockwise order each time.
+    # So if we want normals of dual mesh to be consistent,
+    # we have to call bmesh.ops.recalc_face_normals.
+    if not recalc_normals:
+        return vertices, new_faces
+    else:
+        bm2 = bmesh_from_pydata(vertices, [], new_faces, normal_update=True)
+        bmesh.ops.recalc_face_normals(bm2, faces=bm2.faces)
+        new_vertices, new_edges, new_faces = pydata_from_bmesh(bm2)
+        bm2.free()
+        return new_vertices, new_faces
+

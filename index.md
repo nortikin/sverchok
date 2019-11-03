@@ -126,6 +126,7 @@
     Voronoi2DNode
     SvOffsetLineNode
     SvContourNode
+    SvDualMeshNode
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
