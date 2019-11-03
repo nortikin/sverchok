@@ -129,7 +129,7 @@
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
-    AdaptivePolsNode
+    SvAdaptivePolygonsNodeMk2
     SvDuplicateAlongEdgeNode
     SvFractalCurveNode
     SvSolidifyNode

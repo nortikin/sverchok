@@ -167,6 +167,13 @@ def fullList_deep_copy(l, count):
         l.extend([copy.deepcopy(l[-1]) for _ in range(d)])
     return
 
+def cycle_for_length(lst, count):
+    result = []
+    n = len(lst)
+    for i in range(count):
+        result.append(lst[i % n])
+    return result
+
 def sv_zip(*iterables):
     """zip('ABCD', 'xy') --> Ax By
     like standard zip but list instead of tuple
