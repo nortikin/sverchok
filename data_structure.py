@@ -429,6 +429,8 @@ def rotate_list(l, y=1):
     """
     if len(l) == 0:
         return l
+    if y == 0:
+        return l
     y = y % len(l)
     return list(l[y:]) + list(l[:y])
 
