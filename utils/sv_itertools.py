@@ -25,7 +25,7 @@ class SvSentinel:
 
 class sv_zip_longest:
     def __init__(self, *args):
-        self.counter = len(args) 
+        self.counter = len(args)
         self.iterators = []
         for lst in args:
             fl = lst[-1]
@@ -33,7 +33,7 @@ class sv_zip_longest:
             self.iterators.append(chain(lst, SvSentinel(fl,self), filler))
 
     def __next__(self):
-        try:    
+        try:
             if self.counter:
                 return tuple(map(next, self.iterators))
             else:
@@ -42,7 +42,7 @@ class sv_zip_longest:
             raise StopIteration
 
     def __iter__(self):
-        return self    
+        return self
 
 
 def sv_zip_longest2(*args):
@@ -51,8 +51,8 @@ def sv_zip_longest2(*args):
     itrs = [iter(sl) for sl in args]
     for i in range(longest):
         yield tuple((next(iterator, args[idx][-1]) for idx, iterator in enumerate(itrs)))
-        
-        
+
+
 def recurse_fx(l, f):
     if isinstance(l, (list, tuple)):
         return [recurse_fx(i, f) for i in l]
@@ -61,9 +61,9 @@ def recurse_fx(l, f):
 
 def recurse_fxy(l1, l2, f):
     l1_type = isinstance(l1, (list, tuple))
-    l2_type = isinstance(l2, (list, tuple)) 
+    l2_type = isinstance(l2, (list, tuple))
     if not (l1_type or l2_type):
-        return f(l1, l2)            
+        return f(l1, l2)
     elif l1_type and l2_type:
         fl = l2[-1] if len(l1) > len(l2) else l1[-1]
         res = []
@@ -76,7 +76,47 @@ def recurse_fxy(l1, l2, f):
     else: #not l1_type and l2_type
         return [recurse_fxy(l1, y, f) for y in l2]
 
+def recurse_f_multipar(params, f, matching_f):
 
+    is_list = [isinstance(l, (list, tuple)) for l in params]
+    if any(is_list):
+        res = []
+        if not all(is_list):
+            l_temp = []
+            for l in params:
+                if not isinstance(l, (list, tuple)):
+                    l_temp.append([l])
+                else:
+                    l_temp.append(l)
+                params = l_temp
+        params = matching_f(params)
+        for z in zip(*params):
+            res.append(recurse_f_multipar(z,f, matching_f))
+        return res
+    else:
+        return f(params)
+
+def recurse_f_multipar_const(params, const, f, matching_f):
+    is_list = [isinstance(l, (list, tuple)) for l in params]
+
+    if any(is_list):
+        res = []
+        if not all(is_list):
+            l_temp = []
+            for l in params:
+                if not isinstance(l, (list, tuple)):
+                    l_temp.append([l])
+                else:
+                    l_temp.append(l)
+                params = l_temp
+        params = matching_f(params)
+        for z in zip(*params):
+            res.append(recurse_f_multipar_const(z, const, f, matching_f))
+        return res
+    else:
+        return f(params, const)
+
+        
 def extend_if_needed(vl, wl, default=0.5):
     # match wl to correspond with vl
     try:
