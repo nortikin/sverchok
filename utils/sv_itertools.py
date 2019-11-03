@@ -77,7 +77,8 @@ def recurse_fxy(l1, l2, f):
         return [recurse_fxy(l1, y, f) for y in l2]
 
 def recurse_f_multipar(params, f, matching_f):
-
+    '''params will spread using the matching function (matching_f)
+        on the lowest level applys f (function)'''
     is_list = [isinstance(l, (list, tuple)) for l in params]
     if any(is_list):
         res = []
@@ -97,8 +98,9 @@ def recurse_f_multipar(params, f, matching_f):
         return f(params)
 
 def recurse_f_multipar_const(params, const, f, matching_f):
+    '''params will spread using the matchig function, the const is a constant
+        parameter that you dont want to spread '''
     is_list = [isinstance(l, (list, tuple)) for l in params]
-
     if any(is_list):
         res = []
         if not all(is_list):
@@ -116,7 +118,7 @@ def recurse_f_multipar_const(params, const, f, matching_f):
     else:
         return f(params, const)
 
-        
+
 def extend_if_needed(vl, wl, default=0.5):
     # match wl to correspond with vl
     try:
