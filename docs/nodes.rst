@@ -11,10 +11,12 @@ Nodes
    Analyzers <nodes/analyzer/analyzer_index>
    Modifier Change <nodes/modifier_change/modifier_change_index>
    Modifier Make <nodes/modifier_make/modifier_make_index>
+   CAD <nodes/CAD/CAD_index>
 
    Number <nodes/number/number_index>
    Vector <nodes/vector/vector_index>
    Matrix <nodes/matrix/matrix_index>
+   Quaternion <nodes/quaternion/quaternion_index>
    Logic <nodes/logic/logic_index>
    List Main <nodes/list_main/list_main_index>
    List Structure <nodes/list_struct/list_struct_index>
