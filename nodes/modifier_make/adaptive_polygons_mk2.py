@@ -28,6 +28,7 @@ from mathutils.geometry import barycentric_transform
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_generate,
                                      Vector_degenerate, match_long_repeat, fullList, cycle_for_length,
+                                     describe_data_shape,
                                      rotate_list)
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
@@ -170,6 +171,17 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = ngon_modes, default = "QUADS",
         update = updateNode)
 
+    matching_modes = [
+            ("LONG", "Repeat", "Make an iteration for each donor or recipient object - depending on which list is longer", 0),
+            ("PERFACE", "Donor per face", "If there are many donor objects, match each donor object with corresponding recipient object face", 1)
+        ]
+
+    matching_mode: EnumProperty(
+        name = "Matching",
+        description = "How to match list of recipient objects with list of donor objects",
+        items = matching_modes, default = "LONG",
+        update = updateNode)
+
     join : BoolProperty(
         name = "Join",
         description = "Output one joined mesh",
@@ -193,6 +205,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "join")
+        layout.prop(self, "matching_mode")
 
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
@@ -386,8 +399,16 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask):
         bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
-        # Original (unrotated) donor vertices
-        donor_verts_o = [Vector(v) for v in verts_donor]
+        single_donor = self.matching_mode == 'LONG'
+        if single_donor:
+            # Original (unrotated) donor vertices
+            donor_verts_o = [Vector(v) for v in verts_donor]
+
+            verts_donor = [verts_donor]
+            faces_donor = [faces_donor]
+
+        fullList(verts_donor, len(faces_recpt))
+        fullList(faces_donor, len(faces_recpt))
 
         X, Y = self.get_other_axes()
         Z = self.normal_axis_idx()
@@ -399,9 +420,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         tri_vert_2 = self.from2d(0.5, -sqrt_3_6)
         tri_vert_3 = self.from2d(0, sqrt_3_3)
 
-        # We will be rotating the donor object around Z axis,
-        # so it's size along Z is not going to change.
-        z_size = diameter(donor_verts_o, Z)
+        if single_donor:
+            # We will be rotating the donor object around Z axis,
+            # so it's size along Z is not going to change.
+            z_size = diameter(donor_verts_o, Z)
 
         verts_out = []
         faces_out = []
@@ -410,13 +432,18 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         quad_vert_idxs = [0, 1, 2, -1]
 
         prev_angle = None
-        for recpt_face, recpt_face_bm, zcoef, zoffset, angle, wcoef, facerot, m in zip(faces_recpt, bm.faces, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask):
+        face_data = zip(faces_recpt, bm.faces, verts_donor, faces_donor, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask)
+        for recpt_face, recpt_face_bm, donor_verts_i, donor_faces_i, zcoef, zoffset, angle, wcoef, facerot, m in face_data:
 
             recpt_face_vertices_bm = [bm.verts[i] for i in recpt_face]
+            if not single_donor:
+                # Original (unrotated) donor vertices
+                donor_verts_o = [Vector(v) for v in donor_verts_i]
+                z_size = diameter(donor_verts_o, Z)
 
             # We have to recalculate rotated vertices only if
             # the rotation angle have changed.
-            if prev_angle is None or angle != prev_angle:
+            if prev_angle is None or angle != prev_angle or not single_donor:
                 donor_verts_v = self.rotate_z(donor_verts_o, angle)
 
                 if self.xy_mode == 'BOUNDS' or self.z_scale == 'AUTO' :
@@ -480,7 +507,6 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                          recpt_face_vertices_bm[i2].co],
                                         [tri_vert_1/wcoef, tri_vert_2/wcoef, tri_vert_3/wcoef]
                                     ) * zcoef
-                #self.info("T: %s, %s, %s", tri_vert_1, tri_vert_2, tri_vert_3)
                 new_verts = []
                 for v in donor_verts_v:
                     new_verts.append(self.interpolate_tri_3d(
@@ -491,7 +517,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         recpt_face_bm.normal,
                                         v, zcoef, zoffset))
                 verts_out.append(new_verts)
-                faces_out.append(faces_donor)
+                faces_out.append(donor_faces_i)
 
             elif map_mode == 'QUAD':
                 # Quads processing mode.
@@ -548,7 +574,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                         zcoef, zoffset))
 
                 verts_out.append(new_verts)
-                faces_out.append(faces_donor)
+                faces_out.append(donor_faces_i)
 
         bm.free()
 
@@ -558,10 +584,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if not any(output.is_linked for output in self.outputs):
             return
 
-        verts_donor_s = self.inputs['VersR'].sv_get()
-        faces_donor_s = self.inputs['PolsR'].sv_get()
-        verts_recpt_s = self.inputs['VersD'].sv_get()
-        faces_recpt_s = self.inputs['PolsD'].sv_get(default=[[]])
+        verts_recpt_s = self.inputs['VersR'].sv_get()
+        faces_recpt_s = self.inputs['PolsR'].sv_get(default=[[]])
+        verts_donor_s = self.inputs['VersD'].sv_get()
+        faces_donor_s = self.inputs['PolsD'].sv_get()
         zcoefs_s = self.inputs['Z_Coef'].sv_get()
         zoffsets_s = self.inputs['Z_Offset'].sv_get()
         zrotations_s = self.inputs['Z_Rotation'].sv_get()
@@ -575,8 +601,11 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         verts_out = []
         faces_out = []
 
+        if self.matching_mode == 'PERFACE':
+            verts_donor_s = [verts_donor_s]
+            faces_donor_s = [faces_donor_s]
         objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
-        for verts_donor, faces_donor, verts_recpt, faces_recpt, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
+        for verts_recpt, faces_recpt, verts_donor, faces_donor, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
             fullList(zcoefs, len(faces_recpt))
             fullList(zoffsets, len(faces_recpt))
             fullList(zrotations, len(faces_recpt))
