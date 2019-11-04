@@ -172,7 +172,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     matching_modes = [
-            ("LONG", "Repeat", "Make an iteration for each donor or recipient object - depending on which list is longer", 0),
+            ("LONG", "Match longest", "Make an iteration for each donor or recipient object - depending on which list is longer", 0),
             ("PERFACE", "Donor per face", "If there are many donor objects, match each donor object with corresponding recipient object face", 1)
         ]
 

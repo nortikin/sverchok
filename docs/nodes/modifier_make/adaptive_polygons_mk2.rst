@@ -61,6 +61,21 @@ This node has some number of parameters, and most of them are accessible only in
 
 - **Join**. If checked, then all procuced copies of donor object will be merged
   into one mesh. Unchecked by default.
+- **Matching mode**. This defines how the list of donor objects is matched with list of recipient objects. Available values are:
+  
+   - **Match longest**. Each pair of recipient and donor objects will be
+     processed. For example, if there are 2 recipient objects and 2 donor
+     objects, you will have two outputs: `recipient[1] + donor[1]` and
+     `recipient[2] + donor[2]`. If one of lists is shorter than another, the
+     last object will be repeated as many times as necessary. For example, if
+     there is 1 recipient object and 2 donor objects, you will have two
+     outputs: `recipient[1] + donor[1]` and `recipient[1] + donor[2]`.
+   - **Donor per face**. The list of donor objects will be treated as "one
+     donor object per recipient object face". Number of outputs will be defined
+     by number of recipient objects.
+
+   The default value is **Match longest**.
+
 - **Normal axis**. Axis of the donor object to be aligned with recipient object
   face normal. Available values are X, Y, and Z. Default value is Z.
 - **Z Scale**. This defines how donor object size along recipient face normal
