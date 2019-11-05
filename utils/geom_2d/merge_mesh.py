@@ -38,6 +38,28 @@ def edges_to_faces(sv_verts, sv_edges, do_intersect=True, fill_holes=True, accur
     return mesh.to_sv_mesh(edges=False, del_face_flag='del')
 
 
+def merge_mesh_light(sv_verts, sv_faces, face_overlapping=False, accuracy=1e-5):
+    """
+    Rebuild faces and vertices with taking in account intersections and holes
+    Also produce indexes of old faces in which new faces are
+    :param sv_verts: list of SV points
+    :param sv_faces: list of SV faces
+    :param face_overlapping: add index mask (new face : index old face) to the output of the function if True
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: SV vertices, SV faces, index face mask (optionally)
+    """
+    mesh = DCELMesh(accuracy=accuracy)
+    mesh.from_sv_faces(sv_verts, sv_faces, face_data={'index': list(range(len(sv_faces)))})
+    find_intersections(mesh, accuracy, face_overlapping=True)  # anyway should be true
+    mesh.generate_faces_from_hedges()
+    mark_not_in_faces(mesh)
+    monotone_faces_with_holes(mesh)
+    if face_overlapping:
+        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh)]
+    else:
+        return mesh.to_sv_mesh(edges=False, del_face_flag='del')
+
+
 def from_sv_faces(sv_verts, sv_faces, accuracy=1e-6):
     """
     Merge Sverchok mesh objects into one mesh with finding intersections and all
@@ -119,3 +141,17 @@ def del_holes(dcel_mesh):
                 del_hole(next_face)
 
     add_hole(dcel_mesh.unbounded)
+
+
+def get_min_face_indexes(dcel_mesh, del_flag='del'):
+    # returns list index per face where index is index of boundary face with grater index
+    # assume that order of created face is the same to order of mesh.faces list
+    return [min([in_face.sv_data['index'] for in_face in face.outer.in_faces])
+            for face in dcel_mesh.faces if del_flag not in face.flags]
+
+
+def mark_not_in_faces(mesh, del_flag='del'):
+    # mark faces which are not in any faces as for deleting
+    for face in mesh.faces:
+        if not face.outer.in_faces:
+            face.flags.add(del_flag)

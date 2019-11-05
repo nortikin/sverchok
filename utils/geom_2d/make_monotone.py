@@ -34,16 +34,17 @@ def monotone_sv_face_with_holes(vert_face, vert_holes=None, face_holes=None, acc
     return mesh.to_sv_mesh(edges=False, only_select=True)
 
 
-def monotone_faces_with_holes(dcel_mesh):
+def monotone_faces_with_holes(dcel_mesh, del_flag='del'):
     """
     Split polygons with holes into monotone pieces of DCEL mesh data structure
     Faces already should have actual information about inner component
     :param dcel_mesh: DCELMesh
+    :param del_flag: faces with such flag just are just ignore by the algorithm
     :return: DCELMesh with split faces
     """
     is_inners = False
     for face in dcel_mesh.faces:
-        if 'del' in face.flags:
+        if del_flag in face.flags:
             continue
         elif face.outer and face.inners:
             is_inners = True
@@ -166,6 +167,7 @@ def find_hedge(point):
 
 def rebuild_face_list(dcel_mesh):
     # rebuild face list after partition algorithm
+    # this function should correct boundless face but it does not !!!!
     for hedge in dcel_mesh.hedges:
         if hedge.face:
             continue
@@ -177,6 +179,8 @@ def rebuild_face_list(dcel_mesh):
     used = set()
     faces = []
     for hedge in dcel_mesh.hedges:
+        if hedge.face == dcel_mesh.unbounded:
+            continue
         if hedge not in used:
             faces.append(hedge.face)
             [used.add(h) for h in hedge.loop_hedges]

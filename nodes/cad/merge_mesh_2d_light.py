@@ -10,6 +10,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
 
 
 class SvMergeMesh2DLight(bpy.types.Node, SverchCustomTreeNode):
@@ -45,7 +46,18 @@ class SvMergeMesh2DLight(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Faces")
 
     def process(self):
-        pass
+        if not all([sock.is_linked for sock in self.inputs]):
+            return
+        out = []
+        for sv_verts, sv_faces in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get()):
+            out.append(merge_mesh_light(sv_verts, sv_faces, self.face_index, self.accuracy))
+        if self.face_index:
+            out_verts, out_faces, face_index = zip(*out)
+            self.outputs['Face index'].sv_set(face_index)
+        else:
+            out_verts, out_faces = zip(*out)
+        self.outputs['Verts'].sv_set(out_verts)
+        self.outputs['Faces'].sv_set(out_faces)
 
 
 def register():

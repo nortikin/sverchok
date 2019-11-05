@@ -52,6 +52,10 @@ class HalfEdge(HalfEdge_template):
         # Also this need for make monotone algorithm, don't remember how
         self.edge = None
 
+        # faces from overlapping edges, for keeping status of overlapping edges
+        self.lap_faces = {face} if face else set()
+        self.in_faces = {face} if face else set()  # in which faces new face is located
+
 
 class DCELMesh(DCELMesh_template):
     Point = Point
@@ -89,13 +93,14 @@ class Edge(SortEdgeSweepingAlgorithm):
         return self.low_hedge if self.low_hedge.origin != self.event_point else self.up_hedge
 
 
-def find_intersections(dcel_mesh, accuracy=1e-6):
+def find_intersections(dcel_mesh, accuracy=1e-6, face_overlapping=False):
     """
     Initializing of searching intersection algorithm, read Computational Geometry by Mark de Berg
     Only half edges have correct data after the algorithm.
     Use build faces from half edges method for updating faces if necessary.
     :param dcel_mesh: inner DCELMesh data structure
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :param face_overlapping: if True detect in which faces new face is inside
     """
     status = AVLTree()
     event_queue = AVLTree()
@@ -104,7 +109,7 @@ def find_intersections(dcel_mesh, accuracy=1e-6):
     init_event_queue(event_queue, dcel_mesh)
     while event_queue:
         event_node = event_queue.find_smallest()
-        handle_event_point(status, event_queue, event_node.key, dcel_mesh, accuracy)
+        handle_event_point(status, event_queue, event_node.key, dcel_mesh, accuracy, face_overlapping)
         event_queue.remove_node(event_node)
     dcel_mesh.hedges = [hedge for hedge in dcel_mesh.hedges if hedge.edge]
 
@@ -128,7 +133,7 @@ def init_event_queue(event_queue, dcel_mesh):
         used.add(hedge)
 
 
-def handle_event_point(status, event_queue, event_point, dcel_mesh, accuracy=1e-6):
+def handle_event_point(status, event_queue, event_point, dcel_mesh, accuracy=1e-6, face_overlapping=False):
     # Read Computational Geometry by Mark de Berg
     Edge.global_event_point = event_point
     left_l_candidate, coincidence, right_l_candidate = get_coincidence_edges(status, event_point.co[x], accuracy)
@@ -137,9 +142,9 @@ def handle_event_point(status, event_queue, event_point, dcel_mesh, accuracy=1e-
     [status.remove_node(node) for node in c]
     [status.remove_node(node) for node in l]
 
-    lc, uc_edges, is_lapp_1 = split_crossed_edge(coincidence, event_point, dcel_mesh)
-    up_overlapping, is_lapp_2 = extract_overlapping_edges(coincidence, event_point)
-    u, is_lapp_3 = insert_edges_in_status(status, event_point, uc_edges, up_overlapping)
+    lc, uc_edges, is_lapp_1 = split_crossed_edge(coincidence, event_point, dcel_mesh, face_overlapping)
+    up_overlapping, is_lapp_2 = extract_overlapping_edges(coincidence, event_point, face_overlapping)
+    u, is_lapp_3 = insert_edges_in_status(status, event_point, uc_edges, up_overlapping, face_overlapping)
     is_overlapping = any([is_lapp_1, is_lapp_2, is_lapp_3])
 
     # After new up edges (created be dividing intersected event point edges) was insert in status
@@ -149,7 +154,7 @@ def handle_event_point(status, event_queue, event_point, dcel_mesh, accuracy=1e-
     left_neighbor = left_l_candidate if left_l_candidate else left_u_candidate
     right_neighbor = right_l_candidate if right_l_candidate else right_u_candidate
 
-    relink_half_edges(uc, lc, c, left_neighbor, is_overlapping)
+    relink_half_edges(uc, lc, c, left_neighbor, is_overlapping, face_overlapping)
 
     if not uc:
         if left_neighbor and right_neighbor:
@@ -207,7 +212,7 @@ def get_coincidence_edges(tree, x_position, accuracy=1e-6):
     return adjacent_left, left_part[::-1] + right_part, adjacent_right
 
 
-def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh):
+def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh, face_overlapping):
     """
     In this bloke of code  edges which go through event point are splitting in to edges upper and lower of event point
     Also in this bloke of code coincidence of ends of edges are detected
@@ -216,6 +221,7 @@ def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh):
     :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
     :param event_point: event point of intersection algorithm, Point
     :param dcel_mesh: for new half edges recording, DCELMesh
+    :param face_overlapping: if True detect in which faces new face is inside
     :return: list of nodes with edges above event point, list of edges below event point, flag of overlapping detection
     """
     lc = []  # is ordered in cw direction low edges
@@ -244,14 +250,15 @@ def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh):
             up_edge.up_hedge.next = edge.up_hedge.next
             edge.up_hedge.next.last = up_edge.up_hedge
             event_point.hedge = up_edge.up_hedge
-            if not "This is for marking faces algorithm for future implementation":
+            if face_overlapping:
+                # "This is for marking faces algorithm for future implementation
                 # add information about belonging to other faces only for new half edge of low edge
                 # https://github.com/nortikin/sverchok/issues/2497#issuecomment-536862680
                 # and delete outdate information about belonging for low half edge of up edge
-                low_edge.low_hedge.in_faces = set(edge.low_hedge.in_faces)  # <-- should be init in data structure
-                up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)  # <-- should be init in data structure
-                up_edge.up_hedge.in_faces = set(low_edge.up_hedge.lap_faces)  # <-- should be init in data structure
-                up_edge.up_hedge.lap_faces = set(low_edge.up_hedge.lap_faces)  # <-- should be init in data structure
+                low_edge.low_hedge.in_faces = set(edge.low_hedge.in_faces)
+                up_edge.low_hedge.in_faces = set(up_edge.low_hedge.lap_faces)
+                up_edge.up_hedge.in_faces = set(low_edge.up_hedge.lap_faces)
+                up_edge.up_hedge.lap_faces = set(low_edge.up_hedge.lap_faces)
             up_edge.low_hedge.left = None  # for hole detection
             low_edge.low_hedge.edge = low_edge  # "user" of half edge should be set
             up_edge.up_hedge.edge = up_edge  # the same
@@ -272,12 +279,13 @@ def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh):
     return lc, uc_edges, is_overlapping
 
 
-def extract_overlapping_edges(coincidence_nodes, event_point):
+def extract_overlapping_edges(coincidence_nodes, event_point, face_overlapping):
     """
     As sooner low edges keeps overlapping edges inside itself
     the overlapping edges should be extract before handling up edges
     :param coincidence_nodes: list of nodes which intersects with event point, [Node1, ..., Node_n]
     :param event_point: event point of intersection algorithm, Point
+    :param face_overlapping: if True detect in which faces new face is inside
     :return: list of extracted edges below event point, flag of overlapping detection
     """
     up_overlapping = []
@@ -297,7 +305,8 @@ def extract_overlapping_edges(coincidence_nodes, event_point):
                     # also there is need in deleting half edges of such overlapping edges
                     min_edge.up_hedge.edge = None  # this means that the hedge does not use any more...
                     min_edge.low_hedge.edge = None  # and should be deleted
-                    if not "this part for marking faces algorithm":
+                    if face_overlapping:
+                        # this part for marking faces algorithm
                         node.key.low_hedge.lap_faces -= {min_edge.low_hedge.face}
                         node.key.up_hedge.lap_faces -= {min_edge.up_hedge.face}
                 else:
@@ -315,7 +324,8 @@ def extract_overlapping_edges(coincidence_nodes, event_point):
                     up_edge.up_hedge.origin = event_point
                     up_edge.up_hedge.edge = up_edge
                     up_edge.low_hedge.edge = up_edge
-                    if not "this part for marking faces algorithm":
+                    if face_overlapping:
+                        # this part for marking faces algorithm
                         # Add in_faces status, also faces of half edges of low edge should be remove from in_faces
                         up_edge.low_hedge.lap_faces = node.key.low_hedge.lap_faces - {node.key.low_hedge.face}
                         up_edge.up_hedge.lap_faces = node.key.up_hedge.lap_faces - {node.key.up_hedge.face}
@@ -329,7 +339,7 @@ def extract_overlapping_edges(coincidence_nodes, event_point):
     return up_overlapping, is_overlapping
 
 
-def insert_edges_in_status(status, event_point, uc_edges, up_overlapping):
+def insert_edges_in_status(status, event_point, uc_edges, up_overlapping, face_overlapping):
     """
     Here the edges below of the event point are inserted in status tree
     Also it detects overlapping of points in case if two edges has two different start points
@@ -338,6 +348,7 @@ def insert_edges_in_status(status, event_point, uc_edges, up_overlapping):
     :param event_point: event point of intersection algorithm, Point
     :param uc_edges: list of edges below event point which was created by splitting by sweeping line edges
     :param up_overlapping: list of extracted edges from overlapping list of edges above event point
+    :param face_overlapping: if True detect in which faces new face is inside
     :return: list of nodes with edges below an event point, flag of overlapping detection
     """
     u = []
@@ -364,7 +375,8 @@ def insert_edges_in_status(status, event_point, uc_edges, up_overlapping):
                 # This also mean that edges can be equal but there is no difference
                 node.key.coincidence.extend(edge.coincidence)
                 node.key.coincidence.append(edge)
-            if not "This part for marking face mode":
+            if face_overlapping:
+                # This part for marking face mode
                 # Combine information about relations half edges with faces
                 # Only current edge can keep actual information about in_faces status
                 node.key.low_hedge.in_faces |= edge.low_hedge.in_faces
@@ -377,7 +389,7 @@ def insert_edges_in_status(status, event_point, uc_edges, up_overlapping):
     return u, is_overlapping
 
 
-def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping):
+def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping, face_overlapping):
     """
     Here new connections between intersected edges are creating
     Also half edges are marked in which faces they located if need
@@ -386,6 +398,7 @@ def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping):
     :param c: list of nodes with edges intersection sweep line, just for knowing if such exist for current event point
     :param left_neighbor: nearest left edge to event point which intersects sweep line
     :param is_overlapping: flag of overlapping detection
+    :param face_overlapping: if True detect in which faces new face is inside
     :return: None
     """
     rotation_nodes = uc + lc[::-1]
@@ -402,7 +415,8 @@ def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping):
             edge.outer_hedge.next = rotation_nodes[last_i].key.inner_hedge
             edge.inner_hedge.last = rotation_nodes[next_i].key.outer_hedge
 
-        if not "this part for marking faces mode":
+        if face_overlapping:
+            # this part for marking faces mode
             sub_status = set(rotation_nodes[-1].key.inner_hedge.in_faces)
             for i in range(len(rotation_nodes)):
                 edge = rotation_nodes[i].key
@@ -412,7 +426,8 @@ def relink_half_edges(uc, lc, c, left_neighbor, is_overlapping):
                 edge.inner_hedge.in_faces |= sub_status
 
     else:
-        if not "and this part for marking faces mode":
+        if face_overlapping:
+            # and this part for marking faces mode
             sub_status = set(left_neighbor.up_hedge.in_faces) if left_neighbor else set()
             for node in uc:
                 edge = node.key
