@@ -8,7 +8,7 @@ Modes
 
 The available **Modes** are: WXYZ, EULER, AXIS-ANGLE & MATRIX.
 
-+===============+================================================================+
++---------------+----------------------------------------------------------------+
 | Mode          | Description                                                    |
 +===============+================================================================+
 | WXYZ          | Converts a quaternion into its W, X, Y, Z components. [1]      |
@@ -20,8 +20,8 @@ The available **Modes** are: WXYZ, EULER, AXIS-ANGLE & MATRIX.
 +---------------+----------------------------------------------------------------+
 | AXIS-ANGLE    | Converts a quaternion into the Axis & Angle of rotation. [2]   |
 +---------------+----------------------------------------------------------------+
-| MATRIX        | Converts a quaternion into an orthogonal 4x4 rotation matrix...|
-+===============+================================================================+
+| MATRIX        | Converts a quaternion into an orthogonal 4x4 rotation matrix.  |
++---------------+----------------------------------------------------------------+
 
 Notes:
 [1] : For WXYZ and SCALAR-VECTOR modes the node provides a "Normalize" option to normalize the input quaternion before outputting its components. All the other modes automatically normalize the quaternion.
@@ -44,7 +44,7 @@ Outputs
 
 Based on the selected **Mode** the node makes available the corresponding output sockets:
 
-+===============+==================================+
++---------------+----------------------------------+
 | Mode          | Output Sockets (types)           |
 +===============+==================================+
 | WXYZ          | W, X, Y, Z  (floats)             |
@@ -56,7 +56,7 @@ Based on the selected **Mode** the node makes available the corresponding output
 | AXIS-ANGLE    | Axis (vector) & Angle (float)    |
 +---------------+----------------------------------+
 | MATRIX        | Matrix (4x4 matrix)              |
-+===============+==================================+
++---------------+----------------------------------+
 
 The modes WXYZ and SCALAR-VECTOR are the same except the WXYZ mode outputs the components as 4 floats (W, X, Y and Z), while the SCALAR-VECTOR mode outputs the components as a scalar (W) and a vector (XYZ).
 

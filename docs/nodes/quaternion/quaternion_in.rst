@@ -9,10 +9,7 @@ Modes
 
 The available **Modes** are: WXYZ, SCALAR-VECTOR, EULER, AXIS-ANGLE & MATRIX.
 
-
-
-
-+===============+================================================================+
++---------------+----------------------------------------------------------------+
 | Mode          | Description                                                    |
 +===============+================================================================+
 | WXYZ          | Converts W, X, Y, Z components into a quaternion. [1]          |
@@ -25,7 +22,7 @@ The available **Modes** are: WXYZ, SCALAR-VECTOR, EULER, AXIS-ANGLE & MATRIX.
 | AXIS-ANGLE    | Converts an Axis & an Angle of rotation into a quaternion. [2] |
 +---------------+----------------------------------------------------------------+
 | MATRIX        | Converts an orthogonal 4x4 rotation matrix into a quaternion.  |
-+===============+================================================================+
++---------------+----------------------------------------------------------------+
 
 Notes:
 [1] : For WXYZ and SCALAR-VECTOR modes the node provides a "Normalize" option to generate a normalized quaternion. All the other modes automatically generate a normalized quaternion.
@@ -46,7 +43,7 @@ extend the length of the connected input lists to match the longest one before c
 
 Based on the selected **Mode** the node makes available the corresponding input sockets:
 
-+===============+==================================+
++---------------+----------------------------------+
 | Mode          | Input Sockets (types)            |
 +===============+==================================+
 | WXYZ          | W, X, Y, Z  (floats)             |
@@ -58,7 +55,7 @@ Based on the selected **Mode** the node makes available the corresponding input 
 | AXIS-ANGLE    | Axis (vector) & Angle (float)    |
 +---------------+----------------------------------+
 | MATRIX        | Matrix (4x4 matrix)              |
-+===============+==================================+
++---------------+----------------------------------+
 
 
 Outputs

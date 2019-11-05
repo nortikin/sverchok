@@ -5,7 +5,7 @@ The Quaternion Math node performs various artithmetic operations on quaternions.
 
 The available arithmetic operations and their corresponding inputs/outputs are:
 
-+============+========+========+=====================================+
++------------+--------+--------+-------------------------------------+
 | Operation  | Input  | Output | Description                         |
 +============+========+========+=====================================+
 | ADD        |   NQ   |   Q    | Add multiple quaternions            |
@@ -22,7 +22,7 @@ The available arithmetic operations and their corresponding inputs/outputs are:
 | SCALE      |   QS   |   Q    | Scale a quaternion by given factor  |
 | QUADRANCE  |   Q    |   S    | Quadrance of a quaternion           |
 | MAGNITUDE  |   Q    |   S    | Magnitude of a quaternion           |
-+============+========+========+=====================================+
++------------+--------+--------+-------------------------------------+
 
 where:
 
