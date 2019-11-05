@@ -113,6 +113,12 @@ def sv_main_handler(scene):
     """
     for ng in sverchok_trees():
         # print("Scene handler looking at tree {}".format(ng.name))
+
+        # if P (sv_process is False, we can skip this node tree.
+        if not ng.sv_process:
+            continue
+
+
         if ng.has_changed:
             print('depsgraph_update_pre called - ng.has_changed -> ')
             # print('sv_main_handler')
