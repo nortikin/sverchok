@@ -249,7 +249,12 @@ def split_crossed_edge(coincidence_nodes, event_point, dcel_mesh, face_overlappi
             dcel_mesh.hedges.append(up_edge.up_hedge)
             up_edge.up_hedge.next = edge.up_hedge.next
             edge.up_hedge.next.last = up_edge.up_hedge
-            event_point.hedge = up_edge.up_hedge
+            if not event_point.hedge:
+                # assign half edges for new points which was created by edges intersection
+                # this need for monotone algorithm at this moment
+                # if assign to every event point the half edge, the monotone became broken
+                # if there are overlapping edges
+                event_point.hedge = up_edge.up_hedge
             if face_overlapping:
                 # "This is for marking faces algorithm for future implementation
                 # add information about belonging to other faces only for new half edge of low edge
