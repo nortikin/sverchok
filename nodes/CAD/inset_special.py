@@ -25,7 +25,6 @@ from mathutils import Vector
 from bpy.props import FloatProperty, FloatVectorProperty, IntProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.geom import calc_normal
 from sverchok.data_structure import (
     updateNode, Vector_generate,
     repeat_last, fullList)
@@ -113,7 +112,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         avg_vec = get_average_vector(verts, n)
 
         if abs(inset_by) < 1e-6:
-            normal = calc_normal(verts)
+            normal = mathutils.geometry.normal(*verts)
             new_vertex = avg_vec.lerp(avg_vec + normal, distance)
             vertices.append(new_vertex)
             new_vertex_idx = current_verts_idx
@@ -127,10 +126,7 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
         new_verts_prime = [avg_vec.lerp(v, inset_by) for v in verts]
 
         if distance:
-            if normal_mode == 'Fast':
-                local_normal = mathutils.geometry.normal(*new_verts_prime[:3])
-            else:
-                local_normal = calc_normal(new_verts_prime)
+            local_normal = mathutils.geometry.normal(*new_verts_prime)
             new_verts_prime = [v.lerp(v+local_normal, distance) for v in new_verts_prime]
 
         vertices.extend(new_verts_prime)
@@ -265,7 +261,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
                 'distances': distance_vals,
                 'make_inners': make_inners,
                 'ignores': ignores,
-                'normal_mode': self.normal_mode,
+                # 'normal_mode': self.normal_mode,
                 'zero_mode': self.zero_mode
             }
 
