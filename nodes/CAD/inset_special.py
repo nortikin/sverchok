@@ -32,8 +32,7 @@ from sverchok.data_structure import (
 
 ''' very non optimal routines. beware. I know this '''
 
-
-def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, normal_mode="Exact", zero_mode="SKIP"):
+def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners, zero_mode="SKIP"):
 
     new_faces = []
     new_ignores = []
@@ -217,7 +216,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
         o.new('SvStringsSocket', 'inset')
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "normal_mode")
+        # layout.prop(self, "normal_mode")
         layout.prop(self, "zero_mode")
 
     def process(self):
@@ -261,7 +260,6 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
                 'distances': distance_vals,
                 'make_inners': make_inners,
                 'ignores': ignores,
-                # 'normal_mode': self.normal_mode,
                 'zero_mode': self.zero_mode
             }
 
