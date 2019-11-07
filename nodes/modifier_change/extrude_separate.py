@@ -20,7 +20,7 @@ from math import pi
 
 import bpy
 import bmesh.ops
-from bpy.props import IntProperty, FloatProperty
+from bpy.props import IntProperty, FloatProperty, EnumProperty
 from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
@@ -36,6 +36,25 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Extrude Separate Faces'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_FACE'
+
+    extrude_modes = [
+            ("NORMAL", "Normal", "Extrude along normal and scale", 0),
+            ("MATRIX", "Matrix", "Apply specified matrix", 1)
+        ]
+
+    def update_mode(self, context):
+        self.inputs['Height'].hide_safe = self.extrude_mode != 'NORMAL'
+        self.inputs['Scale'].hide_safe = self.extrude_mode != 'NORMAL'
+        if 'Matrix' in self.inputs:
+            self.inputs['Matrix'].hide_safe = self.extrude_mode != 'MATRIX'
+        updateNode(self, context)
+
+    extrude_mode: EnumProperty(
+            name = "Mode",
+            description = "Extrusion mode",
+            items = extrude_modes,
+            default = 'NORMAL',
+            update = update_mode)
 
     height_: FloatProperty(name="Height", description="Extrusion amount", default=0.0, update=updateNode)
     scale_: FloatProperty(name="Scale", description="Extruded faces scale", default=1.0, min=0.0, update=updateNode)
@@ -55,12 +74,18 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         inew(toposock, 'Mask')
         inew(toposock, "Height").prop_name = "height_"
         inew(toposock, "Scale").prop_name = "scale_"
+        inew('SvMatrixSocket', 'Matrix')
 
         onew(vsock, 'Vertices')
         onew(toposock, 'Edges')
         onew(toposock, 'Polygons')
         onew(toposock, 'ExtrudedPolys')
         onew(toposock, 'OtherPolys')
+
+        self.update_mode(context)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'extrude_mode')
 
     @property
     def scale_socket_type(self):
@@ -90,6 +115,13 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         masks_s = inputs['Mask'].sv_get(default=[[1]])
         heights_s = inputs['Height'].sv_get()
         scales_s  = inputs['Scale'].sv_get()
+        if 'Matrix' in inputs:
+            matrixes_s = inputs['Matrix'].sv_get(default=[[Matrix()]])
+        else:
+            matrixes_s = [[Matrix()]]
+
+        if type(matrixes_s[0]) == Matrix:
+            matrixes_s = [matrixes_s]
 
         linked_extruded_polygons = outputs['ExtrudedPolys'].is_linked
         linked_other_polygons = outputs['OtherPolys'].is_linked
@@ -100,20 +132,21 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         result_extruded_faces = []
         result_other_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s])
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s, matrixes_s])
 
-        for vertices, edges, faces, masks, heights, scales in zip(*meshes):
+        for vertices, edges, faces, masks, heights, scales, matrixes in zip(*meshes):
 
             new_extruded_faces = []
             new_extruded_faces_append = new_extruded_faces.append
             fullList(heights, len(faces))
             fullList(scales, len(faces))
+            fullList(matrixes, len(faces))
             fullList(masks, len(faces))
 
             bm = bmesh_from_pydata(vertices, edges, faces)
             extruded_faces = bmesh.ops.extrude_discrete_faces(bm, faces=bm.faces)['faces']
 
-            for face, mask, height, scale in zip(extruded_faces, masks, heights, scales):
+            for face, mask, height, scale, matrix in zip(extruded_faces, masks, heights, scales, matrixes):
 
                 if not mask:
                     continue
@@ -133,11 +166,14 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 dr = face.normal * height
                 center = face.calc_center_median()
                 translation = Matrix.Translation(center)
-                m = (translation @ m_r).inverted()
+                space = (translation @ m_r).inverted()
 
-                # inset, scale and push operations
-                bmesh.ops.scale(bm, vec=vec, space=m, verts=face.verts)
-                bmesh.ops.translate(bm, verts=face.verts, vec=dr)
+                if self.extrude_mode == 'NORMAL':
+                    # inset, scale and push operations
+                    bmesh.ops.scale(bm, vec=vec, space=space, verts=face.verts)
+                    bmesh.ops.translate(bm, verts=face.verts, vec=dr)
+                else:
+                    bmesh.ops.transform(bm, matrix=matrix, space=space, verts=face.verts)
 
                 if linked_extruded_polygons or linked_other_polygons:
                     new_extruded_faces_append([v.index for v in face.verts])
