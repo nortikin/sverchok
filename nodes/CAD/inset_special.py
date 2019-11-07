@@ -161,6 +161,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSET'
 
+    # unused property.
     normal_modes = [
             ("Fast", "Fast", "Fast algorithm", 0),
             ("Exact", "Exact", "Slower, but exact algorithm", 1)
@@ -179,6 +180,7 @@ class SvInsetSpecial(bpy.types.Node, SverchCustomTreeNode):
     ignore: IntProperty(name='Ignore', description='skip polygons', default=0, update=updateNode)
     make_inner: IntProperty(name='Make Inner', description='Make inner polygon', default=1, update=updateNode)
 
+    # unused property.
     normal_mode : EnumProperty(name = "Normals",
             description = "Normals calculation algorithm",
             default = "Exact",
