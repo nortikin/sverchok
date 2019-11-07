@@ -210,7 +210,7 @@ class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode):
             yy = x * sins + y * coss
             verts.append((xx, yy, 0))
 
-        edges = list((i, (i + 1) % N) for i in range(N + 1))
+        edges = list((i, (i + 1) % N) for i in range(N))
         polys = [list(range(N))]
 
         return verts, edges, polys, f1, f2
