@@ -67,6 +67,7 @@ class DCELMesh:
     def from_sv_faces(self, verts: List[TSVPoint], 
                       faces: List[TSVFace], 
                       face_selection: List[Union[bool, int]] = ...,
+                      face_flag: List[str] = ...,
                       face_data: Dict[str, list] = ...) -> None: ...
     
     def to_sv_mesh(self, edges: bool = ..., faces: bool = ..., only_select: bool = ..., del_face_flag: str = ...) -> \
@@ -84,5 +85,6 @@ def generate_dcel_mesh(mesh: 'DCELMesh',
                        verts: List[TSVPoint],
                        faces: List[TSVFace],
                        face_selection: List[Union[bool, int]] = ...,
+                       face_flag: List[str] = ...,
                        face_data: Dict[str, list] = ...,
                        new_mesh: bool = ...) -> 'DCELMesh': ...

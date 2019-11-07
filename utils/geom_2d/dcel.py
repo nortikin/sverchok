@@ -221,7 +221,8 @@ class Face:
     def insert_holes(self, sv_verts, sv_faces, face_selection=None, face_data=None):
         # not sure super useful, holes should not intersect with the face
         self.check_mesh()
-        hole_mesh = generate_dcel_mesh(self.mesh, sv_verts, sv_faces, face_selection, face_data,  new_mesh=True)
+        hole_mesh = generate_dcel_mesh(self.mesh, sv_verts, sv_faces, face_selection, face_data=face_data,
+                                       new_mesh=True)
         self.inners.extend(hole_mesh.unbounded.inners)
         [setattr(obj, 'mesh', self.mesh) for obj in chain(hole_mesh.points, hole_mesh.hedges, hole_mesh.faces)]
         self.mesh.points.extend(hole_mesh.points)
@@ -263,9 +264,9 @@ class DCELMesh:
         cls.Face.accuracy = accuracy
         cls.accuracy = accuracy
 
-    def from_sv_faces(self, verts, faces, face_selection=None, face_data=None):
+    def from_sv_faces(self, verts, faces, face_selection=None, face_flag=None, face_data=None):
         # face_data = {name of data: [value 1, val2, .., value n]} - number of values should be equal to number of faces
-        generate_dcel_mesh(self, verts, faces, face_selection, face_data, False)
+        generate_dcel_mesh(self, verts, faces, face_selection, face_flag, face_data, False)
 
     def from_sv_edges(self, verts, edges):
         # Probably it is worth take in account such cases as: edge with 0 length at least
@@ -548,7 +549,7 @@ class DCELMesh:
     def to_sv_mesh(self, edges=True, faces=True, only_select=False, del_face_flag=None):
         # all elements of mesh should have correct links
         # will create only selected faces if only_select is True
-        sv_points, point_index = generate_sv_points(self)
+        sv_points, point_index = generate_sv_points(self, del_face_flag)
         if edges and not faces:
             sv_edges = generate_sv_edges(self, point_index)
             return sv_points, sv_edges
@@ -648,7 +649,7 @@ class DCELMesh:
         face.mesh = None
 
 
-def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_data=None, new_mesh=False):
+def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_flag=None, face_data=None, new_mesh=False):
     # todo: self intersection polygons? double repeated polygons???
     # face_data = {name of data: [value 1, val2, .., value n]} - number of values should be equal to number of faces
     # I'm not going use zip longest or  something else with face mask and face data inputs
@@ -657,6 +658,9 @@ def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_data=None, 
     if face_selection and len(face_selection) != len(faces):
         raise IndexError("Length of face_mask({}) input should be equal to"
                          " length of input faces({})".format(len(face_selection), len(faces)))
+    if face_flag and len(face_flag) != len(faces):
+        raise IndexError("Length of face_flag({}) input should be equal to"
+                         " length of input faces({})".format(len(face_flag), len(faces)))
     if face_data and any([len(val) != len(faces) for val in face_data.values()]):
         bad_key, length = [(key, len(val)) for key, val in face_data.items() if len(val) != len(faces)][0]
         raise IndexError("Face data should be a dictionary."
@@ -679,10 +683,12 @@ def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_data=None, 
     # ...
     # Next Face  # a 1  # b 3  # Next Face  # a 2  # b 4
     face_data_iter = zip(cycle([face_data.keys()]), zip(*face_data.values())) if face_data else cycle([None])
-    for face, fm, fd in zip(faces, face_selection or cycle([False]), face_data_iter):
+    for face, fm, ff, fd in zip(faces, face_selection or cycle([False]), face_flag or cycle([None]), face_data_iter):
         face = face if is_ccw_polygon([verts[i] for i in face]) else face[::-1]
         f = mesh.Face(mesh)
         f.select = bool(fm)
+        if ff:
+            f.flags.add(ff)
         if fd:
             for property_name, value in zip(*fd):
                 f.sv_data[property_name] = value
@@ -744,17 +750,32 @@ def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_data=None, 
     return mesh
 
 
-def generate_sv_points(dcel_mesh):
+def generate_sv_points(dcel_mesh, del_flag=None):
+    # This function also takes in accont faces which should be deleted
+    # if all hedges around points have faces with del flag the point won't be added to the output list
     used = set()
     point_index = dict()
     sv_verts = []
-    for hedge in dcel_mesh.hedges:
-        if hedge in used:
-            continue
-        point_index[hedge.origin] = len(sv_verts)
-        sv_verts.append(hedge.origin.co)
-        for h in hedge.ccw_hedges:
-            used.add(h)
+    if not del_flag:
+        for hedge in dcel_mesh.hedges:
+            if hedge in used:
+                continue
+            point_index[hedge.origin] = len(sv_verts)
+            sv_verts.append(hedge.origin.co)
+            for h in hedge.ccw_hedges:
+                used.add(h)
+    else:
+        for hedge in dcel_mesh.hedges:
+            point_usage = False
+            if hedge in used:
+                continue
+            for h in hedge.ccw_hedges:
+                used.add(h)
+                if not h.face.is_unbounded and del_flag not in h.face.flags:
+                    point_usage = True
+            if point_usage:
+                point_index[hedge.origin] = len(sv_verts)
+                sv_verts.append(hedge.origin.co)
     return sv_verts, point_index
 
 

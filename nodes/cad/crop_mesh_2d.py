@@ -10,7 +10,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
+from sverchok.utils.geom_2d.merge_mesh import crop_mesh
 
 
 class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
@@ -30,8 +30,8 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.new('SvStringsSocket', 'Face index')
         updateNode(self, context)
 
-    enum_items = [('Inner', 'Inner', 'Fit mesh', 'SELECT_INTERSECT', 0),
-                 ('Outer', 'Outer', 'Make hole', 'SELECT_SUBTRACT', 1)]
+    enum_items = [('inner', 'Inner', 'Fit mesh', 'SELECT_INTERSECT', 0),
+                  ('outer', 'Outer', 'Make hole', 'SELECT_SUBTRACT', 1)]
 
     mode: bpy.props.EnumProperty(items=enum_items, name='Mode of cropping mesh', update=updateNode, 
                                  description='Switch between creating holes and fitting mesh into another mesh')
@@ -56,7 +56,22 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Faces")
 
     def process(self):
-        pass
+        if not all([sock.is_linked for sock in self.inputs]):
+            return
+        out = []
+        for sv_verts, sv_faces, sv_verts_crop, sv_faces_crop in zip(self.inputs['Verts'].sv_get(),
+                                                                    self.inputs['Faces'].sv_get(),
+                                                                    self.inputs['Verts Crop'].sv_get(),
+                                                                    self.inputs['Faces Crop'].sv_get()):
+            out.append(crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, self.face_index, self.mode,
+                                 self.accuracy))
+        if self.face_index:
+            out_verts, out_faces, face_index = zip(*out)
+            self.outputs['Face index'].sv_set(face_index)
+        else:
+            out_verts, out_faces = zip(*out)
+        self.outputs['Verts'].sv_set(out_verts)
+        self.outputs['Faces'].sv_set(out_faces)
 
 
 def register():

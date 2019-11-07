@@ -46,13 +46,41 @@ def merge_mesh_light(sv_verts, sv_faces, face_overlapping=False, accuracy=1e-5):
     :param sv_faces: list of SV faces
     :param face_overlapping: add index mask (new face : index old face) to the output of the function if True
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
-    :return: SV vertices, SV faces, index face mask (optionally)
+    :return: list of SV vertices, list of SV faces, index face mask (optionally)
     """
     mesh = DCELMesh(accuracy=accuracy)
     mesh.from_sv_faces(sv_verts, sv_faces, face_data={'index': list(range(len(sv_faces)))})
     find_intersections(mesh, accuracy, face_overlapping=True)  # anyway should be true
     mesh.generate_faces_from_hedges()
     mark_not_in_faces(mesh)
+    monotone_faces_with_holes(mesh)
+    if face_overlapping:
+        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh)]
+    else:
+        return mesh.to_sv_mesh(edges=False, del_face_flag='del')
+
+
+def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, face_overlapping=False, mode='inner', accuracy=1e-5):
+    """
+    The function takes one SV mesh determined by polygons and crop it by polygons of another SV mesh.
+    It can as creates holes in mesh so fit mesh into boundary of another mesh
+    :param sv_verts: list of SV points
+    :param sv_faces: list of SV faces
+    :param sv_verts_crop: list of SV points
+    :param sv_faces_crop: list of SV faces
+    :param face_overlapping: add index mask (new face : index old face) to the output of the function if True
+    :param mode: inner or outer, switch between holes creation and feting into mesh
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: list of SV vertices, list of SV faces, index face mask (optionally)
+    """
+    mesh = DCELMesh(accuracy=accuracy)
+    mesh.from_sv_faces(sv_verts, sv_faces, face_flag=['base' for _ in range(len(sv_faces))],
+                       face_data={'index': list(range(len(sv_faces)))})
+    mesh.from_sv_faces(sv_verts_crop, sv_faces_crop, face_flag=['crop' for _ in range(len(sv_faces_crop))])
+    find_intersections(mesh, accuracy, face_overlapping=True)  # anyway should be true
+    mesh.generate_faces_from_hedges()
+    mark_not_in_faces(mesh)
+    mark_crop_faces(mesh, mode)
     monotone_faces_with_holes(mesh)
     if face_overlapping:
         return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh)]
@@ -146,8 +174,12 @@ def del_holes(dcel_mesh):
 def get_min_face_indexes(dcel_mesh, del_flag='del'):
     # returns list index per face where index is index of boundary face with grater index
     # assume that order of created face is the same to order of mesh.faces list
-    return [min([in_face.sv_data['index'] for in_face in face.outer.in_faces])
-            for face in dcel_mesh.faces if del_flag not in face.flags]
+    out = []
+    for face in dcel_mesh.faces:
+        if del_flag in face.flags:
+            continue
+        out.append(min([in_face.sv_data['index'] for in_face in face.outer.in_faces if 'index' in in_face.sv_data]))
+    return out
 
 
 def mark_not_in_faces(mesh, del_flag='del'):
@@ -155,3 +187,21 @@ def mark_not_in_faces(mesh, del_flag='del'):
     for face in mesh.faces:
         if not face.outer.in_faces:
             face.flags.add(del_flag)
+
+
+def mark_crop_faces(mesh, mode, crop_name='crop', del_flag='del'):
+    # mark face for deleting if they are in faces with flag crop_name or not
+    for face in mesh.faces:
+        inside_base = False
+        inside_crop = False
+        for in_face in face.outer.in_faces:
+            if crop_name in in_face.flags:
+                inside_crop = True
+            else:
+                inside_base = True
+        if mode == 'inner':
+            if not inside_base or not inside_crop:
+                face.flags.add(del_flag)
+        else:
+            if inside_crop:
+                face.flags.add(del_flag)
