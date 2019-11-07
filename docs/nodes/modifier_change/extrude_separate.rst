@@ -6,8 +6,10 @@ Extrude Separate Faces
 Functionality
 -------------
 
-This node applies Extrude operator to each of input faces separately. After that, resulting faces can be scaled up or down by specified factor.
+This node applies Extrude operator to each of input faces separately. After
+that, resulting faces can be scaled up or down by specified factor.
 It is possible to provide specific extrude and scaling factors for each face.
+As an option, transformation matrix may be provided for each face.
 
 Inputs
 ------
@@ -17,9 +19,12 @@ This node has the following inputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
-- **Mask**. List of boolean or integer flags. Zero means do not process face with corresponding index. If this input is not connected, then by default all faces will be processed.
+- **Mask**. List of boolean or integer flags. Zero means do not process face
+  with corresponding index. If this input is not connected, then by default all
+  faces will be processed.
 - **Height**. Extrude factor.
 - **Scale**. Scaling factor.
+- **Matrix**. Transformation matrix. Default value is the identity matrix.
 
 Parameters
 ----------
@@ -29,13 +34,25 @@ This node has the following parameters:
 +----------------+---------------+-------------+------------------------------------------------------+
 | Parameter      | Type          | Default     | Description                                          |  
 +================+===============+=============+======================================================+
+| **Mode**       | Enumeration   | Normal      | This defines how the transformation of faces being   |
+|                |               |             | exturded is specified. There are the following       |
+|                |               |             | modes available:                                     |
+|                |               |             |                                                      |
+|                |               |             | * **Normal**: the transformation is defined by       |
+|                |               |             |   **Height** and **Scale** inputs (see below).       |
+|                |               |             | * **Matrix**: the transformation is defined by       |
+|                |               |             |   the **Matrix** input.                              |
++----------------+---------------+-------------+------------------------------------------------------+
 | **Height**     | Float         | 0.0         | Extrude factor as a portion of face normal length.   |
 |                |               |             | Default value of zero means do not extrude.          |
 |                |               |             | Negative value means extrude to the opposite         |
 |                |               |             | direction. This parameter can be also provided via   |
-|                |               |             | corresponding input.                                 |
+|                |               |             | corresponding input. The input and parameter are     |
+|                |               |             | available only if **Mode** is set to **Normal**.     |
 +----------------+---------------+-------------+------------------------------------------------------+
 | **Scale**      | Float         | 1.0         | Scale factor. Default value of 1 means do not scale. |
+|                |               |             | The input and parameter are                          |
+|                |               |             | available only if **Mode** is set to **Normal**.     |
 +----------------+---------------+-------------+------------------------------------------------------+
 
 Outputs
