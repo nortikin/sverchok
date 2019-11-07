@@ -77,3 +77,11 @@ Sort of cage:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5888237/978cdc66-a418-11e4-89d4-a17d325426c0.png
 
+An example of **Matrix** mode usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/68410475-9ab76600-01aa-11ea-8aaf-3e13298cfffe.png
+
+Voronoi grid with each cell extruded by it's specific random matrix:
+
+.. image:: https://user-images.githubusercontent.com/284644/68410476-9ab76600-01aa-11ea-90f6-3ab9b20cab56.png
+
