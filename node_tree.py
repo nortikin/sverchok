@@ -19,6 +19,7 @@
 
 import sys
 import time
+from contextlib import contextmanager
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
@@ -81,6 +82,13 @@ class SvLinkNewNodeInput(bpy.types.Operator):
         return {'FINISHED'}
 
 
+@contextmanager
+def throttle_tree_update(self):
+    self.id_data.throttle_tree_update = True
+    yield self
+    self.id_data.throttle_tree_update = False
+
+
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
@@ -88,6 +96,8 @@ class SvNodeTreeCommon(object):
 
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
+    throttle_tree_update: BoolProperty(default=False)
+
 
     def build_update_list(self):
         build_update_list(self)
@@ -139,6 +149,10 @@ class SvNodeTreeCommon(object):
         return res
 
 
+
+
+
+
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
@@ -180,9 +194,13 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
+        if self.throttle_tree_update:
+            print('throttled update from context manager')
+            return
+
         # print('svtree update', self.timestamp)
         self.has_changed = True
-        self.has_link_count_changed
+        # self.has_link_count_changed
         self.process()
 
     def process_ani(self):
