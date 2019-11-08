@@ -43,6 +43,20 @@ This node has the following parameters:
 |                |               |             | * **Matrix**: the transformation is defined by       |
 |                |               |             |   the **Matrix** input.                              |
 +----------------+---------------+-------------+------------------------------------------------------+
+| **Mask mode**  | Enumeration   | Do not      | This defines what exactly to do with faces that are  |
+|                |               | extrude     | masked out. The available modes are:                 |
+|                |               |             |                                                      |
+|                |               |             | * **Do not extrude**. Do not perform extrusion       |
+|                |               |             |   operation on such faces.                           |
+|                |               |             | * **Do not transform**. Such faces will be extruded, |
+|                |               |             |   but will not be transformed (moved or scaled away  |
+|                |               |             |   from positions of original vertices); so the new   |
+|                |               |             |   vertices will be at the same positions as original |
+|                |               |             |   ones. You may want to remove them with **Remove    |
+|                |               |             |   Doubles** node, or move them with another node.    |
+|                |               |             |                                                      |
+|                |               |             | This parameter is available in the N panel only.     |
++----------------+---------------+-------------+------------------------------------------------------+
 | **Height**     | Float         | 0.0         | Extrude factor as a portion of face normal length.   |
 |                |               |             | Default value of zero means do not extrude.          |
 |                |               |             | Negative value means extrude to the opposite         |
