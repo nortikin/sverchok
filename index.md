@@ -187,6 +187,7 @@
     ---
     CrossSectionNode
     SvEdgesToFaces2D
+    SvMergeMesh2D
     SvMergeMesh2DLight
     SvCropMesh2D
     SvBisectNode
