@@ -84,6 +84,19 @@ class SvLinkNewNodeInput(bpy.types.Operator):
 
 @contextmanager
 def throttle_tree_update(node):
+    """ usage
+    from sverchok.node_tree import throttle_tree_update
+
+    inside your node, f.ex inside a wrapped_update that creates a socket
+
+    def wrapped_update(self, context):
+        with throttle_tree_update(self):
+            self.inputs.new(...)
+            self.outputs.new(...)
+
+    that's it. 
+
+    """
     node.id_data.skip_tree_update = True
     yield node
     node.id_data.skip_tree_update = False
