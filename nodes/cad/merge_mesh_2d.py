@@ -10,8 +10,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.geom_2d.merge_mesh import crop_mesh
-
+from sverchok.utils.geom_2d.merge_mesh import merge_mesh
 
 class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -25,6 +24,9 @@ class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'AUTOMERGE_ON'
 
     def update_sockets(self, context):
+        self.id_data.freeze()
+        # is not great, another solution should be find
+        # for protection from update node each time when new socket is created
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
         [self.outputs.remove(sock) for sock in self.outputs[2:]]
         new_socks = []
@@ -35,7 +37,8 @@ class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
             new_socks.append(self.outputs.new('SvStringsSocket', 'Face index A'))
             new_socks.append(self.outputs.new('SvStringsSocket', 'Face index B'))
         [[self.id_data.links.new(sock, link) for link in links[sock.name]] for sock in new_socks if sock.name in links]
-        updateNode(self, context)
+        self.id_data.unfreeze()
+        self.id_data.process()  # is not great, another solution should be find
 
     simple_mask: bpy.props.BoolProperty(name='Simple mask', update=update_sockets, default=True,
                                         description='Switching between two type of masks')
@@ -62,7 +65,33 @@ class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Mask B')
 
     def process(self):
-        pass
+        if not all([sock.is_linked for sock in self.inputs]):
+            return
+        out = []
+        for sv_verts_a, sv_faces_a, sv_verts_b, sv_faces_b in zip(self.inputs['Verts A'].sv_get(),
+                                                                  self.inputs['Faces A'].sv_get(),
+                                                                  self.inputs['Verts B'].sv_get(),
+                                                                  self.inputs['Faces B'].sv_get()):
+            out.append(merge_mesh(sv_verts_a, sv_faces_a, sv_verts_b, sv_faces_b, self.simple_mask, self.index_mask,
+                                  self.accuracy))
+        if self.simple_mask and self.index_mask:
+            out_verts, out_faces, mask_a, mask_b, face_index_a, face_index_b = zip(*out)
+            self.outputs['Mask A'].sv_set(mask_a)
+            self.outputs['Mask B'].sv_set(mask_b)
+            self.outputs['Face index A'].sv_set(face_index_a)
+            self.outputs['Face index B'].sv_set(face_index_b)
+        elif self.simple_mask:
+            out_verts, out_faces, mask_a, mask_b = zip(*out)
+            self.outputs['Mask A'].sv_set(mask_a)
+            self.outputs['Mask B'].sv_set(mask_b)
+        elif self.index_mask:
+            out_verts, out_faces, face_index_a, face_index_b = zip(*out)
+            self.outputs['Face index A'].sv_set(face_index_a)
+            self.outputs['Face index B'].sv_set(face_index_b)
+        else:
+            out_verts, out_faces = zip(*out)
+        self.outputs['Verts'].sv_set(out_verts)
+        self.outputs['Faces'].sv_set(out_faces)
 
 
 def register():

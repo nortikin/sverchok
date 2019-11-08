@@ -55,7 +55,7 @@ def merge_mesh_light(sv_verts, sv_faces, face_overlapping=False, accuracy=1e-5):
     mark_not_in_faces(mesh)
     monotone_faces_with_holes(mesh)
     if face_overlapping:
-        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh)]
+        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh, 'index')]
     else:
         return mesh.to_sv_mesh(edges=False, del_face_flag='del')
 
@@ -83,34 +83,45 @@ def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, face_overlapping
     mark_crop_faces(mesh, mode)
     monotone_faces_with_holes(mesh)
     if face_overlapping:
-        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh)]
+        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh, 'index')]
     else:
         return mesh.to_sv_mesh(edges=False, del_face_flag='del')
 
 
-def from_sv_faces(sv_verts, sv_faces, accuracy=1e-6):
+def merge_mesh(sv_verts_a, sv_faces_a, sv_verts_b, sv_faces_b, is_mask=True, is_index=False, accuracy=1e-6):
     """
-    Merge Sverchok mesh objects into one mesh with finding intersections and all
+    Merge two Sverchok mesh objects into one mesh with finding intersections and all
     Overlapping of edges and points are supported
     Also polygons can have holes
-    :param sv_verts: [[[x1, y1, z1], [x2, y2, z2], ...]-obj_1, [[x1, y1, z1], [x2, y2, z2], ...]-obj_2, ..., obj_n]
-    :param sv_faces: [[[i1, i2, .., in], face2, .., face n]-obj_1, [[i1, .., in], face2, .., face n]-obj_2, .., obj_n]
+    :param sv_verts_a: list of SV points
+    :param sv_faces_a: list of SV faces
+    :param sv_verts_b: list of SV points
+    :param sv_faces_b: list of SV faces
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: vertices in SV format, face in SV format
     """
     mesh = DCELMesh()
-    [mesh.from_sv_faces(vs, fs) for vs, fs in zip(sv_verts, sv_faces)]
-    find_intersections(half_edges, accuracy)
-    half_edges = [he for he in half_edges if he.edge]  # ignore half edges without "users"
-    sv_faces = build_faces_list(half_edges, accuracy)
-    new_half_edges = []
-    for face in sv_faces:
-        if face.outer and face.inners:
-            new_half_edges.extend(make_monotone(face, accuracy))
-    if new_half_edges:
-        half_edges.extend(new_half_edges)
-        sv_faces = rebuild_face_list(half_edges)
-    return to_sv_mesh_from_faces(half_edges, sv_faces)
+    mesh.from_sv_faces(sv_verts_a, sv_faces_a, face_flag=['mesh a' for _ in range(len(sv_faces_a))],
+                       face_data={'index': list(range(len(sv_faces_a)))})
+    mesh.from_sv_faces(sv_verts_b, sv_faces_b, face_flag=['mesh b' for _ in range(len(sv_faces_b))],
+                       face_data={'index': list(range(len(sv_faces_b)))})
+    find_intersections(mesh, accuracy, face_overlapping=True)
+    mesh.generate_faces_from_hedges()
+    mark_not_in_faces(mesh)
+    monotone_faces_with_holes(mesh)
+
+    if is_mask and is_index:
+        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_face_mask_by_flag(mesh, 'mesh a')] + \
+               [get_face_mask_by_flag(mesh, 'mesh b')] + [get_min_face_indexes(mesh, 'index', 'mesh a')] + \
+               [get_face_mask_by_flag(mesh, 'index', 'mesh b')]
+    elif is_mask:
+        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_face_mask_by_flag(mesh, 'mesh a')] + \
+               [get_face_mask_by_flag(mesh, 'mesh b')]
+    elif is_index:
+        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + \
+               [get_min_face_indexes(mesh, 'index', 'mesh a')] + [get_face_mask_by_flag(mesh, 'index', 'mesh b')]
+    else:
+        return mesh.to_sv_mesh(edges=False, del_face_flag='del')
 
 
 # #############################################################################
@@ -171,14 +182,30 @@ def del_holes(dcel_mesh):
     add_hole(dcel_mesh.unbounded)
 
 
-def get_min_face_indexes(dcel_mesh, del_flag='del'):
-    # returns list index per face where index is index of boundary face with grater index
+def get_min_face_indexes(dcel_mesh, index_flag, filter_flag=None, del_flag='del'):
+    # returns list index per face where index is index of boundary face with lower index
     # assume that order of created face is the same to order of mesh.faces list
+    # if flag is given the function takes in account faces with such flag
+    # if there is no faces with such flag at all -1 index is added into output mask
     out = []
-    for face in dcel_mesh.faces:
-        if del_flag in face.flags:
-            continue
-        out.append(min([in_face.sv_data['index'] for in_face in face.outer.in_faces if 'index' in in_face.sv_data]))
+    if not filter_flag:
+        for face in dcel_mesh.faces:
+            if del_flag in face.flags:
+                continue
+            out.append(min([in_face.sv_data[index_flag] for in_face in face.outer.in_faces if
+                            index_flag in in_face.sv_data]))
+    else:
+        for face in dcel_mesh.faces:
+            if del_flag in face.flags:
+                continue
+            indexes = []
+            for in_face in face.outer.in_faces:
+                if filter_flag in in_face.flags:
+                    indexes.append(in_face.sv_data[index_flag])
+            if indexes:
+                out.append(min(indexes))
+            else:
+                out.append(-1)
     return out
 
 
@@ -205,3 +232,16 @@ def mark_crop_faces(mesh, mode, crop_name='crop', del_flag='del'):
         else:
             if inside_crop:
                 face.flags.add(del_flag)
+
+
+def get_face_mask_by_flag(mesh, flag, del_flag='del'):
+    # returns mask of faces where 1 mean that face has given flag
+    out = [0 for face in mesh.faces if del_flag not in face.flags]
+    for i, face in enumerate(mesh.faces):
+        if del_flag in face.flags:
+            continue
+        for in_face in face.outer.in_faces:
+            if flag in in_face.flags:
+                out[i] = 1
+                break
+    return out
