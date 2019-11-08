@@ -56,6 +56,18 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             default = 'NORMAL',
             update = update_mode)
 
+    mask_modes = [
+            ("NOEXTRUDE", "Do not extrude", "Do not perform extrusion on faces that are masked out", 0),
+            ("NOTRANSFORM", "Do not transform", "Perform extrusion operator on all faces, but do not transform (move, scale) faces that are masked out", 1)
+        ]
+
+    mask_mode: EnumProperty(
+            name = "Mask mode",
+            description = "What to do with faces that are masked out",
+            items = mask_modes,
+            default = "NOEXTRUDE",
+            update = updateNode)
+
     height_: FloatProperty(name="Height", description="Extrusion amount", default=0.0, update=updateNode)
     scale_: FloatProperty(name="Scale", description="Extruded faces scale", default=1.0, min=0.0, update=updateNode)
 
@@ -86,6 +98,10 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'extrude_mode')
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'mask_mode')
 
     @property
     def scale_socket_type(self):
@@ -144,12 +160,20 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(masks, len(faces))
 
             bm = bmesh_from_pydata(vertices, edges, faces)
-            extruded_faces = bmesh.ops.extrude_discrete_faces(bm, faces=bm.faces)['faces']
 
-            for face, mask, height, scale, matrix in zip(extruded_faces, masks, heights, scales, matrixes):
+            if self.mask_mode == 'NOEXTRUDE':
+                faces_to_extrude = [face for face, mask in zip(bm.faces, masks) if mask]
+            else:
+                faces_to_extrude = bm.faces
 
-                if not mask:
-                    continue
+            extruded_faces = bmesh.ops.extrude_discrete_faces(bm, faces=faces_to_extrude)['faces']
+
+            if self.mask_mode == 'NOEXTRUDE':
+                face_data = zip(extruded_faces, heights, scales, matrixes)
+            else:
+                face_data = [(face, height, scale, matrix) for (face, mask, height, scale, matrix) in zip(extruded_faces, masks, heights, scales, matrixes) if mask]
+
+            for face, height, scale, matrix in face_data:
 
                 vec = scale if vector_in else (scale, scale, scale)
 
