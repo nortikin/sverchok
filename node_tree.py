@@ -83,10 +83,10 @@ class SvLinkNewNodeInput(bpy.types.Operator):
 
 
 @contextmanager
-def throttle_tree_update(self):
-    self.id_data.skip_tree_update = True
-    yield self
-    self.id_data.skip_tree_update = False
+def throttle_tree_update(node):
+    node.id_data.skip_tree_update = True
+    yield node
+    node.id_data.skip_tree_update = False
 
 
 class SvNodeTreeCommon(object):
