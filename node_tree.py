@@ -84,9 +84,9 @@ class SvLinkNewNodeInput(bpy.types.Operator):
 
 @contextmanager
 def throttle_tree_update(self):
-    self.id_data.throttle_tree_update = True
+    self.id_data.skip_tree_update = True
     yield self
-    self.id_data.throttle_tree_update = False
+    self.id_data.skip_tree_update = False
 
 
 class SvNodeTreeCommon(object):
@@ -96,7 +96,7 @@ class SvNodeTreeCommon(object):
 
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
-    throttle_tree_update: BoolProperty(default=False)
+    skip_tree_update: BoolProperty(default=False)
 
 
     def build_update_list(self):
@@ -194,7 +194,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
-        if self.throttle_tree_update:
+        if self.skip_tree_update:
             print('throttled update from context manager')
             return
 
