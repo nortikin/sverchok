@@ -154,7 +154,10 @@ def match_short(lsts):
 def fullList(l, count):
     """extends list l so len is at least count if needed with the
     last element of l"""
-    d = count - len(l)
+    n = len(l)
+    if n == count:
+        return
+    d = count - n
     if d > 0:
         l.extend([l[-1] for a in range(d)])
     return

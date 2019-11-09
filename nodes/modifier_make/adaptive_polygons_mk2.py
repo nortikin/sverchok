@@ -633,9 +633,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             verts_donor = [verts_donor]
             faces_donor = [faces_donor]
+            frame_widths = [frame_widths]
 
-        fullList(verts_donor, len(faces_recpt))
-        fullList(faces_donor, len(faces_recpt))
+        n_faces_recpt = len(faces_recpt)
+        fullList(verts_donor, n_faces_recpt)
+        fullList(faces_donor, n_faces_recpt)
+        fullList(frame_widths, n_faces_recpt)
 
         X, Y = self.get_other_axes()
         Z = self.normal_axis_idx()
@@ -762,15 +765,17 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if self.matching_mode == 'PERFACE':
             verts_donor_s = [verts_donor_s]
             faces_donor_s = [faces_donor_s]
+            frame_widths_s = [frame_widths_s]
         objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
         for verts_recpt, faces_recpt, verts_donor, faces_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
-            fullList(zcoefs, len(faces_recpt))
-            fullList(zoffsets, len(faces_recpt))
-            fullList(zrotations, len(faces_recpt))
-            fullList(frame_widths, len(faces_recpt))
-            fullList(wcoefs, len(faces_recpt))
-            fullList(facerots, len(faces_recpt))
-            mask = cycle_for_length(mask, len(faces_recpt))
+            n_faces_recpt = len(faces_recpt)
+            fullList(zcoefs, n_faces_recpt)
+            fullList(zoffsets, n_faces_recpt)
+            fullList(zrotations, n_faces_recpt)
+            fullList(frame_widths, n_faces_recpt)
+            fullList(wcoefs, n_faces_recpt)
+            fullList(facerots, n_faces_recpt)
+            mask = cycle_for_length(mask, n_faces_recpt)
 
             new = self._process(verts_recpt, faces_recpt,
                                  verts_donor, faces_donor,
