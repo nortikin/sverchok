@@ -22,6 +22,12 @@ from bpy.props import StringProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import levelsOflist, changable_sockets, multi_socket, updateNode
 
+socket_types = {
+    "SvVerticesSocket": "VERTICES",
+    "SvStringsSocket": "EDGES/POLYGONS/OTHERS",
+    "SvMatrixSocket": "MATRICES",
+    "SvObjectSocket": "OBJECTS"
+}
 
 
 class SverchokViewerMK1(bpy.types.Operator):
@@ -50,25 +56,10 @@ class SverchokViewerMK1(bpy.types.Operator):
                 label = insert.other.node.label
                 if label:
                     label = '; node ' + label.upper()
+                
                 name = insert.name.upper()
-                # vertices socket
-                if insert.other.bl_idname == 'SvVerticesSocket':
-                    itype = '\n\nSocket ' + name + label + '; type VERTICES: \n'
-
-                # edges/faces socket
-                elif insert.other.bl_idname == 'SvStringsSocket':
-                    itype = '\n\nSocket ' + name + label + '; type EDGES/POLYGONS/OTHERS: \n'
-
-                # matrix socket
-                elif insert.other.bl_idname == 'SvMatrixSocket':
-                    itype = '\n\nSocket ' + name + label + '; type MATRICES: \n'
-
-                # object socket
-                elif insert.other.bl_idname == 'SvObjectSocket':
-                    itype = '\n\nSocket ' + name + label + '; type OBJECTS: \n'
-                # else
-                else:
-                    itype = '\n\nSocket ' + name + label + '; type DATA: \n'
+                data_type = socket_types.get(insert.other.bl_idname, "DATA")    
+                itype = f'\n\nSocket {name}{label}; type {data_type}: \n'
 
                 eva = insert.sv_get()
                 deptl = levelsOflist(eva)
@@ -79,7 +70,7 @@ class SverchokViewerMK1(bpy.types.Operator):
                 else:
                     a = 'None'
                 outs += itype+str(a)+'\n'
-        self.do_text(outs,node)
+        self.do_text(outs, node)
 
     def makeframe(self, nTree):
         '''
