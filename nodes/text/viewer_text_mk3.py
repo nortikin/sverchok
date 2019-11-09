@@ -63,6 +63,39 @@ def makeframe(nTree):
         color = [1 - i for i in bpy.context.preferences.themes['Default'].node_editor.space.back[:]]
         a.color[:] = color
 
+def readFORviewer_sockets_data(data, dept, le, num_lines):
+    cache = ''
+    output = ''
+    deptl = dept - 1
+    if le:
+        cache += ('(' + str(le) + ') object(s)')
+        del(le)
+    if deptl > 1:
+        for i, object in enumerate(data):
+            cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
+            cache += str(readFORviewer_sockets_data(object, deptl, False))
+    else:
+        for k, val in enumerate(data):
+            output += ('\n' + str(val))
+            if k >= num_lines-1: break
+    return cache + output
+
+def readFORviewer_sockets_data_small(data, dept, le):
+    cache = ''
+    output = ''
+    deptl = dept - 1
+    if le:
+        cache += ('(' + str(le) + ') object(s)')
+        del(le)
+    if deptl > 0:
+        for i, object in enumerate(data):
+            cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
+            cache += str(readFORviewer_sockets_data_small(object, deptl, False))
+    else:
+        for k, val in enumerate(data):
+            output += ('\n' + str(val))
+    return cache + output
+
 def do_text(node, out_string):
 
     if not 'Sverchok_viewer' in bpy.data.texts:
@@ -75,6 +108,34 @@ def do_text(node, out_string):
     
     if node.frame:
         makeframe(node.id_data)
+
+def prep_text(node, num_lines):
+    """ main preparation function for text """
+    
+    outs  = ''
+    inputs = node.inputs
+    for insert in inputs:
+        if insert.is_linked:
+            label = insert.other.node.label
+            if label:
+                label = '; node ' + label.upper()
+            
+            name = insert.name.upper()
+            data_type = socket_types.get(insert.other.bl_idname, "DATA")    
+            itype = f'\n\nSocket {name}{label}; type {data_type}: \n'
+
+            eva = insert.sv_get()
+            deptl = levelsOflist(eva)
+            if deptl and deptl > 2:
+                a = readFORviewer_sockets_data(eva, deptl, len(eva), num_lines)
+            elif deptl:
+                a = readFORviewer_sockets_data_small(eva, deptl, len(eva))
+            else:
+                a = 'None'
+            outs += itype+str(a)+'\n'
+    
+    do_text(node, outs)
+
 
 
 class SverchokViewerMK1(bpy.types.Operator):
@@ -90,69 +151,10 @@ class SverchokViewerMK1(bpy.types.Operator):
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
-        inputs = node.inputs
-        self.prep_text(node, inputs)
+        num_lines = self.lines
+        
+        prep_text(node, num_lines)
         return {'FINISHED'}
-
-    def prep_text(self, node, inputs):
-        """ main preparation function for text """
-        
-        outs  = ''
-        for insert in inputs:
-            if insert.is_linked:
-                label = insert.other.node.label
-                if label:
-                    label = '; node ' + label.upper()
-                
-                name = insert.name.upper()
-                data_type = socket_types.get(insert.other.bl_idname, "DATA")    
-                itype = f'\n\nSocket {name}{label}; type {data_type}: \n'
-
-                eva = insert.sv_get()
-                deptl = levelsOflist(eva)
-                if deptl and deptl > 2:
-                    a = self.readFORviewer_sockets_data(eva, deptl, len(eva))
-                elif deptl:
-                    a = self.readFORviewer_sockets_data_small(eva, deptl, len(eva))
-                else:
-                    a = 'None'
-                outs += itype+str(a)+'\n'
-        
-        do_text(node, outs)
-
-
-    def readFORviewer_sockets_data(self, data, dept, le):
-        cache = ''
-        output = ''
-        deptl = dept - 1
-        if le:
-            cache += ('(' + str(le) + ') object(s)')
-            del(le)
-        if deptl > 1:
-            for i, object in enumerate(data):
-                cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
-                cache += str(self.readFORviewer_sockets_data(object, deptl, False))
-        else:
-            for k, val in enumerate(data):
-                output += ('\n' + str(val))
-                if k >= self.lines-1: break
-        return cache + output
-
-    def readFORviewer_sockets_data_small(self, data, dept, le):
-        cache = ''
-        output = ''
-        deptl = dept - 1
-        if le:
-            cache += ('(' + str(le) + ') object(s)')
-            del(le)
-        if deptl > 0:
-            for i, object in enumerate(data):
-                cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
-                cache += str(self.readFORviewer_sockets_data_small(object, deptl, False))
-        else:
-            for k, val in enumerate(data):
-                output += ('\n' + str(val))
-        return cache + output
 
 
 class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
@@ -208,8 +210,8 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
         if not self.autoupdate:
             pass
         else:
-            bpy.ops.node.sverchok_viewer_buttonmk1(nodename=self.name, treename=self.id_data.name, lines=self.lines)
-
+            # bpy.ops.node.sverchok_viewer_buttonmk1(nodename=self.name, treename=self.id_data.name, lines=self.lines)
+            prep_text(self, self.lines)
 
 
 def register():
