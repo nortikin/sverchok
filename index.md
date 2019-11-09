@@ -100,7 +100,7 @@
     SvMakeMonotone
     ---
     PolygonBoomNode
-    SvDissolveFaces
+    SvDissolveFaces2D
     Pols2EdgsNode
     SvMeshJoinNode
     ---

@@ -81,6 +81,8 @@ class DCELMesh:
 
     def del_loose_hedges(self, flag: str) -> None: ...
 
+    def dissolve_selected_faces(self) -> None: ...
+
 def generate_dcel_mesh(mesh: 'DCELMesh',
                        verts: List[TSVPoint],
                        faces: List[TSVFace],

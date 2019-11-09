@@ -584,6 +584,7 @@ class DCELMesh:
             new_faces.append(face)
             face.select = True
             face.outer = hedge
+            face.sv_data = dict(hedge.face.sv_data)  # new face get all sv data related with first edge in loop
             hedge.face = face
             for ccw_hedge in hedge.ccw_hedges:
                 if id(ccw_hedge) != id(hedge) and not ccw_hedge.face.select:
