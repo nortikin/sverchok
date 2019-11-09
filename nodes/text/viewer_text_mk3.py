@@ -31,12 +31,8 @@ socket_types = {
 
 footer = """
 
-
 **************************************************
-
-                     The End                      
-
-"""
+                     The End                      """
 
 def makeframe(nTree):
     '''
