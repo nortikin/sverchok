@@ -29,13 +29,39 @@ socket_types = {
     "SvObjectSocket": "OBJECTS"
 }
 
+def makeframe(nTree):
+    '''
+    Making frame to show text to user. appears in left corner
+    Todo - make more organized layout with button making
+    lines in up and between Frame and nodes and text of user and layout name
+    '''
+    # labls = [n.label for n in nTree.nodes]
+    if any('Sverchok_viewer' == n.label for n in nTree.nodes):
+        return
+    else:
+        a = nTree.nodes.new('NodeFrame')
+        a.width = 800
+        a.height = 1500
+        locx = [n.location[0] for n in nTree.nodes]
+        locy = [n.location[1] for n in nTree.nodes]
+        mx, my = min(locx), max(locy)
+        a.location[0] = mx - a.width - 10
+        a.location[1] = my
+        a.text = bpy.data.texts['Sverchok_viewer']
+        a.label = 'Sverchok_viewer'
+        a.shrink = False
+        a.use_custom_color = True
+        # this trick allows us to negative color, so user accept it as grey!!!
+        color = [1 - i for i in bpy.context.preferences.themes['Default'].node_editor.space.back[:]]
+        a.color[:] = color
+
 
 class SverchokViewerMK1(bpy.types.Operator):
     """Sverchok viewerMK1"""
     bl_idname = "node.sverchok_viewer_buttonmk1"
     bl_label = "Sverchok viewer.mk1"
     bl_icon = 'TEXT'
-    bl_options = {'INTERNAL', 'UNDO'}
+    # bl_options = {'INTERNAL', 'UNDO'}
 
     nodename: StringProperty(name='nodename')
     treename: StringProperty(name='treename')
@@ -47,9 +73,9 @@ class SverchokViewerMK1(bpy.types.Operator):
         self.prep_text(context,node,inputs)
         return {'FINISHED'}
 
-    def prep_text(self,context,node,inputs):
-        'main preparation function for text'
-        # outputs
+    def prep_text(self, context, node, inputs):
+        """ main preparation function for text """
+        
         outs  = ''
         for insert in inputs:
             if insert.is_linked:
@@ -72,33 +98,9 @@ class SverchokViewerMK1(bpy.types.Operator):
                 outs += itype+str(a)+'\n'
         self.do_text(outs, node)
 
-    def makeframe(self, nTree):
-        '''
-        Making frame to show text to user. appears in left corner
-        Todo - make more organized layout with button making
-        lines in up and between Frame and nodes and text of user and layout name
-        '''
-        # labls = [n.label for n in nTree.nodes]
-        if any('Sverchok_viewer' == n.label for n in nTree.nodes):
-            return
-        else:
-            a = nTree.nodes.new('NodeFrame')
-            a.width = 800
-            a.height = 1500
-            locx = [n.location[0] for n in nTree.nodes]
-            locy = [n.location[1] for n in nTree.nodes]
-            mx, my = min(locx), max(locy)
-            a.location[0] = mx - a.width - 10
-            a.location[1] = my
-            a.text = bpy.data.texts['Sverchok_viewer']
-            a.label = 'Sverchok_viewer'
-            a.shrink = False
-            a.use_custom_color = True
-            # this trick allows us to negative color, so user accept it as grey!!!
-            color = [1 - i for i in bpy.context.preferences.themes['Default'].node_editor.space.back[:]]
-            a.color[:] = color
 
-    def do_text(self,outs,node):
+
+    def do_text(self, outs, node):
         nTree = bpy.data.node_groups[self.treename]
         #this part can be than removed from node text viewer:
 
@@ -114,7 +116,7 @@ class SverchokViewerMK1(bpy.types.Operator):
         bpy.data.texts['Sverchok_viewer'].clear()
         bpy.data.texts['Sverchok_viewer'].write(for_file)
         if node.frame:
-            self.makeframe(nTree)
+            makeframe(nTree)
 
     def readFORviewer_sockets_data(self, data, dept, le):
         cache = ''
@@ -163,8 +165,7 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
 
     autoupdate: BoolProperty(name='update', default=False)
     frame: BoolProperty(name='frame', default=True)
-    lines: IntProperty(name='lines', description='lines count for operate on', default=1000, \
-                        min=1, max=2000)
+    lines: IntProperty(name='lines', description='lines count to show', default=1000, min=1, max=2000)
 
     # multi sockets veriables
     newsock: BoolProperty(name='newsock', default=False)
