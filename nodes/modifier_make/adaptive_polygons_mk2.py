@@ -744,8 +744,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
         verts_recpt_s = self.inputs['VersR'].sv_get(deepcopy=False)
         faces_recpt_s = self.inputs['PolsR'].sv_get(default=[[]], deepcopy=False)
-        verts_donor_s = self.inputs['VersD'].sv_get(deepcopy=False)
-        faces_donor_s = self.inputs['PolsD'].sv_get(deepcopy=False)
+        verts_donor_s = self.inputs['VersD'].sv_get()
+        faces_donor_s = self.inputs['PolsD'].sv_get()
         zcoefs_s = self.inputs['Z_Coef'].sv_get(deepcopy=False)
         zoffsets_s = self.inputs['Z_Offset'].sv_get(deepcopy=False)
         zrotations_s = self.inputs['Z_Rotation'].sv_get(deepcopy=False)
