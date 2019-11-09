@@ -29,6 +29,14 @@ socket_types = {
     "SvObjectSocket": "OBJECTS"
 }
 
+footer = """
+
+
+**************************************************
+                     The End                      
+
+"""
+
 def makeframe(nTree):
     '''
     Making frame to show text to user. appears in left corner
@@ -55,6 +63,19 @@ def makeframe(nTree):
         color = [1 - i for i in bpy.context.preferences.themes['Default'].node_editor.space.back[:]]
         a.color[:] = color
 
+def do_text(node, out_string):
+
+    if not 'Sverchok_viewer' in bpy.data.texts:
+        bpy.data.texts.new('Sverchok_viewer')
+
+    string_to_write = 'node name: ' + node.name + out_string + footer
+    datablock = bpy.data.texts['Sverchok_viewer']
+    datablock.clear()
+    datablock.from_string(string_to_write)
+    
+    if node.frame:
+        makeframe(node.id_data)
+
 
 class SverchokViewerMK1(bpy.types.Operator):
     """Sverchok viewerMK1"""
@@ -70,10 +91,10 @@ class SverchokViewerMK1(bpy.types.Operator):
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         inputs = node.inputs
-        self.prep_text(context,node,inputs)
+        self.prep_text(node, inputs)
         return {'FINISHED'}
 
-    def prep_text(self, context, node, inputs):
+    def prep_text(self, node, inputs):
         """ main preparation function for text """
         
         outs  = ''
@@ -96,27 +117,9 @@ class SverchokViewerMK1(bpy.types.Operator):
                 else:
                     a = 'None'
                 outs += itype+str(a)+'\n'
-        self.do_text(outs, node)
+        
+        do_text(node, outs)
 
-
-
-    def do_text(self, outs, node):
-        nTree = bpy.data.node_groups[self.treename]
-        #this part can be than removed from node text viewer:
-
-        if not 'Sverchok_viewer' in bpy.data.texts:
-            bpy.data.texts.new('Sverchok_viewer')
-
-        footer = '\n'*2 \
-                + '**************************************************' + '\n' \
-                + '                     The End                      '
-        for_file = 'node name: ' + self.nodename \
-                    + outs \
-                    + footer
-        bpy.data.texts['Sverchok_viewer'].clear()
-        bpy.data.texts['Sverchok_viewer'].write(for_file)
-        if node.frame:
-            makeframe(nTree)
 
     def readFORviewer_sockets_data(self, data, dept, le):
         cache = ''
