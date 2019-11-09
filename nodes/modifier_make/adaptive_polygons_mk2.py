@@ -266,6 +266,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Polygons")
 
+        self.update_frame_mode(context)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "join")
         layout.prop(self, "matching_mode")
