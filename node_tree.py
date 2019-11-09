@@ -213,6 +213,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             print('throttled update from context manager')
             return
 
+
         # print('svtree update', self.timestamp)
         self.has_changed = True
         # self.has_link_count_changed
