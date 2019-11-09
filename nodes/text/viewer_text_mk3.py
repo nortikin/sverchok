@@ -200,7 +200,7 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
 
         # we want socket types to match the input
         for socket in self.inputs:
-            if socket.is_linked:
+            if socket.is_linked and socket.links:
                 if not socket.bl_idname == socket.other.bl_idname:
                     socket.replace_socket(socket.other.bl_idname)
 
@@ -208,7 +208,6 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
         if not self.autoupdate:
             pass
         else:
-            # bpy.ops.node.sverchok_viewer_buttonmk1(nodename=self.name, treename=self.id_data.name, lines=self.lines)
             prep_text(self, self.lines)
 
 
