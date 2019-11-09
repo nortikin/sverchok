@@ -681,7 +681,7 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     if not inputsocketname in node.inputs:
         # - node not initialized in sv_init yet,
         # - or socketname incorrect
-        info("changable_socket was called on node (%s) with a socket named \"%s\", this socket does not exist" % (node.name, inputsocketname))
+        info(f"changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist")  
         return
 
     in_socket = node.inputs[inputsocketname]
