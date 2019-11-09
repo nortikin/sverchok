@@ -73,7 +73,7 @@ def readFORviewer_sockets_data(data, dept, le, num_lines):
     if deptl > 1:
         for i, object in enumerate(data):
             cache += ('\n' + '=' + str(i) + '=   (' + str(len(object)) + ')')
-            cache += str(readFORviewer_sockets_data(object, deptl, False))
+            cache += str(readFORviewer_sockets_data(object, deptl, False, num_lines))
     else:
         for k, val in enumerate(data):
             output += ('\n' + str(val))
