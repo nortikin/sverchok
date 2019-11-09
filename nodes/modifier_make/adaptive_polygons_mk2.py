@@ -739,23 +739,23 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if not any(output.is_linked for output in self.outputs):
             return
 
-        verts_recpt_s = self.inputs['VersR'].sv_get()
-        faces_recpt_s = self.inputs['PolsR'].sv_get(default=[[]])
-        verts_donor_s = self.inputs['VersD'].sv_get()
-        faces_donor_s = self.inputs['PolsD'].sv_get()
-        zcoefs_s = self.inputs['Z_Coef'].sv_get()
-        zoffsets_s = self.inputs['Z_Offset'].sv_get()
-        zrotations_s = self.inputs['Z_Rotation'].sv_get()
-        wcoefs_s = self.inputs['W_Coef'].sv_get()
+        verts_recpt_s = self.inputs['VersR'].sv_get(deepcopy=False)
+        faces_recpt_s = self.inputs['PolsR'].sv_get(default=[[]], deepcopy=False)
+        verts_donor_s = self.inputs['VersD'].sv_get(deepcopy=False)
+        faces_donor_s = self.inputs['PolsD'].sv_get(deepcopy=False)
+        zcoefs_s = self.inputs['Z_Coef'].sv_get(deepcopy=False)
+        zoffsets_s = self.inputs['Z_Offset'].sv_get(deepcopy=False)
+        zrotations_s = self.inputs['Z_Rotation'].sv_get(deepcopy=False)
+        wcoefs_s = self.inputs['W_Coef'].sv_get(deepcopy=False)
         if 'FrameWidth' in self.inputs:
-            frame_widths_s = self.inputs['FrameWidth'].sv_get()
+            frame_widths_s = self.inputs['FrameWidth'].sv_get(deepcopy=False)
         else:
             frame_widths_s = [[0.5]]
         if 'PolyRotation' in self.inputs:
-            facerots_s = self.inputs['PolyRotation'].sv_get(default = [[0]])
+            facerots_s = self.inputs['PolyRotation'].sv_get(default = [[0]], deepcopy=False)
         else:
             facerots_s = [[0]]
-        mask_s = self.inputs['PolyMask'].sv_get(default = [[1]])
+        mask_s = self.inputs['PolyMask'].sv_get(default = [[1]], deepcopy=False)
 
         output = OutputData()
 
