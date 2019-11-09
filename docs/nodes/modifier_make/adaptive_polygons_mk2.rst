@@ -240,5 +240,13 @@ In some cases iterative application can give interesting results:
 
 .. image:: https://user-images.githubusercontent.com/284644/68075234-ee027080-fdc6-11e9-8192-61d0917d45f7.png
 
+An example of **Frame** mode:
+
+.. image:: https://user-images.githubusercontent.com/284644/68528852-d7ee3600-0319-11ea-81ba-14bdd6e36a8e.png
+
+The same setup with **FrameWidth** set to 1.0 - the processing switches to **Fan** mode:
+
+.. image:: https://user-images.githubusercontent.com/284644/68528834-b68d4a00-0319-11ea-89d7-5857c886d423.png
+
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
 
