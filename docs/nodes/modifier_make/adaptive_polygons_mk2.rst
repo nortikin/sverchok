@@ -11,7 +11,12 @@ deformed (adapted) to match the shape and normals of recipient's face.
 This node works primarily with Quads and Tris; if you ask it to work with NGons
 (N > 4), it can produce weird resuls.
 
-One can pass recipient object through **Inset Special** node to achieve results
+As an option, the node can process NGons (and Quads / Tris, optionally) in so
+called "Frame / Fan" mode. In this mode, each face of recipient mesh is inset
+by some amount, so it is replaced with a number of either Quads or Tris. Each
+of such faces is then processed as usual.
+
+Or one can pass recipient object through **Inset Special** node to achieve results
 similar to Tissue's "Fan" or "Frame" modes.
 
 In many cases it is good idea to pass the output of this node through **Remove
@@ -37,6 +42,10 @@ This node has the following inputs:
 - **Width coeff**. Coefficient for donor object width (size along X,Y axis,
   usually). Default value is 1.0. The input expects one number per each
   recipient object face.
+- **Frame width**. Width of frame for "Frame / Fan" mode. Maximum value of 1.0
+  means that there will be no gap in the center of face, so this will be "Fan"
+  mode. Default value is 0.5. This input is available only if **Frame mode**
+  parameter is set to value other than **Do not use**.
 - **Z coeff**. Coefficient for donor object size along recipient object face
   normal. Exact meaning depends on **Z Scale** parameter (see below). The
   default value is 1.0. The input expects one number per each recipient object face.
@@ -145,6 +154,22 @@ This node has some number of parameters, and most of them are accessible only in
   of it.
 
   The default value is **Bounds**.
+
+- **Frame mode**. This defines when to apply "Frame / Fan" mode. The available values are:
+
+  - **Do not use**. Frame / fan mode will not be used.
+  - **NGons only**. Frame / fan mode will be used for NGons (n > 4) only. Other
+    faces will be processed in simple replacement mode.
+  - **NGons and Quads**. Frame / fan mode will be used for NGons and Quads
+    (i.e. n >= 4) only. Tris will be processed in simple replacement mode.
+  - **Always**. Frame / fan mode will be used for all faces.
+
+  The default value is **Do not use**.
+
+  Note that "Frame / Fan" mode makes either several Quads (when FrameWidth <
+  1.0) or several Tris (when FrameWidth == 1.0) out of each recipient face. How
+  exactly these Quads and Tris will be processed is defined by **Faces mode**
+  parameter.
 
 - **Faces mode**. This defines how deformations of donor object will be
   calculated for Quad and Tris recipient faces. Available values are:
