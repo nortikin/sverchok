@@ -179,21 +179,14 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     map_modes = [
             ("QUADTRI", "Quads / Tris Auto", "Use Quads or Tris mapping automatically", 0),
-            ("QUADS", "Quads Always", "Use Quads mapping even for the Tris", 1),
-            ("FRAME", "Frame / Fan", "Frame or Fan mode", 2)
+            ("QUADS", "Quads Always", "Use Quads mapping even for the Tris", 1)
         ]
-
-    def update_map_mode(self, context):
-        show_width = self.map_mode == 'FRAME' or self.ngon_mode == 'FRAME'
-        if 'FrameWidth' in self.inputs:
-            self.inputs['FrameWidth'].hide_safe = not show_width
-        updateNode(self, context)
 
     map_mode : EnumProperty(
         name = "Faces mode",
         description = "Donor object mapping mode",
         items = map_modes, default = "QUADTRI",
-        update = update_map_mode)
+        update = updateNode)
 
     skip_modes = [
             ("SKIP", "Skip", "Do not output anything", 0),
@@ -209,15 +202,33 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     ngon_modes = [
             ("QUADS", "As Quads", "Try to process as Quads", 0),
             ("SKIP", "Skip", "Do not output anything", 1),
-            ("ASIS", "As Is", "Output these faces as is", 2),
-            ("FRAME", "Frame / Fan", "Frame or Fan mode", 3)
+            ("ASIS", "As Is", "Output these faces as is", 2)
         ]
 
     ngon_mode: EnumProperty(
         name = "NGons",
         description = "What to do with NGons",
         items = ngon_modes, default = "QUADS",
-        update = update_map_mode)
+        update = updateNode)
+
+    def update_frame_mode(self, context):
+        show_width = self.frame_mode != 'NEVER'
+        if 'FrameWidth' in self.inputs:
+            self.inputs['FrameWidth'].hide_safe = not show_width
+        updateNode(self, context)
+
+    frame_modes = [
+            ("NEVER", "Do not use", "Do not use Frame / Fan mode", 0),
+            ("NGONS", "NGons only", "Use Frame / Fan mode for NGons (n > 4) only", 1),
+            ("NGONQUAD", "NGons and Quads", "Use Frame / Fan mode for NGons and Quads (n >= 4)", 2),
+            ("ALWAYS", "Always", "Use Frame / Fan mode for all faces", 3)
+        ]
+    
+    frame_mode: EnumProperty(
+        name = "Frame mode",
+        description = "When to use Frame / Fan mode",
+        items = frame_modes, default = 'NEVER',
+        update = update_frame_mode)
 
     matching_modes = [
             ("LONG", "Match longest", "Make an iteration for each donor or recipient object - depending on which list is longer", 0),
@@ -269,6 +280,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if self.normal_mode == 'MAP':
             layout.prop(self, "normal_interp_mode")
         layout.prop(self, "xy_mode")
+        layout.prop(self, "frame_mode")
         layout.prop(self, "map_mode")
         layout.prop(self, "mask_mode")
         layout.prop(self, "ngon_mode")
@@ -688,23 +700,28 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 map_mode = self.mask_mode
             else:
                 if n == 3:
-                    if self.map_mode == 'QUADTRI':
-                        map_mode = 'TRI'
-                    elif self.map_mode == 'QUADS':
-                        map_mode = 'QUAD'
-                    else:
+                    if self.frame_mode == 'ALWAYS':
                         map_mode = 'FRAME'
+                    else:
+                        if self.map_mode == 'QUADTRI':
+                            map_mode = 'TRI'
+                        else: # self.map_mode == 'QUADS':
+                            map_mode = 'QUAD'
                 elif n == 4:
-                    map_mode = 'QUAD'
-                else:
-                    if self.ngon_mode == 'QUADS':
-                        map_mode = 'QUAD'
-                    elif self.ngon_mode == 'ASIS':
-                        map_mode = 'ASIS'
-                    elif self.ngon_mode == 'FRAME':
+                    if self.frame_mode in ['ALWAYS', 'NGONQUAD']:
                         map_mode = 'FRAME'
                     else:
-                        map_mode = 'SKIP'
+                        map_mode = 'QUAD'
+                else:
+                    if self.frame_mode in ['ALWAYS', 'NGONQUAD', 'NGONS']:
+                        map_mode = 'FRAME'
+                    else:
+                        if self.ngon_mode == 'QUADS':
+                            map_mode = 'QUAD'
+                        elif self.ngon_mode == 'ASIS':
+                            map_mode = 'ASIS'
+                        else:
+                            map_mode = 'SKIP'
 
             if map_mode == 'SKIP':
                 # Skip this recipient's face - do not produce any vertices/faces for it
