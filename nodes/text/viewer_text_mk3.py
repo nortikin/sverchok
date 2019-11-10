@@ -111,17 +111,17 @@ def prep_text(node, num_lines):
     
     outs  = ''
     inputs = node.inputs
-    for insert in inputs:
-        if insert.is_linked:
-            label = insert.other.node.label
+    for socket in inputs:
+        if socket.is_linked and socket.other:
+            label = socket.other.node.label
             if label:
                 label = '; node ' + label.upper()
             
-            name = insert.name.upper()
-            data_type = socket_types.get(insert.other.bl_idname, "DATA")    
+            name = socket.name.upper()
+            data_type = socket_types.get(socket.other.bl_idname, "DATA")    
             itype = f'\n\nSocket {name}{label}; type {data_type}: \n'
 
-            eva = insert.sv_get()
+            eva = socket.sv_get()
             deptl = levelsOflist(eva)
             if deptl and deptl > 2:
                 a = readFORviewer_sockets_data(eva, deptl, len(eva), num_lines)
@@ -201,8 +201,9 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
         # we want socket types to match the input
         for socket in self.inputs:
             if socket.is_linked and socket.links:
-                if not socket.bl_idname == socket.other.bl_idname:
-                    socket.replace_socket(socket.other.bl_idname)
+                if socket.other: 
+                    if not socket.bl_idname == socket.other.bl_idname:
+                        socket.replace_socket(socket.other.bl_idname)
 
     def process(self):
         if not self.autoupdate:
