@@ -28,7 +28,7 @@ from mathutils.geometry import barycentric_transform
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, Vector_generate,
                                      Vector_degenerate, match_long_repeat, fullList, cycle_for_length,
-                                     describe_data_shape,
+                                     describe_data_shape, get_data_nesting_level,
                                      rotate_list)
 
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
@@ -627,13 +627,15 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
         single_donor = self.matching_mode == 'LONG'
+        frame_level = get_data_nesting_level(frame_widths)
         if single_donor:
             # Original (unrotated) donor vertices
             donor_verts_o = [Vector(v) for v in verts_donor]
 
             verts_donor = [verts_donor]
             faces_donor = [faces_donor]
-            frame_widths = [frame_widths]
+            if frame_level == 0:
+                frame_widths = [frame_widths]
 
         n_faces_recpt = len(faces_recpt)
         fullList(verts_donor, n_faces_recpt)
@@ -668,6 +670,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             recpt_face_data.center = recpt_face_bm.calc_center_median()
             recpt_face_data.vertices_co = [bm.verts[i].co for i in recpt_face]
             recpt_face_data.vertices_normal = [bm.verts[i].normal for i in recpt_face]
+            if not isinstance(frame_width, (int, float)):
+                raise Exception(f"Unexpected data type for frame_width: {frame_width}")
             recpt_face_data.frame_width = frame_width
 
             donor.faces_i = donor_faces_i
@@ -765,7 +769,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if self.matching_mode == 'PERFACE':
             verts_donor_s = [verts_donor_s]
             faces_donor_s = [faces_donor_s]
-            frame_widths_s = [frame_widths_s]
+            #frame_widths_s = [frame_widths_s]
         objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
         for verts_recpt, faces_recpt, verts_donor, faces_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
             n_faces_recpt = len(faces_recpt)
