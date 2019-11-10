@@ -10,7 +10,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.geom_2d.dcel import DCELMesh
+from sverchok.utils.geom_2d.dissolve_mesh import dissolve_faces
 
 
 class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
@@ -64,14 +64,19 @@ class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
         out_index = []
         for vs, fs, mf in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get(),
                               self.inputs['Face mask'].sv_get()):
-            mesh = DCELMesh()
-            mesh.from_sv_faces(vs, fs, face_selection=mf, face_data={'index': list(range(len(fs)))})
-            mesh.dissolve_selected_faces()
-            out.append(mesh.to_sv_mesh(edges=False))
-            if self.face_mask:
-                out_mask.append([int(face.select) for face in mesh.faces])
-            if self.index_mask:
-                out_index.append([face.sv_data['index'] for face in mesh.faces])
+            if self.face_mask and self.index_mask:
+                v, f, m, i = dissolve_faces(vs, fs, mf, self.face_mask, self.index_mask)
+                out_mask.append(m)
+                out_index.append(i)
+            elif self.face_mask:
+                v, f, m = dissolve_faces(vs, fs, mf, self.face_mask, self.index_mask)
+                out_mask.append(m)
+            elif self.index_mask:
+                v, f, i = dissolve_faces(vs, fs, mf, self.face_mask, self.index_mask)
+                out_index.append(i)
+            else:
+                v, f = dissolve_faces(vs, fs, mf, self.face_mask, self.index_mask)
+            out.append([v, f])
         out_v, out_f = zip(*out)
         self.outputs['Verts'].sv_set(out_v)
         self.outputs['Faces'].sv_set(out_f)

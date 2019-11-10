@@ -561,61 +561,6 @@ class DCELMesh:
             sv_faces = generate_sv_faces(self, point_index, only_select, del_face_flag)
             return sv_points, sv_edges, sv_faces
 
-    def dissolve_selected_faces(self):
-
-        # mark unused hedges and faces
-        boundary_hedges = []
-        un_used_hedges = set()
-        for face in self.faces:
-            if face.select:
-                for hedge in face.outer.loop_hedges:
-                    if hedge.twin.face.select:
-                        un_used_hedges.add(hedge)
-                    else:
-                        boundary_hedges.append(hedge)
-        # create new faces
-        used = set()
-        new_faces = []
-        for hedge in boundary_hedges:
-            if hedge in used:
-                continue
-            used.add(hedge)
-            face = self.Face(self)
-            new_faces.append(face)
-            face.select = True
-            face.outer = hedge
-            face.sv_data = dict(hedge.face.sv_data)  # new face get all sv data related with first edge in loop
-            hedge.face = face
-            for ccw_hedge in hedge.ccw_hedges:
-                if id(ccw_hedge) != id(hedge) and not ccw_hedge.face.select:
-                    break
-            last_hedge = ccw_hedge.twin
-            hedge.last = last_hedge
-            last_hedge.next = hedge
-            used.add(last_hedge)
-            last_hedge.face = face
-            count = 0
-            current_hedge = last_hedge
-            while id(current_hedge) != id(hedge):
-                for ccw_hedge in current_hedge.ccw_hedges:
-                    if id(ccw_hedge) != id(hedge) and not ccw_hedge.face.select:
-                        break
-                last_hedge = ccw_hedge.twin
-                used.add(last_hedge)
-                last_hedge.face = face
-                current_hedge.last = last_hedge
-                last_hedge.next = current_hedge
-                current_hedge = last_hedge
-                count += 1
-                if count > len(self.hedges):
-                    raise RecursionError("Dissolve face algorithm can't built a loop from hedge - {}".format(hedge))
-        # update faces
-        self.faces = [face for face in self.faces if not face.select]
-        self.faces.extend(new_faces)
-        # update hedges
-        self.hedges = [hedge for hedge in self.hedges if hedge not in un_used_hedges]
-        # todo how to rebuilt points list
-
     def del_loose_hedges(self, flag=None):
         # flag means that half edges with the value will be deleted
         if flag:
