@@ -195,19 +195,19 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
 
 
     def update(self):
-        # inputs
+        # this function auto extends the number of input sockets once a socket is linked.
         multi_socket(self, min=1)
 
-        if 'data' in self.inputs and len(self.inputs['data'].links) > 0:
-            inputsocketname = 'data'
-            outputsocketname = ['data']
-            changable_sockets(self, inputsocketname, outputsocketname)
+        # we want socket types to match the input
+        for socket in self.inputs:
+            if socket.is_linked and socket.links:
+                if not socket.bl_idname == socket.other.bl_idname:
+                    socket.replace_socket(socket.other.bl_idname)
 
     def process(self):
         if not self.autoupdate:
             pass
         else:
-            # bpy.ops.node.sverchok_viewer_buttonmk1(nodename=self.name, treename=self.id_data.name, lines=self.lines)
             prep_text(self, self.lines)
 
 
