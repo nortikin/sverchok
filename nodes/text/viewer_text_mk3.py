@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
 from sverchok.data_structure import levelsOflist, changable_sockets, multi_socket, updateNode
 
 socket_types = {
@@ -104,24 +104,26 @@ def do_text(node, out_string):
     datablock.from_string(string_to_write)
     
     if node.frame:
-        makeframe(node.id_data)
+        # adding a frame if it doesn't exist, will create a depsgraph update
+        with throttle_tree_update(node):
+            makeframe(node.id_data)
 
 def prep_text(node, num_lines):
     """ main preparation function for text """
     
     outs  = ''
     inputs = node.inputs
-    for insert in inputs:
-        if insert.is_linked:
-            label = insert.other.node.label
+    for socket in inputs:
+        if socket.is_linked and socket.other:
+            label = socket.other.node.label
             if label:
                 label = '; node ' + label.upper()
             
-            name = insert.name.upper()
-            data_type = socket_types.get(insert.other.bl_idname, "DATA")    
+            name = socket.name.upper()
+            data_type = socket_types.get(socket.other.bl_idname, "DATA")    
             itype = f'\n\nSocket {name}{label}; type {data_type}: \n'
 
-            eva = insert.sv_get()
+            eva = socket.sv_get()
             deptl = levelsOflist(eva)
             if deptl and deptl > 2:
                 a = readFORviewer_sockets_data(eva, deptl, len(eva), num_lines)
@@ -201,8 +203,9 @@ class ViewerNodeTextMK3(bpy.types.Node, SverchCustomTreeNode):
         # we want socket types to match the input
         for socket in self.inputs:
             if socket.is_linked and socket.links:
-                if not socket.bl_idname == socket.other.bl_idname:
-                    socket.replace_socket(socket.other.bl_idname)
+                if socket.other: 
+                    if not socket.bl_idname == socket.other.bl_idname:
+                        socket.replace_socket(socket.other.bl_idname)
 
     def process(self):
         if not self.autoupdate:
