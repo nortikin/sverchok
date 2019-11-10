@@ -1,25 +1,28 @@
 Crop mesh 2D
 ============
 
-.. image:: https://user-images.githubusercontent.com/28003269/68309560-0bd21d00-00c8-11ea-94cf-8c6e523b6128.png
+.. image:: https://user-images.githubusercontent.com/28003269/68539431-12e57d80-039d-11ea-9324-3f7c39b3ded2.png
 
 Functionality
 -------------
-The node takes two meshes determined by faces find them intersection and dependently of mode 
+The node takes two meshes determined by faces find them intersection and dependently of mode
 show either overlapping each other faces or faces of first mesh which has not overlapping.
 
-Differently to say crop mesh can crete holes in base mesh in outer mode or 
+Differently to say crop mesh can crete holes in base mesh in outer mode or
 base mesh can be insert in crop mesh in inner mode.
+
+The node can take edges for base mesh and crop them according the same logic. Crop mesh always should have faces.
 
 Also this node have optional extra output socket of face index mash which should be switched on on N panel.
 This output gives index of old face for every new faces.
 It can help to assign for example colors to mesh with new topology from previous mesh.
+It available only ind faces mode.
 
 **Warning:**
 
 This node is not 100 % robust. Some corner cases can knock it out. If you get an error or unexpected result check:
 
-- did not you try to plug edges instead of faces.
+- did not you try to plug edges instead of faces and vise versa.
 - try to change accuracy parameter on N panel.
 
 Category
@@ -31,7 +34,7 @@ Inputs
 ------
 
 - **Vertices** - vertices of base mesh
-- **Faces** - faces of base mesh (don't try to plug edges)
+- **Faces** or **Edges** - faces of base mesh (don't try to plug edges)
 - **Vertices Crop** - vertices of cropping mesh
 - **Faces Crop** - faces of cropping mesh (don't try to plug edges)
 
@@ -39,8 +42,8 @@ Outputs
 -------
 
 - **Vertices** - vertices, can produce new vertices
-- **Faces** - faces, also new edges can be added for showing holes
-- **Face index** (optionally) - index of old face by which new face was created 
+- **Faces** or **Edges** - faces, also new edges can be added for showing holes
+- **Face index** (optionally for face mode only) - index of old face by which new face was created
 
 Parameters
 ----------
@@ -48,6 +51,10 @@ Parameters
 +--------------------------+-------+--------------------------------------------------------------------------------+
 | Parameters               | Type  | Description                                                                    |
 +==========================+=======+================================================================================+
+| Faces                    | bool  | Enable faces mode of input mesh, so faces should be plugged into input socket  |
++--------------------------+-------+--------------------------------------------------------------------------------+
+| Edges                    | bool  | Enable edges mode of input mesh, so edges should be plugged into input socket  |
++--------------------------+-------+--------------------------------------------------------------------------------+
 | Inner                    | bool  | Enable inner mode fro inserting mesh into crop mesh                            |
 +--------------------------+-------+--------------------------------------------------------------------------------+
 | Outer                    | bool  | Enable outer mode for creating holes in base mesh                              |
@@ -66,11 +73,19 @@ Usage
 
 Creating holes:
 
-.. image:: https://user-images.githubusercontent.com/28003269/68450210-a5521980-0203-11ea-87a1-19f52129f91b.png
+.. image:: https://user-images.githubusercontent.com/28003269/68539557-2eea1e80-039f-11ea-91d2-aabb4399a9db.png
 
 Fit mesh inside mesh:
 
-.. image:: https://user-images.githubusercontent.com/28003269/68450333-201b3480-0204-11ea-9faa-493ec884f774.png
+.. image:: https://user-images.githubusercontent.com/28003269/68539501-95227180-039e-11ea-9836-404d7687cd14.png
+
+Crop Voronoi diagram by some shape:
+
+.. image:: https://user-images.githubusercontent.com/28003269/68539337-5dfe9100-039b-11ea-9811-1a1733a447c8.png
+
+Creating something like sewer grate:
+
+.. image:: https://user-images.githubusercontent.com/28003269/68532980-8e174700-033d-11ea-8134-8da6b13c8121.png
 
 Examples
 --------
