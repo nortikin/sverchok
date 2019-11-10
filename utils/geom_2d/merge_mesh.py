@@ -88,6 +88,29 @@ def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, face_overlapping
         return mesh.to_sv_mesh(edges=False, del_face_flag='del')
 
 
+def crop_edges(sv_verts, sv_edges, sv_verts_crop, sv_faces_crop, mode='inner', accuracy=1e-5):
+    """
+    The function takes one SV mesh determined by edges and crop it by polygons of another SV mesh determined by faces.
+    :param sv_verts: list of SV points
+    :param sv_edges: list of SV edges
+    :param sv_verts_crop: list of SV points
+    :param sv_faces_crop: list of SV faces
+    :param mode: inner or outer, switch between holes creation and feting into mesh
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
+    :return: list of SV vertices, list of SV faces
+    """
+    mesh = DCELMesh(accuracy=accuracy)
+    mesh.from_sv_edges(sv_verts, sv_edges)
+    mesh.from_sv_faces(sv_verts_crop, sv_faces_crop)
+    find_intersections(mesh, accuracy, face_overlapping=True)
+    [hedge.flags.add('del') for hedge in mesh.hedges if hedge.face]
+    if mode == 'inner':
+        [hedge.flags.add('del') for hedge in mesh.hedges if not hedge.in_faces]
+    else:
+        [hedge.flags.add('del') for hedge in mesh.hedges if hedge.in_faces]
+    return mesh.to_sv_mesh(faces=False, del_edge_flag='del')
+
+
 def merge_mesh(sv_verts_a, sv_faces_a, sv_verts_b, sv_faces_b, is_mask=True, is_index=False, accuracy=1e-6):
     """
     Merge two Sverchok mesh objects into one mesh with finding intersections and all

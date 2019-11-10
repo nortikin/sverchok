@@ -546,18 +546,18 @@ class DCELMesh:
         if rebuild:
             self.del_loose_hedges(tail_key)
 
-    def to_sv_mesh(self, edges=True, faces=True, only_select=False, del_face_flag=None):
+    def to_sv_mesh(self, edges=True, faces=True, only_select=False, del_edge_flag=None, del_face_flag=None):
         # all elements of mesh should have correct links
         # will create only selected faces if only_select is True
-        sv_points, point_index = generate_sv_points(self, del_face_flag)
+        sv_points, point_index = generate_sv_points(self, del_edge_flag=del_edge_flag, del_face_flag=del_face_flag)
         if edges and not faces:
-            sv_edges = generate_sv_edges(self, point_index)
+            sv_edges = generate_sv_edges(self, point_index, del_flag=del_edge_flag)
             return sv_points, sv_edges
         elif faces and not edges:
             sv_faces = generate_sv_faces(self, point_index, only_select, del_face_flag)
             return sv_points, sv_faces
         else:
-            sv_edges = generate_sv_edges(self, point_index)
+            sv_edges = generate_sv_edges(self, point_index, del_flag=del_edge_flag)
             sv_faces = generate_sv_faces(self, point_index, only_select, del_face_flag)
             return sv_points, sv_edges, sv_faces
 
@@ -751,13 +751,15 @@ def generate_dcel_mesh(mesh, verts, faces, face_selection=None, face_flag=None, 
     return mesh
 
 
-def generate_sv_points(dcel_mesh, del_flag=None):
-    # This function also takes in accont faces which should be deleted
+def generate_sv_points(dcel_mesh, del_edge_flag=None, del_face_flag=None):
+    # This function also takes in account faces which should be deleted
     # if all hedges around points have faces with del flag the point won't be added to the output list
+    if del_edge_flag and del_face_flag:
+        raise ValueError('Not sure that both del flags can do the job')
     used = set()
     point_index = dict()
     sv_verts = []
-    if not del_flag:
+    if not del_face_flag and not del_edge_flag:
         for hedge in dcel_mesh.hedges:
             if hedge in used:
                 continue
@@ -765,6 +767,18 @@ def generate_sv_points(dcel_mesh, del_flag=None):
             sv_verts.append(hedge.origin.co)
             for h in hedge.ccw_hedges:
                 used.add(h)
+    elif del_face_flag:
+        for hedge in dcel_mesh.hedges:
+            point_usage = False
+            if hedge in used:
+                continue
+            for h in hedge.ccw_hedges:
+                used.add(h)
+                if not h.face.is_unbounded and del_face_flag not in h.face.flags:
+                    point_usage = True
+            if point_usage:
+                point_index[hedge.origin] = len(sv_verts)
+                sv_verts.append(hedge.origin.co)
     else:
         for hedge in dcel_mesh.hedges:
             point_usage = False
@@ -772,7 +786,7 @@ def generate_sv_points(dcel_mesh, del_flag=None):
                 continue
             for h in hedge.ccw_hedges:
                 used.add(h)
-                if not h.face.is_unbounded and del_flag not in h.face.flags:
+                if del_edge_flag not in h.flags:
                     point_usage = True
             if point_usage:
                 point_index[hedge.origin] = len(sv_verts)
@@ -780,11 +794,13 @@ def generate_sv_points(dcel_mesh, del_flag=None):
     return sv_verts, point_index
 
 
-def generate_sv_edges(dcel_mesh, point_index):
+def generate_sv_edges(dcel_mesh, point_index, del_flag=None):
     sv_edges = []
     used = set()
     for hedge in dcel_mesh.hedges:
         if hedge in used:
+            continue
+        if del_flag and del_flag in hedge.flags:
             continue
         used.add(hedge)
         used.add(hedge.twin)

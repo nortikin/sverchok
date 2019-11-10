@@ -70,7 +70,11 @@ class DCELMesh:
                       face_flag: List[str] = ...,
                       face_data: Dict[str, list] = ...) -> None: ...
     
-    def to_sv_mesh(self, edges: bool = ..., faces: bool = ..., only_select: bool = ..., del_face_flag: str = ...) -> \
+    def to_sv_mesh(self, edges: bool = ...,
+                   faces: bool = ...,
+                   only_select: bool = ...,
+                   del_edge_flag: str = ...,
+                   del_face_flag: str = ...) -> \
             Tuple[List[TSVPoint], List[TSVEdge], List[TSVFace]]: ...
 
     def del_face(self, face: 'Face') -> None: ...
