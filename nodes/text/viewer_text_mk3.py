@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import StringProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
 from sverchok.data_structure import levelsOflist, changable_sockets, multi_socket, updateNode
 
 socket_types = {
@@ -104,7 +104,9 @@ def do_text(node, out_string):
     datablock.from_string(string_to_write)
     
     if node.frame:
-        makeframe(node.id_data)
+        # adding a frame if it doesn't exist, will create a depsgraph update
+        with throttle_tree_update(node):
+            makeframe(node.id_data)
 
 def prep_text(node, num_lines):
     """ main preparation function for text """
