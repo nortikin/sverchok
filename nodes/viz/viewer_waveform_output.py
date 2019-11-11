@@ -47,11 +47,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     A short description for reader of node code
     """
 
-    MAX_SOCKETS = 6
 
     bl_idname = 'SvWaveformViewer'
     bl_label = 'SvWaveformViewer'
     bl_icon = 'GREASEPENCIL'
+
+    MAX_SOCKETS = 6
+    DATA_SOCKET = 'SvStringsSocket'
 
     def update_socket_count(self, context):
         ... # if self.num_channels < MAX_SOCKETS 
@@ -71,7 +73,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         name="out_of_bounds")
 
     def sv_init(self, context):
-        _ = [self.inputs.new('SvStringsSocket', f'channel{idx}') for idx in range(2)]
+        _ = [self.inputs.new(DATA_SOCKET, f'channel {idx}') for idx in range(2)]
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'num_channels')
