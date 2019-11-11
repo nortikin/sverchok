@@ -150,30 +150,29 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def get_waveparams(self):
         # (nchannels, sampwidth, framerate, nframes, comptype, compname)
-        #                                            None,     None
-        ...
+        return (self.num_channels, self.bits, self.sample_rate, self.num_frames, None, None)
 
     def get_wavedata(self, wave_params):
+        """
+        do they match? what convention to use to fill up one if needed..
+        - copy opposite channel if channel data is short
+        - repeat last channel value until data length matches longest
+        """
         if self.multi_channel_sockets:
-            # use first socket for all data
             data = self.inputs[0].get()
             if self.num_channels == 2:
-                ...
+                data = self.interleave(data)
         else:
-            data_left = self.inputs[0].get()
-            data_right = self.inputs[1].get()
-            # do they match? what convention to use to fill up one if needed..
-            # - copy opposite channel if channel data is short
-            # - repeat last channel value until data length matches longest
-
-
+            if self.num_channels == 2:
+                data_left = self.inputs[0].get()[0]
+                data_right = self.inputs[1].get()[0]
+                data = self.interleave([data_left, data_right])
+            elif self.num_channels == 1:
+                data = self.inputs[0].get()[0]
 
     def set_dir(self, dirname):
         self.dirname = dirname
         print(self.dirname, dirname)
-
-
-
 
 
 classes = [SvWaveformViewer, SvWaveformViewerOperator, SvWaveformViewerOperatorDP]
