@@ -76,7 +76,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     num_channels: bpy.props.IntProperty(
         name='num channels', default=1, min=1, max=MAX_SOCKETS,
-        description='num channels interleaved', update=update_socket_count)
+        description='num channels interleaved', update=updateNode)
 
     bits: bpy.props.IntProperty(name='bit rate', default=16, min=4, max=192)
 
@@ -113,7 +113,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         
         col.separator()
         col.prop(self, 'colour_limits')
-        
 
         col.separator()
         row = col.row(align=True)
@@ -122,13 +121,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         self.wrapper_tracked_ui_draw_op(row, cb, icon='FILE', text='')
         col.prop(self, "filename")
 
-        if not (self.filename and self.dirname):
-            return
-
-        col.separator()
-        cb = "node.waveform_viewer_callback"
-        op = self.wrapper_tracked_ui_draw_op(col, cb, icon='CURSOR', text='WRITE')
-        op.fn_name = "process_wave"
+        if (self.filename and self.dirname):
+            col.separator()
+            cb = "node.waveform_viewer_callback"
+            op = self.wrapper_tracked_ui_draw_op(col, cb, icon='CURSOR', text='WRITE')
+            op.fn_name = "process_wave"
 
     def process(self):
         ...
@@ -141,22 +138,35 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         #
         # get safe filename, do not overwrite existing? - TODO
         #
+        wave_params = self.get_waveparams()
+      
         filepath = os.path.join(self.dirname, self.filename)
         filetype = "wav"
 
         full_filepath_with_ext = f"{filepath}.{filetype}"
-
-        with wave.open(full_filepath_with_ext, 'wb') as write_wave:        
-            write_wave.setparams(self.get_waveparams())
-            write_wave.writeframes(self.get_wavedata())
+        with wave.open(full_filepath_with_ext, 'wb') as write_wave:
+            write_wave.setparams(wave_params)
+            write_wave.writeframes(self.get_wavedata(wave_params))
 
     def get_waveparams(self):
         # (nchannels, sampwidth, framerate, nframes, comptype, compname)
         #                                            None,     None
         ...
 
-    def get_wavedata(self):
-        ...
+    def get_wavedata(self, wave_params):
+        if self.multi_channel_sockets:
+            # use first socket for all data
+            data = self.inputs[0].get()
+            if self.num_channels == 2:
+                ...
+        else:
+            data_left = self.inputs[0].get()
+            data_right = self.inputs[1].get()
+            # do they match? what convention to use to fill up one if needed..
+            # - copy opposite channel if channel data is short
+            # - repeat last channel value until data length matches longest
+
+
 
     def set_dir(self, dirname):
         self.dirname = dirname
