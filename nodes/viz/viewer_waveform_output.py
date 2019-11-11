@@ -31,6 +31,8 @@ class SvWaveformViewerOperator(bpy.types.Operator):
         getattr(node, self.fn_name)()
         return {'FINISHED'}
 
+# missing "node.waveform_viewer_dirpick"
+
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     
@@ -69,6 +71,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     multi_channel_sockets: bpy.props.BoolProperty(
         name="multiplex", update=updateNode, description="sockets carry multiple layers of data")
 
+    dirname: bpy.props.StringProperty()
+    filename: bpy.props.StringProperty()
+
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
         self.inputs.new(DATA_SOCKET, 'channel 1')
@@ -93,11 +98,26 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         op = self.wrapper_tracked_ui_draw_op(col, cb, icon='CURSOR', text='WRITE')
         op.fn_name = "process_wave"
 
+        col.separator()
+        row = col.row(align=True)
+        row.prop(self, 'dirname')
+        cb = "node.waveform_viewer_dirpick"
+        op = self.wrapper_tracked_ui_draw_op(row, cb, icon='FILE', text='')
+        op.fn_name = "set_dir"
+        col.prop(self, "filename")
+
     def process(self):
         ...
 
     def process_wave(self):
         print('process wave pressed')
+
+
+    def set_dir(self):
+        ...
+
+
+
 
 
 classes = [SvWaveformViewer, SvWaveformViewerOperator]
