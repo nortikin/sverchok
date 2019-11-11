@@ -14,30 +14,22 @@ import wave
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
-class SvWaveformViewerOperator(bpy.types.Operator):
-
-    bl_idname = "node.waveform_viewer_callback"
-    bl_label = "Waveform Viewer Operator"
-    # bl_options = {'REGISTER', 'UNDO'}
-
-    fn_name = bpy.props.StringProperty(default='')
-    # obj_type = bpy.props.StringProperty(default='MESH')
-
-    def dispatch(self, context, type_op):
-        n = context.node
-
-        if type_op == 'some_named_function':
-            pass
-
-        elif type_op == 'some_named_other_function':
-            pass
-
-    def execute(self, context):
-        self.dispatch(context, self.fn_name)
-        return {'FINISHED'}
-
 MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
+
+
+class SvWaveformViewerOperator(bpy.types.Operator):
+    bl_idname = "node.waveform_viewer_callback"
+    bl_label = "Waveform Viewer Operator"
+
+    idname = bpy.props.StringProperty(default='')
+    idtree = bpy.props.StringProperty(default='')
+    fn_name = bpy.props.StringProperty(default='')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        getattr(node, self.fn_name)()
+        return {'FINISHED'}
 
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
@@ -64,7 +56,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         description='num channels interleaved', update=update_socket_count)
 
     bitrate: bpy.props.IntProperty(
-        name="bitrate", min=8000, default=44100)
+        name="bitrate", min=8000, default=48000)
 
     auto_normalize: bpy.props.BoolProperty(
         name="normalize")
@@ -92,9 +84,17 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         
         col.separator()
         col.prop(self, 'colour_limits')
+        
+        col.separator()
+        cb = "node.waveform_viewer_callback"
+        op = self.wrapper_tracked_ui_draw_op(col, cb, icon='CURSOR', text='WRITE')
+        op.fn_name = "process_wave"
 
     def process(self):
         ...
+
+    def process_wave(self):
+        print('process wave pressed')
 
 
 classes = [SvWaveformViewer, SvWaveformViewerOperator]
