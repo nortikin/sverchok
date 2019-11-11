@@ -1,5 +1,5 @@
 from itertools import chain, repeat, zip_longest
-
+from sverchok.data_structure import levels_of_list_or_np
 
 # the class based should be slower but kept until tested
 class SvZipExhausted(Exception):
@@ -98,7 +98,7 @@ def recurse_f_multipar(params, f, matching_f):
         return f(params)
 
 def recurse_f_multipar_const(params, const, f, matching_f):
-    '''params will spread using the matchig function, the const is a constant
+    '''params will spread using the matching function, the const is a constant
         parameter that you dont want to spread '''
     is_list = [isinstance(l, (list, tuple)) for l in params]
     if any(is_list):
@@ -118,6 +118,26 @@ def recurse_f_multipar_const(params, const, f, matching_f):
     else:
         return f(params, const)
 
+def recurse_f_level_control(params, constant, main_func, matching_f, desired_levels):
+    '''params will spread using the matching function (matching_f), the const is a constant
+        parameter that you dont want to spread , the main_func is the function to apply
+        and the desired_levels should be like [1, 2, 1, 3...] one level per parameter'''
+    input_levels = [levels_of_list_or_np(p) for p in params]
+    over_levels = [lv > dl for lv, dl in zip(input_levels, desired_levels)]
+    if any(over_levels):
+        p_temp = []
+        result = []
+        for p, lv, dl in zip(params, input_levels, desired_levels):
+            if lv <= dl:
+                p_temp.append([p])
+            else:
+                p_temp.append(p)
+        params = matching_f(p_temp)
+        for g in zip(*params):
+            result.append(recurse_f_level_control(matching_f(g), constant, main_func, matching_f, desired_levels))
+    else:
+        result = main_func(params, constant, matching_f)
+    return result
 
 def extend_if_needed(vl, wl, default=0.5):
     # match wl to correspond with vl
