@@ -152,6 +152,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def get_waveparams(self):
         # (nchannels, sampwidth, framerate, nframes, comptype, compname)
+        #                                            None,     None
         ...
 
     def get_wavedata(self):
