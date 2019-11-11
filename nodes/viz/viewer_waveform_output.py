@@ -22,41 +22,36 @@ class SvWaveformViewerOperator(bpy.types.Operator):
     bl_idname = "node.waveform_viewer_callback"
     bl_label = "Waveform Viewer Operator"
 
-    idname = bpy.props.StringProperty(default='')
-    idtree = bpy.props.StringProperty(default='')
-    fn_name = bpy.props.StringProperty(default='')
+    idname: bpy.props.StringProperty(default='')
+    idtree: bpy.props.StringProperty(default='')
+    fn_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
         node = bpy.data.node_groups[self.idtree].nodes[self.idname]
         getattr(node, self.fn_name)()
         return {'FINISHED'}
 
-# missing "node.waveform_viewer_dirpick"
-"""
-class svImageImporterOp(bpy.types.Operator):
 
-    bl_idname = "image.image_importer"
-    bl_label = "sv Image Import Operator"
+class SvWaveformViewerOperatorDP(bpy.types.Operator):
+    bl_idname = "node.waveform_viewer_dirpick"
+    bl_label = "Waveform Viewer Directory Picker"
 
-    filepath: StringProperty(
-        name="File Path",
-        description="Filepath used for importing the font file",
+    idname: bpy.props.StringProperty(default='')
+    idtree: bpy.props.StringProperty(default='')
+    filepath: bpy.props.StringProperty(
+        name="File Path", description="Filepath used for writing waveform files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
-    origin: StringProperty("")
-
     def execute(self, context):
-        a = bpy.data.images.load(self.filepath)
-        node_tree, node_name = self.origin.split('|><|')
-        node = bpy.data.node_groups[node_tree].nodes[node_name]
-        node.image_name = a.name
+        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node.set_dir(self.filepath)
         return {'FINISHED'}
 
     def invoke(self, context, event):
         wm = context.window_manager
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
-"""
+
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     
@@ -70,7 +65,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvWaveformViewer'
     bl_label = 'SvWaveformViewer'
-    bl_icon = 'GREASEPENCIL'
+    bl_icon = 'FORCE_HARMONIC'
 
 
     def update_socket_count(self, context):
@@ -117,18 +112,21 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         col.separator()
         col.prop(self, 'colour_limits')
         
+
+        col.separator()
+        row = col.row(align=True)
+        row.prop(self, 'dirname', text='')
+        cb = "node.waveform_viewer_dirpick"
+        self.wrapper_tracked_ui_draw_op(row, cb, icon='FILE', text='')
+        col.prop(self, "filename")
+
+        if not (self.filename and self.dirname):
+            return
+
         col.separator()
         cb = "node.waveform_viewer_callback"
         op = self.wrapper_tracked_ui_draw_op(col, cb, icon='CURSOR', text='WRITE')
         op.fn_name = "process_wave"
-
-        col.separator()
-        row = col.row(align=True)
-        row.prop(self, 'dirname')
-        cb = "node.waveform_viewer_dirpick"
-        op = self.wrapper_tracked_ui_draw_op(row, cb, icon='FILE', text='')
-        op.fn_name = "set_dir"
-        col.prop(self, "filename")
 
     def process(self):
         ...
@@ -136,13 +134,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def process_wave(self):
         print('process wave pressed')
 
-
-    def set_dir(self):
-        ...
-
-
+    def set_dir(self, dirname):
+        self.dirname = dirname
+        print(self.dirname, dirname)
 
 
 
-classes = [SvWaveformViewer, SvWaveformViewerOperator]
+
+
+classes = [SvWaveformViewer, SvWaveformViewerOperator, SvWaveformViewerOperatorDP]
 register, unregister = bpy.utils.register_classes_factory(classes)
