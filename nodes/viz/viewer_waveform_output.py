@@ -60,8 +60,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
 
     num_channels: bpy.props.IntProperty(
-        name='num channels', default=1, min=1, max=MAX_SOCKETS,
-        description='num channels interleaved', uppdate=update_socket_count)
+        name='num channels', default=1, min=1, max=self.MAX_SOCKETS,
+        description='num channels interleaved', update=update_socket_count)
 
     bitrate: bpy.props.IntProperty(
         name="bitrate", min=8000, default=441000)
@@ -73,7 +73,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         name="out_of_bounds")
 
     def sv_init(self, context):
-        _ = [self.inputs.new(DATA_SOCKET, f'channel {idx}') for idx in range(2)]
+        self.inputs.new(self.DATA_SOCKET, 'channel 0')
+        self.inputs.new(self.DATA_SOCKET, 'channel 1')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'num_channels')
