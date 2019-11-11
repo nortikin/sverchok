@@ -278,6 +278,7 @@
     ---
     SvTextureViewerNode
     SvTextureViewerNodeLite
+    SvWaveformViewer
 
 ## Text
     ViewerNodeTextMK3
