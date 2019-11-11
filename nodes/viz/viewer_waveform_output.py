@@ -32,7 +32,31 @@ class SvWaveformViewerOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 # missing "node.waveform_viewer_dirpick"
+"""
+class svImageImporterOp(bpy.types.Operator):
 
+    bl_idname = "image.image_importer"
+    bl_label = "sv Image Import Operator"
+
+    filepath: StringProperty(
+        name="File Path",
+        description="Filepath used for importing the font file",
+        maxlen=1024, default="", subtype='FILE_PATH')
+
+    origin: StringProperty("")
+
+    def execute(self, context):
+        a = bpy.data.images.load(self.filepath)
+        node_tree, node_name = self.origin.split('|><|')
+        node = bpy.data.node_groups[node_tree].nodes[node_name]
+        node.image_name = a.name
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        wm.fileselect_add(self)
+        return {'RUNNING_MODAL'}
+"""
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     
