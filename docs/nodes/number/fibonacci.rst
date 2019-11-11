@@ -1,8 +1,6 @@
 Fibonacci Sequence
 ==================
 
-*destination after Beta: Number*
-
 Functionality
 -------------
 
@@ -23,7 +21,7 @@ All parameters can be given by the node or an external input.
 This node has the following parameters:
 
 +----------------+---------------+-------------+----------------------------------------------------+
-| Parameter      | Type          | Default     | Description                                        |  
+| Parameter      | Type          | Default     | Description                                        |
 +================+===============+=============+====================================================+
 | **X1**         | Float         | 1.0         | First item of sequence.                            |
 +----------------+---------------+-------------+----------------------------------------------------+
@@ -54,4 +52,3 @@ Given simplest nodes setup:
 you will have something like:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5691664/227c9d0e-98f5-11e4-87c9-fb6f552e1b89.png
-
