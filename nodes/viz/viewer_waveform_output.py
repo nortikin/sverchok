@@ -7,6 +7,7 @@
 
 import bpy
 import numpy as np
+import wave
 # import mathutils
 # from mathutils import Vector
 # from bpy.props import FloatProperty, BoolProperty
@@ -46,15 +47,37 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     A short description for reader of node code
     """
 
+    MAX_SOCKETS = 6
+
     bl_idname = 'SvWaveformViewer'
     bl_label = 'SvWaveformViewer'
     bl_icon = 'GREASEPENCIL'
 
+    def update_socket_count(self, context):
+        ... # if self.num_channels < MAX_SOCKETS 
+
+
+    num_channels: bpy.props.IntProperty(
+        name='num channels', default=1, min=1, max=MAX_SOCKETS,
+        description='num channels interleaved', uppdate=update_socket_count)
+
+    bitrate: bpy.props.IntProperty(
+        name="bitrate", min=8000, default=441000)
+
+    auto_normmalize: bpy.props.BoolProperty(
+        name="auto normalize")
+
+    colour_out_of_bounds_in_scope: bpy.props.BoolProperty(
+        name="out_of_bounds")
+
     def sv_init(self, context):
-        ...
+        _ = [self.inputs.new('SvStringsSocket', f'channel{idx}') for idx in range(2)]
 
     def draw_buttons(self, context, layout):
-        ...
+        layout.prop(self, 'num_channels')
+        layout.prop(self, 'bitrate')
+        layout.prop(self, 'auto_normalize')
+        layout.prop(self, 'colour_out_of_bounds_in_scope')
 
     def process(self):
         ...
