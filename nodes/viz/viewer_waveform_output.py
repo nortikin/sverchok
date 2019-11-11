@@ -64,23 +64,34 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         description='num channels interleaved', update=update_socket_count)
 
     bitrate: bpy.props.IntProperty(
-        name="bitrate", min=8000, default=441000)
+        name="bitrate", min=8000, default=44100)
 
     auto_normalize: bpy.props.BoolProperty(
-        name="auto normalize")
+        name="normalize")
 
-    colour_out_of_bounds_in_scope: bpy.props.BoolProperty(
-        name="out_of_bounds")
+    colour_limits: bpy.props.BoolProperty(
+        name="color limits")
+
+    multi_channel_sockets: bpy.props.BoolProperty(
+        name="multiplex", update=updateNode, description="sockets carry multiple layers of data")
 
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
         self.inputs.new(DATA_SOCKET, 'channel 1')
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'num_channels')
-        layout.prop(self, 'bitrate')
-        layout.prop(self, 'auto_normalize')
-        layout.prop(self, 'colour_out_of_bounds_in_scope')
+        col = layout.column(align=True)
+        
+        col.prop(self, 'num_channels')
+        col.prop(self, 'bitrate')
+        
+        col.separator()
+        row1 = col.row()
+        row1.prop(self, 'auto_normalize', toggle=True)
+        row1.prop(self, 'multi_channel_sockets', toggle=True)
+        
+        col.separator()
+        col.prop(self, 'colour_limits')
 
     def process(self):
         ...
