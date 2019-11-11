@@ -7,3 +7,4 @@ Viz
 
    viewer_bmesh
    viewer_metaball
+   viewer_waveform_output
