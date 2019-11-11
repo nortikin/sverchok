@@ -5,9 +5,12 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-import bpy
+import os
 import numpy as np
 import wave
+from contextlib import contextmanager
+
+import bpy
 # import mathutils
 # from mathutils import Vector
 # from bpy.props import FloatProperty, BoolProperty
@@ -16,6 +19,16 @@ from sverchok.data_structure import updateNode
 
 MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
+
+@contextmanager
+def open_wave_file(full_filepath_with_ext):
+
+    try:
+        write_wave = wave.Wave_write(full_filepath_with_ext)
+        yield write_wave
+    finally:
+        write_wave.close()
+
 
 
 class SvWaveformViewerOperator(bpy.types.Operator):
@@ -133,6 +146,26 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def process_wave(self):
         print('process wave pressed')
+        if not self.dirname and self.filename:
+            return
+        
+        #
+        # get safe filename, do not overwrite existing? - TODO
+        #
+        filepath = os.path.join(self.dirname, self.filename)
+        filetype = "wav"
+
+        full_filepath_with_ext = f"{filepath}.{filetype}"
+
+        with open_wave_file(full_filepath_with_ext) as write_wave:        
+            write_wave.setparams(self.get_waveparams())
+            write_wave.writeframes(self.get_wavedata())
+
+    def get_waveparams(self):
+        ...
+
+    def get_wavedata(self):
+        ...
 
     def set_dir(self, dirname):
         self.dirname = dirname
