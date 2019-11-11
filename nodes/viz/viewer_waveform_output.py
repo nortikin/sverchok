@@ -55,8 +55,10 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         name='num channels', default=1, min=1, max=MAX_SOCKETS,
         description='num channels interleaved', update=update_socket_count)
 
-    bitrate: bpy.props.IntProperty(
-        name="bitrate", min=8000, default=48000)
+    bits: bpy.props.IntProperty(name='bit rate', default=16, min=4, max=192)
+
+    sample_rate: bpy.props.IntProperty(
+        name="sample rate", min=8000, default=48000)
 
     auto_normalize: bpy.props.BoolProperty(
         name="normalize")
@@ -75,7 +77,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         
         col.prop(self, 'num_channels')
-        col.prop(self, 'bitrate')
+        col.prop(self, 'sample_rate')
+        col.prop(self, 'bits')
         
         col.separator()
         row1 = col.row()
