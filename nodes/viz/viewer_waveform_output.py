@@ -60,7 +60,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
 
     num_channels: bpy.props.IntProperty(
-        name='num channels', default=1, min=1, max=self.MAX_SOCKETS,
+        name='num channels', default=1, min=1, max=MAX_SOCKETS,
         description='num channels interleaved', update=update_socket_count)
 
     bitrate: bpy.props.IntProperty(
