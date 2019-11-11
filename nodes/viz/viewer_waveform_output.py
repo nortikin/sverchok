@@ -66,7 +66,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     bitrate: bpy.props.IntProperty(
         name="bitrate", min=8000, default=441000)
 
-    auto_normmalize: bpy.props.BoolProperty(
+    auto_normalize: bpy.props.BoolProperty(
         name="auto normalize")
 
     colour_out_of_bounds_in_scope: bpy.props.BoolProperty(
