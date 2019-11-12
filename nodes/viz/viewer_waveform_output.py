@@ -149,8 +149,14 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             write_wave.writeframes(self.get_wavedata(wave_params))
 
     def get_waveparams(self):
+        # reference http://blog.acipo.com/wave-generation-in-python/
         # (nchannels, sampwidth, framerate, nframes, comptype, compname)
-        return (self.num_channels, self.bits, self.sample_rate, self.num_frames, None, None)
+        
+        # sampwidth
+        # :    1 = 8bit, 
+        # :    2 = 16bit, (int values between +-32767)
+        # :    4 = 32bit?
+        return (self.num_channels, int(self.bits / 8), self.sample_rate, self.num_frames, None, None)
 
     def get_wavedata(self, wave_params):
         """
