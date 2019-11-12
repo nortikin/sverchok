@@ -160,7 +160,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         """
         if self.multi_channel_sockets:
             data = self.inputs[0].get()
-            if self.num_channels == 2:
+            if self.num_channels == 2 and len(data) == 2:
                 data = self.interleave(data)
         else:
             if self.num_channels == 2:
@@ -169,6 +169,17 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 data = self.interleave([data_left, data_right])
             elif self.num_channels == 1:
                 data = self.inputs[0].get()[0]
+        
+        return data
+
+    def interleave(data_left, data_right):
+        # if type data is two numpy arrays:
+        # ..
+        # else
+        flat_list = []
+        flat_add = flat_list.extend
+        _ = [flat_add((l, r)) for zip(data_left, data_right)]
+        return flat_list
 
     def set_dir(self, dirname):
         self.dirname = dirname
