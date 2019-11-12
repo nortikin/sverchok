@@ -145,9 +145,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         filetype = "wav"
 
         full_filepath_with_ext = f"{filepath}.{filetype}"
-        with wave.open(full_filepath_with_ext, 'wb') as write_wave:
+        with wave.open(full_filepath_with_ext, 'w') as write_wave:
             write_wave.setparams(wave_params)
-            write_wave.writeframes(wave_data)
+            write_wave.writeframesraw(wave_data)
 
     def get_waveparams(self, wave_data):
         # reference http://blog.acipo.com/wave-generation-in-python/
@@ -181,7 +181,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
         # at this point data is a single list.        
         self.sample_data_length = len(data)
-        data = "".join((wave.struct.pack('h', int(d)) for d in data))
+        # data = "".join((wave.struct.pack('h', int(d)) for d in data))
+        data = b''.join(wave.struct.pack('<h', int(d)) for d in data)
         return data
 
     def interleave(data_left, data_right):
