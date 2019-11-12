@@ -20,33 +20,37 @@ from sverchok.data_structure import updateNode
 MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
 
+class NodeTreeGetter():
+    __annotations__ = {}
+    __annotations__['idname'] = bpy.props.StringProperty(default='')
+    __annotations__['idtree'] = bpy.props.StringProperty(default='')
 
-class SvWaveformViewerOperator(bpy.types.Operator):
+    def get_node(self):
+        return bpy.data.node_groups[self.idtree].nodes[self.idname]
+
+
+class SvWaveformViewerOperator(bpy.types.Operator, NodeTreeGetter):
     bl_idname = "node.waveform_viewer_callback"
     bl_label = "Waveform Viewer Operator"
 
-    idname: bpy.props.StringProperty(default='')
-    idtree: bpy.props.StringProperty(default='')
     fn_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node()
         getattr(node, self.fn_name)()
         return {'FINISHED'}
 
 
-class SvWaveformViewerOperatorDP(bpy.types.Operator):
+class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
     bl_idname = "node.waveform_viewer_dirpick"
     bl_label = "Waveform Viewer Directory Picker"
 
-    idname: bpy.props.StringProperty(default='')
-    idtree: bpy.props.StringProperty(default='')
     filepath: bpy.props.StringProperty(
         name="File Path", description="Filepath used for writing waveform files",
         maxlen=1024, default="", subtype='FILE_PATH')
 
     def execute(self, context):
-        node = bpy.data.node_groups[self.idtree].nodes[self.idname]
+        node = self.get_node()
         node.set_dir(self.filepath)
         return {'FINISHED'}
 
