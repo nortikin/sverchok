@@ -184,7 +184,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         # else
         flat_list = []
         flat_add = flat_list.extend
-        _ = [flat_add((l, r)) for zip(data_left, data_right)]
+        _ = [flat_add((l, r)) for l, r in zip(data_left, data_right)]
         return flat_list
 
     def set_dir(self, dirname):
