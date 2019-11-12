@@ -18,3 +18,4 @@ Number
    range_map
    numbers
    scalar_mk3
+   oscillator

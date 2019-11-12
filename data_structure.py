@@ -208,7 +208,7 @@ list_match_func = {
     "XREF":   match_cross,
     "XREF2":  match_cross2
     }
-    
+
 
 #####################################################
 ################# list levels magic #################
@@ -274,6 +274,18 @@ def levelsOflist(lst):
     for n in lst:
         if n and isinstance(n, (list, tuple)):
             level += levelsOflist(n)
+        return level
+    return 0
+
+def levels_of_list_or_np(lst):
+    """calc list nesting only in countainment level integer"""
+    level = 1
+    for n in lst:
+        if isinstance(n, (list, tuple)):
+            level += levels_of_list_or_np(n)
+        elif isinstance(n, (np.ndarray)):
+            level += len(n.shape)
+
         return level
     return 0
 

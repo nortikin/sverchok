@@ -208,6 +208,7 @@
     ---
     SvGenFibonacci
     SvGenExponential
+    SvOscillatorNode
 
 ## Vector
     GenVectorsNode
