@@ -15,7 +15,8 @@ import bpy
 # from mathutils import Vector
 # from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, node_id
+from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
@@ -74,10 +75,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'SvWaveformViewer'
     bl_icon = 'FORCE_HARMONIC'
 
+    n_id: StringProperty(default='')
 
     def update_socket_count(self, context):
         ... # if self.num_channels < MAX_SOCKETS 
 
+    activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
 
     num_channels: bpy.props.IntProperty(
         name='num channels', default=1, min=1, max=MAX_SOCKETS,
@@ -134,14 +137,47 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             op = self.wrapper_tracked_ui_draw_op(col, cb, icon='CURSOR', text='WRITE')
             op.fn_name = "process_wave"
 
+        col.separator()
+        col.prop(self, 'activate', icon="DESKTOP")
+        if self.activate:
+            col.label(text="show the oscilloscope")
+
+
     def process(self):
-        ...
+        n_id = node_id(self)
+        nvBGL.callback_disable(n_id)
+
+        if self.activate:
+
+            # do stuff !!!
+            draw_data = {}
+
+            nvBGL.callback_enable(n_id, draw_data)
+
+
+    def free(self):
+        nvBGL.callback_disable(node_id(self))
+
+    def copy(self, node):
+        # reset n_id on copy
+        self.n_id = ''
+
+    def update(self):
+        # handle disconnecting sockets, also disconnect drawing to view?
+        if not ("channel 1" in self.inputs):
+            return
+        try:
+            if not self.inputs[0].other or self.inputs[1].other:
+                nvBGL.callback_disable(node_id(self))
+        except:
+            print('Waveform Viewer node update holdout (not a problem)')
 
     def process_wave(self):
         print('process wave pressed')
         if not self.dirname and self.filename:
             return
 
+        # could be cached. from process()
         wave_data = self.get_wavedata()
         wave_params = self.get_waveparams(wave_data)
 
