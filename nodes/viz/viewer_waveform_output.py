@@ -92,6 +92,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     multi_channel_sockets: bpy.props.BoolProperty(
         name="multiplex", update=updateNode, description="sockets carry multiple layers of data")
 
+    sample_data_length: bpy.props.IntProperty(min=0, name="sample data len")
+
     dirname: bpy.props.StringProperty()
     filename: bpy.props.StringProperty()
 
@@ -134,21 +136,19 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         print('process wave pressed')
         if not self.dirname and self.filename:
             return
-        
-        #
-        # get safe filename, do not overwrite existing? - TODO
-        #
-        wave_params = self.get_waveparams()
-      
+
+        wave_data = self.get_wavedata()
+        wave_params = self.get_waveparams(wave_data)
+
         filepath = os.path.join(self.dirname, self.filename)
         filetype = "wav"
 
         full_filepath_with_ext = f"{filepath}.{filetype}"
         with wave.open(full_filepath_with_ext, 'wb') as write_wave:
             write_wave.setparams(wave_params)
-            write_wave.writeframes(self.get_wavedata(wave_params))
+            write_wave.writeframes(b''.join(wave_data))
 
-    def get_waveparams(self):
+    def get_waveparams(self, wave_data):
         # reference http://blog.acipo.com/wave-generation-in-python/
         # (nchannels, sampwidth, framerate, nframes, comptype, compname)
         
@@ -156,25 +156,35 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         # :    1 = 8bit, 
         # :    2 = 16bit, (int values between +-32767)
         # :    4 = 32bit?
-        return (self.num_channels, int(self.bits / 8), self.sample_rate, self.num_frames, None, None)
+        num_frames = self.num_channels * self.sample_data_length
+        return (self.num_channels, int(self.bits / 8), self.sample_rate, num_frames, 'NONE', 'NONE')
 
-    def get_wavedata(self, wave_params):
+    def get_wavedata(self):
         """
         do they match? what convention to use to fill up one if needed..
         - copy opposite channel if channel data is short
         - repeat last channel value until data length matches longest
+
+        yikes, this logic blows...
         """
         if self.multi_channel_sockets:
-            data = self.inputs[0].get()
+            data = self.inputs[0].sv_get()
+
             if self.num_channels == 2 and len(data) == 2:
                 data = self.interleave(data)
+                self.sample_data_length = len(data)
+            else:
+                self.sample_data_length = len(data[0])
         else:
             if self.num_channels == 2:
-                data_left = self.inputs[0].get()[0]
-                data_right = self.inputs[1].get()[0]
+                data_left = self.inputs[0].sv_get()[0]
+                data_right = self.inputs[1].sv_get()[0]
                 data = self.interleave([data_left, data_right])
             elif self.num_channels == 1:
-                data = self.inputs[0].get()[0]
+                data = self.inputs[0].sv_get()[0]
+                data = [int(d) for d in data]
+            
+            self.sample_data_length = len(data)
         
         return data
 
@@ -184,7 +194,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         # else
         flat_list = []
         flat_add = flat_list.extend
-        _ = [flat_add((l, r)) for l, r in zip(data_left, data_right)]
+        _ = [flat_add((int(l), int(r))) for l, r in zip(data_left, data_right)]
         return flat_list
 
     def set_dir(self, dirname):
