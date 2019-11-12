@@ -8,6 +8,7 @@
 import os
 import numpy as np
 import wave
+import struct
 
 import bpy
 # import mathutils
@@ -146,7 +147,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         full_filepath_with_ext = f"{filepath}.{filetype}"
         with wave.open(full_filepath_with_ext, 'wb') as write_wave:
             write_wave.setparams(wave_params)
-            write_wave.writeframes(b''.join(wave_data))
+            write_wave.writeframes(wave_data)
 
     def get_waveparams(self, wave_data):
         # reference http://blog.acipo.com/wave-generation-in-python/
@@ -182,10 +183,10 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 data = self.interleave([data_left, data_right])
             elif self.num_channels == 1:
                 data = self.inputs[0].sv_get()[0]
-                data = [int(d) for d in data]
             
             self.sample_data_length = len(data)
         
+        data = "".join((wave.struct.pack('h', int(d)) for d in data))
         return data
 
     def interleave(data_left, data_right):
