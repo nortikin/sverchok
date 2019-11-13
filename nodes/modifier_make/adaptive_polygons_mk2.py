@@ -762,7 +762,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         zrotations_s = self.inputs['Z_Rotation'].sv_get(deepcopy=False)
         wcoefs_s = self.inputs['W_Coef'].sv_get(deepcopy=False)
         if 'FrameWidth' in self.inputs:
-            frame_widths_s = self.inputs['FrameWidth'].sv_get(deepcopy=False)
+            frame_widths_s = self.inputs['FrameWidth'].sv_get(deepcopy=True)
         else:
             frame_widths_s = [[0.5]]
         if 'PolyRotation' in self.inputs:
@@ -776,13 +776,17 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if self.matching_mode == 'PERFACE':
             verts_donor_s = [verts_donor_s]
             faces_donor_s = [faces_donor_s]
+            #self.info("FW: %s", frame_widths_s)
             #frame_widths_s = [frame_widths_s]
         objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
+        self.info("N objects: %s", len(list(zip(*objects))))
         for verts_recpt, faces_recpt, verts_donor, faces_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
             n_faces_recpt = len(faces_recpt)
             fullList(zcoefs, n_faces_recpt)
             fullList(zoffsets, n_faces_recpt)
             fullList(zrotations, n_faces_recpt)
+            if get_data_nesting_level(frame_widths) < 1:
+                frame_widths = [frame_widths]
             fullList(frame_widths, n_faces_recpt)
             fullList(wcoefs, n_faces_recpt)
             fullList(facerots, n_faces_recpt)
