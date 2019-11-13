@@ -17,7 +17,7 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 
 # import mathutils
-# from mathutils import Vector
+from mathutils import Vector
 # from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
@@ -38,19 +38,28 @@ def advanced_grid_xy(x, y, args):
     this draws 2 shaders
 
     """
-
     geom, config = args
-    back_color, grid_color, line_color = config.palette
+    # back_color, grid_color, line_color = config.palette
 
     # draw background, this could be cached......
-    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-    batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
-    shader.bind()
-    shader.uniform_float("color", back_color)
-    batch.draw(shader)
+    # shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    # batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
+    # shader.bind()
+    # shader.uniform_float("color", back_color)
+    # batch.draw(shader)
 
     # draw grid and graph
-    config.batch.draw(config.shader)    
+    # config.batch.draw(config.shader)    
+
+    shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
+    batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
+    
+    shader.bind()
+    shader.uniform_float("vpw", config.grid.w)
+    shader.uniform_float("vph", config.grid.h)
+    shader.uniform_float("offset", [0.2, 0.4])
+    shader.uniform_int("pitch", [20, 20])
+    batch.draw(shader)
 
 
 class NodeTreeGetter():
@@ -93,10 +102,10 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
         return {'RUNNING_MODAL'}
 
 grid_vertex_shader = """
-attribute vec4 aVertexPosition;
+attribute vec4 pos;
 
 void main(void) {
-  gl_Position = aVertexPosition;
+  gl_Position = pos;
 }
 
 """
@@ -131,10 +140,13 @@ void main() {
 
 
 class gridshader():
-    def __init__(self, w, h):
+    def __init__(self, w, h, loc):
+        x, y = loc
+        self.w = w
+        self.h = h
         self.vertex_shader = grid_vertex_shader
         self.fragment_shader = grid_fragment_shader
-        self.background_coords = [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]
+        self.background_coords = [(x, y, 0, 0), (x + w, y, 0, 0), (w + x, y - h, 0, 0), (x, y - h, 0, 0)]
         self.background_indices = [(0, 1, 2), (0, 2, 3)]
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
@@ -151,7 +163,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'SvWaveformViewer'
     bl_icon = 'FORCE_HARMONIC'
 
-    n_id: StringProperty(default='')
+    n_id: bpy.props.StringProperty(default='')
 
     def update_socket_count(self, context):
         ... # if self.num_channels < MAX_SOCKETS 
@@ -250,6 +262,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config = lambda: None
             config.loc = (x, y)
             config.scale = scale
+            config.w = 120
+            config.h = 80
+            config.grid = gridshader(config.w, config.h, (x, y))
+
+            geom = lambda: None
 
             draw_data = {
                 'mode': 'custom_function',
