@@ -53,6 +53,7 @@ class RecptFaceData(object):
     def __init__(self):
         self.vertices_co = []
         self.vertices_normal = []
+        self.vertices_idxs = []
         self.normal = None
         self.center = None
         self.frame_width = None
@@ -61,6 +62,7 @@ class RecptFaceData(object):
         r = RecptFaceData()
         r.vertices_co = self.vertices_co[:]
         r.vertices_normal = self.vertices_normal[:]
+        r.vertices_idxs = self.vertices_idxs[:]
         r.normal = self.normal
         r.center = self.center
         r.frame_width = self.frame_width
@@ -470,7 +472,9 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
         if map_mode == 'ASIS':
             # Leave this recipient's face as it was - as a single face.
-            output.verts_out.append([verts_recpt[i] for i in recpt_face])
+            verts = recpt_face_data.vertices_co[:]
+            n = len(verts)
+            output.verts_out.append(verts)
             output.faces_out.append([list(range(n))])
 
         elif map_mode == 'TRI':
@@ -595,6 +599,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     sub_recpt = recpt_face_data.copy()
                     sub_recpt.vertices_co = tri_face
                     sub_recpt.vertices_normal = tri_normal
+                    sub_recpt.vertices_idxs = [0, 1, 2]
                     self._process_face(sub_map_mode, output, sub_recpt, donor, zcoef, zoffset, angle, wcoef, facerot)
             else:
                 inner_verts = [vert.lerp(recpt_face_data.center, recpt_face_data.frame_width)
@@ -621,6 +626,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     sub_recpt = recpt_face_data.copy()
                     sub_recpt.vertices_co = quad_face
                     sub_recpt.vertices_normal = quad_normal
+                    sub_recpt.vertices_idxs = [0, 1, 2, 3]
                     self._process_face(sub_map_mode, output, sub_recpt, donor, zcoef, zoffset, angle, wcoef, facerot)
 
     def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask):
@@ -670,6 +676,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             recpt_face_data.center = recpt_face_bm.calc_center_median()
             recpt_face_data.vertices_co = [bm.verts[i].co for i in recpt_face]
             recpt_face_data.vertices_normal = [bm.verts[i].normal for i in recpt_face]
+            recpt_face_data.vertices_idxs = recpt_face[:]
             if not isinstance(frame_width, (int, float)):
                 raise Exception(f"Unexpected data type for frame_width: {frame_width}")
             recpt_face_data.frame_width = frame_width
