@@ -104,7 +104,7 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
 grid_vertex_shader = """
 attribute vec4 pos;
 
-void main(void) {
+void main() {
   gl_Position = pos;
 }
 
