@@ -102,7 +102,7 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
         return {'RUNNING_MODAL'}
 
 grid_vertex_shader = """
-attribute vec4 pos;
+in vec3 pos;
 
 void main() {
   gl_Position = pos;
@@ -113,17 +113,17 @@ grid_fragment_shader = """
 
 precision mediump float;
 
-uniform float vpw; // Width, in pixels
-uniform float vph; // Height, in pixels
+uniform float vpw;
+uniform float vph;
 
-uniform vec2 offset; // e.g. [-0.023500000000000434 0.9794000000000017], currently the same as the x/y offset in the mvMatrix
-uniform vec2 pitch;  // e.g. [50 50]
+uniform vec2 offset;
+uniform vec2 pitch;
 
 void main() {
   float lX = gl_FragCoord.x / vpw;
   float lY = gl_FragCoord.y / vph;
 
-  float scaleFactor = 10000.0;
+  float scaleFactor = 10.0;
 
   float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
   float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
@@ -146,7 +146,7 @@ class gridshader():
         self.h = h
         self.vertex_shader = grid_vertex_shader
         self.fragment_shader = grid_fragment_shader
-        self.background_coords = [(x, y, 0, 0), (x + w, y, 0, 0), (w + x, y - h, 0, 0), (x, y - h, 0, 0)]
+        self.background_coords = [(x, y, 0), (x + w, y, 0), (w + x, y - h, 0), (x, y - h, 0)]
         self.background_indices = [(0, 1, 2), (0, 2, 3)]
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
