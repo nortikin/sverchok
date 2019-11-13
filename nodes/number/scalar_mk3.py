@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import *
+from math import pi, e
 from fractions import gcd
 
 import bpy
@@ -24,8 +24,9 @@ from bpy.props import EnumProperty, FloatProperty, IntProperty, BoolProperty
 
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
-from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
+from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy, recurse_f_level_control)
+import numpy as np
 # pylint: disable=C0326
 
 # Rules for modification:
@@ -34,51 +35,51 @@ from sverchok.utils.sv_itertools import (recurse_fx, recurse_fxy)
 
 func_dict = {
     "---------------OPS" : "#---------------------------------------------------#",
-    "ADD":         (0,   lambda x, y: x+y,                ('ss s'), "Add"),
-    "SUB":         (1,   lambda x, y: x-y,                ('ss s'), "Sub"),
-    "MUL":         (2,   lambda x, y: x*y,                ('ss s'), "Multiply"),
-    "DIV":         (3,   lambda x, y: x/y,                ('ss s'), "Divide"),
-    "INTDIV":      (4,   lambda x, y: x//y,               ('ss s'), "Int Division"),
-    "SQRT":        (10,  lambda x: sqrt(fabs(x)),          ('s s'), "Squareroot"),
-    "EXP":         (11,  exp,                              ('s s'), "Exponent"),
-    "POW":         (12,  lambda x, y: x**y,               ('ss s'), "Power y"),
-    "POW2":        (13,  lambda x: x*x,                    ('s s'), "Power 2"),
-    "LN":          (14,  log,                              ('s s'), "log"),
-    "LOG10":       (20,  log10,                            ('s s'), "log10"),
-    "LOG1P":       (21,  log1p,                            ('s s'), "log1p"),
-    "ABS":         (30,  fabs,                             ('s s'), "Absolute"),
-    "NEG":         (31,  lambda x: -x,                     ('s s'), "Negate"),
-    "CEIL":        (32,  ceil,                             ('s s'), "Ceiling"),
-    "FLOOR":       (33,  floor,                            ('s s'), "floor"),
-    "MIN":         (40,  min,                             ('ss s'), "min"),
-    "MAX":         (42,  max,                             ('ss s'), "max"),
-    "ROUND":       (50,  round,                            ('s s'), "Round"),
-    "ROUND-N":     (51,  lambda x, y: round(x, int(y)),   ('ss s'), "Round N",),
-    "FMOD":        (52,  fmod,                            ('ss s'), "Fmod"),
-    "MODULO":      (53,  lambda x, y: (x % y),            ('ss s'), "modulo"),
-    "MEAN":        (54,  lambda x, y: 0.5*(x + y),        ('ss s'), "mean"),
-    "GCD":         (55,  gcd,                             ('ss s'), "gcd"),
+    "ADD":         (0,   lambda x : x[0]+x[1],              ('ss s'), "Add"),
+    "SUB":         (1,   lambda x : x[0]-x[1],             ('ss s'), "Sub"),
+    "MUL":         (2,   lambda x: x[0]*x[1],              ('ss s'), "Multiply"),
+    "DIV":         (3,   lambda x: x[0]/x[1],              ('ss s'), "Divide"),
+    "INTDIV":      (4,   lambda x: x[0]//x[1],             ('ss s'), "Int Division"),
+    "SQRT":        (10,  lambda x: np.sqrt(np.fabs(x)),    ('s s'),  "Squareroot"),
+    "EXP":         (11,  lambda x: np.exp(x),              ('s s'),  "Exponent"),
+    "POW":         (12,  lambda x: x[0]**x[1],             ('ss s'), "Power y"),
+    "POW2":        (13,  lambda x: x*x,                    ('s s'),  "Power 2"),
+    "LN":          (14,  np.log,                           ('s s'),  "log"),
+    "LOG10":       (20,  np.log10,                         ('s s'),  "log10"),
+    "LOG1P":       (21,  np.log1p,                         ('s s'),  "log1p"),
+    "ABS":         (30,  np.fabs,                          ('s s'),  "Absolute"),
+    "NEG":         (31,  lambda x: -x,                     ('s s'),  "Negate"),
+    "CEIL":        (32,  np.ceil,                          ('s s'),  "Ceiling"),
+    "FLOOR":       (33,  np.floor,                         ('s s'),  "floor"),
+    "MIN":         (40,  lambda x: np.minimum(x[0],x[1]),  ('ss s'), "min"),
+    "MAX":         (42,  lambda x: np.maximum(x[0],x[1]),  ('ss s'), "max"),
+    "ROUND":       (50,  np.round,                         ('s s'),  "Round"),
+    "ROUND-N":     (51,  lambda x, y: round(x, int(y)),    ('ss s'), "Round N",),
+    "FMOD":        (52,  lambda x: np.fmod(x[0], x[1]),    ('ss s'), "Fmod"),
+    "MODULO":      (53,  lambda x: (x[0] % x[1]),          ('ss s'), "modulo"),
+    "MEAN":        (54,  lambda x: 0.5*(x[0] + x[1]),      ('ss s'), "mean"),
+    "GCD":         (55,  gcd,                              ('ss s'), "gcd"),
     "--------------TRIG" : "#-------------------------------------------------#",
-    "SINCOS":      (60,  lambda x: (sin(x), cos(x)),      ('s ss'), "Sin & Cos"),
-    "SINE":        (61,  sin,                              ('s s'), "Sine"),
-    "COSINE":      (62,  cos,                              ('s s'), "Cosine"),
-    "TANGENT":     (63,  tan,                              ('s s'), "Tangent"),
-    "ARCSINE":     (64,  asin,                             ('s s'), "Arcsine"),
-    "ARCCOSINE":   (65,  acos,                             ('s s'), "Arccosine"),
-    "ARCTANGENT":  (66,  atan,                             ('s s'), "Arctangent"),
-    "ACOSH":       (67,  acosh,                            ('s s'), "acosh"),
-    "ASINH":       (68,  asinh,                            ('s s'), "asinh"),
-    "ATANH":       (69,  atanh,                            ('s s'), "atanh"),
-    "COSH":        (70,  cosh,                             ('s s'), "cosh"),
-    "SINH":        (71,  sinh,                             ('s s'), "sinh"),
-    "TANH":        (72,  tanh,                             ('s s'), "tanh"),
-    "ATAN2":       (79,  lambda x, y: atan2(y,x),         ('ss s'), "atan2"),
-    "DEGREES":     (80,  degrees,                          ('s s'), "Degrees"),
-    "RADIANS":     (82,  radians,                          ('s s'), "Radians"),
-    "SINXY":       (83,  lambda x, y: sin(x*y),           ('ss s'), "sin(x*y)"),
-    "COSXY":       (84,  lambda x, y: cos(x*y),           ('ss s'), "cos(x*y)"),
-    "YSINX":       (85,  lambda x, y: y * sin(x),         ('ss s'), "y * sin(x)"),
-    "YCOSX":       (86,  lambda x, y: y * cos(x),         ('ss s'), "y * cos(x)"),
+    "SINCOS":      (60,  lambda x: (np.sin(x), np.cos(x)), ('s ss'), "Sin & Cos"),
+    "SINE":        (61,  np.sin,                           ('s s'),  "Sine"),
+    "COSINE":      (62,  np.cos,                           ('s s'),  "Cosine"),
+    "TANGENT":     (63,  np.tan,                           ('s s'),  "Tangent"),
+    "ARCSINE":     (64,  np.arcsin,                        ('s s'),  "Arcsine"),
+    "ARCCOSINE":   (65,  np.arccos,                        ('s s'),  "Arccosine"),
+    "ARCTANGENT":  (66,  np.arctan,                        ('s s'),  "Arctangent"),
+    "ACOSH":       (67,  np.arccosh,                       ('s s'),  "acosh"),
+    "ASINH":       (68,  np.arcsinh,                       ('s s'),  "asinh"),
+    "ATANH":       (69,  np.arctanh,                       ('s s'),  "atanh"),
+    "COSH":        (70,  np.cosh,                          ('s s'),  "cosh"),
+    "SINH":        (71,  np.sinh,                          ('s s'),  "sinh"),
+    "TANH":        (72,  np.tanh,                          ('s s'),  "tanh"),
+    "ATAN2":       (79,  lambda x: np.arctan2(x[1],x[0]),  ('ss s'), "atan2"),
+    "DEGREES":     (80,  np.degrees,                       ('s s'),  "Degrees"),
+    "RADIANS":     (82,  np.radians,                       ('s s'),  "Radians"),
+    "SINXY":       (83,  lambda x: np.sin(x[0]*x[1]),      ('ss s'), "sin(x*y)"),
+    "COSXY":       (84,  lambda x: np.cos(x[0]*x[1]),      ('ss s'), "cos(x*y)"),
+    "YSINX":       (85,  lambda x: x[1] * np.sin(x[0]),    ('ss s'), "y * sin(x)"),
+    "YCOSX":       (86,  lambda x: x[1] * np.cos(x[0]),    ('ss s'), "y * cos(x)"),
     "-------------CONST" : "#---------------------------------------------------#",
     "PI":          (90,  lambda x: pi * x,                 ('s s'), "pi * x"),
     "TAU":         (100, lambda x: pi * 2 * x,             ('s s'), "tau * x"),
@@ -111,6 +112,24 @@ def property_change(node, context, origin):
         pass
     updateNode(node, context)
 
+def math_numpy(params, constant, matching_f):
+    result = []
+    func, matching_mode, out_numpy = constant
+    params = matching_f(params)
+    matching_numpy = numpy_list_match_func[matching_mode]
+    for props in zip(*params):
+
+        np_prop = [np.array(prop) for prop in props]
+
+        if len(np_prop)== 1:
+            res = func(np_prop[0])
+        else:
+            regular_prop = matching_numpy(np_prop)
+            res = func(regular_prop)
+
+        result.append(res if out_numpy else res.tolist())
+
+    return result
 
 class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Scalar: Add, Sine... '''
@@ -142,6 +161,17 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         items=mode_options, description="offers int / float selection for socket 2",
         default="Float", update=lambda s, c: property_change(s, c, 'input_mode_two'))
 
+    list_match: EnumProperty(
+        name="List Match",
+        description="Behavior on different list lengths",
+        items=numpy_list_match_modes, default="REPEAT",
+        update=updateNode)
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
+
     def draw_label(self):
         num_inputs = len(self.inputs)
         label = [self.current_op]
@@ -168,13 +198,19 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.row().prop(self, 'input_mode_one', text="input 1")
         if len(self.inputs) == 2:
             layout.row().prop(self, 'input_mode_two', text="input 2")
+        if self.current_op not in ['GCD', 'ROUND-N']:
+            layout.row().prop(self, 'list_match', expand=False)
+            layout.prop(self, "output_numpy", expand=False)
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "current_op", text="Function")
         layout.prop_menu_enum(self, "input_mode_one", text="Input 1 number type")
         if len(self.inputs) == 2:
             layout.prop_menu_enum(self, "input_mode_two", text="Input 2 number type")
-    
+        if self.current_op not in ['GCD', 'ROUND-N']:
+            layout.prop_menu_enum(self, "list_match", text="List Match")
+            layout.prop(self, "output_numpy", expand=False)
+
     def migrate_from(self, old_node):
         self.current_op = old_node.current_op
 
@@ -209,24 +245,23 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
-        signature = (len(self.inputs), len(self.outputs))
-
-        x = self.inputs['x'].sv_get(deepcopy=False)
-        if signature == (2, 1):
-            y = self.inputs['y'].sv_get(deepcopy=False)
-
         if self.outputs[0].is_linked:
-            result = []
             current_func = func_from_mode(self.current_op)
-            if signature == (1, 1):
-                result = recurse_fx(x, current_func)
-            elif signature == (2, 1):
-                result = recurse_fxy(x, y, current_func)
-            elif signature == (1, 2):
-                # special case at the moment
-                result = recurse_fx(x, sin)
-                result2 = recurse_fx(x, cos)
+            params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]
+            matching_f = list_match_func[self.list_match]
+            desired_levels = [2 for p in params]
+
+            if self.current_op in ['GCD', 'ROUND-N']:
+                result = recurse_fxy(params[0], params[1], current_func)
+            elif self.current_op  == 'SINCOS':
+                ops = [np.sin, self.list_match, self.output_numpy]
+                result = recurse_f_level_control(params, ops, math_numpy, matching_f, desired_levels)
+                ops2 = [np.cos, self.list_match, self.output_numpy]
+                result2 = recurse_f_level_control(params, ops2, math_numpy, matching_f, desired_levels)
                 self.outputs[1].sv_set(result2)
+            else:
+                ops = [current_func, self.list_match, self.output_numpy]
+                result = recurse_f_level_control(params, ops, math_numpy, matching_f, desired_levels)
 
             self.outputs[0].sv_set(result)
 

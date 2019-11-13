@@ -6,6 +6,7 @@ Functionality
 
 This node creates a oscillation signal from a lineal range.
 
+This node will accept lists of flat NumPy arrays.
 
 Inputs & Parameters
 -------------------

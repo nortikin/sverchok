@@ -22,7 +22,7 @@ from bpy.props import EnumProperty, FloatProperty, BoolProperty
 
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, list_match_func, list_match_modes
+from sverchok.data_structure import updateNode, list_match_func, list_match_modes, numpy_list_match_modes, numpy_list_match_func
 from sverchok.utils.sv_itertools import (recurse_f_level_control)
 from sverchok.utils.geom import LinearSpline, CubicSpline
 import numpy as np
@@ -37,13 +37,13 @@ mode_Items = [
 
 def oscillator(params, constant, matching_f):
     result = []
-    mode, spline_func, knots, out_numpy = constant
+    mode, spline_func, knots, match_mode, out_numpy = constant
     params = matching_f(params)
-
+    numpy_match = numpy_list_match_func[match_mode]
     for props in zip(*params):
-        regular_prop = matching_f(props[:5])
         wave = props[5]
-        val, amplitude, period, phase, offset = [np.array(prop) for prop in regular_prop]
+        np_props = [np.array(prop) for prop in props[:5]]
+        val, amplitude, period, phase, offset = numpy_match(np_props)
 
         if mode == 'Sine':
             res = amplitude * np.sin((val / period + phase) * pi*2) + offset
@@ -121,7 +121,7 @@ class SvOscillatorNode(bpy.types.Node, SverchCustomTreeNode):
     list_match: EnumProperty(
         name="List Match",
         description="Behavior on different list lengths",
-        items=list_match_modes, default="REPEAT",
+        items=numpy_list_match_modes, default="REPEAT",
         update=updateNode)
 
     output_numpy: BoolProperty(
@@ -183,7 +183,7 @@ class SvOscillatorNode(bpy.types.Node, SverchCustomTreeNode):
             matching_f = list_match_func[self.list_match]
             spline_func = CubicSpline if self.wave_interp_mode == 'SPL' else LinearSpline
             desired_levels = [2, 2, 2, 2, 2, 3]
-            ops = [self.current_op, spline_func, self.knot_mode, self.output_numpy]
+            ops = [self.current_op, spline_func, self.knot_mode, self.list_match, self.output_numpy]
             result = recurse_f_level_control(params, ops, oscillator, matching_f, desired_levels)
 
             self.outputs[0].sv_set(result)

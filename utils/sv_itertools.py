@@ -124,6 +124,7 @@ def recurse_f_level_control(params, constant, main_func, matching_f, desired_lev
         and the desired_levels should be like [1, 2, 1, 3...] one level per parameter'''
     input_levels = [levels_of_list_or_np(p) for p in params]
     over_levels = [lv > dl for lv, dl in zip(input_levels, desired_levels)]
+    print(over_levels)
     if any(over_levels):
         p_temp = []
         result = []
