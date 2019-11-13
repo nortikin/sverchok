@@ -131,9 +131,9 @@ def math_numpy(params, constant, matching_f):
 
     return result
 
-class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     '''Scalar: Add, Sine... '''
-    bl_idname = 'SvScalarMathNodeMK3'
+    bl_idname = 'SvScalarMathNodeMK4'
     bl_label = 'Scalar Math'
     sv_icon = 'SV_SCALAR_MATH'
 
@@ -266,5 +266,5 @@ class SvScalarMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             self.outputs[0].sv_set(result)
 
 
-classes = [SvScalarMathNodeMK3]
+classes = [SvScalarMathNodeMK4]
 register, unregister = bpy.utils.register_classes_factory(classes)
