@@ -11,6 +11,11 @@ import wave
 import struct
 
 import bpy
+import blf
+import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
+
 # import mathutils
 # from mathutils import Vector
 # from bpy.props import FloatProperty, BoolProperty
@@ -20,6 +25,33 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
+
+"""
+grid shader borrowed from : https://stackoverflow.com/a/24792822/1243487
+
+"""
+
+def advanced_grid_xy(x, y, args):
+    """ 
+    x and y are passed by default so you could add font content 
+
+    this draws 2 shaders
+
+    """
+
+    geom, config = args
+    back_color, grid_color, line_color = config.palette
+
+    # draw background, this could be cached......
+    shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+    batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
+    shader.bind()
+    shader.uniform_float("color", back_color)
+    batch.draw(shader)
+
+    # draw grid and graph
+    config.batch.draw(config.shader)    
+
 
 class NodeTreeGetter():
     __annotations__ = {}
@@ -60,6 +92,50 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
+grid_vertex_shader = """
+attribute vec4 aVertexPosition;
+
+void main(void) {
+  gl_Position = aVertexPosition;
+}
+
+"""
+grid_fragment_shader = """
+
+precision mediump float;
+
+uniform float vpw; // Width, in pixels
+uniform float vph; // Height, in pixels
+
+uniform vec2 offset; // e.g. [-0.023500000000000434 0.9794000000000017], currently the same as the x/y offset in the mvMatrix
+uniform vec2 pitch;  // e.g. [50 50]
+
+void main() {
+  float lX = gl_FragCoord.x / vpw;
+  float lY = gl_FragCoord.y / vph;
+
+  float scaleFactor = 10000.0;
+
+  float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
+  float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
+
+  if (int(mod(offX, pitch[0])) == 0 ||
+      int(mod(offY, pitch[1])) == 0) {
+    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
+  } else {
+    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+  }
+}
+
+"""
+
+
+class gridshader():
+    def __init__(self, w, h):
+        self.vertex_shader = grid_vertex_shader
+        self.fragment_shader = grid_fragment_shader
+        self.background_coords = [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]
+        self.background_indices = [(0, 1, 2), (0, 2, 3)]
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     
@@ -79,6 +155,25 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def update_socket_count(self, context):
         ... # if self.num_channels < MAX_SOCKETS 
+
+    def get_drawing_attributes(self):
+        """
+        adjust render location based on preference multiplier setting
+        """
+        x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+
+        try:
+            with sv_preferences() as prefs:
+                multiplier = prefs.render_location_xy_multiplier
+                scale = prefs.render_scale
+        except:
+            # print('did not find preferences - you need to save user preferences')
+            multiplier = 1.0
+            scale = 1.0
+        x, y = [x * multiplier, y * multiplier]
+
+        return x, y, scale, multiplier
+
 
     activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
 
@@ -150,8 +245,19 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate:
 
-            # do stuff !!!
-            draw_data = {}
+            x, y, scale, multiplier = self.get_drawing_attributes()
+
+            config = lambda: None
+            config.loc = (x, y)
+            config.scale = scale
+
+            draw_data = {
+                'mode': 'custom_function',
+                'tree_name': self.id_data.name[:],
+                'loc': (x, y),
+                'custom_function': advanced_grid_xy,
+                'args': (geom, config)
+            }
 
             nvBGL.callback_enable(n_id, draw_data)
 
