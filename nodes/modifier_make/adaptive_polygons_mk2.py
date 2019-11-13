@@ -779,7 +779,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             #self.info("FW: %s", frame_widths_s)
             #frame_widths_s = [frame_widths_s]
         objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
-        self.info("N objects: %s", len(list(zip(*objects))))
+        #self.info("N objects: %s", len(list(zip(*objects))))
         for verts_recpt, faces_recpt, verts_donor, faces_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
             n_faces_recpt = len(faces_recpt)
             fullList(zcoefs, n_faces_recpt)
