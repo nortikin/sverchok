@@ -44,31 +44,26 @@ grid_vertex_shader = '''
 grid_fragment_shader = '''
 
     precision mediump float;
-    // in vec3 position;
-    // uniform float vpw;
-    // uniform float vph;
-    // uniform vec2 offset;
-    // uniform vec2 pitch;
 
-    //// varying offX;
-    //// varying offY;
+    uniform vec2 offset;
+    uniform vec2 pitch;
+
     out vec4 fragColor;
 
     void main()
     {
-        // float vpw = 30.0;
-        // float vph = 40.0;
-        // float scaleFactor = 10.0;
 
-        // float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
-        // float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
+        float scaleFactor = 10.0;
 
-        // if (int(mod(offX, pitch[0])) == 0 || int(mod(offY, pitch[1])) == 0) {
-        //     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
-        // } else {
-        //     gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-        // }
-        fragColor = vec4(1.0, 0.8, 0.8, 1.0);
+        float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
+        float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
+
+        if (int(mod(offX, pitch[0])) == 0 || int(mod(offY, pitch[1])) == 0) {
+            fragColor = vec4(0.0, 0.0, 0.0, 0.5);
+        } else {
+            fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+
     }
 
 '''
@@ -89,25 +84,14 @@ def advanced_grid_xy(x, y, args):
     """
     geom, config = args
 
-    # print('w', config.grid.w)
-    # print('h', config.grid.h)
-    # print('bc', config.grid.background_coords)
-    # print('bi', config.grid.background_indices)
-    # print('vs', config.grid.vertex_shader)
-    # print('fs', config.grid.fragment_shader)
-
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
-    # shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
-    # shader.bind()
-    # shader.uniform_float("u_mvp", matrix)
-    # shader.uniform_float("vpw", config.grid.w)
-    # shader.uniform_float("vph", config.grid.h)
-    # shader.uniform_float("offset", (0.2, 0.4))
-    # shader.uniform_float("pitch", (20, 20))
-    # back_color = (0.243299, 0.590403, 0.836084, 1.00)
-    # shader.uniform_float("color", back_color)
+    shader.bind()
+    # shader.uniform_float('vpw', 60.0) # config.grid.w)
+    # shader.uniform_float('vph', 40.0) # config.grid.h)
+    shader.uniform_float('offset', (0.2, 0.4))
+    shader.uniform_float('pitch', (20, 20))
     batch.draw(shader)
 
 
