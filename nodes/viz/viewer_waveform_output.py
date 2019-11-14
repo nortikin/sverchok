@@ -22,6 +22,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.ui import bgl_callback_nodeview as nvBGL
+# from sverchok.ui import bgl_callback_3dview as v3dBGL
 
 MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
@@ -33,35 +34,41 @@ grid shader borrowed from : https://stackoverflow.com/a/24792822/1243487
 
 grid_vertex_shader = '''
     in vec2 pos;
-
     void main()
     {
-        gl_Position = vec4(pos.x, pos.y, 0.0, 1.0);
+        gl_Position = vec4(pos.x, pos.y, 0.0f, 1.0f);
     }
 
 '''
 
 grid_fragment_shader = '''
 
+    precision mediump float;
+    // in vec3 position;
     // uniform float vpw;
     // uniform float vph;
-    uniform vec2 offset;
-    uniform vec2 pitch;
+    // uniform vec2 offset;
+    // uniform vec2 pitch;
+
+    //// varying offX;
+    //// varying offY;
+    out vec4 fragColor;
 
     void main()
     {
-        float vpw = 30.0;
-        float vph = 40.0;
-        float scaleFactor = 10.0;
+        // float vpw = 30.0;
+        // float vph = 40.0;
+        // float scaleFactor = 10.0;
 
-        float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
-        float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
+        // float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
+        // float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
 
-        if (int(mod(offX, pitch[0])) == 0 || int(mod(offY, pitch[1])) == 0) {
-            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
-        } else {
-            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-        }
+        // if (int(mod(offX, pitch[0])) == 0 || int(mod(offY, pitch[1])) == 0) {
+        //     gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
+        // } else {
+        //     gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        // }
+        fragColor = vec4(1.0, 0.8, 0.8, 1.0);
     }
 
 '''
@@ -69,8 +76,8 @@ grid_fragment_shader = '''
 class gridshader():
     def __init__(self, w, h, loc):
         x, y = loc
-        self.w = w
-        self.h = h
+        self.w = float(w)
+        self.h = float(h)
         self.vertex_shader = grid_vertex_shader
         self.fragment_shader = grid_fragment_shader
         self.background_coords = [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]
@@ -81,7 +88,6 @@ def advanced_grid_xy(x, y, args):
     x and y are passed by default so you could add font content 
     """
     geom, config = args
-    # matrix = context.region_data.perspective_matrix
 
     # print('w', config.grid.w)
     # print('h', config.grid.h)
@@ -91,14 +97,17 @@ def advanced_grid_xy(x, y, args):
     # print('fs', config.grid.fragment_shader)
 
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
+    # shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
-    shader.bind()
+    # shader.bind()
     # shader.uniform_float("u_mvp", matrix)
     # shader.uniform_float("vpw", config.grid.w)
     # shader.uniform_float("vph", config.grid.h)
-    shader.uniform_float("offset", (0.2, 0.4))
-    shader.uniform_float("pitch", (20, 20))
+    # shader.uniform_float("offset", (0.2, 0.4))
+    # shader.uniform_float("pitch", (20, 20))
+    # back_color = (0.243299, 0.590403, 0.836084, 1.00)
+    # shader.uniform_float("color", back_color)
     batch.draw(shader)
 
 
@@ -251,8 +260,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         if self.activate:
 
             x, y, scale, multiplier = self.get_drawing_attributes()
-            w = 120.0
-            h = 80.0
+            x, y = (0, 0)
+            w = 220.0
+            h = 60.0
             grid_data = gridshader(w, h, (x, y))
 
             config = lambda: None
@@ -261,6 +271,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.grid = grid_data
 
             geom = lambda: None
+            geom.luxe = 20
 
             draw_data = {
                 'mode': 'custom_function',
@@ -270,7 +281,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 'args': (geom, config)
             }
 
-            nvBGL.callback_enable(n_id, draw_data)
+            nvBGL.callback_enable(self.n_id, draw_data)
 
 
     def free(self):
