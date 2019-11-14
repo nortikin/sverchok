@@ -17,7 +17,7 @@ supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
 common_nodes = [
     ['GenVectorsNode', 'VectorsOutNode'],
     ['SvNumberNode', 'GenListRangeIntNode', 'SvGenFloatRange'],
-    ['SvScalarMathNodeMK3', 'SvVectorMathNodeMK2'],
+    ['SvScalarMathNodeMK4', 'SvVectorMathNodeMK2'],
     ['---', 'NodeReroute']
 ]
 
@@ -111,7 +111,7 @@ def add_connection(tree, bl_idname_new_node, offset):
                 # connect_stethoscope to first visible output socket of active node
                 links.new(socket, inputs[0])
                 break
-            
+
             tree.update()   # without this the node won't show output until an update is triggered manually
             # existing_node.process_node(None)
 

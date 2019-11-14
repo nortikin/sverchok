@@ -257,7 +257,7 @@ class DefaultMacros():
                         math_node.current_op = 'SCALAR'
                         sorted_nodes =[sorted_nodes[1], sorted_nodes[0]]
                     else:
-                        math_node = nodes.new('SvScalarMathNodeMK3')
+                        math_node = nodes.new('SvScalarMathNodeMK4')
                         math_node.location = maxx + 100, maxy
                         math_node.current_op = operator
             else:
@@ -265,7 +265,7 @@ class DefaultMacros():
                     math_node = nodes.new('SvVectorMathNodeMK2')
                     math_node.current_op = operator
                 else:
-                    math_node = nodes.new('SvScalarMathNodeMK3')
+                    math_node = nodes.new('SvScalarMathNodeMK4')
                     math_node.current_op = operator
 
             math_node.location = maxx + 100, maxy
@@ -321,7 +321,7 @@ class DefaultMacros():
             needed_nodes = [
                 ['SvGetAssetProperties', (0.00, 0.00)],
                 ['SvScriptNodeLite', (250, 55)],
-                ['SvScalarMathNodeMK3', (430, 115)],
+                ['SvScalarMathNodeMK4', (430, 115)],
                 ['Float2IntNode', (600, 50)],
                 ['SvGenFloatRange', (720, 90)],
                 ['SvInterpolationNodeMK3', (880, 40)],
