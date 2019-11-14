@@ -59,9 +59,9 @@ grid_fragment_shader = '''
         float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
 
         if (int(mod(offX, pitch[0])) == 0 || int(mod(offY, pitch[1])) == 0) {
-            fragColor = vec4(0.0, 0.0, 0.0, 0.5);
+            fragColor = vec4(0.094488, 0.230995, 0.064505, 1.0);
         } else {
-            fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+            fragColor = vec4(0.01, 0.01, 0.01, 1.0);
         }
 
     }
