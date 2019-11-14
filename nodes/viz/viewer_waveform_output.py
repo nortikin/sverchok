@@ -83,12 +83,12 @@ def advanced_grid_xy(x, y, args):
     geom, config = args
     # matrix = context.region_data.perspective_matrix
 
-    print('w', config.grid.w)
-    print('h', config.grid.h)
-    print('bc', config.grid.background_coords)
-    print('bi', config.grid.background_indices)
-    print('vs', config.grid.vertex_shader)
-    print('fs', config.grid.fragment_shader)
+    # print('w', config.grid.w)
+    # print('h', config.grid.h)
+    # print('bc', config.grid.background_coords)
+    # print('bi', config.grid.background_indices)
+    # print('vs', config.grid.vertex_shader)
+    # print('fs', config.grid.fragment_shader)
 
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
@@ -97,8 +97,8 @@ def advanced_grid_xy(x, y, args):
     # shader.uniform_float("u_mvp", matrix)
     # shader.uniform_float("vpw", config.grid.w)
     # shader.uniform_float("vph", config.grid.h)
-    shader.uniform_float("offset", [0.2, 0.4])
-    shader.uniform_int("pitch", [20, 20])
+    shader.uniform_float("offset", (0.2, 0.4))
+    shader.uniform_float("pitch", (20, 20))
     batch.draw(shader)
 
 
