@@ -31,32 +31,72 @@ grid shader borrowed from : https://stackoverflow.com/a/24792822/1243487
 
 """
 
+grid_vertex_shader = '''
+    in vec2 pos;
+
+    void main()
+    {
+        gl_Position = vec4(pos.x, pos.y, 0.0, 1.0);
+    }
+
+'''
+
+grid_fragment_shader = '''
+
+    // uniform float vpw;
+    // uniform float vph;
+    uniform vec2 offset;
+    uniform vec2 pitch;
+
+    void main()
+    {
+        float vpw = 30.0;
+        float vph = 40.0;
+        float scaleFactor = 10.0;
+
+        float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
+        float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
+
+        if (int(mod(offX, pitch[0])) == 0 || int(mod(offY, pitch[1])) == 0) {
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
+        } else {
+            gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    }
+
+'''
+
+class gridshader():
+    def __init__(self, w, h, loc):
+        x, y = loc
+        self.w = w
+        self.h = h
+        self.vertex_shader = grid_vertex_shader
+        self.fragment_shader = grid_fragment_shader
+        self.background_coords = [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]
+        self.background_indices = [(0, 1, 2), (0, 2, 3)]
+
 def advanced_grid_xy(x, y, args):
     """ 
     x and y are passed by default so you could add font content 
-
-    this draws 2 shaders
-
     """
     geom, config = args
-    # back_color, grid_color, line_color = config.palette
+    # matrix = context.region_data.perspective_matrix
 
-    # draw background, this could be cached......
-    # shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-    # batch = batch_for_shader(shader, 'TRIS', {"pos": geom.background_coords}, indices=geom.background_indices)
-    # shader.bind()
-    # shader.uniform_float("color", back_color)
-    # batch.draw(shader)
-
-    # draw grid and graph
-    # config.batch.draw(config.shader)    
+    print('w', config.grid.w)
+    print('h', config.grid.h)
+    print('bc', config.grid.background_coords)
+    print('bi', config.grid.background_indices)
+    print('vs', config.grid.vertex_shader)
+    print('fs', config.grid.fragment_shader)
 
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
     shader.bind()
-    shader.uniform_float("vpw", config.grid.w)
-    shader.uniform_float("vph", config.grid.h)
+    # shader.uniform_float("u_mvp", matrix)
+    # shader.uniform_float("vpw", config.grid.w)
+    # shader.uniform_float("vph", config.grid.h)
     shader.uniform_float("offset", [0.2, 0.4])
     shader.uniform_int("pitch", [20, 20])
     batch.draw(shader)
@@ -101,53 +141,6 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
-grid_vertex_shader = """
-in vec3 pos;
-
-void main() {
-  gl_Position = pos;
-}
-
-"""
-grid_fragment_shader = """
-
-precision mediump float;
-
-uniform float vpw;
-uniform float vph;
-
-uniform vec2 offset;
-uniform vec2 pitch;
-
-void main() {
-  float lX = gl_FragCoord.x / vpw;
-  float lY = gl_FragCoord.y / vph;
-
-  float scaleFactor = 10.0;
-
-  float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
-  float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
-
-  if (int(mod(offX, pitch[0])) == 0 ||
-      int(mod(offY, pitch[1])) == 0) {
-    gl_FragColor = vec4(0.0, 0.0, 0.0, 0.5);
-  } else {
-    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
-  }
-}
-
-"""
-
-
-class gridshader():
-    def __init__(self, w, h, loc):
-        x, y = loc
-        self.w = w
-        self.h = h
-        self.vertex_shader = grid_vertex_shader
-        self.fragment_shader = grid_fragment_shader
-        self.background_coords = [(x, y, 0), (x + w, y, 0), (w + x, y - h, 0), (x, y - h, 0)]
-        self.background_indices = [(0, 1, 2), (0, 2, 3)]
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     
@@ -258,13 +251,14 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         if self.activate:
 
             x, y, scale, multiplier = self.get_drawing_attributes()
+            w = 120.0
+            h = 80.0
+            grid_data = gridshader(w, h, (x, y))
 
             config = lambda: None
             config.loc = (x, y)
             config.scale = scale
-            config.w = 120
-            config.h = 80
-            config.grid = gridshader(config.w, config.h, (x, y))
+            config.grid = grid_data
 
             geom = lambda: None
 
