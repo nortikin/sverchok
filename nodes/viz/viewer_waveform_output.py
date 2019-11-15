@@ -16,13 +16,13 @@ import bgl
 import gpu
 from gpu_extras.batch import batch_for_shader
 
-# import mathutils
 from mathutils import Vector
-# from bpy.props import FloatProperty, BoolProperty
+
+from sverchok.utils.context_managers import sv_preferences
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, node_id
 from sverchok.ui import bgl_callback_nodeview as nvBGL
-# from sverchok.ui import bgl_callback_3dview as v3dBGL
+
 
 MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
@@ -78,7 +78,7 @@ class gridshader():
         self.background_coords = [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]
         self.background_indices = [(0, 1, 2), (0, 2, 3)]
 
-def advanced_grid_xy(x, y, args):
+def advanced_grid_xy(context, args):
     """ 
     x and y are passed by default so you could add font content 
     """
@@ -258,9 +258,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             geom.luxe = 20
 
             draw_data = {
-                'mode': 'custom_function',
+                'mode': 'custom_function_context',
                 'tree_name': self.id_data.name[:],
-                'loc': (x, y),
                 'custom_function': advanced_grid_xy,
                 'args': (geom, config)
             }

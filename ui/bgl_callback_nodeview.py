@@ -247,11 +247,11 @@ def draw_callback_px(n_id, data):
         2) your passing function might look something like
 
             config = lambda: None
-            config.stuff
+            config.shader_data = ...
+            config.loc = (x, y)  (for node location..)
 
             geom = lambda: None
-            geom.x = ..
-            geom.y = ..
+            geom.stuff = ..
 
             draw_data = {
                 'mode': 'custom_function_context',
