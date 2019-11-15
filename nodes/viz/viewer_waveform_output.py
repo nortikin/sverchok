@@ -91,7 +91,7 @@ def advanced_grid_xy(context, args):
     # matrix = context.region_data.perspective_matrix
     # print(dir(context.region_data))
     # print(dir(context.region.view2d))
-    matrix = gpu.matrix.get_projection_matrix() # gpu.matrix.get_model_view_matrix()
+    matrix = gpu.matrix.get_projection_matrix()
 
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
@@ -254,7 +254,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         if self.activate:
 
             x, y, scale, multiplier = self.get_drawing_attributes()
-            x, y = (0, 0)
+            # x, y = (0, 0)
             w = 220.0
             h = 60.0
             grid_data = gridshader(w, h, (x, y))
