@@ -39,7 +39,7 @@ grid_vertex_shader = '''
     
     void main()
     {
-        # gl_Position = vec4(pos.x, pos.y, 0.0f, 1.0f);
+        // gl_Position = vec4(pos.x, pos.y, 0.0f, 1.0f);
         gl_Position = viewProjectionMatrix * vec4(pos.x, pos.y, 0.0f, 1.0f);
     }
 
@@ -87,15 +87,19 @@ def advanced_grid_xy(context, args):
     x and y are passed by default so you could add font content 
     """
     geom, config = args
-    matrix = context.region_data.perspective_matrix
+    
+    # matrix = context.region_data.perspective_matrix
+    # print(dir(context.region_data))
+    # print(dir(context.region.view2d))
+    matrix = gpu.matrix.get_projection_matrix() # gpu.matrix.get_model_view_matrix()
 
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
     shader.bind()
     shader.uniform_float("viewProjectionMatrix", matrix)
-    # shader.uniform_float('vpw', 60.0) # config.grid.w)
-    # shader.uniform_float('vph', 40.0) # config.grid.h)
+    # # shader.uniform_float('vpw', 60.0) # config.grid.w)
+    # # shader.uniform_float('vph', 40.0) # config.grid.h)
     shader.uniform_float('offset', (0.2, 0.4))
     shader.uniform_float('pitch', (20, 20))
     batch.draw(shader)
