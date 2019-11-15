@@ -57,7 +57,7 @@ grid_fragment_shader = '''
     void main()
     {
 
-        float scaleFactor = 10.0;
+        float scaleFactor = 100.0;
 
         float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
         float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
@@ -92,11 +92,18 @@ def advanced_grid_xy(context, args):
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
+    x, y = config.loc
+    scale = config.scale
+
+    loc, rot, sca = matrix.decompose()
+    print('loc', loc)
+    print('sca', sca)
+
     shader.bind()
     shader.uniform_float("viewProjectionMatrix", matrix)
     # # shader.uniform_float('vpw', 60.0) # config.grid.w)
     # # shader.uniform_float('vph', 40.0) # config.grid.h)
-    shader.uniform_float('offset', (0.2, 0.4))
+    shader.uniform_float('offset', (0.0 - loc.x, 0.0 + loc.y))
     shader.uniform_float('pitch', (20, 20))
     batch.draw(shader)
 
