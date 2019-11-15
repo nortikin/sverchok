@@ -32,6 +32,9 @@ grid shader borrowed from : https://stackoverflow.com/a/24792822/1243487
 
 """
 
+# uniform mat4 viewProjectionMatrix;
+# viewProjectionMatrix * vec4(position, 1.0f)
+
 grid_vertex_shader = '''
     in vec2 pos;
     void main()
@@ -83,11 +86,13 @@ def advanced_grid_xy(context, args):
     x and y are passed by default so you could add font content 
     """
     geom, config = args
+    matrix = context.region_data.perspective_matrix
 
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
     shader.bind()
+    # shader.uniform_float("viewProjectionMatrix", matrix)
     # shader.uniform_float('vpw', 60.0) # config.grid.w)
     # shader.uniform_float('vph', 40.0) # config.grid.h)
     shader.uniform_float('offset', (0.2, 0.4))
