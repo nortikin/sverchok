@@ -88,11 +88,7 @@ def advanced_grid_xy(context, args):
     """
     geom, config = args
     
-    # matrix = context.region_data.perspective_matrix
-    # print(dir(context.region_data))
-    # print(dir(context.region.view2d))
     matrix = gpu.matrix.get_projection_matrix()
-
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
