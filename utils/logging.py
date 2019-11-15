@@ -155,7 +155,10 @@ def with_module_logger(method_name):
     def wrapper(*args, **kwargs):
         frame = inspect.stack()[1]
         module = inspect.getmodule(frame[0])
-        name = module.__name__
+        if module is None:
+            name = "<Unknown Module>"
+        else:
+            name = module.__name__
         try_initialize()
         logger = logging.getLogger(name)
         method = getattr(logger, method_name)
