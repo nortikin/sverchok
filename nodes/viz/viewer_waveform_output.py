@@ -32,14 +32,15 @@ grid shader borrowed from : https://stackoverflow.com/a/24792822/1243487
 
 """
 
-# uniform mat4 viewProjectionMatrix;
-# viewProjectionMatrix * vec4(position, 1.0f)
 
 grid_vertex_shader = '''
     in vec2 pos;
+    uniform mat4 viewProjectionMatrix;
+    
     void main()
     {
-        gl_Position = vec4(pos.x, pos.y, 0.0f, 1.0f);
+        # gl_Position = vec4(pos.x, pos.y, 0.0f, 1.0f);
+        gl_Position = viewProjectionMatrix * vec4(pos.x, pos.y, 0.0f, 1.0f);
     }
 
 '''
@@ -92,7 +93,7 @@ def advanced_grid_xy(context, args):
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
     shader.bind()
-    # shader.uniform_float("viewProjectionMatrix", matrix)
+    shader.uniform_float("viewProjectionMatrix", matrix)
     # shader.uniform_float('vpw', 60.0) # config.grid.w)
     # shader.uniform_float('vph', 40.0) # config.grid.h)
     shader.uniform_float('offset', (0.2, 0.4))

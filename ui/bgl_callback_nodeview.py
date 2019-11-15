@@ -241,7 +241,7 @@ def draw_callback_px(n_id, data):
         restore_opengl_defaults()
     elif data.get('mode') == 'custom_function_context':
         
-        """
+        '''
         0) this mode is useful for custom shader inside 2d drawing context, like nodeview
         1) you will supply this function with args, and args will contain (geom, config) 
         2) your passing function might look something like
@@ -262,7 +262,8 @@ def draw_callback_px(n_id, data):
 
             nvBGL.callback_enable(self.n_id, draw_data)
 
-        """
+        '''
+
         drawing_func = data.get('custom_function')
         args = data.get('args', (None,))
         drawing_func(bpy.context, args)
