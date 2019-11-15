@@ -239,6 +239,34 @@ def draw_callback_px(n_id, data):
         args = data.get('args', (None,))
         drawing_func(x, y, args)
         restore_opengl_defaults()
+    elif data.get('mode') == 'custom_function_context':
+        
+        """
+        0) this mode is useful for custom shader inside 2d drawing context, like nodeview
+        1) you will supply this function with args, and args will contain (geom, config) 
+        2) your passing function might look something like
+
+            config = lambda: None
+            config.stuff
+
+            geom = lambda: None
+            geom.x = ..
+            geom.y = ..
+
+            draw_data = {
+                'mode': 'custom_function_context',
+                'tree_name': self.id_data.name[:],
+                'custom_function': advanced_grid_xy,
+                'args': (geom, config)
+            }
+
+            nvBGL.callback_enable(self.n_id, draw_data)
+
+        """
+        drawing_func = data.get('custom_function')
+        args = data.get('args', (None,))
+        drawing_func(bpy.context, args)
+        restore_opengl_defaults()
 
         
         
