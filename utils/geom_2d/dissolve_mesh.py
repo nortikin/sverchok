@@ -13,7 +13,16 @@ from .dcel_debugger import Debugger
 
 
 def dissolve_faces(sv_verts, sv_faces, face_mask, is_mask=False, is_index=False):
-    Debugger.clear(False)
+    """
+    Combine adjacent faces with mask True.
+    It resist to combine faces in several corner cases like creating hanging face inside mesh.
+    :param sv_verts: list of SV vertices
+    :param sv_faces: list of SV faces
+    :param face_mask: List of True of False per input face
+    :param is_mask: add to output new face_mask
+    :param is_index: add to output index of old face per nes faces
+    :return: list of SV vertices, list of SV face, face_mask (optionally), index_mask (optionally)
+    """
     mesh = DCELMesh()
     mesh.from_sv_faces(sv_verts, sv_faces, face_flag=['dissolve' if mark else None for mark in face_mask],
                        face_data={'index': list(range(len(sv_faces)))})
@@ -294,37 +303,36 @@ def dissolve_faces_add(mesh, flag):
             continue
         used.add(face)
         faces.append(face)
-        Debugger.print(face, 'start face')
-        candidate_faces = [hedge.twin.face for hedge in face.outer.loop_hedges
-                           if flag in hedge.twin.face.flags and hedge.twin.face not in used]
-        checked_faces = set(candidate_faces)  # detect faces which already was added to the stack
-        Debugger.print(list(candidate_faces), 'candidate_faces')
+        checked_faces = set()  # detect faces which already was added to the stack
+        candidate_faces = get_next_candidates(face, checked_faces, used, flag)
+        face_points = set([hedge.origin for hedge in face.outer.loop_hedges])
         while candidate_faces:
-            Debugger.print(list(candidate_faces), 'candidate_faces')
             face_candidate = candidate_faces.pop()
-            Debugger.print(face_candidate, 'candidate')  # + f', is addable-{is_addable(face, face_candidate)}')
-            # print([hedge.origin.co for hedge in face_candidate.outer.loop_hedges])
-            if is_addable(face, face_candidate):
+            checked_faces.remove(face_candidate)  # some face should be added several times
+            if is_addable(face, face_candidate, face_points):
                 used.add(face_candidate)
-                candidate_faces.extend(get_next_candidates(face_candidate, checked_faces, flag))
-                # Debugger.print(face_candidate, 'candidate2')
-                # print([hedge.origin.co for hedge in face_candidate.outer.loop_hedges])
-                add_faces(face, face_candidate)
+                candidate_faces.extend(get_next_candidates(face_candidate, checked_faces, used, flag))
+                add_faces(face, face_candidate, face_points)
     mesh.faces = faces
     mesh.hedges = [hedge for face in mesh.faces for hedge in face.outer.loop_hedges]
 
 
-def get_next_candidates(face, checked_faces, flag):
+def get_next_candidates(face, checked_faces, used, flag):
     out = []
     for hedge in face.outer.loop_hedges:
-        if flag in hedge.twin.face.flags and hedge.twin.face not in checked_faces:
-            checked_faces.add(hedge.twin.face)
-            out.append(hedge.twin.face)
+        candidate = hedge.twin.face
+        if flag in candidate.flags and candidate not in checked_faces and candidate not in used:
+            checked_faces.add(candidate)
+            out.append(candidate)
     return out
 
 
-def is_addable(face, candidate):
+def is_addable(face, candidate, face_points):
     # does not take in account possible common points yet
+    for loop_hedge in candidate.outer.loop_hedges:
+        if loop_hedge.origin in face_points:
+            if loop_hedge.twin.face != face and loop_hedge.last.twin.face != face:
+                return False
     in_common_edge = False
     number_common_lines = 0
     start_from_common_hedge = False
@@ -345,13 +353,10 @@ def is_addable(face, candidate):
     return True if number_common_lines == 1 else False
 
 
-def add_faces(face, dis_face):
+def add_faces(face, dis_face, face_points):
     last_hedge_1, next_hedge_1 = None, None
     last_hedge_2, next_hedge_2 = None, None
     dis_hedges = []
-    # print([hedge.origin.co for hedge in face.outer.loop_hedges])
-    Debugger.print(face, 'face')
-    Debugger.print(dis_face, 'dis_face')
     for loop_hedge in dis_face.outer.loop_hedges:
         if loop_hedge.twin.face == face and loop_hedge.last.twin.face != face:
             last_hedge_1, next_hedge_1 = loop_hedge.last, loop_hedge.twin.next
@@ -361,6 +366,7 @@ def add_faces(face, dis_face):
             dis_hedges.append(loop_hedge)
         else:
             loop_hedge.face = face
+            face_points.add(loop_hedge.origin)
     [setattr(hedge, 'mesh', None) for hedge in dis_hedges]
     [setattr(hedge.twin, 'mesh', None) for hedge in dis_hedges]
     dis_face.mesh = None

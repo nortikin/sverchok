@@ -57,13 +57,13 @@ class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Faces')
 
     def process(self):
-        if not all([sock.is_linked for sock in self.inputs]):
+        if not all([sock.is_linked for sock in self.inputs[:2]]):
             return
         out = []
         out_mask = []
         out_index = []
         for vs, fs, mf in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get(),
-                              self.inputs['Face mask'].sv_get()):
+                              self.inputs['Face mask'].sv_get() if self.inputs['Face mask'].is_linked else [[1]]):
             mf = mf if len(mf) == len(fs) else mf[:len(fs)] if len(mf) > len(fs) \
                                           else mf + [mf[-1]] * (len(fs) - len(mf))
             if self.face_mask and self.index_mask:
