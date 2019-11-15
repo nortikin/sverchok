@@ -64,6 +64,8 @@ class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
         out_index = []
         for vs, fs, mf in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get(),
                               self.inputs['Face mask'].sv_get()):
+            mf = mf if len(mf) == len(fs) else mf[:len(fs)] if len(mf) > len(fs) \
+                                          else mf + [mf[-1]] * (len(fs) - len(mf))
             if self.face_mask and self.index_mask:
                 v, f, m, i = dissolve_faces(vs, fs, mf, self.face_mask, self.index_mask)
                 out_mask.append(m)

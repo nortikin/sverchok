@@ -8,7 +8,7 @@
 
 from itertools import chain
 from functools import wraps
-from copy import copy
+from copy import copy, deepcopy
 
 from .lin_alg import almost_equal
 
@@ -68,7 +68,7 @@ class Debugger:
         if not isinstance(dcel_object, (list, set, tuple)):
             dcel_object = [dcel_object]
         for db in dcel_object:
-            cls.data.append(db)
+            cls.data.append(deepcopy(db))
             cls.msg.append(msg if msg is not None else db)
             blank_msg = '  {}  '.format(msg)
             print('{} - {:*^50}'.format(cls._count, blank_msg if msg is not None else str(db)))
@@ -295,8 +295,13 @@ class Debugger:
             print(msg + cls.check_correct_data(item))
             return [v], [f], empty_mesh[0], empty_mesh[1]
         elif type(item).__name__ == 'Face':
-            print(msg + cls.check_correct_data(item))
-            return list(cls._face_to_sv(item, scale)) + empty_mesh
+            if number > 0:
+                out = cls._get_next_hedges(item.outer, number, mode, scale)
+                print(msg + cls.check_correct_data(item))
+                return list(zip(*out)) + empty_mesh
+            else:
+                print(msg + cls.check_correct_data(item))
+                return list(cls._face_to_sv(item, scale)) + empty_mesh
         elif type(item).__name__ == 'Edge':
             v, f = cls._edge_to_sv(item)
             print(msg + cls.check_correct_data(item))
