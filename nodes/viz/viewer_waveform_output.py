@@ -39,7 +39,6 @@ grid_vertex_shader = '''
     
     void main()
     {
-        // gl_Position = vec4(pos.x, pos.y, 0.0f, 1.0f);
         gl_Position = viewProjectionMatrix * vec4(pos.x, pos.y, 0.0f, 1.0f);
     }
 
@@ -51,13 +50,12 @@ grid_fragment_shader = '''
 
     uniform vec2 offset;
     uniform vec2 pitch;
+    uniform float scaleFactor;
 
     out vec4 fragColor;
 
     void main()
     {
-
-        float scaleFactor = 100.0;
 
         float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
         float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
@@ -92,19 +90,21 @@ def advanced_grid_xy(context, args):
     shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
     batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
     
-    x, y = config.loc
-    scale = config.scale
+    # x, y = config.loc
+    # scale = config.scale
+    xloc, yloc = context.region.view2d.region_to_view(context.area.width/2, context.area.height/2)
+    print(xloc, yloc)
 
     loc, rot, sca = matrix.decompose()
-    print('loc', loc)
-    print('sca', sca)
 
     shader.bind()
     shader.uniform_float("viewProjectionMatrix", matrix)
     # # shader.uniform_float('vpw', 60.0) # config.grid.w)
     # # shader.uniform_float('vph', 40.0) # config.grid.h)
-    shader.uniform_float('offset', (0.0 - loc.x, 0.0 + loc.y))
-    shader.uniform_float('pitch', (20, 20))
+    shader.uniform_float("scaleFactor", config.scaleFactor)
+    shader.uniform_float('offset', (xloc, yloc))
+    # shader.uniform_float('offset', config.offset)
+    shader.uniform_float('pitch', config.pitch)
     batch.draw(shader)
 
 
@@ -211,43 +211,65 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     dirname: bpy.props.StringProperty()
     filename: bpy.props.StringProperty()
 
+    # ui props
+    display_sampler_config: bpy.props.BoolProperty(default=False, name="Display Sampler Config", update=updateNode)
+    display_graph_config: bpy.props.BoolProperty(default=False, name="Display Graph Config", update=updateNode)
+    scaleFactor: bpy.props.FloatProperty(default=10, min=0.1, name='scale factor')
+    offset: bpy.props.FloatVectorProperty(default=(0.0, 0.0), size=2, name='offset', update=updateNode)
+    pitch: bpy.props.FloatVectorProperty(default=(20.0, 20.0), size=2, name='pitch', update=updateNode)
+
+
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
         self.inputs.new(DATA_SOCKET, 'channel 1')
         self.get_and_set_gl_scale_info()
 
     def draw_buttons(self, context, layout):
-        col = layout.column(align=True)
-        
-        col.prop(self, 'num_channels')
-        col.prop(self, 'sample_rate')
-        col.prop(self, 'bits')
-        
-        col.separator()
-        row1 = col.row()
-        row1.prop(self, 'auto_normalize', toggle=True)
-        row1.prop(self, 'multi_channel_sockets', toggle=True)
-        
-        col.separator()
-        col.prop(self, 'colour_limits')
 
-        col.separator()
-        row = col.row(align=True)
-        row.prop(self, 'dirname', text='')
-        cb = "node.waveform_viewer_dirpick"
-        self.wrapper_tracked_ui_draw_op(row, cb, icon='FILE', text='')
-        col.prop(self, "filename")
+        col = layout.column(align=True)
+
+        col.prop(self, "display_sampler_config", toggle=True)
+        if self.display_sampler_config:
+            box1 = col.box()
+            box_col = box1.column(align=True)
+            
+            box_col.prop(self, 'num_channels')
+            box_col.prop(self, 'sample_rate')
+            box_col.prop(self, 'bits')
+            
+            box_col.separator()
+            row1 = box_col.row()
+            row1.prop(self, 'auto_normalize', toggle=True)
+            row1.prop(self, 'multi_channel_sockets', toggle=True)
+            
+            box_col.separator()
+            box_col.prop(self, 'colour_limits')
+
+            box_col.separator()
+            row = box_col.row(align=True)
+            row.prop(self, 'dirname', text='')
+            cb = "node.waveform_viewer_dirpick"
+            self.wrapper_tracked_ui_draw_op(row, cb, icon='FILE', text='')
+            box_col.prop(self, "filename")
 
         if (self.filename and self.dirname):
-            col.separator()
             cb = "node.waveform_viewer_callback"
             op = self.wrapper_tracked_ui_draw_op(col, cb, icon='CURSOR', text='WRITE')
             op.fn_name = "process_wave"
+            col.separator()
 
-        col.separator()
-        col.prop(self, 'activate', icon="DESKTOP")
-        if self.activate:
-            col.label(text="show the oscilloscope")
+        col.prop(self, "display_graph_config", toggle=True)
+        if self.display_graph_config:
+            box2 = col.box()
+            box_col2 = box2.column(align=True)
+
+            box_col2.prop(self, 'activate', icon="DESKTOP")
+
+            # box_col2.prop(self, 'scaleFactor')
+            row1 = box_col2.row()
+            row1.prop(self, 'offset')
+            row2 = box_col2.row()
+            row2.prop(self, 'pitch')
 
 
     def process(self):
@@ -266,6 +288,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.loc = (x, y)
             config.scale = scale
             config.grid = grid_data
+            config.scaleFactor = self.scaleFactor
+            config.offset = self.offset[:]
+            config.pitch = self.pitch[:]
 
             geom = lambda: None
             geom.luxe = 20
