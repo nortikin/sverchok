@@ -4,7 +4,7 @@ Viewer Draw MK3
 Functionality
 -------------
 
-*aliases: vdmk3, viewer draw*
+*aliases: vdmk3, viewer draw 3, vd experimental*
 
 This node takes your geometry and displays it in the 3d view, using opengl and shaders. The node is intended to be a fast way to show you the result of your node tree. We've added various levels of refinements that you may find useful to better understand the virtual geometry you've created.
 
