@@ -269,14 +269,14 @@ def get_shader_data(named_shader=None):
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: exp vd
-    Tooltip: experimental drawing node
+    Triggers: exp vd mk3
+    Tooltip: drawing, with experimental features
 
     not a very exciting node.
     """
 
     bl_idname = 'SvVDExperimental'
-    bl_label = 'VD Experimental'
+    bl_label = 'Viewer Draw Mk3'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 

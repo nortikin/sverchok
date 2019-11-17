@@ -7,3 +7,4 @@ Viz
 
    viewer_bmesh
    viewer_metaball
+   vd_draw_experimental
