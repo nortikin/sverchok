@@ -50,6 +50,7 @@ class SvDataShapeNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def copy(self, node):
+        super().copy(node)
         self.text = ""
 
 def register():

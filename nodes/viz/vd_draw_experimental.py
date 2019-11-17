@@ -614,6 +614,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             callback_enable(n_id, gl_instructions)
 
     def copy(self, node):
+        super().copy(node)
         self.n_id = ''
 
     @property

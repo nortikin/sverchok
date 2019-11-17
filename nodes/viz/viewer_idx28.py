@@ -298,6 +298,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
     def copy(self, node):
         ''' reset n_id on copy '''
+        super().copy(node)
         self.n_id = ''
 
 

@@ -158,6 +158,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         self.delete_texture()
 
     def copy(self, node):
+        super().copy(node)
         # reset n_id on copy
         self.n_id = ''
 

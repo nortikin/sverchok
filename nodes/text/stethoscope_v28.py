@@ -96,6 +96,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     # reset n_id on copy
     def copy(self, node):
+        super().copy(node)
         self.n_id = ''
 
     def draw_buttons(self, context, layout):

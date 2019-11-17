@@ -162,6 +162,7 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
 
     # reset n_id on copy
     def copy(self, node):
+        super().copy(node)
         self.n_id = ''
 
     def update(self):

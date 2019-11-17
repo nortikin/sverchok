@@ -78,6 +78,7 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
                 return
 
     def copy(self, node):
+        super().copy(node)
         ng = self.id_data
         var_set = {node.var_name for node in ng.nodes if node.bl_idname == 'WifiInNode'}
 

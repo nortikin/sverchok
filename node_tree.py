@@ -33,7 +33,8 @@ from sverchok.core.update_system import (
     build_update_list,
     process_from_node,
     process_tree,
-    get_update_lists, update_error_nodes)
+    get_update_lists, update_error_nodes,
+    get_original_node_color)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
@@ -480,6 +481,11 @@ class SverchCustomTreeNode:
         else:
             pass
 
+    def copy(self, original):
+        self.info("Copy!")
+        settings = get_original_node_color(self.id_data, original.name)
+        if settings is not None:
+            self.use_custom_color, self.color = settings
         
     def free(self):
         """

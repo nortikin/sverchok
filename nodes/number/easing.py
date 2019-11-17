@@ -248,6 +248,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         nvBGL.callback_disable(node_id(self))
 
     def copy(self, node):
+        super().copy(node)
         # reset n_id on copy
         self.n_id = ''
 

@@ -178,6 +178,7 @@ class SvSNFunctorB(bpy.types.Node, SverchCustomTreeNode, SvSNPropsFunctor):
         self.clear_sockets()
 
     def copy(self, node):
+        super().copy(node)
         self.node_dict[hash(self)] = {}
         self.load(bpy.context)
 
