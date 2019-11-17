@@ -296,10 +296,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     def free(self):
         callback_disable(node_id(self))
 
-    def copy(self, node):
+    def sv_copy(self, node):
         ''' reset n_id on copy '''
         self.n_id = ''
-
 
 def register():
     bpy.utils.register_class(SvIDXViewer28)

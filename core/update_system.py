@@ -293,6 +293,22 @@ def update_error_nodes(ng, name, err=Exception):
         node.color = exception_color
     node.use_custom_color=True
 
+def get_original_node_color(ng, name):
+    if "error nodes" in ng:
+        error_nodes = ast.literal_eval(ng["error nodes"])
+        return error_nodes.get(name, None)
+    return None
+
+def reset_error_node(ng, name):
+    node = ng.nodes.get(name)
+    if node:
+        if "error nodes" in ng:
+            error_nodes = ast.literal_eval(ng["error nodes"])
+            if name in error_nodes:
+                node.use_custom_color, node.color = error_nodes[name]
+                del error_nodes[name]
+            ng["error nodes"] = str(error_nodes)
+
 def reset_error_nodes(ng):
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])

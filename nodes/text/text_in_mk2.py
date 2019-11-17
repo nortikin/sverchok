@@ -220,7 +220,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
 
             col.operator(TEXT_IO_CALLBACK, text='Load').fn_name = 'load'
 
-    def copy(self, node):
+    def sv_copy(self, node):
         self.n_id = ''
 
     def free(self):
