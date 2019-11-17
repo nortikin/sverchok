@@ -273,8 +273,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         for socket_set in [self.inputs, self.outputs]:
             socket_set.clear()        
 
-    def copy(self, node):
-        super().copy(node)
+    def sv_copy(self, node):
         self.node_dict[hash(self)] = {}
         self.load()
 

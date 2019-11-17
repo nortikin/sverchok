@@ -482,10 +482,21 @@ class SverchCustomTreeNode:
             pass
 
     def copy(self, original):
-        self.info("Copy!")
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_copy() instead.
+        """
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
+        self.sv_copy(original)
+
+    def sv_copy(self, original):
+        """
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        """
+        pass
         
     def free(self):
         """

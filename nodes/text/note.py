@@ -133,8 +133,7 @@ class NoteNode(bpy.types.Node, SverchCustomTreeNode):
             text = [[a] for a in self.text.split()]
             self.outputs['Text Out'].sv_set([text])
 
-    def copy(self, node):
-        super().copy(node)
+    def sv_copy(self, node):
         self.n_id = ''
         node_id(self)
 

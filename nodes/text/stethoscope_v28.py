@@ -93,10 +93,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.get_theme_colors_for_contrast()
         self.get_and_set_gl_scale_info()
 
-
-    # reset n_id on copy
-    def copy(self, node):
-        super().copy(node)
+    def sv_copy(self, node):
+        # reset n_id on copy
         self.n_id = ''
 
     def draw_buttons(self, context, layout):

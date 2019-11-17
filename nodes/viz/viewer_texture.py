@@ -436,8 +436,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         nvBGL2.callback_disable(node_id(self))
         self.delete_texture()
 
-    def copy(self, node):
-        super().copy(node)
+    def sv_copy(self, node):
         # reset n_id on copy
         self.n_id = ''
 

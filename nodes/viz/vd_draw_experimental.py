@@ -613,8 +613,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             gl_instructions = self.format_draw_data(func=draw_matrix, args=(matrices, ))
             callback_enable(n_id, gl_instructions)
 
-    def copy(self, node):
-        super().copy(node)
+    def sv_copy(self, node):
         self.n_id = ''
 
     @property
