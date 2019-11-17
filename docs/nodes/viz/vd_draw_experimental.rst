@@ -36,8 +36,8 @@ Features
 - Bake the current mesh(es)
 - Set the 3d cursor to the center of Mesh 1. (handy for ratating around in this virtual geometry)
 - "Polygon offset" (to prevent z-fighting between edges and faces)
-- "quad tessellator", this mode treats all faces as potentially irregular and uses extended mathutils 
-to get the normal.
+- "quad tessellator", this mode treats all faces as potentially irregular and uses extended mathutils to get the normal.
+
 - (experimental..) the "Attribute socket" can be used to configure the viewer node from another node, in this case a dedicated Attributes node.
 - can show matrices, if you only connect matrices without any other geometry.
 
