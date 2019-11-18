@@ -11,6 +11,7 @@ Number
    formula3
    list_input
    mix_numbers
+   mix_inputs
    random
    random_num_gen
    range_float
