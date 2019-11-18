@@ -258,7 +258,7 @@ class SvMixInputsNode(bpy.types.Node, SverchCustomTreeNode):
         if m != "MATRIX":
             for l in ['A', 'B']:
                 attr_name = m.lower() + "_" + l.lower()
-                vars()[attr_name] = make_prop(m, l)
+                vars()["__annotations__"][attr_name] = make_prop(m, l)
 
     mirror : BoolProperty(
         name="Mirror", description="Mirror the interplation factor",
