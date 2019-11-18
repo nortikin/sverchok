@@ -98,7 +98,7 @@ class GenListRangeIntNode(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     mode: EnumProperty(items=modes, default='LAZYRANGE', update=mode_change)
-
+    replacement_nodes = [('SvGenNumberRange', dict(Step='Stop', Stop='Step'), None)]
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Start").prop_name = 'start_'
         self.inputs.new('SvStringsSocket', "Step").prop_name = 'step_'
@@ -113,16 +113,20 @@ class GenListRangeIntNode(bpy.types.Node, SverchCustomTreeNode):
                  'COUNTRANGE': countRange}
 
     def process(self):
+        if self.mode == 'COUNTRANGE':
+            self.replacement_nodes = [('SvGenNumberRange', dict(Step='Step', Stop='Stop'), None)]
+            print(self.replacement_nodes)
+            # self.replacement_nodes = [('SvGenNumberRange', dict(Step='Stop'), None)]
         inputs = self.inputs
         outputs = self.outputs
         if not outputs[0].is_linked:
             return
-            
+
         param = [inputs[i].sv_get()[0] for i in range(3)]
         f = self.func_dict[self.mode]
         out = [f(*args) for args in zip(*match_long_repeat(param))]
         outputs['Range'].sv_set(out)
-    
+
 def register():
     bpy.utils.register_class(GenListRangeIntNode)
 

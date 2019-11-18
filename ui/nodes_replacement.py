@@ -70,6 +70,7 @@ class SvReplaceNode(bpy.types.Operator):
         name="Output sockets names mapping", type=SvSocketReplacement)
 
     def get_new_input_name(self, old_name):
+        print("x",self.inputs_mapping)
         for item in self.inputs_mapping:
             if item.old_name == old_name:
                 return item.new_name
@@ -110,6 +111,7 @@ class SvReplaceNode(bpy.types.Operator):
             new_target_socket_name = self.get_new_input_name(old_link.to_socket.name)
             if new_target_socket_name in new_node.inputs:
                 new_target_socket = new_node.inputs[new_target_socket_name]
+                print(new_target_socket_name, new_target_socket, new_node.inputs)
                 new_link = tree.links.new(old_link.from_socket, new_target_socket)
             else:
                 debug("New node %s has no input named %s, skipping", new_node.name, new_target_socket_name)
@@ -136,7 +138,7 @@ class SvReplaceNode(bpy.types.Operator):
                 new_node.name, new_node.bl_idname)
         info(msg)
         self.report({'INFO'}, msg)
-        
+
         if old_node.parent and old_node.parent.label == "Deprecated node!":
             if old_node.parent.parent:
                 new_node.parent = old_node.parent.parent
