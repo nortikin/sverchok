@@ -129,7 +129,7 @@ def has_state_switch_protection(node, k):
 
     if k == 'current_mode':
         return node.bl_idname in {
-            'SvGenFloatRange', 'GenListRangeIntNode',
+            'SvGenNumberRange',
             'SvKDTreeNode', 'SvMirrorNode', 'SvRotationNode'}
 
     if k == 'current_op':
@@ -287,7 +287,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
             elif has_state_switch_protection(node, k):
                 continue
 
-            handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree)            
+            handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree)
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -723,7 +723,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
-        
+
         ng.update()
         ng.update_tag()
 

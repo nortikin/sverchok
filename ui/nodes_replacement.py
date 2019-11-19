@@ -70,6 +70,7 @@ class SvReplaceNode(bpy.types.Operator):
         name="Output sockets names mapping", type=SvSocketReplacement)
 
     def get_new_input_name(self, old_name):
+        print("x",self.inputs_mapping)
         for item in self.inputs_mapping:
             if item.old_name == old_name:
                 return item.new_name
@@ -136,7 +137,7 @@ class SvReplaceNode(bpy.types.Operator):
                 new_node.name, new_node.bl_idname)
         info(msg)
         self.report({'INFO'}, msg)
-        
+
         if old_node.parent and old_node.parent.label == "Deprecated node!":
             if old_node.parent.parent:
                 new_node.parent = old_node.parent.parent

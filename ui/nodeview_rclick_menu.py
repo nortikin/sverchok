@@ -16,7 +16,7 @@ supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
 # for rclick i want convenience..
 common_nodes = [
     ['GenVectorsNode', 'VectorsOutNode'],
-    ['SvNumberNode', 'GenListRangeIntNode', 'SvGenFloatRange'],
+    ['SvNumberNode', 'SvGenNumberRange'],
     ['SvScalarMathNodeMK4', 'SvVectorMathNodeMK2'],
     ['---', 'NodeReroute']
 ]

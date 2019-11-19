@@ -193,8 +193,7 @@
 ## Number
     SvNumberNode
     SvScalarMathNodeMK4
-    GenListRangeIntNode
-    SvGenFloatRange
+    SvGenNumberRange
     SvListInputNode
     SvRndNumGen
     RandomNode
