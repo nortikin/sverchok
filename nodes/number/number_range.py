@@ -24,7 +24,7 @@ from sverchok.data_structure import updateNode, list_match_func, list_match_mode
 import numpy as np
 
 
-def frange(start, stop, step, n_type, out_numpy):
+def range_step_stop(start, stop, step, n_type, out_numpy):
     '''Behaves like range but for floats'''
     step = max(1e-5, abs(step))
     if start > stop:
@@ -33,14 +33,14 @@ def frange(start, stop, step, n_type, out_numpy):
     return result if out_numpy else result.tolist()
 
 
-def frange_count(start, stop, count, n_type, out_numpy):
+def range_stop_count(start, stop, count, n_type, out_numpy):
     ''' Gives count total values in [start,stop] '''
     # we are casting to int here because the input can be floats.
     result = np.linspace(start, stop, num=count, dtype=n_type)
     return result if out_numpy else result.tolist()
 
 
-def frange_step(start, step, count, n_type, out_numpy):
+def range_step_count(start, step, count, n_type, out_numpy):
     ''' Gives count values with step from start'''
     stop = start + step * count
     result = np.arange(start, stop, step, dtype=n_type)
@@ -62,11 +62,11 @@ class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
         default=10, update=updateNode)
 
     count_: IntProperty(
-        name='count', description='num items',
+        name='count', description='number of items',
         default=10, min=1, update=updateNode)
 
     step_float: FloatProperty(
-        name='step', description='step',
+        name='step', description='step, difference among items',
         default=1.0, update=updateNode)
     start_int: IntProperty(
         name='start', description='start',
@@ -75,12 +75,9 @@ class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
     stop_int: IntProperty(
         name='stop', description='stop',
         default=10, update=updateNode)
-    count_int: IntProperty(
-        name='count', description='num items',
-        default=10, update=updateNode)
 
     step_int: IntProperty(
-        name='step', description='step',
+        name='step', description='step, difference among items',
         default=1, min=1, update=updateNode)
 
     list_match: EnumProperty(
@@ -100,16 +97,16 @@ class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
         description='Output NumPy arrays',
         default=False, update=updateNode)
 
-    current_mode: StringProperty(default="FLOATFRANGE")
+    current_mode: StringProperty(default="FLOATRANGE")
     main_modes = [
         ("int", "Int", "Integer Series", 1),
         ("float", "Float", "Float Series", 2),
     ]
 
-    float_modes = [
-        ("RANGE", "Range", "Series based frange like function", 1),
-        ("RANGE_COUNT", "Count", "Create series based on count", 2),
-        ("RANGE_STEP", "Step", "Create range based step and count", 3),
+    range_modes = [
+        ("RANGE", "Range", "Define range by setting start, step and stop.", 1),
+        ("RANGE_COUNT", "Count", "Define range by setting start, stop and count number (divisions).", 2),
+        ("RANGE_STEP", "Step", "Define range by setting start, step and count number", 3),
     ]
 
     def mode_change(self, context):
@@ -137,8 +134,17 @@ class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
         self.current_mode = mode
         updateNode(self, context)
 
-    number_mode: EnumProperty(items=main_modes, default='float', update=mode_change)
-    range_mode: EnumProperty(items=float_modes, default='RANGE', update=mode_change)
+    number_mode: EnumProperty(
+        name='Number Type',
+        items=main_modes,
+        default='float',
+        update=mode_change)
+
+    range_mode: EnumProperty(
+        name='Range Mode',
+        items=range_modes,
+        default='RANGE',
+        update=mode_change)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Start").prop_name = 'start_float'
@@ -150,16 +156,22 @@ class SvGenNumberRange(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "number_mode", expand=True)
         layout.prop(self, "range_mode", expand=True)
-
+    def draw_buttons_ext(self, ctx, layout):
+        layout.prop(self, "number_mode", expand=True)
+        layout.prop(self, "range_mode", expand=True)
+        layout.prop(self, "list_match", expand=False)
+        layout.prop(self, "flat_output", expand=False)
+        layout.prop(self, "output_numpy", expand=False)
     def rclick_menu(self, context, layout):
-
+        layout.prop_menu_enum(self, "number_mode")
+        layout.prop_menu_enum(self, "range_mode")
         layout.prop_menu_enum(self, "list_match", text="List Match")
         layout.prop(self, "flat_output", expand=False)
         layout.prop(self, "output_numpy", expand=False)
 
-    range_func_dict = {'RANGE': frange,
-                       'RANGE_COUNT': frange_count,
-                       'RANGE_STEP': frange_step}
+    range_func_dict = {'RANGE': range_step_stop,
+                       'RANGE_COUNT': range_stop_count,
+                       'RANGE_STEP': range_step_count}
 
     def migrate_from(self, old_node):
         if old_node.bl_idname == 'SvGenFloatRange':

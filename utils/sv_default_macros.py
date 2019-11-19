@@ -320,10 +320,10 @@ class DefaultMacros():
         elif term == 'gp +':
             needed_nodes = [
                 ['SvGetAssetProperties', (0.00, 0.00)],
-                ['SvScriptNodeLite', (250, 55)],
+                ['SvPathLengthNode', (250, 55)],
                 ['SvScalarMathNodeMK4', (430, 115)],
                 ['Float2IntNode', (600, 50)],
-                ['SvGenFloatRange', (720, 90)],
+                ['SvGenNumberRange', (720, 90)],
                 ['SvInterpolationNodeMK3', (880, 40)],
                 ['LineConnectNodeMK2', (1060, -40)],
                 ['SvVDExperimental', (1245, 50)],
@@ -336,9 +336,8 @@ class DefaultMacros():
                 n.location = node_location[0] + x, node_location[1] + y
                 made_nodes.append(n)
 
-            # Script node lite
-            snlite = made_nodes[1]
-            sn_loader(snlite, script_name='path_length.py')
+            # Path legnth node
+            made_nodes[1].segment = False
 
             # ID Selector
             made_nodes[0].Mode = 'grease_pencils'  # the rest must be user driven
@@ -355,8 +354,8 @@ class DefaultMacros():
             links.new(made_nodes[3].outputs[0], made_nodes[4].inputs[2])
 
             # Float range
-            made_nodes[4].mode = 'FRANGE_COUNT'
-            made_nodes[4].stop_ = 1.0
+            made_nodes[4].range_mode = 'RANGE_COUNT'
+            made_nodes[4].stop_float = 1.0
             links.new(made_nodes[4].outputs[0], made_nodes[5].inputs[1])
 
             # Vector Interpolate

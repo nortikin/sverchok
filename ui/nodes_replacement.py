@@ -111,7 +111,6 @@ class SvReplaceNode(bpy.types.Operator):
             new_target_socket_name = self.get_new_input_name(old_link.to_socket.name)
             if new_target_socket_name in new_node.inputs:
                 new_target_socket = new_node.inputs[new_target_socket_name]
-                print(new_target_socket_name, new_target_socket, new_node.inputs)
                 new_link = tree.links.new(old_link.from_socket, new_target_socket)
             else:
                 debug("New node %s has no input named %s, skipping", new_node.name, new_target_socket_name)

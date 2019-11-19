@@ -94,7 +94,7 @@ def throttle_tree_update(node):
             self.inputs.new(...)
             self.outputs.new(...)
 
-    that's it. 
+    that's it.
 
     """
     try:
@@ -199,7 +199,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     @property
     def has_link_count_changed(self):
         link_count = len(self.links)
-        if not link_count == self.tree_link_count: 
+        if not link_count == self.tree_link_count:
             # print('update event: link count changed', self.timestamp)
             self.tree_link_count = link_count
             return True
@@ -241,7 +241,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.build_update_list()
             self.has_changed = False
         if self.is_frozen():
-            # print('not processing: because self/tree.is_frozen') 
+            # print('not processing: because self/tree.is_frozen')
             return
         if self.sv_process:
             process_tree(self)
@@ -436,7 +436,7 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
-        
+
         if hasattr(self, "sv_init"):
 
             try:
@@ -480,7 +480,7 @@ class SverchCustomTreeNode:
         else:
             pass
 
-        
+
     def free(self):
         """
         some nodes require additional operations upon node removal
@@ -512,7 +512,7 @@ class SverchCustomTreeNode:
 
     def get_and_set_gl_scale_info(self, origin=None):
         """
-        This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
+        This function is called in sv_init in nodes that draw GL instructions to the nodeview,
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
@@ -528,7 +528,7 @@ class SverchCustomTreeNode:
 
 
 classes = [
-    SverchCustomTree, 
+    SverchCustomTree,
     SvLinkNewNodeInput
 ]
 

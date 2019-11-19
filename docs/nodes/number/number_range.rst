@@ -16,9 +16,9 @@ Inputs and Parameters
 |*Number Type* | Enum       | Float: Decimal numbers. (Double precision float: sign bit, 11 bits exponent, 52 bits mantissa) |
 |              |            | Int: Integer numbers (Integer from -9223372036854775808 to 9223372036854775807)                |
 +--------------+------------+------------------------------------------------------------------------------------------------+
-|*Range Type*  | Enum       | Range: Set start, step and stop.                                                               |
-|              |            | Count: Set start, stop and count number (divisions).                                           |
-|              |            | Step: Set start, step and count number.                                                        |
+|*Range Type*  | Enum       | Range: Define range by setting start, step and stop.                                           |
+|              |            | Count: Define range by setting start, stop and count number (divisions).                       |
+|              |            | Step: Define range by setting start, step and count number.                                    |
 +--------------+------------+------------------------------------------------------------------------------------------------+
 | *Start*      | Float/ Int | value to start at                                                                              |
 +--------------+------------+------------------------------------------------------------------------------------------------+
@@ -32,51 +32,27 @@ Inputs and Parameters
 |              |            | **Never negative** - negative produces an empty list                                           |
 +--------------+------------+------------------------------------------------------------------------------------------------+
 
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster)
+
+**List Match**: Define how list with different lengths should be matched
+
+**Flat Output**: Keeps the output list depth
 
 Outputs
 -------
 
-Integers only, in list form.
+Range: Lists of sequences
 
 Examples
 --------
 
-**Non-vectorized**
+.. image:: https://user-images.githubusercontent.com/10011941/69128534-cdb40080-0aac-11ea-887d-721f4c785ebd.png
 
-Int Range
+With the 'Flat Output' activated the output will be [[..],[..],...] and it can be plugged to another Number Range Node.
 
-::
-
-    intRange(0,1,10)
-    >>> [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-    intRange(0,2,10)
-    >>> [0, 2, 4, 6, 8]
-
-    intRange(-4,1,6)
-    >>> [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5]
-
-    intRange(2,1,-4)
-    >>> [2, 1, 0, -1, -2, -3]
-
-Count Range
-
-::
-
-    countRange(0,1,5)
-    >>> [0, 1, 2, 3, 4]
-
-    countRange(0,2,5)
-    >>> [0, 2, 4, 6, 8]
-
-    countRange(-4,1,6)
-    >>> [-4, -3, -2, -1, 0, 1]
-
-    countRange(2,1,4)
-    >>> [2, 3, 4, 5]
-
-**Vectorized**
-
-`Progress Thread <https://github.com/nortikin/sverchok/issues/156>`_ in the issue tracker shows several examples.
-
-.. image:: https://cloud.githubusercontent.com/assets/619340/4163189/29d5fb56-34e4-11e4-9b00-baa15a8ddf00.png
+.. image:: https://user-images.githubusercontent.com/10011941/69128863-72ced900-0aad-11ea-8f3b-d65c47e970f8.png
