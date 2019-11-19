@@ -23,7 +23,7 @@ import mathutils
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_extended_curve_utils import get_points_bezier, get_points_nurbs, offset
-from sverchok.nodes.number.range_float import frange_count
+from sverchok.utils.modules.range_utils import frange_count
 
 point_attrs = {'NURBS': 'points', 'BEZIER': 'bezier_points'}
 
@@ -91,7 +91,7 @@ def interpolate_catmul(knots, cyclic, num_segments):
 
 
 def interpolate_linear(points, cyclic, num_segments):
-    
+
     if cyclic:
         points.append(points[0])
 
@@ -141,7 +141,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
     mode_options = [(k, k, '', i) for i, k in enumerate(["LINEAR", "CATMUL"])]
-    
+
     selected_mode: bpy.props.EnumProperty(
         items=mode_options, description="offers....", default="LINEAR", update=updateNode
     )
@@ -194,7 +194,7 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
             resolution = curve.render_resolution_u or curve.resolution_u
             # ('POLY', 'BEZIER', 'BSPLINE', 'CARDINAL', 'NURBS')
             for spline in curve.splines:
-                
+
                 if spline.type == 'BEZIER':
                     verts_part, edges_part, radii = get_points_bezier(spline, calc_radii=calc_radii)
                 elif spline.type == 'NURBS':
@@ -215,9 +215,9 @@ class SvCurveInputNode(bpy.types.Node, SverchCustomTreeNode):
 
             verts_out.append(verts)
             edges_out.append(edges)
-            # faces_out.append(faces) 
+            # faces_out.append(faces)
             radii_out.append(radii)
- 
+
 
         _out['matrices'].sv_set(mtrx_out)
         _out['verts'].sv_set(verts_out)

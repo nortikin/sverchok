@@ -192,9 +192,8 @@
 
 ## Number
     SvNumberNode
-    SvScalarMathNodeMK3
-    GenListRangeIntNode
-    SvGenFloatRange
+    SvScalarMathNodeMK4
+    SvGenNumberRange
     SvListInputNode
     SvRndNumGen
     RandomNode
@@ -204,6 +203,7 @@
     SvMapRangeNode
     SvEasingNode
     SvMixNumbersNode
+    SvMixInputsNode
     SvFormulaNodeMk3
     ---
     SvGenFibonacci

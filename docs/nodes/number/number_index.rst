@@ -11,11 +11,11 @@ Number
    formula3
    list_input
    mix_numbers
+   mix_inputs
    random
    random_num_gen
-   range_float
-   range_int
+   number_range
    range_map
    numbers
-   scalar_mk3
+   scalar_mk4
    oscillator

@@ -27,7 +27,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, BoolVectorProperty
 from mathutils import Matrix, Vector
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import natural_plus_one, greek_alphabet
@@ -317,11 +317,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 
-        try:
-
-            # for animations we need to suppress depsgraph updates emminating from this part of the process/            
-            self.id_data.freeze(hard=True)
-
+        # we need to suppress depsgraph updates emminating from this part of the process/            
+        with throttle_tree_update(self):
 
             if self.merge:
                 obj_index = 0
@@ -363,12 +360,6 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
             if self.outputs[0].is_linked:
                 self.outputs[0].sv_set(objs)
-
-        except Exception as err:
-            print('something weird happened', err)
-            ... # self.id_data.unfreeze(hard=True)
-
-        self.id_data.unfreeze(hard=True)
 
 
     def set_autosmooth(self, objs):

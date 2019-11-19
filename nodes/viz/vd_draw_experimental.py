@@ -269,14 +269,14 @@ def get_shader_data(named_shader=None):
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: exp vd
-    Tooltip: experimental drawing node
+    Triggers: exp vd mk3
+    Tooltip: drawing, with experimental features
 
     not a very exciting node.
     """
 
     bl_idname = 'SvVDExperimental'
-    bl_label = 'VD Experimental'
+    bl_label = 'Viewer Draw Mk3'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
@@ -613,7 +613,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             gl_instructions = self.format_draw_data(func=draw_matrix, args=(matrices, ))
             callback_enable(n_id, gl_instructions)
 
-    def copy(self, node):
+    def sv_copy(self, node):
         self.n_id = ''
 
     @property

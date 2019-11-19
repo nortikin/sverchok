@@ -33,7 +33,8 @@ from sverchok.core.update_system import (
     build_update_list,
     process_from_node,
     process_tree,
-    get_update_lists, update_error_nodes)
+    get_update_lists, update_error_nodes,
+    get_original_node_color)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
@@ -210,7 +211,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
         if self.skip_tree_update:
-            print('throttled update from context manager')
+            # print('throttled update from context manager')
             return
 
 
@@ -480,6 +481,22 @@ class SverchCustomTreeNode:
         else:
             pass
 
+    def copy(self, original):
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_copy() instead.
+        """
+        settings = get_original_node_color(self.id_data, original.name)
+        if settings is not None:
+            self.use_custom_color, self.color = settings
+        self.sv_copy(original)
+
+    def sv_copy(self, original):
+        """
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        """
+        pass
         
     def free(self):
         """
