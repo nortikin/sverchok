@@ -271,6 +271,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row2 = box_col2.row()
             row2.prop(self, 'pitch')
 
+    def demux_if_needed(self, wave_data, wave_params):
+        num_channels = wave_params[0]
+        if num_channels == 2:
+            return []
+        return wave_data
+
+
 
     def process(self):
         n_id = node_id(self)
@@ -283,6 +290,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             w = 220.0
             h = 60.0
             grid_data = gridshader(w, h, (x, y))
+
+            # this wave_* stuff may have only superficial resemblance to the wave writen to disk
+            # this is for drawing graphically only.
+            wave_data = self.get_wavedata()
+            wave_params = self.get_waveparams(wave_data)
+            wave_data = self.demux_if_needed(wave_data, wave_params)
+
 
             config = lambda: None
             config.loc = (x, y)
