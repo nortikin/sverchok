@@ -80,7 +80,7 @@ class SvLoadArchivedBlendURL(bpy.types.Operator):
     https://github.com/nortikin/sverchok/files/647412/blend_name_YYYY_MM_DD_HH_mm.gz
     """
     download_url: bpy.props.StringProperty()
-    os_temp_path: tempfile.gettempdir()
+    os_temp_path = tempfile.gettempdir()
 
     def execute(self, context):
 

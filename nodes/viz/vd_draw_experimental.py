@@ -64,7 +64,7 @@ def edges_from_faces(indices):
     return list(out)
 
 
-def ensure_triangles(coords, indices):
+def ensure_triangles(node, coords, indices):
     """
     this fully tesselates the incoming topology into tris,
     not optimized for meshes that don't contain ngons
@@ -76,13 +76,13 @@ def ensure_triangles(coords, indices):
         num_verts = len(idxset)
         if num_verts == 3:
             concat(tuple(idxset))
-        elif num_verts == 4:
+        elif num_verts == 4 and not node.handle_concave_quads:
             # a b c d  ->  [a, b, c], [a, c, d]
             concat2([(idxset[0], idxset[1], idxset[2]), (idxset[0], idxset[2], idxset[3])])
         else:
             subcoords = [Vector(coords[idx]) for idx in idxset]
             for pol in tessellate([subcoords]):
-                concat([idxset[i] for i in reversed(pol)])
+                concat([idxset[i] for i in pol])
     return new_indices
 
 
@@ -142,7 +142,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
 
     if GL_KIND == 'LINES' and dashed_data:
 
-        shader = dashed_data.shader
+        shader = dashed_data.dashed_shader
         batch = batch_for_shader(shader, 'LINES', {"inPos" : coords}, **params)
         shader.bind()
         shader.uniform_float("u_mvp", dashed_data.matrix)
@@ -185,7 +185,7 @@ def pack_dashed_config(config):
     dashed_config.u_dash_size = config.u_dash_size
     dashed_config.u_gap_size = config.u_gap_size
     dashed_config.m_color = config.line4f
-    dashed_config.shader = config.shader
+    dashed_config.dashed_shader = config.dashed_shader
     return dashed_config
 
 def draw_lines_uniform(context, config, coords, indices, line_color, line_width):
@@ -216,7 +216,32 @@ def draw_fragment(context, args):
     shader.uniform_float("brightness", 0.5)
     batch.draw(shader)
 
-def draw_faces(context, args):
+def draw_faces_uniform(context, args):
+    geom, config = args
+
+    if config.draw_gl_wireframe:
+            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+
+    if config.draw_gl_polygonoffset:
+        bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
+        bgl.glPolygonOffset(1.0, 1.0)
+
+    if config.shade == "flat":
+        draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
+    elif config.shade == "facet":
+        draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
+    elif config.shade == "smooth":
+        draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
+    elif config.shade == 'fragment':
+        if config.draw_fragment_function:
+            config.draw_fragment_function(context, args)
+        else:
+            draw_fragment(context, args)
+
+    if config.draw_gl_wireframe:
+        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
+
+def draw_complex(context, args):
     geom, config = args
 
     if config.draw_gl_polygonoffset:
@@ -224,32 +249,8 @@ def draw_faces(context, args):
     
     if config.display_edges:
         draw_lines_uniform(context, config, geom.verts, geom.edges, config.line4f, config.line_width)
-
     if config.display_faces:
-
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
-
-        if config.draw_gl_polygonoffset:
-            bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
-            bgl.glPolygonOffset(1.0, 1.0)
-
-        if config.shade == "flat":
-            draw_uniform('TRIS', geom.verts, geom.faces, config.face4f)
-        elif config.shade == "facet":
-            draw_smooth(geom.facet_verts, geom.facet_verts_vcols)
-        elif config.shade == "smooth":
-            draw_smooth(geom.verts, geom.smooth_vcols, indices=geom.faces)
-        elif config.shade == 'fragment':
-            if config.draw_fragment_function:
-                config.draw_fragment_function(context, args)
-            else:
-                draw_fragment(context, args)
-
-        if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_FILL)
-
-
+        draw_faces_uniform(context, args)
     if config.display_verts:
         draw_uniform('POINTS', geom.verts, None, config.vcol, config.point_size)
 
@@ -268,14 +269,14 @@ def get_shader_data(named_shader=None):
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: exp vd
-    Tooltip: experimental drawing node
+    Triggers: exp vd mk3
+    Tooltip: drawing, with experimental features
 
     not a very exciting node.
     """
 
     bl_idname = 'SvVDExperimental'
-    bl_label = 'VD Experimental'
+    bl_label = 'Viewer Draw Mk3'
     bl_icon = 'GREASEPENCIL'
     sv_icon = 'SV_DRAW_VIEWER'
 
@@ -327,6 +328,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     extended_matrix: BoolProperty(
         default=False,
         description='Allows mesh.transform(matrix) operation, quite fast!')
+
+    handle_concave_quads: BoolProperty(
+        name='Handle Concave Quads', default=False, update=updateNode,
+        description='tessellate quads using geometry.tessellate_polygon, expect some speed impact')
 
     # glGet with argument GL_POINT_SIZE_RANGE
     point_size: FloatProperty(description="glPointSize( GLfloat size)", update=updateNode, default=4.0, min=1.0, max=15.0)
@@ -427,13 +432,14 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'point_size', text='Point Size')
         layout.prop(self, 'line_width', text='Edge Width')
         layout.separator()
+        layout.prop(self, 'handle_concave_quads', toggle=True)
         layout.prop(self, 'draw_gl_wireframe', toggle=True)
         layout.prop(self, 'draw_gl_polygonoffset', toggle=True)
         layout.prop(self, 'node_ui_show_attrs_socket', toggle=True)
         layout.separator()
 
     def add_gl_stuff_to_config(self, config):
-        config.shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
+        config.dashed_shader = gpu.types.GPUShader(dashed_vertex_shader, dashed_fragment_shader)
 
     def fill_config(self):
 
@@ -531,6 +537,12 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     print('error inside socket_acquired_attrs: ', err)
                     self.id_data.unfreeze(hard=True)  # ensure this thing is unfrozen
 
+    def format_draw_data(self, func=None, args=None):
+        return {
+            'tree_name': self.id_data.name[:],
+            'custom_function': func,
+            'args': args}
+
     def process(self):
 
         self.handle_attr_socket()
@@ -560,12 +572,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             geom.verts = coords
 
             if self.display_verts and not any([display_edges, display_faces]):
-                draw_data = {
-                    'tree_name': self.id_data.name[:],
-                    'custom_function': draw_verts,
-                    'args': (geom, config)
-                }
-                callback_enable(n_id, draw_data)
+                gl_instructions = self.format_draw_data(func=draw_verts, args=(geom, config))
+                callback_enable(n_id, gl_instructions)
                 return
 
             if edges_socket.is_linked and not faces_socket.is_linked:
@@ -573,22 +581,15 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     self.add_gl_stuff_to_config(config)
 
                 geom.edges = edge_indices
-                draw_data = {
-                    'tree_name': self.id_data.name[:],
-                    'custom_function': draw_edges,
-                    'args': (geom, config)
-                }
-                callback_enable(n_id, draw_data)
+                gl_instructions = self.format_draw_data(func=draw_edges, args=(geom, config))
+                callback_enable(n_id, gl_instructions)
                 return
 
             if faces_socket.is_linked:
 
-                # we could offer different optimizations, like
-                #  -expecting only tris as input, then no processing
-                #  -expecting only quads, then minimal processing needed
-                #  -expecting mixed bag, then ensure_triangles (current default)
+                #  expecting mixed bag of tris/quads/ngons
                 if self.display_faces:
-                    geom.faces = ensure_triangles(coords, face_indices)
+                    geom.faces = ensure_triangles(self, coords, face_indices)
 
                 if self.display_edges:
                     if self.use_dashed:    
@@ -597,32 +598,22 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
                     # pass edges from socket if we can, else we manually compute them from faces
                     geom.edges = edge_indices if edges_socket.is_linked else edges_from_faces(face_indices)
-                if self.display_faces:
 
+                if self.display_faces:
                     self.faces_diplay(geom, config)
 
-                draw_data = {
-                    'tree_name': self.id_data.name[:],
-                    'custom_function': draw_faces,
-                    'args': (geom, config)
-                }
-                callback_enable(n_id, draw_data)
+                gl_instructions = self.format_draw_data(func=draw_complex, args=(geom, config))
+                callback_enable(n_id, gl_instructions)
                 return
 
             return
 
         elif matrix_socket.is_linked:
             matrices = matrix_socket.sv_get(deepcopy=False, default=[Matrix()])
+            gl_instructions = self.format_draw_data(func=draw_matrix, args=(matrices, ))
+            callback_enable(n_id, gl_instructions)
 
-            draw_data = {
-                'tree_name': self.id_data.name[:],
-                'custom_function': draw_matrix,
-                'args': (matrices,)
-            }
-
-            callback_enable(n_id, draw_data)
-
-    def copy(self, node):
+    def sv_copy(self, node):
         self.n_id = ''
 
     @property

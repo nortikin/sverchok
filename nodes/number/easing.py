@@ -121,6 +121,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Float").prop_name = 'in_float'
         self.outputs.new('SvStringsSocket', "Float").custom_draw = 'custom_draw_socket'
+        self.get_and_set_gl_scale_info()
 
     def get_drawing_attributes(self):
         """
@@ -246,7 +247,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
     def free(self):
         nvBGL.callback_disable(node_id(self))
 
-    def copy(self, node):
+    def sv_copy(self, node):
         # reset n_id on copy
         self.n_id = ''
 

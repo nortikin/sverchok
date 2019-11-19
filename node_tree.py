@@ -19,6 +19,7 @@
 
 import sys
 import time
+from contextlib import contextmanager
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
@@ -32,7 +33,8 @@ from sverchok.core.update_system import (
     build_update_list,
     process_from_node,
     process_tree,
-    get_update_lists, update_error_nodes)
+    get_update_lists, update_error_nodes,
+    get_original_node_color)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
@@ -81,6 +83,28 @@ class SvLinkNewNodeInput(bpy.types.Operator):
         return {'FINISHED'}
 
 
+@contextmanager
+def throttle_tree_update(node):
+    """ usage
+    from sverchok.node_tree import throttle_tree_update
+
+    inside your node, f.ex inside a wrapped_update that creates a socket
+
+    def wrapped_update(self, context):
+        with throttle_tree_update(self):
+            self.inputs.new(...)
+            self.outputs.new(...)
+
+    that's it. 
+
+    """
+    try:
+        node.id_data.skip_tree_update = True
+        yield node
+    finally:
+        node.id_data.skip_tree_update = False
+
+
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
@@ -88,6 +112,8 @@ class SvNodeTreeCommon(object):
 
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
+    skip_tree_update: BoolProperty(default=False)
+
 
     def build_update_list(self):
         build_update_list(self)
@@ -139,6 +165,10 @@ class SvNodeTreeCommon(object):
         return res
 
 
+
+
+
+
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
@@ -180,9 +210,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
+        if self.skip_tree_update:
+            print('throttled update from context manager')
+            return
+
+
         # print('svtree update', self.timestamp)
         self.has_changed = True
-        self.has_link_count_changed
+        # self.has_link_count_changed
         self.process()
 
     def process_ani(self):
@@ -446,6 +481,22 @@ class SverchCustomTreeNode:
         else:
             pass
 
+    def copy(self, original):
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_copy() instead.
+        """
+        settings = get_original_node_color(self.id_data, original.name)
+        if settings is not None:
+            self.use_custom_color, self.color = settings
+        self.sv_copy(original)
+
+    def sv_copy(self, original):
+        """
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        """
+        pass
         
     def free(self):
         """
@@ -473,7 +524,24 @@ class SverchCustomTreeNode:
         """
         op = layout_element.operator(operator_idname, **keywords)
         op.idname = self.name
-        op.idtree = self.id_data.name      
+        op.idtree = self.id_data.name
+
+
+    def get_and_set_gl_scale_info(self, origin=None):
+        """
+        This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
+        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+        x,y and dpi scale info.
+        """
+        print('get_and_set_gl_scale_info called from', origin or self.name)
+
+        try:
+            print('getting gl scale params')
+            from sverchok.utils.context_managers import sv_preferences
+            with sv_preferences() as prefs:
+                getattr(prefs, 'set_nodeview_render_params')(None)
+        except Exception as err:
+            print('failed to get gl scale info', err)
 
 
 classes = [

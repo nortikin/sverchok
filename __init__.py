@@ -34,6 +34,7 @@
 #     Eleanor Howick (aka elfnor)
 #     Walter Perdan (aka kalwalt)
 #     Marius Giurgi (aka DolphinDream)
+#     Victor Doval (aka vicdoval)
 #
 #  ***** END GPL LICENSE BLOCK *****
 #
@@ -41,14 +42,9 @@
 
 bl_info = {
     "name": "Sverchok",
-    "author": (
-        "sverchok-b3d@ya.ru, "
-        "Cfyzzz, Nikitron, Ly29, "
-        "AgustinJB, Zeffii, Kosvor, "
-        "Portnov, Elfnor, kalwalt, DolphinDream"
-    ),
+    "author": "sverchok-b3d@ya.ru various authors see https://github.com/nortikin/sverchok/graphs/contributors",
     "version": (0, 6, 0, 0),
-    "blender": (2, 80, 0),
+    "blender": (2, 81, 0),
     "location": "Node Editor",
     "category": "Node",
     "description": "Parametric node-based geometry programming",

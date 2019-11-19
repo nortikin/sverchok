@@ -11,13 +11,12 @@ from sverchok.utils.testing import *
 from sverchok.utils.sv_IO_panel_tools import import_tree
 from sverchok.utils.sv_examples_utils import examples_paths
 
-class ScriptUvImportTest(ReferenceTreeTestCase):
-
-    reference_file_name = "script_uv_ref.blend.gz"
+class ScriptUvImportTest(SverchokTestCase):
 
     def test_script_uv_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
-            import_tree(new_tree, self.get_reference_file_path("script_uv.json"))
+            with self.assert_logs_no_errors():
+                import_tree(new_tree, self.get_reference_file_path("script_uv.json"))
 
             # Check links
             self.assert_nodes_linked("ImportedTree", "Scripted Node Lite", "verts", "UV Connection", "vertices")
@@ -29,30 +28,27 @@ class ScriptUvImportTest(ReferenceTreeTestCase):
             self.assert_node_property_equals("ImportedTree", "UV Connection", "polygons", 'Edges')
             self.assert_node_property_equals("ImportedTree", "UV Connection", "dir_check", 'U_dir')
 
-class ProfileImportTest(ReferenceTreeTestCase):
-
-    reference_file_name = "profile_ref.blend.gz"
+class ProfileImportTest(SverchokTestCase):
 
     def test_profile_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
-            import_tree(new_tree, self.get_reference_file_path("profile.json"))
+            with self.assert_logs_no_errors():
+                import_tree(new_tree, self.get_reference_file_path("profile.json"))
 
-class MeshExprImportTest(ReferenceTreeTestCase):
-
-    reference_file_name = "mesh_expr_ref.blend.gz"
+class MeshExprImportTest(SverchokTestCase):
 
     def test_mesh_expr_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
-            import_tree(new_tree, self.get_reference_file_path("mesh.json"))
+            with self.assert_logs_no_errors():
+                import_tree(new_tree, self.get_reference_file_path("mesh.json"))
 
-class MonadImportTest(ReferenceTreeTestCase):
-
-    reference_file_name = "monad_1_ref.blend.gz"
+class MonadImportTest(SverchokTestCase):
 
     def test_monad_import(self):
         with self.temporary_node_tree("ImportedTree") as new_tree:
-            import_tree(new_tree, self.get_reference_file_path("monad_1.json"))
-            self.assert_node_property_equals("ImportedTree", "Monad", "amplitude", 0.6199999451637268)
+            with self.assert_logs_no_errors():
+                import_tree(new_tree, self.get_reference_file_path("monad_1.json"))
+            self.assert_node_input_equals("ImportedTree", "Monad", "Num X", [[4]])
 
 
 # to keep automated tests from breaking, i've collected a list of examples that need to be skipped
@@ -105,3 +101,4 @@ class ExamplesImportTest(SverchokTestCase):
                             if is_old(node):
                                 error_format = "This example contains deprecated node `{}' ({}). Please upgrade the example file." 
                                 self.fail(error_format.format(node.name, node.bl_idname))
+

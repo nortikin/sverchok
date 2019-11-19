@@ -159,9 +159,8 @@ class SvMatrixViewer28(bpy.types.Node, SverchCustomTreeNode):
         callback_disable(node_id(self))
         callback_disable(node_id(self) + '__2D')
 
-
-    # reset n_id on copy
-    def copy(self, node):
+    def sv_copy(self, node):
+        # reset n_id on copy
         self.n_id = ''
 
     def update(self):

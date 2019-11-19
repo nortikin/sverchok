@@ -104,7 +104,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
 
     @staticmethod
     def a_rot(ang, rp, axis, q):
-        return (Matrix.Rotation(ang, 3, axis) * (q - rp)) + rp
+        return (Matrix.Rotation(ang, 3, axis) @ (q - rp)) + rp
 
     # #################
     # opp -     offset amount

@@ -348,7 +348,9 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         height_socket = inew('SvStringsSocket', "Height")
         height_socket.prop_name = 'height_custom_tex'
         height_socket.hide_safe = True
-        pass
+
+        self.get_and_set_gl_scale_info()
+
 
     def delete_texture(self):
         n_id = node_id(self)
@@ -434,7 +436,7 @@ class SvTextureViewerNode(bpy.types.Node, SverchCustomTreeNode):
         nvBGL2.callback_disable(node_id(self))
         self.delete_texture()
 
-    def copy(self, node):
+    def sv_copy(self, node):
         # reset n_id on copy
         self.n_id = ''
 

@@ -125,7 +125,7 @@ class SvOBJInsolationNode(bpy.types.Node, SverchCustomTreeNode):
         OutS_ = np.array([[i[0] for i in i2] for i2 in outfin]).reshape([leno,lenor,lendir])
         def colset(rec,OutS_):
             OutS_ = 1-OutS_.sum(axis=2)/lendir
-            OutS = np.array([[[i,i,i] for i in k] for k in OutS_.tolist()]).reshape([leno,lenor,3]).tolist()
+            OutS = np.array([[[i,i,i,1] for i in k] for k in OutS_.tolist()]).reshape([leno,lenor,4]).tolist()
             if not 'SvInsol' in rec.data.vertex_colors:
                 rec.data.vertex_colors.new(name='SvInsol')
             colors = rec.data.vertex_colors['SvInsol'].data

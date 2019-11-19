@@ -8,8 +8,8 @@ from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools, logging
+from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
-
 
 def get_params(settings_and_fallbacks):
     """
@@ -35,6 +35,16 @@ def get_params(settings_and_fallbacks):
                 value = v
             setattr(props, k, value)
     return props
+
+# getDpiFactor and getDpi are lifted from Animation Nodes :)
+
+def get_dpi_factor():
+    return get_dpi() / 72
+
+def get_dpi():
+    systemPreferences = bpy.context.preferences.system
+    retinaFactor = getattr(systemPreferences, "pixel_size", 1)
+    return systemPreferences.dpi * retinaFactor
 
 
 class SverchokPreferences(AddonPreferences):
@@ -229,12 +239,23 @@ class SverchokPreferences(AddonPreferences):
     index_viewer_scale: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default index viewer scale')
 
+    def set_nodeview_render_params(self, context):
+        # i think these are both the same..
+        self.render_scale = get_dpi_factor()
+        self.render_location_xy_multiplier = get_dpi_factor()
+        print(f'set render_scale to: {self.render_scale}')
+        print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
+
     ##
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     defaults_location: StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
     external_editor: StringProperty(description='which external app to invoke to view sources')
     real_sverchok_path: StringProperty(description='use with symlinked to get correct src->dst')
+
+    github_token : StringProperty(name = "GitHub API Token",
+                    description = "GitHub API access token. Should have 'gist' OAuth scope.",
+                    subtype="PASSWORD")
 
     # Logging settings
 
@@ -303,6 +324,13 @@ class SverchokPreferences(AddonPreferences):
             col1.prop(self, "external_editor", text="Ext Editor")
             col1.prop(self, "real_sverchok_path", text="Src Directory")
 
+            box = col1.box()
+            box.label(text="Export to Gist")
+            box.prop(self, "github_token")
+            box.label(text="To export node trees to gists, you have to create a GitHub API access token.")
+            box.label(text="For more information, visit " + TOKEN_HELP_URL)
+            box.operator("node.sv_github_api_token_help", text="Visit documentation page")
+
             col2 = col_split.split().column()
             col2.label(text="Frame change handler:")
             col2.row().prop(self, "frame_change_mode", expand=True)
@@ -341,8 +369,10 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col = box_sub1.column(align=True)
             
             box_sub1_col.label(text='Render Scale & Location')
-            box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-            box_sub1_col.prop(self, 'render_scale', text='scale')
+            # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
+            # box_sub1_col.prop(self, 'render_scale', text='scale')
+            box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
+            box_sub1_col.label(text=f'render_scale : {self.render_scale}')
             
             box_sub1_col.label(text='Stethoscope')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')

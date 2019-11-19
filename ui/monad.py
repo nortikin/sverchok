@@ -69,7 +69,7 @@ class SV_PT_CustomGroupInterface(Panel):
         # should ideally take dpi into account,
         if width > 310:
             row = layout.row()
-            split = row.split(percentage=0.5)
+            split = row.split(factor=0.5)
             column1 = split.box().column()
             split = split.split()
             column2 = split.box().column()
@@ -110,11 +110,11 @@ class SV_PT_CustomGroupInterface(Panel):
             set_multiple_attrs(m, direction=0, **socket_ref)
 
 
-        column1.label('inputs')
+        column1.label(text='inputs')
         for i, s in enumerate(in_node.outputs):
             draw_socket_row(column1, s, i)
 
-        column2.label('outputs')
+        column2.label(text='outputs')
         for i, s in enumerate(out_node.inputs):
             draw_socket_row(column2, s, i)
 
@@ -122,7 +122,7 @@ class SV_PT_CustomGroupInterface(Panel):
         if len(monad.instances) == 1:
             origin_node = monad.instances[0]
             layout.separator()
-            layout.label('Monad UI:')
+            layout.label(text='Monad UI:')
             box = layout.column().box()
             origin_node.draw_buttons(None, box)
 

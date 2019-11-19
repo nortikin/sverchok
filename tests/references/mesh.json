@@ -1,1 +1,60 @@
-{"nodes": {"Viewer Draw": {"params": {"shading": 1}, "bl_idname": "NodeUndefined", "height": 100.0, "width": 140.0, "label": "", "hide": false, "location": [-426.6385498046875, 77.74425506591797], "color": [1.0, 0.30000001192092896, 0.0], "use_custom_color": true}, "Mesh Expression": {"geom": "{\n  \"faces\": [\n    [\n      0,\n      1,\n      3,\n      2\n    ]\n  ],\n  \"edges\": [\n    [\n      0,\n      2\n    ],\n    [\n      0,\n      1\n    ],\n    [\n      1,\n      3\n    ],\n    [\n      2,\n      3\n    ]\n  ],\n  \"vertices\": [\n    [\n      -1.0,\n      -1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      1.0,\n      -1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      -1.0,\n      1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      1.0,\n      1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ]\n  ]\n}", "params": {"filename": "Mesh Expression"}, "bl_idname": "SvMeshEvalNode", "height": 100.0, "width": 166.06861877441406, "label": "", "hide": false, "location": [-641.396728515625, 33.163639068603516], "color": [0.800000011920929, 0.0, 0.0], "use_custom_color": true}}, "groups": {}, "framed_nodes": {}, "update_lists": [["Mesh Expression", "Vertices", "Viewer Draw", "vertices"], ["Mesh Expression", "Faces", "Viewer Draw", "edg_pol"]], "export_version": "0.079"}
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Mesh Expression": {
+      "bl_idname": "SvMeshEvalNode",
+      "geom": "{\n  \"faces\": [\n    [\n      0,\n      1,\n      3,\n      2\n    ]\n  ],\n  \"edges\": [\n    [\n      0,\n      2\n    ],\n    [\n      0,\n      1\n    ],\n    [\n      1,\n      3\n    ],\n    [\n      2,\n      3\n    ]\n  ],\n  \"vertices\": [\n    [\n      -1.0,\n      -1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      1.0,\n      -1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      -1.0,\n      1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      1.0,\n      1.0,\n      0.0,\n      [\n        \"Selected\"\n      ]\n    ]\n  ]\n}",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -535.1032104492188,
+        -70.09326171875
+      ],
+      "params": {
+        "filename": "Mesh Expression"
+      },
+      "width": 140.0
+    },
+    "VD Experimental": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -319.22802734375,
+        3.3283565044403076
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Mesh Expression",
+      0,
+      "VD Experimental",
+      0
+    ],
+    [
+      "Mesh Expression",
+      1,
+      "VD Experimental",
+      1
+    ],
+    [
+      "Mesh Expression",
+      2,
+      "VD Experimental",
+      2
+    ]
+  ]
+}

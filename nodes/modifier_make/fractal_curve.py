@@ -36,6 +36,7 @@ class SvFractalCurveNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvFractalCurveNode'
     bl_label = 'Fractal Curve'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FRACTAL_CURVE'
 
     iterations : IntProperty(name = 'Iterations',
             description = 'Number of iterations',

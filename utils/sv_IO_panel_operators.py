@@ -21,7 +21,7 @@ from sverchok.utils.sv_IO_panel_tools import (
     load_json_from_gist,
     import_tree,
     write_json)
-
+from sverchok.utils.sv_gist_tools import show_token_help, TOKEN_HELP_URL
 from sverchok.utils.logging import debug, info, warning, error, exception
 
 
@@ -229,15 +229,21 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
 
         try:
             gist_url = sv_gist_tools.main_upload_function(gist_filename, gist_description, gist_body, show_browser=False)
+            if not gist_url:
+                self.report({'ERROR'}, "You have not specified GitHub API access token, which is " +
+                                "required to create gists from Sverchok. Please see " +
+                                TOKEN_HELP_URL +
+                                " for more information.")
+                return {'CANCELLED'}
             
             context.window_manager.clipboard = gist_url   # full destination url
             info(gist_url)
-            self.report({'WARNING'}, "Copied gistURL to clipboad")
+            self.report({'WARNING'}, "Copied gist URL to clipboad")
 
             sv_gist_tools.write_or_append_datafiles(gist_url, gist_filename)
             return {'FINISHED'}
         except Exception as err:
-            info(err)
+            exception(err)
             self.report({'ERROR'}, "Error 222: net connection or github login failed!")
 
         return {'CANCELLED'}
@@ -297,6 +303,17 @@ class SvBlendToArchive(bpy.types.Operator):
 
         return {'CANCELLED'}
 
+class SvOpenTokenHelpOperator(bpy.types.Operator):
+    """Open a wiki page with information about GitHub API tokens creation
+    in the browser"""
+    
+    bl_idname = "node.sv_github_api_token_help"
+    bl_label = "GitHub API token help"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        show_token_help()
+        return {'FINISHED'}
 
 classes = [
     SvNodeTreeExporter,
@@ -304,7 +321,8 @@ classes = [
     SvNodeTreeImporter,
     SvNodeTreeImporterSilent,
     SvNodeTreeImportFromGist,
-    SvBlendToArchive
+    SvBlendToArchive,
+    SvOpenTokenHelpOperator
 ]
 
 

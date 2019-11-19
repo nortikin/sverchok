@@ -27,6 +27,7 @@ only for speed, never for aesthetics or line count or cleverness.
 '''
 
 import math
+from math import sin, cos, sqrt
 import numpy as np
 from numpy import linalg
 from functools import wraps
@@ -897,9 +898,9 @@ def diameter(vertices, axis):
         return (M-m)
     else:
         if axis == 'X':
-            axis == 0
+            axis = 0
         elif axis == 'Y':
-            axis == 1
+            axis = 1
         elif axis == 'Z':
             axis = 2
         elif isinstance(axis, str):
@@ -999,6 +1000,11 @@ class PlaneEquation(object):
         c = (x2 - x1)*(y3 - y1) - (y2 - y1)*(x3 - x1)
 
         return PlaneEquation.from_normal_and_point((a, b, c), p1)
+
+    @classmethod
+    def from_point_and_two_vectors(cls, point, v1, v2):
+        normal = v1.cross(v2)
+        return PlaneEquation.from_normal_and_point(normal, point)
 
     @classmethod
     def from_coordinate_plane(cls, plane_name):
@@ -1109,7 +1115,7 @@ class PlaneEquation(object):
         denominator = math.sqrt(a*a + b*b + c*c)
         return numerators / denominator
 
-    def intersect_with_line(self, line):
+    def intersect_with_line(self, line, min_det=1e-8):
         """
         Calculate intersection between this plane and specified line.
         input: line - an instance of LineEquation.
@@ -1184,8 +1190,10 @@ class PlaneEquation(object):
         else:
             raise Exception("Invalid plane: all coefficients are (nearly) zero: {}, {}, {}".format(a, b, c))
 
-        if abs(linalg.det(matrix)) < 1e-8:
-            raise Exception("Plane: {}, line: {}".format(self, line))
+        det = linalg.det(matrix)
+        if abs(det) < min_det:
+            return None
+            #raise Exception("Plane: {}, line: {}, det: {}".format(self, line, det))
 
         result = np.linalg.solve(matrix, free)
         x, y, z = result[0], result[1], result[2]
@@ -1436,6 +1444,191 @@ class LineEquation(object):
         # Then find an intersection of that plane with this line.
         return plane.intersect_with_line(self)
 
+class LineEquation2D(object):
+    def __init__(self, a, b, c):
+        epsilon = 1e-8
+        if abs(a) < epsilon and abs(b) < epsilon:
+            raise Exception(f"Direction is (nearly) zero: {a}, {b}")
+        self.a = a
+        self.b = b
+        self.c = c
+
+    def __repr__(self):
+        return f"{self.a}*x + {self.b}*y + {self.c} = 0"
+
+    @classmethod
+    def from_normal_and_point(cls, normal, point):
+        a, b = tuple(normal)
+        cx, cy = tuple(point)
+        c = - (a*cx + b*cy)
+        return LineEquation2D(a, b, c)
+
+    @classmethod
+    def from_direction_and_point(cls, direction, point):
+        dx, dy = tuple(direction)
+        return LineEquation2D.from_normal_and_point((-dy, dx), point)
+
+    @classmethod
+    def from_two_points(cls, v1, v2):
+        x1,y1 = tuple(v1)
+        x2,y2 = tuple(v2)
+        a = y2 - y1
+        b = x1 - x2
+        c = y1*x2 - x1*y2
+        epsilon = 1e-8
+        if abs(a) < epsilon and abs(b) < epsilon:
+            raise Exception(f"Two points are too close: {v1}, {v2}")
+        return LineEquation2D(a, b, c)
+
+    @classmethod
+    def from_coordinate_axis(cls, axis_name):
+        if axis_name == 'X':
+            return LineEquation2D(0, 1, 0)
+        elif axis_name == 'Y':
+            return LineEquation2D(1, 0, 0)
+        else:
+            raise Exception("Unknown coordinate axis name")
+
+    @property
+    def normal(self):
+        return Vector((self.a, self.b))
+
+    @normal.setter
+    def normal(self, normal):
+        self.a = normal[0]
+        self.b = normal[1]
+
+    @property
+    def direction(self):
+        return Vector((-self.b, self.a))
+
+    @direction.setter
+    def direction(self, direction):
+        self.a = - direvtion[1]
+        self.b = direction[0]
+
+    def nearest_point_to_origin(self):
+        a, b, c = self.a, self.b, self.c
+        sqr = a*a + b*b
+        return Vector(( (-a*c)/sqr, (-b*c)/sqr ))
+
+    def two_points(self):
+        p1 = self.nearest_point_to_origin()
+        p2 = p1 + self.direction
+        return p1, p2
+
+    def check(self, point, eps=1e-6):
+        a, b, c = self.a, self.b, self.c
+        x, y, z = tuple(point)
+        value = a*x + b*y + c
+        return abs(value) < eps
+
+    def side_of_point(self, point, eps=1e-8):
+        a, b, c = self.a, self.b, self.c
+        x, y, z = tuple(point)
+        value = a*x + b*y + c
+        if abs(value) < eps:
+            return 0
+        elif value > 0:
+            return +1
+        else:
+            return -1
+
+    def distance_to_point(self, point):
+        a, b, c = self.a, self.b, self.c
+        x, y, z = tuple(point)
+        value = a*x + b*y + c
+        numerator = abs(value)
+        denominator = sqrt(a*a + b*b)
+        return numerator / denominator
+
+    def projection_of_point(self, point):
+        normal = self.normal.normalized()
+        distance = self.distance_to_point(point)
+        sign = self.side_of_point(point)
+        return Vector(point) - sign * distance * normal
+
+    def intersect_with_line(self, line2, min_det=1e-8):
+        """
+        Find intersection between two lines.
+        """
+        #
+        #   /
+        #   |  A1 x + B1 y + C1 = 0
+        #  /
+        #  \
+        #   |  A2 x + B2 y + C2 = 0
+        #   \
+        #
+        matrix = np.array([
+                    [self.a, self.b],
+                    [line2.a, line2.b]
+                ])
+        free = np.array([
+                    -self.c,
+                    -line2.c
+                ])
+
+        det = linalg.det(matrix)
+        if abs(det) < min_det:
+            return None
+
+        result = np.linalg.solve(matrix, free)
+        x, y = tuple(result)
+        return Vector((x, y))
+
+class CircleEquation2D(object):
+    def __init__(self, center, radius):
+        if not isinstance(center, Vector):
+            center = Vector(center)
+        self.center = center
+        self.radius = radius
+
+    def __str__(self):
+        return f"(x - {self.center.x})^2 + (y - {self.center.y})^2 = {self.radius}^2"
+
+    def evaluate(self, point):
+        x, y = tuple(point)
+        x0, y0 = tuple(self.center)
+        r = self.radius
+        return (x - x0)**2 + (y - y0)**2 - r**2
+
+    def check(self, point, eps=1e-8):
+        value = self.evaluate(point)
+        return abs(value) < eps
+
+    def intersect_with_line(self, line2):
+        line_p1, line_p2 = line2.two_points()
+        r = mathutils.geometry.intersect_line_sphere_2d(line_p1, line_p2, self.center, self.radius, False)
+        return r
+
+    def intersect_with_segment(self, p1, p2):
+        return mathutils.geometry.intersect_line_sphere_2d(p1, p2, self.center, self.radius, True)
+
+    def intersect_with_circle(self, circle2):
+        return mathutils.geometry.intersect_sphere_sphere_2d(self.center, self.radius, circle2.center, circle2.radius)
+
+    def projection_of_point(self, point, nearest=True):
+        line = LineEquation2D.from_two_points(self.center, point)
+        p1, p2 = self.intersect_with_line(line)
+        if nearest:
+            rho1 = (point - p1).length
+            rho2 = (point - p2).length
+            if rho1 < rho2:
+                return p1
+            else:
+                return p2
+        else:
+            return p1, p2
+
+    def contains(self, point, include_bound=True, eps=1e-8):
+        value = self.evaluate(point)
+        on_edge = abs(value) < eps
+        if include_bound:
+            return (value < 0) or on_edge
+        else:
+            return value < 0
+
 class LinearApproximationData(object):
     """
     This class contains results of linear approximation calculation.
@@ -1584,3 +1777,22 @@ def distance_line_line(line_a, line_b, result, gates, tolerance):
     for i, res in enumerate(result):
         if gates[i]:
             res.append([local_result[i]])
+
+def rotate_vector_around_vector(v, k, theta):
+    """
+    Rotate vector v around vector k by theta angle.
+    input: v, k - 3-tuples or Vectors; theta - float, in radians.
+    output: Vector.
+
+    This implements Rodrigues' formula: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
+    """
+    if not isinstance(v, Vector):
+        v = Vector(v)
+    if not isinstance(k, Vector):
+        k = Vector(k)
+    k = k.normalized()
+
+    ct, st = cos(theta), sin(theta)
+
+    return ct * v + st * (k.cross(v)) + (1 - ct) * (k.dot(v)) * k
+

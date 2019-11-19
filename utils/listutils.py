@@ -232,3 +232,11 @@ def wrapper_2(l_etalon, list_a, level):
     for l in range(level-1):
         list_tmp = [list_tmp]
     return list_tmp
+
+def lists_flat(lists):
+    list_temp = [[] for list in lists]
+    for l_t, l in zip(list_temp, lists):
+        for item in l:
+            l_t += item
+
+    return list_temp

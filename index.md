@@ -14,7 +14,6 @@
     SvNGonNode
     SvBoxNode
     SvCircleNode
-    CylinderNode
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
@@ -23,10 +22,10 @@
     SvCricketNode
     ---
     BasicSplineNode
+    SvQuadraticSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
     SvScriptNodeLite
-    SvSNFunctor
     SvSNFunctorB
     ImageNode
 
@@ -37,7 +36,6 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvProfileNodeMK2
     SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
@@ -47,6 +45,8 @@
     SvEllipseNode
     SvSuperEllipsoidNode
     SvRegularSolid
+    SvConicSectionNode
+    SvTriangleNode
 
 ## Analyzers
     SvBBoxNodeMk2
@@ -58,11 +58,11 @@
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
     SvPathLengthNode
-    CentersPolsNodeMK2
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
+    SvIntersectCircleCircleNode
     SvIntersectPlanePlaneNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
@@ -85,10 +85,15 @@
     SvMoveNodeMK2
     SvMirrorNode
     MatrixApplyNode
-    SvSimpleDeformNode
     SvBarycentricTransformNode
     ---
     Svb28MatrixArrayNode
+    ---
+    SvTransformSelectNode
+    SvSimpleDeformNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
+    SvRandomizeVerticesNode
 
 ## Modifier Change
     SvDeleteLooseNode
@@ -107,30 +112,27 @@
     SvFillsHoleNode
     SvRecalcNormalsNode
     SvFlipNormalsNode
-    SvRandomizeVerticesNode
     ---
-    SvIterateNode
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
-    SvBendAlongPathNode
-    SvBendAlongSurfaceNode
     SvVertMaskNode
-    SvTransformSelectNode
     SvSplitEdgesNode
 
 ## Modifier Make
     LineConnectNodeMK2
     ---
-    SvConvexHullNode
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
+    SvOffsetLineNode
+    SvContourNode
+    SvDualMeshNode
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
-    AdaptivePolsNode
+    SvAdaptivePolygonsNodeMk2
     SvDuplicateAlongEdgeNode
     SvFractalCurveNode
     SvSolidifyNode
@@ -181,6 +183,7 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
+    SvInsetSpecial
     SvLatheNode
     SvSmoothNode
     SvSmoothLines
@@ -195,7 +198,7 @@
 
 ## Number
     SvNumberNode
-    SvScalarMathNodeMK3
+    SvScalarMathNodeMK4
     GenListRangeIntNode
     SvGenFloatRange
     SvListInputNode
@@ -207,11 +210,12 @@
     SvMapRangeNode
     SvEasingNode
     SvMixNumbersNode
-    Formula2Node
+    SvMixInputsNode
     SvFormulaNodeMk3
     ---
     SvGenFibonacci
     SvGenExponential
+    SvOscillatorNode
 
 ## Vector
     GenVectorsNode
@@ -227,12 +231,10 @@
     VectorPolarOutNode
     SvAttractorNode
     ---
-    EvaluateLineNode
     SvVectorLerp
     SvInterpolationStripesNode
-    SvInterpolationNode
-    SvInterpolationNodeMK2
     SvInterpolationNodeMK3
+    SvInterpolationNodeMK2
     SvLinearApproxNode
     ---
     SvHomogenousVectorField
@@ -241,16 +243,24 @@
     SvLacunarityNode
     SvVectorFractal
 
-
 ## Matrix
     SvMatrixGenNodeMK2
     MatrixOutNode
+    SvMatrixApplyJoinNode
+    SvIterateNode
     MatrixDeformNode
     SvMatrixValueIn
     SvMatrixEulerNode
     MatrixShearNode
+    SvMatrixNormalNode
+    SvMatrixTrackToNode
+    SvMatrixMathNode
     MatrixInterpolationNode
-    SvMatrixApplyJoinNode
+
+## Quaternion
+    SvQuaternionInNode
+    SvQuaternionOutNode
+    SvQuaternionMathNode
 
 ## Logic
     SvLogicNode
@@ -344,10 +354,6 @@
     SvColorInputNode
     SvColorsOutNodeMK1
     ---
-    SvMatrixNormalNode
-    SvMatrixTrackToNode
-    SvMatrixMathNode
-    ---
     SvSculptMaskNode
     SvSelectMeshVerts
     SvSetCustomMeshNormals
@@ -362,7 +368,6 @@
     SvBMtoElementNode
     SvBMOpsNodeMK2
     ---
-    SvInsetSpecial
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
     SvParticlesNode
@@ -373,8 +378,6 @@
     SvUVtextureNode
     SvSeparateMeshNodeMK2
     SvMultiExtrudeAlt
-    SvOffsetLineNode
-    SvContourNode
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
     SvTopologySimple

@@ -120,7 +120,7 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
 
             callback_enable(n_id, draw_data)
 
-    def copy(self, node):
+    def sv_copy(self, node):
         self.n_id = ''
 
     def update(self):

@@ -375,15 +375,17 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
 
     def make_props(self, cls_dict):
+        cls_dict['__annotations__'] = {}
+
         for s in self.float_props:
             prop_dict = s.get_settings()
             prop_dict["update"] = updateNode
-            cls_dict[s.prop_name] = FloatProperty(**prop_dict)
+            cls_dict['__annotations__'][s.prop_name] = FloatProperty(**prop_dict)
 
         for s in self.int_props:
             prop_dict = s.get_settings()
             prop_dict["update"] = updateNode
-            cls_dict[s.prop_name] = IntProperty(**prop_dict)
+            cls_dict['__annotations__'][s.prop_name] = IntProperty(**prop_dict)
 
 
     def generate_inputs(self):

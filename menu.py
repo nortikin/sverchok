@@ -28,7 +28,7 @@ import bl_operators
 
 import sverchok
 from sverchok.utils import get_node_class_reference
-from sverchok.utils.logging import info
+from sverchok.utils.logging import info, error, exception
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
@@ -530,6 +530,7 @@ def unregister_node_panels():
     global node_panels
     for panel_type in reversed(node_panels):
         bpy.utils.unregister_class(panel_type)
+    node_panels = []
 
 def reload_menu():
     menu, node_count, original_categories = make_categories()

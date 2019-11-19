@@ -17,7 +17,8 @@ supported_mesh_viewers = {'SvBmeshViewerNodeMK2', 'ViewerNode2'}
 common_nodes = [
     ['GenVectorsNode', 'VectorsOutNode'],
     ['SvNumberNode', 'GenListRangeIntNode', 'SvGenFloatRange'],
-    ['SvScalarMathNodeMK3', 'SvVectorMathNodeMK2']
+    ['SvScalarMathNodeMK4', 'SvVectorMathNodeMK2'],
+    ['---', 'NodeReroute']
 ]
 
 
@@ -110,7 +111,7 @@ def add_connection(tree, bl_idname_new_node, offset):
                 # connect_stethoscope to first visible output socket of active node
                 links.new(socket, inputs[0])
                 break
-            
+
             tree.update()   # without this the node won't show output until an update is triggered manually
             # existing_node.process_node(None)
 
@@ -215,7 +216,10 @@ class SvNodeviewRClickMenu(bpy.types.Menu):
         layout.separator()
         for nodelist in common_nodes:
             for named_node in nodelist:
-                draw_add_node_operator(layout, named_node)
+                if named_node == '---':
+                    layout.separator()
+                else:
+                    draw_add_node_operator(layout, named_node)
 
 
 

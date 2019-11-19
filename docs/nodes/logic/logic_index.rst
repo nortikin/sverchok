@@ -8,3 +8,4 @@ Logic
    logic_node
    neuro_elman
    switch
+   input_switch_mod

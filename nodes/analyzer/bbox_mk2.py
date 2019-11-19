@@ -155,7 +155,7 @@ class SvBBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     mat_out.append(self.generate_matrix(maxmin, dims, to_2d))
 
                 if has_mean:
-                    mean_out.append(self.generate_mean(v, dims, to_2d))
+                    mean_out.append(self.generate_mean(vec, dims, to_2d))
 
                 if has_limits:
                     for i in range(dims):

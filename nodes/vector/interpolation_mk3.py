@@ -36,7 +36,7 @@ def make_range(number):
 class SvInterpolationNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Advanced Vect. Interpolation'''
     bl_idname = 'SvInterpolationNodeMK3'
-    bl_label = 'Vector Interpolation mk3'
+    bl_label = 'Vector Interpolation'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INTERPOLATION'
 
