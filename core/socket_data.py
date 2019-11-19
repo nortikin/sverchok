@@ -104,12 +104,15 @@ def SvGetSocket(socket, deepcopy=True):
         else:
             if data_structure.DEBUG_MODE:
                 debug(f"cache miss: {socket.node.name} -> {socket.name} from: {other.node.name} -> {other.name}")
-            raise SvNoDataError(socket)
+            raise SvNoDataError(socket, msg="not found in socket_data_cache")
     # not linked
     raise SvNoDataError(socket)
 
 class SvNoDataError(LookupError):
-    def __init__(self, socket=None, node=None):
+    def __init__(self, socket=None, node=None, msg=None):
+        
+        self.extra_message = msg if msg else ""
+
         if node is None and socket is not None:
             node = socket.node
         self.node = node
@@ -118,6 +121,8 @@ class SvNoDataError(LookupError):
         super(LookupError, self).__init__(self.get_message())
 
     def get_message(self):
+        if self.extra_message:
+            return f"node {self.socket.node.name} (socket {self.socket.name}) {self.extra_message}"
         if not self.node and not self.socket:
             return "SvNoDataError"
         else:
