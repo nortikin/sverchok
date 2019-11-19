@@ -69,7 +69,7 @@ class SV_PT_CustomGroupInterface(Panel):
         # should ideally take dpi into account,
         if width > 310:
             row = layout.row()
-            split = row.split(percentage=0.5)
+            split = row.split(factor=0.5)
             column1 = split.box().column()
             split = split.split()
             column2 = split.box().column()
