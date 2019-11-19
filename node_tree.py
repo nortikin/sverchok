@@ -211,7 +211,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
         if self.skip_tree_update:
-            print('throttled update from context manager')
+            # print('throttled update from context manager')
             return
 
 
