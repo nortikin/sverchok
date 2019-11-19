@@ -29,3 +29,5 @@ Modifier Change
    remove_doubles
    triangulate
    vertices_mask
+   make_monotone
+   dissolve_faces_2d
