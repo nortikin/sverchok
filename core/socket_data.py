@@ -72,9 +72,9 @@ def SvSetSocket(socket, out):
     global socket_data_cache
     if data_structure.DEBUG_MODE:
         if not socket.is_output:
-            warning("{} setting input socket: {}".format(socket.node.name, socket.name))
+            warning(f"{socket.node.name} setting input socket: {socket.name}")
         if not socket.is_linked:
-            warning("{} setting unconncted socket: {}".format(socket.node.name, socket.name))
+            warning(f"{socket.node.name} setting unconncted socket: {socket.name}")
     s_id = socket.socket_id
     s_ng = socket.id_data.name
     if s_ng not in socket_data_cache:
