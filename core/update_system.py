@@ -343,8 +343,10 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
                 node.process()
             delta = time.perf_counter() - start
             total_time += delta
+
             if data_structure.DEBUG_MODE:
                 debug("Processed  %s in: %.4f", node_name, delta)
+
             timings.append(delta)
             gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
 
