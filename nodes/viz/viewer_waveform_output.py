@@ -277,11 +277,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row2 = box_col2.row()
             row2.prop(self, 'pitch')
 
-    def generate_2d_drawing_data(self, wave_data, wave_params, dims):
+    def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
 
         num_channels = wave_params[0]
         num_frames = wave_params[3]
         w, h = dims
+        x, y = loc
 
         # set up a container
         data = lambda: None
@@ -304,13 +305,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             
             # vertex data
             time_data = np.linspace(0, w, num_frames/2, endpoint=True).repeat(2)
+            data.verts = np.vstack([time_data, unit_data]).T.tolist()
         else:
             """
             GL_LINE_STRIP   no indices needed
             """
             time_data = np.linspace(0, w, num_frames, endpoint=True)
-
-        data.verts = np.vstack([time_data, unit_data]).T.tolist()
+            data.verts = (np.vstack([time_data, unit_data]).T + [x , y]).tolist()
         return data
 
 
@@ -331,7 +332,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             # this is for drawing graphically only.
             wave_data = self.get_wavedata(raw=False)
             wave_params = self.get_waveparams()
-            wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, (w, h))
+            wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, (w, h), (x, y))
 
             config = lambda: None
             config.loc = (x, y)
