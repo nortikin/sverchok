@@ -267,6 +267,9 @@ class SverchCustomTreeNode:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
 
+    def sv_throttle_tree_update(self):
+        return throttle_tree_update(self)
+
     def mark_error(self, err):
         """
         marks the with system error color
