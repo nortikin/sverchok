@@ -69,17 +69,17 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             obj = bpy.data.objects.get(obj_name)
 
         if obj:
-            # obj_data = obj.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
-            obj_data = obj.to_mesh()
-            self.node_dict[hash(self)] = {
-                'Vertices': list([v.co[:] for v in obj_data.vertices]),
-                'Edges': obj_data.edge_keys,
-                'Polygons': [list(p.vertices) for p in obj_data.polygons],
-                'Matrix': obj.matrix_world
-            }
-
-            # bpy.data.meshes.remove(obj_data)
-            obj.to_mesh_clear()
+            with self.sv_throttle_tree_update():
+                # obj_data = obj.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+                depsgraph = bpy.context.evaluated_depsgraph_get()
+                obj_data = obj.to_mesh(depsgraph=depsgraph)
+                self.node_dict[hash(self)] = {
+                    'Vertices': list([v.co[:] for v in obj_data.vertices]),
+                    'Edges': obj_data.edge_keys,
+                    'Polygons': [list(p.vertices) for p in obj_data.polygons],
+                    'Matrix': obj.matrix_world
+                }
+                obj.to_mesh_clear()
 
             self.currently_storing = True
 
