@@ -287,7 +287,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         data = lambda: None
         data.verts = None 
         data.indices = None
-        
+    
         unit_data = np.array(wave_data)  # rescale/recomp into 2d data for shader
 
         # equip wave_data with time domain, and rescale 
@@ -310,7 +310,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             """
             time_data = np.linspace(0, w, num_frames, endpoint=True)
 
-        data.verts = np.vstack([time_data, unit_data]).T
+        data.verts = np.vstack([time_data, unit_data]).T.tolist()
         return data
 
 
@@ -345,8 +345,14 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             coords = wave_data_processed.verts
             indices = wave_data_processed.indices
             config.line_shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
-            shader_params = ('LINES', {"pos": coords}, {'indices', indices}) if indices else ('LINE_STRIP', {"pos": coords})
-            config.line_batch = batch_for_shader(config.line_shader, *shader_params)
+            # shader_params = ('LINES', {"pos": coords}, {'indices', indices}) if indices else ('LINE_STRIP', {"pos": coords})
+            # config.line_batch = batch_for_shader(config.line_shader, *shader_params)
+            if indices:
+                config.line_batch = batch_for_shader(config.line_shader, 'LINES', {"pos": coords}, indices=indices)
+            else:
+                config.line_batch = batch_for_shader(config.line_shader, 'LINE_STRIP', {"pos": coords})
+
+
 
             geom = lambda: None
 
