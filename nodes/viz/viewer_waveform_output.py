@@ -270,38 +270,44 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row2 = box_col2.row()
             row2.prop(self, 'pitch')
 
-    def generate_2d_drawing_data(self, wave_data, wave_params):
+    def generate_2d_drawing_data(self, wave_data, wave_params, dims):
+
+        num_channels = wave_params[0]
+        num_frames = wave_params[3]
+        w, h = dims
+
+        # set up a container
         data = lambda: None
         data.verts = None 
         data.indices = None
         
+        unit_data = np.array(wave_data)  # rescale/recomp into 2d data for shader
+
         # equip wave_data with time domain, and rescale 
-        pre_data = np.array(wave_data)  # rescale/recomp into 2d data for shader
-       
-        num_channels = wave_params[0]
-        num_frames = wave_params[3]
+
         if num_channels == 2:
             """
-            GL_LINES
-            where a,b,c,d,e,f.. are vertex indicess 0, 1, 2, 3, 4, 5..
-            
-            a---c---e---
-
-            b---d---f---
-
-            indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
+            GL_LINES  indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
             """
+            
+            # edges..
             ext = []
             gather = ext.extend
             _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, num_frames, 2)]
             data.indices = ext
+            
+            # vertex data
+            # time_data = np.linspace(0, w, len(unit_data), endpoint=True)
+            # post_data = np.vstack([unit_data, time_data]).T
+
         else:
             """
-            GL_LINE_STRIP
-            no indices needed
+            GL_LINE_STRIP   no indices needed
             """
-            pass
+            time_data = np.linspace(0, w, len(unit_data), endpoint=True)
+            post_data = np.vstack([unit_data, time_data]).T
 
+        data.verts = post_data
         return data
 
 
@@ -322,7 +328,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             # this is for drawing graphically only.
             wave_data = self.get_wavedata()
             wave_params = self.get_waveparams(wave_data)
-            wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params)
+            wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, (w, h))
 
             config = lambda: None
             config.loc = (x, y)
