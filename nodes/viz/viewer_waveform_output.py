@@ -24,7 +24,6 @@ from sverchok.data_structure import updateNode, node_id
 from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 
-MAX_SOCKETS = 6
 DATA_SOCKET = 'SvStringsSocket'
 
 """
@@ -189,7 +188,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     activate: bpy.props.BoolProperty(name="show graph", update=updateNode)
 
     num_channels: bpy.props.IntProperty(
-        name='num channels', default=1, min=1, max=MAX_SOCKETS,
+        name='num channels', default=1, min=1, max=2,
         description='num channels interleaved', update=updateNode)
 
     bits: bpy.props.IntProperty(name='bit rate', default=16, min=4, max=192)
@@ -273,8 +272,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
     def generate_2d_drawing_data(self, wave_data, wave_params):
         data = lambda: None
-        data.verts = wave_data  # rescale/recomp into 2d data for shader
+        data.verts = None 
         data.indices = None
+        
+        # equip wave_data with time domain, and rescale 
+        pre_data = np.array(wave_data)  # rescale/recomp into 2d data for shader
        
         num_channels = wave_params[0]
         num_frames = wave_params[3]
