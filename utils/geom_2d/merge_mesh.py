@@ -38,15 +38,16 @@ def edges_to_faces(sv_verts, sv_edges, do_intersect=True, fill_holes=True, accur
     return mesh.to_sv_mesh(edges=False, del_face_flag='del')
 
 
-def merge_mesh_light(sv_verts, sv_faces, face_overlapping=False, accuracy=1e-5):
+def merge_mesh_light(sv_verts, sv_faces, face_overlapping=False, is_overlap_number=False, accuracy=1e-5):
     """
     Rebuild faces and vertices with taking in account intersections and holes
     Also produce indexes of old faces in which new faces are
     :param sv_verts: list of SV points
     :param sv_faces: list of SV faces
     :param face_overlapping: add index mask (new face : index old face) to the output of the function if True
+    :param is_overlap_number: returns information about number of overlapping face by another faces
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
-    :return: list of SV vertices, list of SV faces, index face mask (optionally)
+    :return: list of SV vertices, list of SV faces, index face mask (optionally), list of overlap_number (optionally)
     """
     mesh = DCELMesh(accuracy=accuracy)
     mesh.from_sv_faces(sv_verts, sv_faces, face_data={'index': list(range(len(sv_faces)))})
@@ -54,10 +55,9 @@ def merge_mesh_light(sv_verts, sv_faces, face_overlapping=False, accuracy=1e-5):
     mesh.generate_faces_from_hedges()
     mark_not_in_faces(mesh)
     monotone_faces_with_holes(mesh)
-    if face_overlapping:
-        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh, 'index')]
-    else:
-        return mesh.to_sv_mesh(edges=False, del_face_flag='del')
+    face_indexes = [get_min_face_indexes(mesh, 'index')] if face_overlapping else [[]]
+    overlap_number = [get_number_of_overlapping_mask(mesh)] if is_overlap_number else [[]]
+    return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + face_indexes + overlap_number
 
 
 def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, face_overlapping=False, mode='inner', accuracy=1e-5):
@@ -268,3 +268,7 @@ def get_face_mask_by_flag(mesh, flag, del_flag='del'):
                 out[i] = 1
                 break
     return out
+
+
+def get_number_of_overlapping_mask(mesh, del_flag='del'):
+    return [len(face.outer.in_faces) - 1 for face in mesh.faces if del_flag not in face.flags]
