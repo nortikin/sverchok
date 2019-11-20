@@ -8,7 +8,7 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
 
@@ -25,9 +25,10 @@ class SvMergeMesh2DLight(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'AUTOMERGE_ON'
 
     def update_sockets(self, context):
-        [self.outputs.remove(sock) for sock in self.outputs[2:]]
-        if self.face_index:
-            self.outputs.new('SvStringsSocket', 'Face index')
+        with throttle_tree_update(self):
+            [self.outputs.remove(sock) for sock in self.outputs[2:]]
+            if self.face_index:
+                self.outputs.new('SvStringsSocket', 'Face index')
         updateNode(self, context)
 
     face_index: bpy.props.BoolProperty(name="Show face mask", update=update_sockets,

@@ -8,7 +8,7 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.dissolve_mesh import dissolve_faces
 
@@ -25,19 +25,17 @@ class SvDissolveFaces2D(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MESH_PLANE'
 
     def update_sockets(self, context):
-        self.id_data.freeze()
-        # is not great, another solution should be find
-        # for protection from update node each time when new socket is created
-        links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-        [self.outputs.remove(sock) for sock in self.outputs[2:]]
-        new_socks = []
-        if self.face_mask:
-            new_socks.append(self.outputs.new('SvStringsSocket', 'Face mask'))
-        if self.index_mask:
-            new_socks.append(self.outputs.new('SvStringsSocket', 'Index mask'))
-        [[self.id_data.links.new(sock, link) for link in links[sock.name]] for sock in new_socks if sock.name in links]
-        self.id_data.unfreeze()
-        self.id_data.process()  # is not great, another solution should be find
+        with throttle_tree_update(self):
+            links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+            [self.outputs.remove(sock) for sock in self.outputs[2:]]
+            new_socks = []
+            if self.face_mask:
+                new_socks.append(self.outputs.new('SvStringsSocket', 'Face mask'))
+            if self.index_mask:
+                new_socks.append(self.outputs.new('SvStringsSocket', 'Index mask'))
+            [[self.id_data.links.new(sock, link) for link in links[sock.name]]
+                                                 for sock in new_socks if sock.name in links]
+        updateNode(self, context)
 
     face_mask: bpy.props.BoolProperty(name='Face mask', update=update_sockets,
                                         description='Show new selecting mak after dissolving faces')

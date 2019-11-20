@@ -8,7 +8,7 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges
 
@@ -25,12 +25,13 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_BOOLEAN'
 
     def update_sockets(self, context):
-        [self.outputs.remove(sock) for sock in self.outputs[2:]]
-        if self.face_index and self.input_mode == 'faces':
-            self.outputs.new('SvStringsSocket', 'Face index')
-        if self.inputs[1].name != self.input_mode:
-            self.inputs[1].name = self.input_mode.title()
-            self.outputs[1].name = self.input_mode.title()
+        with throttle_tree_update(self):
+            [self.outputs.remove(sock) for sock in self.outputs[2:]]
+            if self.face_index and self.input_mode == 'faces':
+                self.outputs.new('SvStringsSocket', 'Face index')
+            if self.inputs[1].name != self.input_mode:
+                self.inputs[1].name = self.input_mode.title()
+                self.outputs[1].name = self.input_mode.title()
         updateNode(self, context)
 
     mode_items = [('inner', 'Inner', 'Fit mesh', 'SELECT_INTERSECT', 0),
