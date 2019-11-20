@@ -224,6 +224,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     offset: bpy.props.FloatVectorProperty(default=(0.0, 0.0), size=2, name='offset', update=updateNode)
     pitch: bpy.props.FloatVectorProperty(default=(20.0, 20.0), size=2, name='pitch', update=updateNode)
 
+    graph_width: bpy.props.IntProperty(name='w', default=220, min=1, update=updateNode)
+    graph_height: bpy.props.IntProperty(name='h', default=220, min=1, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new(DATA_SOCKET, 'channel 0')
@@ -264,7 +266,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             op.fn_name = "process_wave"
             col.separator()
 
-        col.prop(self, "display_graph_config", toggle=True)
+        graph_row_1 = col.row(align=True)
+        graph_row_1.prop(self, "display_graph_config", toggle=True)
+
         if self.display_graph_config:
             box2 = col.box()
             box_col2 = box2.column(align=True)
@@ -276,6 +280,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row1.prop(self, 'offset')
             row2 = box_col2.row()
             row2.prop(self, 'pitch')
+            row3 = box_col2.row()
+            row3.prop(self, 'graph_width', text='W')
+            row3.prop(self, 'graph_height', text='H')
+        else:
+            graph_row_1.prop(self, 'activate', text='', icon='DESKTOP')
 
     def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
 
@@ -324,8 +333,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
             x, y, scale, multiplier = self.get_drawing_attributes()
             # x, y = (0, 0)
-            w = 220.0
-            h = 60.0
+            w = self.graph_width
+            h = self.graph_height
             grid_data = gridshader(w, h, (x, y))
 
             # this wave_* stuff may have only superficial resemblance to the wave writen to disk
