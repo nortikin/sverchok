@@ -291,8 +291,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         unit_data = np.array(wave_data)  # rescale/recomp into 2d data for shader
 
         # equip wave_data with time domain, and rescale 
-        print(unit_data)
-
         if num_channels == 2:
             """
             GL_LINES  indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
@@ -306,16 +304,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             
             # vertex data
             time_data = np.linspace(0, w, num_frames/2, endpoint=True).repeat(2)
-            post_data = np.vstack([unit_data, time_data]).T
-
         else:
             """
             GL_LINE_STRIP   no indices needed
             """
             time_data = np.linspace(0, w, num_frames, endpoint=True)
-            post_data = np.vstack([unit_data, time_data]).T
 
-        data.verts = post_data
+        data.verts = np.vstack([time_data, unit_data]).T
         return data
 
 
