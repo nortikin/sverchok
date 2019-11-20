@@ -96,6 +96,8 @@ def advanced_grid_xy(context, args):
 
     loc, rot, sca = matrix.decompose()
 
+    ##  background grid
+
     shader.bind()
     shader.uniform_float("viewProjectionMatrix", matrix)
     # # shader.uniform_float('vpw', 60.0) # config.grid.w)
@@ -106,6 +108,11 @@ def advanced_grid_xy(context, args):
     shader.uniform_float('pitch', config.pitch)
     batch.draw(shader)
 
+    ##  line graph
+    line_shader, line_batch = config.line_shader, config.line_batch
+    line_shader.bind()
+    line_shader.uniform_float("color", (1, 0, 0, 1))
+    line_batch.draw(line_shader)
 
 class NodeTreeGetter():
     __annotations__ = {}
@@ -284,6 +291,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         unit_data = np.array(wave_data)  # rescale/recomp into 2d data for shader
 
         # equip wave_data with time domain, and rescale 
+        print(unit_data)
 
         if num_channels == 2:
             """
@@ -297,14 +305,14 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             data.indices = ext
             
             # vertex data
-            time_data = np.linspace(0, w, len(unit_data)/2, endpoint=True).repeat(2)
+            time_data = np.linspace(0, w, num_frames/2, endpoint=True).repeat(2)
             post_data = np.vstack([unit_data, time_data]).T
 
         else:
             """
             GL_LINE_STRIP   no indices needed
             """
-            time_data = np.linspace(0, w, len(unit_data), endpoint=True)
+            time_data = np.linspace(0, w, num_frames, endpoint=True)
             post_data = np.vstack([unit_data, time_data]).T
 
         data.verts = post_data
@@ -326,8 +334,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
             # this wave_* stuff may have only superficial resemblance to the wave writen to disk
             # this is for drawing graphically only.
-            wave_data = self.get_wavedata()
-            wave_params = self.get_waveparams(wave_data)
+            wave_data = self.get_wavedata(raw=False)
+            wave_params = self.get_waveparams()
             wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, (w, h))
 
             config = lambda: None
@@ -337,10 +345,15 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.scaleFactor = self.scaleFactor
             config.offset = self.offset[:]
             config.pitch = self.pitch[:]
+            
+
+            coords = wave_data_processed.verts
+            indices = wave_data_processed.indices
+            config.line_shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+            shader_params = ('LINES', {"pos": coords}, {'indices', indices}) if indices else ('LINE_STRIP', {"pos": coords})
+            config.line_batch = batch_for_shader(config.line_shader, *shader_params)
 
             geom = lambda: None
-            geom.vertices = wave_data_processed.verts
-            geom.indices = wave_data_processed.indices
 
             draw_data = {
                 'mode': 'custom_function_context',
@@ -376,7 +389,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
         # could be cached. from process()
         wave_data = self.get_wavedata()
-        wave_params = self.get_waveparams(wave_data)
+        wave_params = self.get_waveparams()
 
         filepath = os.path.join(self.dirname, self.filename)
         filetype = "wav"
@@ -386,7 +399,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             write_wave.setparams(wave_params)
             write_wave.writeframesraw(wave_data)
 
-    def get_waveparams(self, wave_data):
+    def get_waveparams(self):
         # reference http://blog.acipo.com/wave-generation-in-python/
         # (nchannels, sampwidth, framerate, nframes, comptype, compname)
         
@@ -397,7 +410,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         num_frames = self.num_channels * self.sample_data_length
         return (self.num_channels, int(self.bits / 8), self.sample_rate, num_frames, 'NONE', 'NONE')
 
-    def get_wavedata(self):
+    def get_wavedata(self, raw=True):
         """
         do they match? what convention to use to fill up one if needed..
         - copy opposite channel if channel data is short
@@ -419,7 +432,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         # at this point data is a single list.        
         self.sample_data_length = len(data)
         # data = "".join((wave.struct.pack('h', int(d)) for d in data))
-        data = b''.join(wave.struct.pack('<h', int(d)) for d in data)
+        if raw:
+            data = b''.join(wave.struct.pack('<h', int(d)) for d in data)
         return data
 
     def interleave(data_left, data_right):
