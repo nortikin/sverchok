@@ -297,8 +297,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             data.indices = ext
             
             # vertex data
-            # time_data = np.linspace(0, w, len(unit_data), endpoint=True)
-            # post_data = np.vstack([unit_data, time_data]).T
+            time_data = np.linspace(0, w, len(unit_data)/2, endpoint=True).repeat(2)
+            post_data = np.vstack([unit_data, time_data]).T
 
         else:
             """
