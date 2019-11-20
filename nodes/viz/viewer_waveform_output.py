@@ -271,11 +271,36 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row2 = box_col2.row()
             row2.prop(self, 'pitch')
 
-    def demux_if_needed(self, wave_data, wave_params):
+    def generate_2d_drawing_data(self, wave_data, wave_params):
+        data = lambda: None
+        data.verts = wave_data  # rescale/recomp into 2d data for shader
+        data.indices = None
+       
         num_channels = wave_params[0]
+        num_frames = wave_params[3]
         if num_channels == 2:
-            return []
-        return wave_data
+            """
+            GL_LINES
+            where a,b,c,d,e,f.. are vertex indicess 0, 1, 2, 3, 4, 5..
+            
+            a---c---e---
+
+            b---d---f---
+
+            indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
+            """
+            ext = []
+            gather = ext.extend
+            _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, num_frames, 2)]
+            data.indices = ext
+        else:
+            """
+            GL_LINE_STRIP
+            no indices needed
+            """
+            pass
+
+        return data
 
 
 
@@ -295,8 +320,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             # this is for drawing graphically only.
             wave_data = self.get_wavedata()
             wave_params = self.get_waveparams(wave_data)
-            wave_data = self.demux_if_needed(wave_data, wave_params)
-
+            wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params)
 
             config = lambda: None
             config.loc = (x, y)
@@ -307,7 +331,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.pitch = self.pitch[:]
 
             geom = lambda: None
-            geom.luxe = 20
+            geom.vertices = wave_data_processed.verts
+            geom.indices = wave_data_processed.indices
 
             draw_data = {
                 'mode': 'custom_function_context',
