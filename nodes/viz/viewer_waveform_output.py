@@ -268,12 +268,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
         graph_row_1 = col.row(align=True)
         graph_row_1.prop(self, "display_graph_config", toggle=True)
+        graph_row_1.prop(self, 'activate', text='', icon='NORMALIZE_FCURVES')
 
         if self.display_graph_config:
             box2 = col.box()
             box_col2 = box2.column(align=True)
-
-            box_col2.prop(self, 'activate', icon="DESKTOP")
 
             # box_col2.prop(self, 'scaleFactor')
             row1 = box_col2.row()
@@ -283,8 +282,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row3 = box_col2.row()
             row3.prop(self, 'graph_width', text='W')
             row3.prop(self, 'graph_height', text='H')
-        else:
-            graph_row_1.prop(self, 'activate', text='', icon='DESKTOP')
 
     def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
 
