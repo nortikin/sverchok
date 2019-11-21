@@ -215,6 +215,7 @@
     VectorsOutNode
     SvAxisInputNodeMK2
     SvVectorMathNodeMK2
+    SvVectorMathNodeMK3
     VertsDelDoublesNode
     SvVectorRewire
     ---
