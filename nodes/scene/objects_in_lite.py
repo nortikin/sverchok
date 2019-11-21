@@ -110,16 +110,14 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         addon = context.preferences.addons.get(sverchok.__name__)
         prefs = addon.preferences
         callback = 'node.sverchok_objectinlite_cb'
-        display_test = self.obj_name if self.currently_storing else '--None--'
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.scale_y = 4.0 if prefs.over_sized_buttons else 1
 
-        if not self.currently_storing:
-            self.wrapper_tracked_ui_draw_op(row, callback, text='G E T').cmd = 'dget'
-        else:
-            self.wrapper_tracked_ui_draw_op(row, callback, text='D R O P').cmd = 'drop'
+        display_test = self.obj_name or '--None--'
+        cb_text, cmd = ("D R O P", "drop") if self.currently_storing else ("G E T", "dget")
+        self.wrapper_tracked_ui_draw_op(row, callback, text=cb_text).cmd = cmd
 
         row.prop(self, 'modifiers', text='', icon='MODIFIER')
         layout.label(text=display_test)
