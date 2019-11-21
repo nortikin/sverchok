@@ -35,9 +35,16 @@ class SvObjLiteCallback(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     cmd: StringProperty()
+    idname: StringProperty()
+    idtree: StringProperty()
+
+    def get_node(self):
+        return bpy.data.node_groups[self.idtree].nodes[self.idname]    
 
     def execute(self, context):
-        getattr(context.node, self.cmd)()
+        node = self.get_node()
+        getattr(node, self.cmd)()
+        node.process_node(context)
         return {'FINISHED'}
 
 
@@ -59,7 +66,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
     def drop(self):
         self.obj_name = ""
         self.currently_storing = False
-        self.node_dict = {}
+        self.node_dict[hash(self)] = {}
 
     def dget(self, obj_name=None):
         if not obj_name:
@@ -70,14 +77,14 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
 
         if obj:
             with self.sv_throttle_tree_update():
-                # obj_data = obj.to_mesh(depsgraph=bpy.context.depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+
                 depsgraph = bpy.context.evaluated_depsgraph_get()
                 deps_obj = depsgraph.objects[obj.name]
-                # obj_data = deps_obj.to_mesh(depsgraph=depsgraph if self.modifiers else None)
+
                 if self.modifiers:
                     obj_data = deps_obj.to_mesh(depsgraph=depsgraph)
                 else:
-                    obj_data = deps_obj.original.to_mesh(depsgraph=depsgraph)
+                    obj_data = deps_obj.original.to_mesh()
 
                 self.node_dict[hash(self)] = {
                     'Vertices': list([v.co[:] for v in obj_data.vertices]),
@@ -86,8 +93,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
                     'Matrix': deps_obj.matrix_world
                 }
                 deps_obj.to_mesh_clear()
-
-            self.currently_storing = True
+                self.currently_storing = True
 
         else:
             self.report({'WARNING'}, 'No object selected')
@@ -104,20 +110,27 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         addon = context.preferences.addons.get(sverchok.__name__)
         prefs = addon.preferences
         callback = 'node.sverchok_objectinlite_cb'
+        display_test = self.obj_name if self.currently_storing else '--None--'
 
         col = layout.column(align=True)
         row = col.row(align=True)
         row.scale_y = 4.0 if prefs.over_sized_buttons else 1
 
         if not self.currently_storing:
-            row.operator(callback, text='G E T').cmd = 'dget'
-            row.prop(self, 'modifiers', text='', icon='MODIFIER')
-            layout.label(text='--None--')
+            self.wrapper_tracked_ui_draw_op(row, callback, text='G E T').cmd = 'dget'
         else:
-            row.operator(callback, text='D R O P').cmd = 'drop'
-            row.prop(self, 'modifiers', text='', icon='MODIFIER')
-            layout.label(text=self.obj_name)
+            self.wrapper_tracked_ui_draw_op(row, callback, text='D R O P').cmd = 'drop'
 
+        row.prop(self, 'modifiers', text='', icon='MODIFIER')
+        layout.label(text=display_test)
+
+
+    def pass_data_to_sockets(self):
+        mesh_data = self.node_dict.get(hash(self))
+        if mesh_data:
+            for socket in self.outputs:
+                if socket.is_linked:
+                    socket.sv_set([mesh_data[socket.name]])
 
     def process(self):
 
@@ -128,11 +141,8 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
                 print('ending early, no node_dict')
                 return
 
-        mesh_data = self.node_dict.get(hash(self))
+        self.pass_data_to_sockets()
 
-        for socket in self.outputs:
-            if socket.is_linked:
-                socket.sv_set([mesh_data[socket.name]])
 
 
     def storage_set_data(self, storage):
