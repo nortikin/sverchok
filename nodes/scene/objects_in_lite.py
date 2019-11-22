@@ -161,17 +161,16 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         polygons = unrolled_geom['Polygons']
         matrix = unrolled_geom['Matrix']
 
-        bm = bmesh_from_pydata(verts, edges, polygons)
-        obj = generate_object(name, bm)
-        obj.matrix_world = matrix
+        with self.sv_throttle_tree_update():
+            bm = bmesh_from_pydata(verts, edges, polygons)
+            obj = generate_object(name, bm)
+            obj.matrix_world = matrix
 
-        # rename if obj existed
-        if not obj.name == name:
-            storage['params']["obj_name"] = obj.name
-            self.id_data.freeze(hard=True)
-            self.obj_name = obj.name
-            self.id_data.unfreeze(hard=True)
-
+            # rename if obj existed
+            if not obj.name == name:
+                storage['params']["obj_name"] = obj.name
+                self.obj_name = obj.name
+    
 
     def storage_get_data(self, storage):
         # generate flat data, and inject into incoming storage variable
