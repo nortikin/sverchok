@@ -28,84 +28,25 @@ from sverchok.data_structure import levelsOflist, levels_of_list_or_np, updateNo
 
 from sverchok.ui.sv_icons import custom_icon
 import numpy as np
-
+from sverchok.utils.modules.vector_math_utils import numpy_vector_func_dict, mathutils_vector_func_dict, vector_math_ops
 # pylint: disable=C0326
 
 socket_type = {'s': 'SvStringsSocket', 'v': 'SvVerticesSocket'}
-def unit_vector(vector):
-    """ Returns the unit vector of the vector.  """
-    return vector / np.linalg.norm(vector)
-
-def angle_between(v1, v2):
-    """ Returns the angle in radians between vectors 'v1' and 'v2'::
-
-            >>> angle_between((1, 0, 0), (0, 1, 0))
-            1.5707963267948966
-            >>> angle_between((1, 0, 0), (1, 0, 0))
-            0.0
-            >>> angle_between((1, 0, 0), (-1, 0, 0))
-            3.141592653589793
-    """
-    v1_u = unit_vector(v1)
-    v2_u = unit_vector(v2)
-    return np.arccos(np.clip(np.sum(v1_u * v2_u, axis=1), -1.0, 1.0))
-# project from https://stackoverflow.com/a/55226228
-def reflect(v1,v2):
-    mirror = v2/np.linalg.norm(v2, axis=1)
-    dot2 = 2 * np.sum(mirror * v1, axis=1)
-    return v1 - (dot2[:,np.newaxis] * mirror)
-def scale_two_axis(v1,s, axis1, axis2):
-    v1[:,axis1]*=s
-    v1[:,axis2]*=s
-    return v1
-func_dict = {
-    "DOT":            (1,  lambda u, v: np.sum(u * v, axis=1),                          ('vv s'),        "Dot product"),
-    "DISTANCE":       (5,  lambda u, v: np.linalg.norm(u-v, axis=1),            ('vv s'),           "Distance"),
-    "ANGLE DEG":      (12, lambda u, v: np.degrees(angle_between(u,v)),            ('vv s'),      "Angle Degrees"),
-    "ANGLE RAD":      (17, lambda u, v: angle_between(u,v),                     ('vv s'),      "Angle Radians"),
-
-    "LEN":            (4,  lambda u: np.linalg.norm(u, axis=1),     ('v s'),             "Length"),
-    "CROSS":          (0,  lambda u, v: np.cross(u, v),                     ('vv v'),      "Cross product"),
-    "ADD":            (2,  lambda u, v: u+v                              ,         ('vv v'),                "Add"),
-    "SUB":            (3,  lambda u, v: u-v                              ,         ('vv v'),                "Sub"),
-    "PROJECT":        (13, lambda u, v: v * (np.sum(u * v, axis=1)/np.sum(v * v, axis=1))[:,np.newaxis],                   ('vv v'),            "Project"),
-    "REFLECT":        (14, lambda u, v: reflect(u,v),                   ('vv v'),            "Reflect"),
-    "COMPONENT-WISE": (19, lambda u, v: u*v,         ('vv v'), "Component-wise U*V"),
-
-    "SCALAR":         (15, lambda u, s: u*s,                  ('vs v'),    "Multiply Scalar"),
-    "1/SCALAR":       (16, lambda u, s: u/s,                  ('vs v'),  "Multiply 1/Scalar"),
-    "ROUND":          (18, lambda u, s: Vector(u).to_tuple(abs(int(s))),           ('vs v'),     "Round s digits"),
-
-    "NORMALIZE":      (6,  lambda u: u/np.linalg.norm(u, axis=1),                     ('v v'),          "Normalize"),
-    "NEG":            (7,  lambda u: -u,                               ('v v'),             "Negate"),
-
-    "SCALE XY":       (30, lambda u, s: scale_two_axis(u, s, 0, 1),                    ('vs v'),           "Scale XY"),
-    "SCALE XZ":       (31, lambda u, s: scale_two_axis(u, s, 0, 2),                  ('vs v'),           "Scale XZ"),
-    "SCALE YZ":       (32, lambda u, s: scale_two_axis(u, s, 1, 2),                  ('vs v'),           "Scale YZ")
-
-}
-
-
-mode_items = [(k, descr, '', ident) for k, (ident, _, _, descr) in sorted(func_dict.items(), key=lambda k: k[1][0])]
-
 
 # apply f to all values recursively
 # - fx and fxy do full list matching by length
 
-def recurse_fx(l, f, level, out_numpy):
+def recurse_fx_numpy(l, f, level, out_numpy):
     if level ==1:
         nl= np.array(l)
         return f(nl) if out_numpy else f(nl).tolist()
     else:
-        rfx = recurse_fx
+        rfx = recurse_fx_numpy
         t = [rfx(i, f, level-1, out_numpy) for i in l]
     return t
 
-def recurse_fxy(l1, l2, f, level, out_numpy):
-    res = []
-    res_append = res.append
-    # will only be used if lists are of unequal length
-    fl = l2[-1] if len(l1) > len(l2) else l1[-1]
+def recurse_fxy_numpy(l1, l2, f, level, out_numpy):
+
     if level == 1:
 
         nl1= np.array(l1)
@@ -113,15 +54,35 @@ def recurse_fxy(l1, l2, f, level, out_numpy):
         nl1, nl2 = numpy_list_match_func['REPEAT']([nl1, nl2])
         res =f(nl1, nl2) if out_numpy else f(nl1, nl2).tolist()
         return res
-        # for u, v in zip_longest(l1, l2, fillvalue=fl):
-        #     res_append(f(u, v))
     else:
-
+        res = []
+        res_append = res.append
+        # will only be used if lists are of unequal length
+        fl = l2[-1] if len(l1) > len(l2) else l1[-1]
         for u, v in zip_longest(l1, l2, fillvalue=fl):
-            res_append(recurse_fxy(u, v, f, level-1, out_numpy))
+            res_append(recurse_fxy_numpy(u, v, f, level-1, out_numpy))
         return res
 
+def recurse_fx(l, f, level):
+    if not level:
+        return f(l)
+    else:
+        rfx = recurse_fx
+        t = [rfx(i, f, level-1) for i in l]
+    return t
 
+def recurse_fxy(l1, l2, f, level):
+    res = []
+    res_append = res.append
+    # will only be used if lists are of unequal length
+    fl = l2[-1] if len(l1) > len(l2) else l1[-1]
+    if level == 1:
+        for u, v in zip_longest(l1, l2, fillvalue=fl):
+            res_append(f(u, v))
+    else:
+        for u, v in zip_longest(l1, l2, fillvalue=fl):
+            res_append(recurse_fxy(u, v, f, level-1))
+    return res
 
 
 class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
@@ -136,7 +97,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     current_op: EnumProperty(
-        items=mode_items,
+        items=vector_math_ops,
         name="Function",
         description="Function choice",
         default="COMPONENT-WISE",
@@ -146,6 +107,18 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     v3_input_0: FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
     v3_input_1: FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
 
+    implentation_modes = [
+        ("NumPy", "NumPy", "NumPy", 0),
+        ("MathUtils", "MathUtils", "MathUtils", 1)]
+
+    implementation : EnumProperty(
+        name='Implementation', items=implentation_modes,
+        description='Choose calculation method',
+        default="NumPy", update=updateNode)
+    implementation_func_dict ={
+        "NumPy": (numpy_vector_func_dict, recurse_fx_numpy, recurse_fxy_numpy),
+        "MathUtils": (mathutils_vector_func_dict, recurse_fx, recurse_fxy)
+    }
     output_numpy: BoolProperty(
         name='Output NumPy',
         description='Output NumPy arrays',
@@ -163,12 +136,17 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, ctx, layout):
         layout.prop(self, "current_op", text="", icon_value=custom_icon("SV_FUNCTION"))
-        layout.prop(self, "output_numpy")
+        layout.label(text="Implementation:")
+        layout.prop(self, "implementation", expand=True)
+        if self.implementation == "NumPy":
+            layout.prop(self, "output_numpy", toggle=False)
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "current_op", text="Function")
         #layout.prop_menu_enum(self, "list_match", text="List Match")
-        layout.prop(self, "output_numpy", expand=False)
+        layout.prop_menu_enum(self, "implementation", text="Implementation")
+        if self.implementation == "NumPy":
+            layout.prop(self, "output_numpy", toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "A").prop_name = 'v3_input_0'
@@ -177,7 +155,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
 
     def update_sockets(self):
-        socket_info = func_dict.get(self.current_op)[2]
+        socket_info = numpy_vector_func_dict.get(self.current_op)[2]
         t_inputs, t_outputs = socket_info.split(' ')
 
         self.outputs[0].replace_socket(socket_type.get(t_outputs))
@@ -199,7 +177,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
 
-        func = func_dict.get(self.current_op)[1]
+        func = self.implementation_func_dict[self.implementation][0].get(self.current_op)[1]
         num_inputs = len(inputs)
 
         # get either input data, or socket default
@@ -208,11 +186,17 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         # level = levelsOflist(input_one) - 1
         level = levels_of_list_or_np(input_one) - 1
         if num_inputs == 1:
-            result = recurse_fx(input_one, func, level, self.output_numpy)
+            recurse_func = self.implementation_func_dict[self.implementation][1]
+            params =[input_one, func, level]
+            # result = recurse_func(input_one, func, level, self.output_numpy)
         else:
             input_two = inputs[1].sv_get(deepcopy=True)
-            result = recurse_fxy(input_one, input_two, func, level, self.output_numpy)
+            params =[input_one, input_two, func, level]
+            recurse_func = self.implementation_func_dict[self.implementation][2]
 
+        if self.implementation == 'NumPy':
+            params.append(self.output_numpy)
+        result = recurse_func(*params)
         outputs[0].sv_set(result)
 
 
