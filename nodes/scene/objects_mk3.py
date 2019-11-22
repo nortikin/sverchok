@@ -173,8 +173,9 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "modifiers", text="Post", toggle=True)
         row.prop(self, "vergroups", text="VeGr", toggle=True)
 
-        row = col.row(align=True)
-        row.operator(callback, text="Select Objects").fn_name = 'select_objs'
+        #  i don't even know what this is supposed to do....
+        #  row = col.row(align=True)
+        #  row.operator(callback, text="Select Objects").fn_name = 'select_objs'
 
         self.draw_obj_names(layout)
 
@@ -256,7 +257,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                             obj = depsgraph.objects[obj.name]
                             obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
                         else:
-                            obj_data = obj.data.to_mesh()
+                            obj_data = obj.to_mesh()
 
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
@@ -266,8 +267,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         obj.to_mesh_clear()
 
 
-                except:
-                    print('failure in process between frozen area', self.name)
+                except Exception as err:
+                    print('failure in process between frozen area', self.name, err)
 
             vers_out.append(vers)
             edgs_out.append(edgs)
