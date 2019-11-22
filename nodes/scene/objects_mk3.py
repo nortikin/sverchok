@@ -23,7 +23,6 @@ import bmesh
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
 
@@ -229,7 +228,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             pols = []
             mtrx = []
 
-            with hard_freeze(self) as _:
+            with self.sv_throttle_tree_update():
 
                 mtrx = obj.matrix_world
                 if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
@@ -244,6 +243,15 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         vers, edgs, pols = pydata_from_bmesh(bm)
                         del bm
                     else:
+
+                        """
+                        this is where the magic happens.
+                        because we are in throttled tree update state at this point, we can aquire a depsgraph if 
+                        - modifiers
+                        - or vertex groups are desired
+                        
+                        """
+
                         obj_data = obj.to_mesh() # depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
@@ -251,6 +259,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         edgs = obj_data.edge_keys
                         # bpy.data.meshes.remove(obj_data, do_unlink=True)
                         obj.to_mesh_clear()
+
+
                 except:
                     print('failure in process between frozen area', self.name)
 
