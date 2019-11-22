@@ -115,12 +115,15 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.scale_y = 4.0 if prefs.over_sized_buttons else 1
 
-        display_test = self.obj_name or '--None--'
-        cb_text, cmd = ("D R O P", "drop") if self.currently_storing else ("G E T", "dget")
+        cb_text, cmd, display_text = [
+            ("G E T", "dget", "--None--"),
+            ("D R O P", "drop", self.obj_name)
+        ][self.currently_storing]
+
         self.wrapper_tracked_ui_draw_op(row, callback, text=cb_text).cmd = cmd
 
         row.prop(self, 'modifiers', text='', icon='MODIFIER')
-        layout.label(text=display_test)
+        layout.label(text=display_text)
 
 
     def pass_data_to_sockets(self):
