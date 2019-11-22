@@ -139,20 +139,39 @@ def is_edges_intersect(a1, b1, a2, b2):
             (is_ccw(a2, b2, a1) != is_ccw(a2, b2, b1) or is_ccw(b2, a2, a1) != is_ccw(b2, a2, b1)))
 
 
-def intersect_edges(a1, a2, b1, b2):
+def intersect_edges(a1, a2, b1, b2, to_project=False, accuracy=1e-5):
     """
     Find intersection of two lines determined by two coordinates
     :param a1: point 1 of line a - any massive
     :param a2: point 2 of line a - any massive
     :param b1: point 1 of line b - any massive
     :param b2: point 2 of line b - any massive
+    :param to_project: to project intersection point back into first edge - bool
+    :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: returns intersection point (list) if lines are not parallel else returns False
     """
+    def project_point(e1, e2, p, accuracy):
+        if almost_equal(e1[z], e2[z], accuracy):
+            return p[x], p[y], e1[z]
+        ev = [co1 - co2 for co1, co2 in zip(e1, e2)]
+        pv = [cop - co2 for cop, co2 in zip(p, e2)]
+        dz = ev[z]
+        ev = [ev[x], ev[y], 0]
+        pv = [pv[x], pv[y], 0]
+        pow_len_ev = sum([co ** 2 for co in ev]) ** 0.5
+        pow_len_pv = sum([co ** 2 for co in pv]) ** 0.5
+        pz = e2[z] + (dz * (pow_len_pv / pow_len_ev))
+        return p[x], p[y], pz
+
     cross_a = cross_product((a1[x], a1[y], 1), (a2[x], a2[y], 1))
     cross_b = cross_product((b1[x], b1[y], 1), (b2[x], b2[y], 1))
     hom_v = cross_product(cross_a, cross_b)
     if hom_v[2] != 0:
-        return convert_homogeneous_to_cartesian(hom_v)
+        intersect = convert_homogeneous_to_cartesian(hom_v)
+        if to_project:
+            return project_point(a1, a2, intersect, accuracy)
+        else:
+            return intersect
     elif not any(hom_v):
         return False  # two lines ara overlapping
     else:

@@ -454,8 +454,9 @@ def find_new_event(edge1, edge2, event_queue, event_point, dcel_mesh, accuracy=1
     :return: None
     """
     if is_edges_intersect(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co):
-        intersection = intersect_edges(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co)
+        intersection = intersect_edges(edge1.up_p.co, edge1.low_p.co, edge2.up_p.co, edge2.low_p.co, to_project=True,
+                                       accuracy=accuracy)
         if intersection:  # strange checking
-            new_event_point = dcel_mesh.Point(dcel_mesh, intersection + [0], accuracy)
+            new_event_point = dcel_mesh.Point(dcel_mesh, intersection, accuracy)
             if new_event_point > event_point:
                 event_queue.insert(new_event_point)
