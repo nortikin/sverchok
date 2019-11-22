@@ -173,7 +173,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "modifiers", text="Post", toggle=True)
         row.prop(self, "vergroups", text="VeGr", toggle=True)
 
-        #  i don't even know what this is supposed to do....
+        #  i don't even know what this is supposed to do.... not useful enough i think..
         #  row = col.row(align=True)
         #  row.operator(callback, text="Select Objects").fn_name = 'select_objs'
 
@@ -217,6 +217,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         pols_out = []
         mtrx_out = []
 
+        if self.modifiers or self.vergroups:
+            with self.sv_throttle_tree_update():
+                depsgraph = bpy.context.evaluated_depsgraph_get()
+
         # iterate through references
         for obj in (data_objects.get(o.name) for o in self.object_names):
 
@@ -253,7 +257,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
                         """
                         if self.modifiers or self.vergroups:
-                            depsgraph = bpy.context.evaluated_depsgraph_get()
+                            # depsgraph = bpy.context.evaluated_depsgraph_get()
                             obj = depsgraph.objects[obj.name]
                             obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
                         else:
