@@ -249,15 +249,20 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         because we are in throttled tree update state at this point, we can aquire a depsgraph if 
                         - modifiers
                         - or vertex groups are desired
-                        
-                        """
 
-                        obj_data = obj.to_mesh() # depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+                        """
+                        if self.modifiers or self.vergroups:
+                            depsgraph = bpy.context.evaluated_depsgraph_get()
+                            obj = depsgraph.objects[obj.name]
+                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+                        else:
+                            obj_data = obj.data.to_mesh()
+
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
                         edgs = obj_data.edge_keys
-                        # bpy.data.meshes.remove(obj_data, do_unlink=True)
+
                         obj.to_mesh_clear()
 
 
