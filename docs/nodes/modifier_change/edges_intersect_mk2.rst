@@ -34,6 +34,17 @@ Difference between algorithm can be shown in some corner cases for example, inte
 
 .. image:: https://user-images.githubusercontent.com/28003269/67559745-9ad75080-f72a-11e9-9ce6-da1ed027cdef.gif
 
+Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.
+
+The algorithm of finding new intersection is like this:
+
+It takes two edges, removes Z coordinates and finds their intersection.
+But after intersection is found it projects intersection point back onto one of the given edges.
+This means that input mesh still should be flat but it can be located in space however you like.
+Only location of input flatten mesh along Z coordinate will bring the error.
+
 Inputs
 ------
 

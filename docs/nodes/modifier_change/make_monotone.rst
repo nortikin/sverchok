@@ -9,6 +9,10 @@ The node split polygon into monotone pieces.
 
 What is monotone polygon look here: https://en.wikipedia.org/wiki/Monotone_polygon
 
+Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.
+
 **Note: input points of the polygon should be in ordered order either you will get an error**
 
 Polygon optionally can have holes. Holes should be inside the polygon or you can get an error

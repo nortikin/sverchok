@@ -23,6 +23,7 @@ class SvEdgesToFaces2D(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvEdgesToFaces2D'
     bl_label = 'Edges to faces 2D'
     bl_icon = 'MESH_GRID'
+    sv_icon = 'SV_PLANAR_EDGES_TO_POLY'
 
     do_intersect: bpy.props.BoolProperty(name="Self intersect", default=False, update=updateNode,
                                          description="Activate an algorithm of finding self intersections")

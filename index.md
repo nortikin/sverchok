@@ -189,11 +189,11 @@
     SvSmoothLines
     ---
     CrossSectionNode
+    SvBisectNode
     SvEdgesToFaces2D
     SvMergeMesh2D
-    SvMergeMesh2DLight
+    SvMergeMesh2DLite
     SvCropMesh2D
-    SvBisectNode
     SvWafelNode
 
 ## Number

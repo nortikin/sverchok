@@ -1,4 +1,4 @@
-Merge mesh 2D light
+Merge mesh 2D lite
 ===================
 
 .. image:: https://user-images.githubusercontent.com/28003269/69255239-ed444980-0bd0-11ea-8ee5-17f1a02c1a17.png
@@ -10,6 +10,10 @@ This means that output can be similar to input if input faces does not have any 
 For example output of two intersected squares will be in next view:
 
 .. image:: https://user-images.githubusercontent.com/28003269/68193618-c3820480-ffcc-11e9-8b7b-9b9d65838ec2.png
+
+Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.
 
 Also this node can connect not intersecting polygons.
 If face is inside another face the one will be connected with boundary face with two extra edges 

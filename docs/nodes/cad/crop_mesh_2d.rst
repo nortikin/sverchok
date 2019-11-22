@@ -13,6 +13,10 @@ base mesh can be insert in crop mesh in inner mode.
 
 The node can take edges for base mesh and crop them according the same logic. Crop mesh always should have faces.
 
+Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.
+
 Also this node have optional extra output socket of face index mash which should be switched on on N panel.
 This output gives index of old face for every new faces.
 It can help to assign for example colors to mesh with new topology from previous mesh.

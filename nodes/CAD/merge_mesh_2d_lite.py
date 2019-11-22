@@ -13,15 +13,15 @@ from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
 
 
-class SvMergeMesh2DLight(bpy.types.Node, SverchCustomTreeNode):
+class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Merge 2D mesh into one
     Tooltip: Takes in account intersections and holes
 
     Has hidden output socket, look N panel
     """
-    bl_idname = 'SvMergeMesh2DLight'
-    bl_label = 'Merge mesh 2D light'
+    bl_idname = 'SvMergeMesh2DLite'
+    bl_label = 'Merge mesh 2D lite'
     bl_icon = 'AUTOMERGE_ON'
 
     def update_sockets(self, context):
@@ -73,8 +73,8 @@ class SvMergeMesh2DLight(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvMergeMesh2DLight)
+    bpy.utils.register_class(SvMergeMesh2DLite)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvMergeMesh2DLight)
+    bpy.utils.unregister_class(SvMergeMesh2DLite)

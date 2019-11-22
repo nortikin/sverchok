@@ -7,11 +7,9 @@ Functionality
 -------------
 This node merging to input meshes in one with finding intersections and providing extra information about faces. 
 
-The node tended to be used for 2D mesh only located on 'XY' surface. 
-Actually the node just ignore 'Z' coordinate but old points of resulting mesh will be kept with initial 'Z' coordinate 
-and 'Z' coordinate of new points will be equal to zero. 
-So for avoiding unexpected result they recommend to use `Vecor Math` node in `component-wise U*V` mode 
-before `merge mesh 2D` node.
+Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.
 
 The node can merge two meshes which are overlapping each other. 
 It is goal of this node. But also it is possible to have overlapping inside one of the input meshes or both of them. 

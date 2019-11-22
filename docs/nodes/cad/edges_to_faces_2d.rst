@@ -9,6 +9,10 @@ The node try create faces from given edges in 2D mode.
 It include some clever features as find self intersections of edge net and detection polygons with holes and 
 convert them in proper condition for visualization nodes.
 
+Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.
+
 There some corner case when work of the node can be broken. First try to change `accuracy` parameter in N panel. 
 Also it is possible that one of new polygons has self intersection in its points. 
 The node is not designed at this stage for handling such case.

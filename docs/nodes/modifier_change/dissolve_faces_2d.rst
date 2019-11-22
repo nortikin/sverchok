@@ -16,6 +16,10 @@ For example if on the picture below all faces would be combined than holes have 
 
 .. image:: https://user-images.githubusercontent.com/28003269/68931279-a4902900-07a9-11ea-8a22-9d25a9997bf9.png
 
+Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.
+
 Also this node have optional extra output sockets which should be switched on on N panel.
 
 Face mask outputs returns modified input mask.
