@@ -528,6 +528,7 @@ class SverchCustomTreeNode:
         op = layout_element.operator(operator_idname, **keywords)
         op.idname = self.name
         op.idtree = self.id_data.name
+        return op
 
 
     def get_and_set_gl_scale_info(self, origin=None):
