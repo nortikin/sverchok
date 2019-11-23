@@ -246,14 +246,14 @@ class DefaultMacros():
             is_vector = all(node.outputs[0].bl_idname == "SvVerticesSocket" for node in sorted_nodes)
             if operator == 'MUL':
                 if is_vector:
-                    math_node = nodes.new('SvVectorMathNodeMK2')
+                    math_node = nodes.new('SvVectorMathNodeMK3')
                     math_node.current_op = 'CROSS'
                 else:
                     if (sorted_nodes[0].outputs[0].bl_idname == "SvVerticesSocket"):
-                        math_node = nodes.new('SvVectorMathNodeMK2')
+                        math_node = nodes.new('SvVectorMathNodeMK3')
                         math_node.current_op = 'SCALAR'
                     elif (sorted_nodes[1].outputs[0].bl_idname == "SvVerticesSocket"):
-                        math_node = nodes.new('SvVectorMathNodeMK2')
+                        math_node = nodes.new('SvVectorMathNodeMK3')
                         math_node.current_op = 'SCALAR'
                         sorted_nodes =[sorted_nodes[1], sorted_nodes[0]]
                     else:
@@ -262,7 +262,7 @@ class DefaultMacros():
                         math_node.current_op = operator
             else:
                 if is_vector:
-                    math_node = nodes.new('SvVectorMathNodeMK2')
+                    math_node = nodes.new('SvVectorMathNodeMK3')
                     math_node.current_op = operator
                 else:
                     math_node = nodes.new('SvScalarMathNodeMK4')

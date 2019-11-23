@@ -96,7 +96,7 @@ class SvVectorMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Math'
     bl_icon = 'THREE_DOTS'
     sv_icon = 'SV_VECTOR_MATH'
-
+    replacement_nodes = [('SvVectorMathNodeMK3', None, None)]
     def mode_change(self, context):
         self.update_sockets()
         updateNode(self, context)

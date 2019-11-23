@@ -34,7 +34,19 @@ mathutils_vector_func_dict = {
 
     "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),           "Scale XY"),
     "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),           "Scale XZ"),
-    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),           "Scale YZ")
+    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),           "Scale YZ"),
+
+    "SCALAR TO X":    (40, lambda u, s: (s, u[1], u[2]),                           ('vs v'),        "Scalar to X"),
+    "SCALAR TO Y":    (41, lambda u, s: (u[0], s, u[2]),                           ('vs v'),        "Scalar to Y"),
+    "SCALAR TO Z":    (42, lambda u, s: (u[0], u[1], s),                           ('vs v'),        "Scalar to Z"),
+
+    "SWITCH X":       (50, lambda u, v: (v[0], u[1], u[2]),                        ('vv v'),           "Switch X"),
+    "SWITCH Y":       (51, lambda u, v: (u[0], v[1], u[2]),                        ('vv v'),           "Switch Y"),
+    "SWITCH Z":       (52, lambda u, v: (u[0], u[1], v[2]),                        ('vv v'),           "Switch Z"),
+
+    "SWAP XY":        (60, lambda u: (u[1], u[0], u[2]),                            ('v v'),            "Swap XY"),
+    "SWAP XZ":        (61, lambda u: (u[2], u[1], u[0]),                            ('v v'),            "Swap XZ"),
+    "SWAP YZ":        (62, lambda u: (u[0], u[2], u[1]),                            ('v v'),            "Swap YZ"),
 
 }
 
@@ -61,9 +73,20 @@ def reflect(v1, v2):
     dot2 = 2 * np.sum(mirror * v1, axis=1)
     return v1 - (dot2[:, np.newaxis] * mirror)
 
-def scale_two_axis(v1,s, axis1, axis2):
-    v1[:, axis1] *= s
-    v1[:, axis2] *= s
+def scale_two_axis(v1, s, axis1, axis2):
+    v1[:,[axis1, axis2]] *= s
+    return v1
+
+def scalar_to_axis(v1, s, axis):
+    v1[:, axis] = s
+    return v1
+
+def switch_component(v1, v2, component):
+    v1[:, component] = v2[:, component]
+    return v1
+
+def swap_component(v1, component1, component2):
+    v1[:,[component1, component2]] = v1[:,[component2, component1]]
     return v1
 
 def np_dot(u, v):
@@ -89,7 +112,7 @@ numpy_vector_func_dict = {
     "SUB":            (3,  lambda u, v: u-v,                            ('vv v'),                "Sub"),
     "PROJECT":        (13, lambda u, v: np_project(u,v),                ('vv v'),            "Project"),
     "REFLECT":        (14, lambda u, v: reflect(u, v),                  ('vv v'),            "Reflect"),
-    "COMPONENT-WISE": (19, lambda u, v: u*v,                            ('vv v'), "Component-wise U*V"),
+    "COMPONENT-WISE": (19, lambda u, v: u * v,                          ('vv v'), "Component-wise U*V"),
 
     "SCALAR":         (15, lambda u, s: u*s[:, np.newaxis],             ('vs v'),    "Multiply Scalar"),
     "1/SCALAR":       (16, lambda u, s: u/s[:, np.newaxis],             ('vs v'),  "Multiply 1/Scalar"),
@@ -100,6 +123,18 @@ numpy_vector_func_dict = {
 
     "SCALE XY":       (30, lambda u, s: scale_two_axis(u, s, 0, 1),     ('vs v'),           "Scale XY"),
     "SCALE XZ":       (31, lambda u, s: scale_two_axis(u, s, 0, 2),     ('vs v'),           "Scale XZ"),
-    "SCALE YZ":       (32, lambda u, s: scale_two_axis(u, s, 1, 2),     ('vs v'),           "Scale YZ")
+    "SCALE YZ":       (32, lambda u, s: scale_two_axis(u, s, 1, 2),     ('vs v'),           "Scale YZ"),
+
+    "SCALAR TO X":    (40, lambda u, s: scalar_to_axis(u, s, 0),        ('vs v'),        "Scalar to X"),
+    "SCALAR TO Y":    (41, lambda u, s: scalar_to_axis(u, s, 1),        ('vs v'),        "Scalar to Y"),
+    "SCALAR TO Z":    (42, lambda u, s: scalar_to_axis(u, s, 2),        ('vs v'),        "Scalar to Z"),
+
+    "SWITCH X":       (50, lambda u, v: switch_component(u, v, 0),      ('vv v'),           "Switch X"),
+    "SWITCH Y":       (51, lambda u, v: switch_component(u, v, 1),      ('vv v'),           "Switch Y"),
+    "SWITCH Z":       (52, lambda u, v: switch_component(u, v, 2),      ('vv v'),           "Switch Z"),
+
+    "SWAP XY":        (60, lambda u: swap_component(u, 0, 1),         ('v v'),           "Swap XY"),
+    "SWAP XZ":        (61, lambda u: swap_component(u, 0, 2),         ('v v'),           "Swap XZ"),
+    "SWAP YZ":        (62, lambda u: swap_component(u, 1, 2),         ('v v'),           "Swap YZ"),
 
 }

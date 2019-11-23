@@ -16,43 +16,40 @@
 #
 # END GPL LICENSE BLOCK #####
 
-from math import degrees, sqrt
 from itertools import zip_longest
 
 import bpy
 from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, BoolProperty
-from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import levelsOflist, levels_of_list_or_np, updateNode, list_match_func, list_match_modes, numpy_list_match_modes, numpy_list_match_func
+from sverchok.data_structure import levelsOflist, levels_of_list_or_np, updateNode, numpy_match_long_repeat
 
 from sverchok.ui.sv_icons import custom_icon
 import numpy as np
 from sverchok.utils.modules.vector_math_utils import numpy_vector_func_dict, mathutils_vector_func_dict, vector_math_ops
-# pylint: disable=C0326
+
 
 socket_type = {'s': 'SvStringsSocket', 'v': 'SvVerticesSocket'}
 
 # apply f to all values recursively
 # - fx and fxy do full list matching by length
 
-def recurse_fx_numpy(l, f, level, out_numpy):
-    if level ==1:
-        nl= np.array(l)
-        return f(nl) if out_numpy else f(nl).tolist()
+def recurse_fx_numpy(l, func, level, out_numpy):
+    if level == 1:
+        nl = np.array(l)
+        return func(nl) if out_numpy else func(nl).tolist()
     else:
         rfx = recurse_fx_numpy
-        t = [rfx(i, f, level-1, out_numpy) for i in l]
+        t = [rfx(i, func, level-1, out_numpy) for i in l]
     return t
 
-def recurse_fxy_numpy(l1, l2, f, level, out_numpy):
+def recurse_fxy_numpy(l1, l2, func, level, out_numpy):
 
     if level == 1:
-
-        nl1= np.array(l1)
-        nl2= np.array(l2)
-        nl1, nl2 = numpy_list_match_func['REPEAT']([nl1, nl2])
-        res =f(nl1, nl2) if out_numpy else f(nl1, nl2).tolist()
+        nl1 = np.array(l1)
+        nl2 = np.array(l2)
+        nl1, nl2 = numpy_match_long_repeat([nl1, nl2])
+        res = func(nl1, nl2) if out_numpy else func(nl1, nl2).tolist()
         return res
     else:
         res = []
@@ -60,28 +57,32 @@ def recurse_fxy_numpy(l1, l2, f, level, out_numpy):
         # will only be used if lists are of unequal length
         fl = l2[-1] if len(l1) > len(l2) else l1[-1]
         for u, v in zip_longest(l1, l2, fillvalue=fl):
-            res_append(recurse_fxy_numpy(u, v, f, level-1, out_numpy))
+            res_append(recurse_fxy_numpy(u, v, func, level-1, out_numpy))
         return res
 
-def recurse_fx(l, f, level):
+def recurse_fx(l, func, level):
     if not level:
-        return f(l)
+        return func(l)
     else:
         rfx = recurse_fx
-        t = [rfx(i, f, level-1) for i in l]
+        t = [rfx(i, func, level-1) for i in l]
     return t
 
-def recurse_fxy(l1, l2, f, level):
+def recurse_fxy(l1, l2, func, level):
     res = []
     res_append = res.append
+    if levelsOflist(l1) < 2:
+        l1 = [l1]
+    if levelsOflist(l2) < 2:
+        l2 = [l2]
     # will only be used if lists are of unequal length
     fl = l2[-1] if len(l1) > len(l2) else l1[-1]
     if level == 1:
         for u, v in zip_longest(l1, l2, fillvalue=fl):
-            res_append(f(u, v))
+            res_append(func(u, v))
     else:
         for u, v in zip_longest(l1, l2, fillvalue=fl):
-            res_append(recurse_fxy(u, v, f, level-1))
+            res_append(recurse_fxy(u, v, func, level-1))
     return res
 
 
@@ -127,7 +128,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def draw_label(self):
         text = self.current_op
         if text in {'SCALAR', '1/SCALAR'}:
-           text = f'A * {text}'
+            text = f'A * {text}'
         return text
 
 
@@ -187,11 +188,12 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         level = levels_of_list_or_np(input_one) - 1
         if num_inputs == 1:
             recurse_func = self.implementation_func_dict[self.implementation][1]
-            params =[input_one, func, level]
+            params = [input_one, func, level]
             # result = recurse_func(input_one, func, level, self.output_numpy)
         else:
             input_two = inputs[1].sv_get(deepcopy=True)
-            params =[input_one, input_two, func, level]
+            level = max(level, levels_of_list_or_np(input_two) - 1)
+            params = [input_one, input_two, func, level]
             recurse_func = self.implementation_func_dict[self.implementation][2]
 
         if self.implementation == 'NumPy':
