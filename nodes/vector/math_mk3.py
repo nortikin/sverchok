@@ -157,22 +157,22 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     socket_info: StringProperty(default="vv v")
     def update_sockets(self):
         socket_info = numpy_vector_func_dict.get(self.current_op)[2]
-        # if socket_info != self.socket_info:
-        with self.sv_throttle_tree_update():
-            self.socket_info = socket_info
-            t_inputs, t_outputs = socket_info.split(' ')
+        if socket_info != self.socket_info:
+            with self.sv_throttle_tree_update():
+                self.socket_info = socket_info
+                t_inputs, t_outputs = socket_info.split(' ')
 
-            self.outputs[0].replace_socket(socket_type.get(t_outputs))
+                self.outputs[0].replace_socket(socket_type.get(t_outputs))
 
-            if len(t_inputs) > len(self.inputs):
-                self.inputs.new('SvVerticesSocket', "dummy")
-            elif len(t_inputs) < len(self.inputs):
-                self.inputs.remove(self.inputs[-1])
+                if len(t_inputs) > len(self.inputs):
+                    self.inputs.new('SvVerticesSocket', "dummy")
+                elif len(t_inputs) < len(self.inputs):
+                    self.inputs.remove(self.inputs[-1])
 
-            renames = 'AB'
-            for idx, t_in in enumerate(t_inputs):
-                s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
-                s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
+                renames = 'AB'
+                for idx, t_in in enumerate(t_inputs):
+                    s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
+                    s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
 
 
     def process(self):
