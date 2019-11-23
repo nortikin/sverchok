@@ -20,6 +20,7 @@ import os
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatProperty, IntProperty
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.socket_data import SvNoDataError
@@ -269,7 +270,8 @@ class SvPrifilizerMk3(bpy.types.Operator):
                     values += self.stringadd(hr,ob_points[-1].select_right_handle)
                     values += self.stringadd(hl,ob_points[0].select_left_handle)
                     values += self.stringadd(ob_points[0].co,ob_points[0].select_control_point)
-                    values += ' 0 '
+                    #values += self.stringadd(len(ob_points))
+                    #values += ' 0 '
                     values += '\n'
                     out_points.append(hr[:])
                     out_points.append(hl[:])
@@ -292,6 +294,11 @@ class SvPrifilizerMk3(bpy.types.Operator):
         node.filename = self.nodename
         #print([out_points], [out_names])
         # sharing data to node:
+        if node.addnodes:
+            self.index_viewer_adding(node)
+            self.viewedraw_adding(node)
+            if self.knotselected:
+                self.float_add_if_selected(node)
         return{'FINISHED'}
 
     def write_values(self,text,values):
@@ -306,6 +313,52 @@ class SvPrifilizerMk3(bpy.types.Operator):
             bpy.data.texts.new(text)
         bpy.data.texts[text].clear()
         bpy.data.texts[text].write(values)
+
+
+    def index_viewer_adding(self, node):
+        """ adding new viewer index node if none """
+        if node.outputs[2].is_linked: return
+        loc = node.location
+
+        tree = bpy.context.space_data.edit_tree
+        links = tree.links
+
+        vi = tree.nodes.new("SvIDXViewer28")
+
+        vi.location = loc+Vector((200,-100))
+        vi.draw_bg = True
+
+        links.new(node.outputs[2], vi.inputs[0])   #knots
+        links.new(node.outputs[3], vi.inputs[4])   #names
+
+    def float_add_if_selected(self, node):
+        """ adding new float node if selected knots """
+        if node.inputs[0].is_linked: return
+        loc = node.location
+
+        tree = bpy.context.space_data.edit_tree
+        links = tree.links
+
+        nu = tree.nodes.new('SvNumberNode')
+        nu.location = loc+Vector((-200,-150))
+
+        links.new(nu.outputs[0], node.inputs[0])   #number
+
+    def viewedraw_adding(self, node):
+        """ adding new viewer draw node node if none """
+        if node.outputs[0].is_linked: return
+        loc = node.location
+
+        tree = bpy.context.space_data.edit_tree
+        links = tree.links
+
+        vd = tree.nodes.new("SvVDExperimental")
+
+        vd.location = loc+Vector((200,225))
+
+        links.new(node.outputs[0], vd.inputs[0])   #verts
+        links.new(node.outputs[1], vd.inputs[1])   #edges
+
 
 
 #################################
@@ -378,6 +431,10 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name="Precision", min=0, max=10, default=8, update=updateNode,
         description="decimal precision of coordinates when generating profile from selection")
 
+    addnodes : BoolProperty(
+        name="AddNodes", default=False,
+        description="Lets add support nodes at pressing from selection button")
+
     curve_points_count : IntProperty(
         name="Curve points count", min=1, max=100, default=20, update=updateNode,
         description="Default number of points on curve segment")
@@ -412,6 +469,7 @@ class SvProfileNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         layout.label(text="Import Examples")
         layout.menu(SvProfileImportMenu.bl_idname)
+        layout.prop(self, "addnodes",text='Auto add nodes')
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "a")
@@ -579,4 +637,3 @@ def register():
 def unregister():
     for name in reversed(classes):
         bpy.utils.unregister_class(name)
-
