@@ -736,6 +736,22 @@ def updateNode(self, context):
     """
     self.process_node(context)
 
+# use as a decorator
+def throttled_update_node_function(self, context, func):
+    """
+    When a node has changed, like a mode-change leading to a socket change (remove, add, hide...)
+    Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
+    - first throttling the update system. 
+    - then We execute the code that makes changes to the node/nodetree
+    - then we end the throttle-state
+    - we are then ready to process
+
+    """
+    with self.sv_throttle_tree_update():
+        func(self, context)
+    self.process_node(context)
+
+
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
