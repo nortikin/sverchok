@@ -144,7 +144,6 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "current_op", text="Function")
-        #layout.prop_menu_enum(self, "list_match", text="List Match")
         layout.prop_menu_enum(self, "implementation", text="Implementation")
         if self.implementation == "NumPy":
             layout.prop(self, "output_numpy", toggle=True)

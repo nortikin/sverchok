@@ -11,6 +11,13 @@ The node expects correct input for the chosen operation (called mode),
 but it will fail gracefully with a message in the console if the input
 is not right for the selected mode.
 
+The node will accept lists of NumPy arrays. Flat arrays for scalar lists
+and two axis arrays for vectors with shape [n,3]
+
+It can also output Numpy arrays in the same format when using the NumPy
+implementation and the "Output NumPy" parameter activated.
+(See advanced parameters)
+
 Input and Output
 ^^^^^^^^^^^^^^^^
 
