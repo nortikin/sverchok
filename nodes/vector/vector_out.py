@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, dataCorrect_np, updateNode
+from sverchok.data_structure import dataCorrect_np, updateNode
 from numpy import ndarray, array
 
 def unpack_np(obj):
