@@ -49,16 +49,17 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'DOT'
 
     def wrapped_update(self, context):
-        kind = self.selected_mode
-        prop = kind + '_'
-        self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop
-        self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
-        self.process_node(context)
+        with self.sv_throttle_tree_update():
+            kind = self.selected_mode
+            prop = kind + '_'
+            self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop
+            self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
+            self.process_node(context)
 
     int_: IntProperty(
         default=0, name="an int", update=updateNode,
         get=lambda s: uget(s, 'int_'),
-        set=lambda s, val: uset(s, val, 'int_')) 
+        set=lambda s, val: uset(s, val, 'int_'))
     int_min: IntProperty(default=-1024, description='minimum')
     int_max: IntProperty(default=1024, description='maximum')
 
@@ -70,7 +71,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     float_max: FloatProperty(default=500.0, description='maximum')
 
     mode_options = [(k, k, '', i) for i, k in enumerate(["float", "int"])]
-    
+
     selected_mode: bpy.props.EnumProperty(
         items=mode_options, default="float", update=wrapped_update)
 
@@ -97,7 +98,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
             c.prop(self, kind + '_max', text='max')
             c = layout.column()
             c.prop(self, 'show_limits', icon='SETTINGS', text='')
-                
+
             c.prop(self, 'to3d', icon='PLUGIN', text='')
 
     def draw_buttons_ext(self, context, layout):
@@ -121,7 +122,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return self.label or self.name
 
-            
+
     def process(self):
 
         if not self.inputs[0].is_linked:
