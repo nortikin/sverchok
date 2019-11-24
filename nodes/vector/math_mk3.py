@@ -108,12 +108,12 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     v3_input_0: FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
     v3_input_1: FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
 
-    implentation_modes = [
+    implementation_modes = [
         ("NumPy", "NumPy", "NumPy", 0),
         ("MathUtils", "MathUtils", "MathUtils", 1)]
 
     implementation : EnumProperty(
-        name='Implementation', items=implentation_modes,
+        name='Implementation', items=implementation_modes,
         description='Choose calculation method',
         default="NumPy", update=updateNode)
     implementation_func_dict ={

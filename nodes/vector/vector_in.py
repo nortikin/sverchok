@@ -72,12 +72,12 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
 
     advanced_mode: BoolProperty(name='deep copy', update=updateNode, default=True)
     show_3d_cursor_button: BoolProperty(name='show button', update=updateNode, default=False)
-    implentation_modes = [
+    implementation_modes = [
         ("NumPy", "NumPy", "NumPy", 0),
         ("Python", "Python", "Python", 1)]
 
     implementation: EnumProperty(
-        name='Implementation', items=implentation_modes,
+        name='Implementation', items=implementation_modes,
         description='Choose calculation method',
         default="Python", update=updateNode)
 
