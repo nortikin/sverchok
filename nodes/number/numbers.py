@@ -54,7 +54,8 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
             prop = kind + '_'
             self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop
             self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
-            self.process_node(context)
+
+        self.process_node(context)
 
     int_: IntProperty(
         default=0, name="an int", update=updateNode,
