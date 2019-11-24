@@ -79,7 +79,7 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     implementation: EnumProperty(
         name='Implementation', items=implentation_modes,
         description='Choose calculation method',
-        default="NumPy", update=updateNode)
+        default="Python", update=updateNode)
 
     output_numpy: BoolProperty(
         name='Output NumPy',
