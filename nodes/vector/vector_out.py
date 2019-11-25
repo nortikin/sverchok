@@ -17,32 +17,53 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-
+from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect
+from sverchok.data_structure import dataCorrect_np, updateNode
+from numpy import ndarray, array
 
+def unpack_np(obj):
+    return (obj[:, 0], obj[:, 1], obj[:, 2])
+
+def unpack_list(obj):
+    return (list(x) for x in zip(*obj))
+
+def unpack_list_to_np(obj):
+    return (array(x) for x in zip(*obj))
 
 class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Vectors out '''
     bl_idname = 'VectorsOutNode'
     bl_label = 'Vector out'
     sv_icon = 'SV_VECTOR_OUT'
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vectors")
         self.outputs.new('SvStringsSocket', "X")
         self.outputs.new('SvStringsSocket', "Y")
         self.outputs.new('SvStringsSocket', "Z")
+    def draw_buttons_ext(self, ctx, layout):
+        layout.prop(self, "output_numpy", toggle=False)
+
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
-        # inputs
         if self.inputs['Vectors'].is_linked:
             xyz = self.inputs['Vectors'].sv_get(deepcopy=False)
 
-            data = dataCorrect(xyz)
+            data = dataCorrect_np(xyz)
             X, Y, Z = [], [], []
+            if self.output_numpy:
+                unpack_func = unpack_np if isinstance(data[0], ndarray) else unpack_list_to_np
+            else:
+                unpack_func = unpack_list
             for obj in data:
-                x_, y_, z_ = (list(x) for x in zip(*obj))
+                x_, y_, z_ = unpack_func(obj)
                 X.append(x_)
                 Y.append(y_)
                 Z.append(z_)

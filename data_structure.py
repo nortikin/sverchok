@@ -286,6 +286,18 @@ def dataCorrect(data, nominal_dept=2):
         output = dataStandart(data, dept, nominal_dept)
         return output
 
+def dataCorrect_np(data, nominal_dept=2):
+    """data from nasting to standart: TO container( objects( lists( floats, ), ), )
+    """
+    dept = levels_of_list_or_np(data)
+    output = []
+    if not dept: # for empty lists
+        return []
+    if dept < 2:
+        return data #[dept, data]
+    else:
+        output = dataStandart(data, dept, nominal_dept)
+        return output
 
 def dataSpoil(data, dept):
     """from standart data to initial levels: to nested lists
