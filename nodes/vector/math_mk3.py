@@ -93,9 +93,9 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'THREE_DOTS'
     sv_icon = 'SV_VECTOR_MATH'
 
+    @throttled_nodetree_and_auto_update
     def mode_change(self, context):
         self.update_sockets()
-        updateNode(self, context)
 
     current_op: EnumProperty(
         items=vector_math_ops,
@@ -116,10 +116,12 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name='Implementation', items=implementation_modes,
         description='Choose calculation method',
         default="NumPy", update=updateNode)
+
     implementation_func_dict ={
         "NumPy": (numpy_vector_func_dict, recurse_fx_numpy, recurse_fxy_numpy),
         "MathUtils": (mathutils_vector_func_dict, recurse_fx, recurse_fxy)
     }
+
     output_numpy: BoolProperty(
         name='Output NumPy',
         description='Output NumPy arrays',
@@ -157,21 +159,20 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def update_sockets(self):
         socket_info = numpy_vector_func_dict.get(self.current_op)[2]
         if socket_info != self.socket_info:
-            with self.sv_throttle_tree_update():
-                self.socket_info = socket_info
-                t_inputs, t_outputs = socket_info.split(' ')
+            self.socket_info = socket_info
+            t_inputs, t_outputs = socket_info.split(' ')
 
-                self.outputs[0].replace_socket(socket_type.get(t_outputs))
+            self.outputs[0].replace_socket(socket_type.get(t_outputs))
 
-                if len(t_inputs) > len(self.inputs):
-                    self.inputs.new('SvVerticesSocket', "dummy")
-                elif len(t_inputs) < len(self.inputs):
-                    self.inputs.remove(self.inputs[-1])
+            if len(t_inputs) > len(self.inputs):
+                self.inputs.new('SvVerticesSocket', "dummy")
+            elif len(t_inputs) < len(self.inputs):
+                self.inputs.remove(self.inputs[-1])
 
-                renames = 'AB'
-                for idx, t_in in enumerate(t_inputs):
-                    s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
-                    s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
+            renames = 'AB'
+            for idx, t_in in enumerate(t_inputs):
+                s = self.inputs[idx].replace_socket(socket_type.get(t_in), renames[idx])
+                s.prop_name = f'v3_input_{idx}' if t_in == 'v' else 'amount'
 
 
     def process(self):
