@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
-from math import sqrt, sin, cos, radians,pi
+from math import sqrt, sin, cos, tan, radians,pi
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
@@ -39,7 +39,9 @@ grid_type_items = [
     ("HEXAGON", "Hexagon", "", custom_icon("SV_HEXAGON"), 2),
     ("PENTAGON", "Pentagon", "", custom_icon("SV_HEXAGON"), 3),
     ("PENTAGON1", "Pentagon 1", "", custom_icon("SV_HEXAGON"), 4),
-    ("PENTAGON2", "Pentagon 2", "", custom_icon("SV_HEXAGON"), 5)]
+    ("PENTAGON2", "Pentagon 2", "", custom_icon("SV_HEXAGON"), 5),
+    ("PENTAGON3", "Pentagon 3", "", custom_icon("SV_HEXAGON"), 6),
+    ("PENTAGON4", "Pentagon 4", "", custom_icon("SV_HEXAGON"), 7)]
 size_mode_items = [
     ("RADIUS", "Radius", "Define polygon by its radius", custom_icon("SV_RAD"), 0),
     ("SIDE", "Side", "Define polygon by its side", custom_icon("SV_SIDE"), 1)]
@@ -142,7 +144,16 @@ def rect_layout(settings, pol_type):
         offset_x = [l%2  for l in range(numy)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
         tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
-
+    elif pol_type == 'PENTAGON3':
+        offset_y = [l%2  for l in range(cols)]
+        offset_x = [l%2  for l in range(numy)]
+        grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
+        tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
+    elif pol_type == 'PENTAGON4':
+        offset_y = [l%2  for l in range(cols)]
+        offset_x = [l%2  for l in range(numy)]
+        grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
+        tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
     elif pol_type == 'PENTAGON0':
         offset_y = [(l % 3)  for l in range(cols)]
         # offset_x = [l  for l in range(numy)]
@@ -211,8 +222,33 @@ def generate_grid(center, layout, pol_type, settings):
         dy = b
         dx = (2*a*cos(A-pi/2)+d*cos(C+A-pi/2-pi))
         off_base = -b+2*a*sin(A-pi/2)-d*sin(-C-A-pi/2)
-        off_base_x = (-a+d +cos(A)*c)*0
-
+        off_base_x = 0
+    elif pol_type == 'PENTAGON3':
+        A = settings[4]
+        B = settings[5]
+        C = settings[6]
+        D = settings[7]
+        a = settings[8]
+        b = settings[9]
+        c = settings[10]
+        d = settings[11]
+        dy = b
+        dx = (2*a*cos(A-pi/2)+cos(D/2)*(b/2)/sin(D/2))
+        off_base = b/2+a*sin(A-pi/2)*0
+        off_base_x = 0
+    elif pol_type == 'PENTAGON4':
+        A = settings[4]
+        B = settings[5]
+        C = settings[6]
+        D = settings[7]
+        a = settings[8]
+        b = settings[9]
+        c = settings[10]
+        d = settings[11]
+        dy = b
+        dx = (2*a*cos(A-pi/2)+cos(D/2)*(b/2)/sin(D/2))
+        off_base = b/2+a*sin(A-pi/2)*0
+        off_base_x = 0
     '''
     cols : number of points along x
     rows : number of points along Y for each x location
@@ -262,6 +298,16 @@ def generate_tiles(tile_settings):
     local_angle = 45 if sides == 4 else 30
 
     tile = circle(radius*scale, radians(local_angle - angle), sides, None, 'pydata')
+    A,B,C,D = angles
+    a,b,c,d = sides_data
+    a=a[0]
+    b=b[0]
+    c=c[0]
+    d = d[0]
+    A = pi - A[0]
+    B = B[0]
+    C = C[0]
+    D = D[0]
     if sides == 8:
         a = radius*scale
         a2 = a/3
@@ -316,16 +362,6 @@ def generate_tiles(tile_settings):
                 ]
             #v = [v[0]*cos(radians(angle)) ,v[1],0]
     if sides == 9:
-        A,B,C,D = angles
-        a,b,c,d = sides_data
-        a=a[0]
-        b=b[0]
-        c=c[0]
-        d = d[0]
-        A = pi - A[0]
-        B = B[0]
-        C = C[0]
-        D = D[0]
         tile = [[
             [0, 0, 0],
             [0,b,0],
@@ -336,15 +372,38 @@ def generate_tiles(tile_settings):
             [-a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
             [-(a*cos(A-pi/2)+d*cos(-C+A-pi/2-pi)), a*sin(A-pi/2)+d*sin(-C+A-pi/2-pi), 0],
             [-a*cos(A-pi/2), a*sin(A-pi/2), 0],
-            #[a+cos(A)*b+ (d-a)*cos(pi),0+sin(A)*c,0],
-            #[a+cos(A)*b+c*cos(B+A),0+sin(A)*b+c*sin(B+A),0],
-            #[a+cos(A)*b+c*cos(B+A)+d*cos(C+B+A),0+sin(A)*b+c*sin(B+A)+d*sin(C+B+A),0],
-            #[b*cos(B),b*sin(B),0],
-            # [c*cos(D)+d*cos(B+D+pi),c*sin(D)+d*sin(B+D+pi), 0],
-            # [c*cos(D),c*sin(D), 0],
-            #[a+d,0, 0],
-            #[a+cos(A)*c + a+b*cos(B-pi),sin(A)*c+b*sin(B-pi), 0],
-            #[a+cos(A)*c + a,0+sin(A)*c,0]
+            ],
+            [(0,1),(1,2),(2,3),(3,4),(4,0)],
+            [[0,1,2,3,4], [0,1,5,6,7]
+            ]
+            ]
+    if sides == 10:
+        tile = [[
+            [0, 0, 0],
+            [0,b,0],
+            [a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
+            [a*cos(A-pi/2)+(b/2)*cos(D/2)/sin(D/2), b/2+a*sin(A-pi/2), 0],
+            [a*cos(A-pi/2), a*sin(A-pi/2), 0],
+
+            [-a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
+            [-(a*cos(A-pi/2)+cos(D/2)*(b/2)/sin(D/2)), b/2+a*sin(A-pi/2), 0],
+            [-a*cos(A-pi/2), a*sin(A-pi/2), 0],
+            ],
+            [(0,1),(1,2),(2,3),(3,4),(4,0)],
+            [[0,1,2,3,4], [0,1,5,6,7]
+            ]
+            ]
+    if sides == 11:
+        tile = [[
+            [0, 0, 0],
+            [0,b,0],
+            [a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
+            [a*cos(A-pi/2)+(b/2)*cos(D/2)/sin(D/2), b/2+a*sin(A-pi/2), 0],
+            [a*cos(A-pi/2), a*sin(A-pi/2), 0],
+
+            [-a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
+            [-(a*cos(A-pi/2)+cos(D/2)*(b/2)/sin(D/2)), b/2+a*sin(A-pi/2), 0],
+            [-a*cos(A-pi/2), a*sin(A-pi/2), 0],
             ],
             [(0,1),(1,2),(2,3),(3,4),(4,0)],
             [[0,1,2,3,4], [0,1,5,6,7]
@@ -549,6 +608,10 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
             sides = 7
         elif self.gridType == 'PENTAGON2':
             sides = 9
+        elif self.gridType == 'PENTAGON3':
+            sides = 10
+        elif self.gridType == 'PENTAGON4':
+            sides = 11
         elif self.gridType in ['PENTAGON']:
             sides = 8
         radius_factor = 2 * sin(radians(180/sides)) if self.gridType != 'HEXAGON' and self.sizeMode == 'SIDE' else 1
