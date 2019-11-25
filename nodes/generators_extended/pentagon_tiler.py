@@ -133,10 +133,16 @@ def rect_layout(settings, pol_type):
     if pol_type in ['HEXAGON']:
         offset_y = [l % 2 for l in range(cols)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
-    elif pol_type in ['PENTAGON','PENTAGON1','PENTAGON2']:
+    elif pol_type in ['PENTAGON','PENTAGON1']:
         offset_y = [l  for l in range(cols)]
         offset_x = [l  for l in range(numy)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
+    elif pol_type == 'PENTAGON2':
+        offset_y = [l%2  for l in range(cols)]
+        offset_x = [l%2  for l in range(numy)]
+        grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
+        tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
+
     elif pol_type == 'PENTAGON0':
         offset_y = [(l % 3)  for l in range(cols)]
         # offset_x = [l  for l in range(numy)]
@@ -146,10 +152,13 @@ def rect_layout(settings, pol_type):
 
         grid_center = [(numx) / 2 - 2/3.0, (numy-1) / 2]
         tile_rotated = [[(x + y) % 2 for y in range(rows[x])] for x in range(cols)]
+        print("t1", tile_rotated,rows,cols)
 
     else: # pol_type == 'SQUARE':
         offset_y = [0 for l in range(cols)]
         grid_center = [(numx-1) / 2, (numy-1) / 2]
+        tile_rotated = [[(x + y) % 2 for y in range(rows[x])] for x in range(cols)]
+        print("t1", tile_rotated,rows,cols)
 
     return cols, rows, offset_y, offset_x, grid_center, tile_rotated
 
@@ -194,14 +203,15 @@ def generate_grid(center, layout, pol_type, settings):
         print(1,settings[4])
         A = settings[4]
         B = settings[5]
+        C = settings[6]
         a = settings[8]
         b = settings[9]
         c = settings[10]
         d = settings[11]
-        dy = sin(A)*c
-        dx = a+d-b*cos(B)
-        off_base = b*sin(B)
-        off_base_x = -a+d +cos(A)*c
+        dy = b
+        dx = (2*a*cos(A-pi/2)+d*cos(C+A-pi/2-pi))
+        off_base = -b+2*a*sin(A-pi/2)-d*sin(-C-A-pi/2)
+        off_base_x = (-a+d +cos(A)*c)*0
 
     '''
     cols : number of points along x
@@ -226,10 +236,12 @@ def generate_grid(center, layout, pol_type, settings):
     cx = grid_center[0] * dx if center else (-dx/2 if pol_type == 'SQUARE' else -dx*2/3)
     cy = grid_center[1] * dy if center else 0
 
-    if pol_type == 'TRIANGLE':
+    if pol_type in ['TRIANGLE', 'PENTAGON2']:
         sin_base = sin(radians(30))
         x_offset = r * sin_base
-        grid = [(x * dx - cx - x_offset * tile_rotated[x][y] - offset_x[y], y * dy - offset_y[x] * off_base - cy, tile_rotated[x][y]) for x in range(cols) for y in range(rows[x])]
+        # grid = [(x * dx - cx - x_offset * tile_rotated[x][y] - offset_x[y], y * dy - offset_y[x] * off_base - cy, tile_rotated[x][y]) for x in range(cols) for y in range(rows[x])]
+        grid = [(x * dx - cx - offset_x[y]* off_base_x, y * dy - offset_y[x] * off_base - cy, tile_rotated[x][y]) for x in range(cols) for y in range(rows[x])]
+
     else:
         grid = [(x * dx - cx - offset_x[y]* off_base_x, y * dy - offset_y[x] * off_base - cy, 0) for x in range(cols) for y in range(rows[x])]
 
@@ -316,28 +328,33 @@ def generate_tiles(tile_settings):
         D = D[0]
         tile = [[
             [0, 0, 0],
-            [a, 0, 0],
-            [a+cos(A)*b,0+sin(A)*b,0],
+            [0,b,0],
+            [a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
+            [a*cos(A-pi/2)+d*cos(-C+A-pi/2-pi), a*sin(A-pi/2)+d*sin(-C+A-pi/2-pi), 0],
+            [a*cos(A-pi/2), a*sin(A-pi/2), 0],
+
+            [-a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
+            [-(a*cos(A-pi/2)+d*cos(-C+A-pi/2-pi)), a*sin(A-pi/2)+d*sin(-C+A-pi/2-pi), 0],
+            [-a*cos(A-pi/2), a*sin(A-pi/2), 0],
             #[a+cos(A)*b+ (d-a)*cos(pi),0+sin(A)*c,0],
             #[a+cos(A)*b+c*cos(B+A),0+sin(A)*b+c*sin(B+A),0],
             #[a+cos(A)*b+c*cos(B+A)+d*cos(C+B+A),0+sin(A)*b+c*sin(B+A)+d*sin(C+B+A),0],
             #[b*cos(B),b*sin(B),0],
-            [c*cos(D)+d*cos(B+D+pi),c*sin(D)+d*sin(B+D+pi), 0],
-            [c*cos(D),c*sin(D), 0],
+            # [c*cos(D)+d*cos(B+D+pi),c*sin(D)+d*sin(B+D+pi), 0],
+            # [c*cos(D),c*sin(D), 0],
             #[a+d,0, 0],
             #[a+cos(A)*c + a+b*cos(B-pi),sin(A)*c+b*sin(B-pi), 0],
             #[a+cos(A)*c + a,0+sin(A)*c,0]
             ],
             [(0,1),(1,2),(2,3),(3,4),(4,0)],
-            [[0,1,2,3,4],
-            #[1,6,7,8,9,2]
+            [[0,1,2,3,4], [0,1,5,6,7]
             ]
             ]
     print(tile[0])
     for grid in grid_list:
         vert_list, edge_list, poly_list = [[], [], []]
 
-        if sides == 3:
+        if sides in [3,9]:
             tiles_triangular(vert_list, edge_list, poly_list, tile, grid)
         else:
             tiles(vert_list, edge_list, poly_list, tile, grid)
