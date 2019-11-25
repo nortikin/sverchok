@@ -736,9 +736,14 @@ def updateNode(self, context):
     """
     self.process_node(context)
 
-# use as a decorator
 def throttled_nodetree_and_auto_update(func):
     """
+    use as a decorator
+
+        @throttled_nodetree_and_auto_update
+        def mode_update(self, context):
+            ...
+
     When a node has changed, like a mode-change leading to a socket change (remove, add, hide...)
     Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
     - first throttling the update system. 
@@ -753,6 +758,7 @@ def throttled_nodetree_and_auto_update(func):
         self.process_node(context)
 
     return wrapper_update
+
 
 
 ##############################################################
