@@ -89,7 +89,7 @@ def recurse_fxy(l1, l2, func, level):
 class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     '''Vector: Add, Dot P..'''
     bl_idname = 'SvVectorMathNodeMK3'
-    bl_label = 'Vector Math Numpy'
+    bl_label = 'Vector Math'
     bl_icon = 'THREE_DOTS'
     sv_icon = 'SV_VECTOR_MATH'
 
@@ -108,12 +108,12 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     v3_input_0: FloatVectorProperty(size=3, default=(0,0,0), name='input a', update=updateNode)
     v3_input_1: FloatVectorProperty(size=3, default=(0,0,0), name='input b', update=updateNode)
 
-    implentation_modes = [
+    implementation_modes = [
         ("NumPy", "NumPy", "NumPy", 0),
         ("MathUtils", "MathUtils", "MathUtils", 1)]
 
     implementation : EnumProperty(
-        name='Implementation', items=implentation_modes,
+        name='Implementation', items=implementation_modes,
         description='Choose calculation method',
         default="NumPy", update=updateNode)
     implementation_func_dict ={
@@ -144,7 +144,6 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         layout.prop_menu_enum(self, "current_op", text="Function")
-        #layout.prop_menu_enum(self, "list_match", text="List Match")
         layout.prop_menu_enum(self, "implementation", text="Implementation")
         if self.implementation == "NumPy":
             layout.prop(self, "output_numpy", toggle=True)
