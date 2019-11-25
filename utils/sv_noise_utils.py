@@ -23,5 +23,5 @@ def get_noise_type(name):
     return dict(noise_options)[name]
 
 for name, value in noise_options:
-    locals()[name] = value
+    locals()[name] = name
 
