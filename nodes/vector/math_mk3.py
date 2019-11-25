@@ -22,7 +22,9 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import levelsOflist, levels_of_list_or_np, updateNode, numpy_match_long_repeat
+from sverchok.data_structure import (
+    levelsOflist, levels_of_list_or_np, numpy_match_long_repeat
+    updateNode, throttled_nodetree_and_auto_update)
 
 from sverchok.ui.sv_icons import custom_icon
 import numpy as np
