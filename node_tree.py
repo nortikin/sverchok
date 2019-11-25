@@ -211,7 +211,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
         if self.skip_tree_update:
-            print('throttled update from context manager')
+            # print('throttled update from context manager')
             return
 
 
@@ -266,6 +266,9 @@ class SverchCustomTreeNode:
         if not self.n_id:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
+
+    def sv_throttle_tree_update(self):
+        return throttle_tree_update(self)
 
     def mark_error(self, err):
         """
@@ -525,6 +528,7 @@ class SverchCustomTreeNode:
         op = layout_element.operator(operator_idname, **keywords)
         op.idname = self.name
         op.idtree = self.id_data.name
+        return op
 
 
     def get_and_set_gl_scale_info(self, origin=None):

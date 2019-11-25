@@ -17,10 +17,11 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import FloatProperty, BoolProperty, StringProperty
+from bpy.props import FloatProperty, BoolProperty, StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, fullList_deep_copy
+from sverchok.data_structure import updateNode, fullList, fullList_deep_copy, numpy_match_long_repeat
 from sverchok.utils.sv_itertools import sv_zip_longest
+from numpy import array
 
 class SvVectorFromCursor(bpy.types.Operator):
     "Vector from 3D Cursor"
@@ -33,12 +34,31 @@ class SvVectorFromCursor(bpy.types.Operator):
     treename: StringProperty(name='treename')
 
     def execute(self, context):
-        cursor = bpy.context.scene.cursor_location
+        cursor = bpy.context.scene.cursor.location
 
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
         node.x_, node.y_, node.z_ = tuple(cursor)
 
         return{'FINISHED'}
+
+def python_pack_vecs(X_, Y_, Z_, output_numpy):
+    series_vec = []
+    for x, y, z in zip(X_, Y_, Z_):
+        max_v = max(map(len, (x, y, z)))
+        fullList(x, max_v)
+        fullList(y, max_v)
+        fullList(z, max_v)
+        series_vec.append(array([x,y,z]).T if output_numpy else list(zip(x, y, z)))
+    return series_vec
+
+def numpy_pack_vecs(X_, Y_, Z_, output_numpy):
+    series_vec = []
+    for obj in zip(X_, Y_, Z_):
+        np_obj = [array(p) for p in obj]
+        x, y, z = numpy_match_long_repeat(np_obj)
+        vecs = array([x,y,z]).T
+        series_vec.append(vecs if output_numpy else vecs.tolist())
+    return series_vec
 
 class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Generator vectors '''
@@ -52,6 +72,19 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
 
     advanced_mode: BoolProperty(name='deep copy', update=updateNode, default=True)
     show_3d_cursor_button: BoolProperty(name='show button', update=updateNode, default=False)
+    implementation_modes = [
+        ("NumPy", "NumPy", "NumPy", 0),
+        ("Python", "Python", "Python", 1)]
+
+    implementation: EnumProperty(
+        name='Implementation', items=implementation_modes,
+        description='Choose calculation method',
+        default="Python", update=updateNode)
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "X").prop_name = 'x_'
@@ -71,9 +104,14 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.row().prop(self, 'advanced_mode')
+        layout.label(text="Implementation:")
+        layout.prop(self, "implementation", expand=True)
+        layout.prop(self, "output_numpy", toggle=False)
 
     def rclick_menu(self, context, layout):
         layout.prop(self, "advanced_mode", text="use deep copy")
+        layout.prop_menu_enum(self, "implementation", text="Implementation")
+        layout.prop(self, "output_numpy", toggle=True)
         layout.prop(self, "show_3d_cursor_button", text="show 3d cursor button")
         if not any(s.is_linked for s in self.inputs):
             opname = 'node.sverchok_vector_from_cursor'
@@ -90,19 +128,13 @@ class GenVectorsNode(bpy.types.Node, SverchCustomTreeNode):
         Z_ = inputs['Z'].sv_get()
         series_vec = []
         max_obj = max(map(len, (X_, Y_, Z_)))
-
+        pack_func = numpy_pack_vecs if self.implementation == 'NumPy' else python_pack_vecs
         fullList_main = fullList_deep_copy if self.advanced_mode else fullList
         fullList_main(X_, max_obj)
         fullList_main(Y_, max_obj)
         fullList_main(Z_, max_obj)
+        series_vec = pack_func(X_, Y_, Z_, self.output_numpy)
 
-        for i in range(max_obj):
-
-            max_v = max(map(len, (X_[i], Y_[i], Z_[i])))
-            fullList(X_[i], max_v)
-            fullList(Y_[i], max_v)
-            fullList(Z_[i], max_v)
-            series_vec.append(list(zip(X_[i], Y_[i], Z_[i])))
 
         self.outputs['Vectors'].sv_set(series_vec)
 

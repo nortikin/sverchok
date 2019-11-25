@@ -11,7 +11,7 @@ Vector
    normal
    interpolation_stripes
    interpolation_mk3
-   math_mk2
+   math_mk3
    noise_mk2
    fractal
    lerp

@@ -74,7 +74,7 @@ class SvGenFloatRange(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGenFloatRange'
     bl_label = 'Range Float'
     bl_icon = 'IPO_LINEAR'
-
+    replacement_nodes = [('SvGenNumberRange', None, None)]
     start_: FloatProperty(
         name='start', description='start',
         default=0, update=updateNode)

@@ -1085,6 +1085,8 @@ class PlaneEquation(object):
         """
         a, b, c, d = self.a, self.b, self.c, self.d
         sqr = a*a + b*b + c*c
+        if sqr < 1e-8:
+            raise Exception("Plane normal is (almost) zero!")
         return mathutils.Vector(((- a*d)/sqr, (- b*d)/sqr, (- c*d)/sqr))
     
     def distance_to_point(self, point):
@@ -1243,9 +1245,11 @@ class PlaneEquation(object):
         output: Vector.
         """
         normal = self.normal.normalized()
-        distance = self.distance_to_point(point)
+        distance = abs(self.distance_to_point(point))
         sign = self.side_of_point(point)
-        return mathutils.Vector(point) - sign * distance * normal
+        result = Vector(point) - sign * distance * normal
+        #info("P(%s): %s - %s * [%s] * %s = %s", point, point, sign, distance, normal, result)
+        return result
     
     def projection_of_points(self, points):
         """
@@ -1260,6 +1264,11 @@ class PlaneEquation(object):
         signed_distances = np.multiply(signs, distances)
         scaled_normals = np.outer(signed_distances, normal)
         return points - scaled_normals
+
+    def projection_of_vector(self, v1, v2):
+        v1p = self.projection_of_point(v1)
+        v2p = self.projection_of_point(v2)
+        return v2p - v1p
 
     def intersect_with_plane(self, plane2):
         """

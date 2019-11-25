@@ -317,11 +317,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 
-        try:
-
-            # for animations we need to suppress depsgraph updates emminating from this part of the process/            
-            self.id_data.freeze(hard=True)
-
+        # we need to suppress depsgraph updates emminating from this part of the process/            
+        with self.sv_throttle_tree_update():
 
             if self.merge:
                 obj_index = 0
@@ -363,12 +360,6 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
             if self.outputs[0].is_linked:
                 self.outputs[0].sv_set(objs)
-
-        except Exception as err:
-            print('something weird happened', err)
-            ... # self.id_data.unfreeze(hard=True)
-
-        self.id_data.unfreeze(hard=True)
 
 
     def set_autosmooth(self, objs):

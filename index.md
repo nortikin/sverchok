@@ -199,8 +199,7 @@
 ## Number
     SvNumberNode
     SvScalarMathNodeMK4
-    GenListRangeIntNode
-    SvGenFloatRange
+    SvGenNumberRange
     SvListInputNode
     SvRndNumGen
     RandomNode
@@ -221,7 +220,7 @@
     GenVectorsNode
     VectorsOutNode
     SvAxisInputNodeMK2
-    SvVectorMathNodeMK2
+    SvVectorMathNodeMK3
     VertsDelDoublesNode
     SvVectorRewire
     ---

@@ -14,8 +14,7 @@ Number
    mix_inputs
    random
    random_num_gen
-   range_float
-   range_int
+   number_range
    range_map
    numbers
    scalar_mk4
