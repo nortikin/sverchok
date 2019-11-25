@@ -19,4 +19,9 @@ noise_options = [
     ('CELLNOISE', 14)
 ]
 
-PERLIN_ORIGINAL = noise_options[1][0]
+def get_noise_type(name):
+    return dict(noise_options)[name]
+
+for name, value in noise_options:
+    locals()[name] = value
+
