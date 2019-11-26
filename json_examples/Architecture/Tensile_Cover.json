@@ -592,7 +592,7 @@
       "width": 140.0
     },
     "Vector Math": {
-      "bl_idname": "SvVectorMathNodeMK2",
+      "bl_idname": "SvVectorMathNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -606,7 +606,7 @@
       "width": 140.0
     },
     "Vector Math.001": {
-      "bl_idname": "SvVectorMathNodeMK2",
+      "bl_idname": "SvVectorMathNodeMK3",
       "height": 100.0,
       "hide": true,
       "label": "",

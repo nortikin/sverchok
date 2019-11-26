@@ -105,7 +105,7 @@ def selected_masks_adding(node):
 
     mo = tree.nodes.new('MaskListNode')
     mv = tree.nodes.new('SvMoveNodeMK2')
-    rf = tree.nodes.new('SvGenFloatRange')
+    rf = tree.nodes.new('SvGenNumberRange')
     vi = tree.nodes.new('GenVectorsNode')
     mi = tree.nodes.new('SvMaskJoinNode')
     vd = tree.nodes.new('ViewerNode2')
