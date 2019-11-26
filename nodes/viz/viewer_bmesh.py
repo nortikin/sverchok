@@ -27,7 +27,7 @@ import bpy
 from bpy.props import BoolProperty, StringProperty, BoolVectorProperty
 from mathutils import Matrix, Vector
 
-from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import natural_plus_one, greek_alphabet
@@ -318,7 +318,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 fullList(mrest[idx], maxlen)
 
         # we need to suppress depsgraph updates emminating from this part of the process/            
-        with throttle_tree_update(self):
+        with self.sv_throttle_tree_update():
 
             if self.merge:
                 obj_index = 0
