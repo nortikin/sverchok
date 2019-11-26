@@ -102,8 +102,10 @@
     SvLimitedDissolve
     SvMeshBeautify
     SvTriangulateNode
+    SvMakeMonotone
     ---
     PolygonBoomNode
+    SvDissolveFaces2D
     Pols2EdgsNode
     SvMeshJoinNode
     ---
@@ -188,6 +190,10 @@
     ---
     CrossSectionNode
     SvBisectNode
+    SvEdgesToFaces2D
+    SvMergeMesh2D
+    SvMergeMesh2DLite
+    SvCropMesh2D
     SvWafelNode
 
 ## Number
