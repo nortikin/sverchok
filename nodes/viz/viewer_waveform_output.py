@@ -374,7 +374,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.offset = self.offset[:]
             config.pitch = self.pitch[:]
             
+            # GRAPH PART
+            # gs, gb = self.generate_graph_data(wave_params, (w, h), (x, y))
+            # config.graph_shader = gs
+            # config.graph_batch = gb
 
+            # LINE PART
             coords = wave_data_processed.verts
             indices = wave_data_processed.indices
             config.line_shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
