@@ -334,14 +334,14 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'PARTICLE_POINT'
 
     def switch_res_mode(self, context):
-        with self.sv_throttle_tree_update:
+        with self.sv_throttle_tree_update():
             if self.set_res:
                 self.inputs.new('SvStringsSocket', 'Resolution').prop_name = 'resolution'
             else:
                 self.inputs.remove(self.inputs['Resolution'])
             self.process_node(context)
 
-    resolution = FloatProperty(name='resolution',
+    resolution: FloatProperty(name='resolution',
                                description='the less the more accurate',
                                default=1.0,
                                min=0.01,
@@ -349,12 +349,12 @@ class SvProjectPointToLine(bpy.types.Node, SverchCustomTreeNode):
                                unit='LENGTH',
                                update=SverchCustomTreeNode.process_node)
 
-    set_res = BoolProperty(name='Set resolution',
+    set_res: BoolProperty(name='Set resolution',
                           description='Add socket for setting resolution value',
                           default=False,
                           update=switch_res_mode)
 
-    cyclic = BoolProperty(name='Cyclic',
+    cyclic: BoolProperty(name='Cyclic',
                           description='Close input lines',
                           default=False,
                           update=SverchCustomTreeNode.process_node)
