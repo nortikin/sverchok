@@ -162,9 +162,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: 
     
     """
-    @property
-    def extended_docstring(self):
-        return inspect.cleandoc("""
+
+    def extended_docstring(self, auto_print=False):
+        text = inspect.cleandoc("""
         a dedicated node converting input streams into samples of type: (Wav, ..)
 
         https://en.wikipedia.org/wiki/Audio_bit_depth
@@ -182,6 +182,10 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
 
         """)
+        if auto_print:
+            print(text)
+        else:
+            return text
 
 
     bl_idname = 'SvWaveformViewer'
