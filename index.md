@@ -78,6 +78,7 @@
     SvOBJInsolationNode
     SvDeformationNode
     SvLinkedVertsNode
+    SvProjectPointToLine
 
 ## Transforms
     SvRotationNodeMK2
