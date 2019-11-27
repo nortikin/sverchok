@@ -48,14 +48,12 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'A Number'
     bl_icon = 'DOT'
 
+    @throttled
     def wrapped_update(self, context):
-        with self.sv_throttle_tree_update():
-            kind = self.selected_mode
-            prop = kind + '_'
-            self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop
-            self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
-
-        self.process_node(context)
+        kind = self.selected_mode
+        prop = kind + '_'
+        self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop
+        self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
 
     int_: IntProperty(
         default=0, name="an int", update=updateNode,

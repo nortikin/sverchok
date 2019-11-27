@@ -8,7 +8,7 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode, throttle_tree_update
+from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh
 
@@ -23,20 +23,20 @@ class SvMergeMesh2D(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Merge mesh 2D'
     bl_icon = 'AUTOMERGE_ON'
 
+    @throttled
     def update_sockets(self, context):
-        with throttle_tree_update(self):
-            links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-            [self.outputs.remove(sock) for sock in self.outputs[2:]]
-            new_socks = []
-            if self.simple_mask:
-                new_socks.append(self.outputs.new('SvStringsSocket', 'Mask A'))
-                new_socks.append(self.outputs.new('SvStringsSocket', 'Mask B'))
-            if self.index_mask:
-                new_socks.append(self.outputs.new('SvStringsSocket', 'Face index A'))
-                new_socks.append(self.outputs.new('SvStringsSocket', 'Face index B'))
-            [[self.id_data.links.new(sock, link) for link in links[sock.name]]
-                                                 for sock in new_socks if sock.name in links]
-        updateNode(self, context)
+        links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+        [self.outputs.remove(sock) for sock in self.outputs[2:]]
+        new_socks = []
+        if self.simple_mask:
+            new_socks.append(self.outputs.new('SvStringsSocket', 'Mask A'))
+            new_socks.append(self.outputs.new('SvStringsSocket', 'Mask B'))
+        if self.index_mask:
+            new_socks.append(self.outputs.new('SvStringsSocket', 'Face index A'))
+            new_socks.append(self.outputs.new('SvStringsSocket', 'Face index B'))
+        [[self.id_data.links.new(sock, link) for link in links[sock.name]]
+                                             for sock in new_socks if sock.name in links]
+
 
     simple_mask: bpy.props.BoolProperty(name='Simple mask', update=update_sockets, default=True,
                                         description='Switching between two type of masks')

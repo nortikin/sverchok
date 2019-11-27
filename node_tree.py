@@ -270,6 +270,30 @@ class SverchCustomTreeNode:
     def sv_throttle_tree_update(self):
         return throttle_tree_update(self)
 
+    def throttled(func):
+        """
+        use as a decorator
+
+            @throttled
+            def mode_update(self, context):
+                ...
+
+        When a node has changed, like a mode-change leading to a socket change (remove, add, hide...)
+        Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
+        - first throttling the update system. 
+        - then We execute the code that makes changes to the node/nodetree
+        - then we end the throttle-state
+        - we are then ready to process
+
+        """
+        def wrapper_update(self, context):
+            with self.sv_throttle_tree_update():
+                func(self, context)
+            self.process_node(context)
+
+    return wrapper_update
+
+
     def mark_error(self, err):
         """
         marks the with system error color
