@@ -27,7 +27,8 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.geom import circle
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.nodes.modifier_change.remove_doubles import remove_doubles
-
+from mathutils import Vector
+from mathutils.geometry import intersect_sphere_sphere_2d
 grid_layout_items = [
     ("RECTANGLE", "Rectangle", "", custom_icon("SV_HEXA_GRID_RECTANGLE"), 0),
     ("TRIANGLE", "Triangle", "", custom_icon("SV_HEXA_GRID_TRIANGLE"), 1),
@@ -150,8 +151,8 @@ def rect_layout(settings, pol_type):
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
         tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
     elif pol_type == 'PENTAGON4':
-        offset_y = [l%2  for l in range(cols)]
-        offset_x = [l%2  for l in range(numy)]
+        offset_y = [l  for l in range(cols)]
+        offset_x = [l  for l in range(numy)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
         tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
     elif pol_type == 'PENTAGON0':
@@ -245,10 +246,10 @@ def generate_grid(center, layout, pol_type, settings):
         b = settings[9]
         c = settings[10]
         d = settings[11]
-        dy = b
-        dx = (2*a*cos(A-pi/2)+cos(D/2)*(b/2)/sin(D/2))
-        off_base = b/2+a*sin(A-pi/2)*0
-        off_base_x = 0
+        dy = c + b * sin(B- pi/2) + c*sin(B - C -3*pi/2) + c*sin(-pi/2 - C)
+        dx = (b * cos(B- pi/2))+ b * cos(-C+pi/2) + c*cos(-C + B-3*pi/2)
+        off_base = c -b * sin(-C + pi/2) - c*sin(-C+B-3*pi/2) - b*sin(B-pi/2)
+        off_base_x = -b * cos(B - pi/2) - c*cos(B - pi/2 - C -pi) - c*cos(-pi/2 - C)
     '''
     cols : number of points along x
     rows : number of points along Y for each x location
@@ -394,19 +395,34 @@ def generate_tiles(tile_settings):
             ]
             ]
     if sides == 11:
+        Ap = (b*cos(B - pi/2), b * sin(B - pi/2))
+        Cp = (0, -c)
+        Dp = (Cp[0] + b * cos(-C + pi/2), Cp[1]+ b * sin(-C + pi/2))
+        Ep = (Dp[0] + c*cos(-C+ pi/2 + B), Dp[1] + c*sin(-C + pi/2 + B) )
+        B2p = (Ap[0] + c*cos(B - C - 3*pi/2), Ap[1] + c*sin(B - C - 3*pi/2))
+        C3p = (b * cos(B + pi/2), b * sin(B + pi/2), 0)
+        B3p = (C3p[0] + c*cos(B - C + 3*pi/2), C3p[1]+c*sin(B - C +3*pi/2))
+        D4p = (b * cos(-C - pi/2), c + b * sin(-C - pi/2), 0)
         tile = [[
             [0, 0, 0],
-            [0,b,0],
-            [a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
-            [a*cos(A-pi/2)+(b/2)*cos(D/2)/sin(D/2), b/2+a*sin(A-pi/2), 0],
-            [a*cos(A-pi/2), a*sin(A-pi/2), 0],
+            [b*cos(B - pi/2), b * sin(B- pi/2), 0],
+            [Ep[0], Ep[1], 0],
+            [Dp[0], Dp[1] , 0],
+            [0, -c, 0],
 
-            [-a*cos(A-pi/2), b+a*sin(A-pi/2), 0],
-            [-(a*cos(A-pi/2)+cos(D/2)*(b/2)/sin(D/2)), b/2+a*sin(A-pi/2), 0],
-            [-a*cos(A-pi/2), a*sin(A-pi/2), 0],
+            [B2p[0], B2p[1], 0],
+            [B2p[0] + c*cos(- pi/2 - C), B2p[1]+ c*sin(- pi/2 - C), 0],
+            [0, c, 0],
+
+            [C3p[0], C3p[1], 0],
+            [B3p[0], B3p[1], 0],
+            [B3p[0] + b*cos(pi/2 - C), B3p[1]+ b*sin(pi/2 - C), 0],
+
+            [D4p[0], D4p[1], 0],
+            [D4p[0] + c * cos(-C- pi/2 + B), D4p[1] + c * sin(-C-pi/2 + B),0],
             ],
             [(0,1),(1,2),(2,3),(3,4),(4,0)],
-            [[0,1,2,3,4], [0,1,5,6,7]
+            [[0,1,2,3,4], [0,1,5,6,7],[0,4,10,9,8], [0,8,12,11,7]
             ]
             ]
     print(tile[0])
