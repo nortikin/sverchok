@@ -8,7 +8,7 @@
 
 import bpy
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges
 

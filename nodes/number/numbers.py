@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import FloatProperty, BoolProperty, IntProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode
 
 

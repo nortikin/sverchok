@@ -21,7 +21,7 @@ from itertools import zip_longest
 import bpy
 from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, BoolProperty, StringProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import (
     levelsOflist, levels_of_list_or_np, numpy_match_long_repeat, updateNode)
 
