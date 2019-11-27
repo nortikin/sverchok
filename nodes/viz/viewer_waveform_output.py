@@ -51,6 +51,7 @@ grid_fragment_shader = '''
     uniform vec2 offset;
     uniform vec2 pitch;
     uniform float scaleFactor;
+    uniform mat4 viewProjectionMatrix;
 
     out vec4 fragColor;
 
