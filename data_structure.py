@@ -761,7 +761,10 @@ def updateNode(self, context):
 @contextmanager
 def context_sensitive_throttle(node_tree):
     if node_tree.skip_tree_update:
-        yield node_tree
+        try:
+            yield node_tree
+        finally:
+            pass
 
     else:
         try:
