@@ -9,6 +9,7 @@ import os
 import numpy as np
 import wave
 import struct
+import inspect
 
 import bpy
 import blf
@@ -160,8 +161,27 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     Triggers: SvWaveformViewer
     Tooltip: 
     
-    A short description for reader of node code
     """
+    @property
+    def extended_docstring(self):
+        return inspect.cleandoc("""
+        a dedicated node converting input streams into samples of type: (Wav, ..)
+
+        https://en.wikipedia.org/wiki/Audio_bit_depth
+
+        wav:
+            bitness | range of valid values     | signed | sum
+            --------+---------------------------+--------+
+            8  bit  | 0 to 255                  | no     | 256
+            16 bit  | -32768 to 32767           | yes    | 256**2
+            24 bit  | -8388608 to 8388608       | yes    | 256**3
+            32 bit  | -2147483648 to 2147483648 | yes    | 256**4
+            64 bit  |       uhmm..              | yes    | 256**8
+
+        sample rate is not locked.
+
+
+        """)
 
 
     bl_idname = 'SvWaveformViewer'
