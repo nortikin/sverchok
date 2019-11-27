@@ -88,8 +88,6 @@
     MatrixApplyNode
     SvBarycentricTransformNode
     ---
-    Svb28MatrixArrayNode
-    ---
     SvTransformSelectNode
     SvSimpleDeformNode
     SvBendAlongPathNode
