@@ -924,14 +924,15 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
 
             if out_count > 30:
                 out_count = 30
+
             if lenod < out_count:
+
                 while len(node.outputs) < out_count:
                     length = start + len(node.outputs)
-                    if breck:
-                        name = node.base_name + '[' + str(length)+ ']'
-                    else:
-                        name = node.base_name + str(length)
+                    postfix = f'[{length}]' if breck else f'{length}'
+                    name = node.base_name + postfix
                     node.outputs.new(node.multi_socket_type, name)
+
             else:
                 while len(node.outputs) > out_count:
                     node.outputs.remove(node.outputs[-1])
