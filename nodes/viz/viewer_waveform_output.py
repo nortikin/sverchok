@@ -352,8 +352,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
         if self.activate:
 
+            # parameter containers
+            config = lambda: None
+            geom = lambda: None
+
             x, y, scale, multiplier = self.get_drawing_attributes()
-            # x, y = (0, 0)
             w = self.graph_width
             h = self.graph_height
             grid_data = gridshader(w, h, (x, y))
@@ -364,7 +367,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             wave_params = self.get_waveparams()
             wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, (w, h), (x, y))
 
-            config = lambda: None
             config.loc = (x, y)
             config.scale = scale
             config.grid = grid_data
@@ -381,10 +383,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 config.line_batch = batch_for_shader(config.line_shader, 'LINES', {"pos": coords}, indices=indices)
             else:
                 config.line_batch = batch_for_shader(config.line_shader, 'LINE_STRIP', {"pos": coords})
-
-
-
-            geom = lambda: None
 
             draw_data = {
                 'mode': 'custom_function_context',
