@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from contextlib import contextmanager
 from math import radians, ceil
 import itertools
 import time
@@ -757,6 +758,19 @@ def updateNode(self, context):
 ##############################################################
 ##############################################################
 
+@contextmanager
+def context_sensitive_throttle(node_tree):
+    if node_tree.skip_tree_update:
+        yield node_tree
+
+    else:
+        try:
+            node_tree.skip_tree_update = True
+            yield node_tree
+        finally:
+            node_tree.skip_tree_update = False
+
+
 def changable_sockets(node, inputsocketname, outputsocketname):
     '''
     arguments: node, name of socket to follow, list of socket to change
@@ -778,18 +792,19 @@ def changable_sockets(node, inputsocketname, outputsocketname):
         if s_type == 'SvDummySocket':
             return #
         if outputs[outputsocketname[0]].bl_idname != s_type:
-            node.id_data.freeze(hard=True)
-            to_links = {}
-            for n in outputsocketname:
-                out_socket = outputs[n]
-                to_links[n] = [l.to_socket for l in out_socket.links]
-                outputs.remove(outputs[n])
-            for n in outputsocketname:
-                new_out_socket = outputs.new(s_type, n)
-                for to_socket in to_links[n]:
-                    ng.links.new(to_socket, new_out_socket)
-            node.id_data.unfreeze(hard=True)
-
+    
+            with context_sensitive_throttle(ng):
+    
+                to_links = {}
+                for n in outputsocketname:
+                    out_socket = outputs[n]
+                    to_links[n] = [l.to_socket for l in out_socket.links]
+                    outputs.remove(outputs[n])
+                for n in outputsocketname:
+                    new_out_socket = outputs.new(s_type, n)
+                    for to_socket in to_links[n]:
+                        ng.links.new(to_socket, new_out_socket)
+    
 
 def replace_socket(socket, new_type, new_name=None, new_pos=None):
     '''
@@ -800,31 +815,30 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
     socket_pos = new_pos or socket.index
     ng = socket.id_data
 
-    ng.freeze()
+    with context_sensitive_throttle(ng):
 
-    if socket.is_output:
-        outputs = socket.node.outputs
-        to_sockets = [l.to_socket for l in socket.links]
+        if socket.is_output:
+            outputs = socket.node.outputs
+            to_sockets = [l.to_socket for l in socket.links]
 
-        outputs.remove(socket)
-        new_socket = outputs.new(new_type, socket_name)
-        outputs.move(len(outputs)-1, socket_pos)
+            outputs.remove(socket)
+            new_socket = outputs.new(new_type, socket_name)
+            outputs.move(len(outputs)-1, socket_pos)
 
-        for to_socket in to_sockets:
-            ng.links.new(new_socket, to_socket)
+            for to_socket in to_sockets:
+                ng.links.new(new_socket, to_socket)
 
-    else:
-        inputs = socket.node.inputs
-        from_socket = socket.links[0].from_socket if socket.is_linked else None
+        else:
+            inputs = socket.node.inputs
+            from_socket = socket.links[0].from_socket if socket.is_linked else None
 
-        inputs.remove(socket)
-        new_socket = inputs.new(new_type, socket_name)
-        inputs.move(len(inputs)-1, socket_pos)
+            inputs.remove(socket)
+            new_socket = inputs.new(new_type, socket_name)
+            inputs.move(len(inputs)-1, socket_pos)
 
-        if from_socket:
-            ng.links.new(from_socket, new_socket)
+            if from_socket:
+                ng.links.new(from_socket, new_socket)
 
-    ng.unfreeze()
 
     return new_socket
 
@@ -881,39 +895,44 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
     # do nothing
     ng = node.id_data
 
-    if min < 1:
-        min = 1
-    if out_count is None:
-        if not node.inputs:
-            return
-        if node.inputs[-1].links:
-            length = start + len(node.inputs)
-            if breck:
-                name = node.base_name + '[' + str(length) + ']'
-            else:
-                name = node.base_name + str(length)
-            node.inputs.new(node.multi_socket_type, name)
-        else:
-            while len(node.inputs) > min and not node.inputs[-2].links:
-                node.inputs.remove(node.inputs[-1])
-    elif isinstance(out_count, int):
-        lenod = len(node.outputs)
-        ng.freeze(True)
-        print(out_count)
-        if out_count > 30:
-            out_count = 30
-        if lenod < out_count:
-            while len(node.outputs) < out_count:
-                length = start + len(node.outputs)
+    with context_sensitive_throttle(ng):
+
+        if min < 1:
+            min = 1
+
+        if out_count is None:
+
+            if not node.inputs:
+                return
+            if node.inputs[-1].links:
+                length = start + len(node.inputs)
                 if breck:
-                    name = node.base_name + '[' + str(length)+ ']'
+                    name = node.base_name + '[' + str(length) + ']'
                 else:
                     name = node.base_name + str(length)
-                node.outputs.new(node.multi_socket_type, name)
-        else:
-            while len(node.outputs) > out_count:
-                node.outputs.remove(node.outputs[-1])
-        ng.unfreeze(True)
+                node.inputs.new(node.multi_socket_type, name)
+            else:
+                while len(node.inputs) > min and not node.inputs[-2].links:
+                    node.inputs.remove(node.inputs[-1])
+
+        elif isinstance(out_count, int):
+
+            lenod = len(node.outputs)
+            print(out_count)
+
+            if out_count > 30:
+                out_count = 30
+            if lenod < out_count:
+                while len(node.outputs) < out_count:
+                    length = start + len(node.outputs)
+                    if breck:
+                        name = node.base_name + '[' + str(length)+ ']'
+                    else:
+                        name = node.base_name + str(length)
+                    node.outputs.new(node.multi_socket_type, name)
+            else:
+                while len(node.outputs) > out_count:
+                    node.outputs.remove(node.outputs[-1])
 
 
 #####################################
