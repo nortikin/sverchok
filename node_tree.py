@@ -117,7 +117,7 @@ def throttled(func):
             def mode_update(self, context):
                 ...
 
-    When a node has changed, like a mode-change leading to a socket change (remove, add, hide...)
+    When a node has changed, like a mode-change leading to a socket change (remove, new)
     Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
     - first throttling the update system. 
     - then We execute the code that makes changes to the node/nodetree
