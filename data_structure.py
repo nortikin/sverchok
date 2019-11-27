@@ -950,7 +950,6 @@ def SvGetSocketAnyType(self, socket, default=None, deepcopy=True):
 
 def SvSetSocketAnyType(self, socket_name, out):
     """Old interface, don't use"""
-
     self.outputs[socket_name].sv_set(out)
 
 
