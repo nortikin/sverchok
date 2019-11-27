@@ -894,8 +894,6 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
      node.multi_socket_type - type of socket, as .bl_idname
 
     '''
-    #probably incorrect state due or init or change of inputs
-    # do nothing
     ng = node.id_data
 
     with context_sensitive_throttle(ng):
@@ -907,13 +905,14 @@ def multi_socket(node, min=1, start=0, breck=False, out_count=None):
 
             if not node.inputs:
                 return
+
             if node.inputs[-1].links:
+
                 length = start + len(node.inputs)
-                if breck:
-                    name = node.base_name + '[' + str(length) + ']'
-                else:
-                    name = node.base_name + str(length)
+                postfix = f'[{length}]' if breck else f'{length}'
+                name = node.base_name + postfix
                 node.inputs.new(node.multi_socket_type, name)
+
             else:
                 while len(node.inputs) > min and not node.inputs[-2].links:
                     node.inputs.remove(node.inputs[-1])
