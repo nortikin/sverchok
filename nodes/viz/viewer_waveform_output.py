@@ -111,10 +111,9 @@ def advanced_grid_xy(context, args):
     batch.draw(shader)
 
     ##  line graph
-    line_shader, line_batch = config.line_shader, config.line_batch
-    line_shader.bind()
-    line_shader.uniform_float("color", (1, 0, 0, 1))
-    line_batch.draw(line_shader)
+    config.line_shader.bind()
+    config.line_shader.uniform_float("color", (1, 0, 0, 1))
+    config.line_batch.draw(config.line_shader)
 
 class NodeTreeGetter():
     __annotations__ = {}
