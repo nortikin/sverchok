@@ -466,12 +466,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         """
         if self.multi_channel_sockets:
             data = self.inputs[0].sv_get()
-            data = self.interleave(data) if (self.num_channels, len(data)) == (2, 2) else data[0]
+            data = self.interleave(*data) if (self.num_channels, len(data)) == (2, 2) else data[0]
         else:
             if self.num_channels == 2:
                 data_left = self.inputs[0].sv_get()[0]
                 data_right = self.inputs[1].sv_get()[0]
-                data = self.interleave([data_left, data_right])
+                data = self.interleave(data_left, data_right)
             elif self.num_channels == 1:
                 data = self.inputs[0].sv_get()[0]
 
@@ -482,7 +482,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             data = b''.join(wave.struct.pack('<h', int(d)) for d in data)
         return data
 
-    def interleave(data_left, data_right):
+    def interleave(self, data_left, data_right):
         # if type data is two numpy arrays:
         # ..
         # else
