@@ -35,14 +35,11 @@ grid_layout_items = [
     ("DIAMOND", "Diamond", "", custom_icon("SV_HEXA_GRID_DIAMOND"), 2),
     ("HEXAGON", "Hexagon", "", custom_icon("SV_HEXA_GRID_HEXAGON"), 3)]
 grid_type_items = [
-    ("TRIANGLE", "Triangle", "", custom_icon("SV_TRIANGLE"), 0),
-    ("SQUARE", "Square", "", custom_icon("SV_SQUARE"), 1),
-    ("HEXAGON", "Hexagon", "", custom_icon("SV_HEXAGON"), 2),
-    ("PENTAGON", "Pentagon", "", custom_icon("SV_HEXAGON"), 3),
     ("PENTAGON1", "Pentagon 1", "", custom_icon("SV_HEXAGON"), 4),
     ("PENTAGON2", "Pentagon 2", "", custom_icon("SV_HEXAGON"), 5),
     ("PENTAGON3", "Pentagon 3", "", custom_icon("SV_HEXAGON"), 6),
-    ("PENTAGON4", "Pentagon 4", "", custom_icon("SV_HEXAGON"), 7)]
+    ("PENTAGON4", "Pentagon 4", "", custom_icon("SV_HEXAGON"), 7),
+    ("PENTAGON5", "Pentagon 5", "", custom_icon("SV_HEXAGON"), 8)]
 size_mode_items = [
     ("RADIUS", "Radius", "Define polygon by its radius", custom_icon("SV_RAD"), 0),
     ("SIDE", "Side", "Define polygon by its side", custom_icon("SV_SIDE"), 1)]
@@ -155,6 +152,11 @@ def rect_layout(settings, pol_type):
         offset_x = [l  for l in range(numy)]
         grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
         tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
+    elif pol_type == 'PENTAGON5':
+        offset_y = [l  for l in range(cols)]
+        offset_x = [l  for l in range(numy)]
+        grid_center = [(numx - 1) / 2, (numy - 1.0 + 0.5 * (numx > 1)) / 2]
+        tile_rotated = [[(x) % 2 for y in range(rows[x])] for x in range(cols)]
     elif pol_type == 'PENTAGON0':
         offset_y = [(l % 3)  for l in range(cols)]
         # offset_x = [l  for l in range(numy)]
@@ -246,10 +248,23 @@ def generate_grid(center, layout, pol_type, settings):
         b = settings[9]
         c = settings[10]
         d = settings[11]
-        dy = c + b * sin(B- pi/2) + c*sin(B - C -3*pi/2) + c*sin(-pi/2 - C)
+        dy = c + b * sin(B- pi/2) + c*sin(B - C -3*pi/2) + b*sin(-pi/2 - C)
         dx = (b * cos(B- pi/2))+ b * cos(-C+pi/2) + c*cos(-C + B-3*pi/2)
         off_base = c -b * sin(-C + pi/2) - c*sin(-C+B-3*pi/2) - b*sin(B-pi/2)
-        off_base_x = -b * cos(B - pi/2) - c*cos(B - pi/2 - C -pi) - c*cos(-pi/2 - C)
+        off_base_x = -b * cos(B - pi/2) - c*cos(B - pi/2 - C -pi) - b*cos(-pi/2 - C)
+    elif pol_type == 'PENTAGON5':
+        A = settings[4]
+        B = settings[5]
+        C = settings[6]
+        D = settings[7]
+        a = settings[8]
+        b = settings[9]
+        c = settings[10]
+        d = settings[11]
+        dy = b + d * sin(pi/2- pi/2) + d*sin(pi/2 - C -3*pi/2) + d*sin(-pi/2 - C)
+        dx = b * cos(pi/2- pi/2) + d * cos(-C+pi/2) + d*cos(-C + pi/2-3*pi/2)
+        off_base = b -d * sin(-C + pi/2) - d*sin(-C+pi/2-3*pi/2) - d*sin(pi/2-pi/2)
+        off_base_x = -b * cos(pi/2 - pi/2) - d*cos(pi/2 - pi/2 - C -pi) - d*cos(-pi/2 - C)
     '''
     cols : number of points along x
     rows : number of points along Y for each x location
@@ -290,46 +305,21 @@ def generate_grid(center, layout, pol_type, settings):
 
     return rotated_grid
 
-
-def generate_tiles(tile_settings):
-
-    radius, angle, scale, separate, grid_list, sides, angles, sides_data = tile_settings
-    vert_grid_list, edge_grid_list, poly_grid_list = [[], [], []]
-
-    local_angle = 45 if sides == 4 else 30
-
-    tile = circle(radius*scale, radians(local_angle - angle), sides, None, 'pydata')
+def pentagon(angles, sides_data, pentagon_type):
     A,B,C,D = angles
     a,b,c,d = sides_data
-    a=a[0]
-    b=b[0]
-    c=c[0]
-    d = d[0]
-    A = pi - A[0]
-    B = B[0]
-    C = C[0]
-    D = D[0]
-    if sides == 8:
-        a = radius*scale
+    A = pi - A
+    if pentagon_type == 'PENTAGON0':
         a2 = a/3
         tile = [[[0, 0, 0],[a2, a2, 0],[a2,a,0],[-a2,a,0],[-a2,a2,0],[-a,a2,0],[-a,-a2,0],[-a2,-a2,0],[-a2,-a,0], [a2, -a, 0], [a2,-a2, 0],[a, -a2, 0],[a,a2,0]],
             [(0,1),(1,2),(2,3),(3,4),(4,0)],
             [[0,1,2,3,4],[4,5,6,7,0], [7,8,9,10,0],[10,11,12,1,0]]
             ]
 
-        angle2 = radians(angle)
-        cosa = cos(angle2)
-        sina = sin(angle2)
-        tile[0]=[[v[0] * cosa - v[1] * sina, v[0] * sina + v[1] * cosa, 0] for v in tile[0]]
-    if sides == 7:
+    elif pentagon_type == 'PENTAGON1':
         A,B,C,D = angles
         a,b,c,d = sides_data
-        a=a[0]
-        b=b[0]
-        c=c[0]
-        d = d[0]
-        A = pi - A[0]
-        B = B[0]
+
         if a < d:
             tile = [[
                 [0, 0, 0],
@@ -361,8 +351,7 @@ def generate_tiles(tile_settings):
                 [(0,1),(1,2),(2,3),(3,4),(4,0)],
                 [[0,1,2,3,4,5],[2,6,7,8,9,3]]
                 ]
-            #v = [v[0]*cos(radians(angle)) ,v[1],0]
-    if sides == 9:
+    elif pentagon_type == 'PENTAGON2':
         tile = [[
             [0, 0, 0],
             [0,b,0],
@@ -378,7 +367,7 @@ def generate_tiles(tile_settings):
             [[0,1,2,3,4], [0,1,5,6,7]
             ]
             ]
-    if sides == 10:
+    elif pentagon_type == 'PENTAGON3':
         tile = [[
             [0, 0, 0],
             [0,b,0],
@@ -394,7 +383,7 @@ def generate_tiles(tile_settings):
             [[0,1,2,3,4], [0,1,5,6,7]
             ]
             ]
-    if sides == 11:
+    elif pentagon_type == 'PENTAGON4':
         Ap = (b*cos(B - pi/2), b * sin(B - pi/2))
         Cp = (0, -c)
         Dp = (Cp[0] + b * cos(-C + pi/2), Cp[1]+ b * sin(-C + pi/2))
@@ -411,7 +400,7 @@ def generate_tiles(tile_settings):
             [0, -c, 0],
 
             [B2p[0], B2p[1], 0],
-            [B2p[0] + c*cos(- pi/2 - C), B2p[1]+ c*sin(- pi/2 - C), 0],
+            [B2p[0] + b*cos(- pi/2 - C), B2p[1]+ b*sin(- pi/2 - C), 0],
             [0, c, 0],
 
             [C3p[0], C3p[1], 0],
@@ -425,23 +414,65 @@ def generate_tiles(tile_settings):
             [[0,1,2,3,4], [0,1,5,6,7],[0,4,10,9,8], [0,8,12,11,7]
             ]
             ]
-    print(tile[0])
-    for grid in grid_list:
-        vert_list, edge_list, poly_list = [[], [], []]
+    elif pentagon_type == 'PENTAGON5':
+        Ap = (b, 0)
+        Cp = (0, -b)
+        Dp = (Cp[0] + d * cos(-C + pi/2), Cp[1]+ d * sin(-C + pi/2))
+        Ep = (Dp[0] + d*cos(-C+ pi/2 + pi/2), Dp[1] + d*sin(-C + pi/2 + pi/2) )
+        B2p = (Ap[0] + d*cos(pi/2 - C - 3*pi/2), Ap[1] + d*sin(pi/2 - C - 3*pi/2))
+        C3p = (b * cos(pi/2 + pi/2), b * sin(pi/2 + pi/2), 0)
+        B3p = (C3p[0] + d * cos(pi/2 - C + 3*pi/2), C3p[1] + d * sin(pi/2 - C +3*pi/2))
+        D4p = (d * cos(-C - pi/2), b + d * sin(-C - pi/2), 0)
+        tile = [[
+            [0, 0, 0],
+            [b, 0, 0],
+            [Ep[0], Ep[1], 0],
+            [Dp[0], Dp[1] , 0],
+            [0, -b, 0],
 
-        if sides in [3,9]:
-            tiles_triangular(vert_list, edge_list, poly_list, tile, grid)
-        else:
-            tiles(vert_list, edge_list, poly_list, tile, grid)
+            [B2p[0], B2p[1], 0],
+            [B2p[0] + d*cos(pi/2 - C - 3*pi/2 + pi/2), B2p[1]+ d*sin(pi/2 - C - 3*pi/2 + pi/2), 0],
+            [0, b, 0],
 
-        if not separate:
-            vert_list, edge_list, poly_list = mesh_join(vert_list, edge_list, poly_list)
-            if scale == 1.0:
-                vert_list, edge_list, poly_list, _ = remove_doubles(vert_list, poly_list, 0.01, False)
+            [C3p[0], C3p[1], 0],
+            [B3p[0], B3p[1], 0],
+            [B3p[0] + d*cos(pi/2 - C), B3p[1]+ d*sin(pi/2 - C), 0],
 
-        vert_grid_list.append(vert_list)
-        edge_grid_list.append(edge_list)
-        poly_grid_list.append(poly_list)
+            [D4p[0], D4p[1], 0],
+            [D4p[0] + d * cos(-C- pi/2 + pi/2), D4p[1] + d * sin(-C-pi/2 + pi/2), 0],
+            ],
+            [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0), (1, 5), (5, 6), (6, 7),(7, 0)],
+            [[0, 1, 2, 3, 4], [0, 1, 5, 6, 7], [0, 4, 10, 9, 8], [0, 8, 12, 11, 7]
+            ]
+            ]
+    return tile
+
+def generate_tiles(tile_settings, separate, pentagon_type):
+
+    angle, scale, grid, A,B,C,D, a,b,c,d = tile_settings
+    vert_grid_list, edge_grid_list, poly_grid_list = [[], [], []]
+
+    tile = pentagon([A,B,C,D], [a,b,c,d], pentagon_type)
+    angle2 = radians(angle)
+    cosa = cos(angle2)
+    sina = sin(angle2)
+    tile[0] = [[v[0] * cosa - v[1] * sina, v[0] * sina + v[1] * cosa, 0] for v in tile[0]]
+
+    vert_list, edge_list, poly_list = [[], [], []]
+
+    if pentagon_type == 'PENTAGON2':
+        tiles_triangular(vert_list, edge_list, poly_list, tile, grid)
+    else:
+        tiles(vert_list, edge_list, poly_list, tile, grid)
+
+    if not separate:
+        vert_list, edge_list, poly_list = mesh_join(vert_list, edge_list, poly_list)
+        if scale == 1.0:
+            vert_list, edge_list, poly_list, _ = remove_doubles(vert_list, poly_list, 0.01, False)
+
+    vert_grid_list.append(vert_list)
+    edge_grid_list.append(edge_list)
+    poly_grid_list.append(poly_list)
 
     return vert_grid_list, edge_grid_list, poly_grid_list
 
@@ -483,7 +514,7 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
     gridType: EnumProperty(
         name="Type",
         description="Polygon Type",
-        default="HEXAGON", items=grid_type_items,
+        default="PENTAGON2", items=grid_type_items,
         update=update_layout)
 
     gridLayout: EnumProperty(
@@ -584,25 +615,14 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         named_sockets = ['NumX', 'NumY']
 
+        if "NumX" not in inputs:
+            inputs.new("SvStringsSocket", "NumX").prop_name = "numx"
+        if "NumY" not in inputs:
+            inputs.new("SvStringsSocket", "NumY").prop_name = "numy"
 
-        if self.gridLayout == "RECTANGLE":
-            if "Level" in inputs:
-                inputs.remove(inputs["Level"])
-            if "NumX" not in inputs:
-                inputs.new("SvStringsSocket", "NumX").prop_name = "numx"
-            if "NumY" not in inputs:
-                inputs.new("SvStringsSocket", "NumY").prop_name = "numy"
-
-        elif self.gridLayout in {"TRIANGLE", "DIAMOND", "HEXAGON"}:
-            if "Level" not in inputs:
-                inputs.new("SvStringsSocket", "Level").prop_name = "level"
-            for socket_name in named_sockets:
-                if socket_name in inputs:
-                    inputs.remove(inputs[socket_name])
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'gridType', expand=False)
-        layout.prop(self, 'gridLayout', expand=False)
         if self.gridType != "HEXAGON":
             layout.prop(self, 'sizeMode', expand=True)
         row = layout.row(align=True)
@@ -613,24 +633,6 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         # return if no outputs are connected
         if not any(s.is_linked for s in self.outputs):
             return
-
-        if self.gridType == 'HEXAGON':
-            sides = 6
-        elif self.gridType == 'TRIANGLE':
-            sides = 3
-        elif self.gridType == 'SQUARE':
-            sides = 4
-        elif self.gridType == 'PENTAGON1':
-            sides = 7
-        elif self.gridType == 'PENTAGON2':
-            sides = 9
-        elif self.gridType == 'PENTAGON3':
-            sides = 10
-        elif self.gridType == 'PENTAGON4':
-            sides = 11
-        elif self.gridType in ['PENTAGON']:
-            sides = 8
-        radius_factor = 2 * sin(radians(180/sides)) if self.gridType != 'HEXAGON' and self.sizeMode == 'SIDE' else 1
 
         # input values lists
         inputs = self.inputs
@@ -654,19 +656,15 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         input_level = list(map(lambda x: max(1, x), input_level))
         input_numx = list(map(lambda x: max(1, x), input_numx))
         input_numy = list(map(lambda x: max(1, x), input_numy))
-        input_radius = list(map(lambda x: max(0, x / radius_factor), input_radius))
+        input_radius = list(map(lambda x: max(0, x), input_radius))
         input_scale = list(map(lambda x: max(0, x), input_scale))
 
         # generate the vectorized grids
         param_list = []
-        if self.gridLayout == 'RECTANGLE':
-            param_list.extend([input_radius, input_angle, input_numx, input_numy])
-            param_list+=angles
-            param_list+=sides_data
-            print(2,len(param_list))
+        param_list.extend([input_radius, input_angle, input_numx, input_numy])
+        param_list += angles
+        param_list += sides_data
 
-        else:  # TRIANGLE, DIAMOND HEXAGON layouts
-            param_list.extend([input_radius, input_angle, input_level])
         params = match_long_repeat(param_list)
         grid_list = [generate_grid(self.center, self.gridLayout, self.gridType, args) for args in zip(*params)]
         self.outputs['Centers'].sv_set([[(x, y, 0.0) for x, y, _ in grid_list[0]]])
@@ -675,14 +673,16 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         _, V, E, P = self.outputs[:]
         if not any(s.is_linked for s in [V, E, P]):
             return
-
-        params = match_long_repeat([input_radius, input_angle, input_scale, grid_list])
+        params = [input_angle, input_scale, grid_list]
+        params += angles
+        params += sides_data
+        params = match_long_repeat(params)
 
         vert_list, edge_list, poly_list = [[], [], []]
-        for r, a, s, grid in zip(*params):
-            tile_settings = [r, a, s, self.separate, [grid], sides, angles, sides_data]
+        for p in zip(*params):
+            # tile_settings = [a, s, self.separate, [grid], angles, sides_data, self.gridType]
 
-            verts, edges, polys = generate_tiles(tile_settings)
+            verts, edges, polys = generate_tiles(p, self.separate, self.gridType)
             vert_list.extend(verts)
             edge_list.extend(edges)
             poly_list.extend(polys)
