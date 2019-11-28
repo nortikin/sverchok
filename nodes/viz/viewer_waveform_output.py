@@ -27,90 +27,54 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 
 DATA_SOCKET = 'SvStringsSocket'
 
-"""
-grid shader borrowed from : https://stackoverflow.com/a/24792822/1243487
-
-"""
-
-
-grid_vertex_shader = '''
-    in vec2 pos;
-    uniform mat4 viewProjectionMatrix;
-    
-    void main()
-    {
-        gl_Position = viewProjectionMatrix * vec4(pos.x, pos.y, 0.0f, 1.0f);
-    }
-
-'''
-
-grid_fragment_shader = '''
-
-    precision mediump float;
-
-    uniform vec2 offset;
-    uniform vec2 pitch;
-    uniform float scaleFactor;
-    uniform mat4 viewProjectionMatrix;
-
-    out vec4 fragColor;
-
-    void main()
-    {
-
-        float offX = (scaleFactor * offset[0]) + gl_FragCoord.x;
-        float offY = (scaleFactor * offset[1]) + (1.0 - gl_FragCoord.y);
-
-        if (int(mod(offX, pitch[0])) == 0 || int(mod(offY, pitch[1])) == 0) {
-            fragColor = vec4(0.094488, 0.230995, 0.064505, 1.0);
-        } else {
-            fragColor = vec4(0.01, 0.01, 0.01, 1.0);
-        }
-
-    }
-
-'''
 
 class gridshader():
-    def __init__(self, w, h, loc):
+    def __init__(self, dims, loc, palette, channels):
         x, y = loc
-        self.w = float(w)
-        self.h = float(h)
-        self.vertex_shader = grid_vertex_shader
-        self.fragment_shader = grid_fragment_shader
-        self.background_coords = [(x, y), (x + w, y), (w + x, y - h), (x, y - h)]
-        self.background_indices = [(0, 1, 2), (0, 2, 3)]
+        w, h = dims
+        
+        if channels == 2:
+            h *= 2
+
+        h2 = h / 2
+        hc = palette.high_color
+        lc = palette.low_color
+
+        if channels == 1:
+            """
+            0 - - - - - - 1  low color           0 = (x,     y)  
+            |  -          |                      1 = (x + W, y)
+            |      -      |
+            |          -  |
+            2 - - - - - - 3  high color          2 = (x,     y - h2)
+            |  -          |                      3 = (x + w, y - h2)
+            |      -      |
+            |          -  |
+            4 - - - - - - 5  low color           4 = (x,     y - h)
+                                                 5 = (x + w, y - h)
+            """
+            self.background_coords = [
+                (x, y),      (x + w, y),
+                (x, y - h2), (x + w, y - h2),
+                (x, y - h),  (x + w, y - h)]
+            self.background_indices = [(0, 1, 3), (0, 3, 2), (2, 3, 5), (2, 5, 4)]
+            self.background_colors = [lc, lc, hc, hc, lc, lc]
+
+        elif channels == 2:
+            
+            self.background_coords = []
+            self.background_indices = []
 
 def advanced_grid_xy(context, args):
-    """ 
-    x and y are passed by default so you could add font content 
-    """
     geom, config = args
     
-    matrix = gpu.matrix.get_projection_matrix()
-    shader = gpu.types.GPUShader(config.grid.vertex_shader, config.grid.fragment_shader)
-    batch = batch_for_shader(shader, 'TRIS', {"pos": config.grid.background_coords}, indices=config.grid.background_indices)
+    ## background    
+    config.background_batch.draw(config.background_shader)
     
-    # x, y = config.loc
-    # scale = config.scale
-    xloc, yloc = context.region.view2d.region_to_view(context.area.width/2, context.area.height/2)
-    print(xloc, yloc)
+    ## background grid
+    config.grid_line_batch.draw(config.grid_line_shader)
 
-    loc, rot, sca = matrix.decompose()
-
-    ##  background grid
-
-    shader.bind()
-    shader.uniform_float("viewProjectionMatrix", matrix)
-    # # shader.uniform_float('vpw', 60.0) # config.grid.w)
-    # # shader.uniform_float('vph', 40.0) # config.grid.h)
-    shader.uniform_float("scaleFactor", config.scaleFactor)
-    shader.uniform_float('offset', (xloc, yloc))
-    # shader.uniform_float('offset', config.offset)
-    shader.uniform_float('pitch', config.pitch)
-    batch.draw(shader)
-
-    ##  line graph
+    ## line graph
     config.line_shader.bind()
     config.line_shader.uniform_float("color", (1, 0, 0, 1))
     config.line_batch.draw(config.line_shader)
