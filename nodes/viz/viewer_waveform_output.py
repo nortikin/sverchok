@@ -40,8 +40,8 @@ class gridshader():
         h2 = h / 2
         h3 = h * (3 / 4)
 
-        hc = palette.high_color
-        lc = palette.low_color
+        hc = palette.high_colour
+        lc = palette.low_colour
 
         if channels == 1:
             """
@@ -108,7 +108,7 @@ def advanced_grid_xy(context, args):
     config.background_batch.draw(config.background_shader)
     
     ## background grid
-    config.grid_line_batch.draw(config.grid_line_shader)
+    ## config.grid_line_batch.draw(config.grid_line_shader)
 
     ## line graph
     config.line_shader.bind()
@@ -355,29 +355,41 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             # parameter containers
             config = lambda: None
             geom = lambda: None
+            palette = lambda: None
+
+            palette.high_colour = (0.2, 0.2, 0.2, 1.0)
+            palette.low_colour = (0.1, 0.1, 0.1, 1.0)
 
             x, y, scale, multiplier = self.get_drawing_attributes()
+
+            # some aliases
             w = self.graph_width
             h = self.graph_height
-            grid_data = gridshader(w, h, (x, y))
+            dims = (w, h)
+            loc = (x, y)
 
-            # this wave_* stuff may have only superficial resemblance to the wave writen to disk
+            grid_data = gridshader(dims, loc, palette, self.num_channels)
+
             # this is for drawing graphically only.
             wave_data = self.get_wavedata(raw=False)
             wave_params = self.get_waveparams()
-            wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, (w, h), (x, y))
+            wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, dims, loc)
 
-            config.loc = (x, y)
+            config.loc = loc
             config.scale = scale
             config.grid = grid_data
             config.scaleFactor = self.scaleFactor
             config.offset = self.offset[:]
             config.pitch = self.pitch[:]
             
-            # GRAPH PART
-            # gs, gb = self.generate_graph_data(wave_params, (w, h), (x, y))
-            # config.graph_shader = gs
-            # config.graph_batch = gb
+            # GRAPH PART Background
+            config.background_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+            config.background_batch = batch_for_shader(
+                config.background_shader, 'TRIS', {
+                "pos": grid_data.background_coords, 
+                "color": grid_data.background_colors},
+                indices=grid_data.background_indices
+            )
 
             # LINE PART
             coords = wave_data_processed.verts
