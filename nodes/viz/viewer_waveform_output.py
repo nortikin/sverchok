@@ -36,7 +36,10 @@ class gridshader():
         if channels == 2:
             h *= 2
 
+        h1 = h * (1 / 4)
         h2 = h / 2
+        h3 = h * (3 / 4)
+
         hc = palette.high_color
         lc = palette.low_color
 
@@ -46,7 +49,7 @@ class gridshader():
             |  -          |                      1 = (x + W, y)
             |      -      |
             |          -  |
-            2 - - - - - - 3  high color          2 = (x,     y - h2)
+            2 + + + + + + 3  high color          2 = (x,     y - h2)
             |  -          |                      3 = (x + w, y - h2)
             |      -      |
             |          -  |
@@ -61,9 +64,42 @@ class gridshader():
             self.background_colors = [lc, lc, hc, hc, lc, lc]
 
         elif channels == 2:
+            """
+            0 - - - - - - 1  low color           0 = (x,     y)  
+            |  -          |                      1 = (x + W, y)
+            |      -      |
+            |          -  |
+            2 - - - - - - 3  high color          2 = (x,     y - h1)
+            |  -          |                      3 = (x + w, y - h1)
+            |      -      |
+            |          -  |
+            4 + + + + + + 5  low color           4 = (x,     y - h2)
+            |  -          |                      5 = (x + w, y - h2)                      
+            |      -      |
+            |          -  |
+            6 - - - - - - 7  high color          6 = (x,     y - h3)
+            |  -          |                      7 = (x + w, y - h3)
+            |      -      |
+            |          -  |
+            8 - - - - - - 9  low color           8 = (x,     y - h)
+                                                 9 = (x + w, y - h)
+
+            """
             
-            self.background_coords = []
-            self.background_indices = []
+            self.background_coords = [
+                (x, y),      (x + w, y),
+                (x, y - h1), (x + w, y - h1),
+                (x, y - h2), (x + w, y - h2),
+                (x, y - h3), (x + w, y - h3),
+                (x, y - h),  (x + w, y - h)]
+
+            self.background_indices = [
+                (0, 1, 3), (0, 3, 2), 
+                (2, 3, 5), (2, 5, 4),
+                (4, 5, 7), (4, 7, 6),
+                (6, 7, 9), (6, 9, 8)]
+            
+            self.background_colors = [lc, lc, hc, hc, lc, lc, hc, hc, lc, lc]
 
 def advanced_grid_xy(context, args):
     geom, config = args
