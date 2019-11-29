@@ -405,7 +405,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.offset = self.offset[:]
             config.pitch = self.pitch[:]
             
-            # GRAPH PART Background
+            # GRAPH PART - Background
             config.background_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
             config.background_batch = batch_for_shader(
                 config.background_shader, 'TRIS', {
