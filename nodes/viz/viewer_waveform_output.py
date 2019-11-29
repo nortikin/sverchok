@@ -346,10 +346,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             0.0 0.1 0.2 0.3
 
             """
-            
-            # edges..
             samples_per_channel = unit_data.size
 
+            # edges..
             ext = []
             gather = ext.extend
             _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, samples_per_channel-2, 2)]
