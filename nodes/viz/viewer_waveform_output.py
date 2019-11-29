@@ -357,6 +357,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             time_data = np.linspace(0, w, samples_per_channel/2, endpoint=True).repeat(2)
             data.verts = (np.vstack([time_data, unit_data]).T + [x , y]).tolist()
         else:
+
             """
             GL_LINE_STRIP   no indices needed
             """
