@@ -68,7 +68,7 @@
       "width": 140.0
     },
     "Convex Hull": {
-      "bl_idname": "SvConvexHullNode",
+      "bl_idname": "SvConvexHullNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
