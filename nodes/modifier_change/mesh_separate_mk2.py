@@ -28,6 +28,7 @@ class SvSeparateMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSeparateMeshNodeMK2'
     bl_label = 'Separate Loose Parts MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SEPARATE_LOOSE_PARTS'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')

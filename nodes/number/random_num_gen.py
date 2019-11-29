@@ -35,8 +35,9 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRndNumGen'
     bl_label = 'Random Num Gen'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_RANDOM_NUM_GEN'
 
-    low_f : FloatProperty(
+    low_f: FloatProperty(
         name='Float Low', description='Minimum float value',
         default=0.0, update=updateNode)
 

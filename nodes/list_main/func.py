@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -33,17 +33,18 @@ func_dict = {
     "MIN": min,
     "MAX": max,
     "AVR": avr,
-    "SUM": sum 
+    "SUM": sum
 }
 
 class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     '''
-    Triggers: List functions
+    Triggers: Average, Sum, Min...
     Tooltip: Operations with list, sum, average, min, max
     '''
     bl_idname = 'ListFuncNode'
     bl_label = 'List Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_MATH'
 
     mode_items = [
         ("MIN",         "Minimum",        "", 1),
@@ -56,22 +57,23 @@ class ListFuncNode(bpy.types.Node, SverchCustomTreeNode):
     func_: EnumProperty(
         name="Function", description="Function choice",
         default="AVR", items=mode_items, update=updateNode)
-    
+
     level: IntProperty(
         name='level_to_count',
         default=1, min=0, update=updateNode)
-    
+
     wrap: BoolProperty(
-        name='wrap', description='extra level add', 
-        default=False,update=updateNode)
+        name='wrap', description='extra level add',
+        default=True, update=updateNode)
 
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "level", text="level")
         layout.prop(self, "func_", text="Functions:")
+        layout.prop(self, "wrap", text="Warp")
 
     def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "wrap")
+        self.draw_buttons(context, layout)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Data")

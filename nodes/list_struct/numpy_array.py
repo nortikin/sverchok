@@ -28,6 +28,7 @@ class SvNumpyArrayNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvNumpyArrayNode'
     bl_label = 'Numpy Array'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_NUMPY'
 
     Modes = ['x.tolist()','x.conj()','x.flatten()','np.add(x,y)','np.subtract(x,y)','x.resize()',
              'x.transpose()','np.trunc(x)','x.squeeze()','np.ones_like(x)','np.minimum(x,y)',

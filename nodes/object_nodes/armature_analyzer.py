@@ -25,7 +25,7 @@ class SvArmaturePropsNode(bpy.types.Node, SverchCustomTreeNode):
     '''Armature object props'''
     bl_idname = 'SvArmaturePropsNode'
     bl_label = 'Armature Props'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_ARMATURE'
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Armature Object')

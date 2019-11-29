@@ -1,0 +1,17 @@
+default bottom_w = 0.6
+default bottom_dx = 0.1
+default bottom_height = 0.3
+default base_height = 1
+default base_w = 0.2
+default top_w = 1.2
+default top_dx = bottom_dx
+default top_height = bottom_height
+default base_dx = bottom_dx
+
+H bottom_w ;
+l bottom_dx, bottom_height
+H base_w ;
+l base_dx, base_height
+H top_w ;
+l top_dx, top_height
+H 0 ;

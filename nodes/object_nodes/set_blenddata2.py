@@ -33,6 +33,7 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSetDataObjectNodeMK2'
     bl_label = 'Object ID Set MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OBJECT_ID_SET'
 
     formula: StringProperty(name='formula', default='delta_location', update=updateNode)
 

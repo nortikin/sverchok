@@ -52,6 +52,7 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVDBasicLines'
     bl_label = 'Basic Line viewer'
     bl_icon = 'GREASEPENCIL'
+    sv_icon = 'SV_LINE_VIEWER'
 
     n_id: StringProperty(default='')
     activate: BoolProperty(name='Show', description='Activate', default=True, update=updateNode)
@@ -119,7 +120,7 @@ class SvVDBasicLines(bpy.types.Node, SverchCustomTreeNode):
 
             callback_enable(n_id, draw_data)
 
-    def copy(self, node):
+    def sv_copy(self, node):
         self.n_id = ''
 
     def update(self):

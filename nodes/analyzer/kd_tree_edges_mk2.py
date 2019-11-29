@@ -32,6 +32,7 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvKDTreeEdgesNodeMK2'
     bl_label = 'KDT Closest Edges MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_KDT_EDGES'
 
     mindist : FloatProperty(
         name='mindist', description='Minimum dist', min=0.0,
@@ -66,7 +67,7 @@ class SvKDTreeEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             verts = inputs['Verts'].sv_get()[0]
             linked = outputs['Edges'].is_linked
             if not linked:
-                return            
+                return
         except (IndexError, KeyError) as e:
             return
 

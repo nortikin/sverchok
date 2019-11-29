@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -33,6 +33,8 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     '''Texture Viewer node Lite'''
     bl_idname = 'SvTextureViewerNodeLite'
     bl_label = 'Texture viewer lite'
+    bl_icon = 'IMAGE'
+    sv_icon = 'SV_TEXTURE_VIEWER_LITE'
     texture = {}
 
     n_id: StringProperty(default='')
@@ -77,6 +79,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.width = 180
         self.inputs.new('SvStringsSocket', "pixel value")
+        self.get_and_set_gl_scale_info()
 
     def delete_texture(self):
         n_id = node_id(self)
@@ -136,7 +139,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
     def get_preferences(self):
         # supplied with default, forces at least one value :)
         props = get_params({
-            'render_scale': 1.0, 
+            'render_scale': 1.0,
             'render_location_xy_multiplier': 1.0})
         return props.render_scale, props.render_location_xy_multiplier
 
@@ -149,16 +152,13 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         width, height = [width * scale, height * scale]
         return x, y, width, height
 
-
     def free(self):
         nvBGL2.callback_disable(node_id(self))
         self.delete_texture()
 
-    def copy(self, node):
+    def sv_copy(self, node):
         # reset n_id on copy
         self.n_id = ''
-
-
 
 classes = [SvTextureViewerNodeLite,]
 register, unregister = bpy.utils.register_classes_factory(classes)

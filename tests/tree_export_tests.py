@@ -39,6 +39,7 @@ class MeshExprExportTest(ReferenceTreeTestCase):
 
     def test_mesh_expr_export(self):
         export_result = create_dict_of_tree(self.tree)
+        #self.store_reference_json("mesh.json", export_result)
         self.assert_json_equals_file(export_result, "mesh.json")
 
 class MonadExportTest(ReferenceTreeTestCase):
@@ -65,4 +66,5 @@ class ViewerTextExportTest(ReferenceTreeTestCase):
 
     def test_textview_expr_export(self):
         export_result = create_dict_of_tree(self.tree)
+        #self.store_reference_json("viewer_text.blend.json", export_result)
         self.assert_json_equals_file(export_result, "viewer_text.blend.json")

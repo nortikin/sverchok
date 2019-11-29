@@ -39,8 +39,8 @@ def get_data_nesting_level_mod(data):
 
 class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
-    Triggers: meta ball
-    Tooltip: Create Blender's metaball object
+    Triggers: Output Metaball obj.
+    Tooltip: Create Blender's metaball  dynamic object.
     
     A short description for reader of node code
     """
@@ -48,6 +48,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_idname = 'SvMetaballOutNode'
     bl_label = 'Metaball'
     bl_icon = 'META_BALL'
+    sv_icon = 'SV_METABALL'
 
     data_kind: StringProperty(default='META')
 

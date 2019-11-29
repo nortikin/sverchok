@@ -6,10 +6,22 @@ Functionality
 
 Outputs values/numbers from vertices.
 
+The node will accept regular lists or lists of NumPy arrays if the arrays have two axis arrays with shape [n,3]
+
+It can also output Numpy arrays (flat arrays) when using the activating the "Output NumPy" parameter.
+(See advanced parameters)
+
 Inputs
 -------
 
 **Vector** - Vertex or series of vertices
+
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster if you input NumPy arrays).
 
 Outputs
 -------

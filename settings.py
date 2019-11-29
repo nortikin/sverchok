@@ -8,8 +8,8 @@ from sverchok import data_structure
 from sverchok.core import handlers
 from sverchok.core import update_system
 from sverchok.utils import sv_panels_tools, logging
+from sverchok.utils.sv_gist_tools import TOKEN_HELP_URL
 from sverchok.ui import color_def
-
 
 def get_params(settings_and_fallbacks):
     """
@@ -35,6 +35,16 @@ def get_params(settings_and_fallbacks):
                 value = v
             setattr(props, k, value)
     return props
+
+# getDpiFactor and getDpi are lifted from Animation Nodes :)
+
+def get_dpi_factor():
+    return get_dpi() / 72
+
+def get_dpi():
+    systemPreferences = bpy.context.preferences.system
+    retinaFactor = getattr(systemPreferences, "pixel_size", 1)
+    return systemPreferences.dpi * retinaFactor
 
 
 class SverchokPreferences(AddonPreferences):
@@ -185,6 +195,31 @@ class SverchokPreferences(AddonPreferences):
 
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
+    
+    node_panel_modes = [
+            ("X", "Do not show", "Do not show node buttons", 0),
+            ("T", "T panel", "Show node buttons under the T panel", 1),
+            ("N", "N panel", "Show node under the N panel", 2)
+        ]
+
+    node_panels: EnumProperty(
+        items = node_panel_modes,
+        name = "Display node buttons",
+        description = "Where to show node insertion buttons. Restart Blender to apply changes.",
+        default = "X")
+    
+    node_panels_icons_only : BoolProperty(
+            name = "Display icons only",
+            description = "Show node icon only when icon has an icon, otherwise show it's name",
+            default = True
+        )
+
+    node_panels_columns : IntProperty(
+            name = "Columns",
+            description = "Number of icon panels per row",
+            default = 4,
+            min = 2, max = 12
+        )
 
     enable_live_objin: BoolProperty(
         description="Objects in edit mode will be updated in object-in Node")
@@ -204,12 +239,23 @@ class SverchokPreferences(AddonPreferences):
     index_viewer_scale: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default index viewer scale')
 
+    def set_nodeview_render_params(self, context):
+        # i think these are both the same..
+        self.render_scale = get_dpi_factor()
+        self.render_location_xy_multiplier = get_dpi_factor()
+        print(f'set render_scale to: {self.render_scale}')
+        print(f'set render_location_xy_multiplier to: {self.render_location_xy_multiplier}')
+
     ##
 
     datafiles = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok', create=True))
     defaults_location: StringProperty(default=datafiles, description='usually ..data_files\\sverchok\\defaults\\nodes.json')
     external_editor: StringProperty(description='which external app to invoke to view sources')
     real_sverchok_path: StringProperty(description='use with symlinked to get correct src->dst')
+
+    github_token : StringProperty(name = "GitHub API Token",
+                    description = "GitHub API access token. Should have 'gist' OAuth scope.",
+                    subtype="PASSWORD")
 
     # Logging settings
 
@@ -264,10 +310,26 @@ class SverchokPreferences(AddonPreferences):
             col1 = col_split.column()
             col1.label(text="UI:")
             col1.prop(self, "show_icons")
+
+            toolbar_box = col1.box()
+            toolbar_box.label(text="Node toolbars")
+            toolbar_box.prop(self, "node_panels")
+            if self.node_panels != "X":
+                toolbar_box.prop(self, "node_panels_icons_only")
+                if self.node_panels_icons_only:
+                    toolbar_box.prop(self, "node_panels_columns")
+
             col1.prop(self, "over_sized_buttons")
             col1.prop(self, "enable_live_objin", text='Enable Live Object-In')
             col1.prop(self, "external_editor", text="Ext Editor")
             col1.prop(self, "real_sverchok_path", text="Src Directory")
+
+            box = col1.box()
+            box.label(text="Export to Gist")
+            box.prop(self, "github_token")
+            box.label(text="To export node trees to gists, you have to create a GitHub API access token.")
+            box.label(text="For more information, visit " + TOKEN_HELP_URL)
+            box.operator("node.sv_github_api_token_help", text="Visit documentation page")
 
             col2 = col_split.split().column()
             col2.label(text="Frame change handler:")
@@ -307,8 +369,10 @@ class SverchokPreferences(AddonPreferences):
             box_sub1_col = box_sub1.column(align=True)
             
             box_sub1_col.label(text='Render Scale & Location')
-            box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
-            box_sub1_col.prop(self, 'render_scale', text='scale')
+            # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
+            # box_sub1_col.prop(self, 'render_scale', text='scale')
+            box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
+            box_sub1_col.label(text=f'render_scale : {self.render_scale}')
             
             box_sub1_col.label(text='Stethoscope')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')

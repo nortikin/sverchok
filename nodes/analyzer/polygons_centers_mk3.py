@@ -27,11 +27,12 @@ from sverchok.data_structure import Vector_generate, Vector_degenerate, updateNo
 class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     ''' Centers of polygons of mesh (not including matrixes, so apply scale-rot-loc ctrl+A) '''
     bl_idname = 'CentersPolsNodeMK3'
-    bl_label = 'Centers polygons 3'
+    bl_label = 'Centers polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CENTER_POLYGONS'
 
     Separate: BoolProperty(
-        name="Separate", description="separate by objects", 
+        name="Separate", description="separate by objects",
         default=True, update=updateNode)
 
     def draw_buttons(self, context, layout):
@@ -95,7 +96,7 @@ class CentersPolsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 norm_abs_out.extend(norm_abs)
                 origins.extend(centrs)
                 normals_out.extend(normals)
-                
+
             mat_collect_ = []
 
             for cen, nor, p0 in zip(centrs, normals, p0_xdirs):

@@ -112,7 +112,7 @@ def app_handler_ops(append=None, remove=None):
     #     print('error while listing event handlers', err)
     #     listed = ""
 
-    print(f'sv: {operation} app.handlers:')
+    print(f'sv: {operation} app.handlers')
     # print(f'{listed}')
 
 
@@ -120,9 +120,10 @@ utils_modules = [
     # non UI tools
     "cad_module", "cad_module_class", "sv_bmesh_utils", "sv_viewer_utils", "sv_curve_utils",
     "voronoi", "sv_script", "sv_itertools", "script_importhelper", "sv_oldnodes_parser",
-    "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common",
+    "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
     "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",
-    "profile", "logging", "testing", "sv_prefs", "sv_requests", "sv_examples_utils",
+    "profile", "logging", "testing", "sv_prefs", "sv_requests", "sv_examples_utils", "sv_shader_sources",
+    "avl_tree",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
@@ -130,5 +131,8 @@ utils_modules = [
     "sv_panels_tools", "sv_gist_tools", "sv_IO_panel_tools", "sv_load_archived_blend",
     "monad", "sv_help", "sv_default_macros", "sv_macro_utils", "sv_extra_search", "sv_3dview_tools",
     #"loadscript",
-    "debug_script", "sv_update_utils", "sv_obj_helper", "sv_batch_primitives", "sv_idx_viewer28_draw"
+    "debug_script", "sv_update_utils", "sv_obj_helper", "sv_batch_primitives", "sv_idx_viewer28_draw",
+    # geom 2d tools
+    "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
+    "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger"
 ]

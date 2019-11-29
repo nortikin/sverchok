@@ -19,6 +19,7 @@
 
 import sys
 import time
+from contextlib import contextmanager
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
@@ -32,7 +33,8 @@ from sverchok.core.update_system import (
     build_update_list,
     process_from_node,
     process_tree,
-    get_update_lists, update_error_nodes)
+    get_update_lists, update_error_nodes,
+    get_original_node_color)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
@@ -76,7 +78,60 @@ class SvLinkNewNodeInput(bpy.types.Operator):
             locx, locy = recursive_framed_location_finder(new_node, loc_xy)
             new_node.location = locx, locy
 
+        new_node.process_node(context)
+
         return {'FINISHED'}
+
+
+@contextmanager
+def throttle_tree_update(node):
+    """ usage
+    from sverchok.node_tree import throttle_tree_update
+
+    inside your node, f.ex inside a wrapped_update that creates a socket
+
+    def wrapped_update(self, context):
+        with throttle_tree_update(self):
+            self.inputs.new(...)
+            self.outputs.new(...)
+
+    that's it. 
+
+    """
+    try:
+        node.id_data.skip_tree_update = True
+        yield node
+    finally:
+        node.id_data.skip_tree_update = False
+
+
+def throttled(func):
+    """
+    use as a decorator
+
+        from sverchok.node_tree import SverchCustomTreeNode, throttled
+
+        class YourNode
+
+            @throttled
+            def mode_update(self, context):
+                ...
+
+    When a node has changed, like a mode-change leading to a socket change (remove, new)
+    Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
+    - first throttling the update system. 
+    - then We execute the code that makes changes to the node/nodetree
+    - then we end the throttle-state
+    - we are then ready to process
+
+    """
+    def wrapper_update(self, context):
+        with self.sv_throttle_tree_update():
+            func(self, context)
+        self.process_node(context)
+
+    return wrapper_update
+
 
 
 class SvNodeTreeCommon(object):
@@ -86,6 +141,8 @@ class SvNodeTreeCommon(object):
 
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
+    skip_tree_update: BoolProperty(default=False)
+
 
     def build_update_list(self):
         build_update_list(self)
@@ -137,6 +194,10 @@ class SvNodeTreeCommon(object):
         return res
 
 
+
+
+
+
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
     bl_idname = 'SverchCustomTreeType'
@@ -159,6 +220,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_user_colors: StringProperty(default="")
 
     tree_link_count: IntProperty(name='keep track of current link count', default=0)
+    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
 
     @property
     def timestamp(self):
@@ -168,7 +230,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     def has_link_count_changed(self):
         link_count = len(self.links)
         if not link_count == self.tree_link_count: 
-            print('update event: link count changed', self.timestamp)
+            # print('update event: link count changed', self.timestamp)
             self.tree_link_count = link_count
             return True
 
@@ -177,9 +239,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
+        if self.skip_tree_update:
+            # print('throttled update from context manager')
+            return
+
+
         # print('svtree update', self.timestamp)
         self.has_changed = True
-        self.has_link_count_changed
+        # self.has_link_count_changed
         self.process()
 
     def process_ani(self):
@@ -194,10 +261,17 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         process the Sverchok tree upon editor changes from handler
         """
+
+        if self.configuring_new_node:
+            # print('skipping global process during node init')
+            return
+
         if self.has_changed:
+            # print('processing build list: because has_changed==True')
             self.build_update_list()
             self.has_changed = False
         if self.is_frozen():
+            # print('not processing: because self/tree.is_frozen') 
             return
         if self.sv_process:
             process_tree(self)
@@ -221,6 +295,9 @@ class SverchCustomTreeNode:
         if not self.n_id:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
+
+    def sv_throttle_tree_update(self):
+        return throttle_tree_update(self)
 
     def mark_error(self, err):
         """
@@ -392,8 +469,17 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
+        
         if hasattr(self, "sv_init"):
-            self.sv_init(context)
+
+            try:
+                ng.configuring_new_node = True
+                self.sv_init(context)
+            except Exception as err:
+                print('nodetree.node.sv_init failure - stare at the error message below')
+                sys.stderr.write('ERROR: %s\n' % str(err))
+
+        ng.configuring_new_node = False
         self.set_color()
         ng.unfreeze()
 
@@ -427,6 +513,22 @@ class SverchCustomTreeNode:
         else:
             pass
 
+    def copy(self, original):
+        """
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_copy() instead.
+        """
+        settings = get_original_node_color(self.id_data, original.name)
+        if settings is not None:
+            self.use_custom_color, self.color = settings
+        self.sv_copy(original)
+
+    def sv_copy(self, original):
+        """
+        Override this method to do anything node-specific
+        at the moment of node being copied.
+        """
+        pass
         
     def free(self):
         """
@@ -441,17 +543,44 @@ class SverchCustomTreeNode:
                 print(f'failed to remove {self.name} from tree={self.id_data.name}')
 
 
+    def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
+        """
+        this wrapper allows you to track the origin of a clicked operator, by automatically passing
+        the idname and idtree of the tree.
+
+        example usage:
+
+            row.separator()
+            self.wrapper_tracked_ui_draw_op(row, "node.view3d_align_from", icon='CURSOR', text='')
+
+        """
+        op = layout_element.operator(operator_idname, **keywords)
+        op.idname = self.name
+        op.idtree = self.id_data.name
+        return op
+
+
+    def get_and_set_gl_scale_info(self, origin=None):
+        """
+        This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
+        the nodeview scale and dpi differs between users and must be queried to get correct nodeview
+        x,y and dpi scale info.
+        """
+        print('get_and_set_gl_scale_info called from', origin or self.name)
+
+        try:
+            print('getting gl scale params')
+            from sverchok.utils.context_managers import sv_preferences
+            with sv_preferences() as prefs:
+                getattr(prefs, 'set_nodeview_render_params')(None)
+        except Exception as err:
+            print('failed to get gl scale info', err)
+
+
 classes = [
     SverchCustomTree, 
     SvLinkNewNodeInput
 ]
 
 
-def register():
-    for cls in classes:
-        bpy.utils.register_class(cls)
-
-
-def unregister():
-    for cls in classes:
-        bpy.utils.unregister_class(cls)
+register, unregister = bpy.utils.register_classes_factory(classes)

@@ -27,6 +27,7 @@ class SvFixEmptyObjectsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvFixEmptyObjectsNode'
     bl_label = 'fix empty objects'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FIX_EMPTY_OBJECTS'
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "data")

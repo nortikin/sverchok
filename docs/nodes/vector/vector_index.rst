@@ -8,10 +8,10 @@ Vector
    attractor
    axis_input_mk2
    drop
+   normal
    interpolation_stripes
    interpolation_mk3
-   line_evaluate
-   math_mk2
+   math_mk3
    noise_mk2
    fractal
    lerp
@@ -25,3 +25,5 @@ Vector
    vertices_sort
    variable_lacunarity
    turbulence
+   linear_approx
+   color_input

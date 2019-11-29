@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import radians
+from math import radians, ceil
 import itertools
 import time
 import ast
@@ -154,7 +154,10 @@ def match_short(lsts):
 def fullList(l, count):
     """extends list l so len is at least count if needed with the
     last element of l"""
-    d = count - len(l)
+    n = len(l)
+    if n == count:
+        return
+    d = count - n
     if d > 0:
         l.extend([l[-1] for a in range(d)])
     return
@@ -166,6 +169,13 @@ def fullList_deep_copy(l, count):
     if d > 0:
         l.extend([copy.deepcopy(l[-1]) for _ in range(d)])
     return
+
+def cycle_for_length(lst, count):
+    result = []
+    n = len(lst)
+    for i in range(count):
+        result.append(lst[i % n])
+    return result
 
 def sv_zip(*iterables):
     """zip('ABCD', 'xy') --> Ax By
@@ -198,8 +208,63 @@ list_match_func = {
     "XREF":   match_cross,
     "XREF2":  match_cross2
     }
-    
+numpy_list_match_modes =  list_match_modes[:3]
+# numpy_list_match_modes = [
+#     ("SHORT",  "Match Short",  "Match shortest List",    1),
+#     ("CYCLE",  "Cycle",  "Match longest List by cycling",     2),
+#     ("REPEAT", "Repeat Last", "Match longest List by repeating last item",     3),
+#     ]
 
+
+def numpy_match_long_repeat(list_of_arrays):
+    '''match numpy arrays length by repeating last one'''
+    out = []
+    maxl = 0
+    for array in list_of_arrays:
+        maxl = max(maxl, array.shape[0])
+    for array in list_of_arrays:
+        difl = maxl - array.shape[0]
+        if difl > 0:
+            new_part = np.repeat(array[np.newaxis, -1], difl, axis=0)
+            array = np.concatenate((array, new_part))
+        out.append(array)
+    return out
+
+def numpy_match_long_cycle(list_of_arrays):
+    '''match numpy arrays length by repeating last one'''
+    out = []
+    maxl = 0
+    for array in list_of_arrays:
+        maxl = max(maxl, array.shape[0])
+    for array in list_of_arrays:
+        difl = maxl - array.shape[0]
+        if difl > 0:
+            if difl < array.shape[0]:
+                array = np.concatenate((array, array[:difl]))
+            else:
+                new_part = np.repeat(array, ceil(difl / array.shape[0]), axis=0)
+                array = np.concatenate((array, new_part[:difl]))
+        out.append(array)
+    return out
+
+def numpy_match_short(list_of_arrays):
+    '''match numpy arrays length by repeating last one'''
+    out = []
+    minl = list_of_arrays[0].shape[0]
+    for array in list_of_arrays:
+        minl = min(minl, array.shape[0])
+    for array in list_of_arrays:
+        difl = array.shape[0] - minl
+        if difl > 0:
+            array = array[:minl]
+        out.append(array)
+    return out
+
+numpy_list_match_func = {
+    "SHORT":  numpy_match_short,
+    "CYCLE":  numpy_match_long_cycle,
+    "REPEAT": numpy_match_long_repeat,
+    }
 #####################################################
 ################# list levels magic #################
 #####################################################
@@ -221,6 +286,18 @@ def dataCorrect(data, nominal_dept=2):
         output = dataStandart(data, dept, nominal_dept)
         return output
 
+def dataCorrect_np(data, nominal_dept=2):
+    """data from nasting to standart: TO container( objects( lists( floats, ), ), )
+    """
+    dept = levels_of_list_or_np(data)
+    output = []
+    if not dept: # for empty lists
+        return []
+    if dept < 2:
+        return data #[dept, data]
+    else:
+        output = dataStandart(data, dept, nominal_dept)
+        return output
 
 def dataSpoil(data, dept):
     """from standart data to initial levels: to nested lists
@@ -264,6 +341,18 @@ def levelsOflist(lst):
     for n in lst:
         if n and isinstance(n, (list, tuple)):
             level += levelsOflist(n)
+        return level
+    return 0
+
+def levels_of_list_or_np(lst):
+    """calc list nesting only in countainment level integer"""
+    level = 1
+    for n in lst:
+        if isinstance(n, (list, tuple)):
+            level += levels_of_list_or_np(n)
+        elif isinstance(n, (np.ndarray)):
+            level += len(n.shape)
+
         return level
     return 0
 
@@ -366,6 +455,75 @@ def describe_data_shape(data):
 
     nesting, result = helper(data)
     return "Level {}: {}".format(nesting, result)
+
+def calc_mask(subset_data, set_data, level=0, negate=False, ignore_order=True):
+    """
+    Calculate mask: for each item in set_data, return True if it is present in subset_data.
+    The function can work at any specified level.
+
+    subset_data: subset, for example [1]
+    set_data: set, for example [1, 2, 3]
+    level: 0 to check immediate members of set and subset; 1 to work with lists of lists and so on.
+    negate: if True, then result will be negated (True if item of set is not present in subset).
+    ignore_order: when comparing lists, ignore items order.
+
+    Raises an exception if nesting level of input sets is less than specified level parameter.
+
+    calc_mask([1], [1,2,3]) == [True, False, False])
+    calc_mask([1], [1,2,3], negate=True) == [False, True, True]
+    """
+    if level == 0:
+        if not isinstance(subset_data, (tuple, list)):
+            raise Exception("Specified level is too high for given Subset")
+        if not isinstance(set_data, (tuple, list)):
+            raise Exception("Specified level is too high for given Set")
+
+        if ignore_order and get_data_nesting_level(subset_data) > 1:
+            if negate:
+                return [set(item) not in map(set, subset_data) for item in set_data]
+            else:
+                return [set(item) in map(set, subset_data) for item in set_data]
+        else:
+            if negate:
+                return [item not in subset_data for item in set_data]
+            else:
+                return [item in subset_data for item in set_data]
+    else:
+        sub_objects = match_long_repeat([subset_data, set_data])
+        return [calc_mask(subset_item, set_item, level - 1, negate, ignore_order) for subset_item, set_item in zip(*sub_objects)]
+
+def apply_mask(mask, lst):
+    good, bad = [], []
+    for m, item in zip(mask, lst):
+        if m:
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad
+
+def rotate_list(l, y=1):
+    """
+    "Rotate" list by shifting it's items towards the end and putting last items to the beginning.
+    For example,
+
+    rotate_list([1, 2, 3]) = [2, 3, 1]
+    rotate_list([1, 2, 3], y=2) = [3, 1, 2]
+    """
+    if len(l) == 0:
+        return l
+    if y == 0:
+        return l
+    y = y % len(l)
+    return list(l[y:]) + list(l[:y])
+
+def partition(p, lst):
+    good, bad = [], []
+    for item in lst:
+        if p(item):
+            good.append(item)
+        else:
+            bad.append(item)
+    return good, bad
 
 #####################################################
 ################### matrix magic ####################
@@ -590,6 +748,7 @@ def updateNode(self, context):
     """
     self.process_node(context)
 
+
 ##############################################################
 ##############################################################
 ############## changable type of socket magic ################
@@ -605,7 +764,7 @@ def changable_sockets(node, inputsocketname, outputsocketname):
     if not inputsocketname in node.inputs:
         # - node not initialized in sv_init yet,
         # - or socketname incorrect
-        info("changable_socket was called on node (%s) with a socket named \"%s\", this socket does not exist" % (node.name, inputsocketname))
+        info(f"changable_socket was called on {node.name} with a socket named {inputsocketname}, this socket does not exist")
         return
 
     in_socket = node.inputs[inputsocketname]

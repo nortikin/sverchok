@@ -1,7 +1,42 @@
-        {"export_version": "0.072", "update_lists": [], "groups": {},
-        "framed_nodes": {}, "nodes": {"Cylinder": {"use_custom_color": true,
-        "color": [0.0, 0.5, 0.5], "location": [0.0, 0.0], "params": {"height_":
-            2.0299999713897705, "Separate": 1, "radTop_": 1.0299999713897705,
-            "cap_": 0, "subd_": 1, "radBot_": 1.0299999713897705, "vert_": 33},
-        "bl_idname": "CylinderNode", "label": "", "height": 100.0, "width":
-        140.0, "hide": false}}}
+{
+  "nodes": {
+    "Cylinder": {
+      "bl_idname": "SvCylinderNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 2.0299999713897705,
+      "hide": false,
+      "label": "",
+      "location": [
+        0.0,
+        0.0
+      ],
+      "params": {
+        "angle_units": "RAD",
+        "cap_bottom": 1,
+        "cap_top": 1,
+        "center": 0,
+        "height": 2.0299999713897705,
+        "last_angle_units": "RAD",
+        "meridians": 33,
+        "parallels": 2,
+        "phase": 1.0299999713897705,
+        "radius_b": 1.0299999713897705,
+        "radius_t": 1.0299999713897705,
+        "scale": 1.0299999713897705,
+        "separate": 0,
+        "twist": 1.0299999713897705,
+        "updating": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "framed_nodes": {},
+  "update_lists": [],
+  "export_version": "0.079",
+  "groups": {}
+}

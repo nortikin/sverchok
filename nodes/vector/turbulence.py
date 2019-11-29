@@ -35,6 +35,7 @@ class SvTurbulenceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvTurbulenceNode'
     bl_label = 'Vector Turbulence'
     bl_icon = 'FORCE_TURBULENCE'
+    sv_icon = 'SV_VECTOR_TURBULENCE'
 
     def changeMode(self, context):
         outputs = self.outputs

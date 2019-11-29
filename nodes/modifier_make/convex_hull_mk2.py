@@ -95,7 +95,8 @@ def make_hull(vertices, params):
 class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' cvh 2D/3D conv.hull'''
     bl_idname = 'SvConvexHullNodeMK2'
-    bl_label = 'Convex Hull MK2'
+    bl_label = 'Convex Hull'
+    sv_icon = 'SV_CONVEX_HULL'
     # bl_icon = 'OUTLINER_OB_EMPTY'
 
     hull_mode_options = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
@@ -119,7 +120,7 @@ class SvConvexHullNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
         col.row().prop(self, 'hull_mode', expand=True)
-        
+
         row = col.row(align=True)
         row.prop(self, 'inside', toggle=True)
         row.prop(self, 'outside', toggle=True)

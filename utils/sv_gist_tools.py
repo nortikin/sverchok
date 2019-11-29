@@ -20,29 +20,19 @@ import os
 import json
 import base64
 from time import gmtime, strftime
-from urllib.request import urlopen, Request
+from urllib.request import Request
+import webbrowser
 
 import bpy
+from sverchok.utils.logging import info, debug, error
+from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.sv_requests import urlopen
 
 API_URL = 'https://api.github.com/gists'
+TOKEN_HELP_URL = "https://github.com/nortikin/sverchok/wiki/Set-up-GitHub-account-for-exporting-node-trees-from-Sverchok"
 
-
-def get_git_login_hash():
-    
-    # arp = '%s:%s' % (user, pw)
-    # base64.b64encode(arp.encode())
-    # format_login(git.username, git.password).decode('utf-8')
-    try:
-        dirpath = os.path.join(bpy.utils.user_resource('DATAFILES', path='sverchok'))
-        fullpath = os.path.join(dirpath, "sv_fx.wad")
-        with open(fullpath) as fx:
-            return ''.join(fx).strip()
-    except Exception as err:
-        print(err)
-        print('seeing this message means you need to generate an uptoken')
-    
-    return 
-
+def show_token_help():
+    webbrowser.open(TOKEN_HELP_URL)
 
 def main_upload_function(gist_filename, gist_description, gist_body, show_browser=False):
 
@@ -68,19 +58,22 @@ def main_upload_function(gist_filename, gist_description, gist_body, show_browse
 
     def upload_gist():
 
-        git_hash = get_git_login_hash()
-        if not git_hash:
-            return
+        with sv_preferences() as prefs:
+            token = prefs.github_token
+            if not token:
+                info("GitHub API access token is not specified")
+                show_token_help()
+                return
 
-        print('sending')
-        headers = {"Authorization": "Basic " + git_hash}
-    
-        req = Request(API_URL, data=json_post_data, headers=headers)
-        json_to_parse = urlopen(req, data=json_post_data)
+            info("Uploading: %s", gist_filename)
+            headers = {"Authorization": "token " + token}
         
-        print('received response from server')
-        found_json = json_to_parse.read().decode()
-        return get_gist_url(found_json)
+            req = Request(API_URL, data=json_post_data, headers=headers)
+            json_to_parse = urlopen(req, data=json_post_data)
+            
+            info('Received response from server')
+            found_json = json_to_parse.read().decode()
+            return get_gist_url(found_json)
 
     return upload_gist()
 

@@ -5,11 +5,11 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from sverchok.utils.sv_gist_tools import get_git_login_hash
+from sverchok.utils.context_managers import sv_preferences
 
 login_found = False
 
-if get_git_login_hash():
-    login_found = True
+with sv_preferences() as prefs:
+    login_found = bool(prefs.github_token)
 
 

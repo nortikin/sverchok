@@ -50,7 +50,7 @@ class SvReplaceNode(bpy.types.Operator):
 
     This operator removes old node and creates a new node.
     It tries to preserve all links and properties that old
-    node had. For cases when new node has other names of 
+    node had. For cases when new node has other names of
     inputs and/or outputs, it is possible to define mapping.
     In the end, this operator calls `migrate_from' method
     of the new node, so the new node can copy it's settings
@@ -70,6 +70,7 @@ class SvReplaceNode(bpy.types.Operator):
         name="Output sockets names mapping", type=SvSocketReplacement)
 
     def get_new_input_name(self, old_name):
+        print("x",self.inputs_mapping)
         for item in self.inputs_mapping:
             if item.old_name == old_name:
                 return item.new_name
@@ -137,6 +138,10 @@ class SvReplaceNode(bpy.types.Operator):
         info(msg)
         self.report({'INFO'}, msg)
 
+        if old_node.parent and old_node.parent.label == "Deprecated node!":
+            if old_node.parent.parent:
+                new_node.parent = old_node.parent.parent
+            tree.nodes.remove(old_node.parent)
         tree.nodes.remove(old_node)
 
         return {'FINISHED'}

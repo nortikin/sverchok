@@ -7,16 +7,15 @@ Number
 
    exponential
    fibonacci
-   float
    float_to_int
-   formula2
-   integer
+   formula3
    list_input
    mix_numbers
+   mix_inputs
    random
-   range_float
-   range_int
+   random_num_gen
+   number_range
    range_map
-   scalar_mk2
-   scalar
    numbers
+   scalar_mk4
+   oscillator

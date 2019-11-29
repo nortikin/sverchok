@@ -14,18 +14,18 @@
     SvNGonNode
     SvBoxNode
     SvCircleNode
-    CylinderNode
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
     SvTorusNode
     SvSuzanneNode
+    SvCricketNode
     ---
     BasicSplineNode
+    SvQuadraticSplineNode
     svBasicArcNode
     RandomVectorNodeMK2
     SvScriptNodeLite
-    SvSNFunctor
     SvSNFunctorB
     ImageNode
 
@@ -36,7 +36,7 @@
     HilbertNode
     Hilbert3dNode
     HilbertImageNode
-    SvProfileNodeMK2
+    SvProfileNodeMK3
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
@@ -45,10 +45,16 @@
     SvEllipseNode
     SvSuperEllipsoidNode
     SvRegularSolid
+<<<<<<< HEAD
     SvPentagonTilerNode
+=======
+    SvConicSectionNode
+    SvTriangleNode
+>>>>>>> b28_prelease_master
 
 ## Analyzers
-    SvBBoxNode
+    SvBBoxNodeMk2
+    SvDiameterNode
     SvVolumeNode
     SvAreaNode
     DistancePPNode
@@ -56,11 +62,11 @@
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
     SvPathLengthNode
-    CentersPolsNodeMK2
     CentersPolsNodeMK3
     GetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
+    SvIntersectCircleCircleNode
     SvIntersectPlanePlaneNode
     SvKDTreeNodeMK2
     SvKDTreeEdgesNodeMK2
@@ -76,6 +82,7 @@
     SvOBJInsolationNode
     SvDeformationNode
     SvLinkedVertsNode
+    SvProjectPointToLine
 
 ## Transforms
     SvRotationNodeMK2
@@ -83,10 +90,13 @@
     SvMoveNodeMK2
     SvMirrorNode
     MatrixApplyNode
-    SvSimpleDeformNode
     SvBarycentricTransformNode
     ---
-    Svb28MatrixArrayNode
+    SvTransformSelectNode
+    SvSimpleDeformNode
+    SvBendAlongPathNode
+    SvBendAlongSurfaceNode
+    SvRandomizeVerticesNode
 
 ## Modifier Change
     SvDeleteLooseNode
@@ -95,39 +105,39 @@
     SvLimitedDissolve
     SvMeshBeautify
     SvTriangulateNode
+    SvMakeMonotone
     ---
     PolygonBoomNode
+    SvDissolveFaces2D
     Pols2EdgsNode
     SvMeshJoinNode
     ---
     SvFillsHoleNode
     SvRecalcNormalsNode
     SvFlipNormalsNode
-    SvRandomizeVerticesNode
     ---
-    SvIterateNode
     SvExtrudeEdgesNode
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
-    SvBendAlongPathNode
-    SvBendAlongSurfaceNode
     SvVertMaskNode
-    SvTransformSelectNode
     SvSplitEdgesNode
 
 ## Modifier Make
     LineConnectNodeMK2
     ---
-    SvConvexHullNode
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
     Voronoi2DNode
+    SvOffsetLineNode
+    SvContourNode
+    SvDualMeshNode
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
-    AdaptivePolsNode
+    SvAdaptivePolygonsNodeMk2
     SvDuplicateAlongEdgeNode
+    SvFractalCurveNode
     SvSolidifyNode
     SvWireframeNode
     SvPipeNode
@@ -137,11 +147,16 @@
     MaskListNode
     SvMaskJoinNode
     SvMaskConvertNode
+    SvMaskToIndexNode
+    SvIndexToMaskNode
+    SvCalcMaskNode
 
 ## List Mutators
     SvListModifierNode
     SvFixEmptyObjectsNode
     SvDatetimeStrings
+    SvVDAttrsNode
+    SvPolygonSortNode
 
 ## List Main
     ListJoinNode
@@ -152,6 +167,7 @@
     ListMatchNode
     ListFuncNode
     SvListDecomposeNode
+    SvListStatisticsNode
 
 ## List Struct
     ShiftNodeMK2
@@ -159,7 +175,8 @@
     ListSliceNode
     SvListSplitNode
     ListFLNode
-    ListItem2Node
+    SvListItemNode
+    SvListItemInsertNode
     ListReverseNode
     ListShuffleNode
     ListSortNodeMK2
@@ -169,19 +186,23 @@
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
+    SvInsetSpecial
     SvLatheNode
     SvSmoothNode
     SvSmoothLines
     ---
     CrossSectionNode
     SvBisectNode
+    SvEdgesToFaces2D
+    SvMergeMesh2D
+    SvMergeMesh2DLite
+    SvCropMesh2D
     SvWafelNode
 
 ## Number
     SvNumberNode
-    SvScalarMathNodeMK2
-    GenListRangeIntNode
-    SvGenFloatRange
+    SvScalarMathNodeMK4
+    SvGenNumberRange
     SvListInputNode
     SvRndNumGen
     RandomNode
@@ -191,16 +212,18 @@
     SvMapRangeNode
     SvEasingNode
     SvMixNumbersNode
-    Formula2Node
+    SvMixInputsNode
+    SvFormulaNodeMk3
     ---
     SvGenFibonacci
     SvGenExponential
+    SvOscillatorNode
 
 ## Vector
     GenVectorsNode
     VectorsOutNode
     SvAxisInputNodeMK2
-    SvVectorMathNodeMK2
+    SvVectorMathNodeMK3
     VertsDelDoublesNode
     SvVectorRewire
     ---
@@ -210,39 +233,49 @@
     VectorPolarOutNode
     SvAttractorNode
     ---
-    EvaluateLineNode
     SvVectorLerp
     SvInterpolationStripesNode
-    SvInterpolationNode
-    SvInterpolationNodeMK2
     SvInterpolationNodeMK3
+    SvInterpolationNodeMK2
+    SvLinearApproxNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
-    SvVectorFractal
-    SvLacunarityNode
     SvTurbulenceNode
+    SvLacunarityNode
+    SvVectorFractal
 
 ## Matrix
     SvMatrixGenNodeMK2
     MatrixOutNode
+    SvMatrixApplyJoinNode
+    SvIterateNode
     MatrixDeformNode
     SvMatrixValueIn
     SvMatrixEulerNode
     MatrixShearNode
+    SvMatrixNormalNode
+    SvMatrixTrackToNode
+    SvMatrixMathNode
     MatrixInterpolationNode
-    SvMatrixApplyJoinNode
+
+## Quaternion
+    SvQuaternionInNode
+    SvQuaternionOutNode
+    SvQuaternionMathNode
 
 ## Logic
     SvLogicNode
     SvSwitchNode
+    SvInputSwitchNodeMOD
     SvNeuroElman1LNode
 
 ## Viz
     Sv3DviewPropsNode
+    ---
+    SvMatrixViewer28
     SvVDBasicLines
     SvVDExperimental
-    SvMatrixViewer28
     ---
     SvIDXViewer28
     ---
@@ -323,15 +356,12 @@
     SvColorInputNode
     SvColorsOutNodeMK1
     ---
-    SvMatrixNormalNode
-    SvMatrixTrackToNode
-    SvMatrixMathNode
-    ---
     SvSculptMaskNode
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
     SvSpiralNode
+    SvCombinatoricsNode
 
 ## Alpha Nodes
     SvBManalyzinNode
@@ -340,7 +370,6 @@
     SvBMtoElementNode
     SvBMOpsNodeMK2
     ---
-    SvInsetSpecial
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
     SvParticlesNode
@@ -350,9 +379,7 @@
     SvCacheNode
     SvUVtextureNode
     SvSeparateMeshNodeMK2
-    SvIndexToMaskNode
     SvMultiExtrudeAlt
-    SvOffsetLineNode
-    SvContourNode
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
+    SvTopologySimple

@@ -7,6 +7,7 @@ List Struct
 
    flip
    item
+   item_insert
    repeater
    reverse
    shift_mk2

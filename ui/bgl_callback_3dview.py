@@ -66,6 +66,15 @@ def restore_opengl_defaults():
     bgl.glDisable(bgl.GL_BLEND)
     bgl.glDisable(bgl.GL_DEPTH_TEST)
 
+    # glIsEnabled with argument 
+    # GL_POLYGON_OFFSET_FILL, 
+    # GL_POLYGON_OFFSET_LINE, or 
+    # GL_POLYGON_OFFSET_POINT.
+
+    # glGet with argument 
+    # GL_POLYGON_OFFSET_FACTOR or 
+    # GL_POLYGON_OFFSET_UNITS.
+
 
 def draw_callback_px(n_id, data):
     context = bpy.context

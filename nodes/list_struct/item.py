@@ -22,76 +22,90 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, repeat_last, updateNode)
 
 
-# ListItem2
-# Allows a list of items, with both negative and positive index and repeated values
+# SvListItemNode
+# Allows a list of indexes, with both negative and positive index and repeated values
 # Other output is not wrapped.
-# Based on ListItem
-# For now only accepts one list of items
-# by Linus Yng
+# For now only accepts one list of indexes
+# Based on ListItem2 by Linus Yng
 
 
-class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
-    ''' List item '''
-    bl_idname = 'ListItem2Node'
+class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
+    '''
+    Triggers: List Item Out
+    Tooltip: Get elements from list at desired indexes
+    '''
+    bl_idname = 'SvListItemNode'
     bl_label = 'List Item'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_ITEM'
 
-    level: IntProperty(name='level_to_count', default=2, min=0, update=updateNode)
-    item: IntProperty(name='item', default=0, update=updateNode)
+    level: IntProperty(name='level_to_count', default=2, min=1, update=updateNode)
+    index: IntProperty(name='Index', default=0, update=updateNode)
     typ: StringProperty(name='typ', default='')
     newsock: BoolProperty(name='newsock', default=False)
 
     def draw_buttons(self, context, layout):
+        '''draw buttons on the node'''
         layout.prop(self, "level", text="level")
 
     def sv_init(self, context):
+        '''create sockets'''
         self.inputs.new('SvStringsSocket', "Data")
-        self.inputs.new('SvStringsSocket', "Item").prop_name = 'item'
+        self.inputs.new('SvStringsSocket', "Index").prop_name = 'index'
         self.outputs.new('SvStringsSocket', "Item")
         self.outputs.new('SvStringsSocket', "Other")
 
+    def migrate_from(self, old_node):
+        self.index = old_node.item
+
     def update(self):
+        '''adapt socket type to input type'''
         if 'Data' in self.inputs and self.inputs['Data'].links:
             inputsocketname = 'Data'
             outputsocketname = ['Item', 'Other']
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
+        '''main node function called every update'''
         if self.inputs['Data'].is_linked:
-            OItem, OOther = self.outputs
+            out_item, out_other = self.outputs
             data = self.inputs['Data'].sv_get()
-            items = self.inputs['Item'].sv_get([[self.item]])
-            if OItem.is_linked:
-                if self.level-1:
-                    out = self.get(data, self.level-1, items, self.get_items)
-                else:
-                    out = self.get_items(data, items[0])
-                OItem.sv_set(out)
-            if OOther.is_linked:
-                if self.level-1:
-                    out = self.get(data, self.level-1, items, self.get_other)
-                else:
-                    out = self.get_other(data, items[0])
-                OOther.sv_set(out)
+            indexes = self.inputs['Index'].sv_get([[self.index]])
 
-    def get_items(self, data, items):
+            if out_item.is_linked:
+                if self.level-1:
+                    out = self.get(data, self.level-1, indexes, self.get_items)
+                else:
+                    out = self.get_items(data, indexes[0])
+                out_item.sv_set(out)
+
+            if out_other.is_linked:
+                if self.level-1:
+                    out = self.get(data, self.level-1, indexes, self.get_other)
+                else:
+                    out = self.get_other(data, indexes[0])
+                out_other.sv_set(out)
+
+    def get_items(self, data, indexes):
+        '''extract the indexes from the list'''
         if type(data) in [list, tuple]:
-            return [data[item] for item in items if item < len(data) and item >= -len(data)]
+            return [data[index] for index in indexes if -len(data) <= index < len(data)]
         else:
             return None
 
-    def get_other(self, data, items):
+    def get_other(self, data, indexes):
+        '''remove the indexes from the list'''
         is_tuple = False
         if type(data) == tuple:
             data = list(data)
             is_tuple = True
         if type(data) == list:
-            m_items = items.copy()
-            for idx, item in enumerate(items):
-                if item < 0:
-                    m_items[idx] = len(data)-abs(item)
-            for i in sorted(set(m_items), reverse=True):
-                if i < len(data) and i > -1:
+            m_indexes = indexes.copy()
+            for idx, index in enumerate(indexes):
+                if index < 0:
+                    m_indexes[idx] = len(data)-abs(index)
+            for i in sorted(set(m_indexes), reverse=True):
+                if -1 < i < len(data):
                     del data[i]
             if is_tuple:
                 return tuple(data)
@@ -100,19 +114,22 @@ class ListItem2Node(bpy.types.Node, SverchCustomTreeNode):
         else:
             return None
 
-    def get(self, data, level, items, f):
+    def get(self, data, level, indexes, func):
+        '''iterative fucntion to get down to the requested level'''
         if level == 1:
-            item_iter = repeat_last(items)
-            return [self.get(obj, level-1, next(item_iter), f) for obj in data]
+            index_iter = repeat_last(indexes)
+            return [self.get(obj, level-1, next(index_iter), func) for obj in data]
         elif level:
-            return [self.get(obj, level-1, items, f) for obj in data]
+            return [self.get(obj, level-1, indexes, func) for obj in data]
         else:
-            return f(data, items)
+            return func(data, indexes)
 
 
 def register():
-    bpy.utils.register_class(ListItem2Node)
+    '''register class in Blender'''
+    bpy.utils.register_class(SvListItemNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(ListItem2Node)
+    '''unregister class in Blender'''
+    bpy.utils.unregister_class(SvListItemNode)

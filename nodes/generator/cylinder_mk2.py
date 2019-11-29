@@ -174,7 +174,7 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate cylinder based meshes
     """
     bl_idname = 'SvCylinderNodeMK2'
-    bl_label = 'Cylinder MK2'
+    bl_label = 'Cylinder'
     bl_icon = 'MESH_CYLINDER'
 
     def update_angles(self, context):
@@ -281,6 +281,13 @@ class SvCylinderNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     updating: BoolProperty(
         name="Updating", description="Flag to inhibit updating", default=False)
+
+    def migrate_from(self, old_node):
+        self.separate = old_node.Separate
+        self.cap_bottom = old_node.cap_
+        self.cap_top = old_node.cap_
+        self.center = False
+        self.parallels = old_node.subd_ + 2
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "RadiusT").prop_name = 'radius_t'

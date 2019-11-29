@@ -33,6 +33,7 @@ class SvMatrixTubeNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixTubeNode'
     bl_label = 'Matrix Tube'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_TUBE'
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', "Matrices")

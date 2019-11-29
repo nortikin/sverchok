@@ -79,8 +79,8 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     compact: BoolProperty(default=False, update=updateNode)
     depth: IntProperty(default=5, min=0, update=updateNode)
 
-    def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', 'Data')
+
+    def get_theme_colors_for_contrast(self):
         try:
             current_theme = bpy.context.preferences.themes.items()[0][0]
             editor = bpy.context.preferences.themes[current_theme].node_editor
@@ -88,8 +88,13 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except:
             print('-', end='')
 
-    # reset n_id on copy
-    def copy(self, node):
+    def sv_init(self, context):
+        self.inputs.new('SvStringsSocket', 'Data')
+        self.get_theme_colors_for_contrast()
+        self.get_and_set_gl_scale_info()
+
+    def sv_copy(self, node):
+        # reset n_id on copy
         self.n_id = ''
 
     def draw_buttons(self, context, layout):
@@ -160,7 +165,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
             # adjust proposed text location in case node is framed.
             # take into consideration the hidden state
-            node_width = (self.width_hidden + 30.0) if self.hide else self.width
+            node_width = self.width
             _x, _y = recursive_framed_location_finder(self, self.location[:])
             _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
 

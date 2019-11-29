@@ -27,7 +27,7 @@ from sverchok.data_structure import multi_socket
 
 
 def name_seq():
-    for i in range(ord('a'),ord('z')): 
+    for i in range(ord('a'),ord('z')):
         yield chr(i)
     for i in range(1000):
         yield "a.".join(str(i))
@@ -37,6 +37,7 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'WifiInNode'
     bl_label = 'Wifi in'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_WIFI_IN'
 
     def change_var_name(self, context):
         # no change
@@ -58,7 +59,7 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
                 s.name = "{0}[{1}]".format(self.var_name, i)
         else: #create first socket
             self.inputs.new('SvStringsSocket', self.var_name+"[0]")
-        
+
     var_name: StringProperty(name='var_name', update=change_var_name)
 
     base_name: StringProperty(default='')
@@ -71,12 +72,12 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
         ng = self.id_data
         var_set = {node.var_name for node in ng.nodes if node.bl_idname == 'WifiInNode'}
 
-        for name in name_seq(): 
+        for name in name_seq():
             if not name in var_set:
                 self.var_name = name
                 return
-                
-    def copy(self, node):
+
+    def sv_copy(self, node):
         ng = self.id_data
         var_set = {node.var_name for node in ng.nodes if node.bl_idname == 'WifiInNode'}
 
@@ -91,7 +92,7 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
             n = self.inputs[0].name.rstrip("[0]")
             self.base_name = n
             self.var_name = n
-        else: 
+        else:
             ng = self.id_data
             var_set = {node.var_name for node in ng.nodes if node.bl_idname == 'WifiInNode'}
 
@@ -99,12 +100,12 @@ class WifiInNode(bpy.types.Node, SverchCustomTreeNode):
                 if not name in var_set:
                     self.var_name = name
                     return
-        
+
     def update(self):
         # ugly hack to get var name sometimes with old layouts
         if not self.var_name:
             self.gen_var_name()
-                
+
         self.base_name = self.var_name
         multi_socket(self, min=1, breck=True)
 

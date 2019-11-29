@@ -41,7 +41,7 @@ JSON format:
 # To be extended?
 safe_names = dict(sin=sin, cos=cos, pi=pi, sqrt=sqrt)
 
-    
+
 def get_variables(string):
     root = ast.parse(string, mode='eval')
     result = {node.id for node in ast.walk(root) if isinstance(node, ast.Name)}
@@ -63,7 +63,7 @@ def evaluate(json, variables):
     result['vertices'] = []
 
     groups = {}
-    
+
     for idx, vertex in enumerate(json['vertices']):
         v = []
         if isinstance(vertex, (list, tuple)) and len(vertex) == 3:
@@ -105,7 +105,7 @@ def selected_masks_adding(node):
 
     mo = tree.nodes.new('MaskListNode')
     mv = tree.nodes.new('SvMoveNodeMK2')
-    rf = tree.nodes.new('SvGenFloatRange')
+    rf = tree.nodes.new('SvGenNumberRange')
     vi = tree.nodes.new('GenVectorsNode')
     mi = tree.nodes.new('SvMaskJoinNode')
     vd = tree.nodes.new('ViewerNode2')
@@ -203,6 +203,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMeshEvalNode'
     bl_label = 'Mesh Expression'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MESH_EXPRESSION'
 
     def on_update(self, context):
         self.adjust_sockets()
@@ -246,7 +247,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
         json_data = json.load(f)
         self.validate_json(json_data)
         return json_data
-    
+
     def validate_json(self, json):
         if not "vertices" in json:
             raise Exception("JSON does not have `vertices' key")
@@ -273,13 +274,13 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
                     variables.update(vs)
 
         return list(sorted(list(variables)))
-    
+
     def get_group_names(self):
         groups = set()
         json = self.load_json()
         if not json:
             return groups
-        
+
         for vertex in json["vertices"]:
             if isinstance(vertex, (list, tuple)) and len(vertex) == 4 and isinstance(vertex[-1], (str, list, tuple)):
                 g = vertex[-1]

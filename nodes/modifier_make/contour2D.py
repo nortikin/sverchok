@@ -423,6 +423,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvContourNode'
     bl_label = 'Contour 2D'
     bl_icon = 'FORCE_FORCE'
+    sv_icon = 'SV_CONTOUR_2D'
 
     modeI: EnumProperty(
         name="modeI",

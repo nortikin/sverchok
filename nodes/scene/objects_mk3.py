@@ -23,7 +23,6 @@ import bmesh
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
 
 
@@ -57,6 +56,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvObjectsNodeMK3'
     bl_label = 'Objects in mk3'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OBJECTS_IN'
 
     def hide_show_versgroups(self, context):
         outs = self.outputs
@@ -130,7 +130,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.object_names:
             ops.report({'WARNING'}, "Warning, no object associated with the obj in Node")
-         
+
 
     def draw_obj_names(self, layout):
         # display names currently being tracked, stop at the first 5..
@@ -155,7 +155,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         row = col.row()
         op_text = "Get selection"  # fallback
-    
+
         try:
             addon = context.preferences.addons.get(sverchok.__name__)
             if addon.preferences.over_sized_buttons:
@@ -173,9 +173,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "modifiers", text="Post", toggle=True)
         row.prop(self, "vergroups", text="VeGr", toggle=True)
 
-        row = col.row(align=True)
-        row.operator(callback, text="Select Objects").fn_name = 'select_objs'
-        
+        #  i don't even know what this is supposed to do.... not useful enough i think..
+        #  row = col.row(align=True)
+        #  row.operator(callback, text="Select Objects").fn_name = 'select_objs'
+
         self.draw_obj_names(layout)
 
 
@@ -205,16 +206,20 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.object_names:
             return
-            
+
         scene = bpy.context.scene
         data_objects = bpy.data.objects
         outputs = self.outputs
-        
+
         edgs_out = []
         vers_out = []
         vers_out_grouped = []
         pols_out = []
         mtrx_out = []
+
+        if self.modifiers or self.vergroups:
+            with self.sv_throttle_tree_update():
+                depsgraph = bpy.context.evaluated_depsgraph_get()
 
         # iterate through references
         for obj in (data_objects.get(o.name) for o in self.object_names):
@@ -228,7 +233,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             pols = []
             mtrx = []
 
-            with hard_freeze(self) as _: 
+            with self.sv_throttle_tree_update():
 
                 mtrx = obj.matrix_world
                 if obj.type in {'EMPTY', 'CAMERA', 'LAMP' }:
@@ -243,15 +248,31 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         vers, edgs, pols = pydata_from_bmesh(bm)
                         del bm
                     else:
-                        obj_data = obj.to_mesh() # depsgraph, apply_modifiers=self.modifiers, calc_undeformed=True)
+
+                        """
+                        this is where the magic happens.
+                        because we are in throttled tree update state at this point, we can aquire a depsgraph if 
+                        - modifiers
+                        - or vertex groups are desired
+
+                        """
+                        if self.modifiers or self.vergroups:
+                            # depsgraph = bpy.context.evaluated_depsgraph_get()
+                            obj = depsgraph.objects[obj.name]
+                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+                        else:
+                            obj_data = obj.to_mesh()
+
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
                         edgs = obj_data.edge_keys
-                        # bpy.data.meshes.remove(obj_data, do_unlink=True)
+
                         obj.to_mesh_clear()
-                except:
-                    print('failure in process between frozen area', self.name)
+
+
+                except Exception as err:
+                    print('failure in process between frozen area', self.name, err)
 
             vers_out.append(vers)
             edgs_out.append(edgs)
@@ -284,4 +305,3 @@ def register():
 
 def unregister():
     _ = [bpy.utils.unregister_class(c) for c in classes]
-

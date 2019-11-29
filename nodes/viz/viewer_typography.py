@@ -121,6 +121,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_idname = 'SvTypeViewerNodeV28'
     bl_label = 'Typography Viewer'
     bl_icon = 'OUTLINER_OB_FONT'
+    sv_icon = 'SV_TYPOGRAPHY_VIEWER'
 
     grouping: BoolProperty(default=False)
     data_kind: StringProperty(name='data kind', default='FONT')

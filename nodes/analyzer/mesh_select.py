@@ -24,7 +24,8 @@ import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat, describe_data_shape
+from sverchok.utils.logging import info, debug
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 from sverchok.nodes.analyzer.normals import calc_mesh_normals
 
@@ -70,10 +71,17 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
     radius: FloatProperty(name="Radius", default=1.0, min=0.0, update=updateNode)
 
+    level: IntProperty(name="Level",
+                        description = "Data level to work on",
+                        min=2, default=2,
+                        update=updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode')
         if self.mode not in ['ByNormal', 'EdgeDir']:
             layout.prop(self, 'include_partial')
+        if hasattr(self, 'level'):
+            layout.prop(self, 'level')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -294,21 +302,13 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
 
         return out_verts_mask, out_edges_mask, out_faces_mask
 
-    def process(self):
-
-        if not any(output.is_linked for output in self.outputs):
-            return
-
-        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
-        edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
-
+    def _process(self, meshes):
         out_vertices = []
         out_edges = []
         out_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s])
         for vertices, edges, faces in zip(*meshes):
+            #debug("Level 2, shape: %s", describe_data_shape(vertices))
             if self.mode == 'BySide':
                 vs, es, fs = self.by_side(vertices, edges, faces)
             elif self.mode == 'ByNormal':
@@ -331,6 +331,43 @@ class SvMeshSelectNode(bpy.types.Node, SverchCustomTreeNode):
             out_vertices.append(vs)
             out_edges.append(es)
             out_faces.append(fs)
+
+        return out_vertices, out_edges, out_faces
+
+    def _process_recursive(self, level, meshes):
+        if level <= 2:
+            return self._process(meshes)
+        else:
+            out_vertices = []
+            out_edges = []
+            out_faces = []
+
+            for vertices_s, edges_s, faces_s in zip(*meshes):
+                #debug("Level: %s, shape: %s", level, describe_data_shape(vertices_s))
+                if not edges_s:
+                    edges_s = [[]]
+                if not faces_s:
+                    faces_s = [[]]
+                debug("Level: %s, edges: %s", level, edges_s)
+                sub_meshes = match_long_repeat([vertices_s, edges_s, faces_s])
+                vs, es, fs = self._process_recursive(level-1, sub_meshes)
+                out_vertices.append(vs)
+                out_edges.append(es)
+                out_faces.append(fs)
+
+            return out_vertices, out_edges, out_faces
+
+    def process(self):
+
+        if not any(output.is_linked for output in self.outputs):
+            return
+
+        vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
+        edges_s = self.inputs['Edges'].sv_get(default=[[]])
+        faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s])
+        out_vertices, out_edges, out_faces = self._process_recursive(self.level, meshes)
 
         self.outputs['VerticesMask'].sv_set(out_vertices)
         self.outputs['EdgesMask'].sv_set(out_edges)

@@ -23,7 +23,6 @@ import zipfile
 import json
 import re
 import urllib
-from urllib.request import urlopen
 from itertools import chain
 
 import bpy
@@ -32,6 +31,7 @@ from sverchok import old_nodes
 from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
+from sverchok.utils.sv_requests import urlopen
 
 # pylint: disable=w0621
 
@@ -129,7 +129,7 @@ def has_state_switch_protection(node, k):
 
     if k == 'current_mode':
         return node.bl_idname in {
-            'SvGenFloatRange', 'GenListRangeIntNode',
+            'SvGenNumberRange',
             'SvKDTreeNode', 'SvMirrorNode', 'SvRotationNode'}
 
     if k == 'current_op':
@@ -202,6 +202,10 @@ def can_skip_property(node, k):
 
     elif node.bl_idname == 'SvProfileNodeMK2' and k in {'SvLists', 'SvSubLists'}:
         # these are CollectionProperties, populated later.
+        return True
+
+    elif node.bl_idname == 'SvVDAttrsNode' and k in node.properties_to_skip_iojson:
+        # these are serialized in storage_get_data
         return True
 
     elif node.bl_idname == 'ObjectsNode' and (k == "objects_local"):
@@ -283,7 +287,7 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
             elif has_state_switch_protection(node, k):
                 continue
 
-            handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree)            
+            handle_old_groupnode(node, k, v, groups_dict, create_dict_of_tree)
 
             if isinstance(v, (float, int, str)):
                 node_items[k] = v
@@ -719,7 +723,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
-        
+
         ng.update()
         ng.update_tag()
 

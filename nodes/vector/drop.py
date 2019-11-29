@@ -31,6 +31,7 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'VectorDropNode'
     bl_label = 'Vector Drop'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VECTOR_DROP'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vectors")
@@ -41,12 +42,12 @@ class VectorDropNode(bpy.types.Node, SverchCustomTreeNode):
         # inputs
         if not self.inputs['Matrixes'].is_linked:
             return
-                        
+
         vecs_ = self.inputs['Vectors'].sv_get()
         vecs = Vector_generate(vecs_)
-        
+
         mats = self.inputs['Matrixes'].sv_get()
-        
+
         vectors = self.vecscorrect(vecs, mats)
         self.outputs['Vectors'].sv_set(vectors)
 

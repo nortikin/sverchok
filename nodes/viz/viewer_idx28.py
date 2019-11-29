@@ -37,6 +37,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvIDXViewer28'
     bl_label = 'Viewer Index+'
     bl_icon = 'INFO'
+    sv_icon = 'SV_INDEX_VIEWER'
 
     def get_scale(self):
         try:
@@ -87,6 +88,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
+        inew('SvStringsSocket', 'text')
 
 
     def draw_buttons(self, context, layout):
@@ -187,7 +189,7 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         geom = lambda: None
 
-        for socket in ['matrix', 'verts', 'edges', 'faces']:
+        for socket in ['matrix', 'verts', 'edges', 'faces', 'text']:
             input_stream = inputs[socket].sv_get(default=[])
             if socket == 'verts' and input_stream:
                 
@@ -212,16 +214,24 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
             display_topology.vert_data = []
             display_topology.edge_data = []
             display_topology.face_data = []
+            display_topology.text_data = []
 
             concat_vert = display_topology.vert_data.append
             concat_edge = display_topology.edge_data.append
             concat_face = display_topology.face_data.append
+            concat_text = display_topology.text_data.append
             
             for obj_index, final_verts in enumerate(geom.verts):
 
+                # can't display vert idx and text simultaneously - ...
                 if self.display_vert_index:
                     for idx, vpos in enumerate(final_verts):
                         concat_vert((idx, vpos))
+                    if geom.text:
+                        
+                        text_items = self.get_text_of_correct_length(obj_index, geom, len(final_verts))                        
+                        for text_item, vpos in zip(text_items, final_verts):
+                            concat_text(text_item)
 
                 if self.display_edge_index and obj_index < len(geom.edges):
                     for edge_index, (idx1, idx2) in enumerate(geom.edges[obj_index]):
@@ -236,6 +246,24 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
 
             return display_topology
 
+    def get_text_of_correct_length(self, obj_index, geom, num_elements_to_fill):
+        """ get text elements, and extend if needed"""
+        if obj_index < len(geom.text):
+            text_items = geom.text[obj_index]
+        else:
+            text_items = geom.text[len(geom.text)-1]
+
+        if not (len(text_items) == num_elements_to_fill):
+            
+            # ---- this doesn't touch the data, but returns a copy, or a modified copy -----
+            if len(text_items) < num_elements_to_fill:
+                return text_items + [text_items[-1], ] * (num_elements_to_fill - len(text_items))
+            else:
+                return text_items[:num_elements_to_fill]
+
+        return text_items
+
+ 
     def process(self):
         n_id = node_id(self)
         callback_disable(n_id)
@@ -268,10 +296,9 @@ class SvIDXViewer28(bpy.types.Node, SverchCustomTreeNode):
     def free(self):
         callback_disable(node_id(self))
 
-    def copy(self, node):
+    def sv_copy(self, node):
         ''' reset n_id on copy '''
         self.n_id = ''
-
 
 def register():
     bpy.utils.register_class(SvIDXViewer28)

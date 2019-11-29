@@ -6,6 +6,8 @@
 Welcome to Sverchok's documentation!
 ====================================
 
+.. image:: https://user-images.githubusercontent.com/619340/65963856-ee23ef00-e45b-11e9-98aa-32b218cde934.png
+
 Contents:
 
 .. toctree::

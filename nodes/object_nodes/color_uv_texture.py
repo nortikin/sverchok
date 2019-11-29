@@ -29,7 +29,7 @@ class SvMeshUVColorNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Find pixel on UV texture from surface'''
     bl_idname = 'SvMeshUVColorNode'
     bl_label = 'Set UV Color'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'UV_DATA'
 
     mode1: BoolProperty(name='normal_update', default=True, update=updateNode)
     image: StringProperty(default='', update=updateNode)

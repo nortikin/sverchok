@@ -74,6 +74,7 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRemoveDoublesNode'
     bl_label = 'Remove Doubles'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_REMOVE_DOUBLES'
 
     distance: FloatProperty(
         name='Distance', description='Remove distance',

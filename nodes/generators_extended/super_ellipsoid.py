@@ -136,6 +136,7 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvSuperEllipsoidNode'
     bl_label = 'Super Ellipsoid'
+    sv_icon = 'SV_SUPER_ELLIPSE'
 
     def update_ellipsoid(self, context):
         if self.updating:

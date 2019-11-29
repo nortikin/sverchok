@@ -28,6 +28,7 @@ class SvBMOpsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBMOpsNodeMK2'
     bl_label = 'BMesh Ops 2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_BMESH_OPS'
 
     PV = ['remove_doubles(bm,verts=e,dist=v[0])',
           'collapse(bm,edges=e,uvs=v[0])',

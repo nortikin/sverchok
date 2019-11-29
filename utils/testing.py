@@ -123,6 +123,7 @@ def link_node_tree(reference_blend_path, tree_name=None):
     if tree_name in bpy.data.node_groups:
         raise Exception("Tree named `{}' already exists in current scene".format(tree_name))
     with bpy.data.libraries.load(reference_blend_path, link=True) as (data_src, data_dst):
+        #debug("Linked: %s", reference_blend_path)
         data_dst.node_groups = [tree_name]
 
 def link_text_block(reference_blend_path, block_name):
@@ -160,18 +161,21 @@ def get_tests_path():
     tests_dir = join(dirname(sv_init), "tests")
     return tests_dir
 
-def run_all_tests():
+def run_all_tests(pattern=None):
     """
     Run all existing test cases.
     Test cases are looked up under tests/ directory.
     """
+    
+    if pattern is None:
+        pattern = "*_tests.py"
 
     tests_path = get_tests_path()
     log_handler = logging.FileHandler(join(tests_path, "sverchok_tests.log"), mode='w')
     logging.getLogger().addHandler(log_handler)
     try:
         loader = unittest.TestLoader()
-        suite = loader.discover(start_dir = tests_path, pattern = "*_tests.py")
+        suite = loader.discover(start_dir = tests_path, pattern = pattern)
         buffer = StringIO()
         runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
         result = runner.run(suite)
@@ -179,6 +183,34 @@ def run_all_tests():
         return result
     finally:
         logging.getLogger().removeHandler(log_handler)
+
+
+def run_test_from_file(file_name):
+    """
+    Run test from file given by name. File should be places in tests folder
+    :param file_name: sting like avl_tree_tests.py
+    :return: result
+    """
+    tests_path = get_tests_path()
+    log_handler = logging.FileHandler(join(tests_path, "sverchok_tests.log"), mode='w')
+    logging.getLogger().addHandler(log_handler)
+    try:
+        loader = unittest.TestLoader()
+        suite = loader.discover(start_dir=tests_path, pattern=file_name)
+        buffer = StringIO()
+        runner = unittest.TextTestRunner(stream=buffer, verbosity=2)
+        result = runner.run(suite)
+        info("Test cases result:\n%s", buffer.getvalue())
+        return result
+    finally:
+        logging.getLogger().removeHandler(log_handler)
+
+
+""" using:
+from sverchok.utils.testing import run_test_from_file
+run_test_from_file("avl_tree_tests.py")
+"""
+
 
 ##############################################
 # Base test case classes
@@ -188,6 +220,9 @@ class SverchokTestCase(unittest.TestCase):
     """
     Base class for Sverchok test cases.
     """
+
+    def setUp(self):
+        debug("Starting test: %s", self.__class__.__name__)
 
     @contextmanager
     def temporary_node_tree(self, new_tree_name):
@@ -232,6 +267,14 @@ class SverchokTestCase(unittest.TestCase):
             data = f.read()
             return ast.literal_eval(data)
 
+    def store_reference_sverchok_data(self, file_name, data):
+        """
+        Store reference data in Sverchok format
+        (plain Python syntax of nested lists).
+        """
+        with open(self.get_reference_file_path(file_name), 'w') as f:
+            f.write(repr(data))
+
     def assert_json_equals(self, actual_json, expected_json):
         """
         Assert that two JSON objects are equal.
@@ -256,6 +299,11 @@ class SverchokTestCase(unittest.TestCase):
         """
         node = get_node(node_name, tree_name)
         actual_value = getattr(node, property_name)
+        self.assertEqual(actual_value, expected_value)
+
+    def assert_node_input_equals(self, tree_name, node_name, input_name, expected_value):
+        node = get_node(node_name, tree_name)
+        actual_value = node.inputs[input_name].sv_get()
         self.assertEqual(actual_value, expected_value)
 
     def assert_nodes_linked(self, tree_name, node1_name, node1_output_name, node2_name, node2_input_name):
@@ -438,9 +486,11 @@ class SverchokTestCase(unittest.TestCase):
         logging.getLogger().addHandler(handler)
 
         try:
+            debug("=== \/ === [%s] Here should be no errors === \/ ===", self.__class__.__name__)
             yield handler
             self.assertFalse(has_errors, "There were some errors logged")
         finally:
+            debug("=== /\ === [%s] There should be no errors === /\ ===", self.__class__.__name__)
             logging.getLogger().handlers.remove(handler)
 
     def subtest_assert_equals(self, value1, value2, message=None):
@@ -463,10 +513,12 @@ class EmptyTreeTestCase(SverchokTestCase):
     """
 
     def setUp(self):
+        super().setUp()
         self.tree = get_or_create_node_tree()
 
     def tearDown(self):
         remove_node_tree()
+        super().tearDown()
 
 class ReferenceTreeTestCase(SverchokTestCase):
     """
@@ -500,15 +552,18 @@ class ReferenceTreeTestCase(SverchokTestCase):
         link_text_block(self.get_reference_file_path(), block_name)
 
     def setUp(self):
+        super().setUp()
         if self.reference_file_name is None:
             raise Exception("ReferenceTreeTestCase subclass must have `reference_file_name' set")
         if self.reference_tree_name is None:
             self.reference_tree_name = "TestingTree"
         
-        self.tree = self.link_node_tree()
+        with self.assert_logs_no_errors():
+            self.tree = self.link_node_tree()
 
     def tearDown(self):
         remove_node_tree()
+        super().tearDown()
 
 class NodeProcessTestCase(EmptyTreeTestCase):
     """

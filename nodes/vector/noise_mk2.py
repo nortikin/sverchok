@@ -16,7 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import inspect
 import operator
 from math import sqrt
 
@@ -35,17 +34,22 @@ def deepnoise(v, noise_basis=PERLIN_ORIGINAL):
     return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
 
 
-# noise_dict = {t[0]: t[0] for t in noise_options}
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
-
 noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
 
 
 class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    '''Vector Noise node'''
+    """
+    Triggers: Vector Noise
+    Tooltip: Affect input verts with a noise function.
+    
+    A short description for reader of node code
+    """
+
     bl_idname = 'SvNoiseNodeMK2'
-    bl_label = 'Vector Noise MK2'
+    bl_label = 'Vector Noise'
     bl_icon = 'FORCE_TURBULENCE'
+    sv_icon = 'SV_VECTOR_NOISE'
 
     def changeMode(self, context):
         outputs = self.outputs
@@ -124,10 +128,6 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         else:
             return self.label or self.name
 
+classes = [SvNoiseNodeMK2]
+register, unregister = bpy.utils.register_classes_factory(classes)
 
-def register():
-    bpy.utils.register_class(SvNoiseNodeMK2)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvNoiseNodeMK2)

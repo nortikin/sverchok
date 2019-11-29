@@ -24,7 +24,7 @@ from bpy.props import EnumProperty, FloatProperty
 from mathutils import Matrix, Euler
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Matrix_listing, match_long_repeat)
+from sverchok.data_structure import (updateNode, match_long_repeat)
 
 
 class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -32,6 +32,7 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMatrixEulerNode'
     bl_label = 'Matrix Euler'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MATRIX_EULER'
 
     X: FloatProperty(name='X', description='X rotation', default=0.0, update=updateNode)
     Y: FloatProperty(name='Y', description='Y rotation', default=0.0, update=updateNode)

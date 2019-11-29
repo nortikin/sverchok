@@ -293,6 +293,22 @@ def update_error_nodes(ng, name, err=Exception):
         node.color = exception_color
     node.use_custom_color=True
 
+def get_original_node_color(ng, name):
+    if "error nodes" in ng:
+        error_nodes = ast.literal_eval(ng["error nodes"])
+        return error_nodes.get(name, None)
+    return None
+
+def reset_error_node(ng, name):
+    node = ng.nodes.get(name)
+    if node:
+        if "error nodes" in ng:
+            error_nodes = ast.literal_eval(ng["error nodes"])
+            if name in error_nodes:
+                node.use_custom_color, node.color = error_nodes[name]
+                del error_nodes[name]
+            ng["error nodes"] = str(error_nodes)
+
 def reset_error_nodes(ng):
     if "error nodes" in ng:
         error_nodes = ast.literal_eval(ng["error nodes"])
@@ -312,6 +328,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     global graphs
     timings = []
     graph = []
+    gather = graph.append
+    
     total_time = 0
     done_nodes = set(procesed_nodes)
 
@@ -325,13 +343,12 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
                 node.process()
             delta = time.perf_counter() - start
             total_time += delta
+
             if data_structure.DEBUG_MODE:
                 debug("Processed  %s in: %.4f", node_name, delta)
+
             timings.append(delta)
-            graph.append({"name" : node_name,
-                           "bl_idname": node.bl_idname,
-                           "start": start,
-                           "duration": delta})
+            gather({"name" : node_name, "bl_idname": node.bl_idname, "start": start, "duration": delta})
 
         except Exception as err:
             ng = nodes.id_data
@@ -339,9 +356,11 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
             return None
+
     graphs.append(graph)
     if data_structure.DEBUG_MODE:
         debug("Node set updated in: %.4f seconds", total_time)
+    
     return timings
 
 

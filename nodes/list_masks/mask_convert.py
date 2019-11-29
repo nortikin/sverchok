@@ -26,6 +26,7 @@ class SvMaskConvertNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvMaskConvertNode'
     bl_label = 'Mask Converter'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_MASK_CONVERTER'
 
     modes = [
             ('ByVertex', "Vertices", "Get edges and faces masks by vertex mask", 0),

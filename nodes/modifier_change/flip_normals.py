@@ -66,9 +66,10 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvFlipNormalsNode'
     bl_label = 'Flip normals'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FLIP_NORMALS'
 
     mode_options = [(mode, mode, '', idx) for idx, mode in enumerate(['mask', 'match'])]
-        
+
     selected_mode: EnumProperty(
         items=mode_options, description="offers flip options", default="match", update=updateNode)
 
@@ -87,7 +88,7 @@ class SvFlipNormalsNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         r = layout.row(align=True)
-        r1 = r.split(factor=0.35)        
+        r1 = r.split(factor=0.35)
         r1.prop(self, 'reverse', text='reverse', toggle=True)
         r2 = r1.split().row()
         r2.prop(self, "selected_mode", expand=True)

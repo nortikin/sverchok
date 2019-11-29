@@ -27,6 +27,7 @@ class SvVertexGroupNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvVertexGroupNodeMK2'
     bl_label = 'Vertex group weights'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VERTEX_WEIGHT'
 
     fade_speed: FloatProperty(name='fade', default=2, update=updateNode)
     clear: BoolProperty(name='clear w', default=True, update=updateNode)

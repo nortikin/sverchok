@@ -113,6 +113,12 @@ def sv_main_handler(scene):
     """
     for ng in sverchok_trees():
         # print("Scene handler looking at tree {}".format(ng.name))
+
+        # if P (sv_process is False, we can skip this node tree.
+        if not ng.sv_process:
+            continue
+
+
         if ng.has_changed:
             print('depsgraph_update_pre called - ng.has_changed -> ')
             # print('sv_main_handler')
@@ -136,6 +142,11 @@ def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
+
+    # ensure current nodeview view scale / location parameters reflect users' system settings
+    from sverchok import node_tree
+    node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
+
 
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:

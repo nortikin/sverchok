@@ -58,6 +58,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvRotationNodeMK2'
     bl_label = 'Rotation'
     bl_icon = 'NONE' #'MAN_ROT'
+    sv_icon = 'SV_ROTATE'
 
     angle_: FloatProperty(
         name='Angle', description='rotation angle', default=0.0, update=updateNode)
@@ -85,7 +86,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
-            self.inputs.new('SvVerticesSocket', "centers")
+            self.inputs.new('SvVerticesSocket', "center")
             self.inputs.new('SvVerticesSocket', "axis")
             self.inputs.new('SvStringsSocket', "angle").prop_name = "angle_"
         elif mode == 'EULER' or mode == 'QUAT':
@@ -134,7 +135,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         # inputs
         Vertices = self.inputs['vertices'].sv_get()
-        
+
         if self.mode == 'AXIS':
             Angle = self.inputs['angle'].sv_get()
             Center = self.inputs['center'].sv_get(default=[[[0.0, 0.0, 0.0]]])
@@ -163,7 +164,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             points = [euler_rotation(v, x, y, z, o) for v, x, y, z, o in zip(*parameters)]
         elif self.mode == 'QUAT':
             points = [quat_rotation(m, x, y, z, w) for m, x, y, z, w in zip(*parameters)]
-        
+
         self.outputs['vertices'].sv_set(points)
 
 

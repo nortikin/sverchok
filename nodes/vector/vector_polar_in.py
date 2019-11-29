@@ -43,17 +43,18 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'VectorPolarInNode'
     bl_label = 'Vector polar input'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VECTOR_POLAR_IN'
 
 
     rho_: FloatProperty(
         name='rho', description='Rho coordinate', default=0.0, precision=3, update=updateNode)
-    
+
     phi_: FloatProperty(
         name='phi', description='Phi coordinate', default=0.0, precision=3, update=updateNode)
-    
+
     theta_: FloatProperty(
         name='theta', description='Theta coordinate', default=0.0, precision=3, update=updateNode)
-    
+
     z_: FloatProperty(
         name='Z', description='Z coordinate', default=0.0, precision=3, update=updateNode)
 
@@ -87,7 +88,7 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "coordinates", expand=True)
         layout.prop(self, "angles_mode", expand=True)
-    
+
     def process(self):
         if not self.outputs['Vectors'].is_linked:
             return
@@ -107,8 +108,8 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
             result.append(vs)
 
         self.outputs['Vectors'].sv_set(result)
-    
-    
+
+
 def register():
     bpy.utils.register_class(VectorPolarInNode)
 

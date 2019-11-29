@@ -30,7 +30,7 @@ from bpy.props import IntProperty, StringProperty
 import mathutils as mu
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Vector_generate, Matrix_listing
+from sverchok.data_structure import updateNode, Vector_generate
 
 
 """
@@ -104,8 +104,8 @@ class LSystem:
                 count = int(statement.get("count", 1))
                 count_xform = mu.Matrix.Identity(4)
                 for n in range(count):
-                    count_xform *= xform
-                    matrix = base_matrix * count_xform
+                    count_xform @= xform
+                    matrix = base_matrix @ count_xform
 
                     if statement.tag == "call":
                         rule = _pickRule(self._tree, statement.get("rule"))
@@ -152,7 +152,7 @@ class LSystem:
             faces_out.append(list(range(nring)))
             for i, m in enumerate(mats):
                 for j, v in enumerate(verts[0]):
-                    vout = mu.Matrix(m) * mu.Vector(v)
+                    vout = mu.Matrix(m) @ mu.Vector(v)
                     verts_out.append(vout.to_tuple())
                     vID = j + i*nring
                     # rings
@@ -220,44 +220,44 @@ def _parseXform(xform_string):
             # Translation
             if command == 'tx':
                 x, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Translation(mu.Vector((x, 0, 0)))
+                matrix @= mu.Matrix.Translation(mu.Vector((x, 0, 0)))
             elif command == 'ty':
                 y, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Translation(mu.Vector((0, y, 0)))
+                matrix @= mu.Matrix.Translation(mu.Vector((0, y, 0)))
             elif command == 'tz':
                 z, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Translation(mu.Vector((0, 0, z)))
+                matrix @= mu.Matrix.Translation(mu.Vector((0, 0, z)))
             elif command == 't':
                 x, t = eval(tokens[t]), t + 1
                 y, t = eval(tokens[t]), t + 1
                 z, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Translation(mu.Vector((x, y, z)))
+                matrix @= mu.Matrix.Translation(mu.Vector((x, y, z)))
 
             # Rotation
             elif command == 'rx':
                 theta, t = _radians(eval(tokens[t])), t + 1
-                matrix *= mu.Matrix.Rotation(theta, 4, 'X')
+                matrix @= mu.Matrix.Rotation(theta, 4, 'X')
 
             elif command == 'ry':
                 theta, t = _radians(eval(tokens[t])), t + 1
-                matrix *= mu.Matrix.Rotation(theta, 4, 'Y')
+                matrix @= mu.Matrix.Rotation(theta, 4, 'Y')
             elif command == 'rz':
                 theta, t = _radians(eval(tokens[t])), t + 1
-                matrix *= mu.Matrix.Rotation(theta, 4, 'Z')
+                matrix @= mu.Matrix.Rotation(theta, 4, 'Z')
 
             # Scale
             elif command == 'sx':
                 x, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Scale(x, 4, mu.Vector((1.0, 0.0, 0.0)))
+                matrix @= mu.Matrix.Scale(x, 4, mu.Vector((1.0, 0.0, 0.0)))
             elif command == 'sy':
                 y, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Scale(y, 4, mu.Vector((0.0, 1.0, 0.0)))
+                matrix @= mu.Matrix.Scale(y, 4, mu.Vector((0.0, 1.0, 0.0)))
             elif command == 'sz':
                 z, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Scale(z, 4, mu.Vector((0.0, 0.0, 1.0)))
+                matrix @= mu.Matrix.Scale(z, 4, mu.Vector((0.0, 0.0, 1.0)))
             elif command == 'sa':
                 v, t = eval(tokens[t]), t + 1
-                matrix *= mu.Matrix.Scale(v, 4)
+                matrix @= mu.Matrix.Scale(v, 4)
             elif command == 's':
                 x, t = eval(tokens[t]), t + 1
                 y, t = eval(tokens[t]), t + 1
@@ -265,8 +265,8 @@ def _parseXform(xform_string):
                 mx = mu.Matrix.Scale(x, 4, mu.Vector((1.0, 0.0, 0.0)))
                 my = mu.Matrix.Scale(y, 4, mu.Vector((0.0, 1.0, 0.0)))
                 mz = mu.Matrix.Scale(z, 4, mu.Vector((0.0, 0.0, 1.0)))
-                mxyz = mx*my*mz
-                matrix *= mxyz
+                mxyz = mx@my@mz
+                matrix @= mxyz
 
             else:
                 err_str = "unrecognized transform: '%s' at position %d in '%s'" % (command, t, xform_string)
@@ -291,6 +291,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGenerativeArtNode'
     bl_label = 'Generative Art'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_GENERATIVE_ART'
 
     def updateNode_filename(self, context):
         self.process_node(context)
@@ -404,14 +405,14 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs.remove(socket)
 
     def process(self):
-      
+
         self.read_xml()
         self.make_sockets()
         self.xml_text_format()
 
         if not hasattr(self, 'xml_tree'):
             return
-        
+
         if not any(output.is_linked for output in self.outputs):
             return
 
@@ -447,7 +448,7 @@ class SvGenerativeArtNode(bpy.types.Node, SverchCustomTreeNode):
                             faces_out.append(f)
 
                 mat_sublist = []
-        
+
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
         self.outputs['Faces'].sv_set(faces_out)

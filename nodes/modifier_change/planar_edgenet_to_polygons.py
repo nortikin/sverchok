@@ -336,6 +336,7 @@ class SvPlanarEdgenetToPolygons(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvPlanarEdgenetToPolygons'
     bl_label = 'Planar edgenet to polygons'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_PLANAR_EDGES_TO_POLY'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vers')

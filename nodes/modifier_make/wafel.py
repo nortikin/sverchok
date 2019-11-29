@@ -40,6 +40,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvWafelNode'
     bl_label = 'Wafel'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_WAFEL'
 
 
     def ext_draw_checking(self, context):

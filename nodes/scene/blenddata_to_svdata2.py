@@ -28,6 +28,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvObjectToMeshNodeMK2'
     bl_label = 'Object ID Out MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OBJECT_ID_OUT'
 
     modifiers: BoolProperty(name='Modifiers', default=False, update=updateNode)
 

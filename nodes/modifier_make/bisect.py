@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty
 import bmesh
-from mathutils import Vector
+from mathutils import Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Matrix_generate, Vector_generate
@@ -61,7 +61,7 @@ def bisect(cut_me_vertices, cut_me_edges, pp, pno, outer, inner, fill):
             bm, edges=[e for e in res['geom_cut'] if isinstance(e, bmesh.types.BMEdge)]
         )
         bmesh.ops.edgeloop_fill(bm, edges=fres['edges'])
-    
+
     edges = []
     faces = []
     bm.verts.index_update()
@@ -85,6 +85,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvBisectNode'
     bl_label = 'Bisect'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_BISECT'
 
     inner: BoolProperty(
         name='inner', description='clear inner',
@@ -95,7 +96,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     fill: BoolProperty(
-        name='fill', description='Fill cuts', 
+        name='fill', description='Fill cuts',
         default=False, update=updateNode)
 
     slice_mode: BoolProperty(
@@ -122,7 +123,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        if not all([s.is_linked for s in self.inputs]):
+        if not all([s.is_linked for s in self.inputs[:2]]):
             return
 
         if not self.outputs['vertices'].is_linked:
@@ -130,7 +131,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
 
         verts_ob = Vector_generate(self.inputs['vertices'].sv_get())
         edg_pols = self.inputs['edg_pol'].sv_get()
-        cut_mats = self.inputs['cut_matrix'].sv_get()
+        cut_mats = self.inputs['cut_matrix'].sv_get(default=[Matrix()])
         verts_out = []
         edges_out = []
         polys_out = []
@@ -147,7 +148,7 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
                     verts_out.append(res[0])
                     edges_out.append(res[1])
                     polys_out.append(res[2])
-        
+
         else:
 
             for idx, (obj) in enumerate(zip(verts_ob, edg_pols)):
@@ -155,13 +156,13 @@ class SvBisectNode(bpy.types.Node, SverchCustomTreeNode):
                 cut_mat = cut_mats[idx if idx < len(cut_mats) else -1]
                 pp = cut_mat.to_translation()
                 pno = Vector((0.0, 0.0, 1.0)) @ cut_mat.to_3x3().transposed()
-        
+
                 res = bisect(obj[0], obj[1], pp, pno, self.outer, self.inner, self.fill)
                 if not res:
                     return
                 verts_out.append(res[0])
                 edges_out.append(res[1])
-                polys_out.append(res[2])            
+                polys_out.append(res[2])
 
 
         self.outputs['vertices'].sv_set(verts_out)

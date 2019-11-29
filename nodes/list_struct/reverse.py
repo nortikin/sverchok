@@ -28,6 +28,7 @@ class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListReverseNode'
     bl_label = 'List Reverse'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_REVERSE'
 
     level: IntProperty(name='level_to_Reverse', default=2, min=1, update=updateNode)
     typ: StringProperty(name='typ', default='')

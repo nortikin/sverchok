@@ -29,7 +29,7 @@ class SvLimitedDissolveMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Limited Dissolve MK2 '''
     bl_idname = 'SvLimitedDissolveMK2'
     bl_label = 'Limited Dissolve MK2'
-    bl_icon = 'OUTLINER_OB_EMPTY'
+    bl_icon = 'MOD_DECIM'
 
     angle: FloatProperty(default=5.0, min=0.0, update=updateNode)
     use_dissolve_boundaries: BoolProperty(update=updateNode)

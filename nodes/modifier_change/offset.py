@@ -37,15 +37,16 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvOffsetNode'
     bl_label = 'Offset'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_OFFSET'
 
     offset: FloatProperty(
         name='offset', description='distance of offset',
         default=0.04, update=updateNode)
-    
+
     nsides: IntProperty(
         name='nsides', description='number of sides',
         default=1, min=1, max=64, update=updateNode)
-    
+
     radius: FloatProperty(
         name='radius', description='radius of inset',
         default=0.04, min=0.0001, update=updateNode)
@@ -103,7 +104,7 @@ class SvOffsetNode(bpy.types.Node, SverchCustomTreeNode):
 
     @staticmethod
     def a_rot(ang, rp, axis, q):
-        return (Matrix.Rotation(ang, 3, axis) * (q - rp)) + rp
+        return (Matrix.Rotation(ang, 3, axis) @ (q - rp)) + rp
 
     # #################
     # opp -     offset amount

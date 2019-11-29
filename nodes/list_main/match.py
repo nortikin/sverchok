@@ -39,6 +39,7 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'ListMatchNode'
     bl_label = 'List Match'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_LIST_MATCH'
 
     level: IntProperty(
         name='level', description='Choose level of data (see help)',
@@ -88,8 +89,8 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
         # socket handling
         if self.inputs[-1].links:
             name = 'Data '+str(len(self.inputs))
-            self.inputs.new('SvStringsSocket', name, name)
-            self.outputs.new('SvStringsSocket', name, name)
+            self.inputs.new('SvStringsSocket', name)
+            self.outputs.new('SvStringsSocket', name)
         else:
             while len(self.inputs) > 2 and not self.inputs[-2].links:
                 self.inputs.remove(self.inputs[-1])
@@ -104,7 +105,7 @@ class ListMatchNode(bpy.types.Node, SverchCustomTreeNode):
                 count_inputs += 1
                 if type(socket.links[0].from_socket) != type(self.outputs[socket.name]):
                     self.outputs.remove(self.outputs[socket.name])
-                    self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name, socket.name)
+                    self.outputs.new(socket.links[0].from_socket.bl_idname, socket.name)
                     self.outputs.move(len(self.outputs)-1, idx)
 
     def process(self):

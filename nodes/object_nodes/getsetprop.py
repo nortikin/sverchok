@@ -149,6 +149,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvGetPropNode'
     bl_label = 'Get property'
     bl_icon = 'FORCE_VORTEX'
+    sv_icon = 'SV_PROP_GET'
 
     bad_prop: BoolProperty(default=False)
 
@@ -190,6 +191,7 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSetPropNode'
     bl_label = 'Set property'
     bl_icon = 'FORCE_VORTEX'
+    sv_icon = 'SV_PROP_SET'
 
     ok_prop: BoolProperty(default=False)
     bad_prop: BoolProperty(default=False)

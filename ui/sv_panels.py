@@ -90,7 +90,7 @@ class Sv3DViewObjInUpdater(bpy.types.Operator, object):
             # self.speed = 1 / context.node.updateRate
 
             wm = context.window_manager
-            self._timer = wm.event_timer_add(self.speed, context.window)
+            self._timer = wm.event_timer_add(self.speed, window=context.window)
             wm.modal_handler_add(self)
 
         if type_op == 'end':
@@ -131,7 +131,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
             if context.scene.SvShowIn3D_active:
                 row.operator(OP, text='Stop live update', icon='CANCEL').mode = 'end'
             else:
-                row.operator(OP, text='Start live update', icon='EDIT').mode = 'start'
+                row.operator(OP, text='Start live update', icon='EDITMODE_HLT').mode = 'start'
 
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -281,7 +281,7 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
     bl_label = "SV " + version_and_sha
     bl_space_type = 'NODE_EDITOR'
     bl_region_type = 'UI'
-    # bl_category = 'Sverchok'
+    bl_category = 'Sverchok'
     use_pin = True
 
     @classmethod
@@ -303,7 +303,7 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
             if profile.have_gathered_stats():
                 row = profile_col.row(align=True)
                 row.operator("node.sverchok_profile_dump", text="Dump data", icon="TEXT")
-                row.operator("node.sverchok_profile_save", text="Save data", icon="SAVE_AS")
+                row.operator("node.sverchok_profile_save", text="Save data", icon="FILE_TICK")
                 profile_col.operator("node.sverchok_profile_reset", text="Reset data", icon="X")
 
     def draw_interaction_template(self, layout):

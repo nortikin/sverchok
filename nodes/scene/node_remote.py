@@ -37,6 +37,7 @@ class SvNodePickup(bpy.types.Operator):
 
     bl_idname = "node.pickup_active_node"
     bl_label = "Node Pickup"
+    
     # bl_options = {'REGISTER', 'UNDO'}
 
     nodegroup_name: bpy.props.StringProperty(default='')
@@ -53,6 +54,7 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvNodeRemoteNode'
     bl_label = 'Node Remote (Control)'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_REMOTE_NODE'
 
     activate: BoolProperty(
         default=True,
