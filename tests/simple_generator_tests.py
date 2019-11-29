@@ -48,5 +48,6 @@ class NGonNodeTest(NodeProcessTestCase):
         #info("NGon: %s", data)
 
         expected_data = [[(1.0, 0.0, 0), (0.30901699437494745, 0.9510565162951535, 0), (-0.8090169943749473, 0.5877852522924732, 0), (-0.8090169943749476, -0.587785252292473, 0), (0.30901699437494723, -0.9510565162951536, 0)]]
-        self.assert_output_data_equals("Vertices", expected_data)
-
+        # self.assert_output_data_equals("Vertices", expected_data)
+        vertex_data = self.get_output_data("Vertices")
+        self.assert_sverchok_data_equal(vertex_data, expected_data, precision=6)
