@@ -324,18 +324,39 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         # equip wave_data with time domain, and rescale 
         if num_channels == 2:
             """
-            GL_LINES  indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
+            GL_LINES    indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
+                        wave_data = [A0, A1, B0, B1, C0, C1....] 
+                        time_data = [0.0, 0.0, 0.1, 0.1, 0.2, 0.2, 0.3, 0.4....)
+            
+            2 different waveforms come in, interwoven.
+            - lines must be drawn between A0 B0, B0 C0, C0 D0,....
+            - lines must be drawn between A1 B1, B1 C1, C1 D1,..
+            - to draw 2d data, separated the interweave we add a second dimension to the array:
+                (0.0, A0), (0.0, A1), (0.1, B0), (0.1, B1), (0.2, C0), (0.2, C1),.....
+
+
+                    C0
+            A0          D0 
+                B0
+
+
+            A1          D1
+                B1  C1 
+
+            0.0 0.1 0.2 0.3
+
             """
             
             # edges..
+            samples_per_channel = unit_data.size
+
             ext = []
             gather = ext.extend
-            _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, num_frames, 2)]
+            _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, samples_per_channel, 2)]
             data.indices = ext
             
-            # vertex data
-            time_data = np.linspace(0, w, num_frames/2, endpoint=True).repeat(2)
-            data.verts = np.vstack([time_data, unit_data]).T.tolist()
+            time_data = np.linspace(0, w, samples_per_channel/2, endpoint=True).repeat(2)
+            data.verts = (np.vstack([time_data, unit_data]).T + [x , y]).tolist()
         else:
             """
             GL_LINE_STRIP   no indices needed
@@ -466,14 +487,20 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         """
         if self.multi_channel_sockets:
             data = self.inputs[0].sv_get()
+            # print(f'multi channel socket = True, (num_channels, len(data)) == ({self.num_channels}, {len(data)})')
             data = self.interleave(*data) if (self.num_channels, len(data)) == (2, 2) else data[0]
         else:
             if self.num_channels == 2:
                 data_left = self.inputs[0].sv_get()[0]
                 data_right = self.inputs[1].sv_get()[0]
+                len_left = len(data_left)
+                len_right = len(data_right)
+                # print(f'multi channel socket = False, num_channels = 2, (len(data_left), len(data_right)) == ({len_left}, {len_right})')
                 data = self.interleave(data_left, data_right)
             elif self.num_channels == 1:
                 data = self.inputs[0].sv_get()[0]
+                # print(f'multi channel socket = False, num_channels = 1, (len(data),) == ({len(data)}, )')
+
 
         # at this point data is a single list.        
         self.sample_data_length = len(data)
