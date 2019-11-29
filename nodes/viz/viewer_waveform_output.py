@@ -352,7 +352,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
             ext = []
             gather = ext.extend
-            _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, samples_per_channel, 2)]
+            _ = [gather(((d, d+2), (d+1, d+3))) for d in range(0, samples_per_channel-2, 2)]
             data.indices = ext
             
             time_data = np.linspace(0, w, samples_per_channel/2, endpoint=True).repeat(2)
