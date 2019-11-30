@@ -359,20 +359,16 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 (0.0, A0), (0.0, A1), (0.1, B0), (0.1, B1), (0.2, C0), (0.2, C1),.....
 
 
-                    C0
-            A0          D0 
-                B0
+                    C0,
+            A0.    .   'D0 
+               'B0'
 
 
-            A1          D1
-                B1  C1 
+            A1-.       -D1
+                B1--C1' 
 
             0.0 0.1 0.2 0.3
 
-
-            TODO, place and scale the graphs correctly.
-                - first scale
-                - then offset
 
             """
             h *= 2
