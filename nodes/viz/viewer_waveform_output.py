@@ -264,9 +264,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     # ui props
     display_sampler_config: bpy.props.BoolProperty(default=False, name="Display Sampler Config", update=updateNode)
     display_graph_config: bpy.props.BoolProperty(default=False, name="Display Graph Config", update=updateNode)
-    scaleFactor: bpy.props.FloatProperty(default=10, min=0.1, name='scale factor')
-    offset: bpy.props.FloatVectorProperty(default=(0.0, 0.0), size=2, name='offset', update=updateNode)
-    pitch: bpy.props.FloatVectorProperty(default=(20.0, 20.0), size=2, name='pitch', update=updateNode)
 
     graph_width: bpy.props.IntProperty(name='w', default=220, min=1, update=updateNode)
     graph_height: bpy.props.IntProperty(name='h', default=220, min=1, update=updateNode)
@@ -319,11 +316,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             box2 = col.box()
             box_col2 = box2.column(align=True)
 
-            # box_col2.prop(self, 'scaleFactor')
-            row1 = box_col2.row()
-            row1.prop(self, 'offset')
-            row2 = box_col2.row()
-            row2.prop(self, 'pitch')
             row3 = box_col2.row()
             row3.prop(self, 'graph_width', text='W')
             row3.prop(self, 'graph_height', text='H')
@@ -439,6 +431,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             h = self.graph_height
             dims = (w, h)
             loc = (x, y)
+            config.loc = loc
+            config.scale = scale
 
             grid_data = gridshader(dims, loc, palette, self.num_channels)
 
@@ -446,13 +440,6 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             wave_data = self.get_wavedata(raw=False)
             wave_params = self.get_waveparams()
             wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, dims, loc)
-
-            config.loc = loc
-            config.scale = scale
-            config.grid = grid_data
-            config.scaleFactor = self.scaleFactor
-            config.offset = self.offset[:]
-            config.pitch = self.pitch[:]
             
             # GRAPH PART - Background
             config.background_shader = get_2d_smooth_color_shader()
