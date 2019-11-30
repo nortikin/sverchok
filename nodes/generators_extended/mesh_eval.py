@@ -405,7 +405,7 @@ class SvMeshEvalNode(bpy.types.Node, SverchCustomTreeNode):
             masks = self.groups_to_masks(groups, len(verts))
             for name in masks.keys():
                 if name in result_masks_dict:
-                    result_masks_dict[name].add(masks[name])
+                    result_masks_dict[name].append(masks[name])
                 else:
                     result_masks_dict[name] = [masks[name]]
 
