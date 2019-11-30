@@ -433,7 +433,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             geom = lambda: None
             palette = lambda: None
 
-            palette.high_colour = (0.2, 0.2, 0.2, 1.0)
+            palette.high_colour = (0.13, 0.13, 0.13, 1.0)
             palette.low_colour = (0.1, 0.1, 0.1, 1.0)
 
             x, y, scale, multiplier = self.get_drawing_attributes()
