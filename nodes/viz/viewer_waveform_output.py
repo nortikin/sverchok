@@ -161,6 +161,12 @@ def get_2d_uniform_color_shader():
 def get_2d_smooth_color_shader():
     return gpu.shader.from_builtin('2D_SMOOTH_COLOR')
 
+signed_digital_voltage_max = {
+    8: 127,
+    16: 32767,
+    24: 256**3,
+    32: 256**4
+}
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     
@@ -180,6 +186,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             bitness | range of valid values     | signed | sum
             --------+---------------------------+--------+
             8  bit  | 0 to 255                  | no     | 256
+            8  bit  | -128 to 127               | yes    | 256
             16 bit  | -32768 to 32767           | yes    | 256**2
             24 bit  | -8388608 to 8388608       | yes    | 256**3
             32 bit  | -2147483648 to 2147483648 | yes    | 256**4
@@ -322,7 +329,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row3.prop(self, 'graph_height', text='H')
 
     def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
+        """
+        equip wave_data with time domain, and rescale and translate (offset) 
+        """
 
+        voltage_max = signed_digital_voltage_max.get(int(self.bits))
         num_channels = wave_params[0]
         num_frames = wave_params[3]
         w, h = dims
@@ -333,9 +344,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         data.verts = None 
         data.indices = None
     
-        unit_data = np.array(wave_data)  # rescale/recomp into 2d data for shader
+        unit_data = np.array(wave_data)
 
-        # equip wave_data with time domain, and rescale 
         if num_channels == 2:
             """
             GL_LINES    indices = [0 2] [1 3] [2 4] [3 5] [4 6] [5 7]
@@ -364,24 +374,23 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 - first scale
                 - then offset
 
-                y1 = int(1/4 * h)
-                y3 = int(3/4 * h)
-
-                # [x] interweaved UNIT_DATA
-                A1 = np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4])
-                
-                # [ ] rescale
-                # this will depend on bitrate, and whether there is normalizing
-
-                # [x] offset
-                B1 = np.array([y1, y3])
-                OFFSET = np.tile(B1, int(A1.size / 2))
-
-                UNIT_DATA = A1 + OFFSET
-
-
-
             """
+            h *= 2
+            y1 = -int(1 / 4 * h)
+            y3 = -int(3 / 4 * h)
+            h2 = -int(h/2)
+
+            # [x] interweaved UNIT_DATA
+            A1 = unit_data   # np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4])
+                
+            # [x] rescale | depends on bitrate, and whether there is normalizing
+            A1_AMPED = A1 * (h2 / voltage_max)
+
+            # [x] offset (translate: LEFT=TOP, RIGHT=BOTTOM)
+            B1 = np.array([y1, y3])
+            OFFSET = np.tile(B1, int(A1.size / 2))
+            unit_data = A1_AMPED + OFFSET
+
             samples_per_channel = unit_data.size
 
             # edges..
@@ -397,8 +406,16 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             """
             GL_LINE_STRIP   no indices needed
             """
-    
+            
+            h2 = -int(h/2)    
             time_data = np.linspace(0, w, num_frames, endpoint=True)
+            A1 = unit_data
+            # [ ] rescale
+            A1_AMPED = A1 * (h2 / voltage_max)
+            # [ ] offset
+            OFFSET = h2
+            unit_data = A1_AMPED + OFFSET    
+
             data.verts = (np.vstack([time_data, unit_data]).T + [x , y]).tolist()
     
         return data
