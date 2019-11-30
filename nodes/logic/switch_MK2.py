@@ -18,13 +18,16 @@ def switch_data(state, a, b):
     """
     Merge data from a and b inputs according bool value(s) of state input
     :param state: list of bool values or numpy bool array
-    :param a: any SV object like: list of values, list of vectors, matrix, Blender object, numpy array, None
-    :param b: any SV object like: list of values, list of vectors, matrix, Blender object, numpy array, None
+    :param a: any SV object like: list of values, list of vectors, matrix, Blender object, numpy array, None, []
+    :param b: any SV object like: list of values, list of vectors, matrix, Blender object, numpy array, None, []
     :return: merged list of a and b inputs
     """
-    if any([isinstance(a, np.ndarray), isinstance(b, np.ndarray)]) and \
-            (any([a is None, b is None]) or
-             any([hasattr(a, '__iter__') and len(a) == 1, hasattr(b, '__iter__') and len(b) == 1])):
+    a = None if hasattr(a, '__iter__') and len(a) == 0 else a
+    b = None if hasattr(b, '__iter__') and len(b) == 0 else b
+    if all([isinstance(a, np.ndarray), isinstance(b, np.ndarray)]) or \
+            (any([isinstance(a, np.ndarray), isinstance(b, np.ndarray)]) and
+                (any([a is None, b is None]) or
+                 any([hasattr(a, '__iter__') and len(a) == 1, hasattr(b, '__iter__') and len(b) == 1]))):
         return switch_data_np(state, a, b)
 
     max_len = max([len(x) for x in [state, a, b] if hasattr(x, '__iter__')])
@@ -40,11 +43,13 @@ def switch_data(state, a, b):
         if b is None:
             return list(compress(iter_a, iter_s))
         elif a is None:
-            return list(compress(iter_b, iter_s))
+            return list(compress(iter_b, (not s for s in iter_s)))
         else:
             return a if state[0] else b
     else:
-        return []
+        a = [] if a is None else a
+        b = [] if b is None else b
+        return a if state[0] else b
 
 
 def switch_data_np(states, a, b):
@@ -57,8 +62,7 @@ def switch_data_np(states, a, b):
     :return: merged numpy array
     """
     max_len = max([ar.shape[0] for ar in [a, b] if isinstance(ar, np.ndarray)] + [len(states)])
-    states = np.concatenate((np.array(states), np.full(max_len - len(states), states[-1]))) \
-        if len(states) < max_len else states
+    states = np.concatenate((np.array(states, dtype=bool), np.full(max_len - len(states), bool(states[-1]))))
     if isinstance(a, np.ndarray):
         a = a if a.shape[0] == max_len else np.concatenate((a, np.full(max_len - a.shape[0], a[-1])))
     elif hasattr(a, '__iter__'):
@@ -69,7 +73,7 @@ def switch_data_np(states, a, b):
         b = np.full(max_len, b[-1])
 
     if a is None or b is None:
-        return np.compress(states, a) if b is None else np.compress(states, b)
+        return np.compress(states, a) if b is None else np.compress(~states, b)
     elif isinstance(a, np.ndarray) and isinstance(b, np.ndarray):
         return np.where(states, a, b)
     else:
