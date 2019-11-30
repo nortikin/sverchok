@@ -460,6 +460,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             else:
                 config.line_batch = batch_for_shader(config.line_shader, 'LINE_STRIP', {"pos": coords})
 
+            # -------------- final draw data accumulation and pass to callback ------------------
+
             draw_data = {
                 'mode': 'custom_function_context',
                 'tree_name': self.id_data.name[:],
