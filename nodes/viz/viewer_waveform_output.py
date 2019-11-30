@@ -406,9 +406,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             h2 = -int(h/2)    
             time_data = np.linspace(0, w, num_frames, endpoint=True)
             A1 = unit_data
-            # [ ] rescale
+            # [x] rescale
             A1_AMPED = A1 * (h2 / voltage_max)
-            # [ ] offset
+            # [x] offset
             OFFSET = h2
             unit_data = A1_AMPED + OFFSET    
 
