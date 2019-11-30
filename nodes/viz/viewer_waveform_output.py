@@ -320,6 +320,12 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             row3.prop(self, 'graph_width', text='W')
             row3.prop(self, 'graph_height', text='H')
 
+    def generate_tick_data(self, wave_data, dims, loc):
+        """
+        The scope displays time-ticks based on a multiple of 512 frames
+        """
+        return []
+
     def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
         """
         equip wave_data with time domain, and rescale and translate (offset) 
@@ -440,7 +446,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             wave_data = self.get_wavedata(raw=False)
             wave_params = self.get_waveparams()
             wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, dims, loc)
-            
+            scope_tick_data = self.generate_tick_data(wave_data, dims, loc)
+
             # GRAPH PART - Background
             config.background_shader = get_2d_smooth_color_shader()
             config.background_batch = batch_for_shader(
