@@ -229,7 +229,13 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         name='num channels', default=1, min=1, max=2,
         description='num channels interleaved', update=updateNode)
 
-    bits: bpy.props.IntProperty(name='bit rate', default=16, min=4, max=192)
+    bitrates = [(k, k, '', i) for i, k in enumerate("8 16 24 32".split())]
+    
+    bits: bpy.props.EnumProperty(
+        items=bitrates,
+        description="standard bitrate options",
+        default="16", update=updateNode
+    )
 
     sample_rate: bpy.props.IntProperty(
         name="sample rate", min=8000, default=48000)
@@ -274,7 +280,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             
             box_col.prop(self, 'num_channels')
             box_col.prop(self, 'sample_rate')
-            box_col.prop(self, 'bits')
+            box_row1 = box_col.row()
+            box_row1.prop(self, 'bits', expand=True)
             
             box_col.separator()
             row1 = box_col.row()
@@ -506,7 +513,8 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         # :    2 = 16bit, (int values between +-32767)
         # :    4 = 32bit?
         num_frames = self.num_channels * self.sample_data_length
-        return (self.num_channels, int(self.bits / 8), self.sample_rate, num_frames, 'NONE', 'NONE')
+        bitrate = int(int(self.bits) / 8)
+        return (self.num_channels, bitrate, self.sample_rate, num_frames, 'NONE', 'NONE')
 
     def get_wavedata(self, raw=True):
         """
