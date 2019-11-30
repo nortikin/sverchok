@@ -154,6 +154,13 @@ class SvWaveformViewerOperatorDP(bpy.types.Operator, NodeTreeGetter):
         wm.fileselect_add(self)
         return {'RUNNING_MODAL'}
 
+# place here (out of node) to supress warnings during headless testing. i think.
+def get_2d_uniform_color_shader():
+    return gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+
+def get_2d_smooth_color_shader():
+    return gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+
 
 class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     
@@ -345,6 +352,28 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
             0.0 0.1 0.2 0.3
 
+
+            TODO, place and scale the graphs correctly.
+                - first scale
+                - then offset
+
+                y1 = int(1/4 * h)
+                y3 = int(3/4 * h)
+
+                # [x] interweaved UNIT_DATA
+                A1 = np.array([0, 0, 1, 1, 2, 2, 3, 3, 4, 4])
+                
+                # [ ] rescale
+                # this will depend on bitrate, and whether there is normalizing
+
+                # [x] offset
+                B1 = np.array([y1, y3])
+                OFFSET = np.tile(B1, int(A1.size / 2))
+
+                UNIT_DATA = A1 + OFFSET
+
+
+
             """
             samples_per_channel = unit_data.size
 
@@ -406,7 +435,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             config.pitch = self.pitch[:]
             
             # GRAPH PART - Background
-            config.background_shader = gpu.shader.from_builtin('2D_SMOOTH_COLOR')
+            config.background_shader = get_2d_smooth_color_shader()
             config.background_batch = batch_for_shader(
                 config.background_shader, 'TRIS', {
                 "pos": grid_data.background_coords, 
@@ -417,7 +446,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             # LINE PART
             coords = wave_data_processed.verts
             indices = wave_data_processed.indices
-            config.line_shader = gpu.shader.from_builtin('2D_UNIFORM_COLOR')
+            config.line_shader = get_2d_uniform_color_shader()
 
             if indices:
                 config.line_batch = batch_for_shader(config.line_shader, 'LINES', {"pos": coords}, indices=indices)
