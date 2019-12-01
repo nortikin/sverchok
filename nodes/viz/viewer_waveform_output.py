@@ -107,8 +107,11 @@ def advanced_grid_xy(context, args):
     ## background    
     config.background_batch.draw(config.background_shader)
     
-    ## background grid
-    ## config.grid_line_batch.draw(config.grid_line_shader)
+    ## background grid / ticks
+    if hasattr(config, 'tick_shader'):
+        config.tick_shader.bind()
+        config.tick_shader.uniform_float("color", (0.4, 0.4, 0.9, 1))
+        config.tick_batch.draw(config.tick_shader)
 
     ## line graph
     config.line_shader.bind()
@@ -328,19 +331,35 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         
         """
 
+        tick_data = lambda: None
+        tick_data.verts = []
+        tick_data.indices = []
         w, h = dims
         x, y = loc
 
-        unit_data = np.array(wave_data)
-
         if self.num_channels == 2:
-            samples_per_channel = int(unit_data.size / 2)
-            time_data = np.linspace(0, w, samples_per_channel, endpoint=True)
-        else:
-            num_frames = unit_data.size
-            time_data = np.linspace(0, w, num_frames, endpoint=True)
+            h *= 2
 
-        return []
+        th = h / 8
+        h2 = 0.5 * h
+
+        unit_data = np.array(wave_data)
+        samples_per_channel = int(unit_data.size / 2) if (self.num_channels == 2) else unit_data.size
+        time_data = np.linspace(0, w, samples_per_channel, endpoint=True)
+
+        # time_data at this point will provide a tick for each sample (mono, or stereo..)
+        if (samples_per_channel // 128) > 1:
+            ticks = time_data[::128].copy()
+            tick_x = ticks.repeat(2)
+            Y1 = np.array([th, -th])
+            tick_y = np.tile(Y1, int(tick_x.shape[0] /2))
+            np_verts = np.vstack([tick_x, tick_y]).T + [x , y - h2]
+            tick_data.verts = np_verts.tolist()
+
+            indices = np.arange(np_verts.shape[0])
+            tick_data.indices = indices.reshape((-1, 2)).tolist()
+
+        return tick_data
 
     def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
         """
@@ -420,8 +439,10 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             h2 = -int(h/2)    
             time_data = np.linspace(0, w, num_frames, endpoint=True)
             A1 = unit_data
+
             # [x] rescale
             A1_AMPED = A1 * (h2 / voltage_max)
+
             # [x] offset
             OFFSET = h2
             unit_data = A1_AMPED + OFFSET    
@@ -472,6 +493,11 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
                 "color": grid_data.background_colors},
                 indices=grid_data.background_indices
             )
+
+            if scope_tick_data.verts:
+                params, kw_params = (('LINES', {"pos": scope_tick_data.verts}), {"indices": scope_tick_data.indices})
+                config.tick_shader = get_2d_uniform_color_shader()
+                config.tick_batch = batch_for_shader(config.tick_shader, *params, **kw_params)
 
             # LINE PART
             coords = wave_data_processed.verts
