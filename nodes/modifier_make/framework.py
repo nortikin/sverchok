@@ -43,21 +43,37 @@ def is_in_segment(v1, v2, point, tolerance=1e-6):
         return False
     return True
 
-def make_verts_axis(v, Z, make_basis, offset, step, count):
+def make_verts_axis(v, Z, make_basis, offset, step, count, length):
     result = []
-    v = Vector(v)
+    v0 = v = Vector(v)
     has_offset = abs(offset) > 1e-6
     if make_basis or not has_offset:
         result.append(v)
     if has_offset:
         v = v + offset*Z
         result.append(v)
-    for i in range(count):
-        v = v + step*Z
-        result.append(v)
-    if make_basis or not has_offset:
-        v = v + (step - offset)*Z
-        result.append(v)
+    if count is not None:
+        for i in range(count):
+            v = v + step*Z
+            result.append(v)
+    else:
+        L = offset
+        while True:
+            v = v + step*Z
+            L += step
+            if L > length:
+                break
+            result.append(v)
+
+    if count is not None:
+        if make_basis or not has_offset:
+            v = v + (step - offset)*Z
+            result.append(v)
+    else:
+        n = L // step
+        if make_basis: # and n*step < L:
+            v = v0 + length*Z
+            result.append(v)
     return result
 
 def make_verts_curve(v, curve):
@@ -135,11 +151,17 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1, default = 10,
             update = updateNode)
 
-    def update_z_mode(self, context):
+    length : FloatProperty(name = "Length",
+            description = "Construction height / length",
+            min = 0, default = 10,
+            update = updateNode)
+
+    def update_mode(self, context):
         self.inputs['Offset'].hide_safe = self.z_mode != 'AXIS'
         self.inputs['Step'].hide_safe = self.z_mode != 'AXIS'
-        self.inputs['Count'].hide_safe = self.z_mode != 'AXIS'
+        self.inputs['Count'].hide_safe = self.z_mode != 'AXIS' or self.len_mode != 'COUNT'
         self.inputs['Curve'].hide_safe = self.z_mode == 'AXIS'
+        self.inputs['Length'].hide_safe = self.len_mode != 'LENGTH'
         updateNode(self, context)
 
     z_modes = [
@@ -151,7 +173,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             description = "Third dimension generation mode",
             default = "AXIS",
             items = z_modes,
-            update = update_z_mode)
+            update = update_mode)
 
     axes = [
         ("X", "X", "X axis", 1),
@@ -163,6 +185,17 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             default = "Z",
             items = axes, update=updateNode)
 
+    len_modes = [
+            ("COUNT", "Count", "Specify vertices count", 0),
+            ("LENGTH", "Length", "Specify edges length", 1)
+        ]
+
+    len_mode : EnumProperty(name = "Length mode",
+            description = "How vertices count is specified",
+            default = 'COUNT',
+            items = len_modes,
+            update = update_mode)
+
     make_basis : BoolProperty(name = "Basis",
             description = "Always make baseline vertices (without offset)",
             default = False,
@@ -172,6 +205,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "z_mode", expand=True)
         if self.z_mode == 'AXIS':
             layout.prop(self, "orient_axis", expand=True)
+            layout.prop(self, "len_mode", expand=True)
             layout.prop(self, "make_basis", toggle=True)
 
     def sv_init(self, context):
@@ -183,12 +217,13 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'NConnections').prop_name = 'n_connections'
         self.inputs.new('SvStringsSocket', 'MaxRho').prop_name = 'max_rho'
         self.inputs.new('SvStringsSocket', 'Count').prop_name = 'count'
+        self.inputs.new('SvStringsSocket', 'Length').prop_name = 'length'
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Faces')
 
-        self.update_z_mode(context)
+        self.update_mode(context)
 
     def get_orientation_vector(self):
         if self.orient_axis == 'X':
@@ -232,6 +267,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         n_connections_in = self.inputs['NConnections'].sv_get()
         max_rhos_in = self.inputs['MaxRho'].sv_get()
         count_in = self.inputs['Count'].sv_get()
+        length_in = self.inputs['Length'].sv_get()
         curves_in = self.inputs['Curve'].sv_get(default=[[]])
 
         verts_out = []
@@ -244,14 +280,20 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             z_idx = None
 
-        objects = match_long_repeat([verts_in, edges_in, offset_in, step_in, n_connections_in, max_rhos_in, count_in, curves_in])
-        for verts, edges, offsets, steps, n_connections, max_rhos, counts, curves in zip(*objects):
+        objects = match_long_repeat([verts_in, edges_in, offset_in, step_in, n_connections_in, max_rhos_in, count_in, length_in, curves_in])
+        for verts, edges, offsets, steps, n_connections, max_rhos, counts, lengths, curves in zip(*objects):
             nverts = len(verts)
             offsets = cycle_for_length(offsets, nverts)
             steps = cycle_for_length(steps, nverts)
             n_connections = cycle_for_length(n_connections, nverts)
             max_rhos = cycle_for_length(max_rhos, nverts)
-            counts = cycle_for_length(counts, nverts)
+            if self.len_mode == 'COUNT':
+                counts = cycle_for_length(counts, nverts)
+                lengths = [None for i in range(nverts)]
+            else:
+                counts = [None for i in range(nverts)]
+                lengths = cycle_for_length(lengths, nverts)
+
             if curves:
                 curves = cycle_for_length(curves, nverts)
             
@@ -261,7 +303,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             verts_bm = []
             for i, v in enumerate(verts):
                 if self.z_mode == 'AXIS':
-                    verts_line = make_verts_axis(v, Z, self.make_basis, steps[i]*offsets[i], steps[i], counts[i])
+                    verts_line = make_verts_axis(v, Z, self.make_basis, steps[i]*offsets[i], steps[i], counts[i], lengths[i])
                 else:
                     verts_line = make_verts_curve(v, curves[i])
                 verts_line_bm = []
