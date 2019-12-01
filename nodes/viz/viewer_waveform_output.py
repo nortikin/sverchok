@@ -496,8 +496,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def free(self):
         nvBGL.callback_disable(node_id(self))
 
-    def copy(self, node):
-        # reset n_id on copy
+    def sv_copy(self, node):
         self.n_id = ''
 
     def update(self):
