@@ -323,7 +323,23 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
     def generate_tick_data(self, wave_data, dims, loc):
         """
         The scope displays time-ticks based on a multiple of 512 frames
+
+        | . . . . | . . . . | . . . . | . . . . | . . . . 
+        
         """
+
+        w, h = dims
+        x, y = loc
+
+        unit_data = np.array(wave_data)
+
+        if self.num_channels == 2:
+            samples_per_channel = int(unit_data.size / 2)
+            time_data = np.linspace(0, w, samples_per_channel, endpoint=True)
+        else:
+            num_frames = unit_data.size
+            time_data = np.linspace(0, w, num_frames, endpoint=True)
+
         return []
 
     def generate_2d_drawing_data(self, wave_data, wave_params, dims, loc):
@@ -442,7 +458,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
 
             grid_data = gridshader(dims, loc, palette, self.num_channels)
 
-            # this is for drawing graphically only.
+            # this is for drawing only.
             wave_data = self.get_wavedata(raw=False)
             wave_params = self.get_waveparams()
             wave_data_processed = self.generate_2d_drawing_data(wave_data, wave_params, dims, loc)
@@ -461,11 +477,9 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
             coords = wave_data_processed.verts
             indices = wave_data_processed.indices
             config.line_shader = get_2d_uniform_color_shader()
+            params, kw_params = (('LINES', {"pos": coords}), {"indices": indices}) if indices else (('LINE_STRIP', {"pos": coords}), {})
+            config.line_batch = batch_for_shader(config.line_shader, *params, **kw_params)
 
-            if indices:
-                config.line_batch = batch_for_shader(config.line_shader, 'LINES', {"pos": coords}, indices=indices)
-            else:
-                config.line_batch = batch_for_shader(config.line_shader, 'LINE_STRIP', {"pos": coords})
 
             # -------------- final draw data accumulation and pass to callback ------------------
 
