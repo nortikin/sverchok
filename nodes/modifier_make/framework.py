@@ -204,9 +204,9 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "z_mode", expand=True)
+        layout.prop(self, "len_mode", expand=True)
         if self.z_mode == 'AXIS':
             layout.prop(self, "orient_axis", expand=True)
-            layout.prop(self, "len_mode", expand=True)
             layout.prop(self, "make_basis", toggle=True)
 
     def sv_init(self, context):
@@ -269,7 +269,10 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         max_rhos_in = self.inputs['MaxRho'].sv_get()
         count_in = self.inputs['Count'].sv_get()
         length_in = self.inputs['Length'].sv_get()
-        curves_in = self.inputs['Curve'].sv_get(default=[[]])
+        if self.z_mode == 'CURVE':
+            curves_in = self.inputs['Curve'].sv_get()
+        else:
+            curves_in = [[]]
 
         verts_out = []
         edges_out = []
