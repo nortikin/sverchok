@@ -21,9 +21,10 @@ from collections import defaultdict
 import bpy
 import bmesh
 from mathutils import Vector
+from mathutils.geometry import intersect_point_line
 from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
 
-from sverchok.data_structure import match_long_repeat, fullList, updateNode
+from sverchok.data_structure import match_long_repeat, cycle_for_length, updateNode
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.logging import info
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, remove_doubles
@@ -32,7 +33,16 @@ from sverchok.utils.intersect_edges import intersect_edges_3d
 def distance_z(idx, v1, v2):
     return abs(v1[idx] - v2[idx])
 
-def make_verts(v, Z, make_basis, offset, step, count):
+def is_in_segment(v1, v2, point, tolerance=1e-6):
+    closest, percent = intersect_point_line(point, v1, v2)
+    if not (0 <= percent <= 1):
+        return False
+    distance = (point - closest).length
+    if distance > tolerance:
+        return False
+    return True
+
+def make_verts_axis(v, Z, make_basis, offset, step, count):
     result = []
     v = Vector(v)
     has_offset = abs(offset) > 1e-6
@@ -49,23 +59,43 @@ def make_verts(v, Z, make_basis, offset, step, count):
         result.append(v)
     return result
 
+def make_verts_curve(v, curve):
+    #info("C: %s", curve)
+    v = Vector(v)
+    result = []
+    prev_pt = None
+    for pt in curve:
+        pt = Vector(pt)
+        if prev_pt is None:
+            dv = pt
+        else:
+            dv = pt - prev_pt
+        v = v + dv
+        result.append(v)
+        prev_pt = pt
+    return result
+
 def connect_verts(bm, z_idx, v1, verts2_bm, width):
-    dz = width / 2.0
+    if z_idx is not None:
+        dz = width / 2.0
+    else:
+        dz = width
     for v2 in verts2_bm:
-        distance = distance_z(z_idx, v1.co, v2.co)
+        if z_idx is not None:
+            distance = distance_z(z_idx, v1.co, v2.co)
+        else:
+            distance = (v1.co - v2.co).length
         #info("V1: %s, V2: %s, distance: %s", v1.co, v2.co, distance)
         if distance <= dz + 1e-6:
             #info("make edge")
             bm.edges.new((v1, v2))
             bm.edges.ensure_lookup_table()
 
-def process_edge(bm, z_idx, verts1_bm, verts2_bm, offset1, offset2, step1, step2, mult1, mult2, count1, count2):
+def process_edge(bm, z_idx, verts1_bm, verts2_bm, step1, step2, mult1, mult2):
     if step1 < step2:
         verts1_bm, verts2_bm = verts2_bm, verts1_bm
-        offset1, offset2 = offset2, offset1
         step1, step2 = step2, step1
         mult1, mult2 = mult2, mult1
-        count1, count2 = count2, count1
                 
     bm.verts.index_update()
     
@@ -103,6 +133,24 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             min = 1, default = 10,
             update = updateNode)
 
+    def update_z_mode(self, context):
+        self.inputs['Offset'].hide_safe = self.z_mode != 'AXIS'
+        self.inputs['Step'].hide_safe = self.z_mode != 'AXIS'
+        self.inputs['Count'].hide_safe = self.z_mode != 'AXIS'
+        self.inputs['Curve'].hide_safe = self.z_mode == 'AXIS'
+        updateNode(self, context)
+
+    z_modes = [
+            ("AXIS", "Axis", "Generate framework along X, Y, or Z axis", 0),
+            ("CURVE", "Curve", "Generate framework along arbitrary curve", 1)
+        ]
+
+    z_mode : EnumProperty(name = "Mode",
+            description = "Third dimension generation mode",
+            default = "AXIS",
+            items = z_modes,
+            update = update_z_mode)
+
     axes = [
         ("X", "X", "X axis", 1),
         ("Y", "Y", "Y axis", 2),
@@ -119,12 +167,15 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "orient_axis", expand=True)
-        layout.prop(self, "make_basis", toggle=True)
+        layout.prop(self, "z_mode", expand=True)
+        if self.z_mode == 'AXIS':
+            layout.prop(self, "orient_axis", expand=True)
+            layout.prop(self, "make_basis", toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvVerticesSocket', 'Curve')
         self.inputs.new('SvStringsSocket', 'Offset').prop_name = 'offset'
         self.inputs.new('SvStringsSocket', 'Step').prop_name = 'step'
         self.inputs.new('SvStringsSocket', 'Multiplier').prop_name = 'multiplier'
@@ -133,6 +184,8 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Faces')
+
+        self.update_z_mode(context)
 
     def get_orientation_vector(self):
         if self.orient_axis == 'X':
@@ -150,16 +203,20 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return v1.xy == v2.xy
 
+    def to_2d(self, v):
+        if self.orient_axis == 'X':
+            return v.yz
+        elif self.orient_axis == 'Y':
+            return v.xz
+        else:
+            return v.xy
+
     def is_same_edge(self, v1, v2, e1, e2):
-        if self.is_same(v1, e1) and self.is_same(v2, e2):
-            return True
-        if self.is_same(v1, e2) and self.is_same(v2, e1):
-            return True
-        if self.is_same(v1, e1) and self.is_same(v2, e1):
-            return True
-        if self.is_same(v1, e2) and self.is_same(v2, e2):
-            return True
-        return False
+        e1 = self.to_2d(e1)
+        e2 = self.to_2d(e2)
+        v1 = self.to_2d(v1)
+        v2 = self.to_2d(v2)
+        return is_in_segment(e1, e2, v1) or is_in_segment(e1, e2, v2)
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
@@ -171,26 +228,35 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         step_in = self.inputs['Step'].sv_get()
         multiplier_in = self.inputs['Multiplier'].sv_get()
         count_in = self.inputs['Count'].sv_get()
+        curves_in = self.inputs['Curve'].sv_get(default=[[]])
 
         verts_out = []
         edges_out = []
         faces_out = []
-        objects = match_long_repeat([verts_in, edges_in, offset_in, step_in, multiplier_in, count_in])
+        objects = match_long_repeat([verts_in, edges_in, offset_in, step_in, multiplier_in, count_in, curves_in])
         Z = self.get_orientation_vector()
-        z_idx = 'XYZ'.index(self.orient_axis)
-        for verts, edges, offsets, steps, multipliers, counts in zip(*objects):
+        if self.z_mode == 'AXIS':
+            z_idx = 'XYZ'.index(self.orient_axis)
+        else:
+            z_idx = None
+        for verts, edges, offsets, steps, multipliers, counts, curves in zip(*objects):
             nverts = len(verts)
-            fullList(offsets, nverts)
-            fullList(steps, nverts)
-            fullList(multipliers, nverts)
-            fullList(counts, nverts)
+            offsets = cycle_for_length(offsets, nverts)
+            steps = cycle_for_length(steps, nverts)
+            multipliers = cycle_for_length(multipliers, nverts)
+            counts = cycle_for_length(counts, nverts)
+            if curves:
+                curves = cycle_for_length(curves, nverts)
             
             bm = bmesh.new()
             bm.verts.ensure_lookup_table()
             
             verts_bm = []
             for i, v in enumerate(verts):
-                verts_line = make_verts(v, Z, self.make_basis, offsets[i], steps[i], counts[i])
+                if self.z_mode == 'AXIS':
+                    verts_line = make_verts_axis(v, Z, self.make_basis, offsets[i], steps[i], counts[i])
+                else:
+                    verts_line = make_verts_curve(v, curves[i])
                 verts_line_bm = []
                 prev_bm_vert = None
                 for v in verts_line:
@@ -203,7 +269,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
                 verts_bm.append(verts_line_bm)
             
             for i, j in edges:
-                process_edge(bm, z_idx, verts_bm[i], verts_bm[j], offsets[i], offsets[j], steps[i], steps[j], multipliers[i], multipliers[j], counts[i], counts[j])
+                process_edge(bm, z_idx, verts_bm[i], verts_bm[j], steps[i], steps[j], multipliers[i], multipliers[j])
 
             verts_new, edges_new, _ = pydata_from_bmesh(bm)
             bm.free()
@@ -213,20 +279,28 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
 
             if self.outputs['Faces'].is_linked:
                 bm = bmesh_from_pydata(verts_new, edges_new, [], normal_update=True)
-                edges_per_edge = defaultdict(list)
-                for edge_i, (i, j) in enumerate(edges):
-                    v_i = Vector(verts[i])
-                    v_j = Vector(verts[j])
-                    for bm_edge in bm.edges:
-                        bm_v1 = bm_edge.verts[0].co
-                        bm_v2 = bm_edge.verts[1].co
-                        if self.is_same_edge(bm_v1, bm_v2, v_i, v_j):
-                            edges_per_edge[edge_i].append(bm_edge)
+                if self.z_mode == 'AXIS':
+                    for i, j in edges:
+                        side_edges = []
+                        v_i = Vector(verts[i])
+                        v_j = Vector(verts[j])
+                        #self.info("Check: [%s - %s]", v_i, v_j)
+                        for bm_edge in bm.edges:
+                            bm_v1 = bm_edge.verts[0].co
+                            bm_v2 = bm_edge.verts[1].co
+                            if self.is_same_edge(bm_v1, bm_v2, v_i, v_j):
+                                side_edges.append(bm_edge)
+                                #self.info("Yes: [%s - %s]", bm_v1, bm_v2)
+                            else:
+                                pass
+                                #self.info("No: [%s - %s]", bm_v1, bm_v2)
 
-                for edge_i in edges_per_edge:
-                    #self.info("E[%s]: %s", edge_i, edges_per_edge[edge_i])
-                    bmesh.ops.holes_fill(bm, edges=edges_per_edge[edge_i], sides=4)
-                    #bm.verts.ensure_lookup_table()
+                        bmesh.ops.holes_fill(bm, edges=side_edges, sides=4)
+                        bm.edges.ensure_lookup_table()
+                        bm.faces.ensure_lookup_table()
+                else:
+                    bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=4)
+
                 verts_new, edges_new, faces_new = pydata_from_bmesh(bm)
                 bm.free()
             else:
