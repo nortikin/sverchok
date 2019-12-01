@@ -134,6 +134,7 @@
     SvAdaptivePolygonsNodeMk2
     SvDuplicateAlongEdgeNode
     SvFractalCurveNode
+    SvFrameworkNode
     SvSolidifyNode
     SvWireframeNode
     SvPipeNode
