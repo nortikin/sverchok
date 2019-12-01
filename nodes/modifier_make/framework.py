@@ -22,6 +22,7 @@ import bpy
 import bmesh
 from mathutils import Vector
 from mathutils.geometry import intersect_point_line
+from mathutils.kdtree import KDTree
 from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
 
 from sverchok.data_structure import match_long_repeat, cycle_for_length, updateNode
@@ -75,33 +76,29 @@ def make_verts_curve(v, curve):
         prev_pt = pt
     return result
 
-def connect_verts(bm, z_idx, v1, verts2_bm, width):
-    if z_idx is not None:
-        dz = width / 2.0
-    else:
-        dz = width
-    for v2 in verts2_bm:
-        if z_idx is not None:
-            distance = distance_z(z_idx, v1.co, v2.co)
-        else:
-            distance = (v1.co - v2.co).length
-        #info("V1: %s, V2: %s, distance: %s", v1.co, v2.co, distance)
-        if distance <= dz + 1e-6:
-            #info("make edge")
-            bm.edges.new((v1, v2))
-            bm.edges.ensure_lookup_table()
+def connect_verts(bm, z_idx, v1, verts2_bm, connections, max_rho):
+    tree = KDTree(len(verts2_bm))
+    for i, v2 in enumerate(verts2_bm):
+        tree.insert(v2.co, i)
+    tree.balance()
 
-def process_edge(bm, z_idx, verts1_bm, verts2_bm, step1, step2, mult1, mult2):
+    for co, i, dist in tree.find_n(v1.co, connections):
+        if dist <= max_rho:
+            v2 = verts2_bm[i]
+            if bm.edges.get((v1, v2)) is None:
+                bm.edges.new((v1, v2))
+                bm.edges.ensure_lookup_table()
+
+def process_edge(bm, z_idx, verts1_bm, verts2_bm, step1, step2, conn1, conn2, max_rho1, max_rho2):
     if step1 < step2:
-        verts1_bm, verts2_bm = verts2_bm, verts1_bm
+        conn1, conn2 = conn2, conn1
+        max_rho1, max_rho2 = max_rho2, max_rho1
         step1, step2 = step2, step1
-        mult1, mult2 = mult2, mult1
-                
+
     bm.verts.index_update()
     
     for i, v in enumerate(verts1_bm):
-        #info("Connect #%s", i)
-        connect_verts(bm, z_idx, v, verts2_bm, mult1 * step1)
+        connect_verts(bm, z_idx, v, verts2_bm, conn1, max_rho1)
     
 class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -123,9 +120,14 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             min = 0, default = 1.0,
             update = updateNode)
 
-    multiplier : FloatProperty(name = "Multiplier",
-            description = "Edges multiplier, defines how many edges this will generate",
-            min = 0.0, default = 1.0,
+    n_connections : IntProperty(name = "Conections",
+            description = "How many vertices to connect to each vertex",
+            min = 0, default = 1,
+            update = updateNode)
+
+    max_rho : FloatProperty(name = "Max Distance",
+            description = "Maximum generated edge length",
+            min = 0, default = 1,
             update = updateNode)
     
     count : IntProperty(name = "Count",
@@ -178,7 +180,8 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', 'Curve')
         self.inputs.new('SvStringsSocket', 'Offset').prop_name = 'offset'
         self.inputs.new('SvStringsSocket', 'Step').prop_name = 'step'
-        self.inputs.new('SvStringsSocket', 'Multiplier').prop_name = 'multiplier'
+        self.inputs.new('SvStringsSocket', 'NConnections').prop_name = 'n_connections'
+        self.inputs.new('SvStringsSocket', 'MaxRho').prop_name = 'max_rho'
         self.inputs.new('SvStringsSocket', 'Count').prop_name = 'count'
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
@@ -226,24 +229,28 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
         edges_in = self.inputs['Edges'].sv_get()
         offset_in = self.inputs['Offset'].sv_get()
         step_in = self.inputs['Step'].sv_get()
-        multiplier_in = self.inputs['Multiplier'].sv_get()
+        n_connections_in = self.inputs['NConnections'].sv_get()
+        max_rhos_in = self.inputs['MaxRho'].sv_get()
         count_in = self.inputs['Count'].sv_get()
         curves_in = self.inputs['Curve'].sv_get(default=[[]])
 
         verts_out = []
         edges_out = []
         faces_out = []
-        objects = match_long_repeat([verts_in, edges_in, offset_in, step_in, multiplier_in, count_in, curves_in])
+
         Z = self.get_orientation_vector()
         if self.z_mode == 'AXIS':
             z_idx = 'XYZ'.index(self.orient_axis)
         else:
             z_idx = None
-        for verts, edges, offsets, steps, multipliers, counts, curves in zip(*objects):
+
+        objects = match_long_repeat([verts_in, edges_in, offset_in, step_in, n_connections_in, max_rhos_in, count_in, curves_in])
+        for verts, edges, offsets, steps, n_connections, max_rhos, counts, curves in zip(*objects):
             nverts = len(verts)
             offsets = cycle_for_length(offsets, nverts)
             steps = cycle_for_length(steps, nverts)
-            multipliers = cycle_for_length(multipliers, nverts)
+            n_connections = cycle_for_length(n_connections, nverts)
+            max_rhos = cycle_for_length(max_rhos, nverts)
             counts = cycle_for_length(counts, nverts)
             if curves:
                 curves = cycle_for_length(curves, nverts)
@@ -254,7 +261,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
             verts_bm = []
             for i, v in enumerate(verts):
                 if self.z_mode == 'AXIS':
-                    verts_line = make_verts_axis(v, Z, self.make_basis, offsets[i], steps[i], counts[i])
+                    verts_line = make_verts_axis(v, Z, self.make_basis, steps[i]*offsets[i], steps[i], counts[i])
                 else:
                     verts_line = make_verts_curve(v, curves[i])
                 verts_line_bm = []
@@ -269,7 +276,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
                 verts_bm.append(verts_line_bm)
             
             for i, j in edges:
-                process_edge(bm, z_idx, verts_bm[i], verts_bm[j], steps[i], steps[j], multipliers[i], multipliers[j])
+                process_edge(bm, z_idx, verts_bm[i], verts_bm[j], steps[i], steps[j], n_connections[i], n_connections[j], max_rhos[i], max_rhos[j])
 
             verts_new, edges_new, _ = pydata_from_bmesh(bm)
             bm.free()
