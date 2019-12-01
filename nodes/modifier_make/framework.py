@@ -125,6 +125,7 @@ class SvFrameworkNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvFrameworkNode'
     bl_label = 'Framework'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FRAMEWORK'
 
     offset : FloatProperty(name = "Offset",
             description = "Vertices offset along orientation axis",
