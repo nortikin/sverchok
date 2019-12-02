@@ -340,7 +340,7 @@ class SvWaveformViewer(bpy.types.Node, SverchCustomTreeNode):
         if self.num_channels == 2:
             h *= 2
 
-        th = h / 8
+        th = h / 12
         h2 = 0.5 * h
 
         unit_data = np.array(wave_data)
