@@ -16,7 +16,7 @@
    id="svg8"
    inkscape:version="0.92.2 (5c3e80d, 2017-08-06)"
    sodipodi:docname="sv_framework.svg"
-   inkscape:export-filename="/home/portnov/src/sverchok_280/ui/icons/sv_dual_mesh.svg.png"
+   inkscape:export-filename="/home/portnov/src/sverchok_280/ui/icons/sv_framework.png"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96">
   <defs
@@ -35,9 +35,9 @@
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
-     inkscape:window-width="1916"
-     inkscape:window-height="1196"
-     inkscape:window-x="0"
+     inkscape:window-width="1820"
+     inkscape:window-height="1076"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="0">
     <inkscape:grid

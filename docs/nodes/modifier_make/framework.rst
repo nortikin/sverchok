@@ -109,4 +109,19 @@ This node has the following outputs:
 Examples of usage
 -----------------
 
+Simple example:
+
+.. image:: https://user-images.githubusercontent.com/284644/69917574-50639500-1489-11ea-82f1-1c91349093ca.png
+
+An example with intersecting traverse edges:
+
+.. image:: https://user-images.githubusercontent.com/284644/69917576-50639500-1489-11ea-84cd-3d490d4e24e3.png
+
+Example of using different steps for different crossbars:
+
+.. image:: https://user-images.githubusercontent.com/284644/69917575-50639500-1489-11ea-8257-4836725f9cb8.png
+
+Example of *Curve* mode use:
+
+.. image:: https://user-images.githubusercontent.com/284644/69979339-ef52c480-154f-11ea-849e-7e67e2e3c91a.png
 
