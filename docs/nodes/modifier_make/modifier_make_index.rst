@@ -17,6 +17,7 @@ Modifier Make
    voronoi_2d
    delaunay_2d
    wafel
+   framework
    wireframe
    offset_line
    bevel_curve
