@@ -94,7 +94,7 @@ def tag_redraw_all_nodeviews():
 
 def callback_enable(*args):
     n_id = args[0]
-    global callback_dict
+    # global callback_dict
     if n_id in callback_dict:
         return
 
@@ -104,7 +104,7 @@ def callback_enable(*args):
 
 
 def callback_disable(n_id):
-    global callback_dict
+    # global callback_dict
     handle_pixel = callback_dict.get(n_id, None)
     if not handle_pixel:
         return
@@ -114,7 +114,7 @@ def callback_disable(n_id):
 
 
 def callback_disable_all():
-    global callback_dict
+    # global callback_dict
     temp_list = list(callback_dict.keys())
     for n_id in temp_list:
         if n_id:
@@ -239,7 +239,36 @@ def draw_callback_px(n_id, data):
         args = data.get('args', (None,))
         drawing_func(x, y, args)
         restore_opengl_defaults()
+    elif data.get('mode') == 'custom_function_context':
+        
+        '''
+        0) this mode is useful for custom shader inside 2d drawing context, like nodeview
+        1) you will supply this function with args, and args will contain (geom, config) 
+        2) your passing function might look something like
 
+            config = lambda: None
+            config.shader_data = ...
+            config.loc = (x, y)  (for node location..)
+
+            geom = lambda: None
+            geom.stuff = ..
+
+            draw_data = {
+                'mode': 'custom_function_context',
+                'tree_name': self.id_data.name[:],
+                'custom_function': advanced_grid_xy,
+                'args': (geom, config)
+            }
+
+            nvBGL.callback_enable(self.n_id, draw_data)
+
+        '''
+        bgl.glEnable(bgl.GL_DEPTH_TEST)
+        drawing_func = data.get('custom_function')
+        args = data.get('args', (None,))
+        drawing_func(bpy.context, args)
+        restore_opengl_defaults()
+        bgl.glDisable(bgl.GL_DEPTH_TEST)
         
         
 def unregister():
