@@ -115,6 +115,29 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     self.inputs.remove(self.inputs[-1])
                     self.outputs.remove(self.outputs[-1])
 
+    def rebuild_out_sockets(self, context):
+        with self.sv_throttle_tree_update():
+            links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+            [self.outputs.remove(sock) for sock in self.outputs]
+            new_socks = []
+            for i, (sock_a, sock_b) in enumerate(zip(list(self.inputs)[1::2], list(self.inputs)[2::2])):
+                sock_a_link = get_other_socket(sock_a)
+                sock_b_link = get_other_socket(sock_b)
+                if sock_a_link and sock_b_link:
+                    if sock_a_link.bl_idname == sock_b_link.bl_idname:
+                        new_socks.append(self.outputs.new(sock_a_link.bl_idname, f"Out_{i}"))
+                    else:
+                        new_socks.append(self.outputs.new("SvStringsSocket", f"Out_{i}"))
+                elif sock_a_link and getattr(self, sock_b.prop_name) == 'None':
+                    new_socks.append(self.outputs.new(sock_a_link.bl_idname, f"Out_{i}"))
+                elif sock_b_link and getattr(self, sock_a.prop_name) == 'None':
+                    new_socks.append(self.outputs.new(sock_b_link.bl_idname, f"Out_{i}"))
+                else:
+                    new_socks.append(self.outputs.new("SvStringsSocket", f"Out_{i}"))
+            [[self.id_data.links.new(sock, link) for link in links[sock.name]]
+                                                 for sock in new_socks if sock.name in links]
+        updateNode(self, context)
+
     switch_state: bpy.props.EnumProperty(items=input_items[:2], name="state", default="False", update=updateNode)
     socket_number: bpy.props.IntProperty(name="count", min=1, max=10, default=1, update=change_sockets)
 
@@ -135,20 +158,26 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
         # todo fix later
-        inputs_A = [i for i in self.inputs if i.name[0] == 'A']
-        for in_soc, out_soc in zip(inputs_A, self.outputs):
-
-            if not in_soc.links:
-                new_type = in_soc.bl_idname
-            else:
-                in_other = get_other_socket(in_soc)
-                new_type = in_other.bl_idname
-
-            if new_type == out_soc.bl_idname:
-                continue
-
-            replace_socket(out_soc, new_type)
-        updateNode(self, bpy.context)
+        for sock_a, sock_b, sock_out in zip(list(self.inputs)[1::2], list(self.inputs)[2::2], self.outputs):
+            sock_a_link = get_other_socket(sock_a)
+            sock_b_link = get_other_socket(sock_b)
+            if sock_a_link and sock_b_link:
+                if sock_a_link.bl_idname == sock_b_link.bl_idname:
+                    if sock_a_link.bl_idname != sock_out.bl_idname:
+                        replace_socket(sock_out, sock_a_link.bl_idname)
+                else:
+                    if sock_out.bl_idname != "SvStringsSocket":
+                        replace_socket(sock_out, "SvStringsSocket")
+            elif sock_a_link and sock_b.prop_name == 'None':
+                if sock_a_link.bl_idname != sock_out.bl_idname:
+                    replace_socket(sock_out, sock_a_link.bl_idname)
+            elif sock_b_link and sock_a_link.prop_name == 'None':
+                if sock_b_link.bl_idname != sock_out.bl_idname:
+                    replace_socket(sock_out, sock_a_link.bl_idname)
+            elif sock_out.bl_idname != "SvStringsSocket":
+                replace_socket(sock_out, "SvStringsSocket")
+        #
+        # updateNode(self, bpy.context)
 
     def process(self):
         for sock_a, sock_b, sock_out in zip(list(self.inputs)[1::2], list(self.inputs)[2::2], self.outputs):
