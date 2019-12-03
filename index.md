@@ -45,12 +45,9 @@
     SvEllipseNode
     SvSuperEllipsoidNode
     SvRegularSolid
-<<<<<<< HEAD
-    SvPentagonTilerNode
-=======
     SvConicSectionNode
     SvTriangleNode
->>>>>>> b28_prelease_master
+    SvPentagonTilerNode
 
 ## Analyzers
     SvBBoxNodeMk2
