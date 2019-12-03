@@ -104,6 +104,15 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         c = layout.column(align=True)
         c.prop(self, 'to3d', icon='PLUGIN', text='to 3dview')
 
+    def draw_buttons_3dpanel(self, layout):
+        row = layout.row(align=True)
+        row.prop(self, 'float_' if self.selected_mode == 'float' else 'int_',
+                 text=self.label if self.label else self.name)
+        colo = row.row(align=True)
+        colo.scale_x = 0.8
+        colo.prop(self, self.selected_mode + '_min', text='', slider=True, emboss=False)
+        colo.prop(self, self.selected_mode + '_max', text='', slider=True, emboss=False)
+
 
     def draw_label(self):
         kind = self.selected_mode + '_'

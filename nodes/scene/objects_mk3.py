@@ -179,13 +179,12 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         self.draw_obj_names(layout)
 
-
-    def draw_sv3dpanel_ob3(self, col, little_width):
+    def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'
-        row = col.row(align=True)
+        row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
         colo = row.row(align=True)
-        colo.scale_x = little_width * 5
+        colo.scale_x = 1.6
         op = colo.operator(callback, text="Get")
         op.fn_name = 'get_objects_from_scene'
         op.tree_name = self.id_data.name

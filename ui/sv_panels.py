@@ -113,7 +113,8 @@ class SV_PT_3DPanel(bpy.types.Panel):
     ''' Panel to manipuplate parameters in Sverchok layouts '''
 
     bl_space_type = 'VIEW_3D'
-    bl_region_type = 'TOOLS'
+    bl_region_type = 'UI'
+    bl_category = 'Tool'
     bl_label = "Sverchok " + version_and_sha
     bl_options = {'DEFAULT_CLOSED'}
     # bl_category = 'Sverchok'
@@ -195,8 +196,8 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
                         # properties are not automatically removed from Sv3DProps when a node is deleted.
                         # temporary fix for ui.
-                        warning = no not in tree.nodes
-                        if warning:
+                        node = tree.nodes.get(no, None)
+                        if not node:
                             row = col.row()
                             row.alert = True
                             row.label(icon='ERROR', text=f'missing node: "{no}"')
@@ -205,75 +206,7 @@ class SV_PT_3DPanel(bpy.types.Panel):
                             op.node_name = no
                             continue
 
-                        node = tree.nodes[no]
-
-                        if node.label:
-                            tex = node.label
-                        else:
-                            tex = no
-
-                        #print(node.bl_idname, tex)
-
-                        if node.bl_idname == "ObjectsNodeMK2":
-                            row = col.row(align=True)
-                            # row.alert = warning
-                            row.label(text=tex)
-                            colo = row.row(align=True)
-                            colo.scale_x = little_width * 5
-                            op = colo.operator("node.sverchok_object_insertion", text="Get")
-                            op.node_name = node.name
-                            op.tree_name = tree.name
-                            op.grup_name = node.groupname
-                            op.sort = node.sort
-
-                        elif node.bl_idname == 'SvBmeshViewerNodeMK2':
-                            row = col.row(align=True)
-                            # row.alert = warning
-                            row.prop(node, 'basemesh_name', text='')
-                            row.prop_search(node, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
-                            #row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
-
-                        elif node.bl_idname == 'SvObjectsNodeMK3':
-                            node.draw_sv3dpanel_ob3(col, little_width)
-
-                        elif node.bl_idname in {"IntegerNode", "FloatNode", "SvNumberNode"}:
-                            row = col.row(align=True)
-                            # row.alert = warning
-                            row.prop(node, ver, text=tex)
-                            colo = row.row(align=True)
-                            colo.scale_x = little_width * 2.5
-                            
-                            if node.bl_idname == 'SvNumberNode':
-                                min_name = node.selected_mode + '_min'
-                                max_name = node.selected_mode + '_max'
-                            else:
-                                min_name = 'minim'
-                                max_name = 'maxim'
-                            
-                            colo.prop(node, min_name, text='', slider=True, emboss=False)
-                            colo.prop(node, max_name, text='', slider=True, emboss=False)
-
-                        elif node.bl_idname in {'SvColorInputNode'}:
-                            col.label(text=tex)
-                            col.template_color_picker(node, ver, value_slider=True)
-                            col.prop(node, ver, text='')
-
-                        elif node.bl_idname in {"SvListInputNode"}:
-                            col.row(align=True).label(text=node.label or node.name)
-
-                            if node.mode == 'vector':
-                                colum_list = col.column(align=True)
-                                for i in range(node.v_int):
-                                    row = colum_list.row(align=True)
-                                    for j in range(3):
-                                        row.prop(node, 'vector_list', index=i*3+j, text='XYZ'[j]+tex)
-                            else:
-                                colum_list = col.column(align=True)
-                                for i in range(node.int_):
-                                    row = colum_list.row(align=True)
-                                    row.prop(node, node.mode, index=i, text=str(i)+tex)
-                                    row.scale_x = little_width * 2.5
-
+                        node.draw_buttons_3dpanel(col)
 
 
 class SV_PT_ToolsMenu(bpy.types.Panel):

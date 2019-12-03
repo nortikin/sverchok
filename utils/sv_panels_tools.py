@@ -226,8 +226,8 @@ class SvLayoutScanProperties(bpy.types.Operator):
                     if any((s.links for s in node.outputs)):
                         templist.append([node.label, node.name, ""])
                 
-                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode', 'SvColorInputNode', 'SvBmeshViewerNodeMK2'}:
-                    if idname != 'SvBmeshViewerNodeMK2':
+                elif idname in {'SvNumberNode', 'IntegerNode', 'FloatNode', 'SvListInputNode', 'SvColorInputNode', 'SvBmeshViewerNodeV28'}:
+                    if idname != 'SvBmeshViewerNodeV28':
                         if not node.outputs:
                             debug("Node %s does not have outputs", node.name)
                             continue
@@ -243,7 +243,7 @@ class SvLayoutScanProperties(bpy.types.Operator):
 
                     if 'Integer' in idname:
                         templist.append([node.label, node.name, 'int_'])
-                    elif 'SvBmeshViewerNodeMK2' in idname:
+                    elif 'SvBmeshViewerNodeV28' in idname:
                         templist.append([node.label, node.name, 'basemesh_name'])
                     elif 'Float' in idname:
                         templist.append([node.label, node.name, 'float_'])                     
