@@ -232,6 +232,30 @@ This node has some number of parameters, and most of them are accessible only in
 Base area illustrations
 -----------------------
 
+The following illustration demonstrates the meaning of "bounding rectangle" term (it is used for Quads when **Coordinates** is set to **Bounds**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073275-5e94eb00-161a-11ea-8bee-4166313f4cab.png
+
+The following is the unit square (which is used for Quads when **Coordinates** is set to **As Is**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073317-74a2ab80-161a-11ea-808a-6ea041cf7850.png
+
+The following illustration demonstrates the meaning of term "bounding equilateral triangle" (it is used for Tris when **Coordinates** is set to **Bounds**, and **Bounding triangle** is set to **Equilateral**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073381-99971e80-161a-11ea-9ffa-a8bee07b0536.png
+
+The following is the unit equilateral triangle (it is used for Tris when **Coordinates** is set to **As Is**, and **Bounding triangle** is set to **Equilateral**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073338-7ff5d700-161a-11ea-9e28-a50525cfe7bb.png
+
+The following demonstrates the meaning of term "bounding rectangular triangle" (it is used for Tris when **Coordinates** is set to **Bounds**, and **Bounding triangle** is set to **Rectangular**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073402-a7e53a80-161a-11ea-972f-04e9f76d54ae.png
+
+The following is a "unit rectangular triangle" (it is used for Tris when **Coordinates** is set to **As Is**, and **Bounding triangle** is set to **Rectangular**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073442-bcc1ce00-161a-11ea-84f1-1b544c4ab3dd.png
+
 Outputs
 -------
 
