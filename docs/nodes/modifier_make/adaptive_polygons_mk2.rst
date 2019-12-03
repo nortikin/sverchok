@@ -135,15 +135,18 @@ This node has some number of parameters, and most of them are accessible only in
 
     - For Quad recipient object faces, the bounding rectangle of donor object is taken.
     - For Tris recipient object faces, the bounding triangle of donor object is
-      taken. The "bounding triangle" is defined as the smallest triangle with
-      equal sides, which covers all donor vertices while having bottom side
-      parallel to X axis (or other axis according to **Normal axis** parameter).
+      taken. The "bounding triangle" is defined as the smallest triangle, which
+      covers all donor vertices while having bottom side parallel to X axis (or
+      other axis according to **Normal axis** parameter). The triangle can be
+      defined as either equilateral or rectangular, depending on **Bounding
+      triangle** parameter.
   
   - **As Is**. The source area is defined as follows:
 
     - For Quad faces, the `[-1/2; 1/2] x [-1/2; 1/2]` unit square is taken.
-    - For Tris faces, the unit triangle is taken, i.e. the triangle with all
-      sides equal to 1 with center at (0,0,0).
+    - For Tris faces, the unit triangle is taken. The triangle can be defined
+      as equilateral or rectangular, depending on **Bounding triangle**
+      parameter.
 
   Note that by definition of **Bounds** mode, the donor object always lies
   within the *source area*.
@@ -154,6 +157,22 @@ This node has some number of parameters, and most of them are accessible only in
   of it.
 
   The default value is **Bounds**.
+
+- **Bounding triangle**. This defines the form of triangle to be used as base area (for tris faces). The available values are:
+
+  - **Equilateral**. The base triangle will be defined as a triangle with all
+    sides equal. When **Coordinates** parameter is set to **As Is**, this will
+    be a triangle with center at `(0, 0, 0)` and a side of 1. In **Bounds**
+    mode, this will be the bounding triangle.
+
+  - **Rectangular**. The base triangle will be defined as a triangle with one
+    angle equal to 90 degrees. When **Coordinates** parameter is set to **As
+    Is**, this will be a triangle with center of it's hypotenuse at `(0, 0, 0)`
+    and length of hypotenuse equal to 2. In **Bounds** mode, this will be the
+    bounding triangle.
+  
+  Please see below for the illustrations of bounding triangles.
+  The default value is **Equilateral**.
 
 - **Frame mode**. This defines when to apply "Frame / Fan" mode. The available values are:
 
@@ -209,6 +228,9 @@ This node has some number of parameters, and most of them are accessible only in
     output for each recipient face.
 
   The default value is **As Quads**.
+
+Base area illustrations
+-----------------------
 
 Outputs
 -------
