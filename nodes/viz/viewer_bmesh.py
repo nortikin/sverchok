@@ -280,6 +280,10 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             box.prop(self, 'randomize_vcol_islands', text='randomize vcol islands')
         col.prop(self, 'to3d')
 
+    @property
+    def draw_3dpanel(self):
+        return self.to3d
+
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
         # row.alert = warning

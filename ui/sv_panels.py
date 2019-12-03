@@ -192,7 +192,6 @@ class SV_PT_3DPanel(bpy.types.Panel):
                    
                     for item in tree.Sv3DProps:
                         no = item.node_name
-                        ver = item.prop_name
 
                         # properties are not automatically removed from Sv3DProps when a node is deleted.
                         # temporary fix for ui.

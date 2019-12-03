@@ -179,6 +179,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         self.draw_obj_names(layout)
 
+    @property
+    def draw_3dpanel(self):
+        return True if any((s.is_linked for s in self.outputs)) else False
+
     def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'
         row = layout.row(align=True)

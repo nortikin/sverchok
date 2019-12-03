@@ -95,6 +95,10 @@ class SvListInputNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'to3d', text='to3d')
 
+    @property
+    def draw_3dpanel(self):
+        return False if not self.outputs[0].is_linked or not self.to3d else True
+
     def draw_buttons_3dpanel(self, layout):
         layout.row(align=True).label(text=self.label or self.name)
 
