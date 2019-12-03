@@ -31,6 +31,7 @@ from sverchok.data_structure import (updateNode, Vector_generate,
                                      describe_data_shape, get_data_nesting_level,
                                      rotate_list)
 
+from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.geom import diameter, LineEquation2D, center
@@ -179,6 +180,20 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = xy_modes, default = "BOUNDS",
         update = updateNode)
 
+    tri_bound_modes = [
+            ("EQUILATERAL", "Equilateral", "Use unit-sided equilateral triangle as a base area",
+                custom_icon("SV_EQUILATERAL_TRIANGLE"), 0),
+            ("RECTANGULAR", "Rectangular", "Use rectangular triangle with hypotenuse of 2 as a base area",
+                custom_icon("SV_RECTANGULAR_TRIANGLE"), 1)
+        ]
+
+    tri_bound_mode : EnumProperty(
+        name = "Bounding triangle",
+        description = "Type of triangle to use as a bounding triangle",
+        items = tri_bound_modes,
+        default = "EQUILATERAL",
+        update = updateNode)
+
     map_modes = [
             ("QUADTRI", "Quads / Tris Auto", "Use Quads or Tris mapping automatically", 0),
             ("QUADS", "Quads Always", "Use Quads mapping even for the Tris", 1)
@@ -284,6 +299,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if self.normal_mode == 'MAP':
             layout.prop(self, "normal_interp_mode")
         layout.prop(self, "xy_mode")
+        layout.label(text="Bounding triangle:")
+        layout.prop(self, "tri_bound_mode", expand=True)
         layout.prop(self, "frame_mode")
         layout.prop(self, "map_mode")
         layout.prop(self, "mask_mode")
@@ -294,9 +311,14 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         Three normal of unit triangle's edges.
         This is not constant just because the normal can be X or Y or Z.
         """
-        triangle_direction_1 = Vector((cos_pi_6, sin_pi_6, 0))
-        triangle_direction_2 = Vector((-cos_pi_6, sin_pi_6, 0))
-        triangle_direction_3 = Vector((0, -1, 0))
+        if self.tri_bound_mode == 'EQUILATERAL':
+            triangle_direction_1 = Vector((cos_pi_6, sin_pi_6, 0))
+            triangle_direction_2 = Vector((-cos_pi_6, sin_pi_6, 0))
+            triangle_direction_3 = Vector((0, -1, 0))
+        else:
+            triangle_direction_1 = Vector((1, 1, 0))
+            triangle_direction_2 = Vector((-1, 1, 0))
+            triangle_direction_3 = Vector((0, -1, 0))
 
         if self.normal_axis == 'X':
             return triangle_direction_1.zxy, triangle_direction_2.zxy, triangle_direction_3.zxy
@@ -331,7 +353,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
     def bounding_triangle(self, vertices):
         """
-        Return three vertices of a triangle with equal sides,
+        Return three vertices of a triangle with equal sides / rectangular triangle,
         which contains all provided vertices.
         """
         X, Y = self.get_other_axes()
@@ -656,9 +678,14 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         # Vertices of the unit triangle.
         # In case xy_mode != BOUNDS, we will never
         # have to recalculate these.
-        donor.tri_vert_1 = self.from2d(-0.5, -sqrt_3_6)
-        donor.tri_vert_2 = self.from2d(0.5, -sqrt_3_6)
-        donor.tri_vert_3 = self.from2d(0, sqrt_3_3)
+        if self.tri_bound_mode == 'EQUILATERAL':
+            donor.tri_vert_1 = self.from2d(-0.5, -sqrt_3_6)
+            donor.tri_vert_2 = self.from2d(0.5, -sqrt_3_6)
+            donor.tri_vert_3 = self.from2d(0, sqrt_3_3)
+        else:
+            donor.tri_vert_1 = self.from2d(-1, 0)
+            donor.tri_vert_2 = self.from2d(1, 0)
+            donor.tri_vert_3 = self.from2d(0, 1)
 
         if single_donor:
             # We will be rotating the donor object around Z axis,
