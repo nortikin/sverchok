@@ -294,5 +294,9 @@ The same setup with **FrameWidth** set to 1.0 - the processing switches to **Fan
 
 .. image:: https://user-images.githubusercontent.com/284644/68528834-b68d4a00-0319-11ea-89d7-5857c886d423.png
 
+An example of **Rectangular** triangles usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/70074578-cba98000-161c-11ea-88dd-69336809a659.png
+
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
 
