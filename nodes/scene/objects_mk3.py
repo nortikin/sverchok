@@ -87,6 +87,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode)
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    to3d: BoolProperty(default=False, update=updateNode)
 
 
     def sv_init(self, context):
@@ -179,9 +180,12 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         self.draw_obj_names(layout)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'to3d')
+
     @property
     def draw_3dpanel(self):
-        return True if any((s.is_linked for s in self.outputs)) else False
+        return True if self.to3d and any((s.is_linked for s in self.outputs)) else False
 
     def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'
