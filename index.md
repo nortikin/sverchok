@@ -266,6 +266,7 @@
     SvSwitchNode
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
+    SvCustomSwitcher
 
 ## Viz
     Sv3DviewPropsNode

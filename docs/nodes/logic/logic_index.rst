@@ -9,3 +9,4 @@ Logic
    neuro_elman
    switch
    input_switch_mod
+   custom_switcher
