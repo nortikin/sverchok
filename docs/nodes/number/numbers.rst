@@ -31,6 +31,13 @@ Outputs
 
 **float or integer** - only one digit. when unlinked
 
+3D panel
+--------
+
+The node can show its properties on 3D panel. 
+For this parameter `to 3d` should be enabled, output should be linked and input should not be linked.
+After that you can press `scan for props` button on 3D panel for showing the node properties on 3D panel.
+
 Examples
 --------
 

@@ -240,6 +240,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         default=False,
         description="experimental option to find islands in the outputmesh and colour them randomly")
 
+    to3d: BoolProperty(default=False, update=updateNode)
+
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
 
@@ -276,6 +278,18 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             box.prop(self, 'calc_normals', text='calculate normals')
             box.prop(self, 'layer_choice', text='layer')
             box.prop(self, 'randomize_vcol_islands', text='randomize vcol islands')
+        col.prop(self, 'to3d')
+
+    @property
+    def draw_3dpanel(self):
+        return self.to3d
+
+    def draw_buttons_3dpanel(self, layout):
+        row = layout.row(align=True)
+        # row.alert = warning
+        row.prop(self, 'basedata_name', text='')
+        row.prop_search(self, 'material', bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+        #row.operator('node.sv_callback_bmesh_viewer',text='',icon='RESTRICT_SELECT_OFF')
 
     def get_geometry_from_sockets(self):
 

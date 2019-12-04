@@ -55,6 +55,15 @@ class SvColorInputNode(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons(context, layout)
         layout.prop(self, "to3d")
 
+    @property
+    def draw_3dpanel(self):
+        return False if not self.outputs[0].is_linked or not self.to3d else True
+
+    def draw_buttons_3dpanel(self, layout):
+        layout.label(text=self.label if self.label else self.name)
+        layout.template_color_picker(self, 'color_data', value_slider=True)
+        layout.prop(self, 'color_data', text='')
+
     def process(self):
         if self.use_alpha:
             color = self.color_data[:]
