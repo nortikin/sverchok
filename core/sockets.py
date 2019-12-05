@@ -178,15 +178,14 @@ class SvSocketCommon:
 
         # just handle custom draw..be it input or output.
         # hasattr may be excessive here
+        if hasattr(self, 'custom_draw') and self.custom_draw:
+            # does the node have the draw function referred to by
+            # the string stored in socket's custom_draw attribute
+            if hasattr(node, self.custom_draw):
+                getattr(node, self.custom_draw)(self, context, layout)
+                return
+
         if self.bl_idname == 'SvStringsSocket':
-            if hasattr(self, 'custom_draw') and self.custom_draw:
-
-                # does the node have the draw function referred to by
-                # the string stored in socket's custom_draw attribute
-                if hasattr(node, self.custom_draw):
-                    getattr(node, self.custom_draw)(self, context, layout)
-                    return
-
             if node.bl_idname in {'SvScriptNodeLite', 'SvScriptNode'}:
                 if not self.is_output and not self.is_linked and self.prop_type:
                     layout.prop(node, self.prop_type, index=self.prop_index, text=self.name)
@@ -356,6 +355,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
     prop_name: StringProperty(default='')
     use_prop: BoolProperty(default=False)
+    custom_draw: StringProperty()
 
     def get_prop_data(self):
         if self.prop_name:
