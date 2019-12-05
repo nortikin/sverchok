@@ -87,6 +87,7 @@
     SvMirrorNode
     MatrixApplyNode
     SvBarycentricTransformNode
+    SvAlignMeshByMesh
     ---
     SvTransformSelectNode
     SvSimpleDeformNode
