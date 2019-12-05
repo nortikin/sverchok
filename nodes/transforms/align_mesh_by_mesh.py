@@ -40,10 +40,10 @@ class SvAlignMeshByMesh(bpy.types.Node, SverchCustomTreeNode):
                   ('M', ' ', '', 'ARROW_LEFTRIGHT', 2),
                   ('R', ' ', '', 'FORWARD', 3)]
 
-    axis: bpy.props.EnumProperty(items=[(i, i, '') for i in ['x', 'y', 'z']], options={'ENUM_FLAG'}, update=updateNode)
+    axis: bpy.props.EnumProperty(items=[(i, i, '') for i in ['x', 'y', 'z']], default={'x'}, options={'ENUM_FLAG'},
+                                 update=updateNode)
     align_base_mesh: bpy.props.EnumProperty(items=align_enum, update=updateNode)
     align_moved_mesh: bpy.props.EnumProperty(items=align_enum, update=updateNode)
-
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Base').custom_draw = 'draw_base_sock'

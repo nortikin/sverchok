@@ -16,3 +16,4 @@ Transforms
    mirror
    transform_select
    randomize
+   align_mesh_by_mesh
