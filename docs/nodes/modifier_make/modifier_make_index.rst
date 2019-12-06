@@ -25,4 +25,4 @@ Modifier Make
    fractal_curve
    convex_hull_mk2
    dual_mesh
-   random_point_on_mesh
+   random_points_on_mesh
