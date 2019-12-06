@@ -31,7 +31,7 @@ def get_points(sv_verts, faces, number, seed, face_mask=None):
     tri_faces, face_indexes = triangulate_mesh(bl_verts, faces, face_mask)
     if not tri_faces:
         return [[]], []
-    face_numbers = distribute_points(bl_verts, tri_faces, number)
+    face_numbers = distribute_points_accurate(bl_verts, tri_faces, number)
     out_verts = []
     out_face_index = []
     for face, fi, fnum in zip(tri_faces, face_indexes, face_numbers):
@@ -41,12 +41,24 @@ def get_points(sv_verts, faces, number, seed, face_mask=None):
     return [co[:] for co in out_verts], out_face_index
 
 
-def distribute_points(bl_verts, tri_faces, number):
+def distribute_points_fast(bl_verts, tri_faces, number):
     # returns list of numbers which mean how many points should be created on face according its area
+    # actually this function has much better performance but for whole algorithm it does not matter
+    # leave this function unused
     face_areas = [area_tri(*[bl_verts[i] for i in f]) for f in tri_faces]
     total_area = sum(face_areas)
     face_numbers = [int(area * number / total_area) for area in face_areas]
     chosen_faces = random.choices(range(len(tri_faces)), face_areas, k=number-sum(face_numbers))
+    for i in chosen_faces:
+        face_numbers[i] += 1
+    return face_numbers
+
+
+def distribute_points_accurate(bl_verts, tri_faces, number):
+    # returns list of numbers which mean how many points should be created on face according its area
+    face_areas = [area_tri(*[bl_verts[i] for i in f]) for f in tri_faces]
+    face_numbers = [0 for _ in tri_faces]
+    chosen_faces = random.choices(range(len(tri_faces)), face_areas, k=number)
     for i in chosen_faces:
         face_numbers[i] += 1
     return face_numbers
