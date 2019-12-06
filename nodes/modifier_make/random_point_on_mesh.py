@@ -16,12 +16,19 @@ from sverchok.data_structure import updateNode
 
 
 def get_points(sv_verts, faces, number, seed):
+    """
+    Return points distributed on given mesh
+    :param sv_verts: list of vertices
+    :param faces: list of faces
+    :param number: int, number of points which should be putted on mesh
+    :param seed: seed of random module
+    :return: list of vertices, list of indexes for each generated point 
+    which are point to a face where point was created
+    """
     random.seed(seed)
     bl_verts = [Vector(co) for co in sv_verts]
     tri_faces, face_indexes = triangulate_mesh(bl_verts, faces)
-    face_areas = [area_tri(*[bl_verts[i] for i in f]) for f in tri_faces]
-    total_area = sum(face_areas)
-    face_numbers = [int(area * number / total_area) for area in face_areas]
+    face_numbers = distribute_points(bl_verts, tri_faces, number)
     out_verts = []
     out_face_index = []
     for face, fi, fnum in zip(tri_faces, face_indexes, face_numbers):
@@ -31,7 +38,19 @@ def get_points(sv_verts, faces, number, seed):
     return [co[:] for co in out_verts], out_face_index
 
 
+def distribute_points(bl_verts, tri_faces, number):
+    # returns list of numbers which mean how many points should be created on face according its area
+    face_areas = [area_tri(*[bl_verts[i] for i in f]) for f in tri_faces]
+    total_area = sum(face_areas)
+    face_numbers = [int(area * number / total_area) for area in face_areas]
+    chosen_faces = random.choices(range(len(tri_faces)), face_areas, k=number-sum(face_numbers))
+    for i in chosen_faces:
+        face_numbers[i] += 1
+    return face_numbers
+
+
 def triangulate_mesh(bl_verts, faces):
+    # returns list of triangle faces and list of indexes which points to initial faces for each new triangle
     new_faces = []
     face_indexes = []  # index of old faces
     for i, f in enumerate(faces):
@@ -48,6 +67,7 @@ def triangulate_mesh(bl_verts, faces):
 
 
 def get_random_vectors_on_tri(v1, v2, v3, number):
+    # returns random vertices for given triangle
     out = []
     for _ in range(number):
         u1 = random.random()
@@ -62,14 +82,14 @@ def get_random_vectors_on_tri(v1, v2, v3, number):
 
 class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: ...
-    ...
+    Triggers: distribute points on given mesh
+    points are created evenly according area faces
 
-    ...
+    based on Blender function - tessellate_polygon
     """
     bl_idname = 'SvRandomPointsOnMesh'
     bl_label = 'Random points on mesh'
-    bl_icon = 'MESH_GRID'
+    bl_icon = 'SNAP_FACE_CENTER'
 
     points_number: bpy.props.IntProperty(name='Number', default=10, description="Number of random points",
                                          update=updateNode)
