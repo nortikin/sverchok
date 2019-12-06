@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 import random
+from itertools import cycle, chain, repeat
 
 import bpy
 from mathutils import Vector
@@ -15,7 +16,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-def get_points(sv_verts, faces, number, seed):
+def get_points(sv_verts, faces, number, seed, face_mask=None):
     """
     Return points distributed on given mesh
     :param sv_verts: list of vertices
@@ -27,7 +28,9 @@ def get_points(sv_verts, faces, number, seed):
     """
     random.seed(seed)
     bl_verts = [Vector(co) for co in sv_verts]
-    tri_faces, face_indexes = triangulate_mesh(bl_verts, faces)
+    tri_faces, face_indexes = triangulate_mesh(bl_verts, faces, face_mask)
+    if not tri_faces:
+        return [[]], []
     face_numbers = distribute_points(bl_verts, tri_faces, number)
     out_verts = []
     out_face_index = []
@@ -49,11 +52,16 @@ def distribute_points(bl_verts, tri_faces, number):
     return face_numbers
 
 
-def triangulate_mesh(bl_verts, faces):
+def triangulate_mesh(bl_verts, faces, face_mask=None):
     # returns list of triangle faces and list of indexes which points to initial faces for each new triangle
     new_faces = []
     face_indexes = []  # index of old faces
-    for i, f in enumerate(faces):
+    iter_mask = cycle([True]) if face_mask is None else \
+                    face_mask if len(face_mask) >= len(faces) else \
+                    chain(face_mask, repeat(face_mask[-1], len(faces) - len(face_mask)))
+    for i, (f, m) in enumerate(zip(faces, iter_mask)):
+        if not m:
+            continue
         fverts = []  # list of list of vertices for tessellate algorithm
         iverts = []  # list of old index of point per new position of point
         # [[v1,v2,v3,v4]] - fverts
@@ -89,7 +97,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvRandomPointsOnMesh'
     bl_label = 'Random points on mesh'
-    bl_icon = 'SNAP_FACE_CENTER'
+    sv_icon = 'SV_RANDOM_NUM_GEN'
 
     points_number: bpy.props.IntProperty(name='Number', default=10, description="Number of random points",
                                          update=updateNode)
@@ -98,6 +106,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
         self.inputs.new('SvStringsSocket', 'Faces')
+        self.inputs.new('SvStringsSocket', 'Face mask')
         self.inputs.new('SvStringsSocket', 'Number').prop_name = 'points_number'
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
         self.outputs.new('SvVerticesSocket', 'Verts')
@@ -108,9 +117,10 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
             return
         out_verts = []
         out_face_index = []
-        for v, f, n, s in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get(),
-                              self.inputs['Number'].sv_get(), self.inputs['Seed'].sv_get()):
-            new_vertices, face_index = get_points(v, f, n[0], s[0])
+        for v, f, m, n, s in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get(),
+                            self.inputs['Face mask'].sv_get() if self.inputs['Face mask'].is_linked else cycle([None]),
+                            self.inputs['Number'].sv_get(), self.inputs['Seed'].sv_get()):
+            new_vertices, face_index = get_points(v, f, n[0], s[0], m)
             out_verts.append(new_vertices)
             out_face_index.append(face_index)
         self.outputs['Verts'].sv_set(out_verts)
