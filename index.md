@@ -129,6 +129,7 @@
     SvOffsetLineNode
     SvContourNode
     SvDualMeshNode
+    SvRandomPointsOnMesh
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
