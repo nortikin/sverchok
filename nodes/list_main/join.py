@@ -49,7 +49,7 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update(self):
 
-        if len(self.inputs) > 0:
+        if len(self.outputs) > 0:
             multi_socket(self, min=1)
 
 
