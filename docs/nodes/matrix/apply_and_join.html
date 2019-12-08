@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Apply Matrix to Mesh &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Matrix" href="matrix_index.html"/>
+        <link rel="next" title="Matrix Deform" href="deform.html"/>
+        <link rel="prev" title="Matrix" href="matrix_index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="matrix_index.html">Matrix</a> &raquo;</li>
+      
+    <li>Apply Matrix to Mesh</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/matrix/apply_and_join.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="apply-matrix-to-mesh">
+<h1>Apply Matrix to Mesh<a class="headerlink" href="#apply-matrix-to-mesh" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>Applies a Transform Matrix to a list or nested lists of vertices, edges and faces. If several matrices are provided on the input, then this node will produce several meshes.</p>
+<p><strong>Note</strong>. Unless there is further processing going on which explicitly require the duplicated topology, then letting the <code class="docutils literal"><span class="pre">Viewer</span> <span class="pre">Draw</span></code> or <code class="docutils literal"><span class="pre">BMesh</span> <span class="pre">Viewer</span></code> nodes automatically repeat the index lists for the edges and faces is slightly more efficient than use of this node.</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><strong>Vertices</strong>. Represents vertices or intermediate vectors used for further vector math.</li>
+<li><strong>Edges</strong></li>
+<li><strong>Faces</strong></li>
+<li><strong>Matrices</strong>. One or more, never empty.</li>
+</ul>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following parameter:</p>
+<p><strong>Join</strong>. If set, then this node will join output meshes into one mesh, the same way as <code class="docutils literal"><span class="pre">Mesh</span> <span class="pre">Join</span></code> node does.
+Otherwise, if N matrices are provided at the input, this node will produce N lists of vertices, N lists of edges and N lists of faces.</p>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><strong>Vertices</strong>.  Nested list of vectors / vertices, matching the number nested incoming <em>matrices</em>.</li>
+<li><strong>Edges</strong>. Input edges list, repeated the number of incoming matrices. Empty if corresponding input is empty.</li>
+<li><strong>Faces</strong>. Input faces list, repeated the number of incoming matrices. Empty if corresponding input is empty.</li>
+</ul>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<img alt="https://cloud.githubusercontent.com/assets/284644/6096652/ac13659e-afbf-11e4-83c9-e13b75c0e346.png" src="https://cloud.githubusercontent.com/assets/284644/6096652/ac13659e-afbf-11e4-83c9-e13b75c0e346.png" />
+<img alt="https://cloud.githubusercontent.com/assets/284644/6096654/b300fbfa-afbf-11e4-901b-1361a44238c2.png" src="https://cloud.githubusercontent.com/assets/284644/6096654/b300fbfa-afbf-11e4-901b-1361a44238c2.png" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="deform.html" class="btn btn-neutral float-right" title="Matrix Deform">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="matrix_index.html" class="btn btn-neutral" title="Matrix"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

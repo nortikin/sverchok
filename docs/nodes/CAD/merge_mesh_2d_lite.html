@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Merge mesh 2D lite &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="CAD" href="CAD_index.html"/>
+        <link rel="next" title="Inset Special" href="inset_special.html"/>
+        <link rel="prev" title="Merge mesh 2d" href="merge_mesh_2d.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="CAD_index.html">CAD</a> &raquo;</li>
+      
+    <li>Merge mesh 2D lite</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/CAD/merge_mesh_2d_lite.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="merge-mesh-2d-lite">
+<h1>Merge mesh 2D lite<a class="headerlink" href="#merge-mesh-2d-lite" title="Permalink to this headline">¶</a></h1>
+<img alt="https://user-images.githubusercontent.com/28003269/69255239-ed444980-0bd0-11ea-8ee5-17f1a02c1a17.png" src="https://user-images.githubusercontent.com/28003269/69255239-ed444980-0bd0-11ea-8ee5-17f1a02c1a17.png" />
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>The node takes mesh determined by faces and returns new mesh with taking in account intersection of given faces.
+This means that output can be similar to input if input faces does not have any intersection.
+For example output of two intersected squares will be in next view:</p>
+<img alt="https://user-images.githubusercontent.com/28003269/68193618-c3820480-ffcc-11e9-8b7b-9b9d65838ec2.png" src="https://user-images.githubusercontent.com/28003269/68193618-c3820480-ffcc-11e9-8b7b-9b9d65838ec2.png" />
+<p>Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.</p>
+<p>Also this node can connect not intersecting polygons.
+If face is inside another face the one will be connected with boundary face with two extra edges
+(number of edges can be different).</p>
+<img alt="https://user-images.githubusercontent.com/28003269/68193732-0c39bd80-ffcd-11e9-9c9d-0b227f1c1bf0.png" src="https://user-images.githubusercontent.com/28003269/68193732-0c39bd80-ffcd-11e9-9c9d-0b227f1c1bf0.png" />
+<p>Also this node have optional extra output sockets of <cite>face index</cite> mask and <cite>overlap number</cite>
+which should be switched on on N panel.</p>
+<p><cite>Face index</cite> output gives index of old face for every new faces.
+For example if you merged two squares and each of them had different color
+it is possible to assign old colors to new mesh.
+Besides if squares have intersection then overlapping polygon will have color of polygon which was added earlier.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/68194735-fcbb7400-ffce-11e9-95e5-ad55d37e7667.gif" src="https://user-images.githubusercontent.com/28003269/68194735-fcbb7400-ffce-11e9-95e5-ad55d37e7667.gif" />
+<p><cite>Overlap number</cite> output give information about how many times current face is overlapping with faces.
+On the picture below there is intersection of fore squares.
+Figures in the centers of new created faces mean number of overlapping.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/69255898-08fc1f80-0bd2-11ea-8d1c-d861c2cd12b0.png" src="https://user-images.githubusercontent.com/28003269/69255898-08fc1f80-0bd2-11ea-8d1c-d861c2cd12b0.png" />
+<p><strong>Warning:</strong></p>
+<p>This node is not 100 % robust. Some corner cases can knock it out. If you get an error or unexpected result check:</p>
+<ul class="simple">
+<li>did not you try to plug edges instead of faces.</li>
+<li>try to change accuracy parameter on N panel.</li>
+</ul>
+</div>
+<div class="section" id="category">
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<p>CAD -&gt; Merge mesh 2D light</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>Vertices</strong> - vertices</li>
+<li><strong>Faces</strong> - faces (don’t try to plug edges)</li>
+</ul>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>Vertices</strong> - vertices, can produce new vertices</li>
+<li><strong>Faces</strong> - faces, also new edges can be added for showing holes</li>
+<li><strong>Face index</strong> (optionally) - index of old face by which new face was created</li>
+<li><strong>Overlap number</strong> (optionally) - number of overlapping current face with other</li>
+</ul>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="6%" />
+<col width="70%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameters</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Show face mask (N-panel)</td>
+<td>bool</td>
+<td>Enable of showing <cite>face index</cite> mask output socket</td>
+</tr>
+<tr class="row-odd"><td><dl class="first last docutils">
+<dt>Show number of overlapping</dt>
+<dd>(N-panel)</dd>
+</dl>
+</td>
+<td>bool</td>
+<td>Enable of showing <cite>overlap number</cite> output socket</td>
+</tr>
+<tr class="row-even"><td>Accuracy (N-panel)</td>
+<td>int</td>
+<td>Number of figures of decimal part of a number for comparing float values</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Accuracy</strong> - In most cases there is no need in touching this parameter
+but there is some cases when the node can stuck in error and playing with the parameter can resolve the error.
+This parameter does not have any affect to performance in spite of its name.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>If there is need for example to merge two squares they should be joined in one object before.
+This can be done with ‘list join’ nodes and ‘mesh join’:</p>
+<img alt="https://user-images.githubusercontent.com/28003269/68199389-63dd2680-ffd7-11e9-9418-b822bca3170d.png" src="https://user-images.githubusercontent.com/28003269/68199389-63dd2680-ffd7-11e9-9418-b822bca3170d.png" />
+<p>According that fact that the node can change topology of a input mesh
+it can be a problem to applying related with faces information to result mesh.
+If input faces has for example colors it can be so that the colors should be applied to result mesh.
+Face index socket is dedicated to help in this situation <cite>list item</cite> node.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/68201729-c506f900-ffdb-11e9-827e-b81c7ed69e77.png" src="https://user-images.githubusercontent.com/28003269/68201729-c506f900-ffdb-11e9-827e-b81c7ed69e77.png" />
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<img alt="https://user-images.githubusercontent.com/28003269/68143481-f683b400-ff4a-11e9-9a39-805e9c7d07d4.png" src="https://user-images.githubusercontent.com/28003269/68143481-f683b400-ff4a-11e9-9a39-805e9c7d07d4.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/61684024-f27baf80-ad28-11e9-9f82-38c4ffef8a7f.png" src="https://user-images.githubusercontent.com/28003269/61684024-f27baf80-ad28-11e9-9f82-38c4ffef8a7f.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/61684160-7897f600-ad29-11e9-8425-3dddba31d951.gif" src="https://user-images.githubusercontent.com/28003269/61684160-7897f600-ad29-11e9-8425-3dddba31d951.gif" />
+<p><strong>Dyeing of overlapping faces based on number of overlapping:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/69240475-fecc2800-0bb5-11ea-85f4-76d8e14320bd.png" src="https://user-images.githubusercontent.com/28003269/69240475-fecc2800-0bb5-11ea-85f4-76d8e14320bd.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/69251244-93d91c00-0bca-11ea-8ad7-fb62db1580da.gif" src="https://user-images.githubusercontent.com/28003269/69251244-93d91c00-0bca-11ea-8ad7-fb62db1580da.gif" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="inset_special.html" class="btn btn-neutral float-right" title="Inset Special">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="merge_mesh_2d.html" class="btn btn-neutral" title="Merge mesh 2d"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

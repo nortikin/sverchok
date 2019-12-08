@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Bricks Grid &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Generators" href="generator_index.html"/>
+        <link rel="next" title="Circle" href="circle.html"/>
+        <link rel="prev" title="Box" href="box.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="generator_index.html">Generators</a> &raquo;</li>
+      
+    <li>Bricks Grid</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/generator/bricks.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="bricks-grid">
+<h1>Bricks Grid<a class="headerlink" href="#bricks-grid" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>This node generates bricks-like grid, i.e. a grid each row of which is shifted
+with relation to another. It is also possible to specify toothing, so it will
+be like engaged bricks.
+All parameters of bricks can be randomized with separate control over
+randomization of each parameter.</p>
+<p>Optionally the grid may be cyclic in one or two directions. This can be useful
+if you are going to map the grid onto some sort of cyclic or toroidal surface.</p>
+</div>
+<div class="section" id="inputs-parameters">
+<h2>Inputs &amp; Parameters<a class="headerlink" href="#inputs-parameters" title="Permalink to this headline">¶</a></h2>
+<p>All parameters except for <code class="docutils literal"><span class="pre">Faces</span> <span class="pre">mode</span></code> can be given by the node or an external input.
+All inputs are vectorized and they will accept single or multiple values.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="14%" />
+<col width="12%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Param</th>
+<th class="head">Type</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>Cycle U</strong></td>
+<td>Boolean</td>
+<td>False</td>
+<td>Make the grid cyclic in U direction, i.e. the direction of
+brick rows. This makes sense only if you are going to map
+the grid on to some sort of cyclic surface (e.g. cylinder).
+<strong>Note</strong>: after such mapping, you may want to use “Remove
+doubles” node.</td>
+</tr>
+<tr class="row-odd"><td><strong>Cycle V</strong></td>
+<td>Boolean</td>
+<td>False</td>
+<td>Make the grid cyclic in V direction, i.e. the direction of
+brick columns. This makes sense only if you are going to map
+the grid on to some sort of cyclic surface (e.g. cylinder).
+<strong>Note</strong>: after such mapping, you may want to use “Remove
+doubles” node.</td>
+</tr>
+<tr class="row-even"><td><strong>Faces mode</strong></td>
+<td><p class="first">Flat or</p>
+<p>Stitch or</p>
+<p class="last">Center</p>
+</td>
+<td>Flat</td>
+<td><p class="first">What kind of polygons to generate:</p>
+<ul class="last simple">
+<li>Flat - generate one polygon (n-gon, in general) for each
+brick.</li>
+<li>Stitch - split each brick into several triangles, with
+edges going across brick.</li>
+<li>Center - split each brick into triangles by adding new
+vertex in the center of the brick. This mode is not
+available if <em>any</em> of <strong>Cycle U</strong>, <strong>Cycle V</strong>
+parameters is checked.</li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><strong>Unit width</strong></td>
+<td>Float</td>
+<td>2.0</td>
+<td>Width of one unit (brick).</td>
+</tr>
+<tr class="row-even"><td><strong>Unit height</strong></td>
+<td>Float</td>
+<td>1.0</td>
+<td>Height of one unit (brick).</td>
+</tr>
+<tr class="row-odd"><td><strong>Width</strong></td>
+<td>Float</td>
+<td>10.0</td>
+<td>Width of overall grid.</td>
+</tr>
+<tr class="row-even"><td><strong>Height</strong></td>
+<td>Float</td>
+<td>10.0</td>
+<td>Height of overall grid.</td>
+</tr>
+<tr class="row-odd"><td><strong>Toothing</strong></td>
+<td>Float</td>
+<td>0.0</td>
+<td>Bricks toothing amount. Default value of zero means no
+toothing.</td>
+</tr>
+<tr class="row-even"><td><strong>Toothing
+random</strong></td>
+<td>Float</td>
+<td>0.0</td>
+<td>Toothing randomization factor. Default value of zero means
+that all toothings will be equal. Maximal value of 1.0
+means toothing will be random in range from zero to value
+of <code class="docutils literal"><span class="pre">Toothing</span></code> parameter.</td>
+</tr>
+<tr class="row-odd"><td><strong>Random U</strong></td>
+<td>Float</td>
+<td>0.0</td>
+<td>Randomization amplitude along bricks rows. Default value of
+zero means all bricks will be of same width.</td>
+</tr>
+<tr class="row-even"><td><strong>Random V</strong></td>
+<td>Float</td>
+<td>0.0</td>
+<td>Randomization amplitude across bricks rows. Default value
+of zero means all grid rows will be of same height.</td>
+</tr>
+<tr class="row-odd"><td><strong>Shift</strong></td>
+<td>Float</td>
+<td>0.5</td>
+<td>Brick rows shift factor. Default value of 0.5 means each
+row of bricks will be shifted by half of brick width in
+relation to previous row. Minimum value of zero means no
+shift.</td>
+</tr>
+<tr class="row-even"><td><strong>Seed</strong></td>
+<td>Int</td>
+<td>0</td>
+<td>Random seed.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><strong>Vertices</strong></li>
+<li><strong>Edges</strong>. Note that this output will contain only edges that are between bricks, not that splitting bricks into triangles.</li>
+<li><strong>Polygons</strong></li>
+<li><strong>Centers</strong>. Centers of bricks.</li>
+</ul>
+</div>
+<div class="section" id="examples-of-usage">
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<p>Default settings:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/5981695/2fd5badc-a8de-11e4-858e-10ce590b19ec.png" src="https://cloud.githubusercontent.com/assets/284644/5981695/2fd5badc-a8de-11e4-858e-10ce590b19ec.png" />
+<p>The same with Stitch faces mode:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/5981673/06e0c5fe-a8de-11e4-822f-b1b44681982c.png" src="https://cloud.githubusercontent.com/assets/284644/5981673/06e0c5fe-a8de-11e4-822f-b1b44681982c.png" />
+<p>The same with Centers faces mode:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/5981672/0693c66e-a8de-11e4-8326-a75a15e37e74.png" src="https://cloud.githubusercontent.com/assets/284644/5981672/0693c66e-a8de-11e4-8326-a75a15e37e74.png" />
+<p>Using <code class="docutils literal"><span class="pre">toothing</span></code> parameter together with randomization, it is possible to generate something like stone wall:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/5981643/bb85d572-a8dd-11e4-88c0-ebd018bfcdd1.png" src="https://cloud.githubusercontent.com/assets/284644/5981643/bb85d572-a8dd-11e4-88c0-ebd018bfcdd1.png" />
+<p>A honeycomb structure:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/5981635/a75e5a74-a8dd-11e4-9d1f-64e19da8f01a.png" src="https://cloud.githubusercontent.com/assets/284644/5981635/a75e5a74-a8dd-11e4-9d1f-64e19da8f01a.png" />
+<p>Wooden floor:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/5981642/bb7ceda4-a8dd-11e4-9319-c9728199d44e.png" src="https://cloud.githubusercontent.com/assets/284644/5981642/bb7ceda4-a8dd-11e4-9319-c9728199d44e.png" />
+<p>You can also find some more examples <a class="reference external" href="https://github.com/portnov/sverchok/issues/19">in the development thread</a>.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="circle.html" class="btn btn-neutral float-right" title="Circle">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="box.html" class="btn btn-neutral" title="Box"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Edges to faces 2D &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="CAD" href="CAD_index.html"/>
+        <link rel="next" title="Merge mesh 2d" href="merge_mesh_2d.html"/>
+        <link rel="prev" title="Crop mesh 2D" href="crop_mesh_2d.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="CAD_index.html">CAD</a> &raquo;</li>
+      
+    <li>Edges to faces 2D</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/CAD/edges_to_faces_2d.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="edges-to-faces-2d">
+<h1>Edges to faces 2D<a class="headerlink" href="#edges-to-faces-2d" title="Permalink to this headline">¶</a></h1>
+<img alt="https://user-images.githubusercontent.com/28003269/67938049-30218b80-fbe8-11e9-9da7-c65df2de733e.png" src="https://user-images.githubusercontent.com/28003269/67938049-30218b80-fbe8-11e9-9da7-c65df2de733e.png" />
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>The node try create faces from given edges in 2D mode.
+It include some clever features as find self intersections of edge net and detection polygons with holes and
+convert them in proper condition for visualization nodes.</p>
+<p>Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.</p>
+<p>There some corner case when work of the node can be broken. First try to change <cite>accuracy</cite> parameter in N panel.
+Also it is possible that one of new polygons has self intersection in its points.
+The node is not designed at this stage for handling such case.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/67850794-87f5bf00-fb22-11e9-8e10-8ab61ccf810a.png" src="https://user-images.githubusercontent.com/28003269/67850794-87f5bf00-fb22-11e9-8e10-8ab61ccf810a.png" />
+</div>
+<div class="section" id="category">
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<p>CAD -&gt; Edges to faces 2D</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>Vertices</strong> - vertices of edge net</li>
+<li><strong>Edges</strong> - edges (don’t try to plug faces)</li>
+</ul>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>Vertices</strong> - vertices, can produce new vertices in intersection mode</li>
+<li><strong>Faces</strong> - faces, also new edges can be added for showing holes</li>
+</ul>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="7%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameters</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Self intersect</td>
+<td>bool</td>
+<td>Searching self intersections</td>
+</tr>
+<tr class="row-odd"><td>Fill holes</td>
+<td>bool</td>
+<td>Create faces for detected holes</td>
+</tr>
+<tr class="row-even"><td>Accuracy (N-panel)</td>
+<td>int</td>
+<td>Number of figures of decimal part of a number for comparing float values</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Self intersection</strong> - If it is quite reasonably clear what this option do with intersection it can be not clear
+that this option also is responsible for finding holes.
+If there is face inside another face without intersection with the face
+the finding intersection algorithm will consider this face as a hole.
+If intersection is off the face will be recognize as independent one.</p>
+<p><strong>Fill holes</strong> - If this option is on it views all generated faces.
+If it is off the node works in more interesting way.
+If hole detected the face of the hole is not going to be created.
+If hole also has a hole second hole will be filled with face.
+This algorithm will be repeated recursively over all nested holes.</p>
+<p><strong>Accuracy</strong> - In most cases there is no need in touching this parameter
+but there is some cases when the node can stuck in error and playing with the parameter can resolve the error.
+This parameter does not have any affect to performance in spite of its name.</p>
+</div>
+<div class="section" id="dissolving-tail-edges-algorithm">
+<h2>Dissolving tail edges algorithm<a class="headerlink" href="#dissolving-tail-edges-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>It also worth to light such specific behaviour of the node as dissolving tail edges.
+Tail edge is an edge from both side of which there is the same face.
+Actually, polygons with such tail edges can’t be viewed without extra preparations.
+The node just ignore such edges for simplicity of algorithm.
+After such deleting joined parts of mesh can become disjoint and inner parts of mesh can become holes.</p>
+<p>In the example below there are initial mesh with tail edges and result of the node.
+All tail edges are gone but some new edges was created.
+New edges creates for viewing faces with holes as if the faces was without holes.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/67653172-a3fe3280-f961-11e9-91bf-93c0425707fa.png" src="https://user-images.githubusercontent.com/28003269/67653172-a3fe3280-f961-11e9-91bf-93c0425707fa.png" />
+<p><strong>One more example of work principles:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/67849943-e0c45800-fb20-11e9-84b0-2b45624b90ca.gif" src="https://user-images.githubusercontent.com/28003269/67849943-e0c45800-fb20-11e9-84b0-2b45624b90ca.gif" />
+<p><strong>Example of work of filling holes:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/67938067-3879c680-fbe8-11e9-87ec-a882441d3db9.gif" src="https://user-images.githubusercontent.com/28003269/67938067-3879c680-fbe8-11e9-87ec-a882441d3db9.gif" />
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p><strong>Intersection of generated edges randomly:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/67630013-d3496c80-f899-11e9-8bad-77f9bc196eab.gif" src="https://user-images.githubusercontent.com/28003269/67630013-d3496c80-f899-11e9-8bad-77f9bc196eab.gif" />
+<img alt="https://user-images.githubusercontent.com/28003269/67947987-302c8600-fbfe-11e9-8c0e-a8c9ddda90d1.png" src="https://user-images.githubusercontent.com/28003269/67947987-302c8600-fbfe-11e9-8c0e-a8c9ddda90d1.png" />
+<p><strong>Work of contour 2D node and this node in tandem:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/67938552-26e4ee80-fbe9-11e9-9db7-f6cb8bdc5b18.png" src="https://user-images.githubusercontent.com/28003269/67938552-26e4ee80-fbe9-11e9-9db7-f6cb8bdc5b18.png" />
+<p><strong>Creating of some patterns:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/67940398-028b1100-fbed-11e9-8bcc-ac496721e1f5.gif" src="https://user-images.githubusercontent.com/28003269/67940398-028b1100-fbed-11e9-8bcc-ac496721e1f5.gif" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="merge_mesh_2d.html" class="btn btn-neutral float-right" title="Merge mesh 2d">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="crop_mesh_2d.html" class="btn btn-neutral" title="Crop mesh 2D"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

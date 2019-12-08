@@ -1,0 +1,308 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Extrude Region &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Modifier Change" href="modifier_change_index.html"/>
+        <link rel="next" title="Fill Holes" href="holes_fill.html"/>
+        <link rel="prev" title="Extrude separate faces lite" href="extrude_separate_lite.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="modifier_change_index.html">Modifier Change</a> &raquo;</li>
+      
+    <li>Extrude Region</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/modifier_change/extrude_region.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="extrude-region">
+<h1>Extrude Region<a class="headerlink" href="#extrude-region" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>This node applies Extrude operator to the region of selected faces, as whole. After that, resulting faces can be either transformed by any matrix, or moved along normal and scaled.
+If transformation is specified by matrix, it is possible to provide specific matrix for each vertex.</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following inputs:</p>
+<ul class="simple">
+<li><strong>Vertices</strong></li>
+<li><strong>Edges</strong></li>
+<li><strong>Polygons</strong></li>
+<li><strong>Mask</strong>. List of boolean or integer flags. Zero means do not process face with corresponding index. If this input is not connected, then by default all faces will be processed.</li>
+<li><strong>Height</strong>. Extrude factor. Available only in <strong>Along normal</strong> mode.</li>
+<li><strong>Scale</strong>. Scaling factor. Available only in <strong>Along normal</strong> mode.</li>
+<li><strong>Matrix</strong>. Transformation matrices. Available only in <strong>Matrix</strong> mode.</li>
+</ul>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following parameters:</p>
+<ul class="simple">
+<li><strong>Transformation mode</strong>. Controls how the transformation of extruded vertices is specified. There are two modes available:<ul>
+<li><strong>Matrix</strong>. This is the default mode. Transformation is specified by matrix provided at <strong>Matrix</strong> input.</li>
+<li><strong>Along normal</strong>. Vertices are translated along normal and scaled. Please note, that by <em>normal</em> here we mean <em>average of normals of selected faces</em>. Scaling center is average center of selected faces.</li>
+</ul>
+</li>
+<li><strong>Multiple extrude</strong>. This parameter defines how to deal with multiple matrices passed into <strong>Matrix</strong> input or multiple values passed into <strong>Height</strong> and <strong>Scale</strong> inputs. This parameter is available only in <strong>Matrix</strong> mode; in <strong>Along normal</strong> mode, this parameter is always checked.<ul>
+<li>If not checked (and <strong>Matrix</strong> mode is used), then each matrix provided will be applied to corresponding extruded vertex. So number of matrices in input is expected to be from 1 to the number of vertices which are extruded.</li>
+<li>If checked, or <strong>Along normal</strong> mode is used, then extrusion operation may be performed several times:<ul>
+<li>In <strong>Along normal</strong> mode, extrusion operation will be performed one time for each pair of <strong>Height</strong> and <strong>Scale</strong> input values.</li>
+<li>In <strong>Matrix</strong> mode, extrusion operation will be performed one time for each matrix passed into <strong>Matrix</strong> input.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Keep original</strong>. If checked, the original geometry will be passed to output as well as extruded geometry. This parameter is visible only in <strong>Properties</strong> (N) panel.</li>
+<li><strong>Height</strong>. Available only in <strong>Along normal</strong> mode. Extrude factor as a portion of face normal length. Default value of zero means do not extrude. Negative value means extrude to the opposite direction. This parameter can be also provided via corresponding input.</li>
+<li><strong>Scale</strong>. Available only in <strong>Along normal</strong> mode. Scale factor. Default value of 1 means do not scale. This parameter can be also provided via corresponding input.</li>
+</ul>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>This node has the following outputs:</p>
+<ul class="simple">
+<li><strong>Vertices</strong>. All vertices of resulting mesh.</li>
+<li><strong>Edges</strong>. All edges of resulting mesh.</li>
+<li><strong>Polygons</strong>. All faces of resulting mesh.</li>
+<li><strong>NewVerts</strong>. Only newly created vertices.</li>
+<li><strong>NewEdges</strong>. Only newly created edges.</li>
+<li><strong>NewFaces</strong>. Only newly created faces.</li>
+</ul>
+<p><strong>Note 1</strong>: Indicies in <strong>NewEdges</strong>, <strong>NewFaces</strong> outputs relate to vertices in <strong>Vertices</strong> output, not to <strong>NewVerts</strong> ones.</p>
+<p><strong>Note 2</strong>: If multiple extrusion is used, then <strong>NewVerts</strong>, <strong>NewEdges</strong>, <strong>NewFaces</strong> outputs will contain only geometry created by <em>last</em> extrusion operation.</p>
+</div>
+<div class="section" id="examples-of-usage">
+<h2>Examples of usage<a class="headerlink" href="#examples-of-usage" title="Permalink to this headline">¶</a></h2>
+<p>Extrude along normal:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/23824189/4686ba06-069c-11e7-9522-51d25e7667ad.png" src="https://cloud.githubusercontent.com/assets/284644/23824189/4686ba06-069c-11e7-9522-51d25e7667ad.png" />
+<p>Extrude by scale matrix:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/23824190/46b7b1a6-069c-11e7-87fb-ddabeb87e6b9.png" src="https://cloud.githubusercontent.com/assets/284644/23824190/46b7b1a6-069c-11e7-87fb-ddabeb87e6b9.png" />
+<p>Multiple extrusion mode:</p>
+<img alt="https://cloud.githubusercontent.com/assets/284644/24330825/c914a3fe-1248-11e7-9694-3068659feaf7.png" src="https://cloud.githubusercontent.com/assets/284644/24330825/c914a3fe-1248-11e7-9694-3068659feaf7.png" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="holes_fill.html" class="btn btn-neutral float-right" title="Fill Holes">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="extrude_separate_lite.html" class="btn btn-neutral" title="Extrude separate faces lite"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

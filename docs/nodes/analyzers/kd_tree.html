@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>KDT Closest Verts &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Analyzers" href="analyzers_index.html"/>
+        <link rel="next" title="KDT Closest Edges" href="kd_tree_edges_mk2.html"/>
+        <link rel="prev" title="Angles at the Edges" href="edge_angles.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="analyzers_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bpy_data/bpy_data_index.html">BPY data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../beta_nodes/beta_nodes_index.html">Beta Nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../alpha_nodes/alpha_nodes_index.html">Alpha Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="analyzers_index.html">Analyzers</a> &raquo;</li>
+      
+    <li>KDT Closest Verts</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/analyzers/kd_tree.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="kdt-closest-verts">
+<h1>KDT Closest Verts<a class="headerlink" href="#kdt-closest-verts" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>For every vertex in Verts, it checks the list of Vertices in Check Verts.
+What it does exactly depends on the <em>Search Mode</em>. Search modes are mere examples of what is possible with Blender’s KDTree module. The documentation for kdtree is found at the latest version of <code class="docutils literal"><span class="pre">mathutils.kdtree.html</span></code>.</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="29%" />
+<col width="54%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Mode</th>
+<th class="head">Input Name</th>
+<th class="head">type</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>All</td>
+<td>Verts</td>
+<td>vertices</td>
+</tr>
+<tr class="row-odd"><td>&#160;</td>
+<td>Check Verts</td>
+<td>vertices</td>
+</tr>
+<tr class="row-even"><td>N</td>
+<td>N</td>
+<td>int, or list of ints</td>
+</tr>
+<tr class="row-odd"><td>Radius</td>
+<td>Radius</td>
+<td>float, or list of floats</td>
+</tr>
+</tbody>
+</table>
+<p>Verts and Check Verts do not need to be the same pool of verts, they don’t even need to be the same
+length.</p>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Search Mode</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>1</td>
+<td>for each vertex in <em>Verts</em> return the vertex in <em>Check Verts</em> which is closest.</td>
+</tr>
+<tr class="row-odd"><td>N</td>
+<td>for each vertex in <em>Verts</em> return the list of N closest vertices found in Check Verts</td>
+</tr>
+<tr class="row-even"><td>Radius</td>
+<td>for each vertex in <em>Verts</em> return the <em>vertices</em> of <em>Check Verts</em> that are found
+within radius-distance of that vertex.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p>The meaning of each output differs between Modes, but essentially they are:</p>
+<ul class="simple">
+<li>Vertices coordinates</li>
+<li>Vertex Indices of related vertex in Check Verts</li>
+<li>Vertex Distance between Vertex in Verts and Check Verts</li>
+</ul>
+<p>The output lists will be nested if the <code class="docutils literal"><span class="pre">Mode</span></code> allows mutiple outputs, as is the case in N and Radius Mode.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>All kinds of crazy things are possible, see some examples here in
+<a class="reference external" href="https://github.com/nortikin/sverchok/issues/99">the development thread</a></p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/2808767/9be1483e-cd44-11e3-8c90-ff43a6daa2af.gif" src="https://cloud.githubusercontent.com/assets/619340/2808767/9be1483e-cd44-11e3-8c90-ff43a6daa2af.gif" />
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p><strong>Design specs</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">find(co)</span>
+<span class="sd">    : internal function</span>
+<span class="sd">    : &lt; Find nearest point to co</span>
+<span class="sd">    : &gt; returns co, index, dist</span>
+
+<span class="sd">    : inputs:</span>
+<span class="sd">        1) Main Verts for kdtree to hold</span>
+<span class="sd">        2) [cVert(s)] to check against</span>
+<span class="sd">    : outputs:</span>
+<span class="sd">        1) [Verts.co] from Main Verts that were closest</span>
+<span class="sd">        2) [Verts.idx] from Main Verts that were closest</span>
+
+
+<span class="sd">find_n(co, n)</span>
+<span class="sd">    : internal function</span>
+<span class="sd">    : &gt; Find nearest n points to co</span>
+<span class="sd">    : &lt; returns iterable of (co, index, dist)</span>
+
+<span class="sd">    : inputs:</span>
+<span class="sd">        1) Main Verts for kdtree to hold</span>
+<span class="sd">        2) [cVert(s)] to check against (size don&#39;t have to match)</span>
+<span class="sd">        3) n, max n nearest</span>
+<span class="sd">        optional?</span>
+<span class="sd">        4) mask, [0, 0, 1, 0, 1]  (return 3rd and 5th closest)</span>
+<span class="sd">        4) range clamp, [2:] (don&#39;t return first 2 closest)</span>
+<span class="sd">    : outputs:</span>
+<span class="sd">        for v in cVerts:</span>
+<span class="sd">        1) ([Verts.co],..) from Main Verts closest to v.co</span>
+<span class="sd">        2) ([Verts.idx],..) from Main Verts closest to v.co</span>
+<span class="sd">        optional!</span>
+<span class="sd">        3) could generate edges directly (Saves node noodle)</span>
+
+
+<span class="sd">find_range(co, radius)</span>
+<span class="sd">    : &gt; Find all points within radius of co</span>
+<span class="sd">    : &lt; returns iterable of (co, index, dist)</span>
+
+<span class="sd">    : inputs:</span>
+<span class="sd">        1) Main Verts for kdtree to hold</span>
+<span class="sd">        2) [cVert(s)] to check against (size don&#39;t have to match)</span>
+<span class="sd">        3) [distance(s)] ,</span>
+
+<span class="sd">    : outputs:</span>
+<span class="sd">        options:</span>
+<span class="sd">        1) grouped [.co for points in Main Verts in radius of v in cVert]</span>
+<span class="sd">        2) grouped [.idx for points in Main Verts in radius of v in cVert]</span>
+<span class="sd">        3) grouped [.dist for points in Main Verts in radius of v in cVert]</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+</div>
+<p>If you need large kdtree searches and memoization or specific functionality you shall want to write your own Node to utilize the kdtree module. Part of the problem of making a <em>general use</em> node is that it becomes sub-optimal for certain tasks. On the up-side, having this node allows you to rip out the specifics and implement your own more specialized kdtree node. Recommend using a different Node name and sharing it with team Sverchok :)</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="kd_tree_edges_mk2.html" class="btn btn-neutral float-right" title="KDT Closest Edges">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="edge_angles.html" class="btn btn-neutral" title="Angles at the Edges"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

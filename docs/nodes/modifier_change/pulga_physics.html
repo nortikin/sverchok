@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pulga Physics &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Modifier Change" href="modifier_change_index.html"/>
+        <link rel="next" title="Modifier Make" href="../modifier_make/modifier_make_index.html"/>
+        <link rel="prev" title="Planar edgenet to polygons" href="planar_edgenet_to_polygons.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="modifier_change_index.html">Modifier Change</a> &raquo;</li>
+      
+    <li>Pulga Physics</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/modifier_change/pulga_physics.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="pulga-physics">
+<h1>Pulga Physics<a class="headerlink" href="#pulga-physics" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>This node creates simulations from input parameters, it is meant to be used in form-finding purposes.
+It creates the simulation using the inputed vertices as spheric particles that react to applied forces.</p>
+<p>The node is a basic NumPy implementation of basic physics system heavily inspired in “The Nature of Code” by Daniel Shiffman
+and the Kangoroo Plug-in for Grasshopper. Due the nature of the algorithm it can get very intensive, handle with responsibility</p>
+</div>
+<div class="section" id="input-output">
+<h2>Input &amp; Output<a class="headerlink" href="#input-output" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="28%" />
+<col width="17%" />
+<col width="55%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Input</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>Initial_Pos</strong></td>
+<td>Vertices</td>
+<td>Vertices in original state</td>
+</tr>
+<tr class="row-odd"><td><strong>Iterations</strong></td>
+<td>Vertices</td>
+<td>Number of iterations of the process</td>
+</tr>
+<tr class="row-even"><td><strong>Springs</strong></td>
+<td>Strings</td>
+<td>Edges referenced to vertices</td>
+</tr>
+<tr class="row-odd"><td><strong>Springs Length</strong></td>
+<td>Strings</td>
+<td>Specify spring rest length,
+0 to calculate it from initial position</td>
+</tr>
+<tr class="row-even"><td><strong>Springs Stiffness</strong></td>
+<td>Strings</td>
+<td>Springs stiffness constant</td>
+</tr>
+<tr class="row-odd"><td><strong>Pins</strong></td>
+<td>Strings</td>
+<td>Indexes of vertices with fixed position,
+accepts a vertices mask and index number</td>
+</tr>
+<tr class="row-even"><td><strong>Pins Goal Position</strong></td>
+<td>Vertices</td>
+<td>Final position of pinned vertices</td>
+</tr>
+<tr class="row-odd"><td><strong>Radius</strong></td>
+<td>Strings</td>
+<td>Radius of virtual sphere, used to
+calculate intersections, mass and surface</td>
+</tr>
+<tr class="row-even"><td><strong>Self Collision</strong></td>
+<td>Strings</td>
+<td>Collision force.
+Applied when vertex distance &lt; sum Radius</td>
+</tr>
+<tr class="row-odd"><td><strong>Self Attract</strong></td>
+<td>Strings</td>
+<td>Attract force magnitude.
+Applied when vertex distance &gt; sum Radius</td>
+</tr>
+<tr class="row-even"><td><strong>Self Attract Decay</strong></td>
+<td>Strings</td>
+<td>attract force decay with distance (power)
+0 = no decay, 1 = linear, 2 = quadratic…</td>
+</tr>
+<tr class="row-odd"><td><strong>Grow</strong></td>
+<td>Strings</td>
+<td>Radius variance factor.
+Shrink when they intersect, Grow when don’t.</td>
+</tr>
+<tr class="row-even"><td><strong>Min Radius</strong></td>
+<td>Strings</td>
+<td>Minimum radius limit</td>
+</tr>
+<tr class="row-odd"><td><strong>Max Radius</strong></td>
+<td>Strings</td>
+<td>Maximum radius limit</td>
+</tr>
+<tr class="row-even"><td><strong>Pols</strong></td>
+<td>Strings</td>
+<td>Pols referenced to vertices.
+(used to calculate inflate force)</td>
+</tr>
+<tr class="row-odd"><td><strong>Inflate</strong></td>
+<td>Strings</td>
+<td>Inflate force magnitude (per surface unit)</td>
+</tr>
+<tr class="row-even"><td><strong>Initial Velocity</strong></td>
+<td>Vertices</td>
+<td>Initial vertices velocity</td>
+</tr>
+<tr class="row-odd"><td><strong>Max Velocity</strong></td>
+<td>Strings</td>
+<td>Maximum vertices velocity</td>
+</tr>
+<tr class="row-even"><td><strong>Drag Force</strong></td>
+<td>Strings</td>
+<td>Movement resistance from environment</td>
+</tr>
+<tr class="row-odd"><td><strong>Attractors</strong></td>
+<td>Vertices</td>
+<td>Attractors origins</td>
+</tr>
+<tr class="row-even"><td><strong>Attractors Force</strong></td>
+<td>Strings</td>
+<td>Attractors Force magnitude</td>
+</tr>
+<tr class="row-odd"><td><strong>Attractors Clamp</strong></td>
+<td>Strings</td>
+<td>Attractors maximum influence distance</td>
+</tr>
+<tr class="row-even"><td><strong>Attractors Decay</strong></td>
+<td>Strings</td>
+<td>Decay with distance
+0 = no decay, 1 = linear, 2 = quadratic…</td>
+</tr>
+<tr class="row-odd"><td><strong>Random Seed</strong></td>
+<td>Strings</td>
+<td>Random seed number</td>
+</tr>
+<tr class="row-even"><td><strong>Random Force</strong></td>
+<td>Strings</td>
+<td>Random force magnitude</td>
+</tr>
+<tr class="row-odd"><td><strong>Random Variation</strong></td>
+<td>Strings</td>
+<td>Random force variation</td>
+</tr>
+<tr class="row-even"><td><strong>Density</strong></td>
+<td>Strings</td>
+<td>Particles Density</td>
+</tr>
+<tr class="row-odd"><td><strong>Gravity</strong></td>
+<td>Vectors</td>
+<td>Constant forces that are mass independent</td>
+</tr>
+<tr class="row-even"><td><strong>Wind</strong></td>
+<td>Vertices</td>
+<td>constant forces that are mass dependent</td>
+</tr>
+<tr class="row-odd"><td><strong>Bounding Box</strong></td>
+<td>Vertices</td>
+<td>Limits of the system. It will work with the
+bounding box of the given vectors (min. two)</td>
+</tr>
+<tr class="row-even"><td><strong>Obstacles</strong></td>
+<td>Vertices</td>
+<td>Obstacles vertices</td>
+</tr>
+<tr class="row-odd"><td><strong>Obstacles Pols</strong></td>
+<td>Strings</td>
+<td>Pols referenced to obstacles vertices.
+(they must be triangles)</td>
+</tr>
+<tr class="row-even"><td><strong>Obstacles Bounce</strong></td>
+<td>Strings</td>
+<td>Obstacles Bounce force</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="accumulative">
+<h2>Accumulative:<a class="headerlink" href="#accumulative" title="Permalink to this headline">¶</a></h2>
+<p>When activated every nodeTree update will use the previous update as the starting point. The update can be triggered by the Update button or by any other event that triggers regular updates (like playing animation or changing any value).</p>
+<p>It offers some options:</p>
+<p><strong>Reset</strong>: Takes back the system to the initial state.</p>
+<p><strong>Update</strong>: Runs one Node-Tree update.</p>
+<p><strong>Pause</strong>: Pauses nodes calculations and ignores ui changes.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Arranging circles with attraction and collision.</p>
+<img alt="circle_fitting_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55254066-3d902500-5257-11e9-9a28-46d3deffcf0b.png" />
+<p>Tensile structures can be studied with collisions and pinned points.</p>
+<img alt="textile_structures_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55254067-3e28bb80-5257-11e9-8988-7e19e8a2462b.png" />
+<img alt="textile_cover_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/56082937-23da0a80-5e1f-11e9-9b50-611629574cef.png" />
+<p>Traction structures can be converted to compression structures with inverted gravity.</p>
+<img alt="compression_structures_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55254068-3e28bb80-5257-11e9-86b3-2243b4e7ac4e.png" />
+<p>Using the caternary  as a structural modeling tool:</p>
+<img alt="catenary_cover_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/56082943-305e6300-5e1f-11e9-811b-c20df2a7a4d2.png" />
+<p>Variable spring stiffness can be used to simulate sewing springs inflatable structures.</p>
+<img alt="inflateble_structures_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55256836-69fb6f80-525e-11e9-9a1b-21a6eafd0a4e.png" />
+<p>Trajectories can be traced by supplying the desired iterations as a list.</p>
+<img alt="physics_modeling_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/55313009-14de7a00-5467-11e9-887e-781d7b4dc025.png" />
+<p>Shooting particles to a attractors field.</p>
+<img alt="shooting partcles_pulga_physics_procedural_design.PNG" src="https://user-images.githubusercontent.com/10011941/56082940-2b011880-5e1f-11e9-8124-90da02ab7cf5.png" />
+<p>The “Pins Reactions” output supply the resultant force on the pins. It can be use to model auxiliary structures.</p>
+<img alt="pin_reactions_pulga_physics_procedural_design.png" src="https://user-images.githubusercontent.com/10011941/56082950-479d5080-5e1f-11e9-87ed-19b9247c07b5.png" />
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>When using accumulative mode the node uses one text-block (called pulga_memory + NodeTree name + Node name .txt) to save the current state when you hit pause in order to be maintained in case of closing the program.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../modifier_make/modifier_make_index.html" class="btn btn-neutral float-right" title="Modifier Make">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="planar_edgenet_to_polygons.html" class="btn btn-neutral" title="Planar edgenet to polygons"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

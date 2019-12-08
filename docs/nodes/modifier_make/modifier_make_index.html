@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Modifier Make &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Nodes" href="../../nodes.html"/>
+        <link rel="next" title="Bisect" href="bisect.html"/>
+        <link rel="prev" title="Pulga Physics" href="../modifier_change/pulga_physics.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+    <li>Modifier Make</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/modifier_make/modifier_make_index.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="modifier-make">
+<h1>Modifier Make<a class="headerlink" href="#modifier-make" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bisect.html">Bisect</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bisect.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bisect.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bisect.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bisect.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bisect.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bisect.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cross_section.html">Cross Section</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cross_section.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cross_section.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cross_section.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cross_section.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cross_section.html#example-of-usage">Example of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="edges_adaptative.html">Adaptative Edges</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lathe.html">Lathe</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="lathe.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lathe.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lathe.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lathe.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lathe.html#example-of-usage">Example of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="matrix_tube.html">Matrix Tube</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="matrix_tube.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix_tube.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix_tube.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matrix_tube.html#example-of-usage">Example of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipe_tubes.html">Pipe</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipe_tubes.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe_tubes.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe_tubes.html#properties">Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe_tubes.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipe_tubes.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="adaptive_polygons_mk2.html">Adaptive Polygons Mk2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="adaptive_polygons_mk2.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adaptive_polygons_mk2.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adaptive_polygons_mk2.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adaptive_polygons_mk2.html#base-area-illustrations">Base area illustrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adaptive_polygons_mk2.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="adaptive_polygons_mk2.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="solidify.html">Solidify</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uv_connect.html">UV Connection</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="uv_connect.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uv_connect.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uv_connect.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uv_connect.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="uv_connect.html#example-of-usage">Example of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="voronoi_2d.html">Voronoi 2D Node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="voronoi_2d.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="delaunay_2d.html">Delaunay 2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="wafel.html">Wafel</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="wafel.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wafel.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wafel.html#properties">Properties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wafel.html#properties-extended">Properties_extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wafel.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wafel.html#notes">Notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wafel.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="framework.html">Framework node</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="framework.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="framework.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="framework.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="framework.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="framework.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="wireframe.html">Wireframe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="offset_line.html">Offset line</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="offset_line.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="offset_line.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="offset_line.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="offset_line.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="offset_line.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bevel_curve.html">Bevel a Curve</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bevel_curve.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bevel_curve.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bevel_curve.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bevel_curve.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bevel_curve.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contour2D.html">Contour 2D</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contour2D.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contour2D.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contour2D.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contour2D.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contour2D.html#examples-of-usage">Examples of usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contour2D.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="fractal_curve.html">Fractal curve</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="fractal_curve.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fractal_curve.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fractal_curve.html#parameters">Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fractal_curve.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fractal_curve.html#examples-of-usage">Examples of usage</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="convex_hull_mk2.html">Convex Hull</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#examples">Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="convex_hull_mk2.html#notes">Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dual_mesh.html">Dual Mesh</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="dual_mesh.html#functionality">Functionality</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dual_mesh.html#inputs">Inputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dual_mesh.html#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dual_mesh.html#examples-of-usage">Examples of Usage</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bisect.html" class="btn btn-neutral float-right" title="Bisect">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../modifier_change/pulga_physics.html" class="btn btn-neutral" title="Pulga Physics"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,522 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Scripted Node 2(Generator) &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Generators Extended" href="generators_extended_index.html"/>
+        <link rel="next" title="An introduction and tutorial for the Scripted Nodes" href="scripted_intro.html"/>
+        <link rel="prev" title="Scripted Node (Generator)" href="script.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bpy_data/bpy_data_index.html">BPY data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../beta_nodes/beta_nodes_index.html">Beta Nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../alpha_nodes/alpha_nodes_index.html">Alpha Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="generators_extended_index.html">Generators Extended</a> &raquo;</li>
+      
+    <li>Scripted Node 2(Generator)</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/generators_extended/script3.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="scripted-node-2-generator">
+<h1>Scripted Node 2(Generator)<a class="headerlink" href="#scripted-node-2-generator" title="Permalink to this headline">¶</a></h1>
+<p>aka Script Node MK2</p>
+<ul class="simple">
+<li>Introduction</li>
+<li>Features</li>
+<li>Structure</li>
+<li>Templates</li>
+<li>Conveniences</li>
+<li>Examples</li>
+<li>Techniques to improve Python performance</li>
+<li>Limitations</li>
+</ul>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>When you want to express an idea in written form and the concept is suitable
+for a one line Python expression then often you can use a Formula node. If you
+need access to imports, classes, temporary variables, and functions then you can
+write a script to load into Script Node 2.</p>
+<p>Script Node MK2 differs from Script Node iteratrion 1 in that offers more control.
+It also has a prototype system where you could for example reuse the behavior of
+a generator and the template takes care of all the details leaving you to focus
+on the function. Scripts using the templates automatically becomes more powerful.</p>
+<p>It’s a prototype so bug reports, questions and feature request are very welcome.</p>
+</div>
+<div class="section" id="features">
+<h2>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h2>
+<p>allows:</p>
+<ul class="simple">
+<li>Loading/Reloading scripts currently in TextEditor</li>
+<li>imports and aliasing, ie anything you can import from console works in SN2</li>
+<li>nested functions and lambdas</li>
+<li>named inputs and outputs</li>
+<li>named operators (buttons to action something upon button press)</li>
+</ul>
+</div>
+<div class="section" id="structure">
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h2>
+<p>At present all scripts for SN2 must:</p>
+<ul class="simple">
+<li>be subclasses SvScript</li>
+<li>include a function called process in the class</li>
+<li>have member attributes called <code class="docutils literal"><span class="pre">inputs</span></code> and <code class="docutils literal"><span class="pre">outputs</span></code></li>
+<li>have one Script class per file, if more than one, last one found will be used</li>
+</ul>
+<p><strong>process(self)</strong></p>
+<p><code class="docutils literal"><span class="pre">process(self)</span></code> is the main flow control function. It is called when all sockets
+without defaults are connected. Usually the template provides a <code class="docutils literal"><span class="pre">process</span></code> function
+for you.</p>
+<p><strong>inputs</strong></p>
+<p>Default can be a float or integer value, not other types are usable yet:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="s1">&#39;socket name on ui&#39;</span><span class="p">,</span> <span class="n">default</span><span class="p">],</span>
+    <span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="s1">&#39;socket name on ui2&#39;</span><span class="p">,</span> <span class="n">default</span><span class="p">],</span>
+    <span class="c1"># ...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>outputs</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="s1">&#39;socket name on ui&#39;</span><span class="p">],</span>
+    <span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="s1">&#39;socket name on ui 2&#39;</span><span class="p">],</span>
+    <span class="c1"># ...</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>inputs and outputs</strong></p>
+<ul>
+<li><p class="first">Each <em>socket name on ui</em> string shall be unique.</p>
+</li>
+<li><p class="first"><strong>type</strong> are currently limited to</p>
+<blockquote>
+<div><table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">type id</th>
+<th class="head">type data</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>‘s’</td>
+<td>floats, ints, edges, faces, strings</td>
+</tr>
+<tr class="row-odd"><td>‘v’</td>
+<td>vertices, vectors, 3-tuples</td>
+</tr>
+<tr class="row-even"><td>‘m’</td>
+<td>matrices, 4 x 4 nested lists</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</li>
+</ul>
+<p>There are a series of names that have special meaning that scripts should
+avoid as class attributes or only used for the intended meaning. To be described:</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">node</span></code> <code class="docutils literal"><span class="pre">draw_buttons</span></code> <code class="docutils literal"><span class="pre">update</span></code> <code class="docutils literal"><span class="pre">process</span></code> <code class="docutils literal"><span class="pre">enum_func</span></code> <code class="docutils literal"><span class="pre">inputs</span></code></div></blockquote>
+<p><code class="docutils literal"><span class="pre">outputs</span></code></p>
+</div>
+<div class="section" id="templates">
+<h2>Templates<a class="headerlink" href="#templates" title="Permalink to this headline">¶</a></h2>
+<p>Sverchok includes a series of examples for the different templates.</p>
+</div>
+<div class="section" id="conveniences">
+<h2>Conveniences<a class="headerlink" href="#conveniences" title="Permalink to this headline">¶</a></h2>
+<p>We value our time, we are sure you do too, so features have been added to help speed up the
+script creation process.</p>
+<p><strong>Text Editor</strong></p>
+<ul class="simple">
+<li>can refresh the Script Node which currently loads that script by hitting <code class="docutils literal"><span class="pre">Ctrl+Enter</span></code></li>
+</ul>
+<p>Main classes for your subclasses are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">SvScript</span></code></li>
+<li><code class="docutils literal"><span class="pre">SvScriptSimpleGenerator</span></code></li>
+<li><code class="docutils literal"><span class="pre">SvScriptSimpleFunction</span></code></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="limitations">
+<h2>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h2>
+<p>Using <code class="docutils literal"><span class="pre">SvScriptSimpleGenerator</span></code> and <code class="docutils literal"><span class="pre">SvScriptSimpleFunction</span></code> you limit inputs to deal with one object.
+For plane, for example, you’ll get next data:</p>
+<blockquote>
+<div>[(0.0, 0.0, 0.0), (1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (1.0, 1.0, 0.0)] [(0, 1, 3, 2)]</div></blockquote>
+<p>If you need Full support of Sverchok data - you’d better use <code class="docutils literal"><span class="pre">SvScript</span></code>
+class and <code class="docutils literal"><span class="pre">self.node.inputs[0].sv_get()</span></code> function.</p>
+</div>
+<div class="section" id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>The best way to get familiarity with Script Node 2 is to go through the templates folder.
+They are intended to be lightweight and educational, but some of them will show
+advanced use cases. The images and animations on this <a class="reference external" href="https://github.com/nortikin/sverchok/issues/439">thread on github</a>.
+may also provide some insight into what’s possible.</p>
+<p>A typical nodescript using the <code class="docutils literal"><span class="pre">SvScriptSimpleGenerator</span></code> may look like this, note that
+the third argument for outputs is specific to this template:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="k">class</span> <span class="nc">GridGen</span><span class="p">(</span><span class="n">SvScriptSimpleGenerator</span><span class="p">):</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;Size&quot;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">),</span>
+              <span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;Subdivs&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)]</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;v&quot;</span><span class="p">,</span> <span class="s2">&quot;verts&quot;</span><span class="p">,</span> <span class="s2">&quot;make_verts&quot;</span><span class="p">),</span>
+               <span class="p">(</span><span class="s2">&quot;s&quot;</span><span class="p">,</span> <span class="s2">&quot;edges&quot;</span><span class="p">,</span> <span class="s2">&quot;make_edges&quot;</span><span class="p">)]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">make_verts</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
+        <span class="n">side</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sub</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="n">side</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">make_edges</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">sub</span><span class="p">):</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sub</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">sub</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sub</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">,</span> <span class="n">sub</span> <span class="o">*</span> <span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">edges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sub</span> <span class="o">*</span> <span class="n">j</span> <span class="o">+</span> <span class="n">i</span><span class="p">,</span> <span class="n">sub</span> <span class="o">*</span> <span class="n">j</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="n">sub</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">edges</span>
+</pre></div>
+</div>
+<p>Note that here the name of the method that should be called for producing data
+for each socket in the final last arguments to <code class="docutils literal"><span class="pre">outputs</span></code> but we are not forced
+to have all code inside the class, we can also do</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="k">def</span> <span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="n">add_vert</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">append</span>
+
+    <span class="n">x0</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">z0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">h</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">z0</span><span class="p">)</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span>
+        <span class="n">z1</span> <span class="o">=</span> <span class="n">z0</span> <span class="o">+</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">*</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">c</span> <span class="o">*</span> <span class="n">z0</span><span class="p">)</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">z0</span> <span class="o">=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">z1</span>
+
+        <span class="n">add_vert</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">z1</span><span class="p">))</span>
+
+<span class="k">class</span> <span class="nc">LorenzAttractor</span><span class="p">(</span><span class="n">SvScriptSimpleGenerator</span><span class="p">):</span>
+
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="mf">28.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="mf">8.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">make_verts</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">verts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">verts</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">make_edges</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">h</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">edges</span>
+
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="s1">&#39;verts&#39;</span><span class="p">,</span> <span class="s2">&quot;make_verts&quot;</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span><span class="s1">&#39;edges&#39;</span><span class="p">,</span> <span class="s2">&quot;make_edges&quot;</span><span class="p">]</span>
+    <span class="p">]</span>
+</pre></div>
+</div>
+<p>Here is a simple script for deleting loose vertices from mesh data, it also serves as an
+illustration for a type of script that uses the <code class="docutils literal"><span class="pre">`SvScriptSimpleFunction`</span></code> template that
+has one main function that decomposes into separate sockets. The methods don’t have be static
+but in general it is good practice to keep them free from side effects.</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">chain</span>
+
+<span class="k">class</span> <span class="nc">DeleteLooseVerts</span><span class="p">(</span><span class="n">SvScriptSimpleFunction</span><span class="p">):</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;verts&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;pol&#39;</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;verts&#39;</span><span class="p">),</span>
+        <span class="p">(</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;pol&#39;</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="c1"># delete loose verts</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">ve</span><span class="p">,</span> <span class="n">pe</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="c1"># find used indexes</span>
+        <span class="n">v_index</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="n">pe</span><span class="p">)))</span>
+        <span class="c1"># remap the vertices</span>
+        <span class="n">v_out</span> <span class="o">=</span> <span class="p">[</span><span class="n">ve</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v_index</span><span class="p">]</span>
+        <span class="c1"># create a mapping from old to new vertices index</span>
+        <span class="n">mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(((</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">v_index</span><span class="p">)))</span>
+        <span class="c1"># apply mapping to input polygon index</span>
+        <span class="n">p_out</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">mapping</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pe</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">v_out</span><span class="p">,</span> <span class="n">p_out</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="breakout-scripts">
+<h2>Breakout Scripts<a class="headerlink" href="#breakout-scripts" title="Permalink to this headline">¶</a></h2>
+<p>Scripts that needs to access the node can do so via the <code class="docutils literal"><span class="pre">`self.node`</span></code> variable
+that is automatically set.</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Breakout</span><span class="p">(</span><span class="n">SvScript</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span>
+        <span class="n">node_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="o">.</span><span class="n">id_data</span>
+        <span class="c1"># here you can do anything to the node or node group</span>
+        <span class="c1"># that real a real node could do including multisocket</span>
+        <span class="c1"># adaptive sockets etc. templates and examples for this are</span>
+        <span class="c1"># coming</span>
+</pre></div>
+</div>
+<p>Admit, you can call sockets data directly when using <code class="docutils literal"><span class="pre">`SvScript`</span></code> as <code class="docutils literal"><span class="pre">`self.node.inputs[0].sv_get()`</span></code>.
+And other <code class="docutils literal"><span class="pre">`self.node.`</span></code> operations possible from this class.</p>
+</div>
+<div class="section" id="techniques-to-improve-python-performance">
+<h2>Techniques to improve Python performance<a class="headerlink" href="#techniques-to-improve-python-performance" title="Permalink to this headline">¶</a></h2>
+<p>There are many ways to speed up python code. Some slowness will be down to
+innefficient algorithm design, other slowness is caused purely by how much
+processing is minimally required to solve a problem. A decent read regarding
+general methods to improve python code performance can be found
+on <a class="reference external" href="https://wiki.python.org/moin/PythonSpeed/PerformanceTips">python.org</a>.
+If you don’t know where the cycles are being consumed, then you don’t know
+if your efforts to optimize will have any significant impact.</p>
+<p>Read these 5 rules by Rob Pike before any optimization.
+<a class="reference external" href="http://users.ece.utexas.edu/~adnan/pike.html">http://users.ece.utexas.edu/~adnan/pike.html</a></p>
+</div>
+<div class="section" id="id1">
+<h2>Limitations<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<p>Most limitations are voided by increasing your Python and <code class="docutils literal"><span class="pre">bpy</span></code> skills. But
+one should also realize what is approriate for a node script to do.</p>
+<p>That’s it for now.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="scripted_intro.html" class="btn btn-neutral float-right" title="An introduction and tutorial for the Scripted Nodes">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="script.html" class="btn btn-neutral" title="Scripted Node (Generator)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

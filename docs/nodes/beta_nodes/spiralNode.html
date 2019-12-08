@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Spiral &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Beta Nodes" href="beta_nodes_index.html"/>
+        <link rel="next" title="Unsubdivide node" href="unsubdivide.html"/>
+        <link rel="prev" title="Color by formula" href="color_by_formula.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bpy_data/bpy_data_index.html">BPY data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="beta_nodes_index.html">Beta Nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../alpha_nodes/alpha_nodes_index.html">Alpha Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="beta_nodes_index.html">Beta Nodes</a> &raquo;</li>
+      
+    <li>Spiral</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/beta_nodes/spiralNode.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="spiral">
+<h1>Spiral<a class="headerlink" href="#spiral" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>Generates various types of spirals: Archimedean, Logarithmic, Spherical, Cornu (Euler), Ovoidal, Exo (to coin the term) and Spirangle.</p>
+<p>All spirals are defined as smooth curves (given enough curve resolution per turn) except the Spirangle spiral, which is a polygonal type of spiral.</p>
+<p>Most of the spirals are 2D and some are 3D, but any of the 2D spirals can be turned into 3D by setting the height parameter to a non-zero value.</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>All inputs are vectorized and they will accept single or multiple values.</p>
+<ul class="simple">
+<li><strong>Exterior Radius</strong> [1]</li>
+<li><strong>Interior Radius</strong> [1]</li>
+<li><strong>Exponent</strong> [2]</li>
+<li><strong>Turns</strong></li>
+<li><strong>Turn Resolution</strong></li>
+<li><strong>Scale</strong> [3]</li>
+<li><strong>Height</strong> [4]</li>
+<li><strong>Phase</strong></li>
+<li><strong>Arms</strong></li>
+</ul>
+<p>Notes:
+[1] : For some spirals the Exterior/Interior radii are repurposed to represent other spiral parameters like spherical (3D) radius, spiral length (Cornu) etc.
+[2] : For some spirals the exponent setting is repurposed to alter spiral shape in some way.
+[3] : For some spirals the scale settings affect xy radii, while for others it scales xyz radii.
+[4] : For some spirals the height setting spreads the spiral along z, for other it is ignored (e.g. spherical spiral has a predefined height to define a sphere)</p>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>All settings except <strong>Type</strong>, <strong>Flip</strong> and <strong>Preset</strong> can be given by the node or an external input.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="15%" />
+<col width="14%" />
+<col width="48%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Param</th>
+<th class="head">Type</th>
+<th class="head">Default [1]</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>Spiral Type</strong></td>
+<td><dl class="first last docutils">
+<dt>Enum:</dt>
+<dd>Archimedean
+Logarithmic
+Spherical
+Ovoidal
+Cornu
+Exo
+Spirangle</dd>
+</dl>
+</td>
+<td>Archimedean</td>
+<td>Type of the spiral. Each type is defined by
+a unique formula (See “Spiral Type” section
+for details).</td>
+</tr>
+<tr class="row-odd"><td><strong>Exterior Radius</strong></td>
+<td>Float</td>
+<td>0.1</td>
+<td>Exterior radius of the spiral.</td>
+</tr>
+<tr class="row-even"><td><strong>Interior Radius</strong></td>
+<td>Float</td>
+<td>0.0</td>
+<td>Interior radius of the spiral.</td>
+</tr>
+<tr class="row-odd"><td><strong>Exponent</strong></td>
+<td>Float</td>
+<td>1.0</td>
+<td>Exponent, attenuator, slope.</td>
+</tr>
+<tr class="row-even"><td><strong>Turns</strong></td>
+<td>Int</td>
+<td>7</td>
+<td>Number of turns in the spiral (&gt;= 1).</td>
+</tr>
+<tr class="row-odd"><td><strong>Turn Resolution</strong></td>
+<td>Int</td>
+<td>100</td>
+<td>Number of points in one turn (&gt;= 3).</td>
+</tr>
+<tr class="row-even"><td><strong>Scale</strong></td>
+<td>Float</td>
+<td>1.00</td>
+<td>Scale the radii of the spiral.</td>
+</tr>
+<tr class="row-odd"><td><strong>Height</strong></td>
+<td>Float</td>
+<td>0.0</td>
+<td>Height of the 3D spiral (2D if height = 0).</td>
+</tr>
+<tr class="row-even"><td><strong>Phase</strong></td>
+<td>float</td>
+<td>0.0</td>
+<td>Phase (in radians) around the spiral center.</td>
+</tr>
+<tr class="row-odd"><td><strong>Arms</strong></td>
+<td>Int</td>
+<td>1</td>
+<td>Number of arms in the spiral.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Notes:</dt>
+<dd>[1] : The default values for the spiral settings listed above correspond to the <strong>Archimedean</strong> preset, which is the default preset when creating a new spiral node (see Presets section).</dd>
+</dl>
+</div>
+<div class="section" id="spiral-types">
+<h2>Spiral Types<a class="headerlink" href="#spiral-types" title="Permalink to this headline">¶</a></h2>
+<p><strong>Archimedean</strong>
+The general Archimedean spirals are given by the formula:</p>
+<blockquote>
+<div>r = a + b * theta ^ (1/c)</div></blockquote>
+<p>where different value of c define certain known spirals:</p>
+<blockquote>
+<div>c =  1.0 : Archimedean spiral
+c =  2.0 : Parabolic spiral (Fermat)
+c = -1.0 : Hyperbolic spiral
+c = -2.0 : Lituus spiral</div></blockquote>
+<p><a class="reference external" href="http://mathworld.wolfram.com/ArchimedeanSpiral.html">http://mathworld.wolfram.com/ArchimedeanSpiral.html</a>
+<a class="reference external" href="https://en.wikipedia.org/wiki/Archimedean_spiral">https://en.wikipedia.org/wiki/Archimedean_spiral</a></p>
+<p><strong>Logarithmic</strong>
+The logarithmic spirals are given by the formula:</p>
+<blockquote>
+<div>r = a + b * e ^ (c * theta)</div></blockquote>
+<p>For c = ln(Phi)/(Pi/2) the logarithmic spiral is a Fibonacci (golden) spiral.</p>
+<p><a class="reference external" href="https://en.wikipedia.org/wiki/Logarithmic_spiral">https://en.wikipedia.org/wiki/Logarithmic_spiral</a></p>
+<p><strong>Spherical</strong>
+The spherical spirals are given by the formula:</p>
+<blockquote>
+<div>x = a * cos(b * t) * cos(c * t)
+y = a * sin(b * t) * cos(c * t)
+z = a * sin(c * t)</div></blockquote>
+<p>where a, b, c are constants.</p>
+<p>see: <a class="reference external" href="http://mathworld.wolfram.com/SphericalSpiral.html">http://mathworld.wolfram.com/SphericalSpiral.html</a></p>
+<p><strong>Cornu</strong>
+The Cornu spiral (also known as Euler spiral) is given the by the formula:</p>
+<blockquote>
+<div>x(L) = integral(cos(s^2), 0, L)
+y(L) = integral(sin(s^2), 0, L)</div></blockquote>
+<p>see: <a class="reference external" href="http://mathworld.wolfram.com/CornuSpiral.html">http://mathworld.wolfram.com/CornuSpiral.html</a>
+see: <a class="reference external" href="https://en.wikipedia.org/wiki/Euler_spiral">https://en.wikipedia.org/wiki/Euler_spiral</a></p>
+<p><strong>Ovoidal</strong>
+The Ovoidal spiral is similar to the spherical spiral and its vertical cross section shape is given by the intersection of two circles of radius R which overlap by radius r, while the horizontal cross section is a circle of radius r.</p>
+<p>Note: when R = r the ovoidal spiral is identical to the spherical spiral.</p>
+<p><strong>Exo</strong>
+The Exo spiral is given by the formula:</p>
+<blockquote>
+<div>r = a + (b-a) / (1 + exp(-c * (t - 0.5)))</div></blockquote>
+<p>This spiral has its radius follow a sigmoid transition between an inner radius and an outer radius.</p>
+<p><strong>Spirangle</strong>
+The Spirangle spiral is given by the formula:</p>
+<blockquote>
+<div>phi = phi + deltaPhi
+r = r + deltaR
+x = x + r * cos(phi)
+y = y + r * sin(phi)</div></blockquote>
+<p>where deltaPhi = 2*pi / N, and deltaR is a constant.</p>
+<p>see: <a class="reference external" href="https://en.wikipedia.org/wiki/Spirangle">https://en.wikipedia.org/wiki/Spirangle</a></p>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p><strong>Vertices</strong> and <strong>Edges</strong>
+All outputs will be generated when connected.</p>
+<p>Note: for spirals with multiple arms the outputs consist of disjoint lists defining each arm.</p>
+</div>
+<div class="section" id="presets">
+<h2>Presets<a class="headerlink" href="#presets" title="Permalink to this headline">¶</a></h2>
+<p>A set of spiral configuration presets is available for convenience. Once a preset is selected the spiral settings are updated with the preset values and the user can modify the settings to further alter the spiral shape.</p>
+<p>Note: once a setting is altered (after selecting a preset) the preset selection is cleared from the preset drop-down indicating that the new setting configuration is no longer the one corresponding to the previously selected preset.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="18%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+<col width="9%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Preset</th>
+<th class="head">type</th>
+<th class="head">R</th>
+<th class="head">r</th>
+<th class="head">e</th>
+<th class="head">t</th>
+<th class="head">N</th>
+<th class="head">s</th>
+<th class="head">h</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Fibonacci</td>
+<td>Logarithmic</td>
+<td>0.1</td>
+<td>0.0</td>
+<td>[1]</td>
+<td>4</td>
+<td>100</td>
+<td>0.1</td>
+<td>0.0</td>
+</tr>
+<tr class="row-odd"><td>Helix</td>
+<td>Logarithmic</td>
+<td>1.0</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>7</td>
+<td>100</td>
+<td>1.0</td>
+<td>7.0</td>
+</tr>
+<tr class="row-even"><td>Archimedean</td>
+<td>Archimedean</td>
+<td>0.1</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>7</td>
+<td>100</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-odd"><td>Conical</td>
+<td>Archimedean</td>
+<td>0.1</td>
+<td>0.0</td>
+<td>1.0</td>
+<td>7</td>
+<td>100</td>
+<td>1.0</td>
+<td>10.0</td>
+</tr>
+<tr class="row-even"><td>Parabolic</td>
+<td>Archimedean</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>2.0</td>
+<td>3</td>
+<td>100</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-odd"><td>Hyperbolic</td>
+<td>Archimedean</td>
+<td>10.0</td>
+<td>0.0</td>
+<td>-1.0</td>
+<td>11</td>
+<td>100</td>
+<td>2.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-even"><td>Lituus</td>
+<td>Archimedean</td>
+<td>7.0</td>
+<td>0.0</td>
+<td>-2.0</td>
+<td>11</td>
+<td>100</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-odd"><td>Spherical</td>
+<td>Spherical</td>
+<td>5.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>11</td>
+<td>55</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-even"><td>Ovoidal</td>
+<td>Ovoidal</td>
+<td>11.0</td>
+<td>4.0</td>
+<td>0.0</td>
+<td>7</td>
+<td>55</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-odd"><td>Cornu</td>
+<td>Cornu</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>7</td>
+<td>111</td>
+<td>5.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-even"><td>Exo</td>
+<td>Exo</td>
+<td>5.0</td>
+<td>1.0</td>
+<td>13.0</td>
+<td>11</td>
+<td>101</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-odd"><td>Spirangle SC</td>
+<td>Spirangle</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>8</td>
+<td>4</td>
+<td>1.0</td>
+<td>0.0</td>
+</tr>
+<tr class="row-even"><td>Spirangle HX</td>
+<td>Spirangle</td>
+<td>1.0</td>
+<td>0.0</td>
+<td>0.5</td>
+<td>7</td>
+<td>6</td>
+<td>0.1</td>
+<td>0.0</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Notes:</dt>
+<dd>[1] : Fibonacci spiral exponent is: ln(PHI)/(PI/2), where PHI is the golden ratio.
+[2] : The Spirangle SC and HX stand for Square/Constant and Hexa/Exponential, given the selected values.</dd>
+</dl>
+<p>The preset settings were selected for each type such that when switching from one preset to another the generated spirals are relatively the same size.</p>
+</div>
+<div class="section" id="example-of-usage">
+<h2>Example of usage<a class="headerlink" href="#example-of-usage" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="unsubdivide.html" class="btn btn-neutral float-right" title="Unsubdivide node">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="color_by_formula.html" class="btn btn-neutral" title="Color by formula"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

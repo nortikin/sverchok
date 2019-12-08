@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Merge mesh 2d &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="CAD" href="CAD_index.html"/>
+        <link rel="next" title="Merge mesh 2D lite" href="merge_mesh_2d_lite.html"/>
+        <link rel="prev" title="Edges to faces 2D" href="edges_to_faces_2d.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="CAD_index.html">CAD</a> &raquo;</li>
+      
+    <li>Merge mesh 2d</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/CAD/merge_mesh_2d.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="merge-mesh-2d">
+<h1>Merge mesh 2d<a class="headerlink" href="#merge-mesh-2d" title="Permalink to this headline">¶</a></h1>
+<img alt="https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png" src="https://user-images.githubusercontent.com/28003269/68468490-91bda780-0231-11ea-8c7d-c37c6d4f372f.png" />
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<p>This node merging to input meshes in one with finding intersections and providing extra information about faces.</p>
+<p>Prefix 2D means that the node expects from input any kind of flatten mesh
+but it does not mean that the mesh should only lay on XY surface.
+Input mesh can below or above XY surface or even can be tilted relative one.</p>
+<p>The node can merge two meshes which are overlapping each other.
+It is goal of this node. But also it is possible to have overlapping inside one of the input meshes or both of them.
+It is also is okay but you should be careful in expectation from <cite>mask index</cite> output.</p>
+<p>The node is capable of handling overlapping edges and points
+what can seem obvious that it should be but it was a bit tricky in implementation.
+Also the node can create holes in polygons.
+The algorithm will split polygon with holes into some pieces so holes lay on boundary of new pieces.</p>
+<p>The node can use information related with faces of initial meshes for assign them to new mesh.</p>
+</div>
+<div class="section" id="performance">
+<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
+<p>The node can handle with heavy meshes but there is important parameter as number of intersections
+to which the algorithm is sensitive.</p>
+<p>It is probably better to avoid using the node with heavy meshes when most parts of first mesh intersects
+with almost all parts of second one.</p>
+<p>Also overlapping edges can slow down the process.
+It is okay when most edges have several overlapping with each other,but performance can slow down dramatically
+if there is at least one edge which has a lot of overlapping with other edges.</p>
+</div>
+<div class="section" id="category">
+<h2>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h2>
+<p>CAD -&gt; Merge mesh 2D</p>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>VertsA</strong> - vertices of mesh 1</li>
+<li><strong>FacesA</strong> - faces of mesh 1</li>
+<li><strong>VertsB</strong> - vertices of mesh 2</li>
+<li><strong>FacesD</strong> - faces of mesh 2</li>
+</ul>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><strong>Verts</strong> - vertices of merged mesh</li>
+<li><strong>Faces</strong> - faces of merged mesh</li>
+<li><strong>Mask A</strong> - list of 0 and 1 related with <cite>faces</cite> socket output where 1 means that face lays inside mesh A</li>
+<li><strong>Mask B</strong> - list of 0 and 1 related with <cite>faces</cite> socket output where 1 means that face lays inside mesh B</li>
+<li><strong>Face Index A</strong> (hidden by default) - list of indexes with range from -1 to infinite related with <cite>faces</cite> socket output where index points to face from mesh A</li>
+<li><strong>Face Index B</strong> (hidden by default) - list of indexes with range from -1 to infinite related with <cite>faces</cite> socket output where index points to face from mesh B</li>
+</ul>
+</div>
+<div class="section" id="n-panel">
+<h2>N panel<a class="headerlink" href="#n-panel" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="7%" />
+<col width="75%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Parameters</th>
+<th class="head">Type</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Simple mask</td>
+<td>Bool</td>
+<td>Switcher of mask sockets</td>
+</tr>
+<tr class="row-odd"><td>Index mask</td>
+<td>Bool</td>
+<td>Switcher of index mask sockets</td>
+</tr>
+<tr class="row-even"><td>Accuracy</td>
+<td>int</td>
+<td>Number of figures of decimal part of a number for comparing float values</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Accuracy</strong> - In most cases there is no need in touching this parameter
+but there is some cases when the node can stuck in error and playing with the parameter can resolve the error.
+This parameter does not have any affect to performance in spite of its name.</p>
+</div>
+<div class="section" id="masks-usage">
+<h2>Masks usage<a class="headerlink" href="#masks-usage" title="Permalink to this headline">¶</a></h2>
+<p>For understanding what sockets maskA and maskB returns imagine merging of two squares.
+Result of merging will be 3 faces. MaskA will show result as on the picture below.
+Zero value means that the face  lays outside of the mesh A and one means inside.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/66568416-6dab6f80-eb7a-11e9-81d7-8fe527d52eba.png" src="https://user-images.githubusercontent.com/28003269/66568416-6dab6f80-eb7a-11e9-81d7-8fe527d52eba.png" />
+<p>This is quite useful information which can be handled by <cite>logic function</cite> node and <cite>list mask (out)</cite> node.
+With this information it is possible to get result close to 2D boolean operation.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/66569412-93d20f00-eb7c-11e9-9289-44f586ee334c.gif" src="https://user-images.githubusercontent.com/28003269/66569412-93d20f00-eb7c-11e9-9289-44f586ee334c.gif" />
+<p><cite>Maskindex</cite> output returns more tricky data so it is hidden by default for not confuse users from start.
+The meaning of this output is to set data related with faces from initial mesh to resulting mesh.
+For example there are initial meshes A and B which have colors assigned to their faces.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/66625625-1521b400-ec06-11e9-8165-4a8047cf564f.png" src="https://user-images.githubusercontent.com/28003269/66625625-1521b400-ec06-11e9-8165-4a8047cf564f.png" />
+<p>With <cite>MaskIndexA</cite> output and <cite>List index</cite> node it is possible to assign colors from mesh A to new mesh.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/66625966-7f872400-ec07-11e9-8f75-400608661388.png" src="https://user-images.githubusercontent.com/28003269/66625966-7f872400-ec07-11e9-8f75-400608661388.png" />
+<p>Also it is possible to assign colors from mesh B.
+But in the example in new mesh there are some faces which does not lays inside mesh B.
+In this case the socket returns -1 value. <cite>List item</cite> node will return last element from list with -1 index.
+But with other nodes it is possible to obtain more interesting results.
+For example it is possible to assign colors from mesh B to new mesh but to faces which does not lays inside mesh B assign colors from mesh A.</p>
+<img alt="https://user-images.githubusercontent.com/28003269/66634753-c9c7cf80-ec1e-11e9-9046-17db117ef30e.png" src="https://user-images.githubusercontent.com/28003269/66634753-c9c7cf80-ec1e-11e9-9046-17db117ef30e.png" />
+<p>It is possible ti use <cite>Mask</cite> and <cite>IndesMask</cite> simultaneously in this way:</p>
+<img alt="https://user-images.githubusercontent.com/28003269/66636848-fe3d8a80-ec22-11e9-8149-d26b259e9e49.gif" src="https://user-images.githubusercontent.com/28003269/66636848-fe3d8a80-ec22-11e9-8149-d26b259e9e49.gif" />
+<p>There is one more thing which should be known.
+According with the fact that algorithm can handle with overlapping of faces even inside one mesh (A or B)
+<cite>MaskIndex</cite> should returns several values to each face
+but for simplicity it returns only first face from list of overlapping faces inside one mesh (A or B).</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p><strong>First of all it is possible just crop some mesh by contours of another:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/66644275-93478000-ec31-11e9-975d-d00276ec1d56.png" src="https://user-images.githubusercontent.com/28003269/66644275-93478000-ec31-11e9-975d-d00276ec1d56.png" />
+<p><strong>Or in a more complex way:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/66561206-14d3db00-eb6a-11e9-9cf4-9f21ea96e01e.png" src="https://user-images.githubusercontent.com/28003269/66561206-14d3db00-eb6a-11e9-9cf4-9f21ea96e01e.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/66561184-0980af80-eb6a-11e9-9784-52c19ed82185.gif" src="https://user-images.githubusercontent.com/28003269/66561184-0980af80-eb6a-11e9-9784-52c19ed82185.gif" />
+<img alt="https://user-images.githubusercontent.com/28003269/61456611-92c38400-a977-11e9-8ebd-eeb7115aa08b.png" src="https://user-images.githubusercontent.com/28003269/61456611-92c38400-a977-11e9-8ebd-eeb7115aa08b.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/61456563-76bfe280-a977-11e9-9e57-5f44eda0b4da.jpg" src="https://user-images.githubusercontent.com/28003269/61456563-76bfe280-a977-11e9-9e57-5f44eda0b4da.jpg" />
+<p><strong>Just as hole maker:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/63747796-07fc7000-c8b9-11e9-89fa-c36542608885.gif" src="https://user-images.githubusercontent.com/28003269/63747796-07fc7000-c8b9-11e9-89fa-c36542608885.gif" />
+<p><strong>Pattern maker:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/64519578-6f78dd80-d305-11e9-8bdc-284c2120ec7b.png" src="https://user-images.githubusercontent.com/28003269/64519578-6f78dd80-d305-11e9-8bdc-284c2120ec7b.png" />
+<p><strong>Create simple meshes:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/61684024-f27baf80-ad28-11e9-9f82-38c4ffef8a7f.png" src="https://user-images.githubusercontent.com/28003269/61684024-f27baf80-ad28-11e9-9f82-38c4ffef8a7f.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/61684160-7897f600-ad29-11e9-8425-3dddba31d951.gif" src="https://user-images.githubusercontent.com/28003269/61684160-7897f600-ad29-11e9-8425-3dddba31d951.gif" />
+<p><strong>Or creating more complex meshes:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/61510835-a5849a00-aa05-11e9-8c5e-fdbd94859cd9.jpg" src="https://user-images.githubusercontent.com/28003269/61510835-a5849a00-aa05-11e9-8c5e-fdbd94859cd9.jpg" />
+<img alt="https://user-images.githubusercontent.com/28003269/61510836-a74e5d80-aa05-11e9-878e-1aeea7a2f440.gif" src="https://user-images.githubusercontent.com/28003269/61510836-a74e5d80-aa05-11e9-878e-1aeea7a2f440.gif" />
+<img alt="https://user-images.githubusercontent.com/28003269/61652698-9c2b5400-acc9-11e9-9251-2ea21ac5391c.png" src="https://user-images.githubusercontent.com/28003269/61652698-9c2b5400-acc9-11e9-9251-2ea21ac5391c.png" />
+<img alt="https://user-images.githubusercontent.com/28003269/61652705-a2b9cb80-acc9-11e9-9c57-41e5f49be523.jpg" src="https://user-images.githubusercontent.com/28003269/61652705-a2b9cb80-acc9-11e9-9c57-41e5f49be523.jpg" />
+<img alt="https://user-images.githubusercontent.com/28003269/63831569-f16d1c00-c97f-11e9-812c-98b448e4963f.jpg" src="https://user-images.githubusercontent.com/28003269/63831569-f16d1c00-c97f-11e9-812c-98b448e4963f.jpg" />
+<p><strong>Creating pixel arts and so on and so forth:</strong></p>
+<img alt="https://user-images.githubusercontent.com/28003269/66258738-d29d4900-e7b9-11e9-9685-b00ab2618b95.png" src="https://user-images.githubusercontent.com/28003269/66258738-d29d4900-e7b9-11e9-9685-b00ab2618b95.png" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="merge_mesh_2d_lite.html" class="btn btn-neutral float-right" title="Merge mesh 2D lite">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="edges_to_faces_2d.html" class="btn btn-neutral" title="Edges to faces 2D"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

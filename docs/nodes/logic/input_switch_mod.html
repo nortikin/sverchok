@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Input Switch &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Logic" href="logic_index.html"/>
+        <link rel="next" title="Custom switcher" href="custom_switcher.html"/>
+        <link rel="prev" title="Switch" href="switch.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="logic_index.html">Logic</a> &raquo;</li>
+      
+    <li>Input Switch</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/logic/input_switch_mod.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="input-switch">
+<h1>Input Switch<a class="headerlink" href="#input-switch" title="Permalink to this headline">¶</a></h1>
+<p>This node allows switching among an arbitrary number of sets of any type of inputs connected to the node.</p>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p>When first created, the node has a single <strong>set</strong> of input sockets (e.g. [“Alpha 1”, “Alpha 2”]) and it will automatically create new sets of input sockets (e.g. [“Beta 1”, “Beta 2”], [“Gamma 1”, “Gamma 2”] etc) whenever any socket of the last set is connected, thus always allowing additional set of inputs to be connected to the node. Also, when all the sockets of the last connected set are disconnected the node will remove all but the last disconnected sets, thus always allowing one extra set of inputs to be connected to the node.</p>
+<p>The node takes any type of inputs from the external nodes for its sets.</p>
+<p>The sets are labeled based on the Greek alphabet letters from <strong>Alpha</strong> to <strong>Omega</strong> and the inputs within each set are suffixed with an increasing number starting from 1 (e.g. Alpha 1, Alpha 2, etc).</p>
+<p><strong>Alpha #</strong>
+This first set of inputs always exists, no matter whether any of its input sockets are connected to or not.</p>
+<p><strong>Beta #</strong>
+…
+<strong>Omega #</strong>
+These sets of inputs are created automatically, one at a time, only as the last set is connected.</p>
+<p>Note: Be advised that while it is possible to connect any arbitrary mixture of input types to any sets (e.g. Vertex &amp; Edge to the Alpha set, and Float &amp; Color to Beta set etc) this combination of mixed sets of inputs may likely be of little to no use. This is because the output of the Input Switch node is likely going to be connected to a node tree that expects specific types of inputs, and therefore when changing the selection of the set, the Input Switch node will output a set of values that may be incompatible with the ones expected by the nodes it connects to. There are exceptions to this rule, of course, for instance: you can connect Vertex &amp; Edge to Alpha set and Vertex &amp; Poly to Beta set and have the output of the Input Switch node connected to a node that expects Vertex and EdgePoly as inputs. In this case, switching the set selection from Alpha to Beta will not break the node-tree since the final node can take either VE or VP as inputs.</p>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>Selected</strong> parameter accepts single input values directly from the node or from an outside node. The value is sanitized to be bounded by the number N of the connected inputs (0, N-1). In fact, the value is converted via a modulo-N function to wrap around within (0, N-1) range for values larger than N. In other words, as the <strong>Selected</strong> value increases, the node essentially cycles through the connected sets as it picks one to be sent to the output.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="9%" />
+<col width="12%" />
+<col width="61%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Param</th>
+<th class="head">Type</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>Set Size</strong></td>
+<td>Int</td>
+<td>2</td>
+<td>The number of inputs in a set. [1][2][3]</td>
+</tr>
+<tr class="row-odd"><td><strong>Selected</strong></td>
+<td>Int</td>
+<td>0</td>
+<td>The index of the selected set to output. [4]</td>
+</tr>
+</tbody>
+</table>
+<p>Notes:
+[1] : As the size of the set changes, the corresponding number of inputs are generated for each set with labels in increasing order (e.g. Lambda 1, Lambda 2, … ).
+[2] : When changing the set size, the existing connections of the input &amp; output sockets to the outer nodes are being preserved, unless decreasing the set size renders some of the connected input &amp; output sockets non-existent.
+[3] : Currently the node limits the max set size to 9 since it is assumed it’s unlikely the user may need sets larger than this. Not putting a limit on the size sets could end up creating very tall nodes.
+[4] : The index 0 corresponds to the first set</p>
+</div>
+<div class="section" id="extra-parameters">
+<h2>Extra Parameters<a class="headerlink" href="#extra-parameters" title="Permalink to this headline">¶</a></h2>
+<p><strong>Show Separators</strong>
+The sets are separated by an empty socket / line to aid with visually differentiating between sets. The Property Panel has a toggle to turn the separators ON and OFF if desired (default is ON).</p>
+<p><strong>Greek Labels</strong>
+The input sockets in each set have Greek letter names as labels. The Property Panel has a toggle to turn the labels from Greek to Latin if desired (default is Greek). The Latin labels are simply letters A to Z.</p>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p><strong>Data #</strong>
+The number of Data output sockets is the same as the number of inputs in a set (set size) and they correspond to the inputs in the selected set (e.g. for Selected = 0 : Data 1 = Alpha 1, Data 2 = Alpha 2 .. etc)</p>
+<p>When an output socket is connected the node will output the corresponding input in the selected set.</p>
+<p>As the node is vectorized, whenever the <strong>Selected</strong> parameter is given a list of indices each Data output is a list of set input values corresponding to the given indices. (e.g. for Selected = [0, 1, 1] : Data 1 = [Alpha 1, Beta 1, Beta 1], Data 2 = [Alpha 2, Beta 2, Beta 2]).</p>
+</div>
+<div class="section" id="output-socket-types">
+<h2>Output Socket Types<a class="headerlink" href="#output-socket-types" title="Permalink to this headline">¶</a></h2>
+<p>The types of the output sockets are automatically updated to correspond to the types of outer nodes connected to the the input sockets of the selected set. If the <strong>Selected</strong> socket is connected, however, the output sockets types will default to StringSockets (green) as the output would consist in this case of a combination of sets which may or may not have the same types for the corresponding inputs.</p>
+</div>
+<div class="section" id="macros">
+<h2>Macros<a class="headerlink" href="#macros" title="Permalink to this headline">¶</a></h2>
+<p>There is a macro that allows to automatically connect multiple selected nodes (e.g. generators) to a switch node and to a ViewerDraw node. To connect the nodes, first select the desired nodes, then search and select “&gt; sw” (short for switch).</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="custom_switcher.html" class="btn btn-neutral float-right" title="Custom switcher">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="switch.html" class="btn btn-neutral" title="Switch"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Formula &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Number" href="number_index.html"/>
+        <link rel="next" title="Formula Node Mk3" href="formula3.html"/>
+        <link rel="prev" title="Float to Integer" href="float_to_int.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bpy_data/bpy_data_index.html">BPY data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../beta_nodes/beta_nodes_index.html">Beta Nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../alpha_nodes/alpha_nodes_index.html">Alpha Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="number_index.html">Number</a> &raquo;</li>
+      
+    <li>Formula</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/number/formula2.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="formula">
+<h1>Formula<a class="headerlink" href="#formula" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functionality">
+<h2>Functionality<a class="headerlink" href="#functionality" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Formula2 - support next operations:</strong></dt>
+<dd><ul class="first last simple">
+<li>vector*vector, define hierarhy and calculate respectfully to it.</li>
+<li>Vector*scalar, the same. And output to vector.</li>
+<li>Moreover, you can define lists with formula, i.e. <code class="docutils literal"><span class="pre">`0,1,2,3,4,5`</span></code> for series or <code class="docutils literal"><span class="pre">`(1,2,3),(1,2,3)`</span></code> for vertices.</li>
+<li><dl class="first docutils">
+<dt>Supporting expressions beside * / - +:</dt>
+<dd><ul class="first last">
+<li>acos()</li>
+<li>acosh()</li>
+<li>asin()</li>
+<li>asinh()</li>
+<li>atan()</li>
+<li>atan2()</li>
+<li>atanh()</li>
+<li>ceil()</li>
+<li>copysign()</li>
+<li>cos()</li>
+<li>cosh()</li>
+<li>degrees()</li>
+<li>e</li>
+<li>erf()</li>
+<li>erfc()</li>
+<li>exp()</li>
+<li>expm1()</li>
+<li>fabs()</li>
+<li>factorial()</li>
+<li>floor()</li>
+<li>fmod()</li>
+<li>frexp()</li>
+<li>fsum()</li>
+<li>gamma()</li>
+<li>hypot()</li>
+<li>isfinite()</li>
+<li>isinf()</li>
+<li>isnan()</li>
+<li>ldexp()</li>
+<li>lgamma()</li>
+<li>log()</li>
+<li>log10()</li>
+<li>log1p()</li>
+<li>log2()</li>
+<li>modf()</li>
+<li>pi</li>
+<li>pow()</li>
+<li>radians()</li>
+<li>sin()</li>
+<li>sinh()</li>
+<li>sqrt()</li>
+<li>str()</li>
+<li>tan()</li>
+<li>tanh()</li>
+<li>trunc()</li>
+<li>==</li>
+<li>!=</li>
+<li>&lt;, &gt;</li>
+<li>for, in, if, else</li>
+<li>[]</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="inputs">
+<h2>Inputs<a class="headerlink" href="#inputs" title="Permalink to this headline">¶</a></h2>
+<p><strong>X</strong> - main x that defines sequence. it can be range of vertices or range of floats/integers.
+If x == one number, than other veriables will be the same - one number, if two - two.</p>
+<p><strong>n[0,1,2,3,4]</strong> - multisocket for veriables.</p>
+</div>
+<div class="section" id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h2>
+<p><strong>Formula</strong> - the string line, defining formula, i.e. <code class="docutils literal"><span class="pre">`x&gt;n[0]`</span></code> or <code class="docutils literal"><span class="pre">`x**n[0]+(n[1]/n[2])`</span></code> are expressions.
+May have <code class="docutils literal"><span class="pre">`x</span> <span class="pre">if</span> <span class="pre">x&gt;n[0]</span> <span class="pre">else</span> <span class="pre">n[1]`</span></code></p>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p><strong>Result</strong> - what we got as result.</p>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<img alt="https://cloud.githubusercontent.com/assets/7894950/4606629/51fd445c-5228-11e4-815b-d12866da7794.png" src="https://cloud.githubusercontent.com/assets/7894950/4606629/51fd445c-5228-11e4-815b-d12866da7794.png" />
+<img alt="https://cloud.githubusercontent.com/assets/7894950/4688830/e1e9680a-5694-11e4-9062-6ee03356b533.png" src="https://cloud.githubusercontent.com/assets/7894950/4688830/e1e9680a-5694-11e4-9062-6ee03356b533.png" />
+<img alt="https://cloud.githubusercontent.com/assets/5783432/4689948/6d4c9fcc-56d4-11e4-9628-22eeffed4eed.png" src="https://cloud.githubusercontent.com/assets/5783432/4689948/6d4c9fcc-56d4-11e4-9628-22eeffed4eed.png" />
+<img alt="https://cloud.githubusercontent.com/assets/5783432/4689947/6d4be5e6-56d4-11e4-911f-86494b69f182.png" src="https://cloud.githubusercontent.com/assets/5783432/4689947/6d4be5e6-56d4-11e4-911f-86494b69f182.png" />
+<img alt="https://cloud.githubusercontent.com/assets/5783432/4689951/6d590226-56d4-11e4-9519-67b2c871e9c8.png" src="https://cloud.githubusercontent.com/assets/5783432/4689951/6d590226-56d4-11e4-9519-67b2c871e9c8.png" />
+<img alt="https://cloud.githubusercontent.com/assets/5783432/4689950/6d58321a-56d4-11e4-8ba9-1d28426b8307.png" src="https://cloud.githubusercontent.com/assets/5783432/4689950/6d58321a-56d4-11e4-8ba9-1d28426b8307.png" />
+<img alt="https://cloud.githubusercontent.com/assets/5783432/4689949/6d57503e-56d4-11e4-9df9-9224b8f645cb.png" src="https://cloud.githubusercontent.com/assets/5783432/4689949/6d57503e-56d4-11e4-9df9-9224b8f645cb.png" />
+<img alt="https://cloud.githubusercontent.com/assets/7894950/4732337/74f49ce6-59ba-11e4-8406-77d55c55ff02.png" src="https://cloud.githubusercontent.com/assets/7894950/4732337/74f49ce6-59ba-11e4-8406-77d55c55ff02.png" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="formula3.html" class="btn btn-neutral float-right" title="Formula Node Mk3">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="float_to_int.html" class="btn btn-neutral" title="Float to Integer"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

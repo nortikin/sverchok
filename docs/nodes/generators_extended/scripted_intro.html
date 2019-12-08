@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>An introduction and tutorial for the Scripted Nodes &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../../index.html"/>
+        <link rel="up" title="Generators Extended" href="generators_extended_index.html"/>
+        <link rel="next" title="Scripted Node 2(Generator)" href="script_mk2.html"/>
+        <link rel="prev" title="Scripted Node 2(Generator)" href="script3.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../nodes.html">Nodes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../bpy_data/bpy_data_index.html">BPY data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../network/network_index.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../beta_nodes/beta_nodes_index.html">Beta Nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../alpha_nodes/alpha_nodes_index.html">Alpha Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../nodes.html">Nodes</a> &raquo;</li>
+      
+          <li><a href="generators_extended_index.html">Generators Extended</a> &raquo;</li>
+      
+    <li>An introduction and tutorial for the Scripted Nodes</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../../_sources/nodes/generators_extended/scripted_intro.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="an-introduction-and-tutorial-for-the-scripted-nodes">
+<span id="scripted-tutorial"></span><h1>An introduction and tutorial for the Scripted Nodes<a class="headerlink" href="#an-introduction-and-tutorial-for-the-scripted-nodes" title="Permalink to this headline">¶</a></h1>
+<p>&gt; Dealga Mcardle | 2014 | October</p>
+<p>In my opinion new users should avoid the Script Nodes until they understand a majority of the existing nodes and the Sverchok <cite>Eco-system</cite> as a concept. This suggestion applies to everyone, even competent coders.</p>
+<p>Script Nodes are great when you want to encapsulate a behaviour which may not be easy to achieve with existing nodes alone. They are my prefered way to either 1) prototype code, or 2) write custom nodes that are too specific to be submitted as regular nodes.</p>
+<p>At the moment Sverchok has 2 Scripted Node implementations: SN and SN2. Exactly how they differ from eachother will be shown later. Both offer <cite>practical shorthand</cite> ways to define what a node does, which sliders and sane defaults it might have, and what socket types can connect to it. These scripts have a minimal interface, are stored inside the <cite>.blend</cite> file as plain text python, and can be shared easily.</p>
+<p>If you’ve ever written code for a Blender addon or script, you will be familiar with registration of classes. Nodes normally also need to be registered so Blender can find them, but Script Nodes don’t because they are in essence a shell for your code – and the shell is already registered, all you have to do is write code to process input into output.</p>
+<div class="section" id="scripted-node-1-an-informal-introduction">
+<h2>Scripted Node 1 – an informal introduction<a class="headerlink" href="#scripted-node-1-an-informal-introduction" title="Permalink to this headline">¶</a></h2>
+<p>Here is a classic ‘Hello World’ style example used to demonstrate graphics coding. It’s called a Lorenz Attractor.</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="k">def</span> <span class="nf">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">):</span>
+    <span class="n">add_vert</span> <span class="o">=</span> <span class="n">verts</span><span class="o">.</span><span class="n">append</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="mf">0.01</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mf">10.0</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mf">28.0</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="mf">8.0</span> <span class="o">/</span> <span class="mf">3.0</span>
+
+    <span class="n">x0</span> <span class="o">=</span> <span class="mf">0.1</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">z0</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x0</span> <span class="o">+</span> <span class="n">h</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="n">y0</span> <span class="o">-</span> <span class="n">x0</span><span class="p">)</span>
+        <span class="n">y1</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">*</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">z0</span><span class="p">)</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span>
+        <span class="n">z1</span> <span class="o">=</span> <span class="n">z0</span> <span class="o">+</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="n">x0</span> <span class="o">*</span> <span class="n">y0</span> <span class="o">-</span> <span class="n">c</span> <span class="o">*</span> <span class="n">z0</span><span class="p">)</span>
+        <span class="n">x0</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">z0</span> <span class="o">=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">z1</span>
+
+        <span class="n">add_vert</span><span class="p">((</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">,</span><span class="n">z1</span><span class="p">))</span>
+
+<span class="k">def</span> <span class="nf">sv_main</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+
+    <span class="n">verts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">in_sockets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span> <span class="n">N</span><span class="p">]]</span>
+    <span class="n">out_sockets</span> <span class="o">=</span> <span class="p">[[</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="s1">&#39;verts&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">verts</span><span class="p">]]]</span>
+
+    <span class="n">lorenz</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">verts</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">in_sockets</span><span class="p">,</span> <span class="n">out_sockets</span>
+</pre></div>
+</div>
+<p>Here’s what this code produces.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5219883/5d3e1252-765d-11e4-87e8-56e1eef2d5ae.png" src="https://cloud.githubusercontent.com/assets/619340/5219883/5d3e1252-765d-11e4-87e8-56e1eef2d5ae.png" />
+<p>Infact, here’s the Node Interface that the script produces too</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5219902/a310c824-765d-11e4-9836-c34cb0d8a7b4.png" src="https://cloud.githubusercontent.com/assets/619340/5219902/a310c824-765d-11e4-9836-c34cb0d8a7b4.png" />
+<p>Compare the code with the image of the node and you might get a fair idea where the sockets are defined and where the default comes from. Look carefully at
+<code class="docutils literal"><span class="pre">in_sockets</span></code> and <code class="docutils literal"><span class="pre">out_sockets</span></code>, two of the elements are strings (socket type and socket name), and the third element is the Python variable that we automatically bind to those sockets.</p>
+</div>
+<div class="section" id="brief-guided-explanation">
+<h2>Brief Guided Explanation<a class="headerlink" href="#brief-guided-explanation" title="Permalink to this headline">¶</a></h2>
+<p>You’ve probably got a fair idea already from the example script. SN1 has a few conventions which let you quickly define sockets and defaults. What follows are short remarks about the elements that make up these scripts, aimed at someone who is about to write their first script for SN1.</p>
+</div>
+<div class="section" id="sockets">
+<h2>Sockets<a class="headerlink" href="#sockets" title="Permalink to this headline">¶</a></h2>
+<p>Sverchok at present has 3 main socket types: SvVerticesSocket, SvStringsSocket and SvMatrixSocket. Script Nodes refer to these socket types with only their first letter in lowercase. ‘s’,’v’,’m’:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="s1">&#39;s&#39;</span> <span class="n">to</span> <span class="n">hold</span><span class="p">:</span> <span class="n">floats</span><span class="p">,</span> <span class="n">ints</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">faces</span><span class="p">,</span> <span class="n">strings</span>
+<span class="s1">&#39;v&#39;</span> <span class="n">to</span> <span class="n">hold</span><span class="p">:</span> <span class="n">vertices</span><span class="p">,</span> <span class="n">vectors</span><span class="p">,</span> <span class="mi">3</span><span class="o">-</span><span class="n">tuples</span>
+<span class="s1">&#39;m&#39;</span> <span class="n">to</span> <span class="n">hold</span><span class="p">:</span> <span class="n">matrices</span><span class="p">,</span> <span class="mi">4</span> <span class="n">x</span> <span class="mi">4</span> <span class="n">nested</span> <span class="n">lists</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="socket-names">
+<h2>Socket Names<a class="headerlink" href="#socket-names" title="Permalink to this headline">¶</a></h2>
+<p>Each socket has a name. Take a minute to think about a good descriptive name for each. Socket names can always be changed later, but my advice is to use clear names from the very beginning.</p>
+</div>
+<div class="section" id="variable-names">
+<h2>Variable names<a class="headerlink" href="#variable-names" title="Permalink to this headline">¶</a></h2>
+<p>Variable names are used to expose the values of the associated socket to your script. If the socket is unconnected then the value of the variable will be taken from the specified default.</p>
+</div>
+<div class="section" id="node-function-sv-main">
+<h2>node function <cite>(sv_main)</cite><a class="headerlink" href="#node-function-sv-main" title="Permalink to this headline">¶</a></h2>
+<p>The main function for SN1 is <code class="docutils literal"><span class="pre">sv_main</span></code>, in the body of this function is where we declare socket types, socket names, and variable names for input and output sockets. These are declared in two arrays <code class="docutils literal"><span class="pre">in_sockets</span></code> and <code class="docutils literal"><span class="pre">out_sockets</span></code>.</p>
+<p>The argument list of <code class="docutils literal"><span class="pre">sv_main</span></code> is where you provide defaults values or the nestedness of an incoming datatype. (don’t worry if this makes no sense, read it again later).</p>
+</div>
+<div class="section" id="that-s-great-show-me">
+<h2>That’s great, show me!<a class="headerlink" href="#that-s-great-show-me" title="Permalink to this headline">¶</a></h2>
+<p>The easiest way to get started is to first load an existing script. Here are some steps:</p>
+<ul class="simple">
+<li>Go to <cite>Generators / Scripted Node</cite> and add it to the NodeView.</li>
+<li>Open a Blender TextEditor window so you can see the TextEditor and the NodeView at the same time.</li>
+<li>Paste the Lorenz Attractor script (from above) into the TextEditor and call it ‘attractor.py’</li>
+<li>In NodeView look at the field on the second row of the Scripted Node. This is a file selector which shows all Text files in blender. When you click on it you will see “attractor.py”</li>
+<li>Select “attractor.py” press the button the right, the one that looks like a powersocket.</li>
+<li>This changes the way the Node appears. The node will now have 1 input socket and one output socket. It might even have changed to a light blue.</li>
+</ul>
+<p>That’s pretty much all there is to loading a script. All you do now is hook the output Verts to a Viewer Node and you’ll see a classic Lorenz Attractor point set.</p>
+</div>
+<div class="section" id="study-the-sv-main">
+<h2>Study the sv_main<a class="headerlink" href="#study-the-sv-main" title="Permalink to this headline">¶</a></h2>
+<p>If you look carefully in <code class="docutils literal"><span class="pre">sv_main</span></code> there’s not a lot to the whole process. <code class="docutils literal"><span class="pre">sv_main</span></code> has two <strong>required</strong> lists; <code class="docutils literal"><span class="pre">in_sockets</span></code> and <code class="docutils literal"><span class="pre">out_sockets</span></code>. sv_main also has a argument list which you must fill with defaults, here the only variable is N so the argument list was <code class="docutils literal"><span class="pre">sv_main(N=1000)</span></code>.</p>
+<p>The lorenz function takes 2 arguments:</p>
+<ul class="simple">
+<li><strong>N</strong>, to set the number of vertices.</li>
+<li><strong>verts</strong>, a list-variable to store the vertices generated by the algorithm.</li>
+</ul>
+<p>In this example the <code class="docutils literal"><span class="pre">verts</span></code> variable is also what will be sent to the output socket, because it says so in <code class="docutils literal"><span class="pre">out_sockets</span></code>. Notice that the lorenz function doesn’t return the verts variable. All the lorenz function does is fill that list with values. Just to be clear about this example. At the time <code class="docutils literal"><span class="pre">sv_main</span></code> ends, the content of <code class="docutils literal"><span class="pre">verts</span></code> is full, but before <code class="docutils literal"><span class="pre">lorenz()</span></code> is called, <code class="docutils literal"><span class="pre">verts</span></code> is an empty list.</p>
+<p>Here is the same lorenz attractor with more parameters exposed, see can you load it?
+<a class="reference external" href="https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py">https://github.com/nortikin/sverchok/blob/master/node_scripts/templates/zeffii/LorenzAttractor2.py</a></p>
+</div>
+<div class="section" id="lastly">
+<h2>Lastly<a class="headerlink" href="#lastly" title="Permalink to this headline">¶</a></h2>
+<p>If none of this makes sense, spend time learning about Python and dig through the <code class="docutils literal"><span class="pre">node_scripts/templates</span></code> directory.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="script_mk2.html" class="btn btn-neutral float-right" title="Scripted Node 2(Generator)">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="script3.html" class="btn btn-neutral" title="Scripted Node 2(Generator)"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
