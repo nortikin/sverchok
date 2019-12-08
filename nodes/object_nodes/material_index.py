@@ -19,9 +19,9 @@
 import numpy as np
 
 import bpy
-from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerProperty
+from bpy.props import IntProperty, BoolProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
 class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
@@ -34,21 +34,40 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Set Material Index"
     bl_icon = 'MATERIAL'
 
+    @throttled
+    def update_all_faces(self, context):
+        self.inputs['FaceIndex'].hide_safe = self.all_faces
+        updateNode(self, context)
+
+    all_faces: BoolProperty(name = "All Faces",
+            description = "Assign materials to all faces",
+            default = False,
+            update = update_all_faces)
+
+    face_index : IntProperty(name = "Face Index", default = 0,
+            description = "Index of the face, to which the material is to be assigned (starting from 0)",
+            min = 0,
+            update = updateNode)
+
     material_index : IntProperty(name = "Material Index", default = 0,
             description = "Material index to set (starting from 0)",
             min = 0,
             update = updateNode)
 
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "all_faces", toggle=True)
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
-        self.inputs.new('SvStringsSocket', 'FaceIndex')
+        self.inputs.new('SvStringsSocket', 'FaceIndex').prop_name = 'face_index'
         self.inputs.new('SvStringsSocket', 'MaterialIndex').prop_name = 'material_index'
         self.outputs.new('SvObjectSocket', 'Object')
+        self.update_all_faces(context)
 
     def set_material_indices(self, obj, faces, materials):
         prev_material_index_layer = obj.data.polygon_layers_int.get("prev_material_index")
         if prev_material_index_layer is None:
-            self.info("Creating a layer")
+            self.debug("Creating a layer")
             prev_material_index_layer = obj.data.polygon_layers_int.new(name="prev_material_index")
             prev_material_indices = np.full(len(obj.data.polygons), 0, dtype=int)
             obj.data.polygons.foreach_get("material_index", prev_material_indices)
@@ -73,6 +92,9 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
 
         inputs = match_long_repeat([objects, faces_s, materials_s])
         for obj, faces, materials in zip(*inputs):
+            if self.all_faces:
+                faces = list(range(len(obj.data.polygons)))
+
             fullList(materials, len(faces))
             self.set_material_indices(obj, faces, materials)
             obj.data.update()
