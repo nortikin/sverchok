@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contributing small things &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="index.html"/>
+        <link rel="next" title="Testing" href="testing.html"/>
+        <link rel="prev" title="Contribute" href="contributing.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="main.html">Docs</a> &raquo;</li>
+      
+    <li>Contributing small things</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/contribute_small_things.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="contributing-small-things">
+<h1>Contributing small things<a class="headerlink" href="#contributing-small-things" title="Permalink to this headline">¶</a></h1>
+<p>If you’re reading this because you would like to change or add code to sverchok, that’s cool. If not, you can skip this document now.</p>
+<p>Thanks for taking the time to read on, we gladly accept contributions to our code and documentation. We will always consider the proposed changes in light of our understanding of sverchok as a whole. Sverchok’s code base is large and in a few places challenging to comprehend. If we don’t think it’s appropriate to accept your suggestion we’ll defend our position. Usually we can come to some compromise that makes sense for sverchok, yet also satisfies the amicable contributor.</p>
+<div class="section" id="pull-requests">
+<h2>Pull Requests<a class="headerlink" href="#pull-requests" title="Permalink to this headline">¶</a></h2>
+<p>A pull request (PR) is what you might consider a “formally suggested edit” to sverchok. You do this either via the online Git tools provided by GitHub / or via GIT. Newcomers to git should probably use the online GitHub mechanisms for doing small edits. See GitHub’s guide to PRs ( <a class="reference external" href="https://help.github.com/articles/about-pull-requests/">https://help.github.com/articles/about-pull-requests/</a> ).</p>
+<p>We accept one-liner PRs, but might also reject them and instead add the same (or similar) code modifications to our own frequent PR streaks. We’ll usually add a comment in the commit to acknowledge your input.</p>
+</div>
+<div class="section" id="informal-code-suggestions">
+<h2>Informal code suggestions<a class="headerlink" href="#informal-code-suggestions" title="Permalink to this headline">¶</a></h2>
+<p>If you don’t want to go through the git / github interface you can suggest an edit using the issue tracker. Open a new issue, state succintly in the title what the edit hopes to achieve. In the issue you can use Markdown to show us which file and section of code you’re talking about and what changes you think would be beneficial (and why). You can copy / paste a permalink ( <a class="reference external" href="https://github.com/blog/2415-introducing-embedded-code-snippets">https://github.com/blog/2415-introducing-embedded-code-snippets</a> ) into the issue for this purpose.</p>
+<p>And below it write the following “differential”.</p>
+<div class="highlight-none"><div class="highlight"><pre>In the following file: sverchok/nodes/scene/frame_info.py on line 122
+
+
+   ```diff
+   - print(some_variable)
+   + # print(some_variable)
+   ```
+
+this node prints very often, and seems to slow down Blender because of it.
+I&#39;m not certain but I don&#39;t think this printout it essential and suggest you drop it.
+</pre></div>
+</div>
+<p>using the backticks and the diff (language type) it will display the proposed change in code with syntax highlighting like this:</p>
+<div class="highlight-diff"><div class="highlight"><pre><span class="gd">- print(some_variable)</span>
+<span class="gi">+ # print(some_variable)</span>
+</pre></div>
+</div>
+<p>This way you show what code you’re talking about, what you propose to change, and why. Great. We love clear issues.</p>
+</div>
+<div class="section" id="non-one-liners">
+<h2>Non one-liners<a class="headerlink" href="#non-one-liners" title="Permalink to this headline">¶</a></h2>
+<p>Sometimes a small contribution is 2 or more lines. It’s hard to define where the term “small contribtion” becomes inaccurate to describe your proposal. We’ll know it when we see it. We also accept code block rewrites or function replacements. The more you propose to change the more we will want to see profiling/performance evidence to defend your claim.</p>
+</div>
+<div class="section" id="what-gets-our-attention">
+<h2>What gets our attention<a class="headerlink" href="#what-gets-our-attention" title="Permalink to this headline">¶</a></h2>
+<p>Everything. We tend to be more lenient/rapid if your code proposal fixes a real flaw in existing code, and doesn’t involve changing too much outside of the area in question.</p>
+</div>
+<div class="section" id="general-guidelines">
+<h2>General guidelines<a class="headerlink" href="#general-guidelines" title="Permalink to this headline">¶</a></h2>
+<p>The document you should be reading to get a sense of how we’d like contributed code to look and behave is here ( contribute.rst ).</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="testing.html" class="btn btn-neutral float-right" title="Testing">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="contributing.html" class="btn btn-neutral" title="Contribute"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

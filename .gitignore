@@ -51,7 +51,6 @@ __MACOSX
 *~
 
 #Ignore folders
-docs/
 nodes/
 json_examples/
 node_scripts/

@@ -1,0 +1,566 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Panels of Sverchok &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="index.html"/>
+        <link rel="next" title="Nodes" href="nodes.html"/>
+        <link rel="prev" title="Introduction to modular components" href="Unit_01/lesson_03.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="main.html">Docs</a> &raquo;</li>
+      
+    <li>Panels of Sverchok</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/panels.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="panels-of-sverchok">
+<h1>Panels of Sverchok<a class="headerlink" href="#panels-of-sverchok" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="node-tree-panel">
+<h2>Node Tree Panel<a class="headerlink" href="#node-tree-panel" title="Permalink to this headline">¶</a></h2>
+<img alt="nodetreepanel.ng" src="https://cloud.githubusercontent.com/assets/5783432/4512957/866dacd8-4b46-11e4-9cfa-2b78d2a2f8a9.png" />
+<p>This panel allows to manage sverchok layouts as easy as you press buttons on an elevator.</p>
+<div class="section" id="update">
+<h3>Update<a class="headerlink" href="#update" title="Permalink to this headline">¶</a></h3>
+<img alt="nodetreeupdate.png" src="https://cloud.githubusercontent.com/assets/5783432/4512960/868c837e-4b46-11e4-9fba-a5062fd5434f.png" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="37%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Update</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>all</td>
+<td>Updates all trees of sverchok.</td>
+</tr>
+<tr class="row-odd"><td>Update layout</td>
+<td>Updates currently active layout</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="layout-manager">
+<h3>Layout manager<a class="headerlink" href="#layout-manager" title="Permalink to this headline">¶</a></h3>
+<img alt="manager.png" src="https://cloud.githubusercontent.com/assets/5783432/4512959/867d395a-4b46-11e4-9419-95ed1479ac72.png" />
+<p>Box to quickly pick layout, switch between them with buttons instead of popup list. Also have settins:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Button</th>
+<th class="head">Function</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>B</strong></td>
+<td>bake this layout - will gather all layout’s viewer draw and viewer text to bake them.
+Bake only if bakeable button is active on node, else ignore.</td>
+</tr>
+<tr class="row-odd"><td><strong>Show layout</strong></td>
+<td>Controlls all OpenGL viewer of this layout. Viewer, Stethoscop and Viewer Indices</td>
+</tr>
+<tr class="row-even"><td><strong>Animate layout</strong></td>
+<td>to animate the layout (or not) - may preserve you time.</td>
+</tr>
+<tr class="row-odd"><td><strong>Process layout</strong></td>
+<td>Automaticlly evaluate layout while editing, disable for large or complex layouts</td>
+</tr>
+<tr class="row-even"><td><strong>Fake User</strong></td>
+<td>Sets fake user so layout isn’t deleted on save</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="check-for-updates">
+<h3>Check for updates<a class="headerlink" href="#check-for-updates" title="Permalink to this headline">¶</a></h3>
+<img alt="upgradenewversion.png" src="https://cloud.githubusercontent.com/assets/5783432/4512958/8671953c-4b46-11e4-898d-e09eec52b464.png" />
+<p><strong>Check for updates</strong> - finds if master branch on github has new version of sverchok. In future there will be releases, but now dangerouse update.</p>
+<p><strong>Upgrade Sverchok</strong> - upgrades Sverchok from github with new version - button appears only if ‘check for updates’ finds a new version.</p>
+</div>
+</div>
+<div class="section" id="tools-panel">
+<h2>Tools Panel<a class="headerlink" href="#tools-panel" title="Permalink to this headline">¶</a></h2>
+<p>Blender’s node editor, as well as other types of editor, has a Tools panel (on the left side), which is toggled by pressing the <em>T</em> key.
+Sverchok uses it to present all nodes available, organized in categories. Each category has a special tab for it.</p>
+<img alt="t-panel.png" src="https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png" />
+<p>You can add node to the tree by clicking corresponding button in the <em>T</em> panel.</p>
+</div>
+<div class="section" id="presets-panel">
+<h2>Presets Panel<a class="headerlink" href="#presets-panel" title="Permalink to this headline">¶</a></h2>
+<p>This is a second tab under the <em>T</em> panel. This is how it looks by default:</p>
+<img alt="empty-presets.png" src="https://user-images.githubusercontent.com/284644/34566374-19623d6e-f180-11e7-840a-ec5bb8972e64.png" />
+<div class="section" id="introduction-to-presets">
+<h3>Introduction to Presets<a class="headerlink" href="#introduction-to-presets" title="Permalink to this headline">¶</a></h3>
+<p>Preset is a named set of stored settings of one of several nodes. You can:</p>
+<ul class="simple">
+<li>Save settings of one or several selected nodes (links between nodes are saved
+too) under specific name.</li>
+<li>Use saved preset in another node tree later.</li>
+<li>Import and export presets as <cite>.json</cite> files.</li>
+<li>Share presets with other users via gist.github.com service, or import presets
+made by other users.</li>
+</ul>
+<p>Presets are saved as <cite>.json</cite> files under Blender configuration directory, in <cite>datafiles/sverchok/presets</cite>.</p>
+<p>It can be good idea to store as a preset (and maybe share) the following things:</p>
+<ul class="simple">
+<li>One node with a lot of settings, if you think this is “good” settings and you
+are going to use the same settings many times.</li>
+<li>Scripted node, or “Mesh Expression” node, or one of other nodes that use
+Blender’s text blocks as settings. Such nodes are stored together with
+corresponding text.</li>
+<li>Group (monad) node. It is saved with all contents.</li>
+<li>Several linked nodes, that do some completed thing, for later usage “as-is”.</li>
+<li>Several linked nodes, that are “sort of going to be needed in this
+combination often”, so that later you can start with this preset and add some
+nodes to it or tweak it somehow.</li>
+</ul>
+</div>
+<div class="section" id="panel-buttons">
+<h3>Panel Buttons<a class="headerlink" href="#panel-buttons" title="Permalink to this headline">¶</a></h3>
+<p>The Presets panel has the following buttons:</p>
+<ul class="simple">
+<li><strong>Save Preset</strong>. This button is only shown when there are some nodes selected
+in the tree. When you press this button, it asks you for the name under which
+this preset should be known. You need to enter some descriptive name and
+press Ok. After that, the preset will become available in the lower part of
+the panel.</li>
+<li><strong>Manage Presets</strong>. This is a toggle button. It switches you between “presets
+usage mode” (which is the default, when button is not pressed) and “presets
+management mode” (when the button is pressed).</li>
+</ul>
+<p>Contents of lower part of the panel depend on whether the <strong>Manage Presets</strong> button is pressed.</p>
+<p>When management mode is disabled, there is a button shown for each preset that you already have:</p>
+<img alt="https://user-images.githubusercontent.com/284644/34495416-df370a76-f016-11e7-98e7-97c01969fe74.png" src="https://user-images.githubusercontent.com/284644/34495416-df370a76-f016-11e7-98e7-97c01969fe74.png" />
+<p>By pressing such button, you add nodes saved in corresponding preset into
+current tree. New nodes are automatically selected, so that you can move them
+to another part of the node view.</p>
+<p>When management mode is enabled, there are more buttons:</p>
+<img alt="https://user-images.githubusercontent.com/284644/34495429-f1b9a6d6-f016-11e7-9d2c-ffd6432c27db.png" src="https://user-images.githubusercontent.com/284644/34495429-f1b9a6d6-f016-11e7-9d2c-ffd6432c27db.png" />
+<ul class="simple">
+<li><strong>Import preset from Gist</strong>. You will be asked for Gist ID or full URL of the
+gist, and preset name. If you have gist URL in the clibpoard, it will be
+pasted automatically.</li>
+<li><strong>Import preset from file</strong>. File browser will appear to allow you to select
+a <cite>.json</cite> file to import. In the left bottom part of this file browser, there
+is mandatory text field asking you to enter preset name.</li>
+</ul>
+<p>The following buttons (in this order) are shown for each preset you have:</p>
+<ul>
+<li><p class="first"><strong>Export preset to Gist</strong>. Preset will be exported to gist service. Gist URL will be automatically copied into clipboard.</p>
+</li>
+<li><p class="first"><strong>Export preset to outer file</strong>. File browser will appear asking you to select where to save the preset.</p>
+</li>
+<li><p class="first"><strong>Edit preset properties</strong>. A dialog will appear allowing you to change the following properties of preset: Name, Description, Author, License. The Description attribute will be used as a tooltip for preset button.</p>
+<img alt="https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png" src="https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png" />
+</li>
+<li><p class="first"><strong>Delete preset</strong>. You will be asked for confirmation.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="d-panel">
+<h2>3D Panel<a class="headerlink" href="#d-panel" title="Permalink to this headline">¶</a></h2>
+<img alt="https://user-images.githubusercontent.com/28003269/70139516-16bea400-16ac-11ea-9c77-3125856b4d28.png" src="https://user-images.githubusercontent.com/28003269/70139516-16bea400-16ac-11ea-9c77-3125856b4d28.png" />
+<p>With this panel your layout becomes addon itself. So, you making your life easy.
+Since Blender 2.8 this panel has two instances. One instance located on <cite>N</cite> panel in <cite>Tool</cite> category of <cite>3D</cite> editor.
+Another located in <cite>Active tool and workspace settings</cite> shelf of <cite>Properties</cite> editor.</p>
+<div class="section" id="scan-for-props">
+<h3>Scan for props<a class="headerlink" href="#scan-for-props" title="Permalink to this headline">¶</a></h3>
+<img alt="scanprops.png" src="https://cloud.githubusercontent.com/assets/5783432/4512955/866461fa-4b46-11e4-8caf-d650d15f5c5f.png" />
+<dl class="docutils">
+<dt>When layout is in, check for next nodes to embad them as properties:</dt>
+<dd><ul class="first last simple">
+<li>A number</li>
+<li>Color input</li>
+<li>List Input</li>
+<li>Objects in</li>
+<li>Viewer BMesh</li>
+</ul>
+</dd>
+</dl>
+<p>Read documentation of this nodes for getting more details about how to enable them on 3D panel.</p>
+<p>Sorting them by label, that user defined in node tree panel or if no label, the name of the node is used.</p>
+</div>
+<div class="section" id="update-all">
+<h3>Update all<a class="headerlink" href="#update-all" title="Permalink to this headline">¶</a></h3>
+<img alt="updateall.png" src="https://cloud.githubusercontent.com/assets/5783432/4512955/866461fa-4b46-11e4-8caf-d650d15f5c5f.png" />
+<p>Forces update of all layouts.</p>
+</div>
+<div class="section" id="clean">
+<h3>Clean<a class="headerlink" href="#clean" title="Permalink to this headline">¶</a></h3>
+<img alt="cleanlayout.png" src="https://cloud.githubusercontent.com/assets/5783432/4512954/8662fbf8-4b46-11e4-8f67-243a56c48856.png" />
+<p>Button to remove sverchok layouts, that has not users (0)</p>
+<p><strong>hard clean</strong>  - boolean flag to remove layouts even if it has users (1,2…), but not fake user (F). Fake user layout will be left.</p>
+<p><strong>Clean layouts</strong> - remove layouts. Button active only if no node tree windiw around. Better to make active layout nothing or fake user layout to prevent blender crash. Easyest way - activate your Faked user layout, on 3D press <strong>ctrl+UP</strong> and press button. than again <strong>ctrl+UP</strong> to go back. No wastes left after sverchok in scene.</p>
+<p>Use with care.</p>
+</div>
+<div class="section" id="properties">
+<h3>Properties<a class="headerlink" href="#properties" title="Permalink to this headline">¶</a></h3>
+<img alt="properties.png" src="https://cloud.githubusercontent.com/assets/5783432/4512956/8666aeba-4b46-11e4-9c13-651e3826f111.png" />
+<p>Layouts by box. Every layout has buttons:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="19%" />
+<col width="81%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Button</th>
+<th class="head">Function</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><strong>B</strong></td>
+<td>bake this layout - will gather all layout’s viewer draw and viewer text to bake them.
+Bake only if bakeable button is active on node, else ignore.</td>
+</tr>
+<tr class="row-odd"><td><strong>Show layout</strong></td>
+<td>show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer
+not handled for now.</td>
+</tr>
+<tr class="row-even"><td><strong>Animate layout</strong></td>
+<td>to animate the layout (or not) - may preserve you time.</td>
+</tr>
+<tr class="row-odd"><td><strong>P</strong></td>
+<td>Process layout, allows safely manupilate monsterouse layouts.</td>
+</tr>
+<tr class="row-even"><td><strong>F</strong></td>
+<td>Fake user of layout to preserve from removing with reloading file or
+with <strong>clean layouts</strong> button.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="import-export-panel">
+<h2>Import Export Panel<a class="headerlink" href="#import-export-panel" title="Permalink to this headline">¶</a></h2>
+<img alt="panelio.png" src="https://cloud.githubusercontent.com/assets/5783432/4519324/9e11b7be-4cb6-11e4-86c9-ee5e136ed088.png" />
+<p>location: N panel of any Sverchok Tree.</p>
+<p>Import and export of the current state of a Sverchok Tree. This tool stores</p>
+<blockquote>
+<div><ul class="simple">
+<li>Node state: location, hidden, frame parent</li>
+<li>Node parameters: (internal state) like booleans, enum toggles and strings</li>
+<li>connections and connection order (order is important for dynamic-socket nodes)</li>
+</ul>
+</div></blockquote>
+<div class="section" id="export">
+<h3>Export<a class="headerlink" href="#export" title="Permalink to this headline">¶</a></h3>
+<img alt="panelexport.png" src="https://cloud.githubusercontent.com/assets/5783432/4519326/9e4320f6-4cb6-11e4-88ba-b6dc3ce48d5a.png" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">feature</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Zip</td>
+<td>When toggled to <em>on</em> this will perform an extra zip operation when you press Export. The zip
+can sometimes be a lot smaller that the json. These files can also be read by the import
+feature.</td>
+</tr>
+<tr class="row-odd"><td>Export</td>
+<td>Export to file, opens file browser in blender to let you type the name of the file, Sverchok
+will auto append the .json or .zip file extention - trust it.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="import">
+<h3>Import<a class="headerlink" href="#import" title="Permalink to this headline">¶</a></h3>
+<img alt="panelimport.png" src="https://cloud.githubusercontent.com/assets/5783432/4519325/9e2f2c40-4cb6-11e4-8b03-479a411ead3d.png" />
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="88%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">feature</th>
+<th class="head">description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Layout name</td>
+<td>name of layout to use, has a default but you might want to force a name</td>
+</tr>
+<tr class="row-odd"><td>Import</td>
+<td>import to new layout with name (described above). Can import directly from zip file if there is
+only one .json in the zip. Warning to the descerned reader, only import from zip if the source
+is trusted. If you are not sure, resist the urge and take the time to learn a little bit about
+what you are doing.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Warnings</strong></p>
+<p>Consider this whole IO feature experimental for the time being. You use it at your own risk and don’t be surprised if certain node trees won’t export or import (See bug reporting below). The concept of importing and exporting a node tree is not complicated, but the practical implementation of a working IO which supports dynamic nodes requires a bit of extra work behind the scenes. Certain nodes will not work yet, including (but not limited to) :</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="13%" />
+<col width="87%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Node</th>
+<th class="head">Issue</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Object In</td>
+<td>the json currently doesn’t store geometry but an empty shell without object
+references instead</td>
+</tr>
+<tr class="row-odd"><td>SN MK1</td>
+<td>currently this auto imports by design, but perhaps some interruption of the import
+process will be implemented</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why make it if it’s so limited?</strong></p>
+<p>Primarily this is for sharing quick setups, for showing people how to achieve a general result. The decision to not include geometry in the Object In references may change, until then consider it a challenge to avoid it. The way to exchange large complex setups will always be the <code class="docutils literal"><span class="pre">.blend</span></code>, this loads faster and stores anything your Tree may reference.</p>
+<p><strong>While importing I see lots of messages in the console!</strong></p>
+<p>Relax, most of these warnings can be ignored, unless the Tree fails to import, then the last couple of lines of the warning will explain the failure.</p>
+<p><strong>Bug Reporting</strong></p>
+<p>By all means if you like using this feature, file issues in <a class="reference external" href="https://github.com/nortikin/sverchok/issues/422">this thread</a>. The best way to solve issues is to share with us a screenshot of the last few lines of the error if we need more then we will ask for a copy of the <cite>.blend</cite>.</p>
+</div>
+</div>
+<div class="section" id="groups-panel">
+<h2>Groups Panel<a class="headerlink" href="#groups-panel" title="Permalink to this headline">¶</a></h2>
+<p>Crete a node group (Monad) from selection.
+It can have vectorized inputs, adding or removing sockets.
+Sverchok groups is a beta feature, use a your own risk and please report bugs. Also while it is in beta old node groups may break.
+<a class="reference external" href="https://github.com/nortikin/sverchok/issues/462">Bug reports</a>.</p>
+</div>
+<div class="section" id="templates-in-menu-panel-of-nodes-area">
+<h2>Templates in menu panel of nodes area<a class="headerlink" href="#templates-in-menu-panel-of-nodes-area" title="Permalink to this headline">¶</a></h2>
+<p>You can use embedded templates in Sverchok. They are stored in json folder as jsons for import to Sverchok.</p>
+<img alt="templates.gif" src="https://cloud.githubusercontent.com/assets/5783432/19623205/245bcab2-98d2-11e6-810c-ace33de8499b.gif" />
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="nodes.html" class="btn btn-neutral float-right" title="Nodes">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Unit_01/lesson_03.html" class="btn btn-neutral" title="Introduction to modular components"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,475 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Contribute &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="index.html"/>
+        <link rel="next" title="Contributing small things" href="contribute_small_things.html"/>
+        <link rel="prev" title="Network" href="nodes/network/network_index.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/CAD/CAD_index.html">CAD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/quaternion/quaternion_index.html">Quaternion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="main.html">Docs</a> &raquo;</li>
+      
+    <li>Contribute</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/contributing.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="contribute">
+<h1>Contribute<a class="headerlink" href="#contribute" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="our-workflow">
+<h2>Our workflow:<a class="headerlink" href="#our-workflow" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>You have the freedom to code how you like, but follow pep8 and use the style of existing nodes. Pep8 using PyLint if your editor has it, search our codebase for “pylint ignore”, because there are rules we routinely and consciously ignore. But.. the vast majority of pep8 is solid gold, and part of the path for us to accept your code.</li>
+<li>Agile software development - look <a class="reference external" href="http://en.wikipedia.org/wiki/Agile_software_development">http://en.wikipedia.org/wiki/Agile_software_development</a> here.</li>
+<li>Implementing ideas from other add-ons is fine, if you have the appropriate licenses (GPL), written consent or rights. We don’t accept unattributed code you didn’t write.</li>
+<li>Before you spend a lot of time making something, we recommend you tell us about it beforehand in the Issue Tracker. Sometimes the thing you want to make already exists, or we have plans for it already with placeholder code.</li>
+<li>Brainstorm and discuss solutions. We use the issue tracker a lot and will give our honest opinion and interpretations of new code. We are artists and technical people trying to solve complicated and interesting issues using code and Blender. We care about optimal code but also accept working and novel solutions.</li>
+<li>Test your code, Test your proposed changes. Write automated tests for your code whenever it makes sense. Please refer to <a class="reference external" href="testing.html">this document</a> for details.</li>
+</ol>
+</div>
+<div class="section" id="what-not-to-do">
+<h2>What not to do:<a class="headerlink" href="#what-not-to-do" title="Permalink to this headline">¶</a></h2>
+<p>Doing these things will break old layouts or have other unintended consequences.</p>
+<ol class="arabic simple">
+<li>Change <code class="docutils literal"><span class="pre">bl_idname</span></code> of a node</li>
+<li>Remove or rename sockets</li>
+<li>Adding new socket inbetween existing sockets without updating upgrade.py. We prefer that you add sockets behind the last existing socket for either <code class="docutils literal"><span class="pre">self.inputs</span></code> or <code class="docutils literal"><span class="pre">self.outputs</span></code>.</li>
+<li>the node property <code class="docutils literal"><span class="pre">current_mode</span></code> should be considered a reserved keyword, don’t use it.</li>
+<li>There are other reserved property names see the bpy.types.Node baseclass in Blender docs and Sverchok’s custom node mixin class.</li>
+</ol>
+</div>
+<div class="section" id="helpful-hints">
+<h2>Helpful hints<a class="headerlink" href="#helpful-hints" title="Permalink to this headline">¶</a></h2>
+<p>In blender console you can easily inspect the sverchok system by writing:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sverchok</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">dir</span><span class="p">(</span><span class="n">sverchok</span><span class="o">.</span><span class="n">nodes</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="to-create-a-node">
+<h2>To create a node:<a class="headerlink" href="#to-create-a-node" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Make a scripted node to test the idea.</li>
+<li>Show your node to us in an issue or create branch or fork of master in github. If it
+is a huge complex job we can make you collaborator.</li>
+<li>Copy an existing node that is similar, as a basis to start from.</li>
+<li>Change class name, class bl_idname, docstring, and class registration section in your file (at the bottom)</li>
+<li>Add node’s <code class="docutils literal"><span class="pre">bl_idname</span></code> to menu.py in an appropriate category.</li>
+<li>Add file to matching category: <code class="docutils literal"><span class="pre">..sverchok/nodes/whatever_existing_category/your_file.py</span></code></li>
+<li>Make a pull request.</li>
+</ol>
+</div>
+<div class="section" id="some-rules">
+<h2>SOME RULES:<a class="headerlink" href="#some-rules" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">All classes that are subclasses of blender classes - have to have prefix Sv, ie SvColors.</p>
+</li>
+<li><p class="first">node_tree.py contains base classes of node tree and, maybe you need to create collection property or new socket (for
+new type of socket tell us first), you make it here.</p>
+</li>
+<li><p class="first">data_structure.py has magic of:</p>
+<blockquote>
+<div><ol class="loweralpha">
+<li><p class="first">update definitions, that works pretty well with sockets’ and nodes’ updates</p>
+</li>
+<li><p class="first">some bmesh functiones</p>
+</li>
+<li><p class="first">cache – operates with handles – we use it to operate with nodes’ data, it is dictionary,
+with node’name, node-tree’name and it’s data</p>
+</li>
+<li><dl class="first docutils">
+<dt>list levels definitions - you must yse them:</dt>
+<dd><ol class="first last arabic">
+<li><p class="first">data correct makes list from chaotic to 4th levels list, seems like [[[floats/integers]]]
+and not [[f/i]] or [[[[f/i]]]].</p>
+<dl class="docutils">
+<dt>usage:</dt>
+<dd><p class="first last">dataCorrect(data, nominal_dept=2), where data - is your list, nominal_depth -
+optioal, normal for your’ case depth of list</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">data spoil - make list more nasty for value of depth</p>
+<dl class="docutils">
+<dt>usage:</dt>
+<dd><p class="first last">dataSpoil(data, dept), where data - your list, depth - level of nestynessing.
+Gives list from [] to [[]] etc</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Levels of list - find level of nestiness.</p>
+<dl class="docutils">
+<dt>usage:</dt>
+<dd><p class="first last">levelsOflist(list) - returns level of list nestiness [[]] - is 2, [] - 1, [[[]]] - 3</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p class="first">matrix definitions - to make something with matrices/vertices</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Matrix_generate(prop) - make from simple list real mathutils.Matrix(()()()())</li>
+<li>Matrix_listing(prop) - make from mathutils.Matrix() simple list like [[][][][]] with
+container is [[[][][][]]]</li>
+<li>Matrix_location(prop, list=False) - return mathutils.Vector() of matrix’ location</li>
+<li>Matrix_scale(prop, list=False) - the same, but returns matrix’ scale vectors</li>
+<li>Matrix_rotation(prop, list=False) - return rotation axis and rotation angle in radians
+value as tuple (Vector((x,y,z)),angle)</li>
+<li>Vector_generate(prop) - makes from simple list real mathutils.Vector(), as Matrix generate def</li>
+<li>Vector_degenerate(prop) - as matrix listing, it degenerate Vectors to simple list</li>
+<li>Edg_pol_generate(prop) - define wether it is edges or polygons in list, and terurns tuple as
+(type,list)</li>
+<li>matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]) - defines matrix</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p class="first">list definitions:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>fullList(l, count) - makes list full till some count. last item multiplied to rest of needed
+length, ie [1,2,3,4] for count 6 will be [1,2,3,4,4,4]</li>
+<li>match_short(lsts) Shortest list decides output length
+[[1,2,3,4,5], [10,11]] -&gt; [[1,2], [10, 11]]</li>
+<li>match_cross2(lsts) cross rference
+[[1,2], [5,6,7]] -&gt;[[1, 2, 1, 2, 1, 2], [5, 5, 6, 6, 7, 7]]</li>
+<li>match_long_repeat(lsts) repeat last of shorter list
+[[1,2,3,4,5] ,[10,11]] -&gt; [[1,2,3,4,5] ,[10,11,10,11,10]]</li>
+<li>match_long_cycle(lsts) cycle shorts lists
+[[1,2,3,4,5] ,[10,11]] -&gt; [[1,2,3,4,5] ,[10,11,10,11,10]]</li>
+<li>repeat_last(lst) creates an infinite iterator that repeats last item of list,
+for cycle see itertools.cycle</li>
+<li>some others to operate with exact nodes</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p class="first">update sockets - definitions to operate with update</p>
+</li>
+<li><p class="first">changable type of socket - makes possible to use changable socket in your node - it calling</p>
+<dl class="docutils">
+<dt>usage:</dt>
+<dd><ol class="first last arabic simple">
+<li>node has to have self veriables:</li>
+<li><dl class="first docutils">
+<dt>and in update:</dt>
+<dd><ul class="first last">
+<li>inputsocketname = ‘data’ # ‘data’ - name of your input socket, that defines type</li>
+<li>outputsocketname = [‘dataTrue’,’dataFalse’] # ‘data…’ - are names of your
+sockets to be changed</li>
+<li>changable_sockets(self, inputsocketname, outputsocketname)</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p class="first">multi-socket multi_socket(node,min=1) - as used by ListJoin, List Zip, Connect UV</p>
+<blockquote>
+<div><ul>
+<li><p class="first">multi_socket(node,min=1)</p>
+</li>
+<li><p class="first">base_name = ‘data’</p>
+</li>
+<li><p class="first">multi_socket_type = ‘SvStringsSocket’</p>
+</li>
+<li><p class="first">setup the fixed number of socket you need, the last of them is the first multi socket.
+minimum of one.</p>
+</li>
+<li><p class="first">then in update(self):</p>
+<blockquote>
+<div><ul class="simple">
+<li>multi_socket(self, min=1, start=0, breck=False)  - [where min - minimum count of
+input sockets;</li>
+<li>start - starting of numeration, could be -1, -2 to start as in formula2 node; breck -
+to make breckets, as used in formula2 node]</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">for more details see files mentioned above</p>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>Utils</strong> folder has:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>CADmodule - to provide lines intersection</li>
+<li>IndexViewerDraw - to provide OpenGL drawing of INDXview node in basics</li>
+<li>sv_bmeshutils - self say name</li>
+<li>sv_tools - it is toolbox in node area for update button, upgrade button and for layers
+visibility buttons, also update node and upgrade functional to automate this process.</li>
+<li>text_editor_plugins - for sandbox node scripted node (SN) to implement Ctrl+I auto complete function</li>
+<li>text_editor_submenu - templates of SN</li>
+<li>upgrade - to avoid breaking old layouts. Defines new simplified interface override. if you change some property in def draw_buttons()
+than just bring new properties here to avoid break old layout</li>
+<li>viewer_draw - for draw and handle OpenGL of Viewer Draw node (have to be remaked)</li>
+<li>voronoi - for delaunai and voronoi functions of correspond nodes</li>
+</ol>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>Node scripts</strong> folder for every template for SN (see utils-e.)</p>
+</li>
+<li><p class="first"><strong>Nodes</strong> folder for categorized nodes. not forget to write your nodes to init.py there</p>
+</li>
+<li><dl class="first docutils">
+<dt>To use enumerate property you have to assign index to items, never change the index of items added,</dt>
+<dd><p class="first last">it will break if you add more functions.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Not make many nodes if you can do less multifunctional.</p>
+</li>
+<li><p class="first">Use levels, findout how it works and use level IntProperty in draw to define what level is to operate.
+We operate with 1,2,3 - standart and additional 4… infinity. make sure, that your levels limited,
+dropped down by levelsOflist as maximum value</p>
+</li>
+<li><p class="first">Keep order in node’ update definition as if output: if input. To count input only if you have output socket
+assembled.</p>
+</li>
+<li><p class="first">Look at todo list to know what is happening on and what you can do.
+use your nodes and test them.</p>
+</li>
+<li><p class="first">There is no reason to auto wrap or make less levels of wrapping, than needed to proceed in other nodes.
+So, for now canonical will be [[0,1,2,3]] for simple data and [[[0,1,2,3]]] for real data as edge,
+vertex, matrix other cases may be more nasty, but not less nesty and wrapping need to be grounded on
+some reasons to be provided.</p>
+</li>
+<li><p class="first">Do not use is_linked to test if socket is linked in <code class="docutils literal"><span class="pre">def</span> <span class="pre">update(self)</span></code>, check links. In <code class="docutils literal"><span class="pre">def</span> <span class="pre">process(self)</span></code>
+use <code class="docutils literal"><span class="pre">.is_linked</span></code></p>
+</li>
+<li><p class="first">to <strong>CHANGE</strong> some node, please, follow next:</p>
+<ol class="loweralpha simple">
+<li>Put old node file to ../old_nodes add the corresponding bl_idname in __init__.py in the table. (there is README file also);</li>
+<li>Make new changed node as mk2(3,4…n) and place to where old node was placed with all changes as new node, change name and bl_idname (look ‘To create a node:’ in current instructions).</li>
+</ol>
+</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contribute_small_things.html" class="btn btn-neutral float-right" title="Contributing small things">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="nodes/network/network_index.html" class="btn btn-neutral" title="Network"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

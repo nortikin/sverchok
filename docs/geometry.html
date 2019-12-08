@@ -1,0 +1,397 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction to geometry &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="index.html"/>
+        <link rel="next" title="Introduction to Sverchok" href="induction.html"/>
+        <link rel="prev" title="Installation" href="installation.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="induction.html">Introduction to Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2"><a class="reference internal" href="induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nodes/network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="main.html">Docs</a> &raquo;</li>
+      
+    <li>Introduction to geometry</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/geometry.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="introduction-to-geometry">
+<h1>Introduction to geometry<a class="headerlink" href="#introduction-to-geometry" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basics">
+<h2>Basics<a class="headerlink" href="#basics" title="Permalink to this headline">¶</a></h2>
+<p>If you’ve ever created a mesh and geometry programatically then you can skip this section.
+If you are uncertain what any of the following terms mean then use it as a reference for
+further study:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">List</span><span class="p">,</span> <span class="n">Index</span><span class="p">,</span> <span class="n">Vector</span><span class="p">,</span> <span class="n">Vertex</span><span class="p">,</span> <span class="n">Edge</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Normal</span><span class="p">,</span> <span class="n">Transformation</span><span class="p">,</span> <span class="ow">and</span> <span class="n">Matrix</span><span class="o">.</span>
+</pre></div>
+</div>
+<div class="section" id="list">
+<h3>List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
+<p>As a visual programming language Sverchok borrows many terms from text-based programming languages, specifically from <code class="docutils literal"><span class="pre">Python</span></code>. Sverchok uses <em>Lists</em> to store geometry, <em>Lists</em> offer fast and ordered storage. The items stored in Lists are called <em>Elements</em>. Each element of a List is assigned a unique sequential index.</p>
+</div>
+<div class="section" id="index">
+<h3>Index<a class="headerlink" href="#index" title="Permalink to this headline">¶</a></h3>
+<p><em>plural: Indices</em></p>
+<p>Indices allow us to quickly reference a specific element of a List. The index of the first element is 0 and the index of the last element is equal to the number of total elements minus 1.</p>
+</div>
+</div>
+<div class="section" id="d-geometry">
+<h2>3D Geometry<a class="headerlink" href="#d-geometry" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vector">
+<h3>Vector<a class="headerlink" href="#vector" title="Permalink to this headline">¶</a></h3>
+<p>The most fundamental element you need to know about is the <em>Vector</em>. Think of Vectors as things that have a multitude of properties (also called components). For example <em>House prices</em> are calculated depending on maybe 20 or more different properties: floor space, neighbourhood, age, any renovations, rooms, bathrooms, garage… The point is, a house can be seen as a Vector datapoint:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">House_one</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">((</span><span class="n">floor_space</span><span class="p">,</span> <span class="n">neighbourhood</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">renovations</span><span class="p">,</span> <span class="n">rooms</span><span class="p">,</span> <span class="o">...</span><span class="p">))</span>
+
+<span class="c1"># or simply</span>
+<span class="n">House_one</span> <span class="o">=</span> <span class="p">(</span><span class="n">floor_space</span><span class="p">,</span> <span class="n">neighbourhood</span><span class="p">,</span> <span class="n">age</span><span class="p">,</span> <span class="n">renovations</span><span class="p">,</span> <span class="n">rooms</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>3D Geometry concentrates mostly on a small number of components. <code class="docutils literal"><span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">Z,</span> <span class="pre">and</span> <span class="pre">maybe</span> <span class="pre">W</span></code>. If you’ve ever scaled or moved a model in 3d space you have performed Vector Math on the locations of those 3d points. The concept of <em>3d location</em> or <em>point in 3d space</em> is so important that the Vector used to describe the idea has a special name; <em>Vertex</em>, and it is a special, limited, case of a <em>Vector</em>. More about this later.</p>
+<p>Understanding Vectors and Vector math is an integral part of parametric modeling and generative design, and it’s a lot easier than it might appear at first. You won’t have to do the calculations yourself, but you will need to feed Sverchok meaningful input. The good news is that figuring out what Vector math operations produce which results can be learned through observation and understood by experimenting interactively.</p>
+<p>The various ways in which Vectors can be manipulated will be covered in subsequent parts. If you want to do cool stuff with Sverchok spend time getting to understand Vector based math, it will be time well spent.</p>
+</div>
+<div class="section" id="vertex">
+<h3>Vertex<a class="headerlink" href="#vertex" title="Permalink to this headline">¶</a></h3>
+<p><em>plural: Vertices</em></p>
+<p>A vertex is a point in 3d space described by 3 or 4 values which represent its X, Y and Z location. Optionally a 4th value can represent a property of the vertex, usually <em>influence</em> or <em>weight</em> and is denoted by <strong>W</strong>.</p>
+<p>A quick Python example should clarify this. The following would make 3 vertices.
+In this case each vertex has 3 components.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">v0</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v2</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Mesh objects in Blender contain geometric data stored in <em>lists</em>. In Python and
+Sverchok an empty list looks like <code class="docutils literal"><span class="pre">[</span> <span class="pre">]</span></code> (open and closed square brackets). Vertices are stored in lists too,
+a list with 3 vertices might look like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">vertices</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="edges">
+<h3>Edges<a class="headerlink" href="#edges" title="Permalink to this headline">¶</a></h3>
+<p><em>Edges</em> form a bond between 2 vertices. Edges are also stored in a list associated
+with the mesh object. For example the following sets up an empty list to hold the edges:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+</div>
+<p>If we want to declare edges, we reference the vertices by index. Below is an example of
+how 3 edges are created:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">edges</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>Here you see we are using lists inside lists to help separate the edges. This is called <em>Nesting</em></p>
+</div>
+<div class="section" id="polygons">
+<h3>Polygons<a class="headerlink" href="#polygons" title="Permalink to this headline">¶</a></h3>
+<p><em>also called Faces or Polys</em></p>
+<p>Polygons are built using the same convention as Edges. The main difference is that polygons include at least 3 unique vertex indices. For the purposes of this introduction we’ll only cover polygons made from 3 or 4 vertices, these are called <em>Tris and Quads</em> respectively.</p>
+<p>Now imagine we have a total of 6 vertices, the last vertex index is 5. If we want
+to create 2 polygons, each built from 3 vertices, we do:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">polygons</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>In Blender you might mix Tris and Quads in one object during the modelling process,
+but for Sverchok geometry you’ll find it more convenient to create separate lists for each and combine them at the end.</p>
+<p>An example that sets us up for the first Sverchok example is the following pyhon code:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="c1"># this code can be run from Blender Text Editor and it will generate a Cube.</span>
+
+<span class="kn">import</span> <span class="nn">bpy</span>
+
+<span class="n">verts</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span> <span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span> <span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
+    <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># empty list for now.</span>
+
+<span class="n">faces</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">mesh_data</span> <span class="o">=</span> <span class="n">bpy</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">meshes</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;cube_mesh_data&quot;</span><span class="p">)</span>
+<span class="n">mesh_data</span><span class="o">.</span><span class="n">from_pydata</span><span class="p">(</span><span class="n">verts</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">faces</span><span class="p">)</span>
+<span class="n">mesh_data</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+<span class="n">cube_object</span> <span class="o">=</span> <span class="n">bpy</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s2">&quot;Cube_Object&quot;</span><span class="p">,</span> <span class="n">mesh_data</span><span class="p">)</span>
+
+<span class="n">scene</span> <span class="o">=</span> <span class="n">bpy</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">scene</span>
+<span class="n">scene</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="n">cube_object</span><span class="p">)</span>
+<span class="n">cube_object</span><span class="o">.</span><span class="n">select</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>If we extract from that the geometry only we are left with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">v0</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v2</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v3</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v4</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v5</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v6</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">v7</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+<span class="n">vertices</span> <span class="o">=</span> <span class="p">[</span><span class="n">v0</span><span class="p">,</span> <span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">,</span> <span class="n">v3</span><span class="p">,</span> <span class="n">v4</span><span class="p">,</span> <span class="n">v5</span><span class="p">,</span> <span class="n">v6</span><span class="p">,</span> <span class="n">v7</span><span class="p">]</span>
+
+<span class="n">polygons</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="side-effect-of-defining-polygons">
+<h3>Side Effect of Defining Polygons<a class="headerlink" href="#side-effect-of-defining-polygons" title="Permalink to this headline">¶</a></h3>
+<p>A chain of Vertex indices defines a polygon and each polygon has edges that make up its boundary. If a polygon has 4 vertices, then it also has 4 edges (or sides..if you prefer).</p>
+<p><strong>example 1</strong></p>
+<p>If we take the above polygons list as example and look at the first polygon (index=0), it reads <code class="docutils literal"><span class="pre">(0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3)</span></code>. That polygon therefor defines the following edges <code class="docutils literal"><span class="pre">(0,1),(1,2),(2,3),(3,0)</span></code>. The last edge <code class="docutils literal"><span class="pre">(3,0)</span></code> is the edge that closes the polygon.</p>
+<p><strong>example 2</strong></p>
+<p>The polygon with index 3 reads <code class="docutils literal"><span class="pre">(1,</span> <span class="pre">5,</span> <span class="pre">6,</span> <span class="pre">2)</span></code>, it implies the following edges <code class="docutils literal"><span class="pre">(1,5)</span> <span class="pre">(5,6)</span> <span class="pre">(6,2)</span> <span class="pre">(2,1)</span></code>.</p>
+</div>
+<div class="section" id="ready">
+<h3>Ready?<a class="headerlink" href="#ready" title="Permalink to this headline">¶</a></h3>
+<p>I think this broadly covers the things you should be
+comfortable with before Sverchok will make sense.</p>
+</div>
+<div class="section" id="sverchok">
+<h3>Sverchok<a class="headerlink" href="#sverchok" title="Permalink to this headline">¶</a></h3>
+<p>This section will introduce you to a selection of nodes that can be combined
+to create renderable geometry. Starting with the simple Plane generator</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="induction.html" class="btn btn-neutral float-right" title="Introduction to Sverchok">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

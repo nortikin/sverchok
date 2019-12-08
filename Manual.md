@@ -19,4 +19,10 @@ The manual is an essential reference for new and existing users. Each node has a
             Read Online</a></td>
     <td class="sv_table-elem"></td>
   </tr>
+  <tr>
+    <td class="sv_table-elem">
+        <a href="/docs/main.html">
+            Online for 2.8x</a></td>
+    <td class="sv_table-elem"></td>
+  </tr>
 </table>

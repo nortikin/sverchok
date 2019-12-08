@@ -1,0 +1,363 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction to modular components &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="Introduction to Sverchok" href="../induction.html"/>
+        <link rel="next" title="Introduction to modular components" href="lesson_03.html"/>
+        <link rel="prev" title="Introduction to modular components" href="lesson_01.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../induction.html">Introduction to Sverchok</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../induction.html">Introduction to Sverchok</a> &raquo;</li>
+      
+    <li>Introduction to modular components</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/Unit_01/lesson_02.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="introduction-to-modular-components">
+<h1>Introduction to modular components<a class="headerlink" href="#introduction-to-modular-components" title="Permalink to this headline">¶</a></h1>
+<p><strong>prerequisites</strong></p>
+<p>Same as lesson 01.</p>
+<div class="section" id="lesson-02-a-circle">
+<h2>Lesson 02 - A Circle<a class="headerlink" href="#lesson-02-a-circle" title="Permalink to this headline">¶</a></h2>
+<p>This lesson will introduce the following nodes: <code class="docutils literal"><span class="pre">List</span> <span class="pre">Length,</span> <span class="pre">Int</span> <span class="pre">Range,</span> <span class="pre">List</span> <span class="pre">Shift,</span> <span class="pre">List</span> <span class="pre">Zip</span></code></p>
+<p>This will continue from the previous lesson where we made a plane from 4 vectors. We can reuse some of these nodes in order to make a Circle. If you saved it as suggested load it up, or download from <strong>here</strong>. You can also create it from scratch by cross referencing this image.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5428874/fac67fd4-83d5-11e4-9601-1399248dddd6.png" src="https://cloud.githubusercontent.com/assets/619340/5428874/fac67fd4-83d5-11e4-9601-1399248dddd6.png" />
+<p><strong>A Circle</strong></p>
+<p>Just like Blender has a Circle primitive, Sverchok also has a built in Circle primitive called the <cite>Circle Generator</cite>. We will avoid using the primtives until we’ve covered more of the fundamental nodes and how they interact.</p>
+<p><strong>Dynamic Polygons</strong></p>
+<p>In the collection of nodes we have in the Node View at the moment, the sequence used for linking up vertices to form a <cite>polygon</cite> is input manually. As mentioned earlier, as soon as you need to link many vertices instead of the current 4, you will want to make this <cite>list creation</cite> automatic. You will probably also want to make it dynamic to add new segments automatically if the vertex count is changeable.</p>
+<p>Because this is a common task, there’s a dedicated node for it called <code class="docutils literal"><span class="pre">UV</span> <span class="pre">Connect</span></code> (link) , but just like the <cite>Circle</cite> generator nodes we will avoid using that for the same reason. Learning how to build these things yourself is the best way to learn Visual Programming with nodes.</p>
+<p><strong>Generating an index list for the polygon</strong></p>
+<p>In order to make the list automatically, we should know how many vertices there are at any given moment.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">List</span> <span class="pre">Main</span> <span class="pre">-&gt;</span> <span class="pre">List</span> <span class="pre">Length</span></code></li>
+</ul>
+<p>The <cite>List Length</cite> node lets you output the length of incoming data, it also lets you pick what level of the data you want to inspect. It’s worth reading the <strong>reference</strong> of this node for a comprehensive tour of its capabilities.</p>
+<ol class="arabic simple">
+<li>hook the <cite>Vector In</cite> output into the <cite>Data</cite> input of <cite>List Length</cite></li>
+<li>hook a new <cite>Stethoscope</cite> up to the output of the <cite>List Length</cite> node.</li>
+<li>notice the <cite>Level</cite> slider is set to 1 by default, you should see Stethoscope shows output.</li>
+</ol>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5436323/15ea171e-8465-11e4-8356-ec18ae8ea19d.png" src="https://cloud.githubusercontent.com/assets/619340/5436323/15ea171e-8465-11e4-8356-ec18ae8ea19d.png" />
+<p>Notice that, besides all the square brackets, you see the length of the incoming data is <cite>4</cite>, as expected. We want to generate a sequence (list) that goes something like <code class="docutils literal"><span class="pre">[0,1,2,...n]</span></code> where n is the index of that last vertex. In Python you might write something like this this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">n</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">...</span><span class="n">n</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>To generate the index list for the polygon we need a node that outputs a sequential list of integers, Sverchok has exactly such a node and it accepts values for <cite>start</cite>, <cite>step</cite> and <cite>count</cite> as parameters. This is what the <cite>Range Integer (count mode)</cite> node does.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Numbers</span> <span class="pre">-&gt;</span> <span class="pre">Range</span> <span class="pre">Int</span></code></li>
+</ul>
+<ol class="arabic simple">
+<li>Set the mode of List Range int to <cite>Count</cite></li>
+<li>Make sure <cite>start</cite> is 0 and <cite>step</cite> is 1</li>
+<li>Hook the output of <cite>List Length</cite> into the <cite>count</cite> socket of Range Int</li>
+<li>Disconnect the Formula node from the EdgPol socket</li>
+<li>Connect the output of Range Int into EdgPol instead</li>
+<li>Optionally you can connect a Stethoscope also to the output of Range Int in order to see the generated list for yourself</li>
+</ol>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5436483/10651094-8467-11e4-9dc3-e4ade958531a.png" src="https://cloud.githubusercontent.com/assets/619340/5436483/10651094-8467-11e4-9dc3-e4ade958531a.png" />
+<p><strong>Generating the set of circular verts</strong></p>
+<p>The 4 verts we’ve had from the very beginning are already points on a circular path, we can make a simple change to finally see this Circle emerge.</p>
+<ol class="arabic simple">
+<li>Set the <cite>mode</cite> of the Float series node to <cite>Range</cite></li>
+<li>Set the <cite>stop</cite> parameter to 2.0</li>
+<li>Set the <cite>step</cite> to 0.2 for example.</li>
+</ol>
+<p><code class="docutils literal"><span class="pre">2.0</span> <span class="pre">/</span> <span class="pre">0.2</span> <span class="pre">=</span> <span class="pre">10</span></code>, this means the Float Series node will now output <code class="docutils literal"><span class="pre">[0.0,</span> <span class="pre">0.2,</span> <span class="pre">0.4,</span> <span class="pre">0.6,</span> <span class="pre">0.8,</span> <span class="pre">1.0,</span> <span class="pre">1.2,</span> <span class="pre">1.4,</span> <span class="pre">1.6,</span> <span class="pre">1.8]</span></code>. Notice that it does not output 2.0 at the end, because this mode excludes the terminating value. (called non inclusive)</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5436796/a37a7092-846a-11e4-8f81-512e910b3a0b.png" src="https://cloud.githubusercontent.com/assets/619340/5436796/a37a7092-846a-11e4-8f81-512e910b3a0b.png" />
+<p>You can see the beginnings of a circle.</p>
+<p><strong>Forcing an even spread of Vertices</strong></p>
+<p>Above we have the step set to 0.2, this manually sets the distance but calculation of this step value soon gets cumbersome. We will add nodes to do the calculation for us. Think about how you might do that.</p>
+<p>I would want to have something like <code class="docutils literal"><span class="pre">1</span> <span class="pre">/</span> <span class="pre">number_vertices</span></code>, this calls for a Math node and an <cite>Int</cite> to represent the whole number of vertices.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Numbers</span> <span class="pre">-&gt;</span> <span class="pre">Math</span></code></li>
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Numbers</span> <span class="pre">-&gt;</span> <span class="pre">Int</span></code></li>
+</ul>
+<ol class="arabic simple">
+<li>Set the Math node <cite>mode</cite> to <code class="docutils literal"><span class="pre">/</span> <span class="pre">(division)</span></code> , and put 1.0 in the numerator</li>
+<li>Connect the Int node into the bottom socket of the division Math node</li>
+<li>Adjust the integer value on the Int node to 18 for example</li>
+<li>In the image below I’ve connected a Stethoscope to the output of the Math Node to see the value of this computation</li>
+<li>Finally, hook up the output of the division Math node into the <cite>step</cite> socket of Float series</li>
+</ol>
+<p>You should see something like this, if not you can by now probably figure out what to do.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5437240/f7f80fa4-846e-11e4-8229-97a4c62c6368.png" src="https://cloud.githubusercontent.com/assets/619340/5437240/f7f80fa4-846e-11e4-8229-97a4c62c6368.png" />
+<p><strong>Notice this is starting to get crowded, let’s minimize nodes</strong></p>
+<p>Before going any further I would like to draw attention to the fact that you can make nodes smaller. This minimizing feature is called <cite>hide</cite>, we can argue about how good or badly that option is named. With Any node selected press H, to ‘minimize/hide’.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5438258/29b11056-8477-11e4-877d-499553dcfe0c.png" src="https://cloud.githubusercontent.com/assets/619340/5438258/29b11056-8477-11e4-877d-499553dcfe0c.png" />
+<p>In Sverchok we added special functionality to certain nodes to draw information about themselves into their header area. This allows you to see what the node is supposed to be doing even when the UI is minimized. Currently the <cite>Int, Float, Math, Vector Math</cite> nodes have this behaviour because they are essential nodes and used very often.</p>
+<p>In future lessons you will often see minimized/hidden nodes</p>
+<p><strong>Polygon is easy, what about Edges?</strong></p>
+<p>Remember, there are nodes that can take an incoming set of vertices and generate the required Edges index lists. But we’re trying to explore the modular features of Sverchok – we’ll build our own Edges generator this time.</p>
+<p>The edge index list of the square looked like <code class="docutils literal"><span class="pre">[[0,1],[1,2],[2,3],[3,0]]</span></code>. For the Circle of a variable number of vertices that list will look like <code class="docutils literal"><span class="pre">[[0,1],[1,2],...,[n-1,n],[n,0]]</span></code>. Notice i’m just showing the start of the list and the end, to indicate that there might be a formula for it based purely on how many verts you want to link.</p>
+<p>In python you might express this using a for loop or a list comprehension:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="c1"># for loop</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+   <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="o">&gt;&gt;</span> <span class="mi">0</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;</span> <span class="mi">1</span> <span class="mi">2</span>
+<span class="o">&gt;&gt;</span> <span class="mi">2</span> <span class="mi">3</span>
+<span class="o">&gt;&gt;</span> <span class="mi">3</span> <span class="mi">4</span>
+<span class="o">&gt;&gt;</span> <span class="mi">4</span> <span class="mi">0</span>
+
+<span class="c1"># list comprehension</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">edges</span> <span class="o">=</span> <span class="p">[[</span><span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+<span class="o">&gt;&gt;</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]</span>
+</pre></div>
+</div>
+<p>In Sverchok the end result will be the same, but we’ll arrive at the result in a different way.</p>
+<p>The second index of each edge is one higher than the first index, except for the last edge. The last edge closes the ring of edges and meets back up with the first vertex. In essenence this is a wrap-around. Or, you can think of it as two lists, one of which is shifted by one with respect the other list.</p>
+<p>Sverchok has a node for this called <cite>List Shift</cite>. We’ll zip the two lists together using <cite>List Zip</cite> node.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">add</span> <span class="pre">-&gt;</span> <span class="pre">List</span> <span class="pre">Struct</span> <span class="pre">-&gt;</span> <span class="pre">List</span> <span class="pre">Shift</span></code></li>
+<li><code class="docutils literal"><span class="pre">add</span> <span class="pre">-&gt;</span> <span class="pre">List</span> <span class="pre">Main</span> <span class="pre">-&gt;</span> <span class="pre">List</span> <span class="pre">Zip</span></code></li>
+</ul>
+<ol class="arabic simple">
+<li>Hook the output of <cite>List Range Int</cite> into the first Data socket of the <cite>List Zip</cite> node.</li>
+<li>Hook the output of <cite>List Range Int</cite> also into the <cite>List Shift</cite> node.</li>
+<li>To make the wrap-around, simply set the <cite>Shift slider</cite> to 1.</li>
+<li>connect the output of <cite>List Shift</cite> to the second Data input of <cite>List Zip</cite>.</li>
+<li>Make sure the level parameter on <cite>List Zip</cite> is set to 1.</li>
+<li>Hook up a Stethoscope to the output of <cite>List Zip</cite> to verify</li>
+</ol>
+<p>Notice in this image I have minimized/hidden (shortcut H) a few nodes to keep the node view from getting claustrophobic.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5440504/6f4ddf60-8489-11e4-81f4-ead627fe710c.png" src="https://cloud.githubusercontent.com/assets/619340/5440504/6f4ddf60-8489-11e4-81f4-ead627fe710c.png" />
+<ol class="arabic simple" start="7">
+<li>Or hook up the output of <cite>List Zip</cite> straight into the EdgPol socket of`Viewer Draw`.</li>
+</ol>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5440916/bee96a1e-848c-11e4-8799-060c7f458c3e.png" src="https://cloud.githubusercontent.com/assets/619340/5440916/bee96a1e-848c-11e4-8799-060c7f458c3e.png" />
+<p><strong>End of lesson 02</strong></p>
+<p>Save this .blend you’ve been working on as Sverchok_Unit_01_Lesson_02 for future tutorials or as reference if you want to look something up later if you like.</p>
+<p>You now know how to create basic shapes programmatically using Sverchok nodes. In Lesson 03 a dynamic grid will be generated, but first relax and reiterate what has been learned so far.</p>
+<p><strong>Addendum</strong></p>
+<p><code class="docutils literal"><span class="pre">Viewer</span> <span class="pre">Draw</span></code> automatically generates Edges when you pass one or more Vertices and Polygons. This means in practice when you already have the Polygons for an object then you don’t need to also pass in the Edges, they are inferred purely from the indices of the incoming Polygons.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="lesson_03.html" class="btn btn-neutral float-right" title="Introduction to modular components">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lesson_01.html" class="btn btn-neutral" title="Introduction to modular components"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

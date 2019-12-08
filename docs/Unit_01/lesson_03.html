@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction to modular components &mdash; Sverchok 0.5 documentation</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Sverchok 0.5 documentation" href="../index.html"/>
+        <link rel="up" title="Introduction to Sverchok" href="../induction.html"/>
+        <link rel="next" title="Panels of Sverchok" href="../panels.html"/>
+        <link rel="prev" title="Introduction to modular components" href="lesson_02.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        <a href="../main.html" class="fa fa-home"> Sverchok</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+        
+            <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#troubleshooting-installation-errors">Troubleshooting Installation Errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry.html">Introduction to geometry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#basics">Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../geometry.html#d-geometry">3D Geometry</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="../induction.html">Introduction to Sverchok</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../induction.html#unit-00-introduction-to-nodeview-and-3dview">Unit 00 - Introduction to NodeView and 3DView</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../induction.html#unit-01-introduction-to-modular-components">Unit 01 - Introduction to modular components</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../panels.html">Panels of Sverchok</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#node-tree-panel">Node Tree Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#tools-panel">Tools Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#presets-panel">Presets Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#d-panel">3D Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#import-export-panel">Import Export Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#groups-panel">Groups Panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../panels.html#templates-in-menu-panel-of-nodes-area">Templates in menu panel of nodes area</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../nodes.html">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/generator/generator_index.html">Generators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/generators_extended/generators_extended_index.html">Generators Extended</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/transforms/transforms_index.html">Transforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/analyzer/analyzer_index.html">Analyzers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/modifier_change/modifier_change_index.html">Modifier Change</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/modifier_make/modifier_make_index.html">Modifier Make</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/number/number_index.html">Number</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/vector/vector_index.html">Vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/matrix/matrix_index.html">Matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/logic/logic_index.html">Logic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_main/list_main_index.html">List Main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_struct/list_struct_index.html">List Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_masks/list_masks_index.html">List Masks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/list_mutators/list_mutators_index.html">List Mutators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/viz/viz_index.html">Viz</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/text/text_index.html">Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/scene/scene_index.html">Scene</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/object_nodes/object_nodes_index.html">Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/layout/layout_index.html">Layout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nodes/network/network_index.html">Network</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contribute</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#our-workflow">Our workflow:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#what-not-to-do">What not to do:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#helpful-hints">Helpful hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#to-create-a-node">To create a node:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html#some-rules">SOME RULES:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../contribute_small_things.html">Contributing small things</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#pull-requests">Pull Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#informal-code-suggestions">Informal code suggestions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#non-one-liners">Non one-liners</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#what-gets-our-attention">What gets our attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contribute_small_things.html#general-guidelines">General guidelines</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing.html">Testing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing.html#preface">Preface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../testing.html#implementation">Implementation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../testing.html#continuous-integration">Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../main.html">Sverchok</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../main.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../induction.html">Introduction to Sverchok</a> &raquo;</li>
+      
+    <li>Introduction to modular components</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="../_sources/Unit_01/lesson_03.rst.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            
+  <div class="section" id="introduction-to-modular-components">
+<h1>Introduction to modular components<a class="headerlink" href="#introduction-to-modular-components" title="Permalink to this headline">¶</a></h1>
+<p><strong>prerequisites</strong></p>
+<p>Same as lesson 01.</p>
+<div class="section" id="status-wip">
+<h2>Status: <strong>WIP</strong><a class="headerlink" href="#status-wip" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="lesson-03-a-grid">
+<h2>Lesson 03 - A Grid<a class="headerlink" href="#lesson-03-a-grid" title="Permalink to this headline">¶</a></h2>
+<p>Grids are another common geometric primitive. A Grid can be thought of as a Plane subdivided over its <em>x</em> and <em>y</em> axes. Sverchok’s <cite>Plane</cite> generator makes grids (including edges and polygons), but we will combine the elementary nodes to build one from scratch. Doing this will cover several important concepts of parametric design, and practical tips for the construction of dynamic  topology.</p>
+<p><strong>What do we know about Grids?</strong></p>
+<p>For simplicity let’s take a subdivided <cite>Plane</cite> as our template. We know it’s flat and therefore the 3rd dimension (z) will be constant. We can either have a uniformly subdivided Plane or allow for x and y to be divided separately. A separate XY division is a little bit more interesting, let’s go with that.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5506680/c59524c6-879c-11e4-8f64-53e4b83b05a8.png" src="https://cloud.githubusercontent.com/assets/619340/5506680/c59524c6-879c-11e4-8f64-53e4b83b05a8.png" />
+<p><strong>Where to start?</strong></p>
+<p>For non trivial objects we often use a notepad (yes, actual paper – or blender Greasepencil etc) to draw a simplified version of what we want to accomplish. On a drawing we can easily name and point to properties, see relationships, and even solve problems in advance.</p>
+<p>I chose a Grid because it has only a few properties: <cite>X Side Length, Y Side Length, X num subdivs, Y num subdivs</cite>. These properies can be exposed in several ways. You could expose the number of divisions (edges) per side, or the amount of vertices per side. 1 geometric property, but two ways of looking at it.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png" src="https://cloud.githubusercontent.com/assets/619340/5514705/5b6766a8-8847-11e4-8812-76916faece52.png" />
+<p><strong>Decide which variables you want to expose</strong></p>
+<p>The upside of building generators from scratch is that you can make decisions based on what is most convenient for you. Here I’ll pick what I think is the most convenient, it can always be changed later.</p>
+<ul class="simple">
+<li>Division distance side X</li>
+<li>Division distance side Y</li>
+<li>Number Vertices on side X</li>
+<li>Number Vertices on side Y</li>
+</ul>
+<p><strong>Think in Whole numbers (ints) if you can</strong></p>
+<p>What I mean by this is, reduce the problem to something that is mathematically uncomplicated. Here’s a grid drawn on an xy graph to illustrate the coordinates. The z-dimension could be ignored but it’s included for completeness.</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5505509/ef999dd4-8791-11e4-8892-b46ab9688ad2.png" src="https://cloud.githubusercontent.com/assets/619340/5505509/ef999dd4-8791-11e4-8892-b46ab9688ad2.png" />
+<p>The reason I pick 4 verts for the X axis and 3 for Y, is because that’s the smallest useful set of vertices we can use as a reference. The reason i’m not picking 3*3 or 4*4 is because using different vertex counts makes it clear what that <cite>X</cite> axis might have some relation to 4 and to <cite>Y</cite> to 3.</p>
+<p>If you consider the sequence just by looking at the first index of each vertex, it goes <code class="docutils literal"><span class="pre">[0,1,2,3,0,1,2,3,0,1,2,3]</span></code>. We can generate sequences like that easily. When we look at the second index of these vertices that sequence is <code class="docutils literal"><span class="pre">[0,0,0,0,1,1,1,1,2,2,2,2]</span></code>, this also is easy to generate.</p>
+<p><strong>Using `modulo` and `integer division` to get grid coordinates</strong></p>
+<p>I hope you know Python, or at the very least what <cite>% (modulo)</cite> and <cite>// (int div)</cite> are. The sequences above can be generated using code this way – If this code doesn’t make sense keep reading, it’s explained further down:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="c1"># variables</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">j</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>          <span class="c1"># 12</span>
+
+<span class="c1"># using for loop</span>
+<span class="n">final_list</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="p">):</span>
+   <span class="n">x</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">4</span>       <span class="c1"># makes: 0 1 2 3 0 1 2 3 0 1 2 3</span>
+   <span class="n">y</span> <span class="o">=</span> <span class="n">i</span> <span class="o">//</span> <span class="mi">4</span>      <span class="c1"># makes: 0 0 0 0 1 1 1 1 2 2 2 2</span>
+   <span class="n">z</span> <span class="o">=</span> <span class="mi">0</span>
+   <span class="n">final_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">final_list</span><span class="p">)</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&gt;&gt; [(0, 0, 0), (1, 0, 0), (2, 0, 0), (3, 0, 0),</span>
+<span class="sd">&gt;&gt;  (0, 1, 0), (1, 1, 0), (2, 1, 0), (3, 1, 0),</span>
+<span class="sd">&gt;&gt;  (0, 2, 0), (1, 2, 0), (2, 2, 0), (3, 2, 0)]</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1"># using list comprehension</span>
+<span class="n">final_list</span> <span class="o">=</span> <span class="p">[(</span><span class="n">i</span><span class="o">%</span><span class="mi">4</span><span class="p">,</span> <span class="n">i</span><span class="o">//</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">j</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>With any luck you aren’t lost by all this code, visual programming is very similar except with less typing. The plumbing of an algorithm is still the same whether you are clicking and dragging nodes to create a flow of information or writing code in a text editor.</p>
+<p><strong>Operands</strong></p>
+<p>We introduced the Math node in lesson 01 and 02, the Math node (from the Number menu) has many operations called operands. We’ll focus on these to get the vertex components.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="10%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Operand</th>
+<th class="head">Symbol</th>
+<th class="head">Behaviour</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Modulo (mod)</td>
+<td>%</td>
+<td><code class="docutils literal"><span class="pre">i</span> <span class="pre">%</span> <span class="pre">4</span></code> returns the division remainder of <code class="docutils literal"><span class="pre">i</span> <span class="pre">/</span> <span class="pre">4</span></code>,
+rounded down to the nearest whole number</td>
+</tr>
+<tr class="row-odd"><td>Integer Division</td>
+<td>//</td>
+<td><code class="docutils literal"><span class="pre">i</span> <span class="pre">//</span> <span class="pre">4</span></code> returns the result of <code class="docutils literal"><span class="pre">i</span> <span class="pre">/</span> <span class="pre">4</span></code>,
+rounded down to the nearest whole number.</td>
+</tr>
+</tbody>
+</table>
+<p>We can use:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">i</span> <span class="pre">%</span> <span class="pre">4</span></code> to turn <code class="docutils literal"><span class="pre">[0,1,2,3,4,5,6,7,8,9,10,11]</span></code> into <code class="docutils literal"><span class="pre">[0,1,2,3,0,1,2,3,0,1,2,3]</span></code></li>
+<li><code class="docutils literal"><span class="pre">i</span> <span class="pre">//</span> <span class="pre">4</span></code> to turn <code class="docutils literal"><span class="pre">[0,1,2,3,4,5,6,7,8,9,10,11]</span></code> into <code class="docutils literal"><span class="pre">[0,0,0,0,1,1,1,1,2,2,2,2]</span></code></li>
+</ul>
+<p><strong>Making vertices</strong></p>
+<p>A recipe which you should be able to hook up yourself by seeing the example image.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Vector</span> <span class="pre">-&gt;</span> <span class="pre">Vector</span> <span class="pre">In</span></code></li>
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Number</span> <span class="pre">-&gt;</span> <span class="pre">Math</span></code> (3x) notice I minimized the Multiplication Node.</li>
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Number</span> <span class="pre">-&gt;</span> <span class="pre">Integer</span></code> (2x)</li>
+<li><code class="docutils literal"><span class="pre">Add</span> <span class="pre">-&gt;</span> <span class="pre">Number</span> <span class="pre">-&gt;</span> <span class="pre">Range</span> <span class="pre">Int</span></code></li>
+</ul>
+<p>We multiply <code class="docutils literal"><span class="pre">y=3</span></code> by <code class="docutils literal"><span class="pre">x=4</span></code> to get <code class="docutils literal"><span class="pre">12</span></code> this is the number of vertices. This parameter determines the length of the range <code class="docutils literal"><span class="pre">[0,1..11]</span></code> (12 vertices, remember we start counting indices at 0).</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5477351/e15771f0-862a-11e4-8085-289b88d4cb6a.png" src="https://cloud.githubusercontent.com/assets/619340/5477351/e15771f0-862a-11e4-8085-289b88d4cb6a.png" />
+<p>With all nodes hooked up correctly you can hook <code class="docutils literal"><span class="pre">Vector</span> <span class="pre">In</span></code>’s output to the <cite>vertices</cite> socket of a ViewerDraw node to display the vertices. To test if it works you can use the sliders on the two Integer nodes to see the grid of vertices respond to the two parameters. Remember to put these sliders back to 3 and 4 (as displayed in the image), to continue to the next step.</p>
+<p><strong>Making Polygons</strong></p>
+<p>This might be obvious to some, so this is directed at those who’ve never done this kind of thing before. This is where we use a notepad to write out the indexlist for the 6 polygons (two rows of 3 polygons, is the result of a x=4, y=3 grid). Viewing the vertices from above, go clockwise. The order in which you populate the the list of polygons is determined by what you find more convenient.</p>
+<p>For my example, I think of the X axis as the Columns, and I go from left to right and upwards</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png" src="https://cloud.githubusercontent.com/assets/619340/5514961/5ef77828-8854-11e4-81b4-4bd30a75d177.png" />
+<p>Notice that between polygon index 2 and 3 there is a break in the pattern. The polygon with vertex indices <code class="docutils literal"><span class="pre">[3,7,8,4]</span></code> doesn’t exist (for a grid of x=4, y=3), if we did make that polygon it would connect one Row to the next like so:</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png" src="https://cloud.githubusercontent.com/assets/619340/5515010/d58119fc-8856-11e4-837a-44beb57c3fb4.png" />
+<p>We know how many polygons we need (let’s call this number <code class="docutils literal"><span class="pre">j</span></code>), it is useful to think of an algorithm that produces these index sequences based on a range from <code class="docutils literal"><span class="pre">0</span> <span class="pre">thru</span> <span class="pre">j-1</span></code> or <code class="docutils literal"><span class="pre">[0,1,2,3,4,5]</span></code>. We can first ignore the fact that we need to remove every n-th polygon, or avoid creating it in the first place. Whatever you decide will be a choice between convenience and efficiency - I will choose convenience here.</p>
+<p><strong>A polygon Algorithm</strong></p>
+<blockquote>
+<div>Sverchok lets you create complex geometry without writing a single line of code, but you will not get the most out of the system by avidly avoiding code. Imagine living a lifetime without ever taking a left turn at a corner, you would miss out on faster more convenient ways to reach your destination.</div></blockquote>
+<p>It’s easier for me to explain how an algorithm works, and give you something to test it with, by showing the algorithm as a program, a bit of Python. Programming languages allow you to see without ambiguity how something works by running the code.</p>
+<p><strong>WIP - NOT ELEGANT</strong></p>
+<p>this generates faces from a vertex count for x,y:</p>
+<div class="highlight-default"><div class="highlight"><pre><span class="n">ny</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">add_face</span> <span class="o">=</span> <span class="n">faces</span><span class="o">.</span><span class="n">append</span>
+
+<span class="n">total_range</span> <span class="o">=</span> <span class="p">((</span><span class="n">ny</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">nx</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_range</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="n">nx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>  <span class="c1"># +1 is the shift</span>
+        <span class="n">add_face</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="n">nx</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="n">nx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># clockwise</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">faces</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is that same algorithm using the elementary nodes, can you see the similarity?</p>
+<img alt="https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png" src="https://cloud.githubusercontent.com/assets/619340/5515808/31552e1a-887c-11e4-9c74-0f3af2f193e6.png" />
+<p>// – TODO</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../panels.html" class="btn btn-neutral float-right" title="Panels of Sverchok">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="lesson_02.html" class="btn btn-neutral" title="Introduction to modular components"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, sverchok team.
+    </p>
+  </div>
+
+  <a href="https://github.com/snide/sphinx_rtd_theme">Sphinx theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.5',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
