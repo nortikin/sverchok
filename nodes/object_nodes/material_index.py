@@ -25,11 +25,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
 class SvMaterialEntry(bpy.types.PropertyGroup):
-    material = PointerProperty(type = bpy.types.Material)
+    material : PointerProperty(type = bpy.types.Material)
 
 class SvMaterialList(bpy.types.PropertyGroup):
-    materials = CollectionProperty(type=SvMaterialEntry)
-    index = IntProperty()
+    materials : CollectionProperty(type=SvMaterialEntry)
+    index : IntProperty()
 
 class SvMaterialUiList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
@@ -40,8 +40,8 @@ class SvAddMaterial(bpy.types.Operator):
     bl_idname = "sverchok.material_index_add"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
-    nodename = StringProperty(name='nodename')
-    treename = StringProperty(name='treename')
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
@@ -53,8 +53,8 @@ class SvRemoveMaterial(bpy.types.Operator):
     bl_idname = "sverchok.material_index_remove"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
-    nodename = StringProperty(name='nodename')
-    treename = StringProperty(name='treename')
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
@@ -72,29 +72,29 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Set Material Index"
     bl_icon = 'MATERIAL'
 
-    materials = CollectionProperty(type=SvMaterialEntry)
-    selected = IntProperty()
+    materials : CollectionProperty(type=SvMaterialEntry)
+    selected : IntProperty()
 
-    object_ref = StringProperty(default='', update=updateNode)
-    material_index = IntProperty(name = "Material Index", default = 0,
+    object_ref : StringProperty(default='', update=updateNode)
+    material_index : IntProperty(name = "Material Index", default = 0,
             description = "Material index to set (starting from 0)",
             min = 0,
             update = updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
-        self.inputs.new('StringsSocket', 'FaceIndex')
-        self.inputs.new('StringsSocket', 'MaterialIndex').prop_name = 'material_index'
+        self.inputs.new('SvStringsSocket', 'FaceIndex')
+        self.inputs.new('SvStringsSocket', 'MaterialIndex').prop_name = 'material_index'
 
     def draw_buttons(self, context, layout):
         layout.template_list("SvMaterialUiList", "materials", self, "materials", self, "selected")
         row = layout.row(align=True)
 
-        add = row.operator('sverchok.material_index_add', text='', icon='ZOOMIN')
+        add = row.operator('sverchok.material_index_add', text='', icon='ADD')
         add.nodename = self.name
         add.treename = self.id_data.name
 
-        remove = row.operator('sverchok.material_index_remove', text='', icon='ZOOMOUT')
+        remove = row.operator('sverchok.material_index_remove', text='', icon='REMOVE')
         remove.nodename = self.name
         remove.treename = self.id_data.name
 
