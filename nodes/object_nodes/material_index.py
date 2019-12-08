@@ -24,44 +24,6 @@ from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerPr
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 
-class SvMaterialEntry(bpy.types.PropertyGroup):
-    material : PointerProperty(type = bpy.types.Material)
-
-class SvMaterialList(bpy.types.PropertyGroup):
-    materials : CollectionProperty(type=SvMaterialEntry)
-    index : IntProperty()
-
-class SvMaterialUiList(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
-        layout.prop_search(item, "material", bpy.data, 'materials', text='', icon='MATERIAL_DATA')
-
-class SvAddMaterial(bpy.types.Operator):
-    bl_label = "Add material"
-    bl_idname = "sverchok.material_index_add"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    nodename : StringProperty(name='nodename')
-    treename : StringProperty(name='treename')
-
-    def execute(self, context):
-        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
-        node.materials.add()
-        return {'FINISHED'}
-
-class SvRemoveMaterial(bpy.types.Operator):
-    bl_label = "Remove material"
-    bl_idname = "sverchok.material_index_remove"
-    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
-
-    nodename : StringProperty(name='nodename')
-    treename : StringProperty(name='treename')
-
-    def execute(self, context):
-        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
-        idx = node.selected
-        node.materials.remove(idx)
-        return {'FINISHED'}
-
 class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
     '''
     Triggers: material index
@@ -72,10 +34,6 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = "Set Material Index"
     bl_icon = 'MATERIAL'
 
-    materials : CollectionProperty(type=SvMaterialEntry)
-    selected : IntProperty()
-
-    object_ref : StringProperty(default='', update=updateNode)
     material_index : IntProperty(name = "Material Index", default = 0,
             description = "Material index to set (starting from 0)",
             min = 0,
@@ -85,27 +43,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvObjectSocket', 'Object')
         self.inputs.new('SvStringsSocket', 'FaceIndex')
         self.inputs.new('SvStringsSocket', 'MaterialIndex').prop_name = 'material_index'
-
-    def draw_buttons(self, context, layout):
-        layout.template_list("SvMaterialUiList", "materials", self, "materials", self, "selected")
-        row = layout.row(align=True)
-
-        add = row.operator('sverchok.material_index_add', text='', icon='ADD')
-        add.nodename = self.name
-        add.treename = self.id_data.name
-
-        remove = row.operator('sverchok.material_index_remove', text='', icon='REMOVE')
-        remove.nodename = self.name
-        remove.treename = self.id_data.name
-
-    def assign_materials(self, obj):
-        n_existing = len(obj.data.materials)
-        for i, material_entry in enumerate(self.materials):
-            material = material_entry.material
-            if i >= n_existing:
-                obj.data.materials.append(material)
-            else:
-                obj.data.materials[i] = material
+        self.outputs.new('SvObjectSocket', 'Object')
 
     def set_material_indices(self, obj, faces, materials):
         prev_material_index_layer = obj.data.polygon_layers_int.get("prev_material_index")
@@ -136,12 +74,12 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = match_long_repeat([objects, faces_s, materials_s])
         for obj, faces, materials in zip(*inputs):
             fullList(materials, len(faces))
-            #self.info("I: %s, %s, %s", obj, faces, materials)
-            self.assign_materials(obj)
             self.set_material_indices(obj, faces, materials)
             obj.data.update()
 
-classes = [SvMaterialEntry, SvMaterialList, SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvMaterialIndexNode]
+        self.outputs['Object'].sv_set(objects)
+
+classes = [SvMaterialIndexNode]
 
 def register():
     for name in classes:
