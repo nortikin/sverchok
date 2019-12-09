@@ -143,6 +143,9 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
 
     def assign_materials(self, obj):
         n_existing = len(obj.data.materials)
+        if n_existing > len(self.materials):
+            obj.data.materials.clear()
+            n_existing = 0
         for i, material_entry in enumerate(self.materials):
             material = material_entry.material
             if i >= n_existing:
