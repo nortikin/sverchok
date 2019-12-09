@@ -143,13 +143,11 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', 'draw cyclic').prop_name = 'draw_cyclic'   # per stroke
         inew('SvStringsSocket', 'pressure').prop_name = 'pressure'         # per point
 
-        with new_input(self, 'SvStringsSocket', 'stroke color') as c1:
+        with new_input(self, 'SvColorSocket', 'stroke color') as c1:
             c1.prop_name = 'stroke_color'
-            c1.nodule_color = nodule_color       
-
-        with new_input(self, 'SvStringsSocket', 'fill color') as c2:
+ 
+        with new_input(self, 'SvColorSocket', 'fill color') as c2:
             c2.prop_name = 'fill_color'
-            c2.nodule_color = nodule_color
 
         onew('SvObjectSocket', 'frame')
         
@@ -189,7 +187,9 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         if frame.is_linked and coordinates.is_linked:
 
             strokes = frame.sv_get()
+
             GP_DATA = strokes.id_data
+            
             PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
             BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
 
