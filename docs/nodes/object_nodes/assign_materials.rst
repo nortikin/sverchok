@@ -26,7 +26,8 @@ Parameters
 
 This node has only one parameter: the list of materials to be assigned to the
 object. One can add or remove items from this list by means of **Plus** /
-**Minus** buttons next to the list.
+**Minus** buttons next to the list. Materials list can be rearranged by means
+of **Up** / **Down** buttons next to the list.
 
 Outputs
 -------
@@ -40,5 +41,5 @@ Examples of usage
 
 An example of usage in pair with the **Set Material Index** node:
 
-.. image:: https://user-images.githubusercontent.com/284644/70392046-4ef01a80-19fd-11ea-8e4d-5039cf053fed.png
+.. image:: https://user-images.githubusercontent.com/284644/70449726-50d0e100-1ac4-11ea-8094-d73cb2cf0c76.png
 
