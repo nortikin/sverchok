@@ -9,3 +9,4 @@ Viz
    viewer_metaball
    viewer_waveform_output
    vd_draw_experimental
+   empty_out

@@ -283,6 +283,8 @@
     SvSkinViewerNodeV28
     SvMetaballOutNode
     ---
+    SvEmptyOutNode
+    ---
     SvTextureViewerNode
     SvTextureViewerNodeLite
     SvWaveformViewer
