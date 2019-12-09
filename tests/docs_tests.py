@@ -120,7 +120,6 @@ class DocumentationTests(SverchokTestCase):
 vd_matrix.py
 viewer_typography.py
 viewer_skin.py
-vd_basic_lines.py
 viewer_idx28.py
 viewer_texture.py
 viewer_curves.py
