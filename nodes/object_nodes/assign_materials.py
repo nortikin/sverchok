@@ -56,6 +56,9 @@ class SvMaterialUiList(bpy.types.UIList):
         remove.nodename = data.name
         remove.treename = data.id_data.name
         remove.item_index = index
+    
+    def draw_filter(self, context, layout):
+        pass
 
 class SvAddMaterial(bpy.types.Operator):
     bl_label = "Add material slot"
