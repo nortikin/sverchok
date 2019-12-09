@@ -59,7 +59,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.create_empty()
-        self.inputs.new('MatrixSocket', "Matrix")
+        self.inputs.new('SvMatrixSocket', "Matrix")
         self.outputs.new('SvObjectSocket', "Objects")
 
     def find_empty(self):
@@ -118,7 +118,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
                     collection.objects.unlink(empty)
                     objects.remove(empty)
                 except:
-                    print("{0} failed to remove empty".format(self.name))
+                    print(f"{self.name} failed to remove empty")
 
 
 def register():
