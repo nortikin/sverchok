@@ -83,7 +83,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         return None
 
     def draw_buttons(self, context, layout):
-        layout.label(tezt="Base name")
+        layout.label(text="Base name")
         row = layout.row()
         row.scale_y = 1.1
         row.prop(self, "empty_name", text="")
