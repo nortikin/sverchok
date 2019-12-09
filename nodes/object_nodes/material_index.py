@@ -19,10 +19,10 @@
 import numpy as np
 
 import bpy
-from bpy.props import IntProperty, BoolProperty
+from bpy.props import IntProperty, BoolProperty, EnumProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, get_data_nesting_level, describe_data_shape
 
 class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -54,8 +54,22 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
             min = 0,
             update = updateNode)
 
+    matching_modes = [
+            ('FACE', "Per Face", "Assign specific material for each face", 0),
+            ('OBJECT', "Per Object", "Assign signle material for the whole object", 1)
+        ]
+
+    matching_mode : EnumProperty(
+            name = "Mode",
+            description = "Material assignment mode",
+            items = matching_modes,
+            default = 'FACE',
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "all_faces", toggle=True)
+        if self.all_faces:
+            layout.prop(self, "matching_mode", text='')
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Object')
@@ -80,9 +94,7 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
             material_index = material_by_face.get(face_index, None)
             if material_index is None:
                 material_index = prev_material_index_layer.data[face_index].value
-            #self.info("[%s] = %s", face_index, material_index)
             material_indices[face_index] = material_index
-        #self.info("Materials: %s", material_indices)
         obj.data.polygons.foreach_set("material_index", material_indices)
 
     def process(self):
@@ -90,14 +102,35 @@ class SvMaterialIndexNode(bpy.types.Node, SverchCustomTreeNode):
         faces_s = self.inputs['FaceIndex'].sv_get(default = [[]])
         materials_s = self.inputs['MaterialIndex'].sv_get(default = [[]])
 
-        inputs = match_long_repeat([objects, faces_s, materials_s])
-        for obj, faces, materials in zip(*inputs):
-            if self.all_faces:
-                faces = list(range(len(obj.data.polygons)))
+        materials_level = get_data_nesting_level(materials_s)
+        if self.all_faces and self.matching_mode == 'OBJECT':
+            if materials_level == 2:
+                materials = materials_s[0]
+            elif materials_level == 1:
+                materials = materials_s
+            else:
+                raise Exception("Materials input can consume either list of indicies or list of lists of indicies, but got " + describe_data_shape(materials_s))
 
-            fullList(materials, len(faces))
-            self.set_material_indices(obj, faces, materials)
-            obj.data.update()
+            inputs = match_long_repeat([objects, faces_s, materials])
+            for obj, faces, material in zip(*inputs):
+                n_faces = len(obj.data.polygons)
+                faces = list(range(n_faces))
+                ms = [material for i in range(len(faces))]
+                self.set_material_indices(obj, faces, ms)
+                obj.data.update()
+        else:
+            if materials_level != 2:
+                raise Exception("Materials input can consume only list of lists of indicies, but got " + describe_data_shape(materials_s))
+
+            inputs = match_long_repeat([objects, faces_s, materials_s])
+            for obj, faces, materials in zip(*inputs):
+                n_faces = len(obj.data.polygons)
+                if self.all_faces:
+                    faces = list(range(n_faces))
+
+                fullList(materials, len(faces))
+                self.set_material_indices(obj, faces, materials)
+                obj.data.update()
 
         self.outputs['Object'].sv_set(objects)
 
