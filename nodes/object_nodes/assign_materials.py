@@ -36,11 +36,29 @@ class SvMaterialList(bpy.types.PropertyGroup):
     index : IntProperty()
 
 class SvMaterialUiList(bpy.types.UIList):
-    def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
-        layout.prop_search(item, "material", bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+    def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
+        row = layout.row(align=True)
+        row.prop_search(item, "material", bpy.data, 'materials', text='', icon='MATERIAL_DATA')
+
+        up = row.operator(SvMoveMaterial.bl_idname, text='', icon='TRIA_UP')
+        up.nodename = data.name
+        up.treename = data.id_data.name
+        up.item_index = index
+        up.shift = -1
+
+        down = row.operator(SvMoveMaterial.bl_idname, text='', icon='TRIA_DOWN')
+        down.nodename = data.name
+        down.treename = data.id_data.name
+        down.item_index = index
+        down.shift = 1
+
+        remove = row.operator(SvRemoveMaterial.bl_idname, text='', icon='REMOVE')
+        remove.nodename = data.name
+        remove.treename = data.id_data.name
+        remove.item_index = index
 
 class SvAddMaterial(bpy.types.Operator):
-    bl_label = "Add material"
+    bl_label = "Add material slot"
     bl_idname = "sverchok.material_index_add"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
@@ -54,18 +72,43 @@ class SvAddMaterial(bpy.types.Operator):
         return {'FINISHED'}
 
 class SvRemoveMaterial(bpy.types.Operator):
-    bl_label = "Remove material"
+    bl_label = "Remove material slot"
     bl_idname = "sverchok.material_index_remove"
     bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     nodename : StringProperty(name='nodename')
     treename : StringProperty(name='treename')
+    item_index : IntProperty(name='item_index')
 
     def execute(self, context):
         node = bpy.data.node_groups[self.treename].nodes[self.nodename]
-        idx = node.selected
+        idx = self.item_index
         node.materials.remove(idx)
         updateNode(node, context)
+        return {'FINISHED'}
+
+class SvMoveMaterial(bpy.types.Operator):
+    "Move material in the list"
+
+    bl_label = "Move material"
+    bl_idname = "sverchok.material_index_shift"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    nodename : StringProperty(name='nodename')
+    treename : StringProperty(name='treename')
+    item_index : IntProperty(name='item_index')
+    shift : IntProperty(name='shift')
+
+    def execute(self, context):
+        node = bpy.data.node_groups[self.treename].nodes[self.nodename]
+        selected_index = self.item_index
+        next_index = selected_index + self.shift
+        if (0 <= selected_index < len(node.materials)) and (0 <= next_index < len(node.materials)):
+            selected_material = node.materials[selected_index].material
+            next_material = node.materials[next_index].material
+            node.materials[selected_index].material = next_material
+            node.materials[next_index].material = selected_material
+            updateNode(node, context)
         return {'FINISHED'}
 
 class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
@@ -82,6 +125,7 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
     selected : IntProperty()
 
     def sv_init(self, context):
+        self.width = 200
         self.inputs.new('SvObjectSocket', 'Object')
         self.outputs.new('SvObjectSocket', 'Object')
 
@@ -93,9 +137,6 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
         add.nodename = self.name
         add.treename = self.id_data.name
 
-        remove = row.operator('sverchok.material_index_remove', text='', icon='REMOVE')
-        remove.nodename = self.name
-        remove.treename = self.id_data.name
 
     def assign_materials(self, obj):
         n_existing = len(obj.data.materials)
@@ -115,7 +156,7 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Object'].sv_set(objects)
 
-classes = [SvMaterialEntry, SvMaterialList, SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvAssignMaterialListNode]
+classes = [SvMaterialEntry, SvMaterialList, SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvMoveMaterial, SvAssignMaterialListNode]
 
 def register():
     for name in classes:
