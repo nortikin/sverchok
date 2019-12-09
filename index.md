@@ -282,6 +282,7 @@
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
+    SvGreasePencilStrokes
     ---
     SvEmptyOutNode
     ---

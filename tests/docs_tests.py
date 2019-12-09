@@ -123,6 +123,7 @@ viewer_skin.py
 viewer_idx28.py
 viewer_texture.py
 viewer_curves.py
+viewer_gp.py
 vd_draw_experimental.py
 viewer_texture_lite.py
 viewer_polyline.py
