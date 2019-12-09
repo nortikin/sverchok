@@ -35,6 +35,20 @@ This node has the following parameters:
   faces of the object; in this case, **FaceIndex** input is not visible..
   Otherwise, materials will be assigned only to faces with indicies provided in
   the **FaceIndex** input. Unchecked by default.
+- **Mode**. Material setting mode. This parameter is available only if **All
+  Faces** parameter is checked. The following modes are available:
+
+   - **Per Face**. The node will expect one material index for each face of the
+     input object. Thus, valid data for **Material Index** input should always
+     have nesting level 2, i.e. be list of lists of integers (`[[0, 1, 2]]`,
+     for example).
+   - **Per Object**. The node will expect one material index for each input
+     object. In this case, **Material Index** input can accept input data with
+     nesting level of 1 or 2 (`[0, 1, 2]` or `[[0, 1, 2]]`). If input data is a
+     list of lists (nesting level of 2), then only the first list will be used.
+
+   The default mode is **Per Face**.
+
 
 Outputs
 -------
@@ -48,5 +62,21 @@ Examples of usage
 
 An example of usage in pair with the **Assign Material List** node:
 
-.. image:: https://user-images.githubusercontent.com/284644/70392046-4ef01a80-19fd-11ea-8e4d-5039cf053fed.png
+.. image:: https://user-images.githubusercontent.com/284644/70455381-05bbcb80-1ace-11ea-8b0d-858736ef0bed.png
+
+Assign a material per object:
+
+.. image:: https://user-images.githubusercontent.com/284644/70454084-afe62400-1acb-11ea-9a52-cacf0ee3680a.png
+
+Assign material per face, with the same pattern for all objects:
+
+.. image:: https://user-images.githubusercontent.com/284644/70454143-c3918a80-1acb-11ea-8ba2-e2b4785f3761.png
+
+Assign random material for each face of each object:
+
+.. image:: https://user-images.githubusercontent.com/284644/70454269-f9cf0a00-1acb-11ea-9e1d-af7ddc92ac23.png
+
+Set material for one specific face of each object:
+
+.. image:: https://user-images.githubusercontent.com/284644/70454877-115ac280-1acd-11ea-94c0-3da64908c156.png
 
