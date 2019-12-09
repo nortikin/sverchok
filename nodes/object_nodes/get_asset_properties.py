@@ -81,7 +81,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     def frame_updateNode(self, context):
         ''' must rebuild for each update'''
         self.frame_collection_name.clear()
-        gp_layer = bpy.data.grease_pencil[self.gp_name].layers[self.gp_layer]
+        gp_layer = bpy.data.grease_pencils[self.gp_name].layers[self.gp_layer]
         for idx, f in enumerate(gp_layer.frames):
             self.frame_collection_name.add().name = str(idx) + ' | ' + str(f.frame_number)
 
