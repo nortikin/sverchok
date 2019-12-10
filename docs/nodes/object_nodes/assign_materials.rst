@@ -10,6 +10,10 @@ face can be identified by the index of the material in that list.
 
 This node assigns the list of materials to the provided Blender object.
 
+Note that by default Blender assigns all object's faces with material index of
+0. This means that the first material in the list will be used for all object's
+faces by default.  
+
 This node is most commonly used together with the **Set Material Index** node.
 
 Inputs
