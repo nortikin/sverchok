@@ -12,3 +12,6 @@ Objects
    select_mesh_verts
    weightsmk2
    getsetprop
+   assign_materials
+   material_index
+
