@@ -70,8 +70,6 @@
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
-    SvMeshSelectNode
-    SvSelectSimilarNode
     SvPointInside
     SvProportionalEditNode
     SvRaycasterLiteNode
@@ -79,6 +77,10 @@
     SvDeformationNode
     SvLinkedVertsNode
     SvProjectPointToLine
+    ---
+    SvMeshSelectNode
+    SvSelectSimilarNode
+    SvChessSelection
 
 ## Transforms
     SvRotationNodeMK2
