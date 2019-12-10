@@ -35,3 +35,4 @@ Analyzers
    volume
    raycaster_lite
    image_components
+   chess_selection

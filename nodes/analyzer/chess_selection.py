@@ -13,9 +13,17 @@ from sverchok.node_tree import SverchCustomTreeNode
 
 
 def get_selection(verts, faces):
+    """
+    Returns face mask like chess board.
+    :param verts: list of vertices
+    :param faces: list of faces
+    :return: list of bool per given face
+    """
     bm = bmesh_from_pydata(verts, faces=faces)
     mark_faces(bm)
-    return [face.select for face in bm.faces]
+    out_mask = [face.select for face in bm.faces]
+    bm.free()
+    return out_mask
 
 
 def mark_faces(bm):
@@ -41,14 +49,14 @@ def mark_faces(bm):
 
 class SvChessSelection(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: ...
-    Tooltip: ...
+    Triggers: returns selection like chess board
+    Tooltip: can be used with 3d objects like torus and other primitives
 
-    ...
+    Topology of input mesh should be in an appropriate view for getting expecting result
     """
     bl_idname = 'SvChessSelection'
-    bl_label = 'Chess seletion'
-    bl_icon = 'MESH_GRID'
+    bl_label = 'Chess selection'
+    bl_icon = 'TEXTURE'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
