@@ -88,8 +88,9 @@ def inset_special(vertices, faces, inset_rates, distances, ignores, make_inners,
             add_face([face_elements[j], face_elements[j+1], inner_elements[j+1], inner_elements[j]])
 
         if make_inner:
-            add_face([idx[-1] for idx in out_faces])
-            new_insets.append([idx[-1] for idx in out_faces])
+            temp_face = [idx[-1] for idx in out_faces]
+            add_face(temp_face)
+            new_insets.append(temp_face)
 
         return out_faces
 
