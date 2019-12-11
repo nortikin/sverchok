@@ -13,7 +13,6 @@ Analyzers
    distance_point_plane
    distance_line_line
    deformation
-   edge_length
    edge_angles
    intersect_line_sphere
    intersect_circle_circle
