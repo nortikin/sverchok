@@ -69,7 +69,6 @@
     SvKDTreePathNode
     SvBvhOverlapNodeNew
     SvMeshFilterNode
-    SvEdgeLengthNode
     SvEdgeAnglesNode
     SvPointInside
     SvProportionalEditNode
