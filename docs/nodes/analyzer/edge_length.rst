@@ -29,3 +29,10 @@ This node has the following outputs:
 
 - **Length**. Lengths of each edge, if **Sum** parameter is not checked; otherwise, total sum of all edge lengths.
 
+Example of usage
+----------------
+
+A simple example:
+
+.. image:: https://user-images.githubusercontent.com/284644/70642102-7bf03780-1c60-11ea-941c-e207a2a1e825.png
+
