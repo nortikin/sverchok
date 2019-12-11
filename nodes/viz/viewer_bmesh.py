@@ -98,7 +98,7 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
     objects = bpy.data.objects
     islands = None
 
-    edges, faces, matrix = topology
+    edges, faces, materials, matrix = topology
     name = node.basedata_name + '.' + str("%04d" % obj_index)
 
     if name in objects:
@@ -134,6 +134,9 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
 
         ''' get bmesh, write bmesh to obj, free bmesh'''
         bm = bmesh_from_pydata(verts, edges, faces, normal_update=node.calc_normals)
+        if materials:
+            for face, material in zip(bm.faces[:], materials):
+                face.material_index = material
         bm.to_mesh(sv_object.data)
         if node.randomize_vcol_islands:
             islands = find_islands_treemap(bm)
@@ -178,11 +181,12 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     big_verts = []
     big_edges = []
     big_faces = []
+    big_materials = []
 
     for result in yielder_object:
 
         verts, topology = result
-        edges, faces, matrix = topology
+        edges, faces, materials, matrix = topology
 
         if matrix:
             # matrix = matrix_sanitizer(matrix)
@@ -191,6 +195,7 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
         big_verts.extend(verts)
         big_edges.extend([[a + vert_count, b + vert_count] for a, b in edges])
         big_faces.extend([[j + vert_count for j in f] for f in faces])
+        big_materials.extend(materials)
 
         vert_count += len(verts)
 
@@ -203,6 +208,9 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     else:
         ''' get bmesh, write bmesh to obj, free bmesh'''
         bm = bmesh_from_pydata(big_verts, big_edges, big_faces, normal_update=node.calc_normals)
+        if materials:
+            for face, material in zip(bm.faces[:], big_materials):
+                face.material_index = material
         bm.to_mesh(sv_object.data)
         bm.free()
 
@@ -248,6 +256,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.inputs.new('SvStringsSocket', 'edges')
         self.inputs.new('SvStringsSocket', 'faces')
+        self.inputs.new('SvStringsSocket', 'materials')
         self.inputs.new('SvMatrixSocket', 'matrix')
 
         self.outputs.new('SvObjectSocket', "Objects")
@@ -299,8 +308,12 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         mverts = get('vertices')
         medges = get('edges')
         mfaces = get('faces')
+        if 'materials' in self.inputs:
+            materials = get('materials')
+        else:
+            materials = []
         mmtrix = get('matrix')
-        return mverts, medges, mfaces, mmtrix
+        return mverts, medges, mfaces, materials, mmtrix
 
     def get_structure(self, stype, sindex):
         if not stype:
@@ -327,7 +340,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         # extend all non empty lists to longest of mverts or *mrest
         maxlen = max(len(mverts), *(map(len, mrest)))
         fullList(mverts, maxlen)
-        for idx in range(3):
+        for idx in range(4):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 

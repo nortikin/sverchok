@@ -49,6 +49,7 @@ class OutputData(object):
     def __init__(self):
         self.verts_out = []
         self.faces_out = []
+        self.materials_out = []
 
 class RecptFaceData(object):
     def __init__(self):
@@ -80,6 +81,7 @@ class DonorData(object):
         self.tri_vert_3 = None
         self.verts_v = []
         self.faces_i = []
+        self.materials_i = []
 
 class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -272,6 +274,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "PolsR")
         self.inputs.new('SvVerticesSocket', "VersD")
         self.inputs.new('SvStringsSocket', "PolsD")
+        self.inputs.new('SvStringsSocket', "MaterialsD")
         self.inputs.new('SvStringsSocket', "W_Coef").prop_name = 'width_coef'
         self.inputs.new('SvStringsSocket', "FrameWidth").prop_name = 'frame_width'
         self.inputs.new('SvStringsSocket', "Z_Coef").prop_name = 'z_coef'
@@ -282,6 +285,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Polygons")
+        self.outputs.new('SvStringsSocket', "Materials")
 
         self.update_frame_mode(context)
 
@@ -528,6 +532,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                     v, zcoef, zoffset))
             output.verts_out.append(new_verts)
             output.faces_out.append(donor.faces_i)
+            output.materials_out.append(donor.materials_i)
 
         elif map_mode == 'QUAD':
             # Quads processing mode.
@@ -590,6 +595,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             output.verts_out.append(new_verts)
             output.faces_out.append(donor.faces_i)
+            output.materials_out.append(donor.materials_i)
 
         elif map_mode == 'FRAME':
             is_fan = abs(recpt_face_data.frame_width - 1.0) < 1e-6
@@ -651,7 +657,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     sub_recpt.vertices_idxs = [0, 1, 2, 3]
                     self._process_face(sub_map_mode, output, sub_recpt, donor, zcoef, zoffset, angle, wcoef, facerot)
 
-    def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask):
+    def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, materials_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask):
         bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
         single_donor = self.matching_mode == 'LONG'
@@ -662,12 +668,14 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             verts_donor = [verts_donor]
             faces_donor = [faces_donor]
+            materials_donor = [materials_donor]
             if frame_level == 0:
                 frame_widths = [frame_widths]
 
         n_faces_recpt = len(faces_recpt)
         fullList(verts_donor, n_faces_recpt)
         fullList(faces_donor, n_faces_recpt)
+        fullList(materials_donor, n_faces_recpt)
         fullList(frame_widths, n_faces_recpt)
 
         X, Y = self.get_other_axes()
@@ -695,8 +703,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         output = OutputData()
 
         prev_angle = None
-        face_data = zip(faces_recpt, bm.faces, frame_widths, verts_donor, faces_donor, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask)
-        for recpt_face, recpt_face_bm, frame_width, donor_verts_i, donor_faces_i, zcoef, zoffset, angle, wcoef, facerot, m in face_data:
+        face_data = zip(faces_recpt, bm.faces, frame_widths, verts_donor, faces_donor, materials_donor, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask)
+        for recpt_face, recpt_face_bm, frame_width, donor_verts_i, donor_faces_i, donor_materials_i, zcoef, zoffset, angle, wcoef, facerot, m in face_data:
 
             recpt_face_data = RecptFaceData()
             recpt_face_data.normal = recpt_face_bm.normal
@@ -709,6 +717,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             recpt_face_data.frame_width = frame_width
 
             donor.faces_i = donor_faces_i
+            donor.materials_i = donor_materials_i
 
             if not single_donor:
                 # Original (unrotated) donor vertices
@@ -784,6 +793,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         faces_recpt_s = self.inputs['PolsR'].sv_get(default=[[]], deepcopy=False)
         verts_donor_s = self.inputs['VersD'].sv_get()
         faces_donor_s = self.inputs['PolsD'].sv_get()
+        if 'MaterialsD' in self.inputs:
+            materials_donor_s = self.inputs['MaterialsD'].sv_get(default=[[]])
+        else:
+            materials_donor_s = [[]]
         zcoefs_s = self.inputs['Z_Coef'].sv_get(deepcopy=False)
         zoffsets_s = self.inputs['Z_Offset'].sv_get(deepcopy=False)
         zrotations_s = self.inputs['Z_Rotation'].sv_get(deepcopy=False)
@@ -805,9 +818,9 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             faces_donor_s = [faces_donor_s]
             #self.info("FW: %s", frame_widths_s)
             #frame_widths_s = [frame_widths_s]
-        objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
+        objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, materials_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
         #self.info("N objects: %s", len(list(zip(*objects))))
-        for verts_recpt, faces_recpt, verts_donor, faces_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
+        for verts_recpt, faces_recpt, verts_donor, faces_donor, materials_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
             n_faces_recpt = len(faces_recpt)
             fullList(zcoefs, n_faces_recpt)
             fullList(zoffsets, n_faces_recpt)
@@ -821,21 +834,26 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             new = self._process(verts_recpt, faces_recpt,
                                  verts_donor, faces_donor,
+                                 materials_donor,
                                  frame_widths,
                                  zcoefs, zoffsets, zrotations,
                                  wcoefs, facerots, mask)
 
             output.verts_out.extend(new.verts_out)
             output.faces_out.extend(new.faces_out)
+            output.materials_out.extend(new.materials_out)
 
             output.verts_out = Vector_degenerate(output.verts_out)
             if self.join:
                 output.verts_out, _, output.faces_out = mesh_join(output.verts_out, [], output.faces_out)
                 output.verts_out = [output.verts_out]
                 output.faces_out = [output.faces_out]
+                output.materials_out = [sum(output.materials_out, [])]
 
             self.outputs['Vertices'].sv_set(output.verts_out)
             self.outputs['Polygons'].sv_set(output.faces_out)
+            if 'Materials' in self.outputs:
+                self.outputs['Materials'].sv_set(output.materials_out)
 
 def register():
     bpy.utils.register_class(SvAdaptivePolygonsNodeMk2)
