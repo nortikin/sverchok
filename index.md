@@ -188,6 +188,7 @@
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvInsetSpecial
+    SvInsetFaces
     SvLatheNode
     SvSmoothNode
     SvSmoothLines
