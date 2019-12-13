@@ -12,6 +12,10 @@ Inputs
 - **Distance**
 - **Vertices**
 - **PolyEdge**
+- **FaceData**. List containing an arbitrary data item for each face of input
+  mesh. For example, this may be used to provide material indexes of input
+  mesh faces. Optional input.
+
 
 Parameters
 ----------
@@ -30,7 +34,9 @@ This node has the following outputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
-- **Doubles** - Vertices, that was deleted.
+- **Doubles**. Vertices, that were deleted.
+- **FaceData**. List containing data items from the **FaceData** input, which
+  contains one item for each output mesh face.
 
 Examples of usage
 -----------------
