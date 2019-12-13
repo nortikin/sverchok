@@ -19,40 +19,13 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, props=None):
     tm = time()
-    if props is None:
-        props = set('use_even_offset')
     if len(thickness) == 1 and len(depth) == 1:
-        bm_out = bmesh.new()
-        sv = bm_out.faces.layers.int.new('sv')
-        [bm_out.verts.new(v) for v in verts]
-        bm_out.verts.ensure_lookup_table()
-        bm_out.verts.index_update()
-        for fi, f in enumerate(faces):
-            bmf = bm_out.faces.new([bm_out.verts[i] for i in f])
-            bmf[sv] = fi
-        # bm_out = bmesh_from_pydata(verts, edges, faces, True)
-        # it is creates new faces anyway even if all values are zero
-        # returns faces without inner one
-        # use_interpolate: Interpolate mesh data: e.g. UV’s, vertex colors, weights, etc.
-        res = inset_individual(bm_out, faces=list(bm_out.faces), thickness=thickness[0], depth=depth[0],
-                               use_even_offset='use_even_offset' in props, use_interpolate=True,
-                               use_relative_offset='use_relative_offset' in props)
+        bm_out = inset_faces_individual_one_value(verts, faces, thickness[0], depth[0], edges, props)
     else:
-        verts_number = 0
-        iter_thick = chain(thickness, cycle([thickness[-1]]))
-        iter_depth = chain(depth, cycle([depth[-1]]))
-        bm_out = bmesh.new()
-        sv = bm_out.faces.layers.int.new('sv')
-        for fi, (f, t, d) in enumerate(zip(faces, iter_thick, iter_depth)):
-            # each instance of bmesh get a lot of operative memory, they should be illuminated as fast as possible
-            bm = bmesh_from_pydata([verts[i] for i in f], None, [list(range(len(f)))], True)
-            res = inset_individual(bm, faces=list(bm.faces), thickness=t, depth=d,
-                                   use_even_offset='use_even_offset' in props, use_interpolate=True,
-                                   use_relative_offset='use_relative_offset' in props)
-            verts_number += merge_bmeshes(bm_out, verts_number, sv, fi, bm)
-            bm.free()
-    remove_doubles(bm_out, verts=bm_out.verts, dist=1e-6)
+        bm_out = inset_faces_individual_multiple_values(verts, faces, thickness, depth, edges, props)
     print("Time: ", time() - tm)
+
+    sv = bm_out.faces.layers.int.get('sv')
     out_verts = [v.co[:] for v in bm_out.verts]
     out_edges = [[v.index for v in edge.verts] for edge in bm_out.edges]
     out_faces = [[v.index for v in face.verts] for face in bm_out.faces]
@@ -60,6 +33,7 @@ def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, prop
         face_data_out = [face_data[f[sv]] for f in bm_out.faces]
     else:
         face_data_out = []
+    bm_out.free()
     return out_verts, out_edges, out_faces, face_data_out
 
 
@@ -73,6 +47,56 @@ def merge_bmeshes(bm1, verts_number, layer_item, face_index, bm2):
         f1 = bm1.faces.new([new_verts[v.index] for v in f.verts])
         f1[layer_item] = face_index
     return len(new_verts)
+
+
+def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None, props=None):
+    if props is None:
+        props = set('use_even_offset')
+
+    bm = bmesh.new()
+    sv = bm.faces.layers.int.new('sv')
+    for i, co in enumerate(verts):
+        v = bm.verts.new(co)
+        v.index = i
+    bm.verts.ensure_lookup_table()
+    if edges:
+        for e in edges:
+            bm.edges.new([bm.verts[i] for i in e])
+    for fi, f in enumerate(faces):
+        bmf = bm.faces.new([bm.verts[i] for i in f])
+        bmf[sv] = fi
+    bm.normal_update()
+
+    if thickness or depth:
+        # it is creates new faces anyway even if all values are zero
+        # returns faces without inner one
+        # use_interpolate: Interpolate mesh data: e.g. UV’s, vertex colors, weights, etc.
+        res = inset_individual(bm, faces=list(bm.faces), thickness=thickness, depth=depth,
+                               use_even_offset='use_even_offset' in props, use_interpolate=True,
+                               use_relative_offset='use_relative_offset' in props)
+    return bm
+
+
+def inset_faces_individual_multiple_values(verts, faces, thicknesses, depths, edges=None, props=None):
+    if props is None:
+        props = set('use_even_offset')
+
+    verts_number = 0
+    iter_thick = chain(thicknesses, cycle([thicknesses[-1]]))
+    iter_depth = chain(depths, cycle([depths[-1]]))
+    bm_out = bmesh.new()
+    sv = bm_out.faces.layers.int.new('sv')
+    for fi, (f, t, d) in enumerate(zip(faces, iter_thick, iter_depth)):
+        # each instance of bmesh get a lot of operative memory, they should be illuminated as fast as possible
+        bm = bmesh_from_pydata([verts[i] for i in f], edges, [list(range(len(f)))], True)
+        if t or d:
+            res = inset_individual(bm, faces=list(bm.faces), thickness=t, depth=d,
+                                   use_even_offset='use_even_offset' in props, use_interpolate=True,
+                                   use_relative_offset='use_relative_offset' in props)
+        verts_number += merge_bmeshes(bm_out, verts_number, sv, fi, bm)
+        bm.free()
+    remove_doubles(bm_out, verts=bm_out.verts, dist=1e-6)
+    return bm_out
 
 
 class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
