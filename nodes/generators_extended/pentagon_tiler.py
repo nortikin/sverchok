@@ -29,11 +29,17 @@ from sverchok.utils.pentagon_geom import generate_penta_grid, generate_penta_til
 
 
 GRID_TYPE_ITEMS = [
-    ("PENTAGON1", "Pentagon 1", "", custom_icon("SV_PENTAGON_1"), 4),
-    ("PENTAGON2", "Pentagon 2", "", custom_icon("SV_PENTAGON_2"), 5),
-    ("PENTAGON3", "Pentagon 3", "", custom_icon("SV_PENTAGON_3"), 6),
-    ("PENTAGON4", "Pentagon 4", "", custom_icon("SV_PENTAGON_4"), 7),
-    ("PENTAGON5", "Pentagon 5", "", custom_icon("SV_PENTAGON_5"), 8)]
+    ("PENTAGON1", "Type 1 2-tile", "", custom_icon("SV_PENTAGON_1"), 2),
+    ("TYPE_1_4", "Type 1 4-tile", "", custom_icon("SV_PENTAGON_1"), 3),
+    ("PENTAGON2", "Type 1 2-tile X", "", custom_icon("SV_PENTAGON_2"), 4),
+    ("PENTAGON3", "Type 1 2-tile 2", "", custom_icon("SV_PENTAGON_3"), 5),
+    ("PENTAGON4", "Type 2", "", custom_icon("SV_PENTAGON_4"), 6),
+    ("TYPE_2_1", "Type 2_1", "", custom_icon("SV_PENTAGON_4"), 7),
+    ("PENTAGON7", "Type 3 3-tile", "", custom_icon("SV_PENTAGON_5"), 8),
+    ("PENTAGON5", "Type 4 4-tile", "", custom_icon("SV_PENTAGON_5"), 9),
+    ("PENTAGON6", "Type 5 6-tile", "", custom_icon("SV_PENTAGON_5"), 10),
+    ("PENTAGON14", "Type 14", "", custom_icon("SV_PENTAGON_5"), 14),
+    ("PENTAGON15", "Type 15", "", custom_icon("SV_PENTAGON_5"), 15)]
 
 ALIGN_ITEMS = [
     ("X", "X", "Align tile primitives to X axis", custom_icon("SV_PENTAGON_X_ROT"), 0),
@@ -46,10 +52,16 @@ ANGLE_UNITS_ITEMS = [
 ]
 PENTAGON_SOCKETS = {
     "PENTAGON1": "ABabcd",
-    "PENTAGON2": "ACabd",
-    "PENTAGON3": "ADab",
-    "PENTAGON4": "BCbc",
-    "PENTAGON5": "Cbd",
+    "TYPE_1_4" : "ABabcd",
+    "PENTAGON2": "ABabc",
+    "PENTAGON3": "ABab",
+    "PENTAGON4": "ABab",
+    "TYPE_2_1": "ABabc",
+    "PENTAGON5": "Aab",
+    "PENTAGON6": "Aab",
+    "PENTAGON7": "Aabc",
+    "PENTAGON14": "a",
+    "PENTAGON15": "a",
 }
 
 class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
@@ -98,30 +110,23 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         name="Separate", description="Separate tiles primitives",
         default=False, update=updateNode)
     angle_a: FloatProperty(
-        name="A", description="Scale of the polygon tile",
-        default=80.0, min=0.0, update=updateNode)
+        name="A", description="Corner Angle",
+        default=100.0, min=0.0, update=updateNode)
     angle_b: FloatProperty(
-        name="B", description="Scale of the polygon tile",
-        default=100.0, min=0.0, update=updateNode)
-    angle_c: FloatProperty(
-        name="C", description="Scale of the polygon tile",
-        default=135.0, min=0.0, update=updateNode)
-    angle_d: FloatProperty(
-        name="D", description="Scale of the polygon tile",
-        default=100.0, min=0.0, update=updateNode)
-
+        name="B", description="Corner Angle",
+        default=120.0, min=0.0, update=updateNode)
     side_a: FloatProperty(
-        name="a", description="Scale of the polygon tile",
+        name="a", description="Side length",
         default=1.0, min=0.0, update=updateNode)
     side_b: FloatProperty(
-        name="b", description="Scale of the polygon tile",
-        default=2.0, min=0.0, update=updateNode)
+        name="b", description="Side length",
+        default=1.0, min=0.0, update=updateNode)
     side_c: FloatProperty(
-        name="c", description="Scale of the polygon tile",
-        default=2.5, min=0.0, update=updateNode)
+        name="c", description="Side length",
+        default=1.5, min=0.0, update=updateNode)
     side_d: FloatProperty(
-        name="d", description="Scale of the polygon tile",
-        default=0.5, min=0.0, update=updateNode)
+        name="d", description="Side length",
+        default=1.0, min=0.0, update=updateNode)
 
     list_match_global: EnumProperty(
         name="Match Global",
@@ -148,8 +153,6 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "NumY").prop_name = 'numy'
         self.inputs.new('SvStringsSocket', "A").prop_name = 'angle_a'
         self.inputs.new('SvStringsSocket', "B").prop_name = 'angle_b'
-        self.inputs.new('SvStringsSocket', "C").prop_name = 'angle_c'
-        self.inputs.new('SvStringsSocket', "D").prop_name = 'angle_d'
         self.inputs.new('SvStringsSocket', "a").prop_name = 'side_a'
         self.inputs.new('SvStringsSocket', "b").prop_name = 'side_b'
         self.inputs.new('SvStringsSocket', "c").prop_name = 'side_c'
@@ -163,7 +166,7 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def update_sockets(self):
         inputs = self.inputs
-        inputs_n = 'ABCDabcd'
+        inputs_n = 'ABabcd'
         for socket in inputs_n:
             if socket in PENTAGON_SOCKETS[self.grid_type]:
                 if inputs[socket].hide_safe:
@@ -207,7 +210,7 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
         params[1:3] = [list(map(lambda x: max(1, x), num)) for num in  params[1:3]]
         if self.angle_mode == 'DEG':
             params[0] = list(map(lambda x: radians(x), params[0]))
-            params[3:7] = [list(map(lambda x: radians(x), ang)) for ang in params[3:7]]
+            params[3:5] = [list(map(lambda x: radians(x), ang)) for ang in params[3:5]]
         params = list_match_func[self.list_match_local](params)
 
         vert_list, edge_list, poly_list = [[], [], []]
