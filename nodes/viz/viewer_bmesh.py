@@ -256,7 +256,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.inputs.new('SvVerticesSocket', 'vertices')
         self.inputs.new('SvStringsSocket', 'edges')
         self.inputs.new('SvStringsSocket', 'faces')
-        self.inputs.new('SvStringsSocket', 'materials')
+        self.inputs.new('SvStringsSocket', 'material_idx')
         self.inputs.new('SvMatrixSocket', 'matrix')
 
         self.outputs.new('SvObjectSocket', "Objects")
@@ -308,8 +308,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         mverts = get('vertices')
         medges = get('edges')
         mfaces = get('faces')
-        if 'materials' in self.inputs:
-            materials = get('materials')
+        if 'material_idx' in self.inputs:
+            materials = get('material_idx')
         else:
             materials = []
         mmtrix = get('matrix')

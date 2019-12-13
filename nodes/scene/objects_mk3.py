@@ -95,7 +95,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         new('SvVerticesSocket', "Vertices")
         new('SvStringsSocket', "Edges")
         new('SvStringsSocket', "Polygons")
-        new('SvStringsSocket', "Materials")
+        new('SvStringsSocket', "MaterialIdx")
         new('SvMatrixSocket', "Matrixes")
         new('SvObjectSocket', "Object")
 
@@ -302,8 +302,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             outputs['Vertices'].sv_set(vers_out)
             outputs['Edges'].sv_set(edgs_out)
             outputs['Polygons'].sv_set(pols_out)
-            if 'Materials' in outputs:
-                outputs['Materials'].sv_set(materials_out)
+            if 'MaterialIdx' in outputs:
+                outputs['MaterialIdx'].sv_set(materials_out)
 
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)
