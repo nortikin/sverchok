@@ -10,19 +10,22 @@ from time import time
 
 import bpy
 import bmesh
-from bmesh.ops import inset_individual, remove_doubles
+from bmesh.ops import inset_individual, remove_doubles, inset_region
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
-def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, mask_type=None, props=None):
+def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, inset_type=None, mask_type=None, props=None):
     tm = time()
-    if len(thickness) == 1 and len(depth) == 1:
-        bm_out = inset_faces_individual_one_value(verts, faces, thickness[0], depth[0], edges, props)
+    if inset_type is None or inset_type == 'individual':
+        if len(thickness) == 1 and len(depth) == 1:
+            bm_out = inset_faces_individual_one_value(verts, faces, thickness[0], depth[0], edges, props)
+        else:
+            bm_out = inset_faces_individual_multiple_values(verts, faces, thickness, depth, edges, props)
     else:
-        bm_out = inset_faces_individual_multiple_values(verts, faces, thickness, depth, edges, props)
+        bm_out = inset_faces_region_one_value(verts, faces, thickness[0], depth[0], edges, props)
     print("Time: ", time() - tm)
 
     sv = bm_out.faces.layers.int.get('sv')
@@ -55,13 +58,10 @@ def merge_bmeshes(bm1, verts_number, layer_item, face_index, bm2):
     return len(new_verts)
 
 
-def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None, props=None):
-    if props is None:
-        props = set('use_even_offset')
-
+def bmesh_from_sv(verts, faces, edges=None):
     bm = bmesh.new()
     sv = bm.faces.layers.int.new('sv')
-    mask = bm.faces.layers.int.new('mask')
+    bm.faces.layers.int.new('mask')
     for i, co in enumerate(verts):
         v = bm.verts.new(co)
         v.index = i
@@ -73,6 +73,15 @@ def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None,
         bmf = bm.faces.new([bm.verts[i] for i in f])
         bmf[sv] = fi
     bm.normal_update()
+    return bm
+
+
+def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None, props=None):
+    if props is None:
+        props = set('use_even_offset')
+
+    bm = bmesh_from_sv(verts, faces, edges)
+    mask = bm.faces.layers.int.get('mask')
 
     if thickness or depth:
         # it is creates new faces anyway even if all values are zero
@@ -112,6 +121,21 @@ def inset_faces_individual_multiple_values(verts, faces, thicknesses, depths, ed
     return bm_out
 
 
+def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, props=None):
+    if props is None:
+        props = {'use_even_offset', 'use_boundary'}
+    bm = bmesh_from_sv(verts, faces, edges)
+    mask = bm.faces.layers.int.get('mask')
+
+    if thickness or depth:
+        # use_interpolate: Interpolate mesh data: e.g. UV’s, vertex colors, weights, etc.
+        res = inset_region(bm, faces=list(bm.faces), thickness=thickness, depth=depth, use_interpolate=True,
+                           **{k: True for k in props})
+        for rf in res['faces']:
+            rf[mask] = 1
+    return bm
+
+
 class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: ...
@@ -123,8 +147,9 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Inset faces'
     bl_icon = 'MESH_GRID'
 
-    bool_properties = ['use_even_offset', 'use_relative_offset']
-    mask_type_items = [(k ,k , '', i) for i, k in enumerate(['out', 'in'])]
+    bool_properties = ['use_even_offset', 'use_relative_offset', 'use_boundary', 'use_edge_rail', 'use_outset']
+    mask_type_items = [(k, k.title(), '', i) for i, k in enumerate(['out', 'in'])]
+    inset_type_items = [(k, k.title(), '', i) for i, k in enumerate(['individual', 'region'])]
 
     thickness: bpy.props.FloatProperty(name="Thickness", default=0.1, min=0.0, update=updateNode,
                                        description="Set the size of the offset.")
@@ -134,11 +159,21 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
                                             description="Scale the offset to give a more even thickness.")
     use_relative_offset: bpy.props.BoolProperty(name="Offset Relative", default=False, update=updateNode,
                                                 description="Scale the offset by lengths of surrounding geometry.")
+    use_boundary: bpy.props.BoolProperty(name="Boundary ", default=True, update=updateNode,
+                                         description='Determines whether open edges will be inset or not.')
+    use_edge_rail: bpy.props.BoolProperty(name="Edge Rail", update=updateNode,
+                                          description="Created vertices slide along the original edges of the inner"
+                                                      " geometry, instead of the normals.")
+    use_outset: bpy.props.BoolProperty(name="Outset ", update=updateNode,
+                                       description="Create an outset rather than an inset. Causes the geometry to be "
+                                                   "created surrounding selection (instead of within).")
     mask_type: bpy.props.EnumProperty(items=mask_type_items, update=updateNode,
                                       description="Switch between inner and outer faces generated by insertion")
+    inset_type: bpy.props.EnumProperty(items=inset_type_items, update=updateNode,
+                                       description="Switch between inserting type")
 
     def draw_buttons(self, context, layout):
-        pass
+        layout.prop(self, 'inset_type', expand=True)
 
     def draw_buttons_ext(self, context, layout):
         [layout.prop(self, name) for name in self.bool_properties]
@@ -170,7 +205,7 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
                          self.inputs['Thickness'].sv_get(),
                          self.inputs['Depth'].sv_get(),
                          self.inputs['Face data'].sv_get() if self.inputs['Face data'].is_linked else cycle([None])):
-            out.append(inset_faces(v, f, t, d, e, fd, self.mask_type, set(prop for prop in self.bool_properties if getattr(self, prop))))
+            out.append(inset_faces(v, f, t, d, e, fd, self.inset_type, self.mask_type, set(prop for prop in self.bool_properties if getattr(self, prop))))
         out_verts, out_edges, out_faces, out_face_data, out_mask = zip(*out)
         self.outputs['Verts'].sv_set(out_verts)
         self.outputs['Edges'].sv_set(out_edges)
