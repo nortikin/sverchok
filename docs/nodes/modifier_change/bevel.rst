@@ -105,3 +105,8 @@ You can work with multiple objects:
 Vertex mode and multiple radius:
 
 .. image:: https://user-images.githubusercontent.com/10011941/38384563-cb1bb8a6-390f-11e8-82cc-d2a978cb8d52.png
+
+An example of "FaceData" sockets usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/70852164-0682a200-1ec0-11ea-8b65-75b0bced3659.png
+
