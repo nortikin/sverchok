@@ -33,7 +33,11 @@ def matrix_in(params):
     return matrixes
 
 class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' MatrixGeneratorMK2 '''
+    """
+    Triggers: From loc, scale, rot
+    Tooltip:  Creates a transformation Matrix by defining its Location, Scale and Rotation.
+
+    """
     bl_idname = 'SvMatrixGenNodeMK2'
     bl_label = 'Matrix in'
     bl_icon = 'OUTLINER_OB_EMPTY'
