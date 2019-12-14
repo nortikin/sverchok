@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 from itertools import cycle, chain
-from time import time
 
 import bpy
 import bmesh
@@ -16,11 +15,27 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face_mask=None, inset_type=None, mask_type=None, props=None):
+def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face_mask=None, inset_type=None,
+                mask_type=None, props=None):
+    """
+    It handle Bmesh inset individual and inset region operators according Sverchok demands
+    :param verts: list of SV vertices
+    :param faces: list of SV faces
+    :param thickness: list of floats, at list one value in the list
+    :param depth: list of floats, at list one value in the list
+    :param edges: list of Edges, optionally
+    :param face_data: list of any data related with given faces, optionally
+    :param face_mask: list of bool to mark faces in which face should be inserted
+    :param inset_type: 'individual' or 'region', 'region by default
+    :param mask_type: this option for mask output, should be a set of 3 available keys {'mask', 'out, 'in'}
+    :param props: set of properties which should be switched on in bmesh operators
+    :return: SV vertices, edges, faces, data related with faces if such was given or indexes of old faces,
+    selection mask according given options of mask type
+    """
     if mask_type is None:
         mask_type = set()
 
-    tm = time()
+    # call appropriate inserting function
     if inset_type is None or inset_type == 'individual':
         if len(thickness) == 1 and len(depth) == 1:
             bm_out = inset_faces_individual_one_value(verts, faces, thickness[0], depth[0], edges, face_mask, props)
@@ -31,8 +46,8 @@ def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face
             bm_out = inset_faces_region_one_value(verts, faces, thickness[0], depth[0], edges, face_mask, props)
         else:
             bm_out = inset_faces_region_multiple_values(verts, faces, thickness, depth, edges, face_mask, props)
-    print("Time: ", time() - tm)
 
+    # convert result Bmesh to Sverchok type
     sv = bm_out.faces.layers.int.get('sv')
     mask = bm_out.faces.layers.int.get('mask')
     out_verts = [v.co[:] for v in bm_out.verts]
@@ -41,7 +56,7 @@ def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face
     if face_data:
         face_data_out = [face_data[f[sv]] for f in bm_out.faces]
     else:
-        face_data_out = []
+        face_data_out = [f[sv] for f in bm_out.faces]
     int_mak = {0: 'in', 1: 'out', 2: 'mask'}
     face_select = [1 if int_mak[f[mask]] in mask_type else 0 for f in bm_out.faces]
     bm_out.free()
@@ -49,6 +64,9 @@ def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face
 
 
 def merge_bmeshes(bm1, verts_number, bm2):
+    # Merge two Bmeshes into first given, verts_number is total number of vertices of first given bmesh
+    # Crete two layers any way and copy data from them to first given Bmesh
+    # Returns number of added vertices
     new_verts = []
     sv1 = bm1.faces.layers.int.get('sv')
     sv2 = bm2.faces.layers.int.get('sv')
@@ -66,6 +84,9 @@ def merge_bmeshes(bm1, verts_number, bm2):
 
 
 def bmesh_from_sv(verts, faces, edges=None, face_int_layers=None):
+    # Generate Bmesh from Sverchok data
+    # Optionally it can create faces int layers and set given values
+    # Layers should be given in dictionary format where ket is name of layer and value as list of values per given faces
     if face_int_layers is None:
         face_int_layers = dict()
     bm = bmesh.new()
@@ -78,7 +99,7 @@ def bmesh_from_sv(verts, faces, edges=None, face_int_layers=None):
         for e in edges:
             bm.edges.new([bm.verts[i] for i in e])
     for f in faces:
-        f_new = bm.faces.new([bm.verts[i] for i in f])
+        bm.faces.new([bm.verts[i] for i in f])
     for key in face_int_layers:
         if face_int_layers[key] is not None:
             for v, f in zip(face_int_layers[key], bm.faces):
@@ -88,6 +109,7 @@ def bmesh_from_sv(verts, faces, edges=None, face_int_layers=None):
 
 
 def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None, face_mask=None, props=None):
+    # It calling Bmesh function with one value of thickness and depth for all faces
     if props is None:
         props = set('use_even_offset')
     if face_mask is None:
@@ -114,6 +136,7 @@ def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None,
 
 
 def inset_faces_individual_multiple_values(verts, faces, thicknesses, depths, edges=None, face_mask=None, props=None):
+    # It generate Bmesh per one face, inset face into it and merge the Bmesh to output Bmesh
     if props is None:
         props = set('use_even_offset')
     if face_mask is None:
@@ -148,6 +171,7 @@ def inset_faces_individual_multiple_values(verts, faces, thicknesses, depths, ed
 
 
 def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, face_mask=None, props=None):
+    # It inserts faces in region mode with one value of thickness and depth for all mesh
     if props is None:
         props = {'use_even_offset', 'use_boundary'}
     if face_mask is None:
@@ -172,6 +196,8 @@ def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, fac
 
 
 def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=None, face_mask=None, props=None):
+    # It split mesh into islands, calculate average value of thickness and depth per island,
+    # inserts faces into island and merge mesh into output mesh
     if props is None:
         props = {'use_even_offset', 'use_boundary'}
     if face_mask is None:
@@ -271,10 +297,10 @@ def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=
 
 class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: ...
-    Tooltip: ...
+    Triggers: Also can used as extrude
+    Tooltip: Analog of Blender inset function
 
-    ...
+    Most options on N panel
     """
     bl_idname = 'SvInsetFaces'
     bl_label = 'Inset faces'
@@ -340,7 +366,8 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
                          self.inputs['Depth'].sv_get(),
                          self.inputs['Face data'].sv_get() if self.inputs['Face data'].is_linked else cycle([None]),
                          self.inputs['Face mask'].sv_get() if self.inputs['Face mask'].is_linked else cycle([None])):
-            out.append(inset_faces(v, f, t, d, e, fd, m, self.inset_type, self.mask_type, set(prop for prop in self.bool_properties if getattr(self, prop))))
+            out.append(inset_faces(v, f, t, d, e, fd, m, self.inset_type, self.mask_type,
+                                   set(prop for prop in self.bool_properties if getattr(self, prop))))
         out_verts, out_edges, out_faces, out_face_data, out_mask = zip(*out)
         self.outputs['Verts'].sv_set(out_verts)
         self.outputs['Edges'].sv_set(out_edges)
