@@ -816,6 +816,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if self.matching_mode == 'PERFACE':
             verts_donor_s = [verts_donor_s]
             faces_donor_s = [faces_donor_s]
+            face_data_donor_s = [face_data_donor_s]
             #self.info("FW: %s", frame_widths_s)
             #frame_widths_s = [frame_widths_s]
         objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, face_data_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
