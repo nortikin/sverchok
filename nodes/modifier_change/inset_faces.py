@@ -14,19 +14,20 @@ from bmesh.ops import inset_individual, remove_doubles, inset_region
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
 def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face_mask=None, inset_type=None, mask_type=None, props=None):
     tm = time()
     if inset_type is None or inset_type == 'individual':
-        if len(thickness) == 1 and len(depth) == 1 and face_mask is None:
-            bm_out = inset_faces_individual_one_value(verts, faces, thickness[0], depth[0], edges, props)
+        if len(thickness) == 1 and len(depth) == 1:
+            bm_out = inset_faces_individual_one_value(verts, faces, thickness[0], depth[0], edges, face_mask, props)
         else:
-            print('Multiple')
             bm_out = inset_faces_individual_multiple_values(verts, faces, thickness, depth, edges, face_mask, props)
     else:
-        bm_out = inset_faces_region_one_value(verts, faces, thickness[0], depth[0], edges, face_mask, props)
+        if len(thickness) == 1 and len(depth) == 1:
+            bm_out = inset_faces_region_one_value(verts, faces, thickness[0], depth[0], edges, face_mask, props)
+        else:
+            bm_out = inset_faces_region_multiple_values(verts, faces, thickness, depth, edges, face_mask, props)
     print("Time: ", time() - tm)
 
     sv = bm_out.faces.layers.int.get('sv')
@@ -43,9 +44,10 @@ def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face
     return out_verts, out_edges, out_faces, face_data_out, face_select
 
 
-def merge_bmeshes(bm1, verts_number, layer_item, face_index, bm2):
+def merge_bmeshes(bm1, verts_number, bm2):
     new_verts = []
-    sv = bm1.faces.layers.int.get('sv')
+    sv1 = bm1.faces.layers.int.get('sv')
+    sv2 = bm2.faces.layers.int.get('sv')
     mask1 = bm1.faces.layers.int.get('mask')
     mask2 = bm2.faces.layers.int.get('mask')
     for i, v in enumerate(bm2.verts):
@@ -54,15 +56,16 @@ def merge_bmeshes(bm1, verts_number, layer_item, face_index, bm2):
         new_verts.append(new_v)
     for f in bm2.faces:
         f1 = bm1.faces.new([new_verts[v.index] for v in f.verts])
-        f1[sv] = face_index
+        f1[sv1] = f[sv2]
         f1[mask1] = f[mask2]
     return len(new_verts)
 
 
-def bmesh_from_sv(verts, faces, edges=None):
+def bmesh_from_sv(verts, faces, edges=None, face_int_layers=None):
+    if face_int_layers is None:
+        face_int_layers = dict()
     bm = bmesh.new()
-    sv = bm.faces.layers.int.new('sv')
-    bm.faces.layers.int.new('mask')
+    [bm.faces.layers.int.new(key) for key in face_int_layers]
     for i, co in enumerate(verts):
         v = bm.verts.new(co)
         v.index = i
@@ -70,26 +73,33 @@ def bmesh_from_sv(verts, faces, edges=None):
     if edges:
         for e in edges:
             bm.edges.new([bm.verts[i] for i in e])
-    for fi, f in enumerate(faces):
-        bmf = bm.faces.new([bm.verts[i] for i in f])
-        bmf[sv] = fi
+    for f in faces:
+        f_new = bm.faces.new([bm.verts[i] for i in f])
+    for key in face_int_layers:
+        if face_int_layers[key] is not None:
+            for v, f in zip(face_int_layers[key], bm.faces):
+                f[bm.faces.layers.int.get(key)] = v
     bm.normal_update()
     return bm
 
 
-def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None, props=None):
+def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None, face_mask=None, props=None):
     if props is None:
         props = set('use_even_offset')
+    if face_mask is None:
+        face_mask = cycle([True])
+    else:
+        face_mask = chain(face_mask, cycle([face_mask[-1]]))
 
-    bm = bmesh_from_sv(verts, faces, edges)
+    bm = bmesh_from_sv(verts, faces, edges, face_int_layers={'sv': list(range(len(faces))), 'mask': None})
     mask = bm.faces.layers.int.get('mask')
 
     if thickness or depth:
         # it is creates new faces anyway even if all values are zero
         # returns faces without inner one
         # use_interpolate: Interpolate mesh data: e.g. UV’s, vertex colors, weights, etc.
-        res = inset_individual(bm, faces=list(bm.faces), thickness=thickness, depth=depth,
-                               use_even_offset='use_even_offset' in props, use_interpolate=True,
+        res = inset_individual(bm, faces=[f for f, m in zip(list(bm.faces), face_mask) if m], thickness=thickness,
+                               depth=depth, use_even_offset='use_even_offset' in props, use_interpolate=True,
                                use_relative_offset='use_relative_offset' in props)
         for rf in res['faces']:
             rf[mask] = 1
@@ -110,17 +120,18 @@ def inset_faces_individual_multiple_values(verts, faces, thicknesses, depths, ed
     bm_out = bmesh.new()
     sv = bm_out.faces.layers.int.new('sv')
     mask = bm_out.faces.layers.int.new('mask')
-    for fi, (f, m, t, d) in enumerate(zip(faces, iter_face_mask, iter_thick, iter_depth)):
+    for i, (f, m, t, d) in enumerate(zip(faces, iter_face_mask, iter_thick, iter_depth)):
         # each instance of bmesh get a lot of operative memory, they should be illuminated as fast as possible
-        bm = bmesh_from_pydata([verts[i] for i in f], edges, [list(range(len(f)))], True)
-        mask = bm.faces.layers.int.new('mask')
+        bm = bmesh_from_sv([verts[i] for i in f], [list(range(len(f)))],
+                           face_int_layers={'sv': [i], 'mask': None})
+        mask = bm.faces.layers.int.get('mask')
         if m and (t or d):
             res = inset_individual(bm, faces=list(bm.faces), thickness=t, depth=d,
                                    use_even_offset='use_even_offset' in props, use_interpolate=True,
                                    use_relative_offset='use_relative_offset' in props)
             for rf in res['faces']:
                 rf[mask] = 1
-        verts_number += merge_bmeshes(bm_out, verts_number, sv, fi, bm)
+        verts_number += merge_bmeshes(bm_out, verts_number, bm)
         bm.free()
     remove_doubles(bm_out, verts=bm_out.verts, dist=1e-6)
     return bm_out
@@ -131,7 +142,7 @@ def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, fac
         props = {'use_even_offset', 'use_boundary'}
     if face_mask is None:
         face_mask = cycle([True])
-    bm = bmesh_from_sv(verts, faces, edges)
+    bm = bmesh_from_sv(verts, faces, edges, face_int_layers={'sv': list(range(len(faces))), 'mask': None})
     mask = bm.faces.layers.int.get('mask')
 
     if thickness or depth:
@@ -142,6 +153,102 @@ def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, fac
         for rf in res['faces']:
             rf[mask] = 1
     return bm
+
+
+def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=None, face_mask=None, props=None):
+    if props is None:
+        props = {'use_even_offset', 'use_boundary'}
+    if face_mask is None:
+        iter_face_mask = cycle([True])
+    else:
+        iter_face_mask = chain(face_mask, cycle([face_mask[-1]]))
+    face_mask = [m for _, m in zip(range(len(faces)), iter_face_mask)]
+    thicknesses = [t for _, t in zip(range(len(faces)), chain(thicknesses, cycle([thicknesses[-1]])))]
+    depths = [d for _, d in zip(range(len(faces)), chain(depths, cycle([depths[-1]])))]
+
+    bm = bmesh_from_sv(verts, faces, edges, face_int_layers={'sv': list(range(len(faces))), 'mask': None})
+    sv = bm.faces.layers.int.get('sv')
+    mask = bm.faces.layers.int.get('mask')
+
+    islands = []
+    ignored_faces = []
+    used = set()
+    for face in bm.faces:
+        if face in used:
+            continue
+        if not face_mask[face[sv]]:
+            ignored_faces.append(face)
+            used.add(face)
+            continue
+        elif not any([thicknesses[face[sv]], depths[face[sv]]]):
+            ignored_faces.append(face)
+            used.add(face)
+            continue
+        island = []
+        next_faces = [face]
+        while next_faces:
+            nf = next_faces.pop()
+            if nf in used:
+                continue
+            island.append(nf)
+            used.add(nf)
+            for edge in nf.edges:
+                for twin_face in edge.link_faces:
+                    if twin_face not in used:
+                        if not face_mask[twin_face[sv]]:
+                            ignored_faces.append(twin_face)
+                            used.add(twin_face)
+                        elif not any([thicknesses[twin_face[sv]], depths[twin_face[sv]]]):
+                            ignored_faces.append(twin_face)
+                            used.add(twin_face)
+                        else:
+                            next_faces.append(twin_face)
+        islands.append(island)
+
+    verts_number = 0
+    bm_out = bmesh.new()
+    sv_out = bm_out.faces.layers.int.new('sv')
+    mask_out = bm_out.faces.layers.int.new('mask')
+    for island_faces in islands:
+        # each instance of bmesh get a lot of operative memory, they should be illuminated as fast as possible
+        bm_isl = bmesh.new()
+        sv_isl = bm_isl.faces.layers.int.new('sv')
+        mask_isl = bm_isl.faces.layers.int.new('mask')
+        used_verts = dict()
+        for face in island_faces:
+            face_verts = []
+            for v in face.verts:
+                if v not in used_verts:
+                    v_new = bm_isl.verts.new(v.co)
+                    used_verts[v] = v_new
+                    face_verts.append(v_new)
+                else:
+                    face_verts.append(used_verts[v])
+            face_new = bm_isl.faces.new(face_verts)
+            face_new[sv_isl] = face[sv]
+            face_new[mask_isl] = face[mask]
+        bm_isl.normal_update()
+
+        thick_isl = sum([thicknesses[f[sv_isl]] for f in bm_isl.faces]) / len(island_faces)
+        depth_isl = sum([depths[f[sv_isl]] for f in bm_isl.faces]) / len(island_faces)
+        res = inset_region(bm_isl, faces=bm_isl.faces, thickness=thick_isl,
+                           depth=depth_isl, use_interpolate=True, **{k: True for k in props})
+        for rf in res['faces']:
+            rf[mask_isl] = 1
+        verts_number += merge_bmeshes(bm_out, verts_number, bm_isl)
+        bm_isl.free()
+
+    for face in ignored_faces:
+        v_news = []
+        for v in face.verts:
+            v_news.append(bm_out.verts.new(v.co))
+        f = bm_out.faces.new(v_news)
+        f[sv_out] = face[sv]
+        f[mask_out] = face[mask]
+
+    bm.free()
+    remove_doubles(bm_out, verts=bm_out.verts, dist=1e-6)
+    return bm_out
 
 
 class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
