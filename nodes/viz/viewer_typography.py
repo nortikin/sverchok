@@ -82,7 +82,7 @@ def get_obj_and_fontcurve(context, name):
 
 def make_text_object(node, idx, context, data):
     txt, matrix = data
-    name = node.basedata_name + '.' + str("%04d" % idx)
+    name = f'{node.basedata_name}.{idx:04d}'
 
     sv_object, f = get_obj_and_fontcurve(context, name)
     font_set_props(f, node, txt)
