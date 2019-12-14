@@ -39,6 +39,9 @@ This node has the following inputs:
   input is mandatory. 
 - **VersD**. Vertices of the donor object. This input is mandatory.
 - **PolsD**. Faces of the donor object.
+- **FaceDataD**. List containing an arbitrary data item for each face of donor
+  object. For example, this may be used to provide material indexes of donor
+  object faces. Optional input.
 - **Width coeff**. Coefficient for donor object width (size along X,Y axis,
   usually). Default value is 1.0. The input expects one number per each
   recipient object face.
@@ -263,6 +266,8 @@ This node hsa the following outputs:
 
 - **Vertices**
 - **Polygons**
+- **FaceData**. List of data items, which were provided in the **FaceDataD**
+  input, containing one data item for each face of output mesh.
 
 The outputs will contain one object, if **Join** flag is checked, or one object
 per recipient object face, otherwise.

@@ -17,9 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
+from sverchok.utils.logging import info, debug
 
-
-def bmesh_from_pydata(verts=None, edges=None, faces=None, normal_update=False):
+def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
         normal_update, will update verts/edges/faces normals at the end
     '''
@@ -52,16 +52,37 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, normal_update=False):
 
         bm.edges.index_update()
 
+    if markup_face_data:
+        bm.faces.ensure_lookup_table()
+        layer = bm.faces.layers.int.new("initial_index")
+        for idx, face in enumerate(bm.faces):
+            face[layer] = idx
+
     if normal_update:
         bm.normal_update()
     return bm
 
 
-def pydata_from_bmesh(bm):
-    v = [v.co[:] for v in bm.verts]
-    e = [[i.index for i in e.verts] for e in bm.edges]
-    p = [[i.index for i in p.verts] for p in bm.faces]
-    return v, e, p
+def pydata_from_bmesh(bm, face_data=None):
+    verts = [v.co[:] for v in bm.verts]
+    edges = [[i.index for i in e.verts] for e in bm.edges]
+    faces = [[i.index for i in p.verts] for p in bm.faces]
+    if face_data is None:
+        return verts, edges, faces
+    else:
+        initial_index = bm.faces.layers.int.get("initial_index")
+        if initial_index is None:
+            raise Exception("bmesh has no initial_index layer")
+        face_data_out = []
+        n_face_data = len(face_data)
+        for face in bm.faces:
+            idx = face[initial_index]
+            if idx < 0 or idx >= n_face_data:
+                debug("Unexisting face_data[%s] [0 - %s]", idx, n_face_data)
+                face_data_out.append(None)
+            else:
+                face_data_out.append(face_data[idx])
+        return verts, edges, faces, face_data_out
 
 def with_bmesh(method):
     '''Decorator for methods which can work with BMesh.
