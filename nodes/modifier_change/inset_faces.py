@@ -17,6 +17,9 @@ from sverchok.data_structure import updateNode
 
 
 def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face_mask=None, inset_type=None, mask_type=None, props=None):
+    if mask_type is None:
+        mask_type = set()
+
     tm = time()
     if inset_type is None or inset_type == 'individual':
         if len(thickness) == 1 and len(depth) == 1:
@@ -39,7 +42,8 @@ def inset_faces(verts, faces, thickness, depth, edges=None, face_data=None, face
         face_data_out = [face_data[f[sv]] for f in bm_out.faces]
     else:
         face_data_out = []
-    face_select = [f[mask] if 'out' == mask_type else int(not bool(f[mask])) for f in bm_out.faces]
+    int_mak = {0: 'in', 1: 'out', 2: 'mask'}
+    face_select = [1 if int_mak[f[mask]] in mask_type else 0 for f in bm_out.faces]
     bm_out.free()
     return out_verts, out_edges, out_faces, face_data_out, face_select
 
@@ -89,11 +93,14 @@ def inset_faces_individual_one_value(verts, faces, thickness, depth, edges=None,
     if face_mask is None:
         face_mask = cycle([True])
     else:
-        face_mask = chain(face_mask, cycle([face_mask[-1]]))
+        face_mask = [m for m, _ in zip(chain(face_mask, cycle([face_mask[-1]])), range(len(faces)))]
 
     bm = bmesh_from_sv(verts, faces, edges, face_int_layers={'sv': list(range(len(faces))), 'mask': None})
     mask = bm.faces.layers.int.get('mask')
 
+    for face, m in zip(list(bm.faces), face_mask):
+        if not m:
+            face[mask] = 2
     if thickness or depth:
         # it is creates new faces anyway even if all values are zero
         # returns faces without inner one
@@ -131,6 +138,9 @@ def inset_faces_individual_multiple_values(verts, faces, thicknesses, depths, ed
                                    use_relative_offset='use_relative_offset' in props)
             for rf in res['faces']:
                 rf[mask] = 1
+        else:
+            for face in bm.faces:
+                face[mask] = 2
         verts_number += merge_bmeshes(bm_out, verts_number, bm)
         bm.free()
     remove_doubles(bm_out, verts=bm_out.verts, dist=1e-6)
@@ -148,7 +158,13 @@ def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, fac
     if thickness or depth:
         # use_interpolate: Interpolate mesh data: e.g. UV’s, vertex colors, weights, etc.
         iter_face_mask = chain(face_mask, cycle([face_mask[-1]])) if face_mask is not None else face_mask
-        res = inset_region(bm, faces=[f for f, m in zip(list(bm.faces), iter_face_mask) if m], thickness=thickness,
+        ins_faces = []
+        for f, m in zip(list(bm.faces), iter_face_mask):
+            if m:
+                ins_faces.append(f)
+            else:
+                f[mask] = 2
+        res = inset_region(bm, faces=ins_faces, thickness=thickness,
                            depth=depth, use_interpolate=True, **{k: True for k in props})
         for rf in res['faces']:
             rf[mask] = 1
@@ -170,6 +186,7 @@ def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=
     sv = bm.faces.layers.int.get('sv')
     mask = bm.faces.layers.int.get('mask')
 
+    # Split mesh to islands
     islands = []
     ignored_faces = []
     used = set()
@@ -205,6 +222,7 @@ def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=
                             next_faces.append(twin_face)
         islands.append(island)
 
+    # Regenerate mesh from islands
     verts_number = 0
     bm_out = bmesh.new()
     sv_out = bm_out.faces.layers.int.new('sv')
@@ -244,7 +262,7 @@ def inset_faces_region_multiple_values(verts, faces, thicknesses, depths, edges=
             v_news.append(bm_out.verts.new(v.co))
         f = bm_out.faces.new(v_news)
         f[sv_out] = face[sv]
-        f[mask_out] = face[mask]
+        f[mask_out] = 2
 
     bm.free()
     remove_doubles(bm_out, verts=bm_out.verts, dist=1e-6)
@@ -263,7 +281,7 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MESH_GRID'
 
     bool_properties = ['use_even_offset', 'use_relative_offset', 'use_boundary', 'use_edge_rail', 'use_outset']
-    mask_type_items = [(k, k.title(), '', i) for i, k in enumerate(['out', 'in'])]
+    mask_type_items = [(k, k.title(), '') for i, k in enumerate(['mask', 'out', 'in'])]
     inset_type_items = [(k, k.title(), '', i) for i, k in enumerate(['individual', 'region'])]
 
     thickness: bpy.props.FloatProperty(name="Thickness", default=0.1, min=0.0, update=updateNode,
@@ -282,8 +300,8 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     use_outset: bpy.props.BoolProperty(name="Outset ", update=updateNode,
                                        description="Create an outset rather than an inset. Causes the geometry to be "
                                                    "created surrounding selection (instead of within).")
-    mask_type: bpy.props.EnumProperty(items=mask_type_items, update=updateNode,
-                                      description="Switch between inner and outer faces generated by insertion")
+    mask_type: bpy.props.EnumProperty(items=mask_type_items, update=updateNode, options={'ENUM_FLAG'}, default={'out'},
+                                description="Switch between untouched, inner and outer faces generated by insertion")
     inset_type: bpy.props.EnumProperty(items=inset_type_items, update=updateNode,
                                        description="Switch between inserting type")
 
