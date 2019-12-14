@@ -342,7 +342,7 @@ class SvObjHelper():
         objects = bpy.data.objects
         collection = bpy.context.scene.collection
 
-        curve_name = self.basedata_name + '.' + str("%04d" % obj_index)
+        curve_name = f'{self.basedata_name}.{obj_index:04d}'
 
         # if curve data exists, pick it up else make new curve
         cu = curves.get(curve_name)

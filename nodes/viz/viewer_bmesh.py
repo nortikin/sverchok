@@ -99,7 +99,7 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
     islands = None
 
     edges, faces, materials, matrix = topology
-    name = node.basedata_name + '.' + str("%04d" % obj_index)
+    name = f'{node.basedata_name}.{obj_index:04d}'
 
     if name in objects:
         sv_object = objects[name]
@@ -164,7 +164,7 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
     collection = scene.collection
     meshes = bpy.data.meshes
     objects = bpy.data.objects
-    name = node.basedata_name + '.' + str("%04d" % obj_index)
+    name = f'{node.basedata_name}.{obj_index:04d}'
 
     if name in objects:
         sv_object = objects[name]
