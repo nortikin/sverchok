@@ -136,7 +136,8 @@ def make_bmesh_geometry(node, obj_index, context, verts, *topology):
         bm = bmesh_from_pydata(verts, edges, faces, normal_update=node.calc_normals)
         if materials:
             for face, material in zip(bm.faces[:], materials):
-                face.material_index = material
+                if material is not None:
+                    face.material_index = material
         bm.to_mesh(sv_object.data)
         if node.randomize_vcol_islands:
             islands = find_islands_treemap(bm)
@@ -210,7 +211,8 @@ def make_bmesh_geometry_merged(node, obj_index, context, yielder_object):
         bm = bmesh_from_pydata(big_verts, big_edges, big_faces, normal_update=node.calc_normals)
         if materials:
             for face, material in zip(bm.faces[:], big_materials):
-                face.material_index = material
+                if material is not None:
+                    face.material_index = material
         bm.to_mesh(sv_object.data)
         bm.free()
 

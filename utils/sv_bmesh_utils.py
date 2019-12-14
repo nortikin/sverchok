@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
-
+from sverchok.utils.logging import info, debug
 
 def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
@@ -73,7 +73,15 @@ def pydata_from_bmesh(bm, face_data=None):
         initial_index = bm.faces.layers.int.get("initial_index")
         if initial_index is None:
             raise Exception("bmesh has no initial_index layer")
-        face_data_out = [face_data[face[initial_index]] for face in bm.faces]
+        face_data_out = []
+        n_face_data = len(face_data)
+        for face in bm.faces:
+            idx = face[initial_index]
+            if idx < 0 or idx >= n_face_data:
+                debug("Unexisting face_data[%s] [0 - %s]", idx, n_face_data)
+                face_data_out.append(None)
+            else:
+                face_data_out.append(face_data[idx])
         return verts, edges, faces, face_data_out
 
 def with_bmesh(method):
