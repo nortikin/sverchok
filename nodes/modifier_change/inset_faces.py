@@ -305,6 +305,7 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvInsetFaces'
     bl_label = 'Inset faces'
     bl_icon = 'MESH_GRID'
+    sv_icon = 'SV_INSET'
 
     bool_properties = ['use_even_offset', 'use_relative_offset', 'use_boundary', 'use_edge_rail', 'use_outset']
     mask_type_items = [(k, k.title(), '') for i, k in enumerate(['mask', 'out', 'in'])]
@@ -318,12 +319,12 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
                                             description="Scale the offset to give a more even thickness.")
     use_relative_offset: bpy.props.BoolProperty(name="Offset Relative", default=False, update=updateNode,
                                                 description="Scale the offset by lengths of surrounding geometry.")
-    use_boundary: bpy.props.BoolProperty(name="Boundary ", default=True, update=updateNode,
+    use_boundary: bpy.props.BoolProperty(name="Boundary", default=True, update=updateNode,
                                          description='Determines whether open edges will be inset or not.')
     use_edge_rail: bpy.props.BoolProperty(name="Edge Rail", update=updateNode,
                                           description="Created vertices slide along the original edges of the inner"
                                                       " geometry, instead of the normals.")
-    use_outset: bpy.props.BoolProperty(name="Outset ", update=updateNode,
+    use_outset: bpy.props.BoolProperty(name="Outset", update=updateNode,
                                        description="Create an outset rather than an inset. Causes the geometry to be "
                                                    "created surrounding selection (instead of within).")
     mask_type: bpy.props.EnumProperty(items=mask_type_items, update=updateNode, options={'ENUM_FLAG'}, default={'out'},
