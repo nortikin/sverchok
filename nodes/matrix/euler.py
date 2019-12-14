@@ -19,16 +19,28 @@
 from math import radians
 
 import bpy
-from bpy.props import EnumProperty, FloatProperty
+from bpy.props import EnumProperty, FloatProperty, BoolProperty
 
 from mathutils import Matrix, Euler
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, match_long_repeat)
 
+def matrix_euler(param, order):
+    mats = []
+    for angles in zip(*match_long_repeat(param)):
+        a_r = [radians(x) for x in angles]
+        mat = Euler(a_r, order).to_matrix().to_4x4()
+        mats.append(mat)
+    return mats
+
 
 class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Construct a Matirx from Euler '''
+    """
+    Triggers: from axis rotation
+    Tooltip:  Construct a Matirx from Euler rotations
+
+    """
     bl_idname = 'SvMatrixEulerNode'
     bl_label = 'Matrix Euler'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -54,6 +66,11 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     order: EnumProperty(
         name="Order", description="Order",
         default="XYZ", items=orders, update=change_prop)
+    flat_output: BoolProperty(
+        name="Flat output",
+        description="Flatten output by list-joining level 1",
+        default=True,
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "pos0").prop_name = 'X'
@@ -64,16 +81,25 @@ class SvMatrixEulerNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, "order", text="Order:")
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "order", text="Order:")
+        layout.prop(self, "flat_output", text="Flat Output", expand=False)
+
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "order", text="Order:")
+        layout.prop(self, "flat_output", text="Flat Output", expand=False)
+
     def process(self):
         if not self.outputs['Matrix'].is_linked:
             return
         inputs = self.inputs
-        param = [s.sv_get()[0] for s in inputs]
+        params = [s.sv_get() for s in inputs]
         mats = []
-        for angles in zip(*match_long_repeat(param)):
-            a_r = [radians(x) for x in angles]
-            mat = Euler(a_r, self.order).to_matrix().to_4x4()
-            mats.append(mat)
+        m_add = mats.extend if  self.flat_output else mats.append
+        params = match_long_repeat(params)
+        for par in zip(*params):
+            matrixes = matrix_euler(par, self.order)
+            m_add(matrixes)
         self.outputs['Matrix'].sv_set(mats)
 
 
