@@ -103,6 +103,9 @@ def match_long_repeat(lsts):
             tmp.append(repeat_last(l))
     return list(map(list, zip(*zip(*tmp))))
 
+def zip_long_repeat(*lists):
+    objects = match_long_repeat(lists)
+    return zip(*objects)
 
 def match_long_cycle(lsts):
     """return matched list, cycling the shorter lists
