@@ -203,7 +203,8 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
             spot_blend = spot_blend[0]
 
         scene = bpy.context.scene
-        lamps_data = bpy.data.lamps
+        collection = bpy.context.scene.collection
+        lamps_data = bpy.data.lights
         objects = bpy.data.objects
         name = self.lamp_name + "_" + str(index)
 
@@ -214,7 +215,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             lamp_data = lamps_data.new(name = name, type = self.type)
             lamp_object = objects.new(name = name, object_data = lamp_data)
-            scene.objects.link(lamp_object)
+            collection.objects.link(lamp_object)
 
         lamp_object['idx'] = index
         lamp_object['madeby'] = self.name
@@ -287,15 +288,16 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
         if not objs:
             return
 
-        lamps_data = bpy.data.lamps
+        lamps_data = bpy.data.lights
         objects = bpy.data.objects
         scene = bpy.context.scene
+        collection = bpy.context.scene.collection
 
         # remove excess objects
         for object_name in objs:
             obj = objects[object_name]
             obj.hide_select = False
-            scene.objects.unlink(obj)
+            collection.objects.unlink(obj)
             objects.remove(obj, do_unlink=True)
 
         # delete associated lamps data
