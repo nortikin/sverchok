@@ -74,7 +74,7 @@ def reflect(v1, v2):
     return v1 - (dot2[:, np.newaxis] * mirror)
 
 def scale_two_axis(v1, s, axis1, axis2):
-    v1[:,[axis1, axis2]] *= s
+    v1[:,[axis1, axis2]] *= s[:,np.newaxis]
     return v1
 
 def scalar_to_axis(v1, s, axis):
