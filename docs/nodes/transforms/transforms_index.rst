@@ -13,7 +13,7 @@ Transforms
    bend_along_path
    bend_along_surface
    deform
-   mirror
+   mirror_mk2
    transform_select
    randomize
    align_mesh_by_mesh

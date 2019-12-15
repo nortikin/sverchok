@@ -98,7 +98,10 @@ def mirror_plane_coordinate(vertex, plane):
         return -x, y, z
 
 class SvMirrorNodeMk2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Mirroring, Symmetry'''
+    '''
+    Triggers: mirror
+    Tooltip: Mirror vertices around a point, axis or a plane
+    '''
     bl_idname = 'SvMirrorNodeMk2'
     bl_label = 'Mirror Mk2'
     bl_icon = 'MOD_MIRROR'
