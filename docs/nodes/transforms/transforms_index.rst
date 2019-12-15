@@ -14,6 +14,7 @@ Transforms
    bend_along_surface
    deform
    mirror_mk2
+   symmetrize
    transform_select
    randomize
    align_mesh_by_mesh

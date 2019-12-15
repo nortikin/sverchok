@@ -79,3 +79,7 @@ Suzanne mirrored around some random plane:
 
 .. image:: https://user-images.githubusercontent.com/284644/70866839-782a2100-1f90-11ea-9682-9a7d66acc7bb.png
 
+Suzanne mirrored around an axis which goes through the `(1, 1, 0)` point parallel to the Z axis:
+
+.. image:: https://user-images.githubusercontent.com/284644/70866955-a0664f80-1f91-11ea-83eb-49cd1bedd983.png
+
