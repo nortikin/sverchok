@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
-from mathutils import Matrix
+from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
@@ -87,7 +87,7 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
             return 'Z'
         return None
 
-    def mirror(self, verts, axis):
+    def mirror(self, verts, axis, matrix):
         def go_x(x, y, z):
             return -x, y, z
         def go_y(x, y, z):
@@ -95,12 +95,24 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
         def go_z(x, y, z):
             return x, y, -z
 
+        def apply_matrix(verts, matrix):
+            return [(matrix @ Vector(v))[:] for v in verts]
+
+        has_matrix = matrix is not None and matrix != Matrix()
+        if has_matrix:
+            verts = apply_matrix(verts, matrix.inverted())
+
         if axis == 'X':
-            return [go_x(*v) for v in verts]
+            verts = [go_x(*v) for v in verts]
         if axis == 'Y':
-            return [go_y(*v) for v in verts]
+            verts = [go_y(*v) for v in verts]
         if axis == 'Z':
-            return [go_z(*v) for v in verts]
+            verts = [go_z(*v) for v in verts]
+
+        if has_matrix:
+            verts = apply_matrix(verts, matrix)
+
+        return verts
 
     def process(self):
         if not (self.inputs['Vertices'].is_linked and self.inputs['Polygons'].is_linked):
@@ -134,7 +146,7 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
             # https://developer.blender.org/T59804
             mirror_axis = self.get_mirror_direction()
             if mirror_axis is not None:
-                vertices = self.mirror(vertices, mirror_axis)
+                vertices = self.mirror(vertices, mirror_axis, matrix)
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True)
 
             if has_matrix:
@@ -155,7 +167,7 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
                 new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
                 new_face_data = []
             if mirror_axis is not None:
-                new_vertices = self.mirror(new_vertices, mirror_axis)
+                new_vertices = self.mirror(new_vertices, mirror_axis, matrix)
             bm.free()
 
             result_vertices.append(new_vertices)
