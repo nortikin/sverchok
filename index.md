@@ -127,6 +127,7 @@
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
+    SvDelaunay2DCdt
     Voronoi2DNode
     SvOffsetLineNode
     SvContourNode
