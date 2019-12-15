@@ -98,7 +98,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     loop_slide : BoolProperty(
         name = "Loop Slide",
         description = "prefer to slide along edges to having even widths",
-        default = False,
+        default = True,
         update = updateNode)
 
     def sv_init(self, context):
