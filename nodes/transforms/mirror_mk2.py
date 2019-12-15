@@ -21,7 +21,7 @@ from math import radians
 from mathutils import Vector, Matrix
 
 import bpy
-from bpy.props import StringProperty, EnumProperty
+from bpy.props import StringProperty, EnumProperty, FloatVectorProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
@@ -148,13 +148,41 @@ class SvMirrorNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                         default = 'XY', items = planes,
                         update = updateNode)
 
+    vert_a : FloatVectorProperty(
+            name = "A",
+            description = "Vertex A",
+            default = (0.0, 0.0, 0.0),
+            precision = 3,
+            update = updateNode)
+
+    vert_b : FloatVectorProperty(
+            name = "B",
+            description = "Vertex B",
+            default = (0.1, 0.0, 0.0),
+            precision = 3,
+            update = updateNode)
+
+    normal : FloatVectorProperty(
+            name = "Normal",
+            description = "Plane normal",
+            default = (0.0, 0.0, 0.1),
+            precision = 3,
+            update = updateNode)
+
+    direction : FloatVectorProperty(
+            name = "Direction",
+            description = "Axis direction",
+            default = (0.0, 0.0, 0.1),
+            precision = 3,
+            update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
-        self.inputs.new('SvVerticesSocket', "Vert A")
-        self.inputs.new('SvVerticesSocket', "Vert B")
+        self.inputs.new('SvVerticesSocket', "Vert A").prop_name = 'vert_a'
+        self.inputs.new('SvVerticesSocket', "Vert B").prop_name = 'vert_b'
         self.inputs.new('SvMatrixSocket', "Plane")
-        self.inputs.new('SvVerticesSocket', "Normal")
-        self.inputs.new('SvVerticesSocket', "Direction")
+        self.inputs.new('SvVerticesSocket', "Normal").prop_name = 'normal'
+        self.inputs.new('SvVerticesSocket', "Direction").prop_name = 'direction'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.mode_change(context)
 
