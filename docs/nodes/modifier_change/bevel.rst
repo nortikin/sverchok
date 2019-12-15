@@ -53,7 +53,7 @@ This node has the following parameters:
 | **Clamp Overlap** | Boolean       | False       | If checked, do not allow beveled edges/vertices to |
 |                   |               |             | overlap each other                                 |
 +-------------------+---------------+-------------+----------------------------------------------------+
-| **Loop Slide**    | Boolean       | False       | If checked, prefer to slide along edges to having  |
+| **Loop Slide**    | Boolean       | True        | If checked, prefer to slide along edges to having  |
 |                   |               |             | even widths                                        |
 +-------------------+---------------+-------------+----------------------------------------------------+
 | **Amount**        | Float         | 0.0         | Amount to offset beveled edge. Exact               |
