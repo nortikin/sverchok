@@ -19,6 +19,7 @@
 import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
+from mathutils import Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
@@ -36,6 +37,7 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Edges')
         self.inputs.new('SvStringsSocket', 'Polygons')
         self.inputs.new('SvStringsSocket', 'FaceData')
+        self.inputs.new('SvMatrixSocket', "Matrix")
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
@@ -110,17 +112,23 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
         face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+        matrixes_s = self.inputs['Matrix'].sv_get(default=[[Matrix()]])
 
         result_vertices = []
         result_edges = []
         result_faces = []
         result_face_data = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, face_data_s])
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, face_data_s, matrixes_s])
 
-        for vertices, edges, faces, face_data in zip(*meshes):
+        for vertices, edges, faces, face_data, matrixes in zip(*meshes):
             if face_data:
                 fullList(face_data, len(faces))
+            if isinstance(matrixes, list):
+                matrix = matrixes[0]
+            else:
+                matrix = matrixes
+            has_matrix = matrix is not None and matrix != Matrix()
 
             # TODO: this is actually a workaround for a known Blender bug
             # https://developer.blender.org/T59804
@@ -129,13 +137,17 @@ class SvSymmetrizeNode(bpy.types.Node, SverchCustomTreeNode):
                 vertices = self.mirror(vertices, mirror_axis)
             bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True)
 
-            #bmesh.ops.reverse_faces(bm, faces = list(bm.faces))
+            if has_matrix:
+                bmesh.ops.transform(bm, matrix = matrix.inverted(), verts = list(bm.verts))
 
             bmesh.ops.symmetrize(
                 bm, input = list(bm.verts) + list(bm.edges) + list(bm.faces),
                 direction = self.get_symmetrize_direction(),
                 dist = self.merge_dist
             )
+
+            if has_matrix:
+                bmesh.ops.transform(bm, matrix = matrix, verts = list(bm.verts))
 
             if face_data:
                 new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
