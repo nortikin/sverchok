@@ -22,7 +22,7 @@ import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, Vector_generate, repeat_last
-
+from sverchok.utils.logging import info, debug
 
 #
 # Remove Doubles
@@ -72,7 +72,11 @@ def remove_doubles(vertices, faces, d, face_data=None, find_doubles=False):
     if face_data:
         for face in bm.faces:
             initial_face_index = face[layer]
-            face_data_o = face_data[initial_face_index]
+            if 0 <= initial_face_index < len(face_data):
+                face_data_o = face_data[initial_face_index]
+            else:
+                info("No face data for face #%s", initial_face_index)
+                face_data_o = None
             face_data_out.append(face_data_o)
 
     bm.clear()
