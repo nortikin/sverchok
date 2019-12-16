@@ -61,11 +61,13 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Edges')
         self.inputs.new('SvStringsSocket', 'Polygons')
+        self.inputs.new('SvStringsSocket', 'FaceData')
         self.inputs.new('SvStringsSocket', 'Mask')
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
         self.outputs.new('SvStringsSocket', 'Polygons')
+        self.outputs.new('SvStringsSocket', 'FaceData')
         self.outputs.new('SvStringsSocket', 'NewEdges')
         self.outputs.new('SvStringsSocket', 'NewPolys')
 
@@ -82,19 +84,27 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
         vertices_s = self.inputs['Vertices'].sv_get(default=[[]])
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        if 'FaceData' in self.inputs:
+            face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+        else:
+            face_data_s = [[]]
         mask_s = self.inputs['Mask'].sv_get(default=[[True]])
 
         result_vertices = []
         result_edges = []
         result_faces = []
+        result_face_data = []
         result_new_edges = []
         result_new_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, mask_s])
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, face_data_s, mask_s])
 
-        for vertices, edges, faces, mask in zip(*meshes):
+        for vertices, edges, faces, face_data, mask in zip(*meshes):
 
-            bm = bmesh_from_pydata(vertices, edges, faces)
+            if face_data:
+                fullList(face_data, len(faces))
+
+            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True)
             fullList(mask, len(faces))
 
             b_faces = []
@@ -109,25 +119,27 @@ class SvTriangulateNode(bpy.types.Node, SverchCustomTreeNode):
             b_new_edges = [tuple(v.index for v in edge.verts) for edge in res['edges']]
             b_new_faces = [[v.index for v in face.verts] for face in res['faces']]
 
-            new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+            if face_data:
+                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+            else:
+                new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+                new_face_data = []
             bm.free()
 
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
+            result_face_data.append(new_face_data)
             result_new_edges.append(b_new_edges)
             result_new_faces.append(b_new_faces)
 
-        if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(result_vertices)
-        if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(result_edges)
-        if self.outputs['Polygons'].is_linked:
-            self.outputs['Polygons'].sv_set(result_faces)
-        if self.outputs['NewEdges'].is_linked:
-            self.outputs['NewEdges'].sv_set(result_new_edges)
-        if self.outputs['NewPolys'].is_linked:
-            self.outputs['NewPolys'].sv_set(result_new_faces)
+        self.outputs['Vertices'].sv_set(result_vertices)
+        self.outputs['Edges'].sv_set(result_edges)
+        self.outputs['Polygons'].sv_set(result_faces)
+        if 'FaceData' in self.outputs:
+            self.outputs['FaceData'].sv_set(result_face_data)
+        self.outputs['NewEdges'].sv_set(result_new_edges)
+        self.outputs['NewPolys'].sv_set(result_new_faces)
 
 
 def register():
