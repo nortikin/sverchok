@@ -5,12 +5,64 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from time import time
 
 import bpy
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges
+
+try:
+    from mathutils.geometry import delaunay_2d_cdt as bl_crop_mesh
+except ImportError:
+    bl_crop_mesh = None
+
+
+def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
+    merged_verts, merged_faces, faces_indexes, faces_crop_indexes = join_meshes(verts, faces, verts_crop, faces_crop)
+    merged_verts = [Vector(co[:2]) for co in merged_verts]
+    verts_new, _, faces_new, _, _, face_indexes = bl_crop_mesh(merged_verts, [], merged_faces, 3, epsilon)
+    print(face_indexes)
+    if mode == 'inner':
+        faces_out = []
+        for f, fi in zip(faces_new, face_indexes):
+            if not fi:
+                # it means new faces was generated
+                continue
+            in_1 = False
+            in_2 = False
+            for i in fi:
+                if i in faces_indexes:
+                    in_1 = True
+                else:
+                    in_2 = True
+                if in_1 and in_2:
+                    faces_out.append(f)
+                    break
+        return [v.to_3d()[:] for v in verts_new], faces_out
+    else:
+        faces_out = []
+        for f, fi in zip(faces_new, face_indexes):
+            if not fi:
+                # it means new faces was generated
+                continue
+            in_2 = False
+            for i in fi:
+                if i in faces_crop_indexes:
+                    in_2 = True
+                    break
+            if not in_2:
+                faces_out.append(f)
+        return [v.to_3d()[:] for v in verts_new], faces_out
+
+
+def join_meshes(verts1, faces1, verts2, faces2):
+    faces_out = faces1 + [[i + len(verts1) for i in f] for f in faces2]
+    faces1_indexes = {i for i in range(len(faces1))}
+    faces2_indexes = {i + len(faces1) for i in range(len(faces2))}
+    return verts1 + verts2, faces_out, faces1_indexes, faces2_indexes
 
 
 class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
@@ -33,7 +85,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
             self.inputs[1].name = self.input_mode.title()
             self.outputs[1].name = self.input_mode.title()
 
-
+    alg_mode_items = [(k, k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
     mode_items = [('inner', 'Inner', 'Fit mesh', 'SELECT_INTERSECT', 0),
                   ('outer', 'Outer', 'Make hole', 'SELECT_SUBTRACT', 1)]
     input_mode_items = [('faces', 'Faces', 'Input type', 'FACESEL', 0),
@@ -47,8 +99,10 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
                                        description="Show output socket of index face mask")
     accuracy: bpy.props.IntProperty(name='Accuracy', update=updateNode, default=5, min=3, max=12,
                                     description='Some errors of the node can be fixed by changing this value')
+    alg_mode: bpy.props.EnumProperty(items=alg_mode_items, name="Name of algorithm", update=updateNode)
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, 'alg_mode', expand=True)
         layout.label(text='Type of input mesh:')
         col = layout.column(align=True)
         col.row().prop(self, 'input_mode', expand=True)
@@ -72,16 +126,24 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not all([sock.is_linked for sock in self.inputs]):
             return
+        if self.alg_mode == "Blender" and not bl_crop_mesh:
+            return
+        t = time()
         out = []
         for sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop in zip(self.inputs['Verts'].sv_get(),
                                                                     self.inputs[1].sv_get(),
                                                                     self.inputs['Verts Crop'].sv_get(),
                                                                     self.inputs['Faces Crop'].sv_get()):
             if self.input_mode == 'faces':
-                out.append(crop_mesh(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop, self.face_index, self.mode,
-                                     self.accuracy))
+                if self.alg_mode == 'Sweep line':
+                    out.append(crop_mesh(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop, self.face_index,
+                                         self.mode, self.accuracy))
+                else:
+                    out.append(get_bl_crop_mesh_faces(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop,
+                                                      self.mode, 1 / 10 ** self.accuracy))
             else:
                 out.append(crop_edges(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop, self.mode, self.accuracy))
+        print(self.alg_mode, ": ", time() - t)
         if self.face_index and self.input_mode == 'faces':
             out_verts, out_faces_edges, face_index = zip(*out)
             self.outputs['Face index'].sv_set(face_index)
