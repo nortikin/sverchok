@@ -16,8 +16,6 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from time import time
-
 import bpy
 from mathutils import Vector
 
@@ -77,7 +75,6 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-        t = time()
         try:
             verts_in = inputs['Verts_in'].sv_get(deepcopy=False)[0]
             edges_in = inputs['Edges_in'].sv_get(deepcopy=False)[0]
@@ -102,7 +99,6 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         # post processing step to remove doubles
         if self.rm_switch and self.mode == "3D" or self.alg_mode_2d == "Alg 1":
             verts_out, edges_out = remove_doubles_from_edgenet(verts_out, edges_out, self.rm_doubles)
-        print(self.alg_mode_2d, ": ", time() - t)
         outputs['Verts_out'].sv_set([verts_out])
         outputs['Edges_out'].sv_set([edges_out])
 
