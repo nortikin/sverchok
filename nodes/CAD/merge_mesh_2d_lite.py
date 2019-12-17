@@ -14,12 +14,19 @@ from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
 from sverchok.utils.geom_2d.lin_alg import is_ccw_polygon
 
 try:
-    from mathutils.geometry import delaunay_2d_cdt1 as bl_merge_mesh
+    from mathutils.geometry import delaunay_2d_cdt as bl_merge_mesh
 except ImportError:
     bl_merge_mesh = None
 
 
 def get_bl_merge_mesh(verts, faces, epsilon):
+    """
+    Merge mesh into one with all intersection and overlapping information by Blender internal function
+    :param verts: list of Sv vertices
+    :param faces: list of Sv faces
+    :param epsilon: For nearness tests
+    :return:  list of Sv Vertices, Faces, list of face old index, list of face overlapping
+    """
     faces = [f if is_ccw_polygon([verts[i] for i in f], accuracy=epsilon) else f[::-1] for f in faces]
     verts = [Vector(co[:2]) for co in verts]
     verts_new, _, faces_new, _, _, face_indexes = bl_merge_mesh(verts, [], faces, 3, epsilon)
