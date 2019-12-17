@@ -232,6 +232,8 @@ class SverchNodeItem(object):
     @staticmethod
     def draw(self, layout, context):
         add = draw_add_node_operator(layout, self.nodetype, label=self._label)
+        if add is None:
+            return
 
         for setting in self.settings.items():
             ops = add.settings.add()
@@ -341,7 +343,11 @@ def draw_add_node_operator(layout, nodetype, label=None, icon_name=None, params=
     """
 
     default_context = bpy.app.translations.contexts.default
-    node_rna = get_node_class_reference(nodetype).bl_rna
+    node_class = get_node_class_reference(nodetype)
+    if node_class is None:
+        info("cannot locate node class: %s", nodetype)
+        return
+    node_rna = node_class.bl_rna
 
     if label is None:
         if hasattr(node_rna, 'bl_label'):
