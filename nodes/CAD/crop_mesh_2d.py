@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 from time import time
+from itertools import chain
 
 import bpy
 from mathutils import Vector
@@ -13,6 +14,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges
+from sverchok.utils.geom_2d.lin_alg import is_ccw_polygon
 
 try:
     from mathutils.geometry import delaunay_2d_cdt as bl_crop_mesh
@@ -21,6 +23,8 @@ except ImportError:
 
 
 def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
+    faces = [f if is_ccw_polygon([verts[i] for i in f], accuracy=epsilon) else f[::-1] for f in faces]
+    faces_crop = [f if is_ccw_polygon([verts_crop[i] for i in f], accuracy=epsilon) else f[::-1] for f in faces_crop]
     merged_verts, merged_faces, faces_indexes, faces_crop_indexes = join_meshes(verts, faces, verts_crop, faces_crop)
     merged_verts = [Vector(co[:2]) for co in merged_verts]
     verts_new, _, faces_new, _, _, face_indexes = bl_crop_mesh(merged_verts, [], merged_faces, 3, epsilon)
@@ -63,6 +67,14 @@ def join_meshes(verts1, faces1, verts2, faces2):
     faces1_indexes = {i for i in range(len(faces1))}
     faces2_indexes = {i + len(faces1) for i in range(len(faces2))}
     return verts1 + verts2, faces_out, faces1_indexes, faces2_indexes
+
+
+def del_loose(verts, poly_edge):
+    indx = set(chain.from_iterable(poly_edge))
+    verts_out = [v for i, v in enumerate(verts) if i in indx]
+    v_index = dict([(j, i) for i, j in enumerate(sorted(indx))])
+    poly_edge_out = [list(map(lambda n: v_index[n], p)) for p in poly_edge]
+    return verts_out, poly_edge_out
 
 
 class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
