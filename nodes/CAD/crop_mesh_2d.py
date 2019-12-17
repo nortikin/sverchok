@@ -28,9 +28,9 @@ def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
     merged_verts, merged_faces, faces_indexes, faces_crop_indexes = join_meshes(verts, faces, verts_crop, faces_crop)
     merged_verts = [Vector(co[:2]) for co in merged_verts]
     verts_new, _, faces_new, _, _, face_indexes = bl_crop_mesh(merged_verts, [], merged_faces, 3, epsilon)
-    print(face_indexes)
     if mode == 'inner':
         faces_out = []
+        faces_index_out = []
         for f, fi in zip(faces_new, face_indexes):
             if not fi:
                 # it means new faces was generated
@@ -44,10 +44,13 @@ def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
                     in_2 = True
                 if in_1 and in_2:
                     faces_out.append(f)
+                    faces_index_out.append(min(fi))
                     break
-        return [v.to_3d()[:] for v in verts_new], faces_out
+        verts_out, faces_out = del_loose(verts_new, faces_out)
+        return [v.to_3d()[:] for v in verts_out], faces_out, faces_index_out
     else:
         faces_out = []
+        faces_index_out = []
         for f, fi in zip(faces_new, face_indexes):
             if not fi:
                 # it means new faces was generated
@@ -59,7 +62,9 @@ def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
                     break
             if not in_2:
                 faces_out.append(f)
-        return [v.to_3d()[:] for v in verts_new], faces_out
+                faces_index_out.append(min(fi))
+        verts_out, faces_out = del_loose(verts_new, faces_out)
+        return [v.to_3d()[:] for v in verts_out], faces_out, faces_index_out
 
 
 def join_meshes(verts1, faces1, verts2, faces2):
