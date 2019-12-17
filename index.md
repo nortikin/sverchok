@@ -103,6 +103,7 @@
     SvRemoveDoublesNode
     SvSeparateMeshNode
     SvLimitedDissolve
+    SvPlanarFacesNode
     SvMeshBeautify
     SvTriangulateNode
     SvMakeMonotone
