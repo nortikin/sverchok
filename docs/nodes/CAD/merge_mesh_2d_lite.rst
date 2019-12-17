@@ -1,7 +1,7 @@
 Merge mesh 2D lite
 ===================
 
-.. image:: https://user-images.githubusercontent.com/28003269/69255239-ed444980-0bd0-11ea-8ee5-17f1a02c1a17.png
+.. image:: https://user-images.githubusercontent.com/28003269/70966958-47400e00-20ae-11ea-98bb-0745c2da1bd6.png
 
 Functionality
 -------------
@@ -11,9 +11,11 @@ For example output of two intersected squares will be in next view:
 
 .. image:: https://user-images.githubusercontent.com/28003269/68193618-c3820480-ffcc-11e9-8b7b-9b9d65838ec2.png
 
-Prefix 2D means that the node expects from input any kind of flatten mesh
+*Sweep line algorithm:* Prefix 2D means that the node expects from input any kind of flatten mesh
 but it does not mean that the mesh should only lay on XY surface.
 Input mesh can below or above XY surface or even can be tilted relative one.
+
+*Blender algorithm:* it just project all coordinates into XY surface.
 
 Also this node can connect not intersecting polygons.
 If face is inside another face the one will be connected with boundary face with two extra edges 
@@ -43,6 +45,14 @@ This node is not 100 % robust. Some corner cases can knock it out. If you get an
 
 - did not you try to plug edges instead of faces.
 - try to change accuracy parameter on N panel.
+
+Modes
+-----
+
+*Sweep line mode:* it is Python implementation, so it is more slower and it can be broken with some corner cases.
+
+*Blender mode:* it is more robust and pretty fast but with some big meshes it can just crash Blender. 
+So it is not enabled by default.
 
 Category
 --------
