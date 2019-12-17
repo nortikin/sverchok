@@ -113,6 +113,7 @@
     SvMeshJoinNode
     ---
     SvFillsHoleNode
+    SvTriangleFillNode
     SvRecalcNormalsNode
     SvFlipNormalsNode
     ---
