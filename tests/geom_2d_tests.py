@@ -210,9 +210,9 @@ class CropMesh2DTest(SverchokTestCase):
         expected_face_index_mask_outer = [0,1,2,3,4,5,5,6,7,7,8,9,9,10,11,11,5,11]
 
         resoult_points_inner, result_faces_inner, result_face_index_mask_inner = crop_mesh(
-            sv_points, sv_faces, sv_points_crop, sv_faces_crop, True, 'inner', 5)
+            sv_points, sv_faces, sv_points_crop, sv_faces_crop, 'inner', 5)
         result_points_outer, result_faces_outer, result_face_index_mask_outer = crop_mesh(
-            sv_points, sv_faces, sv_points_crop, sv_faces_crop, True, 'outer', 5)
+            sv_points, sv_faces, sv_points_crop, sv_faces_crop, 'outer', 5)
 
         self.assert_sverchok_data_equal(expected_points_inner, resoult_points_inner, precision=5)
         self.assert_sverchok_data_equal(expected_faces_inner, result_faces_inner)
