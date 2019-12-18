@@ -67,11 +67,25 @@ def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
         return [v.to_3d()[:] for v in verts_out], faces_out, faces_index_out
 
 
+def get_bl_crop_mesh_edges(verts, edges, verts_crop, faces_crop, mode, epsilon):
+    # well, it does not work, delaunay function does not give enough information
+    # about location mesh relatively to each other. Can be implemented with help of some another algorithm
+    m_verts, m_edges, m_faces = join_meshes2(verts, edges, verts_crop, faces_crop)
+    m_verts = [Vector(co[:2]) for co in m_verts]
+    verts_new, edges_new, faces_new, _, _, _ = bl_crop_mesh(m_verts, m_edges, m_faces, 2, epsilon)
+    return [v.to_3d() for v in verts_new], edges_new
+
+
 def join_meshes(verts1, faces1, verts2, faces2):
     faces_out = faces1 + [[i + len(verts1) for i in f] for f in faces2]
     faces1_indexes = {i for i in range(len(faces1))}
     faces2_indexes = {i + len(faces1) for i in range(len(faces2))}
     return verts1 + verts2, faces_out, faces1_indexes, faces2_indexes
+
+
+def join_meshes2(verts1, edges1, verts2, faces2):
+    faces_out = [[i + len(verts1) for i in f] for f in faces2]
+    return verts1 + verts2, edges1, faces_out
 
 
 def del_loose(verts, poly_edge):
@@ -95,12 +109,14 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
 
     @throttled
     def update_sockets(self, context):
-        [self.outputs.remove(sock) for sock in self.outputs[2:]]
-        if self.face_index and self.input_mode == 'faces':
-            self.outputs.new('SvStringsSocket', 'Face index')
-        if self.inputs[1].name != self.input_mode:
-            self.inputs[1].name = self.input_mode.title()
-            self.outputs[1].name = self.input_mode.title()
+        if self.alg_mode == 'Sweep line':
+            if self.inputs[1].name != self.input_mode:
+                self.inputs[1].name = self.input_mode.title()
+                self.outputs[1].name = self.input_mode.title()
+        else:
+            if self.inputs[1].name != 'Faces':
+                self.inputs[1].name = 'Faces'
+                self.outputs[1].name = 'Faces'
 
     alg_mode_items = [(k, k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
     mode_items = [('inner', 'Inner', 'Fit mesh', 'SELECT_INTERSECT', 0),
@@ -112,24 +128,21 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
                                  description='Switch between creating holes and fitting mesh into another mesh')
     input_mode: bpy.props.EnumProperty(items=input_mode_items, name="Type of input data", update=update_sockets,
                                        description='Switch between input mesh type')
-    face_index: bpy.props.BoolProperty(name="Show face mask", update=update_sockets,
-                                       description="Show output socket of index face mask")
     accuracy: bpy.props.IntProperty(name='Accuracy', update=updateNode, default=5, min=3, max=12,
                                     description='Some errors of the node can be fixed by changing this value')
-    alg_mode: bpy.props.EnumProperty(items=alg_mode_items, name="Name of algorithm", update=updateNode)
+    alg_mode: bpy.props.EnumProperty(items=alg_mode_items, name="Name of algorithm", update=update_sockets)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'alg_mode', expand=True)
-        layout.label(text='Type of input mesh:')
         col = layout.column(align=True)
-        col.row().prop(self, 'input_mode', expand=True)
+        col.label(text='Type of input mesh:')
+        if self.alg_mode == 'Sweep line':
+            col.row().prop(self, 'input_mode', expand=True)
+        else:
+            col.row().label(text='Faces', icon='FACESEL')
         col.row().prop(self, 'mode', expand=True)
 
     def draw_buttons_ext(self, context, layout):
-        face_col = layout.column()
-        if self.input_mode == 'edges':
-            face_col.active = False
-        face_col.prop(self, 'face_index', toggle=True)
         layout.prop(self, 'accuracy')
 
     def sv_init(self, context):
@@ -139,6 +152,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Faces Crop")
         self.outputs.new('SvVerticesSocket', 'Verts')
         self.outputs.new('SvStringsSocket', "Faces")
+        self.outputs.new('SvStringsSocket', 'Face index')
 
     def process(self):
         if not all([sock.is_linked for sock in self.inputs]):
@@ -153,7 +167,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
                                                                     self.inputs['Faces Crop'].sv_get()):
             if self.input_mode == 'faces':
                 if self.alg_mode == 'Sweep line':
-                    out.append(crop_mesh(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop, self.face_index,
+                    out.append(crop_mesh(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop,
                                          self.mode, self.accuracy))
                 else:
                     out.append(get_bl_crop_mesh_faces(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop,
@@ -161,7 +175,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
             else:
                 out.append(crop_edges(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop, self.mode, self.accuracy))
         print(self.alg_mode, ": ", time() - t)
-        if self.face_index and self.input_mode == 'faces':
+        if self.input_mode == 'faces':
             out_verts, out_faces_edges, face_index = zip(*out)
             self.outputs['Face index'].sv_set(face_index)
         else:
