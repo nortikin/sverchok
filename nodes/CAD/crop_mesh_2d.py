@@ -5,7 +5,6 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from time import time
 from itertools import chain
 
 import bpy
@@ -23,6 +22,16 @@ except ImportError:
 
 
 def get_bl_crop_mesh_faces(verts, faces, verts_crop, faces_crop, mode, epsilon):
+    """
+    Crop given faces by another set of faces by Blender internal function
+    :param verts: list of Sv vertices
+    :param faces: list of faces wich should be cropped
+    :param verts_crop: list of Sv vertices
+    :param faces_crop: list of faces by which mesh should be cropped
+    :param mode: 'inner' or 'outer'
+    :param epsilon: float, for nearness tests
+    :return: list of Sv vertices, faces, indexes of old faces
+    """
     faces = [f if is_ccw_polygon([verts[i] for i in f], accuracy=epsilon) else f[::-1] for f in faces]
     faces_crop = [f if is_ccw_polygon([verts_crop[i] for i in f], accuracy=epsilon) else f[::-1] for f in faces_crop]
     merged_verts, merged_faces, faces_indexes, faces_crop_indexes = join_meshes(verts, faces, verts_crop, faces_crop)
@@ -159,7 +168,6 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
             return
         if self.alg_mode == "Blender" and not bl_crop_mesh:
             return
-        t = time()
         out = []
         for sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop in zip(self.inputs['Verts'].sv_get(),
                                                                     self.inputs[1].sv_get(),
@@ -174,7 +182,6 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
                                                       self.mode, 1 / 10 ** self.accuracy))
             else:
                 out.append(crop_edges(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop, self.mode, self.accuracy))
-        print(self.alg_mode, ": ", time() - t)
         if self.input_mode == 'faces':
             out_verts, out_faces_edges, face_index = zip(*out)
             self.outputs['Face index'].sv_set(face_index)
