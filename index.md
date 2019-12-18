@@ -104,6 +104,7 @@
     SvSeparateMeshNode
     SvLimitedDissolve
     SvPlanarFacesNode
+    SvSplitFacesNode
     SvMeshBeautify
     SvTriangulateNode
     SvMakeMonotone
