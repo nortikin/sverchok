@@ -7,6 +7,7 @@ Analyzers
 
    area
    bbox_mk2
+   component_analyzer
    diameter
    distance_pp
    distance_point_line
