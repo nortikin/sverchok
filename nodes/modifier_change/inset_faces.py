@@ -359,16 +359,22 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not all([sock.is_linked for sock in [self.inputs['Verts'], self.inputs['Faces']]]):
             return
+
+        verts = self.inputs['Verts'].sv_get()
+        edges = self.inputs['Edges'].sv_get() if self.inputs['Edges'].is_linked else cycle([None])
+        faces = self.inputs['Faces'].sv_get()
+        face_data = chain(self.inputs['Face data'].sv_get(), cycle([self.inputs['Face data'].sv_get()[-1]]))\
+                    if self.inputs['Face data'].is_linked else cycle([None])
+        face_mask = chain(self.inputs['Face mask'].sv_get(), cycle([self.inputs['Face mask'].sv_get()[-1]]))\
+                    if self.inputs['Face mask'].is_linked else cycle([None])
+        thickness = chain(self.inputs['Thickness'].sv_get(), cycle([self.inputs['Thickness'].sv_get()[-1]]))
+        depth = chain(self.inputs['Depth'].sv_get(), cycle([self.inputs['Depth'].sv_get()[-1]]))
+
         out = []
-        for v, e, f, t, d, fd, m in zip(self.inputs['Verts'].sv_get(),
-                         self.inputs['Edges'].sv_get() if self.inputs['Edges'].is_linked else cycle([None]),
-                         self.inputs['Faces'].sv_get(),
-                         self.inputs['Thickness'].sv_get(),
-                         self.inputs['Depth'].sv_get(),
-                         self.inputs['Face data'].sv_get() if self.inputs['Face data'].is_linked else cycle([None]),
-                         self.inputs['Face mask'].sv_get() if self.inputs['Face mask'].is_linked else cycle([None])):
+        for v, e, f, t, d, fd, m in zip(verts, edges, faces, thickness, depth, face_data, face_mask):
             out.append(inset_faces(v, f, t, d, e, fd, m, self.inset_type, self.mask_type,
                                    set(prop for prop in self.bool_properties if getattr(self, prop))))
+
         out_verts, out_edges, out_faces, out_face_data, out_mask = zip(*out)
         self.outputs['Verts'].sv_set(out_verts)
         self.outputs['Edges'].sv_set(out_edges)
