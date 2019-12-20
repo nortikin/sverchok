@@ -120,8 +120,8 @@ class SvSplitFacesNode(bpy.types.Node, SverchCustomTreeNode):
                 new_geom = bmesh.ops.connect_verts_concave(bm,
                         faces = bm_faces)
 
-            new_verts, _, _ = pydata_from_bmesh(bm)
-            new_edges, new_faces = get_bm_geom(new_geom)
+            new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
+            #new_edges, new_faces = get_bm_geom(new_geom)
             if not face_data:
                 new_face_data = []
             else:
