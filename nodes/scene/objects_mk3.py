@@ -16,6 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+import traceback
+
 import bpy
 from bpy.props import BoolProperty, StringProperty
 import bmesh
@@ -219,8 +221,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         if not self.object_names:
             return
+        else:
+            print('self.object_names found =>', [o.name for o in self.object_names])
 
-        scene = bpy.context.scene
+        # scene = bpy.context.scene
         data_objects = bpy.data.objects
         outputs = self.outputs
 
@@ -289,7 +293,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
 
                 except Exception as err:
-                    print('failure in process between frozen area', self.name, err)
+                    print('failure in process between frozen area', self.name)
+                    traceback.print_exc()
 
             vers_out.append(vers)
             edgs_out.append(edgs)
