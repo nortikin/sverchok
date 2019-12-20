@@ -52,3 +52,14 @@ This node has the following outputs:
 - **FaceData**. List containing data items from the **FaceData** input, which
   contains one item for each output mesh face.
 
+Examples of usage
+-----------------
+
+Simple example of splitting non-planar faces:
+
+.. image:: https://user-images.githubusercontent.com/284644/71113680-e91b4400-21ef-11ea-87a8-51b5b947e9c7.png
+
+An example of splitting concave faces:
+
+.. image:: https://user-images.githubusercontent.com/284644/71113601-c0934a00-21ef-11ea-9b75-50decaba0094.png
+

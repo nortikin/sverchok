@@ -42,3 +42,11 @@ This node has the following outputs:
 - **Vertices**.
 - **Edges**.
 - **Faces**.
+
+Example of Usage
+----------------
+
+Simple example:
+
+.. image:: https://user-images.githubusercontent.com/284644/71113600-c0934a00-21ef-11ea-8c41-498f5d12a8f2.png
+
