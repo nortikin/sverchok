@@ -70,19 +70,23 @@ def pydata_from_bmesh(bm, face_data=None):
     if face_data is None:
         return verts, edges, faces
     else:
-        initial_index = bm.faces.layers.int.get("initial_index")
-        if initial_index is None:
-            raise Exception("bmesh has no initial_index layer")
-        face_data_out = []
-        n_face_data = len(face_data)
-        for face in bm.faces:
-            idx = face[initial_index]
-            if idx < 0 or idx >= n_face_data:
-                debug("Unexisting face_data[%s] [0 - %s]", idx, n_face_data)
-                face_data_out.append(None)
-            else:
-                face_data_out.append(face_data[idx])
+        face_data_out = face_data_from_bmesh_faces(bm, face_data)
         return verts, edges, faces, face_data_out
+
+def face_data_from_bmesh_faces(bm, face_data):
+    initial_index = bm.faces.layers.int.get("initial_index")
+    if initial_index is None:
+        raise Exception("bmesh has no initial_index layer")
+    face_data_out = []
+    n_face_data = len(face_data)
+    for face in bm.faces:
+        idx = face[initial_index]
+        if idx < 0 or idx >= n_face_data:
+            debug("Unexisting face_data[%s] [0 - %s]", idx, n_face_data)
+            face_data_out.append(None)
+        else:
+            face_data_out.append(face_data[idx])
+    return face_data_out
 
 def with_bmesh(method):
     '''Decorator for methods which can work with BMesh.

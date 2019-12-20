@@ -26,6 +26,8 @@ Modifier Change
    recalc_normals
    remove_doubles
    triangulate
+   planar_faces
+   split_faces
    vertices_mask
    make_monotone
    dissolve_faces_2d
