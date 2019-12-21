@@ -101,7 +101,7 @@ def make_line_advanced(numbers, steps, sizes, verts_a, verts_b, mode='AB', norma
                 dir_line = (vb - va) * 1 / len_line
             else:
                 len_line = st * (n - 1 if n > 2 else 1)
-                dir_line = (vb - va) * 1 / np.linalg.norm(vb - va)
+                dir_line = vb * 1 / np.linalg.norm(vb)
 
             if normalized and center:
                 verts_line = generate_verts(va + dir_line * (-size / 2), va + dir_line * (size / 2), n)
@@ -114,7 +114,7 @@ def make_line_advanced(numbers, steps, sizes, verts_a, verts_b, mode='AB', norma
                 verts_line = generate_verts(va, vb, n)
             else:
                 len_line = st * (n - 1 if n > 2 else 1)
-                dir_line = (vb - va) * 1 / np.linalg.norm(vb - va)
+                dir_line = vb * 1 / np.linalg.norm(vb)
                 verts_line = generate_verts(va, va + dir_line * len_line, n)
 
         edges_lines.extend((i + len(verts_lines), i + len(verts_lines) + 1) for i in range(1 if n <= 2 else n - 1))
