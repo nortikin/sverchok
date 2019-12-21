@@ -16,11 +16,15 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from itertools import chain, cycle
+import numpy as np
+
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty
+
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList, match_long_repeat
-from sverchok.utils.modules.geom_utils import interp_v3_v3v3, normalize, add_v3_v3v3, sub_v3_v3v3
+from sverchok.data_structure import updateNode
+
 
 directionItems = [
     ("X",  "X",  "Along X axis",         0),
@@ -30,25 +34,121 @@ directionItems = [
     ("OD", "OD", "Origin and Direction", 4),
     ]
 
-    
-def make_line(steps, center, direction, vert_a, vert_b):
-    if direction == "X":
-        vec = lambda l: (l, 0.0, 0.0)
-    elif direction == "Y":
-        vec = lambda l: (0.0, l, 0.0)
-    elif direction == "Z":
-        vec = lambda l: (0.0, 0.0, l)
-    elif direction in ["AB", "OD"]:
-        vec = lambda l: interp_v3_v3v3(vert_a, vert_b, l)
 
-    verts = []
-    add_vert = verts.append
-    x = -sum(steps) / 2 if center else 0
-    for s in [0.0] + steps:
-        x = x + s
-        add_vert(vec(x))
-    edges = [[i, i + 1] for i in range(len(steps))]
-    return verts, edges
+def make_line(numbers, steps, sizes, mode='X', normalized=False, center=False):
+    """
+    Generate simple lines along X, Y or Z axis. All lines locates in one object.
+    :param numbers: Number of vertices, list of int
+    :param steps: Step length, list of float
+    :param sizes: Size of lines in normalized mode, list of floats
+    :param mode: 'X' or 'Y' or 'Z'
+    :param normalized: fit line into given size
+    :param center: move center of line in center of coordinates
+    :return: list of vertices, list of edges
+    """
+    max_len = max(len(numbers), len(sizes), len(steps))
+    numbers = chain(numbers, cycle([numbers[-1]]))
+    steps = chain(steps, cycle([steps[-1]]))
+    sizes = chain(sizes, cycle([sizes[-1]]))
+    verts_lines = []
+    edges_lines = []
+
+    for i, n, st, size in zip(range(max_len), numbers, steps, sizes):
+        if normalized and center:
+            co1, co2 = -size / 2, size / 2
+        elif normalized:
+            co1, co2 = 0, size
+        elif center:
+            co1, co2 = -st * (n - 1) / 2, st * (n - 1) / 2
+        else:
+            co1, co2 = 0, st * (n - 1)
+        va = np.array((co1 if mode == "X" else 0, co1 if mode == "Y" else 0, co1 if mode == "Z" else 0))
+        vb = np.array((co2 if mode == "X" else 0, co2 if mode == "Y" else 0, co2 if mode == "Z" else 0))
+        edges_lines.extend((i + len(verts_lines), i + len(verts_lines) + 1) for i in range(1 if n <= 2 else n - 1))
+        verts_lines.extend(generate_verts(va, vb, n).tolist())
+    return verts_lines, edges_lines
+
+
+def make_line_advanced(numbers, steps, sizes, verts_a, verts_b, mode='AB', normalized=False, center=False):
+    """
+    Generate lines between two given points in 'AB' mode or determined by origin(vert_a) and direction(vert_b)
+    :param numbers: Number of vertices, list of int
+    :param steps: Step length, list of float
+    :param sizes: Size of lines in normalized mode, list of floats
+    :param verts_a: or origin, list of vertices
+    :param verts_b: or direction, list of vertices
+    :param mode: 'AB' - generate line between points, 'OD' - generate line from origin with determined direction
+    :param normalized: fit line into given size
+    :param center: move center of line into vert_a
+    :return: list of vertices, list of edges (*one object)
+    """
+    max_len = max(len(numbers), len(steps), len(sizes), len(verts_a), len(verts_b))
+    numbers = chain(numbers, cycle([numbers[-1]]))
+    steps = chain(steps, cycle([steps[-1]]))
+    sizes = chain(sizes, cycle([sizes[-1]]))
+    verts_a = chain(verts_a, cycle([verts_a[-1]]))
+    verts_b = chain(verts_b, cycle([verts_b[-1]]))
+    verts_lines = []
+    edges_lines = []
+
+    for i, n, st, size, va, vb in zip(range(max_len), numbers, steps, sizes, verts_a, verts_b):
+        va, vb = np.array(va), np.array(vb)
+        if normalized or center:
+            # if center is true then va becomes center
+
+            if mode == 'AB':
+                len_line = np.linalg.norm(vb - va)
+                dir_line = (vb - va) * 1 / len_line
+            else:
+                len_line = st * (n - 1 if n > 2 else 1)
+                dir_line = (vb - va) * 1 / np.linalg.norm(vb - va)
+
+            if normalized and center:
+                verts_line = generate_verts(va + dir_line * (-size / 2), va + dir_line * (size / 2), n)
+            elif normalized:
+                verts_line = generate_verts(va, va + dir_line * size, n)
+            elif center:
+                verts_line = generate_verts(va + dir_line * (-len_line / 2), va + dir_line * (len_line / 2), n)
+        else:
+            if mode == 'AB':
+                verts_line = generate_verts(va, vb, n)
+            else:
+                len_line = st * (n - 1 if n > 2 else 1)
+                dir_line = (vb - va) * 1 / np.linalg.norm(vb - va)
+                verts_line = generate_verts(va, va + dir_line * len_line, n)
+
+        edges_lines.extend((i + len(verts_lines), i + len(verts_lines) + 1) for i in range(1 if n <= 2 else n - 1))
+        verts_lines.extend(verts_line.tolist())
+    return verts_lines, edges_lines
+
+
+def generate_verts(va, vb, number):
+    # interpolate vertices between two given
+    if number <= 2:
+        return np.array((va, vb))
+    x = np.linspace(va[0], vb[0], number)
+    y = np.linspace(va[1], vb[1], number)
+    z = np.linspace(va[2], vb[2], number)
+    return np.stack((x, y, z), axis=-1)
+
+
+def split_lines_to_objects(verts, edges):
+    # detect lines and split them into separate objects
+    # vertices and edges should be ordered according generator lines logic
+    verts = iter(verts)
+    verts_out = [[]]
+
+    for i in range(len(edges)):
+        verts_out[-1].append(next(verts))
+        # current edge - (0, 1), next edge - (1, 2) - still on the same line
+        # current edge - (1, 2), next edge - (3, 4) - the current line is finished
+        is_end = True if i + 1 >= len(edges) else True if edges[i][1] != edges[i + 1][0] else False
+        if is_end:
+            verts_out[-1].append(next(verts))
+            if i != len(edges) - 1:
+                verts_out.append([])
+    edges_out = [[(i, i + 1) for i in range(len(vs) - 1)] for vs in verts_out]
+    return verts_out, edges_out
 
 
 class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
@@ -63,9 +163,7 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def update_size_socket(self, context):
         """ need to do UX transformation before updating node"""
-        size_socket = self.inputs["Size"]
-        size_socket.hide_safe = not self.normalize
-
+        self.inputs["Size"].hide_safe = not self.normalize
         updateNode(self, context)
 
     def update_vect_socket(self, context):
@@ -134,26 +232,20 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         size=3, default=(1, 1, 1),
         update=updateNode)
 
-    def set_size_socket(self):
-        size_socket = self.inputs.new('SvStringsSocket', "Size")
-        size_socket.prop_name = 'size'
-        size_socket.hide_safe = not self.normalize
-
-    def set_vector_sockets(self):
-        si = self.inputs
-        si.new('SvVerticesSocket', "A").prop_name = 'v3_input_0'
-        si.new('SvVerticesSocket', "B").prop_name = 'v3_input_1'
-        si[3].hide_safe = self.direction not in ["AB", " OD"]
-        si[4].hide_safe = self.direction not in ["AB", " OD"]
+    split: BoolProperty(name="Split to objects", description="Each object in separate object", update=updateNode)
 
     def sv_init(self, context):
-        si = self.inputs
-        si.new('SvStringsSocket', "Num").prop_name = 'num'
-        si.new('SvStringsSocket', "Step").prop_name = 'step'
-        self.set_size_socket()
-        self.set_vector_sockets()
+        self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'
+        self.inputs.new('SvStringsSocket', "Step").prop_name = 'step'
+        self.inputs.new('SvStringsSocket', "Size").prop_name = 'size'
+        self.inputs.new('SvVerticesSocket', "A").prop_name = 'v3_input_0'
+        self.inputs.new('SvVerticesSocket', "B").prop_name = 'v3_input_1'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
+
+        self.inputs['Size'].hide_safe = True
+        self.inputs["A"].hide_safe = True
+        self.inputs["B"].hide_safe = True
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -163,74 +255,39 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "center", toggle=True)
         row.prop(self, "normalize", toggle=True)
 
-    def get_data(self):
-        c, d = self.center, self.direction
-        input_num = self.inputs["Num"].sv_get()
-        input_step = self.inputs["Step"].sv_get()
-        normal_size = [2.0 if c else 1.0]
-
-        if self.normalize:
-
-            normal_size = self.inputs["Size"].sv_get()[0]
-
-        params = [input_num, input_step, normal_size]
-
-        if d in ["AB", "OD"]:
-            v_a = self.inputs[3].sv_get()[0]
-            v_b = self.inputs[4].sv_get()[0]
-            params.append(v_a)
-            params.append(v_b)
-
-        return match_long_repeat(params)
-
-    def define_steplist(self, step_list, s, n, nor, normal):
-
-        for num in n:
-            num = max(2, num)
-            s = s[:(num - 1)]  # shorten if needed
-            fullList(s, num - 1)  # extend if needed
-            step_list.append([S * nor / sum(s) for S in s] if normal else s)
-
-    def process_vectors(self, pts_list, d, va, vb):
-        if d == "AB" and self.normalize:
-            vb = add_v3_v3v3(normalize(sub_v3_v3v3(vb, va)), va) 
-        elif d == "OD":
-            vb = add_v3_v3v3(normalize(vb), va)
-        pts_list.append((va, vb))
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'split')
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
 
-        c, d = self.center, self.direction
-        step_list = []
-        pts_list = []
-        verts_out, edges_out = [], []
-        normal = self.normalize or d == "AB"
-        advanced = d in ["AB", "OD"]
-        params = self.get_data()
-        if advanced:
-            for p in zip(*params):
-                n, s, nor, va, vb = p
-                self.define_steplist(step_list, s, n, nor, normal)
-                self.process_vectors(pts_list, d, va, vb)
-            for s, vc in zip(step_list, pts_list):
-                r1, r2 = make_line(s, c, d, vc[0], vc[1])
-                verts_out.append(r1)
-                edges_out.append(r2)
-        else:
-            for p in zip(*params):
-                n, s, nor = p
-                self.define_steplist(step_list, s, n, nor, normal)
-            for s in step_list:
-                r1, r2 = make_line(s, c, d, [], [])
-                verts_out.append(r1)
-                edges_out.append(r2)
+        number, step, size, vas, vbs = [sock.sv_get() for sock in self.inputs]
+        max_len = max([len(item) for item in [number, step, size, vas, vbs]])
+        number = chain(number, cycle([number[-1]]))
+        step = chain(step, cycle([step[-1]]))
+        size = chain(size, cycle([size[-1]]))
+        vas = chain(vas, cycle([vas[-1]]))
+        vbs = chain(vbs, cycle([vbs[-1]]))
+        out = []
+        for i, n, st, si, va, vb in zip(range(max_len), number, step, size, vas, vbs):
+            if self.direction in ['X', 'Y', 'Z']:
+                out.append(make_line(n, st, si, self.direction, self.normalize, self.center))
+            else:
+                out.append(make_line_advanced(n, st, si, va, vb, self.direction, self.normalize, self.center))
 
-        if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(verts_out)
-        if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(edges_out)
+        if self.split:
+            verts, edges = zip(*out)
+            verts_out, edges_out = [], []
+            for vs, ns in zip(verts, edges):
+                v_out, e_out = split_lines_to_objects(vs, ns)
+                verts_out.extend(v_out)
+                edges_out.extend(e_out)
+        else:
+            verts_out, edges_out = zip(*out)
+
+        self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Edges'].sv_set(edges_out)
 
 
 def register():
