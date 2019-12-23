@@ -44,16 +44,23 @@ def make_line(numbers, steps, sizes, mode='X', normalized=False, center=False):
     :param mode: 'X' or 'Y' or 'Z'
     :param normalized: fit line into given size
     :param center: move center of line in center of coordinates
-    :return: list of vertices, list of edges
+    :return: np.array of vertices, np.array of edges
     """
-    max_len = max(len(numbers), len(sizes), len(steps))
+    number_of_lines = max(len(numbers), len(sizes), len(steps))
+    number_of_edges = sum([v_number - 1 if v_number > 1 else 1 for _, v_number in
+                           zip(range(number_of_lines), chain(numbers, cycle([numbers[-1]])))])
+    number_of_vertices = sum([v_number if v_number > 1 else 2 for _, v_number in
+                           zip(range(number_of_lines), chain(numbers, cycle([numbers[-1]])))])
     numbers = chain(numbers, cycle([numbers[-1]]))
     steps = chain(steps, cycle([steps[-1]]))
     sizes = chain(sizes, cycle([sizes[-1]]))
-    verts_lines = []
-    edges_lines = []
+    verts_lines = np.empty((number_of_vertices, 3))
+    edges_lines = np.empty((number_of_edges, 2))
+    num_added_edges = 0
+    num_added_verts = 0
 
-    for i, n, st, size in zip(range(max_len), numbers, steps, sizes):
+    for i_line, n, st, size in zip(range(number_of_lines), numbers, steps, sizes):
+        n = 2 if n < 2 else n
         if normalized and center:
             co1, co2 = -size / 2, size / 2
         elif normalized:
@@ -64,8 +71,10 @@ def make_line(numbers, steps, sizes, mode='X', normalized=False, center=False):
             co1, co2 = 0, st * (n - 1)
         va = np.array((co1 if mode == "X" else 0, co1 if mode == "Y" else 0, co1 if mode == "Z" else 0))
         vb = np.array((co2 if mode == "X" else 0, co2 if mode == "Y" else 0, co2 if mode == "Z" else 0))
-        edges_lines.extend((i + len(verts_lines), i + len(verts_lines) + 1) for i in range(1 if n <= 2 else n - 1))
-        verts_lines.extend(generate_verts(va, vb, n).tolist())
+        edges_lines[num_added_edges: num_added_edges + n - 1] = np.stack([np.arange(n - 1), np.arange(1, n)], axis=1)
+        verts_lines[num_added_verts: num_added_verts + n] = (generate_verts(va, vb, n))
+        num_added_edges += n - 1
+        num_added_verts += n
     return verts_lines, edges_lines
 
 
@@ -233,6 +242,7 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     split: BoolProperty(name="Split to objects", description="Each object in separate object", update=updateNode)
+    as_numpy: BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'
@@ -257,6 +267,11 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'split')
+        layout.prop(self, 'as_numpy')
+
+    def rclick_menu(self, context, layout):
+        layout.prop(self, 'split')
+        layout.prop(self, 'as_numpy')
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
@@ -285,6 +300,10 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 edges_out.extend(e_out)
         else:
             verts_out, edges_out = zip(*out)
+
+        if not self.as_numpy:
+            verts_out = [ar.tolist() for ar in verts_out]
+            edges_out = [ar.tolist() for ar in edges_out]
 
         self.outputs['Vertices'].sv_set(verts_out)
         self.outputs['Edges'].sv_set(edges_out)
