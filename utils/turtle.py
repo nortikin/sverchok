@@ -121,10 +121,11 @@ class Turtle(object):
                 self.current_face[painting_layer] = value
                 debug("Paint face #%s, layer `%s' with value `%s'", self.current_face.index, painting_layer.name, value)
 
-    def turn_opposite(self, bias=None):
+    def get_opposite_loop(self, loop, bias=None):
         if bias is None:
             bias = self.opposite_bias
-        n = len(self.current_face.loops)
+        face = loop.face
+        n = len(face.loops)
         if n % 2 == 0:
             steps = n // 2
         else:
@@ -133,10 +134,22 @@ class Turtle(object):
             else:
                 steps = n // 2 + 1
         for i in range(steps):
-            self.turn_next()
+            loop = loop.link_loop_next
+        return loop
 
-    def get_next_face(self):
-        return self.current_loop.link_loop_radial_next.face
+    def turn_opposite(self, bias=None):
+        self.current_loop = self.get_opposite_loop(self.current_loop)
+
+    def get_next_face(self, count=1, bias=None):
+        face = self.current_face
+        loop = self.current_loop
+        for i in range(count):
+            # click
+            next_loop = loop.link_loop_radial_next
+            face = next_loop.face
+            # opposite
+            loop = self.get_opposite_loop(next_loop, bias)
+        return face
 
     def step(self, count=1, bias=None):
         for i in range(count):
