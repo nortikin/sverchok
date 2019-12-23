@@ -176,14 +176,15 @@ def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, fac
         props = {'use_even_offset', 'use_boundary'}
     if face_mask is None:
         face_mask = cycle([True])
+    else:
+        face_mask = chain(face_mask, cycle([face_mask[-1]]))
     bm = bmesh_from_sv(verts, faces, edges, face_int_layers={'sv': list(range(len(faces))), 'mask': None})
     mask = bm.faces.layers.int.get('mask')
 
     if thickness or depth:
         # use_interpolate: Interpolate mesh data: e.g. UV’s, vertex colors, weights, etc.
-        iter_face_mask = chain(face_mask, cycle([face_mask[-1]])) if face_mask is not None else face_mask
         ins_faces = []
-        for f, m in zip(list(bm.faces), iter_face_mask):
+        for f, m in zip(list(bm.faces), face_mask):
             if m:
                 ins_faces.append(f)
             else:
