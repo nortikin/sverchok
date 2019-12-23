@@ -244,3 +244,84 @@ def dual_mesh(bm, recalc_normals=True):
         bm2.free()
         return new_vertices, new_faces
 
+def wave_markup_faces(bm, face_mask, neighbour_by_vert = True):
+    """
+    Given initial faces, markup all mesh faces by wave algorithm:
+    initial faces get index of 1, their neighbours get index of 2, and so on.
+    """
+    if not isinstance(face_mask, (list, tuple)):
+        raise TypeError("Face mask is specified incorrectly")
+
+    index = bm.faces.layers.int.new("wave_front")
+    bm.faces.ensure_lookup_table()
+    bm.faces.index_update()
+    n_total = len(bm.faces)
+
+    init_faces = [face for face, mask in zip(bm.faces[:], face_mask) if mask]
+    if not init_faces:
+        raise Exception("Initial faces set is empty")
+
+    done = set(init_faces)
+    wave_front = set(init_faces)
+    step = 0
+    while len(done) < n_total:
+        step += 1
+        new_wave_front = set()
+        for face in wave_front:
+            face[index] = step
+        for face in wave_front:
+            for edge in face.edges:
+                for other_face in edge.link_faces:
+                    if other_face == face:
+                        continue
+                    if other_face[index] == 0:
+                        new_wave_front.add(other_face)
+            if neighbour_by_vert:
+                for vert in face.verts:
+                    for other_face in vert.link_faces:
+                        if other_face == face:
+                            continue
+                        if other_face[index] == 0:
+                            new_wave_front.add(other_face)
+        #debug("Front #%s: %s", step, len(new_wave_front))
+        done.update(wave_front)
+        wave_front = new_wave_front
+
+    return [face[index] for face in bm.faces]
+
+def wave_markup_verts(bm, vert_mask):
+    """
+    Given initial vertices, markup all mesh vertices by wave algorithm:
+    initial vertices get index of 1, their neighbours get index of 2, and so on.
+    """
+    if not isinstance(vert_mask, (list, tuple)):
+        raise TypeError("Verts mask is specified incorrectly")
+
+    index = bm.verts.layers.int.new("wave_front")
+    bm.verts.ensure_lookup_table()
+    bm.verts.index_update()
+    n_total = len(bm.verts)
+
+    init_verts = [vert for vert, mask in zip(bm.verts[:], vert_mask) if mask]
+    if not init_verts:
+        raise Exception("Initial vertices set is empty")
+
+    done = set(init_verts)
+    wave_front = set(init_verts)
+    step = 0
+    while len(done) < n_total:
+        step += 1
+        new_wave_front = set()
+        for vert in wave_front:
+            vert[index] = step
+        for vert in wave_front:
+            for edge in vert.link_edges:
+                other_vert = edge.other_vert(vert)
+                if other_vert[index] == 0:
+                    new_wave_front.add(other_vert)
+        #debug("Front #%s: %s", step, len(new_wave_front))
+        done.update(wave_front)
+        wave_front = new_wave_front
+
+    return [vert[index] for vert in bm.verts]
+
