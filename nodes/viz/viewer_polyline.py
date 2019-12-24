@@ -213,29 +213,30 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         has_matrices = self.inputs['matrix'].is_linked
         mverts, mradii, mtwist, mmatrices = self.get_geometry_from_sockets(has_matrices)
 
-        out_objects = []
-        for obj_index, Verts in enumerate(mverts):
-            if not Verts:
-                continue
+        with self.sv_throttle_tree_update():
+            out_objects = []
+            for obj_index, Verts in enumerate(mverts):
+                if not Verts:
+                    continue
 
-            matrix = mmatrices[obj_index] if has_matrices else []
+                matrix = mmatrices[obj_index] if has_matrices else []
 
-            if self.selected_mode == 'Multi':
-                curve_args = obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index]
-                new_obj = make_curve_geometry(*curve_args)
-                out_objects.append(new_obj)
-            else:
-                if matrix:
-                    mverts = [multiply_vectors(*mv) for mv in zip(mmatrices, mverts)]
-                new_obj = make_curve_geometry(0, self, mverts, [], mradii, mtwist)
-                out_objects.append(new_obj)
-                break
+                if self.selected_mode == 'Multi':
+                    curve_args = obj_index, self, Verts, matrix, mradii[obj_index], mtwist[obj_index]
+                    new_obj = make_curve_geometry(*curve_args)
+                    out_objects.append(new_obj)
+                else:
+                    if matrix:
+                        mverts = [multiply_vectors(*mv) for mv in zip(mmatrices, mverts)]
+                    new_obj = make_curve_geometry(0, self, mverts, [], mradii, mtwist)
+                    out_objects.append(new_obj)
+                    break
 
-        last_index = len(mverts) - 1
-        self.remove_non_updated_objects(last_index)
-        self.set_corresponding_materials()
+            last_index = len(mverts) - 1
+            self.remove_non_updated_objects(last_index)
+            self.set_corresponding_materials()
 
-        self.outputs['object'].sv_set(out_objects)
+            self.outputs['object'].sv_set(out_objects)
 
 
     def set_auto_uv(self, obj):
