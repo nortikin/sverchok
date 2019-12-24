@@ -244,45 +244,137 @@ def dual_mesh(bm, recalc_normals=True):
         bm2.free()
         return new_vertices, new_faces
 
-def wave_markup_faces(bm, face_mask, neighbour_by_vert = True):
+def get_neighbour_faces(face, by_vert = True):
+    """
+    Get neighbour faces of the given face.
+
+    face : BMFace
+    by_vert: True if by "neighbour" you mean having any common vertex; 
+             or False, if by "neighbour" you mean having any common edge.
+
+    result: set of BMFace.
+    """
+    result = set()
+    if by_vert:
+        for vert in face.verts:
+            for other_face in vert.link_faces:
+                if other_face == face:
+                    continue
+                result.add(other_face)
+    else:
+        for edge in face.edges:
+            for other_face in edge.link_faces:
+                if other_face == face:
+                    continue
+                result.add(other_face)
+    return result
+
+def fill_faces_layer(bm, face_mask, layer_name, layer_type, value, invert_mask = False):
+    if layer_type == int:
+        layers = bm.faces.layers.int
+    elif layer_type == float:
+        layers = bm.faces.layers.float
+    elif layer_type == str:
+        layers = bm.faces.layers.str
+    else:
+        raise Exception("Unsupported layer data type")
+
+    if not isinstance(value, layer_type):
+        raise TypeError("Value type does not correspond to layer data type")
+
+    layer = layers.get(layer_name)
+    if layer is None:
+        raise Exception("Specified layer does not exist")
+
+    for face, mask in zip(bm.faces, face_mask):
+        if mask != invert_mask:
+            face[layer] = value
+
+def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortest_path = False):
     """
     Given initial faces, markup all mesh faces by wave algorithm:
     initial faces get index of 1, their neighbours get index of 2, and so on.
+
+    bm : BMesh
+    init_face_mask : Mask for faces to start from.
+    neighbour_by_vert : True if by "neighbour" you mean having any common vertex; 
+             or False, if by "neighbour" you mean having any common edge.
+    find_shortest_path : if set to True, markup enough information to trace the shortest
+            path from each face of the mesh to the initially selected faces.
+
+    result : Distance from initial faces, in steps, for each face of the mesh.
+
+    This uses the following custom data layers on mesh faces:
+
+    * wave_front : int, output; the distance from initially selected faces (starting with 1
+      for initially selected faces).
+    * wave_start_index : int, output; the index of the initial face to which this face is nearest.
+      Filled only if find_shortest_path is set to True.
+    * wave_path_prev_index : int, output; the index of the face, to which you
+      should step to follow the shortest path to initial faces. Filled only if
+      find_shortest_path is set to True.
+    * wave_path_prev_distance : float, output; the euclidian distance to the
+      face mentioned in wave_path_prev_index. Filled only if find_shortest_path
+      is set to True.
+    * wave_obstacle : int, input, optional; set to non-zero value to indicate
+      that this face is an obstacle (wave can not pass through it).
+
     """
-    if not isinstance(face_mask, (list, tuple)):
+    if not isinstance(init_face_mask, (list, tuple)):
         raise TypeError("Face mask is specified incorrectly")
 
     index = bm.faces.layers.int.new("wave_front")
+    if find_shortest_path:
+        init_index = bm.faces.layers.int.new("wave_start_index")
+        path_prev_index = bm.faces.layers.int.new("wave_path_prev_index")
+        path_prev_distance = bm.faces.layers.float.new("wave_path_prev_distance")
+    obstacles = bm.faces.layers.int.get("wave_obstacle")
     bm.faces.ensure_lookup_table()
     bm.faces.index_update()
     n_total = len(bm.faces)
 
-    init_faces = [face for face, mask in zip(bm.faces[:], face_mask) if mask]
+    if find_shortest_path:
+        face_center = dict([(face.index, face.calc_center_median()) for face in bm.faces])
+    else:
+        face_center = None
+
+    init_faces = [face for face, mask in zip(bm.faces[:], init_face_mask) if mask]
     if not init_faces:
         raise Exception("Initial faces set is empty")
+    
+    def is_obstacle(face):
+        if obstacles is None:
+            return False
+        else:
+            return face[obstacles]
 
     done = set(init_faces)
     wave_front = set(init_faces)
     step = 0
+    if find_shortest_path:
+        for face in init_faces:
+            face[init_index] = face.index
     while len(done) < n_total:
         step += 1
         new_wave_front = set()
         for face in wave_front:
             face[index] = step
         for face in wave_front:
-            for edge in face.edges:
-                for other_face in edge.link_faces:
-                    if other_face == face:
-                        continue
-                    if other_face[index] == 0:
-                        new_wave_front.add(other_face)
-            if neighbour_by_vert:
-                for vert in face.verts:
-                    for other_face in vert.link_faces:
-                        if other_face == face:
-                            continue
-                        if other_face[index] == 0:
-                            new_wave_front.add(other_face)
+            if find_shortest_path:
+                this_center = face_center[face.index]
+            for other_face in get_neighbour_faces(face, neighbour_by_vert):
+                if is_obstacle(other_face):
+                    continue
+                if other_face[index] == 0:
+                    new_wave_front.add(other_face)
+                    if find_shortest_path:
+                        other_center = face_center[other_face.index]
+                        distance = (this_center - other_center).length
+                        prev_distance = other_face[path_prev_distance]
+                        if prev_distance == 0 or prev_distance > distance:
+                            other_face[path_prev_distance] = distance
+                            other_face[path_prev_index] = face.index
+                            other_face[init_index] = face[init_index]
         #debug("Front #%s: %s", step, len(new_wave_front))
         done.update(wave_front)
         wave_front = new_wave_front
