@@ -174,7 +174,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         self.draw_ext_object_buttons(context, layout)
-        row = self.layout.row()
+        row = layout.row()
         row.prop(self, "use_auto_uv")
 
 
