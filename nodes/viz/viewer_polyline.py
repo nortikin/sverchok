@@ -95,14 +95,6 @@ def live_curve(obj_index, node, verts, radii, twist):
 
     return obj
 
-def set_auto_uv(self, obj):
-    """
-    this will change the state of the object.prop if it does not match the new desired state
-    """
-    if sv_object.data.use_uv_as_generated != self.use_auto_uv:
-        sv_object.data.use_uv_as_generated = self.use_auto_uv
-
-
 def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     sv_object = live_curve(obj_index, node, verts, radii, twist)
     sv_object.hide_select = False
@@ -244,6 +236,14 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         self.set_corresponding_materials()
 
         self.outputs['object'].sv_set(out_objects)
+
+
+    def set_auto_uv(self, obj):
+        """
+        this will change the state of the object.prop if it does not match the new desired state
+        """
+        if obj.data.use_uv_as_generated != self.use_auto_uv:
+            obj.data.use_uv_as_generated = self.use_auto_uv
 
 
 def register():
