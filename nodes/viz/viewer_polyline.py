@@ -95,11 +95,19 @@ def live_curve(obj_index, node, verts, radii, twist):
 
     return obj
 
+@classmethod
+def set_auto_uv(obj, node):
+    """
+    this will change the state of the object.prop if it does not match the new desired state
+    """
+    if sv_object.data.use_uv_as_generated != node.use_auto_uv:
+        sv_object.data.use_uv_as_generated = node.use_auto_uv
 
 
 def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     sv_object = live_curve(obj_index, node, verts, radii, twist)
     sv_object.hide_select = False
+    self.set_auto_uv(sv_object, node)
     node.push_custom_matrix_if_present(sv_object, matrix)
     return sv_object
 
@@ -133,6 +141,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     radii: FloatProperty(min=0, default=0.2, update=updateNode)
     twist: FloatProperty(default=0.0, update=updateNode)
     caps: BoolProperty(update=updateNode)
+    use_auto_uv: BoolProperty(name="auto uv", update=updateNode)
 
     data_kind: StringProperty(default='CURVE')
 
@@ -174,6 +183,8 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     def draw_buttons_ext(self, context, layout):
         self.draw_buttons(context, layout)
         self.draw_ext_object_buttons(context, layout)
+        row = self.layout.row()
+        row.prop(self, "use_auto_uv")
 
 
     def get_geometry_from_sockets(self, has_matrices):
