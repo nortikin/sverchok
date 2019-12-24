@@ -95,19 +95,18 @@ def live_curve(obj_index, node, verts, radii, twist):
 
     return obj
 
-@classmethod
-def set_auto_uv(obj, node):
+def set_auto_uv(self, obj):
     """
     this will change the state of the object.prop if it does not match the new desired state
     """
-    if sv_object.data.use_uv_as_generated != node.use_auto_uv:
-        sv_object.data.use_uv_as_generated = node.use_auto_uv
+    if sv_object.data.use_uv_as_generated != self.use_auto_uv:
+        sv_object.data.use_uv_as_generated = self.use_auto_uv
 
 
 def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     sv_object = live_curve(obj_index, node, verts, radii, twist)
     sv_object.hide_select = False
-    self.set_auto_uv(sv_object, node)
+    node.set_auto_uv(sv_object)
     node.push_custom_matrix_if_present(sv_object, matrix)
     return sv_object
 
