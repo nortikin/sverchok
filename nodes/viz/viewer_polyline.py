@@ -175,7 +175,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         self.draw_buttons(context, layout)
         self.draw_ext_object_buttons(context, layout)
         row = layout.row()
-        row.prop(self, "use_auto_uv")
+        row.prop(self, "use_auto_uv", text="Use UV for mapping")
 
 
     def get_geometry_from_sockets(self, has_matrices):
