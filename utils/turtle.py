@@ -60,6 +60,11 @@ class Turtle(object):
     NB 2: If you wish to use other custom data layers on the same bmesh, for purposes
     other than painting by turtle, then you have to create them BEFORE calling the Turtle
     constructor.
+
+    One can mark some faces as obstacles. The turtle will pass through obstacles, if you
+    say it to step() on it; but you can explicitly check if the turtle is going to
+    enter the obstacle face with turtle.is_looking_at_obstacle, or check if the turtle
+    is already at obstacle with turtle.is_at_obstacle.
     """
 
     PREVIOUS = 'PREVIOUS'
@@ -77,6 +82,7 @@ class Turtle(object):
         # Creation of the custom data layer invalidates all
         # references to mesh's BMFaces!
         self.index_layer = bm.faces.layers.int.new("turtle_index")
+        self.obstacle_layer = bm.faces.layers.int.new("turtle_obstacle")
         bm.faces.ensure_lookup_table()
         bm.faces.index_update()
         self.current_face = bm.faces[0] if bm_face is None else bm_face
@@ -290,7 +296,79 @@ class Turtle(object):
             loop = self.get_opposite_loop(next_loop, bias)
         return face
 
-    def step(self, count=1, bias=None):
+    def get_direct_distance_to_edge(self, check_loop, maximum = None, bias=None):
+        """
+        Find distance to some "good" edge, if the turtle will step forward
+        each time.
+
+        check_loop: function taking BMLoop and returning boolean.
+        maximum: maximum number of faces to check (to prevent possible infinite loop,
+                    or too long paths). None means the total number of faces in the mesh.
+        bias: bias for get_next_face().
+
+        returns: number of steps to reach a "good" edge, or None if such edge is too far.
+        """
+        if maximum is None:
+            maximum = len(self.bmesh.faces)
+        i = 0
+        face = self.current_face
+        loop = self.current_loop
+        while True:
+            if i > maximum:
+                return None
+            if check_loop(loop):
+                return i
+            # click
+            next_loop = loop.link_loop_radial_next
+            face = next_loop.face
+            # opposite
+            loop = self.get_opposite_loop(next_loop, bias)
+            i += 1
+        return None
+    
+    def get_direct_distance_to_boundary(self, maximum = None, bias = None):
+        """
+        Find distance to a boundary edge, if the turtle will step forward
+        each time.
+
+        maximum: maximum number of faces to check (to prevent possible infinite loop,
+                    or too long paths). None means the total number of faces in the mesh.
+        bias: bias for get_next_face().
+
+        returns: number of steps to reach a boundary edge, or None if such edge is too far.
+        """
+        return self.get_direct_distance_to_edge(lambda loop: loop.edge.is_boundary, maximum, bias)
+
+    def get_direct_distance_to_obstacle(self, maximum = None, bias = None):
+        """
+        Find distance to an edge near an obstacle, if the turtle will step forward
+        each time.
+
+        maximum: maximum number of faces to check (to prevent possible infinite loop,
+                    or too long paths). None means the total number of faces in the mesh.
+        bias: bias for get_next_face().
+
+        returns: number of steps to reach an edge of an obstacle, or None if such edge is too far.
+        """
+        if maximum is None:
+            maximum = len(self.bmesh.faces)
+        i = 0
+        face = self.current_face
+        loop = self.current_loop
+        while True:
+            if i > maximum:
+                return None
+            # click
+            next_loop = loop.link_loop_radial_next
+            face = next_loop.face
+            if face[self.obstacle_layer]:
+                return i
+            # opposite
+            loop = self.get_opposite_loop(next_loop, bias)
+            i += 1
+        return None
+
+    def step(self, count=1, bias=None, stop_at_boundary = False, stop_at_obstacle = False):
         """
         Step to the next face, i.e. the face which is beyond the edge
         at which the turtle is currently looking, without changing 
@@ -307,6 +385,12 @@ class Turtle(object):
         for i in range(count):
             self.click()
             self.turn_opposite(bias=bias)
+            if stop_at_boundary:
+                if self.is_looking_at_boundary:
+                    break
+            if stop_at_obstacle:
+                if self.is_looking_at_obstacle:
+                    break
 
     def step_back(self, count=1, bias=None):
         """
@@ -320,7 +404,7 @@ class Turtle(object):
             self.turn_opposite(bias=bias)
             self.click()
 
-    def strafe_next(self, count=1):
+    def strafe_next(self, count=1, stop_at_boundary = False, stop_at_obstacle = False):
         """
         Step to the face which is in the "next" (i.e. usually counterclockwise)
         direction, without changing turtle's orientation:
@@ -335,10 +419,18 @@ class Turtle(object):
         """
         for i in range(count):
             self.turn_next()
+            if stop_at_boundary:
+                if self.is_looking_at_boundary:
+                    self.turn_prev()
+                    break
+            if stop_at_obstacle:
+                if self.is_looking_at_obstacle:
+                    self.turn_prev()
+                    break
             self.click()
             self.turn_next()
 
-    def strafe_prev(self, count=1):
+    def strafe_prev(self, count=1, stop_at_boundary = False, stop_at_obstacle = False):
         """
         Step to the face which is in the "prev" (i.e. usually clockwise)
         direction, without changing turtle's orientation:
@@ -353,6 +445,14 @@ class Turtle(object):
         """
         for i in range(count):
             self.turn_prev()
+            if stop_at_boundary:
+                if self.is_looking_at_boundary:
+                    self.turn_next()
+                    break
+            if stop_at_obstacle:
+                if self.is_looking_at_obstacle:
+                    self.turn_next()
+                    break
             self.click()
             self.turn_prev()
 
@@ -464,13 +564,67 @@ class Turtle(object):
     def reset_painting_cycle(self, layer_name = PAINT):
         self.painting_index[layer_name] = 0
 
+    def set_is_obstacle(self, is_obstacle):
+        """
+        Mark current face as an obstacle.
+        "Obstacle" is just a boolean indicator, that can be
+        checked with turtle.get_is_obstacle or turtle.is_looking_at_obstacle.
+
+        is_obstacle : boolean or int, 1 or True for marking face as obstacle.
+        """
+        self.current_face[self.obstacle_layer] = int(is_obstacle)
+
+    def get_is_obstacle(self, face):
+        return bool(face[self.obstacle_layer])
+
+    @property
+    def is_at_obstacle(self):
+        """
+        Contains True if the turtle is currently at face which was marked
+        as an obstacle.
+        """
+        return bool(self.current_face[self.obstacle_layer])
+
+    def set_obstacle_mask(self, face_mask, invert=False):
+        """
+        Set obstacle indicators for all faces of the mesh.
+
+        face_mask: list of booleans or ints, True or 1 to mark face as an obstacle.
+        invert: boolean, default false: set to True to invert the meaning of face_mask.
+        """
+        for is_obstacle, face in zip(face_mask, self.bmesh.faces):
+            if invert:
+                face[self.obstacle_layer] = 1 - int(is_obstacle)
+            else:
+                face[self.obstacle_layer] = int(is_obstacle)
+
+    @property
+    def is_looking_at_obstacle(self):
+        """
+        Contains True if the face beyond the edge at which the turtle is currently
+        looking was marked as an obstacle.
+        """
+        face = self.get_next_face()
+        return bool(face[self.obstacle_layer])
+
     def get_selected_faces_pydata(self):
+        """
+        Return list of selected faces in Sverchok format.
+        """
         return [[vert.index for vert in face.verts] for face in self.bmesh.faces if face.select]
 
     def get_selected_faces(self):
+        """
+        Return list of selected faces.
+        returns: list of BMFace.
+        """
         return [face for face in self.bmesh.faces if face.select]
 
     def get_selection_mask(self):
+        """
+        Returns selection mask.
+        result: list of booleans.
+        """
         return [face.select for face in self.bmesh.faces]
 
     def get_painting_value(self, face, layer_name = PAINT):
@@ -481,19 +635,56 @@ class Turtle(object):
         layer = self.painting_layer[layer_name]
         return [face[layer] for face in self.bmesh.faces]
 
+    def get_is_looking_at_face_ring(self, max_length = None, consider_obstacles = True, bias = None):
+        if max_length is None:
+            max_length = len(self.bmesh.faces)
+        loop = self.current_loop
+        face = self.current_face
+        i = 0
+        while True:
+            if i > max_length:
+                return False
+            i += 1
+            next_loop = loop.link_loop_radial_next
+            face = next_loop.face
+            if consider_obstacles and face[self.obstacle_layer]:
+                return False
+            loop = self.get_opposite_loop(next_loop, bias)
+            if loop.edge.is_boundary:
+                return False
+            if face == self.current_face:
+                return True
+        return False
+
     def was_at_face(self, face):
+        """
+        Whether the turtle already has previously visited the given face.
+
+        face : BMFace
+        returns: boolean
+        """
         v = face[self.index_layer]
         return (v != 0)
 
     @property
     def is_looking_at_boundary(self):
+        """
+        Contains True if the edge at which the turtle is currently looking
+        is a boundary edge.
+        """
         return self.current_loop.edge.is_boundary
 
     @property
     def is_at_boundary(self):
+        """
+        Contains True if the current face is a boundary face.
+        """
         return any(edge.is_boundary for edge in self.current_face.edges)
 
     @property
     def was_here(self):
+        """
+        Contains True if the turtle has previously visited the current face.
+        """
         return self.was_at_face(self.current_face)
 
