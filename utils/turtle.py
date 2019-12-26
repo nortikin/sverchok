@@ -296,6 +296,16 @@ class Turtle(object):
             loop = self.get_opposite_loop(next_loop, bias)
         return face
 
+    def get_face_at_next(self):
+        loop = self.current_loop.link_loop_next
+        next_loop = loop.link_loop_radial_next
+        return next_loop.face
+
+    def get_face_at_prev(self):
+        loop = self.current_loop.link_loop_prev
+        next_loop = loop.link_loop_radial_next
+        return next_loop.face
+
     def get_direct_distance_to_edge(self, check_loop, maximum = None, bias=None):
         """
         Find distance to some "good" edge, if the turtle will step forward
