@@ -98,6 +98,11 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     py_items = {"True": [[True]], "False": [[False]], "None": [None]}
 
+    def update_node(self, context):
+        with self.sv_throttle_tree_update():
+            self.rebuild_out_sockets()
+        updateNode(self, context)
+
     def change_sockets(self, context):
         with self.sv_throttle_tree_update():
             pre_num = len(self.inputs) // 2
@@ -117,7 +122,7 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def rebuild_out_sockets(self):
         links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-        [self.outputs.remove(sock) for sock in self.outputs]
+        self.outputs.clear()
         new_socks = []
         for i, (sock_a, sock_b) in enumerate(zip(list(self.inputs)[1::2], list(self.inputs)[2::2])):
             sock_a_link = get_other_socket(sock_a) if sock_a.links else None
@@ -138,14 +143,14 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         for link in new_links:
             link.is_valid = True
 
-    switch_state: bpy.props.EnumProperty(items=input_items[:2], name="state", default="False", update=updateNode)
+    switch_state: bpy.props.EnumProperty(items=input_items[:2], name="state", default="False", update=update_node)
     socket_number: bpy.props.IntProperty(name="count", min=1, max=10, default=1, update=change_sockets)
 
     for i in range(10):
         vars()['__annotations__'][f'A_{i}'] = bpy.props.EnumProperty(items=input_items, name=f'A_{i}', default="True",
-                                                                     update=updateNode)
+                                                                     update=update_node)
         vars()['__annotations__'][f'B_{i}'] = bpy.props.EnumProperty(items=input_items, name=f'B_{i}', default="False",
-                                                                     update=updateNode)
+                                                                     update=update_node)
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "State").prop_name = 'switch_state'
@@ -157,7 +162,8 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'socket_number', text="in/out number")
 
     def update(self):
-        self.rebuild_out_sockets()
+        if not self.id_data.skip_tree_update:
+            self.rebuild_out_sockets()
 
     def process(self):
         for sock_a, sock_b, sock_out in zip(list(self.inputs)[1::2], list(self.inputs)[2::2], self.outputs):
