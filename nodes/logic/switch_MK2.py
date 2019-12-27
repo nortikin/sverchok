@@ -88,7 +88,7 @@ class SvSwitchNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     You can deal with empty data connected to input sockets (True or False)
     """
     bl_idname = 'SvSwitchNodeMK2'
-    bl_label = 'Switch mk2'
+    bl_label = 'Switch'
     bl_icon = 'ACTION_TWEAK'
     sv_icon = 'SV_SWITCH'
 
