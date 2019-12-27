@@ -7,5 +7,5 @@ Logic
 
    logic_node
    neuro_elman
-   switch
+   switch_MK2
    input_switch_mod
