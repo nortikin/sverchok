@@ -22,7 +22,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat, fullList, dataCorrect
 from sverchok.utils.listutils import lists_flat
 
-from sverchok.utils.modules.polygon_utils import faces_modes_dict, areas_from_polygons
+from sverchok.utils.modules.polygon_utils import faces_modes_dict, areas_from_polygons, pols_origin_modes_dict
 
 from sverchok.utils.modules.edge_utils import edges_modes_dict
 from sverchok.utils.modules.vertex_utils import vertex_modes_dict
@@ -60,12 +60,22 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
     edge_modes =   [(k, k, descr, ident) for k, (ident, _, _, _, _, _, descr) in sorted(edges_modes_dict.items(), key=lambda k: k[1][0])]
     vertex_modes = [(k, k, descr, ident) for k, (ident, _, _, _, _, _, descr) in sorted(vertex_modes_dict.items(), key=lambda k: k[1][0])]
     face_modes =   [(k, k, descr, ident) for k, (ident, _, _, _, _, _, descr) in sorted(faces_modes_dict.items(), key=lambda k: k[1][0])]
+    pols_origin_modes =   [(k, k, descr, ident) for k, (ident, _, descr) in sorted(pols_origin_modes_dict.items(), key=lambda k: k[1][0])]
 
-    cmp_modes = [
-        ("0", "=", "Compare by ==", 0),
-        ("1", ">=", "Compare by >=", 1),
-        ("2", "<=", "Compare by <=", 2)
+    origin_modes = [
+        ("Center", "Center", "Median Center", 0),
+        ("First", "First", "First Vertex", 1),
+        ("Last", "Last", "Last Vertex", 2)
     ]
+
+    tangent_modes = [
+        ("Edge", "Edge", "Face tangent based on longest edge", 0),
+        ("Edge Diagonal", "Edge Diagonal", "Face tangent based on the edge farthest from any vertex", 1),
+        ("Edge Pair", "Edge Pair", "Face tangent based on the two longest disconnected edges", 2),
+        ("Vert Diagonal", "Vert Diagonal", "Face tangent based on the two most distant vertices", 3),
+        ("Center - Origin", "Center - Origin", "Face tangent based on the mean center and first corner", 4),
+    ]
+
     @throttled
     def update_mode(self, context):
         # for mode in self.modes:
@@ -109,6 +119,26 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
     sum_items: BoolProperty(
         name="Separate", description="Separate tiles",
         default=False, update=updateNode)
+    origin_mode: EnumProperty(
+        name="Origin",
+        items=origin_modes,
+        default="Center",
+        update=update_mode)
+    tangent_mode: EnumProperty(
+        name="Direction",
+        items=tangent_modes,
+        default="Edge",
+        update=update_mode)
+    center_mode: EnumProperty(
+        name="Direction",
+        items=pols_origin_modes[:3],
+        default="Median Center",
+        update=update_mode)
+    pols_origin_mode: EnumProperty(
+        name="Direction",
+        items=pols_origin_modes,
+        default="Median Center",
+        update=update_mode)
 
     def actual_mode(self):
         if self.mode == 'Verts':
@@ -120,7 +150,7 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         return component_mode
 
     def draw_label(self):
-        text = self.mode + " "+ self.actual_mode()
+        text = "CA: " + self.mode + " "+ self.actual_mode()
         return text
 
     def draw_buttons(self, context, layout):
@@ -136,7 +166,19 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "face_mode", text="")
             if self.face_mode == "Area":
                 layout.prop(self, "sum_items", text="Sum Areas")
-
+            if self.face_mode == "Perimeter":
+                layout.prop(self, "sum_items", text="Sum Perimeters")
+        info = modes_dicts[self.mode][self.actual_mode()]
+        oper_props = info[3]
+        if 'o' in oper_props:
+            layout.prop(self, "origin_mode", text="Center")
+        if 't' in oper_props:
+            layout.prop(self, "tangent_mode", text="Direction")
+        if 'c' in oper_props:
+            layout.prop(self, "center_mode", text="")
+        if 'm' in oper_props:
+            layout.prop(self, "pols_origin_mode", text="Origin")
+            layout.prop(self, "tangent_mode", text="Direction")
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -169,9 +211,26 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = match_long_repeat(params)
         func = modes_dict[component_mode][4]
+        special = False
+        if "s" in func_inputs:
+            special_op = self.sum_items
+            special = True
+        elif 'o' in func_inputs:
+            special_op = self.origin_mode
+            special = True
+        elif 't' in func_inputs:
+            special_op = self.tangent_mode
+            special = True
+        elif 'm' in func_inputs:
+            special_op = [self.tangent_mode, self.pols_origin_mode]
+            special = True
+        elif 'c' in func_inputs:
+            special_op = self.center_mode
+            special = True
+
         for param in zip(*meshes):
-            if "s" in func_inputs:
-                vals = func(*param, self.sum_items)
+            if special:
+                vals = func(*param, special_op)
             else:
                 vals = func(*param)
             result_vals.append(vals)

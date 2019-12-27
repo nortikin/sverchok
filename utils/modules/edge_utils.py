@@ -12,7 +12,7 @@ import numpy as np
 from numpy.linalg import norm as np_norm
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import matrix_normal, vectors_to_matrix, vectors_center_axis_to_matrix
-
+from sverchok.utils.modules.vertex_utils import vertex_shell_factor
 def edges_aux(vertices):
     '''create auxiliary edges array '''
     v_len = [len(v) for v in vertices]
@@ -174,6 +174,11 @@ def edges_is_wire(vertices, edges, faces):
     bm.free()
     return vals
 
+def edges_shell_factor(vertices, edges, faces):
+    v_shell = vertex_shell_factor(vertices, edges, faces)
+    vals = [(v_shell[e[0]] + v_shell[e[1]])/2 for e in edges]
+    return vals
+
 def edges_center(vertices, edges):
     vals = [tuple((Vector(vertices[e[0]])+Vector(vertices[e[1]]))/2) for e in edges]
     return vals
@@ -186,17 +191,32 @@ def edges_end(vertices, edges):
     vals = [vertices[e[1]] for e in edges]
     return vals
 
-def edges_matrix_center_ZY(vertices, edges):
+def edges_inverted(vertices, edges):
+    vals = [[e[1], e[0]] for e in edges]
+    return vals
+
+def edge_vertex(vertices, edges, origin):
+    if origin == 'Center':
+        center = [(Vector(vertices[e[0]])+Vector(vertices[e[1]]))/2 for e in edges]
+    elif origin == 'First':
+        center = [Vector(vertices[e[0]]) for e in edges]
+    else:
+        center = [Vector(vertices[e[1]]) for e in edges]
+    return center
+
+def edges_matrix_ZY(vertices, edges, origin):
     normal = edges_direction(vertices, edges, out_numpy=False)
     normal_v = [Vector(n) for n in normal]
-    center = [(Vector(vertices[e[0]])+Vector(vertices[e[1]]))/2 for e in edges]
+    center = edge_vertex(vertices, edges, origin)
+
+
     vals = matrix_normal([center, normal_v], "Z", "Y")
     return vals
 
-def edges_matrix_center_Z(vertices, edges, faces):
+def edges_matrix_Z(vertices, edges, faces, origin):
     direction = edges_direction(vertices, edges, out_numpy=False)
     direction_v = [Vector(d) for d in direction]
-    center = [(Vector(vertices[e[0]]) + Vector(vertices[e[1]])) / 2 for e in edges]
+    center = edge_vertex(vertices, edges, origin)
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     normals = [tuple(face.normal) for face in bm.faces]
     bm.free()
@@ -204,9 +224,9 @@ def edges_matrix_center_Z(vertices, edges, faces):
     vals = vectors_center_axis_to_matrix(center, direction_v, ed_normals)
     return vals
 
-def edges_matrix_center_X(vertices, edges, faces):
-    p0 = [vertices[e[0]] for e in edges]
-    center = [(Vector(vertices[e[0]])+ Vector(vertices[e[1]])) / 2 for e in edges]
+def edges_matrix_X(vertices, edges, faces, origin):
+    p0 = [vertices[e[1]] for e in edges] if origin == 'First' else [vertices[e[0]] for e in edges]
+    center = edge_vertex(vertices, edges, origin)
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     normals = [tuple(face.normal) for face in bm.faces]
     bm.free()
@@ -215,22 +235,24 @@ def edges_matrix_center_X(vertices, edges, faces):
     return vals
 
 edges_modes_dict = {
-    'Geometry':           (100, 'vs', 'u', 've',  edges_vertices, 'Vertices Faces', 'Vertices of each edge'),
-    'Length':             (101, 's', 's',  'ves', edges_length, 'Length', 'Edge length'),
-    'Direction':          (102, 'v', '',   've',  edges_direction, 'Direction', 'Normalized Direction'),
-    'Normal':             (103, 'v', '',   'vep', edges_normals_full, 'Normal', 'Edge Normal'),
-    'Face Angle':         (104, 's', '',   'vep', faces_angle_full, 'Face Angle', 'Face angle'),
-    'Is Boundary':        (105, 's', '',   'vep', edge_is_boundary, 'Is Boundary', 'Is Edge on mesh borders'),
-    'Is Contiguous':      (106, 's', '',   'vep', edge_is_contiguous, 'Is Contuguous', 'Is Edge contiguous'),
-    'Is Convex':          (107, 's', '',   'vep', edge_is_convex, 'Is_Convex', 'Is Edge Convex'),
-    'Is Mainfold':        (108, 's', '',   'vep', edge_is_manifold, 'Is_Mainfold', 'Is Edge part of the Mainfold'),
-    'Is Wire':            (109, 's', '',   'vep', edges_is_wire, 'Is_Wire', 'Has no related faces'),
-    'Center':             (110, 'v', '',   've', edges_center, 'Center', 'Edges Midpoint'),
-    'Origin':             (111, 'v', '',   've', edges_origin, 'Origin', 'Edges first point'),
-    'End':                (112, 'v', '',   've', edges_end, 'End', 'Edges End point'),
-    'Adjacent faces':     (113, 's', 'u',  'ep', adjacent_faces_comp, 'Faces', 'Adjacent faces'),
-    'Adjacent faces Num': (114, 's', '',   'ep', adjacent_faces, 'Number', 'Adjacent faces number'),
-    'Matrix Center ZY':   (115, 'm', 'u',  've', edges_matrix_center_ZY, 'Matrix', 'Matrix in center of edge. Z axis on edge. Y up'),
-    'Matrix Center Z':    (116, 'm', 'u',  'vep', edges_matrix_center_Z,  'Matrix', 'Matrix in center of edge. Z axis on edge. Z in normal'),
-    'Matrix Center X':    (117, 'm', 'u',  'vep', edges_matrix_center_X,  'Matrix', 'Matrix in center of edge. X axis on edge. Z in normal'),
+    'Geometry':           (0, 'vs', 'u', 've',  edges_vertices, 'Vertices Faces', 'Geometry of each edge. (explode)'),
+    'Direction':          (1, 'v', '',   've',  edges_direction, 'Direction', 'Normalized Direction'),
+    'Center':             (2, 'v', '',   've', edges_center, 'Center', 'Edges Midpoint'),
+    'Origin':             (3, 'v', '',   've', edges_origin, 'Origin', 'Edges first point'),
+    'End':                (4, 'v', '',   've', edges_end, 'End', 'Edges End point'),
+    'Normal':             (5, 'v', '',   'vep', edges_normals_full, 'Normal', 'Edge Normal'),
+    'Length':             (10, 's', 's',  'ves', edges_length, 'Length', 'Edge length'),
+    'Face Angle':         (11, 's', '',   'vep', faces_angle_full, 'Face Angle', 'Face angle'),
+    'Sharpness':          (12,   's', '',   'vep', edges_shell_factor, 'Sharpness ', 'Average of curvature of mesh in edges vertices'),
+    'Inverted':           (20, 'v', '',   've', edges_inverted, 'Edges', 'Reversed Edge'),
+    'Adjacent faces':     (21, 's', 'u',  'ep', adjacent_faces_comp, 'Faces', 'Adjacent faces'),
+    'Adjacent faces Num': (22, 's', '',   'ep', adjacent_faces, 'Number', 'Adjacent faces number'),
+    'Is Boundary':        (30, 's', '',   'vep', edge_is_boundary, 'Is Boundary', 'Is Edge on mesh borders'),
+    'Is Contiguous':      (31, 's', '',   'vep', edge_is_contiguous, 'Is Contuguous', 'Is Edge  manifold and between two faces with the same winding'),
+    'Is Convex':          (32, 's', '',   'vep', edge_is_convex, 'Is_Convex', 'Is Edge Convex'),
+    'Is Mainfold':        (33, 's', '',   'vep', edge_is_manifold, 'Is_Mainfold', 'Is Edge part of the Mainfold'),
+    'Is Wire':            (34, 's', '',   'vep', edges_is_wire, 'Is_Wire', 'Has no related faces'),
+    'Matrix ZY':          (40, 'm', 'uo',  'veo', edges_matrix_ZY, 'Matrix', 'Matrix in center of edge. Z axis on edge. Y up'),
+    'Matrix Z':           (41, 'm', 'uo',  'vepo', edges_matrix_Z,  'Matrix', 'Matrix in center of edge. Z axis on edge. Z in normal'),
+    'Matrix X':           (42, 'm', 'uo',  'vepo', edges_matrix_X,  'Matrix', 'Matrix in center of edge. X axis on edge. Z in normal'),
 }

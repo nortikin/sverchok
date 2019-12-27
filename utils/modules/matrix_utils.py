@@ -13,7 +13,7 @@ def vectors_to_matrix(centrs, normals, p0_xdirs):
 
     for cen, nor, p0 in zip(centrs, normals, p0_xdirs):
         zdir = nor
-        xdir = (Vector(p0) - cen).normalized()
+        xdir = (Vector(p0) - Vector(cen)).normalized()
         ydir = Vector(zdir).cross(xdir)
         lM = [(xdir[0], ydir[0], zdir[0], cen[0]),
               (xdir[1], ydir[1], zdir[1], cen[1]),

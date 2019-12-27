@@ -40,25 +40,21 @@ This node has the following parameters:
 
   * For **Edges**, supported criteria are:
 
-    * **Length**. Edges with similar length.
-    * **Direction**. Edges with similar direction.
-    * **Adjacent faces**. Edges with similar number of adjacent faces.
-    * **Face Angle**. Edges which have similar angle between adjacent faces.
-
     * **Geometry**. Geometry of each edge. (explode)
     * **Length**. Edge length
     * **Direction**.  'Normalized Direction
     * **Normal**. Edge Normal
-    * **Face Angle**. Face angle
+    * **Face Angle**. Edges faces angle
     * **Is Boundary**.  Is Edge on mesh borders
     * **Is Contiguous**. Is Edge contiguous
     * **Is Convex**. Is Edge Convex
     * **Is Manifold**. Is Edge part of the Manifold
     * **Is Wire**. Has no related faces
-    * **Center**. Edges Midpoint
-    * **Origin**. Edges first point
-    * **End**. Edges End point
-    * **Adjacent faces**. Adjacent faces
+    * **Sharpness**. Average of curvature of mesh in edges vertices.
+    * **Center**. Edges Midpoint.
+    * **Origin**. Edges first point.
+    * **End**. Edges End point.
+    * **Adjacent faces**. Adjacent faces.
     * **Adjacent faces Num**. Adjacent faces number
     * **Matrix Center Z**. Matrix in center of edge. Z axis on edge. Y up
     * **Matrix Center Z'**. Matrix in center of edge. Z axis on edge. Z in normal
@@ -66,13 +62,24 @@ This node has the following parameters:
 
   * For **Faces**, supported criteria are:
 
-    * **Area**. Faces with similar area.
-    * **Sides**. Faces with similar number of sides.
-    * **Perimeter**. Faces with similar perimeter.
-    * **Normal**. Faces with similar normal vector.
-    * **CoPlanar**. Faces nearly coplanar to selected.
-- **Compare by**. Comparasion operator to use. Available values are **=**, **>=**, **<=**.
-- **Threshold**. Similarity threshold. This parameter can be also provided as input.
+    * **Geometry**. Geometry of each face. (explode)
+    * **Area**. Area of faces
+    * **Sides**. Sides of faces
+    * **Perimeter**. Perimeter of faces
+    * **Normal**. Normal of faces
+    * **Normal Absolute**. Median Center + Normal
+    * **Center Bounds**. Center of bounding box of faces
+    * **Center Median**. Mean of vertices of each face
+    * **Center Median Weighted**. Mean of vertices of each face weighted by edges length
+    * **Perimeter Bmesh**. Perimeter
+    * **Tangent edge**. Face tangent based on longest edge
+    * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
+    * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.
+    * **Tangent vert diagonal**. Face tangent based on the two most distant vertices.
+    * **Edges**. Face Edges.
+    * **Matrix**. Matrix in median center of face. Z axis on normal. X to first corner.
+    * **Matrix Median Align**. Matrix in median center of face. Z axis on normal. X aligned with first edge.
+    * **Matrix p0 Align**. Matrix in first corner of face. Z axis on normal. X aligned with first edge.
 
 Outputs
 -------

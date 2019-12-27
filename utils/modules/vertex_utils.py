@@ -90,7 +90,7 @@ vertex_modes_dict = {
     'Adjacent faces num': (2, 's', '',   'vp', adjacent_edg_pol, 'Number', 'Number of adjacent faces'),
     'Adjacent edges':     (4, 's', 'u',  've', adjacent_edg_pol_comp, 'Edges', 'Adjacent edges'),
     'Adjacent faces ':    (5, 's', 'u',  'vp', adjacent_edg_pol_comp, 'Faces ', 'Adjacent faces'),
-    'Sharpness':         (6, 's', '',   'vep', vertex_shell_factor, 'Sharpness ', 'Curvature of mesh in vertex'),
+    'Sharpness':          (6, 's', '',   'vep', vertex_shell_factor, 'Sharpness ', 'Curvature of mesh in vertex'),
     'Is Boundary ':       (7, 's', '',   'vep', vertex_is_boundary, 'Is_Boundary ', 'Is Vertex on mesh borders'),
     'Is Manifold':        (8, 's', '',   'vep', vertex_is_manifold, 'Is_Manifold', 'Is Vertex part of the Manifold'),
     'Is Wire':            (9, 's', '',   'vep', vertex_is_wire, 'Is_Wire', 'Is vertex only connected by edges'),
