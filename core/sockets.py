@@ -44,7 +44,8 @@ socket_colors = {
     "SvDummySocket": (0.8, 0.8, 0.8, 0.3),
     "SvSeparatorSocket": (0.0, 0.0, 0.0, 0.0),
     "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
-    "SvTextSocket": (0.68, 0.85, 0.90, 1)
+    "SvTextSocket": (0.68, 0.85, 0.90, 1),
+    "SvDictionarySocket": (0.40, 0.02, 1.00, 1.00)
 }
 
 def process_from_socket(self, context):
@@ -367,7 +368,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
+        if self.links and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -505,7 +506,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         # debug("Node %s, socket %s, is_linked: %s, is_output: %s",
         #         self.node.name, self.name, self.is_linked, self.is_output)
 
-        if self.is_linked and not self.is_output:
+        if self.links and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.prop_name:
             # to deal with subtype ANGLE, this solution should be considered temporary...
@@ -520,6 +521,34 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
             return default
         else:
             raise SvNoDataError(self)
+
+
+class SvDictionarySocket(NodeSocket, SvSocketCommon):
+    '''For dictionary data'''
+    bl_idname = "SvDictionarySocket"
+    bl_label = "Dictionary Socket"
+
+    prop_name: StringProperty(default='')
+    custom_draw: StringProperty()
+
+    def get_prop_data(self):
+        if self.prop_name:
+            return {"prop_name": self.prop_name}
+        else:
+            return {}
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if self.links and not self.is_output:
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif default is sentinel:
+            raise SvNoDataError(self)
+        else:
+            return default
+
 
 """
 type_map_to/from are used to get the bl_idname from a single letter
@@ -550,7 +579,7 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
-    SvTextSocket, SvObjectSocket
+    SvTextSocket, SvObjectSocket, SvDictionarySocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)

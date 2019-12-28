@@ -120,6 +120,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddQuaternion", **icon('SV_QUATERNION'))
         layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
+        layout.menu("NODEVIEW_MT_AddDictionary")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText", icon='TEXT')
@@ -187,6 +188,7 @@ classes = [
     make_class('Layout', "Layout"),
     make_class('Listmain', "List Main"),
     make_class('Liststruct', "List Struct"),
+    make_class('Dictionary', "Dictionary"),
     make_class('Number', "Number"),
     make_class('Vector', "Vector"),
     make_class('Matrix', "Matrix"),
