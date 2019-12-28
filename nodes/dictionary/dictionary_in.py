@@ -56,7 +56,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvSeparatorSocket', 'Empty')
-        self.outputs.new('SvDictionarySocket', 'Dict')['keys'] = []
+        self.outputs.new('SvDictionarySocket', 'Dict')
 
     def update(self):
         print(f'Update {self.name}')
@@ -75,11 +75,8 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
             re_socket.custom_draw = 'draw_socket'
             re_link = self.id_data.links.new(socket_from, re_socket)
             re_link.is_valid = True
+            setattr(self, re_socket.prop_name, re_socket.other.name)
             self.inputs.new('SvSeparatorSocket', 'Empty')
-
-        # set order of output data
-        self.outputs['Dict']['order'] = [(getattr(self, sock.prop_name), sock.bl_idname) for sock in list(self.inputs)[:-1]]
-        print("Socket order", self.outputs['Dict']['order'])
 
     def draw_socket(self, socket, context, layout):
         layout.prop(self, 'up', text='', icon='TRIA_UP')
