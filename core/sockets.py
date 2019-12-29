@@ -60,6 +60,8 @@ class SvSocketCommon:
     use_expander: BoolProperty(default=True)
     use_quicklink: BoolProperty(default=True)
     expanded: BoolProperty(default=False)
+    custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
+    prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
@@ -270,7 +272,9 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
     object_ref: StringProperty(update=process_from_socket)
 
     def draw(self, context, layout, node, text):
-        if not self.is_output and not self.is_linked:
+        if self.custom_draw:
+            super().draw(context, layout, node, text)
+        elif not self.is_output and not self.is_linked:
             layout.prop_search(self, 'object_ref', bpy.data, 'objects', text=self.name)
         elif self.is_linked:
             layout.label(text=text + '. ' + SvGetSocketInfo(self))
@@ -278,7 +282,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             layout.label(text=text)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
+        if self.links and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.object_ref:
             obj_ref = bpy.data.objects.get(self.object_ref)
@@ -306,7 +310,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
         return (0.68,  0.85,  0.90, 1)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
+        if self.links and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.text:
             return [self.text]
@@ -321,7 +325,6 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvMatrixSocket"
     bl_label = "Matrix Socket"
 
-    prop_name: StringProperty(default='')
     num_matrices: IntProperty(default=0)
 
     @property
@@ -338,7 +341,7 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         self.num_matrices = 0
-        if self.is_linked and not self.is_output:
+        if self.links and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -354,9 +357,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     bl_label ="Vertices Socket"
 
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-    prop_name: StringProperty(default='')
     use_prop: BoolProperty(default=False)
-    custom_draw: StringProperty()
 
     def get_prop_data(self):
         if self.prop_name:
@@ -388,7 +389,6 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     bl_label = "Quaternion Socket"
 
     prop: FloatVectorProperty(default=(1, 0, 0, 0), size=4, subtype='QUATERNION', update=process_from_socket)
-    prop_name: StringProperty(default='')
     use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
@@ -401,7 +401,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
+        if self.links and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -421,7 +421,6 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
     bl_label = "Color Socket"
 
     prop: FloatVectorProperty(default=(0, 0, 0, 1), size=4, subtype='COLOR', min=0, max=1, update=process_from_socket)
-    prop_name: StringProperty(default='')
     use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
@@ -434,7 +433,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.is_linked and not self.is_output:
+        if self.links and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
 
         if self.prop_name:
@@ -453,14 +452,13 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
     bl_label = "Dummys Socket"
 
     prop: FloatVectorProperty(default=(0, 0, 0), size=3, update=process_from_socket)
-    prop_name: StringProperty(default='')
     use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
         return self.other.get_prop_data()
 
     def sv_get(self):
-        if self.is_linked:
+        if self.links:
             return self.links[0].bl_idname
 
     def sv_type_conversion(self, new_self):
@@ -470,8 +468,6 @@ class SvSeparatorSocket(NodeSocket, SvSocketCommon):
     ''' Separator Socket used to separate groups of sockets '''
     bl_idname = "SvSeparatorSocket"
     bl_label = "Separator Socket"
-
-    prop_name: StringProperty(default='')
 
     def draw(self, context, layout, node, text):
         # layout.label("")
@@ -488,10 +484,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvStringsSocket"
     bl_label = "Strings Socket"
 
-    prop_name: StringProperty(default='')
     prop_type: StringProperty(default='')
     prop_index: IntProperty()
-    custom_draw: StringProperty()
 
     def get_prop_data(self):
         if self.prop_name:
@@ -527,9 +521,6 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
     '''For dictionary data'''
     bl_idname = "SvDictionarySocket"
     bl_label = "Dictionary Socket"
-
-    prop_name: StringProperty(default='')
-    custom_draw: StringProperty()
 
     def get_prop_data(self):
         if self.prop_name:
