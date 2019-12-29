@@ -169,7 +169,6 @@ def faces_angle_full(vertices, edges, faces):
 
 def edge_is_filter(vertices, edges, faces, mode):
     mode = mode.split(' ')[1]
-    print(mode)
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     good, bad, mask = Edges.process(bm, mode, edges)
     bm.free()
@@ -230,26 +229,26 @@ def edges_matrix_normal(vertices, edges, faces, orientation):
 
 
 edges_modes_dict = {
-    'Geometry':           (0, 'vs',  'u', '', 've',  edges_vertices, 'Vertices, Faces', 'Geometry of each edge. (explode)'),
-    'Direction':          (1, 'v', '',  '',   've',  edges_direction, 'Direction', 'Normalized Direction'),
-    'Center':             (2, 'v', '',  '',   've', edges_center, 'Center', 'Edges Midpoint'),
-    'Origin':             (3, 'v', '',  '',   've', edges_origin, 'Origin', 'Edges first point'),
-    'End':                (4, 'v', '',  '',   've', edges_end, 'End', 'Edges End point'),
-    'Normal':             (5, 'v', '',  '',   'vep', edges_normals_full, 'Normal', 'Edge Normal'),
-    'Matrix':             (10, 'm', 'u',  'omu',  've', edges_matrix, 'Matrix', 'Aligned with edge'),
-    'Matrix Normal':      (11, 'm', 'u',  'on',  'vep', edges_matrix_normal,  'Matrix', 'Aligned with edge and Normal (Needs Faces)'),
-    'Length':             (20, 's', '',  's',  've', edges_length, 'Length', 'Edge length'),
-    'Sharpness':          (21, 's', '',  '',   'vep', edges_shell_factor, 'Sharpness ', 'Average of curvature of mesh in edges vertices'),
-    'Face Angle':         (22, 's', '',  '',   'vep', faces_angle_full, 'Face Angle', 'Face angle'),
-    'Inverted':           (30, 'v', '',  '',   've', edges_inverted, 'Edges', 'Reversed Edge'),
-    'Adjacent Faces':     (31, 's', 'u',  '',  'ep', adjacent_faces, 'Faces', 'Adjacent faces'),
-    'Connected Edges':    (32, 's', 'u',  '',   've', connected_edges, 'Number', 'Adjacent faces number'),
-    'Adjacent Faces Num': (33, 's', '',  '',   'ep', adjacent_faces_number, 'Number', 'Adjacent faces number'),
-    'Connected Edges Num': (34, 's', '',  '',   've', connected_edges_num, 'Number', 'Adjacent faces number'),
-    'Is Boundary':        (40, 'sss', '',  'b',   'vep', edge_is_filter, 'Mask, True Edges, False Edges', 'Is Edge on mesh borders'),
-    'Is Interior':        (41, 'sss', '',  'b',   'vep', edge_is_filter, 'Is Mainfold', 'Is Edge part of the Mainfold'),
-    'Is Contiguous':      (42, 'sss', '',  'b',   'vep', edge_is_filter, 'Mask, True Edges, False Edges', 'Is Edge  manifold and between two faces with the same winding'),
-    'Is Convex':          (43, 'sss', '',  'b',   'vep', edge_is_filter, 'Is Convex', 'Is Edge Convex'),
-    'Is Concave':         (44, 'sss', '',  'b',   'vep', edge_is_filter, 'Is Convex', 'Is Edge Convex'),
-    'Is Wire':            (45, 'sss', '',  'b',   'vep', edge_is_filter, 'Mask, True Edges, False Edges', 'Has no related faces'),
+    'Geometry':           (0, 'vs',  'u', '',    've',  edges_vertices,        'Vertices, Faces', 'Geometry of each edge. (explode)'),
+    'Direction':          (1, 'v', '',  '',      've',  edges_direction,       'Direction', 'Normalized Direction'),
+    'Center':             (2, 'v', '',  '',      've',  edges_center,          'Center', 'Edges Midpoint'),
+    'Origin':             (3, 'v', '',  '',      've',  edges_origin,          'Origin', 'Edges first point'),
+    'End':                (4, 'v', '',  '',      've',  edges_end,             'End', 'Edges End point'),
+    'Normal':             (5, 'v', '',  '',      'vep', edges_normals_full,    'Normal', 'Edge Normal'),
+    'Matrix':             (10, 'm', 'u',  'omu', 've',  edges_matrix,          'Matrix', 'Aligned with edge'),
+    'Matrix Normal':      (11, 'm', 'u',  'on',  'vep', edges_matrix_normal,   'Matrix', 'Aligned with edge and Normal (Needs Faces)'),
+    'Length':             (20, 's', '',  's',    've',  edges_length,          'Length', 'Edge length'),
+    'Sharpness':          (21, 's', '',  '',     'vep', edges_shell_factor,    'Sharpness ', 'Average of curvature of mesh in edges vertices'),
+    'Face Angle':         (22, 's', '',  '',     'vep', faces_angle_full,      'Face Angle', 'Face angle'),
+    'Inverted':           (30, 'v', '',  '',     've',  edges_inverted,        'Edges', 'Reversed Edge'),
+    'Adjacent Faces':     (31, 's', 'u',  '',    'ep',  adjacent_faces,        'Faces', 'Adjacent faces'),
+    'Connected Edges':    (32, 's', 'u',  '',    've',  connected_edges,       'Number', 'Adjacent faces number'),
+    'Adjacent Faces Num': (33, 's', '',  '',     'ep',  adjacent_faces_number, 'Number', 'Adjacent faces number'),
+    'Connected Edges Num':(34, 's', '',  '',     've',  connected_edges_num,   'Number', 'Adjacent faces number'),
+    'Is Boundary':        (40, 'sss', '',  'b',  'vep', edge_is_filter,        'Mask, True Edges, False Edges', 'Is Edge on mesh borders'),
+    'Is Interior':        (41, 'sss', '',  'b',  'vep', edge_is_filter,        'Mask, True Edges, False Edges', 'Is Edge part of the Mainfold'),
+    'Is Contiguous':      (42, 'sss', '',  'b',  'vep', edge_is_filter,        'Mask, True Edges, False Edges', 'Is Edge  manifold and between two faces with the same winding'),
+    'Is Convex':          (43, 'sss', '',  'b',  'vep', edge_is_filter,        'Mask, True Edges, False Edges', 'Is Edge Convex'),
+    'Is Concave':         (44, 'sss', '',  'b',  'vep', edge_is_filter,        'Mask, True Edges, False Edges', 'Is Edge Concave'),
+    'Is Wire':            (45, 'sss', '',  'b',  'vep', edge_is_filter,        'Mask, True Edges, False Edges', 'Has no related faces'),
 }

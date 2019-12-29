@@ -22,7 +22,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.utils.modules.polygon_utils import areas_from_polygons, perimeters_from_polygons
+from sverchok.utils.modules.polygon_utils import areas_from_polygons, pols_perimeters
 from sverchok.utils.modules.edge_utils import edges_length, edges_direction, adjacent_faces_number, faces_angle
 from sverchok.utils.modules.vertex_utils import adjacent_edg_pol_num
 
@@ -206,7 +206,7 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
         elif int(self.face_mode) == 204:
             vals = [len(p) for p in faces]
         elif int(self.face_mode) == 205:
-            vals = perimeters_from_polygons(vertices, faces)
+            vals = pols_perimeters(vertices, faces)
         elif  int(self.face_mode) == 206:
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
             vals = [tuple(face.normal) for face in bm.faces]

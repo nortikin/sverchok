@@ -26,81 +26,63 @@ This node has the following parameters:
   * For **Vertices** supported criteria are:
 
     * **Normal**. Vertices with similar normal vector.
-    * **Adjacent edges num**: Number of Adjacent edges
-    * **Adjacent faces num**: Number of adjacent faces
+    * **Matrix ZY**: Matrix aligned with normal
+    * **Sharpness**: Curvature of mesh in vertex
     * **Adjacent edges**: Adjacent edges
     * **Adjacent faces**: Adjacent faces
-    * **Sharpness**: Curvature of mesh in vertex
+    * **Adjacent edges num**: Number of Adjacent edges
+    * **Adjacent faces num**: Number of adjacent faces
     * **Is Boundary**: Is Vertex on mesh borders
+    * **Is Interior**: Is Vertex on mesh interior
     * **Is Manifold**: Is Vertex part of the Manifold
     * **Is Wire**: Is vertex only connected by edges
-    * **'Matrix ZY**: Matrix, Z in normal, Y up
-    * **Matrix YX**: Matrix, Y in normal, X up
-    * **Matrix XZ**: Matrix, X in normal, Z up
+
 
   * For **Edges**, supported criteria are:
 
     * **Geometry**. Geometry of each edge. (explode)
-    * **Length**. Edge length
     * **Direction**.  'Normalized Direction
+    * **Center**. Edges Midpoint.
+    * **Origin**. Edges first point.
+    * **End**. Edges End point.
     * **Normal**. Edge Normal
-    * **Face Angle**. Edges faces angle
+    * **Matrix**. Matrix aligned with edge.
+    * **Matrix Normal**. Matrix aligned with edge and edge normal (needs faces).
+    * **Length**. Edge length
+    * **Sharpness**. Average of curvature of mesh in edges vertices.
+    * **Face Angle**. Edges faces angle.
+    * **Inverted**. Reversed edges.
+    * **Adjacent faces**. Adjacent faces.
+    * **Adjacent faces Num**. Adjacent faces number
     * **Is Boundary**.  Is Edge on mesh borders
     * **Is Contiguous**. Is Edge contiguous
     * **Is Convex**. Is Edge Convex
     * **Is Manifold**. Is Edge part of the Manifold
     * **Is Wire**. Has no related faces
-    * **Sharpness**. Average of curvature of mesh in edges vertices.
-    * **Center**. Edges Midpoint.
-    * **Origin**. Edges first point.
-    * **End**. Edges End point.
-    * **Adjacent faces**. Adjacent faces.
-    * **Adjacent faces Num**. Adjacent faces number
-    * **Matrix Center Z**. Matrix in center of edge. Z axis on edge. Y up
-    * **Matrix Center Z'**. Matrix in center of edge. Z axis on edge. Z in normal
-    * **Matrix Center X'**. Matrix in center of edge. X axis on edge. Z in normal
 
   * For **Faces**, supported criteria are:
 
     * **Geometry**. Geometry of each face. (explode)
-    * **Area**. Area of faces
-    * **Sides**. Sides of faces
-    * **Perimeter**. Perimeter of faces
+    * **Center **.
+      * **Center Bounds**. Center of bounding box of faces
+      * **Center Median**. Mean of vertices of each face
+      * **Center Median Weighted**. Mean of vertices of each face weighted by edges length
     * **Normal**. Normal of faces
     * **Normal Absolute**. Median Center + Normal
-    * **Center Bounds**. Center of bounding box of faces
-    * **Center Median**. Mean of vertices of each face
-    * **Center Median Weighted**. Mean of vertices of each face weighted by edges length
-    * **Tangent edge**. Face tangent based on longest edge
-    * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
-    * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.
-    * **Tangent vert diagonal**. Face tangent based on the two most distant vertices.
-    * **Edges**. Face Edges.
+    * **Tangent**.
+      * **Tangent edge**. Face tangent based on longest edge
+      * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
+      * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.
+      * **Tangent vert diagonal**. Face tangent based on the two most distant vertices.
     * **Matrix**. Matrix in median center of face. Z axis on normal. X to first corner.
-    * **Matrix Median Align**. Matrix in median center of face. Z axis on normal. X aligned with first edge.
-    * **Matrix p0 Align**. Matrix in first corner of face. Z axis on normal. X aligned with first edge.
-
-Outputs
--------
-
-This node has the following outputs:
-
-- **Mask**. This indicates elements selected by the node. This mask is to be applied to vertices, edges or faces, depending on selected mode.
-- **Vertices**. Selected vertices. This output is only available in **Vertices** mode.
-- **Edges**. Selected edges. This output is only available in **Edges** mode.
-- **Faces**. Selected faces. This output is only available in **Faces** mode.
-
-Examples of usage
------------------
-
-Select faces with similar normal vector. Originally selected faces are marked with red color.
-
-.. image:: https://cloud.githubusercontent.com/assets/284644/25073036/6cabd4da-22ff-11e7-9880-143d8af4b8c9.png
-
-Select faces with similar area. Originally selected faces are marked with red color.
-
-.. image:: https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png
-
-Select edges with direction similar to selected edges. Originally selected edges are marked with orange color.
-
-.. image:: https://cloud.githubusercontent.com/assets/284644/25073037/6ce11f50-22ff-11e7-8744-f5aefb616f23.png
+    * **Area**. Area of faces
+    * **Perimeter**. Perimeter of faces
+    * **Sides**. Sides of faces
+    * **Neighbor Faces Num**. Number of Faces that share a edge with face
+    * **Adjacent Faces Num**. Number of Faces that share a vertex with face.
+    * **Sharpness**. Average of curvature of mesh in faces vertices'),
+    * **Inverse**. Reversed Polygons (Flipped)'),
+    * **Edges**. Face Edges.
+    * **Adjacent Faces**. Faces that share a edge with face.
+    * **Neighbor Faces**. Faces that share a vertex with face.
+    * **Is Boundary**. Is the face boundary or interior

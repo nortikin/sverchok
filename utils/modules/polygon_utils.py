@@ -43,7 +43,7 @@ def areas_from_polygons(verts, polygons, sum_faces=False):
     return areas
 
 
-def perimeters_from_polygons(verts, polygons, sum_perimeters=False):
+def pols_perimeters(verts, polygons, sum_perimeters=False):
 
     perimeters = []
     concat_perimeters = perimeters.append
@@ -102,7 +102,7 @@ def pols_adjacent(pols):
 def pols_adjacent_num(pols):
     return [len(p) for p in pols_adjacent(pols)]
 
-def pols_neighbour(verts, pols):
+def pols_neighbor(verts, pols):
     v_adj = adjacent_edg_pol(verts, pols)
     vals = []
     for pol in pols:
@@ -117,8 +117,8 @@ def pols_neighbour(verts, pols):
 
     return vals
 
-def pols_neighbour_num(verts, pols):
-    return [len(p) for p in pols_neighbour(verts, pols)]
+def pols_neighbor_num(verts, pols):
+    return [len(p) for p in pols_neighbor(verts, pols)]
 
 def pols_normals(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
@@ -145,7 +145,6 @@ def pols_shell_factor(vertices, edges, faces):
 
 def pols_center(vertices, edges, faces, origin):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    print(pols_origin_modes_dict[origin])
     vals = pols_origin_modes_dict[origin][1](bm.faces)
     bm.free()
     return vals
@@ -235,22 +234,22 @@ pols_origin_modes_dict = {
 
 }
 faces_modes_dict = {
-    'Geometry':        (0,  'vs', 'u', '',   'vp',  pols_vertices,            "Vertices, Faces", "Geometry of each face. (explode)"),
-    'Center':          (10, 'v',  '',  'c',  'vep', pols_center,              'Center', 'Center faces'),
-    'Normal':          (20, 'v',  '',  '',   'vep', pols_normals,             'Normal', 'Normal of faces'),
-    'Normal Absolute': (21, 'v',  '',  '',   'vep', pols_absolute_normals,    'Normal_Abs', 'Median Center + Normal'),
-    'Tangent':         (30, 'v',  '',  't',  'vep', pols_tangent,             'Tangent', 'Face tangent.'),
-    'Matrix':          (40, 'm',  'u', 'qt', 'vep', pols_matrix,             'Matrix', 'Matrix of face. Z axis on normal. X to first corner'),
-    'Area':            (50, 's',  '',  's',  'vps', areas_from_polygons,      "Area", "Area of faces"),
-    'Perimeter':       (51, 's',  '',  's',  'vp',  perimeters_from_polygons, 'Perimeter', 'Perimeter of faces'),
-    'Sides Number':    (52, 's',  '',  's',  'p',   pols_sides,               "Sides", "Sides of faces"),
-    'Neighbour Faces Num':    (53, 's',  '',  '',  'vp',   pols_neighbour_num,               "Sides", "Sides of faces"),
-    'Adjacent Faces Numr':    (54, 's',  '',  '',  'p',   pols_adjacent_num,               "Sides", "Sides of faces"),
-    'Sharpness':       (55, 's',  '',  '',   'vep', pols_shell_factor,        'Sharpness ', 'Average of curvature of mesh in faces vertices'),
-    'Inverse':         (60, 'v',  '',  '',   'p',  pols_inverted,            'Faces', 'Reversed Polygons (Flipped)'),
-    'Edges':           (61, 's',  'u', '',   'p',   pols_edges,               'Edges', 'Face Edges'),
-    'Adjacent Faces': (62, 's',  'u', '',   'p',   pols_adjacent,               'Edges', 'Face Edges'),
-    'Neighbour Faces': (63, 's',  'u', '',   'vp',   pols_neighbour,               'Edges', 'Face Edges'),
-    'Is Boundary':     (70, 'sss',  '',  '',   'vep', pols_is_boundary,        'Mask, Boundary, Interior', 'Is the face boundary'),
+    'Geometry':           (0,  'vs', 'u', '',   'vp',  pols_vertices,         'Vertices, Faces', "Geometry of each face. (explode)"),
+    'Center':             (10, 'v',  '',  'c',  'vep', pols_center,           'Center', 'Center faces'),
+    'Normal':             (20, 'v',  '',  '',   'vep', pols_normals,          'Normal', 'Normal of faces'),
+    'Normal Absolute':    (21, 'v',  '',  '',   'vep', pols_absolute_normals, 'Normal_Abs', 'Median Center + Normal'),
+    'Tangent':            (30, 'v',  '',  't',  'vep', pols_tangent,          'Tangent', 'Face tangent.'),
+    'Matrix':             (40, 'm',  'u', 'qt', 'vep', pols_matrix,           'Matrix', 'Matrix of face. Z axis on normal. X to first corner'),
+    'Area':               (50, 's',  '',  's',  'vps', areas_from_polygons,   'Area', "Area of faces"),
+    'Perimeter':          (51, 's',  '',  's',  'vp',  pols_perimeters,       'Perimeter', 'Perimeter of faces'),
+    'Sides Number':       (52, 's',  '',  's',  'p',   pols_sides,            'Sides', "Number of sides of faces"),
+    'Adjacent Faces Num': (53, 's',  '',  '',   'p',   pols_adjacent_num,     'Number', "Number of Faces that share a edge with face"),
+    'Neighbor Faces Num': (54, 's',  '',  '',   'vp',  pols_neighbor_num,     'Number', "Number of Faces that share a vertex with face"),
+    'Sharpness':          (55, 's',  '',  '',   'vep', pols_shell_factor,     'Sharpness ', 'Average of curvature of mesh in faces vertices'),
+    'Inverse':            (60, 'v',  '',  '',   'p',   pols_inverted,         'Faces', 'Reversed Polygons (Flipped)'),
+    'Edges':              (61, 's',  'u', '',   'p',   pols_edges,            'Edges', 'Face Edges'),
+    'Adjacent Faces':     (62, 's',  'u', '',   'p',   pols_adjacent,         'Edges', 'Faces that share a edge with face'),
+    'Neighbor Faces':     (63, 's',  'u', '',   'vp',  pols_neighbor,         'Edges', 'Faces that share a vertex with face'),
+    'Is Boundary':        (70, 'sss', '', '',   'vep', pols_is_boundary,      'Mask, Boundary, Interior', 'Is the face boundary'),
 
 }
