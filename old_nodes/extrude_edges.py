@@ -36,6 +36,8 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_EDGES'
 
+    replacement_nodes = [('SvExtrudeEdgesNodeMk2', None, None)]
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Edg_Pol')
