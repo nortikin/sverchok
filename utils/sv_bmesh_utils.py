@@ -19,7 +19,7 @@
 import bmesh
 from sverchok.utils.logging import info, debug
 
-def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, normal_update=False):
+def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
         normal_update, will update verts/edges/faces normals at the end
     '''
@@ -41,14 +41,18 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
         bm.faces.index_update()
 
     if edges:
+        if markup_edge_data:
+            initial_index_layer = bm.edges.layers.int.new("initial_index")
+
         add_edge = bm.edges.new
-        for edge in edges:
+        get_edge = bm.edges.get
+        for idx, edge in enumerate(edges):
             edge_seq = tuple(bm.verts[i] for i in edge)
-            try:
-                add_edge(edge_seq)
-            except ValueError:
-                # edge exists!
-                pass
+            bm_edge = get_edge(edge_seq)
+            if not bm_edge:
+                bm_edge = add_edge(edge_seq)
+            if markup_edge_data:
+                bm_edge[initial_index_layer] = idx
 
         bm.edges.index_update()
 
@@ -87,6 +91,37 @@ def face_data_from_bmesh_faces(bm, face_data):
         else:
             face_data_out.append(face_data[idx])
     return face_data_out
+
+def edge_data_from_bmesh_edges(bm, edge_data):
+    initial_index = bm.edges.layers.int.get("initial_index")
+    if initial_index is None:
+        raise Exception("bmesh has no initial_index layer")
+    edge_data_out = []
+    n_edge_data = len(edge_data)
+    for edge in bm.edges:
+        idx = edge[initial_index]
+        if idx < 0 or idx >= n_edge_data:
+            debug("Unexisting edge_data[%s] [0 - %s]", idx, n_edge_data)
+            edge_data_out.append(None)
+        else:
+            edge_data_out.append(edge_data[idx])
+    return edge_data_out
+
+def bmesh_edges_from_edge_mask(bm, edge_mask):
+    initial_index = bm.edges.layers.int.get("initial_index")
+    if initial_index is None:
+        raise Exception("bmesh has no initial_index layer")
+    bm_edges = []
+    n_edge_mask = len(edge_mask)
+    for bm_edge in bm.edges:
+        idx = bm_edge[initial_index]
+        if idx < 0 or idx >= n_edge_mask:
+            debug("Unexisting edge_mask[%s] [0 - %s]", idx, n_edge_mask)
+        else:
+            mask = edge_mask[idx]
+            if mask:
+                bm_edges.append(bm_edge)
+    return bm_edges
 
 def with_bmesh(method):
     '''Decorator for methods which can work with BMesh.

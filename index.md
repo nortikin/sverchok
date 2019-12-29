@@ -119,6 +119,7 @@
     SvFlipNormalsNode
     ---
     SvExtrudeEdgesNode
+    SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
     SvVertMaskNode
