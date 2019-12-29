@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok import data_structure
-from sverchok.utils.logging import warning, info
+from sverchok.utils.logging import warning, info, debug
 
 #####################################
 # socket data cache                 #
@@ -27,6 +27,11 @@ sentinel = object()
 
 # socket cache
 socket_data_cache = {}
+
+socket_name_cache = {}
+
+socket_lookup_cache = {}
+
 
 # faster than builtin deep copy for us.
 # useful for our limited case
@@ -44,11 +49,11 @@ def sv_deep_copy(lst):
 
 
 # Build string for showing in socket label
-def SvGetSocketInfo(socket):
+def SvGetSocketInfoInner(socket):
     """returns string to show in socket label"""
     global socket_data_cache
     ng = socket.id_data.name
-
+    
     if socket.is_output:
         s_id = socket.socket_id
     elif socket.is_linked:
@@ -66,6 +71,14 @@ def SvGetSocketInfo(socket):
                 return str(len(data))
     return ''
 
+def SvGetSocketInfo(socket):
+    socket_id = socket.socket_id
+    if socket_id in socket_name_cache:
+        return socket_name_cache[socket_id]
+    else:
+        data = SvGetSocketInfoInner(socket)
+        socket_name_cache[socket_id] = data
+        return data
 
 def SvSetSocket(socket, out):
     """sets socket data for socket"""
@@ -81,6 +94,9 @@ def SvSetSocket(socket, out):
         socket_data_cache[s_ng] = {}
     socket_data_cache[s_ng][s_id] = out
 
+def getOtherCached(socket):
+    socket_id = socket.socket_id
+    return socket_name_cache[socket_id] if socket.socket_id in socket_name_cache else socket.other.socket_id
 
 def SvGetSocket(socket, deepcopy=True):
     """gets socket data from socket,
@@ -89,26 +105,24 @@ def SvGetSocket(socket, deepcopy=True):
     set to False and increase performance substanstilly
     """
     global socket_data_cache
-    if socket.is_linked:
-        other = socket.other
-        s_id = other.socket_id
-        s_ng = other.id_data.name
-        if s_ng not in socket_data_cache:
-            raise LookupError
-        if s_id in socket_data_cache[s_ng]:
-            out = socket_data_cache[s_ng][s_id]
-            if deepcopy:
-                return sv_deep_copy(out)
-            else:
-                return out
-        else:
-            if data_structure.DEBUG_MODE:
-                debug("cache miss: %s -> %s from: %s -> %s",
-                        socket.node.name, socket.name, other.node.name, other.name)
-            raise SvNoDataError(socket)
-    # not linked
-    raise SvNoDataError(socket)
+    global socket_name_cache
+    
+    other_id = getOtherCached(socket)
+    s_ng = socket.id_data.name
 
+    if other_id in socket_data_cache[s_ng]:
+        out = socket_data_cache[s_ng][other_id]
+        if deepcopy:
+            return sv_deep_copy(out)
+        else:
+            return out
+
+    if data_structure.DEBUG_MODE:
+        other = socket.other
+        debug("cache miss: %s -> %s from: %s -> %s",
+                socket.node.name, socket.name, other.node.name, other.name)
+    raise SvNoDataError(socket)
+   
 class SvNoDataError(LookupError):
     def __init__(self, socket=None, node=None):
         if node is None and socket is not None:
@@ -162,4 +176,11 @@ def reset_socket_cache(ng):
     Reset socket cache either for node group.
     """
     global socket_data_cache
+    global socket_name_cache
+    global socket_lookup_cache
     socket_data_cache[ng.name] = {}
+    
+    socket_name_cache = {}
+
+    socket_lookup_cache = {}
+
