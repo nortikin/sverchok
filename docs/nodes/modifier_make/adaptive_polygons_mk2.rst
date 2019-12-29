@@ -127,6 +127,13 @@ This node has some number of parameters, and most of them are accessible only in
 
   The default value is **Linear**.
 
+- **Use shell factor**. If checked, each vertex normal will be multiplied by
+  so-called "shell factor" - a multiplier calculated based on the sharpness of
+  the vertex. Where a flat surface gives 1.0, and higher values sharper edges.
+  When this parameter is checked, you will have more constant "thickness" of
+  the resulting shape; when it is unchecked, the shape will tend to be more
+  smooth. Unchecked by default.
+
 - **Coordinates**. This defines the method of calculation of donor object's
   coordinates along two axes orthogonal to recipient's face normal. In any
   case, the location is defined by transforming some area of XOY plane (or
@@ -302,6 +309,10 @@ The same setup with **FrameWidth** set to 1.0 - the processing switches to **Fan
 An example of **Rectangular** triangles usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/70074578-cba98000-161c-11ea-88dd-69336809a659.png
+
+An example of "Use shell factor" parameter usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/71557169-3acf9400-2a64-11ea-85e6-b8301669745b.png
 
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
 

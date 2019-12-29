@@ -146,6 +146,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         description = "Normals mapping mode",
         items = normal_modes, default = "MAP",
         update = updateNode)
+
+    use_shell_factor : BoolProperty(
+        name = "Use shell factor",
+        description = "Use shell factor to make shell thickness constant",
+        default = False,
+        update = updateNode)
     
     z_scale_modes = [
             ("PROP", "Proportional", "Scale along normal proportionally with the donor object", 0),
@@ -302,6 +308,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "normal_mode")
         if self.normal_mode == 'MAP':
             layout.prop(self, "normal_interp_mode")
+        layout.prop(self, "use_shell_factor")
         layout.prop(self, "xy_mode")
         layout.label(text="Bounding triangle:")
         layout.prop(self, "tri_bound_mode", expand=True)
@@ -616,12 +623,16 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                                     recpt_face_data.vertices_co[0],
                                     recpt_face_data.center))
 
+                if self.use_shell_factor:
+                    face_normal = sum(recpt_face_data.vertices_normal, Vector()) / n
+                else:
+                    face_normal = recpt_face_data.normal
                 tri_normals = [(recpt_face_data.vertices_normal[i],
                                 recpt_face_data.vertices_normal[i+1],
-                                recpt_face_data.normal) for i in range(n-1)]
+                                face_normal) for i in range(n-1)]
                 tri_normals.append((recpt_face_data.vertices_normal[-1],
                                     recpt_face_data.vertices_normal[0],
-                                    recpt_face_data.normal))
+                                    face_normal))
 
                 for tri_face, tri_normal in zip(tri_faces, tri_normals):
                     sub_recpt = recpt_face_data.copy()
@@ -632,8 +643,13 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 inner_verts = [vert.lerp(recpt_face_data.center, recpt_face_data.frame_width)
                                     for vert in recpt_face_data.vertices_co]
-                inner_normals = [normal.lerp(recpt_face_data.normal, recpt_face_data.frame_width)
-                                    for normal in recpt_face_data.vertices_normal]
+                if self.use_shell_factor:
+                    inner_normals = [normal.lerp(recpt_face_data.normal, recpt_face_data.frame_width)
+                                        for normal in recpt_face_data.vertices_normal]
+                else:
+                    face_normal = sum(recpt_face_data.vertices_normal, Vector()) / n
+                    inner_normals = [normal.lerp(face_normal, recpt_face_data.frame_width)
+                                        for normal in recpt_face_data.vertices_normal]
 
                 quad_faces = [(recpt_face_data.vertices_co[i],
                                 recpt_face_data.vertices_co[i+1],
@@ -710,7 +726,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             recpt_face_data.normal = recpt_face_bm.normal
             recpt_face_data.center = recpt_face_bm.calc_center_median()
             recpt_face_data.vertices_co = [bm.verts[i].co for i in recpt_face]
-            recpt_face_data.vertices_normal = [bm.verts[i].normal for i in recpt_face]
+            if self.use_shell_factor:
+                recpt_face_data.vertices_normal = [bm.verts[i].normal * bm.verts[i].calc_shell_factor() for i in recpt_face]
+            else:
+                recpt_face_data.vertices_normal = [bm.verts[i].normal for i in recpt_face]
             recpt_face_data.vertices_idxs = recpt_face[:]
             if not isinstance(frame_width, (int, float)):
                 raise Exception(f"Unexpected data type for frame_width: {frame_width}")
