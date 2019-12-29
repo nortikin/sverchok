@@ -71,6 +71,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
     def dget(self, obj_name=None):
         if not obj_name:
             obj = bpy.context.active_object
+            if not obj:
+                self.error("No object selected")
+                return
             self.obj_name = obj.name
         else:
             obj = bpy.data.objects.get(obj_name)
@@ -90,13 +93,14 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
                     'Vertices': list([v.co[:] for v in obj_data.vertices]),
                     'Edges': obj_data.edge_keys,
                     'Polygons': [list(p.vertices) for p in obj_data.polygons],
+                    'MaterialIdx': [p.material_index for p in obj_data.polygons],
                     'Matrix': deps_obj.matrix_world
                 }
                 deps_obj.to_mesh_clear()
                 self.currently_storing = True
 
         else:
-            self.report({'WARNING'}, 'No object selected')
+            self.error("No object selected")
 
 
     def sv_init(self, context):
@@ -104,6 +108,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         out('SvVerticesSocket', 'Vertices')
         out('SvStringsSocket', 'Edges')
         out('SvStringsSocket', 'Polygons')
+        out('SvStringsSocket', 'MaterialIdx')
         out('SvMatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
