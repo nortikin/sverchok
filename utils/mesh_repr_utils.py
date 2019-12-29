@@ -81,7 +81,8 @@ def generate_object(name, bm):
 
     # create object and link to scene
     obj = bpy.data.objects.new(name, mesh)
-    bpy.context.scene.objects.link(obj)
+    collection = bpy.context.scene.collection
+    collection.objects.link(obj)
     return obj 
 
 
