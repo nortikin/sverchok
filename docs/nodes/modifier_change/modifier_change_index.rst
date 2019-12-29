@@ -12,7 +12,7 @@ Modifier Change
    smooth
    delete_loose
    edges_intersect_mk2
-   extrude_edges
+   extrude_edges_mk2
    extrude_separate
    extrude_separate_lite
    extrude_region

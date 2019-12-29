@@ -1,8 +1,6 @@
 Extrude edges
 =============
 
-*destination after Beta: Modifier Change*
-
 Functionality
 -------------
 
@@ -13,14 +11,22 @@ Inputs
 
 This node has the following inputs:
 
-- **Vertices**
-- **Edgs/Pols**
-- **Matrices**
+- **Vertices**. This input is mandatory.
+- **Edges**
+- **Faces**
+- **EdgeMask**. The mask for edges to be extruded. By default, all edges will
+  be extruded. Note that providing this input does not have sense if **Edges**
+  input was not provided.
+- **FaceData**. List containing an arbitrary data item for each face of input
+  mesh. For example, this may be used to provide material indexes of input
+  mesh faces. Optional input.
+- **Matrices**. Matrices for vertices transformation. This input expects one
+  matrix per each extruded vertex.
 
 Parameters
 ----------
 
-Nope
+This node does not have parameters.
 
 Outputs
 -------
@@ -29,10 +35,12 @@ This node has the following outputs:
 
 - **Vertices**
 - **Edges**
-- **Polygons**
+- **Faces**
 - **NewVertices** - only new vertices
 - **NewEdges** - only new edges
 - **NewPolys** - only new faces.
+- **FaceData**. List containing data items from the **FaceData** input, which
+  contains one item for each output mesh face.
 
 Examples of usage
 -----------------
@@ -52,3 +60,12 @@ Matrix input node can make skew in one or another direction:
 Matrix input node can also scale extruded edges, so you will get bell:
 
 .. image:: https://cloud.githubusercontent.com/assets/5783432/18603881/8d81e9e4-7c86-11e6-9a77-a9104bd234cc.png
+
+Extrude only top edges of the cube:
+
+.. image:: https://user-images.githubusercontent.com/284644/71553527-c9c3b880-2a32-11ea-8e87-c88bd6be744c.png
+
+Extrude only boundary edges of the plane; this also is an example of FaceData socket usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/71553528-ca5c4f00-2a32-11ea-95c4-80c1d85129f1.png
+
