@@ -43,6 +43,7 @@ def flatten(data):
         'Vertices': list(itertools.chain.from_iterable(data['Vertices'])),
         'Edges': list(itertools.chain.from_iterable(data['Edges'])),
         'Polygons': xjoined(data['Polygons']),
+        'MaterialIdx': data.get('MaterialIdx', []),
         'Matrix': list(itertools.chain.from_iterable(data['Matrix']))
     }
 
@@ -70,6 +71,7 @@ def unflatten(data):
         'Vertices': unroll(data['Vertices'], stride=3),
         'Edges': [] or unroll(data['Edges'], stride=2),
         'Polygons': [] or unroll(data['Polygons'], constant=False),
+        'MaterialIdx': data.get('MaterialIdx',[]),
         'Matrix': unroll(data['Matrix'], stride=4)
     }
 
