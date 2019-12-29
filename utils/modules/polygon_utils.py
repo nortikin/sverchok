@@ -10,8 +10,10 @@ from mathutils import Vector
 from mathutils.geometry import area_tri as area
 from mathutils.geometry import tessellate_polygon as tessellate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.modules.matrix_utils import vectors_to_matrix, vectors_center_axis_to_matrix
-from sverchok.utils.modules.vertex_utils import vertex_shell_factor
+from sverchok.utils.modules.matrix_utils import vectors_center_axis_to_matrix
+from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol
+from sverchok.nodes.analyzer.mesh_filter import Faces
+
 
 def areas_from_polygons(verts, polygons, sum_faces=False):
 
@@ -65,8 +67,58 @@ def pols_vertices(vertices, faces):
 def pols_sides(faces, sum_sides=False):
     vals = [len(p) for p in faces]
     if sum_sides:
-        vals =[sum(vals)]
+        vals = [sum(vals)]
     return vals
+
+def pols_adjacent(pols):
+    vals = []
+    edges = []
+    pols_eds = []
+    for pol in pols:
+        pol_edgs = []
+        for edge in zip(pol, pol[1:] + [pol[0]]):
+            e_s = tuple(sorted(edge))
+            pol_edgs.append(e_s)
+            edges.append(e_s)
+        pols_eds.append(pol_edgs)
+    edges = list(set(edges))
+
+    ad_faces = [[] for e in edges]
+    for pol, eds in zip(pols, pols_eds):
+        for e in eds:
+            idx = edges.index(e)
+            ad_faces[idx] += [pol]
+
+    for pol, edgs in zip(pols, pols_eds):
+        col_pol = []
+        for edge in edgs:
+            idx = edges.index(edge)
+            col_pol.extend(ad_faces[idx])
+            col_pol.remove(pol)
+        vals.append(col_pol)
+
+    return vals
+
+def pols_adjacent_num(pols):
+    return [len(p) for p in pols_adjacent(pols)]
+
+def pols_neighbour(verts, pols):
+    v_adj = adjacent_edg_pol(verts, pols)
+    vals = []
+    for pol in pols:
+        pol_adj = []
+        for c in pol:
+            for related_pol in v_adj[c]:
+                if not related_pol in pol_adj:
+                    pol_adj.append(related_pol)
+
+        pol_adj.remove(pol)
+        vals.append(pol_adj)
+
+    return vals
+
+def pols_neighbour_num(verts, pols):
+    return [len(p) for p in pols_neighbour(verts, pols)]
 
 def pols_normals(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
@@ -91,7 +143,6 @@ def pols_shell_factor(vertices, edges, faces):
 
     return vals
 
-
 def pols_center(vertices, edges, faces, origin):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     print(pols_origin_modes_dict[origin])
@@ -107,10 +158,13 @@ def pols_center_median(bm_faces):
 
 def pols_center_median_weighted(bm_faces):
     return [tuple(bm_face.calc_center_median_weighted()) for bm_face in bm_faces]
+
 def pols_first_vert(bm_faces):
     return [tuple(bm_face.verts[0].co) for bm_face in bm_faces]
+
 def pols_last_vert(bm_faces):
     return [tuple(bm_face.verts[-1].co) for bm_face in bm_faces]
+
 def pols_perimeter(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     vals = [bm_face.calc_perimeter() for bm_face in bm.faces]
@@ -119,7 +173,7 @@ def pols_perimeter(vertices, edges, faces):
 
 def pols_tangent(vertices, edges, faces, direction):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = tangent_modes_dict[direction](bm.faces)
+    vals = tangent_modes_dict[direction][1](bm.faces)
     bm.free()
     return vals
 
@@ -128,17 +182,9 @@ def pols_tangent_edge(bm_faces):
 
 def pols_is_boundary(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    mask =[]
-    for f in bm.faces:
-        is_boundary = False
-        for e in f.edges:
-            if e.is_boundary:
-                is_boundary = True
-                break
-        mask.append(is_boundary)
-
+    interior, boundary, mask = Faces.process(bm, [], [])
     bm.free()
-    return mask
+    return mask, interior, boundary
 
 def pols_tangent_edge_diagonal(bm_faces):
     return [tuple(bm_face.calc_tangent_edge_diagonal()) for bm_face in bm_faces]
@@ -158,45 +204,27 @@ def pols_edges(faces):
     vals = [[(c, cn) for c, cn in zip(face, face[1:]+[face[0]])] for face in faces]
     return vals
 
-def pols_inverted(vertices, faces):
+def pols_inverted(faces):
     vals = [list(reversed(f)) for f in faces]
     return vals
 
 def pols_matrix(vertices, edges, faces, orientation):
-    origin, direc  = orientation
+    origin, direc = orientation
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     normals = [Vector(face.normal) for face in bm.faces]
     centers = pols_origin_modes_dict[origin][1](bm.faces)
-    tangents = tangent_modes_dict[direc](bm.faces)
+    tangents = tangent_modes_dict[direc][1](bm.faces)
     vals = vectors_center_axis_to_matrix(centers, normals, tangents)
     bm.free()
     return vals
 
-def pols_matrix_median_align(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    normals = [Vector(face.normal) for face in bm.faces]
-    centers = [bm_face.calc_center_median() for bm_face in bm.faces]
-    p0 = [Vector(vertices[face[1]])-Vector(vertices[face[0]]) + center for face,center in zip(faces, centers)]
-    vals = vectors_to_matrix(centers, normals, p0)
-    bm.free()
-    return vals
 
-def pols_matrix_p0_align(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    normals = [Vector(face.normal) for face in bm.faces]
-    centers = [Vector(vertices[face[0]]) for face in faces]
-    p0 = [Vector(vertices[face[1]]) for face in faces]
-    vals = vectors_to_matrix(centers, normals, p0)
-    bm.free()
-    return vals
-
-
-tangent_modes_dict ={
-    'Edge':         pols_tangent_edge,
-    'Edge Diagonal':  pols_tangent_edge_diagonal,
-    'Edge Pair':  pols_tangent_edge_pair,
-    'Vert Diagonal':  pols_tangent_vert_diagonal,
-    'Center - Origin':  pols_tangent_center_origin,
+tangent_modes_dict = {
+    'Edge':            (1, pols_tangent_edge, 'Face tangent based on longest edge'),
+    'Edge Diagonal':   (2, pols_tangent_edge_diagonal, 'Face tangent based on the edge farthest from any vertex'),
+    'Edge Pair':       (3, pols_tangent_edge_pair, 'Face tangent based on the two longest disconnected edges'),
+    'Vert Diagonal':   (4, pols_tangent_vert_diagonal, 'Face tangent based on the two most distant vertices'),
+    'Center - Origin': (5, pols_tangent_center_origin, 'Face tangent based on the mean center and first corner'),
     }
 pols_origin_modes_dict = {
     'Bounds Center':          (30, pols_center_bounds, 'Center of bounding box of faces'),
@@ -216,9 +244,13 @@ faces_modes_dict = {
     'Area':            (50, 's',  '',  's',  'vps', areas_from_polygons,      "Area", "Area of faces"),
     'Perimeter':       (51, 's',  '',  's',  'vp',  perimeters_from_polygons, 'Perimeter', 'Perimeter of faces'),
     'Sides Number':    (52, 's',  '',  's',  'p',   pols_sides,               "Sides", "Sides of faces"),
-    'Sharpness':       (53, 's',  '',  '',   'vep', pols_shell_factor,        'Sharpness ', 'Average of curvature of mesh in faces vertices'),
-    'Inverse':         (60, 'v',  '',  '',   'vp',  pols_inverted,            'Faces', 'Reversed Polygons (Flipped)'),
+    'Neighbour Faces Num':    (53, 's',  '',  '',  'vp',   pols_neighbour_num,               "Sides", "Sides of faces"),
+    'Adjacent Faces Numr':    (54, 's',  '',  '',  'p',   pols_adjacent_num,               "Sides", "Sides of faces"),
+    'Sharpness':       (55, 's',  '',  '',   'vep', pols_shell_factor,        'Sharpness ', 'Average of curvature of mesh in faces vertices'),
+    'Inverse':         (60, 'v',  '',  '',   'p',  pols_inverted,            'Faces', 'Reversed Polygons (Flipped)'),
     'Edges':           (61, 's',  'u', '',   'p',   pols_edges,               'Edges', 'Face Edges'),
-    'Is Boundary':     (70, 'm',  '',  '',   'vep', pols_is_boundary,        'Is_Boundary', 'Is the face boundary'),
+    'Adjacent Faces': (62, 's',  'u', '',   'p',   pols_adjacent,               'Edges', 'Face Edges'),
+    'Neighbour Faces': (63, 's',  'u', '',   'vp',   pols_neighbour,               'Edges', 'Face Edges'),
+    'Is Boundary':     (70, 'sss',  '',  '',   'vep', pols_is_boundary,        'Mask, Boundary, Interior', 'Is the face boundary'),
 
 }

@@ -12,7 +12,9 @@ import numpy as np
 from numpy.linalg import norm as np_norm
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import matrix_normal, vectors_to_matrix, vectors_center_axis_to_matrix
-from sverchok.utils.modules.vertex_utils import vertex_shell_factor
+from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol, adjacent_edg_pol_num
+from sverchok.nodes.analyzer.mesh_filter import Edges
+
 def edges_aux(vertices):
     '''create auxiliary edges array '''
     v_len = [len(v) for v in vertices]
@@ -53,7 +55,28 @@ def edges_direction(vertices, edges, out_numpy=False):
     vect_norm = vect/dist[:, np.newaxis]
     return vect_norm if out_numpy else vect_norm.tolist()
 
-def adjacent_faces(edges, pols):
+def connected_edges(verts, edges):
+    v_adja = adjacent_edg_pol(verts, edges)
+    vals = []
+    for e in edges:
+        adj =[]
+        for c in e:
+            adj.extend(v_adja[c])
+            adj.remove(e)
+        vals.append(adj)
+    return vals
+
+def connected_edges_num(verts, edges):
+    v_adja = adjacent_edg_pol_num(verts, edges)
+    vals = []
+    for e in edges:
+        adj = 0
+        for c in e:
+            adj += v_adja[c] - 1
+        vals.append(adj)
+    return vals
+
+def adjacent_faces_number(edges, pols):
     '''calculate number of adjacent faces '''
     e_sorted = [sorted(e) for e in edges]
     ad_faces = [0 for e in edges]
@@ -65,7 +88,7 @@ def adjacent_faces(edges, pols):
                 ad_faces[idx] += 1
     return ad_faces
 
-def adjacent_faces_comp(edges, pols):
+def adjacent_faces(edges, pols):
     '''calculate adjacent faces '''
     e_sorted = [sorted(e) for e in edges]
     ad_faces = [[] for e in edges]
@@ -78,7 +101,7 @@ def adjacent_faces_comp(edges, pols):
     return ad_faces
 
 def faces_angle(normals, edges, pols):
-    ad_faces = adjacent_faces(edges, pols)
+    ad_faces = adjacent_faces_number(edges, pols)
     e_sorted = [sorted(e) for e in edges]
     ad_faces = [[] for e in edges]
     for idp, pol in enumerate(pols):
@@ -98,7 +121,7 @@ def faces_angle(normals, edges, pols):
     return angles
 
 def edges_normal(vertices, normals, edges, pols):
-    # ad_faces = adjacent_faces(edges, pols)
+    # ad_faces = adjacent_faces_number(edges, pols)
     e_sorted = [sorted(e) for e in edges]
     ad_faces = [[] for e in edges]
     for idp, pol in enumerate(pols):
@@ -116,7 +139,7 @@ def edges_normal(vertices, normals, edges, pols):
             edge_normal = Vector(normals[edg_f[0]])
         else:
             rot_mat = Matrix.Rotation(pi/2, 4, "Z")
-            direc = (Vector(vertices[edg[1]])-Vector(vertices[edg[0]])).normalized()
+            direc = (Vector(vertices[edg[1]]) - Vector(vertices[edg[0]])).normalized()
             edge_normal = direc @ rot_mat
         result.append(tuple(edge_normal))
     return result
@@ -144,42 +167,14 @@ def faces_angle_full(vertices, edges, faces):
     vals = faces_angle(normals, edges, faces)
     return vals
 
-def edge_is_boundary(vertices, edges, faces):
+def edge_is_filter(vertices, edges, faces, mode):
+    mode = mode.split(' ')[1]
+    print(mode)
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [edge.is_boundary for edge in bm.edges]
+    good, bad, mask = Edges.process(bm, mode, edges)
     bm.free()
-    return vals
+    return mask, good, bad
 
-def edge_is_contiguous(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [edge.is_contiguous for edge in bm.edges]
-    bm.free()
-    return vals
-
-def edge_is_convex(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [edge.is_convex for edge in bm.edges]
-    vals = [sorted((edge.verts[0].index, edge.verts[1].index)) for edge in bm.edges if edge.is_convex]
-    mask = []
-    for e in edges:
-        if sorted(e) in vals:
-            mask.append(True)
-        else:
-            mask.append(False)
-    bm.free()
-    return mask
-
-def edge_is_manifold(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [edge.is_manifold for edge in bm.edges]
-    bm.free()
-    return vals
-
-def edges_is_wire(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [edge.is_wire for edge in bm.edges]
-    bm.free()
-    return vals
 
 def edges_shell_factor(vertices, edges, faces):
     v_shell = vertex_shell_factor(vertices, edges, faces)
@@ -216,18 +211,9 @@ def edges_matrix(vertices, edges, orientation):
     normal = edges_direction(vertices, edges, out_numpy=False)
     normal_v = [Vector(n) for n in normal]
     center = edge_vertex(vertices, edges, origin)
-
     vals = matrix_normal([center, normal_v], track, up)
     return vals
 
-def edges_matrix_ZY(vertices, edges, origin):
-    normal = edges_direction(vertices, edges, out_numpy=False)
-    normal_v = [Vector(n) for n in normal]
-    center = edge_vertex(vertices, edges, origin)
-
-
-    vals = matrix_normal([center, normal_v], "Z", "Y")
-    return vals
 def edges_matrix_normal(vertices, edges, faces, orientation):
     origin, track = orientation
     direction = edges_direction(vertices, edges, out_numpy=False)
@@ -242,25 +228,6 @@ def edges_matrix_normal(vertices, edges, faces, orientation):
         vals = vectors_center_axis_to_matrix(center, ed_normals, direction)
     return vals
 
-def edges_matrix_Z(vertices, edges, faces, origin):
-    direction = edges_direction(vertices, edges, out_numpy=False)
-    center = edge_vertex(vertices, edges, origin)
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    normals = [tuple(face.normal) for face in bm.faces]
-    bm.free()
-    ed_normals = edges_normal(vertices, normals, edges, faces)
-    vals = vectors_center_axis_to_matrix(center, direction, ed_normals)
-    return vals
-
-def edges_matrix_X(vertices, edges, faces, origin):
-    p0 = [vertices[e[1]] for e in edges] if origin == 'First' else [vertices[e[0]] for e in edges]
-    center = edge_vertex(vertices, edges, origin)
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    normals = [tuple(face.normal) for face in bm.faces]
-    bm.free()
-    ed_normals = edges_normal(vertices, normals, edges, faces)
-    vals = vectors_to_matrix(center, ed_normals, p0)
-    return vals
 
 edges_modes_dict = {
     'Geometry':           (0, 'vs',  'u', '', 've',  edges_vertices, 'Vertices, Faces', 'Geometry of each edge. (explode)'),
@@ -275,11 +242,14 @@ edges_modes_dict = {
     'Sharpness':          (21, 's', '',  '',   'vep', edges_shell_factor, 'Sharpness ', 'Average of curvature of mesh in edges vertices'),
     'Face Angle':         (22, 's', '',  '',   'vep', faces_angle_full, 'Face Angle', 'Face angle'),
     'Inverted':           (30, 'v', '',  '',   've', edges_inverted, 'Edges', 'Reversed Edge'),
-    'Adjacent faces':     (31, 's', 'u',  '',  'ep', adjacent_faces_comp, 'Faces', 'Adjacent faces'),
-    'Adjacent faces Num': (32, 's', '',  '',   'ep', adjacent_faces, 'Number', 'Adjacent faces number'),
-    'Is Boundary':        (40, 's', '',  '',   'vep', edge_is_boundary, 'Is Boundary', 'Is Edge on mesh borders'),
-    'Is Contiguous':      (41, 's', '',  '',   'vep', edge_is_contiguous, 'Is Contuguous', 'Is Edge  manifold and between two faces with the same winding'),
-    'Is Convex':          (42, 's', '',  '',   'vep', edge_is_convex, 'Is Convex', 'Is Edge Convex'),
-    'Is Mainfold':        (43, 's', '',  '',   'vep', edge_is_manifold, 'Is Mainfold', 'Is Edge part of the Mainfold'),
-    'Is Wire':            (44, 's', '',  '',   'vep', edges_is_wire, 'Is Wire', 'Has no related faces'),
+    'Adjacent Faces':     (31, 's', 'u',  '',  'ep', adjacent_faces, 'Faces', 'Adjacent faces'),
+    'Connected Edges':    (32, 's', 'u',  '',   've', connected_edges, 'Number', 'Adjacent faces number'),
+    'Adjacent Faces Num': (33, 's', '',  '',   'ep', adjacent_faces_number, 'Number', 'Adjacent faces number'),
+    'Connected Edges Num': (34, 's', '',  '',   've', connected_edges_num, 'Number', 'Adjacent faces number'),
+    'Is Boundary':        (40, 'sss', '',  'b',   'vep', edge_is_filter, 'Mask, True Edges, False Edges', 'Is Edge on mesh borders'),
+    'Is Interior':        (41, 'sss', '',  'b',   'vep', edge_is_filter, 'Is Mainfold', 'Is Edge part of the Mainfold'),
+    'Is Contiguous':      (42, 'sss', '',  'b',   'vep', edge_is_filter, 'Mask, True Edges, False Edges', 'Is Edge  manifold and between two faces with the same winding'),
+    'Is Convex':          (43, 'sss', '',  'b',   'vep', edge_is_filter, 'Is Convex', 'Is Edge Convex'),
+    'Is Concave':         (44, 'sss', '',  'b',   'vep', edge_is_filter, 'Is Convex', 'Is Edge Convex'),
+    'Is Wire':            (45, 'sss', '',  'b',   'vep', edge_is_filter, 'Mask, True Edges, False Edges', 'Has no related faces'),
 }
