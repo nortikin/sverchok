@@ -51,21 +51,17 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
         if len(self.outputs) > 0:
             multi_socket(self, min=1)
-
+        self.set_output_socketype([sock.other.bl_idname for sock in self.inputs if sock.links and sock.other])
 
     def process(self):
 
-        if not self.outputs['data'].is_linked:
+        if not self.outputs['data'].links:
             return
 
         slots = []
-        slot_bl_idnames = []
         for socket in self.inputs:
             if socket.is_linked and socket.links:
-                if socket.other:
-                    slots.append(socket.sv_get())
-                    slot_bl_idnames.append(socket.other.bl_idname)
-
+                slots.append(socket.sv_get())
         if len(slots) == 0:
             return
 
@@ -83,7 +79,6 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 list_wrap_mix = wrapper_2(slots, list_mix, self.JoinLevel)
                 result = list_wrap_mix.copy()
 
-        self.set_output_socketype(slot_bl_idnames)
         self.outputs[0].sv_set(result)
 
     def set_output_socketype(self, slot_bl_idnames):

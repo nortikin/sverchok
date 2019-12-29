@@ -1,7 +1,7 @@
 Crop mesh 2D
 ============
 
-.. image:: https://user-images.githubusercontent.com/28003269/68539431-12e57d80-039d-11ea-9324-3f7c39b3ded2.png
+.. image:: https://user-images.githubusercontent.com/28003269/71086774-1b0eb500-21b4-11ea-91c0-37c932309d0a.png
 
 Functionality
 -------------
@@ -29,6 +29,12 @@ This node is not 100 % robust. Some corner cases can knock it out. If you get an
 - did not you try to plug edges instead of faces and vise versa.
 - try to change accuracy parameter on N panel.
 
+Blender mode
+------------
+
+This mode is using internal Blender function so it is faster but can crash Blender. 
+Also it works only with faces at this moment.
+
 Category
 --------
 
@@ -47,7 +53,7 @@ Outputs
 
 - **Vertices** - vertices, can produce new vertices
 - **Faces** or **Edges** - faces, also new edges can be added for showing holes
-- **Face index** (optionally for face mode only) - index of old face by which new face was created
+- **Face index** (face mode only) - index of old face by which new face was created
 
 Parameters
 ----------
@@ -62,8 +68,6 @@ Parameters
 | Inner                    | bool  | Enable inner mode fro inserting mesh into crop mesh                            |
 +--------------------------+-------+--------------------------------------------------------------------------------+
 | Outer                    | bool  | Enable outer mode for creating holes in base mesh                              |
-+--------------------------+-------+--------------------------------------------------------------------------------+
-| Show face mask (N-panel) | bool  | Enable of showing face index mask output socket                                |
 +--------------------------+-------+--------------------------------------------------------------------------------+
 | Accuracy (N-panel)       | int   | Number of figures of decimal part of a number for comparing float values       |
 +--------------------------+-------+--------------------------------------------------------------------------------+

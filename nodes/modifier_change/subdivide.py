@@ -25,7 +25,10 @@ from sverchok.data_structure import updateNode, match_long_repeat, fullList, Mat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
-    '''Subdivide'''
+    '''
+    Triggers: subdivide
+    Tooltip: Subdivide edges and faces
+    '''
 
     bl_idname = 'SvSubdivideNode'
     bl_label = 'Subdivide'
@@ -146,6 +149,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         inew('SvVerticesSocket', "Vertices")
         inew('SvStringsSocket', 'Edges')
         inew('SvStringsSocket', 'Faces')
+        inew('SvStringsSocket', 'FaceData')
         inew('SvStringsSocket', 'EdgeMask')
 
         inew('SvStringsSocket', 'Cuts').prop_name = "cuts"
@@ -158,6 +162,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         onew('SvVerticesSocket', 'Vertices')
         onew('SvStringsSocket', 'Edges')
         onew('SvStringsSocket', 'Faces')
+        onew('SvStringsSocket', 'FaceData')
 
         onew('SvVerticesSocket', 'NewVertices')
         onew('SvStringsSocket', 'NewEdges')
@@ -188,6 +193,10 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
         faces_s = self.inputs['Faces'].sv_get(default=[[]])
         masks_s = self.inputs['EdgeMask'].sv_get(default=[[1]])
+        if 'FaceData' in self.inputs:
+            face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+        else:
+            face_data_s = [[]]
 
         cuts_s = self.inputs['Cuts'].sv_get()[0]
         smooth_s = self.inputs['Smooth'].sv_get()[0]
@@ -198,6 +207,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         result_vertices = []
         result_edges = []
         result_faces = []
+        result_face_data = []
 
         r_inner_vertices = []
         r_inner_edges = []
@@ -207,11 +217,13 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         r_split_edges = []
         r_split_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, cuts_s, smooth_s, fractal_s, along_normal_s, seed_s])
-        for vertices, edges, faces, masks, cuts, smooth, fractal, along_normal, seed in zip(*meshes):
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, face_data_s, masks_s, cuts_s, smooth_s, fractal_s, along_normal_s, seed_s])
+        for vertices, edges, faces, face_data, masks, cuts, smooth, fractal, along_normal, seed in zip(*meshes):
             fullList(masks,  len(edges))
+            if face_data:
+                fullList(face_data, len(faces))
 
-            bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
 
             selected_edges = []
             for m, edge in zip(masks, edges):
@@ -225,7 +237,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
                 if found:
                     selected_edges.append(bmesh_edge)
                 else:
-                    print("Cant find edge: " + str(edge))
+                    self.debug("Cant find edge: " + str(edge))
 
             geom = bmesh.ops.subdivide_edges(bm, edges = selected_edges,
                     smooth = smooth,
@@ -238,7 +250,12 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
                     use_only_quads = self.only_quads,
                     use_smooth_even = self.smooth_even)
 
-            new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
+            if face_data:
+                new_verts, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+            else:
+                new_verts, new_edges, new_faces = pydata_from_bmesh(bm)
+                new_face_data = []
+
             inner_verts, inner_edges, inner_faces = self.get_result_pydata(geom['geom_inner'])
             split_verts, split_edges, split_faces = self.get_result_pydata(geom['geom_split'])
 
@@ -247,6 +264,7 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
             result_vertices.append(new_verts)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
+            result_face_data.append(new_face_data)
 
             r_inner_vertices.append(inner_verts)
             r_inner_edges.append(inner_edges)
@@ -259,6 +277,8 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Vertices'].sv_set(result_vertices)
         self.outputs['Edges'].sv_set(result_edges)
         self.outputs['Faces'].sv_set(result_faces)
+        if 'FaceData' in self.outputs:
+            self.outputs['FaceData'].sv_set(result_face_data)
 
         self.outputs['NewVertices'].sv_set(r_inner_vertices)
         self.outputs['NewEdges'].sv_set(r_inner_edges)

@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
+from collections import defaultdict
 
 from mathutils import Vector, Matrix
 
@@ -52,7 +53,7 @@ class Vertices(object):
         node.outputs['NoFaces'].hide = node.submode == "Wire"
 
     @staticmethod
-    def process(bm, submode):
+    def process(bm, submode, orig_edges):
 
         def find_new_idxs(data, old_idxs):
             new_idxs = []
@@ -139,7 +140,7 @@ class Edges(object):
     default_submode = "Interior"
 
     @staticmethod
-    def process(bm, submode):
+    def process(bm, submode, orig_edges):
 
         good = []
         bad = []
@@ -159,13 +160,26 @@ class Edges(object):
             if submode == "Contiguous":
                 return e.is_contiguous
 
-        for e in bm.edges:
-            idxs = (e.verts[0].index, e.verts[1].index)
-            ok = is_good(e)
+        orig_edges_incidence = defaultdict(dict)
+        for edge_idx, (i1, i2) in enumerate(orig_edges):
+            orig_edges_incidence[i1][i2] = edge_idx
+            orig_edges_incidence[i2][i1] = edge_idx
+
+        bm_edges = dict()
+        for bm_edge in bm.edges:
+            i1, i2 = bm_edge.verts[0].index, bm_edge.verts[1].index
+            orig_edge_idx = orig_edges_incidence[i1][i2]
+            orig_edge = tuple(orig_edges[orig_edge_idx])
+            bm_edges[orig_edge] = bm_edge
+
+        for orig_edge in orig_edges:
+            orig_edge = tuple(orig_edge)
+            bm_edge = bm_edges[orig_edge]
+            ok = is_good(bm_edge)
             if ok:
-                good.append(idxs)
+                good.append(orig_edge)
             else:
-                bad.append(idxs)
+                bad.append(orig_edge)
             mask.append(ok)
 
         return [good, bad, mask]
@@ -178,7 +192,7 @@ class Faces(object):
         ]
     
     @staticmethod
-    def process(bm, submode):
+    def process(bm, submode, orig_edges):
         interior = []
         boundary = []
         mask = []
@@ -275,7 +289,7 @@ class SvMeshFilterNode(bpy.types.Node, SverchCustomTreeNode):
         for vertices, edges, faces in zip(*meshes):
             bm = bmesh_from_pydata(vertices, edges, faces)
             bm.normal_update()
-            outs = cls.process(bm, self.submode)
+            outs = cls.process(bm, self.submode, edges)
             results.append(outs)
 
         results = zip(*results)

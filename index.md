@@ -87,7 +87,8 @@
     SvRotationNodeMK2
     SvScaleNodeMK2
     SvMoveNodeMK2
-    SvMirrorNode
+    SvSymmetrizeNode
+    SvMirrorNodeMk2
     MatrixApplyNode
     SvBarycentricTransformNode
     SvAlignMeshByMesh
@@ -103,6 +104,8 @@
     SvRemoveDoublesNode
     SvSeparateMeshNode
     SvLimitedDissolve
+    SvPlanarFacesNode
+    SvSplitFacesNode
     SvMeshBeautify
     SvTriangulateNode
     SvMakeMonotone
@@ -116,7 +119,7 @@
     SvRecalcNormalsNode
     SvFlipNormalsNode
     ---
-    SvExtrudeEdgesNode
+    SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
     SvVertMaskNode
@@ -128,6 +131,7 @@
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
+    SvDelaunay2DCdt
     Voronoi2DNode
     SvOffsetLineNode
     SvContourNode
@@ -189,6 +193,7 @@
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvInsetSpecial
+    SvInsetFaces
     SvLatheNode
     SvSmoothNode
     SvSmoothLines

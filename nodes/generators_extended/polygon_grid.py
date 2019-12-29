@@ -216,7 +216,7 @@ def generate_tiles(tile_settings):
         if not separate:
             vert_list, edge_list, poly_list = mesh_join(vert_list, edge_list, poly_list)
             if scale == 1.0:
-                vert_list, edge_list, poly_list, _ = remove_doubles(vert_list, poly_list, 0.01, False)
+                vert_list, edge_list, poly_list, _, _ = remove_doubles(vert_list, poly_list, 0.01, False)
 
         vert_grid_list.append(vert_list)
         edge_grid_list.append(edge_list)

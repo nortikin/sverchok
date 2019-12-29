@@ -17,14 +17,17 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-import bmesh
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.geom_2d.intersections import intersect_sv_edges
 from sverchok.utils.intersect_edges import intersect_edges_3d, intersect_edges_2d, remove_doubles_from_edgenet
+
+try:
+    from mathutils.geometry import delaunay_2d_cdt as bl_intersect
+except ImportError:
+    bl_intersect = None
 
 modeItems = [("2D", "2D", "", 0), ("3D", "3D", "", 1)]
 
@@ -36,7 +39,7 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Intersect Edges'
     sv_icon = 'SV_XALL'
 
-    mode_items_2d = [("Alg 1", "Alg 1", "", 0), ("Sweep line", "Sweep line", "", 1)]
+    mode_items_2d = [("Alg 1", "Alg 1", "", 0), ("Sweep line", "Sweep line", "", 1), ("Blender", "Blender", "", 2)]
 
     mode: bpy.props.EnumProperty(items=modeItems, default="3D", update=updateNode)
     rm_switch: bpy.props.BoolProperty(update=updateNode)
@@ -56,6 +59,8 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row.row(align=True).prop(self, "mode", expand=True)
         if self.mode == "2D":
             row.row(align=True).prop(self, "alg_mode_2d", expand=True)
+            if self.alg_mode_2d == 'Blender' and not bl_intersect:
+                row.label(text="For 2.81+ only", icon='ERROR')
         if self.mode == "3D" or self.mode == "2D" and self.alg_mode_2d == "Alg 1":
             r = layout.row(align=True)
             r1 = r.split(factor=0.32)
@@ -70,7 +75,6 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-
         try:
             verts_in = inputs['Verts_in'].sv_get(deepcopy=False)[0]
             edges_in = inputs['Edges_in'].sv_get(deepcopy=False)[0]
@@ -78,17 +82,23 @@ class SvIntersectEdgesNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         except (IndexError, KeyError) as e:
             return
 
+        if self.mode == "2D" and self.alg_mode_2d == "Blender" and not bl_intersect:
+            return
+
         if self.mode == "3D":
             verts_out, edges_out = intersect_edges_3d(verts_in, edges_in, 1 / 10 ** self.epsilon)
         elif self.alg_mode_2d == "Alg 1":
             verts_out, edges_out = intersect_edges_2d(verts_in, edges_in, 1 / 10 ** self.epsilon)
-        else:
+        elif self.alg_mode_2d == "Sweep line":
             verts_out, edges_out = intersect_sv_edges(verts_in, edges_in, self.epsilon)
+        else:
+            verts_out, edges_out, _, _, _, _ = bl_intersect([Vector(co[:2]) for co in verts_in], edges_in, [], 2,
+                                                            1 / 10 ** self.epsilon)
+            verts_out = [v.to_3d()[:] for v in verts_out]
 
         # post processing step to remove doubles
         if self.rm_switch and self.mode == "3D" or self.alg_mode_2d == "Alg 1":
             verts_out, edges_out = remove_doubles_from_edgenet(verts_out, edges_out, self.rm_doubles)
-
         outputs['Verts_out'].sv_set([verts_out])
         outputs['Edges_out'].sv_set([edges_out])
 

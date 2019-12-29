@@ -71,6 +71,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
     def dget(self, obj_name=None):
         if not obj_name:
             obj = bpy.context.active_object
+            if not obj:
+                self.error("No object selected")
+                return
             self.obj_name = obj.name
         else:
             obj = bpy.data.objects.get(obj_name)
@@ -90,13 +93,14 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
                     'Vertices': list([v.co[:] for v in obj_data.vertices]),
                     'Edges': obj_data.edge_keys,
                     'Polygons': [list(p.vertices) for p in obj_data.polygons],
+                    'MaterialIdx': [p.material_index for p in obj_data.polygons],
                     'Matrix': deps_obj.matrix_world
                 }
                 deps_obj.to_mesh_clear()
                 self.currently_storing = True
 
         else:
-            self.report({'WARNING'}, 'No object selected')
+            self.error("No object selected")
 
 
     def sv_init(self, context):
@@ -104,6 +108,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         out('SvVerticesSocket', 'Vertices')
         out('SvStringsSocket', 'Edges')
         out('SvStringsSocket', 'Polygons')
+        out('SvStringsSocket', 'MaterialIdx')
         out('SvMatrixSocket', 'Matrix')
 
     def draw_buttons(self, context, layout):
@@ -139,7 +144,7 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
             if self.obj_name and bpy.data.objects.get(self.obj_name):
                 self.dget(self.obj_name)
             else:
-                print('ending early, no node_dict')
+                self.debug('ending early, no node_dict')
                 return
 
         self.pass_data_to_sockets()
@@ -159,10 +164,14 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
         verts = unrolled_geom['Vertices']
         edges = unrolled_geom['Edges']
         polygons = unrolled_geom['Polygons']
+        materials = unrolled_geom.get('MaterialIdx', [])
         matrix = unrolled_geom['Matrix']
 
         with self.sv_throttle_tree_update():
             bm = bmesh_from_pydata(verts, edges, polygons)
+            if materials:
+                for face, material in zip(bm.faces, materials):
+                    face.material_index = material
             obj = generate_object(name, bm)
             obj.matrix_world = matrix
 
@@ -175,8 +184,9 @@ class SvObjInLite(bpy.types.Node, SverchCustomTreeNode):
     def storage_get_data(self, storage):
         # generate flat data, and inject into incoming storage variable
         obj = self.node_dict.get(hash(self))
+        print(obj)
         if not obj:
-            print('failed to obtain local geometry, can not add to json')
+            self.error('failed to obtain local geometry, can not add to json')
             return
 
         storage['geom'] = json.dumps(flatten(obj))
