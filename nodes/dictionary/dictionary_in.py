@@ -14,6 +14,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
+class SvDict(dict):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.inputs = dict()
+
+
 class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: ...
@@ -24,6 +30,10 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvDictionaryIn'
     bl_label = 'Dictionary in'
     bl_icon = 'MOD_BOOLEAN'
+
+    def update_node(self, context):
+        if not self['update_event']:
+            updateNode(self, context)
 
     def lift_item(self, context):
         if self.up:
@@ -43,20 +53,21 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
 
     up: bpy.props.BoolProperty(update=lift_item)
     down: bpy.props.BoolProperty(update=down_item)
-    key_0: bpy.props.StringProperty(name="", default='Key 1', update=updateNode)
-    key_1: bpy.props.StringProperty(name="", default='Key 2', update=updateNode)
-    key_2: bpy.props.StringProperty(name="", default='Key 3', update=updateNode)
-    key_3: bpy.props.StringProperty(name="", default='Key 4', update=updateNode)
-    key_4: bpy.props.StringProperty(name="", default='Key 5', update=updateNode)
-    key_5: bpy.props.StringProperty(name="", default='Key 6', update=updateNode)
-    key_6: bpy.props.StringProperty(name="", default='Key 7', update=updateNode)
-    key_7: bpy.props.StringProperty(name="", default='Key 8', update=updateNode)
-    key_8: bpy.props.StringProperty(name="", default='Key 9', update=updateNode)
-    key_9: bpy.props.StringProperty(name="", default='Key 10', update=updateNode)
+    key_0: bpy.props.StringProperty(name="", default='Key 1', update=update_node)
+    key_1: bpy.props.StringProperty(name="", default='Key 2', update=update_node)
+    key_2: bpy.props.StringProperty(name="", default='Key 3', update=update_node)
+    key_3: bpy.props.StringProperty(name="", default='Key 4', update=update_node)
+    key_4: bpy.props.StringProperty(name="", default='Key 5', update=update_node)
+    key_5: bpy.props.StringProperty(name="", default='Key 6', update=update_node)
+    key_6: bpy.props.StringProperty(name="", default='Key 7', update=update_node)
+    key_7: bpy.props.StringProperty(name="", default='Key 8', update=update_node)
+    key_8: bpy.props.StringProperty(name="", default='Key 9', update=update_node)
+    key_9: bpy.props.StringProperty(name="", default='Key 10', update=update_node)
 
     def sv_init(self, context):
         self.inputs.new('SvSeparatorSocket', 'Empty')
         self.outputs.new('SvDictionarySocket', 'Dict')
+        self['update_event'] = False
 
     def update(self):
         print(f'Update {self.name}')
@@ -75,8 +86,10 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
             re_socket.custom_draw = 'draw_socket'
             re_link = self.id_data.links.new(socket_from, re_socket)
             re_link.is_valid = True
-            setattr(self, re_socket.prop_name, re_socket.other.name)
             self.inputs.new('SvSeparatorSocket', 'Empty')
+            self['update_event'] = True
+            setattr(self, re_socket.prop_name, re_socket.other.name)
+            self['update_event'] = False
 
     def draw_socket(self, socket, context, layout):
         layout.prop(self, 'up', text='', icon='TRIA_UP')
@@ -93,7 +106,13 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
         keys = [sock.prop_name for sock in list(self.inputs)[:-1]]
         out = []
         for i, *props in zip(range(max_len), *data):
-            out.append({getattr(self, key): prop for key, prop in zip(keys, props) if prop is not None})
+            out_dict = SvDict({getattr(self, key): prop for key, prop in zip(keys, props) if prop is not None})
+            for sock in list(self.inputs)[:-1]:
+                out_dict.inputs[sock.identifier] = {'type': sock.bl_idname,
+                                                    'name': getattr(self, sock.prop_name),
+                                                    'nest': sock.sv_get()[0].inputs
+                                                    if sock.bl_idname == 'SvDictionarySocket' else None}
+            out.append(out_dict)
         self.outputs[0].sv_set(out)
 
 

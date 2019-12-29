@@ -57,29 +57,45 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
         print(f"Update {self.name}")
         if not self.id_data.skip_tree_update:
             if self.inputs['Dict'].links:
-                if list(self['order']) != list(self.inputs['Dict'].sv_get()[0].keys()):
-                    self.rebuild_output()
+                self.rebuild_output()
             else:
                 self.outputs.clear()
                 self['order'] = []
 
     def rebuild_output(self):
         # this can be called during node update event and from process of the node (after update event)
-        with self.sv_throttle_tree_update():
-            links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
-            self.outputs.clear()
-            new_socks = [self.outputs.new(get_socket_type(data), key) for key, data in self.inputs['Dict'].sv_get()[0].items()]
-            self['order'] = list(self.inputs['Dict'].sv_get()[0].keys())
-            [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
-                                                        for other_socket in links[sock.name]]
-        # [self.outputs.new(data, key) for key, data in self.inputs['Dict'].other['order']]
-        # self['order'] = self.inputs['Dict'].other['order']
+        out_dict = self.inputs['Dict'].sv_get()[0]
+        if hasattr(out_dict, 'inputs'):
+            if (self.outputs and 'identifier' not in list(self.outputs)[0]) or \
+                    [sock['identifier'] for sock in self.outputs] != list(out_dict.inputs.keys()):
+                with self.sv_throttle_tree_update():
+                    links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+                    self.outputs.clear()
+                    new_socks = []
+                    for key, data in out_dict.inputs.items():
+                        sock = self.outputs.new(data['type'], data['name'])
+                        sock['identifier'] = key
+                        new_socks.append(sock)
+                    [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
+                                                                for other_socket in links[sock.name]]
+            else:
+                # renaming
+                for sock in self.outputs:
+                    sock.name = out_dict.inputs[sock['identifier']]['name']
+        else:
+            if list(self['order']) != list(self.inputs['Dict'].sv_get()[0].keys()):
+                with self.sv_throttle_tree_update():
+                    links = {sock.name: [link.to_socket for link in sock.links] for sock in self.outputs}
+                    self.outputs.clear()
+                    new_socks = [self.outputs.new(get_socket_type(data), key) for key, data in self.inputs['Dict'].sv_get()[0].items()]
+                    self['order'] = list(self.inputs['Dict'].sv_get()[0].keys())
+                    [self.id_data.links.new(sock, other_socket) for sock in new_socks if sock.name in links
+                                                                for other_socket in links[sock.name]]
 
     def process(self):
         if not self.inputs['Dict'].links:
             return
-        if list(self['order']) != list(self.inputs['Dict'].sv_get()[0].keys()):
-            self.rebuild_output()
+        self.rebuild_output()
         out = []
         for d in self.inputs['Dict'].sv_get():
             out.append(list(d.values()))
