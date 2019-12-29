@@ -29,7 +29,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvDictionaryIn'
     bl_label = 'Dictionary in'
-    bl_icon = 'MOD_BOOLEAN'
+    bl_icon = 'GREASEPENCIL'
 
     def update_node(self, context):
         if not self['update_event']:
@@ -53,6 +53,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
 
     up: bpy.props.BoolProperty(update=lift_item)
     down: bpy.props.BoolProperty(update=down_item)
+    alert: bpy.props.BoolVectorProperty(size=10)
     key_0: bpy.props.StringProperty(name="", default='Key 1', update=update_node)
     key_1: bpy.props.StringProperty(name="", default='Key 2', update=update_node)
     key_2: bpy.props.StringProperty(name="", default='Key 3', update=update_node)
@@ -77,7 +78,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.remove(sock)
 
         # add property to new socket and add extra empty socket
-        free_keys = self.keys - set(sock.prop_name for sock in self.inputs if sock.bl_idname != 'SvSeparatorSocket')
+        free_keys = self.keys - set(sock.prop_name for sock in list(self.inputs)[:-1])
         if list(self.inputs)[-1].links and len(self.inputs) < 11:
             socket_from = self.inputs[-1].other
             self.inputs.remove(list(self.inputs)[-1])
@@ -94,6 +95,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     def draw_socket(self, socket, context, layout):
         layout.prop(self, 'up', text='', icon='TRIA_UP')
         layout.prop(self, 'down', text='', icon='TRIA_DOWN')
+        layout.alert = self.alert[int(socket.prop_name.rsplit('_', 1)[-1])]
         layout.prop(self, socket.prop_name)
 
     def process(self):
@@ -108,12 +110,29 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
         for i, *props in zip(range(max_len), *data):
             out_dict = SvDict({getattr(self, key): prop for key, prop in zip(keys, props) if prop is not None})
             for sock in list(self.inputs)[:-1]:
-                out_dict.inputs[sock.identifier] = {'type': sock.bl_idname,
-                                                    'name': getattr(self, sock.prop_name),
-                                                    'nest': sock.sv_get()[0].inputs
-                                                    if sock.bl_idname == 'SvDictionarySocket' else None}
+                out_dict.inputs[sock.identifier] = {
+                    'type': sock.bl_idname,
+                    'name': getattr(self, sock.prop_name),
+                    'nest': sock.sv_get()[0].inputs if sock.bl_idname == 'SvDictionarySocket' else None}
             out.append(out_dict)
         self.outputs[0].sv_set(out)
+        self.validate_names()
+
+    def validate_names(self):
+        # names of keys
+        used_names = set()
+        invalid_names = set()
+        for sock in list(self.inputs)[:-1]:
+            name = getattr(self, sock.prop_name)
+            if name not in used_names:
+                used_names.add(name)
+            else:
+                invalid_names.add(name)
+        for sock in list(self.inputs)[:-1]:
+            if getattr(self, sock.prop_name) in invalid_names:
+                self.alert[int(sock.prop_name.rsplit('_', 1)[-1])] = True
+            else:
+                self.alert[int(sock.prop_name.rsplit('_', 1)[-1])] = False
 
 
 def register():

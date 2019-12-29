@@ -47,7 +47,7 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvDictionaryOut'
     bl_label = 'Dictionary out'
-    bl_icon = 'MOD_BOOLEAN'
+    bl_icon = 'OUTLINER_DATA_GP_LAYER'
 
     def sv_init(self, context):
         self.inputs.new('SvDictionarySocket', 'Dict')
@@ -96,12 +96,11 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Dict'].links:
             return
         self.rebuild_output()
-        out = dict()
+        out = {key: [] for key in self.inputs['Dict'].sv_get()[0]}
         for d in self.inputs['Dict'].sv_get():
             for key in d:
-                if key not in out:
-                    out[key] = []
-                out[key].append(d[key])
+                if key in out:
+                    out[key].append(d[key])
         [self.outputs[key].sv_set(out[key]) for key in out if key in self.outputs]
 
 

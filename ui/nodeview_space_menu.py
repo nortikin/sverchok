@@ -120,7 +120,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddQuaternion", **icon('SV_QUATERNION'))
         layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
-        layout.menu("NODEVIEW_MT_AddDictionary")
+        layout.menu("NODEVIEW_MT_AddDictionary", icon='OUTLINER_OB_FONT')
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText", icon='TEXT')

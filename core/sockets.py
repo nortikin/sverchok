@@ -45,7 +45,7 @@ socket_colors = {
     "SvSeparatorSocket": (0.0, 0.0, 0.0, 0.0),
     "SvObjectSocket": (0.69, 0.74, 0.73, 1.0),
     "SvTextSocket": (0.68, 0.85, 0.90, 1),
-    "SvDictionarySocket": (0.40, 0.02, 1.00, 1.00)
+    "SvDictionarySocket": (1.0, 1.0, 1.0, 1.0)
 }
 
 def process_from_socket(self, context):
