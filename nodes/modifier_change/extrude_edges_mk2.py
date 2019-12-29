@@ -125,13 +125,13 @@ class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             result_ext_edges.append(extruded_edges)
             result_ext_faces.append(extruded_faces)
 
-            self.outputs['Vertices'].sv_set(result_vertices)
-            self.outputs['Edges'].sv_set(result_edges)
-            self.outputs['Faces'].sv_set(result_faces)
-            self.outputs['FaceData'].sv_set(result_face_data)
-            self.outputs['NewVertices'].sv_set(result_ext_vertices)
-            self.outputs['NewEdges'].sv_set(result_ext_edges)
-            self.outputs['NewFaces'].sv_set(result_ext_faces)
+        self.outputs['Vertices'].sv_set(result_vertices)
+        self.outputs['Edges'].sv_set(result_edges)
+        self.outputs['Faces'].sv_set(result_faces)
+        self.outputs['FaceData'].sv_set(result_face_data)
+        self.outputs['NewVertices'].sv_set(result_ext_vertices)
+        self.outputs['NewEdges'].sv_set(result_ext_edges)
+        self.outputs['NewFaces'].sv_set(result_ext_faces)
 
 
 def register():
