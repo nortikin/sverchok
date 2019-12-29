@@ -10,7 +10,7 @@ from mathutils import Vector
 from mathutils.geometry import area_tri as area
 from mathutils.geometry import tessellate_polygon as tessellate
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.modules.matrix_utils import vectors_to_matrix
+from sverchok.utils.modules.matrix_utils import vectors_to_matrix, vectors_center_axis_to_matrix
 from sverchok.utils.modules.vertex_utils import vertex_shell_factor
 
 def areas_from_polygons(verts, polygons, sum_faces=False):
@@ -62,8 +62,10 @@ def pols_vertices(vertices, faces):
     vals = [verts, pols]
     return vals
 
-def pols_sides(faces):
+def pols_sides(faces, sum_sides=False):
     vals = [len(p) for p in faces]
+    if sum_sides:
+        vals =[sum(vals)]
     return vals
 
 def pols_normals(vertices, edges, faces):
@@ -124,6 +126,19 @@ def pols_tangent(vertices, edges, faces, direction):
 def pols_tangent_edge(bm_faces):
     return [tuple(bm_face.calc_tangent_edge()) for bm_face in bm_faces]
 
+def pols_is_boundary(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    mask =[]
+    for f in bm.faces:
+        is_boundary = False
+        for e in f.edges:
+            if e.is_boundary:
+                is_boundary = True
+                break
+        mask.append(is_boundary)
+
+    bm.free()
+    return mask
 
 def pols_tangent_edge_diagonal(bm_faces):
     return [tuple(bm_face.calc_tangent_edge_diagonal()) for bm_face in bm_faces]
@@ -148,16 +163,12 @@ def pols_inverted(vertices, faces):
     return vals
 
 def pols_matrix(vertices, edges, faces, orientation):
-    direc, origin = orientation
+    origin, direc  = orientation
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     normals = [Vector(face.normal) for face in bm.faces]
-
     centers = pols_origin_modes_dict[origin][1](bm.faces)
-    centers = [Vector(v) for v in centers]
-    tangents = [Vector(v) for v in tangent_modes_dict[direc](bm.faces)]
-    p0 = [center + tang for center, tang in zip(centers, tangents)]
-
-    vals = vectors_to_matrix(centers, normals, p0)
+    tangents = tangent_modes_dict[direc](bm.faces)
+    vals = vectors_center_axis_to_matrix(centers, normals, tangents)
     bm.free()
     return vals
 
@@ -179,6 +190,7 @@ def pols_matrix_p0_align(vertices, edges, faces):
     bm.free()
     return vals
 
+
 tangent_modes_dict ={
     'Edge':         pols_tangent_edge,
     'Edge Diagonal':  pols_tangent_edge_diagonal,
@@ -190,22 +202,23 @@ pols_origin_modes_dict = {
     'Bounds Center':          (30, pols_center_bounds, 'Center of bounding box of faces'),
     'Median Center':          (31, pols_center_median, 'Mean of vertices of each face'),
     'Median Weighted Center': (32, pols_center_median_weighted, 'Mean of vertices of each face weighted by edges length'),
-    'First Vertex':    (33, pols_first_vert,  'Mean of vertices of each face weighted by edges length'),
-    'Last Vertex':     (34, pols_last_vert, 'Mean of vertices of each face weighted by edges length'),
+    'First Vertex':           (33, pols_first_vert,  'First Vertex of Face'),
+    'Last Vertex':            (34, pols_last_vert, 'First Vertex of Face'),
 
 }
 faces_modes_dict = {
-    'Geometry':        (0,  'vs', 'u', 'vp',   pols_vertices,            "Vertices Faces", "Geometry of each face. (explode)"),
-    'Area':            (1,  's',  's', 'vps',  areas_from_polygons,      "Area", "Area of faces"),
-    'Sides Number':    (2,  's',  's', 'p',    pols_sides,               "Sides", "Sides of faces"),
-    'Perimeter':       (3,  's',  '',  'vps',   perimeters_from_polygons, 'Perimeter', 'Perimeter of faces'),
-    'Normal':          (10, 'v',  '',  'vep',  pols_normals,              'Normal', 'Normal of faces'),
-    'Normal Absolute': (11, 'v',  '',  'vep',  pols_absolute_normals,     'Normal_Abs', 'Median Center + Normal'),
-    'Inverse':         (15, 'v',  '',  'vp',   pols_inverted,             'Faces', 'Reversed Polygons (Flipped)'),
-    'Sharpness':       (20, 's',  '',  'vep',  pols_shell_factor,         'Sharpness ', 'Average of curvature of mesh in faces vertices'),
-    'Center':          (30, 'v',  '',  'vepc', pols_center,               'Center', 'Center faces'),
-    'Tangent':         (40, 'v',  '',  'vept', pols_tangent,              'Tangent', 'Face tangent.'),
-    'Edges':           (50, 's',  'u', 'p',    pols_edges,                'Edges', 'Face Edges'),
-    'Matrix':          (60, 'm',  'u', 'vepm', pols_matrix,     'Matrix', 'Matrix of face. Z axis on normal. X to first corner'),
+    'Geometry':        (0,  'vs', 'u', '',   'vp',  pols_vertices,            "Vertices, Faces", "Geometry of each face. (explode)"),
+    'Center':          (10, 'v',  '',  'c',  'vep', pols_center,              'Center', 'Center faces'),
+    'Normal':          (20, 'v',  '',  '',   'vep', pols_normals,             'Normal', 'Normal of faces'),
+    'Normal Absolute': (21, 'v',  '',  '',   'vep', pols_absolute_normals,    'Normal_Abs', 'Median Center + Normal'),
+    'Tangent':         (30, 'v',  '',  't',  'vep', pols_tangent,             'Tangent', 'Face tangent.'),
+    'Matrix':          (40, 'm',  'u', 'qt', 'vep', pols_matrix,             'Matrix', 'Matrix of face. Z axis on normal. X to first corner'),
+    'Area':            (50, 's',  '',  's',  'vps', areas_from_polygons,      "Area", "Area of faces"),
+    'Perimeter':       (51, 's',  '',  's',  'vp',  perimeters_from_polygons, 'Perimeter', 'Perimeter of faces'),
+    'Sides Number':    (52, 's',  '',  's',  'p',   pols_sides,               "Sides", "Sides of faces"),
+    'Sharpness':       (53, 's',  '',  '',   'vep', pols_shell_factor,        'Sharpness ', 'Average of curvature of mesh in faces vertices'),
+    'Inverse':         (60, 'v',  '',  '',   'vp',  pols_inverted,            'Faces', 'Reversed Polygons (Flipped)'),
+    'Edges':           (61, 's',  'u', '',   'p',   pols_edges,               'Edges', 'Face Edges'),
+    'Is Boundary':     (70, 'm',  '',  '',   'vep', pols_is_boundary,        'Is_Boundary', 'Is the face boundary'),
 
 }

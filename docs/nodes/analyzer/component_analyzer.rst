@@ -71,7 +71,6 @@ This node has the following parameters:
     * **Center Bounds**. Center of bounding box of faces
     * **Center Median**. Mean of vertices of each face
     * **Center Median Weighted**. Mean of vertices of each face weighted by edges length
-    * **Perimeter Bmesh**. Perimeter
     * **Tangent edge**. Face tangent based on longest edge
     * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
     * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.

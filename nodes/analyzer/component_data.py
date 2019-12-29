@@ -57,15 +57,27 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         ('Faces', "Faces", "Faces Operators", 2)
     ]
 
-    edge_modes =   [(k, k, descr, ident) for k, (ident, _, _, _, _, _, descr) in sorted(edges_modes_dict.items(), key=lambda k: k[1][0])]
-    vertex_modes = [(k, k, descr, ident) for k, (ident, _, _, _, _, _, descr) in sorted(vertex_modes_dict.items(), key=lambda k: k[1][0])]
-    face_modes =   [(k, k, descr, ident) for k, (ident, _, _, _, _, _, descr) in sorted(faces_modes_dict.items(), key=lambda k: k[1][0])]
+    edge_modes =   [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(edges_modes_dict.items(), key=lambda k: k[1][0])]
+    vertex_modes = [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(vertex_modes_dict.items(), key=lambda k: k[1][0])]
+    face_modes =   [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(faces_modes_dict.items(), key=lambda k: k[1][0])]
     pols_origin_modes =   [(k, k, descr, ident) for k, (ident, _, descr) in sorted(pols_origin_modes_dict.items(), key=lambda k: k[1][0])]
 
     origin_modes = [
         ("Center", "Center", "Median Center", 0),
         ("First", "First", "First Vertex", 1),
         ("Last", "Last", "Last Vertex", 2)
+    ]
+    matrix_track_modes = [
+        ("X", "X", "Median Center", 0),
+        ("Y", "Y", "First Vertex", 1),
+        ("Z", "Z", "Last Vertex", 2),
+        ("-X", "-X", "Median Center", 3),
+        ("-Y", "-Y", "First Vertex", 4),
+        ("-Z", "-Z", "Last Vertex", 5)
+    ]
+    matrix_normal_modes = [
+        ("X", "X", "Median Center", 0),
+        ("Z", "Z", "Last Vertex", 2),
     ]
 
     tangent_modes = [
@@ -81,7 +93,7 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         # for mode in self.modes:
         info = modes_dicts[self.mode][self.actual_mode()]
         sockt_type = info[1]
-        sockt_names = info[5].split(' ')
+        sockt_names = info[6].split(', ')
         for i, s in enumerate(sockt_type):
             self.outputs[i].name = sockt_names[i]
             self.outputs[i].replace_socket(socket_dict[s])
@@ -116,8 +128,13 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         description="Flatten output by list-joining level 1",
         default=True,
         update=updateNode)
+    split: BoolProperty(
+        name="Split output",
+        description="Split output",
+        default=False,
+        update=updateNode)
     sum_items: BoolProperty(
-        name="Separate", description="Separate tiles",
+        name="Sum", description="Sum Items",
         default=False, update=updateNode)
     origin_mode: EnumProperty(
         name="Origin",
@@ -130,14 +147,29 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         default="Edge",
         update=update_mode)
     center_mode: EnumProperty(
-        name="Direction",
+        name="Center",
         items=pols_origin_modes[:3],
         default="Median Center",
         update=update_mode)
     pols_origin_mode: EnumProperty(
-        name="Direction",
+        name="Origin",
         items=pols_origin_modes,
         default="Median Center",
+        update=update_mode)
+    matrix_track: EnumProperty(
+        name="Normal",
+        items=matrix_track_modes,
+        default="Z",
+        update=update_mode)
+    matrix_normal_up: EnumProperty(
+        name="Up",
+        items=matrix_track_modes,
+        default="Y",
+        update=update_mode)
+    matrix_normal: EnumProperty(
+        name="Edge",
+        items=matrix_normal_modes,
+        default="X",
         update=update_mode)
 
     def actual_mode(self):
@@ -160,25 +192,43 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "vertex_mode", text="")
         elif self.mode == 'Edges':
             layout.prop(self, "edge_mode", text="")
-            if self.edge_mode == "Length":
-                layout.prop(self, "sum_items", text="Sum Lengths")
         elif self.mode == 'Faces':
             layout.prop(self, "face_mode", text="")
-            if self.face_mode == "Area":
-                layout.prop(self, "sum_items", text="Sum Areas")
-            if self.face_mode == "Perimeter":
-                layout.prop(self, "sum_items", text="Sum Perimeters")
         info = modes_dicts[self.mode][self.actual_mode()]
-        oper_props = info[3]
-        if 'o' in oper_props:
-            layout.prop(self, "origin_mode", text="Center")
-        if 't' in oper_props:
-            layout.prop(self, "tangent_mode", text="Direction")
-        if 'c' in oper_props:
-            layout.prop(self, "center_mode", text="")
-        if 'm' in oper_props:
-            layout.prop(self, "pols_origin_mode", text="Origin")
-            layout.prop(self, "tangent_mode", text="Direction")
+        local_ops = info[3]
+        out_ops = info[2]
+        op_dict = {
+        'c': 'center_mode',
+        's': 'sum_items',
+        'o': 'origin_mode',
+        'q': 'pols_origin_mode',
+        'm': 'matrix_track',
+        'u': 'matrix_normal_up',
+        'n': 'matrix_normal',
+        't': 'tangent_mode',
+        }
+        special_op = []
+        for op in local_ops:
+            special_op.append (op_dict[op])
+            layout.prop(self, op_dict[op])
+        if not 'u' in out_ops:
+            layout.prop(self, 'split')
+        # if 's' in local_props:
+        #     layout.prop(self, "sum_items", text="Sum")
+        # if 'o' in oper_props:
+        #     layout.prop(self, "origin_mode", text="Center")
+        # if 't' in oper_props:
+        #     layout.prop(self, "tangent_mode", text="Direction")
+        # if 'c' in oper_props:
+        #     layout.prop(self, "center_mode", text="")
+        # if 'm' in oper_props:
+        #     layout.prop(self, "pols_origin_mode", text="Origin")
+        #     layout.prop(self, "tangent_mode", text="Direction")
+        # if 'n' in oper_props:
+        #     layout.prop(self, "matrix_track", text="Normal")
+        #     layout.prop(self, "matrix_normal_up", text="Up")
+        # if 'q' in oper_props:
+        #     layout.prop(self, "matrix_normal", text="Edge")
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -198,7 +248,10 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
             return
         modes_dict = modes_dicts[self.mode]
         component_mode = self.actual_mode()
-        func_inputs = modes_dict[component_mode][3]
+        output_ops = modes_dict[component_mode][2]
+        local_ops = modes_dict[component_mode][3]
+        func_inputs = modes_dict[component_mode][4]
+        func = modes_dict[component_mode][5]
         params = []
         if "v" in func_inputs:
             params.append(self.inputs['Vertices'].sv_get())
@@ -210,23 +263,25 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         result_vals = []
 
         meshes = match_long_repeat(params)
-        func = modes_dict[component_mode][4]
+
         special = False
-        if "s" in func_inputs:
-            special_op = self.sum_items
+        if len(local_ops) > 0:
+            op_dict = {
+            'c': self.center_mode,
+            's': self.sum_items,
+            'o': self.origin_mode,
+            'q': self.pols_origin_mode,
+            'm': self.matrix_track,
+            'u': self.matrix_normal_up,
+            'n': self.matrix_normal,
+            't': self.tangent_mode,
+            }
+            special_op=[]
+            for op in local_ops:
+                special_op.append(op_dict[op])
             special = True
-        elif 'o' in func_inputs:
-            special_op = self.origin_mode
-            special = True
-        elif 't' in func_inputs:
-            special_op = self.tangent_mode
-            special = True
-        elif 'm' in func_inputs:
-            special_op = [self.tangent_mode, self.pols_origin_mode]
-            special = True
-        elif 'c' in func_inputs:
-            special_op = self.center_mode
-            special = True
+            if len(local_ops) == 1:
+                special_op = special_op[0]
 
         for param in zip(*meshes):
             if special:
@@ -242,12 +297,14 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
                 s.sv_set(dataCorrect(r))
 
         else:
-            if 'u' in modes_dict[component_mode][2]:
+            if 'u' in output_ops:
                 result_vals = lists_flat([result_vals])[0]
+            else:
+                if self.split:
+                    result_vals = [[[v] for v in r] for r in result_vals]
+                    result_vals = lists_flat([result_vals])[0]
             self.outputs[0].sv_set(result_vals)
 
-        # self.outputs['Edges'].sv_set(result_edges)
-        # self.outputs['Faces'].sv_set(result_faces)
 
 def register():
     bpy.utils.register_class(SvComponentDataNode)

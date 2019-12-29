@@ -28,14 +28,22 @@ def adjacent_edg_pol_comp(verts, edg_pol):
     return adj_edg_pol
 
 def vertex_normal(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    vals = [tuple(v.normal) for v in bm.verts]
-    bm.free()
+    if faces:
+        bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+        vals = [tuple(v.normal) for v in bm.verts]
+        bm.free()
+
     return vals
 
 def vertex_shell_factor(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     vals = [v.calc_shell_factor() for v in bm.verts]
+    bm.free()
+    return vals
+
+def vertex_calc_angle(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    vals = [v.calc_edge_angle() for v in bm.verts]
     bm.free()
     return vals
 
@@ -55,46 +63,25 @@ def vertex_is_wire(vertices, edges, faces):
     bm.free()
     return vals
 
-def vertex_matrix_ZY(vertices, edges, faces):
-    '''Matrix, Z in normal, Y up'''
+def vertex_matrix(vertices, edges, faces, orientation):
+    track, up = orientation
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     loc = [Vector(v) for v in vertices]
     normal = [v.normal for v in bm.verts]
-    vals = matrix_normal([loc, normal], "Z", "Y")
+    vals = matrix_normal([loc, normal], track, up)
     bm.free()
     return vals
-
-def vertex_matrix_YX(vertices, edges, faces):
-    '''Matrix, Y in normal, X up'''
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    loc = [Vector(v) for v in vertices]
-    normal = [v.normal for v in bm.verts]
-    vals = matrix_normal([loc, normal], "Y", "X")
-    bm.free()
-    return vals
-
-def vertex_matrix_XZ(vertices, edges, faces):
-    '''Matrix, X in normal, Z up'''
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    loc = [Vector(v) for v in vertices]
-    normal = [v.normal for v in bm.verts]
-    vals = matrix_normal([loc, normal], "X", "Z")
-    bm.free()
-    return vals
-
-
 
 vertex_modes_dict = {
-    'Normal':             (0, 'v', '',   'vep', vertex_normal, 'Normal', 'Vertex normal'),
-    'Adjacent edges num': (1, 's', '',   've', adjacent_edg_pol, 'Number', 'Number of Adjacent edges'),
-    'Adjacent faces num': (2, 's', '',   'vp', adjacent_edg_pol, 'Number', 'Number of adjacent faces'),
-    'Adjacent edges':     (4, 's', 'u',  've', adjacent_edg_pol_comp, 'Edges', 'Adjacent edges'),
-    'Adjacent faces ':    (5, 's', 'u',  'vp', adjacent_edg_pol_comp, 'Faces ', 'Adjacent faces'),
-    'Sharpness':          (6, 's', '',   'vep', vertex_shell_factor, 'Sharpness ', 'Curvature of mesh in vertex'),
-    'Is Boundary ':       (7, 's', '',   'vep', vertex_is_boundary, 'Is_Boundary ', 'Is Vertex on mesh borders'),
-    'Is Manifold':        (8, 's', '',   'vep', vertex_is_manifold, 'Is_Manifold', 'Is Vertex part of the Manifold'),
-    'Is Wire':            (9, 's', '',   'vep', vertex_is_wire, 'Is_Wire', 'Is vertex only connected by edges'),
-    'Matrix ZY':          (10, 'm', 'u', 'vep', vertex_matrix_ZY, 'Matrix', 'Matrix, Z in normal, Y up'),
-    'Matrix YX':          (11, 'm', 'u', 'vep', vertex_matrix_YX, 'Matrix', 'Matrix, Y in normal, X up'),
-    'Matrix XZ':          (12, 'm', 'u', 'vep', vertex_matrix_XZ, 'Matrix', 'Matrix, X in normal, Z up'),
-}
+    'Normal':             (0,  'v', '', '',   'vep', vertex_normal, 'Normal', 'Vertex normal'),
+    'Matrix':             (10, 'm', 'u', 'mu', 'vep', vertex_matrix, 'Matrix', 'Matrix aligned with normal'),
+    'Sharpness':          (20,  's', '', '',   'vep', vertex_shell_factor, 'Sharpness ', 'Curvature of mesh in vertex'),
+    'Adjacent edges':     (30,  's', 'u', '',  've', adjacent_edg_pol_comp, 'Edges', 'Adjacent edges'),
+    'Adjacent faces ':    (31,  's', 'u', '',  'vp', adjacent_edg_pol_comp, 'Faces ', 'Adjacent faces'),
+    'Adjacent edges num': (40,  's', '', '',   've', adjacent_edg_pol, 'Number', 'Number of Adjacent edges'),
+    'Adjacent faces num': (41,  's', '', '',   'vp', adjacent_edg_pol, 'Number', 'Number of adjacent faces'),
+    'Edges Angle':        (50,  's', '', '',   'vep', vertex_calc_angle, 'Angle', 'angle between this vert’s two connected edges.'),
+    'Is Boundary ':       (60,  's', '', '',   'vep', vertex_is_boundary, 'Is_Boundary ', 'Is Vertex on mesh borders'),
+    'Is Manifold':        (61,  's', '', '',   'vep', vertex_is_manifold, 'Is_Manifold', 'Is Vertex part of the Manifold'),
+    'Is Wire':            (62, 's', '', '',   'vep', vertex_is_wire, 'Is_Wire', 'Is vertex only connected by edges'),
+ }
