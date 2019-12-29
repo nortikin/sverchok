@@ -96,11 +96,13 @@ class SvDictionaryOut(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Dict'].links:
             return
         self.rebuild_output()
-        out = []
+        out = dict()
         for d in self.inputs['Dict'].sv_get():
-            out.append(list(d.values()))
-        for sock, *data in zip(list(self.outputs), zip(*out)):
-            sock.sv_set(data[0])
+            for key in d:
+                if key not in out:
+                    out[key] = []
+                out[key].append(d[key])
+        [self.outputs[key].sv_set(out[key]) for key in out if key in self.outputs]
 
 
 def register():
