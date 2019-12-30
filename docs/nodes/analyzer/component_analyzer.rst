@@ -63,17 +63,17 @@ This node has the following parameters:
   * For **Faces**, supported criteria are:
 
     * **Geometry**. Geometry of each face. (explode)
-    * **Center **.
-      * **Center Bounds**. Center of bounding box of faces
-      * **Center Median**. Mean of vertices of each face
-      * **Center Median Weighted**. Mean of vertices of each face weighted by edges length
+    * **Center**.
+       * **Center Bounds**. Center of bounding box of faces
+       * **Center Median**. Mean of vertices of each face
+       * **Center Median Weighted**. Mean of vertices of each face weighted by edges length
     * **Normal**. Normal of faces
     * **Normal Absolute**. Median Center + Normal
     * **Tangent**.
-      * **Tangent edge**. Face tangent based on longest edge
-      * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
-      * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.
-      * **Tangent vert diagonal**. Face tangent based on the two most distant vertices.
+       * **Tangent edge**. Face tangent based on longest edge
+       * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
+       * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.
+       * **Tangent vert diagonal**. Face tangent based on the two most distant vertices.
     * **Matrix**. Matrix in median center of face. Z axis on normal. X to first corner.
     * **Area**. Area of faces
     * **Perimeter**. Perimeter of faces
