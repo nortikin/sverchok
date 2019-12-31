@@ -233,23 +233,25 @@ pols_origin_modes_dict = {
     'Last Vertex':            (34, pols_last_vert, 'First Vertex of Face'),
 
 }
+# Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
+
 faces_modes_dict = {
-    'Geometry':           (0,  'vs', 'u', '',   'vp',  pols_vertices,         'Vertices, Faces', "Geometry of each face. (explode)"),
-    'Center':             (10, 'v',  '',  'c',  'vep', pols_center,           'Center', 'Center faces'),
-    'Normal':             (20, 'v',  '',  '',   'vep', pols_normals,          'Normal', 'Normal of faces'),
-    'Normal Absolute':    (21, 'v',  '',  '',   'vep', pols_absolute_normals, 'Normal_Abs', 'Median Center + Normal'),
-    'Tangent':            (30, 'v',  '',  't',  'vep', pols_tangent,          'Tangent', 'Face tangent.'),
-    'Matrix':             (40, 'm',  'u', 'qt', 'vep', pols_matrix,           'Matrix', 'Matrix of face. Z axis on normal. X to first corner'),
-    'Area':               (50, 's',  '',  's',  'vps', areas_from_polygons,   'Area', "Area of faces"),
-    'Perimeter':          (51, 's',  '',  's',  'vp',  pols_perimeters,       'Perimeter', 'Perimeter of faces'),
-    'Sides Number':       (52, 's',  '',  's',  'p',   pols_sides,            'Sides', "Number of sides of faces"),
-    'Adjacent Faces Num': (53, 's',  '',  '',   'p',   pols_adjacent_num,     'Number', "Number of Faces that share a edge with face"),
-    'Neighbor Faces Num': (54, 's',  '',  '',   'vp',  pols_neighbor_num,     'Number', "Number of Faces that share a vertex with face"),
-    'Sharpness':          (55, 's',  '',  '',   'vep', pols_shell_factor,     'Sharpness ', 'Average of curvature of mesh in faces vertices'),
-    'Inverse':            (60, 'v',  '',  '',   'p',   pols_inverted,         'Faces', 'Reversed Polygons (Flipped)'),
-    'Edges':              (61, 's',  'u', '',   'p',   pols_edges,            'Edges', 'Face Edges'),
-    'Adjacent Faces':     (62, 's',  'u', '',   'p',   pols_adjacent,         'Edges', 'Faces that share a edge with face'),
-    'Neighbor Faces':     (63, 's',  'u', '',   'vp',  pols_neighbor,         'Edges', 'Faces that share a vertex with face'),
-    'Is Boundary':        (70, 'sss', '', '',   'vep', pols_is_boundary,      'Mask, Boundary, Interior', 'Is the face boundary'),
+    'Geometry':           (0,  'vp',  '',   'u', pols_vertices,         'vs',  'Vertices, Faces', "Geometry of each face. (explode)"),
+    'Center':             (10, 'vep', 'c',  '',  pols_center,           'v',   'Center', 'Center faces'),
+    'Normal':             (20, 'vep', '',   '',  pols_normals,          'v',   'Normal', 'Normal of faces'),
+    'Normal Absolute':    (21, 'vep', '',   '',  pols_absolute_normals, 'v',   'Normal_Abs', 'Median Center + Normal'),
+    'Tangent':            (30, 'vep', 't',  '',  pols_tangent,          'v',   'Tangent', 'Face tangent.'),
+    'Matrix':             (40, 'vep', 'qt', 'u', pols_matrix,           'm',   'Matrix', 'Matrix of face. Z axis on normal. X to first corner'),
+    'Area':               (50, 'vp',  's',  '',  areas_from_polygons,   's',   'Area', "Area of faces"),
+    'Perimeter':          (51, 'vp',  's',  '',  pols_perimeters,       's',   'Perimeter', 'Perimeter of faces'),
+    'Sides Number':       (52, 'p',   's',  '',  pols_sides,            's',   'Sides', "Number of sides of faces"),
+    'Adjacent Faces Num': (53, 'p',   '',   '',  pols_adjacent_num,     's',   'Number', "Number of Faces that share a edge with face"),
+    'Neighbor Faces Num': (54, 'vp',  '',   '',  pols_neighbor_num,     's',   'Number', "Number of Faces that share a vertex with face"),
+    'Sharpness':          (55, 'vep', '',   '',  pols_shell_factor,     's',   'Sharpness ', 'Average of curvature of mesh in faces vertices'),
+    'Inverse':            (60, 'p',   '',   '',  pols_inverted,         's',   'Faces', 'Reversed Polygons (Flipped)'),
+    'Edges':              (61, 'p',   '',   'u', pols_edges,            's',   'Edges', 'Face Edges'),
+    'Adjacent Faces':     (62, 'p',   '',   'u', pols_adjacent,         's',   'Faces', 'Faces that share a edge with face'),
+    'Neighbor Faces':     (63, 'vp',  '',   'u', pols_neighbor,         's',   'Faces', 'Faces that share a vertex with face'),
+    'Is Boundary':        (70, 'vep', '',   '',  pols_is_boundary,      'sss', 'Mask, Boundary, Interior', 'Is the face boundary'),
 
 }

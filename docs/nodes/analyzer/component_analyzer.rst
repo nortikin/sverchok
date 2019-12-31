@@ -28,10 +28,10 @@ This node has the following parameters:
     * **Normal**. Vertices with similar normal vector.
     * **Matrix ZY**: Matrix aligned with normal
     * **Sharpness**: Curvature of mesh in vertex
-    * **Adjacent edges**: Adjacent edges
-    * **Adjacent faces**: Adjacent faces
-    * **Adjacent edges num**: Number of Adjacent edges
-    * **Adjacent faces num**: Number of adjacent faces
+    * **Adjacent Edges**: Adjacent edges
+    * **Adjacent Faces**: Adjacent faces
+    * **Adjacent Edges num**: Number of Adjacent edges
+    * **Adjacent Faces num**: Number of adjacent faces
     * **Is Boundary**: Is Vertex on mesh borders
     * **Is Interior**: Is Vertex on mesh interior
     * **Is Manifold**: Is Vertex part of the Manifold
@@ -74,7 +74,7 @@ This node has the following parameters:
        * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
        * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.
        * **Tangent vert diagonal**. Face tangent based on the two most distant vertices.
-    * **Matrix**. Matrix in median center of face. Z axis on normal. X to first corner.
+    * **Matrix**. Matrix aligned with face.
     * **Area**. Area of faces
     * **Perimeter**. Perimeter of faces
     * **Sides**. Sides of faces

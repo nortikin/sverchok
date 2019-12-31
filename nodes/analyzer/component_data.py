@@ -32,13 +32,24 @@ modes_dicts = {
     'Verts': vertex_modes_dict,
     'Edges': edges_modes_dict,
     'Faces': faces_modes_dict
-}
+    }
 
+inputs_dict = {
+    'v': 'Vertices',
+    'e': 'Edges',
+    'p': 'Faces',
+
+}
 socket_dict = {
     "v": "SvVerticesSocket",
     "s":"SvStringsSocket",
     "m": "SvMatrixSocket"
 }
+def split_output(result_vals):
+    result_vals = [[[v] for v in r] for r in result_vals]
+    result_vals = lists_flat([result_vals])[0]
+    return lists_flat([result_vals])[0]
+
 class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Center/Matrix/Length
@@ -86,13 +97,24 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
     def update_mode(self, context):
         # for mode in self.modes:
         info = modes_dicts[self.mode][self.actual_mode()]
-        sockt_type = info[1]
-        sockt_names = info[6].split(', ')
-        for i, s in enumerate(sockt_type):
-            self.outputs[i].name = sockt_names[i]
+
+        input_names = info[1]
+        output_socket_type = info[5]
+        output_socket_name = info[6].split(', ')
+        # hide unnecesary inputs only if not connected
+        for i, s in zip(self.inputs, 'vep'):
+            if not s in input_names:
+                if not i.is_linked:
+                    i.hide_safe = True
+            else:
+                if not i.is_linked:
+                    i.hide_safe = False
+
+        for i, s in enumerate(output_socket_type):
+            self.outputs[i].name = output_socket_name[i]
             self.outputs[i].replace_socket(socket_dict[s])
-        if len(sockt_type) < len(self.outputs):
-            for s in self.outputs[len(sockt_type):]:
+        if len(output_socket_type) < len(self.outputs):
+            for s in self.outputs[len(output_socket_type):]:
                 s.hide_safe = True
         updateNode(self, context)
 
@@ -194,8 +216,8 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.mode == 'Faces':
             layout.prop(self, "face_mode", text="")
         info = modes_dicts[self.mode][self.actual_mode()]
-        local_ops = info[3]
-        out_ops = info[2]
+        local_ops = info[2]
+        out_ops = info[3]
         op_dict = {
         'c': 'center_mode',
         's': 'sum_items',
@@ -206,9 +228,11 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         'n': 'matrix_normal',
         't': 'tangent_mode',
         }
+
         for op in local_ops:
             if op in op_dict:
                 layout.prop(self, op_dict[op])
+
         if not 'u' in out_ops:
             layout.prop(self, 'split')
         else:
@@ -228,15 +252,22 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_mode(context)
 
+    def output(self, result_vals, socket, unwrap):
+        if unwrap:
+            if not self.wrap:
+                result_vals = [v for r in result_vals for v in r]
+        else:
+            if self.split:
+                result_vals = [[v] for r in result_vals for v in r]
+
+        socket.sv_set(result_vals)
+
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
         modes_dict = modes_dicts[self.mode]
         component_mode = self.actual_mode()
-        output_ops = modes_dict[component_mode][2]
-        local_ops = modes_dict[component_mode][3]
-        func_inputs = modes_dict[component_mode][4]
-        func = modes_dict[component_mode][5]
+        func_inputs, local_ops, output_ops, func, output_sockets = modes_dict[component_mode][1:6]
         params = []
         if "v" in func_inputs:
             params.append(self.inputs['Vertices'].sv_get())
@@ -250,19 +281,19 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         meshes = match_long_repeat(params)
 
         special = False
-        if len(local_ops) > 0:
+        if local_ops:
             op_dict = {
-            'b': component_mode,
-            'c': self.center_mode,
-            's': self.sum_items,
-            'o': self.origin_mode,
-            'q': self.pols_origin_mode,
-            'm': self.matrix_track,
-            'u': self.matrix_normal_up,
-            'n': self.matrix_normal,
-            't': self.tangent_mode,
+                'b': component_mode,
+                'c': self.center_mode,
+                's': self.sum_items,
+                'o': self.origin_mode,
+                'q': self.pols_origin_mode,
+                'm': self.matrix_track,
+                'u': self.matrix_normal_up,
+                'n': self.matrix_normal,
+                't': self.tangent_mode,
             }
-            special_op=[]
+            special_op = []
             for op in local_ops:
                 special_op.append(op_dict[op])
             special = True
@@ -276,29 +307,14 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
                 vals = func(*param)
             result_vals.append(vals)
 
-
-        if len(modes_dict[component_mode][1]) > 1:
+        unwrap = 'u' in output_ops
+        if len(output_sockets) > 1:
             results = list(zip(*result_vals))
-            for res, s in zip(results, self.outputs):
-                if 'u' in output_ops:
-                    if not self.wrap:
-                        res = lists_flat([res])[0]
-                else:
-                    if self.split:
-                        res = [[[v] for v in r] for r in res]
-                        res = lists_flat([res])[0]
-
-                s.sv_set(res)
-
+            for res, socket in zip(results, self.outputs):
+                self.output(res, socket, unwrap)
         else:
-            if 'u' in output_ops and not self.wrap:
-                result_vals = lists_flat([result_vals])[0]
+            self.output(result_vals, self.outputs[0], unwrap)
 
-            else:
-                if self.split:
-                    result_vals = [[[v] for v in r] for r in result_vals]
-                    result_vals = lists_flat([result_vals])[0]
-            self.outputs[0].sv_set(result_vals)
 
 
 def register():

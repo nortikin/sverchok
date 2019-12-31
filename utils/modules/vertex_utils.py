@@ -77,18 +77,19 @@ def vertex_matrix(vertices, edges, faces, orientation):
     vals = matrix_normal([loc, normal], track, up)
     bm.free()
     return vals
-
+    
+# Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
 vertex_modes_dict = {
-    'Normal':             (0,  'v', '', '',   'vep', vertex_normal, 'Normal', 'Vertex normal'),
-    'Matrix':             (10, 'm', 'u', 'mu', 'vep', vertex_matrix, 'Matrix', 'Matrix aligned with normal'),
-    'Sharpness':          (20,  's', '', '',   'vep', vertex_shell_factor, 'Sharpness ', 'Curvature of mesh in vertex'),
-    'Adjacent edges':     (30,  's', 'u', '',  've', adjacent_edg_pol, 'Edges', 'Adjacent edges'),
-    'Adjacent faces ':    (31,  's', 'u', '',  'vp', adjacent_edg_pol, 'Faces ', 'Adjacent faces'),
-    'Adjacent edges num': (40,  's', '', '',   've', adjacent_edg_pol_num, 'Number', 'Number of Adjacent edges'),
-    'Adjacent faces num': (41,  's', '', '',   'vp', adjacent_edg_pol_num, 'Number', 'Number of adjacent faces'),
-    'Edges Angle':        (50,  's', '', '',   'vep', vertex_calc_angle, 'Angle', 'angle between this vert’s two connected edges.'),
-    'Is Boundary ':       (60,  's', '', '',   'vep', vertex_is_boundary, 'Is Boundary ', 'Is Vertex on mesh borders'),
-    'Is Interior ':       (60,  's', '', '',   'vep', vertex_is_interior, 'Is Interior ', 'Is Vertex on mesh interiors'),
-    'Is Manifold':        (61,  's', '', '',   'vep', vertex_is_manifold, 'Is Manifold', 'Is Vertex part of the Manifold'),
-    'Is Wire':            (62,  's', '', '',   'vep', vertex_is_wire, 'Is Wire', 'Is vertex only connected by edges'),
+    'Normal':             (0,  'vep', '',   '',  vertex_normal,        'v', 'Normal', 'Vertex normal'),
+    'Matrix':             (10, 'vep', 'mu', 'u', vertex_matrix,        'm', 'Matrix', 'Matrix aligned with normal'),
+    'Sharpness':          (20, 'vep', '',   '',  vertex_shell_factor,  's', 'Sharpness ', 'Curvature of mesh in vertex'),
+    'Adjacent edges':     (30, 've',  '',   'u', adjacent_edg_pol,     's', 'Edges', 'Adjacent edges'),
+    'Adjacent faces ':    (31, 'vp',  '',   'u', adjacent_edg_pol,     's', 'Faces ', 'Adjacent faces'),
+    'Adjacent edges num': (40, 've',  '',   '',  adjacent_edg_pol_num, 's', 'Number', 'Number of Adjacent edges'),
+    'Adjacent faces num': (41, 'vp',  '',   '',  adjacent_edg_pol_num, 's', 'Number', 'Number of adjacent faces'),
+    'Edges Angle':        (50, 'vep', '',   '',  vertex_calc_angle,    's', 'Angle', 'angle between this vert’s two connected edges.'),
+    'Is Boundary ':       (60, 'vep', '',   '',  vertex_is_boundary,   's', 'Is Boundary ', 'Is Vertex on mesh borders'),
+    'Is Interior ':       (60, 'vep', '',   '',  vertex_is_interior,   's', 'Is Interior ', 'Is Vertex on mesh interiors'),
+    'Is Manifold':        (61, 'vep', '',   '',  vertex_is_manifold,   's', 'Is Manifold', 'Is Vertex part of the Manifold'),
+    'Is Wire':            (62, 'vep', '',   '',  vertex_is_wire,       's', 'Is Wire', 'Is vertex only connected by edges'),
  }
