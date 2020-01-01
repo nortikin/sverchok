@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
-from math import sin, cos, radians, degrees, sqrt
+from math import sin, cos, radians, degrees, sqrt, asin, acos, atan2
 
 def smooth(x):
     return 3*x*x - 2*x*x*x
