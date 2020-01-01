@@ -45,6 +45,16 @@ socket_dict = {
     "s":"SvStringsSocket",
     "m": "SvMatrixSocket"
 }
+op_dict = {
+    'c': ('center_mode', 'e'),
+    's': ('sum_items', 'b'),
+    'o': ('origin_mode', 'e'),
+    'q': ('pols_origin_mode', 'e'),
+    'm': ('matrix_track', 'e'),
+    'u': ('matrix_normal_up', 'e'),
+    'n': ('matrix_normal', 'e'),
+    't': ('tangent_mode', 'e'),
+}
 def split_output(result_vals):
     result_vals = [[[v] for v in r] for r in result_vals]
     result_vals = lists_flat([result_vals])[0]
@@ -220,7 +230,6 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
-
         if self.mode == 'Verts':
             layout.prop(self, "vertex_mode", text="")
         elif self.mode == 'Edges':
@@ -230,26 +239,39 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         info = modes_dicts[self.mode][self.actual_mode()]
         local_ops = info[2]
         out_ops = info[3]
-        op_dict = {
-            'c': 'center_mode',
-            's': 'sum_items',
-            'o': 'origin_mode',
-            'q': 'pols_origin_mode',
-            'm': 'matrix_track',
-            'u': 'matrix_normal_up',
-            'n': 'matrix_normal',
-            't': 'tangent_mode',
-        }
+
 
         for option in local_ops:
             if option in op_dict:
-                layout.prop(self, op_dict[option])
+                layout.prop(self, op_dict[option][0])
 
         if not 'u' in out_ops:
             layout.prop(self, 'split')
         else:
             layout.prop(self, 'wrap')
 
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "mode", text=self.mode)
+        if self.mode == 'Verts':
+            layout.prop_menu_enum(self, "vertex_mode", text=self.vertex_mode)
+        elif self.mode == 'Edges':
+            layout.prop_menu_enum(self, "edge_mode", text=self.edge_mode)
+        elif self.mode == 'Faces':
+            layout.prop_menu_enum(self, "face_mode", text=self.face_mode)
+
+        info = modes_dicts[self.mode][self.actual_mode()]
+        local_ops = info[2]
+        out_ops = info[3]
+        for option in local_ops:
+            if option in op_dict:
+                if 'b' == op_dict[option][1]:
+                    layout.prop(self, op_dict[option][0])
+                else:
+                    layout.prop_menu_enum(self, op_dict[option][0])
+        if not 'u' in out_ops:
+            layout.prop(self, 'split')
+        else:
+            layout.prop(self, 'wrap')
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -294,7 +316,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
 
         special = False
         if local_ops:
-            op_dict = {
+            options_dict = {
                 'b': component_mode,
                 'c': self.center_mode,
                 's': self.sum_items,
@@ -307,7 +329,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
             }
             special_op = []
             for option in local_ops:
-                special_op.append(op_dict[option])
+                special_op.append(options_dict[option])
             special = True
             if len(local_ops) == 1:
                 special_op = special_op[0]
