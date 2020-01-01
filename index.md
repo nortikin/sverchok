@@ -50,7 +50,7 @@
 
 ## Analyzers
     SvBBoxNodeMk2
-    SvComponentDataNode
+    SvComponentAnalyzerNode
     SvDiameterNode
     SvVolumeNode
     SvAreaNode

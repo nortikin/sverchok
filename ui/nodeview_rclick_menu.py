@@ -18,7 +18,7 @@ common_nodes = [
     ['GenVectorsNode', 'VectorsOutNode'],
     ['SvNumberNode', 'SvGenNumberRange'],
     ['SvScalarMathNodeMK4', 'SvVectorMathNodeMK3'],
-    ['SvComponentDataNode'],
+    ['SvComponentAnalyzerNode'],
     ['---', 'NodeReroute']
 ]
 

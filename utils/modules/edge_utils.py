@@ -11,7 +11,7 @@ from math import acos, pi
 import numpy as np
 from numpy.linalg import norm as np_norm
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
-from sverchok.utils.modules.matrix_utils import matrix_normal, vectors_to_matrix, vectors_center_axis_to_matrix
+from sverchok.utils.modules.matrix_utils import matrix_normal, vectors_center_axis_to_matrix
 from sverchok.utils.modules.vertex_utils import vertex_shell_factor, adjacent_edg_pol, adjacent_edg_pol_num
 from sverchok.nodes.analyzer.mesh_filter import Edges
 
@@ -56,10 +56,11 @@ def edges_direction(vertices, edges, out_numpy=False):
     return vect_norm if out_numpy else vect_norm.tolist()
 
 def connected_edges(verts, edges):
+    '''edges conected to each edge'''
     v_adja = adjacent_edg_pol(verts, edges)
     vals = []
     for e in edges:
-        adj =[]
+        adj = []
         for c in e:
             adj.extend(v_adja[c])
             adj.remove(e)
@@ -67,6 +68,7 @@ def connected_edges(verts, edges):
     return vals
 
 def connected_edges_num(verts, edges):
+    '''number of edges conected to each edge'''
     v_adja = adjacent_edg_pol_num(verts, edges)
     vals = []
     for e in edges:
@@ -99,8 +101,17 @@ def adjacent_faces(edges, pols):
                 idx = e_sorted.index(e_s)
                 ad_faces[idx] += [pol]
     return ad_faces
+def faces_angle_full(vertices, edges, faces):
+    '''angle between faces of each edge (only first two faces)'''
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    normals = [tuple(face.normal) for face in bm.faces]
+    bm.free()
+    vals = faces_angle(normals, edges, faces)
+    return vals
+
 
 def faces_angle(normals, edges, pols):
+    '''angle between faces of each edge (only first two faces)'''
     ad_faces = adjacent_faces_number(edges, pols)
     e_sorted = [sorted(e) for e in edges]
     ad_faces = [[] for e in edges]
@@ -120,8 +131,17 @@ def faces_angle(normals, edges, pols):
         angles.append(ang)
     return angles
 
+def edges_normals_full(vertices, edges, faces):
+    '''Average of normals of the faces that share the edge (only the two first)'''
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    normals = [tuple(face.normal) for face in bm.faces]
+    bm.free()
+    vals = edges_normal(vertices, normals, edges, faces)
+
+    return vals
+
 def edges_normal(vertices, normals, edges, pols):
-    # ad_faces = adjacent_faces_number(edges, pols)
+    '''Average of normals of the faces that share the edge (only the two first)'''
     e_sorted = [sorted(e) for e in edges]
     ad_faces = [[] for e in edges]
     for idp, pol in enumerate(pols):
@@ -142,32 +162,19 @@ def edges_normal(vertices, normals, edges, pols):
             direc = (Vector(vertices[edg[1]]) - Vector(vertices[edg[0]])).normalized()
             edge_normal = direc @ rot_mat
         result.append(tuple(edge_normal))
+
     return result
 
 
 def edges_vertices(vertices, edges):
+    '''Explode edges'''
     verts = [[vertices[c] for c in e] for e in edges]
     eds = [[[0, 1]] for e in edges]
     vals = [verts, eds]
     return vals
 
-def edges_normals_full(vertices, edges, faces):
-
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    normals = [tuple(face.normal) for face in bm.faces]
-    bm.free()
-    vals = edges_normal(vertices, normals, edges, faces)
-
-    return vals
-
-def faces_angle_full(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    normals = [tuple(face.normal) for face in bm.faces]
-    bm.free()
-    vals = faces_angle(normals, edges, faces)
-    return vals
-
 def edge_is_filter(vertices, edges, faces, mode):
+    '''acces to mesh_filter to get differnt bmesh edges filters'''
     mode = mode.split(' ')[1]
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     good, bad, mask = Edges.process(bm, mode, edges)
@@ -176,6 +183,7 @@ def edge_is_filter(vertices, edges, faces, mode):
 
 
 def edges_shell_factor(vertices, edges, faces):
+    '''Average of vertex shell_factor'''
     v_shell = vertex_shell_factor(vertices, edges, faces)
     vals = [(v_shell[e[0]] + v_shell[e[1]])/2 for e in edges]
     return vals
@@ -206,6 +214,7 @@ def edge_vertex(vertices, edges, origin):
     return center
 
 def edges_matrix(vertices, edges, orientation):
+    '''Matrix aligned with edge.'''
     origin, track, up = orientation
     normal = edges_direction(vertices, edges, out_numpy=False)
     normal_v = [Vector(n) for n in normal]
@@ -214,6 +223,7 @@ def edges_matrix(vertices, edges, orientation):
     return vals
 
 def edges_matrix_normal(vertices, edges, faces, orientation):
+    '''Matrix aligned with edge and edge normal (needs faces)'''
     origin, track = orientation
     direction = edges_direction(vertices, edges, out_numpy=False)
     center = edge_vertex(vertices, edges, origin)
@@ -251,4 +261,4 @@ edges_modes_dict = {
     'Is Convex':          (43, 'vep', 'b',  '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge Convex'),
     'Is Concave':         (44, 'vep', 'b',  '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Is Edge Concave'),
     'Is Wire':            (45, 'vep', 'b',  '',  edge_is_filter,        'sss', 'Mask, True Edges, False Edges', 'Has no related faces'),
-}
+    }

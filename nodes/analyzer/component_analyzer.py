@@ -15,14 +15,14 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from itertools import repeat
+
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
+from bpy.props import BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, dataCorrect
+from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.listutils import lists_flat
 
-from sverchok.utils.modules.polygon_utils import faces_modes_dict, areas_from_polygons, pols_origin_modes_dict, tangent_modes_dict
+from sverchok.utils.modules.polygon_utils import faces_modes_dict, pols_origin_modes_dict, tangent_modes_dict
 
 from sverchok.utils.modules.edge_utils import edges_modes_dict
 from sverchok.utils.modules.vertex_utils import vertex_modes_dict
@@ -50,14 +50,14 @@ def split_output(result_vals):
     result_vals = lists_flat([result_vals])[0]
     return lists_flat([result_vals])[0]
 
-class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
+class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Center/Matrix/Length
-    Tooltip: Select vertices, edges, faces similar to selected ones
+    Tooltip: Data from vertices/edges/faces as Orientation, Location, Length, Normal, Center...
 
     """
 
-    bl_idname = 'SvComponentDataNode'
+    bl_idname = 'SvComponentAnalyzerNode'
     bl_label = 'Component Analyzer'
     bl_icon = 'VIEWZOOM'
 
@@ -68,9 +68,9 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         ('Faces', "Faces", "Faces Operators", 2)
     ]
 
-    edge_modes =        [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(edges_modes_dict.items(), key=lambda k: k[1][0])]
+    edge_modes =        [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(edges_modes_dict.items(),  key=lambda k: k[1][0])]
     vertex_modes =      [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(vertex_modes_dict.items(), key=lambda k: k[1][0])]
-    face_modes =        [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(faces_modes_dict.items(), key=lambda k: k[1][0])]
+    face_modes =        [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(faces_modes_dict.items(),  key=lambda k: k[1][0])]
     pols_origin_modes = [(k, k, descr, ident) for k, (ident, _, descr) in sorted(pols_origin_modes_dict.items(), key=lambda k: k[1][0])]
     tangent_modes =     [(k, k, descr, ident) for k, (ident, _, descr) in sorted(tangent_modes_dict.items(), key=lambda k: k[1][0])]
 
@@ -102,17 +102,16 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         output_socket_type = info[5]
         output_socket_name = info[6].split(', ')
         # hide unnecesary inputs only if not connected
-        for i, s in zip(self.inputs, 'vep'):
-            if not s in input_names:
-                if not i.is_linked:
-                    i.hide_safe = True
-            else:
-                if not i.is_linked:
-                    i.hide_safe = False
+        for input_socket, key_name in zip(self.inputs, 'vep'):
+            if not input_socket.is_linked:
+                if not key_name in input_names:
+                    input_socket.hide_safe = True
+                else:
+                    input_socket.hide_safe = False
 
-        for i, s in enumerate(output_socket_type):
-            self.outputs[i].name = output_socket_name[i]
-            self.outputs[i].replace_socket(socket_dict[s])
+        for idx, s in enumerate(output_socket_type):
+            self.outputs[idx].name = output_socket_name[idx]
+            self.outputs[idx].replace_socket(socket_dict[s])
         if len(output_socket_type) < len(self.outputs):
             for s in self.outputs[len(output_socket_type):]:
                 s.hide_safe = True
@@ -129,64 +128,77 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         items=vertex_modes,
         default="Normal",
         update=update_mode)
+
     edge_mode: EnumProperty(
         name="Operator",
         items=edge_modes,
         default="Length",
         update=update_mode)
+
     face_mode: EnumProperty(
         name="Operator",
         items=face_modes,
         default="Normal",
         update=update_mode)
+
     flat_output: BoolProperty(
         name="Flat output",
         description="Flatten output by list-joining level 1",
         default=True,
         update=updateNode)
+
     split: BoolProperty(
         name="Split output",
         description="Split output",
         default=False,
         update=updateNode)
+
     wrap: BoolProperty(
         name="Wrap output",
         description="Wrap output",
         default=False,
         update=updateNode)
+
     sum_items: BoolProperty(
         name="Sum", description="Sum Items",
         default=False, update=updateNode)
+
     origin_mode: EnumProperty(
         name="Origin",
         items=origin_modes,
         default="Center",
         update=update_mode)
+
     tangent_mode: EnumProperty(
         name="Direction",
         items=tangent_modes,
         default="Edge",
         update=update_mode)
+
     center_mode: EnumProperty(
         name="Center",
         items=pols_origin_modes[:3],
         default="Median Center",
         update=update_mode)
+
     pols_origin_mode: EnumProperty(
         name="Origin",
         items=pols_origin_modes,
         default="Median Center",
         update=update_mode)
+
     matrix_track: EnumProperty(
         name="Normal",
         items=matrix_track_modes,
         default="Z",
         update=update_mode)
+
     matrix_normal_up: EnumProperty(
         name="Up",
         items=matrix_track_modes,
         default="Y",
         update=update_mode)
+
     matrix_normal: EnumProperty(
         name="Edge",
         items=matrix_normal_modes,
@@ -219,19 +231,19 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
         local_ops = info[2]
         out_ops = info[3]
         op_dict = {
-        'c': 'center_mode',
-        's': 'sum_items',
-        'o': 'origin_mode',
-        'q': 'pols_origin_mode',
-        'm': 'matrix_track',
-        'u': 'matrix_normal_up',
-        'n': 'matrix_normal',
-        't': 'tangent_mode',
+            'c': 'center_mode',
+            's': 'sum_items',
+            'o': 'origin_mode',
+            'q': 'pols_origin_mode',
+            'm': 'matrix_track',
+            'u': 'matrix_normal_up',
+            'n': 'matrix_normal',
+            't': 'tangent_mode',
         }
 
-        for op in local_ops:
-            if op in op_dict:
-                layout.prop(self, op_dict[op])
+        for option in local_ops:
+            if option in op_dict:
+                layout.prop(self, op_dict[option])
 
         if not 'u' in out_ops:
             layout.prop(self, 'split')
@@ -294,8 +306,8 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
                 't': self.tangent_mode,
             }
             special_op = []
-            for op in local_ops:
-                special_op.append(op_dict[op])
+            for option in local_ops:
+                special_op.append(op_dict[option])
             special = True
             if len(local_ops) == 1:
                 special_op = special_op[0]
@@ -318,8 +330,8 @@ class SvComponentDataNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvComponentDataNode)
+    bpy.utils.register_class(SvComponentAnalyzerNode)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvComponentDataNode)
+    bpy.utils.unregister_class(SvComponentAnalyzerNode)

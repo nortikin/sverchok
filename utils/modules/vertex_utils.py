@@ -10,7 +10,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import matrix_normal
 
 def adjacent_edg_pol_num(verts, edg_pol):
-    '''calculate number of adjacent faces '''
+    '''calculate number of adjacent faces or edges '''
     adj_edg_pol = [0 for v in verts]
     for ep in edg_pol:
         for v in ep:
@@ -19,7 +19,7 @@ def adjacent_edg_pol_num(verts, edg_pol):
     return adj_edg_pol
 
 def adjacent_edg_pol(verts, edg_pol):
-    '''calculate of adjacent faces '''
+    '''calculate of adjacent faces  or edges'''
     adj_edg_pol = [[] for v in verts]
     for ep in edg_pol:
         for v in ep:
@@ -77,7 +77,7 @@ def vertex_matrix(vertices, edges, faces, orientation):
     vals = matrix_normal([loc, normal], track, up)
     bm.free()
     return vals
-    
+
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
 vertex_modes_dict = {
     'Normal':             (0,  'vep', '',   '',  vertex_normal,        'v', 'Normal', 'Vertex normal'),
@@ -92,4 +92,4 @@ vertex_modes_dict = {
     'Is Interior ':       (60, 'vep', '',   '',  vertex_is_interior,   's', 'Is Interior ', 'Is Vertex on mesh interiors'),
     'Is Manifold':        (61, 'vep', '',   '',  vertex_is_manifold,   's', 'Is Manifold', 'Is Vertex part of the Manifold'),
     'Is Wire':            (62, 'vep', '',   '',  vertex_is_wire,       's', 'Is Wire', 'Is vertex only connected by edges'),
- }
+    }

@@ -133,6 +133,7 @@ def pols_absolute_normals(vertices, edges, faces):
     return vals
 
 def pols_shell_factor(vertices, edges, faces):
+    '''Average of vertex shell_factor'''
     v_shell = vertex_shell_factor(vertices, edges, faces)
     vals = []
     for f in faces:
@@ -170,6 +171,7 @@ def pols_perimeter(vertices, edges, faces):
     bm.free()
     return vals
 
+
 def pols_tangent(vertices, edges, faces, direction):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     vals = tangent_modes_dict[direction][1](bm.faces)
@@ -178,12 +180,6 @@ def pols_tangent(vertices, edges, faces, direction):
 
 def pols_tangent_edge(bm_faces):
     return [tuple(bm_face.calc_tangent_edge()) for bm_face in bm_faces]
-
-def pols_is_boundary(vertices, edges, faces):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
-    interior, boundary, mask = Faces.process(bm, [], [])
-    bm.free()
-    return mask, interior, boundary
 
 def pols_tangent_edge_diagonal(bm_faces):
     return [tuple(bm_face.calc_tangent_edge_diagonal()) for bm_face in bm_faces]
@@ -197,6 +193,13 @@ def pols_tangent_center_origin(bm_faces):
 
 def pols_tangent_vert_diagonal(bm_faces):
     return [tuple(bm_face.calc_tangent_vert_diagonal()) for bm_face in bm_faces]
+
+
+def pols_is_boundary(vertices, edges, faces):
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+    interior, boundary, mask = Faces.process(bm, [], [])
+    bm.free()
+    return mask, interior, boundary
 
 
 def pols_edges(faces):
@@ -225,16 +228,16 @@ tangent_modes_dict = {
     'Vert Diagonal':   (4, pols_tangent_vert_diagonal, 'Face tangent based on the two most distant vertices'),
     'Center - Origin': (5, pols_tangent_center_origin, 'Face tangent based on the mean center and first corner'),
     }
+
 pols_origin_modes_dict = {
     'Bounds Center':          (30, pols_center_bounds, 'Center of bounding box of faces'),
     'Median Center':          (31, pols_center_median, 'Mean of vertices of each face'),
     'Median Weighted Center': (32, pols_center_median_weighted, 'Mean of vertices of each face weighted by edges length'),
     'First Vertex':           (33, pols_first_vert,  'First Vertex of Face'),
     'Last Vertex':            (34, pols_last_vert, 'First Vertex of Face'),
+    }
 
-}
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
-
 faces_modes_dict = {
     'Geometry':           (0,  'vp',  '',   'u', pols_vertices,         'vs',  'Vertices, Faces', "Geometry of each face. (explode)"),
     'Center':             (10, 'vep', 'c',  '',  pols_center,           'v',   'Center', 'Center faces'),
@@ -253,5 +256,4 @@ faces_modes_dict = {
     'Adjacent Faces':     (62, 'p',   '',   'u', pols_adjacent,         's',   'Faces', 'Faces that share a edge with face'),
     'Neighbor Faces':     (63, 'vp',  '',   'u', pols_neighbor,         's',   'Faces', 'Faces that share a vertex with face'),
     'Is Boundary':        (70, 'vep', '',   '',  pols_is_boundary,      'sss', 'Mask, Boundary, Interior', 'Is the face boundary'),
-
-}
+    }
