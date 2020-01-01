@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
+from math import sin, cos, radians, sqrt
 
 def smooth(x):
     return 3*x*x - 2*x*x*x
@@ -46,4 +47,49 @@ def falloff(type, radius, rho):
         return 0.0
     func = globals()[type]
     return 1.0 - func(rho / radius)
+
+# Standard functions which for some reasons are not in the math module
+def sign(x):
+    if x < 0:
+        return -1
+    elif x > 0:
+        return 1
+    else:
+        return 0
+
+def from_cylindrical(rho, phi, z, mode="degrees"):
+    if mode == "degrees":
+        phi = radians(phi)
+    x = rho*cos(phi)
+    y = rho*sin(phi)
+    return x, y, z
+
+def from_spherical(rho, phi, theta, mode="degrees"):
+    if mode == "degrees":
+        phi = radians(phi)
+        theta = radians(theta)
+    x = rho * sin(theta) * cos(phi)
+    y = rho * sin(theta) * sin(phi)
+    z = rho * cos(theta)
+    return x, y, z
+
+def to_cylindrical(v, mode="degrees"):
+    x,y,z = v
+    rho = sqrt(x*x + y*y)
+    phi = atan2(y,x)
+    if mode == "degrees":
+        phi = degrees(phi)
+    return rho, phi, z
+
+def to_spherical(v, mode="degrees"):
+    x,y,z = v
+    rho = sqrt(x*x + y*y + z*z)
+    if rho == 0.0:
+        return 0.0, 0.0, 0.0
+    theta = acos(z/rho)
+    phi = atan2(y,x)
+    if mode == "degrees":
+        phi = degrees(phi)
+        theta = degrees(theta)
+    return rho, phi, theta
 
