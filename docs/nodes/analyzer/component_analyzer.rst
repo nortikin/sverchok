@@ -26,21 +26,21 @@ This node has the following parameters:
   * For **Vertices** supported criteria are:
 
     * **Normal**. Vertices with similar normal vector.
-    * **Matrix ZY**: Matrix aligned with normal
-    * **Sharpness**: Curvature of mesh in vertex
-    * **Adjacent Edges**: Adjacent edges
-    * **Adjacent Faces**: Adjacent faces
-    * **Adjacent Edges num**: Number of Adjacent edges
-    * **Adjacent Faces num**: Number of adjacent faces
-    * **Is Boundary**: Is Vertex on mesh borders
-    * **Is Interior**: Is Vertex on mesh interior
-    * **Is Manifold**: Is Vertex part of the Manifold
-    * **Is Wire**: Is vertex only connected by edges
+    * **Matrix ZY**: Matrix aligned with normal.
+    * **Sharpness**: Curvature of mesh in vertex.
+    * **Adjacent Edges**: Adjacent edges.
+    * **Adjacent Faces**: Adjacent faces.
+    * **Adjacent Edges num**: Number of Adjacent edges.
+    * **Adjacent Faces num**: Number of adjacent faces.
+    * **Is Boundary**: Is Vertex on mesh borders.
+    * **Is Interior**: Is Vertex on mesh interior.
+    * **Is Manifold**: Is Vertex part of the Manifold.
+    * **Is Wire**: Is vertex only connected by edges.
 
 
   * For **Edges**, supported criteria are:
 
-    * **Geometry**. Geometry of each edge. (explode)
+    * **Geometry**. Geometry of each edge. (explode).
     * **Direction**.  'Normalized Direction
     * **Center**. Edges Midpoint.
     * **Origin**. Edges first point.
@@ -48,29 +48,29 @@ This node has the following parameters:
     * **Normal**. Edge Normal
     * **Matrix**. Matrix aligned with edge.
     * **Matrix Normal**. Matrix aligned with edge and edge normal (needs faces).
-    * **Length**. Edge length
+    * **Length**. Edge length.
     * **Sharpness**. Average of curvature of mesh in edges vertices.
     * **Face Angle**. Edges faces angle.
     * **Inverted**. Reversed edges.
     * **Adjacent faces**. Adjacent faces.
-    * **Adjacent faces Num**. Adjacent faces number
-    * **Is Boundary**.  Is Edge on mesh borders
-    * **Is Contiguous**. Is Edge contiguous
-    * **Is Convex**. Is Edge Convex
-    * **Is Manifold**. Is Edge part of the Manifold
-    * **Is Wire**. Has no related faces
+    * **Adjacent faces Num**. Adjacent faces number.
+    * **Is Boundary**.  Is Edge on mesh borders.
+    * **Is Contiguous**. Is Edge contiguous.
+    * **Is Convex**. Is Edge Convex.
+    * **Is Manifold**. Is Edge part of the Manifold.
+    * **Is Wire**. Has no related faces.
 
   * For **Faces**, supported criteria are:
 
     * **Geometry**. Geometry of each face. (explode)
     * **Center**.
-       * **Center Bounds**. Center of bounding box of faces
-       * **Center Median**. Mean of vertices of each face
-       * **Center Median Weighted**. Mean of vertices of each face weighted by edges length
-    * **Normal**. Normal of faces
-    * **Normal Absolute**. Median Center + Normal
+       * **Center Bounds**. Center of bounding box of faces.
+       * **Center Median**. Mean of vertices of each face.
+       * **Center Median Weighted**. Mean of vertices of each face weighted by edges length.
+    * **Normal**. Normal of faces.
+    * **Normal Absolute**. Median Center + Normal.
     * **Tangent**.
-       * **Tangent edge**. Face tangent based on longest edge
+       * **Tangent edge**. Face tangent based on longest edge.
        * **Tangent edge diagonal**. Face tangent based on the edge farthest from any vertex.
        * **Tangent edge pair**. Face tangent based on the two longest disconnected edges.
        * **Tangent vert diagonal**. Face tangent based on the two most distant vertices.
@@ -80,15 +80,22 @@ This node has the following parameters:
     * **Sides**. Sides of faces
     * **Neighbor Faces Num**. Number of Faces that share a edge with face
     * **Adjacent Faces Num**. Number of Faces that share a vertex with face.
-    * **Sharpness**. Average of curvature of mesh in faces vertices'),
-    * **Inverse**. Reversed Polygons (Flipped)'),
+    * **Sharpness**. Average of curvature of mesh in faces vertices
+    * **Inverse**. Reversed Polygons (Flipped).
     * **Edges**. Face Edges.
     * **Adjacent Faces**. Faces that share a edge with face.
     * **Neighbor Faces**. Faces that share a vertex with face.
     * **Is Boundary**. Is the face boundary or interior
 
+
+* **Output Parameters**: Depending on output nature (if offers multiple results per component or single result) the node offers one of this parameters.
+
+  * **Split Output**. Split the result to get one object per result *[[0, 1], [2]] --> [[0], [1], [2]]*
+  * **Wrap Output**. Keeps original data shape *[Matrix, Matrix, Matrix] --> [[Matrix, Matrix], [Matrix]]*
+
+
 Example of usage
-    ----------------
+----------------
 
 .. image:: https://user-images.githubusercontent.com/10011941/71564525-ffec5100-2aa1-11ea-9fda-d9605ff3812f.png
 .. image:: https://user-images.githubusercontent.com/10011941/71564638-61adba80-2aa4-11ea-9c1f-c1f5551287cf.png
