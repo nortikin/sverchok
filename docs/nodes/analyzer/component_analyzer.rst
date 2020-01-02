@@ -86,3 +86,11 @@ This node has the following parameters:
     * **Adjacent Faces**. Faces that share a edge with face.
     * **Neighbor Faces**. Faces that share a vertex with face.
     * **Is Boundary**. Is the face boundary or interior
+
+Example of usage
+    ----------------
+
+.. image:: https://user-images.githubusercontent.com/10011941/71564525-ffec5100-2aa1-11ea-9fda-d9605ff3812f.png
+.. image:: https://user-images.githubusercontent.com/10011941/71564638-61adba80-2aa4-11ea-9c1f-c1f5551287cf.png
+.. image:: https://user-images.githubusercontent.com/10011941/71564682-134ceb80-2aa5-11ea-9b97-15891503f39c.png
+.. image:: https://user-images.githubusercontent.com/10011941/71649567-37f8cb80-2d10-11ea-8cfc-aca8958750c8.png

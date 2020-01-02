@@ -239,7 +239,7 @@ def edges_matrix_normal(vertices, edges, faces, orientation):
 
 # Name: (index, input_sockets, func_options, output_options, function, output_sockets, output_sockets_names, description)
 edges_modes_dict = {
-    'Geometry':           (0,  've',  '',   'u', edges_vertices,        'vs',  'Vertices, Faces', 'Geometry of each edge. (explode)'),
+    'Geometry':           (0,  've',  '',   'u', edges_vertices,        'vs',  'Vertices, Edges', 'Geometry of each edge. (explode)'),
     'Direction':          (1,  've',  '',   '',  edges_direction,       'v',   'Direction', 'Normalized Direction'),
     'Center':             (2,  've',  '',   '',  edges_center,          'v',   'Center', 'Edges Midpoint'),
     'Origin':             (3,  've',  '',   '',  edges_origin,          'v',   'Origin', 'Edges first point'),
