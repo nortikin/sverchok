@@ -25,7 +25,7 @@ This node has the following parameters:
 
   * For **Vertices** supported criteria are:
 
-    * **Normal**. Vertices with similar normal vector.
+    * **Normal**. Vertices normal vector.
     * **Matrix ZY**: Matrix aligned with normal.
     * **Sharpness**: Curvature of mesh in vertex.
     * **Adjacent Edges**: Adjacent edges.
