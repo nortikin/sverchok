@@ -275,6 +275,10 @@ This node hsa the following outputs:
 - **Polygons**
 - **FaceData**. List of data items, which were provided in the **FaceDataD**
   input, containing one data item for each face of output mesh.
+- **VertRecptIdx**. For each output vertex, this output contains an index of
+  recipient object face, which was used to construct this output vertex.
+- **FaceRecptIdx**. Foreach output face, this output contains an index of
+  recipient object face, which was used to construct this output face.
 
 The outputs will contain one object, if **Join** flag is checked, or one object
 per recipient object face, otherwise.

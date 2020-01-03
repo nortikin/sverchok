@@ -50,12 +50,15 @@ class OutputData(object):
         self.verts_out = []
         self.faces_out = []
         self.face_data_out = []
+        self.vert_recpt_idx_out = []
+        self.face_recpt_idx_out = []
 
 class RecptFaceData(object):
     def __init__(self):
         self.vertices_co = []
         self.vertices_normal = []
         self.vertices_idxs = []
+        self.index = 0
         self.normal = None
         self.center = None
         self.frame_width = None
@@ -68,6 +71,7 @@ class RecptFaceData(object):
         r.normal = self.normal
         r.center = self.center
         r.frame_width = self.frame_width
+        r.index = self.index
         return r
 
 class DonorData(object):
@@ -292,6 +296,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Polygons")
         self.outputs.new('SvStringsSocket', "FaceData")
+        self.outputs.new('SvStringsSocket', "VertRecptIdx")
+        self.outputs.new('SvStringsSocket', "FaceRecptIdx")
 
         self.update_frame_mode(context)
 
@@ -509,6 +515,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             n = len(verts)
             output.verts_out.append(verts)
             output.faces_out.append([list(range(n))])
+            output.vert_recpt_idx_out.append([recpt_face_data.index for i in verts])
+            output.face_recpt_idx_out.append([recpt_face_data.index for i in range(n)])
 
         elif map_mode == 'TRI':
             # Tris processing mode.
@@ -540,6 +548,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             output.verts_out.append(new_verts)
             output.faces_out.append(donor.faces_i)
             output.face_data_out.append(donor.face_data_i)
+            output.vert_recpt_idx_out.append([recpt_face_data.index for i in new_verts])
+            output.face_recpt_idx_out.append([recpt_face_data.index for i in donor.faces_i])
 
         elif map_mode == 'QUAD':
             # Quads processing mode.
@@ -603,6 +613,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             output.verts_out.append(new_verts)
             output.faces_out.append(donor.faces_i)
             output.face_data_out.append(donor.face_data_i)
+            output.vert_recpt_idx_out.append([recpt_face_data.index for i in new_verts])
+            output.face_recpt_idx_out.append([recpt_face_data.index for i in donor.faces_i])
 
         elif map_mode == 'FRAME':
             is_fan = abs(recpt_face_data.frame_width - 1.0) < 1e-6
@@ -720,9 +732,11 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
         prev_angle = None
         face_data = zip(faces_recpt, bm.faces, frame_widths, verts_donor, faces_donor, face_data_donor, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask)
+        recpt_face_idx = 0
         for recpt_face, recpt_face_bm, frame_width, donor_verts_i, donor_faces_i, donor_face_data_i, zcoef, zoffset, angle, wcoef, facerot, m in face_data:
 
             recpt_face_data = RecptFaceData()
+            recpt_face_data.index = recpt_face_idx
             recpt_face_data.normal = recpt_face_bm.normal
             recpt_face_data.center = recpt_face_bm.calc_center_median()
             recpt_face_data.vertices_co = [bm.verts[i].co for i in recpt_face]
@@ -799,6 +813,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 continue
 
             self._process_face(map_mode, output, recpt_face_data, donor, zcoef, zoffset, angle, wcoef, facerot)
+            recpt_face_idx += 1
 
         bm.free()
 
@@ -862,6 +877,8 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             output.verts_out.extend(new.verts_out)
             output.faces_out.extend(new.faces_out)
             output.face_data_out.extend(new.face_data_out)
+            output.vert_recpt_idx_out.extend(new.vert_recpt_idx_out)
+            output.face_recpt_idx_out.extend(new.face_recpt_idx_out)
 
             output.verts_out = Vector_degenerate(output.verts_out)
             if self.join:
@@ -869,11 +886,17 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 output.verts_out = [output.verts_out]
                 output.faces_out = [output.faces_out]
                 output.face_data_out = [sum(output.face_data_out, [])]
+                output.vert_recpt_idx_out = [sum(output.vert_recpt_idx_out, [])]
+                output.face_recpt_idx_out = [sum(output.face_recpt_idx_out, [])]
 
             self.outputs['Vertices'].sv_set(output.verts_out)
             self.outputs['Polygons'].sv_set(output.faces_out)
             if 'FaceData' in self.outputs:
                 self.outputs['FaceData'].sv_set(output.face_data_out)
+            if 'VertRecptIdx' in self.outputs:
+                self.outputs['VertRecptIdx'].sv_set(output.vert_recpt_idx_out)
+            if 'FaceRecptIdx' in self.outputs:
+                self.outputs['FaceRecptIdx'].sv_set(output.face_recpt_idx_out)
 
 def register():
     bpy.utils.register_class(SvAdaptivePolygonsNodeMk2)
