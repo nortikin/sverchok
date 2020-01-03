@@ -234,9 +234,9 @@ def bmesh_join(list_of_bmeshes, normal_update=False):
     return bm
 
 def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
-    has_face_data = face_data is not None
-    has_vert_data = vert_data is not None
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data = has_face_data, markup_vert_data = has_vert_data)
+    has_face_data = bool(face_data)
+    has_vert_data = bool(vert_data)
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data = True, markup_vert_data = True)
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=d)
     bm.verts.index_update()
     bm.edges.index_update()
@@ -244,6 +244,12 @@ def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
     verts, edges, faces = pydata_from_bmesh(bm)
     if has_face_data or has_vert_data:
         data = dict()
+        vert_layer = bm.verts.layers.int.get("initial_index")
+        face_layer = bm.faces.layers.int.get("initial_index")
+        if vert_layer:
+            data['vert_init_index'] = [vert[vert_layer] for vert in bm.verts]
+        if face_layer:
+            data['face_init_index'] = [face[face_layer] for face in bm.faces]
         if has_face_data:
             data['faces'] = face_data_from_bmesh_faces(bm, face_data)
         if has_vert_data:

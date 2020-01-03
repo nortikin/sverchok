@@ -27,7 +27,9 @@ from mathutils.geometry import barycentric_transform
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import (updateNode, Vector_generate,
-                                     Vector_degenerate, match_long_repeat, fullList, cycle_for_length,
+                                     Vector_degenerate, match_long_repeat,
+                                     zip_long_repeat,
+                                     fullList, cycle_for_length,
                                      describe_data_shape, get_data_nesting_level,
                                      rotate_list)
 
@@ -914,11 +916,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 output.face_recpt_idx_out = sum(output.face_recpt_idx_out, [])
 
                 if self.remove_doubles:
-                    face_data_paired = list(zip(output.face_data_out, output.face_recpt_idx_out))
-                    output.verts_out, _, output.faces_out, data_out = remove_doubles(output.verts_out, [], output.faces_out, threshold, face_data=face_data_paired, vert_data=output.vert_recpt_idx_out)
-                    output.vert_recpt_idx_out = data_out['verts']
-                    output.face_data_out = [item[0] for item in data_out['faces']]
-                    output.face_recpt_idx_out = [item[1] for item in data_out['faces']]
+                    output.verts_out, _, output.faces_out, data_out = remove_doubles(output.verts_out, [], output.faces_out, threshold, face_data=output.face_data_out, vert_data=output.vert_recpt_idx_out)
+                    output.vert_recpt_idx_out = data_out.get('verts', [])
+                    if output.face_recpt_idx_out:
+                        output.face_recpt_idx_out = [output.face_recpt_idx_out[idx] for idx in data_out['face_init_index']]
 
                 output.verts_out = [output.verts_out]
                 output.faces_out = [output.faces_out]
