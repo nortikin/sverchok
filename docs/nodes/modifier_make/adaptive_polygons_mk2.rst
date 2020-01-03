@@ -65,6 +65,9 @@ This node has the following inputs:
 - **PolyMask**. Mask for recipient object faces processing. What exactly will
   be done with faces which are masked out is defined by **Mask Mode** parameter
   (see below).
+- **Threshold**. Merging threshold for "remove doubles" / "merge by distance"
+  function. The default value is 0.0001. This input is only visible if **Remove
+  doubles** parameter is checked.
 
 Parameters
 ----------
@@ -73,6 +76,11 @@ This node has some number of parameters, and most of them are accessible only in
 
 - **Join**. If checked, then all procuced copies of donor object will be merged
   into one mesh. Unchecked by default.
+- **Remove doubles**. If checked, then "remove doubles" / "merge by distance"
+  function will be applied to the resulting mesh; i.e., vertices that have
+  (nearly) the same position, will be merged together. Merging threshold is
+  controlled by **Threshold** input / paramter. This parameter is only visible
+  if **Join** parameter is checked. Unchecked by default.
 - **Matching mode**. This defines how the list of donor objects is matched with list of recipient objects. Available values are:
   
    - **Match longest**. Each pair of recipient and donor objects will be

@@ -246,7 +246,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         if 'FrameWidth' in self.inputs:
             self.inputs['FrameWidth'].hide_safe = not show_width
         if 'Threshold' in self.inputs:
-            self.inputs['Threshold'].hide_safe = not self.remove_doubles
+            self.inputs['Threshold'].hide_safe = not self.join or not self.remove_doubles
 
     frame_modes = [
             ("NEVER", "Do not use", "Do not use Frame / Fan mode", 0),
