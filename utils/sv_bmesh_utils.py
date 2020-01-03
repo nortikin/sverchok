@@ -361,6 +361,26 @@ def get_neighbour_faces(face, by_vert = True):
                 result.add(other_face)
     return result
 
+def get_neighbour_verts(vert, by_edge = True):
+    """
+    Get neighbour vertices of the given vertex.
+
+    vert : BMVert
+    returns: set of BMVert.
+    """
+    result = set()
+    if by_edge:
+        for edge in vert.link_edges:
+            other_vert = edge.other_vert(vert)
+            result.add(other_vert)
+    else:
+        for face in vert.link_faces:
+            for other_vert in face.verts:
+                if other_vert == vert:
+                    continue
+                result.add(other_vert)
+    return result
+
 def fill_faces_layer(bm, face_mask, layer_name, layer_type, value, invert_mask = False):
     if layer_type == int:
         layers = bm.faces.layers.int
@@ -381,6 +401,27 @@ def fill_faces_layer(bm, face_mask, layer_name, layer_type, value, invert_mask =
     for face, mask in zip(bm.faces, face_mask):
         if mask != invert_mask:
             face[layer] = value
+
+def fill_verts_layer(bm, vert_mask, layer_name, layer_type, value, invert_mask = False):
+    if layer_type == int:
+        layers = bm.verts.layers.int
+    elif layer_type == float:
+        layers = bm.verts.layers.float
+    elif layer_type == str:
+        layers = bm.verts.layers.str
+    else:
+        raise Exception("Unsupported layer data type")
+
+    if not isinstance(value, layer_type):
+        raise TypeError("Value type does not correspond to layer data type")
+
+    layer = layers.get(layer_name)
+    if layer is None:
+        raise Exception("Specified layer does not exist")
+
+    for vert, mask in zip(bm.verts, vert_mask):
+        if mask != invert_mask:
+            vert[layer] = value
 
 def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortest_path = False):
     """
@@ -408,6 +449,9 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
     * wave_path_prev_distance : float, output; the euclidian distance to the
       face mentioned in wave_path_prev_index. Filled only if find_shortest_path
       is set to True.
+    * wave_path_distance: float, output; total length of the shortest to the
+      init faces area (sum of all wave_path_prev_distance along that path).
+      Filled only if find_shortest_path is set to True.
     * wave_obstacle : int, input, optional; set to non-zero value to indicate
       that this face is an obstacle (wave can not pass through it).
 
@@ -420,10 +464,14 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
         init_index = bm.faces.layers.int.new("wave_start_index")
         path_prev_index = bm.faces.layers.int.new("wave_path_prev_index")
         path_prev_distance = bm.faces.layers.float.new("wave_path_prev_distance")
+        path_distance = bm.faces.layers.float.new("wave_path_distance")
     obstacles = bm.faces.layers.int.get("wave_obstacle")
     bm.faces.ensure_lookup_table()
     bm.faces.index_update()
-    n_total = len(bm.faces)
+    if obstacles is None:
+        n_total = len(bm.faces)
+    else:
+        n_total = len([face for face in bm.faces if face[obstacles] == 0])
 
     if find_shortest_path:
         face_center = dict([(face.index, face.calc_center_median()) for face in bm.faces])
@@ -462,9 +510,11 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
                     if find_shortest_path:
                         other_center = face_center[other_face.index]
                         distance = (this_center - other_center).length
-                        prev_distance = other_face[path_prev_distance]
-                        if prev_distance == 0 or prev_distance > distance:
+                        new_distance = face[path_distance] + distance
+                        prev_distance = other_face[path_distance]
+                        if prev_distance == 0 or prev_distance > new_distance:
                             other_face[path_prev_distance] = distance
+                            other_face[path_distance] = new_distance
                             other_face[path_prev_index] = face.index
                             other_face[init_index] = face[init_index]
         #debug("Front #%s: %s", step, len(new_wave_front))
@@ -473,36 +523,64 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
 
     return [face[index] for face in bm.faces]
 
-def wave_markup_verts(bm, vert_mask):
+def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortest_path = False):
     """
     Given initial vertices, markup all mesh vertices by wave algorithm:
     initial vertices get index of 1, their neighbours get index of 2, and so on.
     """
-    if not isinstance(vert_mask, (list, tuple)):
+    if not isinstance(init_vert_mask, (list, tuple)):
         raise TypeError("Verts mask is specified incorrectly")
 
     index = bm.verts.layers.int.new("wave_front")
+    if find_shortest_path:
+        init_index = bm.verts.layers.int.new("wave_start_index")
+        path_prev_index = bm.verts.layers.int.new("wave_path_prev_index")
+        path_prev_distance = bm.verts.layers.float.new("wave_path_prev_distance")
+        path_distance = bm.verts.layers.float.new("wave_path_distance")
+    obstacles = bm.verts.layers.int.get("wave_obstacle")
     bm.verts.ensure_lookup_table()
     bm.verts.index_update()
-    n_total = len(bm.verts)
+    if obstacles is None:
+        n_total = len(bm.verts)
+    else:
+        n_total = len([vert for vert in bm.verts if vert[obstacles] == 0])
 
-    init_verts = [vert for vert, mask in zip(bm.verts[:], vert_mask) if mask]
+    init_verts = [vert for vert, mask in zip(bm.verts[:], init_vert_mask) if mask]
     if not init_verts:
         raise Exception("Initial vertices set is empty")
+
+    def is_obstacle(vert):
+        if obstacles is None:
+            return False
+        else:
+            return vert[obstacles]
 
     done = set(init_verts)
     wave_front = set(init_verts)
     step = 0
+    if find_shortest_path:
+        for vert in init_verts:
+            vert[init_index] = vert.index
     while len(done) < n_total:
         step += 1
         new_wave_front = set()
         for vert in wave_front:
             vert[index] = step
         for vert in wave_front:
-            for edge in vert.link_edges:
-                other_vert = edge.other_vert(vert)
+            for other_vert in get_neighbour_verts(vert, neighbour_by_edge):
+                if is_obstacle(other_vert):
+                    continue
                 if other_vert[index] == 0:
                     new_wave_front.add(other_vert)
+                    if find_shortest_path:
+                        distance = (vert.co - other_vert.co).length
+                        new_distance = vert[path_distance] + distance
+                        prev_distance = other_vert[path_distance]
+                        if prev_distance == 0 or prev_distance > new_distance:
+                            other_vert[path_prev_distance] = distance
+                            other_vert[path_distance] = new_distance
+                            other_vert[path_prev_index] = vert.index
+                            other_vert[init_index] = vert[init_index]
         #debug("Front #%s: %s", step, len(new_wave_front))
         done.update(wave_front)
         wave_front = new_wave_front
