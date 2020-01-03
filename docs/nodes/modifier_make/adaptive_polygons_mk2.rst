@@ -65,6 +65,9 @@ This node has the following inputs:
 - **PolyMask**. Mask for recipient object faces processing. What exactly will
   be done with faces which are masked out is defined by **Mask Mode** parameter
   (see below).
+- **Threshold**. Merging threshold for "remove doubles" / "merge by distance"
+  function. The default value is 0.0001. This input is only visible if **Remove
+  doubles** parameter is checked.
 
 Parameters
 ----------
@@ -73,6 +76,11 @@ This node has some number of parameters, and most of them are accessible only in
 
 - **Join**. If checked, then all procuced copies of donor object will be merged
   into one mesh. Unchecked by default.
+- **Remove doubles**. If checked, then "remove doubles" / "merge by distance"
+  function will be applied to the resulting mesh; i.e., vertices that have
+  (nearly) the same position, will be merged together. Merging threshold is
+  controlled by **Threshold** input / paramter. This parameter is only visible
+  if **Join** parameter is checked. Unchecked by default.
 - **Matching mode**. This defines how the list of donor objects is matched with list of recipient objects. Available values are:
   
    - **Match longest**. Each pair of recipient and donor objects will be
@@ -275,6 +283,10 @@ This node hsa the following outputs:
 - **Polygons**
 - **FaceData**. List of data items, which were provided in the **FaceDataD**
   input, containing one data item for each face of output mesh.
+- **VertRecptIdx**. For each output vertex, this output contains an index of
+  recipient object face, which was used to construct this output vertex.
+- **FaceRecptIdx**. Foreach output face, this output contains an index of
+  recipient object face, which was used to construct this output face.
 
 The outputs will contain one object, if **Join** flag is checked, or one object
 per recipient object face, otherwise.
@@ -313,6 +325,10 @@ An example of **Rectangular** triangles usage:
 An example of "Use shell factor" parameter usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/71557169-3acf9400-2a64-11ea-85e6-b8301669745b.png
+
+Use materials from the recipient object faces for the resulting object:
+
+.. image:: https://user-images.githubusercontent.com/284644/71734153-0d705500-2e6d-11ea-87aa-8d9a01085645.png
 
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
 
