@@ -234,6 +234,25 @@ def bmesh_join(list_of_bmeshes, normal_update=False):
     return bm
 
 def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
+    """
+    This is a wrapper for bmesh.ops.remove_doubles.
+
+    vertices, edges, faces: standard sverchok formatted description of the mesh.
+    d: the threshold for the merge procedure.
+    face_data: arbitrary data per mesh face.
+    vert_data: arbitrary data per mesh vertex.
+
+    output:
+        if face_data or vert_data was specified, this outputs 4-tuple:
+            * vertices
+            * edges
+            * faces
+            * data: a dictionary with following keys:
+                * 'vert_init_index': indexes of the output vertices in the original mesh
+                * 'face_init_index': indexes of the output faces in the original mesh
+                * 'faces': correctly reordered face_data (if present)
+                * 'verts': correclty reordered vert_data (if present)
+    """
     has_face_data = bool(face_data)
     has_vert_data = bool(vert_data)
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data = True, markup_vert_data = True)
