@@ -25,21 +25,20 @@ from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.modules.vertex_utils import center
 from sverchok.utils.listutils import lists_flat
 
-from sverchok.utils.pentagon_geom import generate_penta_grid, generate_penta_tiles
+from sverchok.utils.pentagon_geom import generate_penta_grid, generate_penta_tiles, pentagon_dict
 
 
 GRID_TYPE_ITEMS = [
-    ("PENTAGON1", "Type 1 2-tile", "", custom_icon("SV_PENTAGON_1"), 2),
-    ("TYPE_1_4", "Type 1 4-tile", "", custom_icon("SV_PENTAGON_1"), 3),
-    ("PENTAGON2", "Type 1 2-tile X", "", custom_icon("SV_PENTAGON_2"), 4),
-    ("PENTAGON3", "Type 1 2-tile 2", "", custom_icon("SV_PENTAGON_3"), 5),
-    ("PENTAGON4", "Type 2", "", custom_icon("SV_PENTAGON_4"), 6),
-    ("TYPE_2_1", "Type 2_1", "", custom_icon("SV_PENTAGON_4"), 7),
-    ("PENTAGON7", "Type 3 3-tile", "", custom_icon("SV_PENTAGON_5"), 8),
-    ("PENTAGON5", "Type 4 4-tile", "", custom_icon("SV_PENTAGON_5"), 9),
-    ("PENTAGON6", "Type 5 6-tile", "", custom_icon("SV_PENTAGON_5"), 10),
-    ("PENTAGON14", "Type 14", "", custom_icon("SV_PENTAGON_5"), 14),
-    ("PENTAGON15", "Type 15", "", custom_icon("SV_PENTAGON_5"), 15)]
+    ("PENTAGON1", "Type 1 2-tile", "", custom_icon("SV_PENTAGON_1_1"), 2),
+    ("TYPE_1_4", "Type 1 4-tile", "", custom_icon("SV_PENTAGON_1_2"), 3),
+    ("PENTAGON2", "Type 1 2-tile X", "", custom_icon("SV_PENTAGON_1_3"), 4),
+    ("PENTAGON3", "Type 1 2-tile 2", "", custom_icon("SV_PENTAGON_1_4"), 5),
+    ("TYPE_2_1", "Type 2_1", "", custom_icon("SV_PENTAGON_2"), 7),
+    ("PENTAGON_TYPE_3", "Type 3 3-tile", "", custom_icon("SV_PENTAGON_3"), 8),
+    ("PENTAGON_TYPE_4", "Type 4 4-tile", "", custom_icon("SV_PENTAGON_4"), 9),
+    ("PENTAGON_TYPE_5", "Type 5 6-tile", "", custom_icon("SV_PENTAGON_5"), 10),
+    ("PENTAGON14", "Type 14", "", custom_icon("SV_PENTAGON_14"), 14),
+    ("PENTAGON15", "Type 15", "", custom_icon("SV_PENTAGON_15"), 15)]
 
 ALIGN_ITEMS = [
     ("X", "X", "Align tile primitives to X axis", custom_icon("SV_PENTAGON_X_ROT"), 0),
@@ -50,19 +49,6 @@ ANGLE_UNITS_ITEMS = [
     ("RAD", "Radians", "Define angles in radians", 0),
     ("DEG", "Degrees", "Define angles in degrees", 1),
 ]
-PENTAGON_SOCKETS = {
-    "PENTAGON1": "ABabcd",
-    "TYPE_1_4" : "ABabcd",
-    "PENTAGON2": "ABabc",
-    "PENTAGON3": "ABab",
-    "PENTAGON4": "ABab",
-    "TYPE_2_1": "ABabc",
-    "PENTAGON5": "Aab",
-    "PENTAGON6": "Aab",
-    "PENTAGON7": "Aabc",
-    "PENTAGON14": "a",
-    "PENTAGON15": "a",
-}
 
 class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -167,8 +153,9 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
     def update_sockets(self):
         inputs = self.inputs
         inputs_n = 'ABabcd'
+        penta_sockets = pentagon_dict[self.grid_type].input_sockets
         for socket in inputs_n:
-            if socket in PENTAGON_SOCKETS[self.grid_type]:
+            if socket in penta_sockets:
                 if inputs[socket].hide_safe:
                     inputs[socket].hide_safe = False
             else:
