@@ -198,6 +198,8 @@ def can_skip_property(node, k):
     """
 
     if hasattr(node, 'properties_to_skip_iojson'):
+        if k == 'properties_to_skip_iojson':
+            return True
         if k in node.properties_to_skip_iojson:
             return True
 
