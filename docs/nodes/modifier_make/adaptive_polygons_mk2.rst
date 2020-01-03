@@ -326,5 +326,9 @@ An example of "Use shell factor" parameter usage:
 
 .. image:: https://user-images.githubusercontent.com/284644/71557169-3acf9400-2a64-11ea-85e6-b8301669745b.png
 
+Use materials from the recipient object faces for the resulting object:
+
+.. image:: https://user-images.githubusercontent.com/284644/71734153-0d705500-2e6d-11ea-87aa-8d9a01085645.png
+
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
 
