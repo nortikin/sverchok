@@ -87,6 +87,7 @@ class SvWavePainterNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvStringsSocket', "WaveFront")
         self.outputs.new('SvStringsSocket', "WaveDistance")
+        self.outputs.new('SvStringsSocket', "StartIdx")
 
     def process(self):
 
@@ -101,6 +102,7 @@ class SvWavePainterNode(bpy.types.Node, SverchCustomTreeNode):
 
         wave_front_out = []
         wave_distances_out = []
+        start_idxs_out = []
         meshes = zip_long_repeat(vertices_s, edges_s, faces_s, init_masks_s, obstacle_masks_s)
         for vertices, edges, faces, init_mask, obstacle_masks in meshes:
             bm = bmesh_from_pydata(vertices, edges, faces)
@@ -120,19 +122,25 @@ class SvWavePainterNode(bpy.types.Node, SverchCustomTreeNode):
                 by_vert = self.face_mode == 'vertex'
                 new_wave_front = wave_markup_faces(bm, init_mask, neighbour_by_vert=by_vert, find_shortest_path=True)
                 distance = bm.faces.layers.float.get("wave_path_distance")
+                start = bm.faces.layers.int.get("wave_start_index")
                 new_distances = [face[distance] for face in bm.faces]
+                new_starts = [face[start] for face in bm.faces]
             else: # verts
                 by_edge = self.vert_mode == 'edge'
                 new_wave_front = wave_markup_verts(bm, init_mask, neighbour_by_edge=by_edge, find_shortest_path=True)
                 distance = bm.verts.layers.float.get("wave_path_distance")
+                start = bm.verts.layers.int.get("wave_start_index")
                 new_distances = [vert[distance] for vert in bm.verts]
+                new_starts = [vert[start] for vert in bm.verts]
 
             bm.free()
             wave_front_out.append(new_wave_front)
             wave_distances_out.append(new_distances)
+            start_idxs_out.append(new_starts)
 
         self.outputs['WaveFront'].sv_set(wave_front_out)
         self.outputs['WaveDistance'].sv_set(wave_distances_out)
+        self.outputs['StartIdx'].sv_set(start_idxs_out)
 
 def register():
     bpy.utils.register_class(SvWavePainterNode)
