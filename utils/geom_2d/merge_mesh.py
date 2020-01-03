@@ -60,7 +60,7 @@ def merge_mesh_light(sv_verts, sv_faces, face_overlapping=False, is_overlap_numb
     return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + face_indexes + overlap_number
 
 
-def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, face_overlapping=False, mode='inner', accuracy=1e-5):
+def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, mode='inner', accuracy=1e-5):
     """
     The function takes one SV mesh determined by polygons and crop it by polygons of another SV mesh.
     It can as creates holes in mesh so fit mesh into boundary of another mesh
@@ -68,7 +68,6 @@ def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, face_overlapping
     :param sv_faces: list of SV faces
     :param sv_verts_crop: list of SV points
     :param sv_faces_crop: list of SV faces
-    :param face_overlapping: add index mask (new face : index old face) to the output of the function if True
     :param mode: inner or outer, switch between holes creation and feting into mesh
     :param accuracy: two floats figures are equal if their difference is lower then accuracy value, float
     :return: list of SV vertices, list of SV faces, index face mask (optionally)
@@ -82,10 +81,7 @@ def crop_mesh(sv_verts, sv_faces, sv_verts_crop, sv_faces_crop, face_overlapping
     mark_not_in_faces(mesh)
     mark_crop_faces(mesh, mode)
     monotone_faces_with_holes(mesh)
-    if face_overlapping:
-        return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh, 'index')]
-    else:
-        return mesh.to_sv_mesh(edges=False, del_face_flag='del')
+    return list(mesh.to_sv_mesh(edges=False, del_face_flag='del')) + [get_min_face_indexes(mesh, 'index')]
 
 
 def crop_edges(sv_verts, sv_edges, sv_verts_crop, sv_faces_crop, mode='inner', accuracy=1e-5):

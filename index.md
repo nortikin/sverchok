@@ -51,6 +51,7 @@
 
 ## Analyzers
     SvBBoxNodeMk2
+    SvComponentAnalyzerNode
     SvDiameterNode
     SvVolumeNode
     SvAreaNode
@@ -71,8 +72,6 @@
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
-    SvMeshSelectNode
-    SvSelectSimilarNode
     SvPointInside
     SvProportionalEditNode
     SvRaycasterLiteNode
@@ -80,14 +79,20 @@
     SvDeformationNode
     SvLinkedVertsNode
     SvProjectPointToLine
+    ---
+    SvMeshSelectNode
+    SvSelectSimilarNode
+    SvChessSelection
 
 ## Transforms
     SvRotationNodeMK2
     SvScaleNodeMK2
     SvMoveNodeMK2
-    SvMirrorNode
+    SvSymmetrizeNode
+    SvMirrorNodeMk2
     MatrixApplyNode
     SvBarycentricTransformNode
+    SvAlignMeshByMesh
     ---
     SvTransformSelectNode
     SvSimpleDeformNode
@@ -100,6 +105,8 @@
     SvRemoveDoublesNode
     SvSeparateMeshNode
     SvLimitedDissolve
+    SvPlanarFacesNode
+    SvSplitFacesNode
     SvMeshBeautify
     SvTriangulateNode
     SvMakeMonotone
@@ -113,7 +120,7 @@
     SvRecalcNormalsNode
     SvFlipNormalsNode
     ---
-    SvExtrudeEdgesNode
+    SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
     SvVertMaskNode
@@ -125,16 +132,19 @@
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
+    SvDelaunay2DCdt
     Voronoi2DNode
     SvOffsetLineNode
     SvContourNode
     SvDualMeshNode
+    SvRandomPointsOnMesh
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
     SvAdaptivePolygonsNodeMk2
     SvDuplicateAlongEdgeNode
     SvFractalCurveNode
+    SvFrameworkNode
     SvSolidifyNode
     SvWireframeNode
     SvPipeNode
@@ -184,6 +194,7 @@
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvInsetSpecial
+    SvInsetFaces
     SvLatheNode
     SvSmoothNode
     SvSmoothLines
@@ -266,14 +277,13 @@
     SvSwitchNode
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
+    SvCustomSwitcher
 
 ## Viz
     Sv3DviewPropsNode
     ---
-    SvMatrixViewer28
-    SvVDBasicLines
     SvVDExperimental
-    ---
+    SvMatrixViewer28
     SvIDXViewer28
     ---
     SvBmeshViewerNodeV28
@@ -283,8 +293,11 @@
     SvSkinViewerNodeV28
     SvMetaballOutNode
     ---
+    SvEmptyOutNode
+    ---
     SvTextureViewerNode
     SvTextureViewerNodeLite
+    SvWaveformViewer
 
 ## Text
     ViewerNodeTextMK3
@@ -323,6 +336,8 @@
 ## Objects
     SvVertexGroupNodeMK2
     SvVertexColorNodeMK3
+    SvAssignMaterialListNode
+    SvMaterialIndexNode
 
 ## Layout
     WifiInNode

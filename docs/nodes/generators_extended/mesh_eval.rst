@@ -4,7 +4,10 @@ Mesh Expression Node
 Functionality
 -------------
 
-This node generates mesh from description in JSON format. Variables and mathematical expressions are allowed in definitions of vertex coordinates, so exact shape of mesh can be parametrized. All variables used in JSON definition become inputs of node.
+This node generates mesh from description in JSON format. Variables and
+mathematical expressions are allowed in definitions of vertex coordinates, so
+exact shape of mesh can be parametrized. All variables used in JSON definition
+become inputs of node.
 It is also possible to generate JSON description from existing mesh.
 
 Usual workflow
@@ -13,7 +16,9 @@ Usual workflow
 1. Create some mesh object by using usual Blender's modelling techniques. Select that mesh.
 2. Press "from selection" button in Mesh Expression node. New text buffer will appear in Blender.
 3. Switch to Blender's text editor and select newly created buffer.
-4. Edit defintion. You can replace any of vertex coordinates with expression enclosed in double-quotes, such as `"x+1"`. See also syntax description below.
+4. Edit defintion. You can replace any of vertex coordinates with expression
+   enclosed in double-quotes, such as `"x+1"`. See also syntax description
+   below.
 5. Optionally, you can add "defaults" key to definition, with default values of variables.
 6. In Mesh Expression node, all variables used in JSON definition will appear as inputs.
 
@@ -26,8 +31,11 @@ Mesh Expression node uses JSON, which should be a dictionary with following keys
 
 * "vertices". This should be a list, containing 3- or 4- item lists:
   
-  * First 3 items of each list are vertex coordinates. Each coordinate should be either integer or floating-point number, or a string with valid expression (see expression syntax below).
-  * 4th item, if present, may be either string of list of strings. These strings denote vertex groups, to which this vertex belongs.
+  * First 3 items of each list are vertex coordinates. Each coordinate should
+    be either integer or floating-point number, or a string with valid
+    expression (see expression syntax below).
+  * 4th item, if present, may be either string of list of strings. These
+    strings denote vertex groups, to which this vertex belongs.
 
   Examples of valid vertex definition are:
   
@@ -35,12 +43,30 @@ Mesh Expression node uses JSON, which should be a dictionary with following keys
   * `["X", "Y", 1.0]`
   * `[1, 2, 3, "Selected"]`
   * `[3, 2, 1, ["Top", "Right"]]`
-* "edges". This should be a list, containing 2-item lists of integer numbers, which are edges description in Sverchok's native format.
-* "faces". This should be a list, containint lists of integer nubmers, which are mesh faces description in Sverchok's native format.
-* "defaults". This should be a dictionary. Keys are variable names, and values are default variable values. Values can be:
+* "edges". This should be a list, containing 2-item lists of integer numbers,
+  which are edges description in Sverchok's native format.
+* "faces". This should be a list, containint lists of integer nubmers, which
+  are mesh faces description in Sverchok's native format.
+* "vertexdata". This key is optional. If present, this should be a list,
+  containing one item per each vertex. Data type of those items can be
+  arbitrary. If this key contains strings, or lists of strings, or dictionary
+  with string values, then these strings will be evaluated as expressions,
+  similar to "vertices" key. Otherwise, this data will be passed to the
+  "VertexData" output as is.
+* "facedata". This key is optional. If present, this should be a list,
+  containing one item per each face. Data type of those items can be
+  arbitrary. If this key contains strings, or lists of strings, or dictionary
+  with string values, then these strings will be evaluated as expressions,
+  similar to "vertices" key. Otherwise, this data will be passed to the
+  "FaceData" output as is.
+* "defaults". This key is optional. If present, this should be a dictionary.
+  Keys are variable names, and values are default variable values. Values can
+  be:
   
   * integer or floating-point numbers;
-  * string expressions (see expression syntax below). Note that expressions in "defaults" section are evaluated in alphabetical order of variable names. So, you can express "Y" in terms of "X", but not vice versa.
+  * string expressions (see expression syntax below). Note that expressions in
+    "defaults" section are evaluated in alphabetical order of variable names.
+    So, you can express "Y" in terms of "X", but not vice versa.
 
 See also JSON examples below.
 
@@ -51,16 +77,29 @@ Expressions used in place of vertex coordinates are usual Python's expressions.
 
 For exact syntax definition, please refer to https://docs.python.org/3/reference/expressions.html.
 
-In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**` for power), numbers, variables, parenthesis, and function call, such as `sin(x)`.
+In short, you can use usual mathematical operations (`+`, `-`, `*`, `/`, `**`
+for power), numbers, variables, parenthesis, and function call, such as `sin(x)`.
 
-One difference with Python's syntax is that you can call only restricted number of Python's functions. Allowed are:
+One difference with Python's syntax is that you can call only restricted number
+of Python's functions. Allowed are:
 
-* sin
-* cos
-* pi
-* sqrt
+- Functions from math module:
+  - acos, acosh, asin, asinh, atan, atan2,
+        atanh, ceil, copysign, cos, cosh, degrees,
+        erf, erfc, exp, expm1, fabs, factorial, floor,
+        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
+        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
+        pow, radians, sin, sinh, sqrt, tan, tanh, trunc;
+- Constants from math module: pi, e;
+- Additional functions: abs, sign;
+- From mathutlis module: Vector, Matrix;
+- Python type conversions: tuple, list, dict.
 
-This restriction is for security reasons. However, Python's ecosystem does not guarantee that noone can call some unsafe operations by using some sort of language-level hacks. So, please be warned that usage of this node with JSON definition obtained from unknown or untrusted source can potentially harm your system or data.
+This restriction is for security reasons. However, Python's ecosystem does not
+guarantee that noone can call some unsafe operations by using some sort of
+language-level hacks. So, please be warned that usage of this node with JSON
+definition obtained from unknown or untrusted source can potentially harm your
+system or data.
 
 Examples of valid expressions are:
 
@@ -73,7 +112,9 @@ Examples of valid expressions are:
 Inputs
 ------
 
-Set of inputs for this node depends on used JSON definition. Each variable used in JSON becomes one input. If there are no variables used in JSON, then this node will have no inputs.
+Set of inputs for this node depends on used JSON definition. Each variable used
+in JSON becomes one input. If there are no variables used in JSON, then this
+node will have no inputs.
 
 Parameters
 ----------
@@ -92,11 +133,26 @@ This node has the following parameters:
 Operators
 ---------
 
-This node has one button: **from selection**. This button takes currently selected Blender's mesh object and puts it's JSON description into newly created text buffer. Name of created buffer is assigned to **File name** parameter.
+This node has one button: **from selection**. This button takes currently
+selected Blender's mesh object and puts it's JSON description into newly
+created text buffer. Name of created buffer is assigned to **File name**
+parameter.
 
-For each vertex, if it belongs to some vertex groups in initial mesh object, these group names will be added to vertex definition.
+For each vertex, if it belongs to some vertex groups in initial mesh object,
+these group names will be added to vertex definition.
 
-If vertex is selected in edit mode, then special group named "Selected" will be added to vertex definition.
+If vertex is selected in edit mode, then special group named "Selected" will be
+added to vertex definition.
+
+"vertexdata" key of JSON definition will be filled with vertex colors data, if
+there are any vertex color layers defined for the selected mesh. If there is
+exactly one vertex color layer, then this key will be filled with list of
+4-lists, represenging RGBA vertex colors. If there is more than one vertex
+color layer defined, then this key will be filled with dictionaries, mapping
+layer name to RGBA color.
+
+"facedata" key of JSON definition will be filled with face material indexes. By
+default, all faces of the mesh have material index of zero.
 
 Outputs
 -------
@@ -106,8 +162,13 @@ This node always has the following outputs:
 * **Vertices**
 * **Edges**
 * **Faces**
+* **VertexData**
+* **FaceData**
 
-Apart from these, a separate output is created for each name of vertex group mentioned in "vertices" section of JSON definition. Each of these outputs contain a mask for **Vertices**, which selects vertices from corresponding group.
+Apart from these, a separate output is created for each name of vertex group
+mentioned in "vertices" section of JSON definition. Each of these outputs
+contain a mask for **Vertices**, which selects vertices from corresponding
+group.
 
 Examples of usage
 -----------------

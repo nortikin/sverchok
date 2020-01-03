@@ -20,7 +20,7 @@ def create_cricket(as_pydata=False, scale=4.0):
     bm = bmesh_from_pydata(cricket['vert_list'], [], cricket['face_list'])
     bmesh.ops.mirror(bm, geom=(bm.verts[:] + bm.faces[:]), matrix=Matrix(), merge_dist=0.0, axis='X')
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
-    bmesh.ops.scale(bm, vec=Vector((scale, -scale, scale)), verts=bm.verts[:])
+    bmesh.ops.scale(bm, vec=Vector((scale, scale, scale)), verts=bm.verts[:])
 
     if as_pydata:
         verts, edges, faces = pydata_from_bmesh(bm)

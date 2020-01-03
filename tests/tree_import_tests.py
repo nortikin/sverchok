@@ -61,7 +61,8 @@ UNITTEST_BLACKLIST = [
     "pointsONface_gather_lines.json",
     "Generative_Art_Lsystem.json",
     "Elfnor_topology_nodes.json",
-    "l-systems.json"
+    "l-systems.json",
+    "waffle.json"
 ]
 
 @batch_only

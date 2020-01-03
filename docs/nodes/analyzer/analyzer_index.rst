@@ -7,6 +7,7 @@ Analyzers
 
    area
    bbox_mk2
+   component_analyzer
    diameter
    distance_pp
    distance_point_line
@@ -35,3 +36,4 @@ Analyzers
    volume
    raycaster_lite
    image_components
+   chess_selection

@@ -18,27 +18,45 @@
 
 import bpy
 import mathutils
-from bpy.props import FloatProperty, FloatVectorProperty
+from bpy.props import FloatProperty, FloatVectorProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (matrixdef, Vector_generate, updateNode)
+from sverchok.data_structure import (matrixdef, Vector_generate, updateNode, match_long_repeat)
 
+def matrix_in(params):
+    loc, scale, rot, angle, rotA = params
+    max_l = max(len(loc), len(scale), len(rot), len(angle), len(rotA))
+    orig = []
+    for l in range(max_l):
+        M = mathutils.Matrix()
+        orig.append(M)
+    matrixes = matrixdef(orig, [loc], [scale], [rot], [angle], [rotA])
+    return matrixes
 
 class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' MatrixGeneratorMK2 '''
+    """
+    Triggers: From loc, scale, rot
+    Tooltip:  Creates a transformation Matrix by defining its Location, Scale and Rotation.
+
+    """
     bl_idname = 'SvMatrixGenNodeMK2'
     bl_label = 'Matrix in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_IN'
 
     l_: FloatVectorProperty(
-        name='L', default=(0.0,0.0,0.0), description='Location', precision=3, update=updateNode)
+        name='L', default=(0.0, 0.0, 0.0), description='Location', precision=3, update=updateNode)
     s_: FloatVectorProperty(
-        name='S', default=(1.0,1.0,1.0), description='Scale', precision=3, update=updateNode)
+        name='S', default=(1.0, 1.0, 1.0), description='Scale', precision=3, update=updateNode)
     r_: FloatVectorProperty(
-        name='R', default=(0.0,0.0,1.0), description='Rotation', precision=3, update=updateNode)
+        name='R', default=(0.0, 0.0, 1.0), description='Rotation', precision=3, update=updateNode)
     a_: FloatProperty(
         name='A', description='Angle', default=0.0, precision=3, update=updateNode)
 
+    flat_output: BoolProperty(
+        name="Flat output",
+        description="Flatten output by list-joining level 1",
+        default=True,
+        update=updateNode)
     def sv_init(self, context):
 
         inew = self.inputs.new
@@ -49,11 +67,20 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvMatrixSocket', "Matrix")
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "flat_output", text="Flat Output", expand=False)
+
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "flat_output", text="Flat Output", expand=False)
+
+
+
     def process(self):
-        L,S,R,A = self.inputs
+        L, S, R, A = self.inputs
         Ma = self.outputs[0]
         if not Ma.is_linked:
             return
+
         loc = Vector_generate(L.sv_get())
         scale = Vector_generate(S.sv_get())
         rot = Vector_generate(R.sv_get())
@@ -71,13 +98,16 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             angle = A.sv_get()
             rotA = [[]]
 
-        max_l = max(len(loc[0]), len(scale[0]), len(rot[0]), len(angle[0]), len(rotA[0]))
-        orig = []
-        for l in range(max_l):
-            M = mathutils.Matrix()
-            orig.append(M)
-        matrixes_ = matrixdef(orig, loc, scale, rot, angle, rotA)
-        Ma.sv_set(matrixes_)
+        result = []
+
+        m_add = result.extend if  self.flat_output else result.append
+        params = match_long_repeat([loc, scale, rot, angle, rotA])
+
+        for par in zip(*params):
+            matrixes = matrix_in(par)
+            m_add(matrixes)
+
+        Ma.sv_set(result)
 
 
 def register():

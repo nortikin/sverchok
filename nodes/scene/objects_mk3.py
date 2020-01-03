@@ -87,6 +87,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         default=True, update=updateNode)
 
     object_names: bpy.props.CollectionProperty(type=bpy.types.PropertyGroup)
+    to3d: BoolProperty(default=False, update=updateNode)
 
 
     def sv_init(self, context):
@@ -94,6 +95,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         new('SvVerticesSocket', "Vertices")
         new('SvStringsSocket', "Edges")
         new('SvStringsSocket', "Polygons")
+        new('SvStringsSocket', "MaterialIdx")
         new('SvMatrixSocket', "Matrixes")
         new('SvObjectSocket', "Object")
 
@@ -179,13 +181,19 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         self.draw_obj_names(layout)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'to3d')
 
-    def draw_sv3dpanel_ob3(self, col, little_width):
+    @property
+    def draw_3dpanel(self):
+        return True if self.to3d and any((s.is_linked for s in self.outputs)) else False
+
+    def draw_buttons_3dpanel(self, layout):
         callback = 'node.ob3_callback'
-        row = col.row(align=True)
+        row = layout.row(align=True)
         row.label(text=self.label if self.label else self.name)
         colo = row.row(align=True)
-        colo.scale_x = little_width * 5
+        colo.scale_x = 1.6
         op = colo.operator(callback, text="Get")
         op.fn_name = 'get_objects_from_scene'
         op.tree_name = self.id_data.name
@@ -201,6 +209,11 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             vers.append(list(v.co))
         return vers, vers_grouped
 
+    def get_materials_from_bmesh(self, bm):
+        return [face.material_index for face in bm.faces[:]]
+
+    def get_materials_from_mesh(self, mesh):
+        return [face.material_index for face in mesh.polygons[:]]
 
     def process(self):
 
@@ -216,6 +229,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         vers_out_grouped = []
         pols_out = []
         mtrx_out = []
+        materials_out = []
 
         if self.modifiers or self.vergroups:
             with self.sv_throttle_tree_update():
@@ -232,6 +246,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             vers_grouped = []
             pols = []
             mtrx = []
+            materials = []
 
             with self.sv_throttle_tree_update():
 
@@ -246,6 +261,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         me = obj.data
                         bm = bmesh.from_edit_mesh(me)
                         vers, edgs, pols = pydata_from_bmesh(bm)
+                        materials = self.get_materials_from_bmesh(bm)
                         del bm
                     else:
 
@@ -266,6 +282,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
+                        materials = self.get_materials_from_mesh(obj_data)
                         edgs = obj_data.edge_keys
 
                         obj.to_mesh_clear()
@@ -278,12 +295,15 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             edgs_out.append(edgs)
             pols_out.append(pols)
             mtrx_out.append(mtrx)
+            materials_out.append(materials)
             vers_out_grouped.append(vers_grouped)
 
         if vers_out and vers_out[0]:
             outputs['Vertices'].sv_set(vers_out)
             outputs['Edges'].sv_set(edgs_out)
             outputs['Polygons'].sv_set(pols_out)
+            if 'MaterialIdx' in outputs:
+                outputs['MaterialIdx'].sv_set(materials_out)
 
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)

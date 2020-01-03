@@ -155,10 +155,11 @@ The following buttons (in this order) are shown for each preset you have:
 3D Panel
 ========
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512953/865c3962-4b46-11e4-8dbd-df445f10b808.png
-  :alt: panel3d.png
+.. image:: https://user-images.githubusercontent.com/28003269/70139516-16bea400-16ac-11ea-9c77-3125856b4d28.png
 
 With this panel your layout becomes addon itself. So, you making your life easy.
+Since Blender 2.8 this panel has two instances. One instance located on `N` panel in `Tool` category of `3D` editor. 
+Another located in `Active tool and workspace settings` shelf of `Properties` editor.
 
 Scan for props
 --------------
@@ -166,11 +167,14 @@ Scan for props
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512955/866461fa-4b46-11e4-8caf-d650d15f5c5f.png
   :alt: scanprops.png
 
-
 When layout is in, check for next nodes to embad them as properties:
- - float node
- - int node
- - object in node
+ - A number  
+ - Color input
+ - List Input
+ - Objects in
+ - Viewer BMesh
+
+Read documentation of this nodes for getting more details about how to enable them on 3D panel. 
  
 Sorting them by label, that user defined in node tree panel or if no label, the name of the node is used.
 
@@ -221,13 +225,6 @@ Layouts by box. Every layout has buttons:
 | **F**              | Fake user of layout to preserve from removing with reloading file or                   |
 |                    | with **clean layouts** button.                                                         |
 +--------------------+----------------------------------------------------------------------------------------+
-
-Properties has also gathered values:
-
-**floats and integers** - digit itself, maximum and minimum vaues.
-
-**object in** - button for object in node to collect selected objects.
-
 
 Import Export Panel
 ===================

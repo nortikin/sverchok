@@ -57,7 +57,7 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
     # reuse of curve data and applying matrices to objects instead.
 
     # only make the curve data.
-    curve_name = node.basedata_name + '.cloner.' + str("%04d" % obj_index)
+    curve_name = f'{node.basedata_name}.cloner.{obj_index:04d}'
     cu = curves.get(curve_name)
     if not cu:
         cu = curves.new(name=curve_name, type='CURVE')
@@ -83,7 +83,7 @@ def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
     for obj_index, matrix in enumerate(matrices):
 
         # get object to clone the Curve data into.
-        obj_name = node.basedata_name + '.' + str("%04d" % obj_index)
+        obj_name = f'{node.basedata_name}.{obj_index:04d}'
 
         obj = objects.get(obj_name)
         if not obj:
@@ -239,7 +239,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def remove_cloner_curve(self, obj_index):
         # opportunity to remove the .cloner.
         if self.selected_mode == 'Duplicate':
-            curve_name = self.basedata_name + '.cloner.' + str("%04d" % obj_index)
+            curve_name = f'{self.basedata_name}.cloner.{obj_index:04d}'
             cu = bpy.data.curves.get(curve_name)
             if cu:
                 bpy.data.curves.remove(cu) 

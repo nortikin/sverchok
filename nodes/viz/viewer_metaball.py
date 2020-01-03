@@ -99,6 +99,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         if idx == 1:
             return self.basedata_name
         else:
+            #return f'{self.basedata_name}.{(idx-1):04d}'
             return self.basedata_name + '.' + str("%04d" % (idx-1))
 
     def create_metaball(self, index):

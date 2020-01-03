@@ -14,6 +14,9 @@ This node has the following inputs:
 - **Vertrices**
 - **Edges**. For this node to produce interesting result, this input must be provided.
 - **Faces**
+- **FaceData**. List containing an arbitrary data item for each face of input
+  mesh. For example, this may be used to provide material indexes of input
+  mesh faces. Optional input.
 - **EdgeMask**. Selected edges to be subdivided. Faces surrounded by subdivided edges can optionally be subdivided too.
 - **Number of Cuts**
 - **Smooth**
@@ -54,6 +57,8 @@ This node has the following outputs:
 - **Vertices**. All vertices of resulting mesh.
 - **Edges**. All edges of resulting mesh.
 - **Faces**. All faces of resulting mesh.
+- **FaceData**. List containing data items from the **FaceData** input, which
+  contains one item for each output mesh face.
 - **NewVertices**. All vertices that were created by subdivision. This output is only visible when **Show New** parameter is checked.
 - **NewEdges**. Edges that were created by subdividing faces. This output is only visible when **Show New** parameter is checked.
 - **NewFaces**. Faces that were created by subdividing faces. This output is only visible when **Show New** parameter is checked.

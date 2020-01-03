@@ -17,6 +17,7 @@ Modifier Make
    voronoi_2d
    delaunay_2d
    wafel
+   framework
    wireframe
    offset_line
    bevel_curve
@@ -24,4 +25,5 @@ Modifier Make
    fractal_curve
    convex_hull_mk2
    dual_mesh
-
+   random_points_on_mesh
+   delaunay_2d_cdt

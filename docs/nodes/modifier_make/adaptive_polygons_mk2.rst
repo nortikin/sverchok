@@ -39,6 +39,9 @@ This node has the following inputs:
   input is mandatory. 
 - **VersD**. Vertices of the donor object. This input is mandatory.
 - **PolsD**. Faces of the donor object.
+- **FaceDataD**. List containing an arbitrary data item for each face of donor
+  object. For example, this may be used to provide material indexes of donor
+  object faces. Optional input.
 - **Width coeff**. Coefficient for donor object width (size along X,Y axis,
   usually). Default value is 1.0. The input expects one number per each
   recipient object face.
@@ -124,6 +127,13 @@ This node has some number of parameters, and most of them are accessible only in
 
   The default value is **Linear**.
 
+- **Use shell factor**. If checked, each vertex normal will be multiplied by
+  so-called "shell factor" - a multiplier calculated based on the sharpness of
+  the vertex. Where a flat surface gives 1.0, and higher values sharper edges.
+  When this parameter is checked, you will have more constant "thickness" of
+  the resulting shape; when it is unchecked, the shape will tend to be more
+  smooth. Unchecked by default.
+
 - **Coordinates**. This defines the method of calculation of donor object's
   coordinates along two axes orthogonal to recipient's face normal. In any
   case, the location is defined by transforming some area of XOY plane (or
@@ -135,15 +145,18 @@ This node has some number of parameters, and most of them are accessible only in
 
     - For Quad recipient object faces, the bounding rectangle of donor object is taken.
     - For Tris recipient object faces, the bounding triangle of donor object is
-      taken. The "bounding triangle" is defined as the smallest triangle with
-      equal sides, which covers all donor vertices while having bottom side
-      parallel to X axis (or other axis according to **Normal axis** parameter).
+      taken. The "bounding triangle" is defined as the smallest triangle, which
+      covers all donor vertices while having bottom side parallel to X axis (or
+      other axis according to **Normal axis** parameter). The triangle can be
+      defined as either equilateral or rectangular, depending on **Bounding
+      triangle** parameter.
   
   - **As Is**. The source area is defined as follows:
 
     - For Quad faces, the `[-1/2; 1/2] x [-1/2; 1/2]` unit square is taken.
-    - For Tris faces, the unit triangle is taken, i.e. the triangle with all
-      sides equal to 1 with center at (0,0,0).
+    - For Tris faces, the unit triangle is taken. The triangle can be defined
+      as equilateral or rectangular, depending on **Bounding triangle**
+      parameter.
 
   Note that by definition of **Bounds** mode, the donor object always lies
   within the *source area*.
@@ -154,6 +167,22 @@ This node has some number of parameters, and most of them are accessible only in
   of it.
 
   The default value is **Bounds**.
+
+- **Bounding triangle**. This defines the form of triangle to be used as base area (for tris faces). The available values are:
+
+  - **Equilateral**. The base triangle will be defined as a triangle with all
+    sides equal. When **Coordinates** parameter is set to **As Is**, this will
+    be a triangle with center at `(0, 0, 0)` and a side of 1. In **Bounds**
+    mode, this will be the bounding triangle.
+
+  - **Rectangular**. The base triangle will be defined as a triangle with one
+    angle equal to 90 degrees. When **Coordinates** parameter is set to **As
+    Is**, this will be a triangle with center of it's hypotenuse at `(0, 0, 0)`
+    and length of hypotenuse equal to 2. In **Bounds** mode, this will be the
+    bounding triangle.
+  
+  Please see below for the illustrations of bounding triangles.
+  The default value is **Equilateral**.
 
 - **Frame mode**. This defines when to apply "Frame / Fan" mode. The available values are:
 
@@ -210,6 +239,33 @@ This node has some number of parameters, and most of them are accessible only in
 
   The default value is **As Quads**.
 
+Base area illustrations
+-----------------------
+
+The following illustration demonstrates the meaning of "bounding rectangle" term (it is used for Quads when **Coordinates** is set to **Bounds**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073275-5e94eb00-161a-11ea-8bee-4166313f4cab.png
+
+The following is the unit square (which is used for Quads when **Coordinates** is set to **As Is**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073317-74a2ab80-161a-11ea-808a-6ea041cf7850.png
+
+The following illustration demonstrates the meaning of term "bounding equilateral triangle" (it is used for Tris when **Coordinates** is set to **Bounds**, and **Bounding triangle** is set to **Equilateral**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073381-99971e80-161a-11ea-9ffa-a8bee07b0536.png
+
+The following is the unit equilateral triangle (it is used for Tris when **Coordinates** is set to **As Is**, and **Bounding triangle** is set to **Equilateral**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073338-7ff5d700-161a-11ea-9e28-a50525cfe7bb.png
+
+The following demonstrates the meaning of term "bounding rectangular triangle" (it is used for Tris when **Coordinates** is set to **Bounds**, and **Bounding triangle** is set to **Rectangular**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073402-a7e53a80-161a-11ea-972f-04e9f76d54ae.png
+
+The following is a "unit rectangular triangle" (it is used for Tris when **Coordinates** is set to **As Is**, and **Bounding triangle** is set to **Rectangular**):
+
+.. image:: https://user-images.githubusercontent.com/284644/70073442-bcc1ce00-161a-11ea-84f1-1b544c4ab3dd.png
+
 Outputs
 -------
 
@@ -217,6 +273,8 @@ This node hsa the following outputs:
 
 - **Vertices**
 - **Polygons**
+- **FaceData**. List of data items, which were provided in the **FaceDataD**
+  input, containing one data item for each face of output mesh.
 
 The outputs will contain one object, if **Join** flag is checked, or one object
 per recipient object face, otherwise.
@@ -247,6 +305,14 @@ An example of **Frame** mode:
 The same setup with **FrameWidth** set to 1.0 - the processing switches to **Fan** mode:
 
 .. image:: https://user-images.githubusercontent.com/284644/68528834-b68d4a00-0319-11ea-89d7-5857c886d423.png
+
+An example of **Rectangular** triangles usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/70074578-cba98000-161c-11ea-88dd-69336809a659.png
+
+An example of "Use shell factor" parameter usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/71557169-3acf9400-2a64-11ea-85e6-b8301669745b.png
 
 You can also find some more examples `in the development thread <https://github.com/nortikin/sverchok/pull/2651>`_.
 

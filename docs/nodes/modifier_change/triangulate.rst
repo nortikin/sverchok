@@ -17,6 +17,9 @@ This node has the following inputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
+- **FaceData**. List containing an arbitrary data item for each face of input
+  mesh. For example, this may be used to provide material indexes of input
+  mesh faces. Optional input.
 - **Mask**. List of boolean or integer flags. Zero or False means do not triangulate face with corresponding index. If this input is not connected, then all faces will be triangulated.
 
 Parameters
@@ -50,6 +53,8 @@ This node has the following outputs:
 - **Vertices**. This is just copy of input vertices for convinience.
 - **Edges**.
 - **Polygons**.
+- **FaceData**. List containing data items from the **FaceData** input, which
+  contains one item for each output mesh face.
 - **NewEdges**. This contains only new edges created by triangulation procedure.
 - **NewPolys**. This contains only new faces created by triangulation procedure. If ``Mask`` input is not used, then this output will contain the same as ``Polygons`` output.
 

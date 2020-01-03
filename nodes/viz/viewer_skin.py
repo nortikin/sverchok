@@ -115,7 +115,8 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix, _, _ = geometry
-    name = node.basedata_name + '.' + str("%04d" % idx)
+
+    name = f'{node.basedata_name}.{idx:04d}'
 
     if name in objects:
         obj = objects.get(name)

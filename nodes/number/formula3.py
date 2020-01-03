@@ -21,49 +21,13 @@ from math import *
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
-from mathutils import Vector, Matrix
 import json
 import io
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
 from sverchok.utils import logging
-
-def make_functions_dict(*functions):
-    return dict([(function.__name__, function) for function in functions])
-
-# Standard functions which for some reasons are not in the math module
-def sign(x):
-    if x < 0:
-        return -1
-    elif x > 0:
-        return 1
-    else:
-        return 0
-
-# Functions
-safe_names = make_functions_dict(
-        # From math module
-        acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc,
-        # Additional functions
-        abs, sign,
-        # From mathutlis module
-        Vector, Matrix,
-        # Python type conversions
-        tuple, list, str
-    )
-# Constants
-safe_names['e'] = e
-safe_names['pi'] = pi
-
-# Blender modules
-# Consider this not safe for now
-# safe_names["bpy"] = bpy
+from sverchok.utils.script_importhelper import safe_names
 
 class VariableCollector(ast.NodeVisitor):
     """

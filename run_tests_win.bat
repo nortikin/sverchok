@@ -1,5 +1,5 @@
 :: usage
-:: PS C:\Users\you\Desktop\GITHUB\sverchok> .\run_tests_win.bat C:\fullpathto\b279\blender.exe
+:: PS C:\Users\you\Desktop\GITHUB\sverchok> .\run_tests_win.bat C:\fullpathto\b281\blender.exe
 
 echo off
 

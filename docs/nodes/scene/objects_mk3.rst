@@ -28,6 +28,12 @@ Parameters
 | **vert groups** | Bool, toggle  | Import all vertex groups that in object's data. just import indexes      |
 +-----------------+---------------+--------------------------------------------------------------------------+
 
+3D panel
+--------
+
+The node can show its properties on 3D panel. 
+For this parameter `to 3d` should be enabled, output should be linked.
+After that you can press `scan for props` button on 3D panel for showing the node properties on 3D panel.
 
 Outputs
 -------
@@ -39,7 +45,9 @@ Outputs
 +-----------------+--------------------------------------------------------------------------+
 | Edges           | Edges of objects                                                         |
 +-----------------+--------------------------------------------------------------------------+
-| Polygons        | Polyfons of objects                                                      |
+| Polygons        | Polygons of objects                                                      |
++-----------------+--------------------------------------------------------------------------+
+| MaterialIdx     | Material indexes per object face.                                        |
 +-----------------+--------------------------------------------------------------------------+
 | Matrixes        | Matrices of objects                                                      |
 +-----------------+--------------------------------------------------------------------------+
@@ -49,4 +57,5 @@ Outputs
 Examples
 --------
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4328096/bd8b274e-3f80-11e4-8582-6b2ae9743431.png
+
 Importing cobe and look to indeces.

@@ -48,21 +48,19 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "JoinLevel", text="JoinLevel lists")
 
     def update(self):
-        # inputs
-        multi_socket(self, min=1)
 
-        if 'data' in self.inputs and len(self.inputs['data'].links) > 0:
-            inputsocketname = 'data'
-            outputsocketname = ['data']
-            changable_sockets(self, inputsocketname, outputsocketname)
+        if len(self.outputs) > 0:
+            multi_socket(self, min=1)
+        self.set_output_socketype([sock.other.bl_idname for sock in self.inputs if sock.links and sock.other])
 
     def process(self):
-        if not self.outputs['data'].is_linked:
+
+        if not self.outputs['data'].links:
             return
 
         slots = []
         for socket in self.inputs:
-            if socket.is_linked:
+            if socket.is_linked and socket.links:
                 slots.append(socket.sv_get())
         if len(slots) == 0:
             return
@@ -83,6 +81,22 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs[0].sv_set(result)
 
+    def set_output_socketype(self, slot_bl_idnames):
+        """
+        1) if the input sockets are a mixed bag of bl_idnames we convert the output socket
+        to a generic SvStringsSocket type
+        2) if all input sockets where sv_get is successful are of identical bl_idname
+        then set the output socket type to match that.
+        3) no op if current output socket matches proposed new socket type. 
+        """
+
+        if not slot_bl_idnames: return
+
+        num_bl_idnames = len(set(slot_bl_idnames)) 
+        new_socket_type = slot_bl_idnames[0] if num_bl_idnames == 1 else "SvStringsSocket"
+
+        if self.outputs[0].bl_idname != new_socket_type:
+            self.outputs[0].replace_socket(new_socket_type)
 
     def draw_label(self):
         """ this gives quick param display for when the node is minimzed """

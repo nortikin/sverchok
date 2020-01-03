@@ -17,9 +17,9 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
+from sverchok.utils.logging import info, debug
 
-
-def bmesh_from_pydata(verts=None, edges=None, faces=None, normal_update=False):
+def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
         normal_update, will update verts/edges/faces normals at the end
     '''
@@ -41,27 +41,87 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, normal_update=False):
         bm.faces.index_update()
 
     if edges:
+        if markup_edge_data:
+            initial_index_layer = bm.edges.layers.int.new("initial_index")
+
         add_edge = bm.edges.new
-        for edge in edges:
+        get_edge = bm.edges.get
+        for idx, edge in enumerate(edges):
             edge_seq = tuple(bm.verts[i] for i in edge)
-            try:
-                add_edge(edge_seq)
-            except ValueError:
-                # edge exists!
-                pass
+            bm_edge = get_edge(edge_seq)
+            if not bm_edge:
+                bm_edge = add_edge(edge_seq)
+            if markup_edge_data:
+                bm_edge[initial_index_layer] = idx
 
         bm.edges.index_update()
+
+    if markup_face_data:
+        bm.faces.ensure_lookup_table()
+        layer = bm.faces.layers.int.new("initial_index")
+        for idx, face in enumerate(bm.faces):
+            face[layer] = idx
 
     if normal_update:
         bm.normal_update()
     return bm
 
 
-def pydata_from_bmesh(bm):
-    v = [v.co[:] for v in bm.verts]
-    e = [[i.index for i in e.verts] for e in bm.edges]
-    p = [[i.index for i in p.verts] for p in bm.faces]
-    return v, e, p
+def pydata_from_bmesh(bm, face_data=None):
+    verts = [v.co[:] for v in bm.verts]
+    edges = [[i.index for i in e.verts] for e in bm.edges]
+    faces = [[i.index for i in p.verts] for p in bm.faces]
+    if face_data is None:
+        return verts, edges, faces
+    else:
+        face_data_out = face_data_from_bmesh_faces(bm, face_data)
+        return verts, edges, faces, face_data_out
+
+def face_data_from_bmesh_faces(bm, face_data):
+    initial_index = bm.faces.layers.int.get("initial_index")
+    if initial_index is None:
+        raise Exception("bmesh has no initial_index layer")
+    face_data_out = []
+    n_face_data = len(face_data)
+    for face in bm.faces:
+        idx = face[initial_index]
+        if idx < 0 or idx >= n_face_data:
+            debug("Unexisting face_data[%s] [0 - %s]", idx, n_face_data)
+            face_data_out.append(None)
+        else:
+            face_data_out.append(face_data[idx])
+    return face_data_out
+
+def edge_data_from_bmesh_edges(bm, edge_data):
+    initial_index = bm.edges.layers.int.get("initial_index")
+    if initial_index is None:
+        raise Exception("bmesh has no initial_index layer")
+    edge_data_out = []
+    n_edge_data = len(edge_data)
+    for edge in bm.edges:
+        idx = edge[initial_index]
+        if idx < 0 or idx >= n_edge_data:
+            debug("Unexisting edge_data[%s] [0 - %s]", idx, n_edge_data)
+            edge_data_out.append(None)
+        else:
+            edge_data_out.append(edge_data[idx])
+    return edge_data_out
+
+def bmesh_edges_from_edge_mask(bm, edge_mask):
+    initial_index = bm.edges.layers.int.get("initial_index")
+    if initial_index is None:
+        raise Exception("bmesh has no initial_index layer")
+    bm_edges = []
+    n_edge_mask = len(edge_mask)
+    for bm_edge in bm.edges:
+        idx = bm_edge[initial_index]
+        if idx < 0 or idx >= n_edge_mask:
+            debug("Unexisting edge_mask[%s] [0 - %s]", idx, n_edge_mask)
+        else:
+            mask = edge_mask[idx]
+            if mask:
+                bm_edges.append(bm_edge)
+    return bm_edges
 
 def with_bmesh(method):
     '''Decorator for methods which can work with BMesh.
@@ -218,4 +278,177 @@ def dual_mesh(bm, recalc_normals=True):
         new_vertices, new_edges, new_faces = pydata_from_bmesh(bm2)
         bm2.free()
         return new_vertices, new_faces
+
+def get_neighbour_faces(face, by_vert = True):
+    """
+    Get neighbour faces of the given face.
+
+    face : BMFace
+    by_vert: True if by "neighbour" you mean having any common vertex; 
+             or False, if by "neighbour" you mean having any common edge.
+
+    result: set of BMFace.
+    """
+    result = set()
+    if by_vert:
+        for vert in face.verts:
+            for other_face in vert.link_faces:
+                if other_face == face:
+                    continue
+                result.add(other_face)
+    else:
+        for edge in face.edges:
+            for other_face in edge.link_faces:
+                if other_face == face:
+                    continue
+                result.add(other_face)
+    return result
+
+def fill_faces_layer(bm, face_mask, layer_name, layer_type, value, invert_mask = False):
+    if layer_type == int:
+        layers = bm.faces.layers.int
+    elif layer_type == float:
+        layers = bm.faces.layers.float
+    elif layer_type == str:
+        layers = bm.faces.layers.str
+    else:
+        raise Exception("Unsupported layer data type")
+
+    if not isinstance(value, layer_type):
+        raise TypeError("Value type does not correspond to layer data type")
+
+    layer = layers.get(layer_name)
+    if layer is None:
+        raise Exception("Specified layer does not exist")
+
+    for face, mask in zip(bm.faces, face_mask):
+        if mask != invert_mask:
+            face[layer] = value
+
+def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortest_path = False):
+    """
+    Given initial faces, markup all mesh faces by wave algorithm:
+    initial faces get index of 1, their neighbours get index of 2, and so on.
+
+    bm : BMesh
+    init_face_mask : Mask for faces to start from.
+    neighbour_by_vert : True if by "neighbour" you mean having any common vertex; 
+             or False, if by "neighbour" you mean having any common edge.
+    find_shortest_path : if set to True, markup enough information to trace the shortest
+            path from each face of the mesh to the initially selected faces.
+
+    result : Distance from initial faces, in steps, for each face of the mesh.
+
+    This uses the following custom data layers on mesh faces:
+
+    * wave_front : int, output; the distance from initially selected faces (starting with 1
+      for initially selected faces).
+    * wave_start_index : int, output; the index of the initial face to which this face is nearest.
+      Filled only if find_shortest_path is set to True.
+    * wave_path_prev_index : int, output; the index of the face, to which you
+      should step to follow the shortest path to initial faces. Filled only if
+      find_shortest_path is set to True.
+    * wave_path_prev_distance : float, output; the euclidian distance to the
+      face mentioned in wave_path_prev_index. Filled only if find_shortest_path
+      is set to True.
+    * wave_obstacle : int, input, optional; set to non-zero value to indicate
+      that this face is an obstacle (wave can not pass through it).
+
+    """
+    if not isinstance(init_face_mask, (list, tuple)):
+        raise TypeError("Face mask is specified incorrectly")
+
+    index = bm.faces.layers.int.new("wave_front")
+    if find_shortest_path:
+        init_index = bm.faces.layers.int.new("wave_start_index")
+        path_prev_index = bm.faces.layers.int.new("wave_path_prev_index")
+        path_prev_distance = bm.faces.layers.float.new("wave_path_prev_distance")
+    obstacles = bm.faces.layers.int.get("wave_obstacle")
+    bm.faces.ensure_lookup_table()
+    bm.faces.index_update()
+    n_total = len(bm.faces)
+
+    if find_shortest_path:
+        face_center = dict([(face.index, face.calc_center_median()) for face in bm.faces])
+    else:
+        face_center = None
+
+    init_faces = [face for face, mask in zip(bm.faces[:], init_face_mask) if mask]
+    if not init_faces:
+        raise Exception("Initial faces set is empty")
+    
+    def is_obstacle(face):
+        if obstacles is None:
+            return False
+        else:
+            return face[obstacles]
+
+    done = set(init_faces)
+    wave_front = set(init_faces)
+    step = 0
+    if find_shortest_path:
+        for face in init_faces:
+            face[init_index] = face.index
+    while len(done) < n_total:
+        step += 1
+        new_wave_front = set()
+        for face in wave_front:
+            face[index] = step
+        for face in wave_front:
+            if find_shortest_path:
+                this_center = face_center[face.index]
+            for other_face in get_neighbour_faces(face, neighbour_by_vert):
+                if is_obstacle(other_face):
+                    continue
+                if other_face[index] == 0:
+                    new_wave_front.add(other_face)
+                    if find_shortest_path:
+                        other_center = face_center[other_face.index]
+                        distance = (this_center - other_center).length
+                        prev_distance = other_face[path_prev_distance]
+                        if prev_distance == 0 or prev_distance > distance:
+                            other_face[path_prev_distance] = distance
+                            other_face[path_prev_index] = face.index
+                            other_face[init_index] = face[init_index]
+        #debug("Front #%s: %s", step, len(new_wave_front))
+        done.update(wave_front)
+        wave_front = new_wave_front
+
+    return [face[index] for face in bm.faces]
+
+def wave_markup_verts(bm, vert_mask):
+    """
+    Given initial vertices, markup all mesh vertices by wave algorithm:
+    initial vertices get index of 1, their neighbours get index of 2, and so on.
+    """
+    if not isinstance(vert_mask, (list, tuple)):
+        raise TypeError("Verts mask is specified incorrectly")
+
+    index = bm.verts.layers.int.new("wave_front")
+    bm.verts.ensure_lookup_table()
+    bm.verts.index_update()
+    n_total = len(bm.verts)
+
+    init_verts = [vert for vert, mask in zip(bm.verts[:], vert_mask) if mask]
+    if not init_verts:
+        raise Exception("Initial vertices set is empty")
+
+    done = set(init_verts)
+    wave_front = set(init_verts)
+    step = 0
+    while len(done) < n_total:
+        step += 1
+        new_wave_front = set()
+        for vert in wave_front:
+            vert[index] = step
+        for vert in wave_front:
+            for edge in vert.link_edges:
+                other_vert = edge.other_vert(vert)
+                if other_vert[index] == 0:
+                    new_wave_front.add(other_vert)
+        #debug("Front #%s: %s", step, len(new_wave_front))
+        done.update(wave_front)
+        wave_front = new_wave_front
+
+    return [vert[index] for vert in bm.verts]
 
