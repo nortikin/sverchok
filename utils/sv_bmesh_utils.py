@@ -19,7 +19,7 @@
 import bmesh
 from sverchok.utils.logging import info, debug
 
-def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, normal_update=False):
+def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
         normal_update, will update verts/edges/faces normals at the end
     '''
@@ -55,6 +55,12 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
                 bm_edge[initial_index_layer] = idx
 
         bm.edges.index_update()
+
+    if markup_vert_data:
+        bm.verts.ensure_lookup_table()
+        layer = bm.verts.layers.int.new("initial_index")
+        for idx, vert in enumerate(bm.verts):
+            vert[layer] = idx
 
     if markup_face_data:
         bm.faces.ensure_lookup_table()
@@ -106,6 +112,21 @@ def edge_data_from_bmesh_edges(bm, edge_data):
         else:
             edge_data_out.append(edge_data[idx])
     return edge_data_out
+
+def vert_data_from_bmesh_verts(bm, vert_data):
+    initial_index = bm.verts.layers.int.get("initial_index")
+    if initial_index is None:
+        raise Exception("bmesh has no initial_index layer")
+    vert_data_out = []
+    n_vert_data = len(vert_data)
+    for vert in bm.verts:
+        idx = vert[initial_index]
+        if idx < 0 or idx >= n_vert_data:
+            debug("Unexisting vert_data[%s] [0 - %s]", idx, n_vert_data)
+            vert_data_out.append(None)
+        else:
+            vert_data_out.append(vert_data[idx])
+    return vert_data_out
 
 def bmesh_edges_from_edge_mask(bm, edge_mask):
     initial_index = bm.edges.layers.int.get("initial_index")
@@ -212,15 +233,26 @@ def bmesh_join(list_of_bmeshes, normal_update=False):
 
     return bm
 
-def remove_doubles(vertices, edges, faces, d):
-    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+def remove_doubles(vertices, edges, faces, d, face_data=None, vert_data=None):
+    has_face_data = face_data is not None
+    has_vert_data = vert_data is not None
+    bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data = has_face_data, markup_vert_data = has_vert_data)
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=d)
     bm.verts.index_update()
     bm.edges.index_update()
     bm.faces.index_update()
-    v, e, p =pydata_from_bmesh(bm)
-    bm.free()
-    return v, e, p
+    verts, edges, faces = pydata_from_bmesh(bm)
+    if has_face_data or has_vert_data:
+        data = dict()
+        if has_face_data:
+            data['faces'] = face_data_from_bmesh_faces(bm, face_data)
+        if has_vert_data:
+            data['verts'] = vert_data_from_bmesh_verts(bm, vert_data)
+        bm.free()
+        return verts, edges, faces, data
+    else:
+        bm.free()
+        return verts, edges, faces
 
 def dual_mesh(bm, recalc_normals=True):
     # Make vertices of dual mesh by finding

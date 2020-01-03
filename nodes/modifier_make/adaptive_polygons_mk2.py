@@ -25,14 +25,14 @@ import bmesh
 from mathutils import Vector, Matrix
 from mathutils.geometry import barycentric_transform
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import (updateNode, Vector_generate,
                                      Vector_degenerate, match_long_repeat, fullList, cycle_for_length,
                                      describe_data_shape, get_data_nesting_level,
                                      rotate_list)
 
 from sverchok.ui.sv_icons import custom_icon
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, remove_doubles
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.geom import diameter, LineEquation2D, center
 from sverchok.utils.logging import info, debug
@@ -240,11 +240,13 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items = ngon_modes, default = "QUADS",
         update = updateNode)
 
-    def update_frame_mode(self, context):
+    @throttled
+    def update_sockets(self, context):
         show_width = self.frame_mode != 'NEVER'
         if 'FrameWidth' in self.inputs:
             self.inputs['FrameWidth'].hide_safe = not show_width
-        updateNode(self, context)
+        if 'Threshold' in self.inputs:
+            self.inputs['Threshold'].hide_safe = not self.remove_doubles
 
     frame_modes = [
             ("NEVER", "Do not use", "Do not use Frame / Fan mode", 0),
@@ -257,7 +259,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         name = "Frame mode",
         description = "When to use Frame / Fan mode",
         items = frame_modes, default = 'NEVER',
-        update = update_frame_mode)
+        update = update_sockets)
 
     matching_modes = [
             ("LONG", "Match longest", "Make an iteration for each donor or recipient object - depending on which list is longer", 0),
@@ -276,6 +278,19 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    remove_doubles : BoolProperty(
+        name = "Remove doubles",
+        description = "Merge vertices at the same location",
+        default = False,
+        update = update_sockets)
+
+    threshold : FloatProperty(
+        name = "Threshold",
+        description = "Threshold for vertices to be considered as identical",
+        precision=4, min=0,
+        default = 1e-4,
+        update = updateNode)
+
     tri_vert_idxs = [0, 1, 2]
     quad_vert_idxs = [0, 1, 2, -1]
 
@@ -292,6 +307,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Z_Rotation").prop_name = 'z_rotation'
         self.inputs.new('SvStringsSocket', "PolyRotation").prop_name = 'poly_rotation'
         self.inputs.new('SvStringsSocket', "PolyMask")
+        self.inputs.new('SvStringsSocket', "Threshold").prop_name = 'threshold'
 
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Polygons")
@@ -300,9 +316,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "FaceRecptIdx")
 
         self.update_frame_mode(context)
+        self.update_remove_doubles(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "join")
+        if self.join:
+            layout.prop(self, "remove_doubles")
         layout.prop(self, "matching_mode")
 
     def draw_buttons_ext(self, context, layout):
@@ -844,6 +863,10 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         else:
             facerots_s = [[0]]
         mask_s = self.inputs['PolyMask'].sv_get(default = [[1]], deepcopy=False)
+        if 'Threshold' in self.inputs:
+            thresholds_s = self.inputs['Threshold'].sv_get()
+        else:
+            thresholds_s = [[self.threshold]]
 
         output = OutputData()
 
@@ -853,9 +876,9 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             face_data_donor_s = [face_data_donor_s]
             #self.info("FW: %s", frame_widths_s)
             #frame_widths_s = [frame_widths_s]
-        objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, face_data_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s])
+        objects = match_long_repeat([verts_recpt_s, faces_recpt_s, verts_donor_s, faces_donor_s, face_data_donor_s, frame_widths_s, zcoefs_s, zoffsets_s, zrotations_s, wcoefs_s, facerots_s, mask_s, thresholds_s])
         #self.info("N objects: %s", len(list(zip(*objects))))
-        for verts_recpt, faces_recpt, verts_donor, faces_donor, face_data_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask in zip(*objects):
+        for verts_recpt, faces_recpt, verts_donor, faces_donor, face_data_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask, threshold in zip(*objects):
             n_faces_recpt = len(faces_recpt)
             fullList(zcoefs, n_faces_recpt)
             fullList(zoffsets, n_faces_recpt)
@@ -866,6 +889,9 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             fullList(wcoefs, n_faces_recpt)
             fullList(facerots, n_faces_recpt)
             mask = cycle_for_length(mask, n_faces_recpt)
+
+            if isinstance(threshold, (list, tuple)):
+                threshold = threshold[0]
 
             new = self._process(verts_recpt, faces_recpt,
                                  verts_donor, faces_donor,
@@ -883,11 +909,22 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
             output.verts_out = Vector_degenerate(output.verts_out)
             if self.join:
                 output.verts_out, _, output.faces_out = mesh_join(output.verts_out, [], output.faces_out)
+                output.face_data_out = sum(output.face_data_out, [])
+                output.vert_recpt_idx_out = sum(output.vert_recpt_idx_out, [])
+                output.face_recpt_idx_out = sum(output.face_recpt_idx_out, [])
+
+                if self.remove_doubles:
+                    face_data_paired = list(zip(output.face_data_out, output.face_recpt_idx_out))
+                    output.verts_out, _, output.faces_out, data_out = remove_doubles(output.verts_out, [], output.faces_out, threshold, face_data=face_data_paired, vert_data=output.vert_recpt_idx_out)
+                    output.vert_recpt_idx_out = data_out['verts']
+                    output.face_data_out = [item[0] for item in data_out['faces']]
+                    output.face_recpt_idx_out = [item[1] for item in data_out['faces']]
+
                 output.verts_out = [output.verts_out]
                 output.faces_out = [output.faces_out]
-                output.face_data_out = [sum(output.face_data_out, [])]
-                output.vert_recpt_idx_out = [sum(output.vert_recpt_idx_out, [])]
-                output.face_recpt_idx_out = [sum(output.face_recpt_idx_out, [])]
+                output.face_data_out = [output.face_data_out]
+                output.vert_recpt_idx_out = [output.vert_recpt_idx_out]
+                output.face_recpt_idx_out = [output.face_recpt_idx_out]
 
             self.outputs['Vertices'].sv_set(output.verts_out)
             self.outputs['Polygons'].sv_set(output.faces_out)
