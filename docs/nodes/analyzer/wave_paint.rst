@@ -73,3 +73,23 @@ This node has the following outputs:
 - **StartIdx**. For each face (or vertex) of the mesh, this contains the index
   of one of initially selected faces / vertices, which is the nearest from this
   face / vertex, in terms of the shortest path described above.
+
+Examples of usage
+-----------------
+
+Start a wave from some small area on the hexagonal grid; mark some vertices as obstacles. Note how the wave can not pass through the obstacle and has to go the long way around:
+
+.. image:: https://user-images.githubusercontent.com/284644/71737930-e9197600-2e76-11ea-9382-02f07d6fe0e2.png
+
+Similar setup with a rectangular grid; use wave front number to select faces to be extruded:
+
+.. image:: https://user-images.githubusercontent.com/284644/71738492-917c0a00-2e78-11ea-8f82-c4b7307f1434.png
+
+Select some random vertices on a dual mesh of the icosphere, and push the wave from them; use sine of wave distance to deform the mesh:
+
+.. image:: https://user-images.githubusercontent.com/284644/71737929-e9197600-2e76-11ea-8c00-51e00af9a2c5.png
+
+Paint the boundary faces of a rectangular grid with random colors; paint each other face with the color of the nearest boundary face; darken the color based on the distance from boundary. So here one single-colored stripe is actually the shortest path from some face to the boundary:
+
+.. image:: https://user-images.githubusercontent.com/284644/71738976-0439b500-2e7a-11ea-998c-ded8178ea63e.png
+
