@@ -55,10 +55,7 @@ op_dict = {
     'n': ('matrix_normal', 'e'),
     't': ('tangent_mode', 'e'),
 }
-def split_output(result_vals):
-    result_vals = [[[v] for v in r] for r in result_vals]
-    result_vals = lists_flat([result_vals])[0]
-    return lists_flat([result_vals])[0]
+
 
 class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -125,7 +122,6 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         if len(output_socket_type) < len(self.outputs):
             for s in self.outputs[len(output_socket_type):]:
                 s.hide_safe = True
-        updateNode(self, context)
 
     mode: EnumProperty(
         name="Component",
