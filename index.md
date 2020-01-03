@@ -73,6 +73,7 @@
     SvEdgeAnglesNode
     SvPointInside
     SvProportionalEditNode
+    SvWavePainterNode
     SvRaycasterLiteNode
     SvOBJInsolationNode
     SvDeformationNode

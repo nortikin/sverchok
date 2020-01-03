@@ -37,3 +37,5 @@ Analyzers
    raycaster_lite
    image_components
    chess_selection
+   wave_paint
+
