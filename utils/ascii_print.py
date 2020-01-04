@@ -1,5 +1,5 @@
 import os
-from sverchok.ui.development import get_version_string
+from sverchok.utils.development import get_version_string
 
 # pylint: disable=c0304
 # pylint: disable=c0326
