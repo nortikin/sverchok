@@ -57,7 +57,7 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvPentagonTilerNode'
     bl_label = 'Pentagon Tiler'
-    sv_icon = 'SV_PENTAGON_5'
+    sv_icon = 'SV_PENTAGON_TILER'
 
     def update_layout(self, context):
         self.update_sockets()
