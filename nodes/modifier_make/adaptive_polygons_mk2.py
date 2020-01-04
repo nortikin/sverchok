@@ -317,8 +317,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "VertRecptIdx")
         self.outputs.new('SvStringsSocket', "FaceRecptIdx")
 
-        self.update_frame_mode(context)
-        self.update_remove_doubles(context)
+        self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "join")
