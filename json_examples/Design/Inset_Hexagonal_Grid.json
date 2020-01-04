@@ -1,0 +1,404 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        489.46380615234375,
+        -591.1533203125
+      ],
+      "params": {
+        "float_": 4.440000057220459,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        246.02316284179688,
+        -1182.43359375
+      ],
+      "params": {
+        "float_": 3.0300002098083496,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        248.07925415039062,
+        -1289.43408203125
+      ],
+      "params": {
+        "float_": -1.5899996757507324,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "Inset faces": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1675.3548583984375,
+        -932.8839721679688
+      ],
+      "mask_type": [
+        "out"
+      ],
+      "params": {
+        "distance": -0.5099999904632568,
+        "inset": 0.9399999976158142
+      },
+      "width": 140.0
+    },
+    "Polygon Grid": {
+      "bl_idname": "SvPolygonGridNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        224.87342834472656,
+        -846.8458251953125
+      ],
+      "params": {
+        "numx": 28,
+        "numy": 22,
+        "radius": 0.6100000143051147,
+        "scale": 1.0
+      },
+      "width": 170.0
+    },
+    "Scalar Math.001": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1019.5240478515625,
+        -1146.2474365234375
+      ],
+      "params": {
+        "current_op": "MUL"
+      },
+      "width": 140.0
+    },
+    "VD Experimental": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1678.3182373046875,
+        -661.5119018554688
+      ],
+      "params": {
+        "activate": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "VD Experimental.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1947.4835205078125,
+        -844.85302734375
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Vector Math": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        520.8399047851562,
+        -1057.9136962890625
+      ],
+      "params": {
+        "current_op": "SCALAR",
+        "socket_info": "vs v"
+      },
+      "width": 140.0
+    },
+    "Vector Math.005": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        459.6634826660156,
+        -693.7763061523438
+      ],
+      "params": {
+        "current_op": "ADD"
+      },
+      "width": 140.0
+    },
+    "Vector Math.006": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        690.88037109375,
+        -470.23944091796875
+      ],
+      "params": {
+        "current_op": "SCALAR",
+        "socket_info": "vs v"
+      },
+      "width": 140.0
+    },
+    "Vector Math.007": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1062.4161376953125,
+        -438.431884765625
+      ],
+      "params": {
+        "current_op": "1/SCALAR",
+        "socket_info": "vs v"
+      },
+      "width": 140.0
+    },
+    "Vector Math.008": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1254.8031005859375,
+        -424.2951354980469
+      ],
+      "params": {
+        "current_op": "ADD",
+        "socket_info": "vv v"
+      },
+      "width": 140.0
+    },
+    "Vector Noise MK2": {
+      "bl_idname": "SvNoiseNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        877.7910766601562,
+        -470.7660217285156
+      ],
+      "params": {
+        "seed": 37
+      },
+      "width": 140.0
+    },
+    "Vector Noise MK2.001": {
+      "bl_idname": "SvNoiseNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        773.1876831054688,
+        -1096.975830078125
+      ],
+      "params": {
+        "out_mode": "SCALAR",
+        "seed": 37
+      },
+      "width": 140.0
+    },
+    "Vector Rewire": {
+      "bl_idname": "SvVectorRewire",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1463.31884765625,
+        -573.4544067382812
+      ],
+      "params": {
+        "scalar": 0.0,
+        "selected_mode_from": "Scalar"
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        261.9931945800781,
+        -687.5100708007812
+      ],
+      "params": {
+        "x_": 5.069999694824219
+      },
+      "width": 100.0
+    }
+  },
+  "update_lists": [
+    [
+      "Polygon Grid",
+      1,
+      "Vector Math.005",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Vector Math.005",
+      1
+    ],
+    [
+      "Vector Math.005",
+      0,
+      "Vector Math.006",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math.006",
+      1
+    ],
+    [
+      "Vector Math.006",
+      0,
+      "Vector Noise MK2",
+      0
+    ],
+    [
+      "Vector Noise MK2",
+      0,
+      "Vector Math.007",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math.007",
+      1
+    ],
+    [
+      "Polygon Grid",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Vector Math",
+      1
+    ],
+    [
+      "Vector Math",
+      0,
+      "Vector Noise MK2.001",
+      0
+    ],
+    [
+      "Vector Noise MK2.001",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scalar Math.001",
+      1
+    ],
+    [
+      "Polygon Grid",
+      1,
+      "Vector Math.008",
+      1
+    ],
+    [
+      "Vector Math.008",
+      0,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Inset faces",
+      0
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Inset faces",
+      2
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Inset faces",
+      6
+    ],
+    [
+      "Inset faces",
+      0,
+      "VD Experimental.001",
+      0
+    ],
+    [
+      "Inset faces",
+      2,
+      "VD Experimental.001",
+      2
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "VD Experimental",
+      0
+    ],
+    [
+      "Polygon Grid",
+      2,
+      "VD Experimental",
+      1
+    ]
+  ]
+}
