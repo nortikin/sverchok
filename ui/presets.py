@@ -727,7 +727,7 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
             layout.separator()
 
         presets = get_presets(panel_props.category)
-        layout.prop(panel_props, 'manage_mode', toggle=True)
+        layout.prop(panel_props, 'manage_mode', toggle=True, icon='PREFERENCES')
         layout.separator()
 
         if panel_props.manage_mode:
@@ -764,7 +764,8 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
                     delete.preset_name = name
                     delete.category = panel_props.category
             else:
-                layout.label(text="You do not have any presets.")
+                layout.label(text="You do not have any presets")
+                layout.label(text="under `{}` category.".format(panel_props.category))
                 layout.label(text="You can import some presets")
                 layout.label(text="from Gist or from file.")
 
@@ -773,7 +774,8 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
                 layout.label(text="Use preset:")
                 draw_presets_ops(layout, panel_props.category, ntree.name, presets)
             else:
-                layout.label(text="You do not have any presets.")
+                layout.label(text="You do not have any presets")
+                layout.label(text="under `{}` category.".format(panel_props.category))
                 layout.label(text="Select some nodes and")
                 layout.label(text="Use the `Save Preset' button.")
 
