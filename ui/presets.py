@@ -685,7 +685,9 @@ class SvPresetCategoryDelete(bpy.types.Operator):
 
 def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=None):
     if presets is None:
-        presets = get_presets()
+        presets = get_presets(category)
+    if category is None:
+        category = GENERAL
 
     if id_tree is None:
         if context is None:
