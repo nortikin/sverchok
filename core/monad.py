@@ -523,30 +523,32 @@ class SvGroupNodeExp:
     def process(self):
         if not self.monad:
             return
-        if self.vectorize:
-            self.process_vectorize()
-            return
-        elif self.loop_me:
-            self.process_looped(self.loops)
-            return
 
-        monad = self.monad
-        in_node = monad.input_node
-        out_node = monad.output_node
+        with self.sv_throttle_tree_update():
+            if self.vectorize:
+                self.process_vectorize()
+                return
+            elif self.loop_me:
+                self.process_looped(self.loops)
+                return
 
-        for index, socket in enumerate(self.inputs):
-            data = socket.sv_get(deepcopy=False)
-            in_node.outputs[index].sv_set(data)
+            monad = self.monad
+            in_node = monad.input_node
+            out_node = monad.output_node
 
-        #  get update list
-        #  could be cached
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
-        do_update(ul, monad.nodes)
-        # set output sockets correctly
-        for index, socket in enumerate(self.outputs):
-            if socket.is_linked:
-                data = out_node.inputs[index].sv_get(deepcopy=False)
-                socket.sv_set(data)
+            for index, socket in enumerate(self.inputs):
+                data = socket.sv_get(deepcopy=False)
+                in_node.outputs[index].sv_set(data)
+
+            #  get update list
+            #  could be cached
+            ul = make_tree_from_nodes([out_node.name], monad, down=False)
+            do_update(ul, monad.nodes)
+            # set output sockets correctly
+            for index, socket in enumerate(self.outputs):
+                if socket.is_linked:
+                    data = out_node.inputs[index].sv_get(deepcopy=False)
+                    socket.sv_set(data)
 
     def process_vectorize(self):
         monad = self.monad
