@@ -24,8 +24,14 @@ import sverchok
 
 BRANCH = ""
 
+__BRANCH__CACHE__ = None
+
 def get_branch():
     global BRANCH
+    global __BRANCH__CACHE__
+
+    if __BRANCH__CACHE__ is not None:
+        return __BRANCH__CACHE__
 
     # this commented out code needs revisiting at some point.
 
@@ -50,8 +56,10 @@ def get_branch():
         with open(head) as headfile:
             branch = headfile.readlines()[0].split("/")[-1]
         BRANCH = branch.rstrip()
-    except:
+        __BRANCH__CACHE__ = BRANCH
+    except Exception as e:
         BRANCH = ""
+        __BRANCH__CACHE__ = BRANCH
 
     return BRANCH
 

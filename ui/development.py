@@ -29,7 +29,7 @@ import sverchok
 from sverchok.utils.sv_help import remapper
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils import get_node_class_reference
-from sverchok.utils.development import get_branch, BRANCH
+from sverchok.utils.development import get_branch
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 
 def displaying_sverchok_nodes(context):
@@ -38,9 +38,10 @@ def displaying_sverchok_nodes(context):
 def node_show_branch(self, context):
     if not displaying_sverchok_nodes(context):
         return
-    if BRANCH:
+    branch = get_branch()
+    if branch:
         layout = self.layout
-        layout.label(icon='CON_CHILDOF', text=BRANCH)
+        layout.label(icon='CON_CHILDOF', text=branch)
 
 class SvCopyIDName(bpy.types.Operator):
     ''' Copy node's ID name to clipboard to use in code '''
@@ -238,8 +239,8 @@ def idname_draw(self, context):
 
 
 def register():
-    get_branch()
-    if BRANCH:
+    branch = get_branch()
+    if branch:
         bpy.types.NODE_HT_header.append(node_show_branch)
 
     bpy.utils.register_class(SvCopyIDName)
@@ -249,9 +250,11 @@ def register():
 
 
 def unregister():
-    if BRANCH:
+    branch = get_branch()
+    if branch:
         bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
     bpy.utils.unregister_class(SvViewSourceForNode)
+
