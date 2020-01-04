@@ -56,11 +56,12 @@ These are the vertices, edges and polygons of the pentagonal tiles centered on t
 
 Notes:
 - When the **Separate** is ON the output is a single list (joined mesh) of all the tile vertices/edges/polygons in the grid. When **Separate** is OFF the output is a list of grouped (list) tile vertices/edges/polygons (separate meshes).
-- If **Separate** is OFF (joined tiles),  the overlaping vertices will be merged.
+- If **Separate** is OFF (joined tiles),  the overlapping vertices will be merged.
 
 Example of usage
 ----------------
 
-.. image:: https://user-images.githubusercontent.com/10011941/42779991-581204a4-8942-11e8-8339-19ef08408246.png
-
-.. image:: https://user-images.githubusercontent.com/10011941/42779982-508f8026-8942-11e8-837e-a909fb784127.png
+.. image:: https://user-images.githubusercontent.com/10011941/71754304-df4b3f00-2e85-11ea-8feb-99e375ffca8d.png
+.. image:: https://user-images.githubusercontent.com/10011941/71755025-15d68900-2e89-11ea-83e0-3328446fa47d.png
+.. image:: https://user-images.githubusercontent.com/10011941/71755215-e1af9800-2e89-11ea-9ba9-d23de15b2dbb.png
+.. image:: https://user-images.githubusercontent.com/10011941/71755942-7f589680-2e8d-11ea-86de-938d1090fb66.png

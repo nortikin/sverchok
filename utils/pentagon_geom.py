@@ -9,8 +9,7 @@ from math import sin, cos, tan, pi, atan2, sqrt
 
 from sverchok.utils.modules.polygon_utils import pols_to_edges
 from sverchok.utils.sv_mesh_utils import mesh_join
-from sverchok.nodes.modifier_change.remove_doubles import remove_doubles
-
+from sverchok.utils.sv_bmesh_utils import remove_doubles
 class SvPentagon_1_1:
 
     input_sockets = "ABabcd"
@@ -636,7 +635,7 @@ def generate_penta_tiles(tile_settings, grid, separate, pentagon_type):
 
     if not separate:
         vert_list, edge_list, poly_list = mesh_join(vert_list, edge_list, poly_list)
-        vert_list, edge_list, poly_list, _ = remove_doubles(vert_list, poly_list, 1e-5, False)
+        vert_list, edge_list, poly_list = remove_doubles(vert_list, edge_list, poly_list, 1e-5)
 
     vert_grid_list.append(vert_list)
     edge_grid_list.append(edge_list)
