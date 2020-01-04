@@ -83,6 +83,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
             socket_from = self.inputs[-1].other
             self.inputs.remove(list(self.inputs)[-1])
             re_socket = self.inputs.new(socket_from.bl_idname, 'Dict in sock')
+            re_socket.sv_is_linked = True
             re_socket.prop_name = free_keys.pop()
             re_socket.custom_draw = 'draw_socket'
             re_link = self.id_data.links.new(socket_from, re_socket)

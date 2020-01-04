@@ -62,6 +62,9 @@ class SvSocketCommon:
     expanded: BoolProperty(default=False)
     custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
+    sv_is_linked: BoolProperty(description="Node is linked if (node.is_linked or node.sv_is_linked). "
+                                           "`Sv_is_linked` should be set manually. "
+                                           "Useful for socket created dynamically during update event.")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
@@ -282,7 +285,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             layout.label(text=text)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.object_ref:
             obj_ref = bpy.data.objects.get(self.object_ref)
@@ -310,7 +313,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
         return (0.68,  0.85,  0.90, 1)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.text:
             return [self.text]
@@ -341,7 +344,7 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         self.num_matrices = 0
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -369,7 +372,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -401,7 +404,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -433,7 +436,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
 
         if self.prop_name:
@@ -458,7 +461,7 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
         return self.other.get_prop_data()
 
     def sv_get(self):
-        if self.links:
+        if (self.sv_linked or self.sv_is_linked):
             return self.links[0].bl_idname
 
     def sv_type_conversion(self, new_self):
@@ -500,7 +503,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         # debug("Node %s, socket %s, is_linked: %s, is_output: %s",
         #         self.node.name, self.name, self.is_linked, self.is_output)
 
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.prop_name:
             # to deal with subtype ANGLE, this solution should be considered temporary...
@@ -529,7 +532,7 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if self.links and not self.is_output:
+        if (self.is_linked or self.sv_is_linked) and not self.is_output:
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 

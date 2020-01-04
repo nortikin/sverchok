@@ -89,7 +89,7 @@ def SvGetSocket(socket, deepcopy=True):
     set to False and increase performance substanstilly
     """
     global socket_data_cache
-    if socket.links:
+    if socket.is_linked or socket.sv_is_linked:
         other = socket.other
         s_id = other.socket_id
         s_ng = other.id_data.name
