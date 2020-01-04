@@ -28,6 +28,17 @@ def center(verts):
         verts_out.append(vec)
     return verts_out
 
+def center_of_many(verts):
+    verts_out = []
+    verts_ungrouped = [[v for vec in group for v in vec] for group in verts]
+
+    for vec_g, vec_ung in zip(verts, verts_ungrouped):
+        avr = list(map(sum, zip(*vec_ung)))
+        avr = [n/len(vec_ung) for n in avr]
+        vec = [[[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec] for vec in vec_g]
+        verts_out.append(vec)
+    return verts_out
+
 def adjacent_edg_pol(verts, edg_pol):
     '''calculate of adjacent faces  or edges'''
     adj_edg_pol = [[] for v in verts]

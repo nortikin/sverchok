@@ -22,7 +22,7 @@ from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes, sv_zip
 from sverchok.ui.sv_icons import custom_icon
-from sverchok.utils.modules.vertex_utils import center
+from sverchok.utils.modules.vertex_utils import center, center_of_many
 from sverchok.utils.listutils import lists_flat
 
 from sverchok.utils.pentagon_geom import generate_penta_grid, generate_penta_tiles, pentagon_dict
@@ -209,11 +209,14 @@ class SvPentagonTilerNode(bpy.types.Node, SverchCustomTreeNode):
             edge_list.extend(edges)
             poly_list.extend(polys)
 
-        if self.center:
-            vert_list = center(vert_list)
 
         if self.separate:
+            if self.center:
+                vert_list = center_of_many(vert_list)
             vert_list, edge_list, poly_list = lists_flat([vert_list, edge_list, poly_list])
+        else:
+            if self.center:
+                vert_list = center(vert_list)
 
         return vert_list, edge_list, poly_list
 
