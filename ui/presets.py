@@ -17,49 +17,79 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import os
-from os.path import join
+from os.path import join, isdir, basename, dirname
 import shutil
 from glob import glob
 import json
 from urllib.parse import quote_plus
 
 import bpy
-from bpy.props import StringProperty, BoolProperty
+from bpy.props import StringProperty, BoolProperty, EnumProperty
 
 from sverchok.utils.sv_IO_panel_tools import write_json, create_dict_of_tree, import_tree
 from sverchok.utils.logging import debug, info, error, exception
 from sverchok.utils import sv_gist_tools
 from sverchok.utils import sv_IO_panel_tools
 
-def get_presets_directory():
-    path_partial = os.path.join('sverchok', 'presets')
+GENERAL = "General"
+
+def get_presets_directory(category=None, mkdir=True):
+    if category is None or category == GENERAL:
+        path_partial = os.path.join('sverchok', 'presets')
+    else:
+        path_partial = os.path.join('sverchok', 'presets', category)
     presets = join(bpy.utils.user_resource('DATAFILES', path=path_partial, create=True))
-    if not os.path.exists(presets):
+    if not os.path.exists(presets) and mkdir:
         os.makedirs(presets)
     return presets
 
-def get_preset_path(name):
-    presets = get_presets_directory()
+def get_category_names():
+    base = get_presets_directory()
+    categories = []
+    for path in sorted(glob(join(base, "*"))):
+        if isdir(path):
+            name = basename(path)
+            categories.append(name)
+    return categories
+
+def get_category_items(self, context):
+    category_items = None
+    category_items = [(GENERAL, "General", "Uncategorized presets", 0)]
+    for idx, category in enumerate(get_category_names()):
+        category_items.append((category, category, category, idx+1))
+    return category_items
+
+def get_preset_path(name, category=None):
+    presets = get_presets_directory(category)
     return join(presets, name + ".json")
 
-def get_preset_paths():
-    presets = get_presets_directory()
+def get_preset_paths(category=None):
+    presets = get_presets_directory(category)
     return list(sorted(glob(join(presets, "*.json"))))
 
-def get_preset_idname_for_operator(name):
-    return quote_plus(name).replace('+', '_').replace('%', '_').lower()
+def replace_bad_chars(s):
+    return quote_plus(s).replace('+', '_').replace('%', '_').replace('-','_').lower()
+
+def get_preset_idname_for_operator(name, category=None):
+    name = replace_bad_chars(name)
+    if category:
+        category = replace_bad_chars(category)
+        return category + "__" + name
+    else:
+        return name
 
 # We are creating and registering preset adding operators dynamically.
 # So, we have to remember them in order to unregister them when needed.
 preset_add_operators = {}
 
 class SvPreset(object):
-    def __init__(self, name=None, path=None):
+    def __init__(self, name=None, path=None, category=None):
         if name is None and path is None:
             raise Exception("Either name or path must be specified when initializing SvPreset")
         self._name = name
         self._path = path
         self._data = None
+        self.category = category
 
     def get_name(self):
         if self._name is not None:
@@ -80,12 +110,17 @@ class SvPreset(object):
         if self._path is not None:
             return self._path
         else:
-            path = get_preset_path(self._name)
+            path = get_preset_path(self._name, self.category)
             self._path = path
             return path
 
     def set_path(self, new_path):
-        name = os.path.basename(new_path)
+        name = basename(new_path)
+        dir = dirname(new_path)
+        if dir == get_presets_directory():
+            self.category = None
+        else:
+            self.category = basename(dir)
         name,_ = os.path.splitext(name)
         self._name = name
         self._path = new_path
@@ -152,12 +187,14 @@ class SvPreset(object):
         """
 
         global preset_add_operators
+        if self.category is None:
+            self.category = GENERAL
 
-        if self.name not in preset_add_operators:
+        if (self.category, self.name) not in preset_add_operators:
 
             class SverchPresetAddOperator(bpy.types.Operator):
-                bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name)
-                bl_label = "Add {} preset".format(self.name)
+                bl_idname = "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category)
+                bl_label = "Add {} preset ({} category)".format(self.name, self.category)
                 bl_options = {'REGISTER', 'UNDO'}
 
                 cursor_x: bpy.props.IntProperty()
@@ -194,17 +231,30 @@ class SvPreset(object):
             SverchPresetAddOperator.__name__ = self.name
             SverchPresetAddOperator.__doc__ = self.meta.get("description", self.name)
 
-            preset_add_operators[self.name] = SverchPresetAddOperator
+            preset_add_operators[(self.category, self.name)] = SverchPresetAddOperator
             bpy.utils.register_class(SverchPresetAddOperator)
+            debug("Registered: %s",
+                "node.sv_preset_" + get_preset_idname_for_operator(self.name, self.category))
 
-    def draw_operator(self, layout, id_tree):
-        op = layout.operator("node.sv_preset_"+get_preset_idname_for_operator(self.name), text=self.name)
+    def draw_operator(self, layout, id_tree, category=None):
+        if not category:
+            category = self.category
+        op = layout.operator("node.sv_preset_"+get_preset_idname_for_operator(self.name, category), text=self.name)
 
-def get_presets():
+def get_presets(category=None):
     result = []
-    for path in get_preset_paths():
-        result.append(SvPreset(path=path))
+    for path in get_preset_paths(category):
+        result.append(SvPreset(path=path, category=category))
     return result
+
+class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
+    manage_mode: BoolProperty(
+        name="Manage Presets",
+        description="Presets management mode", default=False)
+    category : EnumProperty(
+        name = "Category",
+        description = "Select presets category",
+        items = get_category_items)
 
 class SvSaveSelected(bpy.types.Operator):
     """
@@ -217,6 +267,7 @@ class SvSaveSelected(bpy.types.Operator):
 
     preset_name: StringProperty(name="Name", description="Preset name")
     id_tree: StringProperty()
+    category: StringProperty()
 
     def execute(self, context):
         if not self.id_tree:
@@ -241,7 +292,7 @@ class SvSaveSelected(bpy.types.Operator):
             return {'CANCELLED'}
 
         layout_dict = create_dict_of_tree(ng, selected=True)
-        preset = SvPreset(name=self.preset_name)
+        preset = SvPreset(name=self.preset_name, category = self.category)
         preset.make_add_operator()
         destination_path = preset.path
         write_json(layout_dict, destination_path)
@@ -268,6 +319,9 @@ class SvPresetProps(bpy.types.Operator):
     bl_label = "Preset properties"
     bl_options = {'INTERNAL'}
 
+    old_category: StringProperty(name="Old category", description="Preset category")
+    new_category: EnumProperty(name="Category", description="New preset category", items = get_category_items)
+
     old_name: StringProperty(name="Old name", description="Preset name")
     new_name: StringProperty(name="Name", description="New preset name")
 
@@ -278,6 +332,7 @@ class SvPresetProps(bpy.types.Operator):
 
     def draw(self, context):
         layout = self.layout
+        layout.prop(self, "new_category")
         layout.prop(self, "new_name")
         layout.prop(self, "description")
         layout.prop(self, "author")
@@ -296,15 +351,15 @@ class SvPresetProps(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        preset = SvPreset(name = self.old_name)
+        preset = SvPreset(name = self.old_name, category = self.old_category)
         preset.meta['description'] = self.description
         preset.meta['author'] = self.author
         preset.meta['license'] = self.license
         preset.save()
 
-        if self.new_name != self.old_name:
-            old_path = get_preset_path(self.old_name)
-            new_path = get_preset_path(self.new_name)
+        if self.new_name != self.old_name or self.new_category != self.old_category:
+            old_path = get_preset_path(self.old_name, category=self.old_category)
+            new_path = get_preset_path(self.new_name, category=self.new_category)
 
             if os.path.exists(new_path):
                 msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.new_name)
@@ -314,11 +369,12 @@ class SvPresetProps(bpy.types.Operator):
             
             os.rename(old_path, new_path)
             preset.name = self.new_name
+            preset.category = self.new_category
             info("Renamed `%s' to `%s'", old_path, new_path)
             self.report({'INFO'}, "Renamed `{}' to `{}'".format(self.old_name, self.new_name))
 
-        bpy.utils.unregister_class(preset_add_operators[self.old_name])
-        del preset_add_operators[self.old_name]
+        bpy.utils.unregister_class(preset_add_operators[(self.old_category, self.old_name)])
+        del preset_add_operators[(self.old_category, self.old_name)]
         preset.make_add_operator()
 
         return {'FINISHED'}
@@ -342,6 +398,7 @@ class SvDeletePreset(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     preset_name: StringProperty(name="Preset name", description="Preset name")
+    category : StringProperty(name = "Category")
 
     def execute(self, context):
         if not self.preset_name:
@@ -350,11 +407,11 @@ class SvDeletePreset(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        path = get_preset_path(self.preset_name)
+        path = get_preset_path(self.preset_name, category=self.category)
 
         os.remove(path)
         info("Removed `%s'", path)
-        self.report({'INFO'}, "Removed `{}'".format(self.preset_name))
+        self.report({'INFO'}, "Removed `{} / {}'".format(self.category, self.preset_name))
 
         return {'FINISHED'}
 
@@ -372,6 +429,7 @@ class SvPresetToGist(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     preset_name: StringProperty(name="Preset name", description="Preset name")
+    category : StringProperty(name = "Category")
 
     def execute(self, context):
         if not self.preset_name:
@@ -380,7 +438,7 @@ class SvPresetToGist(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        path = get_preset_path(self.preset_name)
+        path = get_preset_path(self.preset_name, category=self.category)
 
         gist_filename = self.preset_name + ".json"
         gist_description = self.preset_name
@@ -412,6 +470,7 @@ class SvPresetToFile(bpy.types.Operator):
 
     filter_glob: StringProperty(default="*.json", options={'HIDDEN'})
     preset_name: StringProperty(name="Preset name", description="Preset name")
+    category : StringProperty(name = "Category")
 
     filepath: StringProperty(
         name="File Path",
@@ -432,9 +491,9 @@ class SvPresetToFile(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        existing_path = get_preset_path(self.preset_name)
+        existing_path = get_preset_path(self.preset_name, category=self.category)
         shutil.copy(existing_path, self.filepath)
-        msg = "Saved `{}' as `{}'".format(self.preset_name, self.filepath)
+        msg = "Saved `{} / {}' as `{}'".format(self.category, self.preset_name, self.filepath)
         info(msg)
         self.report({'INFO'}, msg)
 
@@ -455,6 +514,7 @@ class SvPresetFromFile(bpy.types.Operator):
     bl_options = {'INTERNAL'}
 
     preset_name: StringProperty(name="Preset name", description="Preset name")
+    category : StringProperty(name = "Category")
 
     filepath: StringProperty(
         name="File Path",
@@ -476,9 +536,9 @@ class SvPresetFromFile(bpy.types.Operator):
             self.report({'ERROR'}, msg)
             return {'CANCELLED'}
 
-        target_path = get_preset_path(self.preset_name)
+        target_path = get_preset_path(self.preset_name, category=self.category)
         shutil.copy(self.filepath, target_path)
-        msg = "Imported `{}' as `{}'".format(self.filepath, self.preset_name)
+        msg = "Imported `{}' as `{} / {}'".format(self.filepath, self.category, self.preset_name)
         info(msg)
         self.report({'INFO'}, msg)
 
@@ -503,6 +563,10 @@ class SvPresetFromGist(bpy.types.Operator):
 
     preset_name: StringProperty(
         name="Preset name", description="Preset name")
+    category : EnumProperty(
+        name = "Category",
+        description = "Select presets category",
+        items = get_category_items)
 
     def execute(self, context):
         if not self.preset_name:
@@ -518,7 +582,7 @@ class SvPresetFromGist(bpy.types.Operator):
             return {'CANCELLED'}
 
         gist_data = sv_IO_panel_tools.load_json_from_gist(self.gist_id, self)
-        target_path = get_preset_path(self.preset_name)
+        target_path = get_preset_path(self.preset_name, category=self.category)
         if os.path.exists(target_path):
             msg = "Preset named `{}' already exists. Refusing to rewrite existing preset.".format(self.preset_name)
             error(msg)
@@ -528,6 +592,9 @@ class SvPresetFromGist(bpy.types.Operator):
         with open(target_path, 'wb') as jsonfile:
             gist_data = json.dumps(gist_data, sort_keys=True, indent=2).encode('utf8')
             jsonfile.write(gist_data)
+
+        preset = SvPreset(name = self.preset_name, category = self.category)
+        preset.make_add_operator()
 
         msg = "Imported `{}' as `{}'".format(self.gist_id, self.preset_name)
         info(msg)
@@ -540,9 +607,87 @@ class SvPresetFromGist(bpy.types.Operator):
         self.gist_id = context.window_manager.clipboard
         return wm.invoke_props_dialog(self)
 
-def draw_presets_ops(layout, id_tree=None, presets=None, context=None):
+class SvPresetCategoryNew(bpy.types.Operator):
+    """
+    Create new presets category
+    """
+    bl_idname = "node.sv_preset_category_new"
+    bl_label = "Create new category"
+    bl_options = {'INTERNAL'}
+
+    category : StringProperty(name = "Category name")
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "category")
+
+    def execute(self, context):
+        if not self.category:
+            msg = "Category name is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+        if self.category == GENERAL or self.category in get_category_names():
+            msg = "Category named `{}' already exists; refusing to overwrite existing category"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        path = get_presets_directory(category = self.category, mkdir=True)
+        info("Created new category `%s' at %s", self.category, path)
+        self.report({'INFO'}, "Created new category {}".format(self.category))
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_props_dialog(self)
+
+class SvPresetCategoryDelete(bpy.types.Operator):
+    """
+    Delete existing presets category
+    """
+    bl_idname = "node.sv_preset_category_remove"
+    bl_label = "Do you really want to delete this presets category? This action cannot be undone."
+    bl_options = {'INTERNAL'}
+
+    category : StringProperty(name = "Category")
+
+    def execute(self, context):
+        if not self.category:
+            msg = "Preset name is not specified"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+        if self.category == GENERAL:
+            msg = "General category can not be deleted"
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+
+        path = get_presets_directory(category = self.category)
+        files = glob(join(path, "*"))
+        if files:
+            msg = "Category `{}' is not empty; refusing to delete non-empty category.".format(self.category)
+            error(msg)
+            self.report({'ERROR'}, msg)
+            return {'CANCELLED'}
+        os.rmdir(path)
+
+        ntree = context.space_data.node_tree
+        panel_props = ntree.preset_panel_properties
+        panel_props.category = GENERAL
+
+        return {'FINISHED'}
+
+    def invoke(self, context, event):
+        wm = context.window_manager
+        return wm.invoke_confirm(self, event)
+
+def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=None):
     if presets is None:
-        presets = get_presets()
+        presets = get_presets(category)
+    if category is None:
+        category = GENERAL
 
     if id_tree is None:
         if context is None:
@@ -550,8 +695,9 @@ def draw_presets_ops(layout, id_tree=None, presets=None, context=None):
         ntree = context.space_data.node_tree
         id_tree = ntree.name
 
+    col = layout.column(align=True)
     for preset in presets:
-        preset.draw_operator(layout, id_tree)
+        preset.draw_operator(col, id_tree, category=category)
 
 class SV_PT_UserPresetsPanel(bpy.types.Panel):
     bl_idname = "SV_PT_UserPresetsPanel"
@@ -573,18 +719,28 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
         ntree = context.space_data.node_tree
         panel_props = ntree.preset_panel_properties
 
+        layout.label(text="Category:")
+        layout.prop(panel_props, 'category', text='')
+
         if any(node.select for node in ntree.nodes):
-            layout.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON').id_tree = ntree.name
+            op = layout.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON')
+            op.id_tree = ntree.name
+            op.category = panel_props.category
             layout.separator()
 
-        presets = get_presets()
-        layout.prop(panel_props, 'manage_mode', toggle=True)
+        presets = get_presets(panel_props.category)
+        layout.prop(panel_props, 'manage_mode', toggle=True, icon='PREFERENCES')
         layout.separator()
 
         if panel_props.manage_mode:
             col = layout.column(align=True)
-            col.operator("node.sv_preset_from_gist", icon='URL')
-            col.operator("node.sv_preset_from_file", icon='IMPORT')
+            col.operator("node.sv_preset_from_gist", icon='URL').category = panel_props.category
+            col.operator("node.sv_preset_from_file", icon='IMPORT').category = panel_props.category
+
+            col.operator('node.sv_preset_category_new', icon='NEWFOLDER')
+            if panel_props.category != GENERAL:
+                remove = col.operator('node.sv_preset_category_remove', text="Delete category {}".format(panel_props.category), icon='CANCEL')
+                remove.category = panel_props.category
 
             if len(presets):
                 layout.label(text="Manage presets:")
@@ -596,33 +752,34 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
 
                     gist = row.operator('node.sv_preset_to_gist', text="", icon='URL')
                     gist.preset_name = name
+                    gist.category = panel_props.category
 
                     export = row.operator('node.sv_preset_to_file', text="", icon="EXPORT")
                     export.preset_name = name
+                    export.category = panel_props.category
 
                     rename = row.operator('node.sv_preset_props', text="", icon="GREASEPENCIL")
                     rename.old_name = name
+                    rename.old_category = panel_props.category
 
                     delete = row.operator('node.sv_preset_delete', text="", icon='CANCEL')
                     delete.preset_name = name
+                    delete.category = panel_props.category
             else:
-                layout.label(text="You do not have any presets.")
+                layout.label(text="You do not have any presets")
+                layout.label(text="under `{}` category.".format(panel_props.category))
                 layout.label(text="You can import some presets")
                 layout.label(text="from Gist or from file.")
 
         else:
             if len(presets):
                 layout.label(text="Use preset:")
-                draw_presets_ops(layout, ntree.name, presets)
+                draw_presets_ops(layout, panel_props.category, ntree.name, presets)
             else:
-                layout.label(text="You do not have any presets.")
+                layout.label(text="You do not have any presets")
+                layout.label(text="under `{}` category.".format(panel_props.category))
                 layout.label(text="Select some nodes and")
                 layout.label(text="Use the `Save Preset' button.")
-
-class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
-    manage_mode: BoolProperty(
-        name="Manage Presets",
-        description="Presets management mode", default=False)
 
 classes = [
     SvSaveSelected,
@@ -631,6 +788,8 @@ classes = [
     SvPresetFromGist,
     SvPresetProps,
     SvDeletePreset,
+    SvPresetCategoryNew,
+    SvPresetCategoryDelete,
     SvPresetToGist,
     SvPresetToFile,
     SV_PT_UserPresetsPanel
@@ -642,6 +801,9 @@ def register():
 
     for preset in get_presets():
         preset.make_add_operator()
+    for category_name in get_category_names():
+        for preset in get_presets(category_name):
+            preset.make_add_operator()
 
     bpy.types.NodeTree.preset_panel_properties = bpy.props.PointerProperty(
         name="preset_panel_properties", type=SvUserPresetsPanelProps)
@@ -652,5 +814,6 @@ def unregister():
     for clazz in reversed(classes):
         bpy.utils.unregister_class(clazz)
 
-    for name in preset_add_operators:
-        bpy.utils.unregister_class(preset_add_operators[name])
+    for category, name in preset_add_operators:
+        bpy.utils.unregister_class(preset_add_operators[(category, name)])
+
