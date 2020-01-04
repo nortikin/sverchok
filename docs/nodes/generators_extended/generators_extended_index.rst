@@ -10,6 +10,7 @@ Generators Extended
    hilbert
    hilbert3d
    hilbert_image
+   pentagon_tiler
    polygon_grid
    profile_mk3
    regular_solid

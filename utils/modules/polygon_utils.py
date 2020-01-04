@@ -64,6 +64,21 @@ def pols_vertices(vertices, faces):
     vals = [verts, pols]
     return vals
 
+def pols_to_edges(obj, unique_edges=False):
+    out = []
+    for faces in obj:
+        out_edges = []
+        seen = set()
+        for face in faces:
+            for edge in zip(face, list(face[1:]) + list([face[0]])):
+                if unique_edges and tuple(sorted(edge)) in seen:
+                    continue
+                if unique_edges:
+                    seen.add(tuple(sorted(edge)))
+                out_edges.append(edge)
+        out.append(out_edges)
+    return out
+
 def pols_sides(faces, sum_sides=False):
     vals = [len(p) for p in faces]
     if sum_sides:

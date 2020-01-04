@@ -47,6 +47,7 @@
     SvRegularSolid
     SvConicSectionNode
     SvTriangleNode
+    SvPentagonTilerNode
 
 ## Analyzers
     SvBBoxNodeMk2

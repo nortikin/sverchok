@@ -18,6 +18,16 @@ def adjacent_edg_pol_num(verts, edg_pol):
 
     return adj_edg_pol
 
+def center(verts):
+    verts_out = []
+    for vec in verts:
+
+        avr = list(map(sum, zip(*vec)))
+        avr = [n/len(vec) for n in avr]
+        vec = [[v[0]-avr[0], v[1]-avr[1], v[2]-avr[2]] for v in vec]
+        verts_out.append(vec)
+    return verts_out
+
 def adjacent_edg_pol(verts, edg_pol):
     '''calculate of adjacent faces  or edges'''
     adj_edg_pol = [[] for v in verts]
