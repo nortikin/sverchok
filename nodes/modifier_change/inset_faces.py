@@ -335,6 +335,18 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
 
     properties_to_skip_iojson = ['mask_type']
 
+    replacement_nodes = [
+        ('SvExtrudeSeparateNode',
+            dict(Verts='Vertices', Faces='Polygons'),
+            dict(Verts='Vertices', Faces='Polygons')),
+        ('SvExtrudeSeparateLiteNode',
+            dict(Verts='Vertices', Faces='Polygons'),
+            dict(Verts='Vertices', Faces='Polygons')),
+        ('SvInsetSpecial',
+            dict(Verts='vertices', Faces='polygons'),
+            dict(Verts='vertices', Faces='polygons')),
+    ]
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'inset_type', expand=True)
 
