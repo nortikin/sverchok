@@ -100,9 +100,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
                     mask_out.append(sub_res[2])
                     ind_true.append(sub_res[3])
                     ind_false.append(sub_res[4])
-            else:
-                print('AHTUNG!!!')
-                return list_a
+
         else:
             indx = min(len(mask_l)-1, idx)
             mask = mask_l[indx]
@@ -120,8 +118,6 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
                 else:
                     result_f.append(item)
                     ind_false.append(idx)
-
-
 
         return (result_t, result_f, mask_out, ind_true, ind_false)
 
