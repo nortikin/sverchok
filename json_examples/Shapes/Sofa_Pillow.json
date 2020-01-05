@@ -1,0 +1,164 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        492.6460266113281,
+        208.35818481445312
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -121.97127532958984,
+        126.31941223144531
+      ],
+      "params": {
+        "center": 1,
+        "stepx": 2.3500001430511475,
+        "stepy": 1.9299999475479126
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Rounded Box": {
+      "bl_idname": "SvBoxRoundedNode",
+      "custom_socket_props": {
+        "3": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -118.80732727050781,
+        405.9994812011719
+      ],
+      "params": {
+        "arcdiv": 5,
+        "div_type": 2,
+        "lindiv": 0.0,
+        "odd_axis_align": 1,
+        "radius": 0.6519999504089355,
+        "vector_vsize": [
+          5.649999618530273,
+          4.690000057220459,
+          1.0
+        ]
+      },
+      "width": 140.0
+    },
+    "Vector Attraction": {
+      "bl_idname": "SvAttractorNode",
+      "custom_socket_props": {
+        "1": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "2": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        243.5277862548828,
+        220.92877197265625
+      ],
+      "params": {
+        "amplitude": 0.6500000953674316,
+        "clamp": 0,
+        "falloff_type": "inverse_cubic"
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        733.9819946289062,
+        406.8300476074219
+      ],
+      "params": {
+        "activate": 1,
+        "display_faces": 1,
+        "draw_gl_polygonoffset": 1,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Rounded Box",
+      0,
+      "Vector Attraction",
+      0
+    ],
+    [
+      "Plane MK2",
+      0,
+      "Vector Attraction",
+      1
+    ],
+    [
+      "Rounded Box",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector Attraction",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "Move",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Rounded Box",
+      1,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}
