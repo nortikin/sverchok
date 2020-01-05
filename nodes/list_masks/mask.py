@@ -19,7 +19,7 @@
 from copy import copy
 from itertools import cycle
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets
 
@@ -60,7 +60,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         data = inputs['data'].sv_get()
         mask = inputs['mask'].sv_get(default=[[1, 0]])
 
-        result = self.getMask(data, mask, self.Level)
+        result = self.get_mask(data, mask, self.Level)
 
         if self.outputs['dataTrue'].is_linked:
             outputs['dataTrue'].sv_set(result[0])
@@ -78,14 +78,14 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
             outputs['ind_false'].sv_set(result[4])
 
     # working horse
-    def getMask(self, list_a, mask_l, level):
-        list_b = self.getCurrentLevelList(list_a, level)
+    def get_mask(self, list_a, mask_l, level):
+        list_b = self.get_current_level_list(list_a, level)
         res = list_b
         if list_b:
-            res = self.putCurrentLevelList(list_a, list_b, mask_l, level)
+            res = self.put_current_level_list(list_a, list_b, mask_l, level)
         return res
 
-    def putCurrentLevelList(self, list_a, list_b, mask_l, level, idx=0):
+    def put_current_level_list(self, list_a, list_b, mask_l, level, idx=0):
         result_t = []
         result_f = []
         mask_out = []
@@ -93,13 +93,13 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         ind_false = []
         if level > 1:
             if isinstance(list_a, (list, tuple)):
-                for idx, l in enumerate(list_a):
-                    l2 = self.putCurrentLevelList(l, list_b, mask_l, level - 1, idx)
-                    result_t.append(l2[0])
-                    result_f.append(l2[1])
-                    mask_out.append(l2[2])
-                    ind_true.append(l2[3])
-                    ind_false.append(l2[4])
+                for idx, sub_list in enumerate(list_a):
+                    sub_res = self.put_current_level_list(sub_list, list_b, mask_l, level - 1, idx)
+                    result_t.append(sub_res[0])
+                    result_f.append(sub_res[1])
+                    mask_out.append(sub_res[2])
+                    ind_true.append(sub_res[3])
+                    ind_false.append(sub_res[4])
             else:
                 print('AHTUNG!!!')
                 return list_a
@@ -110,11 +110,11 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
                 if not mask:
                     mask = [1, 0]
                 mask = cycle(mask)
-                mask_out =[m for m, l in zip(mask, list_a)]
+                mask_out = [m for m, l in zip(mask, list_a)]
             else:
                 mask_out = mask[:len(list_a)]
-            for m, item in zip(mask_out, list_b):
-                if m:
+            for mask_val, item in zip(mask_out, list_b):
+                if mask_val:
                     result_t.append(item)
                     ind_true.append(idx)
                 else:
@@ -125,14 +125,14 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
 
         return (result_t, result_f, mask_out, ind_true, ind_false)
 
-    def getCurrentLevelList(self, list_a, level):
+    def get_current_level_list(self, list_a, level):
         list_b = []
         if level > 1:
             if isinstance(list_a, (list, tuple)):
-                for l in list_a:
-                    l2 = self.getCurrentLevelList(l, level-1)
-                    if isinstance(l2, (list, tuple)):
-                        list_b.extend(l2)
+                for sub_list in list_a:
+                    sub_res = self.get_current_level_list(sub_list, level-1)
+                    if isinstance(sub_res, (list, tuple)):
+                        list_b.extend(sub_res)
                     else:
                         return False
             else:
