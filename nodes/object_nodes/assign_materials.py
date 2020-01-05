@@ -35,7 +35,7 @@ class SvMaterialList(bpy.types.PropertyGroup):
     materials : CollectionProperty(type=SvMaterialEntry)
     index : IntProperty()
 
-class SvMaterialUiList(bpy.types.UIList):
+class UI_UL_SvMaterialUiList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
         row = layout.row(align=True)
         row.prop_search(item, "material", bpy.data, 'materials', text='', icon='MATERIAL_DATA')
@@ -135,7 +135,7 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvObjectSocket', 'Object')
 
     def draw_buttons(self, context, layout):
-        layout.template_list("SvMaterialUiList", "materials", self, "materials", self, "selected")
+        layout.template_list("UI_UL_SvMaterialUiList", "materials", self, "materials", self, "selected")
         row = layout.row(align=True)
 
         add = row.operator('sverchok.material_index_add', text='', icon='ADD')
@@ -175,7 +175,7 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
                 material = bpy.data.materials.new(material_name)
             self.materials.add().material = material
 
-classes = [SvMaterialEntry, SvMaterialList, SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvMoveMaterial, SvAssignMaterialListNode]
+classes = [SvMaterialEntry, SvMaterialList, UI_UL_SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvMoveMaterial, SvAssignMaterialListNode]
 
 def register():
     for name in classes:
