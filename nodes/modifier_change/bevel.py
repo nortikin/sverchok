@@ -21,7 +21,7 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
@@ -58,9 +58,10 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
 
+    @throttled
     def mode_change(self, context):
         self.inputs[5].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
-        updateNode(self, [])
+        self.inputs['Spread'].hide_safe = self.miter_inner == 'SHARP' and self.miter_outer == 'SHARP'
 
     offset_: FloatProperty(
         name='Amount', description='Amount to offset beveled edge',
@@ -112,14 +113,14 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         description = "Outer mitter type",
         items = miter_types,
         default = 'SHARP',
-        update = updateNode)
+        update = mode_change)
 
     miter_inner : EnumProperty(
         name = "Inner",
         description = "Inner mitter type",
         items = miter_types,
         default = 'SHARP',
-        update = updateNode)
+        update = mode_change)
     
     spread : FloatProperty(
         name = "Spread",
@@ -146,6 +147,8 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         so('SvStringsSocket', 'Polygons')
         so('SvStringsSocket', 'FaceData')
         so('SvStringsSocket', 'NewPolys')
+
+        self.mode_change(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "vertexOnly")
