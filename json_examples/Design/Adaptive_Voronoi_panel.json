@@ -1,0 +1,496 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "Centers polygons": "Frame.001",
+    "Fill Holes": "Frame.002",
+    "Flip normals": "Frame.002",
+    "List Math": "Frame.001",
+    "List Math.001": "Frame.001",
+    "Map Range": "Frame.001",
+    "Map Range.001": "Frame",
+    "Mesh Expression": "Frame",
+    "Note": "Frame.002",
+    "Note.001": "Frame.002",
+    "Plane MK2": "Frame.002",
+    "Randomize input vertices": "Frame.002",
+    "Remove Doubles": "Frame.002",
+    "Vector Noise": "Frame.001",
+    "Voronoi 2D": "Frame.002"
+  },
+  "groups": {},
+  "nodes": {
+    "Adaptive Polygons Mk2": {
+      "bl_idname": "SvAdaptivePolygonsNodeMk2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2397.441162109375,
+        318.2692565917969
+      ],
+      "params": {
+        "frame_mode": "ALWAYS",
+        "frame_width": 1.0,
+        "join": 1,
+        "map_mode": "QUADS",
+        "matching_mode": "PERFACE",
+        "remove_doubles": 1
+      },
+      "width": 140.0
+    },
+    "Centers polygons": {
+      "bl_idname": "CentersPolsNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        968.296272277832,
+        -155.60435485839844
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Fill Holes": {
+      "bl_idname": "SvFillsHoleNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        380.61968994140625,
+        76.4851303100586
+      ],
+      "params": {
+        "sides": 15
+      },
+      "width": 140.0
+    },
+    "Flip normals": {
+      "bl_idname": "SvFlipNormalsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        600.6196899414062,
+        112.0316390991211
+      ],
+      "params": {
+        "reverse": 0
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 295.179931640625,
+      "hide": false,
+      "label": "Donor",
+      "location": [
+        -38.67843246459961,
+        4.045716762542725
+      ],
+      "params": {},
+      "width": 398.295654296875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 389.6756591796875,
+      "hide": false,
+      "label": "Donor parameters",
+      "location": [
+        -65.60948944091797,
+        110.06001281738281
+      ],
+      "params": {},
+      "width": 834.364013671875
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 631.3160400390625,
+      "hide": false,
+      "label": "Recipient (Voronoi pattern)",
+      "location": [
+        -307.9476318359375,
+        -91.50511932373047
+      ],
+      "params": {},
+      "width": 1303.0496826171875
+    },
+    "List Math": {
+      "bl_idname": "ListFuncNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1376.0278396606445,
+        -166.29420471191406
+      ],
+      "params": {
+        "func_": "MIN"
+      },
+      "width": 140.0
+    },
+    "List Math.001": {
+      "bl_idname": "ListFuncNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1374.119758605957,
+        -330.58189392089844
+      ],
+      "params": {
+        "func_": "MAX"
+      },
+      "width": 140.0
+    },
+    "Map Range": {
+      "bl_idname": "SvMapRangeNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1602.180305480957,
+        -211.00209045410156
+      ],
+      "params": {
+        "new_max": 2.0,
+        "new_min": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Map Range.001": {
+      "bl_idname": "SvMapRangeNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1841.9021339416504,
+        -58.20816659927368
+      ],
+      "params": {
+        "clamp": 0,
+        "new_max": 0.30000001192092896,
+        "new_min": 0.0
+      },
+      "width": 140.0
+    },
+    "Mesh Expression": {
+      "bl_idname": "SvMeshEvalNode",
+      "geom": "{\n  \"defaults\": {\n    \"Close\": 0.0\n  },\n  \"vertices\": [\n    [\n      0.0,\n      0.0,\n      0.0\n    ],\n    [\n      2.0,\n      0.0,\n      0.0\n    ],\n    [\n      0.0,\n      2.0,\n      0.0\n    ],\n    [\n      2.0,\n      2.0,\n      0.0\n    ],\n    [\n      0.0,\n      0.2,\n      0.0\n    ],\n    [\n      2.0,\n      0.2,\n      0.0\n    ],\n    [\n      2.0,\n      1.0,\n      0.0\n    ],\n    [\n      0.0,\n      1.0,\n      0.0\n    ],\n    [\n      0.0,\n      \"0.2 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      2.0,\n      \"0.2 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      2.0,\n      \"1.0 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ],\n    [\n      0.0,\n      \"1.0 + Close\",\n      0.7,\n      [\n        \"Selected\"\n      ]\n    ]\n  ],\n  \"edges\": [\n    [\n      0,\n      4\n    ],\n    [\n      0,\n      1\n    ],\n    [\n      3,\n      6\n    ],\n    [\n      2,\n      3\n    ],\n    [\n      1,\n      5\n    ],\n    [\n      4,\n      5\n    ],\n    [\n      2,\n      7\n    ],\n    [\n      6,\n      7\n    ],\n    [\n      8,\n      11\n    ],\n    [\n      8,\n      9\n    ],\n    [\n      9,\n      10\n    ],\n    [\n      10,\n      11\n    ],\n    [\n      5,\n      9\n    ],\n    [\n      4,\n      8\n    ],\n    [\n      7,\n      11\n    ],\n    [\n      6,\n      10\n    ]\n  ],\n  \"faces\": [\n    [\n      7,\n      6,\n      3,\n      2\n    ],\n    [\n      0,\n      1,\n      5,\n      4\n    ],\n    [\n      4,\n      5,\n      9,\n      8\n    ],\n    [\n      8,\n      9,\n      10,\n      11\n    ],\n    [\n      6,\n      7,\n      11,\n      10\n    ]\n  ],\n  \"vertexdata\": [],\n  \"facedata\": [\n    0,\n    0,\n    0,\n    0,\n    0\n  ]\n}",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2039.7178077697754,
+        -12.980082035064697
+      ],
+      "params": {
+        "filename": "Donor.json"
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        426.72821044921875,
+        299.15601348876953
+      ],
+      "params": {
+        "text": "\"Flip normals\" may be needed with some parameters, because \"Fill holes\" sometimes may calculate incorrect normals"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Note.001": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        112.27020263671875,
+        -147.38932037353516
+      ],
+      "params": {
+        "text": "Remove doubles to avoid too short edges"
+      },
+      "use_custom_color": true,
+      "width": 270.64849853515625
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -415.841552734375,
+        6.051231384277344
+      ],
+      "params": {
+        "center": 1,
+        "numx": 30,
+        "numy": 20
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Randomize input vertices": {
+      "bl_idname": "SvRandomizeVerticesNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -210.7403106689453,
+        16.86455535888672
+      ],
+      "params": {
+        "random_x_": 1.0,
+        "random_y_": 0.38999998569488525
+      },
+      "width": 140.0
+    },
+    "Remove Doubles": {
+      "bl_idname": "SvRemoveDoublesNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        177.19818115234375,
+        128.9842758178711
+      ],
+      "params": {
+        "distance": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Vector Noise": {
+      "bl_idname": "SvNoiseNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1151.4094314575195,
+        -204.02647399902344
+      ],
+      "params": {
+        "out_mode": "SCALAR"
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2595.7626953125,
+        307.5472412109375
+      ],
+      "params": {
+        "activate": 0,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Voronoi 2D": {
+      "bl_idname": "Voronoi2DNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -39.55157470703125,
+        51.605140686035156
+      ],
+      "params": {
+        "clip": 0.3700000047683716
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Plane MK2",
+      0,
+      "Randomize input vertices",
+      0
+    ],
+    [
+      "Randomize input vertices",
+      0,
+      "Voronoi 2D",
+      0
+    ],
+    [
+      "Voronoi 2D",
+      0,
+      "Remove Doubles",
+      1
+    ],
+    [
+      "Voronoi 2D",
+      1,
+      "Remove Doubles",
+      2
+    ],
+    [
+      "Remove Doubles",
+      0,
+      "Fill Holes",
+      0
+    ],
+    [
+      "Remove Doubles",
+      1,
+      "Fill Holes",
+      1
+    ],
+    [
+      "Fill Holes",
+      0,
+      "Flip normals",
+      0
+    ],
+    [
+      "Fill Holes",
+      2,
+      "Flip normals",
+      2
+    ],
+    [
+      "Flip normals",
+      0,
+      "Centers polygons",
+      0
+    ],
+    [
+      "Flip normals",
+      2,
+      "Centers polygons",
+      1
+    ],
+    [
+      "Centers polygons",
+      2,
+      "Vector Noise",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "List Math",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "List Math.001",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Map Range.001",
+      0
+    ],
+    [
+      "List Math",
+      0,
+      "Map Range.001",
+      1
+    ],
+    [
+      "List Math.001",
+      0,
+      "Map Range.001",
+      2
+    ],
+    [
+      "Map Range.001",
+      0,
+      "Mesh Expression",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Map Range",
+      0
+    ],
+    [
+      "List Math",
+      0,
+      "Map Range",
+      1
+    ],
+    [
+      "List Math.001",
+      0,
+      "Map Range",
+      2
+    ],
+    [
+      "Flip normals",
+      0,
+      "Adaptive Polygons Mk2",
+      0
+    ],
+    [
+      "Flip normals",
+      2,
+      "Adaptive Polygons Mk2",
+      1
+    ],
+    [
+      "Mesh Expression",
+      0,
+      "Adaptive Polygons Mk2",
+      2
+    ],
+    [
+      "Mesh Expression",
+      2,
+      "Adaptive Polygons Mk2",
+      3
+    ],
+    [
+      "Map Range",
+      0,
+      "Adaptive Polygons Mk2",
+      7
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Adaptive Polygons Mk2",
+      1,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}
