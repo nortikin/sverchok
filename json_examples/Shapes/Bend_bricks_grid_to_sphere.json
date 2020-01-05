@@ -1,0 +1,160 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Bend object along surface": {
+      "bl_idname": "SvBendAlongSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        643.9476318359375,
+        71.80648040771484
+      ],
+      "params": {
+        "grouped": 0,
+        "is_cycle_u": 1,
+        "is_cycle_v": 0
+      },
+      "width": 140.0
+    },
+    "Bricks grid": {
+      "bl_idname": "SvBricksNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        13.305574417114258,
+        -245.78457641601562
+      ],
+      "params": {
+        "cycle_u": 1,
+        "cycle_v": 0,
+        "du_": 0.4000000059604645,
+        "dv_": 0.6000000238418579,
+        "rdu_": 0.05000000074505806,
+        "rdv_": 0.05000000074505806,
+        "shift_": 0.699999988079071,
+        "sizeu_": 7.0,
+        "sizev_": 7.0,
+        "toothing_": 0.10999999940395355,
+        "toothing_r_": 0.05000000074505806
+      },
+      "width": 140.0
+    },
+    "List First & Last": {
+      "bl_idname": "ListFLNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        219.47703552246094,
+        -32.070045471191406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Flip": {
+      "bl_idname": "ListFlipNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        411.8503112792969,
+        -69.20037841796875
+      ],
+      "params": {
+        "level": 2
+      },
+      "width": 140.0
+    },
+    "Sphere": {
+      "bl_idname": "SphereNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        8.436305046081543,
+        -11.974403381347656
+      ],
+      "params": {
+        "Separate": 1,
+        "U_": 12,
+        "V_": 12,
+        "rad_": 3.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        858.036376953125,
+        -87.58375549316406
+      ],
+      "params": {
+        "face_color": [
+          0.8100003600120544,
+          0.4850854277610779,
+          0.5390028357505798,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Sphere",
+      0,
+      "List First & Last",
+      0
+    ],
+    [
+      "List First & Last",
+      0,
+      "List Flip",
+      0
+    ],
+    [
+      "Bricks grid",
+      0,
+      "Bend object along surface",
+      0
+    ],
+    [
+      "List Flip",
+      0,
+      "Bend object along surface",
+      1
+    ],
+    [
+      "Bend object along surface",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Bricks grid",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}
