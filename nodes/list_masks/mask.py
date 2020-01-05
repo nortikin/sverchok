@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from copy import copy
-
+from itertools import cycle
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
@@ -106,21 +106,22 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             indx = min(len(mask_l)-1, idx)
             mask = mask_l[indx]
-            mask_0 = copy(mask)
-            while len(mask) < len(list_a):
-                if len(mask_0) == 0:
-                    mask_0 = [1, 0]
-                mask = mask+mask_0
-
-            for idx, l in enumerate(list_a):
-                tmp = list_b.pop(0)
-                if mask[idx]:
-                    result_t.append(tmp)
+            if len(mask) < len(list_a):
+                if not mask:
+                    mask = [1, 0]
+                mask = cycle(mask)
+                mask_out =[m for m, l in zip(mask, list_a)]
+            else:
+                mask_out = mask[:len(list_a)]
+            for m, item in zip(mask_out, list_b):
+                if m:
+                    result_t.append(item)
                     ind_true.append(idx)
                 else:
-                    result_f.append(tmp)
+                    result_f.append(item)
                     ind_false.append(idx)
-            mask_out = mask[:len(list_a)]
+
+
 
         return (result_t, result_f, mask_out, ind_true, ind_false)
 
