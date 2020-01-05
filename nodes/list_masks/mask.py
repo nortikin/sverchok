@@ -79,13 +79,13 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
 
     # working horse
     def get_mask(self, list_a, mask_l, level):
-        list_b = self.get_current_level_list(list_a, level)
-        res = list_b
-        if list_b:
-            res = self.put_current_level_list(list_a, list_b, mask_l, level)
-        return res
+        # list_b = self.get_current_level_list(list_a, level)
+        # res = list_b
+        # if list_b:
+        #     res = self.put_current_level_list(list_a, list_b, mask_l, level)
+        return  self.put_current_level_list(list_a, mask_l, level)
 
-    def put_current_level_list(self, list_a, list_b, mask_l, level, idx=0):
+    def put_current_level_list(self, list_a, mask_l, level, idx=0):
         result_t = []
         result_f = []
         mask_out = []
@@ -94,7 +94,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         if level > 1:
             if isinstance(list_a, (list, tuple)):
                 for idx, sub_list in enumerate(list_a):
-                    sub_res = self.put_current_level_list(sub_list, list_b, mask_l, level - 1, idx)
+                    sub_res = self.put_current_level_list(sub_list, mask_l, level - 1, idx)
                     result_t.append(sub_res[0])
                     result_f.append(sub_res[1])
                     mask_out.append(sub_res[2])
@@ -111,7 +111,7 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
                 mask_out = [m for m, l in zip(mask, list_a)]
             else:
                 mask_out = mask[:len(list_a)]
-            for mask_val, item in zip(mask_out, list_b):
+            for mask_val, item in zip(mask_out, list_a):
                 if mask_val:
                     result_t.append(item)
                     ind_true.append(idx)
