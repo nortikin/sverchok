@@ -1,6 +1,8 @@
 {
   "export_version": "0.079",
   "framed_nodes": {
+    "A Number": "Frame.003",
+    "A Number.001": "Frame.003",
     "Centers polygons": "Frame.001",
     "Fill Holes": "Frame.002",
     "Flip normals": "Frame.002",
@@ -9,16 +11,52 @@
     "Map Range": "Frame.001",
     "Map Range.001": "Frame",
     "Mesh Expression": "Frame",
+    "Move": "Frame.003",
     "Note": "Frame.002",
     "Note.001": "Frame.002",
     "Plane MK2": "Frame.002",
-    "Randomize input vertices": "Frame.002",
     "Remove Doubles": "Frame.002",
+    "Vector Math": "Frame.003",
+    "Vector Math.001": "Frame.003",
     "Vector Noise": "Frame.001",
+    "Vector Noise.001": "Frame.003",
+    "Vector Rewire": "Frame.003",
+    "Viewer Draw Mk3.001": "Frame.002",
+    "Viewer Draw Mk3.002": "Frame.002",
     "Voronoi 2D": "Frame.002"
   },
   "groups": {},
   "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Noise Scale",
+      "location": [
+        -1222.5360221862793,
+        267.6996898651123
+      ],
+      "params": {
+        "float_": 2.380000114440918,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Noise Amplitude",
+      "location": [
+        -1225.8812370300293,
+        183.97640800476074
+      ],
+      "params": {
+        "float_": 0.6699999570846558,
+        "int_": 0
+      },
+      "width": 140.0
+    },
     "Adaptive Polygons Mk2": {
       "bl_idname": "SvAdaptivePolygonsNodeMk2",
       "height": 100.0,
@@ -34,7 +72,8 @@
         "join": 1,
         "map_mode": "QUADS",
         "matching_mode": "PERFACE",
-        "remove_doubles": 1
+        "remove_doubles": 1,
+        "use_shell_factor": 1
       },
       "width": 140.0
     },
@@ -104,7 +143,7 @@
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 631.3160400390625,
+      "height": 858.5401611328125,
       "hide": false,
       "label": "Recipient (Voronoi pattern)",
       "location": [
@@ -112,7 +151,19 @@
         -91.50511932373047
       ],
       "params": {},
-      "width": 1303.0496826171875
+      "width": 2128.134765625
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "height": 331.0596923828125,
+      "hide": false,
+      "label": "Randomize",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 1172.02001953125
     },
     "List Math": {
       "bl_idname": "ListFuncNode",
@@ -188,6 +239,18 @@
       },
       "width": 140.0
     },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -254.34125900268555,
+        190.09525871276855
+      ],
+      "params": {},
+      "width": 140.0
+    },
     "Note": {
       "bl_idname": "NoteNode",
       "color": [
@@ -220,7 +283,7 @@
       "label": "",
       "location": [
         112.27020263671875,
-        -147.38932037353516
+        -147.38931274414062
       ],
       "params": {
         "text": "Remove doubles to avoid too short edges"
@@ -239,8 +302,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -415.841552734375,
-        6.051231384277344
+        -1240.9266357421875,
+        -142.4308624267578
       ],
       "params": {
         "center": 1,
@@ -250,21 +313,6 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Randomize input vertices": {
-      "bl_idname": "SvRandomizeVerticesNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -210.7403106689453,
-        16.86455535888672
-      ],
-      "params": {
-        "random_x_": 1.0,
-        "random_y_": 0.38999998569488525
-      },
-      "width": 140.0
-    },
     "Remove Doubles": {
       "bl_idname": "SvRemoveDoublesNode",
       "height": 100.0,
@@ -272,10 +320,64 @@
       "label": "",
       "location": [
         177.19818115234375,
-        128.9842758178711
+        128.98429107666016
       ],
       "params": {
         "distance": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        787.5957641601562,
+        28.217140197753906
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        788.040771484375,
+        71.43331909179688
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Vector Math": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1003.7809562683105,
+        124.49604606628418
+      ],
+      "params": {
+        "current_op": "SCALAR",
+        "socket_info": "vs v"
+      },
+      "width": 140.0
+    },
+    "Vector Math.001": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -638.191478729248,
+        148.20922660827637
+      ],
+      "params": {
+        "current_op": "SCALAR",
+        "socket_info": "vs v"
       },
       "width": 140.0
     },
@@ -290,6 +392,34 @@
       ],
       "params": {
         "out_mode": "SCALAR"
+      },
+      "width": 140.0
+    },
+    "Vector Noise.001": {
+      "bl_idname": "SvNoiseNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -821.5760612487793,
+        193.02535820007324
+      ],
+      "params": {
+        "seed": 4
+      },
+      "width": 140.0
+    },
+    "Vector Rewire": {
+      "bl_idname": "SvVectorRewire",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -429.8031120300293,
+        150.78661918640137
+      ],
+      "params": {
+        "selected_mode_from": "Scalar"
       },
       "width": 140.0
     },
@@ -309,7 +439,50 @@
       ],
       "params": {
         "activate": 0,
+        "display_edges": 0,
+        "display_faces": 1,
+        "display_verts": 0,
         "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        198.6109619140625,
+        400.62012481689453
+      ],
+      "params": {
+        "activate": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.002": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -23.064361572265625,
+        367.53076934814453
+      ],
+      "params": {
+        "activate": 0
       },
       "use_custom_color": true,
       "width": 140.0
@@ -333,11 +506,59 @@
     [
       "Plane MK2",
       0,
-      "Randomize input vertices",
+      "Vector Math",
       0
     ],
     [
-      "Randomize input vertices",
+      "A Number",
+      0,
+      "Vector Math",
+      1
+    ],
+    [
+      "Vector Math",
+      0,
+      "Vector Noise.001",
+      0
+    ],
+    [
+      "Vector Noise.001",
+      0,
+      "Vector Math.001",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Vector Math.001",
+      1
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "Plane MK2",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Move",
+      2
+    ],
+    [
+      "Move",
       0,
       "Voronoi 2D",
       0
@@ -380,15 +601,27 @@
     ],
     [
       "Flip normals",
-      0,
-      "Centers polygons",
-      0
+      "Vertices",
+      "Reroute.001",
+      "Input"
     ],
     [
       "Flip normals",
-      2,
+      "Polygons",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute.001",
+      "Output",
       "Centers polygons",
-      1
+      "Vertices"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Centers polygons",
+      "Polygons"
     ],
     [
       "Centers polygons",
@@ -451,16 +684,16 @@
       2
     ],
     [
-      "Flip normals",
-      0,
+      "Reroute.001",
+      "Output",
       "Adaptive Polygons Mk2",
-      0
+      "VersR"
     ],
     [
-      "Flip normals",
-      2,
+      "Reroute",
+      "Output",
       "Adaptive Polygons Mk2",
-      1
+      "PolsR"
     ],
     [
       "Mesh Expression",
@@ -481,6 +714,18 @@
       7
     ],
     [
+      "Voronoi 2D",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Voronoi 2D",
+      1,
+      "Viewer Draw Mk3.001",
+      1
+    ],
+    [
       "Adaptive Polygons Mk2",
       0,
       "Viewer Draw Mk3",
@@ -491,6 +736,18 @@
       1,
       "Viewer Draw Mk3",
       2
+    ],
+    [
+      "Move",
+      0,
+      "Viewer Draw Mk3.002",
+      0
+    ],
+    [
+      "Plane MK2",
+      1,
+      "Viewer Draw Mk3.002",
+      1
     ]
   ]
 }
