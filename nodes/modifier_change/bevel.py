@@ -125,7 +125,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     spread : FloatProperty(
         name = "Spread",
         description = "Amount to offset beveled edge",
-        default = 0.0,
+        default = 0.0, min = 0.0,
         update = updateNode)
 
     def sv_init(self, context):
