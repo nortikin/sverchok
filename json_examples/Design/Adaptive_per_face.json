@@ -1,8 +1,8 @@
 {
   "export_version": "0.079",
   "framed_nodes": {
-    "A Number.001": "Frame.003",
     "A Number.002": "Frame.003",
+    "A Number.003": "Frame.003",
     "Centers polygons": "Frame.004",
     "Frame": "Frame.002",
     "Frame.001": "Frame.002",
@@ -28,32 +28,32 @@
   },
   "groups": {},
   "nodes": {
-    "A Number.001": {
-      "bl_idname": "SvNumberNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1711.3359985351562,
-        234.62496948242188
-      ],
-      "params": {
-        "float_": 0.38999998569488525,
-        "int_": 0
-      },
-      "width": 140.0
-    },
     "A Number.002": {
       "bl_idname": "SvNumberNode",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        1708.3153076171875,
-        152.97845458984375
+        1706.8050537109375,
+        209.67471313476562
       ],
       "params": {
         "float_": 0.06000000238418579,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1708.8253173828125,
+        111.21734619140625
+      ],
+      "params": {
+        "float_": 0.20000000298023224,
         "int_": 0
       },
       "width": 140.0
@@ -109,7 +109,7 @@
       "hide": false,
       "label": "Buckle Up",
       "location": [
-        -261.27723693847656,
+        -261.2772216796875,
         1530.1674537658691
       ],
       "params": {},
@@ -170,7 +170,7 @@
       "label": "",
       "location": [
         1437.0738372802734,
-        491.8024444580078
+        491.8024139404297
       ],
       "params": {
         "clamp": 0,
@@ -192,7 +192,7 @@
       "hide": false,
       "label": "",
       "location": [
-        1985.6200256347656,
+        1985.6199951171875,
         143.91238403320312
       ],
       "params": {
@@ -207,8 +207,8 @@
       "hide": false,
       "label": "",
       "location": [
-        1934.3101501464844,
-        483.16491317749023
+        1934.3101806640625,
+        483.1649169921875
       ],
       "params": {
         "filename": "Mesh Expression"
@@ -233,7 +233,7 @@
       "hide": false,
       "label": "",
       "location": [
-        679.4506225585938,
+        679.4505615234375,
         746.8767433166504
       ],
       "params": {},
@@ -282,7 +282,7 @@
       "hide": false,
       "label": "",
       "location": [
-        448.7845001220703,
+        448.78448486328125,
         770.3267555236816
       ],
       "params": {
@@ -387,7 +387,7 @@
       "hide": false,
       "label": "",
       "location": [
-        224.61073303222656,
+        224.6107177734375,
         784.4903907775879
       ],
       "params": {
@@ -402,8 +402,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2219.699848175049,
-        441.0901565551758
+        2219.699951171875,
+        441.09014892578125
       ],
       "params": {
         "direction": "-X+X"
@@ -416,8 +416,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2439.6998291015625,
-        487.67501068115234
+        2439.69970703125,
+        487.6750183105469
       ],
       "params": {
         "direction": "-Y+Y"
@@ -444,7 +444,7 @@
       "hide": false,
       "label": "",
       "location": [
-        453.7858123779297,
+        453.78582763671875,
         594.1969337463379
       ],
       "params": {
@@ -459,7 +459,7 @@
       "label": "",
       "location": [
         1239.1775970458984,
-        447.82521057128906
+        447.82518005371094
       ],
       "params": {},
       "width": 140.0
@@ -497,6 +497,7 @@
         112.16677856445312
       ],
       "params": {
+        "activate": 0,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -658,16 +659,16 @@
       "CenterClose"
     ],
     [
-      "A Number.001",
-      0,
-      "Mesh Expression",
-      1
-    ],
-    [
       "A Number.002",
       0,
       "Mesh Expression",
       2
+    ],
+    [
+      "A Number.003",
+      0,
+      "Mesh Expression",
+      3
     ],
     [
       "Mesh Expression",
@@ -766,12 +767,6 @@
       3
     ],
     [
-      "Viewer BMesh",
-      0,
-      "Assign Materials List",
-      0
-    ],
-    [
       "Reroute",
       "Output",
       "Viewer Draw Mk3.001",
@@ -782,6 +777,12 @@
       "Output",
       "Viewer Draw Mk3.001",
       "faces"
+    ],
+    [
+      "Viewer BMesh",
+      0,
+      "Assign Materials List",
+      0
     ]
   ]
 }
