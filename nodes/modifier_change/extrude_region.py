@@ -141,6 +141,10 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         mask_layer = bm.faces.layers.int.get('mask')
         for face in extruded_faces:
             face[mask_layer] = IN
+        # For some reason, bmesh.ops.extrude_face_region gets
+        # custom layers data for what we call "outer extrusion geometry"
+        # from *surrounding* faces, not from the faces being extruded.
+        # So here we have to manually find out the outer geometry.
         for face in bm.faces:
             if face[mask_layer] == MASK:
                 if any(v in extruded_verts for v in face.verts):
