@@ -25,7 +25,6 @@
     "Reroute.001": "Frame.002",
     "Select mesh elements by location": "Frame.002",
     "Select mesh elements by location.002": "Frame.002",
-    "Set Material Index": "Frame.004",
     "Switch.001": "Frame.004",
     "UV Connection.001": "Frame.001",
     "Vector in.001": "Frame.001",
@@ -71,8 +70,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2261.917465209961,
-        494.31573486328125
+        2535.243392944336,
+        488.1202392578125
       ],
       "materials": [
         "Concrete",
@@ -161,7 +160,7 @@
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 641.19580078125,
+      "height": 635.000244140625,
       "hide": false,
       "label": "Assign Materials",
       "location": [
@@ -169,7 +168,7 @@
         148.50210571289062
       ],
       "params": {},
-      "width": 796.3348388671875
+      "width": 821.6016845703125
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
@@ -530,28 +529,14 @@
       },
       "width": 140.0
     },
-    "Set Material Index": {
-      "bl_idname": "SvMaterialIndexNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2569.976547241211,
-        429.65557861328125
-      ],
-      "params": {
-        "all_faces": 1
-      },
-      "width": 140.0
-    },
     "Switch.001": {
       "bl_idname": "SvSwitchNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        2356.409408569336,
-        221.3009490966797
+        2176.942611694336,
+        192.38851928710938
       ],
       "params": {
         "selected_mode": 1,
@@ -600,8 +585,8 @@
       "hide": false,
       "label": "",
       "location": [
-        2054.839340209961,
-        481.7350158691406
+        2364.264877319336,
+        457.9855041503906
       ],
       "params": {},
       "use_custom_color": true,
@@ -773,6 +758,24 @@
     ],
     [
       "Inset faces.001",
+      4,
+      "Switch.001",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Switch.001",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Switch.001",
+      2
+    ],
+    [
+      "Inset faces.001",
       0,
       "Viewer BMesh",
       0
@@ -784,34 +787,16 @@
       2
     ],
     [
+      "Switch.001",
+      0,
+      "Viewer BMesh",
+      3
+    ],
+    [
       "Viewer BMesh",
       0,
       "Assign Materials List",
       0
-    ],
-    [
-      "Assign Materials List",
-      0,
-      "Set Material Index",
-      0
-    ],
-    [
-      "Inset faces.001",
-      4,
-      "Switch.001",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Switch.001",
-      1
-    ],
-    [
-      "A Number.001",
-      0,
-      "Switch.001",
-      2
     ]
   ]
 }
