@@ -28,9 +28,8 @@
         -917.5125732421875
       ],
       "params": {
-        "formula": "cos(x*pi/180)*n[0]",
         "formula1": "cos(x*pi/180)*n0",
-        "wrap": 1
+        "wrap": 0
       },
       "width": 140.0
     },
@@ -44,9 +43,8 @@
         -734.0225830078125
       ],
       "params": {
-        "formula": "sin(x*pi/180)*n[0]*cos(n[1])",
         "formula1": "sin(x*pi/180)*n0*cos(n)",
-        "wrap": 1
+        "wrap": 0
       },
       "width": 189.837158203125
     },
@@ -60,9 +58,8 @@
         -351.4258117675781
       ],
       "params": {
-        "formula": "cos(x*pi/180)",
         "formula1": "cos(x*pi/180)",
-        "wrap": 1
+        "wrap": 0
       },
       "width": 140.0
     },
@@ -76,9 +73,8 @@
         -164.75888061523438
       ],
       "params": {
-        "formula": "sin(x*pi/180)",
         "formula1": "sin(x*pi/180)",
-        "wrap": 1
+        "wrap": 0
       },
       "width": 140.0
     },
@@ -149,9 +145,7 @@
         "number_mode": "int",
         "range_mode": "RANGE",
         "start_int": 0,
-        "step_": 20,
         "step_int": 20,
-        "stop_": 380,
         "stop_int": 380
       },
       "width": 140.0
@@ -169,11 +163,8 @@
         "count_": 10,
         "number_mode": "float",
         "range_mode": "RANGE",
-        "start_": 1.0,
         "start_float": 1.0,
-        "step_": 0.10000000149011612,
         "step_float": 0.10000000149011612,
-        "stop_": 2.799999952316284,
         "stop_float": 2.799999952316284
       },
       "width": 140.0
@@ -192,9 +183,7 @@
         "number_mode": "int",
         "range_mode": "RANGE",
         "start_int": 0,
-        "step_": 1,
         "step_int": 1,
-        "stop_": 18,
         "stop_int": 18
       },
       "width": 140.0
@@ -212,11 +201,8 @@
         "count_": 10,
         "number_mode": "int",
         "range_mode": "RANGE",
-        "start_": 1,
         "start_int": 1,
-        "step_": 1,
         "step_int": 1,
-        "stop_": 19,
         "stop_int": 19
       },
       "width": 140.0
@@ -234,11 +220,8 @@
         "count_": 10,
         "number_mode": "int",
         "range_mode": "RANGE",
-        "start_": 1,
         "start_int": 1,
-        "step_": 10,
         "step_int": 10,
-        "stop_": 720,
         "stop_int": 720
       },
       "width": 140.0
@@ -256,11 +239,8 @@
         "count_": 10,
         "number_mode": "float",
         "range_mode": "RANGE",
-        "start_": 1.0,
         "start_float": 1.0,
-        "step_": 0.10000000149011612,
         "step_float": 0.10000000149011612,
-        "stop_": 8.199999809265137,
         "stop_float": 8.199999809265137
       },
       "width": 140.0
@@ -286,15 +266,39 @@
   },
   "update_lists": [
     [
-      "Number Range.004",
+      "Number Range",
       0,
-      "Formula",
+      "Formula.003",
       0
     ],
     [
-      "Number Range.005",
+      "Number Range",
       0,
-      "Formula",
+      "Formula.002",
+      0
+    ],
+    [
+      "Formula.003",
+      0,
+      "Gen Vectors.003",
+      0
+    ],
+    [
+      "Formula.002",
+      0,
+      "Gen Vectors.003",
+      1
+    ],
+    [
+      "Number Range.002",
+      0,
+      "List Zip",
+      0
+    ],
+    [
+      "Number Range.003",
+      0,
+      "List Zip",
       1
     ],
     [
@@ -316,6 +320,18 @@
       2
     ],
     [
+      "Number Range.004",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula",
+      1
+    ],
+    [
       "Formula.001",
       0,
       "Gen Vectors.001",
@@ -332,30 +348,6 @@
       0,
       "Gen Vectors.001",
       2
-    ],
-    [
-      "Number Range",
-      0,
-      "Formula.002",
-      0
-    ],
-    [
-      "Number Range",
-      0,
-      "Formula.003",
-      0
-    ],
-    [
-      "Formula.003",
-      0,
-      "Gen Vectors.003",
-      0
-    ],
-    [
-      "Formula.002",
-      0,
-      "Gen Vectors.003",
-      1
     ],
     [
       "Gen Vectors.001",
@@ -374,18 +366,6 @@
       0,
       "Matrix in.001",
       3
-    ],
-    [
-      "Number Range.002",
-      0,
-      "List Zip",
-      0
-    ],
-    [
-      "Number Range.003",
-      0,
-      "List Zip",
-      1
     ],
     [
       "Gen Vectors.003",
