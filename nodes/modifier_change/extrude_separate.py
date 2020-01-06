@@ -285,7 +285,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             outputs['FaceData'].sv_set(result_face_data)
 
     def storage_get_data(self, storage):
-        storage['mask_out_type'] = list(self.out_type)
+        storage['mask_out_type'] = list(self.mask_out_type)
 
     def storage_set_data(self, storage):
         self.mask_out_type = set(storage.get('mask_out_type', []))
