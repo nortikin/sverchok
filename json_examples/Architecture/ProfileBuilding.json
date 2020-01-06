@@ -26,7 +26,7 @@
     "Select mesh elements by location": "Frame.002",
     "Select mesh elements by location.002": "Frame.002",
     "Set Material Index": "Frame.004",
-    "Switch": "Frame.004",
+    "Switch.001": "Frame.004",
     "UV Connection.001": "Frame.001",
     "Vector in.001": "Frame.001",
     "Viewer BMesh": "Frame.004"
@@ -544,13 +544,8 @@
       },
       "width": 140.0
     },
-    "Switch": {
-      "bl_idname": "SvSwitchNode",
-      "color": [
-        1.0,
-        0.30000001192092896,
-        0.0
-      ],
+    "Switch.001": {
+      "bl_idname": "SvSwitchNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -559,10 +554,9 @@
         221.3009490966797
       ],
       "params": {
-        "selected_mode": "multi",
+        "selected_mode": 1,
         "switch_count": 1
       },
-      "use_custom_color": true,
       "width": 140.0
     },
     "UV Connection.001": {
@@ -622,15 +616,15 @@
       2
     ],
     [
-      "Number Range.005",
-      0,
-      "Formula.001",
-      0
-    ],
-    [
       "Number Range.001",
       0,
       "Formula",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
       0
     ],
     [
@@ -689,38 +683,38 @@
     ],
     [
       "UV Connection.001",
-      "data",
-      "Reroute.001",
-      "Input"
-    ],
-    [
-      "UV Connection.001",
       "vertices",
       "Reroute",
       "Input"
     ],
     [
+      "UV Connection.001",
+      "data",
+      "Reroute.001",
+      "Input"
+    ],
+    [
       "Reroute",
       "Output",
-      "Select mesh elements by location.002",
+      "Select mesh elements by location",
       "Vertices"
     ],
     [
       "Reroute.001",
       "Output",
-      "Select mesh elements by location.002",
+      "Select mesh elements by location",
       "Polygons"
     ],
     [
       "Reroute",
       "Output",
-      "Select mesh elements by location",
+      "Select mesh elements by location.002",
       "Vertices"
     ],
     [
       "Reroute.001",
       "Output",
-      "Select mesh elements by location",
+      "Select mesh elements by location.002",
       "Polygons"
     ],
     [
@@ -796,33 +790,27 @@
       0
     ],
     [
-      "Inset faces.001",
-      4,
-      "Switch",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Switch",
-      1
-    ],
-    [
-      "A Number.001",
-      0,
-      "Switch",
-      2
-    ],
-    [
       "Assign Materials List",
       0,
       "Set Material Index",
       0
     ],
     [
-      "Switch",
+      "Inset faces.001",
+      4,
+      "Switch.001",
+      0
+    ],
+    [
+      "A Number",
       0,
-      "Set Material Index",
+      "Switch.001",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Switch.001",
       2
     ]
   ]
