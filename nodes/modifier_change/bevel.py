@@ -61,7 +61,8 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     @throttled
     def mode_change(self, context):
         self.inputs[5].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
-        self.inputs['Spread'].hide_safe = self.miter_inner == 'SHARP' and self.miter_outer == 'SHARP'
+        if 'Spread' in self.inputs:
+            self.inputs['Spread'].hide_safe = self.miter_inner == 'SHARP' and self.miter_outer == 'SHARP'
 
     offset_: FloatProperty(
         name='Amount', description='Amount to offset beveled edge',
