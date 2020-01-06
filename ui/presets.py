@@ -127,6 +127,22 @@ class SvPreset(object):
 
     path = property(get_path, set_path)
 
+    def get_search_terms(self):
+        terms = []
+        if self.name:
+            terms.append(self.name.upper())
+        if self.category:
+            terms.append(self.category.upper())
+        if self.keywords:
+            terms.append(self.keywords.upper())
+        return terms
+
+    def matches(self, needle):
+        if not needle:
+            return True
+        needle = needle.upper()
+        return any(needle in term for term in self.get_search_terms() if term)
+
     @property
     def data(self):
         if self._data is not None:
@@ -150,6 +166,14 @@ class SvPreset(object):
             meta = dict()
             data['metainfo'] = meta
             return meta
+
+    @property
+    def description(self):
+        return self.meta.get("description", None)
+
+    @property
+    def keywords(self):
+        return self.meta.get("keywords", None)
 
     def save(self):
         if self._data is None:
@@ -241,20 +265,33 @@ class SvPreset(object):
             category = self.category
         op = layout.operator("node.sv_preset_"+get_preset_idname_for_operator(self.name, category), text=self.name)
 
-def get_presets(category=None):
+def get_presets(category=None, search=None):
     result = []
-    for path in get_preset_paths(category):
-        result.append(SvPreset(path=path, category=category))
+    if search:
+        categories = [GENERAL] + get_category_names()
+    else:
+        categories = [category]
+    for category in categories:
+        for path in get_preset_paths(category):
+            preset = SvPreset(path=path, category=category)
+            if preset.matches(search):
+                result.append(preset)
     return result
 
 class SvUserPresetsPanelProps(bpy.types.PropertyGroup):
     manage_mode: BoolProperty(
         name="Manage Presets",
         description="Presets management mode", default=False)
+
     category : EnumProperty(
         name = "Category",
         description = "Select presets category",
         items = get_category_items)
+    
+    search_text : StringProperty(
+        name = "Search",
+        description = "Enter search term and press Enter to search; clear the field to return to selection of preset category.")
+
 
 class SvSaveSelected(bpy.types.Operator):
     """
@@ -326,6 +363,7 @@ class SvPresetProps(bpy.types.Operator):
     new_name: StringProperty(name="Name", description="New preset name")
 
     description: StringProperty(name="Description", description="Preset description")
+    keywords: StringProperty(name="Keywords", description="Search keywords")
     author: StringProperty(name="Author", description="Preset author name")
     license: StringProperty(
         name="License", description="Preset license (short name)", default="CC-BY-SA")
@@ -335,6 +373,7 @@ class SvPresetProps(bpy.types.Operator):
         layout.prop(self, "new_category")
         layout.prop(self, "new_name")
         layout.prop(self, "description")
+        layout.prop(self, "keywords")
         layout.prop(self, "author")
         layout.prop(self, "license")
 
@@ -353,6 +392,7 @@ class SvPresetProps(bpy.types.Operator):
 
         preset = SvPreset(name = self.old_name, category = self.old_category)
         preset.meta['description'] = self.description
+        preset.meta['keywords'] = self.keywords
         preset.meta['author'] = self.author
         preset.meta['license'] = self.license
         preset.save()
@@ -382,8 +422,9 @@ class SvPresetProps(bpy.types.Operator):
     def invoke(self, context, event):
         wm = context.window_manager
         self.new_name = self.old_name
-        preset = SvPreset(name=self.old_name)
+        preset = SvPreset(name=self.old_name, category=self.old_category)
         self.description = preset.meta.get('description', "")
+        self.keywords = preset.meta.get("keywords", "")
         self.author = preset.meta.get('author', "")
         self.license = preset.meta.get('license', "CC-BY-SA")
         return wm.invoke_props_dialog(self)
@@ -683,11 +724,25 @@ class SvPresetCategoryDelete(bpy.types.Operator):
         wm = context.window_manager
         return wm.invoke_confirm(self, event)
 
+class SvResetPresetSearchOperator(bpy.types.Operator):
+    """
+    Reset preset search string and return to selection of preset by category
+    """
+    bl_idname = "node.sv_reset_preset_search"
+    bl_label = "Reset search"
+    bl_options = {'REGISTER', 'INTERNAL'}
+
+    def execute(self, context):
+        ntree = context.space_data.node_tree
+        panel_props = ntree.preset_panel_properties
+        panel_props.search_text = ""
+        return {'FINISHED'}
+
 def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=None):
-    if presets is None:
-        presets = get_presets(category)
     if category is None:
         category = GENERAL
+    if presets is None:
+        presets = get_presets(category)
 
     if id_tree is None:
         if context is None:
@@ -697,7 +752,7 @@ def draw_presets_ops(layout, category=None, id_tree=None, presets=None, context=
 
     col = layout.column(align=True)
     for preset in presets:
-        preset.draw_operator(col, id_tree, category=category)
+        preset.draw_operator(col, id_tree) #, category=category)
 
 class SV_PT_UserPresetsPanel(bpy.types.Panel):
     bl_idname = "SV_PT_UserPresetsPanel"
@@ -719,17 +774,26 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
         ntree = context.space_data.node_tree
         panel_props = ntree.preset_panel_properties
 
-        layout.label(text="Category:")
-        layout.prop(panel_props, 'category', text='')
-
-        if any(node.select for node in ntree.nodes):
-            op = layout.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON')
-            op.id_tree = ntree.name
-            op.category = panel_props.category
-            layout.separator()
-
-        presets = get_presets(panel_props.category)
         layout.prop(panel_props, 'manage_mode', toggle=True, icon='PREFERENCES')
+
+        needle = None
+        if not panel_props.manage_mode:
+            row = layout.row(align=True)
+            row.prop(panel_props, "search_text", text="")
+            row.operator("node.sv_reset_preset_search", icon="X", text="")
+            needle = panel_props.search_text
+
+        if not panel_props.search_text:
+            layout.prop(panel_props, 'category', text='')
+
+        row = layout.row()
+        op = row.operator('node.sv_save_selected', text="Save Preset", icon='SOLO_ON')
+        op.id_tree = ntree.name
+        op.category = panel_props.category
+        row.enabled = any(node.select for node in ntree.nodes)
+        layout.separator()
+
+        presets = get_presets(panel_props.category, search=needle)
         layout.separator()
 
         if panel_props.manage_mode:
@@ -775,6 +839,9 @@ class SV_PT_UserPresetsPanel(bpy.types.Panel):
             if len(presets):
                 layout.label(text="Use preset:")
                 draw_presets_ops(layout, panel_props.category, ntree.name, presets)
+            elif needle:
+                layout.label(text="There are no presets matching")
+                layout.label(text="the search terms.")
             else:
                 layout.label(text="You do not have any presets")
                 layout.label(text="under `{}` category.".format(panel_props.category))
@@ -808,7 +875,10 @@ def register():
     bpy.types.NodeTree.preset_panel_properties = bpy.props.PointerProperty(
         name="preset_panel_properties", type=SvUserPresetsPanelProps)
 
+    bpy.utils.register_class(SvResetPresetSearchOperator)
+
 def unregister():
+    bpy.utils.unregister_class(SvResetPresetSearchOperator)
     del bpy.types.NodeTree.preset_panel_properties
 
     for clazz in reversed(classes):
