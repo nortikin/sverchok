@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from itertools import chain
+from itertools import chain, cycle
 
 import bpy
 from mathutils import Vector
@@ -168,11 +168,18 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
             return
         if self.alg_mode == "Blender" and not bl_crop_mesh:
             return
+
+        max_len = max([len(sock.sv_get(deepcopy=False)) for sock in self.inputs])
+        in_verts = chain(self.inputs['Verts'].sv_get(), cycle([self.inputs['Verts'].sv_get(deepcopy=False)[-1]]))
+        in_edges_faces = chain(self.inputs[1].sv_get(), cycle([self.inputs[1].sv_get(deepcopy=False)[-1]]))
+        in_verts_crop = chain(self.inputs['Verts Crop'].sv_get(),
+                              cycle([self.inputs['Verts Crop'].sv_get(deepcopy=False)[-1]]))
+        in_faces_crop = chain(self.inputs['Faces Crop'].sv_get(),
+                              cycle([self.inputs['Faces Crop'].sv_get(deepcopy=False)[-1]]))
+
         out = []
-        for sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop in zip(self.inputs['Verts'].sv_get(),
-                                                                    self.inputs[1].sv_get(),
-                                                                    self.inputs['Verts Crop'].sv_get(),
-                                                                    self.inputs['Faces Crop'].sv_get()):
+        for i, sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop in zip(range(max_len), in_verts, in_edges_faces,
+                                                                             in_verts_crop, in_faces_crop):
             if self.input_mode == 'faces':
                 if self.alg_mode == 'Sweep line':
                     out.append(crop_mesh(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop,
