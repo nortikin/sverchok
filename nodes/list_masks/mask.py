@@ -16,23 +16,56 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from copy import copy
-
+from itertools import cycle
 import bpy
-from bpy.props import BoolProperty, IntProperty, StringProperty
+from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets
 
+def mask_data(list_a, mask_l, level, idx=0):
+
+    mask_out, ind_true, ind_false, result_t, result_f = [], [], [], [], []
+
+    if level > 1:
+        if isinstance(list_a, (list, tuple)):
+            result = [mask_out, ind_true, ind_false, result_t, result_f]
+
+            for idx, sub_list in enumerate(list_a):
+                for i, res in enumerate(mask_data(sub_list, mask_l, level - 1, idx)):
+                    result[i].append(res)
+
+    else:
+        indx = min(len(mask_l)-1, idx)
+        mask = mask_l[indx]
+        if len(mask) < len(list_a):
+            if not mask:
+                mask = [1, 0]
+            mask = cycle(mask)
+            mask_out = [m for m, l in zip(mask, list_a)]
+        else:
+            mask_out = mask[:len(list_a)]
+        for mask_val, (id_item, item) in zip(mask_out, enumerate(list_a)):
+            if mask_val:
+                result_t.append(item)
+                ind_true.append(id_item)
+            else:
+                result_f.append(item)
+                ind_false.append(id_item)
+
+    return mask_out, ind_true, ind_false, result_t, result_f
 
 class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' MaskList node '''
+    '''
+    Triggers: Split data with Mask
+    Tooltip: Filter data with a boolean list ([False, True] or [0,1])
+    '''
     bl_idname = 'MaskListNode'
     bl_label = 'List Mask (out)'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MASK_OUT'
 
     Level: IntProperty(
-        name='Level', description='Choose list level of data (see help)',
+        name='Level', description='List level to mask (see help)',
         default=1, min=1, max=10, update=updateNode)
 
     def sv_init(self, context):
@@ -60,88 +93,11 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
         data = inputs['data'].sv_get()
         mask = inputs['mask'].sv_get(default=[[1, 0]])
 
-        result = self.getMask(data, mask, self.Level)
+        result = mask_data(data, mask, self.Level)
 
-        if self.outputs['dataTrue'].is_linked:
-            outputs['dataTrue'].sv_set(result[0])
-
-        if self.outputs['dataFalse'].is_linked:
-            outputs['dataFalse'].sv_set(result[1])
-
-        if self.outputs['mask'].is_linked:
-            outputs['mask'].sv_set(result[2])
-
-        if self.outputs['ind_true'].is_linked:
-            outputs['ind_true'].sv_set(result[3])
-
-        if self.outputs['ind_false'].is_linked:
-            outputs['ind_false'].sv_set(result[4])
-
-    # working horse
-    def getMask(self, list_a, mask_l, level):
-        list_b = self.getCurrentLevelList(list_a, level)
-        res = list_b
-        if list_b:
-            res = self.putCurrentLevelList(list_a, list_b, mask_l, level)
-        return res
-
-    def putCurrentLevelList(self, list_a, list_b, mask_l, level, idx=0):
-        result_t = []
-        result_f = []
-        mask_out = []
-        ind_true = []
-        ind_false = []
-        if level > 1:
-            if isinstance(list_a, (list, tuple)):
-                for idx, l in enumerate(list_a):
-                    l2 = self.putCurrentLevelList(l, list_b, mask_l, level - 1, idx)
-                    result_t.append(l2[0])
-                    result_f.append(l2[1])
-                    mask_out.append(l2[2])
-                    ind_true.append(l2[3])
-                    ind_false.append(l2[4])
-            else:
-                print('AHTUNG!!!')
-                return list_a
-        else:
-            indx = min(len(mask_l)-1, idx)
-            mask = mask_l[indx]
-            mask_0 = copy(mask)
-            while len(mask) < len(list_a):
-                if len(mask_0) == 0:
-                    mask_0 = [1, 0]
-                mask = mask+mask_0
-
-            for idx, l in enumerate(list_a):
-                tmp = list_b.pop(0)
-                if mask[idx]:
-                    result_t.append(tmp)
-                    ind_true.append(idx)
-                else:
-                    result_f.append(tmp)
-                    ind_false.append(idx)
-            mask_out = mask[:len(list_a)]
-
-        return (result_t, result_f, mask_out, ind_true, ind_false)
-
-    def getCurrentLevelList(self, list_a, level):
-        list_b = []
-        if level > 1:
-            if isinstance(list_a, (list, tuple)):
-                for l in list_a:
-                    l2 = self.getCurrentLevelList(l, level-1)
-                    if isinstance(l2, (list, tuple)):
-                        list_b.extend(l2)
-                    else:
-                        return False
-            else:
-                return False
-        else:
-            if isinstance(list_a, (list, tuple)):
-                return copy(list_a)
-            else:
-                return list_a
-        return list_b
+        for s, res  in zip(outputs, result):
+            if s.is_linked:
+                s.sv_set(res)
 
 
 def register():
