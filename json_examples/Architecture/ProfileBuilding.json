@@ -92,7 +92,7 @@
       ],
       "params": {
         "formula1": "1 + 0.5*sin(x)",
-        "wrap": 1
+        "wrap": 0
       },
       "width": 140.0
     },
@@ -107,7 +107,7 @@
       ],
       "params": {
         "formula1": "5 + sin(x)",
-        "wrap": 1
+        "wrap": 0
       },
       "width": 140.0
     },
@@ -184,8 +184,6 @@
         "in"
       ],
       "params": {
-        "inset": 0.580000102519989,
-        "make_inner": 1,
         "thickness": 0.1499999761581421
       },
       "width": 140.0
@@ -204,9 +202,6 @@
       ],
       "params": {
         "depth": -0.29999998211860657,
-        "distance": -0.20999999344348907,
-        "inset": 1.0,
-        "make_inner": 1,
         "thickness": 0.0
       },
       "width": 140.0
@@ -324,12 +319,10 @@
       ],
       "params": {
         "count_": 10,
-        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
         "start_float": 0.0,
         "step_float": 1.0,
-        "stop_": 13.960000038146973,
         "stop_float": 13.960000038146973
       },
       "width": 140.0
@@ -345,13 +338,10 @@
       ],
       "params": {
         "count_": 10,
-        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
-        "start_": 0.0,
         "start_float": 0.0,
         "step_float": 1.0,
-        "stop_": 6.2831854820251465,
         "stop_float": 6.2831854820251465
       },
       "width": 140.0
@@ -367,13 +357,10 @@
       ],
       "params": {
         "count_": 10,
-        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
-        "start_": 11.0,
         "start_float": 11.0,
         "step_float": 1.0,
-        "stop_": 12.0,
         "stop_float": 12.0
       },
       "width": 140.0
@@ -385,17 +372,14 @@
       "label": "",
       "location": [
         -1153.4583058357239,
-        153.0695571899414
+        153.06954956054688
       ],
       "params": {
         "count_": 10,
-        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
-        "start_": 5.0,
         "start_float": 5.0,
         "step_float": 1.0,
-        "stop_": 3.5,
         "stop_float": 3.5
       },
       "width": 140.0
@@ -407,17 +391,14 @@
       "label": "",
       "location": [
         -1142.3256154060364,
-        311.47986602783203
+        311.47985076904297
       ],
       "params": {
         "count_": 10,
-        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
-        "start_": 5.829999923706055,
         "start_float": 5.829999923706055,
         "step_float": 1.0,
-        "stop_": 1.239999771118164,
         "stop_float": 1.239999771118164
       },
       "width": 140.0
@@ -433,13 +414,10 @@
       ],
       "params": {
         "count_": 10,
-        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
-        "start_": 0.0,
         "start_float": 0.0,
         "step_float": 1.0,
-        "stop_": 6.2831854820251465,
         "stop_float": 6.2831854820251465
       },
       "width": 140.0
@@ -568,6 +546,11 @@
     },
     "Switch": {
       "bl_idname": "SvSwitchNode",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -579,6 +562,7 @@
         "selected_mode": "multi",
         "switch_count": 1
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "UV Connection.001": {
@@ -588,13 +572,12 @@
       "label": "",
       "location": [
         201.22993278503418,
-        419.1833038330078
+        419.18328857421875
       ],
       "params": {
         "cap_U": 0,
         "cap_V": 1,
         "cicl_check_V": 1,
-        "cup_V": 1,
         "dir_check": "V_dir",
         "slice_check": 0
       },
@@ -607,7 +590,7 @@
       "label": "",
       "location": [
         -151.2042407989502,
-        143.44585418701172
+        143.44586181640625
       ],
       "params": {},
       "width": 100.0
@@ -639,15 +622,15 @@
       2
     ],
     [
-      "Number Range.001",
-      0,
-      "Formula",
-      0
-    ],
-    [
       "Number Range.005",
       0,
       "Formula.001",
+      0
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Formula",
       0
     ],
     [
