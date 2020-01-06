@@ -275,7 +275,7 @@
 
 ## Logic
     SvLogicNode
-    SvSwitchNode
+    SvSwitchNodeMK2
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
     SvCustomSwitcher
