@@ -109,3 +109,11 @@ Multiple extrusion mode:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/24330825/c914a3fe-1248-11e7-9694-3068659feaf7.png
 
+Example of FaceData sockets usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/71816787-85c15b00-30a5-11ea-95c8-422f92712994.png
+
+Example of Mask output usage together with Extrude Separate node:
+
+.. image:: https://user-images.githubusercontent.com/284644/71817318-4562dc80-30a7-11ea-9f44-ae2d2bae7acf.png
+

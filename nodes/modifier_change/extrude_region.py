@@ -44,9 +44,9 @@ def get_avg_normal(faces):
     result = (1.0/float(len(faces))) * result
     return result
 
-MASK = 1
-OUT = 2
-IN = 3
+MASK = 0
+OUT = 1
+IN = 2
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
 
 class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
@@ -145,7 +145,6 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             if face[mask_layer] == MASK:
                 if any(v in extruded_verts for v in face.verts):
                     face[mask_layer] = OUT
-        print([face[mask_layer] for face in bm.faces])
         mask = [int(MASK_MEANING[face[mask_layer]] in self.mask_out_type) for face in bm.faces]
         return mask
 
@@ -207,7 +206,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True)
             mask_layer = bm.faces.layers.int.new('mask')
             bm.faces.ensure_lookup_table()
-            fill_faces_layer(bm, masks, 'mask', int, MASK, invert_mask=True)
+            #fill_faces_layer(bm, masks, 'mask', int, MASK, invert_mask=True)
 
             b_faces = []
             b_edges = set()

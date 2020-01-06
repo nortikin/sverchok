@@ -117,3 +117,7 @@ Voronoi grid with each cell extruded by it's specific random matrix:
 
 .. image:: https://user-images.githubusercontent.com/284644/68410476-9ab76600-01aa-11ea-90f6-3ab9b20cab56.png
 
+FaceData sockets usage:
+
+.. image:: https://user-images.githubusercontent.com/284644/71816744-69bdb980-30a5-11ea-94eb-5a3a459a9b0a.png
+
