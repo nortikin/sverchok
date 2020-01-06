@@ -601,7 +601,8 @@
         -41.62611389160156
       ],
       "params": {
-        "current_op": "ANGLE RAD"
+        "current_op": "ANGLE RAD",
+        "socket_info": "vv s"
       },
       "width": 140.0
     },
@@ -616,7 +617,8 @@
       ],
       "params": {
         "amount": 1.0099999904632568,
-        "current_op": "SCALAR"
+        "current_op": "SCALAR",
+        "socket_info": "vs v"
       },
       "width": 140.0
     },
@@ -707,6 +709,48 @@
     [
       "Polygon Grid",
       1,
+      "Subdivide",
+      0
+    ],
+    [
+      "Polygon Grid",
+      2,
+      "Subdivide",
+      1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Subdivide",
+      2
+    ],
+    [
+      "Subdivide",
+      0,
+      "Path Length",
+      0
+    ],
+    [
+      "Subdivide",
+      1,
+      "Path Length",
+      1
+    ],
+    [
+      "Path Length",
+      0,
+      "List Item.003",
+      0
+    ],
+    [
+      "List Item.003",
+      0,
+      "Math MK2",
+      0
+    ],
+    [
+      "Polygon Grid",
+      1,
       "List Item.002",
       0
     ],
@@ -745,6 +789,66 @@
       0,
       "Transform Select",
       4
+    ],
+    [
+      "Subdivide",
+      0,
+      "Pulga Physics.001",
+      0
+    ],
+    [
+      "Subdivide",
+      1,
+      "Pulga Physics.001",
+      2
+    ],
+    [
+      "Math MK2",
+      0,
+      "Pulga Physics.001",
+      3
+    ],
+    [
+      "List Input",
+      0,
+      "Pulga Physics.001",
+      5
+    ],
+    [
+      "Transform Select",
+      0,
+      "Pulga Physics.001",
+      6
+    ],
+    [
+      "List Input.001",
+      "List",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Pulga Physics.001",
+      3,
+      "List Mask (out).002",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).002",
+      "mask"
+    ],
+    [
+      "Transform Select",
+      0,
+      "List Mask (out).001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).001",
+      "mask"
     ],
     [
       "Transform Select",
@@ -789,22 +893,52 @@
       1
     ],
     [
-      "Polygon Grid",
-      1,
-      "Subdivide",
+      "List Mask (out).002",
+      3,
+      "Vector Rewire",
       0
     ],
     [
-      "Polygon Grid",
-      2,
-      "Subdivide",
+      "List Mask (out).002",
+      3,
+      "Vector Rewire.001",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "Vector Rewire.001",
+      0,
+      "Vector Math",
       1
     ],
     [
-      "Polygon Grid",
+      "List Mask (out).001",
       3,
-      "Subdivide",
-      2
+      "Vector out",
+      0
+    ],
+    [
+      "Vector Math",
+      0,
+      "Math MK2.001",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Math MK2.002",
+      0
+    ],
+    [
+      "Math MK2.001",
+      0,
+      "Math MK2.002",
+      1
     ],
     [
       "Subdivide",
@@ -813,166 +947,22 @@
       "Input"
     ],
     [
-      "List Input.001",
-      "List",
-      "Reroute",
+      "Reroute.003",
+      "Output",
+      "Reroute.002",
       "Input"
     ],
     [
-      "Subdivide",
+      "Pulga Physics.001",
       0,
-      "Path Length",
+      "Viewer BMesh",
       0
     ],
     [
-      "Subdivide",
-      1,
-      "Path Length",
-      1
-    ],
-    [
-      "Path Length",
-      0,
-      "List Item.003",
-      0
-    ],
-    [
-      "List Item.003",
-      0,
-      "Math MK2",
-      0
-    ],
-    [
-      "Subdivide",
-      0,
-      "Pulga Physics.001",
-      0
-    ],
-    [
-      "Subdivide",
-      1,
-      "Pulga Physics.001",
-      2
-    ],
-    [
-      "Math MK2",
-      0,
-      "Pulga Physics.001",
-      3
-    ],
-    [
-      "List Input",
-      0,
-      "Pulga Physics.001",
-      5
-    ],
-    [
-      "Transform Select",
-      0,
-      "Pulga Physics.001",
-      6
-    ],
-    [
-      "Pulga Physics.001",
-      3,
-      "List Mask (out).002",
-      0
-    ],
-    [
-      "Reroute",
+      "Reroute.002",
       "Output",
-      "List Mask (out).002",
-      "mask"
-    ],
-    [
-      "List Mask (out).002",
-      3,
-      "Vector Rewire",
-      0
-    ],
-    [
-      "List Mask (out).002",
-      3,
-      "Vector Rewire.001",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Vector Math",
-      0
-    ],
-    [
-      "Vector Rewire.001",
-      0,
-      "Vector Math",
-      1
-    ],
-    [
-      "Transform Select",
-      0,
-      "List Mask (out).001",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Mask (out).001",
-      "mask"
-    ],
-    [
-      "Vector Math",
-      0,
-      "Math MK2.001",
-      0
-    ],
-    [
-      "List Mask (out).001",
-      3,
-      "Vector out",
-      0
-    ],
-    [
-      "Vector out",
-      2,
-      "Math MK2.002",
-      0
-    ],
-    [
-      "Math MK2.001",
-      0,
-      "Math MK2.002",
-      1
-    ],
-    [
-      "Math MK2.002",
-      0,
-      "Line.002",
-      1
-    ],
-    [
-      "List Mask (out).001",
-      3,
-      "Line.002",
-      3
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Line.002",
-      4
-    ],
-    [
-      "Line.002",
-      0,
-      "Curve Viewer",
-      0
-    ],
-    [
-      "Line.002",
-      1,
-      "Curve Viewer",
-      1
+      "Viewer BMesh",
+      "faces"
     ],
     [
       "List Input.003",
@@ -1008,25 +998,37 @@
       "Matrix in.003",
       0,
       "Viewer BMesh.001",
+      4
+    ],
+    [
+      "Math MK2.002",
+      0,
+      "Line.002",
+      1
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Line.002",
       3
     ],
     [
-      "Reroute.003",
-      "Output",
-      "Reroute.002",
-      "Input"
+      "Vector Rewire",
+      0,
+      "Line.002",
+      4
     ],
     [
-      "Pulga Physics.001",
+      "Line.002",
       0,
-      "Viewer BMesh",
+      "Curve Viewer",
       0
     ],
     [
-      "Reroute.002",
-      "Output",
-      "Viewer BMesh",
-      "faces"
+      "Line.002",
+      1,
+      "Curve Viewer",
+      1
     ]
   ]
 }
