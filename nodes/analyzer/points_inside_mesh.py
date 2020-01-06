@@ -16,17 +16,18 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import random
 
+from itertools import cycle
 import bpy
+from bpy.props import (IntProperty, FloatProperty, BoolProperty, EnumProperty, FloatVectorProperty)
 import bmesh
 from mathutils import Vector
 from mathutils.kdtree import KDTree
 from mathutils.bvhtree import BVHTree
 from mathutils.noise import seed_set, random_unit_vector
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 
 
@@ -39,7 +40,7 @@ def generate_random_unitvectors():
 directions = generate_random_unitvectors()
 
 
-def get_points_in_mesh(points, verts, faces, eps=0.0, num_samples=3):
+def get_points_in_mesh(verts, faces, points, eps=0.0, num_samples=3):
     mask_inside = []
 
     bvh = BVHTree.FromPolygons(verts, faces, all_triangles=False, epsilon=eps)
@@ -82,10 +83,11 @@ def get_points_in_mesh(points, verts, faces, eps=0.0, num_samples=3):
         return mask_totals
 
 
-def are_inside(points, bm):
+def are_inside(verts, faces, points, eps):
+    bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
     mask_inside = []
     mask = mask_inside.append
-    bvh = BVHTree.FromBMesh(bm, epsilon=0.0001)
+    bvh = BVHTree.FromBMesh(bm, epsilon=eps)
 
     # return points on polygons
     for point in points:
@@ -97,21 +99,113 @@ def are_inside(points, bm):
     return mask_inside
 
 
+def get_points_in_mesh_2D(verts, faces, points, normal, eps=0.0):
+    mask_totals = []
+    bvh = BVHTree.FromPolygons(verts, faces, all_triangles=False, epsilon=eps)
+
+    for point in points:
+        inside = False
+        for direction in normal:
+            hit = bvh.ray_cast(point, Vector(direction))
+            if hit[0]:
+                inside = True
+                break
+            else:
+                hit = bvh.ray_cast(point, -Vector(direction))
+                if hit[0]:
+                    inside = True
+                    break
+        mask_totals.append(inside)
+    return mask_totals
+
+def get_points_in_mesh_2D_clip(verts, faces, points, normal, clip_distance, eps=0.0, matchig_method='REPEAT'):
+    mask_totals = []
+    bvh = BVHTree.FromPolygons(verts, faces, all_triangles=False, epsilon=eps)
+
+    normal, clip_distance = list_match_func[matchig_method]([normal, clip_distance])
+    for point in points:
+        inside = False
+        for direction, dist in zip(normal, clip_distance):
+            hit = bvh.ray_cast(point, Vector(direction))
+            if hit[0] and hit[3] < dist:
+                inside = True
+                break
+            else:
+                hit = bvh.ray_cast(point, -Vector(direction))
+                if hit[0] and hit[3] < dist:
+                    inside = True
+                    break
+        mask_totals.append(inside)
+    return mask_totals
+
 class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
-    ''' pin get points inside mesh '''
+    """
+    Triggers: Mask verts with geom
+    Tooltip:  Mask points inside geometry in 2D or 3D
+
+    """
     bl_idname = 'SvPointInside'
     bl_label = 'Points Inside Mesh'
     sv_icon = 'SV_POINTS_INSIDE_MESH'
 
-    mode_options = [(k, k, '', i) for i, k in enumerate(["algo 1", "algo 2"])]
+    mode_options = [(k[0], k[1], '', i) for i, k in enumerate([("algo 1", "Regular"), ("algo 2", "Multisample")])]
+    dimension_options = [(k, k, '', i) for i, k in enumerate(["2D", "3D"])]
 
-    selected_algo: bpy.props.EnumProperty(
+    @throttled
+    def update_sockets(self, context):
+        if self.dimensions_mode == '2D' and len(self.inputs) < 4:
+            self.inputs.new('SvVerticesSocket', 'Plane Normal').prop_name = 'normal'
+        elif self.dimensions_mode == '3D' and len(self.inputs) > 3:
+            self.inputs.remove(self.inputs['Plane Normal'])
+        if self.dimensions_mode == '2D' and self.limit_max_dist and len(self.inputs) < 5:
+            self.inputs.new('SvStringsSocket', 'Max Dist').prop_name = 'max_dist'
+        elif self.dimensions_mode == '3D' or  not self.limit_max_dist:
+            if 'Max Dist' in self.inputs:
+                self.inputs.remove(self.inputs['Max Dist'])
+
+    dimensions_mode: EnumProperty(
+        items=dimension_options,
+        description="offers different approaches to finding internal points",
+        default="3D", update=update_sockets
+    )
+    normal: FloatVectorProperty(
+        name='Normal', description='Plane Normal',
+        size=3, default=(0, 0, 1),
+        update=updateNode)
+    max_dist: FloatProperty(
+        name='Max Distance', description='Maximum valid distance',
+        default=10.0, update=updateNode)
+    limit_max_dist: BoolProperty(
+        name='Limit Proyection', description='Limit projection distance',
+        default=False, update=update_sockets)
+
+    selected_algo: EnumProperty(
         items=mode_options,
         description="offers different approaches to finding internal points",
         default="algo 1", update=updateNode
     )
-    epsilon_bvh: bpy.props.FloatProperty(update=updateNode, default=0.0, min=0.0, max=1.0, description="fudge value")
-    num_samples: bpy.props.IntProperty(min=1, max=6, default=3)
+
+    epsilon_bvh: FloatProperty(
+        name='Tolerance', description='fudge value',
+        default=0.0, min=0.0, max=1.0,
+        update=updateNode)
+
+    num_samples: IntProperty(
+        name='Samples Num',
+        description='Number of rays to cast',
+        min=1, max=6, default=3,
+        update=updateNode)
+
+    list_match_global: EnumProperty(
+        name="Match Global",
+        description="Behavior on different list lengths, multiple objects level",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
+    list_match_local: EnumProperty(
+        name="Match Local",
+        description="Behavior on different list lengths, between Normal and Max Distance",
+        items=list_match_modes, default="REPEAT",
+        update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'verts')
@@ -119,36 +213,75 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', 'points')
         self.outputs.new('SvStringsSocket', 'mask')
         self.outputs.new('SvVerticesSocket', 'verts')
+        self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, 'dimensions_mode', expand=True)
+        if self.dimensions_mode == '2D':
+            layout.prop(self, 'limit_max_dist', expand=True)
+        else:
+            layout.prop(self, 'selected_algo', expand=True)
+            if self.selected_algo == 'algo 2':
+                layout.prop(self, 'epsilon_bvh', text='Epsilon')
+                layout.prop(self, 'num_samples', text='Samples')
 
-        layout.prop(self, 'selected_algo', expand=True)
-        if self.selected_algo == 'algo 2':
-            layout.prop(self, 'epsilon_bvh', text='Epsilon')
-            layout.prop(self, 'num_samples', text='Samples')
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'list_match_global', text='Global Match')
+        if self.dimensions_mode == '2D' and self.limit_max_dist:
+            layout.prop(self, 'list_match_local', text='Local Match')
 
+    def rclick_menu(self, context, layout):
+        '''right click sv_menu items'''
+        layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
+        if self.dimensions_mode == '2D' and self.limit_max_dist:
+            layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
+
+    def get_data(self):
+        # general parameters
+        params = [s.sv_get() for s in self.inputs[:3]]
+        # special parameters
+        if self.dimensions_mode == '2D':
+            params.append(self.inputs['Plane Normal'].sv_get(default=[[]]))
+            if self.limit_max_dist:
+                params.append(self.inputs['Max Dist'].sv_get(default=[[]]))
+
+        match_func = list_match_func[self.list_match_global]
+        params = match_func(params)
+        # general options
+        params.append(cycle([self.epsilon_bvh]))
+        # special options and main_func
+        if self.dimensions_mode == '3D':
+            if self.selected_algo == 'algo 1':
+                main_func = are_inside
+            elif self.selected_algo == 'algo 2':
+                params.append(cycle([self.num_samples]))
+                main_func = get_points_in_mesh
+        else:
+            if self.limit_max_dist:
+                params.append(cycle([self.list_match_local]))
+                main_func = get_points_in_mesh_2D_clip
+            else:
+                main_func = get_points_in_mesh_2D
+
+        return main_func, params
 
     def process(self):
 
-        if not all(socket.is_linked for socket in self.inputs):
+        if not all(socket.is_linked for socket in self.inputs[:3]):
             return
 
-        verts_in, faces_in, points = [s.sv_get() for s in self.inputs]
-        mask = []
+        main_func, params = self.get_data()
 
-        for idx, (verts, faces, pts_in) in enumerate(zip(verts_in, faces_in, points)):
-            if self.selected_algo == 'algo 1':
-                bm = bmesh_from_pydata(verts, [], faces, normal_update=True)
-                mask.append(are_inside(pts_in, bm))
-            elif self.selected_algo == 'algo 2':
-                mask.append(
-                    get_points_in_mesh(pts_in, verts, faces, self.epsilon_bvh, self.num_samples)
-                )
+        mask = []
+        for par in zip(*params):
+            mask.append(main_func(*par))
 
         self.outputs['mask'].sv_set(mask)
+
         if self.outputs['verts'].is_linked:
             out_verts = []
-            for masked, pts_in in zip(mask, points):
+            for masked, pts_in in zip(mask, params[2]):
                 out_verts.append([p for m, p in zip(masked, pts_in) if m])
             self.outputs['verts'].sv_set(out_verts)
 
