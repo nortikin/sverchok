@@ -168,14 +168,14 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         default="3D", update=update_sockets
     )
     normal: FloatVectorProperty(
-        name='A', description='Plane Normal',
+        name='Normal', description='Plane Normal',
         size=3, default=(0, 0, 1),
         update=updateNode)
     max_dist: FloatProperty(
-        name='Max Distance', description='Size of line',
+        name='Max Distance', description='Maximum valid distance',
         default=10.0, update=updateNode)
     limit_max_dist: BoolProperty(
-        name='Limit Proyection', description='Normalize line to size',
+        name='Limit Proyection', description='Limit projection distance',
         default=False, update=update_sockets)
 
     selected_algo: EnumProperty(
