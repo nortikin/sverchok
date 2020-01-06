@@ -223,12 +223,12 @@ def idname_draw(self, context):
     if hasattr(node, 'replacement_nodes'):
         box = col.box()
         box.label(text="Replace with:")
-        for bl_idname, inputs_mapping, outputs_mapping in node.replacement_nodes:
-            node_class = get_node_class_reference(bl_idname)
+        for new_bl_idname, inputs_mapping, outputs_mapping in node.replacement_nodes:
+            node_class = get_node_class_reference(new_bl_idname)
             text = node_class.bl_label
             op = box.operator("node.sv_replace_node", text=text)
             op.old_node_name = node.name
-            op.new_bl_idname = bl_idname
+            op.new_bl_idname = new_bl_idname
             set_inputs_mapping(op, inputs_mapping)
             set_outputs_mapping(op, outputs_mapping)
 
