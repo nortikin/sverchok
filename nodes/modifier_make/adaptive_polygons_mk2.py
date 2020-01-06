@@ -915,7 +915,12 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                 output.face_recpt_idx_out = sum(output.face_recpt_idx_out, [])
 
                 if self.remove_doubles:
-                    output.verts_out, _, output.faces_out, data_out = remove_doubles(output.verts_out, [], output.faces_out, threshold, face_data=output.face_data_out, vert_data=output.vert_recpt_idx_out)
+                    doubles_res = remove_doubles(output.verts_out, [], output.faces_out, threshold, face_data=output.face_data_out, vert_data=output.vert_recpt_idx_out)
+                    if len(doubles_res) == 4:
+                        output.verts_out, _, output.faces_out, data_out = doubles_res
+                    else:
+                        output.verts_out, _, output.faces_out = doubles_res
+                        data_out = dict()
                     output.vert_recpt_idx_out = data_out.get('verts', [])
                     if output.face_recpt_idx_out:
                         output.face_recpt_idx_out = [output.face_recpt_idx_out[idx] for idx in data_out['face_init_index']]
