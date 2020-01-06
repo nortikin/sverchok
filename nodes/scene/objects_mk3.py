@@ -30,6 +30,7 @@ class SvOB3Callback(bpy.types.Operator):
 
     bl_idname = "node.ob3_callback"
     bl_label = "Object In mk3 callback"
+    bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
     node_name: StringProperty(default='')

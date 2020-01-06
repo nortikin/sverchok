@@ -62,6 +62,7 @@ class SvScriptNodeLiteCallBack(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_ui_callback"
     bl_label = "SNLite callback"
+    bl_options = {'INTERNAL'}
     fn_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
@@ -73,6 +74,7 @@ class SvScriptNodeLiteCustomCallBack(bpy.types.Operator):
 
     bl_idname = "node.scriptlite_custom_callback"
     bl_label = "custom SNLite callback"
+    bl_options = {'INTERNAL'}
     cb_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):

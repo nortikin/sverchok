@@ -97,7 +97,7 @@ class ImageComponentsOps(bpy.types.Operator):
 
     bl_idname = "node.image_comp_callback"
     bl_label = "Sverchok imagecomp callback"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     fn_name: StringProperty(default='')
 

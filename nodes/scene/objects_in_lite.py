@@ -32,7 +32,7 @@ class SvObjLiteCallback(bpy.types.Operator):
     """ GET / Reject object callback"""
     bl_idname = "node.sverchok_objectinlite_cb"
     bl_label = "Sverchok object in lite callback"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     cmd: StringProperty()
     idname: StringProperty()
