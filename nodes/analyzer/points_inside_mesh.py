@@ -160,7 +160,8 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         if self.dimensions_mode == '2D' and self.limit_max_dist and len(self.inputs) < 5:
             self.inputs.new('SvStringsSocket', 'Max Dist').prop_name = 'max_dist'
         elif self.dimensions_mode == '3D' or  not self.limit_max_dist:
-            self.inputs.remove(self.inputs['Max Dist'])
+            if 'Max Dist' in self.inputs:
+                self.inputs.remove(self.inputs['Max Dist'])
 
     dimensions_mode: EnumProperty(
         items=dimension_options,
