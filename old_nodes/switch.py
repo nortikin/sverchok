@@ -30,6 +30,8 @@ class SvSwitchNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SWITCH'
 
+    replacement_nodes = [('SvSwitchNodeMK2', None, None)]
+
     def draw_buttons(self, context, layout):
         row = layout.row()
         split = row.split(factor=0.6)
