@@ -62,7 +62,7 @@ class SvSocketCommon:
     expanded: BoolProperty(default=False)
     custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
-    sv_is_linked: BoolProperty(description="Node is linked if (node.is_linked or node.sv_is_linked). "
+    sv_is_linked: BoolProperty(description="Socket is linked if (socket.is_linked or socket.sv_is_linked). "
                                            "`Sv_is_linked` should be set manually. "
                                            "Useful for socket created dynamically during update event.")
 
