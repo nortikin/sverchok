@@ -23,11 +23,15 @@ from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerPr
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.utils.logging import info, debug
 
 class SvMaterialEntry(bpy.types.PropertyGroup):
 
     def update_material(self, context):
-        updateNode(context.node, context)
+        if hasattr(context, 'node'):
+            updateNode(context.node, context)
+        else:
+            info("Node is not defined in this context, so will not update the node.")
 
     material : PointerProperty(type = bpy.types.Material, update=update_material)
 
