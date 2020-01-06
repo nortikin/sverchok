@@ -44,9 +44,9 @@ def get_avg_normal(faces):
     result = (1.0/float(len(faces))) * result
     return result
 
-MASK = 0
-OUT = 1
-IN = 2
+MASK = 1
+OUT = 2
+IN = 3
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
 
 class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
@@ -137,10 +137,15 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons(context, layout)
         layout.prop(self, "keep_original", toggle=True)
 
-    def get_out_mask(self, bm, extruded_faces):
+    def get_out_mask(self, bm, extruded_faces, extruded_verts):
         mask_layer = bm.faces.layers.int.get('mask')
         for face in extruded_faces:
             face[mask_layer] = IN
+        for face in bm.faces:
+            if face[mask_layer] == MASK:
+                if any(v in extruded_verts for v in face.verts):
+                    face[mask_layer] = OUT
+        print([face[mask_layer] for face in bm.faces])
         mask = [int(MASK_MEANING[face[mask_layer]] in self.mask_out_type) for face in bm.faces]
         return mask
 
@@ -202,7 +207,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True)
             mask_layer = bm.faces.layers.int.new('mask')
             bm.faces.ensure_lookup_table()
-            fill_faces_layer(bm, masks, 'mask', int, OUT)
+            fill_faces_layer(bm, masks, 'mask', int, MASK, invert_mask=True)
 
             b_faces = []
             b_edges = set()
@@ -218,6 +223,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             extrude_geom = b_faces+list(b_edges)+list(b_verts)
 
             extruded_verts_last = []
+            extruded_bm_verts_all = set()
             extruded_edges_last = []
             extruded_faces_last = []
             extruded_bm_faces_last = []
@@ -225,6 +231,10 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             matrix_spaces = [Matrix()]
 
             for idx in range(n_iterations):
+
+                for item in extrude_geom:
+                    if isinstance(item, bmesh.types.BMFace):
+                        item[mask_layer] = OUT
 
                 new_geom = bmesh.ops.extrude_face_region(bm,
                                 geom=extrude_geom,
@@ -255,6 +265,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     bmesh.ops.scale(bm, vec=(scale, scale, scale), space=m.inverted(), verts=extruded_verts)
                     bmesh.ops.translate(bm, verts=extruded_verts, vec=dr)
 
+                extruded_bm_verts_all.update(extruded_verts)
                 extruded_verts_last = [tuple(v.co) for v in extruded_verts]
 
                 extruded_edges = [e for e in new_geom if isinstance(e, bmesh.types.BMEdge)]
@@ -272,7 +283,7 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                 new_face_data = []
 
             if need_mask_out:
-                new_mask = self.get_out_mask(bm, extruded_bm_faces_last)
+                new_mask = self.get_out_mask(bm, extruded_bm_faces_last, extruded_bm_verts_all)
                 result_mask.append(new_mask)
 
             bm.free()

@@ -95,6 +95,8 @@ This node has the following outputs:
 - **OtherPolys**. All other faces of resulting mesh.
 - **Mask**. Mask for faces of the resulting mesh; which faces are selected
   depends on the **Mask Output** parameter.
+- **FaceData**. List containing data items from the **FaceData** input, which
+  contains one item for each output mesh face.
 
 Example of usage
 ----------------

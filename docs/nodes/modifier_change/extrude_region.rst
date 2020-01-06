@@ -15,7 +15,9 @@ This node has the following inputs:
 - **Vertices**
 - **Edges**
 - **Polygons**
-- **Mask**. List of boolean or integer flags. Zero means do not process face with corresponding index. If this input is not connected, then by default all faces will be processed.
+- **Mask**. List of boolean or integer flags. Zero means do not process face
+  with corresponding index. If this input is not connected, then by default all
+  faces will be processed.
 - **Height**. Extrude factor. Available only in **Along normal** mode.
 - **Scale**. Scaling factor. Available only in **Along normal** mode.
 - **Matrix**. Transformation matrices. Available only in **Matrix** mode.
@@ -25,20 +27,49 @@ Parameters
 
 This node has the following parameters:
 
-- **Transformation mode**. Controls how the transformation of extruded vertices is specified. There are two modes available:
+- **Transformation mode**. Controls how the transformation of extruded vertices
+  is specified. There are two modes available:
 
-  - **Matrix**. This is the default mode. Transformation is specified by matrix provided at **Matrix** input. 
-  - **Along normal**. Vertices are translated along normal and scaled. Please note, that by *normal* here we mean *average of normals of selected faces*. Scaling center is average center of selected faces.
-- **Multiple extrude**. This parameter defines how to deal with multiple matrices passed into **Matrix** input or multiple values passed into **Height** and **Scale** inputs. This parameter is available only in **Matrix** mode; in **Along normal** mode, this parameter is always checked.
+  - **Matrix**. This is the default mode. Transformation is specified by matrix
+    provided at **Matrix** input. 
+  - **Along normal**. Vertices are translated along normal and scaled. Please
+    note, that by *normal* here we mean *average of normals of selected faces*.
+    Scaling center is average center of selected faces.
+- **Multiple extrude**. This parameter defines how to deal with multiple
+  matrices passed into **Matrix** input or multiple values passed into
+  **Height** and **Scale** inputs. This parameter is available only in
+  **Matrix** mode; in **Along normal** mode, this parameter is always checked.
 
-  - If not checked (and **Matrix** mode is used), then each matrix provided will be applied to corresponding extruded vertex. So number of matrices in input is expected to be from 1 to the number of vertices which are extruded.
-  - If checked, or **Along normal** mode is used, then extrusion operation may be performed several times:
+  - If not checked (and **Matrix** mode is used), then each matrix provided
+    will be applied to corresponding extruded vertex. So number of matrices in
+    input is expected to be from 1 to the number of vertices which are
+    extruded.
+  - If checked, or **Along normal** mode is used, then extrusion operation may
+    be performed several times:
 
-    - In **Along normal** mode, extrusion operation will be performed one time for each pair of **Height** and **Scale** input values.
-    - In **Matrix** mode, extrusion operation will be performed one time for each matrix passed into **Matrix** input.
-- **Keep original**. If checked, the original geometry will be passed to output as well as extruded geometry. This parameter is visible only in **Properties** (N) panel.
-- **Height**. Available only in **Along normal** mode. Extrude factor as a portion of face normal length. Default value of zero means do not extrude. Negative value means extrude to the opposite direction. This parameter can be also provided via corresponding input.
-- **Scale**. Available only in **Along normal** mode. Scale factor. Default value of 1 means do not scale. This parameter can be also provided via corresponding input.
+    - In **Along normal** mode, extrusion operation will be performed one time
+      for each pair of **Height** and **Scale** input values.
+    - In **Matrix** mode, extrusion operation will be performed one time for
+      each matrix passed into **Matrix** input.
+- **Keep original**. If checked, the original geometry will be passed to output
+  as well as extruded geometry. This parameter is visible only in
+  **Properties** (N) panel.
+- **Height**. Available only in **Along normal** mode. Extrude factor as a
+  portion of face normal length. Default value of zero means do not extrude.
+  Negative value means extrude to the opposite direction. This parameter can be
+  also provided via corresponding input.
+- **Scale**. Available only in **Along normal** mode. Scale factor. Default
+  value of 1 means do not scale. This parameter can be also provided via
+  corresponding input.
+- **Mask Output**. Defines which faces will be marked with 1 in the **Mask**
+  output. Several modes may be selected together. The available modes are:
+
+   - **Mask**. The faces which were masked out by the **Mask** input.
+   - **In**. Inner faces of the extrusion, i.e. the same faces that are in the
+     **ExtrudedFaces**  output.
+   - **Out**. Outer faces of the extrusion.
+
+   The default value is **Out**.
 
 Outputs
 -------
@@ -51,10 +82,17 @@ This node has the following outputs:
 - **NewVerts**. Only newly created vertices.
 - **NewEdges**. Only newly created edges.
 - **NewFaces**. Only newly created faces.
+- **Mask**. Mask for faces of the resulting mesh; which faces are selected
+  depends on the **Mask Output** parameter.
+- **FaceData**. List containing data items from the **FaceData** input, which
+  contains one item for each output mesh face.
 
-**Note 1**: Indicies in **NewEdges**, **NewFaces** outputs relate to vertices in **Vertices** output, not to **NewVerts** ones.
+**Note 1**: Indicies in **NewEdges**, **NewFaces**, **Mask** outputs relate to
+vertices in **Vertices** output, not to **NewVerts** ones.
 
-**Note 2**: If multiple extrusion is used, then **NewVerts**, **NewEdges**, **NewFaces** outputs will contain only geometry created by *last* extrusion operation.
+**Note 2**: If multiple extrusion is used, then **NewVerts**, **NewEdges**,
+**NewFaces**, **Mask** outputs will contain only geometry created by *last*
+extrusion operation.
 
 Examples of usage
 -----------------
