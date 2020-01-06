@@ -110,6 +110,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         inew(toposock, "Height").prop_name = "height_"
         inew(toposock, "Scale").prop_name = "scale_"
         inew('SvMatrixSocket', 'Matrix')
+        inew('SvStringsSocket', 'FaceData')
 
         onew(vsock, 'Vertices')
         onew(toposock, 'Edges')
@@ -117,6 +118,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         onew(toposock, 'ExtrudedPolys')
         onew(toposock, 'OtherPolys')
         onew('SvStringsSocket', 'Mask').custom_draw = 'draw_mask_socket'
+        onew(toposock, 'FaceData')
 
         self.update_mode(context)
 
@@ -172,6 +174,10 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             matrixes_s = inputs['Matrix'].sv_get(default=[[Matrix()]])
         else:
             matrixes_s = [[Matrix()]]
+        if 'FaceData' in inputs:
+            face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
+        else:
+            face_data_s = [[]]
 
         if type(matrixes_s[0]) == Matrix:
             matrixes_s = [matrixes_s]
@@ -185,10 +191,11 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         result_extruded_faces = []
         result_other_faces = []
         result_mask = []
+        result_face_data = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s, matrixes_s])
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, masks_s, heights_s, scales_s, matrixes_s, face_data_s])
 
-        for vertices, edges, faces, masks, heights, scales, matrixes in zip(*meshes):
+        for vertices, edges, faces, masks, heights, scales, matrixes, face_data in zip(*meshes):
 
             new_extruded_faces = []
             new_extruded_faces_append = new_extruded_faces.append
@@ -196,8 +203,10 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             fullList(scales, len(faces))
             fullList(matrixes, len(faces))
             fullList(masks, len(faces))
+            if face_data:
+                fullList(face_data, len(faces))
 
-            bm = bmesh_from_pydata(vertices, edges, faces)
+            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
             mask_layer = bm.faces.layers.int.new('mask')
             bm.faces.ensure_lookup_table()
             fill_faces_layer(bm, masks, 'mask', int, OUT)
@@ -210,11 +219,11 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             extruded_faces = bmesh.ops.extrude_discrete_faces(bm, faces=faces_to_extrude)['faces']
 
             if self.mask_mode == 'NOEXTRUDE':
-                face_data = zip(extruded_faces, heights, scales, matrixes)
+                extruded_face_items = zip(extruded_faces, heights, scales, matrixes)
             else:
-                face_data = [(face, height, scale, matrix) for (face, mask, height, scale, matrix) in zip(extruded_faces, masks, heights, scales, matrixes) if mask]
+                extruded_face_items = [(face, height, scale, matrix) for (face, mask, height, scale, matrix) in zip(extruded_faces, masks, heights, scales, matrixes) if mask]
 
-            for face, height, scale, matrix in face_data:
+            for face, height, scale, matrix in extruded_face_items:
 
                 vec = scale if vector_in else (scale, scale, scale)
 
@@ -243,7 +252,11 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
                 if linked_extruded_polygons or linked_other_polygons:
                     new_extruded_faces_append([v.index for v in face.verts])
 
-            new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+            if face_data:
+                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+            else:
+                new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+                new_face_data = []
 
             new_other_faces = [f for f in new_faces if f not in new_extruded_faces] if linked_other_polygons else []
             if need_mask_out:
@@ -257,6 +270,7 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             result_faces.append(new_faces)
             result_extruded_faces.append(new_extruded_faces)
             result_other_faces.append(new_other_faces)
+            result_face_data.append(new_face_data)
 
         outputs['Vertices'].sv_set(result_vertices)
         outputs['Edges'].sv_set(result_edges)
@@ -265,7 +279,8 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
         outputs['OtherPolys'].sv_set(result_other_faces)
         if need_mask_out:
             outputs['Mask'].sv_set(result_mask)
-
+        if 'FaceData' in outputs:
+            outputs['FaceData'].sv_set(result_face_data)
 
 def register():
     bpy.utils.register_class(SvExtrudeSeparateNode)
