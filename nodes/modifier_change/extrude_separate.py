@@ -99,6 +99,8 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             dict(Vertices='Verts', Polygons='Faces'))
     ]
 
+    properties_to_skip_iojson = ['mask_out_type']
+
     def sv_init(self, context):
         inew = self.inputs.new
         onew = self.outputs.new
@@ -281,6 +283,12 @@ class SvExtrudeSeparateNode(bpy.types.Node, SverchCustomTreeNode):
             outputs['Mask'].sv_set(result_mask)
         if 'FaceData' in outputs:
             outputs['FaceData'].sv_set(result_face_data)
+
+    def storage_get_data(self, storage):
+        storage['mask_out_type'] = list(self.out_type)
+
+    def storage_set_data(self, storage):
+        self.mask_out_type = set(storage.get('mask_out_type', []))
 
 def register():
     bpy.utils.register_class(SvExtrudeSeparateNode)
