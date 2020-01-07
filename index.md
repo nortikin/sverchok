@@ -126,6 +126,8 @@
     SvExtrudeRegionNode
     SvVertMaskNode
     SvSplitEdgesNode
+    ---
+    SvFollowActiveQuad
 
 ## Modifier Make
     LineConnectNodeMK2
