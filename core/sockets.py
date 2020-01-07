@@ -458,7 +458,7 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
         return self.other.get_prop_data()
 
     def sv_get(self):
-        if self.sv_linked:
+        if self.is_linked:
             return self.links[0].bl_idname
 
     def sv_type_conversion(self, new_self):
