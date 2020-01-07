@@ -839,7 +839,7 @@ def get_other_socket(socket):
     Will return None if there isn't a another socket connect
     so no need to check socket.links
     """
-    if not (socket.is_linked or socket.sv_is_linked):
+    if not socket.is_linked:
         return None
     if not socket.is_output:
         other = socket.links[0].from_socket
