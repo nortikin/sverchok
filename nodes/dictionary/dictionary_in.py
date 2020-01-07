@@ -93,28 +93,24 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     key_9: bpy.props.StringProperty(name="", default='Key 10', update=update_node)
 
     def sv_init(self, context):
-        self.inputs.new('SvSeparatorSocket', 'Empty')
+        self.inputs.new('SvChameleonSocket', 'Data')
         self.outputs.new('SvDictionarySocket', 'Dict')
         self['update_event'] = False  # if True the node does not update upon properties changes
 
     def update(self):
         # Remove unused sockets
         [self.inputs.remove(sock) for sock in list(self.inputs)[:-1] if not sock.is_linked]
+        [sock.set_color() for sock in self.inputs if sock.links]
 
         # add property to new socket and add extra empty socket
-        free_keys = self.keys - set(sock.prop_name for sock in list(self.inputs)[:-1])
         if list(self.inputs)[-1].is_linked and len(self.inputs) < 11:
-            socket_from = self.inputs[-1].other
-            self.inputs.remove(list(self.inputs)[-1])
-            re_socket = self.inputs.new(socket_from.bl_idname, 'Data')
-            re_socket.sv_is_linked = True
-            re_socket.prop_name = free_keys.pop()
-            re_socket.custom_draw = 'draw_socket'
-            re_link = self.id_data.links.new(socket_from, re_socket)
-            re_link.is_valid = True
-            self.inputs.new('SvSeparatorSocket', 'Empty')
+            free_keys = self.keys - set(sock.prop_name for sock in list(self.inputs)[:-1])
+            last_sock = list(self.inputs)[-1]
+            last_sock.prop_name = free_keys.pop()
+            last_sock.custom_draw = 'draw_socket'
+            self.inputs.new('SvChameleonSocket', 'Data')
             self['update_event'] = True
-            setattr(self, re_socket.prop_name, re_socket.other.name)
+            setattr(self, last_sock.prop_name, last_sock.other.name)
             self['update_event'] = False
 
     def draw_socket(self, socket, context, layout):
@@ -154,7 +150,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
             out_dict = SvDict({getattr(self, key): prop for key, prop in zip(keys, props) if prop is not None})
             for sock in list(self.inputs)[:-1]:
                 out_dict.inputs[sock.identifier] = {
-                    'type': sock.bl_idname,
+                    'type': sock.other.bl_idname,
                     'name': getattr(self, sock.prop_name),
                     'nest': sock.sv_get()[0].inputs if sock.bl_idname == 'SvDictionarySocket' else None}
             out.append(out_dict)

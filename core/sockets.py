@@ -62,9 +62,6 @@ class SvSocketCommon:
     expanded: BoolProperty(default=False)
     custom_draw: StringProperty(description="For name of method which will draw socket UI (optionally)")
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
-    sv_is_linked: BoolProperty(description="Socket is linked if (socket.is_linked or socket.sv_is_linked). "
-                                           "`Sv_is_linked` should be set manually. "
-                                           "Useful for socket created dynamically during update event.")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
@@ -285,7 +282,7 @@ class SvObjectSocket(NodeSocket, SvSocketCommon):
             layout.label(text=text)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.object_ref:
             obj_ref = bpy.data.objects.get(self.object_ref)
@@ -313,7 +310,7 @@ class SvTextSocket(NodeSocket, SvSocketCommon):
         return (0.68,  0.85,  0.90, 1)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.text:
             return [self.text]
@@ -344,7 +341,7 @@ class SvMatrixSocket(NodeSocket, SvSocketCommon):
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         self.num_matrices = 0
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -372,7 +369,7 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -404,7 +401,7 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -436,7 +433,7 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
 
         if self.prop_name:
@@ -461,7 +458,7 @@ class SvDummySocket(NodeSocket, SvSocketCommon):
         return self.other.get_prop_data()
 
     def sv_get(self):
-        if (self.sv_linked or self.sv_is_linked):
+        if self.sv_linked:
             return self.links[0].bl_idname
 
     def sv_type_conversion(self, new_self):
@@ -503,7 +500,7 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
         # debug("Node %s, socket %s, is_linked: %s, is_output: %s",
         #         self.node.name, self.name, self.is_linked, self.is_output)
 
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
         elif self.prop_name:
             # to deal with subtype ANGLE, this solution should be considered temporary...
@@ -532,7 +529,7 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
             return {}
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
-        if (self.is_linked or self.sv_is_linked) and not self.is_output:
+        if self.is_linked and not self.is_output:
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
@@ -542,6 +539,41 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
             raise SvNoDataError(self)
         else:
             return default
+
+
+class SvChameleonSocket(NodeSocket, SvSocketCommon):
+    '''Using as input socket with color of other connected socket'''
+    bl_idname = "SvChameleonSocket"
+    bl_label = "Chameleon Socket"
+
+    dynamic_color: FloatVectorProperty(default=(0.0, 0.0, 0.0, 0.0), size=4)
+
+    def get_prop_data(self):
+        if self.prop_name:
+            return {"prop_name": self.prop_name}
+        else:
+            return {}
+
+    def sv_get(self, default=sentinel, deepcopy=True):
+        if self.is_linked and not self.is_output:
+            return SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif default is sentinel:
+            raise SvNoDataError(self)
+        else:
+            return default
+
+    def set_color(self):
+        other = self.other
+        if other:
+            self.dynamic_color = socket_colors[other.bl_idname]
+        else:
+            self.dynamic_color = (0.0, 0.0, 0.0, 0.0)
+
+    def draw_color(self, context, node):
+        return self.dynamic_color
 
 
 """
@@ -573,7 +605,7 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
-    SvTextSocket, SvObjectSocket, SvDictionarySocket
+    SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
