@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 from itertools import chain, cycle
+from collections import namedtuple
 
 import bpy
 import bmesh
@@ -14,67 +15,42 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-def unwrap_mesh(verts, faces):
+Modes = namedtuple('Modes', ['even', 'length', 'average'])
+MODE = Modes('Even', 'Length', 'Average')
+
+
+def unwrap_mesh(verts, faces, uv_verts=None, uv_faces=None, face_mask=None, mode=MODE.even, active_face=0):
     bm = bmesh.new()
     bm_verts = [bm.verts.new(co) for co in verts]
     bm_faces = [bm.faces.new([bm_verts[i] for i in face]) for face in faces]
 
-    # todo pre unwrap ???
-
-    f_act = bm_faces[0]
-    uv_act = bm.loops.layers.uv.new('node')
-
-    for loop in (loop for face in bm_faces for loop in face.loops):
-        loop[uv_act].uv = loop.vert.co.to_2d()
-
+    f_act = None
+    for i, face in enumerate(bm_faces):
+        if i >= active_face and len(face.verts) == 4 and (True if face_mask is None else face_mask[i]):
+            f_act = face
+            break
     if f_act is None:
-        # todo note useful for the node
-        print("No active face")
-        return
-    elif len(f_act.verts) != 4:
-        print("Active face must be a quad")
-        return
+        raise LookupError("No active face")
 
-    # todo add selection
-    # faces = [f for f in bm.faces if f.select and len(f.verts) == 4]
-    faces = [f for f in bm.faces if len(f.verts) == 4]
+    uv_act = bm.loops.layers.uv.new('node')
+    if uv_verts and uv_faces:
+        for face, uv_face in zip(bm_faces, uv_faces):
+            for loop, uv_i in zip(face.loops, uv_face):
+                loop[uv_act].uv = uv_verts[uv_i][:2]
+    else:
+        for loop, co in zip(f_act.loops, ((0, 0), (1, 0), (1, 1), (0, 1))):
+            loop[uv_act].uv = co
 
-    # -------------------------------------------
-    # Calculate average length per loop if needed
+    faces = [f for i, f in enumerate(bm_faces) if len(f.verts) == 4 and (True if face_mask is None else face_mask[i])]
 
-    # if EXTEND_MODE == 'LENGTH_AVERAGE':
-    #     bm.edges.index_update()
-    #     edge_lengths = [None] * len(bm.edges)
-    #
-    #     for f in faces:
-    #         # we know its a quad
-    #         l_quad = f.loops[:]
-    #         l_pair_a = (l_quad[0], l_quad[2])
-    #         l_pair_b = (l_quad[1], l_quad[3])
-    #
-    #         for l_pair in (l_pair_a, l_pair_b):
-    #             if edge_lengths[l_pair[0].edge.index] is None:
-    #
-    #                 edge_length_store = [-1.0]
-    #                 edge_length_accum = 0.0
-    #                 edge_length_total = 0
-    #
-    #                 for l in l_pair:
-    #                     if edge_lengths[l.edge.index] is None:
-    #                         for e in walk_edgeloop(l):
-    #                             if edge_lengths[e.index] is None:
-    #                                 edge_lengths[e.index] = edge_length_store
-    #                                 edge_length_accum += e.calc_length()
-    #                                 edge_length_total += 1
-    #
-    #                 edge_length_store[0] = edge_length_accum / edge_length_total
-
-    # done with average length
-    # ------------------------
+    if mode == MODE.average:
+        edge_lengths = calc_average_length(bm, faces)
+    else:
+        edge_lengths = None
 
     walk_face_init(bm, faces, f_act)
     for f_triple in walk_face(f_act):
-        apply_uv(*f_triple, uv_act)
+        apply_uv(*f_triple, uv_act, mode, edge_lengths)
 
     bm.verts.index_update()
     v_indexes = iter(range(100000000000))
@@ -146,7 +122,7 @@ def extrapolate_uv(fac,
     l_b_outer[:] = l_a_inner + ((l_a_inner - l_a_outer) * fac)
 
 
-def apply_uv(f_prev, l_prev, f_next, uv_act):
+def apply_uv(f_prev, l_prev, f_next, uv_act, mode, edge_lengths=None):
     l_a = [None, None, None, None]
     l_b = [None, None, None, None]
 
@@ -186,20 +162,20 @@ def apply_uv(f_prev, l_prev, f_next, uv_act):
     l_a_uv = [l[uv_act].uv for l in l_a]
     l_b_uv = [l[uv_act].uv for l in l_b]
 
-    # if EXTEND_MODE == 'LENGTH_AVERAGE':
-    #     fac = edge_lengths[l_b[2].edge.index][0] / edge_lengths[l_a[1].edge.index][0]
-    # elif EXTEND_MODE == 'LENGTH':
-    #     a0, b0, c0 = l_a[3].vert.co, l_a[0].vert.co, l_b[3].vert.co
-    #     a1, b1, c1 = l_a[2].vert.co, l_a[1].vert.co, l_b[2].vert.co
-    #
-    #     d1 = (a0 - b0).length + (a1 - b1).length
-    #     d2 = (b0 - c0).length + (b1 - c1).length
-    #     try:
-    #         fac = d2 / d1
-    #     except ZeroDivisionError:
-    #         fac = 1.0
-    # else:
-    fac = 1.0
+    if mode == MODE.average:
+        fac = edge_lengths[l_b[2].edge.index][0] / edge_lengths[l_a[1].edge.index][0]
+    elif mode == MODE.length:
+        a0, b0, c0 = l_a[3].vert.co, l_a[0].vert.co, l_b[3].vert.co
+        a1, b1, c1 = l_a[2].vert.co, l_a[1].vert.co, l_b[2].vert.co
+
+        d1 = (a0 - b0).length + (a1 - b1).length
+        d2 = (b0 - c0).length + (b1 - c1).length
+        try:
+            fac = d2 / d1
+        except ZeroDivisionError:
+            fac = 1.0
+    else:
+        fac = 1.0
 
     extrapolate_uv(fac,
                    l_a_uv[3], l_a_uv[0],
@@ -208,6 +184,38 @@ def apply_uv(f_prev, l_prev, f_next, uv_act):
     extrapolate_uv(fac,
                    l_a_uv[2], l_a_uv[1],
                    l_b_uv[2], l_b_uv[1])
+
+
+def calc_average_length(bm, faces):
+    # Calculate average length per loop
+
+    bm.edges.index_update()
+    edge_lengths = [None] * len(bm.edges)
+
+    for f in faces:
+        # we know its a quad
+        l_quad = f.loops[:]
+        l_pair_a = (l_quad[0], l_quad[2])
+        l_pair_b = (l_quad[1], l_quad[3])
+
+        for l_pair in (l_pair_a, l_pair_b):
+            if edge_lengths[l_pair[0].edge.index] is None:
+
+                edge_length_store = [-1.0]
+                edge_length_accum = 0.0
+                edge_length_total = 0
+
+                for l in l_pair:
+                    if edge_lengths[l.edge.index] is None:
+                        for e in walk_edgeloop(l):
+                            if edge_lengths[e.index] is None:
+                                edge_lengths[e.index] = edge_length_store
+                                edge_length_accum += e.calc_length()
+                                edge_length_total += 1
+
+                edge_length_store[0] = edge_length_accum / edge_length_total
+
+    return edge_lengths
 
 
 class SvFollowActiveQuad(bpy.types.Node, SverchCustomTreeNode):
@@ -221,23 +229,41 @@ class SvFollowActiveQuad(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Follow active quad'
     bl_icon = 'MOD_BOOLEAN'
 
+    edge_length_mode: bpy.props.EnumProperty(items=[(i, i, '') for i in MODE], update=updateNode)
+    active_index: bpy.props.IntProperty(name='Index active quad', min=0, update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        col = layout.column()
+        col.label(text='Edge length mode:')
+        layout.prop(self, 'edge_length_mode', expand=True)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
         self.inputs.new('SvStringsSocket', "Faces")
-        self.outputs.new('SvVerticesSocket', 'Verts')
-        self.outputs.new('SvStringsSocket', "Faces")
+        self.inputs.new('SvVerticesSocket', 'UV verts')
+        self.inputs.new('SvStringsSocket', "UV faces")
+        self.inputs.new('SvStringsSocket', "Active quad index").prop_name = 'active_index'
+        self.inputs.new('SvStringsSocket', "Face mask")
+        self.outputs.new('SvVerticesSocket', 'UV verts')
+        self.outputs.new('SvStringsSocket', "UV faces")
 
     def process(self):
-        if not all([sock.is_linked for sock in self.inputs]):
+        if not all([sock.is_linked for sock in list(self.inputs)[:2]]):
             return
 
         out = []
-        for v, f in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get()):
-            out.append(unwrap_mesh(v, f))
+        for v, f, uv_v, uv_f, m, i in zip(
+                self.inputs['Verts'].sv_get(),
+                self.inputs['Faces'].sv_get(),
+                self.inputs['UV verts'].sv_get() if self.inputs['UV verts'].is_linked else cycle([None]),
+                self.inputs['UV faces'].sv_get() if self.inputs['UV faces'].is_linked else cycle([None]),
+                self.inputs['Face mask'].sv_get() if self.inputs['Face mask'].is_linked else cycle([None]),
+                self.inputs['Active quad index'].sv_get()):
+            out.append(unwrap_mesh(v, f, uv_v, uv_f, m, self.edge_length_mode, i[0]))
 
         verts_out, faces_out = zip(*out)
-        self.outputs['Verts'].sv_set(verts_out)
-        self.outputs['Faces'].sv_set(faces_out)
+        self.outputs['UV verts'].sv_set(verts_out)
+        self.outputs['UV faces'].sv_set(faces_out)
 
 
 def register():
