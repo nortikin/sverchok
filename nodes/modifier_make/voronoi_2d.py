@@ -301,7 +301,10 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         points_in = self.inputs['Vertices'].sv_get()
-        max_sides_in = self.inputs['MaxSides'].sv_get()
+        if 'MaxSides' in self.inputs:
+            max_sides_in = self.inputs['MaxSides'].sv_get()
+        else:
+            max_sides_in = [[10]]
 
         pts_out = []
         edges_out = []
