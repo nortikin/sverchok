@@ -29,14 +29,14 @@ The UI hints at a few fundamental features of the Monad:
 - Vectorize , Vectorize with Split
 - Loop n times
 
-    *Vectorize*
-        tries to match incoming datastreams by repeating data in those sockets that don't have the same number of internal lists.
+*Vectorize*
+    tries to match incoming datastreams by repeating data in those sockets that don't have the same number of internal lists.
 
-    *Vectorize with Split*
-        The more complicated this gets, the harder it is to explain in text. Please see some examples below.
+*Vectorize with Split*
+    The more complicated this gets, the harder it is to explain in text. Please see some examples below.
 
-    *Loop n times*
-        This can be used for repeatedly applying an effect to a mesh, the number of iteration is currently only configurable via the node UI - it's too easy to accidentally grind your computer to a halt if that was set dynamically via an input socket.
+*Loop n times*
+    This can be used for repeatedly applying an effect to a mesh, the number of iteration is currently only configurable via the node UI - it's too easy to accidentally grind your computer to a halt if that was set dynamically via an input socket.
 
 
 Inputs and Outputs
