@@ -135,7 +135,6 @@ cache.py
 objects_in_lite.py
 particles.py
 group.py
-monad.py
 curve_in.py
 uv_texture.py
 instancer.py
