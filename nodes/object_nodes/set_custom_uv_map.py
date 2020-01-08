@@ -6,45 +6,36 @@
 # License-Filename: LICENSE
 
 from itertools import cycle
+import numpy as np
 
 import bpy
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 
-from sverchok.data_structure import match_long_repeat, repeat_last, updateNode
+from sverchok.data_structure import repeat_last, updateNode
 
 
-def set_custom_map(obj, verts, faces, uv_name='SVMap', matrix=None):
-    if uv_name in obj.data.uv_layers:
-        obj.data.uv_layers.remove(obj.data.uv_layers[uv_name])
-    obj.data.uv_layers.new(name=uv_name)
+def set_custom_map(obj, verts=None, faces=None, uv_name='SVMap', matrix=None):
+    # if uv_name in obj.data.uv_layers:
+    #     obj.data.uv_layers.remove(obj.data.uv_layers[uv_name])
+    if uv_name not in obj.data.uv_layers:
+        obj.data.uv_layers.new(name=uv_name)
     set_uv(verts, faces, obj, uv_name)
 
 
 def set_uv(verts, faces, obj, uv_name, matrix=None):
-    # for uv_obj, obj in zip(ver_uv, obj_in):
-    #     pass
-    #
-    # len_loop = len(obj.data.loops)
-    # len_uv_in = len(uv_obj)
-    #
-    # if len_loop < len_uv_in:
-    #     uv_obj = uv_obj[0:len_loop]
-    # elif len_loop > len_uv_in:
-    #     _, uv_obj = match_long_repeat([list(range(len_loop)), uv_obj])
-    #
-    # xy_uv = [(u, v) for u, v, _ in uv_obj]
-    #
-    # per_loop_list = [uv for pair in xy_uv for uv in pair]
-    if matrix:
-        loop_points = [(mat @ Vector(co))[:2] for co, mat in zip((verts[i] for face in faces for i in face),
-                                                                 cycle([matrix]))]
-    else:
-        loop_points = [Vector(co)[:2] for co in (verts[i] for face in faces for i in face)]
-    obj.data.uv_layers[uv_name].data.foreach_set(
-        "uv",
-        [val for point in loop_points for val in point])
+    unpack_uv = np.zeros((len(obj.data.loops) * 2), dtype=float)
+    if verts and faces:
+        for i, co in zip(range(0, len(obj.data.loops) * 2, 2), (verts[i] for face in faces for i in face)):
+            uv = Vector(co[:2])
+            unpack_uv[i: i+2] = uv
+    # if matrix:
+    #     loop_points = ((mat @ Vector(co))[:2] for co, mat in zip((verts[i] for face in faces for i in face),
+    #                                                              cycle([matrix])))
+    # else:
+    #     loop_points = (Vector(co)[:2] for co in (verts[i] for face in faces for i in face))
+    obj.data.uv_layers[uv_name].data.foreach_set("uv", unpack_uv)
 
 
 def deform_uv(obj, uv_name, matrix):
@@ -75,23 +66,23 @@ class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.column(align=True)
         row.prop(self, 'uv_name', text='', icon='GROUP_UVS')
-        row.prop(self, 'active', toggle=True)
+        # row.prop(self, 'active', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Objects')
-        self.inputs.new('SvVerticesSocket', 'Verts')
-        self.inputs.new('SvStringsSocket', 'Faces')
+        self.inputs.new('SvVerticesSocket', 'UV verts')
+        self.inputs.new('SvStringsSocket', 'UV faces')
         self.inputs.new('SvMatrixSocket', 'Matrix')
         self.outputs.new('SvObjectSocket', "Objects")
 
     def process(self):
-        if not all([sock.is_linked for sock in list(self.inputs)[:-1]]):
+        if not self.inputs['Objects'].is_linked:
             return
 
         for ob, v, f, m in zip(
                 self.inputs['Objects'].sv_get(),
-                self.inputs['Verts'].sv_get(deepcopy=False),
-                self.inputs['Faces'].sv_get(deepcopy=False),
+                self.inputs['UV verts'].sv_get(deepcopy=False) if self.inputs['UV verts'].is_linked else cycle([None]),
+                self.inputs['UV faces'].sv_get(deepcopy=False) if self.inputs['UV faces'].is_linked else cycle([None]),
                 self.inputs['Matrix'].sv_get(deepcopy=False) if self.inputs['Matrix'].is_linked else cycle([None])):
 
             set_custom_map(ob, v, f, self.uv_name, m)
