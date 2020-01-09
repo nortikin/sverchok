@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from collections import namedtuple
 from itertools import chain, cycle
 import numpy as np
 
@@ -26,13 +27,18 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
+Directions = namedtuple('Directions', ['x', 'y', 'z', 'od'])
+DIRECTION = Directions('X', 'Y', 'Z', 'OD')
 directionItems = [
-    ("X",  "X",  "Along X axis",         0),
-    ("Y",  "Y",  "Along Y axis",         1),
-    ("Z",  "Z",  "Along Z axis",         2),
-    ("AB", "AB", "Between 2 points",     3),
-    ("OD", "OD", "Origin and Direction", 4),
+    (DIRECTION.x,  DIRECTION.x,  "Along X axis",         0),
+    (DIRECTION.y,  DIRECTION.y,  "Along Y axis",         1),
+    (DIRECTION.z,  DIRECTION.z,  "Along Z axis",         2),
+    (DIRECTION.od, DIRECTION.od, "Origin and Direction", 3),
     ]
+
+Lengths = namedtuple('Lengths', ['size', 'number', 'step'])
+LENGTH = Lengths('Size', 'Number', 'Step')
+length_items = [(i, i, '') for i in LENGTH]
 
 
 def make_line(numbers, steps, sizes, mode='X', normalized=False, center=False):
@@ -243,6 +249,7 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     split: BoolProperty(name="Split to objects", description="Each object in separate object", update=updateNode)
     as_numpy: BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
+    length_mode: EnumProperty(items=length_items, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'
@@ -262,8 +269,9 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "direction", expand=True)
         row = col.row(align=True)
-        row.prop(self, "center", toggle=True)
-        row.prop(self, "normalize", toggle=True)
+        row.prop(self, "length_mode", expand=True)
+        row = col.row(align=True)
+        row.prop(self, "center", text="Center to origin")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'split')
@@ -274,6 +282,7 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'as_numpy')
 
     def process(self):
+        return
         if not any(s.is_linked for s in self.outputs):
             return
 

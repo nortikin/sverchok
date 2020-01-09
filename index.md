@@ -10,6 +10,7 @@
 
 ## Generator
     SvLineNodeMK3
+    SvSegmentGenerator
     SvPlaneNodeMK2
     SvNGonNode
     SvBoxNode
