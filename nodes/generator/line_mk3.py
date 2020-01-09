@@ -41,99 +41,98 @@ LENGTH = Lengths('Size', 'Number', 'Step')
 length_items = [(i, i, '') for i in LENGTH]
 
 
-def make_line(numbers, steps, sizes, mode='X', normalized=False, center=False):
+def make_line(numbers=None, steps=None, sizes=None, verts_a=None, verts_b=None,
+              dir_mode=DIRECTION.x, size_mode=LENGTH.size, center=False):
     """
-    Generate simple lines along X, Y or Z axis. All lines locates in one object.
-    :param numbers: Number of vertices, list of int
-    :param steps: Step length, list of float
-    :param sizes: Size of lines in normalized mode, list of floats
-    :param mode: 'X' or 'Y' or 'Z'
-    :param normalized: fit line into given size
-    :param center: move center of line in center of coordinates
+    Generate lines
+    :param numbers: list of values, number of generated vertices
+    :param steps: list of values, distance between points for step mode only
+    :param sizes: list of values, length of a line for size mode only
+    :param verts_a: list of tuple(float, float, float), custom origin of a line
+    :param verts_b: list of tuple(float, float, float), custom direction of a line
+    :param dir_mode: 'X', 'Y', 'Z' or 'OD', 'OD' mode for custom origin and direction
+    :param size_mode: 'Size' or 'Step', length of line
+    :param center: if True center of a line is moved to origin
     :return: np.array of vertices, np.array of edges
     """
-    number_of_lines = max(len(numbers), len(sizes), len(steps))
-    number_of_edges = sum([v_number - 1 if v_number > 1 else 1 for _, v_number in
-                           zip(range(number_of_lines), chain(numbers, cycle([numbers[-1]])))])
-    number_of_vertices = sum([v_number if v_number > 1 else 2 for _, v_number in
-                           zip(range(number_of_lines), chain(numbers, cycle([numbers[-1]])))])
-    numbers = chain(numbers, cycle([numbers[-1]]))
-    steps = chain(steps, cycle([steps[-1]]))
-    sizes = chain(sizes, cycle([sizes[-1]]))
-    verts_lines = np.empty((number_of_vertices, 3))
-    edges_lines = np.empty((number_of_edges, 2))
-    num_added_edges = 0
+    line_number = max(len(numbers), len(sizes), len(steps), len(verts_a), len(verts_b))
+    vert_number = sum([v_number if v_number > 1 else 2 for _, v_number in
+                             zip(range(line_number), chain(numbers, cycle([numbers[-1]])))])
+    numbers = cycle([None]) if numbers is None else chain(numbers, cycle([numbers[-1]]))
+    steps = cycle([None]) if steps is None else chain(steps, cycle([steps[-1]]))
+    sizes = cycle([None]) if sizes is None else chain(sizes, cycle([sizes[-1]]))
+    verts_a = cycle([None]) if verts_a is None else chain(verts_a, cycle([verts_a[-1]]))
+    verts_b = cycle([None]) if verts_b is None else chain(verts_b, cycle([verts_b[-1]]))
+    verts_lines = np.empty((vert_number, 3))
+    edges_lines = []
     num_added_verts = 0
+    indexes = iter(range(int(1e+100)))
 
-    for i_line, n, st, size in zip(range(number_of_lines), numbers, steps, sizes):
-        n = 2 if n < 2 else n
-        if normalized and center:
-            co1, co2 = -size / 2, size / 2
-        elif normalized:
-            co1, co2 = 0, size
-        elif center:
-            co1, co2 = -st * (n - 1) / 2, st * (n - 1) / 2
-        else:
-            co1, co2 = 0, st * (n - 1)
-        va = np.array((co1 if mode == "X" else 0, co1 if mode == "Y" else 0, co1 if mode == "Z" else 0))
-        vb = np.array((co2 if mode == "X" else 0, co2 if mode == "Y" else 0, co2 if mode == "Z" else 0))
-        edges_lines[num_added_edges: num_added_edges + n - 1] = np.stack([np.arange(n - 1), np.arange(1, n)], axis=1)
-        verts_lines[num_added_verts: num_added_verts + n] = (generate_verts(va, vb, n))
-        num_added_edges += n - 1
-        num_added_verts += n
+    for i_line, n, st, size, va, vb in zip(range(line_number), numbers, steps, sizes, verts_a, verts_b):
+        va, vb = get_corner_points(dir_mode, center, va, vb, get_len_line(size_mode, n, size, st))
+        line_verts = generate_verts(va, vb, n)
+        edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, line_verts[:-1])])
+        verts_lines[num_added_verts: num_added_verts + len(line_verts)] = line_verts
+        num_added_verts += len(line_verts)
     return verts_lines, edges_lines
 
 
-def make_line_advanced(numbers, steps, sizes, verts_a, verts_b, mode='AB', normalized=False, center=False):
+def get_len_line(len_mode, number, size, step):
+    # returns length of line according logic of a mode
+    if len_mode == LENGTH.size:
+        return size
+    elif len_mode == LENGTH.number:
+        return (number - 1 if number > 2 else 1) * step
+
+
+def get_corner_points(dir_mode=DIRECTION.x, center=False, vert_a=None, vert_b=None, len_line=None):
+    # returns coordinates of firs and last points of live according properties of the node
+    directions = {'X': (1, 0, 0), 'Y': (0, 1, 0), 'Z': (0, 0, 1)}
+    origin = np.array(vert_a) if dir_mode == DIRECTION.od else np.array((0, 0, 0))
+    direction = (np.array(vert_b) / np.linalg.norm(np.array(vert_b))
+                 if dir_mode == DIRECTION.od else np.array(directions[dir_mode]))
+    if center:
+        origin = origin - direction * (len_line / 2)
+    return origin, direction * len_line + origin
+
+
+def make_line_multiple_steps(steps, verts_a=None, verts_b=None, dir_mode=DIRECTION.x, center=False):
     """
     Generate lines between two given points in 'AB' mode or determined by origin(vert_a) and direction(vert_b)
-    :param numbers: Number of vertices, list of int
-    :param steps: Step length, list of float
-    :param sizes: Size of lines in normalized mode, list of floats
-    :param verts_a: or origin, list of vertices
-    :param verts_b: or direction, list of vertices
-    :param mode: 'AB' - generate line between points, 'OD' - generate line from origin with determined direction
-    :param normalized: fit line into given size
-    :param center: move center of line into vert_a
-    :return: list of vertices, list of edges (*one object)
+    :param steps: list of values, each step is nest segment of a same line
+    :param verts_a: list of tuple(float, float, float), origin of a line, only for 'OD' mode
+    :param verts_b: list of tuple(float, float, float), direction of a line, only for 'OD' mode
+    :param dir_mode: 'X', 'Y', 'Z' or 'OD' where 'OD' means custom origin and direction
+    :param center: if True center of a line is moved to origin
+    :return: numpy array with shape(number of vertices, 3), list of tuple(int, int)
     """
-    max_len = max(len(numbers), len(steps), len(sizes), len(verts_a), len(verts_b))
-    numbers = chain(numbers, cycle([numbers[-1]]))
-    steps = chain(steps, cycle([steps[-1]]))
-    sizes = chain(sizes, cycle([sizes[-1]]))
-    verts_a = chain(verts_a, cycle([verts_a[-1]]))
-    verts_b = chain(verts_b, cycle([verts_b[-1]]))
-    verts_lines = []
+    line_number = max(len(verts_a or 1), len(verts_b or 1))
+    vert_number = line_number * (len(steps) + 1)
+    len_line = sum(steps)
+    accum_steps = np.add.accumulate(steps)
+    verts_a = cycle([None]) if verts_a is None else chain(verts_a, cycle([verts_a[-1]]))
+    verts_b = cycle([None]) if verts_b is None else chain(verts_b, cycle([verts_b[-1]]))
+    accum_steps = cycle([accum_steps])
+    verts_lines = np.empty((vert_number, 3))
     edges_lines = []
+    num_added_verts = 0
+    indexes = iter(range(int(1e+100)))
 
-    for i, n, st, size, va, vb in zip(range(max_len), numbers, steps, sizes, verts_a, verts_b):
-        va, vb = np.array(va), np.array(vb)
-        if normalized or center:
-            # if center is true then va becomes center
+    for line_i, sts, va, vb in zip(range(line_number), accum_steps, verts_a, verts_b):
+        directions = {'X': (1, 0, 0), 'Y': (0, 1, 0), 'Z': (0, 0, 1)}
+        origin = np.array(va) if dir_mode == DIRECTION.od else np.array((0, 0, 0))
+        direction = (np.array(vb) / np.linalg.norm(np.array(vb))
+                     if dir_mode == DIRECTION.od else np.array(directions[dir_mode]))
+        if center:
+            origin = origin - direction * (len_line / 2)
+        line_verts = np.full((len(steps), 3), direction)
+        line_verts = line_verts * sts.reshape((len(steps), 1))
+        line_verts = line_verts + origin
 
-            if mode == 'AB':
-                len_line = np.linalg.norm(vb - va)
-                dir_line = (vb - va) * 1 / len_line
-            else:
-                len_line = st * (n - 1 if n > 2 else 1)
-                dir_line = vb * 1 / np.linalg.norm(vb)
-
-            if normalized and center:
-                verts_line = generate_verts(va + dir_line * (-size / 2), va + dir_line * (size / 2), n)
-            elif normalized:
-                verts_line = generate_verts(va, va + dir_line * size, n)
-            elif center:
-                verts_line = generate_verts(va + dir_line * (-len_line / 2), va + dir_line * (len_line / 2), n)
-        else:
-            if mode == 'AB':
-                verts_line = generate_verts(va, vb, n)
-            else:
-                len_line = st * (n - 1 if n > 2 else 1)
-                dir_line = vb * 1 / np.linalg.norm(vb)
-                verts_line = generate_verts(va, va + dir_line * len_line, n)
-
-        edges_lines.extend((i + len(verts_lines), i + len(verts_lines) + 1) for i in range(1 if n <= 2 else n - 1))
-        verts_lines.extend(verts_line.tolist())
+        edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, line_verts)])
+        verts_lines[num_added_verts] = origin
+        verts_lines[num_added_verts + 1: num_added_verts + len(line_verts) + 1] = line_verts
+        num_added_verts += len(line_verts) + 1
     return verts_lines, edges_lines
 
 
@@ -148,22 +147,26 @@ def generate_verts(va, vb, number):
 
 
 def split_lines_to_objects(verts, edges):
-    # detect lines and split them into separate objects
-    # vertices and edges should be ordered according generator lines logic
-    verts = iter(verts)
-    verts_out = [[]]
-
+    """
+    detect lines and split them into separate objects
+    vertices and edges should be ordered according generator lines logic
+    :param verts: numpy array with shape(n, 3)
+    :param edges: list of tuple(int, int)
+    :return: list of np arrays, list of list of tuple(int, int)
+    """
+    split_slice = [0]
     for i in range(len(edges)):
-        verts_out[-1].append(next(verts))
+        split_slice[-1] += 1
         # current edge - (0, 1), next edge - (1, 2) - still on the same line
         # current edge - (1, 2), next edge - (3, 4) - the current line is finished
         is_end = True if i + 1 >= len(edges) else True if edges[i][1] != edges[i + 1][0] else False
         if is_end:
-            verts_out[-1].append(next(verts))
+            split_slice[-1] += 1
             if i != len(edges) - 1:
-                verts_out.append([])
-    edges_out = [[(i, i + 1) for i in range(len(vs) - 1)] for vs in verts_out]
-    return verts_out, edges_out
+                split_slice.append(split_slice[-1])
+    edges_out = [[(i, i + 1) for i in range(len(v_num) - 1)]
+                 for v_num in np.split(np.empty(len(verts)), split_slice)[:-1]]
+    return np.split(verts, split_slice)[:-1], edges_out
 
 
 class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
@@ -176,91 +179,60 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GRIP'
     sv_icon = 'SV_LINE'
 
-    def update_size_socket(self, context):
+    def update_sockets(self, context):
         """ need to do UX transformation before updating node"""
-        self.inputs["Size"].hide_safe = not self.normalize
+        def set_hide(sock, status):
+            if sock.hide_safe != status:
+                sock.hide_safe = status
+
+        if self.direction == DIRECTION.od:
+            self.inputs['A'].hide_safe = False
+            self.inputs['B'].hide_safe = False
+        else:
+            self.inputs['A'].hide_safe = True
+            self.inputs['B'].hide_safe = True
+
+        if self.length_mode == LENGTH.size:
+            set_hide(self.inputs['Num'], False)
+            set_hide(self.inputs['Steps'], True)
+            set_hide(self.inputs['Size'], False)
+            self.inputs['Steps'].prop_name = 'step'
+        elif self.length_mode == LENGTH.number:
+            set_hide(self.inputs['Num'], False)
+            set_hide(self.inputs['Steps'], False)
+            set_hide(self.inputs['Size'], True)
+            self.inputs['Steps'].prop_name = 'step'
+        elif self.length_mode == LENGTH.step:
+            set_hide(self.inputs['Num'], True)
+            set_hide(self.inputs['Steps'], False)
+            set_hide(self.inputs['Size'], True)
+            self.inputs['Steps'].prop_name = ''
+
         updateNode(self, context)
 
-    def update_vect_socket(self, context):
-        """ need to do UX transformation before updating node"""
-        si = self.inputs
-        sd = self.direction
-        if sd == "OD" and not si[3].name[0] == "O":
-            si[3].name = "Origin"
-            si[4].name = "Direction"
-            si[3].prop_name = 'v3_origin'
-            si[4].prop_name = 'v3_dir'
-        elif sd == "AB" and not si[3].name[0] == "A":
-            si[3].name = "A"
-            si[4].name = "B"
-            si[3].prop_name = 'v3_input_0'
-            si[4].prop_name = 'v3_input_1'
-
-        ortho = sd not in ["AB", "OD"]
-        if (not ortho and si[3].hide_safe) or ortho:
-            si[3].hide_safe = ortho
-            si[4].hide_safe = ortho
-
-        updateNode(self, context)
-
-    direction : EnumProperty(
-        name="Direction", items=directionItems,
-        default="X", update=update_vect_socket)
-
-    num : IntProperty(
-        name='Num Verts', description='Number of Vertices',
-        default=2, min=2, update=updateNode)
-
-    step : FloatProperty(
-        name='Step', description='Step length',
-        default=1.0, update=updateNode)
-
-    center : BoolProperty(
-        name='Center', description='Center the line',
-        default=False, update=updateNode)
-
-    normalize : BoolProperty(
-        name='Normalize', description='Normalize line to size',
-        default=False, update=update_size_socket)
-
-    size : FloatProperty(
-        name='Size', description='Size of line',
-        default=10.0, update=updateNode)
-
-    v3_input_0 : FloatVectorProperty(
-        name='A', description='Starting point',
-        size=3, default=(0, 0, 0),
-        update=updateNode)
-
-    v3_input_1 : FloatVectorProperty(
-        name='B', description='End point',
-        size=3, default=(0.5, 0.5, 0.5),
-        update=updateNode)
-
-    v3_origin : FloatVectorProperty(
-        name='Origin', description='Origin of line',
-        size=3, default=(0, 0, 0),
-        update=updateNode)
-
-    v3_dir : FloatVectorProperty(
-        name='Direction', description='Direction',
-        size=3, default=(1, 1, 1),
-        update=updateNode)
-
-    split: BoolProperty(name="Split to objects", description="Each object in separate object", update=updateNode)
+    direction: EnumProperty(name="Direction", items=directionItems, default="X", update=update_sockets)
+    num: IntProperty(name='Num Verts', description='Number of Vertices', default=2, min=2, update=updateNode)
+    step: FloatProperty(name='Step', description='Step length', default=1.0, update=updateNode)
+    center: BoolProperty(name='Center', description='Center the line', default=False, update=updateNode)
+    size: FloatProperty(name='Size', description='Size of line', default=10.0, update=updateNode)
+    split: BoolProperty(name="Split to objects", description="Each object in separate object", default=True, 
+                        update=updateNode)
     as_numpy: BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
-    length_mode: EnumProperty(items=length_items, update=updateNode)
+    length_mode: EnumProperty(items=length_items, update=update_sockets)
+    v3_dir: FloatVectorProperty(name='Direction', description='Direction', size=3, default=(1, 1, 1), update=updateNode)
+    v3_origin: FloatVectorProperty(name='Origin', description='Origin of line', size=3, default=(0, 0, 0),
+                                    update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'
-        self.inputs.new('SvStringsSocket', "Step").prop_name = 'step'
+        self.inputs.new('SvStringsSocket', "Steps").prop_name = 'step'
         self.inputs.new('SvStringsSocket', "Size").prop_name = 'size'
-        self.inputs.new('SvVerticesSocket', "A").prop_name = 'v3_input_0'
-        self.inputs.new('SvVerticesSocket', "B").prop_name = 'v3_input_1'
+        self.inputs.new('SvVerticesSocket', "A").prop_name = 'v3_origin'
+        self.inputs.new('SvVerticesSocket', "B").prop_name = 'v3_dir'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
 
-        self.inputs['Size'].hide_safe = True
+        self.inputs['Steps'].hide_safe = True
         self.inputs["A"].hide_safe = True
         self.inputs["B"].hide_safe = True
 
@@ -274,6 +246,12 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "center", text="Center to origin")
 
     def draw_buttons_ext(self, context, layout):
+        col = layout.column(align=True)
+        row = col.row(align=True)
+        row.prop(self, "direction", expand=True)
+        row = col.row(align=True)
+        row.prop(self, "length_mode", expand=True)
+        layout.prop(self, "center", text="Center to origin")
         layout.prop(self, 'split')
         layout.prop(self, 'as_numpy')
 
@@ -282,40 +260,28 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'as_numpy')
 
     def process(self):
-        return
-        if not any(s.is_linked for s in self.outputs):
+        if self.length_mode == LENGTH.step and not self.inputs['Steps'].is_linked:
             return
 
-        number, step, size, vas, vbs = [sock.sv_get() for sock in self.inputs]
-        max_len = max([len(item) for item in [number, step, size, vas, vbs]])
+        number, step, size, vas, vbs = [sock.sv_get(deepcopy=False) for sock in self.inputs]
+        num_objects = max([len(item) for item in [number, step, size, vas, vbs]])
         number = chain(number, cycle([number[-1]]))
         step = chain(step, cycle([step[-1]]))
         size = chain(size, cycle([size[-1]]))
         vas = chain(vas, cycle([vas[-1]]))
         vbs = chain(vbs, cycle([vbs[-1]]))
         out = []
-        for i, n, st, si, va, vb in zip(range(max_len), number, step, size, vas, vbs):
-            if self.direction in ['X', 'Y', 'Z']:
-                out.append(make_line(n, st, si, self.direction, self.normalize, self.center))
+        for i, n, st, si, va, vb in zip(range(num_objects), number, step, size, vas, vbs):
+            if self.length_mode == LENGTH.step:
+                out.append(make_line_multiple_steps(st, va, vb, self.direction, self.center))
             else:
-                out.append(make_line_advanced(n, st, si, va, vb, self.direction, self.normalize, self.center))
-
+                out.append(make_line(n, st, si, va, vb, self.direction, self.length_mode, self.center))
         if self.split:
-            verts, edges = zip(*out)
-            verts_out, edges_out = [], []
-            for vs, ns in zip(verts, edges):
-                v_out, e_out = split_lines_to_objects(vs, ns)
-                verts_out.extend(v_out)
-                edges_out.extend(e_out)
-        else:
-            verts_out, edges_out = zip(*out)
-
+            temp = [split_lines_to_objects(*data) for data in out]
+            out = [v for res in temp for v in zip(*res)]
         if not self.as_numpy:
-            verts_out = [ar.tolist() for ar in verts_out]
-            edges_out = [ar.tolist() for ar in edges_out]
-
-        self.outputs['Vertices'].sv_set(verts_out)
-        self.outputs['Edges'].sv_set(edges_out)
+            out = [(ar.tolist(), edges) for ar, edges in out]
+        [sock.sv_set(data) for sock, data in zip(self.outputs, zip(*out))]
 
 
 def register():
