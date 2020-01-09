@@ -166,12 +166,12 @@ def split_lines_to_objects(verts, edges):
     return verts_out, edges_out
 
 
-class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Line, segment.
     Tooltip: Generate line.
     """
-    bl_idname = 'SvLineNodeMK3'
+    bl_idname = 'SvLineNodeMK4'
     bl_label = 'Line'
     bl_icon = 'GRIP'
     sv_icon = 'SV_LINE'
@@ -319,8 +319,8 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvLineNodeMK3)
+    bpy.utils.register_class(SvLineNodeMK4)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvLineNodeMK3)
+    bpy.utils.unregister_class(SvLineNodeMK4)
