@@ -10,6 +10,7 @@ from collections import namedtuple
 
 import bpy
 import bmesh
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
@@ -35,13 +36,10 @@ def unwrap_mesh(verts, faces, uv_verts=None, uv_faces=None, face_mask=None, mode
     uv_act = bm.loops.layers.uv.new('node')
     if uv_verts and uv_faces:
         for face, uv_face in zip(bm_faces, uv_faces):
-            is_uv_default = all([uv_verts[uv_i] == 0 for uv_i in uv_face])
-            for loop, uv_i, simple_uv in zip(face.loops, uv_face, ((0, 0), (1, 0), (1, 1), (0, 1))):
-                if is_uv_default:
-                    loop[uv_act].uv = simple_uv
-                else:
-                    loop[uv_act].uv = uv_verts[uv_i][:2]
-    else:
+            for loop, uv_i in zip(face.loops, uv_face):
+                loop[uv_act].uv = uv_verts[uv_i][:2]
+
+    if all([loop[uv_act].uv == Vector((0, 0)) for loop in f_act.loops]):
         for loop, co in zip(f_act.loops, ((0, 0), (1, 0), (1, 1), (0, 1))):
             loop[uv_act].uv = co
 
