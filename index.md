@@ -127,7 +127,7 @@
     SvVertMaskNode
     SvSplitEdgesNode
     ---
-    SvFollowActiveQuad
+    SvFollowActiveQuads
 
 ## Modifier Make
     LineConnectNodeMK2

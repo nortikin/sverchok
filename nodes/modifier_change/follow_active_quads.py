@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from itertools import cycle
+from itertools import cycle, chain
 from collections import namedtuple
 
 import bpy
@@ -21,6 +21,17 @@ MODE = Modes('Even', 'Length', 'Average')
 
 
 def unwrap_mesh(verts, faces, active_indexes, uv_verts=None, uv_faces=None, face_mask=None, mode=MODE.even):
+    """
+    Unwrap mesh similar to Blender operator: follow active quad
+    :param verts: list of tuple(float, float, float)
+    :param faces: list of list of int
+    :param active_indexes: list of indexes, arbitrary number
+    :param uv_verts: list of tuple(float, float, float), only XY ate taken in account
+    :param uv_faces: list of list of int, in the same order as faces input
+    :param face_mask: list of bool, for selecting unwrapping faces
+    :param mode: 'even', 'length' or 'average'
+    :return: list of tuple(float, float, float), list of list of int (faces indexes)
+    """
     bm = bmesh.new()
     # create layer for marking unwrapped faces for protection from re unwrapping, should be done before mesh generation
     used_layer = bm.faces.layers.int.new('uv done')
@@ -235,31 +246,42 @@ def calc_average_length(bm, faces):
     return edge_lengths
 
 
-class SvFollowActiveQuad(bpy.types.Node, SverchCustomTreeNode):
+class SvFollowActiveQuads(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: ...
+    Triggers: UV unwrapping
 
-    ...
-    ...
+    As blender unwrapping function
+    Can unwrap mesh  with separate parts at once
     """
-    bl_idname = 'SvFollowActiveQuad'
-    bl_label = 'Follow active quad'
-    bl_icon = 'MOD_BOOLEAN'
+    bl_idname = 'SvFollowActiveQuads'
+    bl_label = 'Follow active quads'
+    bl_icon = 'MOD_UVPROJECT'
 
     edge_length_mode: bpy.props.EnumProperty(items=[(i, i, '') for i in MODE], update=updateNode)
     active_index: bpy.props.IntProperty(name='Index active quad', min=0, update=updateNode)
+    unwrap_all: bpy.props.BoolProperty(name='All', update=updateNode, description="Unwrap all disjoint parts")
 
     def draw_buttons(self, context, layout):
-        col = layout.column()
-        col.label(text='Edge length mode:')
+        layout.label(text='Edge length mode:')
         layout.prop(self, 'edge_length_mode', expand=True)
+
+    def draw_socket(self, socket, context, layout):
+        if socket.is_linked:
+            layout.label(text=socket.name)
+        else:
+            row = layout.row(align=True)
+            row.enabled = False if self.unwrap_all else True
+            row.prop(self, 'active_index')
+            row = layout.row(align=True)
+            row.ui_units_x = 1.2
+            row.prop(self, 'unwrap_all', toggle=True)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
         self.inputs.new('SvStringsSocket', "Faces")
         self.inputs.new('SvVerticesSocket', 'UV verts')
         self.inputs.new('SvStringsSocket', "UV faces")
-        self.inputs.new('SvStringsSocket', "Active quad index").prop_name = 'active_index'
+        self.inputs.new('SvStringsSocket', "Active quad index").custom_draw = 'draw_socket'
         self.inputs.new('SvStringsSocket', "Face mask")
         self.outputs.new('SvVerticesSocket', 'UV verts')
         self.outputs.new('SvStringsSocket', "UV faces")
@@ -268,24 +290,23 @@ class SvFollowActiveQuad(bpy.types.Node, SverchCustomTreeNode):
         if not all([sock.is_linked for sock in list(self.inputs)[:2]]):
             return
 
-        out = []
-        for v, f, uv_v, uv_f, m, i in zip(
-                self.inputs['Verts'].sv_get(),
-                self.inputs['Faces'].sv_get(),
-                self.inputs['UV verts'].sv_get() if self.inputs['UV verts'].is_linked else cycle([None]),
-                self.inputs['UV faces'].sv_get() if self.inputs['UV faces'].is_linked else cycle([None]),
-                self.inputs['Face mask'].sv_get() if self.inputs['Face mask'].is_linked else cycle([None]),
-                self.inputs['Active quad index'].sv_get()):
-            out.append(unwrap_mesh(v, f, i, uv_v, uv_f, m, self.edge_length_mode))
+        in1 = [sock.sv_get(deepcopy=False) for sock in [self.inputs[n] for n in ('Verts', 'Faces')]]
 
-        verts_out, faces_out = zip(*out)
-        self.outputs['UV verts'].sv_set(verts_out)
-        self.outputs['UV faces'].sv_set(faces_out)
+        in2 = [chain(sock.sv_get(deepcopy=False), cycle([sock.sv_get(deepcopy=False)[-1]])) if sock.is_linked else
+               cycle([None]) for sock in [self.inputs[n] for n in ('UV verts', 'UV faces', 'Face mask')]]
+
+        in3 = [chain(sock.sv_get(deepcopy=False), cycle([sock.sv_get(deepcopy=False)[-1]])) if sock.is_linked else
+               cycle([[self.active_index]]) for sock in [self.inputs[n] for n in ('Active quad index',)]]
+
+        out = [unwrap_mesh(v, f, range(len(f)) if self.unwrap_all else i, uv_v, uv_f, m, self.edge_length_mode)
+               for v, f, uv_v, uv_f, m, i in zip(*chain(in1, in2, in3))]
+
+        [sock.sv_set(data) for sock, data in zip(self.outputs, zip(*out))]
 
 
 def register():
-    bpy.utils.register_class(SvFollowActiveQuad)
+    bpy.utils.register_class(SvFollowActiveQuads)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvFollowActiveQuad)
+    bpy.utils.unregister_class(SvFollowActiveQuads)
