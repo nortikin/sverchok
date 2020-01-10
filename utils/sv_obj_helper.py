@@ -168,18 +168,32 @@ class SvObjHelper():
         objs = [obj for obj in objects if obj.type == self.data_kind]
         return [o for o in objs if o.get('basedata_name') == self.basedata_name]
 
-    def to_group(self, objs):
-        groups = bpy.data.groups
-        named = self.basedata_name
+    # def to_group(self, objs):
+    #     groups = bpy.data.groups
+    #     named = self.basedata_name
+
+    #     # alias group, or generate new group and alias that
+    #     group = groups.get(named)
+    #     if not group:
+    #         group = groups.new(named)
+
+    #     for obj in objs:
+    #         if obj.name not in group.objects:
+    #             group.objects.link(obj)
+
+    def to_collection(self, objs):
+        collections = bpy.data.collections
+        named = self.custom_collection_name or self.basedata_name
 
         # alias group, or generate new group and alias that
-        group = groups.get(named)
-        if not group:
-            group = groups.new(named)
+        collection = collections.get(named)
+        if not collection:
+            collection = collections.new(named)
 
         for obj in objs:
-            if obj.name not in group.objects:
-                group.objects.link(obj)
+            if obj.name not in collection.objects:
+                collection.objects.link(obj)
+
 
     def ensure_parent(self):
         if self.parent_to_empty:
@@ -235,6 +249,10 @@ class SvObjHelper():
 
     parent_to_empty: BoolProperty(name='parent to empty', default=False, update=updateNode)
     parent_name: StringProperty(name='parent name')  # calling updateNode would recurse.    
+    
+    custom_collection_name: StringProperty(
+        name='collection name', update=updateNode,
+        description='custom collection name, will default to the basename of the node first')
 
     def sv_init_helper_basedata_name(self):
         """ 
