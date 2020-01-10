@@ -378,7 +378,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             objs = self.get_children()
 
             if self.grouping:
-                self.to_group(objs)
+                self.to_collection(objs)
 
             # truthy if self.material is in .materials
             if bpy.data.materials.get(self.material):

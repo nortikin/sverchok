@@ -343,7 +343,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         objs = self.get_children()
 
         if self.grouping:
-            self.to_group(objs)
+            self.to_collection(objs)
 
         self.set_corresponding_materials()
         self.remove_cloner_curve(obj_index)
