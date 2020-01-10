@@ -166,6 +166,7 @@ def separate_nodes(ng, links=None):
     n = nodes.pop()
     node_set_list = [set([n])]
     node_stack = collections.deque()
+
     # find separate sets
     node_stack_append = node_stack.append
     node_stack_pop = node_stack.pop
@@ -182,13 +183,7 @@ def separate_nodes(ng, links=None):
                 n = node_stack_pop()
             nodes.discard(n)
             node_set_list[-1].add(n)
-    """
-    if ng.bl_idname == "SverchCustomTreeType":
-        skip_types = {"SvGroupInputsNode", "SvGroupOutputsNode"}
-        skip_nodes = {n.name for n in ng.nodes if n.bl_idname in skip_types}
-        if skip_nodes:
-            node_set_list = filter(lambda ns:ns.isdisjoint(skip_nodes), node_set_list)
-    """
+
     return [ns for ns in node_set_list if len(ns) > 1]
 
 def make_tree_from_nodes(node_names, tree, down=True):
