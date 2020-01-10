@@ -8,7 +8,7 @@ out faces s
 """ 
 
 from mathutils import Vector
-from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
 # for sure this can be made in two lines of code
 # i.e. a - circle 24 verts, b - triangle 3 verts (27 length)
 
@@ -27,9 +27,9 @@ if verts_A and verts_B and edges_A and edges_B:
 
     # pols2edges
     if len(edges_A[0][0]) > 2:
-        edges_A = pols_edges(edges_A, unique_edges=True)
+        edges_A = polygons_to_edges(edges_A, unique_edges=True)
     if len(edges_B[0][0]) > 2:
-        edges_B = pols_edges(edges_B, unique_edges=True)
+        edges_B = polygons_to_edges(edges_B, unique_edges=True)
 
 
     # ordering sort edges chain

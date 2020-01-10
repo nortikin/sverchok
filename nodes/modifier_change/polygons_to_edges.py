@@ -21,21 +21,12 @@ from bpy.props import BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.utils.decorators import deprecated
 
+@deprecated("Please use sverchok.utils.sv_mesh_utils.polygons_to_edges instead")
 def pols_edges(obj, unique_edges=False):
-    out = []
-    for faces in obj:
-        out_edges = []
-        seen = set()
-        for face in faces:
-            for edge in zip(face, list(face[1:]) + list([face[0]])):
-                if unique_edges and tuple(sorted(edge)) in seen:
-                    continue
-                if unique_edges:
-                    seen.add(tuple(sorted(edge)))
-                out_edges.append(edge)
-        out.append(out_edges)
-    return out
+    return polygons_to_edges(obj, unique_edges)
 
 class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
     ''' take polygon and to edges '''
@@ -59,7 +50,7 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
             return
         X_ = self.inputs['pols'].sv_get()
         X = dataCorrect(X_)
-        result = pols_edges(X, self.unique_edges)
+        result = polygons_to_edges(X, self.unique_edges)
         self.outputs['edgs'].sv_set(result)
 
 

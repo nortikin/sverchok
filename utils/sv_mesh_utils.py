@@ -71,3 +71,19 @@ def mesh_join_ext(vertices_s, edges_s, faces_s, wrap=False):
         return [result_vertices], [result_edges], [result_faces]
 
     return result_vertices, result_edges, result_faces
+
+def polygons_to_edges(obj, unique_edges=False):
+    out = []
+    for faces in obj:
+        out_edges = []
+        seen = set()
+        for face in faces:
+            for edge in zip(face, list(face[1:]) + list([face[0]])):
+                if unique_edges and tuple(sorted(edge)) in seen:
+                    continue
+                if unique_edges:
+                    seen.add(tuple(sorted(edge)))
+                out_edges.append(edge)
+        out.append(out_edges)
+    return out
+

@@ -12,7 +12,7 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import intersect_line_line_2d
 
 from sverchok.utils.voronoi import Site, computeDelaunayTriangulation
-from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
 from sverchok.data_structure import match_long_repeat
 
 TWO_PI = 2 * pi
@@ -23,7 +23,7 @@ def get_delaunay_triangulation(verts_in):
     polys_in = [tri for tri in res if -1 not in tri]
     #all faces hase normals -Z, should be reversed
     polys_in = [pol[::-1] for pol in polys_in]
-    edges_in = pols_edges([polys_in], unique_edges=True)[0]
+    edges_in = polygons_to_edges([polys_in], unique_edges=True)[0]
     return edges_in, polys_in
 
 def calc_angle(p1,p2,mode='clockwise'):

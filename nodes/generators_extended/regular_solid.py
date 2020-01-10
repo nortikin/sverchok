@@ -24,7 +24,7 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
 from sverchok.utils.modules.geom_utils import interp_v3_v3v3, normalize, add_v3_v3v3, sub_v3_v3v3
-from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
 ## This node is a port to the  add_mesh_extra_objects.add_mesh_solid createSolid
 
 class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
@@ -251,7 +251,7 @@ class SvRegularSolid(bpy.types.Node, SverchCustomTreeNode):
                 verts_out.append(verts)
                 polys_out.append(faces)
                 if get_edges:
-                    edges_out.append(pols_edges([faces], unique_edges=True)[0])
+                    edges_out.append(polygons_to_edges([faces], unique_edges=True)[0])
 
         if self.outputs['Vertices'].is_linked:
             self.outputs['Vertices'].sv_set(verts_out)
