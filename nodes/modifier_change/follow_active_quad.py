@@ -22,6 +22,8 @@ MODE = Modes('Even', 'Length', 'Average')
 
 def unwrap_mesh(verts, faces, active_indexes, uv_verts=None, uv_faces=None, face_mask=None, mode=MODE.even):
     bm = bmesh.new()
+    # create layer for marking unwrapped faces for protection from re unwrapping, should be done before mesh generation
+    used_layer = bm.faces.layers.int.new('uv done')
     bm_verts = [bm.verts.new(co) for co in verts]
     bm_faces = [bm.faces.new([bm_verts[i] for i in face]) for face in faces]
 
@@ -58,9 +60,10 @@ def unwrap_mesh(verts, faces, active_indexes, uv_verts=None, uv_faces=None, face
 
     # process
     for fa in f_acts:
-        walk_face_init(bm, faces, fa)
-        for f_triple in walk_face(fa):
-            apply_uv(*f_triple, uv_act, mode, edge_lengths)
+        if fa[used_layer] == 0:
+            walk_face_init(bm, faces, fa)
+            for f_triple in walk_face(fa, used_layer):
+                apply_uv(*f_triple, uv_act, mode, edge_lengths)
 
     # prepare output
     bm.verts.index_update()
@@ -82,7 +85,7 @@ def walk_face_init(bm, faces, f_act):
     f_act.tag = True
 
 
-def walk_face(f):
+def walk_face(f, used_layer):
     # all faces in this list must be tagged
     f.tag = True
     faces_a = [f]
@@ -90,6 +93,7 @@ def walk_face(f):
 
     while faces_a:
         for f in faces_a:
+            f[used_layer] = 1
             for l in f.loops:
                 l_edge = l.edge
                 if (l_edge.is_manifold is True) and (l_edge.seam is False):
