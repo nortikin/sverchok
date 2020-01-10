@@ -90,6 +90,8 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
+    replacement_nodes = [('SvLineNodeMK4', None, None)]
+
     direction: EnumProperty(
         name="Direction", items=directionItems,
         default="X", update=update_vect_socket)

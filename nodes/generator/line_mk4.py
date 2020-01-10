@@ -41,36 +41,36 @@ LENGTH = Lengths('Size', 'Number', 'Step')
 length_items = [(i, i, '') for i in LENGTH]
 
 
-def make_line(numbers=None, steps=None, sizes=None, verts_a=None, verts_b=None,
+def make_line(numbers=None, steps=None, sizes=None, verts_or=None, verts_dir=None,
               dir_mode=DIRECTION.x, size_mode=LENGTH.size, center=False):
     """
     Generate lines
     :param numbers: list of values, number of generated vertices
     :param steps: list of values, distance between points for step mode only
     :param sizes: list of values, length of a line for size mode only
-    :param verts_a: list of tuple(float, float, float), custom origin of a line
-    :param verts_b: list of tuple(float, float, float), custom direction of a line
+    :param verts_or: list of tuple(float, float, float), custom origin of a line
+    :param verts_dir: list of tuple(float, float, float), custom direction of a line
     :param dir_mode: 'X', 'Y', 'Z' or 'OD', 'OD' mode for custom origin and direction
     :param size_mode: 'Size' or 'Step', length of line
     :param center: if True center of a line is moved to origin
     :return: np.array of vertices, np.array of edges
     """
-    line_number = max(len(numbers), len(sizes), len(steps), len(verts_a), len(verts_b))
+    line_number = max(len(numbers), len(sizes), len(steps), len(verts_or), len(verts_dir))
     vert_number = sum([v_number if v_number > 1 else 2 for _, v_number in
                              zip(range(line_number), chain(numbers, cycle([numbers[-1]])))])
     numbers = cycle([None]) if numbers is None else chain(numbers, cycle([numbers[-1]]))
     steps = cycle([None]) if steps is None else chain(steps, cycle([steps[-1]]))
     sizes = cycle([None]) if sizes is None else chain(sizes, cycle([sizes[-1]]))
-    verts_a = cycle([None]) if verts_a is None else chain(verts_a, cycle([verts_a[-1]]))
-    verts_b = cycle([None]) if verts_b is None else chain(verts_b, cycle([verts_b[-1]]))
+    verts_or = cycle([None]) if verts_or is None else chain(verts_or, cycle([verts_or[-1]]))
+    verts_dir = cycle([None]) if verts_dir is None else chain(verts_dir, cycle([verts_dir[-1]]))
     verts_lines = np.empty((vert_number, 3))
     edges_lines = []
     num_added_verts = 0
     indexes = iter(range(int(1e+100)))
 
-    for i_line, n, st, size, va, vb in zip(range(line_number), numbers, steps, sizes, verts_a, verts_b):
-        va, vb = get_corner_points(dir_mode, center, va, vb, get_len_line(size_mode, n, size, st))
-        line_verts = generate_verts(va, vb, n)
+    for i_line, n, st, size, vor, vdir in zip(range(line_number), numbers, steps, sizes, verts_or, verts_dir):
+        vor, vdir = get_corner_points(dir_mode, center, vor, vdir, get_len_line(size_mode, n, size, st))
+        line_verts = generate_verts(vor, vdir, n)
         edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, line_verts[:-1])])
         verts_lines[num_added_verts: num_added_verts + len(line_verts)] = line_verts
         num_added_verts += len(line_verts)
@@ -186,11 +186,11 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
                 sock.hide_safe = status
 
         if self.direction == DIRECTION.od:
-            self.inputs['A'].hide_safe = False
-            self.inputs['B'].hide_safe = False
+            self.inputs['Origin'].hide_safe = False
+            self.inputs['Direction'].hide_safe = False
         else:
-            self.inputs['A'].hide_safe = True
-            self.inputs['B'].hide_safe = True
+            self.inputs['Origin'].hide_safe = True
+            self.inputs['Direction'].hide_safe = True
 
         if self.length_mode == LENGTH.size:
             set_hide(self.inputs['Num'], False)
@@ -227,14 +227,14 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'
         self.inputs.new('SvStringsSocket', "Steps").prop_name = 'step'
         self.inputs.new('SvStringsSocket', "Size").prop_name = 'size'
-        self.inputs.new('SvVerticesSocket', "A").prop_name = 'v3_origin'
-        self.inputs.new('SvVerticesSocket', "B").prop_name = 'v3_dir'
+        self.inputs.new('SvVerticesSocket', "Origin").prop_name = 'v3_origin'
+        self.inputs.new('SvVerticesSocket', "Direction").prop_name = 'v3_dir'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
 
         self.inputs['Steps'].hide_safe = True
-        self.inputs["A"].hide_safe = True
-        self.inputs["B"].hide_safe = True
+        self.inputs["Origin"].hide_safe = True
+        self.inputs["Direction"].hide_safe = True
 
     def draw_buttons(self, context, layout):
         col = layout.column(align=True)
@@ -263,19 +263,19 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         if self.length_mode == LENGTH.step and not self.inputs['Steps'].is_linked:
             return
 
-        number, step, size, vas, vbs = [sock.sv_get(deepcopy=False) for sock in self.inputs]
-        num_objects = max([len(item) for item in [number, step, size, vas, vbs]])
+        number, step, size, ors, dirs = [sock.sv_get(deepcopy=False) for sock in self.inputs]
+        num_objects = max([len(item) for item in [number, step, size, ors, dirs]])
         number = chain(number, cycle([number[-1]]))
         step = chain(step, cycle([step[-1]]))
         size = chain(size, cycle([size[-1]]))
-        vas = chain(vas, cycle([vas[-1]]))
-        vbs = chain(vbs, cycle([vbs[-1]]))
+        ors = chain(ors, cycle([ors[-1]]))
+        dirs = chain(dirs, cycle([dirs[-1]]))
         out = []
-        for i, n, st, si, va, vb in zip(range(num_objects), number, step, size, vas, vbs):
+        for i, n, st, si, va, d in zip(range(num_objects), number, step, size, ors, dirs):
             if self.length_mode == LENGTH.step:
-                out.append(make_line_multiple_steps(st, va, vb, self.direction, self.center))
+                out.append(make_line_multiple_steps(st, va, d, self.direction, self.center))
             else:
-                out.append(make_line(n, st, si, va, vb, self.direction, self.length_mode, self.center))
+                out.append(make_line(n, st, si, va, d, self.direction, self.length_mode, self.center))
         if self.split:
             temp = [split_lines_to_objects(*data) for data in out]
             out = [v for res in temp for v in zip(*res)]

@@ -79,7 +79,7 @@ def split_lines_to_objects(verts, edges):
 
 class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Create edges between two points
+    Triggers: 2pt Line
 
     Can subdivide output edge
     Vertices can be as numpy array
