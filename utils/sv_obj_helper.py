@@ -168,18 +168,6 @@ class SvObjHelper():
         objs = [obj for obj in objects if obj.type == self.data_kind]
         return [o for o in objs if o.get('basedata_name') == self.basedata_name]
 
-    # def to_group(self, objs):
-    #     groups = bpy.data.groups
-    #     named = self.basedata_name
-
-    #     # alias group, or generate new group and alias that
-    #     group = groups.get(named)
-    #     if not group:
-    #         group = groups.new(named)
-
-    #     for obj in objs:
-    #         if obj.name not in group.objects:
-    #             group.objects.link(obj)
 
     def to_collection(self, objs):
         collections = bpy.data.collections
