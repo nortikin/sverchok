@@ -20,43 +20,54 @@ Modes = namedtuple('Modes', ['even', 'length', 'average'])
 MODE = Modes('Even', 'Length', 'Average')
 
 
-def unwrap_mesh(verts, faces, uv_verts=None, uv_faces=None, face_mask=None, mode=MODE.even, active_face=0):
+def unwrap_mesh(verts, faces, active_indexes, uv_verts=None, uv_faces=None, face_mask=None, mode=MODE.even):
     bm = bmesh.new()
     bm_verts = [bm.verts.new(co) for co in verts]
     bm_faces = [bm.faces.new([bm_verts[i] for i in face]) for face in faces]
 
-    f_act = None
-    for i, face in enumerate(bm_faces):
-        if i >= active_face and len(face.verts) == 4 and (True if face_mask is None else face_mask[i]):
-            f_act = face
-            break
-    if f_act is None:
-        raise LookupError("No active face")
+    # get active faces
+    f_acts = []
+    for ai in active_indexes:
+        if ai < len(faces) and len(bm_faces[ai].verts) == 4 and (True if face_mask is None else face_mask[ai]):
+            f_acts.append(bm_faces[ai])
+    if not f_acts:
+        raise LookupError("Given indexes point to faces which are not quads"
+                          " or does not mark by mask if face mask was given.")
 
+    # create and apply given UC coordinates to bmesh
     uv_act = bm.loops.layers.uv.new('node')
     if uv_verts and uv_faces:
         for face, uv_face in zip(bm_faces, uv_faces):
             for loop, uv_i in zip(face.loops, uv_face):
                 loop[uv_act].uv = uv_verts[uv_i][:2]
 
-    if all([loop[uv_act].uv == Vector((0, 0)) for loop in f_act.loops]):
-        for loop, co in zip(f_act.loops, ((0, 0), (1, 0), (1, 1), (0, 1))):
-            loop[uv_act].uv = co
+    # unwrap active face if they does not have UV map
+    for fa in f_acts:
+        if all([loop[uv_act].uv == Vector((0, 0)) for loop in fa.loops]):
+            for loop, co in zip(fa.loops, ((0, 0), (1, 0), (1, 1), (0, 1))):
+                loop[uv_act].uv = co
 
+    # Select faces
     faces = [f for i, f in enumerate(bm_faces) if len(f.verts) == 4 and (True if face_mask is None else face_mask[i])]
 
+    # prepare help data
     if mode == MODE.average:
         edge_lengths = calc_average_length(bm, faces)
     else:
         edge_lengths = None
 
-    walk_face_init(bm, faces, f_act)
-    for f_triple in walk_face(f_act):
-        apply_uv(*f_triple, uv_act, mode, edge_lengths)
+    # process
+    for fa in f_acts:
+        walk_face_init(bm, faces, fa)
+        for f_triple in walk_face(fa):
+            apply_uv(*f_triple, uv_act, mode, edge_lengths)
 
+    # prepare output
     bm.verts.index_update()
     v_indexes = iter(range(100000000000))
-    return [loop[uv_act].uv.to_3d()[:] for face in bm.faces for loop in face.loops], [[next(v_indexes) for _ in face.verts] for face in bm.faces]
+    uv_vert_out = (loop[uv_act].uv.to_3d()[:] for face in bm.faces for loop in face.loops)
+    uv_face_out = ([next(v_indexes) for _ in face.verts] for face in bm.faces)
+    return list(uv_vert_out), list(uv_face_out)
 
 
 def walk_face_init(bm, faces, f_act):
@@ -261,7 +272,7 @@ class SvFollowActiveQuad(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs['UV faces'].sv_get() if self.inputs['UV faces'].is_linked else cycle([None]),
                 self.inputs['Face mask'].sv_get() if self.inputs['Face mask'].is_linked else cycle([None]),
                 self.inputs['Active quad index'].sv_get()):
-            out.append(unwrap_mesh(v, f, uv_v, uv_f, m, self.edge_length_mode, i[0]))
+            out.append(unwrap_mesh(v, f, i, uv_v, uv_f, m, self.edge_length_mode))
 
         verts_out, faces_out = zip(*out)
         self.outputs['UV verts'].sv_set(verts_out)
