@@ -379,6 +379,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
             if self.grouping:
                 self.to_collection(objs)
+            # else
+            #   self.wipe_collection()
 
             # truthy if self.material is in .materials
             if bpy.data.materials.get(self.material):
