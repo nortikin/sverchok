@@ -185,14 +185,14 @@ class SvObjHelper():
         collections = bpy.data.collections
         named = self.custom_collection_name or self.basedata_name
 
-        # alias group, or generate new group and alias that
+        # alias collection, or generate new collection and alias that
         collection = collections.get(named)
         if not collection:
             collection = collections.new(named)
 
         for obj in objs:
             if obj.name not in collection.objects:
-                collection.objects.link(obj)
+                collection.children.link(obj)
 
 
     def ensure_parent(self):
