@@ -189,10 +189,11 @@ class SvObjHelper():
         collection = collections.get(named)
         if not collection:
             collection = collections.new(named)
+            bpy.context.scene.collection.children.link(collection)
 
         for obj in objs:
             if obj.name not in collection.objects:
-                collection.children.link(obj)
+                collection.objects.link(obj)
 
 
     def ensure_parent(self):
