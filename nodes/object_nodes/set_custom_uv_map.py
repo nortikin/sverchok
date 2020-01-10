@@ -6,7 +6,7 @@
 # License-Filename: LICENSE
 
 
-from itertools import cycle
+from itertools import cycle, chain
 import numpy as np
 
 import bpy
@@ -71,12 +71,10 @@ class SvSetCustomUVMap(bpy.types.Node, SverchCustomTreeNode):
         if not self.inputs['Objects'].is_linked:
             return
 
-        for ob, v, f, m in zip(
-                self.inputs['Objects'].sv_get(),
-                self.inputs['UV verts'].sv_get(deepcopy=False) if self.inputs['UV verts'].is_linked else cycle([None]),
-                self.inputs['UV faces'].sv_get(deepcopy=False) if self.inputs['UV faces'].is_linked else cycle([None]),
-                self.inputs['Matrix'].sv_get(deepcopy=False) if self.inputs['Matrix'].is_linked else cycle([None])):
-
+        input = chain([self.inputs['Objects'].sv_get()],
+                      [chain(sock.sv_get(deepcopy=False), cycle([sock.sv_get(deepcopy=False)[-1]]))
+                       if sock.is_linked else cycle([None]) for sock in list(self.inputs)[1:]])
+        for ob, v, f, m in zip(*input):
             set_custom_map(ob, v, f, self.uv_name, m)
 
         self.outputs['Objects'].sv_set(self.inputs['Objects'].sv_get())

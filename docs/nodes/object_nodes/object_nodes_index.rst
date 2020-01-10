@@ -14,4 +14,4 @@ Objects
    getsetprop
    assign_materials
    material_index
-
+   set_custom_uv_map
