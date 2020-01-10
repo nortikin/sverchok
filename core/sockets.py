@@ -546,7 +546,20 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
     bl_idname = "SvChameleonSocket"
     bl_label = "Chameleon Socket"
 
-    dynamic_color: FloatVectorProperty(default=(0.0, 0.0, 0.0, 0.0), size=4)
+    dynamic_color: FloatVectorProperty(default=(0.0, 0.0, 0.0, 0.0), size=4,
+                                       description="For storing color of other socket via catch_props method")
+    dynamic_type: StringProperty(default='SvChameleonSocket',
+                                 description="For storing type of other socket via catch_props method")
+
+    def catch_props(self):
+        # should be called during update event of a node for catching its property
+        other = self.other
+        if other:
+            self.dynamic_color = socket_colors[other.bl_idname]
+            self.dynamic_type = other.bl_idname
+        else:
+            self.dynamic_color = (0.0, 0.0, 0.0, 0.0)
+            self.dynamic_type = self.bl_idname
 
     def get_prop_data(self):
         if self.prop_name:
@@ -564,13 +577,6 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
             raise SvNoDataError(self)
         else:
             return default
-
-    def set_color(self):
-        other = self.other
-        if other:
-            self.dynamic_color = socket_colors[other.bl_idname]
-        else:
-            self.dynamic_color = (0.0, 0.0, 0.0, 0.0)
 
     def draw_color(self, context, node):
         return self.dynamic_color

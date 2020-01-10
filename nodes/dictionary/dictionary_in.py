@@ -100,7 +100,7 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         # Remove unused sockets
         [self.inputs.remove(sock) for sock in list(self.inputs)[:-1] if not sock.is_linked]
-        [sock.set_color() for sock in self.inputs if sock.links]
+        [sock.catch_props() for sock in self.inputs if sock.links]
 
         # add property to new socket and add extra empty socket
         if list(self.inputs)[-1].is_linked and len(self.inputs) < 11:
@@ -150,9 +150,9 @@ class SvDictionaryIn(bpy.types.Node, SverchCustomTreeNode):
             out_dict = SvDict({getattr(self, key): prop for key, prop in zip(keys, props) if prop is not None})
             for sock in list(self.inputs)[:-1]:
                 out_dict.inputs[sock.identifier] = {
-                    'type': sock.other.bl_idname,
+                    'type': sock.dynamic_type,
                     'name': getattr(self, sock.prop_name),
-                    'nest': sock.sv_get()[0].inputs if sock.bl_idname == 'SvDictionarySocket' else None}
+                    'nest': sock.sv_get()[0].inputs if sock.dynamic_type == 'SvDictionarySocket' else None}
             out.append(out_dict)
         self.outputs[0].sv_set(out)
 
