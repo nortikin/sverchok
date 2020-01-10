@@ -11,6 +11,7 @@ import sys
 
 from sverchok.utils.logging import exception, info
 from sverchok.data_structure import zip_long_repeat
+from sverchok.utils.math import to_spherical, from_spherical
 
 try:
     import scipy
@@ -18,6 +19,14 @@ try:
 except ImportError as e:
     info("SciPy module is not available. Please refer to https://github.com/nortikin/sverchok/wiki/Non-standard-Python-modules-installation for how to install it.")
     raise e
+
+def to_radius(r, v, c):
+    x,y,z = v
+    x0,y0,z0 = c
+    v = x-x0, y-y0, z-z0
+    rho, phi, theta = to_spherical(v, "radians")
+    x,y,z = from_spherical(r, phi, theta, "radians")
+    return x+x0, y+y0, z+z0
 
 out_verts = []
 out_edges = []
@@ -27,10 +36,10 @@ for points, center, radius in zip_long_repeat(in_points, in_center, in_radius):
     if isinstance(radius, (list, tuple)):
         radius = radius[0]
     center = center[0]
-    info("Center: %s, radius: %s", center, radius)
-    #info("Points: %s", points)
+    #info("Center: %s, radius: %s", center, radius)
+    points = np.array([to_radius(radius, v, center) for v in points])
 
-    vor = SphericalVoronoi(np.array(points), radius=radius, center=np.array(center))
+    vor = SphericalVoronoi(points, radius=radius, center=np.array(center))
     vor.sort_vertices_of_regions()
 
     new_verts = vor.vertices.tolist()
