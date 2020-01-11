@@ -7,6 +7,35 @@
 
 
 import bpy
+from sverchok.data_structure import updateNode
+
+"""
+Usage:
+
+    importing like so:
+
+        from sverchok.utils.sv_collection_helper import (
+            group_state_update_handler,
+            to_collection, clear_collection
+        )
+
+    the node you add this to must implement " self.get_collection_name() "
+    something like
+
+        def get_collection_name(self):
+            return self.custom_collection_name or self.basedata_name
+
+    also add this property to your node for setting grouping On/Off
+
+        grouping: BoolProperty(default=False, update=group_state_update_handler)
+
+    and somewhere inside your process function
+
+        if self.grouping:
+            to_collection(self, objs)
+
+"""
+
 
 def group_state_update_handler(node, context):
     """
@@ -22,22 +51,16 @@ def group_state_update_handler(node, context):
     | False | remove collection, if present, and association with object    |
     + - - - + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
     
-    the node you add this to must implement " self.get_collection_name() "
-    something like
-
-        def get_collection_name(self):
-            reutnr self.custom_collection_name or self.basedata_name
-
     """
     if node.grouping:
         updateNode(node, context)
     else:
         with node.sv_throttle_tree_update():
-            node.clear_collection()
+            clear_collection(node)
 
-def to_collection(self, objs):
+def to_collection(node, objs):
     collections = bpy.data.collections
-    named = self.get_collection_name()
+    named = node.get_collection_name()
 
     # alias collection, or generate new collection and alias that
     collection = collections.get(named)
@@ -49,14 +72,14 @@ def to_collection(self, objs):
         if obj.name not in collection.objects:
             collection.objects.link(obj)
 
-def clear_collection(self):
+def clear_collection(node):
     collections = bpy.data.collections
-    named = self.get_collection_name()
+    named = node.get_collection_name()
     
     # alias collection, or generate new collection and alias that
     collection = collections.get(named)
     if not collection:
-        """ seems the collection is already gone, this is a no op """
+        # seems the collection is already gone, this is a no op
         return
     else:
         collections.remove(collection)
