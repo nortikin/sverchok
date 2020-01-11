@@ -228,7 +228,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
 
-    grouping: BoolProperty(default=False, update=group_state_update_handler)
+    grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
     merge: BoolProperty(default=False, update=updateNode)
 
     calc_normals: BoolProperty(default=False, update=updateNode)
