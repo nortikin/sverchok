@@ -168,6 +168,25 @@ class SvObjHelper():
         objs = [obj for obj in objects if obj.type == self.data_kind]
         return [o for o in objs if o.get('basedata_name') == self.basedata_name]
 
+    def group_state_update_handler(self, context):
+        """
+        since this is technically a scene/admin code controlling heirarchy, pressing
+        the button should result in assymetric behaviour depending on the new state of
+        "self.grouping".
+
+        + - - - + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+        | state | desired behaviour                                             |
+        + ----- + --------------------------------------------------------------+
+        | True  | add all objects associated with the node to the collection    |
+        + ----- + --------------------------------------------------------------+
+        | False | remove collection, if present, and associated with objects    |
+        + - - - + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
+        """
+        if self.grouping:
+            updateNode(self, context)
+        else:
+            self.sv_throttle_tree_update():
+                self.clear_collection()
 
     def to_collection(self, objs):
         collections = bpy.data.collections
@@ -183,6 +202,17 @@ class SvObjHelper():
             if obj.name not in collection.objects:
                 collection.objects.link(obj)
 
+    def clear_collection(self):
+        collections = bpy.data.collections
+        named = self.custom_collection_name or self.basedata_name
+
+        # alias collection, or generate new collection and alias that
+        collection = collections.get(named)
+        if not collection:
+            """ seems the collection is already gone, this is a no op """
+            return
+        else:
+            collections.remove(collection)
 
     def ensure_parent(self):
         if self.parent_to_empty:
