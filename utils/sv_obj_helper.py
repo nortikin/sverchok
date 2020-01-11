@@ -179,7 +179,7 @@ class SvObjHelper():
         + ----- + --------------------------------------------------------------+
         | True  | add all objects associated with the node to the collection    |
         + ----- + --------------------------------------------------------------+
-        | False | remove collection, if present, and associated with objects    |
+        | False | remove collection, if present, and association with object    |
         + - - - + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
         """
         if self.grouping:
