@@ -49,9 +49,8 @@ def to_collection(self, objs):
         if obj.name not in collection.objects:
             collection.objects.link(obj)
 
-def clear_collection(self, named):
+def clear_collection(self):
     collections = bpy.data.collections
-
     named = self.get_collection_name()
     
     # alias collection, or generate new collection and alias that
