@@ -1,10 +1,18 @@
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
+
+import bpy
+
 def group_state_update_handler(node, context):
     """
     since this is technically a scene/admin code controlling heirarchy, pressing
     the button should result in assymetric behaviour depending on the new state of
     "self.grouping".
-
-
 
     + - - - + - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - +
     | state | desired behaviour                                             |
