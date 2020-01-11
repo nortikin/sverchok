@@ -46,7 +46,7 @@ def set_curve_props(node, cu):
 
 
 # -- DUPLICATES --
-def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
+def make_duplicates_live_curve(node, obj_index, verts, edges, matrices):
     curves = bpy.data.curves
     objects = bpy.data.objects
     collection = bpy.context.scene.collection
