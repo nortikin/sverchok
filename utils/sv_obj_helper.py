@@ -185,7 +185,7 @@ class SvObjHelper():
         if self.grouping:
             updateNode(self, context)
         else:
-            self.sv_throttle_tree_update():
+            with self.sv_throttle_tree_update():
                 self.clear_collection()
 
     def to_collection(self, objs):
