@@ -29,11 +29,18 @@ Usage:
 
         grouping: BoolProperty(default=False, update=group_state_update_handler)
 
+
+    because updating collections will trigger a nodetree update, you should be
+    using a throttle inside your process function
+
+        with self.sv_throttle_tree_update():
+
+            ... work on Blender objects here
+
     and somewhere inside your process function
 
-        if self.grouping:
-            to_collection(self, objs)
-
+            if self.grouping:
+                to_collection(self, objs)
 """
 
 
