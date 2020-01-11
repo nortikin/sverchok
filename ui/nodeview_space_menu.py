@@ -26,7 +26,7 @@ but massively condensed for sanity.
 
 import bpy
 
-from sverchok.menu import make_node_cats, draw_add_node_operator
+from sverchok.menu import make_node_cats, draw_add_node_operator, get_extra_categories
 from sverchok.utils import get_node_class_reference
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
@@ -135,6 +135,12 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODE_MT_category_SVERCHOK_GROUPS", icon="RNA")
         layout.menu("NODEVIEW_MT_AddPresetOps", icon="SETTINGS")
 
+        extra_categories = get_extra_categories()
+        if extra_categories:
+            layout.separator()
+            for category in extra_categories:
+                layout.menu("NODEVIEW_MT_EX_" + category.identifier)
+
 
 class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
     bl_label = "Generator"
@@ -194,6 +200,32 @@ class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
         for category in presets.get_category_names():
             class_name = preset_category_menus[category].__name__
             layout.menu(class_name)
+
+extra_category_menu_classes = dict()
+
+def make_extra_category_menus():
+    global extra_category_menu_classes
+    extra_categories = get_extra_categories()
+    menu_classes = []
+    for category in extra_categories:
+        if category.identifier in extra_category_menu_classes:
+            clazz = extra_category_menu_classes[category.identifier]
+            menu_classes.append(clazz)
+        else:
+            class NODEVIEW_MT_ExtraCategoryMenu(bpy.types.Menu):
+                bl_label = category.name
+
+                def draw(self, context):
+                    nodes = [[item.nodetype] for item in self.category_items] 
+                    layout_draw_categories(self.layout, nodes)
+
+            class_name = "NODEVIEW_MT_EX_" + category.identifier
+            items = list(category.items(None))
+            menu_class = type(class_name, (NODEVIEW_MT_ExtraCategoryMenu,), {'category_items': items})
+            menu_classes.append(menu_class)
+            extra_category_menu_classes[category.identifier] = menu_class
+            bpy.utils.register_class(menu_class)
+    return menu_classes
 
 classes = [
     NODEVIEW_MT_Dynamic_Menu,
