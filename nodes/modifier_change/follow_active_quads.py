@@ -298,7 +298,8 @@ class SvFollowActiveQuads(bpy.types.Node, SverchCustomTreeNode):
         in3 = [chain(sock.sv_get(deepcopy=False), cycle([sock.sv_get(deepcopy=False)[-1]])) if sock.is_linked else
                cycle([[self.active_index]]) for sock in [self.inputs[n] for n in ('Active quad index',)]]
 
-        out = [unwrap_mesh(v, f, range(len(f)) if self.unwrap_all else i, uv_v, uv_f, m, self.edge_length_mode)
+        set_all = bool(not self.inputs['Active quad index'].is_linked and self.unwrap_all)
+        out = [unwrap_mesh(v, f, range(len(f)) if set_all else i, uv_v, uv_f, m, self.edge_length_mode)
                for v, f, uv_v, uv_f, m, i in zip(*chain(in1, in2, in3))]
 
         [sock.sv_set(data) for sock, data in zip(self.outputs, zip(*out))]
