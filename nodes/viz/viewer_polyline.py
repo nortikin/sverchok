@@ -135,6 +135,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     use_auto_uv: BoolProperty(name="auto uv", update=updateNode)
 
     data_kind: StringProperty(default='CURVE')
+    grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
@@ -176,6 +177,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         self.draw_ext_object_buttons(context, layout)
         row = layout.row()
         row.prop(self, "use_auto_uv", text="Use UV for mapping")
+        row.prop(self, "grouping", text="Group")
 
 
     def get_geometry_from_sockets(self, has_matrices):
@@ -235,6 +237,9 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
             last_index = len(mverts) - 1
             self.remove_non_updated_objects(last_index)
             self.set_corresponding_materials()
+
+            if self.grouping:
+                self.to_collection(self.get_children())
 
             self.outputs['object'].sv_set(out_objects)
 
