@@ -47,7 +47,6 @@ def make_or_update_instance(node, obj_name, matrix):
     else:
         mesh = meshes.get(mesh_name)
         sv_object = objects.new(obj_name, mesh)
-        #scene.objects.link(sv_object)
         scene.collection.objects.link(sv_object)
 
     # apply matrices
@@ -90,7 +89,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             return [('None', 'None', "", 0)]
 
         objs = bpy.data.objects
-        display = lambda i: (not i.name.startswith(self.basemesh_name)) and i.type == "MESH"
+        display = lambda i: (not i.name.startswith(self.basedata_name)) and i.type == "MESH"
         sorted_named_objects = sorted([i.name for i in objs if display(i)])
         return [(name, name, "") for name in sorted_named_objects]
 
@@ -107,7 +106,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         name='Show', description='Activate node?',
         update=updateNode)
 
-    basemesh_name: StringProperty(
+    basedata_name: StringProperty(
         default='Alpha',
         description='stores the mesh name found in the object, this mesh is instanced',
         update=updateNode)
@@ -145,7 +144,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Object base name", icon='OUTLINER_OB_MESH')
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(self, "basemesh_name", text="")
+        row.prop(self, "basedata_name", text="")
 
     def abort_processing(self):
 
@@ -178,11 +177,11 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # we have matrices, we can process, go go go!
         for obj_index, matrix in enumerate(matrices):
-            obj_name = self.basemesh_name + "." + str(obj_index)
+            obj_name = self.basedata_name + "." + str(obj_index)
             make_or_update_instance(self, obj_name, matrix)
 
         # obj_index is now the last index found in matrices
-        self.remove_non_updated_objects(obj_index, self.basemesh_name)
+        self.remove_non_updated_objects(obj_index, self.basedata_name)
 
         if self.grouping:
             self.to_group()
@@ -211,23 +210,23 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     def to_group(self):
 
         objs = bpy.data.objects
-        if not (self.basemesh_name in bpy.data.groups):
-            newgroup = bpy.data.groups.new(self.basemesh_name)
+        if not (self.basedata_name in bpy.data.groups):
+            newgroup = bpy.data.groups.new(self.basedata_name)
         else:
-            newgroup = bpy.data.groups[self.basemesh_name]
+            newgroup = bpy.data.groups[self.basedata_name]
 
         for obj in objs:
-            if self.basemesh_name in obj.name:
+            if self.basedata_name in obj.name:
                 if obj.name not in newgroup.objects:
                     newgroup.objects.link(obj)
 
     def ungroup(self):
-        g = bpy.data.groups.get(self.basemesh_name)
+        g = bpy.data.groups.get(self.basedata_name)
         if g:
             bpy.data.groups.remove(g)
 
     def free(self):
-        self.remove_non_updated_objects(-1, self.basemesh_name)
+        self.remove_non_updated_objects(-1, self.basedata_name)
         self.ungroup()
 
 
