@@ -54,13 +54,12 @@
       "hide": false,
       "label": "",
       "location": [
-        2257.58935546875,
-        -215.71180725097656
+        2130.222900390625,
+        -253.8050079345703
       ],
       "params": {
         "basedata_name": "Gamma",
         "depth": 0.10000000149011612,
-        "object_hide_viewport": 1,
         "object_select": 0
       },
       "use_custom_color": true,
@@ -77,17 +76,15 @@
       "hide": false,
       "label": "",
       "location": [
-        2014.40234375,
-        -192.06781005859375
+        1881.4774169921875,
+        -264.89697265625
       ],
       "params": {
-        "center": 0,
         "direction": "OD",
-        "length_mode": "Size",
-        "step": 12.069986343383789
+        "length_mode": "Number"
       },
       "use_custom_color": true,
-      "width": 152.5849609375
+      "width": 140.0
     },
     "List Input": {
       "bl_idname": "SvListInputNode",
@@ -682,30 +679,7 @@
         333.53466796875
       ],
       "params": {
-        "autosmooth": 1,
-        "basedata_name": "Tensile",
-        "lp": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
+        "basedata_name": "Tensile"
       },
       "use_custom_color": true,
       "width": 140.0
@@ -823,16 +797,28 @@
       0
     ],
     [
-      "List Input.002",
-      0,
-      "List Item",
-      1
+      "Subdivide",
+      1,
+      "Pulga Physics.001",
+      2
     ],
     [
-      "List Input.003",
+      "Math MK2",
       0,
-      "Matrix in.003",
+      "Pulga Physics.001",
       3
+    ],
+    [
+      "List Input",
+      0,
+      "Pulga Physics.001",
+      5
+    ],
+    [
+      "Transform Select",
+      0,
+      "Pulga Physics.001",
+      6
     ],
     [
       "List Input.001",
@@ -841,63 +827,15 @@
       "Input"
     ],
     [
-      "Transform Select",
-      0,
-      "List Mask (out).001",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Mask (out).001",
-      "mask"
-    ],
-    [
-      "List Mask (out).001",
+      "Pulga Physics.001",
       3,
-      "Vector out",
-      0
-    ],
-    [
-      "Polygon Grid",
-      1,
-      "Subdivide",
-      0
-    ],
-    [
-      "Polygon Grid",
-      2,
-      "Subdivide",
-      1
-    ],
-    [
-      "Polygon Grid",
-      3,
-      "Subdivide",
-      2
-    ],
-    [
-      "Subdivide",
-      0,
-      "Path Length",
+      "List Mask (out).002",
       0
     ],
     [
       "Reroute",
       "Output",
       "List Mask (out).002",
-      "mask"
-    ],
-    [
-      "Transform Select",
-      0,
-      "List Mask (out).001",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Mask (out).001",
       "mask"
     ],
     [
@@ -943,15 +881,51 @@
       1
     ],
     [
-      "List Mask (out).002",
-      3,
-      "Vector Rewire.001",
-      0
+      "UV Connection",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "UV Connection",
+      1,
+      "Solidify",
+      2
     ],
     [
       "List Mask (out).002",
       3,
       "Vector Rewire",
+      0
+    ],
+    [
+      "Subdivide",
+      "Faces",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Pulga Physics.001",
+      0,
+      "Viewer BMesh",
+      0
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Viewer BMesh",
+      "faces"
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "Vector Rewire.001",
       0
     ],
     [
@@ -971,6 +945,30 @@
       0,
       "Math MK2.001",
       0
+    ],
+    [
+      "Transform Select",
+      0,
+      "List Mask (out).001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).001",
+      "mask"
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Vector out",
+      0
+    ],
+    [
+      "List Input.003",
+      0,
+      "Matrix in.003",
+      3
     ],
     [
       "Vector out",
@@ -985,82 +983,10 @@
       1
     ],
     [
-      "List Item",
-      0,
-      "3pt Arc",
-      1
-    ],
-    [
-      "3pt Arc",
-      0,
-      "Vector Math.001",
-      0
-    ],
-    [
-      "A Number",
-      0,
-      "Vector Math.001",
-      1
-    ],
-    [
-      "3pt Arc",
-      0,
-      "UV Connection",
-      0
-    ],
-    [
-      "Vector Math.001",
-      0,
-      "UV Connection",
-      1
-    ],
-    [
-      "UV Connection",
-      0,
-      "Solidify",
-      1
-    ],
-    [
-      "UV Connection",
-      1,
-      "Solidify",
-      2
-    ],
-    [
-      "Solidify",
-      0,
-      "Viewer BMesh.001",
-      0
-    ],
-    [
-      "Solidify",
-      2,
-      "Viewer BMesh.001",
-      2
-    ],
-    [
-      "Matrix in.003",
-      0,
-      "Viewer BMesh.001",
-      4
-    ],
-    [
-      "Subdivide",
-      "Faces",
-      "Reroute.003",
-      "Input"
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Line.002",
-      4
-    ],
-    [
       "Math MK2.002",
       0,
       "Line",
-      2
+      1
     ],
     [
       "List Mask (out).001",
@@ -1087,16 +1013,22 @@
       1
     ],
     [
-      "Pulga Physics.001",
+      "Solidify",
       0,
-      "Curve Viewer",
+      "Viewer BMesh.001",
       0
     ],
     [
-      "Line.002",
-      1,
-      "Curve Viewer",
-      1
+      "Solidify",
+      2,
+      "Viewer BMesh.001",
+      2
+    ],
+    [
+      "Matrix in.003",
+      0,
+      "Viewer BMesh.001",
+      4
     ]
   ]
 }

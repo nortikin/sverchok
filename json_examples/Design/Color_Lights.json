@@ -44,8 +44,8 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Line MK2": {
-      "bl_idname": "SvLineNodeMK3",
+    "Line": {
+      "bl_idname": "SvLineNodeMK4",
       "color": [
         0.0,
         0.5,
@@ -55,10 +55,11 @@
       "hide": false,
       "label": "",
       "location": [
-        -440.75177001953125,
-        255.88723754882812
+        -554.4129028320312,
+        287.5152587890625
       ],
       "params": {
+        "length_mode": "Number",
         "num": 4,
         "step": 1.2100000381469727
       },
@@ -299,6 +300,18 @@
   },
   "update_lists": [
     [
+      "Line",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move",
+      1
+    ],
+    [
       "List Input",
       0,
       "Color in MK1",
@@ -321,18 +334,6 @@
       0,
       "List Split",
       0
-    ],
-    [
-      "Line MK2",
-      0,
-      "Move",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move",
-      1
     ],
     [
       "Move",
