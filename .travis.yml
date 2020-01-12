@@ -3,27 +3,42 @@ sudo: enabled
 
 branches:
   only:
-    master
+    - master
+    - 279_master
 
 install:
   - |
+    #set -x
+    set -e
+    if [ $TRAVIS_BRANCH = "master" ]
+    then BLENDER_VERSION=2.80
+         BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2
+         SVERCHOK_DIR=scripts/addons_contrib/sverchok
+    else BLENDER_VERSION=2.79
+         BLENDER_URL=https://www.blend4web.com/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2
+         SVERCHOK_DIR=scripts/addons/sverchok
+    fi
+    BLENDER_TAR=$(basename $BLENDER_URL)
+    BLENDER_DIR=$(basename $BLENDER_URL .tar.bz2)
     if [ ! -f installation/blender/blender ]
     then 
         mkdir -p installation
         cd installation
-        wget https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2
-        tar xf blender-2.79b-linux-glibc219-x86_64.tar.bz2
+        wget $BLENDER_URL
+        tar xf $BLENDER_TAR
         if [ -d blender ]
         then rm -rf blender
         fi
-        mv blender-2.79b-linux-glibc219-x86_64 blender
-        rm blender-2.79b-linux-glibc219-x86_64.tar.bz2
+        mv $BLENDER_DIR blender
+        rm $BLENDER_TAR
         echo "Current directory after downloading blender: $(pwd)"
         cd ..
     fi
-    ln -s ${PWD} ${PWD}/installation/blender/2.79/scripts/addons/sverchok
-    mkdir -p ~/.config/blender/2.79/config/
-    ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/2.79/config/
+
+    #mkdir -p ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+    ln -s ${PWD} ${PWD}/installation/blender/${BLENDER_VERSION}/${SVERCHOK_DIR}
+    mkdir -p ~/.config/blender/${BLENDER_VERSION}/config/
+    ln -s ${PWD}/tests/references/userpref.blend ~/.config/blender/${BLENDER_VERSION}/config/
 
 env:
   - BLENDER=${PWD}/installation/blender/blender-softwaregl
@@ -47,11 +62,11 @@ deploy:
   provider: releases
   skip_cleanup: true
   api_key: $GITHUB_TOKEN
-  github_token: $GITHUB_TOKEN
   keep_history: true
   file: docs/_build/sverchok_documentation.tar.bz2
   draft: true
   on:
+    repo: nortikin/sverchok
     condition: $DOCS_UPDATED = Y
     branch: master
 
