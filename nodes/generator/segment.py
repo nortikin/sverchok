@@ -91,7 +91,7 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
 
     a: bpy.props.FloatVectorProperty(name='A', update=updateNode)
     b: bpy.props.FloatVectorProperty(name='B', default=(0.5, 0.5, 0.5), update=updateNode)
-    cuts_number: bpy.props.IntProperty(name='Number of cuts', min=0, update=updateNode)
+    cuts_number: bpy.props.IntProperty(name='Num cuts', min=0, update=updateNode)
     as_numpy: bpy.props.BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
     split: bpy.props.BoolProperty(name="Split to objects", description="Each object in separate object",
                                    update=updateNode, default=True)
