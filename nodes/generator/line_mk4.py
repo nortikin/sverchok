@@ -229,7 +229,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Size").prop_name = 'size'
         self.inputs.new('SvVerticesSocket', "Origin").prop_name = 'v3_origin'
         self.inputs.new('SvVerticesSocket', "Direction").prop_name = 'v3_dir'
-        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvVerticesSocket', "Verts")
         self.outputs.new('SvStringsSocket', "Edges")
 
         self.inputs['Steps'].hide_safe = True

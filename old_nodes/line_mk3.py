@@ -90,7 +90,12 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    replacement_nodes = [('SvLineNodeMK4', None, None)]
+    @property
+    def replacement_nodes(self):
+        if self.direction == 'AB':
+            return [('SvSegmentGenerator', {'Num': 'Cuts'}, {'Vertices': 'Verts'})]
+        else:
+            return [('SvLineNodeMK4', None, {'Vertices': 'Verts'})]
 
     direction: EnumProperty(
         name="Direction", items=directionItems,
