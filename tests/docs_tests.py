@@ -210,7 +210,7 @@ bvh_nearest_new.py""".split("\n")
 
             if bad_files:
                 error("Category %s: The following nodes do not have corresponding documentation files:\n%s", dir_name, "\n".join(bad_files))
-                self.fail("Not all nodes have corresponding documentation.")
+                self.fail("Not all nodes have corresponding documentation; missing are:\n{}".format("\n".join(bad_files)))
 
         for directory, subdirs, fnames in walk(nodes_dir):
             with self.subTest(directory=basename(directory)):
