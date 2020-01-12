@@ -26,16 +26,9 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
-
+from sverchok.utils.sv_viewer_utils import greek_alphabet
 
 def get_random_init():
-    greek_alphabet = [
-        'Alpha', 'Beta', 'Gamma', 'Delta',
-        'Epsilon', 'Zeta', 'Eta', 'Theta',
-        'Iota', 'Kappa', 'Lamda', 'Mu',
-        'Nu', 'Xi', 'Omicron', 'Pi',
-        'Rho', 'Sigma', 'Tau', 'Upsilon',
-        'Phi', 'Chi', 'Psi', 'Omega']
     return random.choice(greek_alphabet)
 
 
