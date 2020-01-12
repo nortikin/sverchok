@@ -47,7 +47,8 @@ def make_or_update_instance(node, obj_name, matrix):
     else:
         mesh = meshes.get(mesh_name)
         sv_object = objects.new(obj_name, mesh)
-        scene.objects.link(sv_object)
+        #scene.objects.link(sv_object)
+        scene.collection.objects.link(sv_object)
 
     # apply matrices
     if matrix:
@@ -207,7 +208,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         for object_name in objs:
             obj = objects[object_name]
             obj.hide_select = False  # needed?
-            scene.objects.unlink(obj)
+            scene.collection.objects.unlink(obj)
             objects.remove(obj)
 
     def to_group(self):
