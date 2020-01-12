@@ -99,7 +99,7 @@ Email: sverchok-b3d@yandex.ru
 
 ## По-русски
 
-**дополнение к**: [Blender](http://blender.org)  (версия *2.77* и выше).  
+**дополнение к**: [Blender](http://blender.org). Эта ветка предназначена для версии *2.79*. Для версии *2.80* и выше предназначена ветка master.
 **текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **требования**: Python 3.5, numpy, они оба присутствуют в Blender  
