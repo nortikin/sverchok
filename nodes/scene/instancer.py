@@ -177,16 +177,16 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # we have matrices, we can process, go go go!
         for obj_index, matrix in enumerate(matrices):
-            obj_name = self.basedata_name + "." + str(obj_index)
+            obj_name = f'{self.basedata_name}.{obj_index:04d}'
             make_or_update_instance(self, obj_name, matrix)
 
         # obj_index is now the last index found in matrices
         self.remove_non_updated_objects(obj_index, self.basedata_name)
 
-        if self.grouping:
-            self.to_group()
-        else:
-            self.ungroup()
+        # if self.grouping:
+        #     self.to_group()
+        # else:
+        #     self.ungroup()
 
     def remove_non_updated_objects(self, obj_index, _name):
         meshes = bpy.data.meshes
