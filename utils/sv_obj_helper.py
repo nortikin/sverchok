@@ -201,6 +201,8 @@ class SvObjHelper():
         for obj in objs:
             if obj.name not in collection.objects:
                 collection.objects.link(obj)
+            if obj.name in bpy.context.scene.collection.objects:
+                bpy.context.scene.collection.objects.unlink(obj)
 
     def clear_collection(self):
         collections = bpy.data.collections
@@ -212,6 +214,8 @@ class SvObjHelper():
             """ seems the collection is already gone, this is a no op """
             return
         else:
+            for obj in collection.objects:
+                bpy.context.scene.collection.objects.link(obj)
             collections.remove(collection)
 
     def ensure_parent(self):
