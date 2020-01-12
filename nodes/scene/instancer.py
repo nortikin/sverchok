@@ -180,7 +180,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
         # we have matrices, we can process, go go go!
         for obj_index, matrix in enumerate(matrices):
-            obj_name = self.basemesh_name + "_" + str(obj_index)
+            obj_name = self.basemesh_name + "." + str(obj_index)
             make_or_update_instance(self, obj_name, matrix)
 
         # obj_index is now the last index found in matrices
@@ -197,7 +197,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
         objs = [obj for obj in objects if obj.type == 'MESH']
         objs = [obj for obj in objs if obj.name.startswith(_name)]
-        objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
+        objs = [obj.name for obj in objs if int(obj.name.split(".")[-1]) > obj_index]
         if not objs:
             return
 
