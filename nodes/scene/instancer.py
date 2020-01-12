@@ -161,10 +161,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
         socket = inputs[socket_name].links[0].from_socket
-        if socket.bl_idname == socket_type:
-            return dataCorrect(inputs[socket_name].sv_get())
-        else:
-            return []
+        return dataCorrect(inputs[socket_name].sv_get())
 
     def process(self):
         if self.abort_processing() and not self.activate:
