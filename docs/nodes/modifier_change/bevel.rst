@@ -30,6 +30,9 @@ This node has the following inputs:
 - **Amount**. Amount to offset beveled edge.
 - **Segments**. Number of segments in bevel.
 - **Profile**. Profile shape.
+- **Spread**. Controls how far the new vertices are from the meeting point.
+  This input is visible only when one of **Miter Type** parameters is set to
+  value different from **Sharp**. The default value is 0.0.
 
 Parameters
 ----------
@@ -53,9 +56,6 @@ This node has the following parameters:
 | **Clamp Overlap** | Boolean       | False       | If checked, do not allow beveled edges/vertices to |
 |                   |               |             | overlap each other                                 |
 +-------------------+---------------+-------------+----------------------------------------------------+
-| **Loop Slide**    | Boolean       | True        | If checked, prefer to slide along edges to having  |
-|                   |               |             | even widths                                        |
-+-------------------+---------------+-------------+----------------------------------------------------+
 | **Amount**        | Float         | 0.0         | Amount to offset beveled edge. Exact               |
 |                   |               |             | interpretation of this parameter depends on        |
 |                   |               |             | ``Amount type`` parameter. Default value of zero   |
@@ -69,6 +69,20 @@ This node has the following parameters:
 |                   |               |             | default value of 0.5 means round shape.  This      |
 |                   |               |             | parameter can also be specified via corresponding  |
 |                   |               |             | input.                                             |
++-------------------+---------------+-------------+----------------------------------------------------+
+| **Spread**        | Float         | 0.0         | See corresponding input description above.         |
++-------------------+---------------+-------------+----------------------------------------------------+
+| **Loop Slide**    | Boolean       | True        | If checked, prefer to slide along edges to having  |
+|                   |               |             | even widths. This parameter is available in the    |
+|                   |               |             | N panel only.                                      |
++-------------------+---------------+-------------+----------------------------------------------------+
+| **Miter type** /  | Sharp or      | Sharp       | Inner miter type. See Blender documentation for    |
+| **Inner**         | Patch or      |             | the details. This parameter is available in the N  |
+|                   | Arc           |             | panel only.                                        |
++-------------------+---------------+-------------+----------------------------------------------------+
+| **Miter type** /  | Sharp or      | Sharp       | Outer miter type. See Blender documentation for    |
+| **Outer**         | Patch or      |             | the details. This parameter is available in the N  |
+|                   | Arc           |             | panel only.                                        |
 +-------------------+---------------+-------------+----------------------------------------------------+
 
 Outputs

@@ -814,7 +814,8 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         outputs.move(len(outputs)-1, socket_pos)
 
         for to_socket in to_sockets:
-            ng.links.new(new_socket, to_socket)
+            link = ng.links.new(new_socket, to_socket)
+            link.is_valid = True
 
     else:
         inputs = socket.node.inputs
@@ -825,7 +826,8 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         inputs.move(len(inputs)-1, socket_pos)
 
         if from_socket:
-            ng.links.new(from_socket, new_socket)
+            link = ng.links.new(from_socket, new_socket)
+            link.is_valid = True
 
     ng.unfreeze()
 

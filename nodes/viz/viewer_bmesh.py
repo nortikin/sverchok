@@ -228,7 +228,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_icon = 'OUTLINER_OB_MESH'
     sv_icon = 'SV_BMESH_VIEWER'
 
-    grouping: BoolProperty(default=False)
+    grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
     merge: BoolProperty(default=False, update=updateNode)
 
     calc_normals: BoolProperty(default=False, update=updateNode)
@@ -378,7 +378,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             objs = self.get_children()
 
             if self.grouping:
-                self.to_group(objs)
+                self.to_collection(objs)
 
             # truthy if self.material is in .materials
             if bpy.data.materials.get(self.material):

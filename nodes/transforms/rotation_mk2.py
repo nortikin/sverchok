@@ -23,7 +23,7 @@ from mathutils import Matrix, Vector, Euler, Quaternion
 import bpy
 from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_recursive import sv_recursive_transformations
 
@@ -76,6 +76,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     separate: BoolProperty(
         name='separate', description='Separate UV coords', default=False, update=updateNode)
 
+    @throttled
     def mode_change(self, context):
         # just because click doesn't mean we need to change mode
         mode = self.mode
@@ -97,7 +98,6 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
 
         self.current_mode = mode
-        updateNode(self, context)
 
     modes = [
         ("AXIS", "Axis", "Axis and angle rotation", 1),
@@ -125,6 +125,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "axis")
         self.inputs.new('SvStringsSocket', "angle").prop_name = "angle_"
         self.outputs.new('SvVerticesSocket', "vertices")
+        self.mode_change(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -167,6 +168,9 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['vertices'].sv_set(points)
 
+    def storage_set_data(self, storage):
+        self.mode = storage["params"]["mode"]
+        self.mode_change(None)
 
 
 def register():

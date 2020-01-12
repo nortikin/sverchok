@@ -21,22 +21,13 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.utils.math import from_cylindrical, from_spherical
 
 def cylindrical(rho, phi, z, mode):
-    if mode == "degrees":
-        phi = radians(phi)
-    x = rho*cos(phi)
-    y = rho*sin(phi)
-    return x, y, z
+    return from_cylindrical(rho, phi, z, mode)
 
 def spherical(rho, phi, theta, mode):
-    if mode == "degrees":
-        phi = radians(phi)
-        theta = radians(theta)
-    x = rho * sin(theta) * cos(phi)
-    y = rho * sin(theta) * sin(phi)
-    z = rho * cos(theta)
-    return x, y, z
+    return from_spherical(rho, phi, theta,mode)
 
 class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
     '''Generate vectors by spherical or cylindrical coordinates'''

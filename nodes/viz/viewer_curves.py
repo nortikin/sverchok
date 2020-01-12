@@ -46,7 +46,7 @@ def set_curve_props(node, cu):
 
 
 # -- DUPLICATES --
-def make_duplicates_live_curve(node, object_index, verts, edges, matrices):
+def make_duplicates_live_curve(node, obj_index, verts, edges, matrices):
     curves = bpy.data.curves
     objects = bpy.data.objects
     collection = bpy.context.scene.collection
@@ -197,7 +197,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         default=fill_modes_3d[3][0], update=updateNode)
 
     data_kind: StringProperty(default='CURVE')
-    grouping: BoolProperty(default=False)
+    grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
 
     depth: FloatProperty(min=0.0, default=0.2, update=updateNode)
     resolution: IntProperty(min=0, default=3, update=updateNode)
@@ -301,52 +301,52 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         single_set = (len(mverts) == 1) and (len(mrest[-1]) > 1)
         has_matrices = self.inputs['matrix'].is_linked
 
-        if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
-            obj_index = 0
-            self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
+        with self.sv_throttle_tree_update():
 
-            if mode == "Duplicate":
-                obj_index = len(mrest[1]) - 1
+            if single_set and (mode in {'Merge', 'Duplicate'}) and has_matrices:
+                obj_index = 0
+                self.output_dupe_or_merged_geometry(mode, mverts, *mrest)
 
-        else:
-
-            def get_edges_matrices(obj_index):
-                for geom in mrest:
-                    yield self.get_structure(geom, obj_index)
-
-            # extend all non empty lists to longest of mverts or *mrest
-            maxlen = max(len(mverts), *(map(len, mrest)))
-            fullList(mverts, maxlen)
-            for idx in range(2):
-                if mrest[idx]:
-                    fullList(mrest[idx], maxlen)
-
-            if self.curve_dimensions == '3D':
-
-                for obj_index, Verts in enumerate(mverts):
-                    if not Verts:
-                        continue
-
-                    data = get_edges_matrices(obj_index)
-                    make_curve_geometry(self, bpy.context, obj_index, Verts, *data)
-
-                # we must be explicit
-                obj_index = len(mverts) - 1
+                if mode == "Duplicate":
+                    obj_index = len(mrest[1]) - 1
 
             else:
-                obj_index = 0
-                make_curve_geometry(self, bpy.context, obj_index, mverts, *mrest)
 
+                def get_edges_matrices(obj_index):
+                    for geom in mrest:
+                        yield self.get_structure(geom, obj_index)
 
+                # extend all non empty lists to longest of mverts or *mrest
+                maxlen = max(len(mverts), *(map(len, mrest)))
+                fullList(mverts, maxlen)
+                for idx in range(2):
+                    if mrest[idx]:
+                        fullList(mrest[idx], maxlen)
 
-        self.remove_non_updated_objects(obj_index)
-        objs = self.get_children()
+                if self.curve_dimensions == '3D':
 
-        if self.grouping:
-            self.to_group(objs)
+                    for obj_index, Verts in enumerate(mverts):
+                        if not Verts:
+                            continue
 
-        self.set_corresponding_materials()
-        self.remove_cloner_curve(obj_index)
+                        data = get_edges_matrices(obj_index)
+                        make_curve_geometry(self, bpy.context, obj_index, Verts, *data)
+
+                    # we must be explicit
+                    obj_index = len(mverts) - 1
+
+                else:
+                    obj_index = 0
+                    make_curve_geometry(self, bpy.context, obj_index, mverts, *mrest)
+
+            self.remove_non_updated_objects(obj_index)
+            objs = self.get_children()
+
+            if self.grouping:
+                self.to_collection(objs)
+
+            self.set_corresponding_materials()
+            self.remove_cloner_curve(obj_index)
 
 
 def register():

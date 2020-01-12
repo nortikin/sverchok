@@ -21,7 +21,7 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
@@ -58,9 +58,11 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
 
+    @throttled
     def mode_change(self, context):
         self.inputs[5].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
-        updateNode(self, [])
+        if 'Spread' in self.inputs:
+            self.inputs['Spread'].hide_safe = self.miter_inner == 'SHARP' and self.miter_outer == 'SHARP'
 
     offset_: FloatProperty(
         name='Amount', description='Amount to offset beveled edge',
@@ -101,6 +103,32 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
+    miter_types = [
+        ('SHARP', "Sharp", "Sharp", 0),
+        ('PATCH', "Patch", "Patch", 1),
+        ('ARC', "Arc", "Arc", 2)
+    ]
+
+    miter_outer : EnumProperty(
+        name = "Outer",
+        description = "Outer mitter type",
+        items = miter_types,
+        default = 'SHARP',
+        update = mode_change)
+
+    miter_inner : EnumProperty(
+        name = "Inner",
+        description = "Inner mitter type",
+        items = miter_types,
+        default = 'SHARP',
+        update = mode_change)
+    
+    spread : FloatProperty(
+        name = "Spread",
+        description = "Amount to offset beveled edge",
+        default = 0.0, min = 0.0,
+        update = updateNode)
+
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
         si('SvVerticesSocket', "Vertices")
@@ -113,6 +141,7 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         si('SvStringsSocket', "Offset").prop_name = "offset_"
         si('SvStringsSocket', "Segments").prop_name = "segments_"
         si('SvStringsSocket', "Profile").prop_name = "profile_"
+        si('SvStringsSocket', "Spread").prop_name = "spread"
 
         so('SvVerticesSocket', 'Vertices')
         so('SvStringsSocket', 'Edges')
@@ -120,11 +149,20 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         so('SvStringsSocket', 'FaceData')
         so('SvStringsSocket', 'NewPolys')
 
+        self.mode_change(context)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "vertexOnly")
         layout.prop(self, "clamp_overlap")
+        layout.label(text="Amount type:")
+        layout.prop(self, "offsetType", expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         layout.prop(self, "loop_slide")
-        layout.prop(self, "offsetType")
+        layout.label(text="Miter type:")
+        layout.prop(self, 'miter_inner')
+        layout.prop(self, 'miter_outer')
 
     def get_socket_data(self):
         vertices = self.inputs['Vertices'].sv_get(default=[[]])
@@ -145,7 +183,11 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         offsets = self.inputs['Offset'].sv_get()[0]
         segments = self.inputs['Segments'].sv_get()[0]
         profiles = self.inputs['Profile'].sv_get()[0]
-        return vertices, edges, faces, face_data, mask, offsets, segments, profiles, bevel_face_data
+        if 'Spread' in self.inputs:
+            spreads = self.inputs['Spread'].sv_get()[0]
+        else:
+            spreads = [0.0]
+        return vertices, edges, faces, face_data, mask, offsets, segments, profiles, bevel_face_data, spreads
 
     def create_geom(self, bm, mask):
         if not self.vertexOnly:
@@ -171,12 +213,12 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
 
         meshes = match_long_repeat(self.get_socket_data())
 
-        for vertices, edges, faces, face_data, mask, offset, segments, profile, bevel_face_data in zip(*meshes):
+        for vertices, edges, faces, face_data, mask, offset, segments, profile, bevel_face_data, spread in zip(*meshes):
             if face_data:
                 fullList(face_data, len(faces))
             if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
                 bevel_face_data = bevel_face_data[0]
-            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True)
+            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
             geom = self.create_geom(bm, mask)
 
             try:
@@ -189,6 +231,9 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
                     vertex_only=self.vertexOnly,
                     clamp_overlap = self.clamp_overlap,
                     loop_slide = self.loop_slide,
+                    spread = spread,
+                    miter_inner = self.miter_inner,
+                    miter_outer = self.miter_outer,
                     # strength= (float)
                     # hnmode= (enum in ['NONE', 'FACE', 'ADJACENT', 'FIXED_NORMAL_SHADING'], default 'NONE')
                     material=-1)['faces']

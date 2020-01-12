@@ -169,10 +169,11 @@ class Edges(object):
         for bm_edge in bm.edges:
             i1, i2 = bm_edge.verts[0].index, bm_edge.verts[1].index
             orig_edge_idx = orig_edges_incidence[i1][i2]
-            orig_edge = orig_edges[orig_edge_idx]
+            orig_edge = tuple(orig_edges[orig_edge_idx])
             bm_edges[orig_edge] = bm_edge
 
         for orig_edge in orig_edges:
+            orig_edge = tuple(orig_edge)
             bm_edge = bm_edges[orig_edge]
             ok = is_good(bm_edge)
             if ok:

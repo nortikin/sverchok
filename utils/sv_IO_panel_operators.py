@@ -222,8 +222,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
         except Exception as err:
             if 'not JSON serializable' in repr(err):
                 error(layout_dict)
-            else:
-                exception(err)
+            exception(err)
             self.report({'WARNING'}, "See terminal/Command prompt for printout of error")
             return {'CANCELLED'}
 

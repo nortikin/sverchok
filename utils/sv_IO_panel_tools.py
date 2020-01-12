@@ -197,6 +197,12 @@ def can_skip_property(node, k):
     frame_collection_name / type_collection_name both store Collection properties..avoiding for now
     """
 
+    if hasattr(node, 'properties_to_skip_iojson'):
+        if k == 'properties_to_skip_iojson':
+            return True
+        if k in node.properties_to_skip_iojson:
+            return True
+
     if k in {'n_id', 'typ', 'newsock', 'dynamic_strings', 'frame_collection_name', 'type_collection_name'}:
         return True
 

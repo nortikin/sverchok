@@ -24,72 +24,76 @@ import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, bmesh_edges_from_edge_mask
 
 def is_matrix(lst):
     return len(lst) == 4 and len(lst[0]) == 4
 
-class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Extrude edges '''
-    bl_idname = 'SvExtrudeEdgesNode'
-    bl_label = 'Extrude Edges'
+class SvExtrudeEdgesNodeMk2(bpy.types.Node, SverchCustomTreeNode):
+    '''
+    Triggers: Extrude edges
+    Tooltip: Extrude some edges of the mesh
+    '''
+    bl_idname = 'SvExtrudeEdgesNodeMk2'
+    bl_label = 'Extrude Edges Mk2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_EXTRUDE_EDGES'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
-        self.inputs.new('SvStringsSocket', 'Edg_Pol')
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Faces')
+        self.inputs.new('SvStringsSocket', 'EdgeMask')
+        self.inputs.new('SvStringsSocket', 'FaceData')
         self.inputs.new('SvMatrixSocket', "Matrices")
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
         self.outputs.new('SvStringsSocket', 'Edges')
-        self.outputs.new('SvStringsSocket', 'Polygons')
+        self.outputs.new('SvStringsSocket', 'Faces')
         self.outputs.new('SvVerticesSocket', 'NewVertices')
         self.outputs.new('SvStringsSocket', 'NewEdges')
         self.outputs.new('SvStringsSocket', 'NewFaces')
+        self.outputs.new('SvStringsSocket', 'FaceData')
 
     def process(self):
-        # inputs
         if not (self.inputs['Vertices'].is_linked):
             return
 
+        if not any(output.is_linked for output in self.outputs):
+            return
+
         vertices_s = self.inputs['Vertices'].sv_get()
-        edges_s = self.inputs['Edg_Pol'].sv_get(default=[[]])
-        #faces_s = self.inputs['Polygons'].sv_get(default=[[]])
+        edges_s = self.inputs['Edges'].sv_get(default=[[]])
+        faces_s = self.inputs['Faces'].sv_get(default=[[]])
         matrices_s = self.inputs['Matrices'].sv_get(default=[[]])
         if is_matrix(matrices_s[0]):
             matrices_s = [Matrix_generate(matrices_s)]
         else:
             matrices_s = [Matrix_generate(matrices) for matrices in matrices_s]
-        #extrude_edges_s = self.inputs['ExtrudeEdges'].sv_get(default=[[]])
+        edge_masks_s = self.inputs['EdgeMask'].sv_get(default=[[]])
+        face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
 
         result_vertices = []
         result_edges = []
         result_faces = []
+        result_face_data = []
         result_ext_vertices = []
         result_ext_edges = []
         result_ext_faces = []
 
-        meshes = match_long_repeat([vertices_s, edges_s, matrices_s]) #, extrude_edges_s])
+        meshes = match_long_repeat([vertices_s, edges_s, faces_s, edge_masks_s, face_data_s, matrices_s])
 
-        for vertices, edges, matrices in zip(*meshes):
-            if len(edges[0]) == 2:
-                faces = []
-            else:
-                faces = edges.copy()
-                edges = []
+        for vertices, edges, faces, edge_mask, face_data, matrices in zip(*meshes):
             if not matrices:
                 matrices = [Matrix()]
+            if face_data:
+                fullList(face_data, len(faces))
 
-            bm = bmesh_from_pydata(vertices, edges, faces)
-            # better to do it in separate node, not integrate by default.
-            #if extrude_edges:
-            #    b_edges = []
-            #    for edge in extrude_edges:
-            #        b_edge = [e for e in bm.edges if set([v.index for v in e.verts]) == set(edge)]
-            #        b_edges.append(b_edge[0])
-            #else:
-            b_edges = bm.edges
+            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, markup_edge_data=True)
+            if edge_mask:
+                b_edges = bmesh_edges_from_edge_mask(bm, edge_mask)
+            else:
+                b_edges = bm.edges
 
             new_geom = bmesh.ops.extrude_edge_only(bm, edges=b_edges, use_select_history=False)['geom']
 
@@ -106,33 +110,34 @@ class SvExtrudeEdgesNode(bpy.types.Node, SverchCustomTreeNode):
             extruded_faces = [f for f in new_geom if isinstance(f, bmesh.types.BMFace)]
             extruded_faces = [[v.index for v in edge.verts] for edge in extruded_faces]
 
-            new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+            if face_data:
+                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
+            else:
+                new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
+                new_face_data = []
             bm.free()
 
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
+            result_face_data.append(new_face_data)
             result_ext_vertices.append(extruded_verts)
             result_ext_edges.append(extruded_edges)
             result_ext_faces.append(extruded_faces)
 
-        if self.outputs['Vertices'].is_linked:
-            self.outputs['Vertices'].sv_set(result_vertices)
-        if self.outputs['Edges'].is_linked:
-            self.outputs['Edges'].sv_set(result_edges)
-        if self.outputs['Polygons'].is_linked:
-            self.outputs['Polygons'].sv_set(result_faces)
-        if self.outputs['NewVertices'].is_linked:
-            self.outputs['NewVertices'].sv_set(result_ext_vertices)
-        if self.outputs['NewEdges'].is_linked:
-            self.outputs['NewEdges'].sv_set(result_ext_edges)
-        if self.outputs['NewFaces'].is_linked:
-            self.outputs['NewFaces'].sv_set(result_ext_faces)
+        self.outputs['Vertices'].sv_set(result_vertices)
+        self.outputs['Edges'].sv_set(result_edges)
+        self.outputs['Faces'].sv_set(result_faces)
+        self.outputs['FaceData'].sv_set(result_face_data)
+        self.outputs['NewVertices'].sv_set(result_ext_vertices)
+        self.outputs['NewEdges'].sv_set(result_ext_edges)
+        self.outputs['NewFaces'].sv_set(result_ext_faces)
 
 
 def register():
-    bpy.utils.register_class(SvExtrudeEdgesNode)
+    bpy.utils.register_class(SvExtrudeEdgesNodeMk2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvExtrudeEdgesNode)
+    bpy.utils.unregister_class(SvExtrudeEdgesNodeMk2)
+

@@ -176,14 +176,15 @@ def inset_faces_region_one_value(verts, faces, thickness, depth, edges=None, fac
         props = {'use_even_offset', 'use_boundary'}
     if face_mask is None:
         face_mask = cycle([True])
+    else:
+        face_mask = chain(face_mask, cycle([face_mask[-1]]))
     bm = bmesh_from_sv(verts, faces, edges, face_int_layers={'sv': list(range(len(faces))), 'mask': None})
     mask = bm.faces.layers.int.get('mask')
 
     if thickness or depth:
         # use_interpolate: Interpolate mesh data: e.g. UV’s, vertex colors, weights, etc.
-        iter_face_mask = chain(face_mask, cycle([face_mask[-1]])) if face_mask is not None else face_mask
         ins_faces = []
-        for f, m in zip(list(bm.faces), iter_face_mask):
+        for f, m in zip(list(bm.faces), face_mask):
             if m:
                 ins_faces.append(f)
             else:
@@ -332,6 +333,20 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
     inset_type: bpy.props.EnumProperty(items=inset_type_items, update=updateNode,
                                        description="Switch between inserting type")
 
+    properties_to_skip_iojson = ['mask_type']
+
+    replacement_nodes = [
+        ('SvExtrudeSeparateNode',
+            dict(Verts='Vertices', Faces='Polygons'),
+            dict(Verts='Vertices', Faces='Polygons')),
+        ('SvExtrudeSeparateLiteNode',
+            dict(Verts='Vertices', Faces='Polygons'),
+            dict(Verts='Vertices', Faces='Polygons')),
+        ('SvInsetSpecial',
+            dict(Verts='vertices', Faces='polygons'),
+            dict(Verts='vertices', Faces='polygons')),
+    ]
+
     def draw_buttons(self, context, layout):
         layout.prop(self, 'inset_type', expand=True)
 
@@ -382,6 +397,11 @@ class SvInsetFaces(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['Face data'].sv_set(out_face_data)
         self.outputs['Mask'].sv_set(out_mask)
 
+    def storage_get_data(self, storage):
+        storage['mask_type'] = list(self.mask_type)
+
+    def storage_set_data(self, storage):
+        self.mask_type = set(storage.get('mask_type', []))
 
 def register():
     bpy.utils.register_class(SvInsetFaces)

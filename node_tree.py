@@ -429,12 +429,15 @@ class SverchCustomTreeNode:
         if hasattr(self, "replacement_nodes"):
             for bl_idname, inputs_mapping, outputs_mapping in self.replacement_nodes:
                 node_class = get_node_class_reference(bl_idname)
-                text = "Replace with {}".format(node_class.bl_label)
-                op = layout.operator("node.sv_replace_node", text=text)
-                op.old_node_name = self.name
-                op.new_bl_idname = bl_idname
-                set_inputs_mapping(op, inputs_mapping)
-                set_outputs_mapping(op, outputs_mapping)
+                if node_class:
+                    text = "Replace with {}".format(node_class.bl_label)
+                    op = layout.operator("node.sv_replace_node", text=text)
+                    op.old_node_name = self.name
+                    op.new_bl_idname = bl_idname
+                    set_inputs_mapping(op, inputs_mapping)
+                    set_outputs_mapping(op, outputs_mapping)
+                else:
+                    self.error("Can't build replacement menu: no such node class: %s",bl_idname)
 
     def rclick_menu(self, context, layout):
         """

@@ -118,7 +118,7 @@ class SvScalarMathNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Scalar Math'
     sv_icon = 'SV_FUNCTION'
 
-    replacement_nodes = [('SvScalarMathNodeMK3', None, None)]
+    replacement_nodes = [('SvScalarMathNodeMK4', None, None)]
 
     def mode_change(self, context):
         self.update_sockets()

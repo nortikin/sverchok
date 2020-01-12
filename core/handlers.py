@@ -5,7 +5,7 @@ from bpy.app.handlers import persistent
 
 from sverchok import old_nodes
 from sverchok import data_structure
-from sverchok.core import upgrade_nodes, upgrade_group, undo_handler_node_count
+from sverchok.core import upgrade_nodes, undo_handler_node_count
 
 
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
@@ -151,8 +151,6 @@ def sv_post_load(scene):
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
         if monad.input_node and monad.output_node:
             monad.update_cls()
-        else:
-            upgrade_group.upgrade_group(monad)
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)

@@ -294,7 +294,7 @@ class SverchokPreferences(AddonPreferences):
 
 
     # updating sverchok
-    dload_archive_name: StringProperty(name="archive name", default="b28_prelease_master") # default = "master"
+    dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
     dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
 
 

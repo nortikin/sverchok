@@ -30,7 +30,7 @@ class SvObjEditCallback(bpy.types.Operator):
     """ """
     bl_idname = "node.sverchok_objectedit_cb"
     bl_label = "Sverchok object in lite callback"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
 
     cmd: StringProperty()

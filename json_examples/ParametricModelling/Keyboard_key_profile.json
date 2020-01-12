@@ -1,0 +1,347 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -408.0633850097656,
+        -87.2991943359375
+      ],
+      "params": {
+        "float_": 2.049999952316284,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -594.422119140625,
+        -314.2785339355469
+      ],
+      "params": {
+        "float_": 2.0,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.002": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -677.5458374023438,
+        -554.0211181640625
+      ],
+      "params": {
+        "float_": 9.639999389648438,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "A Number.003": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -421.47198486328125,
+        -0.5745044350624084
+      ],
+      "params": {
+        "float_": 0.7200000286102295,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        379.827392578125,
+        -79.8314208984375
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        373.3113708496094,
+        -340.7271728515625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Profile Parametric Mk3": {
+      "bl_idname": "SvProfileNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -155.7331085205078,
+        102.40142822265625
+      ],
+      "params": {
+        "filename": "Text",
+        "selected_axis": "Y"
+      },
+      "profile": "default height = 1.0\ndefault width = 4.0\ndefault depress = 0.1\ndefault top_coeff = 0.9\n\nlet depression = {height * depress}\nlet top_width = {width * top_coeff}\nlet depress_r = {(4*depression**2 + top_width**2)/(8*depression)}\nlet dx = {(width - top_width)/2.0}\n\nM {-width/2.0},0\nl dx, height\na depress_r, depress_r 0 0 1\n  top_width,0\nl dx, -height",
+      "width": 140.0
+    },
+    "Rotation": {
+      "bl_idname": "SvRotationNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        112.3032455444336,
+        44.82217025756836
+      ],
+      "params": {
+        "current_mode": "EULER",
+        "mode": "EULER",
+        "x_": -13.0
+      },
+      "width": 140.0
+    },
+    "Rotation.002": {
+      "bl_idname": "SvRotationNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        119.12319946289062,
+        -472.1751708984375
+      ],
+      "params": {
+        "current_mode": "EULER",
+        "mode": "EULER"
+      },
+      "width": 140.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -411.50726318359375,
+        -573.8271484375
+      ],
+      "params": {
+        "current_op": "NEG",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Scalar Math.002": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -415.73388671875,
+        -221.2644805908203
+      ],
+      "params": {
+        "current_op": "NEG",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        691.7305297851562,
+        -7.395121097564697
+      ],
+      "params": {
+        "cap_U": 1,
+        "cap_V": 1,
+        "cicl_check_U": 0,
+        "cicl_check_V": 1,
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "VD Experimental": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        929.8251953125,
+        93.83525848388672
+      ],
+      "params": {
+        "activate": 1,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -230.46170043945312,
+        -281.4584655761719
+      ],
+      "params": {
+        "x_": 0.0,
+        "y_": -2.0
+      },
+      "width": 100.0
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -243.49375915527344,
+        -439.3004150390625
+      ],
+      "params": {
+        "x_": 0.0,
+        "y_": -2.0
+      },
+      "width": 100.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number.001",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Vector in",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Profile Parametric Mk3",
+      1
+    ],
+    [
+      "A Number.003",
+      0,
+      "Profile Parametric Mk3",
+      2
+    ],
+    [
+      "Profile Parametric Mk3",
+      0,
+      "Rotation.002",
+      0
+    ],
+    [
+      "A Number.002",
+      0,
+      "Rotation.002",
+      1
+    ],
+    [
+      "A Number.001",
+      0,
+      "Vector in.001",
+      1
+    ],
+    [
+      "Rotation.002",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Move.001",
+      1
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      0,
+      "Rotation",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Rotation",
+      1
+    ],
+    [
+      "Rotation",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "Move",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Move.001",
+      0,
+      "UV Connection",
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "VD Experimental",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "VD Experimental",
+      2
+    ]
+  ]
+}

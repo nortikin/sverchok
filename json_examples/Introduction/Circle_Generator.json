@@ -1,0 +1,389 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        27.58025550842285,
+        -895.8607177734375
+      ],
+      "params": {
+        "float_": 60.0,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "Formula": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -347.0594482421875,
+        -917.5125732421875
+      ],
+      "params": {
+        "formula1": "cos(x*pi/180)*n0",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Formula.001": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -396.8990783691406,
+        -734.0225830078125
+      ],
+      "params": {
+        "formula1": "sin(x*pi/180)*n0*cos(n)",
+        "wrap": 0
+      },
+      "width": 189.837158203125
+    },
+    "Formula.002": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -347.0476989746094,
+        -351.4258117675781
+      ],
+      "params": {
+        "formula1": "cos(x*pi/180)",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Formula.003": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -347.04827880859375,
+        -164.75888061523438
+      ],
+      "params": {
+        "formula1": "sin(x*pi/180)",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Gen Vectors.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -36.49382019042969,
+        -713.0039672851562
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Gen Vectors.003": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -36.49308776855469,
+        -328.09088134765625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Zip": {
+      "bl_idname": "ZipNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -36.49366760253906,
+        -488.3409423828125
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Matrix in.001": {
+      "bl_idname": "SvMatrixGenNodeMK2",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        284.8458557128906,
+        -687.3954467773438
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -845.1690063476562,
+        -143.183837890625
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "int",
+        "range_mode": "RANGE",
+        "start_int": 0,
+        "step_int": 20,
+        "stop_int": 380
+      },
+      "width": 140.0
+    },
+    "Number Range.001": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -844.2490234375,
+        -300.7467956542969
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE",
+        "start_float": 1.0,
+        "step_float": 0.10000000149011612,
+        "stop_float": 2.799999952316284
+      },
+      "width": 140.0
+    },
+    "Number Range.002": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -841.1259155273438,
+        -458.56890869140625
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "int",
+        "range_mode": "RANGE",
+        "start_int": 0,
+        "step_int": 1,
+        "stop_int": 18
+      },
+      "width": 140.0
+    },
+    "Number Range.003": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -843.0715942382812,
+        -617.7630615234375
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "int",
+        "range_mode": "RANGE",
+        "start_int": 1,
+        "step_int": 1,
+        "stop_int": 19
+      },
+      "width": 140.0
+    },
+    "Number Range.004": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -842.9569702148438,
+        -775.7496948242188
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "int",
+        "range_mode": "RANGE",
+        "start_int": 1,
+        "step_int": 10,
+        "stop_int": 720
+      },
+      "width": 140.0
+    },
+    "Number Range.005": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -845.2865600585938,
+        -939.5830078125
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE",
+        "start_float": 1.0,
+        "step_float": 0.10000000149011612,
+        "stop_float": 8.199999809265137
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        538.5095825195312,
+        -408.8273010253906
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Number Range",
+      0,
+      "Formula.003",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Formula.002",
+      0
+    ],
+    [
+      "Formula.003",
+      0,
+      "Gen Vectors.003",
+      0
+    ],
+    [
+      "Formula.002",
+      0,
+      "Gen Vectors.003",
+      1
+    ],
+    [
+      "Number Range.002",
+      0,
+      "List Zip",
+      0
+    ],
+    [
+      "Number Range.003",
+      0,
+      "List Zip",
+      1
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula.001",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
+      1
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
+      2
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula",
+      1
+    ],
+    [
+      "Formula.001",
+      0,
+      "Gen Vectors.001",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "Gen Vectors.001",
+      1
+    ],
+    [
+      "Formula.001",
+      0,
+      "Gen Vectors.001",
+      2
+    ],
+    [
+      "Gen Vectors.001",
+      0,
+      "Matrix in.001",
+      0
+    ],
+    [
+      "Gen Vectors.001",
+      0,
+      "Matrix in.001",
+      2
+    ],
+    [
+      "A Number",
+      0,
+      "Matrix in.001",
+      3
+    ],
+    [
+      "Gen Vectors.003",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "List Zip",
+      0,
+      "Viewer Draw Mk3",
+      1
+    ],
+    [
+      "Matrix in.001",
+      0,
+      "Viewer Draw Mk3",
+      3
+    ]
+  ]
+}

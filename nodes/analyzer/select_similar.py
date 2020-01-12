@@ -22,9 +22,9 @@ from mathutils import Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.utils.modules.polygon_utils import areas_from_polygons, perimeters_from_polygons
-from sverchok.utils.modules.edge_utils import edges_length, edges_direction, adjacent_faces, faces_angle
-from sverchok.utils.modules.vertex_utils import adjacent_edg_pol
+from sverchok.utils.modules.polygon_utils import areas_from_polygons, pols_perimeters
+from sverchok.utils.modules.edge_utils import edges_length, edges_direction, adjacent_faces_number, faces_angle
+from sverchok.utils.modules.vertex_utils import adjacent_edg_pol_num
 
 def equals(val, orig_val, threshold):
     return orig_val - threshold <= val <= orig_val + threshold
@@ -178,9 +178,9 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
             bm.free()
             compare_func = equal_vectors
         elif int(self.vertex_mode) == 1:
-            vals = adjacent_edg_pol(vertices, faces)
+            vals = adjacent_edg_pol_num(vertices, faces)
         elif int(self.vertex_mode) == 3:
-            vals = adjacent_edg_pol(vertices, edges)
+            vals = adjacent_edg_pol_num(vertices, edges)
 
         return vals, compare_func
 
@@ -191,7 +191,7 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
             vals = edges_direction(vertices, edges, out_numpy=False)
             compare_func = equal_vectors
         elif int(self.edge_mode) == 103:
-            vals = adjacent_faces(edges, faces)
+            vals = adjacent_faces_number(edges, faces)
         elif int(self.edge_mode) == 104:
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
             normals = [tuple(face.normal) for face in bm.faces]
@@ -206,7 +206,7 @@ class SvSelectSimilarNode(bpy.types.Node, SverchCustomTreeNode):
         elif int(self.face_mode) == 204:
             vals = [len(p) for p in faces]
         elif int(self.face_mode) == 205:
-            vals = perimeters_from_polygons(vertices, faces)
+            vals = pols_perimeters(vertices, faces)
         elif  int(self.face_mode) == 206:
             bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
             vals = [tuple(face.normal) for face in bm.faces]

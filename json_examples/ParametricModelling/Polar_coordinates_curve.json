@@ -1,0 +1,139 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -607.5752563476562,
+        143.81753540039062
+      ],
+      "params": {
+        "count_": 100,
+        "mode": 2,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_": 0.8190000653266907,
+        "start_float": 0.12999999523162842,
+        "step_float": 1.0,
+        "stop_": 1.0,
+        "stop_float": 1.0
+      },
+      "width": 140.0
+    },
+    "Number Range.001": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -604.6683349609375,
+        -58.778350830078125
+      ],
+      "params": {
+        "count_": 100,
+        "mode": 2,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.0,
+        "step_float": 1.0,
+        "stop_": 360.0,
+        "stop_float": 360.0
+      },
+      "width": 140.0
+    },
+    "UV Connect.001": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -167.7644500732422,
+        80.12126159667969
+      ],
+      "params": {
+        "cicl_check_U": 0,
+        "cicl_check_V": 0,
+        "dir_check": "U_dir",
+        "polygons": "Edges"
+      },
+      "width": 140.0
+    },
+    "Vectors polar in": {
+      "bl_idname": "VectorPolarInNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -397.9419250488281,
+        107.2435302734375
+      ],
+      "params": {
+        "angles_mode": "degrees",
+        "coordinates": "theta_",
+        "phi_": 40.31999969482422
+      },
+      "width": 151.9700927734375
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        32.23554992675781,
+        80.12126159667969
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Number Range",
+      0,
+      "Vectors polar in",
+      0
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Vectors polar in",
+      1
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Vectors polar in",
+      2
+    ],
+    [
+      "Vectors polar in",
+      0,
+      "UV Connect.001",
+      0
+    ],
+    [
+      "UV Connect.001",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "UV Connect.001",
+      1,
+      "Viewer Draw Mk3",
+      1
+    ]
+  ]
+}

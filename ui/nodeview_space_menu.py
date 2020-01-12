@@ -120,6 +120,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddQuaternion", **icon('SV_QUATERNION'))
         layout.menu("NODEVIEW_MT_AddLogic", **icon("SV_LOGIC"))
         layout.menu("NODEVIEW_MT_AddListOps", **icon('NLA'))
+        layout.menu("NODEVIEW_MT_AddDictionary", icon='OUTLINER_OB_FONT')
         layout.separator()
         layout.menu("NODEVIEW_MT_AddViz", **icon('RESTRICT_VIEW_OFF'))
         layout.menu("NODEVIEW_MT_AddText", icon='TEXT')
@@ -163,12 +164,36 @@ class NODEVIEW_MT_AddListOps(bpy.types.Menu):
         layout_draw_categories(self.layout, node_cats["List Masks"])
         layout_draw_categories(self.layout, node_cats["List Mutators"])
 
+preset_category_menus = dict()
+
+def make_preset_category_menu(category):
+    global preset_category_menus
+    if category in preset_category_menus:
+        return preset_category_menus[category]
+
+    class SvPresetCategorySubmenu(bpy.types.Menu):
+        bl_label = category
+
+        def draw(self, context):
+            layout = self.layout
+            presets.draw_presets_ops(layout, category=category, context=context)
+
+    category_id = presets.replace_bad_chars(category)
+    class_name = "NODEVIEW_MT_PresetCategory__" + category_id
+    SvPresetCategorySubmenu.__name__ = class_name
+    bpy.utils.register_class(SvPresetCategorySubmenu)
+    preset_category_menus[category] = SvPresetCategorySubmenu
+    return SvPresetCategorySubmenu
+
 class NODEVIEW_MT_AddPresetOps(bpy.types.Menu):
     bl_label = "Presets"
 
     def draw(self, context):
         layout = self.layout
         presets.draw_presets_ops(layout, context=context)
+        for category in presets.get_category_names():
+            class_name = preset_category_menus[category].__name__
+            layout.menu(class_name)
 
 classes = [
     NODEVIEW_MT_Dynamic_Menu,
@@ -187,6 +212,7 @@ classes = [
     make_class('Layout', "Layout"),
     make_class('Listmain', "List Main"),
     make_class('Liststruct', "List Struct"),
+    make_class('Dictionary', "Dictionary"),
     make_class('Number', "Number"),
     make_class('Vector', "Vector"),
     make_class('Matrix', "Matrix"),
@@ -200,13 +226,15 @@ classes = [
     make_class('Alphas', "Alpha Nodes"),
 ]
 
-
-
 def register():
+    for category in presets.get_category_names():
+        make_preset_category_menu(category)
     for class_name in classes:
         bpy.utils.register_class(class_name)
-
 
 def unregister():
     for class_name in classes:
         bpy.utils.unregister_class(class_name)
+    for category in presets.get_category_names():
+        bpy.utils.unregister_class(preset_category_menus[category])
+

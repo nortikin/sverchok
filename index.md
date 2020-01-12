@@ -48,9 +48,11 @@
     SvRegularSolid
     SvConicSectionNode
     SvTriangleNode
+    SvPentagonTilerNode
 
 ## Analyzers
     SvBBoxNodeMk2
+    SvComponentAnalyzerNode
     SvDiameterNode
     SvVolumeNode
     SvAreaNode
@@ -73,6 +75,7 @@
     SvEdgeAnglesNode
     SvPointInside
     SvProportionalEditNode
+    SvWavePainterNode
     SvRaycasterLiteNode
     SvOBJInsolationNode
     SvDeformationNode
@@ -104,6 +107,8 @@
     SvRemoveDoublesNode
     SvSeparateMeshNode
     SvLimitedDissolve
+    SvPlanarFacesNode
+    SvSplitFacesNode
     SvMeshBeautify
     SvTriangulateNode
     SvMakeMonotone
@@ -117,11 +122,13 @@
     SvRecalcNormalsNode
     SvFlipNormalsNode
     ---
-    SvExtrudeEdgesNode
+    SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
     SvVertMaskNode
     SvSplitEdgesNode
+    ---
+    SvFollowActiveQuads
 
 ## Modifier Make
     LineConnectNodeMK2
@@ -185,6 +192,10 @@
     ListShuffleNode
     ListSortNodeMK2
     ListFlipNode
+    
+## Dictionary
+    SvDictionaryIn
+    SvDictionaryOut
 
 ## CAD
     SvBevelNode
@@ -271,7 +282,7 @@
 
 ## Logic
     SvLogicNode
-    SvSwitchNode
+    SvSwitchNodeMK2
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
     SvCustomSwitcher
@@ -335,6 +346,7 @@
     SvVertexColorNodeMK3
     SvAssignMaterialListNode
     SvMaterialIndexNode
+    SvSetCustomUVMap
 
 ## Layout
     WifiInNode

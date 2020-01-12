@@ -23,6 +23,10 @@ Inputs
 The node has the following inputs:
 
 * **Vertices**. Set of input vertices to build Voronoi diagram for.
+* **MaxSides**. Maximum number of sides of the output polygons. If the Voronoi
+  diagram polygon will have more sides, then it will not be created. Default
+  value is 10. This input is available only if **Make Faces** parameter is
+  checked. The value can also be provided as a parameter.
 
 Parameters
 ----------
@@ -40,6 +44,9 @@ This node has the following parameters:
   defined by bounding box, then this amount of space will be added in each
   direction (top, bottom, right and left). If bounds are defined by bounding
   circle, then this amount will be added to the circle's radius. Default value is 1.0.
+- **Make Faces**. If checked, then "fill holes" function will be used to create
+  polygons of the Voronoi diagram. Maximum number of polygon sides is
+  controlled by the **MaxSides** input / parameter. Unchecked by default.
 
 Outputs
 -------
@@ -48,8 +55,7 @@ This node has the following outputs:
 
 - **Vertices**
 - **Edges**
-
-It is possible to use **Fill Holes** node to generate polygons for the diagram.
+- **Faces**. This output is available only if the **Make Faces** parameter is checked.
 
 Examples of usage
 -----------------

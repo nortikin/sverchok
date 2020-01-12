@@ -23,11 +23,15 @@ from bpy.props import StringProperty, IntProperty, CollectionProperty, PointerPr
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.utils.logging import info, debug
 
 class SvMaterialEntry(bpy.types.PropertyGroup):
 
     def update_material(self, context):
-        updateNode(context.node, context)
+        if hasattr(context, 'node'):
+            updateNode(context.node, context)
+        else:
+            info("Node is not defined in this context, so will not update the node.")
 
     material : PointerProperty(type = bpy.types.Material, update=update_material)
 
@@ -35,7 +39,7 @@ class SvMaterialList(bpy.types.PropertyGroup):
     materials : CollectionProperty(type=SvMaterialEntry)
     index : IntProperty()
 
-class SvMaterialUiList(bpy.types.UIList):
+class UI_UL_SvMaterialUiList(bpy.types.UIList):
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname, index, flt_flag):
         row = layout.row(align=True)
         row.prop_search(item, "material", bpy.data, 'materials', text='', icon='MATERIAL_DATA')
@@ -127,13 +131,15 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
     materials : CollectionProperty(type=SvMaterialEntry)
     selected : IntProperty()
 
+    properties_to_skip_iojson = ['materials']
+
     def sv_init(self, context):
         self.width = 200
         self.inputs.new('SvObjectSocket', 'Object')
         self.outputs.new('SvObjectSocket', 'Object')
 
     def draw_buttons(self, context, layout):
-        layout.template_list("SvMaterialUiList", "materials", self, "materials", self, "selected")
+        layout.template_list("UI_UL_SvMaterialUiList", "materials", self, "materials", self, "selected")
         row = layout.row(align=True)
 
         add = row.operator('sverchok.material_index_add', text='', icon='ADD')
@@ -162,7 +168,18 @@ class SvAssignMaterialListNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs['Object'].sv_set(objects)
 
-classes = [SvMaterialEntry, SvMaterialList, SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvMoveMaterial, SvAssignMaterialListNode]
+    def storage_get_data(self, storage):
+        materials = [entry.material.name for entry in self.materials]
+        storage['materials'] = materials
+
+    def storage_set_data(self, storage):
+        for material_name in storage.get('materials', []):
+            material = bpy.data.materials.get(material_name)
+            if material is None:
+                material = bpy.data.materials.new(material_name)
+            self.materials.add().material = material
+
+classes = [SvMaterialEntry, SvMaterialList, UI_UL_SvMaterialUiList, SvAddMaterial, SvRemoveMaterial, SvMoveMaterial, SvAssignMaterialListNode]
 
 def register():
     for name in classes:

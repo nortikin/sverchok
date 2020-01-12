@@ -1,0 +1,430 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "UV Connect": "Frame",
+    "Vectors in.001": "Frame",
+    "Vectors out": "Frame",
+    "Viewer Draw Mk3": "Frame",
+    "Viewer Draw Mk3.001": "Frame"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -435.57537841796875,
+        -280.0163879394531
+      ],
+      "params": {
+        "float_": 7.0,
+        "int_": 0,
+        "selected_mode": "float"
+      },
+      "width": 140.0
+    },
+    "Fill Holes": {
+      "bl_idname": "SvFillsHoleNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        744.4744873046875,
+        241.59812927246094
+      ],
+      "params": {
+        "sides": 10
+      },
+      "width": 140.0
+    },
+    "Formula": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -69.38629150390625,
+        -167.8260040283203
+      ],
+      "params": {
+        "formula1": "tuple(Vector(x)*n0)",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Formula.001": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -162.80117797851562,
+        114.33272552490234
+      ],
+      "params": {
+        "formula1": "cos(x)*x/2",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Formula.002": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -153.77659606933594,
+        -29.85340118408203
+      ],
+      "params": {
+        "formula1": "sin(x)*x/2",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 572.5457763671875,
+      "hide": false,
+      "label": "",
+      "location": [
+        1564.1654052734375,
+        465.4559631347656
+      ],
+      "params": {},
+      "width": 561.61767578125
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        291.776123046875,
+        217.10650634765625
+      ],
+      "params": {
+        "JoinLevel": 2
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -268.3773498535156,
+        245.42233276367188
+      ],
+      "params": {
+        "text": "Nikitron 2014 petri cap series | spiral"
+      },
+      "use_custom_color": true,
+      "width": 320.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -369.3553771972656,
+        42.49581527709961
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE",
+        "start_float": 0.10000000149011612,
+        "step_float": 0.029999999329447746,
+        "stop_float": 20.0
+      },
+      "width": 140.0
+    },
+    "Random Vector MK2": {
+      "bl_idname": "RandomVectorNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -348.44287109375,
+        -140.75091552734375
+      ],
+      "params": {
+        "count_inner": 100
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "UV Connect": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        586.2509765625,
+        -105.86703491210938
+      ],
+      "params": {
+        "dir_check": "U_dir",
+        "polygons": "Edges",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vectors in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        91.97175598144531,
+        59.40167236328125
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors in.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        742.8817138671875,
+        -388.4098815917969
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vectors out": {
+      "bl_idname": "VectorsOutNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        543.3079833984375,
+        -387.2934875488281
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        904.4456787109375,
+        -141.59042358398438
+      ],
+      "params": {
+        "activate": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        902.8817138671875,
+        -388.4098815917969
+      ],
+      "params": {
+        "activate": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.003": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        949.2446899414062,
+        264.5226135253906
+      ],
+      "params": {
+        "draw_gl_polygonoffset": 1,
+        "face_color": [
+          0.8100000619888306,
+          0.45176514983177185,
+          0.3069685399532318,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Voronoi": {
+      "bl_idname": "Voronoi2DNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        515.0988159179688,
+        235.16708374023438
+      ],
+      "params": {
+        "clip": 0.0,
+        "draw_bounds": 0,
+        "draw_hangs": 0
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Number Range",
+      0,
+      "Formula.002",
+      0
+    ],
+    [
+      "Number Range",
+      0,
+      "Formula.001",
+      0
+    ],
+    [
+      "Formula.001",
+      0,
+      "Vectors in",
+      0
+    ],
+    [
+      "Formula.002",
+      0,
+      "Vectors in",
+      1
+    ],
+    [
+      "Random Vector MK2",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Formula",
+      1
+    ],
+    [
+      "Formula",
+      0,
+      "Vectors out",
+      0
+    ],
+    [
+      "Vectors in",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "List Join",
+      0,
+      "Voronoi",
+      0
+    ],
+    [
+      "Voronoi",
+      0,
+      "Fill Holes",
+      0
+    ],
+    [
+      "Voronoi",
+      1,
+      "Fill Holes",
+      1
+    ],
+    [
+      "Fill Holes",
+      0,
+      "Viewer Draw Mk3.003",
+      0
+    ],
+    [
+      "Fill Holes",
+      1,
+      "Viewer Draw Mk3.003",
+      1
+    ],
+    [
+      "Fill Holes",
+      2,
+      "Viewer Draw Mk3.003",
+      2
+    ],
+    [
+      "Vectors in",
+      0,
+      "UV Connect",
+      0
+    ],
+    [
+      "Vectors out",
+      0,
+      "Vectors in.001",
+      0
+    ],
+    [
+      "Vectors out",
+      1,
+      "Vectors in.001",
+      1
+    ],
+    [
+      "UV Connect",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Vectors in.001",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ]
+  ]
+}

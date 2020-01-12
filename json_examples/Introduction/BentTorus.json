@@ -1,0 +1,352 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "A Number": "Frame.001",
+    "Move": "Frame.001",
+    "Note.001": "Frame",
+    "Note.002": "Frame.001",
+    "Plane MK2": "Frame.001",
+    "Torus": "Frame",
+    "Vector Turbulence": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "Plane Size",
+      "location": [
+        -1115.8090147972107,
+        -101.10517501831055
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 6,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Bend object along surface": {
+      "bl_idname": "SvBendAlongSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -41.09748077392578,
+        482.7144470214844
+      ],
+      "params": {
+        "grouped": 0
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 547.7862548828125,
+      "hide": false,
+      "label": "Donor",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 334.082763671875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 525.1359252929688,
+      "hide": false,
+      "label": "Recipient",
+      "location": [
+        1.3593201637268066,
+        -51.75472640991211
+      ],
+      "params": {},
+      "width": 832.2673950195312
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -309.0986022949219,
+        267.9986267089844
+      ],
+      "params": {
+        "split": 6
+      },
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -484.02160024642944,
+        3.855915069580078
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -731.736572265625,
+        298.6689453125
+      ],
+      "params": {
+        "text": "Surface has to be split into several series of points, each series defining one line in the U direction. We are using \"Plane Size\" node output to know how many vertices should be in each series of points."
+      },
+      "use_custom_color": true,
+      "width": 348.8209228515625
+    },
+    "Note.001": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1172.7977409362793,
+        594.8262767791748
+      ],
+      "params": {
+        "text": "The object to be bent. Try with other generators as well."
+      },
+      "use_custom_color": true,
+      "width": 273.60284423828125
+    },
+    "Note.002": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -951.5211119651794,
+        -336.2754783630371
+      ],
+      "params": {
+        "text": "Define some random surface by deforming a plane with turbulence."
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Plane MK2": {
+      "bl_idname": "SvPlaneNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -915.595452785492,
+        -48.429237365722656
+      ],
+      "params": {
+        "numx": 6,
+        "numy": 6
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Torus": {
+      "bl_idname": "SvTorusNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1134.5927848815918,
+        435.87049674987793
+      ],
+      "params": {
+        "torus_eR": 1.4900000095367432,
+        "torus_iR": 0.5099999904632568,
+        "torus_r": 0.49000000953674316
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Vector Turbulence": {
+      "bl_idname": "SvTurbulenceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -675.0626769065857,
+        -49.358527183532715
+      ],
+      "params": {
+        "octaves": 2
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        233.63189697265625,
+        189.88450622558594
+      ],
+      "params": {
+        "display_faces": 0,
+        "edge_color": [
+          0.08281602710485458,
+          0.027364876121282578,
+          0.07007619738578796,
+          1.0
+        ],
+        "line_width": 4
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        229.3109588623047,
+        452.1206970214844
+      ],
+      "params": {
+        "draw_gl_polygonoffset": 1,
+        "edge_color": [
+          0.19204171001911163,
+          0.34912633895874023,
+          1.0,
+          1.0
+        ],
+        "face_color": [
+          0.17936842143535614,
+          0.8100000619888306,
+          0.39302897453308105,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number",
+      0,
+      "Plane MK2",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Plane MK2",
+      1
+    ],
+    [
+      "Plane MK2",
+      0,
+      "Vector Turbulence",
+      0
+    ],
+    [
+      "Plane MK2",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector Turbulence",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "Move",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Plane MK2",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ],
+    [
+      "Move",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "List Split",
+      1
+    ],
+    [
+      "Torus",
+      0,
+      "Bend object along surface",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Bend object along surface",
+      1
+    ],
+    [
+      "Bend object along surface",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Torus",
+      2,
+      "Viewer Draw Mk3.001",
+      2
+    ]
+  ]
+}

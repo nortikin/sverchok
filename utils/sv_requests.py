@@ -20,7 +20,7 @@ def urlopen(url, **kwargs):
             import certifi
             ssl_context = ssl.create_default_context(cafile = os.path.relpath(certifi.where()))
             return rq.urlopen(url, context=ssl_context, **kwargs)
-        except ImportException:
+        except ImportError:
             return rq.urlopen(url, **kwargs)
 
     if os.name == 'posix':

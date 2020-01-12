@@ -1,0 +1,802 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "A Number": "Frame.004",
+    "A Number.001": "Frame.004",
+    "Assign Materials List": "Frame.004",
+    "Formula": "Frame",
+    "Formula.001": "Frame",
+    "Inset faces": "Frame.003",
+    "Inset faces.001": "Frame.003",
+    "Logic functions.001": "Frame.002",
+    "Logic functions.002": "Frame.002",
+    "Matrix Apply.001": "Frame.001",
+    "Note": "Frame",
+    "Note.001": "Frame.001",
+    "Note.002": "Frame.002",
+    "Number Range": "Frame.001",
+    "Number Range.001": "Frame",
+    "Number Range.002": "Frame",
+    "Number Range.003": "Frame",
+    "Number Range.004": "Frame",
+    "Number Range.005": "Frame",
+    "Profile Parametric Mk3.001": "Frame",
+    "Reroute": "Frame.002",
+    "Reroute.001": "Frame.002",
+    "Select mesh elements by location": "Frame.002",
+    "Select mesh elements by location.002": "Frame.002",
+    "Switch.001": "Frame.004",
+    "UV Connection.001": "Frame.001",
+    "Vector in.001": "Frame.001",
+    "Viewer BMesh": "Frame.004"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1974.121810913086,
+        93.64347076416016
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 0,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1984.852523803711,
+        -11.558486938476562
+      ],
+      "params": {
+        "float_": 0.0,
+        "int_": 1,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Assign Materials List": {
+      "bl_idname": "SvAssignMaterialListNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2535.243392944336,
+        488.1202392578125
+      ],
+      "materials": [
+        "Concrete",
+        "Glass"
+      ],
+      "params": {},
+      "width": 200.0
+    },
+    "Formula": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -867.5493092536926,
+        -20.066322326660156
+      ],
+      "params": {
+        "formula1": "1 + 0.5*sin(x)",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Formula.001": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -904.1743092536926,
+        445.27953338623047
+      ],
+      "params": {
+        "formula1": "5 + sin(x)",
+        "wrap": 0
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 923.4965209960938,
+      "hide": false,
+      "label": "Profile",
+      "location": [
+        -5.609428882598877,
+        111.21172332763672
+      ],
+      "params": {},
+      "width": 707.29248046875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 557.42333984375,
+      "hide": false,
+      "label": "Base Form",
+      "location": [
+        -17.924715042114258,
+        190.14381408691406
+      ],
+      "params": {},
+      "width": 791.2181396484375
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 894.410888671875,
+      "hide": false,
+      "label": "Mask Top & Bottom",
+      "location": [
+        -38.79912567138672,
+        -151.44383239746094
+      ],
+      "params": {},
+      "width": 817.0706176757812
+    },
+    "Frame.003": {
+      "bl_idname": "NodeFrame",
+      "height": 386.094482421875,
+      "hide": false,
+      "label": "Inset",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 397.261962890625
+    },
+    "Frame.004": {
+      "bl_idname": "NodeFrame",
+      "height": 635.000244140625,
+      "hide": false,
+      "label": "Assign Materials",
+      "location": [
+        -85.54811096191406,
+        148.50210571289062
+      ],
+      "params": {},
+      "width": 821.6016845703125
+    },
+    "Inset faces": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1481.3184700012207,
+        281.4618663787842
+      ],
+      "mask_type": [
+        "in"
+      ],
+      "params": {
+        "thickness": 0.1499999761581421
+      },
+      "width": 140.0
+    },
+    "Inset faces.001": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1678.1004524230957,
+        282.41447257995605
+      ],
+      "mask_type": [
+        "in"
+      ],
+      "params": {
+        "depth": -0.29999998211860657,
+        "thickness": 0.0
+      },
+      "width": 140.0
+    },
+    "Logic functions.001": {
+      "bl_idname": "SvLogicNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1018.5470657348633,
+        157.33985900878906
+      ],
+      "params": {
+        "items_": "OR"
+      },
+      "width": 140.0
+    },
+    "Logic functions.002": {
+      "bl_idname": "SvLogicNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1207.7133255004883,
+        138.02403259277344
+      ],
+      "params": {
+        "items_": "NOT"
+      },
+      "width": 140.0
+    },
+    "Matrix Apply.001": {
+      "bl_idname": "SvMatrixApplyJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        5.408380508422852,
+        330.08673095703125
+      ],
+      "params": {
+        "do_join": 0
+      },
+      "width": 140.0
+    },
+    "Note": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -841.4544606208801,
+        -179.68054962158203
+      ],
+      "params": {
+        "text": "Generate a profile for each floor"
+      },
+      "use_custom_color": true,
+      "width": 223.67640686035156
+    },
+    "Note.001": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -23.147138595581055,
+        67.3342056274414
+      ],
+      "params": {
+        "text": "Put each floor on correct height, and connect them all with UV surface into the base form of the building"
+      },
+      "use_custom_color": true,
+      "width": 400.0
+    },
+    "Note.002": {
+      "bl_idname": "NoteNode",
+      "color": [
+        0.5,
+        0.5,
+        1.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        620.9787673950195,
+        -94.69935607910156
+      ],
+      "params": {
+        "text": "Exclude top and bottom faces from inset process"
+      },
+      "use_custom_color": true,
+      "width": 304.031005859375
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -353.8853168487549,
+        94.8656997680664
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.0,
+        "step_float": 1.0,
+        "stop_float": 13.960000038146973
+      },
+      "width": 140.0
+    },
+    "Number Range.001": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1166.2787404060364,
+        -184.98499298095703
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.0,
+        "step_float": 1.0,
+        "stop_float": 6.2831854820251465
+      },
+      "width": 140.0
+    },
+    "Number Range.002": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1159.0247120857239,
+        -6.932823181152344
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 11.0,
+        "step_float": 1.0,
+        "stop_float": 12.0
+      },
+      "width": 140.0
+    },
+    "Number Range.003": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1153.4583058357239,
+        153.06954956054688
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 5.0,
+        "step_float": 1.0,
+        "stop_float": 3.5
+      },
+      "width": 140.0
+    },
+    "Number Range.004": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1142.3256154060364,
+        311.47985076904297
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 5.829999923706055,
+        "step_float": 1.0,
+        "stop_float": 1.239999771118164
+      },
+      "width": 140.0
+    },
+    "Number Range.005": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1133.8003468513489,
+        506.85652923583984
+      ],
+      "params": {
+        "count_": 10,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.0,
+        "step_float": 1.0,
+        "stop_float": 6.2831854820251465
+      },
+      "width": 140.0
+    },
+    "Profile Parametric Mk3.001": {
+      "bl_idname": "SvProfileNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -659.4662404060364,
+        406.81966400146484
+      ],
+      "params": {
+        "filename": "Text"
+      },
+      "profile": "default width = 10\ndefault height = 8\ndefault b_width = 4\ndefault b_height = 2\ndefault r = 1\n\nlet dw = {(width - b_width - 2*r)/2}\n\nM {-width/2+r},{-height/2}\nh {width - 2*r} n=4;\nl r,r\nv {height-2*r};\nl -r,r\nh -dw;\nv {b_height - r};\nl -r,r\nh {-(b_width - 2*r)} ;\nl -r,-r\nv {-(b_height - r)};\nh -dw;\nl -r,-r\nv {-(height - 2*r)};\nX\n#l r,-r",
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        598.8027420043945,
+        194.5101776123047
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Reroute.001": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        630.9545364379883,
+        158.0500946044922
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Select mesh elements by location": {
+      "bl_idname": "SvMeshSelectNode",
+      "custom_socket_props": {
+        "3": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            -1.0
+          ],
+          "use_prop": true
+        },
+        "4": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        701.2475662231445,
+        253.05860900878906
+      ],
+      "params": {
+        "include_partial": 0,
+        "mode": "BySide",
+        "percent": 1.0
+      },
+      "width": 140.0
+    },
+    "Select mesh elements by location.002": {
+      "bl_idname": "SvMeshSelectNode",
+      "custom_socket_props": {
+        "3": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        },
+        "4": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        704.261848449707,
+        615.0508575439453
+      ],
+      "params": {
+        "include_partial": 0,
+        "mode": "BySide"
+      },
+      "width": 140.0
+    },
+    "Switch.001": {
+      "bl_idname": "SvSwitchNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2176.942611694336,
+        192.38851928710938
+      ],
+      "params": {
+        "selected_mode": 1,
+        "switch_count": 1
+      },
+      "width": 140.0
+    },
+    "UV Connection.001": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        201.22993278503418,
+        419.18328857421875
+      ],
+      "params": {
+        "cap_U": 0,
+        "cap_V": 1,
+        "cicl_check_V": 1,
+        "dir_check": "V_dir",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector in.001": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -151.2042407989502,
+        143.44586181640625
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Viewer BMesh": {
+      "bl_idname": "SvBmeshViewerNodeV28",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2364.264877319336,
+        457.9855041503906
+      ],
+      "params": {},
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Number Range",
+      0,
+      "Vector in.001",
+      2
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
+      0
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Profile Parametric Mk3.001",
+      0
+    ],
+    [
+      "Formula.001",
+      0,
+      "Profile Parametric Mk3.001",
+      1
+    ],
+    [
+      "Number Range.003",
+      0,
+      "Profile Parametric Mk3.001",
+      2
+    ],
+    [
+      "Formula",
+      0,
+      "Profile Parametric Mk3.001",
+      3
+    ],
+    [
+      "Number Range.002",
+      0,
+      "Profile Parametric Mk3.001",
+      4
+    ],
+    [
+      "Profile Parametric Mk3.001",
+      0,
+      "Matrix Apply.001",
+      0
+    ],
+    [
+      "Profile Parametric Mk3.001",
+      1,
+      "Matrix Apply.001",
+      1
+    ],
+    [
+      "Vector in.001",
+      0,
+      "Matrix Apply.001",
+      3
+    ],
+    [
+      "Matrix Apply.001",
+      0,
+      "UV Connection.001",
+      0
+    ],
+    [
+      "UV Connection.001",
+      "vertices",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "UV Connection.001",
+      "data",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Select mesh elements by location",
+      "Vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Select mesh elements by location",
+      "Polygons"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Select mesh elements by location.002",
+      "Vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Select mesh elements by location.002",
+      "Polygons"
+    ],
+    [
+      "Select mesh elements by location.002",
+      2,
+      "Logic functions.001",
+      0
+    ],
+    [
+      "Select mesh elements by location",
+      2,
+      "Logic functions.001",
+      1
+    ],
+    [
+      "Logic functions.001",
+      0,
+      "Logic functions.002",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Inset faces",
+      "Verts"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Inset faces",
+      "Faces"
+    ],
+    [
+      "Logic functions.002",
+      0,
+      "Inset faces",
+      4
+    ],
+    [
+      "Inset faces",
+      0,
+      "Inset faces.001",
+      0
+    ],
+    [
+      "Inset faces",
+      2,
+      "Inset faces.001",
+      2
+    ],
+    [
+      "Inset faces",
+      4,
+      "Inset faces.001",
+      4
+    ],
+    [
+      "Inset faces.001",
+      4,
+      "Switch.001",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Switch.001",
+      1
+    ],
+    [
+      "A Number",
+      0,
+      "Switch.001",
+      2
+    ],
+    [
+      "Inset faces.001",
+      0,
+      "Viewer BMesh",
+      0
+    ],
+    [
+      "Inset faces.001",
+      2,
+      "Viewer BMesh",
+      2
+    ],
+    [
+      "Switch.001",
+      0,
+      "Viewer BMesh",
+      3
+    ],
+    [
+      "Viewer BMesh",
+      0,
+      "Assign Materials List",
+      0
+    ]
+  ]
+}

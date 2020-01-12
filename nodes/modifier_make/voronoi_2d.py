@@ -20,12 +20,13 @@ from math import sqrt, atan2
 from collections import defaultdict
 
 import bpy
-from bpy.props import FloatProperty, EnumProperty, BoolProperty
+import bmesh
+from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import Vector
 from mathutils.geometry import intersect_line_line_2d
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.voronoi import Site, computeVoronoiDiagram, computeDelaunayTriangulation, BIG_FLOAT
 from sverchok.utils.geom import center, LineEquation2D, CircleEquation2D
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata
@@ -255,10 +256,33 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         default = True,
         update = updateNode)
 
+    @throttled
+    def update_sockets(self, context):
+        if 'Faces' in self.outputs:
+            self.outputs['Faces'].hide_safe = not self.make_faces
+        if 'MaxSides' in self.inputs:
+            self.inputs['MaxSides'].hide_safe = not self.make_faces
+
+    make_faces: BoolProperty(
+        name = "Make faces",
+        description = "Use `fill holes` function to make Voronoi polygons",
+        default = False,
+        update = update_sockets)
+
+    max_sides: IntProperty(
+        name='Sides',
+        description='Maximum number of polygon sides',
+        default=10,
+        min=3,
+        update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
+        self.inputs.new('SvStringsSocket', 'MaxSides').prop_name = 'max_sides'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Faces")
+        self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "bound_mode")
@@ -266,6 +290,7 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.draw_bounds:
             layout.prop(self, "draw_hangs")
         layout.prop(self, "clip", text="Clipping")
+        layout.prop(self, "make_faces")
 
     def process(self):
 
@@ -276,21 +301,28 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         points_in = self.inputs['Vertices'].sv_get()
+        if 'MaxSides' in self.inputs:
+            max_sides_in = self.inputs['MaxSides'].sv_get()
+        else:
+            max_sides_in = [[10]]
 
         pts_out = []
-        # polys_out = []
         edges_out = []
-        for obj in points_in:
+        faces_out = []
+        for sites, max_sides in zip_long_repeat(points_in, max_sides_in):
+            if isinstance(max_sides, (list, tuple)):
+                max_sides = max_sides[0]
+
             bounds = Bounds.new(self.bound_mode)
             source_sites = []
             bounds.x_max = -BIG_FLOAT
             bounds.x_min = BIG_FLOAT
             bounds.y_min = BIG_FLOAT
             bounds.y_max = -BIG_FLOAT
-            x0, y0, z0 = center(obj)
+            x0, y0, z0 = center(sites)
             bounds.center = (x0, y0)
             # creates points in format for voronoi library, throwing away z
-            for x, y, z in obj:
+            for x, y, z in sites:
                 r = sqrt((x-x0)**2 + (y-y0)**2)
                 bounds.r_max = max(r, bounds.r_max)
                 bounds.x_max = max(x, bounds.x_max)
@@ -426,14 +458,24 @@ class Voronoi2DNode(bpy.types.Node, SverchCustomTreeNode):
 
             verts, edges = bm.to_pydata()
 
-            verts3d = [(vert[0], vert[1], 0) for vert in verts]
-            pts_out.append(verts3d)
+            new_vertices = [(vert[0], vert[1], 0) for vert in verts]
+
+            if self.make_faces:
+                bm = bmesh_from_pydata(new_vertices, edges, [])
+                bmesh.ops.holes_fill(bm, edges=bm.edges[:], sides=max_sides)
+                new_vertices, edges, new_faces = pydata_from_bmesh(bm)
+                bm.free()
+                faces_out.append(new_faces)
+
+            pts_out.append(new_vertices)
             edges_out.append(edges)
             #edges_out.append(finite_edges)
 
         # outputs
         self.outputs['Vertices'].sv_set(pts_out)
         self.outputs['Edges'].sv_set(edges_out)
+        if 'Faces' in self.outputs and self.make_faces:
+            self.outputs['Faces'].sv_set(faces_out)
 
 def register():
     bpy.utils.register_class(Voronoi2DNode)
