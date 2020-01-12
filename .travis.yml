@@ -61,12 +61,13 @@ before_deploy:
 deploy:
   provider: releases
   skip_cleanup: true
-  api_key: $GITHUB_TOKEN
-  github_token: $GITHUB_TOKEN
+  api_key:
+    secure: $GITHUB_API_KEY
   keep_history: true
   file: docs/_build/sverchok_documentation.tar.bz2
   draft: true
   on:
+    repo: nortikin/sverchok
     condition: $DOCS_UPDATED = Y
     branch: master
 
