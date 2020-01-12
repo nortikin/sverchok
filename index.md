@@ -341,6 +341,7 @@
     SvVertexColorNodeMK3
     SvAssignMaterialListNode
     SvMaterialIndexNode
+    SvSetCustomUVMap
 
 ## Layout
     WifiInNode
