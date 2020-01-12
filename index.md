@@ -191,6 +191,10 @@
     ListShuffleNode
     ListSortNodeMK2
     ListFlipNode
+    
+## Dictionary
+    SvDictionaryIn
+    SvDictionaryOut
 
 ## CAD
     SvBevelNode
