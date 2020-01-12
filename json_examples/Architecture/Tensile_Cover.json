@@ -54,19 +54,20 @@
       "hide": false,
       "label": "",
       "location": [
-        2130.222900390625,
-        -253.8050079345703
+        2257.58935546875,
+        -215.71180725097656
       ],
       "params": {
         "basedata_name": "Gamma",
         "depth": 0.10000000149011612,
+        "object_hide_viewport": 1,
         "object_select": 0
       },
       "use_custom_color": true,
       "width": 140.0
     },
-    "Line.002": {
-      "bl_idname": "SvLineNodeMK3",
+    "Line": {
+      "bl_idname": "SvLineNodeMK4",
       "color": [
         0.0,
         0.5,
@@ -76,11 +77,13 @@
       "hide": false,
       "label": "",
       "location": [
-        1869.468017578125,
-        -227.23074340820312
+        2014.40234375,
+        -192.06781005859375
       ],
       "params": {
+        "center": 0,
         "direction": "OD",
+        "length_mode": "Size",
         "step": 12.069986343383789
       },
       "use_custom_color": true,
@@ -601,7 +604,8 @@
         -41.62611389160156
       ],
       "params": {
-        "current_op": "ANGLE RAD"
+        "current_op": "ANGLE RAD",
+        "socket_info": "vv s"
       },
       "width": 140.0
     },
@@ -616,7 +620,8 @@
       ],
       "params": {
         "amount": 1.0099999904632568,
-        "current_op": "SCALAR"
+        "current_op": "SCALAR",
+        "socket_info": "vs v"
       },
       "width": 140.0
     },
@@ -677,7 +682,30 @@
         333.53466796875
       ],
       "params": {
-        "basedata_name": "Tensile"
+        "autosmooth": 1,
+        "basedata_name": "Tensile",
+        "lp": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
       },
       "use_custom_color": true,
       "width": 140.0
@@ -759,34 +787,34 @@
       1
     ],
     [
-      "List Item",
+      "List Input.003",
       0,
-      "3pt Arc",
-      1
+      "Matrix in.003",
+      3
     ],
     [
-      "3pt Arc",
+      "List Input.001",
+      "List",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Transform Select",
       0,
-      "Vector Math.001",
+      "List Mask (out).001",
       0
     ],
     [
-      "A Number",
-      0,
-      "Vector Math.001",
-      1
+      "Reroute",
+      "Output",
+      "List Mask (out).001",
+      "mask"
     ],
     [
-      "3pt Arc",
-      0,
-      "UV Connection",
+      "List Mask (out).001",
+      3,
+      "Vector out",
       0
-    ],
-    [
-      "Vector Math.001",
-      0,
-      "UV Connection",
-      1
     ],
     [
       "Polygon Grid",
@@ -805,18 +833,6 @@
       3,
       "Subdivide",
       2
-    ],
-    [
-      "Subdivide",
-      "Faces",
-      "Reroute.003",
-      "Input"
-    ],
-    [
-      "List Input.001",
-      "List",
-      "Reroute",
-      "Input"
     ],
     [
       "Subdivide",
@@ -887,13 +903,13 @@
     [
       "List Mask (out).002",
       3,
-      "Vector Rewire",
+      "Vector Rewire.001",
       0
     ],
     [
       "List Mask (out).002",
       3,
-      "Vector Rewire.001",
+      "Vector Rewire",
       0
     ],
     [
@@ -909,27 +925,9 @@
       1
     ],
     [
-      "Transform Select",
-      0,
-      "List Mask (out).001",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Mask (out).001",
-      "mask"
-    ],
-    [
       "Vector Math",
       0,
       "Math MK2.001",
-      0
-    ],
-    [
-      "List Mask (out).001",
-      3,
-      "Vector out",
       0
     ],
     [
@@ -945,76 +943,106 @@
       1
     ],
     [
-      "Math MK2.002",
+      "List Item",
       0,
-      "Line.002",
+      "3pt Arc",
       1
     ],
     [
-      "List Mask (out).001",
-      3,
-      "Line.002",
-      3
+      "3pt Arc",
+      0,
+      "Vector Math.001",
+      0
     ],
     [
-      "Vector Rewire",
+      "A Number",
       0,
-      "Line.002",
+      "Vector Math.001",
+      1
+    ],
+    [
+      "3pt Arc",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "Vector Math.001",
+      0,
+      "UV Connection",
+      1
+    ],
+    [
+      "UV Connection",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "UV Connection",
+      1,
+      "Solidify",
+      2
+    ],
+    [
+      "Solidify",
+      0,
+      "Viewer BMesh.001",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Viewer BMesh.001",
+      2
+    ],
+    [
+      "Matrix in.003",
+      0,
+      "Viewer BMesh.001",
       4
     ],
     [
-      "Line.002",
-      0,
-      "Curve Viewer",
-      0
-    ],
-    [
-      "Line.002",
-      1,
-      "Curve Viewer",
-      1
-    ],
-    [
-      "List Input.003",
-      0,
-      "Matrix in.003",
-      3
-    ],
-    [
-      "UV Connection",
-      0,
-      "Solidify",
-      1
-    ],
-    [
-      "UV Connection",
-      1,
-      "Solidify",
-      2
-    ],
-    [
-      "Solidify",
-      0,
-      "Viewer BMesh.001",
-      0
-    ],
-    [
-      "Solidify",
-      2,
-      "Viewer BMesh.001",
-      2
-    ],
-    [
-      "Matrix in.003",
-      0,
-      "Viewer BMesh.001",
-      3
+      "Subdivide",
+      "Faces",
+      "Reroute.003",
+      "Input"
     ],
     [
       "Reroute.003",
       "Output",
       "Reroute.002",
       "Input"
+    ],
+    [
+      "Math MK2.002",
+      0,
+      "Line",
+      2
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Line",
+      3
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Line",
+      4
+    ],
+    [
+      "Line",
+      0,
+      "Curve Viewer",
+      0
+    ],
+    [
+      "Line",
+      1,
+      "Curve Viewer",
+      1
     ],
     [
       "Pulga Physics.001",

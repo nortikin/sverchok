@@ -186,11 +186,11 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
                 sock.hide_safe = status
 
         if self.direction == DIRECTION.od:
-            self.inputs['Origin'].hide_safe = False
-            self.inputs['Direction'].hide_safe = False
+            set_hide(self.inputs['Origin'], False)
+            set_hide(self.inputs['Direction'], False)
         else:
-            self.inputs['Origin'].hide_safe = True
-            self.inputs['Direction'].hide_safe = True
+            set_hide(self.inputs['Origin'], True)
+            set_hide(self.inputs['Direction'], True)
 
         if self.length_mode == LENGTH.size:
             set_hide(self.inputs['Num'], False)
