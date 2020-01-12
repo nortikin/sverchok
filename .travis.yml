@@ -61,8 +61,7 @@ before_deploy:
 deploy:
   provider: releases
   skip_cleanup: true
-  api_key:
-    secure: $GITHUB_API_KEY
+  api_key: $GITHUB_TOKEN
   keep_history: true
   file: docs/_build/sverchok_documentation.tar.bz2
   draft: true
