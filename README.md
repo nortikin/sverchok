@@ -5,11 +5,11 @@
 </p>
 <h1 align="center">Sverchok</h1>
 
-[![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=master)](https://travis-ci.org/nortikin/sverchok)
+[![Build Status](https://travis-ci.org/nortikin/sverchok.svg?branch=b79_master)](https://travis-ci.org/nortikin/sverchok)
 
 ## English
 
-**addon for**: [Blender](http://blender.org)  (version *2.78* and *2.79*, but for Blender *2.8+* please install [this zip](https://github.com/nortikin/sverchok/issues/2326) instead ).  
+**addon for**: [Blender](http://blender.org)  (this branch is for version *2.78* and *2.79*; for Blender *2.80* please use the master branch).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **prerequisites**: Python 3.6, and `numpy`, both included in recent versions of Blender (precompiled binaries are convenient for this)  
