@@ -1,20 +1,10 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import random
 
@@ -27,6 +17,7 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.utils.sv_viewer_utils import greek_alphabet
+from sverchok.utils.sv_obj_helper import SvObjHelper
 
 def get_random_init():
     return random.choice(greek_alphabet)
@@ -117,6 +108,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     has_instance: BoolProperty(default=False)
+    data_kind: StringProperty(name='data kind', default='MESH')
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', 'matrix')
@@ -175,35 +167,36 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         if not matrices:
             return
 
-        # we have matrices, we can process, go go go!
-        for obj_index, matrix in enumerate(matrices):
-            obj_name = f'{self.basedata_name}.{obj_index:04d}'
-            make_or_update_instance(self, obj_name, matrix)
+        with self.sv_throttle_tree_update():
 
-        # obj_index is now the last index found in matrices
-        self.remove_non_updated_objects(obj_index, self.basedata_name)
+            for obj_index, matrix in enumerate(matrices):
+                obj_name = f'{self.basedata_name}.{obj_index:04d}'
+                make_or_update_instance(self, obj_name, matrix)
 
-        # if self.grouping:
-        #     self.to_group()
-        # else:
-        #     self.ungroup()
+            num_objects = len(matrices)
+            self.remove_non_updated_objects(num_objects)
 
-    def remove_non_updated_objects(self, obj_index, _name):
+            # if self.grouping:
+            #     self.to_group()
+            # else:
+            #     self.ungroup()
+
+    def remove_non_updated_objects(self, num_objects):
         meshes = bpy.data.meshes
         objects = bpy.data.objects
 
-        objs = [obj for obj in objects if obj.type == 'MESH']
-        objs = [obj for obj in objs if obj.name.startswith(_name)]
-        objs = [obj.name for obj in objs if int(obj.name.split(".")[-1]) > obj_index]
+        objs = [obj for obj in objects if obj.type == self.data_kind]
+        objs = [obj for obj in objs if obj.name.startswith(self.basedata_name)]
+        objs = [obj.name for obj in objs if int(obj.name.split(".")[-1]) >= num_objects]
         if not objs:
             return
 
         # select and finally remove all excess objects
-        scene = bpy.context.scene  # fix for render mode is needed?
+        scene = bpy.context.scene
 
         for object_name in objs:
             obj = objects[object_name]
-            obj.hide_select = False  # needed?
+            obj.hide_select = False
             scene.collection.objects.unlink(obj)
             objects.remove(obj)
 
