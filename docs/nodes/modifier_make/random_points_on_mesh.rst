@@ -21,6 +21,16 @@ Inputs
 - **Number** (one value per mesh) - number of vertices which should be distributed on given mesh
 - **Seed** (one value per mesh) - seed for generation random vertices
 
+Parameters
+----------
+
+This node has the following parameters:
+
+- **Proportional**. If checked, then the number of points on each face will be
+  proportional to the area of the face (and to the weight provided in the
+  **Face weight** input). If not checked, then the number of points on each
+  face will be only defined by **Face weight** input. Checked by default.
+
 Outputs
 -------
 
