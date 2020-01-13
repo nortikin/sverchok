@@ -137,21 +137,21 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "basedata_name", text="")
 
-    def get_corrected_data(self, socket_name, socket_type):
-        inputs = self.inputs
-        socket = inputs[socket_name].links[0].from_socket
-        return dataCorrect(inputs[socket_name].sv_get())
+
+    def get_matrices(self):
+        matrices = []
+        if self.inputs[s_name].is_linked:
+            matrices = dataCorrect(self.inputs['matrix'].sv_get())
+        return matrices
 
     def process(self):
+        """
+        hello
+        """
         if not self.activate:
             return
 
-        inputs = self.inputs
-        s_name, s_type = ['matrix', "SvMatrixSocket"]
-        matrices = []
-        if inputs[s_name].is_linked:
-            matrices = self.get_corrected_data(s_name, s_type)
-
+        matrices = self.get_matrices()
         if not matrices:
             return
 
