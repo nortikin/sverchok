@@ -96,6 +96,7 @@
     SvAlignMeshByMesh
     ---
     SvTransformSelectNode
+    SvTransformMesh
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
