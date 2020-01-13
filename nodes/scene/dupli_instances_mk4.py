@@ -21,6 +21,7 @@ from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 
 def wipe_object(ob):
     ''' this removes all geometry '''
+    # this can be done with the new  `ob.data.clear_geometry()` i think..
     bm = bmesh.new()
     bm.to_mesh(ob.data)
     bm.free()
@@ -76,6 +77,23 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'scale', text='Scale children', toggle=True)
         col.prop(self, 'auto_release', text='One Object only', toggle=True)
 
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column()
+        
+        try:
+            ob = bpy.data.objects.get(self.name_node_generated_parent)
+            if ob.instance_type == "FACES":
+                col.alignment = "RIGHT"
+                col.prop(ob, "show_instancer_for_viewport", text="Display Instancer") # bool
+                col.prop(ob, "show_instancer_for_render", text="Render Instancer") # bool
+                col.prop(self, "scale", text="Scale by Face Size") # bool
+                col.enabled = ob.use_instance_faces_scale
+                col.prop(ob, "instance_faces_scale", text="Factor")  #float
+
+
+        finally:
+            pass
+
     def process(self):
         #objectsP = self.inputs['parent'].sv_get(default=None)
         objectsC = self.inputs['child'].sv_get()
@@ -127,7 +145,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
             ob.data.from_pydata(verts, [], faces)
             ob.instance_type = self.mode
-            ob.instance_faces_scale = self.scale
+            ob.use_instance_faces_scale = self.scale
             child.parent = ob
 
 
