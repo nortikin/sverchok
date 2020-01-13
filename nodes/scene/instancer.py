@@ -29,6 +29,8 @@ def make_or_update_instance(node, obj_name, matrix):
     objects = bpy.data.objects
     mesh_name = node.mesh_to_clone
 
+    collections = bpy.data.collections
+    collection = collections.get(node.basedata_name)
     if not mesh_name:
         return
 
@@ -37,7 +39,7 @@ def make_or_update_instance(node, obj_name, matrix):
     else:
         mesh = meshes.get(mesh_name)
         sv_object = objects.new(obj_name, mesh)
-        scene.collection.objects.link(sv_object)
+        collection.objects.link(sv_object)
 
     # apply matrices
     if matrix:
@@ -89,8 +91,6 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         description="Choose Object to take mesh from",
         update=updateNode)
 
-    grouping: BoolProperty(default=False, update=updateNode)
-
     activate: BoolProperty(
         default=True,
         name='Show', description='Activate node?',
@@ -115,8 +115,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Update")
-        row.prop(self, "grouping", text="Grouped")
-
+        
         cfg = "node.instancer_config"
         if not self.has_instance:
             row = layout.row(align=True)
@@ -156,12 +155,20 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
         with self.sv_throttle_tree_update():
 
+            self.ensure_collection()
             for obj_index, matrix in enumerate(matrices):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
                 make_or_update_instance(self, obj_name, matrix)
 
             num_objects = len(matrices)
             self.remove_non_updated_objects(num_objects)
+
+    def ensure_collection(self):
+        collections = bpy.data.collections
+        if not collections.get(self.basedata_name):
+            collection = collections.new(self.basedata_name)
+            bpy.context.scene.collection.children.link(collection)
+
 
     def remove_non_updated_objects(self, num_objects):
         meshes = bpy.data.meshes
@@ -174,17 +181,21 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         # select and finally remove all excess objects
-        scene = bpy.context.scene
+        collections = bpy.data.collections
+        collection = collections.get(self.basedata_name)
 
         for object_name in objs:
             obj = objects[object_name]
             obj.hide_select = False
-            scene.collection.objects.unlink(obj)
+            collection.objects.unlink(obj)
             objects.remove(obj)
 
 
-    def free(self):
-        self.remove_non_updated_objects(-1)
+    # def free(self):
+    #     # self.remove_non_updated_objects(-1)
+    #     # or remove content of associated collection...undecided, lets see what
+    #     # people expect...
+    #     pass
 
 
 def register():
