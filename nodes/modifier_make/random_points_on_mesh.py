@@ -16,7 +16,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-def get_points(sv_verts, faces, number, seed, face_weight=None):
+def get_points(sv_verts, faces, number, seed, face_weight=None, proportional=True):
     """
     Return points distributed on given mesh
     :param sv_verts: list of vertices
@@ -32,7 +32,7 @@ def get_points(sv_verts, faces, number, seed, face_weight=None):
     tri_faces, face_indexes, tri_weights = triangulate_mesh(bl_verts, faces, face_weight)
     if not tri_faces:
         return [[]], []
-    face_numbers = distribute_points_accurate(bl_verts, tri_faces, number, tri_weights)
+    face_numbers = distribute_points_accurate(bl_verts, tri_faces, number, tri_weights, proportional)
     out_verts = []
     out_face_index = []
     for face, fi, fnum in zip(tri_faces, face_indexes, face_numbers):
@@ -55,9 +55,12 @@ def distribute_points_fast(bl_verts, tri_faces, number):
     return face_numbers
 
 
-def distribute_points_accurate(bl_verts, tri_faces, number, tri_weights):
-    # returns list of numbers which mean how many points should be created on face according its area
-    weighed_face_areas = [area_tri(*[bl_verts[i] for i in f]) * w for f, w in zip(tri_faces, tri_weights)]
+def distribute_points_accurate(bl_verts, tri_faces, number, tri_weights, proportional = True):
+    if proportional:
+        # returns list of numbers which mean how many points should be created on face according its area
+        weighed_face_areas = [area_tri(*[bl_verts[i] for i in f]) * w for f, w in zip(tri_faces, tri_weights)]
+    else:
+        weighed_face_areas = tri_weights
     face_numbers = [0 for _ in tri_faces]
     chosen_faces = random.choices(range(len(tri_faces)), weighed_face_areas, k=number)
     for i in chosen_faces:
@@ -114,6 +117,15 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
                                          update=updateNode)
     seed: bpy.props.IntProperty(name='Seed', update=updateNode)
 
+    proportional : bpy.props.BoolProperty(
+            name = "Proportional",
+            description = "If checked, then number of points at each face is proportional to the area of the face",
+            default = True,
+            update = updateNode)
+    
+    def draw_buttons(self, context, layout):
+        layout.prop(self, "proportional", toggle=True)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
         self.inputs.new('SvStringsSocket', 'Faces')
@@ -131,7 +143,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
         for v, f, n, s, w in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get(),
                          self.inputs['Number'].sv_get(), self.inputs['Seed'].sv_get(),
                          self.inputs['Face weight'].sv_get() if self.inputs['Face weight'].is_linked else cycle([[1]])):
-            new_vertices, face_index = get_points(v, f, n[0], s[0], w)
+            new_vertices, face_index = get_points(v, f, n[0], s[0], w, self.proportional)
             out_verts.append(new_vertices)
             out_face_index.append(face_index)
         self.outputs['Verts'].sv_set(out_verts)
