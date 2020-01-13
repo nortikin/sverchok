@@ -139,10 +139,9 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def get_matrices(self):
-        matrices = []
-        if self.inputs[s_name].is_linked:
-            matrices = dataCorrect(self.inputs['matrix'].sv_get())
-        return matrices
+        if self.inputs['matrix'].is_linked:
+            return dataCorrect(self.inputs['matrix'].sv_get())
+        return []
 
     def process(self):
         """
