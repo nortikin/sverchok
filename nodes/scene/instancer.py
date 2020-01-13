@@ -17,7 +17,6 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.utils.sv_viewer_utils import greek_alphabet
-from sverchok.utils.sv_obj_helper import SvObjHelper
 
 def get_random_init():
     return random.choice(greek_alphabet)
@@ -138,30 +137,19 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "basedata_name", text="")
 
-    def abort_processing(self):
-
-        if not bpy.data.meshes:
-            return True
-
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except Exception as e:
-            print(self.name, "cannot run during startup, press update.")
-            return True
-
     def get_corrected_data(self, socket_name, socket_type):
         inputs = self.inputs
         socket = inputs[socket_name].links[0].from_socket
         return dataCorrect(inputs[socket_name].sv_get())
 
     def process(self):
-        if self.abort_processing() and not self.activate:
+        if not self.activate:
             return
 
         inputs = self.inputs
         s_name, s_type = ['matrix', "SvMatrixSocket"]
         matrices = []
-        if s_name in inputs and inputs[s_name].is_linked:
+        if inputs[s_name].is_linked:
             matrices = self.get_corrected_data(s_name, s_type)
 
         if not matrices:
@@ -175,11 +163,6 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
 
             num_objects = len(matrices)
             self.remove_non_updated_objects(num_objects)
-
-            # if self.grouping:
-            #     self.to_group()
-            # else:
-            #     self.ungroup()
 
     def remove_non_updated_objects(self, num_objects):
         meshes = bpy.data.meshes
@@ -200,27 +183,9 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             scene.collection.objects.unlink(obj)
             objects.remove(obj)
 
-    # def to_group(self):
-
-    #     objs = bpy.data.objects
-    #     if not (self.basedata_name in bpy.data.groups):
-    #         newgroup = bpy.data.groups.new(self.basedata_name)
-    #     else:
-    #         newgroup = bpy.data.groups[self.basedata_name]
-
-    #     for obj in objs:
-    #         if self.basedata_name in obj.name:
-    #             if obj.name not in newgroup.objects:
-    #                 newgroup.objects.link(obj)
-
-    # def ungroup(self):
-    #     g = bpy.data.groups.get(self.basedata_name)
-    #     if g:
-    #         bpy.data.groups.remove(g)
 
     def free(self):
         self.remove_non_updated_objects(-1)
-        # self.ungroup()
 
 
 def register():
