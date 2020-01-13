@@ -83,13 +83,11 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
         try:
             ob = bpy.data.objects.get(self.name_node_generated_parent)
             if ob.instance_type == "FACES":
-                col.alignment = "RIGHT"
                 col.prop(ob, "show_instancer_for_viewport", text="Display Instancer") # bool
                 col.prop(ob, "show_instancer_for_render", text="Render Instancer") # bool
                 col.prop(self, "scale", text="Scale by Face Size") # bool
                 col.enabled = ob.use_instance_faces_scale
                 col.prop(ob, "instance_faces_scale", text="Factor")  #float
-
 
         finally:
             pass
