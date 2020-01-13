@@ -79,15 +79,19 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column()
-        
+
         try:
             ob = bpy.data.objects.get(self.name_node_generated_parent)
             if ob.instance_type == "FACES":
-                col.prop(ob, "show_instancer_for_viewport", text="Display Instancer") # bool
-                col.prop(ob, "show_instancer_for_render", text="Render Instancer") # bool
-                col.prop(self, "scale", text="Scale by Face Size") # bool
-                col.enabled = ob.use_instance_faces_scale
-                col.prop(ob, "instance_faces_scale", text="Factor")  #float
+                row = col.row()
+                row.prop(ob, "show_instancer_for_viewport", text="Display Instancer") # bool
+                row2 = col.row()
+                row2.prop(ob, "show_instancer_for_render", text="Render Instancer") # bool
+                row3 = col.row()
+                row3.prop(self, "scale", text="Scale by Face Size") # bool
+                row4 = col.row()
+                row4.enabled = ob.use_instance_faces_scale
+                row4.prop(ob, "instance_faces_scale", text="Factor")  #float
 
         finally:
             pass
