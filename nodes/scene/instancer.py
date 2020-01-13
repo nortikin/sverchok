@@ -200,27 +200,27 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             scene.collection.objects.unlink(obj)
             objects.remove(obj)
 
-    def to_group(self):
+    # def to_group(self):
 
-        objs = bpy.data.objects
-        if not (self.basedata_name in bpy.data.groups):
-            newgroup = bpy.data.groups.new(self.basedata_name)
-        else:
-            newgroup = bpy.data.groups[self.basedata_name]
+    #     objs = bpy.data.objects
+    #     if not (self.basedata_name in bpy.data.groups):
+    #         newgroup = bpy.data.groups.new(self.basedata_name)
+    #     else:
+    #         newgroup = bpy.data.groups[self.basedata_name]
 
-        for obj in objs:
-            if self.basedata_name in obj.name:
-                if obj.name not in newgroup.objects:
-                    newgroup.objects.link(obj)
+    #     for obj in objs:
+    #         if self.basedata_name in obj.name:
+    #             if obj.name not in newgroup.objects:
+    #                 newgroup.objects.link(obj)
 
-    def ungroup(self):
-        g = bpy.data.groups.get(self.basedata_name)
-        if g:
-            bpy.data.groups.remove(g)
+    # def ungroup(self):
+    #     g = bpy.data.groups.get(self.basedata_name)
+    #     if g:
+    #         bpy.data.groups.remove(g)
 
     def free(self):
-        self.remove_non_updated_objects(-1, self.basedata_name)
-        self.ungroup()
+        self.remove_non_updated_objects(-1)
+        # self.ungroup()
 
 
 def register():
