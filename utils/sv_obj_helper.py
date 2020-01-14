@@ -346,10 +346,10 @@ class SvObjHelper():
         objects = bpy.data.objects
         collection = bpy.context.scene.collection
 
-        # if a node employs "grouping" it must also provide
-        # - self.custom_collection_name (even if not directly used)
-        # - self.basedata_name
         if hasattr(self, "grouping") and self.grouping:
+            # if a node employs "grouping" it must also provide
+            # - self.custom_collection_name (even if not directly used)
+            # - self.basedata_name
             named = self.custom_collection_name or self.basedata_name
             collection = bpy.data.collections.get(named)
 
