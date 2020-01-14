@@ -1,7 +1,7 @@
 Vector Noise
 ============
 
-This noise node takes a list of Vectors and outputs a list of equal length containing either Vectors or Floats in the range 0.0 to 1.0. The seed value permits you to apply a different noise calculation to identical inputs.
+This noise node displaces a list of Vectors. The seed value permits you to apply a different noise calculation to identical inputs.
 
 Inputs & Parameters
 -------------------
@@ -9,7 +9,7 @@ Inputs & Parameters
 +----------------+-------------------------------------------------------------------------+
 | Parameters     | Description                                                             |
 +================+=========================================================================+
-| Noise Function | Pick between Scalar and Vector output                                   |
+| Mode           | Pick between Scalar along Normal and Vector output                      |
 +----------------+-------------------------------------------------------------------------+
 | Noise Type     | Pick between several noise types                                        |
 |                |                                                                         |
@@ -31,27 +31,43 @@ Inputs & Parameters
 |                | constant to allow all seed input to generate repeatable output.         |
 |                | (Seed=0 would otherwise generate random values based on system time)    |
 +----------------+-------------------------------------------------------------------------+
+| Scale Out      | Vector to multiply the added vector                                     |
++----------------+-------------------------------------------------------------------------+
+| Noise Matrix   | Matrix input to determinate noise origin, scale and rotation            |
++----------------+-------------------------------------------------------------------------+
 
 Examples
 --------
 
-Different noises:
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_1.png
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_2.png
 
-Using noise to mask a mesh:
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_1.png
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_3.png
+Basic example
 
-Adding noise transformations:
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_2.png
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_4.png
+Seed and scale per vertex can be passed, in this example the seed is chosen by determining the closest point of another mesh and the scale is based on the distance to that point
 
-Notes
------
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_4.png
 
-This documentation doesn't do the full world of noise any justice, feel free to send us layouts that you've made which rely on this node.
+One matrix per point can be passed if the matrix list is wrapped, note that the "Flat Output" checkbox of the matrix in is un-checked
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_3.png
+
+The node offers three ways of matching the list lengths "Repeat Last", "Cycle" and "Match Short" in this example "Cycle" is used to alternate the noise matrix
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_5.png
+
+In this example the scale output is used to blend with another oscillation texture
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_6.png
+
+The "Vector" Mode does not use vertex normals so it can be used just with verts
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_7.png
+
+The "Scale out" input can be used to mask the affected vertices
 
 
 
