@@ -346,6 +346,14 @@ class SvObjHelper():
         objects = bpy.data.objects
         collection = bpy.context.scene.collection
 
+        # if a node employs "grouping" it must also provide
+        # - self.custom_collection_name (even if not directly used)
+        # - self.basedata_name
+        if hasattr(self, "grouping") and self.grouping:
+            collections = bpy.data.collections
+            named = self.custom_collection_name or self.basedata_name
+            collection = collections.get(named)
+
         # remove excess objects
         for object_name in obj_names:
             obj = objects[object_name]
