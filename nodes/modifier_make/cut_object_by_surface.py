@@ -216,7 +216,6 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                         faces_to_remove.append(old_obj_face)
                         self.debug("Splitting face: %s", [v.index for v in old_obj_face.verts])
                         for new_face_list in new_face_verts.values():
-                            print(new_face_list)
                             bm_obj.faces.new(new_face_list)
 
                 for old_face in faces_to_remove:
