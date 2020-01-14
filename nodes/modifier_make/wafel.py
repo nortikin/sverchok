@@ -32,7 +32,7 @@ from sverchok.data_structure import (Vector_generate, Vector_degenerate, fullLis
 from math import sin, atan, cos, degrees, radians
 from bpy.props import FloatProperty, BoolProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 
 class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
@@ -235,7 +235,7 @@ class SvWafelNode(bpy.types.Node, SverchCustomTreeNode):
                 vecplan = self.inputs['vecPlane'].sv_get()
                 edgplan = self.inputs['edgPlane'].sv_get()
                 if len(edgplan[0][0]) > 2:
-                    edgplan = pols_edges(edgplan)
+                    edgplan = polygons_to_edges(edgplan)
                 thick = self.inputs['thick'].sv_get()[0][0]
                 threshold_coplanar = 0.005
                 sinuso60 = 0.8660254037844386

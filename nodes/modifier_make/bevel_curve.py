@@ -20,7 +20,7 @@ from sverchok.utils.geom import autorotate_householder, autorotate_track, autoro
 from sverchok.utils.geom import LinearSpline, CubicSpline
 from sverchok.utils.logging import info
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.nodes.modifier_change.polygons_to_edges import pols_edges
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
 
 class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -294,7 +294,7 @@ class SvBevelCurveNode(bpy.types.Node, SverchCustomTreeNode):
         if bevel_faces:
             bevel_faces = ensure_nesting_level(bevel_faces, 2)
         if not bevel_edges and bevel_faces:
-            bevel_edges = pols_edges([bevel_faces], True)[0]
+            bevel_edges = polygons_to_edges([bevel_faces], True)[0]
 
         mesh = bmesh.new()
         prev_level_vertices = None

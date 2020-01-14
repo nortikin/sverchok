@@ -26,7 +26,8 @@ from mathutils.geometry import intersect_point_line
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (repeat_last, Matrix_generate, Vector_generate,
                                      updateNode)
-
+from sverchok.utils.sv_mesh_utils import polygons_to_edges
+from sverchok.utils.decorators import deprecated
 
 # distance between two points without sqrt, for comp only
 def distK(v1, v2):
@@ -138,21 +139,9 @@ def sort_vertices_by_connexions(verts_in, edges_in, limit_mode):
 
 
 # function taken from poligons_to_edges.py
+@deprecated
 def pols_edges(obj, unique_edges=False):
-    out = []
-    for faces in obj:
-        out_edges = []
-        seen = set()
-        for face in faces:
-            for edge in zip(face, list(face[1:]) + list([face[0]])):
-                if unique_edges and tuple(sorted(edge)) in seen:
-                    continue
-                if unique_edges:
-                    seen.add(tuple(sorted(edge)))
-                out_edges.append(edge)
-        out.append(out_edges)
-    return out
-
+    return polygons_to_edges(obj, unique_edges)
 
 class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
     '''Vector sort'''
@@ -326,7 +315,7 @@ class SvVertSortNode(bpy.types.Node, SverchCustomTreeNode):
                     pols = []
                     if len(p[0]) > 2:
                         pols = [p[:]]
-                        p = pols_edges([p], True)[0]
+                        p = polygons_to_edges([p], True)[0]
 
                     vect_new, pol_edge_new, index_new = sort_vertices_by_connexions(v, p, self.limit_mode)
                     if len(pols) > 0:
