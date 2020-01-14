@@ -287,7 +287,6 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
             for index, object in enumerate(zip(*objects)):
                 self.make_lamp(index, object)
 
-            print(index)
             self.remove_non_updated_objects(index)
 
             objs = self.get_children()
@@ -305,7 +304,6 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         # remove excess objects
         for object_name in objs:
-            print('called')
             obj = objects[object_name]
             obj.hide_select = False
             collection.objects.unlink(obj)
