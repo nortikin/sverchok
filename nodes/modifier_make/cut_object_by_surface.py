@@ -27,7 +27,6 @@ from mathutils import Vector, Matrix
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.utils.sv_mesh_utils import sort_vertices_by_connections
 
 class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
