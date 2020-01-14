@@ -251,7 +251,7 @@ class SvObjHelper():
         name='basedata name',
         default='Alpha',
         description="which base name the object and data will use",
-        update=updateNode
+        update=rename_updateNode
     )    
 
     # most importantly, what kind of base data are we making?
@@ -286,6 +286,16 @@ class SvObjHelper():
         bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True        
 
+    def perform_rename(self, new_name):
+        if hasattr(self, "grouping"):
+            named = self.custom_collection_name or self.basedata_name
+            if named == new_name:
+                print('this is a no op, suggested name is same as current')
+                return
+
+            # the following might trigger updates to the nodetree, we dont want that yet
+            with self.sv_throttle_tree_update():
+                ...
 
     def icons(self, TYPE):
         NAMED_ICON = {
