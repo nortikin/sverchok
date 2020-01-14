@@ -37,9 +37,14 @@ def randomize(vertices, random_x, random_y, random_z, seed):
 
 
 class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Randomize input vertices locations '''
+    """
+    Triggers: Random Displacement
+    Tooltip: Randomize input vertices locations.
+
+    """
+
     bl_idname = 'SvRandomizeVerticesNode'
-    bl_label = 'Randomize input vertices'
+    bl_label = 'Randomize'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_RANDOMIZE_INPUT_VERTICES'
 

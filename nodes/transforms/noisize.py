@@ -99,8 +99,8 @@ noise_func = {'NORMAL': v_normal, 'VECTOR': v_noise}
 
 class SvNoisizeNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Add Noise to verts
-    Tooltip: Affect input verts/mesh with a noise values.
+    Triggers: Noise Displacement
+    Tooltip: Move input verts/mesh with a noise values.
 
     """
 
