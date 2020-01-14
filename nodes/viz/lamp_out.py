@@ -182,7 +182,7 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
 
     def get_children(self):
         objects = bpy.data.objects
-        objs = [obj for obj in objects if obj.type == 'LAMP']
+        objs = [obj for obj in objects if obj.type == 'LIGHT']
         # critera, basename must be in object.keys and the value must be self.basemesh_name
         return [o for o in objs if o.get('basename') == self.lamp_name]
 
@@ -205,7 +205,14 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
             spot_blend = spot_blend[0]
 
         scene = bpy.context.scene
-        collection = bpy.context.scene.collection
+
+        # ensure we use a collection
+        collections = bpy.data.collections
+        collection = collections.get(self.lamp_name)
+        if not collection:
+            collection = collections.new(self.lamp_name)
+            bpy.context.scene.collection.children.link(collection)
+
         lamps_data = bpy.data.lights
         objects = bpy.data.objects
         name = self.lamp_name + "_" + str(index)
@@ -276,13 +283,15 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         objects = match_long_repeat([origins, sizes_sq, sizes_x, sizes_y, strengths, spot_sizes, spot_blends, colors])
 
-        for index, object in enumerate(zip(*objects)):
-            self.make_lamp(index, object)
+        with self.sv_throttle_tree_update():
+            for index, object in enumerate(zip(*objects)):
+                self.make_lamp(index, object)
 
-        self.remove_non_updated_objects(index)
+            print(index)
+            self.remove_non_updated_objects(index)
 
-        objs = self.get_children()
-        self.outputs['Objects'].sv_set(objs)
+            objs = self.get_children()
+            self.outputs['Objects'].sv_set(objs)
 
     def remove_non_updated_objects(self, obj_index):
         objs = self.get_children()
@@ -292,11 +301,11 @@ class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
 
         lamps_data = bpy.data.lights
         objects = bpy.data.objects
-        scene = bpy.context.scene
-        collection = bpy.context.scene.collection
+        collection = bpy.data.collections.get(self.lamp_name)
 
         # remove excess objects
         for object_name in objs:
+            print('called')
             obj = objects[object_name]
             obj.hide_select = False
             collection.objects.unlink(obj)
