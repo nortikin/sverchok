@@ -76,3 +76,34 @@ This node has the following outputs:
   where the "object" is cut by "surface" (i.e. there will be holes). This
   output is only available if the **Make cut pieces** parameter is checked.
 
+Examples of usage
+-----------------
+
+Sphere cut by the box. Here we intersect edges of the sphere with the box, and
+connect resulting vertices. Note that in this case the number of box's
+subdivisions does not have any meaning, because the places of intersections of
+sphere's edges with the box are always the same.
+
+.. image:: https://user-images.githubusercontent.com/284644/72448547-033d4780-37d9-11ea-9016-79fb80523bcb.png
+
+Box cut by sphere. Here we intersect edges of the box with the sphere, and then
+connect resulting vertices. Note that if we specify number of box's
+subdivisions = 1, we would get nothing at all.
+
+.. image:: https://user-images.githubusercontent.com/284644/72448413-ca9d6e00-37d8-11ea-9e84-5cacfac82c7e.png
+
+Intersection of eight cubes (green edges) with the icosphere (yellowish edges):
+
+.. image:: https://user-images.githubusercontent.com/284644/72447126-9aed6680-37d6-11ea-9dec-ae57cfeb836b.png
+
+The same cut surface passed through the "split faces" node:
+
+.. image:: https://user-images.githubusercontent.com/284644/72447542-531b0f00-37d7-11ea-8ab5-e40afd8514b9.png
+
+Here you can see this node is not at all the boolean operation — it makes one
+big face where the boolean operation would make a part of sphere.
+
+The output of **Make cut pieces**:
+
+.. image:: https://user-images.githubusercontent.com/284644/72451364-9f694d80-37dd-11ea-854d-565a16132a03.png
+
