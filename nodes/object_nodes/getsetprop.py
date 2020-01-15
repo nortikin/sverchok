@@ -161,13 +161,15 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
             self.bad_prop = True
             return
         self.bad_prop = False
-        s_type = types.get(type(obj))
-        outputs = self.outputs
-        if s_type and outputs:
-            outputs[0].replace_socket(s_type)
-        elif s_type:
-            outputs.new(s_type, "Data")
 
+        with self.sv_throttle_tree_update():
+            s_type = types.get(type(self.obj))
+            outputs = self.outputs
+            if s_type and outputs:
+                outputs[0].replace_socket(s_type)
+            elif s_type:
+                outputs.new(s_type, "Data")
+        updateNode(self, context)
 
     prop_name: StringProperty(name='', update=verify_prop)
 
@@ -183,6 +185,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "prop_name", text="")
 
     def process(self):
+        print(">> Get process is called")
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
@@ -205,6 +208,8 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
         return get_object(path)
         
     def verify_prop(self, context):
+
+        # test first 
         try:
             obj = self.obj
         except:
@@ -213,17 +218,22 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
             return
         self.bad_prop = False
 
-        s_type = types.get(type(obj))
-        inputs = self.inputs
-        p_name = {float: "float_prop",
-                 int: "int_prop"}.get(type(obj),"")
-        if inputs and s_type: 
-            socket = inputs[0].replace_socket(s_type)
-            socket.prop_name = p_name
-        elif s_type:
-            inputs.new(s_type, "Data").prop_name = p_name
-        if s_type == "SvVerticesSocket":
-            inputs[0].use_prop = True
+        # execute second
+        with self.sv_throttle_tree_update():
+
+            s_type = types.get(type(self.obj))
+            p_name = {float: "float_prop", int: "int_prop"}.get(type(self.obj),"")
+            inputs = self.inputs
+
+            if inputs and s_type: 
+                socket = inputs[0].replace_socket(s_type)
+                socket.prop_name = p_name
+            elif s_type:
+                inputs.new(s_type, "Data").prop_name = p_name
+            if s_type == "SvVerticesSocket":
+                inputs[0].use_prop = True
+
+        updateNode(self, context)
         
     prop_name: StringProperty(name='', update=verify_prop)
     float_prop: FloatProperty(update=updateNode, name="x")
@@ -234,6 +244,7 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "prop_name", text="")
 
     def process(self):
+        print("<< Set process is called")
         data = self.inputs[0].sv_get()
         eval_str = apply_alias(self.prop_name)
         ast_path = ast.parse(eval_str)
