@@ -246,6 +246,7 @@
     VectorDropNode
     VectorPolarInNode
     VectorPolarOutNode
+    SvVectorNormalIn
     SvAttractorNode
     ---
     SvVectorLerp
