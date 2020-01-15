@@ -7,6 +7,7 @@ Modifier Make
 
    bisect
    cross_section
+   cut_object_by_surface
    edges_adaptative
    lathe
    matrix_tube
