@@ -282,6 +282,10 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
         ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         obj = get_object(path)
+
+        #with self.sv_throttle_tree_update():
+            # changes here should not reflect back into the nodetree?
+
         if isinstance(obj, (int, float, bpy_prop_array)):
             obj = get_object(path[:-1])
             p_type, value = path[-1]
