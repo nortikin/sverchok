@@ -268,6 +268,29 @@ numpy_list_match_func = {
     "CYCLE":  numpy_match_long_cycle,
     "REPEAT": numpy_match_long_repeat,
     }
+
+def make_repeaters(lists):
+    chain = itertools.chain
+    repeat = itertools.repeat
+    out =[]
+    for l in lists:
+        out.append(chain(l, repeat(l[-1])))
+
+    return out
+
+def make_cyclers(lists):
+
+    cycle = itertools.cycle
+    out =[]
+    for l in lists:
+        out.append(cycle(l))
+    return out
+
+iter_list_match_func = {
+    "SHORT":  lambda x: x,
+    "CYCLE":  make_cyclers,
+    "REPEAT": make_repeaters,
+    }
 #####################################################
 ################# list levels magic #################
 #####################################################

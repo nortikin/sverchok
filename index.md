@@ -99,6 +99,7 @@
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
+    SvNoisizeNode
     SvRandomizeVerticesNode
 
 ## Modifier Change
