@@ -20,7 +20,8 @@ import ast
 import traceback
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, IntProperty, FloatProperty
+from bpy.props import StringProperty, BoolProperty, IntProperty, FloatProperty, FloatVectorProperty
+from bpy.types import bpy_prop_array
 import mathutils
 from mathutils import Matrix, Vector, Euler, Quaternion, Color
 
@@ -142,8 +143,18 @@ types = {
     mathutils.Color: "SvVerticesSocket",
     mathutils.Matrix: "SvMatrixSocket",
     mathutils.Euler: "SvMatrixSocket",
-    mathutils.Quaternion: "SvMatrixSocket",
+    mathutils.Quaternion: "SvMatrixSocket"
 }
+
+
+def secondary_type_assesment(item):
+    """
+    we can use this function to perform more granular attr/type identification
+    """
+    if isinstance(item, bpy_prop_array):
+        if hasattr(item, "path_from_id") and item.path_from_id().endswith('color'):
+            return "SvColorSocket"
+    return None
 
 class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Get property '''
@@ -161,15 +172,20 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
             traceback.print_exc()
             self.bad_prop = True
             return
-        self.bad_prop = False
 
+        self.bad_prop = False
         with self.sv_throttle_tree_update():
             s_type = types.get(type(self.obj))
+            
+            if not s_type:
+                s_type = secondary_type_assesment(self.obj)
+
             outputs = self.outputs
             if s_type and outputs:
                 outputs[0].replace_socket(s_type)
             elif s_type:
                 outputs.new(s_type, "Data")
+      
         updateNode(self, context)
 
     prop_name: StringProperty(name='', update=verify_prop)
@@ -186,7 +202,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "prop_name", text="")
 
     def process(self):
-        print(">> Get process is called")
+        # print(">> Get process is called")
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
@@ -217,13 +233,21 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
             traceback.print_exc()
             self.bad_prop = True
             return
-        self.bad_prop = False
 
         # execute second
+        self.bad_prop = False
         with self.sv_throttle_tree_update():
 
             s_type = types.get(type(self.obj))
-            p_name = {float: "float_prop", int: "int_prop"}.get(type(self.obj),"")
+            if not s_type:
+                s_type = secondary_type_assesment(self.obj)
+
+            p_name = {
+                float: "float_prop", 
+                int: "int_prop",
+                bpy_prop_array: "color_prop"
+            }.get(type(self.obj),"")
+            
             inputs = self.inputs
 
             if inputs and s_type: 
@@ -239,19 +263,22 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
     prop_name: StringProperty(name='', update=verify_prop)
     float_prop: FloatProperty(update=updateNode, name="x")
     int_prop: IntProperty(update=updateNode, name="x")
-    
+    color_prop: FloatVectorProperty(
+        name="Color", description="Color", size=4,
+        min=0.0, max=1.0, subtype='COLOR', update=updateNode)
+
     def draw_buttons(self, context, layout):
         layout.alert = self.bad_prop
         layout.prop(self, "prop_name", text="")
 
     def process(self):
-        print("<< Set process is called")
+        # print("<< Set process is called")
         data = self.inputs[0].sv_get()
         eval_str = apply_alias(self.prop_name)
         ast_path = ast.parse(eval_str)
         path = parse_to_path(ast_path.body[0].value)
         obj = get_object(path)
-        if isinstance(obj, (int, float)):
+        if isinstance(obj, (int, float, bpy_prop_array)):
             obj = get_object(path[:-1])
             p_type, value = path[-1]
             if p_type == "attr":
