@@ -63,7 +63,7 @@ In this example the scale output is used to blend with another oscillation textu
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_6.png
 
-The "Vector" Mode does not use vertex normals so it can be used just with verts
+The "Vector" Mode does not use vertex normals so it can be used just with vertices
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noisize/noisize_blender_sverchok_example_7.png
 
