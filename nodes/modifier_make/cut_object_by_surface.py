@@ -30,7 +30,7 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Cut object by surface
+    Triggers: Cut object edges by surface
     Tooltip: Cut object's edges by surface
     """
     bl_idname = 'SvCutObjBySurfaceNode'
@@ -114,6 +114,8 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                 if isinstance(fill_sides, (list, tuple)):
                     fill_sides = fill_sides[0]
 
+            # We are using bvh's raycast to calculate intersections of object's edges
+            # with the surface.
             bvh = mathutils.bvhtree.BVHTree.FromPolygons(surf_vertices, surf_faces)
             bm_obj = bmesh_from_pydata(obj_vertices, obj_edges, obj_faces)
             bm_cut = bmesh.new()
@@ -123,8 +125,12 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             for bm_edge in bm_obj.edges:
                 v1, v2 = bm_edge.verts
                 edge = v1.co - v2.co
+                # Distance restriction is used to find only intersections which are within the edge,
+                # not anywhere on the ray.
                 distance = edge.length
 
+                # Since raycast's ray is single-directioned, we have to check for intersections
+                # twice: from V1 to V2 and from V2 to V1.
                 cast = bvh.ray_cast(v1.co, -edge, distance)
                 #self.debug("Edge %s: %s -> %s, Cast 0: %s", bm_edge.index, v1.co, edge, cast)
                 intersection = cast[0]
@@ -141,12 +147,16 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
             bm_cut.verts.index_update()
 
+            # Make "cut surface" object.
+            # Of each object's face we are cutting, make an edge.
             bm_cut_edges = []
             for intersections in edges_by_face.values():
                 if len(intersections) == 1:
                     self.debug("Only one of object face's edges intersects the surface")
                     continue
                 if len(intersections) > 2:
+                    # Some day we may support splitting the face in more than two pieces;
+                    # but the algorithm will be more complicated then.
                     raise Exception("Unsupported: more than two edges of the face intersect the surface")
                 v1, v2 = intersections[0][0], intersections[1][0]
                 bm_edge = bm_cut.edges.new((v1, v2))
@@ -168,6 +178,9 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     int1, int2 = intersections 
                     intersection1, intersection2 = int1[0].co, int2[0].co
                     old_edge1, old_edge2 = int1[1], int2[1]
+                    # Create a vertex in the "object" mesh at each intersection of
+                    # it's edge with the surface.
+                    # Remember which of new vertices corresponds to which edge.
                     if old_edge1 not in new_verts_by_old_edge:
                         new_vert_1 = bm_obj.verts.new(intersection1)
                         new_verts_by_old_edge[old_edge1] = new_vert_1
@@ -188,6 +201,14 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     if len(intersections) == 1:
                         continue
 
+                    # Walk through the edges of each face we are cutting, in order.
+                    # Of each such face, we are making two. So in this loop we have
+                    # two states: new_face_state == True means we are on the one side of
+                    # the cut, False means we are on the another. Note that we do not know
+                    # which is which (for example, which one is "inside" the surface); but
+                    # it does not matter for us.
+                    # So new_face_verts[True] will contain vertices of one piece,
+                    # new_face_verts[False] - of another one.
                     new_face_verts = defaultdict(list)
                     new_face_side = True
                     old_vert_pairs = list(zip(old_obj_face.verts, old_obj_face.verts[1:])) + [(old_obj_face.verts[-1], old_obj_face.verts[0])]
@@ -199,17 +220,14 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                             need_split = True
                             new_vert_1 = new_verts_by_old_edge[old_edge.index]
                             self.debug("Old edge %s - %s is to be split; use new vert %s", old_vert_1.index, old_vert_2.index, new_vert_1.index)
-                            #new_face_verts[new_face_side].append(old_vert_1)
                             new_face_verts[new_face_side].append(new_vert_1)
-                            #self.debug("new_face_verts[%s].append(%s)", new_face_side, new_vert_1.index)
+                            # if this edge is to be split, then we are stepping from one piece of
+                            # the face to another
                             new_face_side = not new_face_side
                             new_face_verts[new_face_side].append(new_vert_1)
-                            #self.debug("new_face_verts[%s].append(%s)", new_face_side, new_vert_2.index)
                             new_face_verts[new_face_side].append(old_vert_2)
-                            #self.debug("new_face_verts[%s].append(%s)", new_face_side, old_vert_2.index)
                         else:
                             self.debug("Old edge %s - %s is not to be split", old_vert_1.index, old_vert_2.index)
-                            #new_face_verts[new_face_side].append(old_vert_1)
                             new_face_verts[new_face_side].append(old_vert_2)
 
                     if need_split:
@@ -218,9 +236,12 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                         for new_face_list in new_face_verts.values():
                             bm_obj.faces.new(new_face_list)
 
+                # remove old faces and edges (ones we cut in two)
                 for old_face in faces_to_remove:
                     bm_obj.faces.remove(old_face)
                 for old_v1, old_v2 in edges_to_remove:
+                    # we can't just remember BMEdge instances themselve,
+                    # since they will be invalidated when we remove faces.
                     old_edge = bm_obj.edges.get((old_v1, old_v2))
                     if old_edge:
                         bm_obj.edges.remove(old_edge)
@@ -230,6 +251,8 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
                     edge = bm_obj.edges.get((new_vert_1, new_vert_2))
                     edges_to_split.append(edge)
 
+                # Split "object" by remembered cut edges. There will be "holes"
+                # at places we cut.
                 split_result = bmesh.ops.split_edges(bm_obj, edges=edges_to_split)
                 if self.fill:
                     bmesh.ops.holes_fill(bm_obj, edges = split_result['edges'], sides=fill_sides)
@@ -257,7 +280,6 @@ class SvCutObjBySurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
 def register():
     bpy.utils.register_class(SvCutObjBySurfaceNode)
-
 
 def unregister():
     bpy.utils.unregister_class(SvCutObjBySurfaceNode)
