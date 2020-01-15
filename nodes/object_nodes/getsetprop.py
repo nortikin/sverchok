@@ -129,6 +129,7 @@ aliases = {
     "D": "bpy.data",
     "objs": "bpy.data.objects",
     "mats": "bpy.data.materials",
+    "M": "bpy.data.materials",
     "meshes": "bpy.data.meshes",
     "texts": "bpy.data.texts"
 }
