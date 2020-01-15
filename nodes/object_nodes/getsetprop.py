@@ -259,13 +259,17 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode):
                 inputs[0].use_prop = True
 
         updateNode(self, context)
+
+    def local_updateNode(self, context):
+        # no further interaction with the nodetree is required.
+        self.process()
         
     prop_name: StringProperty(name='', update=verify_prop)
     float_prop: FloatProperty(update=updateNode, name="x")
     int_prop: IntProperty(update=updateNode, name="x")
     color_prop: FloatVectorProperty(
         name="Color", description="Color", size=4,
-        min=0.0, max=1.0, subtype='COLOR', update=updateNode)
+        min=0.0, max=1.0, subtype='COLOR', update=local_updateNode)
 
     def draw_buttons(self, context, layout):
         layout.alert = self.bad_prop
