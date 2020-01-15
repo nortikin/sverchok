@@ -208,6 +208,7 @@
     ---
     CrossSectionNode
     SvBisectNode
+    SvCutObjBySurfaceNode
     SvEdgesToFaces2D
     SvMergeMesh2D
     SvMergeMesh2DLite
