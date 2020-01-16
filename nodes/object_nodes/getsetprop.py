@@ -77,7 +77,7 @@ def apply_alias(eval_str):
             raise NameError
     return eval_str
 
-def convert_path_result_to_svdata(tvar):
+def wrap_output_data(tvar):
     '''
     create valid sverchok socket data from an object
     '''
@@ -180,9 +180,6 @@ class SvPropNodeMixin():
             self.execute_inside_throttle()
         updateNode(self, context)
 
-    def local_updateNode(self, context):
-        # no further interaction with the nodetree is required.
-        self.process()
 
     bad_prop: BoolProperty(default=False)
     prop_name: StringProperty(name='', update=verify_prop)
@@ -209,7 +206,8 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         layout.prop(self, "prop_name", text="")
 
     def process(self):
-        self.outputs[0].sv_set(convert_path_result_to_svdata(self.obj))
+        """ convert path result to svdata """
+        self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
 class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
@@ -218,6 +216,10 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     bl_label = 'Set property'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_SET'
+
+    def local_updateNode(self, context):
+        # no further interaction with the nodetree is required.
+        self.process()
 
     float_prop: FloatProperty(update=updateNode, name="x")
     int_prop: IntProperty(update=updateNode, name="x")
