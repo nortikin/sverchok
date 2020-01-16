@@ -180,6 +180,13 @@ class SvPropNodeMixin():
             self.execute_inside_throttle()
         updateNode(self, context)
 
+    def property_assesment(self):
+        p_name = {
+            float: "float_prop", 
+            int: "int_prop",
+            bpy_prop_array: "color_prop"
+        }.get(type(self.obj),"")
+        return p_name
 
     bad_prop: BoolProperty(default=False)
     prop_name: StringProperty(name='', update=verify_prop)
@@ -206,7 +213,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         layout.prop(self, "prop_name", text="")
 
     def process(self):
-        """ convert path result to svdata """
+        """ convert path result to svdata for entering our nodetree """
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
@@ -229,15 +236,9 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
 
     def execute_inside_throttle(self):
         s_type = type_assesment(self.obj)
+        p_name = self.property_assesment()
 
-        p_name = {
-            float: "float_prop", 
-            int: "int_prop",
-            bpy_prop_array: "color_prop"
-        }.get(type(self.obj),"")
-        
         inputs = self.inputs
-
         if inputs and s_type: 
             socket = inputs[0].replace_socket(s_type)
             socket.prop_name = p_name
