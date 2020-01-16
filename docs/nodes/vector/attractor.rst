@@ -4,7 +4,10 @@ Attraction Vectors
 Functionality
 -------------
 
-This node calculates vectors directed from input vertices to specified attractor. Vector lengths are calculated by one of physics-like falloff laws (like 1/R^2), so it looks like attractor attracts vertices, similar to gravity force, for example.
+This node calculates vectors directed from input vertices to specified
+attractor. Vector lengths are calculated by one of physics-like falloff laws
+(like 1/R^2), so it looks like attractor attracts vertices, similar to gravity
+force, for example.
 Output vectors can be used to move vertices along them, for example.
 
 Inputs
@@ -14,9 +17,15 @@ This node has the following inputs:
 
 - **Vertices**
 - **Center**. Center of used attractor. Exact meaning depends on selected attractor type.
-- **Direction**. Direction of used attractor. Exact meaning depends on selected attractor type. Not available if attractor type is **Point**.
-- **Amplitude**. Coefficient of attractor power. Zero means that all output vectors will be zero. If many values are provided, each value will be matched to one vertex.
-- **Coefficient**. Scale coefficient for falloff law. Exact meaning depends on selected falloff type. Available only for falloff types **Inverse exponent** and **Gauss**. If many values are provided, each value will be matched to one vertex.
+- **Direction**. Direction of used attractor. Exact meaning depends on selected
+  attractor type. Not available if attractor type is **Point**.
+- **Amplitude**. Coefficient of attractor power. Zero means that all output
+  vectors will be zero. If many values are provided, each value will be matched
+  to one vertex.
+- **Coefficient**. Scale coefficient for falloff law. Exact meaning depends on
+  selected falloff type. Available only for falloff types **Inverse exponent**
+  and **Gauss**. If many values are provided, each value will be matched to one
+  vertex.
 
 Parameters
 ----------
@@ -24,16 +33,36 @@ Parameters
 This node has the following parameters:
 
 - **Attractor type**. Selects form of used attractor. Available values are:
-  - **Point**. Default value. In simple case, attractor is just one point specified in **Center** input. Several points can be passed in that input; in this case, attracting force for each vertex will be calculated as average of attracting forces towards each attractor point.
-  - **Line**. Attractor is a straight line, defined by a point belonging to this line (**Center** input) and directing vector (**Direction** input).
-  - **Plane**. Attractor is a plane, defined by a point belonging to this line (**Center** input) and normal vector (**Direction** input).
+  - **Point**. Default value. In simple case, attractor is just one point
+    specified in **Center** input. Several points can be passed in that input;
+    the method of attraction vector calculation in this case is controlled by
+    the **Points mode** parameter.
+  - **Line**. Attractor is a straight line, defined by a point belonging to
+    this line (**Center** input) and directing vector (**Direction** input).
+  - **Plane**. Attractor is a plane, defined by a point belonging to this line
+    (**Center** input) and normal vector (**Direction** input).
+- **Points mode**. This defines how attraction vectors are calculated in case
+  several points are provided as attraction centers. The available modes are:
+   - **Average**. Attracting force for each vertex will be calculated as
+    average of attracting forces towards each attractor point.
+   - **Nearest**. Attracting force for each vertex will be calculated as the
+     attracting force towards the nearest of attractor points.
+   The default mode is **Average** (which is more physically correct). This
+   parameter is available only if **Attractor type** parameter is set to
+   **Point**.
 - **Falloff type**. Used falloff law. Avalable values are:
   - **Inverse**. Falloff law is 1/R, where R is distance from vertex to attractor.
-  - **Inverse square**. Falloff law is 1/R^2. This law is most common in physics (gravity and electromagnetizm), so this is the default value.
-  - **Inverse cubic**. Falloff law is 1/R^2.
-  - **Inverse exponent**. Falloff law is `exp(- C * R)`, where R is distance from vertex to attractor, and C is value from **Coefficient** input.
-  - **Gauss**. Falloff law is `exp(- C * R^2 / 2)`, where R is distance from vertex to attractor, and C is value from **Coefficient** input.
-- **Clamp**. Whether to restrict output vector length with distance from vertex to attractor. If not checked, then attraction vector length can be very big for vertices close to attractor, depending on selected falloff type. Default value is True.
+  - **Inverse square**. Falloff law is 1/R^2. This law is most common in
+    physics (gravity and electromagnetizm), so this is the default value.
+  - **Inverse cubic**. Falloff law is 1/R^3.
+  - **Inverse exponent**. Falloff law is `exp(- C * R)`, where R is distance
+    from vertex to attractor, and C is value from **Coefficient** input.
+  - **Gauss**. Falloff law is `exp(- C * R^2 / 2)`, where R is distance from
+    vertex to attractor, and C is value from **Coefficient** input.
+- **Clamp**. Whether to restrict output vector length with distance from vertex
+  to attractor. If not checked, then attraction vector length can be very big
+  for vertices close to attractor, depending on selected falloff type. Default
+  value is True.
 
 Outputs
 -------
