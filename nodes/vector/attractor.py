@@ -89,7 +89,7 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
 
     point_modes = [
         ('AVG', "Average", "Use average distance to all attraction centers", 0),
-        ('MIN', "Minimum", "Use minimum distance to any of attraction centers", 1)
+        ('MIN', "Nearest", "Use minimum distance to any of attraction centers", 1)
     ]
 
     point_mode : EnumProperty(
