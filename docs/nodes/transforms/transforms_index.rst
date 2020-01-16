@@ -16,6 +16,6 @@ Transforms
    mirror_mk2
    symmetrize
    transform_select
-   noisize
+   noise_displace
    randomize
    align_mesh_by_mesh

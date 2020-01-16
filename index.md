@@ -99,7 +99,7 @@
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
-    SvNoisizeNode
+    SvNoiseDisplaceNode
     SvRandomizeVerticesNode
 
 ## Modifier Change
@@ -192,7 +192,7 @@
     ListShuffleNode
     ListSortNodeMK2
     ListFlipNode
-    
+
 ## Dictionary
     SvDictionaryIn
     SvDictionaryOut

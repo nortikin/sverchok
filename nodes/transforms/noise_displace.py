@@ -59,7 +59,7 @@ def vector_noise_normal_multi_seed(params, noise_basis='PERLIN_ORIGINAL'):
     v_vert = Vector(vert)
     noise.seed_set(seed_val if seed_val else 1385)
     noise_scalar = deepnoise(matrix @ v_vert, noise_basis=noise_basis)
-    noise_v = Vector(normal) *noise_scalar
+    noise_v = Vector(normal) * noise_scalar
     return v_vert + Vector((noise_v[0]*scale_out[0], noise_v[1]*scale_out[1], noise_v[2]*scale_out[2]))
 
 def v_noise(verts, pols, m_prop, noise_type, result):
@@ -73,7 +73,7 @@ def v_normal(verts, pols, m_prop, noise_type, result):
     result.append([func(v_prop, noise_basis=noise_type) for v_prop in zip(verts, *m_prop, normals)])
     bm.free()
 
-def noisize(params, constant, matching_f):
+def noise_displace(params, constant, matching_f):
     result = []
     noise_function, noise_type, match_mode = constant
     params = matching_f(params)
@@ -97,15 +97,15 @@ def noisize(params, constant, matching_f):
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
 noise_func = {'NORMAL': v_normal, 'VECTOR': v_noise}
 
-class SvNoisizeNode(bpy.types.Node, SverchCustomTreeNode):
+class SvNoiseDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Noise Displacement
+    Triggers: Add Noise to verts
     Tooltip: Move input verts/mesh with a noise values.
 
     """
 
-    bl_idname = 'SvNoisizeNode'
-    bl_label = 'Noisize'
+    bl_idname = 'SvNoiseDisplaceNode'
+    bl_label = 'Noise Displace'
     bl_icon = 'FORCE_TURBULENCE'
 
     out_modes = [
@@ -129,7 +129,7 @@ class SvNoisizeNode(bpy.types.Node, SverchCustomTreeNode):
 
     scale_out_v: FloatVectorProperty(
         name='Scale Out', description='Scale of the added vector',
-        size=3, default=(0, 0, 0),
+        size=3, default=(1, 1, 1),
         update=updateNode)
 
     list_match: EnumProperty(
@@ -173,7 +173,7 @@ class SvNoisizeNode(bpy.types.Node, SverchCustomTreeNode):
         matching_f = list_match_func[self.list_match]
         desired_levels = [3, 3, 2, 3, 2]
         ops = [noise_func[self.out_mode], self.noise_type, self.list_match]
-        result = recurse_f_level_control(params, ops, noisize, matching_f, desired_levels)
+        result = recurse_f_level_control(params, ops, noise_displace, matching_f, desired_levels)
 
         self.outputs[0].sv_set(result)
 
@@ -188,5 +188,5 @@ class SvNoisizeNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             return self.label or self.name
 
-classes = [SvNoisizeNode]
+classes = [SvNoiseDisplaceNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
