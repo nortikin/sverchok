@@ -180,7 +180,6 @@ class SvPropNodeMixin():
             self.execute_inside_throttle()
         updateNode(self, context)
 
-
     def local_updateNode(self, context):
         # no further interaction with the nodetree is required.
         self.process()
@@ -196,7 +195,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
 
-    def execute_inside_throttle(self)    
+    def execute_inside_throttle(self):    
         s_type = type_assesment(self.obj)
 
         outputs = self.outputs
