@@ -145,18 +145,6 @@ types = {
 }
 
 
-def type_assesment(item):
-    """
-    we can use this function to perform more granular attr/type identification
-    """
-    s_type = types.get(type(item))
-    if s_type:
-        return s_type
-
-    if isinstance(item, bpy_prop_array):
-        if hasattr(item, "path_from_id") and item.path_from_id().endswith('color'):
-            return "SvColorSocket"
-    return None
 
 class SvPropNodeMixin():
 
@@ -179,8 +167,22 @@ class SvPropNodeMixin():
         with self.sv_throttle_tree_update():
             self.execute_inside_throttle()
         updateNode(self, context)
+    
+    def type_assesment(self):
+        """
+        we can use this function to perform more granular attr/type identification
+        """
+        item = self.object
+        s_type = types.get(type(item))
+        if s_type:
+            return s_type
 
-    def property_assesment(self):
+        if isinstance(item, bpy_prop_array):
+            if hasattr(item, "path_from_id") and item.path_from_id().endswith('color'):
+                return "SvColorSocket"
+        return None
+
+    def prop_assesment(self):
         p_name = {
             float: "float_prop", 
             int: "int_prop",
@@ -200,7 +202,7 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     sv_icon = 'SV_PROP_GET'
 
     def execute_inside_throttle(self):    
-        s_type = type_assesment(self.obj)
+        s_type = self.type_assesment()
 
         outputs = self.outputs
         if s_type and outputs:
@@ -235,8 +237,8 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         min=0.0, max=1.0, subtype='COLOR', update=local_updateNode)
 
     def execute_inside_throttle(self):
-        s_type = type_assesment(self.obj)
-        p_name = self.property_assesment()
+        s_type = self.type_assesment()
+        p_name = self.prop_assesment()
 
         inputs = self.inputs
         if inputs and s_type: 
@@ -271,11 +273,5 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
             assign_data(obj, data)
 
 
-def register():
-    bpy.utils.register_class(SvSetPropNode)
-    bpy.utils.register_class(SvGetPropNode)
-
-
-def unregister():
-    bpy.utils.unregister_class(SvSetPropNode)
-    bpy.utils.unregister_class(SvGetPropNode)
+classes = [SvSetPropNode, SvGetPropNode]
+register, unregister = bpy.utils.register_classes_factory(classes)
