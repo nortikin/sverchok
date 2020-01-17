@@ -1,7 +1,7 @@
 Line
 ====
 
-.. image:: https://user-images.githubusercontent.com/28003269/72215538-0f04e180-352d-11ea-8db3-0a9493ff54e2.png
+.. image:: https://user-images.githubusercontent.com/28003269/72597896-27f40500-3928-11ea-98dc-82d173121a55.png
 
 Functionality
 -------------
@@ -50,6 +50,9 @@ Parameters
 +---------------+---------------+--------------+---------------------------------------------------------+
 
 **Step length mode** - expect array of steps with help of which a line can be subdivided into unequal parts.
+
+**Step + size mode** - expect array of steps with help of which a line can be subdivided into proportional parts
+with custom line length.
 
 Example of usage
 ----------------

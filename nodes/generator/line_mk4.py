@@ -37,8 +37,8 @@ direction_items = [
     (DIRECTION.od, DIRECTION.od, "Origin and Direction", 4),
     ]
 
-Lengths = namedtuple('Lengths', ['size', 'number', 'step'])
-LENGTH = Lengths('Size', 'Number', 'Step')
+Lengths = namedtuple('Lengths', ['size', 'number', 'step', 'step_size'])
+LENGTH = Lengths('Size', 'Num', 'Step', 'St+Si')
 length_items = [(i, i, '') for i in LENGTH]
 
 
@@ -102,16 +102,24 @@ def get_corner_points(dir_mode=DIRECTION.x, center=False, vert_a=None, vert_b=No
     return origin, norm_dir * len_line + origin
 
 
-def make_line_multiple_steps(steps, verts_a=None, verts_b=None, dir_mode=DIRECTION.x, center=False):
+def make_line_multiple_steps(steps, size=None, verts_a=None, verts_b=None, 
+                             dir_mode=DIRECTION.x, len_mode=LENGTH.step, center=False):
     """
-    Generate lines between two given points in 'AB' mode or determined by origin(vert_a) and direction(vert_b)
+    Generate one line with origin a and direction b (or point on line)
+    In step mode edges are created according distances set in step list
+    In `step size` mode line is created fixed size by parameter size and steps subdivide line proportionally
     :param steps: list of values, each step is nest segment of a same line
+    :param size: length of line in `step length` mode
     :param verts_a: list of tuple(float, float, float), origin of a line, only for 'OD' mode
     :param verts_b: list of tuple(float, float, float), direction of a line, only for 'OD' mode
     :param dir_mode: 'X', 'Y', 'Z', 'OP' or 'OD', 'OP' and 'OD' mode for custom origin and direction
+    :param len_mode: step or step size modes, 
     :param center: if True center of a line is moved to origin
     :return: numpy array with shape(number of vertices, 3), list of tuple(int, int)
     """
+    if len_mode == LENGTH.step_size:
+        norm_factor = sum(steps) / size
+        steps = [st / norm_factor for st in steps]
     line_number = max(len(verts_a or 1), len(verts_b or 1))
     vert_number = line_number * (len(steps) + 1)
     len_line = sum(steps)
@@ -218,6 +226,11 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
             set_hide(self.inputs['Steps'], False)
             set_hide(self.inputs['Size'], True)
             self.inputs['Steps'].prop_name = ''
+        elif self.length_mode == LENGTH.step_size:
+            set_hide(self.inputs['Num'], True)
+            set_hide(self.inputs['Steps'], False)
+            set_hide(self.inputs['Size'], False)
+            self.inputs['Steps'].prop_name = ''
 
         updateNode(self, context)
 
@@ -248,7 +261,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         self.inputs["Direction"].hide_safe = True
 
     def draw_buttons(self, context, layout):
-        col = layout.column(align=True)
+        col = layout.column()
         row = col.row(align=True)
         row.prop(self, "direction", expand=True)
         row = col.row(align=True)
@@ -283,8 +296,8 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         dirs = chain(dirs, cycle([dirs[-1]]))
         out = []
         for i, n, st, si, va, d in zip(range(num_objects), number, step, size, ors, dirs):
-            if self.length_mode == LENGTH.step:
-                out.append(make_line_multiple_steps(st, va, d, self.direction, self.center))
+            if self.length_mode in (LENGTH.step, LENGTH.step_size):
+                out.append(make_line_multiple_steps(st, si[0], va, d, self.direction, self.length_mode, self.center))
             else:
                 out.append(make_line(n, st, si, va, d, self.direction, self.length_mode, self.center))
         if self.split:
