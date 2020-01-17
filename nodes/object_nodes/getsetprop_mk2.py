@@ -194,10 +194,10 @@ class SvPropNodeMixin():
     prop_name: StringProperty(name='', update=verify_prop)
 
 
-class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
+class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     ''' Get property '''
-    bl_idname = 'SvGetPropNode'
-    bl_label = 'Get property'
+    bl_idname = 'SvGetPropNodeMK2'
+    bl_label = 'Get property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_GET'
 
@@ -219,10 +219,10 @@ class SvGetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
-class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
+class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     ''' Set property '''
-    bl_idname = 'SvSetPropNode'
-    bl_label = 'Set property'
+    bl_idname = 'SvSetPropNodeMK2'
+    bl_label = 'Set property MK2'
     bl_icon = 'FORCE_VORTEX'
     sv_icon = 'SV_PROP_SET'
 
@@ -262,16 +262,22 @@ class SvSetPropNode(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
 
         #with self.sv_throttle_tree_update():
             # changes here should not reflect back into the nodetree?
-        if isinstance(obj, (int, float, bpy_prop_array)):
-            obj = get_object(path[:-1])
-            p_type, value = path[-1]
-            if p_type == "attr":
-                setattr(obj, value, data[0][0])
-            else: 
-                obj[value] = data[0][0]
-        else:
-            assign_data(obj, data)
+
+        try:
+            if isinstance(obj, (int, float, bpy_prop_array)):
+                obj = get_object(path[:-1])
+                p_type, value = path[-1]
+                if p_type == "attr":
+                    setattr(obj, value, data[0][0])
+                else: 
+                    obj[value] = data[0][0]
+            else:
+                assign_data(obj, data)
+
+        except Exception as err:
+            print(err)
 
 
-classes = [SvSetPropNode, SvGetPropNode]
+
+classes = [SvSetPropNodeMK2, SvGetPropNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
