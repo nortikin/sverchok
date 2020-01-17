@@ -141,6 +141,7 @@ instancer.py
 create_bvh_tree.py
 particles_MK2.py
 node_remote.py
+getsetprop_mk2.py
 join_tris.py
 csg_booleanMK2.py
 udp_client.py
