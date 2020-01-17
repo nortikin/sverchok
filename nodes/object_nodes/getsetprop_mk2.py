@@ -28,6 +28,13 @@ from mathutils import Matrix, Vector, Euler, Quaternion, Color
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import Matrix_generate, updateNode, node_id
 
+
+def is_probably_color(item):
+    if isinstance(item, bpy_prop_array):
+        if hasattr(item, "path_from_id") and item.path_from_id().endswith('color'):
+            return True
+
+
 def parse_to_path(p):
     '''
     Create a path and can be looked up easily.
@@ -81,10 +88,15 @@ def wrap_output_data(tvar):
     '''
     create valid sverchok socket data from an object
     '''
-    if isinstance(tvar, (Vector, Color)):
+    if isinstance(tvar, Vector):
         data = [[tvar[:]]]
+    elif isinstance(tvar, Color):
+        data = [[Color(tvar)]]
+    elif is_probably_color(tvar):
+        # mathutils.Color is a 3 component object only. never 4. (2020-January)
+        data = [[Color(tvar[:3])]]
     elif isinstance(tvar, Matrix):
-        data = [[r[:] for r in tvar[:]]]
+        data = [[Matrix(tvar)]]
     elif isinstance(tvar, (Euler, Quaternion)):
         tvar = tvar.to_matrix().to_4x4()
         data = [[r[:] for r in tvar[:]]]
@@ -105,8 +117,7 @@ def assign_data(obj, data):
     elif isinstance(obj, (Vector, Color)):
         obj[:] = data[0][0] 
     elif isinstance(obj, (Matrix, Euler, Quaternion)):
-        mats = Matrix_generate(data)
-        mat = mats[0]
+        mat = data[0]
         if isinstance(obj, Euler):
             eul = mat.to_euler(obj.order)
             obj[:] = eul
@@ -137,13 +148,11 @@ types = {
     float: "SvStringsSocket",
     str: "SvStringsSocket",
     mathutils.Vector: "SvVerticesSocket",
-    mathutils.Color: "SvVerticesSocket",
+    mathutils.Color: "SvColorSocket",
     mathutils.Matrix: "SvMatrixSocket",
     mathutils.Euler: "SvMatrixSocket",
-    mathutils.Quaternion: "SvMatrixSocket"
+    mathutils.Quaternion: "SvQuaternionSocket"
 }
-
-
 
 class SvPropNodeMixin():
 
