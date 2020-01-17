@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 
+from collections import namedtuple
 from itertools import chain, cycle
 import numpy as np
 
@@ -15,7 +16,11 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-def generate_edges(verts_a, verts_b, cuts):
+SplitModes = namedtuple('SplitModes', ['cuts', 'steps'])
+SPLIT_MODE = SplitModes('Cuts', 'Steps')
+
+
+def split_by_cuts(verts_a, verts_b, cuts):
     """
     Generate lines between two given points
     :param verts_a: list of tuple(float, float, float)
@@ -42,6 +47,29 @@ def generate_edges(verts_a, verts_b, cuts):
         num_added_verts += len(verts_line)
 
     return verts_lines, edges_lines
+
+
+def split_by_steps(vert_a, vert_b, steps=None):
+    """
+    Generate one line between given points, steps subdivide line proportionally
+    :param steps: list of values, each step is nest segment of a same line
+    :param vert_a: tuple(float, float, float)
+    :param vert_b: tuple(float, float, float)
+    :return: numpy array with shape(number of vertices, 3), list of tuple(int, int)
+    """
+    if steps is None:
+        return np.array([vert_a, vert_b]), [(0, 1)]
+    steps = [0] + steps
+    vert_a, vert_b = np.array(vert_a), np.array(vert_b)
+    size = np.linalg.norm(vert_b - vert_a)
+    norm_factor = sum(steps) / size
+    steps = [st / norm_factor for st in steps]
+    accum_steps = np.add.accumulate(steps)
+    norm_direction = (vert_b - vert_a) / np.linalg.norm(vert_b - vert_a)
+    line_verts = np.full((len(steps), 3), norm_direction)
+    line_verts = line_verts * accum_steps.reshape((len(steps), 1))
+    line_verts = line_verts + vert_a
+    return line_verts, [(i, i + 1) for i in range(len(line_verts) - 1)]
 
 
 def generate_verts(va, vb, cuts):
@@ -77,6 +105,10 @@ def split_lines_to_objects(verts, edges):
     return np.split(verts, split_slice)[:-1], edges_out
 
 
+def iter_last(l):
+    return chain(l, cycle([l[-1]]))
+
+
 class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: 2pt Line
@@ -89,12 +121,25 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GRIP'
     sv_icon = 'SV_LINE'
 
+    def update_node(self, context):
+        if self.split_mode == SPLIT_MODE.cuts:
+            self.inputs['Cuts'].hide_safe = False
+            self.inputs['Steps'].hide_safe = True
+        elif self.split_mode == SPLIT_MODE.steps:
+            self.inputs['Cuts'].hide_safe = True
+            self.inputs['Steps'].hide_safe = False
+        updateNode(self, context)
+
+    split_mode: bpy.props.EnumProperty(items=[(n, n, '') for n in SPLIT_MODE], update=update_node)
     a: bpy.props.FloatVectorProperty(name='A', update=updateNode)
     b: bpy.props.FloatVectorProperty(name='B', default=(0.5, 0.5, 0.5), update=updateNode)
     cuts_number: bpy.props.IntProperty(name='Num cuts', min=0, update=updateNode)
     as_numpy: bpy.props.BoolProperty(name="Numpy output", description="Format of output data", update=updateNode)
     split: bpy.props.BoolProperty(name="Split to objects", description="Each object in separate object",
                                    update=updateNode, default=True)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'split_mode', expand=True)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'as_numpy')
@@ -108,17 +153,20 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', 'A').prop_name = 'a'
         self.inputs.new('SvVerticesSocket', 'B').prop_name = 'b'
         self.inputs.new('SvStringsSocket', 'Cuts').prop_name = 'cuts_number'
+        self.inputs.new('SvStringsSocket', 'Steps').hide = True
         self.outputs.new('SvVerticesSocket', 'Verts')
         self.outputs.new('SvStringsSocket', 'Edges')
 
     def process(self):
-        num_objects = max([len(sock.sv_get(deepcopy=False)) for sock in self.inputs])
+        num_objects = max([len(sock.sv_get(deepcopy=False, default=[])) for sock in self.inputs])
         out = []
-        for i, a, b, c in zip(
+        for i, a, b, c, st in zip(
                 range(num_objects),
-                *[chain(sock.sv_get(deepcopy=False), cycle([sock.sv_get(deepcopy=False)[-1]]))
-                  for sock in self.inputs]):
-            out.append(generate_edges(a, b, c))
+                *[iter_last(sock.sv_get(deepcopy=False, default=[None])) for sock in self.inputs]):
+            if self.split_mode == SPLIT_MODE.cuts:
+                out.append(split_by_cuts(a, b, c))
+            elif self.split_mode == SPLIT_MODE.steps:
+                out.append(split_by_steps(a[0], b[0], st))
         if self.split:
             temp = [split_lines_to_objects(*data) for data in out]
             out = [v for res in temp for v in zip(*res)]

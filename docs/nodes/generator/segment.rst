@@ -1,7 +1,7 @@
 Segment generator
 =================
 
-.. image:: https://user-images.githubusercontent.com/28003269/72215821-e206fd80-3531-11ea-9e30-d89d625dde1c.png
+.. image:: https://user-images.githubusercontent.com/28003269/72606242-ac01b900-3937-11ea-9cb5-1e7b67c00bca.png
 
 Functionality
 -------------
@@ -32,6 +32,9 @@ Parameters
 +---------------+---------------+--------------+---------------------------------------------------------+
 | Param         | Type          | Default      | Description                                             |
 +===============+===============+==============+=========================================================+
+| **Cute modes**| Enum          | "Cuts"       | **Cuts** - cut line evenly                              | 
+|               |               |              | **Steps** - cut line proportionally by given steps      |
++---------------+---------------+--------------+---------------------------------------------------------+
 | **Split to    | Boolean       |              |                                                         |
 | objects**     | (N panel)     | True         | Each line will be put to separate object any way        |
 +---------------+---------------+--------------+---------------------------------------------------------+
