@@ -27,13 +27,14 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
 
-Directions = namedtuple('Directions', ['x', 'y', 'z', 'od'])
-DIRECTION = Directions('X', 'Y', 'Z', 'OD')
-directionItems = [
+Directions = namedtuple('Directions', ['x', 'y', 'z', 'op', 'od'])
+DIRECTION = Directions('X', 'Y', 'Z', 'OP', 'OD')
+direction_items = [
     (DIRECTION.x,  DIRECTION.x,  "Along X axis",         0),
     (DIRECTION.y,  DIRECTION.y,  "Along Y axis",         1),
     (DIRECTION.z,  DIRECTION.z,  "Along Z axis",         2),
-    (DIRECTION.od, DIRECTION.od, "Origin and Direction", 3),
+    (DIRECTION.op, DIRECTION.op, "Origin and point on line", 3),
+    (DIRECTION.od, DIRECTION.od, "Origin and Direction", 4),
     ]
 
 Lengths = namedtuple('Lengths', ['size', 'number', 'step'])
@@ -50,7 +51,7 @@ def make_line(numbers=None, steps=None, sizes=None, verts_or=None, verts_dir=Non
     :param sizes: list of values, length of a line for size mode only
     :param verts_or: list of tuple(float, float, float), custom origin of a line
     :param verts_dir: list of tuple(float, float, float), custom direction of a line
-    :param dir_mode: 'X', 'Y', 'Z' or 'OD', 'OD' mode for custom origin and direction
+    :param dir_mode: 'X', 'Y', 'Z', 'OP' or 'OD', 'OP' and 'OD' mode for custom origin and direction
     :param size_mode: 'Size' or 'Step', length of line
     :param center: if True center of a line is moved to origin
     :return: np.array of vertices, np.array of edges
@@ -88,12 +89,17 @@ def get_len_line(len_mode, number, size, step):
 def get_corner_points(dir_mode=DIRECTION.x, center=False, vert_a=None, vert_b=None, len_line=None):
     # returns coordinates of firs and last points of live according properties of the node
     directions = {'X': (1, 0, 0), 'Y': (0, 1, 0), 'Z': (0, 0, 1)}
-    origin = np.array(vert_a) if dir_mode == DIRECTION.od else np.array((0, 0, 0))
-    direction = (np.array(vert_b) / np.linalg.norm(np.array(vert_b))
-                 if dir_mode == DIRECTION.od else np.array(directions[dir_mode]))
+    origin = np.array(vert_a) if dir_mode in (DIRECTION.op, DIRECTION.od) else np.array((0, 0, 0))
+    if dir_mode == DIRECTION.op:
+        direction = np.array(vert_b) - origin
+    elif dir_mode == DIRECTION.od:
+        direction = np.array(vert_b)
+    else:
+        direction = np.array(directions[dir_mode])
+    norm_dir = direction / np.linalg.norm(direction)
     if center:
-        origin = origin - direction * (len_line / 2)
-    return origin, direction * len_line + origin
+        origin = origin - norm_dir * (len_line / 2)
+    return origin, norm_dir * len_line + origin
 
 
 def make_line_multiple_steps(steps, verts_a=None, verts_b=None, dir_mode=DIRECTION.x, center=False):
@@ -102,7 +108,7 @@ def make_line_multiple_steps(steps, verts_a=None, verts_b=None, dir_mode=DIRECTI
     :param steps: list of values, each step is nest segment of a same line
     :param verts_a: list of tuple(float, float, float), origin of a line, only for 'OD' mode
     :param verts_b: list of tuple(float, float, float), direction of a line, only for 'OD' mode
-    :param dir_mode: 'X', 'Y', 'Z' or 'OD' where 'OD' means custom origin and direction
+    :param dir_mode: 'X', 'Y', 'Z', 'OP' or 'OD', 'OP' and 'OD' mode for custom origin and direction
     :param center: if True center of a line is moved to origin
     :return: numpy array with shape(number of vertices, 3), list of tuple(int, int)
     """
@@ -120,12 +126,17 @@ def make_line_multiple_steps(steps, verts_a=None, verts_b=None, dir_mode=DIRECTI
 
     for line_i, sts, va, vb in zip(range(line_number), accum_steps, verts_a, verts_b):
         directions = {'X': (1, 0, 0), 'Y': (0, 1, 0), 'Z': (0, 0, 1)}
-        origin = np.array(va) if dir_mode == DIRECTION.od else np.array((0, 0, 0))
-        direction = (np.array(vb) / np.linalg.norm(np.array(vb))
-                     if dir_mode == DIRECTION.od else np.array(directions[dir_mode]))
+        origin = np.array(va) if dir_mode in (DIRECTION.op, DIRECTION.od) else np.array((0, 0, 0))
+        if dir_mode == DIRECTION.op:
+            direction = np.array(vb) - origin
+        elif dir_mode == DIRECTION.od:
+            direction = np.array(vb)
+        else:
+            direction = np.array(directions[dir_mode])
+        norm_dir = direction / np.linalg.norm(direction)
         if center:
-            origin = origin - direction * (len_line / 2)
-        line_verts = np.full((len(steps), 3), direction)
+            origin = origin - norm_dir * (len_line / 2)
+        line_verts = np.full((len(steps), 3), norm_dir)
         line_verts = line_verts * sts.reshape((len(steps), 1))
         line_verts = line_verts + origin
 
@@ -185,7 +196,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
             if sock.hide_safe != status:
                 sock.hide_safe = status
 
-        if self.direction == DIRECTION.od:
+        if self.direction in (DIRECTION.op, DIRECTION.od):
             set_hide(self.inputs['Origin'], False)
             set_hide(self.inputs['Direction'], False)
         else:
@@ -210,7 +221,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    direction: EnumProperty(name="Direction", items=directionItems, default="X", update=update_sockets)
+    direction: EnumProperty(name="Direction", items=direction_items, default="X", update=update_sockets)
     num: IntProperty(name='Num Verts', description='Number of Vertices', default=2, min=2, update=updateNode)
     step: FloatProperty(name='Step', description='Step length', default=1.0, update=updateNode)
     center: BoolProperty(name='Center', description='Center the line', default=False, update=updateNode)
@@ -221,7 +232,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
     length_mode: EnumProperty(items=length_items, update=update_sockets)
     v3_dir: FloatVectorProperty(name='Direction', description='Direction', size=3, default=(1, 1, 1), update=updateNode)
     v3_origin: FloatVectorProperty(name='Origin', description='Origin of line', size=3, default=(0, 0, 0),
-                                    update=updateNode)
+                                   update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Num").prop_name = 'num'
