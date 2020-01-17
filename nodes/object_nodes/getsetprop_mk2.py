@@ -101,7 +101,6 @@ def assign_data(obj, data):
     assigns data to the object
     '''
     if isinstance(obj, (int, float)):
-        # doesn't work
         obj = data[0][0]
     elif isinstance(obj, (Vector, Color)):
         obj[:] = data[0][0] 
@@ -172,7 +171,7 @@ class SvPropNodeMixin():
         """
         we can use this function to perform more granular attr/type identification
         """
-        item = self.object
+        item = self.obj
         s_type = types.get(type(item))
         if s_type:
             return s_type
@@ -215,7 +214,12 @@ class SvGetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         layout.prop(self, "prop_name", text="")
 
     def process(self):
-        """ convert path result to svdata for entering our nodetree """
+        """ 
+        convert path result to svdata for entering our nodetree 
+
+        this is not updated in realtime, when you edit a property on f.ex "modifiers/count"
+        requires a refresh of the tree to pick up current state.
+        """
         self.outputs[0].sv_set(wrap_output_data(self.obj))
 
 
@@ -230,8 +234,8 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         # no further interaction with the nodetree is required.
         self.process()
 
-    float_prop: FloatProperty(update=updateNode, name="x")
-    int_prop: IntProperty(update=updateNode, name="x")
+    float_prop: FloatProperty(update=local_updateNode, name="x")
+    int_prop: IntProperty(update=local_updateNode, name="x")
     color_prop: FloatVectorProperty(
         name="Color", description="Color", size=4,
         min=0.0, max=1.0, subtype='COLOR', update=local_updateNode)
