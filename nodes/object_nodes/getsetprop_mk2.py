@@ -185,9 +185,9 @@ class SvPropNodeMixin():
         if s_type:
             return s_type
 
-        if isinstance(item, bpy_prop_array):
-            if hasattr(item, "path_from_id") and item.path_from_id().endswith('color'):
-                return "SvColorSocket"
+        if is_probably_color(item):
+            return "SvColorSocket"
+
         return None
 
     def prop_assesment(self):
@@ -246,7 +246,7 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
     float_prop: FloatProperty(update=local_updateNode, name="x")
     int_prop: IntProperty(update=local_updateNode, name="x")
     color_prop: FloatVectorProperty(
-        name="Color", description="Color", size=4,
+        name="Color", description="Color", size=3,
         min=0.0, max=1.0, subtype='COLOR', update=local_updateNode)
 
     def execute_inside_throttle(self):
@@ -267,6 +267,7 @@ class SvSetPropNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvPropNodeMixin):
         layout.prop(self, "prop_name", text="")
 
     def process(self):
+
         data = self.inputs[0].sv_get()
         eval_str = apply_alias(self.prop_name)
         ast_path = ast.parse(eval_str)
