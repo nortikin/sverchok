@@ -18,7 +18,7 @@
 from colorsys import rgb_to_hls
 from itertools import repeat
 import bpy
-from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty
+from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, StringProperty, BoolProperty
 from mathutils import Vector, Matrix, Color
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
@@ -31,33 +31,6 @@ class EmptyTexture():
     def evaluate(self, vec):
         return [1, 1, 1, 1]
 
-def end_vector(vertex, eval_v, mid_level, strength, scale_out):
-    vx = eval_v[0]
-    vy = (eval_v[1] - mid_level) * strength * scale_out[1]
-    vz = (eval_v[2] - mid_level) * strength * scale_out[2]
-    return [vx, vy, vz]
-
-def texture_displace_rgb(params):
-    vertex, texture = params
-    v_vertex = Vector(vertex)
-    eval_v = texture.evaluate(v_vertex)[:]
-    return eval_v
-
-
-def texture_displace_hsv(params):
-    vertex, texture = params
-    v_vertex = Vector(vertex)
-    eval_v = Color(texture.evaluate(v_vertex)[:3]).hsv
-    return eval_v
-
-def texture_displace_hls(params):
-    vertex, texture = params
-    v_vertex = Vector(vertex)
-    eval_v = rgb_to_hls(*texture.evaluate(v_vertex)[:3])
-    return eval_v
-
-
-
 def texture_displace_vector_channel(params, extract_func):
     vertex, texture = params
     v_vertex = Vector(vertex)
@@ -65,105 +38,53 @@ def texture_displace_vector_channel(params, extract_func):
     eval_s = extract_func(col)
     return eval_s
 
-
-def apply_texture_displace_rgb(verts, m_prop, channel, result):
-    func = texture_displace_rgb
-    result.append([func(v_prop) for v_prop in zip(verts, *m_prop)])
-
-
-def apply_texture_displace_hsv(verts, m_prop, channel, result):
-    func = texture_displace_hsv
-    result.append([func(v_prop) for v_prop in zip(verts, *m_prop)])
-
-def apply_texture_displace_hls(verts, m_prop, channel, result):
-    func = texture_displace_hls
-    result.append([func(v_prop) for v_prop in zip(verts, *m_prop)])
-
-
-def apply_texture_displace_axis_x(verts, m_prop, channel, result):
-    apply_texture_displace_axis(verts, m_prop, channel, result)
-
-
-def apply_texture_displace_axis_y(verts, m_prop, channel, result):
-    apply_texture_displace_axis(verts, m_prop, channel, result)
-
-
-def apply_texture_displace_axis_z(verts, m_prop, channel, result):
-    apply_texture_displace_axis(verts, m_prop, channel, result)
-
-def apply_texture_displace_axis_custom(verts, m_prop, channel, result):
+def apply_texture_displace_normal(verts, m_prop, extract_func, result):
     func = texture_displace_vector_channel
-    extract_func = color_channels[channel][1]
-    result.append([func(v_prop, extract_func) for v_prop in zip(verts, *m_prop)])
-
-def apply_texture_displace_axis(verts, m_prop, channel, result):
-    func = texture_displace_vector_channel
-    extract_func = color_channels[channel][1]
-    result.append([func(v_prop, extract_func) for v_prop in zip(verts, *m_prop)])
-
-
-
-def apply_texture_displace_normal(verts, m_prop, channel, result):
-    func = texture_displace_vector_channel
-    extract_func = color_channels[channel][1]
     result.append([func(v_prop, extract_func) for v_prop in zip(verts, *m_prop)])
 
 
 def meshes_texture_diplace(params, constant, matching_f):
     result = []
-    displace_function, color_channel, match_mode = constant
+    color_channel, match_mode = constant
     params = matching_f(params)
     local_match = iter_list_match_func[match_mode]
+    extract_func = color_channels[color_channel][1]
     for props in zip(*params):
         verts, texture = props
         if  not type(texture) == list:
             texture = [texture]
 
         m_prop = local_match([texture])
-        displace_function(verts, m_prop, color_channel, result)
+        apply_texture_displace_normal(verts, m_prop, extract_func, result)
 
     return result
 
 color_channels = {
-    'RED':        (1, lambda x: x[0]),
-    'GREEN':      (2, lambda x: x[1]),
-    'BLUE':       (3, lambda x: x[2]),
-    'HUE':        (4, lambda x: Color(x[:3]).h),
-    'SATURATION': (5, lambda x: Color(x[:3]).s),
-    'VALUE':      (6, lambda x: Color(x[:3]).v),
-    'ALPHA':      (7, lambda x: x[3]),
-    'RGB AVERAGE':(8, lambda x: sum(x[:3])/3),
-    'LUMINOSITY': (9, lambda x: 0.21*x[0] + 0.72*x[1] + 0.07*x[2])
+    'Red':        (1, lambda x: x[0]),
+    'Green':      (2, lambda x: x[1]),
+    'Blue':       (3, lambda x: x[2]),
+    'Hue':        (4, lambda x: Color(x[:3]).h),
+    'Saturation': (5, lambda x: Color(x[:3]).s),
+    'Value':      (6, lambda x: Color(x[:3]).v),
+    'Alpha':      (7, lambda x: x[3]),
+    'RGB Average':(8, lambda x: sum(x[:3])/3),
+    'Luminosity': (9, lambda x: 0.21*x[0] + 0.72*x[1] + 0.07*x[2]),
+    'Color': (10, lambda x: x[:3]),
+    'RGBA': (11, lambda x: x[:]),
     }
 
-color_channels_modes = [(t, t.title(), t.title(), '', color_channels[t][0]) for t in color_channels]
+color_channels_modes = [(t, t, t, '', color_channels[t][0]) for t in color_channels if not t == 'RGBA']
 
-displace_funcs = {
-    'NORMAL': apply_texture_displace_normal,
-    'X': apply_texture_displace_axis_x,
-    'Y': apply_texture_displace_axis_y,
-    'Z': apply_texture_displace_axis_z,
-    'Custom Axis': apply_texture_displace_axis_custom,
-    'RGB to XYZ': apply_texture_displace_rgb,
-    'HSV to XYZ': apply_texture_displace_hsv,
-    'HLS to XYZ': apply_texture_displace_hls
-    }
-
-mapper_funcs = {
-    'UV': lambda v, v_uv: Vector((v_uv[0]*2-1, v_uv[1]*2-1, v_uv[2])),
-    'Mesh Matrix': lambda v, m: m @ v,
-    'Texture Matrix': lambda v, m: m @ v
-}
 
 class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Add Noise to verts
+    Triggers: Scence Texture In
     Tooltip: Affect input verts/mesh with a noise values.
 
     """
 
     bl_idname = 'SvTextureEvaluateNode'
-    bl_label = 'Displace'
+    bl_label = 'Texture Evaluate'
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
 
@@ -182,10 +103,10 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     @throttled
     def change_mode(self, context):
         outputs = self.outputs
-        if self.out_mode not in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']:
-            outputs[0].replace_socket('SvStringsSocket', 'Scalar')
+        if self.color_channel not in ['Color', 'RGBA']:
+            outputs[0].replace_socket('SvStringsSocket', 'Value')
         else:
-            outputs[0].replace_socket('SvColorSocket', self.out_mode.split(' ')[0])
+            outputs[0].replace_socket('SvColorSocket', 'Color')
 
 
 
@@ -196,19 +117,14 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         default='',
         update=updateNode)
 
-    out_mode: EnumProperty(
-        name='Direction',
-        items=out_modes,
-        default='NORMAL',
-        description='Apply Mode',
-        update=change_mode)
-
     color_channel: EnumProperty(
         name='Component',
         items=color_channels_modes,
-        default='ALPHA',
+        default='Alpha',
         description="Channel to use from texture",
-        update=updateNode)
+        update=change_mode)
+
+    use_alpha: BoolProperty(default=False, update=updateNode)
 
     list_match: EnumProperty(
         name="List Match",
@@ -217,6 +133,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
+        self.width = 200
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Texture').custom_draw = 'draw_texture_socket'
 
@@ -225,15 +142,18 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_texture_socket(self, socket, context, layout):
         if not socket.is_linked:
-            layout.label(text=socket.name+ ':')
-            layout.prop_search(self, "name_texture", bpy.data, 'textures', text="")
+            c = layout.split(factor=0.3, align=False)
+            c.label(text=socket.name+ ':')
+
+            c.prop_search(self, "name_texture", bpy.data, 'textures', text="")
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'out_mode', expand=False)
-        if self.out_mode in ['NORMAL']:
-            layout.prop(self, 'color_channel', text="Channel")
-
+        c = layout.split(factor=0.3, align=True)
+        c.label(text='Channel:')
+        c.prop(self, 'color_channel', text="")
+        if self.color_channel == 'Color':
+            layout.prop(self, 'use_alpha', text="Use Alpha")
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
@@ -251,7 +171,6 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
 
         result = []
 
-        params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs[:4]]
         params = []
         params.append(inputs[0].sv_get(default=[[]], deepcopy=False))
         if not inputs[1].is_linked:
@@ -265,8 +184,10 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
 
         matching_f = list_match_func[self.list_match]
         desired_levels = [3, 2]
-        ops = [displace_funcs[self.out_mode], self.color_channel, self.list_match]
-
+        if self.color_channel == 'Color' and self.use_alpha:
+            ops = ['RGBA', self.list_match]
+        else:
+            ops = [self.color_channel, self.list_match]
         result = recurse_f_level_control(params, ops, meshes_texture_diplace, matching_f, desired_levels)
 
         self.outputs[0].sv_set(result)

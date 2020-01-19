@@ -177,13 +177,13 @@ mapper_funcs = {
 
 class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Add Noise to verts
-    Tooltip: Affect input verts/mesh with a noise values.
+    Triggers: Add texture to verts
+    Tooltip: Affect input verts/mesh with a scene texture. Mimics Blender Displace modifier
 
     """
 
     bl_idname = 'SvDisplaceNode'
-    bl_label = 'Displace'
+    bl_label = 'Texture Displace'
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
 
@@ -208,14 +208,19 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
         inputs = self.inputs
         if self.tex_coord_type == 'Texture Matrix':
             if 'Texture Matrix' not in inputs:
+                if 'UV coords' in inputs:
+                    inputs[4].hide_safe = False
                 inputs[4].replace_socket('SvMatrixSocket', 'Texture Matrix')
 
         elif self.tex_coord_type == 'Mesh Matrix':
             if 'Mesh Matrix' not in inputs:
+                if 'UV coords' in inputs:
+                    inputs[4].hide_safe = False
                 inputs[4].replace_socket('SvMatrixSocket', 'Mesh Matrix')
 
         elif  self.tex_coord_type == 'UV':
             if 'UV coords' not in inputs:
+                inputs[4].hide_safe = False
                 inputs[4].replace_socket('SvVerticesSocket', 'UV coords')
 
     @throttled
@@ -280,6 +285,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
+        self.width = 200
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Polygons')
         self.inputs.new('SvStringsSocket', 'Texture').custom_draw = 'draw_texture_socket'
@@ -295,15 +301,28 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_texture_socket(self, socket, context, layout):
         if not socket.is_linked:
-            layout.label(text=socket.name+ ':')
-            layout.prop_search(self, "name_texture", bpy.data, 'textures', text="")
+            c = layout.split(factor=0.3, align=False)
+
+            c.label(text=socket.name+ ':')
+            c.prop_search(self, "name_texture", bpy.data, 'textures', text="")
         else:
             layout.label(text=socket.name+ '. ' + SvGetSocketInfo(socket))
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'out_mode', expand=False)
-        if self.out_mode not in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']:
-            layout.prop(self, 'color_channel', text="Channel")
-        layout.prop(self, 'tex_coord_type', text="Tex. Coord")
+        is_vector = self.out_mode in ['RGB to XYZ', 'HSV to XYZ', 'HLS to XYZ']
+
+        c = layout.split(factor=0.5, align=False)
+        r = c.column(align=False)
+        r.label(text='Direction'+ ':')
+        r.prop(self, 'out_mode', expand=False, text='')
+
+        r = c.column(align=False)
+        r.label(text='Texture Coord.'+ ':')
+        r.prop(self, 'tex_coord_type', expand=False, text='')
+        if not is_vector:
+            r = layout.split(factor=0.3, align=False)
+            r.label(text='Channel'+ ':')
+            r.prop(self, 'color_channel', expand=False, text='')
+        # layout.prop(self, 'tex_coord_type', text="Tex. Coord")
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
@@ -332,7 +351,10 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
             params.append(inputs[4].sv_get(default=[Matrix()], deepcopy=False))
             mat_level = 2
         else:
-            params.append(inputs[4].sv_get(default=[[]], deepcopy=False))
+            if inputs[4].is_linked:
+                params.append(inputs[4].sv_get(default=[[]], deepcopy=False))
+            else:
+                params.append(params[0])
             mat_level = 3
         params.append(inputs[5].sv_get(default=[[]], deepcopy=False))
         params.append(inputs[6].sv_get(default=[[]], deepcopy=False))
