@@ -4,13 +4,13 @@ Get Property / Set Property
 Functionality
 -------------
 
-These nodes can be used to control almost anything in Blender once you know the python path. For instance if you want to ``Set`` the location of a scene object called ``Cube``, the python path is ```bpy.data.objects['Cube'].location```.
+These nodes can be used to control almost anything in Blender once you know the python path. For instance if you want to ``Set`` the location of a scene object called ``Cube``, the python path is ``bpy.data.objects['Cube'].location``.
 
 By default these nodes don't expose their input / output sockets, but they will appear if the node was able to find a compatible property in the path you provided.  If you are trying a path and it's not wortking and no socket is appearing, please let us know in the issue tracker and we'll try to fix it. 
 
 The Socket types that the node generates depend on the kind of data path you gave it. It knows about Matrices and Vectors and Numbers etc..
 
-There are also convenience aliases. Instead of writing ```bpy.data.objects['Cube'].location``` you can write ```objs['Cube'].location``` . The aliases are as follows::
+There are also convenience aliases. Instead of writing ``bpy.data.objects['Cube'].location`` you can write ``objs['Cube'].location`` . The aliases are as follows::
 
     aliases = {
         "c": "bpy.context",
@@ -27,7 +27,13 @@ There are also convenience aliases. Instead of writing ```bpy.data.objects['Cube
 
 useful info for path lookups:
 
-    Many properties can be right-clicked and have the option to "copy data path" (to your clipboard for pasting), this can help reduce some console probing / documentation reading. Usually, however, you will need to provide the start of the path yourself. For example: if you copy the path one of the Color properties in a ColorRamp of a shader, then following will be be copied to the clipboard: `node_tree.nodes["ColorRamp"].color_ramp.elements[0].color` , this is not the full path, you will need to add the path to the `node_tree`, something like `bpy.data.materials['Material'].node_tree.nodes["ColorRamp"].color_ramp.elements[0].color`, then the node will know what you're intention is.
+    Many properties can be right-clicked and have the option to "copy data path" (to your clipboard for pasting), this can help reduce some console probing / documentation reading. 
+    
+Usually, however, you will need to provide the start of the path yourself. For example: if you copy the path one of the Color properties in a ColorRamp of a shader, then following will be be copied to the clipboard: 
+
+``node_tree.nodes["ColorRamp"].color_ramp.elements[0].color`` , 
+
+this is not the full path, you will need to add the path to the ``node_tree``, something like: ``bpy.data.materials['Material'].node_tree.nodes["ColorRamp"].color_ramp.elements[0].color``, then the node will know what your intention is.
 
 
 Input
