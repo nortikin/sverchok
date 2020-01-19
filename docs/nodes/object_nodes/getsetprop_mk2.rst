@@ -65,7 +65,7 @@ Limitations
 
 Because this is a generic set/get nodeset, the backend is relatively heavy on logic to provide the simplest user interface. This means sometimes we'll encounter new properties that aren't yet matched in our internal logic, and won't result in a socket or expected behaviour. Let us know when you find such properties and we can adjust our code. 
 
-When piping values into our nodetree from a property of a material or some other Blend object, that value will not update automatically in the Sverchok nodetree until the nodetree is told specifically to update. You can updat the nodetree manually several ways, but the handiest is usually a simple framechange (kb left/right). Another way is to have animation running.
+When piping values into our nodetree from a property of a material or some other Blend object, that value will not update automatically in the Sverchok nodetree until the nodetree is told specifically to update. You can update the nodetree manually several ways, but the handiest is usually a simple framechange (kb left/right). Another way is to have animation running.
 
 
 Examples
