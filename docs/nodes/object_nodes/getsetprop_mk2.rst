@@ -6,7 +6,9 @@ Functionality
 
 These nodes can be used to control almost anything in Blender once you know the python path. For instance if you want to ``Set`` the location of a scene object called ``Cube``, the python path is ```bpy.data.objects['Cube'].location```.
 
-By default these nodes don't expose their input / output sockets, but they will appear if the node was able to find a compatible property in the path you provided. The Socket types that the node generates depend on the kind of data path you gave it. It knows about Matrices and Vectors and Numbers etc..
+By default these nodes don't expose their input / output sockets, but they will appear if the node was able to find a compatible property in the path you provided.  If you are trying a path and it's not wortking and no socket is appearing, please let us know in the issue tracker and we'll try to fix it. 
+
+The Socket types that the node generates depend on the kind of data path you gave it. It knows about Matrices and Vectors and Numbers etc..
 
 There are also convenience aliases. Instead of writing ```bpy.data.objects['Cube'].location``` you can write ```objs['Cube'].location``` . The aliases are as follows::
 
@@ -22,6 +24,10 @@ There are also convenience aliases. Instead of writing ```bpy.data.objects['Cube
         "meshes": "bpy.data.meshes",
         "texts": "bpy.data.texts"
     }  
+
+useful info for path lookups:
+
+    Many properties can be right-clicked and have the option to "copy data path" (to your clipboard for pasting), this can help reduce some console probing / documentation reading. Usually, however, you will need to provide the start of the path yourself. For example: if you copy the path one of the Color properties in a ColorRamp of a shader, then following will be be copied to the clipboard: `node_tree.nodes["ColorRamp"].color_ramp.elements[0].color` , this is not the full path, you will need to add the path to the `node_tree`, something like `bpy.data.materials['Material'].node_tree.nodes["ColorRamp"].color_ramp.elements[0].color`, then the node will know what you're intention is.
 
 
 Input
@@ -57,8 +63,9 @@ The only parameter is the python path to the property you want to set or get. Us
 Limitations
 -----------
 
-(todo?)
+Because this is a generic set/get nodeset, the backend is relatively heavy on logic to provide the simplest user interface. This means sometimes we'll encounter new properties that aren't yet matched in our internal logic, and won't result in a socket or expected behaviour. Let us know when you find such properties and we can adjust our code. 
 
+When piping values into our nodetree from a property of a material or some other Blend object, that value will not update automatically in the Sverchok nodetree until the nodetree is told specifically to update. You can updat the nodetree manually several ways, but the handiest is usually a simple framechange (kb left/right). Another way is to have animation running.
 
 
 Examples
