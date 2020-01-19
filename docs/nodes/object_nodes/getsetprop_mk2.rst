@@ -29,7 +29,7 @@ useful info for path lookups:
 
     Many properties can be right-clicked and have the option to "copy data path" (to your clipboard for pasting), this can help reduce some console probing / documentation reading. 
     
-Usually, however, you will need to provide the start of the path yourself. For example: if you copy the path one of the Color properties in a ColorRamp of a shader, then following will be be copied to the clipboard: 
+Usually, however, you will need to provide the start of the path yourself. For example: if you copy the path to one of the Color properties in a ColorRamp of a shader, then following will be be copied to the clipboard: 
 
 ``node_tree.nodes["ColorRamp"].color_ramp.elements[0].color`` , 
 
