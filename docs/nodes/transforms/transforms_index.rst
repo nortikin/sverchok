@@ -17,5 +17,6 @@ Transforms
    symmetrize
    transform_select
    noise_displace
+   texture_displace
    randomize
    align_mesh_by_mesh

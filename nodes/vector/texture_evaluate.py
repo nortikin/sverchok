@@ -25,7 +25,7 @@ from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.modules.color_utils import color_channels
 
 class EmptyTexture():
     def evaluate(self, vec):
@@ -59,19 +59,19 @@ def meshes_texture_diplace(params, constant, matching_f):
 
     return result
 
-color_channels = {
-    'Red':        (1, lambda x: x[0]),
-    'Green':      (2, lambda x: x[1]),
-    'Blue':       (3, lambda x: x[2]),
-    'Hue':        (4, lambda x: Color(x[:3]).h),
-    'Saturation': (5, lambda x: Color(x[:3]).s),
-    'Value':      (6, lambda x: Color(x[:3]).v),
-    'Alpha':      (7, lambda x: x[3]),
-    'RGB Average':(8, lambda x: sum(x[:3])/3),
-    'Luminosity': (9, lambda x: 0.21*x[0] + 0.72*x[1] + 0.07*x[2]),
-    'Color': (10, lambda x: x[:3]),
-    'RGBA': (11, lambda x: x[:]),
-    }
+# color_channels = {
+#     'Red':        (1, lambda x: x[0]),
+#     'Green':      (2, lambda x: x[1]),
+#     'Blue':       (3, lambda x: x[2]),
+#     'Hue':        (4, lambda x: Color(x[:3]).h),
+#     'Saturation': (5, lambda x: Color(x[:3]).s),
+#     'Value':      (6, lambda x: Color(x[:3]).v),
+#     'Alpha':      (7, lambda x: x[3]),
+#     'RGB Average':(8, lambda x: sum(x[:3])/3),
+#     'Luminosity': (9, lambda x: 0.21*x[0] + 0.72*x[1] + 0.07*x[2]),
+#     'Color': (10, lambda x: x[:3]),
+#     'RGBA': (11, lambda x: x[:]),
+#     }
 
 color_channels_modes = [(t, t, t, '', color_channels[t][0]) for t in color_channels if not t == 'RGBA']
 
@@ -137,7 +137,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Texture').custom_draw = 'draw_texture_socket'
 
-        self.outputs.new('SvVerticesSocket', 'Vertices')
+        self.outputs.new('SvStringsSocket', 'Value')
 
 
     def draw_texture_socket(self, socket, context, layout):

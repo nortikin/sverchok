@@ -26,6 +26,7 @@ from sverchok.core.socket_data import SvGetSocketInfo
 from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.modules.color_utils import color_channels
 
 class EmptyTexture():
     def evaluate(self, vec):
@@ -117,6 +118,20 @@ def apply_texture_displace_normal(verts, pols, m_prop, channel, mapper_func, res
     bm.free()
 
 def meshes_texture_diplace(params, constant, matching_f):
+    '''
+    This function prepares the data to pass to the different displace functions.
+
+    params are verts, pols, texture, scale_out, matrix, mid_level, strength, axis
+    - verts, scale_out, and axis should be list as [[[float, float, float],],] (Level 3)
+    - pols should be list as [[[int, int, int, ...],],] (Level 3)
+    - texture can be [texture, texture] or [[texture, texture],[texture]] for per vertex texture
+    - matrix can be [matrix, matrix] or [[matrix, matrix],[texture]] for per vertex matrix,
+            in case of UV Coors in mapping_mode it should be [[[float, float, float],],] (Level 3)
+    mid_level and strength should be list as [[float, float, ..], [float, ..], ..] (Level 2)
+    desired_levels = [3, 3, 2, 3, 2 or 3, 2, 2, 3]
+    constant are the function options (data that does not need to be matched)
+    matching_f stands for list matching formula to use
+    '''
     result = []
     displace_mode, displace_function, color_channel, match_mode, mapping_mode = constant
     params = matching_f(params)
@@ -144,19 +159,8 @@ def meshes_texture_diplace(params, constant, matching_f):
 
     return result
 
-color_channels = {
-    'RED':        (1, lambda x: x[0]),
-    'GREEN':      (2, lambda x: x[1]),
-    'BLUE':       (3, lambda x: x[2]),
-    'HUE':        (4, lambda x: Color(x[:3]).h),
-    'SATURATION': (5, lambda x: Color(x[:3]).s),
-    'VALUE':      (6, lambda x: Color(x[:3]).v),
-    'ALPHA':      (7, lambda x: x[3]),
-    'RGB AVERAGE':(8, lambda x: sum(x[:3])/3),
-    'LUMINOSITY': (9, lambda x: 0.21*x[0] + 0.72*x[1] + 0.07*x[2])
-    }
 
-color_channels_modes = [(t, t.title(), t.title(), '', color_channels[t][0]) for t in color_channels]
+color_channels_modes = [(t, t, t, '', color_channels[t][0]) for t in color_channels]
 
 displace_funcs = {
     'NORMAL': apply_texture_displace_normal,
@@ -248,8 +252,8 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     color_channel: EnumProperty(
         name='Component',
-        items=color_channels_modes,
-        default='ALPHA',
+        items=color_channels_modes[:9],
+        default='Alpha',
         description="Channel to use from texture",
         update=updateNode)
 
