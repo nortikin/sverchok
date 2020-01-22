@@ -74,8 +74,8 @@ grid_data[(30, 30, 120, 80)] = tri_grid(30, 30, 120, 80)
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
     
     """
-    Triggers: SvConsoleNode
-    Tooltip: 
+    Triggers: Console 
+    Tooltip:  Console for Sverchok node
 
     This node prints the input to the nodeview using a fixedwidth character map.
     """
@@ -84,14 +84,30 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Console Node'
     bl_icon = 'GREASEPENCIL'
 
+    num_rows: bpy.props.IntProperty(name="num rows", default=30, min=1, max=140, update=updateNode)
+    num_chars: bpy.props.IntProperty(name="num chars", default=30, min=10, max=140, update=updateNode)
+    use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
+    char_image: bpy.props.StringProperty(name="image name", update=updateNode)
+
     def sv_init(self, context):
-        ...
+        self.inputs("SvStringsSocket", "text")
 
     def draw_buttons(self, context, layout):
-        ...
+        """
+        [ num rows = 30 ] , 
+        [ num chars wide = 120 ]
+        [ color chars bool ]
+        [ charset to use ]
+
+        """
+        layout.prop(self, "char_image")
 
     def process(self):
+        
+        if self.char_image:
+            ...
         ...
+
 
 
 classes = [SvConsoleNode]
