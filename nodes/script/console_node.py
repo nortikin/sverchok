@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+# pylint: disable=c0103
+
 import bpy
 from mathutils import Vector, Matrix
 
@@ -19,19 +21,22 @@ def process_string_to_charmap(node, str):
         line_limited = line[:node.terminal_width]
         # ord(char) , a = 65
 
-def triangles_from_quads(F):
+def triangles_from_quads(faces):
     r"""
+    this splits up the quad from geom.grid to triangles
+
                 (ABCD)                   (ABC, ACD)
 
     go from:    A - - - B           to    A - B            A 
                 |       |                  \  |            | \
                 |       |                   \ |            |  \
                 D - - - C                     C            D - C
+
     """
-    TF = []
-    TF_add = TX.extend
-    _ = [TF_add((poly[0], poly[1], poly[2]), (poly[0], poly[2], poly[3])) for poly in F]
-    return TF
+    tri_faces = []
+    tris_add = tri_faces.extend
+    _ = [tris_add(((poly[0], poly[1], poly[2]), (poly[0], poly[2], poly[3]))) for poly in faces]
+    return tri_faces
 
 
 def tri_grid(dim_x, dim_y, nx, ny):
@@ -53,20 +58,18 @@ def tri_grid(dim_x, dim_y, nx, ny):
     etc
 
     There's a mapping between int(char) to uv coordinates, charmap will support ascii only.
+
     """
-
     neg_y = Matrix(((1, 0, 0, 0), (0, -1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)))
-    V, E, F = grid(dim_x, dim_y, nx, ny, anchor=7, matrix=neg_y, mode='pydata')
-    TF = triangles_from_quads(F)
-    return V, TF
+    verts, _, faces = grid(dim_x, dim_y, nx, ny, anchor=7, matrix=neg_y, mode='pydata')
+    tri_faces = triangles_from_quads(faces)
+    return verts, tri_faces
 
 
-V, F = tri_grid(dim_x, dim_y, nx, ny)
-
-
-# this data need only be generated once, or at runtime at request.
+# this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
-grid_data[(30, 30, 120, 80)] = grid(30, 30, 120, 80)
+grid_data[(30, 30, 120, 80)] = tri_grid(30, 30, 120, 80)
+
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
     
