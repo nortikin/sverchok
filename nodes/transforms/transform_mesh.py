@@ -38,27 +38,20 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origin=None,
     bm_verts = [bm.verts.new(co) for co in verts]
     bm_edges = [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges] if edges else []
     bm_faces = [bm.faces.new([bm_verts[i] for i in face]) for face in faces] if faces else []
+    sel_verts = get_selected_verts(bm_verts, bm_edges, bm_faces, mask, selection_mode)
+    if space_mode == SP_MODE.norm:
+        bm.normal_update()
+        space = Matrix.Rotation(factor)
 
-    if mask:
-        if selection_mode == SEL_MODE.vert:
-            for vert, select in zip(bm_verts, mask):
-                if select:
-                    vert.select = True
-        elif selection_mode == SEL_MODE.edge and bm_edges:
-            for edge, select in zip(bm_edges, mask):
-                if select:
-                    edge.select_set(True)
-        elif selection_mode == SEL_MODE.face and bm_faces:
-            for face, select in zip(bm_faces, mask):
-                if select:
-                    face.select_set(True)
-    else:
-        [setattr(vert, 'select', True) for vert in bm_verts]
-        [setattr(edge, 'select', True) for edge in bm_edges]
-        [setattr(face, 'select', True) for face in bm_faces]
-
-    bmesh.ops.translate(bm, vec=get_move_vector(custom_direction, factor, direction_mode),
-                        space=Matrix(), verts=[v for v in bm_verts if v.select])
+    if transform_mode == TR_MODE.move:
+        bmesh.ops.translate(bm, vec=get_move_vector(custom_direction, factor, direction_mode),
+                            space=Matrix(), verts=sel_verts)
+    elif transform_mode == TR_MODE.rotate:
+        bmesh.ops.rotate(bm, cent=(0, 0, 0),
+                         matrix=Matrix.Rotation(factor[0], 3, get_move_axis(custom_direction, direction_mode)),
+                         verts=sel_verts, space=Matrix())
+    elif transform_mode == TR_MODE.scale:
+        bmesh.ops.scale(bm, vec=custom_direction[0], space=Matrix.Translation(custom_origin[0]), verts=sel_verts)
 
     return [v.co[:] for v in bm_verts]
 
@@ -67,7 +60,50 @@ def get_move_vector(direction, factor, direction_mode=DIR_MODE.x):
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower()) * factor[0]
     else:
-        return Vector(direction) * factor[0]
+        return Vector(direction[0]) * factor[0]
+
+
+def get_move_axis(direction, direction_mode):
+    if direction_mode in DIR_MODE[:-1]:
+        return getattr(DIR_VEC, direction_mode.lower())
+    else:
+        return direction[0]
+
+
+def get_selected_verts(bm_verts, bm_edges, bm_faces, mask, sel_mode):
+    if mask:
+        if sel_mode == SEL_MODE.vert:
+            return [vert for vert, select in zip(bm_verts, mask) if select]
+        elif sel_mode == SEL_MODE.edge and bm_edges:
+            return list({vert for edge, select in zip(bm_edges, mask) if select for vert in edge.verts})
+        elif sel_mode == SEL_MODE.face and bm_faces:
+            return list({vert for face, select in zip(bm_faces, mask) if select for vert in face.verts})
+    else:
+        return bm_verts
+
+
+def get_normal_tangent(bm_verts, bm_edges, bm_faces, mask, sel_mode):
+    if sel_mode == SEL_MODE.vert:
+        return calc_average_normal([vert.noraml for vert, sel in zip(bm_verts, mask) if mask])
+    elif sel_mode == SEL_MODE.edge:
+        return calc_average_normal(
+            [v.normal for v in {vert for edge, sel in zip(bm_edges, mask) if edge for vert in edge.verts}])
+    elif sel_mode == SEL_MODE.face:
+        return calc_average_normal([face.normal for face, sel in zip(bm_faces, mask) if sel])
+
+
+def calc_average_normal(normals):
+    n1 = normals.pop()
+    for n2 in normals:
+        n1 = (n1 + n2).normalized()
+    return n1
+
+
+def calc_edge_normal(edge):
+    direct = (edge.verts[1].co - edge.verts[0].co).normalized()
+    _normal = (edge.verts[0].normal + edge.verts[1].normal).normalized()
+    tang = direct.cross(_normal)
+    return tang.cross(direct)
 
 
 def iter_last(l):
@@ -102,14 +138,14 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         ('Normal', 'Global', 'Custom'), ('ORIENTATION_NORMAL', 'ORIENTATION_GLOBAL', 'ORIENTATION_CURSOR')))]
     direction_mode_items = [(n, n, '') for n in DIR_MODE]
 
-    transform_mode: bpy.props.EnumProperty(items=transform_mode_items)
-    select_mode: bpy.props.EnumProperty(items=select_mode_items)
+    transform_mode: bpy.props.EnumProperty(items=transform_mode_items, update=updateNode)
+    select_mode: bpy.props.EnumProperty(items=select_mode_items, update=updateNode)
     origin_mode: bpy.props.EnumProperty(items=origin_mode_items, name='Origin', default='Custom', update=update_sockets)
-    space_mode: bpy.props.EnumProperty(items=space_mode_items, name='Space')
-    direction_mode: bpy.props.EnumProperty(items=direction_mode_items, name='Direction')
-    origin: bpy.props.FloatVectorProperty(name='Origin')
-    direction: bpy.props.FloatVectorProperty(name='Direction')
-    factor: bpy.props.FloatProperty(name='Factor', default=1.0)
+    space_mode: bpy.props.EnumProperty(items=space_mode_items, name='Space', update=updateNode)
+    direction_mode: bpy.props.EnumProperty(items=direction_mode_items, name='Direction', update=updateNode)
+    origin: bpy.props.FloatVectorProperty(name='Origin', update=updateNode)
+    direction: bpy.props.FloatVectorProperty(name='Direction', update=updateNode)
+    factor: bpy.props.FloatProperty(name='Factor', default=1.0, update=updateNode)
 
     def draw_buttons(self, context, layout):
         row = layout.row()
@@ -159,7 +195,7 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         direction = iter_last(self.inputs['Direction'].sv_get(deepcopy=False))
         factor = iter_last(self.inputs['Factor'].sv_get(deepcopy=False))
         out = []
-        for v, e, f, m , o, d, fac in zip(verts, edges,faces, mask, origin, direction, factor):
+        for v, e, f, m, o, d, fac in zip(verts, edges, faces, mask, origin, direction, factor):
             out.append(transform_mesh(v, e, f, m, o, d, fac, self.transform_mode, self.origin_mode,
                                       self.direction_mode, self.select_mode, self.space_mode))
         self.outputs['Verts'].sv_set(out)
