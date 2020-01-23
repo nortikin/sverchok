@@ -102,14 +102,14 @@ def get_corner_points(dir_mode=DIRECTION.x, center=False, vert_a=None, vert_b=No
     return origin, norm_dir * len_line + origin
 
 
-def make_line_multiple_steps(steps, size=None, verts_a=None, verts_b=None, 
+def make_line_multiple_steps(steps, sizes=None, verts_a=None, verts_b=None,
                              dir_mode=DIRECTION.x, len_mode=LENGTH.step, center=False):
     """
     Generate one line with origin a and direction b (or point on line)
     In step mode edges are created according distances set in step list
     In `step size` mode line is created fixed size by parameter size and steps subdivide line proportionally
     :param steps: list of values, each step is nest segment of a same line
-    :param size: length of line in `step length` mode
+    :param sizes: list of float, length of line in `step length` mode
     :param verts_a: list of tuple(float, float, float), origin of a line, only for 'OD' mode
     :param verts_b: list of tuple(float, float, float), direction of a line, only for 'OD' mode
     :param dir_mode: 'X', 'Y', 'Z', 'OP' or 'OD', 'OP' and 'OD' mode for custom origin and direction
@@ -117,22 +117,38 @@ def make_line_multiple_steps(steps, size=None, verts_a=None, verts_b=None,
     :param center: if True center of a line is moved to origin
     :return: numpy array with shape(number of vertices, 3), list of tuple(int, int)
     """
+    # prepare steps for both modes
     if len_mode == LENGTH.step_size:
-        norm_factor = sum(steps) / size
-        steps = [st / norm_factor for st in steps]
-    line_number = max(len(verts_a or 1), len(verts_b or 1))
-    vert_number = line_number * (len(steps) + 1)
-    len_line = sum(steps)
-    accum_steps = np.add.accumulate(steps)
-    verts_a = cycle([None]) if verts_a is None else chain(verts_a, cycle([verts_a[-1]]))
-    verts_b = cycle([None]) if verts_b is None else chain(verts_b, cycle([verts_b[-1]]))
-    accum_steps = cycle([accum_steps])
+        # prepare steps for `step size` mode
+        if steps is None:
+            steps = np.array([1])
+        else:
+            steps = np.array(steps)
+        step_length = sum(steps)
+        norm_factors = [step_length / size for size in sizes]
+        steps = [steps / nf for nf in norm_factors]
+        len_lines = sizes
+        accum_steps = [np.add.accumulate(st) for st in steps]
+    else:
+        # prepare steps for 'steps' mode
+        len_lines = [sum(steps)]
+        accum_steps = [np.add.accumulate(steps)]
+
+    # prepare data for output
+    line_number = max(len(verts_a or 1), len(verts_b or 1), len(sizes or 1))
+    vert_number = sum([len(st) + 1 for _, st in zip(range(line_number), chain(accum_steps, cycle([accum_steps[-1]])))])
     verts_lines = np.empty((vert_number, 3))
     edges_lines = []
     num_added_verts = 0
     indexes = iter(range(int(1e+100)))
 
-    for line_i, sts, va, vb in zip(range(line_number), accum_steps, verts_a, verts_b):
+    # cycle input
+    verts_a = cycle([None]) if verts_a is None else chain(verts_a, cycle([verts_a[-1]]))
+    verts_b = cycle([None]) if verts_b is None else chain(verts_b, cycle([verts_b[-1]]))
+    accum_steps = chain(accum_steps, cycle([accum_steps[-1]]))
+    len_lines = chain(len_lines, cycle([len_lines[-1]]))
+
+    for line_i, sts, va, vb, len_line in zip(range(line_number), accum_steps, verts_a, verts_b, len_lines):
         directions = {'X': (1, 0, 0), 'Y': (0, 1, 0), 'Z': (0, 0, 1)}
         origin = np.array(va) if dir_mode in (DIRECTION.op, DIRECTION.od) else np.array((0, 0, 0))
         if dir_mode == DIRECTION.op:
@@ -144,8 +160,9 @@ def make_line_multiple_steps(steps, size=None, verts_a=None, verts_b=None,
         norm_dir = direction / np.linalg.norm(direction)
         if center:
             origin = origin - norm_dir * (len_line / 2)
-        line_verts = np.full((len(steps), 3), norm_dir)
-        line_verts = line_verts * sts.reshape((len(steps), 1))
+        point_number = len(sts) if len(sts) > 0 else 1
+        line_verts = np.full((point_number, 3), norm_dir)
+        line_verts = line_verts * sts.reshape((point_number, 1))
         line_verts = line_verts + origin
 
         edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, line_verts)])
@@ -270,7 +287,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         row.prop(self, "center", text="Center to origin")
 
     def draw_buttons_ext(self, context, layout):
-        col = layout.column(align=True)
+        col = layout.column()
         row = col.row(align=True)
         row.prop(self, "direction", expand=True)
         row = col.row(align=True)
@@ -287,7 +304,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         if self.length_mode == LENGTH.step and not self.inputs['Steps'].is_linked:
             return
 
-        number, step, size, ors, dirs = [sock.sv_get(deepcopy=False) for sock in self.inputs]
+        number, step, size, ors, dirs = [sock.sv_get(deepcopy=False, default=[None]) for sock in self.inputs]
         num_objects = max([len(item) for item in [number, step, size, ors, dirs]])
         number = chain(number, cycle([number[-1]]))
         step = chain(step, cycle([step[-1]]))
@@ -297,7 +314,7 @@ class SvLineNodeMK4(bpy.types.Node, SverchCustomTreeNode):
         out = []
         for i, n, st, si, va, d in zip(range(num_objects), number, step, size, ors, dirs):
             if self.length_mode in (LENGTH.step, LENGTH.step_size):
-                out.append(make_line_multiple_steps(st, si[0], va, d, self.direction, self.length_mode, self.center))
+                out.append(make_line_multiple_steps(st, si, va, d, self.direction, self.length_mode, self.center))
             else:
                 out.append(make_line(n, st, si, va, d, self.direction, self.length_mode, self.center))
         if self.split:
