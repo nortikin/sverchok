@@ -49,27 +49,39 @@ def split_by_cuts(verts_a, verts_b, cuts):
     return verts_lines, edges_lines
 
 
-def split_by_steps(vert_a, vert_b, steps=None):
+def split_by_steps(verts_a, verts_b, steps=None):
     """
     Generate one line between given points, steps subdivide line proportionally
+    Multiple lines can be generated
     :param steps: list of values, each step is nest segment of a same line
-    :param vert_a: tuple(float, float, float)
-    :param vert_b: tuple(float, float, float)
+    :param verts_a: list of tuple(float, float, float)
+    :param verts_b: list of tuple(float, float, float)
     :return: numpy array with shape(number of vertices, 3), list of tuple(int, int)
     """
     if steps is None:
-        return np.array([vert_a, vert_b]), [(0, 1)]
+        steps = [1]
     steps = [0] + steps
-    vert_a, vert_b = np.array(vert_a), np.array(vert_b)
-    size = np.linalg.norm(vert_b - vert_a)
-    norm_factor = sum(steps) / size
-    steps = [st / norm_factor for st in steps]
-    accum_steps = np.add.accumulate(steps)
-    norm_direction = (vert_b - vert_a) / np.linalg.norm(vert_b - vert_a)
-    line_verts = np.full((len(steps), 3), norm_direction)
-    line_verts = line_verts * accum_steps.reshape((len(steps), 1))
-    line_verts = line_verts + vert_a
-    return line_verts, [(i, i + 1) for i in range(len(line_verts) - 1)]
+    line_number = max([len(verts_a), len(verts_b)])
+    vert_number = line_number * len(steps)
+    verts_lines = np.empty((vert_number, 3))
+    edges_lines = []
+    num_added_verts = 0
+    indexes = iter(range(int(1e+100)))
+    for i_line, va, vb in zip(range(line_number), iter_last(verts_a), iter_last(verts_b)):
+        va, vb = np.array(va), np.array(vb)
+        size = np.linalg.norm(vb - va)
+        norm_factor = sum(steps) / size
+        sts = [st / norm_factor for st in steps]
+        accum_steps = np.add.accumulate(sts)
+        norm_direction = (vb - va) / size
+        line_verts = np.full((len(sts), 3), norm_direction)
+        line_verts = line_verts * accum_steps.reshape((len(sts), 1))
+        line_verts = line_verts + va
+
+        edges_lines.extend([(i, i + 1) for i, _ in zip(indexes, range(len(line_verts) - 1))])
+        verts_lines[num_added_verts: num_added_verts + len(line_verts)] = line_verts
+        num_added_verts += len(line_verts)
+    return verts_lines, edges_lines
 
 
 def generate_verts(va, vb, cuts):
@@ -166,7 +178,7 @@ class SvSegmentGenerator(bpy.types.Node, SverchCustomTreeNode):
             if self.split_mode == SPLIT_MODE.cuts:
                 out.append(split_by_cuts(a, b, c))
             elif self.split_mode == SPLIT_MODE.steps:
-                out.append(split_by_steps(a[0], b[0], st))
+                out.append(split_by_steps(a, b, st))
         if self.split:
             temp = [split_lines_to_objects(*data) for data in out]
             out = [v for res in temp for v in zip(*res)]
