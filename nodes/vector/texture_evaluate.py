@@ -31,19 +31,26 @@ class EmptyTexture():
     def evaluate(self, vec):
         return [1, 1, 1, 1]
 
-def texture_displace_vector_channel(params, extract_func):
+def texture_evaluate(params, extract_func):
     vertex, texture = params
     v_vertex = Vector(vertex)
     col = texture.evaluate(v_vertex)
     eval_s = extract_func(col)
     return eval_s
 
-def apply_texture_displace_normal(verts, m_prop, extract_func, result):
-    func = texture_displace_vector_channel
-    result.append([func(v_prop, extract_func) for v_prop in zip(verts, *m_prop)])
 
+def meshes_texture_evaluate(params, constant, matching_f):
+    '''
+    This function prepares the data to pass to the evaluate function.
 
-def meshes_texture_diplace(params, constant, matching_f):
+    params are verts, texture,
+    - verts should be list as [[[float, float, float],],] (Level 3)
+    - texture can be [texture, texture] or [[texture, texture],[texture]] for per vertex texture
+
+    desired_levels = [3, 2 or 3]
+    constant are the function options (data that does not need to be matched)
+    matching_f stands for list matching formula to use
+    '''
     result = []
     color_channel, match_mode = constant
     params = matching_f(params)
@@ -53,25 +60,10 @@ def meshes_texture_diplace(params, constant, matching_f):
         verts, texture = props
         if  not type(texture) == list:
             texture = [texture]
-
-        m_prop = local_match([texture])
-        apply_texture_displace_normal(verts, m_prop, extract_func, result)
+        m_texture = local_match([texture])[0]
+        result.append([texture_evaluate(v_prop, extract_func) for v_prop in zip(verts, m_texture)])
 
     return result
-
-# color_channels = {
-#     'Red':        (1, lambda x: x[0]),
-#     'Green':      (2, lambda x: x[1]),
-#     'Blue':       (3, lambda x: x[2]),
-#     'Hue':        (4, lambda x: Color(x[:3]).h),
-#     'Saturation': (5, lambda x: Color(x[:3]).s),
-#     'Value':      (6, lambda x: Color(x[:3]).v),
-#     'Alpha':      (7, lambda x: x[3]),
-#     'RGB Average':(8, lambda x: sum(x[:3])/3),
-#     'Luminosity': (9, lambda x: 0.21*x[0] + 0.72*x[1] + 0.07*x[2]),
-#     'Color': (10, lambda x: x[:3]),
-#     'RGBA': (11, lambda x: x[:]),
-#     }
 
 color_channels_modes = [(t, t, t, '', color_channels[t][0]) for t in color_channels if not t == 'RGBA']
 
@@ -79,14 +71,14 @@ color_channels_modes = [(t, t, t, '', color_channels[t][0]) for t in color_chann
 class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Scence Texture In
-    Tooltip: Affect input verts/mesh with a noise values.
+    Tooltip: Evaluate Scene texture at input coordinates
 
     """
 
     bl_idname = 'SvTextureEvaluateNode'
     bl_label = 'Texture Evaluate'
-    bl_icon = 'FORCE_TURBULENCE'
-    sv_icon = 'SV_VECTOR_NOISE'
+    bl_icon = 'FORCE_TEXTURE'
+
 
     out_modes = [
         ('NORMAL', 'Single Channel', 'Texture displacement along Vertex Normal', '', 1),
@@ -100,6 +92,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
         ('Texture Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
 
     ]
+
     @throttled
     def change_mode(self, context):
         outputs = self.outputs
@@ -107,9 +100,6 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
             outputs[0].replace_socket('SvStringsSocket', 'Value')
         else:
             outputs[0].replace_socket('SvColorSocket', 'Color')
-
-
-
 
     name_texture: StringProperty(
         name='image_name',
@@ -188,7 +178,7 @@ class SvTextureEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
             ops = ['RGBA', self.list_match]
         else:
             ops = [self.color_channel, self.list_match]
-        result = recurse_f_level_control(params, ops, meshes_texture_diplace, matching_f, desired_levels)
+        result = recurse_f_level_control(params, ops, meshes_texture_evaluate, matching_f, desired_levels)
 
         self.outputs[0].sv_set(result)
 

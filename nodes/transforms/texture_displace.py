@@ -188,8 +188,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvDisplaceNode'
     bl_label = 'Texture Displace'
-    bl_icon = 'FORCE_TURBULENCE'
-    sv_icon = 'SV_VECTOR_NOISE'
+    bl_icon = 'MOD_DISPLACE'
 
     out_modes = [
         ('NORMAL', 'Normal', 'Texture displacement along Vertex Normal', '', 1),
@@ -202,7 +201,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
         ('HLS to XYZ', 'HLS to XYZ', 'Texture displacement with HSV as vector', '', 8)]
 
     texture_coord_modes = [
-        ('UV', 'UV coords', 'Input UV coordinates to evaluate texture', '', 1),
+        ('UV', 'UV', 'Input UV coordinates to evaluate texture', '', 1),
         ('Mesh Matrix', 'Mesh Matrix', 'Matrix to apply to verts before evaluating texture', '', 2),
         ('Texture Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
 
@@ -223,9 +222,9 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
                 inputs[4].replace_socket('SvMatrixSocket', 'Mesh Matrix')
 
         elif  self.tex_coord_type == 'UV':
-            if 'UV coords' not in inputs:
+            if 'UV Coordinates' not in inputs:
                 inputs[4].hide_safe = False
-                inputs[4].replace_socket('SvVerticesSocket', 'UV coords')
+                inputs[4].replace_socket('SvVerticesSocket', 'UV Coordinates')
 
     @throttled
     def change_direction_sockets(self, context):

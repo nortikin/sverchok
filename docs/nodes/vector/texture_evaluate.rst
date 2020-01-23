@@ -37,3 +37,7 @@ Masking mesh with texture
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_3.png
 
 Blender procedural textures work in 3D space
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/texture_evaluate/texture_evaluate_sverchok_blender_example_4.png
+
+You can input multiple textures, when joined [[texture,texture,..],[..],..] they will be used in a single set of vertices with a single output list
