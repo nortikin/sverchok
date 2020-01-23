@@ -59,7 +59,6 @@
         287.5152587890625
       ],
       "params": {
-        "length_mode": "Number",
         "num": 4,
         "step": 1.2100000381469727
       },
@@ -300,18 +299,6 @@
   },
   "update_lists": [
     [
-      "Line",
-      0,
-      "Move",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move",
-      1
-    ],
-    [
       "List Input",
       0,
       "Color in MK1",
@@ -334,6 +321,18 @@
       0,
       "List Split",
       0
+    ],
+    [
+      "Line",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move",
+      1
     ],
     [
       "Move",

@@ -80,8 +80,7 @@
         -264.89697265625
       ],
       "params": {
-        "direction": "OD",
-        "length_mode": "Number"
+        "direction": "OD"
       },
       "use_custom_color": true,
       "width": 140.0
@@ -709,48 +708,6 @@
     [
       "Polygon Grid",
       1,
-      "Subdivide",
-      0
-    ],
-    [
-      "Polygon Grid",
-      2,
-      "Subdivide",
-      1
-    ],
-    [
-      "Polygon Grid",
-      3,
-      "Subdivide",
-      2
-    ],
-    [
-      "Subdivide",
-      0,
-      "Path Length",
-      0
-    ],
-    [
-      "Subdivide",
-      1,
-      "Path Length",
-      1
-    ],
-    [
-      "Path Length",
-      0,
-      "List Item.003",
-      0
-    ],
-    [
-      "List Item.003",
-      0,
-      "Math MK2",
-      0
-    ],
-    [
-      "Polygon Grid",
-      1,
       "List Item.002",
       0
     ],
@@ -791,6 +748,48 @@
       4
     ],
     [
+      "Polygon Grid",
+      1,
+      "Subdivide",
+      0
+    ],
+    [
+      "Polygon Grid",
+      2,
+      "Subdivide",
+      1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Subdivide",
+      2
+    ],
+    [
+      "Subdivide",
+      0,
+      "Path Length",
+      0
+    ],
+    [
+      "Subdivide",
+      1,
+      "Path Length",
+      1
+    ],
+    [
+      "Path Length",
+      0,
+      "List Item.003",
+      0
+    ],
+    [
+      "List Item.003",
+      0,
+      "Math MK2",
+      0
+    ],
+    [
       "Subdivide",
       0,
       "Pulga Physics.001",
@@ -821,6 +820,30 @@
       6
     ],
     [
+      "Transform Select",
+      0,
+      "List Item",
+      0
+    ],
+    [
+      "List Input.002",
+      0,
+      "List Item",
+      1
+    ],
+    [
+      "Subdivide",
+      "Faces",
+      "Reroute.003",
+      "Input"
+    ],
+    [
+      "Reroute.003",
+      "Output",
+      "Reroute.002",
+      "Input"
+    ],
+    [
       "List Input.001",
       "List",
       "Reroute",
@@ -839,16 +862,106 @@
       "mask"
     ],
     [
-      "Transform Select",
-      0,
-      "List Item",
+      "List Mask (out).002",
+      3,
+      "Vector Rewire",
       0
     ],
     [
-      "List Input.002",
+      "Transform Select",
       0,
-      "List Item",
+      "List Mask (out).001",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "List Mask (out).001",
+      "mask"
+    ],
+    [
+      "List Mask (out).002",
+      3,
+      "Vector Rewire.001",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "Vector Rewire.001",
+      0,
+      "Vector Math",
       1
+    ],
+    [
+      "Vector Math",
+      0,
+      "Math MK2.001",
+      0
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Vector out",
+      0
+    ],
+    [
+      "Vector out",
+      2,
+      "Math MK2.002",
+      0
+    ],
+    [
+      "Math MK2.001",
+      0,
+      "Math MK2.002",
+      1
+    ],
+    [
+      "Math MK2.002",
+      0,
+      "Line",
+      2
+    ],
+    [
+      "List Mask (out).001",
+      3,
+      "Line",
+      3
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Line",
+      4
+    ],
+    [
+      "Line",
+      0,
+      "Curve Viewer",
+      0
+    ],
+    [
+      "Line",
+      1,
+      "Curve Viewer",
+      1
+    ],
+    [
+      "Pulga Physics.001",
+      0,
+      "Viewer BMesh",
+      0
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Viewer BMesh",
+      "faces"
     ],
     [
       "List Item",
@@ -893,124 +1006,10 @@
       2
     ],
     [
-      "List Mask (out).002",
-      3,
-      "Vector Rewire",
-      0
-    ],
-    [
-      "Subdivide",
-      "Faces",
-      "Reroute.003",
-      "Input"
-    ],
-    [
-      "Reroute.003",
-      "Output",
-      "Reroute.002",
-      "Input"
-    ],
-    [
-      "Pulga Physics.001",
-      0,
-      "Viewer BMesh",
-      0
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Viewer BMesh",
-      "faces"
-    ],
-    [
-      "List Mask (out).002",
-      3,
-      "Vector Rewire.001",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Vector Math",
-      0
-    ],
-    [
-      "Vector Rewire.001",
-      0,
-      "Vector Math",
-      1
-    ],
-    [
-      "Vector Math",
-      0,
-      "Math MK2.001",
-      0
-    ],
-    [
-      "Transform Select",
-      0,
-      "List Mask (out).001",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "List Mask (out).001",
-      "mask"
-    ],
-    [
-      "List Mask (out).001",
-      3,
-      "Vector out",
-      0
-    ],
-    [
       "List Input.003",
       0,
       "Matrix in.003",
       3
-    ],
-    [
-      "Vector out",
-      2,
-      "Math MK2.002",
-      0
-    ],
-    [
-      "Math MK2.001",
-      0,
-      "Math MK2.002",
-      1
-    ],
-    [
-      "Math MK2.002",
-      0,
-      "Line",
-      1
-    ],
-    [
-      "List Mask (out).001",
-      3,
-      "Line",
-      3
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Line",
-      4
-    ],
-    [
-      "Line",
-      0,
-      "Curve Viewer",
-      0
-    ],
-    [
-      "Line",
-      1,
-      "Curve Viewer",
-      1
     ],
     [
       "Solidify",

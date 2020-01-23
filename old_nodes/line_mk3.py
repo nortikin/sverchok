@@ -92,7 +92,7 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     @property
     def replacement_nodes(self):
-        if self.direction == 'AB':
+        if self.direction == 'AB' and not self.normalize:
             return [('SvSegmentGenerator', {'Num': 'Cuts'}, {'Vertices': 'Verts'})]
         else:
             return [('SvLineNodeMK4', None, {'Vertices': 'Verts'})]
