@@ -62,6 +62,7 @@
     SvDistancetLineLineNode
     SvPathLengthNode
     CentersPolsNodeMK3
+    SvOrigins
     GetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
