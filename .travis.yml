@@ -9,7 +9,7 @@ branches:
 install:
   - |
     #set -x
-    set -e
+    #set -e
     if [ $TRAVIS_BRANCH = "master" ]
     then BLENDER_VERSION=2.80
          BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2

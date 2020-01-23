@@ -23,14 +23,14 @@ from sverchok.data_structure import updateNode, fullList, match_long_repeat
 from sverchok.utils.modules.geom_utils import interp_v3_v3v3, normalize, add_v3_v3v3, sub_v3_v3v3
 
 directionItems = [
-    ("X",  "X",  "Along X axis",         0),
-    ("Y",  "Y",  "Along Y axis",         1),
-    ("Z",  "Z",  "Along Z axis",         2),
-    ("AB", "AB", "Between 2 points",     3),
+    ("X", "X", "Along X axis", 0),
+    ("Y", "Y", "Along Y axis", 1),
+    ("Z", "Z", "Along Z axis", 2),
+    ("AB", "AB", "Between 2 points", 3),
     ("OD", "OD", "Origin and Direction", 4),
-    ]
+]
 
-    
+
 def make_line(steps, center, direction, vert_a, vert_b):
     if direction == "X":
         vec = lambda l: (l, 0.0, 0.0)
@@ -90,46 +90,53 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         updateNode(self, context)
 
-    direction : EnumProperty(
+    @property
+    def replacement_nodes(self):
+        if self.direction == 'AB' and not self.normalize:
+            return [('SvSegmentGenerator', {'Num': 'Cuts'}, {'Vertices': 'Verts'})]
+        else:
+            return [('SvLineNodeMK4', None, {'Vertices': 'Verts'})]
+
+    direction: EnumProperty(
         name="Direction", items=directionItems,
         default="X", update=update_vect_socket)
 
-    num : IntProperty(
+    num: IntProperty(
         name='Num Verts', description='Number of Vertices',
         default=2, min=2, update=updateNode)
 
-    step : FloatProperty(
+    step: FloatProperty(
         name='Step', description='Step length',
         default=1.0, update=updateNode)
 
-    center : BoolProperty(
+    center: BoolProperty(
         name='Center', description='Center the line',
         default=False, update=updateNode)
 
-    normalize : BoolProperty(
+    normalize: BoolProperty(
         name='Normalize', description='Normalize line to size',
         default=False, update=update_size_socket)
 
-    size : FloatProperty(
+    size: FloatProperty(
         name='Size', description='Size of line',
         default=10.0, update=updateNode)
 
-    v3_input_0 : FloatVectorProperty(
+    v3_input_0: FloatVectorProperty(
         name='A', description='Starting point',
         size=3, default=(0, 0, 0),
         update=updateNode)
 
-    v3_input_1 : FloatVectorProperty(
+    v3_input_1: FloatVectorProperty(
         name='B', description='End point',
         size=3, default=(0.5, 0.5, 0.5),
         update=updateNode)
 
-    v3_origin : FloatVectorProperty(
+    v3_origin: FloatVectorProperty(
         name='Origin', description='Origin of line',
         size=3, default=(0, 0, 0),
         update=updateNode)
 
-    v3_dir : FloatVectorProperty(
+    v3_dir: FloatVectorProperty(
         name='Direction', description='Direction',
         size=3, default=(1, 1, 1),
         update=updateNode)
@@ -170,7 +177,6 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         normal_size = [2.0 if c else 1.0]
 
         if self.normalize:
-
             normal_size = self.inputs["Size"].sv_get()[0]
 
         params = [input_num, input_step, normal_size]
@@ -193,7 +199,7 @@ class SvLineNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def process_vectors(self, pts_list, d, va, vb):
         if d == "AB" and self.normalize:
-            vb = add_v3_v3v3(normalize(sub_v3_v3v3(vb, va)), va) 
+            vb = add_v3_v3v3(normalize(sub_v3_v3v3(vb, va)), va)
         elif d == "OD":
             vb = add_v3_v3v3(normalize(vb), va)
         pts_list.append((va, vb))

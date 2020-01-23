@@ -44,8 +44,8 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Line MK2": {
-      "bl_idname": "SvLineNodeMK3",
+    "Line": {
+      "bl_idname": "SvLineNodeMK4",
       "color": [
         0.0,
         0.5,
@@ -55,8 +55,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -440.75177001953125,
-        255.88723754882812
+        -554.4129028320312,
+        287.5152587890625
       ],
       "params": {
         "num": 4,
@@ -323,7 +323,7 @@
       0
     ],
     [
-      "Line MK2",
+      "Line",
       0,
       "Move",
       0
