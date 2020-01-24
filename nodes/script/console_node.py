@@ -14,6 +14,7 @@ from mathutils import Vector, Matrix
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom import grid
+from sverchok.utils.sv_font_xml_parser import get_lookup_dict
 
 """
 import bpy
@@ -48,14 +49,6 @@ def draw():
 
 bpy.types.SpaceView3D.draw_handler_add(draw, (), 'WINDOW', 'POST_PIXEL')
 """
-
-
-def get_fnt(fnt_path):
-    """
-    return a dict lookup from the fnt xml
-    mydict[ordinal] = [(uv-triangle-1,  uv-triangle-2)] 
-    """
-    ...
 
 
 def letter_to_uv(oridinals, fnt):
