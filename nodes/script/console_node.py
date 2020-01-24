@@ -135,7 +135,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GREASEPENCIL'
 
     num_rows: bpy.props.IntProperty(name="num rows", default=30, min=1, max=140, update=updateNode)
-    num_chars: bpy.props.IntProperty(name="num chars", default=30, min=10, max=140, update=updateNode)
+    terminal_width: bpy.props.IntProperty(name="terminal width", default=30, min=10, max=140, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=updateNode)
 
@@ -145,12 +145,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         """
         [ num rows = 30 ] , 
-        [ num chars wide = 120 ]
+        [ terminal_width = 120 ]
         [ color chars bool ]
         [ charset to use ]
 
         """
         layout.prop(self, "char_image")
+
 
     def process(self):
         
