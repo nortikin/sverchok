@@ -270,15 +270,15 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'wrap')
 
     def sv_init(self, context):
-        inew = self.inputs.new
-        inew('SvVerticesSocket', "Vertices")
-        inew('SvStringsSocket', "Edges")
-        inew('SvStringsSocket', "Faces")
+        new_input = self.inputs.new
+        new_input('SvVerticesSocket', "Vertices")
+        new_input('SvStringsSocket', "Edges")
+        new_input('SvStringsSocket', "Faces")
 
-        onew = self.outputs.new
-        onew('SvStringsSocket', "Vals")
-        onew('SvVerticesSocket', "Faces")
-        onew('SvVerticesSocket', "Mask")
+        new_output = self.outputs.new
+        new_output('SvStringsSocket', "Vals")
+        new_output('SvVerticesSocket', "Faces")
+        new_output('SvVerticesSocket', "Mask")
 
         self.update_mode(context)
 

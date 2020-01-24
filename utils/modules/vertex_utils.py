@@ -9,16 +9,11 @@ from mathutils import Vector
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.modules.matrix_utils import matrix_normal
 
-def adjacent_edg_pol_num(verts, edg_pol):
-    '''calculate number of adjacent faces or edges '''
-    adj_edg_pol = [0 for v in verts]
-    for ep in edg_pol:
-        for v in ep:
-            adj_edg_pol[v] += 1
-
-    return adj_edg_pol
-
 def center(verts):
+    '''
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    returns the verts centred arround [0,0,0]
+    '''
     verts_out = []
     for vec in verts:
 
@@ -29,6 +24,10 @@ def center(verts):
     return verts_out
 
 def center_of_many(verts):
+    '''
+    verts: list as [[vertex, vertex, ...],[vertex,...]], being each vertex [float, float, float].
+    returns the verts centred arround [0,0,0] calculating the mean of all lists
+    '''
     verts_out = []
     verts_ungrouped = [[v for vec in group for v in vec] for group in verts]
 
@@ -39,15 +38,41 @@ def center_of_many(verts):
         verts_out.append(vec)
     return verts_out
 
-def adjacent_edg_pol(verts, edg_pol):
-    '''calculate of adjacent faces  or edges'''
-    adj_edg_pol = [[] for v in verts]
-    for ep in edg_pol:
-        for v in ep:
-            adj_edg_pol[v] += [ep]
+def adjacent_edg_pol(verts, edgs_pols):
+    '''
+    returns adjacent faces or edges as [[edge,edge,...], [edge, ...], ...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    '''
+    adj_edgs_pols = [[] for v in verts]
+    for ep in edgs_pols:
+        for v_id in ep:
+            adj_edgs_pols[v_id] += [ep]
 
-    return adj_edg_pol
+    return adj_edgs_pols
 
+
+def adjacent_edg_pol_num(verts, edgs_pols):
+    '''
+    calculate the number of adjacent faces  or edges as [int, int,...]
+    verts: list as [vertex, vertex, ...], being each vertex [float, float, float].
+    edg_pol: list as [edge, edge,..], being each edge [int, int].
+                  or [polygon, polygon,...] being each polygon [int, int, int, ...].
+    '''
+    adj_edgs_pols = [0 for v in verts]
+    for edg_pol in edgs_pols:
+        for v_id in edg_pol:
+            adj_edgs_pols[v_id] += 1
+
+    return adj_edgs_pols
+'''
+The functions bellow expect:
+vertices: list as [vertex, vertex, ...], being each vertex [float, float, float].
+edges: list as [edge, edge,..], being each edge [int, int].
+faces: list as [polygon, polygon,..], being each polygon [int, int, ...].
+returns value of each vertex as [value, value,...]
+'''
 def vertex_normal(vertices, edges, faces):
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     vals = [tuple(v.normal) for v in bm.verts]
@@ -91,6 +116,13 @@ def vertex_is_wire(vertices, edges, faces):
     return vals
 
 def vertex_matrix(vertices, edges, faces, orientation):
+    '''
+    orientation: contains origin track and up
+    origin: String  that can be First, Center, Last
+    track: String  that can be X, Y, Z, -X, -Y or -Z
+    up: String  that can be X, Y, Z, -X, -Y or -Z
+    outputs each vertex matrix [matrix, matrix, matrix]
+    '''
     track, up = orientation
     bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
     loc = [Vector(v) for v in vertices]
