@@ -27,3 +27,4 @@ Vector
    turbulence
    linear_approx
    color_input
+   texture_evaluate
