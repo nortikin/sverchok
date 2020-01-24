@@ -24,7 +24,7 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-
+from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 class SvOB3Callback(bpy.types.Operator):
 
@@ -216,6 +216,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def get_materials_from_mesh(self, mesh):
         return [face.material_index for face in mesh.polygons[:]]
 
+    def free(self):
+        set_sv_depsgraph_need(False)
     def process(self):
 
         if not self.object_names:
@@ -225,6 +227,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         data_objects = bpy.data.objects
         outputs = self.outputs
 
+
         edgs_out = []
         vers_out = []
         vers_out_grouped = []
@@ -233,8 +236,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         materials_out = []
 
         if self.modifiers or self.vergroups:
-            with self.sv_throttle_tree_update():
-                depsgraph = bpy.context.evaluated_depsgraph_get()
+            sv_depsgraph = get_sv_depsgraph()
 
         # iterate through references
         for obj in (data_objects.get(o.name) for o in self.object_names):
@@ -268,15 +270,15 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
                         """
                         this is where the magic happens.
-                        because we are in throttled tree update state at this point, we can aquire a depsgraph if 
+                        because we are in throttled tree update state at this point, we can aquire a depsgraph if
                         - modifiers
                         - or vertex groups are desired
 
                         """
                         if self.modifiers or self.vergroups:
-                            # depsgraph = bpy.context.evaluated_depsgraph_get()
-                            obj = depsgraph.objects[obj.name]
-                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+
+                            obj = sv_depsgraph.objects[obj.name]
+                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                         else:
                             obj_data = obj.to_mesh()
 
