@@ -15,6 +15,61 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.geom import grid
 
+"""
+import bpy
+import gpu
+import bgl
+from gpu_extras.batch import batch_for_shader
+
+IMAGE_NAME = "Untitled"
+image = bpy.data.images[IMAGE_NAME]
+
+shader = gpu.shader.from_builtin('2D_IMAGE')
+batch = batch_for_shader(
+    shader, 'TRI_FAN',
+    {
+        "pos": ((100, 100), (200, 100), (200, 200), (100, 200)),
+        "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1)),
+    },
+)
+
+if image.gl_load():
+    raise Exception()
+
+
+def draw():
+    bgl.glActiveTexture(bgl.GL_TEXTURE0)
+    bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
+
+    shader.bind()
+    shader.uniform_int("image", 0)
+    batch.draw(shader)
+
+
+bpy.types.SpaceView3D.draw_handler_add(draw, (), 'WINDOW', 'POST_PIXEL')
+"""
+
+
+def get_fnt(fnt_path):
+    """
+    return a dict lookup from the fnt xml
+    mydict[ordinal] = [(uv-triangle-1,  uv-triangle-2)] 
+    """
+    ...
+
+
+def letter_to_uv(oridinals, fnt):
+    """
+    expects a 1 or more list of ordinals
+    """
+    uvs = []
+    add_uv = uvs.extend
+    for letter in ordinals:
+        details = fnt.get(letter, ':')
+        add_uv(details)
+
+
+
 
 def process_string_to_charmap(node, str):
     for line in str.split():
