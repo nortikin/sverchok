@@ -51,18 +51,20 @@ bpy.types.SpaceView3D.draw_handler_add(draw, (), 'WINDOW', 'POST_PIXEL')
 """
 
 
-def letter_to_uv(oridinals, fnt):
+def letter_to_uv(letters, fnt):
     """
-    expects a 1 or more list of ordinals
+    expects a 1 or more list of letters, converts to ordinals
     """
     uvs = []
     add_uv = uvs.extend
+    unrecognized = fnt.get(ord(':')) 
+
     for letter in ordinals:
-        details = fnt.get(letter, ':')
+        ordinal = ord(letter)
+        details = fnt.get(ordinal, unrecognized)
         add_uv(details)
 
-
-
+    return uvs
 
 def process_string_to_charmap(node, str):
     for line in str.split():
