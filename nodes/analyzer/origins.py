@@ -21,6 +21,15 @@ MODE = MeshMode('Verts', 'Edges', 'Faces')
 
 
 def get_origin(verts, edges=None, faces=None, mode=MODE.faces):
+    """
+    Return origins of selected type of mesh component 
+    close to how Blender draw axis in edit (normal) mode of selected element
+    :param verts: list of tuple(float, float, float)
+    :param edges: list of tuple(int, int) or None
+    :param faces: list of list of int or None
+    :param mode: 'Verts', 'Edges' or 'Faces'
+    :return: list of centers, normals, tangents and matrixes of vertexes or edges or faces according selected mode
+    """
     bm = bmesh.new(use_operators=False)
     bm_verts = [bm.verts.new(co) for co in verts]
     [bm.edges.new([bm_verts[i] for i in edge]) for edge in edges or []]
@@ -53,6 +62,8 @@ def get_origin(verts, edges=None, faces=None, mode=MODE.faces):
 
 
 def get_vert_tang(vert):
+    # returns tangent close to Blender logic in normal mode
+    # vert - bmesh vertex
     if len(vert.link_edges) == 2:
         return vert.link_loops[0].calc_tangent().cross(vert.normal)
     elif vert.normal == Vector((0, 0, 1)):
@@ -64,6 +75,8 @@ def get_vert_tang(vert):
 
 
 def get_edge_normal_tang(edge):
+    # returns normal and tangent close to Blender logic in normal mode
+    # edge - bmesh edge
     direct = (edge.verts[1].co - edge.verts[0].co).normalized()
     _normal = (edge.verts[0].normal + edge.verts[1].normal).normalized()
     tang = direct.cross(_normal)
@@ -72,6 +85,8 @@ def get_edge_normal_tang(edge):
 
 
 def get_face_tangent(face):
+    # returns tangent close to Blender logic in normal mode
+    # face - bmesh face
     if len(face.edges) > 3:
         return face.calc_tangent_edge_pair().normalized() * -1
     else:
@@ -79,6 +94,7 @@ def get_face_tangent(face):
 
 
 def build_matrix(center, normal, tangent):
+    # build matrix from 3 vectors (center, normal(z), tangent(y))
     x_axis = tangent.cross(normal)
     return Matrix(list(zip(x_axis.resized(4), tangent.resized(4), normal.resized(4), center.to_4d())))
 
@@ -87,8 +103,8 @@ class SvOrigins(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: origin center normal tangent matrix
 
-    ...
-    ...
+    generates centers, normals, tangents
+    and from them matrixes
     """
     bl_idname = 'SvOrigins'
     bl_label = 'Origins'
