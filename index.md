@@ -281,6 +281,7 @@
     SvQuaternionInNode
     SvQuaternionOutNode
     SvQuaternionMathNode
+    SvRotationDifference
 
 ## Logic
     SvLogicNode
