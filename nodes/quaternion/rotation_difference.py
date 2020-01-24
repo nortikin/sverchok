@@ -40,7 +40,7 @@ class SvRotationDifference(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvRotationDifference'
     bl_label = 'Rotation difference'
-    bl_icon = 'MOD_BOOLEAN'
+    bl_icon = 'TRACKING_REFINE_BACKWARDS'
 
     vec1: bpy.props.FloatVectorProperty(default=(1, 0, 0), update=updateNode)
     vec2: bpy.props.FloatVectorProperty(default=(0, 1, 0), update=updateNode)
