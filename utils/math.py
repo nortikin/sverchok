@@ -40,6 +40,21 @@ def sphere(x):
 def invsquare(x):
     return x*x
 
+def inverse(c, x):
+    return 1.0/x
+
+def inverse_square(c, x):
+    return 1.0/(x*x)
+
+def inverse_cubic(c, x):
+    return 1.0/(x*x*x)
+
+def inverse_exp(c, x):
+    return math.exp(-c*x)
+
+def gauss(c, x):
+    return math.exp(-c*x*x/2.0)
+
 def falloff(type, radius, rho):
     if rho <= 0:
         return 1.0
