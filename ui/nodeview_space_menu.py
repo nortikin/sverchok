@@ -26,8 +26,9 @@ but massively condensed for sanity.
 
 import bpy
 
-from sverchok.menu import make_node_cats, draw_add_node_operator, get_extra_categories
+from sverchok.menu import make_node_cats, draw_add_node_operator
 from sverchok.utils import get_node_class_reference
+from sverchok.utils.extra_categories import get_extra_categories
 from sverchok.ui.sv_icons import node_icon, icon, get_icon_switch, custom_icon
 from sverchok.ui import presets
 # from nodeitems_utils import _node_categories

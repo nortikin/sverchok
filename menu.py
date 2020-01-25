@@ -32,6 +32,7 @@ from sverchok.utils.logging import info, error, exception
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.extra_categories import get_extra_categories
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
@@ -571,29 +572,6 @@ def unregister_node_add_operators():
     for idname in node_add_operators:
         bpy.utils.unregister_class(node_add_operators[idname])
 
-extra_category_providers = []
-
-def register_extra_category_provider(provider):
-    global extra_category_providers
-    extra_category_providers.append(provider)
-
-def unregister_extra_category_provider(identifier):
-    global extra_category_providers
-    idx = None
-    for i, provider in enumerate(extra_category_providers):
-        if provider.identifier == identifier:
-            idx = i
-    if idx is None:
-        raise Exception(f"Provider {identifier} was not registered")
-    del extra_category_providers[idx]
-
-def get_extra_categories():
-    global extra_category_providers
-    result = []
-    for provider in extra_category_providers:
-        result.extend(provider.get_categories())
-    return result
-
 def get_all_categories(std_categories):
 
     def generate(self, context):
@@ -631,7 +609,6 @@ def register():
 
     build_help_remap(original_categories)
     print(f"sv: {node_count} nodes.")
-
 
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:
