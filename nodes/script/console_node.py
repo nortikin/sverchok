@@ -8,19 +8,20 @@
 # pylint: disable=c0103
 
 import bpy
+import bgl
+import gpu
+from gpu_extras.batch import batch_for_shader
 from mathutils import Vector, Matrix
 
-# from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.settings import get_params
+from sverchok.data_structure import updateNode, node_id
+
+from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.geom import grid
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict
 
 """
-import bpy
-import gpu
-import bgl
-from gpu_extras.batch import batch_for_shader
 
 IMAGE_NAME = "Untitled"
 image = bpy.data.images[IMAGE_NAME]
@@ -51,7 +52,7 @@ bpy.types.SpaceView3D.draw_handler_add(draw, (), 'WINDOW', 'POST_PIXEL')
 """
 
 
-def letter_to_uv(letters, fnt):
+def letters_to_uv(letters, fnt):
     """
     expects a 1 or more list of letters, converts to ordinals
     """
@@ -89,7 +90,7 @@ def triangles_from_quads(faces):
     return tri_faces
 
 
-def tri_grid(dim_x, dim_y, nx, ny):
+def tri_grid(dim_x=3, dim_y=2, nx=3, ny=3):
     """
     This generates 2d grid, into which we texture each polygon with it's associated character UV
 
@@ -118,7 +119,6 @@ def tri_grid(dim_x, dim_y, nx, ny):
 
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
-grid_data[(30, 30, 120, 80)] = tri_grid(30, 30, 120, 80)
 
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
@@ -139,8 +139,19 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=updateNode)
 
+    texture = {}
+    n_id: StringProperty(default='')
+
+
+    @property
+    def xy_offset(self):
+        a = self.location[:]
+        b = int(self.width) + 20
+        return int(a[0] + b), int(a[1])
+
     def sv_init(self, context):
         self.inputs("SvStringsSocket", "text")
+        grid_data[(15, 32, self.terminal_width, self.num_rows)] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width, ny=self.num_rows)
 
     def draw_buttons(self, context, layout):
         """
@@ -154,10 +165,53 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+    
+        n_id = node_id(self)
+        nvBGL2.callback_disable(n_id)
+
+        # nope
+        if not self.char_image:
+            return
         
-        if self.char_image:
-            ...
-        ...
+        # yep
+        x, y = self.xy_offset
+        x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
+        batch, shader = self.generate_batch_shader((x, y, width, height))
+
+        draw_data = {
+            'tree_name': self.id_data.name[:],
+            'mode': 'custom_function',
+            'custom_function': simple_screen,
+            'loc': (x, y),
+            'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
+        }
+
+        nvBGL2.callback_enable(n_id, draw_data)
+
+
+    def get_preferences(self):
+        # supplied with default, forces at least one value :)
+        props = get_params({
+            'render_scale': 1.0,
+            'render_location_xy_multiplier': 1.0})
+        return props.render_scale, props.render_location_xy_multiplier
+
+    def adjust_position_and_dimensions(self, x, y, width, height):
+        """
+        this could also return scale for a blf notation in the vacinity of the texture
+        """
+        scale, multiplier = self.get_preferences()
+        x, y = [x * multiplier, y * multiplier]
+        width, height = [width * scale, height * scale]
+        return x, y, width, height
+
+    def free(self):
+        nvBGL2.callback_disable(node_id(self))
+        self.delete_texture()
+
+    def sv_copy(self, node):
+        # reset n_id on copy
+        self.n_id = ''
 
 
 
