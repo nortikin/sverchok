@@ -145,6 +145,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     terminal_width: bpy.props.IntProperty(name="terminal width", default=30, min=10, max=140, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode)
+    terminal_text: bpy.props.StringProperty(name="terminal text")
 
     texture = {}
     n_id: StringProperty(default='')
