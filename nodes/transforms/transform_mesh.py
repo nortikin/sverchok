@@ -40,24 +40,32 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origin=None,
         raise LookupError("Faces should be connected")
     if mask and selection_mode == SEL_MODE.edge and not any([faces, edges]):
         raise LookupError("Faces or edges should be connected")
-    if not any(mask):
-        return verts
 
     with get_bmesh(verts, edges, faces, space_mode == SP_MODE.norm) as bm:
-        sel_verts = get_selected_verts(bm, mask, selection_mode)
-        space = get_space(bm, mask, selection_mode, space_mode, origin_mode)
+        bm_components = {SEL_MODE.vert: bm.verts, SEL_MODE.edge: bm.edges, SEL_MODE.face: bm.faces}
+        if mask and not any(mask[:len(bm_components[selection_mode])]):
+            return verts
 
-        if transform_mode == TR_MODE.move:
-            # space matrix applies to bmesh vertices
-            bmesh.ops.translate(bm, vec=space.to_quaternion() @ get_move_vector(custom_direction, factor, direction_mode),
-                                space=Matrix(), verts=sel_verts)
-        elif transform_mode == TR_MODE.rotate:
-            bmesh.ops.rotate(bm, cent=space.to_translation(),
-                             matrix=Matrix.Rotation(factor[0], 3, space.to_quaternion() @ get_move_axis(custom_direction, direction_mode)),
-                             verts=sel_verts, space=Matrix())
-        elif transform_mode == TR_MODE.scale:
-            bmesh.ops.scale(bm, vec=get_scale_vector(custom_direction, factor, direction_mode),
-                            space=space.inverted(), verts=sel_verts)
+        if origin_mode == OR_MODE.individ:
+            selected = iter_bm_islands(bm, selection_mode, mask)
+        else:
+            selected = [[v for v, m in zip(bm_components[selection_mode], mask or cycle([True])) if m]]
+
+        for sel in selected:
+            sel_verts = get_selected_verts(sel)
+            space = get_space(sel, space_mode, origin_mode)
+
+            if transform_mode == TR_MODE.move:
+                # space matrix applies to bmesh vertices
+                bmesh.ops.translate(bm, vec=space.to_quaternion() @ get_move_vector(custom_direction, factor, direction_mode),
+                                    space=Matrix(), verts=sel_verts)
+            elif transform_mode == TR_MODE.rotate:
+                bmesh.ops.rotate(bm, cent=space.to_translation(),
+                                 matrix=Matrix.Rotation(factor[0], 3, space.to_quaternion() @ get_move_axis(custom_direction, direction_mode)),
+                                 verts=sel_verts, space=Matrix())
+            elif transform_mode == TR_MODE.scale:
+                bmesh.ops.scale(bm, vec=get_scale_vector(custom_direction, factor, direction_mode),
+                                space=space.inverted(), verts=sel_verts)
 
         return [v.co[:] for v in bm.verts]
 
@@ -84,6 +92,59 @@ def get_bmesh(verts, edges=None, faces=None, update_normals=False, use_operators
         raise error
 
 
+def iter_bm_islands(bm, sel_mode, mask=None):
+    if sel_mode == SEL_MODE.face:
+        # mark faces which are not selected at first
+        used = {f for f, m in zip(bm.faces, iter_last(mask) if mask else cycle([True])) if not m}
+        for face in bm.faces:
+            if face in used:
+                continue
+            stack = {face, }
+            island = []
+            while stack:
+                next_face = stack.pop()
+                used.add(next_face)
+                island.append(next_face)
+                for edge in next_face.edges:
+                    for f in edge.link_faces:
+                        if f not in used:
+                            stack.add(f)
+            yield island
+
+    if sel_mode == SEL_MODE.edge:
+        used = {e for e, m in zip(bm.edges, iter_last(mask) if mask else cycle([True])) if not m}
+        for edge in bm.edges:
+            if edge in used:
+                continue
+            stack = {edge, }
+            island = []
+            while stack:
+                next_edge = stack.pop()
+                used.add(next_edge)
+                island.append(next_edge)
+                for vert in next_edge.verts:
+                    for e in vert.link_edges:
+                        if e not in used:
+                            stack.add(e)
+            yield island
+
+    if sel_mode == SEL_MODE.vert:
+        used = {v for v, m in zip(bm.verts, iter_last(mask) if mask else cycle([True])) if not m}
+        for vert in bm.verts:
+            if vert in used:
+                continue
+            stack = {vert, }
+            island = []
+            while stack:
+                next_vert = stack.pop()
+                used.add(next_vert)
+                island.append(next_vert)
+                for edge in next_vert.link_edges:
+                    if edge.other_vert(next_vert) not in used:
+                        stack.add(edge.other_vert(next_vert))
+            yield island
+
+
 def get_move_vector(direction, factor, direction_mode=DIR_MODE.x):
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower()) * factor[0]
@@ -105,36 +166,29 @@ def get_move_axis(direction, direction_mode):
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower())
     else:
-        return direction[0]
+        return Vector(direction[0])
 
 
-def get_selected_verts(bm, mask, sel_mode):
-    if mask:
-        if sel_mode == SEL_MODE.vert:
-            return [vert for vert, select in zip(bm.verts, mask) if select]
-        elif sel_mode == SEL_MODE.edge and bm.edges:
-            return list({vert for edge, select in zip(bm.edges, mask) if select for vert in edge.verts})
-        elif sel_mode == SEL_MODE.face and bm.faces:
-            return list({vert for face, select in zip(bm.faces, mask) if select for vert in face.verts})
+def get_selected_verts(selected):
+    if type(selected[0]) == bmesh.types.BMVert:
+        return selected
+    elif type(selected[0]) == bmesh.types.BMEdge:
+        return list({v for e in selected for v in e.verts})
+    elif type(selected[0]) == bmesh.types.BMFace:
+        return list({v for f in selected for v in f.verts})
     else:
-        return bm.verts
+        raise ValueError(f"Such type: {type(selected)} is not supported")
 
 
-def get_space(bm, mask, sel_mode, space_mode, origin_mode):
-    if sel_mode == SEL_MODE.vert:
-        selected = [v for v, m in zip(bm.verts, mask or cycle([True])) if m]
-    elif sel_mode == SEL_MODE.edge:
-        selected = [e for e, m in zip(bm.edges, mask or cycle([True])) if m]
-    elif sel_mode == SEL_MODE.face:
-        selected = [f for f, m in zip(bm.faces, mask or cycle([True])) if m]
-    else:
-        raise ValueError(f"Given selection mode: {sel_mode} is unsupported")
+def get_space(selected, space_mode, origin_mode):
     origin = get_origin(selected, origin_mode)
     if space_mode == SP_MODE.glob:
         return Matrix.Translation(origin)
     elif space_mode == SP_MODE.norm:
         normal = get_normals(selected)
-        tangent = get_tangents(selected)
+        # average tangent can be not perpendicular to average normal
+        _tangent = get_tangents(selected)
+        tangent = normal.cross(_tangent.cross(normal))
         return build_matrix(origin, normal, tangent)
 
 
@@ -152,16 +206,22 @@ def get_origin(mesh_component, origin_mode):
 def get_verts_origin(verts, origin_mode):
     if origin_mode == OR_MODE.bound:
         return get_bound_center([v.co for v in verts])
+    if origin_mode in [OR_MODE.median, OR_MODE.individ]:
+        return get_median_center([v.co for v in verts])
 
 
 def get_edges_origin(edges, origin_mode):
     if origin_mode == OR_MODE.bound:
         return get_bound_center([e.verts[0].co.lerp(e.verts[1].co, 0.5) for e in edges])
+    if origin_mode in [OR_MODE.median, OR_MODE.individ]:
+        return get_median_center([v.co for v in{v for e in edges for v in e.verts}])
 
 
 def get_faces_origin(faces, origin_mode):
     if origin_mode == OR_MODE.bound:
         return get_bound_center([f.calc_center_bounds() for f in faces])
+    if origin_mode in [OR_MODE.median, OR_MODE.individ]:
+        return get_median_center([v.co for v in {v for f in faces for v in f.verts}])
 
 
 def get_bound_center(verts):
@@ -172,6 +232,10 @@ def get_bound_center(verts):
     y_max = max(v.y for v in verts)
     z_max = max(v.z for v in verts)
     return Vector(((x_min + x_max) / 2, (y_min + y_max) / 2, (z_min + z_max) / 2))
+
+
+def get_median_center(verts):
+    return reduce(lambda v1, v2: v1 + v2, verts) / len(verts)
 
 
 def get_normals(mesh_component):
@@ -198,10 +262,6 @@ def get_tangents(mesh_component):
 
 def calc_average_normal(normals):
     return reduce(lambda v1, v2: v1 + v2, normals).normalized()
-    # n1 = normals.pop()
-    # for n2 in normals:
-    #     n1 = (n1 + n2).normalized()
-    # return n1
 
 
 @lru_cache(maxsize=None)
@@ -237,7 +297,6 @@ def get_face_tangent(face):
 def build_matrix(center, normal, tangent):
     # build matrix from 3 vectors (center, normal(z), tangent(y))
     x_axis = tangent.cross(normal)
-    # x_axis = normal.cross(tangent)
     return Matrix(list(zip(x_axis.resized(4), tangent.resized(4), normal.resized(4), center.to_4d())))
 
 
