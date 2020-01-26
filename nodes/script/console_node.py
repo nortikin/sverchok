@@ -45,23 +45,15 @@ batch = batch_for_shader(
 if image.gl_load():
     raise Exception()
 
-def draw():
+"""
+
+def simple_console():
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
 
     shader.bind()
     shader.uniform_int("image", 0)
     batch.draw(shader)
-
-
-bpy.types.SpaceView3D.draw_handler_add(draw, (), 'WINDOW', 'POST_PIXEL')
-"""
-
-def process_string_to_charmap(node, str):
-    for line in str.split():
-        line_limited = line[:node.terminal_width]
-        # ord(char) , a = 65
-
 
 def generate_batch_shader(node, args):
     x, y, w, h = args
@@ -121,10 +113,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         batch, shader = generate_batch_shader((x, y, width, height))
 
         draw_data = {
-            'tree_name': self.id_data.name[:],
-            'mode': 'custom_function',
-            'custom_function': simple_screen,
-            'loc': (x, y),
+            'tree_name': self.id_data.name[:], 'loc': (x, y),
+            'mode': 'custom_function', 'custom_function': simple_console,
             'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
         }
         nvBGL2.callback_enable(n_id, draw_data)
