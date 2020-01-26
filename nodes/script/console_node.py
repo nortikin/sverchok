@@ -7,6 +7,8 @@
 
 # pylint: disable=c0103
 
+import inspect
+
 import bpy
 import bgl
 import gpu
@@ -18,12 +20,16 @@ from sverchok.settings import get_params
 from sverchok.data_structure import updateNode, node_id
 
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
-from sverchok.utils.geom import grid
-from sverchok.utils.sv_font_xml_parser import get_lookup_dict
-from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin
+from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
+from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, tri_grid
+
+
+demo_text = inspect.getsource(tri_grid)
+
+# this data need only be generated once, or at runtime at request (low frequency).
+grid_data = {}
 
 """
-
 IMAGE_NAME = "Untitled"
 image = bpy.data.images[IMAGE_NAME]
 
@@ -39,7 +45,6 @@ batch = batch_for_shader(
 if image.gl_load():
     raise Exception()
 
-
 def draw():
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
@@ -52,75 +57,19 @@ def draw():
 bpy.types.SpaceView3D.draw_handler_add(draw, (), 'WINDOW', 'POST_PIXEL')
 """
 
-
-def letters_to_uv(letters, fnt):
-    """
-    expects a 1 or more list of letters, converts to ordinals
-    """
-    uvs = []
-    add_uv = uvs.extend
-    unrecognized = fnt.get(ord(':')) 
-
-    for letter in ordinals:
-        ordinal = ord(letter)
-        details = fnt.get(ordinal, unrecognized)
-        add_uv(details)
-
-    return uvs
-
 def process_string_to_charmap(node, str):
     for line in str.split():
         line_limited = line[:node.terminal_width]
         # ord(char) , a = 65
 
-def triangles_from_quads(faces):
-    r"""
-    this splits up the quad from geom.grid to triangles
 
-                (ABCD)                   (ABC, ACD)
-
-    go from:    A - - - B           to    A - B            A 
-                |       |                  \  |            | \
-                |       |                   \ |            |  \
-                D - - - C                     C            D - C
-
-    """
-    tri_faces = []
-    tris_add = tri_faces.extend
-    _ = [tris_add(((poly[0], poly[1], poly[2]), (poly[0], poly[2], poly[3]))) for poly in faces]
-    return tri_faces
-
-
-def tri_grid(dim_x=3, dim_y=2, nx=3, ny=3):
-    """
-    This generates 2d grid, into which we texture each polygon with it's associated character UV
-
-    AA -  -  -AB -  -  -AC -  -  -AD -  -  - n
-     | -       | -       | -       |
-     |    -    |    -    |    -    |
-     |       - |       - |       - |
-    BA -  -  -BB -  -  -BC -  - 
-     | -       | -
-     |    -    |    -
-     |       - |       -
-    CA -  -  -CB -  -  -
-     | -
-     |    -
-     |       -
-    etc
-
-    There's a mapping between int(char) to uv coordinates, charmap will support ascii only.
-
-    """
-    neg_y = Matrix(((1, 0, 0, 0), (0, -1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)))
-    verts, _, faces = grid(dim_x, dim_y, nx, ny, anchor=7, matrix=neg_y, mode='pydata')
-    tri_faces = triangles_from_quads(faces)
-    return verts, tri_faces
-
-
-# this data need only be generated once, or at runtime at request (low frequency).
-grid_data = {}
-
+def generate_batch_shader(node, args):
+    x, y, w, h = args
+    positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
+    indices = ((0, 1), (1, 1), (1, 0), (0, 0))
+    shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": positions, "texCoord": indices})
+    return batch, shader
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     
@@ -160,20 +109,16 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def draw_buttons(self, context, layout):
         layout.prop(self, "char_image")
 
-
     def process(self):
-    
         n_id = node_id(self)
         nvBGL2.callback_disable(n_id)
 
-        # nope
         if not self.char_image:
             return
         
-        # yep
         x, y = self.xy_offset
         x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
-        batch, shader = self.generate_batch_shader((x, y, width, height))
+        batch, shader = generate_batch_shader((x, y, width, height))
 
         draw_data = {
             'tree_name': self.id_data.name[:],
@@ -182,7 +127,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             'loc': (x, y),
             'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
         }
-
         nvBGL2.callback_enable(n_id, draw_data)
 
 

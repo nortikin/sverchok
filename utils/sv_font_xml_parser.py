@@ -54,3 +54,18 @@ def get_lookup_dict(fnt_path):
     return uv_dict
 
 # uv_dict = get_lookup_dict(r"C:\Users\zeffi\Desktop\GITHUB\sverchok\utils\modules\bitmap_font\consolas.fnt")
+
+def letters_to_uv(letters, fnt):
+    """
+    expects a 1 or more list of letters, converts to ordinals
+    """
+    uvs = []
+    add_uv = uvs.extend
+    unrecognized = fnt.get(ord(':')) 
+
+    for letter in ordinals:
+        ordinal = ord(letter)
+        details = fnt.get(ordinal, unrecognized)
+        add_uv(details)
+
+    return uvs
