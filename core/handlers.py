@@ -131,20 +131,24 @@ def sv_main_handler(scene):
     global sv_depsgraph
     global depsgraph_need
 
-    if not pre_running:
-        pre_running = True
-        if depsgraph_need:
-            sv_depsgraph = bpy.context.evaluated_depsgraph_get()
-        for ng in sverchok_trees():
-            # if P (sv_process is False, we can skip this node tree.
-            if not ng.sv_process:
-                continue
+    # when this handler is called from inside another call to this handler we end early
+    # to avoid stack overflow.
+    if pre_running:
+        return
 
-            if ng.has_changed:
-                print('depsgraph_update_pre called - ng.has_changed -> ')
+    pre_running = True
+    if depsgraph_need:
+        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+    for ng in sverchok_trees():
+        # if P (sv_process is False, we can skip this node tree.
+        if not ng.sv_process:
+            continue
 
-                ng.process()
-        pre_running = False
+        if ng.has_changed:
+            print('depsgraph_update_pre called - ng.has_changed -> ')
+
+            ng.process()
+    pre_running = False
 
 
 @persistent

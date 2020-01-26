@@ -221,6 +221,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def free(self):
         set_sv_depsgraph_need(False)
+
     def process(self):
 
         if not self.object_names:
@@ -238,7 +239,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         mtrx_out = []
         materials_out = []
 
-        if self.modifiers or self.vergroups:
+        if self.modifiers:
             sv_depsgraph = get_sv_depsgraph()
 
         # iterate through references
@@ -278,7 +279,8 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         - or vertex groups are desired
 
                         """
-                        if self.modifiers or self.vergroups:
+
+                        if self.modifiers:
 
                             obj = sv_depsgraph.objects[obj.name]
                             obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
