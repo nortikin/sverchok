@@ -10,12 +10,6 @@ from sverchok.settings import get_params
 # pylint: disable=c0111
 # pylint: disable=c0103
 
-def get_preferences():
-    # supplied with default, forces at least one value :)
-    props = get_params({
-        'render_scale': 1.0,
-        'render_location_xy_multiplier': 1.0})
-    return props.render_scale, props.render_location_xy_multiplier
 
 class SvNodeViewDrawMixin():
 
@@ -26,8 +20,15 @@ class SvNodeViewDrawMixin():
         return int(a[0] + b), int(a[1])
 
     @staticmethod
-    def adjust_position_and_dimensions(x, y, width, height):
-        scale, multiplier = get_preferences()
+    def get_preferences():
+        # supplied with default, forces at least one value :)
+        props = get_params({
+            'render_scale': 1.0,
+            'render_location_xy_multiplier': 1.0})
+        return props.render_scale, props.render_location_xy_multiplier
+
+    def adjust_position_and_dimensions(self, x, y, width, height):
+        scale, multiplier = self.get_preferences()
         x, y = [x * multiplier, y * multiplier]
         width, height = [width * scale, height * scale]
         return x, y, width, height
