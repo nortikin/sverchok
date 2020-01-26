@@ -13,13 +13,14 @@ import gpu
 from gpu_extras.batch import batch_for_shader
 from mathutils import Vector, Matrix
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.settings import get_params
 from sverchok.data_structure import updateNode, node_id
 
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.geom import grid
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict
+from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin
 
 """
 
@@ -121,7 +122,7 @@ def tri_grid(dim_x=3, dim_y=2, nx=3, ny=3):
 grid_data = {}
 
 
-class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
+class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     
     """
     Triggers: Console 
@@ -134,33 +135,28 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Console Node'
     bl_icon = 'GREASEPENCIL'
 
+    @throttled
+    def local_updateNode(self, context):
+        ...
+
+
+
     num_rows: bpy.props.IntProperty(name="num rows", default=30, min=1, max=140, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=30, min=10, max=140, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
-    char_image: bpy.props.StringProperty(name="image name", update=updateNode)
+    char_image: bpy.props.StringProperty(name="image name", update=local_updateNode)
 
     texture = {}
     n_id: StringProperty(default='')
 
 
-    @property
-    def xy_offset(self):
-        a = self.location[:]
-        b = int(self.width) + 20
-        return int(a[0] + b), int(a[1])
-
     def sv_init(self, context):
         self.inputs("SvStringsSocket", "text")
-        grid_data[(15, 32, self.terminal_width, self.num_rows)] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width, ny=self.num_rows)
+        self.get_and_set_gl_scale_info()
+        initial_state = (15, 32, self.terminal_width, self.num_rows)
+        grid_data[initial_state] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width, ny=self.num_rows)
 
     def draw_buttons(self, context, layout):
-        """
-        [ num rows = 30 ] , 
-        [ terminal_width = 120 ]
-        [ color chars bool ]
-        [ charset to use ]
-
-        """
         layout.prop(self, "char_image")
 
 
@@ -188,22 +184,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode):
 
         nvBGL2.callback_enable(n_id, draw_data)
 
-
-    def get_preferences(self):
-        # supplied with default, forces at least one value :)
-        props = get_params({
-            'render_scale': 1.0,
-            'render_location_xy_multiplier': 1.0})
-        return props.render_scale, props.render_location_xy_multiplier
-
-    def adjust_position_and_dimensions(self, x, y, width, height):
-        """
-        this could also return scale for a blf notation in the vacinity of the texture
-        """
-        scale, multiplier = self.get_preferences()
-        x, y = [x * multiplier, y * multiplier]
-        width, height = [width * scale, height * scale]
-        return x, y, width, height
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
