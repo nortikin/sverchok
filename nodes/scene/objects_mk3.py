@@ -71,6 +71,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
+    def modifiers_handle(self, context):
+        set_sv_depsgraph_need(self.modifiers)
+        updateNode(self, context)
+
     groupname: StringProperty(
         name='groupname', description='group of objects (green outline CTRL+G)',
         default='', update=updateNode)
@@ -78,7 +82,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     modifiers: BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
-        default=False, update=updateNode)
+        default=False, update=modifiers_handle)
 
     vergroups: BoolProperty(
         name='Vergroups',
