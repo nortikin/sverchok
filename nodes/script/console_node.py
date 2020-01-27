@@ -29,38 +29,26 @@ demo_text = inspect.getsource(tri_grid)
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
 
-"""
-IMAGE_NAME = "Untitled"
-image = bpy.data.images[IMAGE_NAME]
 
-shader = gpu.shader.from_builtin('2D_IMAGE')
-batch = batch_for_shader(
-    shader, 'TRI_FAN',
-    {
-        "pos": ((100, 100), (200, 100), (200, 200), (100, 200)),
-        "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1)),
-    },
-)
+def simple_console_xy(context, args):
 
-if image.gl_load():
-    raise Exception()
+    config, image = args
 
-"""
-
-def simple_console():
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
 
-    shader.bind()
-    shader.uniform_int("image", 0)
-    batch.draw(shader)
+    config.shader.bind()
+    config.shader.uniform_int("image", 0)
+    config.batch.draw(config.shader)
 
 def generate_batch_shader(node, args):
+    """
+    whaaat?!
+    """
     x, y, w, h = args
-    positions = ((x, y), (x + w, y), (x + w, y - h), (x, y - h))
-    indices = ((0, 1), (1, 1), (1, 0), (0, 0))
-    shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-    batch = batch_for_shader(shader, 'TRI_FAN', {"pos": positions, "texCoord": indices})
+
+    shader = gpu.shader.from_builtin('2D_IMAGE')
+    batch = batch_for_shader(shader, 'TRIS', {"pos": positions, "texCoord": uv_indices}, indices=poly_indices)
     return batch, shader
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
@@ -108,14 +96,26 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not self.char_image:
             return
         
+        image = bpy.data.images.get(self.char_image)
+        if not image: # or image.gl_load():
+            raise Exception()
+
+        config = lambda: None
+
         x, y = self.xy_offset
         x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
         batch, shader = generate_batch_shader((x, y, width, height))
 
+        dims = (w, h)
+        loc = (x, y)
+        config.loc = loc
+        config.scale = scale
+
         draw_data = {
-            'tree_name': self.id_data.name[:], 'loc': (x, y),
-            'mode': 'custom_function', 'custom_function': simple_console,
-            'args': (texture, self.texture[n_id], width, height, batch, shader, cMode)
+            'tree_name': self.id_data.name[:],
+            'mode': 'custom_function_context', 
+            'custom_function': simple_console_xy,
+            'args': (image, config)
         }
         nvBGL2.callback_enable(n_id, draw_data)
 
