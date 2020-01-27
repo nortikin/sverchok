@@ -29,23 +29,28 @@ demo_text = inspect.getsource(tri_grid)
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
 
+def terminal_text_to_uv(lines):
+    fnt = get_lookup_dict(r"C:\Users\zeffi\Desktop\GITHUB\sverchok\utils\modules\bitmap_font\consolas.fnt") 
+    uvs = []
+    for line in lines.split():
+        uvs.extend(letters_to_uv(line, fnt))
+    return uvs
+
 
 def simple_console_xy(context, args):
-
     config, image = args
 
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
-
     config.shader.bind()
     config.shader.uniform_int("image", 0)
     config.batch.draw(config.shader)
 
 def generate_batch_shader(node, args):
-    """
-    whaaat?!
-    """
-    x, y, w, h = args
+    x, y, w, h, data = args
+    positions, poly_indices = data
+    uv_indices = terminal_text_to_uv(node.terminal_text)
+    positions = [vec[:2] for vec in positions]
 
     shader = gpu.shader.from_builtin('2D_IMAGE')
     batch = batch_for_shader(shader, 'TRIS', {"pos": positions, "texCoord": uv_indices}, indices=poly_indices)
@@ -70,18 +75,18 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
 
 
-    num_rows: bpy.props.IntProperty(name="num rows", default=30, min=1, max=140, update=updateNode)
-    terminal_width: bpy.props.IntProperty(name="terminal width", default=30, min=10, max=140, update=updateNode)
+    num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1, max=140, update=updateNode)
+    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=10, max=140, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode)
-    terminal_text: bpy.props.StringProperty(name="terminal text")
+    terminal_text: bpy.props.StringProperty(name="terminal text", default="0123456 89\nABC EFGHIJ\nabcdefg ij")
 
     texture = {}
-    n_id: StringProperty(default='')
+    n_id: bpy.props.StringProperty(default='')
 
 
     def sv_init(self, context):
-        self.inputs("SvStringsSocket", "text")
+        self.inputs.new("SvStringsSocket", "text")
         self.get_and_set_gl_scale_info()
         initial_state = (15, 32, self.terminal_width, self.num_rows)
         grid_data[initial_state] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width, ny=self.num_rows)
@@ -102,14 +107,27 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
         config = lambda: None
 
+        print(grid_data)
+        grid = grid_data[(15, 32, self.terminal_width, self.num_rows)]
+        if not grid:
+            grid_data[(15, 32, self.terminal_width, self.num_rows)] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width, ny=self.num_rows)
+            grid = grid_data[(15, 32, self.terminal_width, self.num_rows)]
+        
         x, y = self.xy_offset
+        
+        width = self.terminal_width * 15
+        height = self.num_rows * 32
+
         x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
-        batch, shader = generate_batch_shader((x, y, width, height))
+        batch, shader = generate_batch_shader(self, (x, y, width, height, grid))
 
         dims = (w, h)
         loc = (x, y)
         config.loc = loc
         config.scale = scale
+        config.batch = batch
+        config.shader = shader
+        config.grid_data = grid
 
         draw_data = {
             'tree_name': self.id_data.name[:],
@@ -122,7 +140,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
-        self.delete_texture()
+        # self.delete_texture()
 
     def sv_copy(self, node):
         # reset n_id on copy

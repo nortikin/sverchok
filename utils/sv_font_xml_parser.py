@@ -63,7 +63,7 @@ def letters_to_uv(letters, fnt):
     add_uv = uvs.extend
     unrecognized = fnt.get(ord(':')) 
 
-    for letter in ordinals:
+    for letter in letters:
         ordinal = ord(letter)
         details = fnt.get(ordinal, unrecognized)
         add_uv(details)
