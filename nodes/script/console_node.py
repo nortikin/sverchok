@@ -38,7 +38,7 @@ def terminal_text_to_uv(lines):
 
 
 def simple_console_xy(context, args):
-    config, image = args
+    image, config = args
 
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
@@ -51,6 +51,9 @@ def generate_batch_shader(node, args):
     positions, poly_indices = data
     uv_indices = terminal_text_to_uv(node.terminal_text)
     positions = [vec[:2] for vec in positions]
+
+
+    print(len(positions), len(uv_indices), len(poly_indices))
 
     shader = gpu.shader.from_builtin('2D_IMAGE')
     batch = batch_for_shader(shader, 'TRIS', {"pos": positions, "texCoord": uv_indices}, indices=poly_indices)
@@ -78,8 +81,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1, max=140, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=10, max=140, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
-    char_image: bpy.props.StringProperty(name="image name", update=local_updateNode)
-    terminal_text: bpy.props.StringProperty(name="terminal text", default="0123456 89\nABC EFGHIJ\nabcdefg ij")
+    char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
+    terminal_text: bpy.props.StringProperty(name="terminal text", default="012356 8922\n012356 8922\n012356 8922")
 
     texture = {}
     n_id: bpy.props.StringProperty(default='')
@@ -88,8 +91,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.get_and_set_gl_scale_info()
-        initial_state = (15, 32, self.terminal_width, self.num_rows)
-        grid_data[initial_state] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width, ny=self.num_rows)
+        initial_state = (15, 32, self.terminal_width+1, self.num_rows+1)
+        grid_data[initial_state] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width+1, ny=self.num_rows+1)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "char_image")
@@ -107,11 +110,10 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
         config = lambda: None
 
-        print(grid_data)
-        grid = grid_data[(15, 32, self.terminal_width, self.num_rows)]
+        grid = grid_data[(15, 32, self.terminal_width+1, self.num_rows+1)]
         if not grid:
-            grid_data[(15, 32, self.terminal_width, self.num_rows)] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width, ny=self.num_rows)
-            grid = grid_data[(15, 32, self.terminal_width, self.num_rows)]
+            grid_data[(15, 32, self.terminal_width+1, self.num_rows+1)] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width+1, ny=self.num_rows+1)
+            grid = grid_data[(15, 32, self.terminal_width+1, self.num_rows+1)]
         
         x, y = self.xy_offset
         

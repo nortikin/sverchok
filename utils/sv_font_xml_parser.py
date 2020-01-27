@@ -60,12 +60,13 @@ def letters_to_uv(letters, fnt):
     expects a 1 or more list of letters, converts to ordinals
     """
     uvs = []
-    add_uv = uvs.extend
+    add_uv = uvs.append
     unrecognized = fnt.get(ord(':')) 
 
     for letter in letters:
         ordinal = ord(letter)
         details = fnt.get(ordinal, unrecognized)
-        add_uv(details)
+        add_uv(details[0])
+        add_uv(details[1])
 
     return uvs
