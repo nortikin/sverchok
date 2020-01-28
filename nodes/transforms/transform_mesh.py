@@ -24,6 +24,7 @@ Select_mode = namedtuple('Select_mode', ('vert', 'edge', 'face'))
 Origin_mode = namedtuple('Origin_mode', ('individ', 'median', 'bound', 'cust'))
 Space_mode = namedtuple('Space_mode', ('norm', 'glob', 'cust'))
 Direction_mode = namedtuple('Direction_mode', ('x', 'y', 'z', 'cust'))
+MaskMode = namedtuple('MaskMode', ('boolean', 'index'))
 
 TR_MODE = Transform_mode('Move', 'Scale', 'Rotate')
 SEL_MODE = Select_mode('Verts', 'Edges', 'Faces')
@@ -31,53 +32,85 @@ OR_MODE = Origin_mode('Individual', 'Median', 'Center bound box', 'Custom')
 SP_MODE = Space_mode('Normal', 'Global', 'Custom')
 DIR_MODE = Direction_mode('X', 'Y', 'Z', 'Custom')
 DIR_VEC = Direction_mode(Vector((1, 0, 0)), Vector((0, 1, 0)), Vector((0, 0, 1)), None)
+MASK_MODE = MaskMode('Bool mask', 'Index mask')
+LAYER_MASK_NAME = 'index mask'
 
 
-def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None, space_directions=None,
+def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None, space_directions=None, indexes=None,
                    directions=None, factors=None, transform_mode=TR_MODE.move, origin_mode=OR_MODE.individ,
-                   direction_mode=DIR_MODE.x, selection_mode=SEL_MODE.vert, space_mode=SP_MODE.glob):
+                   direction_mode=DIR_MODE.x, selection_mode=SEL_MODE.vert, space_mode=SP_MODE.glob,
+                   mask_mode=MASK_MODE.boolean):
     if mask and selection_mode == SEL_MODE.face and not faces:
         raise LookupError("Faces should be connected")
     if mask and selection_mode == SEL_MODE.edge and not any([faces, edges]):
         raise LookupError("Faces or edges should be connected")
 
-    with get_bmesh(verts, edges, faces, space_mode == SP_MODE.norm) as bm:
+    components = {SEL_MODE.vert: verts, SEL_MODE.edge: edges, SEL_MODE.face: faces}
+    bm_layers = [(selection_mode.lower(), 'int', LAYER_MASK_NAME,
+                  mask if mask_mode == MASK_MODE.index else range(len(components[selection_mode])))]
+
+    with get_bmesh(verts, edges, faces, space_mode == SP_MODE.norm, layers=bm_layers) as bm:
         bm_components = {SEL_MODE.vert: bm.verts, SEL_MODE.edge: bm.edges, SEL_MODE.face: bm.faces}
+        ind_layer = bm_components[selection_mode].layers.int.get(LAYER_MASK_NAME)
         if mask and not any(mask[:len(bm_components[selection_mode])]):
             return verts
 
-        if origin_mode in [OR_MODE.individ, OR_MODE.cust]:
+        if mask_mode == MASK_MODE.index:
+            selected = iter_bm_index_mask(
+                bm_components[selection_mode], selection_mode, indexes,
+                max([len(p) for p in [custom_origins, space_directions, directions, factors]]), mask)
+        elif origin_mode in [OR_MODE.individ, OR_MODE.cust]:
             selected = iter_bm_islands(bm, selection_mode, mask)
         else:
             selected = [[v for v, m in zip(bm_components[selection_mode], mask or cycle([True])) if m]]
 
         for sel in selected:
             sel_verts = get_selected_verts(sel)
-            space = get_space(sel, space_mode, origin_mode, custom_origins, space_directions)
+            space = get_space(sel, space_mode, origin_mode, custom_origins, space_directions, ind_layer)
 
             if transform_mode == TR_MODE.move:
                 # space matrix applies to bmesh vertices
-                bmesh.ops.translate(bm, vec=space.to_quaternion() @ get_move_vector(sel, directions, factors, direction_mode),
+                bmesh.ops.translate(bm, vec=space.to_quaternion() @ get_move_vector(sel, directions, factors, direction_mode, ind_layer),
                                     space=Matrix(), verts=sel_verts)
             elif transform_mode == TR_MODE.rotate:
                 bmesh.ops.rotate(bm, cent=space.to_translation(),
-                                 matrix=Matrix.Rotation(calc_average_factor(factors, sel), 3, space.to_quaternion() @ get_move_axis(sel, directions, direction_mode)),
+                                 matrix=Matrix.Rotation(calc_average_factor(factors, sel, ind_layer), 3, space.to_quaternion() @ get_move_axis(sel, directions, direction_mode, ind_layer)),
                                  verts=sel_verts, space=Matrix())
             elif transform_mode == TR_MODE.scale:
-                bmesh.ops.scale(bm, vec=get_scale_vector(sel, directions, factors, direction_mode),
+                bmesh.ops.scale(bm, vec=get_scale_vector(sel, directions, factors, direction_mode, ind_layer),
                                 space=space.inverted(), verts=sel_verts)
 
         return [v.co[:] for v in bm.verts]
 
 
 @contextmanager
-def get_bmesh(verts, edges=None, faces=None, update_normals=False, use_operators=True):
+def get_bmesh(verts, edges=None, faces=None, update_normals=False, use_operators=True, layers=None):
+    # layers: list of tuple(str, str, str, iterable or None),
+    # (mesh sequence type, layer type, layer name, any related with sequence data),
+    # example: [('verts', 'int', 'mask_index', [0, 1, 2])]
     error = None
     bm = bmesh.new(use_operators=use_operators)
+    sequence_types = {'verts': bm.verts, 'edges': bm.edges, 'faces': bm.faces, 'loops': bm.loops}
     try:
+        # create layers
+        if layers:
+            for seq_type, layer_type, layer_name, data in layers:
+                getattr(sequence_types[seq_type].layers, layer_type).new(layer_name)
+
+        # create mesh
         bm_verts = [bm.verts.new(co) for co in verts]
         [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
         [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
+
+        # fill layers
+        for seq_type, layer_type, layer_name, data in layers:
+            if not data:
+                continue
+            layer = getattr(sequence_types[seq_type].layers, layer_type).get(layer_name)
+            for element, val in zip(sequence_types[seq_type], iter_last(data)):
+                element[layer] = val
+
+        # update mesh
         bm.verts.ensure_lookup_table()
         bm.edges.ensure_lookup_table()
         bm.faces.ensure_lookup_table()
@@ -145,41 +178,53 @@ def iter_bm_islands(bm, sel_mode, mask=None):
             yield island
 
 
-def get_move_vector(selected, directions, factors, direction_mode=DIR_MODE.x):
-    average_factor = calc_average_factor(factors, selected)
+def iter_bm_index_mask(bm_component, sel_mode, indexes, max_param_len, mask=None):
+    if mask is None:
+        mask = [0]
+
+    mesh_index_parts = {i: [] for i in set(mask)}
+    [mesh_index_parts[i].append(elem) for i, elem in zip(iter_last(mask), bm_component)]
+    for ind in indexes:
+        if ind in mesh_index_parts:
+            yield mesh_index_parts[ind]
+
+
+def get_move_vector(selected, directions, factors, direction_mode=DIR_MODE.x, ind_layer=None):
+    average_factor = calc_average_factor(factors, selected, ind_layer)
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower()) * average_factor
     else:
         average_direction = get_median_center(
-            [Vector(directions[sel.index if len(directions) > sel.index else -1]) for sel in selected])
+            [Vector(directions[sel[ind_layer] if len(directions) > sel[ind_layer] else -1]) for sel in selected])
         return average_direction * average_factor
 
 
-def get_scale_vector(selected, directions, factors, direction_mode=DIR_MODE.x):
+def get_scale_vector(selected, directions, factors, direction_mode=DIR_MODE.x, ind_layer=None):
     index = {'X': 0, 'Y': 1, 'Z': 2}
-    average_factor = calc_average_factor(factors, selected)
+    average_factor = calc_average_factor(factors, selected, ind_layer)
     if direction_mode in DIR_MODE[:-1]:
         vec = [1, 1]
         vec.insert(index[direction_mode], 1 * average_factor)
         return Vector(vec)
     else:
         return get_median_center(
-            [Vector(directions[sel.index if len(directions) > sel.index else -1]) for sel in selected]) * average_factor
+            [Vector(directions[sel[ind_layer] if len(directions) > sel[ind_layer] else -1]) for sel in selected]) * average_factor
 
 
-def get_move_axis(selected, directions, direction_mode):
+def get_move_axis(selected, directions, direction_mode, ind_layer=None):
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower())
     else:
         return calc_average_normal(
-            [Vector(directions[sel.index if len(directions) > sel.index else -1]) for sel in selected])
+            [Vector(directions[sel[ind_layer] if len(directions) > sel[ind_layer] else -1]) for sel in selected])
 
 
-def calc_average_factor(factors, selected):
+def calc_average_factor(factors, selected, ind_layer=None):
     if len(factors) == 1:
         return factors[0]
     else:
-        return sum([factors[sel.index if len(factors) > sel.index else -1] for sel in selected]) / len(selected)
+        return sum([factors[sel[ind_layer] if len(factors) > sel[ind_layer] else -1]
+                    for sel in selected]) / len(selected)
 
 
 def get_selected_verts(selected):
@@ -193,8 +238,8 @@ def get_selected_verts(selected):
         raise ValueError(f"Such type: {type(selected)} is not supported")
 
 
-def get_space(selected, space_mode, origin_mode, custom_origins=None, space_directions=None):
-    origin = get_origin(selected, origin_mode, custom_origins)
+def get_space(selected, space_mode, origin_mode, custom_origins=None, space_directions=None, ind_layer=None):
+    origin = get_origin(selected, origin_mode, custom_origins, ind_layer)
     if space_mode == SP_MODE.glob:
         return Matrix.Translation(origin)
     elif space_mode == SP_MODE.norm:
@@ -204,18 +249,18 @@ def get_space(selected, space_mode, origin_mode, custom_origins=None, space_dire
         tangent = normal.cross(_tangent.cross(normal))
         return build_matrix(origin, normal, tangent)
     elif space_mode == SP_MODE.cust:
-        normal = calc_average_normal([Vector(space_directions[sel.index]) if len(space_directions) > sel.index else
-                                      Vector(space_directions[-1]) for sel in selected])
+        normal = calc_average_normal([Vector(space_directions[sel[ind_layer] if len(space_directions) > sel[ind_layer] 
+                                                              else -1]) for sel in selected])
         tangent = Vector((0, 1, 0)) if normal == Vector((0, 0, 1)) else normal.cross(Vector((0, 0, 1)))
         return build_matrix(origin, normal, tangent)
     else:
         raise ValueError(f"Such space mode: {space_mode} is not supported")
 
 
-def get_origin(mesh_component, origin_mode, custom_origins=None):
+def get_origin(mesh_component, origin_mode, custom_origins=None, ind_layer=None):
     if origin_mode == OR_MODE.cust:
-        return get_median_center([Vector(custom_origins[sel.index]) if len(custom_origins) > sel.index else
-                                  Vector(custom_origins[-1]) for sel in mesh_component])
+        return get_median_center([Vector(custom_origins[sel[ind_layer] if len(custom_origins) > sel[ind_layer] else -1])
+                                  for sel in mesh_component])
     else:
         if type(mesh_component[0]) == bmesh.types.BMVert:
             return get_verts_origin(mesh_component, origin_mode)
@@ -346,9 +391,11 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
 
         hide(self.inputs['Origin'], True if self.origin_mode != OR_MODE.cust else False)
         hide(self.inputs['Space direction'], True if self.space_mode != SP_MODE.cust else False)
+        hide(self.inputs['Mask index'], True if self.mask_mode == MASK_MODE.boolean else False)
         updateNode(self, context)
 
-    transform_mode_items = [(i, i, '') for i in ('Move', 'Scale', 'Rotate')]
+    transform_mode_items = [(i, i, '') for i in TR_MODE]
+    mask_mode_items = [(i, i, '') for i in MASK_MODE]
     select_mode_items = [(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
         ('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))]
     origin_mode_items = [(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
@@ -359,6 +406,7 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
     direction_mode_items = [(n, n, '') for n in DIR_MODE]
 
     transform_mode: bpy.props.EnumProperty(items=transform_mode_items, update=updateNode)
+    mask_mode: bpy.props.EnumProperty(items=mask_mode_items, update=update_sockets)
     select_mode: bpy.props.EnumProperty(items=select_mode_items, update=updateNode)
     origin_mode: bpy.props.EnumProperty(items=origin_mode_items, name='Origin', default=OR_MODE.bound,
                                         update=update_sockets)
@@ -366,6 +414,7 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
     direction_mode: bpy.props.EnumProperty(items=direction_mode_items, name='Direction', update=updateNode)
     origin: bpy.props.FloatVectorProperty(name='Origin', update=updateNode)
     space_direction: bpy.props.FloatVectorProperty(name="Space direction", default=(0, 0, 1), update=updateNode)
+    active_index: bpy.props.IntProperty(name="Mask index", update=updateNode)
     direction: bpy.props.FloatVectorProperty(name='Direction', update=updateNode)
     factor: bpy.props.FloatProperty(name='Factor', default=1.0, update=updateNode)
 
@@ -373,6 +422,7 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.scale_y = 1.5
         row.prop(self, 'transform_mode', expand=True)
+        layout.prop(self, 'mask_mode', expand=True)
         layout.prop(self, 'origin_mode')
         layout.prop(self, 'space_mode')
 
@@ -390,6 +440,9 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         sp_dir_socket = self.inputs.new('SvVerticesSocket', "Space direction")
         sp_dir_socket.prop_name = 'space_direction'
         sp_dir_socket.hide = True
+        ind_socket = self.inputs.new('SvStringsSocket', 'Mask index')
+        ind_socket.prop_name = 'active_index'
+        ind_socket.hide = True
         dir_sock = self.inputs.new('SvVerticesSocket', "Direction")
         dir_sock.custom_draw = 'draw_direction_socket'
         dir_sock.prop_name = 'direction'
@@ -420,13 +473,14 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         mask = iter_last(self.inputs['Mask'].sv_get(deepcopy=False, default=[None]))
         origin = iter_last(self.inputs['Origin'].sv_get(deepcopy=False))
         space_direction = iter_last(self.inputs['Space direction'].sv_get(deepcopy=False))
+        active_index = iter_last(self.inputs['Mask index'].sv_get(deepcopy=False))
         direction = iter_last(self.inputs['Direction'].sv_get(deepcopy=False))
         factor = iter_last(self.inputs['Factor'].sv_get(deepcopy=False))
         out = []
-        for v, e, f, m, o, sd, d, fac in zip(verts, edges, faces, mask, origin, space_direction, direction, factor):
-            out.append(transform_mesh(v, e, f, m, o, sd, d, fac, self.transform_mode, self.origin_mode,
+        for v, e, f, m, o, sd, ai, d, fac in zip(verts, edges, faces, mask, origin, space_direction, active_index, direction, factor):
+            out.append(transform_mesh(v, e, f, m, o, sd, ai, d, fac, self.transform_mode, self.origin_mode,
                                       DIR_MODE.cust if self.inputs['Direction'].is_linked else self.direction_mode,
-                                      self.select_mode, self.space_mode))
+                                      self.select_mode, self.space_mode, self.mask_mode))
         self.outputs['Verts'].sv_set(out)
 
 
