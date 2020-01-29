@@ -49,14 +49,20 @@ def simple_console_xy(context, args):
 def generate_batch_shader(node, args):
     x, y, w, h, data = args
     positions, poly_indices = data
+    
     uv_indices = terminal_text_to_uv(node.terminal_text)
-    positions = [vec[:2] for vec in positions]
-
-
-    print(len(positions), len(uv_indices), len(poly_indices))
+    verts = []
+    for poly in poly_indices:
+        for v_idx in poly:
+            verts.append(positions[v_idx][:2])
+    
+    uvs = []
+    add_uv = uvs.append
+    _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
+    uv_indices = uvs
 
     shader = gpu.shader.from_builtin('2D_IMAGE')
-    batch = batch_for_shader(shader, 'TRIS', {"pos": positions, "texCoord": uv_indices}, indices=poly_indices)
+    batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
     return batch, shader
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
@@ -82,24 +88,33 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=10, max=140, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
-    terminal_text: bpy.props.StringProperty(name="terminal text", default="012356 8922\n012356 8922\n012356 8922")
+    terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
 
     texture = {}
     n_id: bpy.props.StringProperty(default='')
+
+    def prepare_for_grid(self):
+        nx = self.terminal_width + 1
+        ny = self.num_rows + 1
+        dim_x = 15 * nx
+        dim_y = 32 * ny
+        return tri_grid(dim_x=dim_x, dim_y=dim_y, nx=nx, ny=ny)
 
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.get_and_set_gl_scale_info()
-        initial_state = (15, 32, self.terminal_width+1, self.num_rows+1)
-        grid_data[initial_state] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width+1, ny=self.num_rows+1)
+        # initial_state = (15, 32, self.terminal_width+1, self.num_rows+1)
+        # grid_data[initial_state] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width+1, ny=self.num_rows+1)
+        self.outputs.new("SvVerticesSocket", "verts")
+        self.outputs.new("SvStringsSocket", "faces")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "char_image")
 
     def process(self):
         n_id = node_id(self)
-        nvBGL2.callback_disable(n_id)
+        # nvBGL2.callback_disable(n_id)
 
         if not self.char_image:
             return
@@ -108,36 +123,41 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not image: # or image.gl_load():
             raise Exception()
 
+        if image.gl_load():
+            raise Exception()
+
         config = lambda: None
 
-        grid = grid_data[(15, 32, self.terminal_width+1, self.num_rows+1)]
-        if not grid:
-            grid_data[(15, 32, self.terminal_width+1, self.num_rows+1)] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width+1, ny=self.num_rows+1)
-            grid = grid_data[(15, 32, self.terminal_width+1, self.num_rows+1)]
-        
+        grid = self.prepare_for_grid()
         x, y = self.xy_offset
         
         width = self.terminal_width * 15
         height = self.num_rows * 32
 
-        x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
-        batch, shader = generate_batch_shader(self, (x, y, width, height, grid))
+        try:
+            x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
+            batch, shader = generate_batch_shader(self, (x, y, width, height, grid))
 
-        dims = (w, h)
-        loc = (x, y)
-        config.loc = loc
-        config.scale = scale
-        config.batch = batch
-        config.shader = shader
-        config.grid_data = grid
+            dims = (width, height)
+            loc = (x, y)
+            config.loc = loc
+            # config.scale = scale
+            config.batch = batch
+            config.shader = shader
+            config.grid_data = grid
 
-        draw_data = {
-            'tree_name': self.id_data.name[:],
-            'mode': 'custom_function_context', 
-            'custom_function': simple_console_xy,
-            'args': (image, config)
-        }
-        nvBGL2.callback_enable(n_id, draw_data)
+            draw_data = {
+                'tree_name': self.id_data.name[:],
+                'mode': 'custom_function_context', 
+                'custom_function': simple_console_xy,
+                'args': (image, config)
+            }
+            nvBGL2.callback_enable(n_id, draw_data)
+        
+        finally:
+        
+            self.outputs[0].sv_set([grid[0]])
+            self.outputs[1].sv_set([grid[1]])
 
 
     def free(self):
