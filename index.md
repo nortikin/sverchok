@@ -61,7 +61,6 @@
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
     SvPathLengthNode
-    CentersPolsNodeMK3
     SvOrigins
     GetNormalsNode
     VectorNormalNode
