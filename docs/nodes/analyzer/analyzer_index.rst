@@ -31,7 +31,6 @@ Analyzers
    object_insolation
    path_length
    points_inside_mesh
-   polygons_centers_mk3
    project_point_to_line
    volume
    raycaster_lite

@@ -6,6 +6,7 @@
 # License-Filename: LICENSE
 
 
+from itertools import chain, cycle
 from collections import namedtuple
 
 import bpy
@@ -99,6 +100,10 @@ def build_matrix(center, normal, tangent):
     return Matrix(list(zip(x_axis.resized(4), tangent.resized(4), normal.resized(4), center.to_4d())))
 
 
+def iter_last(l):
+    return chain(l, cycle([l[-1]]))
+
+
 class SvOrigins(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: origin center normal tangent matrix
@@ -140,7 +145,7 @@ class SvOrigins(bpy.types.Node, SverchCustomTreeNode):
             return
 
         out = []
-        for v, e, f in zip(*[sock.sv_get(deepcopy=False, default=[None]) for sock in self.inputs]):
+        for v, e, f in zip(*[sock.sv_get(deepcopy=False, default=iter_last([None])) for sock in self.inputs]):
             out.append(get_origin(v, e, f, self.mode))
         if self.flat_matrix:
             [sock.sv_set(data) for sock, data in zip(self.outputs[0:-1], zip(*out))]
