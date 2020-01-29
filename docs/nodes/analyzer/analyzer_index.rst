@@ -38,4 +38,5 @@ Analyzers
    image_components
    chess_selection
    wave_paint
+   origins
 
