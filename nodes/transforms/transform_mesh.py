@@ -44,6 +44,8 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
         raise LookupError("Faces should be connected")
     if mask and selection_mode == SEL_MODE.edge and not any([faces, edges]):
         raise LookupError("Faces or edges should be connected")
+    if mask and selection_mode == SEL_MODE.edge and not edges:
+        raise LookupError("Edges should be plugged")
     if mask is None:
         mask = [True]
     if not isinstance(mask[0], int):
@@ -60,7 +62,7 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
         elif origin_mode in [OR_MODE.individ, OR_MODE.cust]:
             selected = iter_bm_islands(bm_components[selection_mode], mask_mode, layers)
         else:
-            selected = [[v for v, m in zip(bm_components[selection_mode], mask or cycle([True])) if m]]
+            selected = [[v for v, m in zip(bm_components[selection_mode], iter_last(mask)) if m]]
 
         for sel in selected:
             sel_verts = get_selected_verts(sel)
@@ -77,7 +79,7 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
                 bmesh.ops.rotate(bm, cent=space.to_translation(), matrix=rotation, verts=sel_verts, space=Matrix())
             elif transform_mode == TR_MODE.scale:
                 scale_vec = get_scale_vector(sel, directions, factors, layers, mask_mode, direction_mode)
-                bmesh.ops.scale(bm, vec=scale_vec, space=space.inverted(), verts=sel_verts)
+                bmesh.ops.scale(bm, vec=scale_vec, space=space.inverted_safe(), verts=sel_verts)
 
         return [v.co[:] for v in bm.verts]
 
@@ -285,7 +287,7 @@ def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, 
         return build_matrix(origin, normal, tangent)
     elif space_mode == SP_MODE.cust:
         if mask_mode == MASK_MODE.index:
-            normal = get_item_last(space_directions, selected[0][layers.index_prop])
+            normal = Vector(get_item_last(space_directions, selected[0][layers.index_prop]))
         else:
             normal = calc_average_normal([Vector(get_item_last(space_directions, sel.index)) for sel in selected])
         tangent = Vector((0, 1, 0)) if normal == Vector((0, 0, 1)) else normal.cross(Vector((0, 0, 1)))
@@ -297,7 +299,7 @@ def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, 
 def get_origin(mesh_component, origin_mode, mask_mode, layers: LayerNames, custom_origins=None):
     if origin_mode == OR_MODE.cust:
         if mask_mode == MASK_MODE.index:
-            return get_item_last(custom_origins, mesh_component[0][layers.index_prop])
+            return Vector(get_item_last(custom_origins, mesh_component[0][layers.index_prop]))
         else:
             return get_median_center([Vector(get_item_last(custom_origins, sel.index)) for sel in mesh_component])
     else:
@@ -383,7 +385,7 @@ def get_edge_normal_tangent(edge):
 def get_vert_tang(vert):
     # returns tangent close to Blender logic in normal mode
     # vert - bmesh vertex
-    if len(vert.link_edges) == 2:
+    if len(vert.link_edges) == 2 and vert.link_loops:
         return vert.link_loops[0].calc_tangent().cross(vert.normal)
     elif vert.normal == Vector((0, 0, 1)):
         return Vector((-1, 0, 0))
