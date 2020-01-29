@@ -25,6 +25,7 @@ Origin_mode = namedtuple('Origin_mode', ('individ', 'median', 'bound', 'cust'))
 Space_mode = namedtuple('Space_mode', ('norm', 'glob', 'cust'))
 Direction_mode = namedtuple('Direction_mode', ('x', 'y', 'z', 'cust'))
 MaskMode = namedtuple('MaskMode', ('boolean', 'index'))
+LayerNames = namedtuple('LayerNames', ['mask', 'index_prop'])
 
 TR_MODE = Transform_mode('Move', 'Scale', 'Rotate')
 SEL_MODE = Select_mode('Verts', 'Edges', 'Faces')
@@ -33,7 +34,6 @@ SP_MODE = Space_mode('Normal', 'Global', 'Custom')
 DIR_MODE = Direction_mode('X', 'Y', 'Z', 'Custom')
 DIR_VEC = Direction_mode(Vector((1, 0, 0)), Vector((0, 1, 0)), Vector((0, 0, 1)), None)
 MASK_MODE = MaskMode('Bool mask', 'Index mask')
-LAYER_MASK_NAME = 'index mask'
 
 
 def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None, space_directions=None, indexes=None,
@@ -44,47 +44,46 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
         raise LookupError("Faces should be connected")
     if mask and selection_mode == SEL_MODE.edge and not any([faces, edges]):
         raise LookupError("Faces or edges should be connected")
+    if mask is None:
+        mask = [True]
+    if not isinstance(mask[0], int):
+        mask = list(map(int, mask))
 
-    components = {SEL_MODE.vert: verts, SEL_MODE.edge: edges, SEL_MODE.face: faces}
-    bm_layers = [(selection_mode.lower(), 'int', LAYER_MASK_NAME,
-                  mask if mask_mode == MASK_MODE.index else range(len(components[selection_mode])))]
-
-    with get_bmesh(verts, edges, faces, space_mode == SP_MODE.norm, layers=bm_layers) as bm:
+    with get_bmesh(verts, edges, faces, space_mode == SP_MODE.norm) as bm:
         bm_components = {SEL_MODE.vert: bm.verts, SEL_MODE.edge: bm.edges, SEL_MODE.face: bm.faces}
-        ind_layer = bm_components[selection_mode].layers.int.get(LAYER_MASK_NAME)
         if mask and not any(mask[:len(bm_components[selection_mode])]):
             return verts
 
+        layers = generate_layers(bm_components[selection_mode], indexes, mask)
         if mask_mode == MASK_MODE.index:
-            selected = iter_bm_index_mask(
-                bm_components[selection_mode], selection_mode, indexes,
-                max([len(p) for p in [custom_origins, space_directions, directions, factors]]), mask)
+            selected = iter_bm_index_mask(bm_components[selection_mode], origin_mode, indexes, layers)
         elif origin_mode in [OR_MODE.individ, OR_MODE.cust]:
-            selected = iter_bm_islands(bm, selection_mode, mask)
+            selected = iter_bm_islands(bm_components[selection_mode], mask_mode, layers)
         else:
             selected = [[v for v, m in zip(bm_components[selection_mode], mask or cycle([True])) if m]]
 
         for sel in selected:
             sel_verts = get_selected_verts(sel)
-            space = get_space(sel, space_mode, origin_mode, custom_origins, space_directions, ind_layer)
+            space = get_space(sel, space_mode, origin_mode, layers, mask_mode, custom_origins, space_directions)
 
             if transform_mode == TR_MODE.move:
                 # space matrix applies to bmesh vertices
-                bmesh.ops.translate(bm, vec=space.to_quaternion() @ get_move_vector(sel, directions, factors, direction_mode, ind_layer),
-                                    space=Matrix(), verts=sel_verts)
+                move_vec = space.to_quaternion() @ get_move_vector(sel, directions, factors, mask_mode, layers, direction_mode)
+                bmesh.ops.translate(bm, vec=move_vec, space=Matrix(), verts=sel_verts)
             elif transform_mode == TR_MODE.rotate:
-                bmesh.ops.rotate(bm, cent=space.to_translation(),
-                                 matrix=Matrix.Rotation(calc_average_factor(factors, sel, ind_layer), 3, space.to_quaternion() @ get_move_axis(sel, directions, direction_mode, ind_layer)),
-                                 verts=sel_verts, space=Matrix())
+                rotation = Matrix.Rotation(
+                    get_factor(factors, sel, mask_mode, layers), 3,
+                    space.to_quaternion() @ get_move_axis(sel, directions, direction_mode, layers, mask_mode))
+                bmesh.ops.rotate(bm, cent=space.to_translation(), matrix=rotation, verts=sel_verts, space=Matrix())
             elif transform_mode == TR_MODE.scale:
-                bmesh.ops.scale(bm, vec=get_scale_vector(sel, directions, factors, direction_mode, ind_layer),
-                                space=space.inverted(), verts=sel_verts)
+                scale_vec = get_scale_vector(sel, directions, factors, layers, mask_mode, direction_mode)
+                bmesh.ops.scale(bm, vec=scale_vec, space=space.inverted(), verts=sel_verts)
 
         return [v.co[:] for v in bm.verts]
 
 
 @contextmanager
-def get_bmesh(verts, edges=None, faces=None, update_normals=False, use_operators=True, layers=None):
+def get_bmesh(verts, edges=None, faces=None, update_normals=False, update_indexes=True, use_operators=True, layers=None):
     # layers: list of tuple(str, str, str, iterable or None),
     # (mesh sequence type, layer type, layer name, any related with sequence data),
     # example: [('verts', 'int', 'mask_index', [0, 1, 2])]
@@ -103,12 +102,13 @@ def get_bmesh(verts, edges=None, faces=None, update_normals=False, use_operators
         [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
 
         # fill layers
-        for seq_type, layer_type, layer_name, data in layers:
-            if not data:
-                continue
-            layer = getattr(sequence_types[seq_type].layers, layer_type).get(layer_name)
-            for element, val in zip(sequence_types[seq_type], iter_last(data)):
-                element[layer] = val
+        if layers:
+            for seq_type, layer_type, layer_name, data in layers:
+                if not data:
+                    continue
+                layer = getattr(sequence_types[seq_type].layers, layer_type).get(layer_name)
+                for element, val in zip(sequence_types[seq_type], iter_last(data)):
+                    element[layer] = val
 
         # update mesh
         bm.verts.ensure_lookup_table()
@@ -116,6 +116,10 @@ def get_bmesh(verts, edges=None, faces=None, update_normals=False, use_operators
         bm.faces.ensure_lookup_table()
         if update_normals:
             bm.normal_update()
+        if update_indexes:
+            bm.verts.index_update()
+            bm.edges.index_update()
+            bm.faces.index_update()
         yield bm
     except Exception as Ex:
         error = Ex
@@ -125,106 +129,137 @@ def get_bmesh(verts, edges=None, faces=None, update_normals=False, use_operators
         raise error
 
 
-def iter_bm_islands(bm, sel_mode, mask=None):
-    if sel_mode == SEL_MODE.face:
-        # mark faces which are not selected at first
-        used = {f for f, m in zip(bm.faces, iter_last(mask) if mask else cycle([True])) if not m}
-        for face in bm.faces:
-            if face in used:
+def generate_layers(mesh_elements, indexes, mask):
+    def gen_prop_index_data():
+        element_prop_indexes_map = {el_i: prop_i for prop_i, el_i in enumerate(indexes)}
+        return [element_prop_indexes_map[mi] if mi in element_prop_indexes_map else -1 for mi in mask]
+
+    def create_layer(sequence, layer_name, layer_type, data):
+        layer = getattr(sequence.layers, layer_type).new(layer_name)
+        for element, val in zip(sequence, iter_last(data)):
+            element[layer] = val
+        return layer
+
+    layer_settings = {'mask': ('int', mask),
+                      'index_prop': ('int', gen_prop_index_data())}
+
+    return LayerNames(*[create_layer(mesh_elements, layer_name, *layer_settings[layer_name])
+                        for layer_name in layer_settings])
+
+
+def iter_bm_islands(mesh_elements, mask_mode, layers: LayerNames):
+    def vert_neighbours(vert):
+        for edge in vert.link_edges:
+            v = edge.other_vert(vert)
+            if ensure_next(vert, v):
+                yield v
+
+    def edge_neighbours(edge):
+        for vert in edge.verts:
+            for e in vert.link_edges:
+                if ensure_next(edge, e):
+                    yield e
+
+    def face_neighbours(face):
+        for edge in face.edges:
+            for f in edge.link_faces:
+                if ensure_next(face, f):
+                    yield f
+
+    def ensure_next(start_elem, next_elem):
+        if start_elem == next_elem:
+            return False
+        if mask_mode == MASK_MODE.boolean:
+            if next_elem[layers.mask]:
+                return True
+        else:
+            if start_elem[layers.index_prop] == next_elem[layers.index_prop]:
+                return True
+        return False
+
+    def mesh_walk(elements, neighbours_walk):
+        used = set()
+        for element in elements:
+            if element in used:
                 continue
-            stack = {face, }
+            if mask_mode == MASK_MODE.boolean:
+                if not element[layers.mask]:
+                    continue
+            stack = {element, }
             island = []
             while stack:
-                next_face = stack.pop()
-                used.add(next_face)
-                island.append(next_face)
-                for edge in next_face.edges:
-                    for f in edge.link_faces:
-                        if f not in used:
-                            stack.add(f)
+                next_element = stack.pop()
+                used.add(next_element)
+                island.append(next_element)
+                for el in neighbours_walk(next_element):
+                    if el not in used:
+                        stack.add(el)
             yield island
 
-    if sel_mode == SEL_MODE.edge:
-        used = {e for e, m in zip(bm.edges, iter_last(mask) if mask else cycle([True])) if not m}
-        for edge in bm.edges:
-            if edge in used:
-                continue
-            stack = {edge, }
-            island = []
-            while stack:
-                next_edge = stack.pop()
-                used.add(next_edge)
-                island.append(next_edge)
-                for vert in next_edge.verts:
-                    for e in vert.link_edges:
-                        if e not in used:
-                            stack.add(e)
-            yield island
-
-    if sel_mode == SEL_MODE.vert:
-        used = {v for v, m in zip(bm.verts, iter_last(mask) if mask else cycle([True])) if not m}
-        for vert in bm.verts:
-            if vert in used:
-                continue
-            stack = {vert, }
-            island = []
-            while stack:
-                next_vert = stack.pop()
-                used.add(next_vert)
-                island.append(next_vert)
-                for edge in next_vert.link_edges:
-                    if edge.other_vert(next_vert) not in used:
-                        stack.add(edge.other_vert(next_vert))
-            yield island
+    walk_map = {bmesh.types.BMVert: vert_neighbours,
+                bmesh.types.BMEdge: edge_neighbours,
+                bmesh.types.BMFace: face_neighbours}
+    return mesh_walk(mesh_elements, walk_map[type(mesh_elements[0])])
 
 
-def iter_bm_index_mask(bm_component, sel_mode, indexes, max_param_len, mask=None):
-    if mask is None:
-        mask = [0]
-
-    mesh_index_parts = {i: [] for i in set(mask)}
-    [mesh_index_parts[i].append(elem) for i, elem in zip(iter_last(mask), bm_component)]
+def iter_bm_index_mask(bm_component, origin_mode, indexes, layers: LayerNames):
+    mesh_index_parts = {}
+    for elem in bm_component:
+        if elem[layers.mask] not in mesh_index_parts:
+            mesh_index_parts[elem[layers.mask]] = []
+        mesh_index_parts[elem[layers.mask]].append(elem)
     for ind in indexes:
         if ind in mesh_index_parts:
-            yield mesh_index_parts[ind]
+            if origin_mode == OR_MODE.individ:
+                yield from iter_bm_islands(mesh_index_parts[ind], MASK_MODE.index, layers)
+            else:
+                yield mesh_index_parts[ind]
 
 
-def get_move_vector(selected, directions, factors, direction_mode=DIR_MODE.x, ind_layer=None):
-    average_factor = calc_average_factor(factors, selected, ind_layer)
+def get_move_vector(selected, directions, factors, mask_mode, layers: LayerNames, direction_mode=DIR_MODE.x):
+    factor = get_factor(factors, selected, mask_mode, layers)
     if direction_mode in DIR_MODE[:-1]:
-        return getattr(DIR_VEC, direction_mode.lower()) * average_factor
+        return getattr(DIR_VEC, direction_mode.lower()) * factor
     else:
-        average_direction = get_median_center(
-            [Vector(directions[sel[ind_layer] if len(directions) > sel[ind_layer] else -1]) for sel in selected])
-        return average_direction * average_factor
+        if mask_mode == MASK_MODE.boolean:
+            direction = get_median_center([Vector(get_item_last(directions, sel.index)) for sel in selected])
+        else:
+            direction = Vector(get_item_last(directions, selected[0][layers.index_prop]))
+        return direction * factor
 
 
-def get_scale_vector(selected, directions, factors, direction_mode=DIR_MODE.x, ind_layer=None):
+def get_scale_vector(selected, directions, factors, layers: LayerNames, mask_mode, direction_mode=DIR_MODE.x):
     index = {'X': 0, 'Y': 1, 'Z': 2}
-    average_factor = calc_average_factor(factors, selected, ind_layer)
+    factor = get_factor(factors, selected, mask_mode, layers)
     if direction_mode in DIR_MODE[:-1]:
         vec = [1, 1]
-        vec.insert(index[direction_mode], 1 * average_factor)
+        vec.insert(index[direction_mode], 1 * factor)
         return Vector(vec)
     else:
-        return get_median_center(
-            [Vector(directions[sel[ind_layer] if len(directions) > sel[ind_layer] else -1]) for sel in selected]) * average_factor
+        if mask_mode == MASK_MODE.index:
+            return Vector(get_item_last(directions, selected[0][layers.index_prop])) * factor
+        else:
+            return get_median_center([Vector(get_item_last(directions, sel.index)) for sel in selected]) * factor
 
 
-def get_move_axis(selected, directions, direction_mode, ind_layer=None):
+def get_move_axis(selected, directions, direction_mode, layers: LayerNames, mask_mode):
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower())
     else:
-        return calc_average_normal(
-            [Vector(directions[sel[ind_layer] if len(directions) > sel[ind_layer] else -1]) for sel in selected])
+        if mask_mode == MASK_MODE.index:
+            return Vector(get_item_last(directions, selected[0][layers.index_prop]))
+        else:
+            return calc_average_normal([Vector(get_item_last(directions, sel.index)) for sel in selected])
 
 
-def calc_average_factor(factors, selected, ind_layer=None):
-    if len(factors) == 1:
-        return factors[0]
+def get_factor(factors, selected, mask_mode, layers: LayerNames):
+    if mask_mode == MASK_MODE.index:
+        return get_item_last(factors, selected[0][layers.index_prop])
     else:
-        return sum([factors[sel[ind_layer] if len(factors) > sel[ind_layer] else -1]
-                    for sel in selected]) / len(selected)
+        if len(factors) == 1:
+            return factors[0]
+        else:
+            return sum([get_item_last(factors, sel.index) for sel in selected]) / len(selected)
 
 
 def get_selected_verts(selected):
@@ -238,8 +273,8 @@ def get_selected_verts(selected):
         raise ValueError(f"Such type: {type(selected)} is not supported")
 
 
-def get_space(selected, space_mode, origin_mode, custom_origins=None, space_directions=None, ind_layer=None):
-    origin = get_origin(selected, origin_mode, custom_origins, ind_layer)
+def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, custom_origins=None, space_directions=None):
+    origin = get_origin(selected, origin_mode, mask_mode, layers, custom_origins)
     if space_mode == SP_MODE.glob:
         return Matrix.Translation(origin)
     elif space_mode == SP_MODE.norm:
@@ -249,18 +284,22 @@ def get_space(selected, space_mode, origin_mode, custom_origins=None, space_dire
         tangent = normal.cross(_tangent.cross(normal))
         return build_matrix(origin, normal, tangent)
     elif space_mode == SP_MODE.cust:
-        normal = calc_average_normal([Vector(space_directions[sel[ind_layer] if len(space_directions) > sel[ind_layer] 
-                                                              else -1]) for sel in selected])
+        if mask_mode == MASK_MODE.index:
+            normal = get_item_last(space_directions, selected[0][layers.index_prop])
+        else:
+            normal = calc_average_normal([Vector(get_item_last(space_directions, sel.index)) for sel in selected])
         tangent = Vector((0, 1, 0)) if normal == Vector((0, 0, 1)) else normal.cross(Vector((0, 0, 1)))
         return build_matrix(origin, normal, tangent)
     else:
         raise ValueError(f"Such space mode: {space_mode} is not supported")
 
 
-def get_origin(mesh_component, origin_mode, custom_origins=None, ind_layer=None):
+def get_origin(mesh_component, origin_mode, mask_mode, layers: LayerNames, custom_origins=None):
     if origin_mode == OR_MODE.cust:
-        return get_median_center([Vector(custom_origins[sel[ind_layer] if len(custom_origins) > sel[ind_layer] else -1])
-                                  for sel in mesh_component])
+        if mask_mode == MASK_MODE.index:
+            return get_item_last(custom_origins, mesh_component[0][layers.index_prop])
+        else:
+            return get_median_center([Vector(get_item_last(custom_origins, sel.index)) for sel in mesh_component])
     else:
         if type(mesh_component[0]) == bmesh.types.BMVert:
             return get_verts_origin(mesh_component, origin_mode)
@@ -371,6 +410,13 @@ def build_matrix(center, normal, tangent):
 
 def iter_last(l):
     return chain(l, cycle([l[-1]]))
+
+
+def get_item_last(seq, ind):
+    try:
+        return seq[ind]
+    except IndexError:
+        return seq[-1]
 
 
 class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
