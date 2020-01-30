@@ -20,3 +20,4 @@ Transforms
    texture_displace
    randomize
    align_mesh_by_mesh
+   transform_mesh
