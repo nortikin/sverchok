@@ -35,3 +35,4 @@ Modifier Change
    pulga_physics
    inset_faces
    follow_active_quads
+   separate_parts_to_indexes

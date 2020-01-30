@@ -108,6 +108,7 @@
     SvDeleteLooseNode
     SvRemoveDoublesNode
     SvSeparateMeshNode
+    SvSeparatePartsToIndexes
     SvLimitedDissolve
     SvPlanarFacesNode
     SvSplitFacesNode
