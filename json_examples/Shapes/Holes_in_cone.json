@@ -1,29 +1,16 @@
 {
   "export_version": "0.079",
   "framed_nodes": {
-    "Centers polygons": "Frame",
     "Circle": "Frame.001",
     "Crop mesh 2D": "Frame.001",
-    "Matrix Apply": "Frame",
     "Matrix Apply.001": "Frame.002",
-    "Matrix Math": "Frame",
+    "Origins": "Frame",
     "Polygon Boom": "Frame",
-    "Remove Doubles": "Frame.002"
+    "Remove Doubles": "Frame.002",
+    "Vector Drop": "Frame"
   },
   "groups": {},
   "nodes": {
-    "Centers polygons": {
-      "bl_idname": "CentersPolsNodeMK3",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        131.5216407775879,
-        252.50860404968262
-      ],
-      "params": {},
-      "width": 140.0
-    },
     "Circle": {
       "bl_idname": "SvCircleNode",
       "color": [
@@ -86,7 +73,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 373.4686279296875,
+      "height": 273.26617431640625,
       "hide": false,
       "label": "Take each face and put it into XOY plane",
       "location": [
@@ -94,11 +81,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 920.8910522460938
+      "width": 624.6648559570312
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 587.4627685546875,
+      "height": 587.1427612304688,
       "hide": false,
       "label": "Cut a hole in each face",
       "location": [
@@ -106,11 +93,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 442.876708984375
+      "width": 442.39654541015625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 294.6806335449219,
+      "height": 293.3472900390625,
       "hide": false,
       "label": "Put faces back in their places",
       "location": [
@@ -118,21 +105,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 467.323486328125
-    },
-    "Matrix Apply": {
-      "bl_idname": "SvMatrixApplyJoinNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        602.6689949035645,
-        192.26806449890137
-      ],
-      "params": {
-        "do_join": 0
-      },
-      "width": 140.0
+      "width": 466.843505859375
     },
     "Matrix Apply.001": {
       "bl_idname": "SvMatrixApplyJoinNode",
@@ -148,17 +121,18 @@
       },
       "width": 141.03147888183594
     },
-    "Matrix Math": {
-      "bl_idname": "SvMatrixMathNode",
+    "Origins": {
+      "bl_idname": "SvOrigins",
       "height": 100.0,
       "hide": false,
-      "label": "Matrix Invert",
+      "label": "",
       "location": [
-        359.57866287231445,
-        205.10601615905762
+        100.57364273071289,
+        153.2661418914795
       ],
       "params": {
-        "operation": "INVERT"
+        "flat_matrix": 1,
+        "mode": "Faces"
       },
       "width": 140.0
     },
@@ -198,6 +172,18 @@
       "params": {},
       "width": 140.0
     },
+    "Vector Drop": {
+      "bl_idname": "VectorDropNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        306.9228096008301,
+        110.55397605895996
+      ],
+      "params": {},
+      "width": 140.0
+    },
     "Viewer Draw Mk3": {
       "bl_idname": "SvVDExperimental",
       "color": [
@@ -214,6 +200,8 @@
       ],
       "params": {
         "activate": 1,
+        "draw_gl_wireframe": 0,
+        "handle_concave_quads": 0,
         "selected_draw_mode": "facet"
       },
       "use_custom_color": true,
@@ -236,48 +224,36 @@
     [
       "Polygon Boom",
       0,
-      "Centers polygons",
+      "Origins",
       0
     ],
     [
       "Polygon Boom",
       1,
-      "Centers polygons",
-      1
+      "Origins",
+      2
     ],
     [
-      "Centers polygons",
+      "Polygon Boom",
+      0,
+      "Vector Drop",
+      0
+    ],
+    [
+      "Origins",
       3,
-      "Matrix Math",
-      0
+      "Vector Drop",
+      1
     ],
     [
-      "Polygon Boom",
-      0,
-      "Matrix Apply",
-      0
-    ],
-    [
-      "Polygon Boom",
-      1,
-      "Matrix Apply",
-      2
-    ],
-    [
-      "Matrix Math",
-      0,
-      "Matrix Apply",
-      3
-    ],
-    [
-      "Matrix Apply",
+      "Vector Drop",
       0,
       "Crop mesh 2D",
       0
     ],
     [
-      "Matrix Apply",
-      2,
+      "Polygon Boom",
+      1,
       "Crop mesh 2D",
       1
     ],
@@ -306,7 +282,7 @@
       2
     ],
     [
-      "Centers polygons",
+      "Origins",
       3,
       "Matrix Apply.001",
       3
