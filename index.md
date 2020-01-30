@@ -103,7 +103,7 @@
     SvDisplaceNode
     SvNoiseDisplaceNode
     SvRandomizeVerticesNode
-    SvSpherizeNode
+    SvCastNode
 
 ## Modifier Change
     SvDeleteLooseNode
