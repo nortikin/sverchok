@@ -93,6 +93,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     texture = {}
     n_id: bpy.props.StringProperty(default='')
 
+    num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
+
     def prepare_for_grid(self):
         nx = self.terminal_width + 1
         ny = self.num_rows + 1
@@ -110,6 +112,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         self.outputs.new("SvStringsSocket", "faces")
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "num_chars")
         layout.prop(self, "char_image")
 
     def process(self):
@@ -157,7 +160,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         finally:
         
             self.outputs[0].sv_set([grid[0]])
-            self.outputs[1].sv_set([grid[1]])
+            self.outputs[1].sv_set([grid[1][:self.num_chars]])
 
 
     def free(self):
