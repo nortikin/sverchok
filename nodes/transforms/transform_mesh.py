@@ -40,6 +40,31 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
                    directions=None, factors=None, transform_mode=TR_MODE.move, origin_mode=OR_MODE.individ,
                    direction_mode=DIR_MODE.x, selection_mode=SEL_MODE.vert, space_mode=SP_MODE.glob,
                    mask_mode=MASK_MODE.boolean):
+    """
+    The function takes mesh and transform it according parameters. It can move, scale and rotate parts of mesh.
+    The logic is close how Blender manipulate with mesh itself.
+    Distribution of parameters: with bool mask all parameters are setting to selected elements ony by one.
+    With integer mask parameters are setting to a group of elements. 
+    For example: given indexes - [1, 3], given parameters - [param1, param2]. 
+    To all parts of mesh masked by 1 will be assigned with param1.
+    To all parts of mesh masked by 3 will be assigned param2. All other parts will be unchanged.
+    :param verts: list of tuple(float, float, float)
+    :param edges: list of tuple(int, int)
+    :param faces: list of list of int
+    :param mask: two types masks are supported. list of bool or list of int
+    :param custom_origins: custom center of transformation - list of tuple(float, float, float)
+    :param space_directions: custom normal to center of transformation - list of tuple(float, float, float)
+    :param indexes: list of int, index of part of mesh to assign parameters
+    :param directions: list of tuple(float, float, float), transformation vector
+    :param factors: list of float, direction * factor
+    :param transform_mode: str, 'Move', 'Scale', 'Rotate'
+    :param origin_mode: str, 'Individual', 'Median', 'Center bound box', 'Custom'
+    :param direction_mode: str, 'X', 'Y', 'Z', 'Custom'
+    :param selection_mode: str, 'Verts', 'Edges', 'Faces'
+    :param space_mode: str, 'Normal', 'Global', 'Custom'
+    :param mask_mode: str, 'Bool mask', 'Index mask'
+    :return: list of tuple(float, float, float)
+    """
     if mask and selection_mode == SEL_MODE.face and not faces:
         raise LookupError("Faces should be connected")
     if mask and selection_mode == SEL_MODE.edge and not any([faces, edges]):
@@ -70,7 +95,8 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
 
             if transform_mode == TR_MODE.move:
                 # space matrix applies to bmesh vertices
-                move_vec = space.to_quaternion() @ get_move_vector(sel, directions, factors, mask_mode, layers, direction_mode)
+                move_vec = space.to_quaternion() \
+                           @ get_move_vector(sel, directions, factors, mask_mode, layers, direction_mode)
                 bmesh.ops.translate(bm, vec=move_vec, space=Matrix(), verts=sel_verts)
             elif transform_mode == TR_MODE.rotate:
                 rotation = Matrix.Rotation(
@@ -85,32 +111,24 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
 
 
 @contextmanager
-def get_bmesh(verts, edges=None, faces=None, update_normals=False, update_indexes=True, use_operators=True, layers=None):
-    # layers: list of tuple(str, str, str, iterable or None),
-    # (mesh sequence type, layer type, layer name, any related with sequence data),
-    # example: [('verts', 'int', 'mask_index', [0, 1, 2])]
+def get_bmesh(verts, edges=None, faces=None, update_normals=False, update_indexes=True, use_operators=True):
+    """
+    It creates bmesh and delete it after usage
+    :param verts: list of tuple(float, float, float)
+    :param edges: list of tuple(int, int)
+    :param faces: list of list of int
+    :param update_normals: bool, it needs for some operators and for getting actual data of normals manually
+    :param update_indexes: bool, for bm.verts[10]
+    :param use_operators: bool, for using bmesh.ops
+    :return: bmesh object
+    """
     error = None
     bm = bmesh.new(use_operators=use_operators)
-    sequence_types = {'verts': bm.verts, 'edges': bm.edges, 'faces': bm.faces, 'loops': bm.loops}
     try:
-        # create layers
-        if layers:
-            for seq_type, layer_type, layer_name, data in layers:
-                getattr(sequence_types[seq_type].layers, layer_type).new(layer_name)
-
         # create mesh
         bm_verts = [bm.verts.new(co) for co in verts]
         [bm.edges.new((bm_verts[i1], bm_verts[i2])) for i1, i2 in edges or []]
         [bm.faces.new([bm_verts[i] for i in face]) for face in faces or []]
-
-        # fill layers
-        if layers:
-            for seq_type, layer_type, layer_name, data in layers:
-                if not data:
-                    continue
-                layer = getattr(sequence_types[seq_type].layers, layer_type).get(layer_name)
-                for element, val in zip(sequence_types[seq_type], iter_last(data)):
-                    element[layer] = val
 
         # update mesh
         bm.verts.ensure_lookup_table()
@@ -132,11 +150,21 @@ def get_bmesh(verts, edges=None, faces=None, update_normals=False, update_indexe
 
 
 def generate_layers(mesh_elements, indexes, mask):
+    # generate required for the algorithm layers
     def gen_prop_index_data():
+        # given indexes: [1, 3], index mask: [0, 0, 1, 2, 2, 3, 3, 4], returns: [-1, -1, 0, -1, -1, 1, 1, -1]
         element_prop_indexes_map = {el_i: prop_i for prop_i, el_i in enumerate(indexes)}
         return [element_prop_indexes_map[mi] if mi in element_prop_indexes_map else -1 for mi in mask]
 
     def create_layer(sequence, layer_name, layer_type, data):
+        """
+        generate layers of bmesh object
+        :param sequence: bm.verts, bm.edges, bm.faces or bm.loops
+        :param layer_name: str
+        :param layer_type: str, according bmesh API, some of available variants: 'int', 'float', 'string'
+        :param data: list of values with types according given layer type. Length of list == length of sequence
+        :return: layer item
+        """
         layer = getattr(sequence.layers, layer_type).new(layer_name)
         for element, val in zip(sequence, iter_last(data)):
             element[layer] = val
@@ -150,6 +178,8 @@ def generate_layers(mesh_elements, indexes, mask):
 
 
 def iter_bm_islands(mesh_elements, mask_mode, layers: LayerNames):
+    # returns bounded set of elements. Set is bounded if its elements with each other and mak is true in bool mode
+    # or have the same indexes in index mode,
     def vert_neighbours(vert):
         for edge in vert.link_edges:
             v = edge.other_vert(vert)
@@ -205,6 +235,7 @@ def iter_bm_islands(mesh_elements, mask_mode, layers: LayerNames):
 
 
 def iter_bm_index_mask(bm_component, origin_mode, indexes, layers: LayerNames):
+    # returns set of elements bounded by a same index in order of given indexes
     mesh_index_parts = {}
     for elem in bm_component:
         if elem[layers.mask] not in mesh_index_parts:
@@ -219,6 +250,7 @@ def iter_bm_index_mask(bm_component, origin_mode, indexes, layers: LayerNames):
 
 
 def get_move_vector(selected, directions, factors, mask_mode, layers: LayerNames, direction_mode=DIR_MODE.x):
+    # returns vector for translate operator
     factor = get_factor(factors, selected, mask_mode, layers)
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower()) * factor
@@ -231,6 +263,7 @@ def get_move_vector(selected, directions, factors, mask_mode, layers: LayerNames
 
 
 def get_scale_vector(selected, directions, factors, layers: LayerNames, mask_mode, direction_mode=DIR_MODE.x):
+    # returns vector for scale operator
     index = {'X': 0, 'Y': 1, 'Z': 2}
     factor = get_factor(factors, selected, mask_mode, layers)
     if direction_mode in DIR_MODE[:-1]:
@@ -245,6 +278,7 @@ def get_scale_vector(selected, directions, factors, layers: LayerNames, mask_mod
 
 
 def get_move_axis(selected, directions, direction_mode, layers: LayerNames, mask_mode):
+    # returns axis vector for rotation operator
     if direction_mode in DIR_MODE[:-1]:
         return getattr(DIR_VEC, direction_mode.lower())
     else:
@@ -255,6 +289,7 @@ def get_move_axis(selected, directions, direction_mode, layers: LayerNames, mask
 
 
 def get_factor(factors, selected, mask_mode, layers: LayerNames):
+    # returns factor for translate, scale and rotate operators
     if mask_mode == MASK_MODE.index:
         return get_item_last(factors, selected[0][layers.index_prop])
     else:
@@ -265,6 +300,7 @@ def get_factor(factors, selected, mask_mode, layers: LayerNames):
 
 
 def get_selected_verts(selected):
+    # convert any sequence of elements to sequence vector elements
     if type(selected[0]) == bmesh.types.BMVert:
         return selected
     elif type(selected[0]) == bmesh.types.BMEdge:
@@ -275,7 +311,9 @@ def get_selected_verts(selected):
         raise ValueError(f"Such type: {type(selected)} is not supported")
 
 
-def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, custom_origins=None, space_directions=None):
+def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, custom_origins=None, 
+              space_directions=None):
+    # returns space matrix for selected elements according given options
     origin = get_origin(selected, origin_mode, mask_mode, layers, custom_origins)
     if space_mode == SP_MODE.glob:
         return Matrix.Translation(origin)
@@ -297,6 +335,7 @@ def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, 
 
 
 def get_origin(mesh_component, origin_mode, mask_mode, layers: LayerNames, custom_origins=None):
+    # get origin of selected elements
     if origin_mode == OR_MODE.cust:
         if mask_mode == MASK_MODE.index:
             return Vector(get_item_last(custom_origins, mesh_component[0][layers.index_prop]))
@@ -314,6 +353,7 @@ def get_origin(mesh_component, origin_mode, mask_mode, layers: LayerNames, custo
 
 
 def get_verts_origin(verts, origin_mode):
+    # returns origin of selected vertices
     if origin_mode == OR_MODE.bound:
         return get_bound_center([v.co for v in verts])
     if origin_mode in [OR_MODE.median, OR_MODE.individ]:
@@ -321,6 +361,7 @@ def get_verts_origin(verts, origin_mode):
 
 
 def get_edges_origin(edges, origin_mode):
+    # returns origin of selected edges
     if origin_mode == OR_MODE.bound:
         return get_bound_center([e.verts[0].co.lerp(e.verts[1].co, 0.5) for e in edges])
     if origin_mode in [OR_MODE.median, OR_MODE.individ]:
@@ -328,6 +369,7 @@ def get_edges_origin(edges, origin_mode):
 
 
 def get_faces_origin(faces, origin_mode):
+    # returns origin of selected faces
     if origin_mode == OR_MODE.bound:
         return get_bound_center([f.calc_center_bounds() for f in faces])
     if origin_mode in [OR_MODE.median, OR_MODE.individ]:
@@ -335,6 +377,7 @@ def get_faces_origin(faces, origin_mode):
 
 
 def get_bound_center(verts):
+    # returns center of bounding box of given vertices
     x_min = min(v.x for v in verts)
     y_min = min(v.y for v in verts)
     z_min = min(v.z for v in verts)
@@ -345,10 +388,12 @@ def get_bound_center(verts):
 
 
 def get_median_center(verts):
+    # returns median center of given vertices
     return reduce(lambda v1, v2: v1 + v2, verts) / len(verts)
 
 
 def get_normals(mesh_component):
+    # returns normals of any selected elements
     if type(mesh_component[0]) == bmesh.types.BMVert:
         return calc_average_normal([v.normal for v in mesh_component])
     elif type(mesh_component[0]) == bmesh.types.BMEdge:
@@ -360,6 +405,7 @@ def get_normals(mesh_component):
 
 
 def get_tangents(mesh_component):
+    # returns tangent of any selected elements
     if type(mesh_component[0]) == bmesh.types.BMVert:
         return calc_average_normal([get_vert_tang(v) for v in mesh_component])
     elif type(mesh_component[0]) == bmesh.types.BMEdge:
@@ -371,11 +417,13 @@ def get_tangents(mesh_component):
 
 
 def calc_average_normal(normals):
+    # calculates average normal of give normals, given normals should be normalized
     return reduce(lambda v1, v2: v1 + v2, normals).normalized()
 
 
 @lru_cache(maxsize=None)
 def get_edge_normal_tangent(edge):
+    # returns tangent of given edge close to Blender logic
     direct = (edge.verts[1].co - edge.verts[0].co).normalized()
     _normal = (edge.verts[0].normal + edge.verts[1].normal).normalized()
     tang = direct.cross(_normal)
@@ -411,10 +459,12 @@ def build_matrix(center, normal, tangent):
 
 
 def iter_last(l):
+    # returns generator which repeat last element of given sequence infinitely
     return chain(l, cycle([l[-1]]))
 
 
 def get_item_last(seq, ind):
+    # return item of sequence, if index is out of range returns last item
     try:
         return seq[ind]
     except IndexError:
@@ -423,14 +473,15 @@ def get_item_last(seq, ind):
 
 class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: ...
+    Triggers: move rotate scale
 
-    ...
-    ...
+    Transform mesh on mesh level
+    Similar how Blender do transformations
     """
     bl_idname = 'SvTransformMesh'
     bl_label = 'Transform Mesh'
     bl_icon = 'MOD_BOOLEAN'
+    sv_icon = 'SV_TRANSFORM_SELECT'
 
     def update_sockets(self, context):
         def hide(socket, statement):
@@ -473,9 +524,6 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'mask_mode', expand=True)
         layout.prop(self, 'origin_mode')
         layout.prop(self, 'space_mode')
-
-    def draw_buttons_ext(self, context, layout):
-        pass
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Verts')
@@ -525,7 +573,8 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         direction = iter_last(self.inputs['Direction'].sv_get(deepcopy=False))
         factor = iter_last(self.inputs['Factor'].sv_get(deepcopy=False))
         out = []
-        for v, e, f, m, o, sd, ai, d, fac in zip(verts, edges, faces, mask, origin, space_direction, active_index, direction, factor):
+        for v, e, f, m, o, sd, ai, d, fac in zip(verts, edges, faces, mask, origin, space_direction, active_index,
+                                                 direction, factor):
             out.append(transform_mesh(v, e, f, m, o, sd, ai, d, fac, self.transform_mode, self.origin_mode,
                                       DIR_MODE.cust if self.inputs['Direction'].is_linked else self.direction_mode,
                                       self.select_mode, self.space_mode, self.mask_mode))
