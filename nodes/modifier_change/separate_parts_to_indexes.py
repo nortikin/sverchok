@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+
 from itertools import cycle
 
 import bpy
@@ -14,6 +15,14 @@ from sverchok.node_tree import SverchCustomTreeNode
 
 
 def mark_mesh(verts, edges=None, faces=None):
+    """
+    Marks mesh elements by indexes. All disjoint parts of mesh have different indexes.
+    Elements of one part have a same index.
+    :param verts: list of tuple(float, float, float)
+    :param edges: list of tuple(int, int)
+    :param faces: list of list of int
+    :return: return tuple(list of int, list of int, list of int), index masks for vertices, edges and faces
+    """
     if edges is None and faces is None:
         raise ValueError("Edges or Faces should be given")
 
@@ -32,10 +41,12 @@ def mark_mesh(verts, edges=None, faces=None):
     v_out = [vert[ind_v] for vert in bm_verts]
     e_out = [edge[ind_e] for edge in bm_edges] if edges else []
     f_out = [face[ind_f] for face in bm_faces] if faces else []
+    bm.free()
     return v_out, e_out, f_out
 
 
 def mark_edges(bm_edges, layer):
+    # walk over edges and mark them
     used = set()
     current_i = 0
     for edge in bm_edges:
@@ -55,6 +66,7 @@ def mark_edges(bm_edges, layer):
 
 
 def mark_faces(bm_faces, layer):
+    # walk over faces and mark them
     used = set()
     current_i = 0
     for face in bm_faces:
@@ -74,6 +86,7 @@ def mark_faces(bm_faces, layer):
 
 
 def mark_verts(bm_verts, v_layer, by_edges=False, e_layer=None, by_faces=False, f_layer=None):
+    # walk over vertices by edges or faces and mark them
     if not ((by_edges and e_layer) or (by_faces and f_layer)):
         raise ValueError("Pick edges or faces for filling index values of vertices")
     if by_edges and e_layer:
@@ -90,10 +103,11 @@ def mark_verts(bm_verts, v_layer, by_edges=False, e_layer=None, by_faces=False, 
 
 class SvSeparatePartsToIndexes(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: separate
+    Triggers: separate index mask
 
-    ...
-    ...
+    Marks mesh elements by indexes
+    All disjoint parts of mesh have different indexes
+    Elements of one part have a same index
     """
     bl_idname = 'SvSeparatePartsToIndexes'
     bl_label = 'Separate Parts To Indexes'
