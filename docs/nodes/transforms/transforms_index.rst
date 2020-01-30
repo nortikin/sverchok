@@ -18,3 +18,4 @@ Transforms
    transform_select
    randomize
    align_mesh_by_mesh
+   transform_mesh
