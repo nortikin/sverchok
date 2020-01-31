@@ -237,8 +237,8 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     name_texture: StringProperty(
-        name='image_name',
-        description='image name',
+        name='Texture',
+        description='Texture(s) to evaluate',
         default='',
         update=updateNode)
 
@@ -269,16 +269,16 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     custom_axis: FloatVectorProperty(
-        name='Custom Axis', description='Scale of the added vector',
+        name='Custom Axis', description='Axis to use in displacement',
         size=3, default=(1, 1, 1),
         update=updateNode)
 
     strength: FloatProperty(
-        name='Strength', description='Size of line',
+        name='Strength', description='Scalar displacement multiplier',
         default=1.0, update=updateNode)
 
     mid_level: FloatProperty(
-        name='Middle Level', description='Size of line',
+        name='Middle Level', description='Texture middle level',
         default=0.0, update=updateNode)
 
     list_match: EnumProperty(
