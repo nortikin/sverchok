@@ -82,8 +82,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def local_updateNode(self, context):
         ...
 
-
-
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1, max=140, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=10, max=140, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
@@ -96,10 +94,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
 
     def prepare_for_grid(self):
-        nx = self.terminal_width
-        ny = self.num_rows
-        return get_console_grid(15, 32, nx, ny)
-
+        return get_console_grid(15, 32, self.terminal_width, self.num_rows)
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")

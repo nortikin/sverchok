@@ -45,11 +45,10 @@ def get_lookup_dict(fnt_path):
         top = 1 - (y / scale_h)
         bottom = 1 - ((y + height) / scale_h)
         
-        A = (left, top)      # 0
-        B = (right, top)     # 1
-        C = (right, bottom)  # 2
-        D = (left, bottom)   # 3
-        # uv_dict[id] = [(A, B, C), (A, C, D)]
+        A = (left, top)
+        B = (right, top)
+        C = (right, bottom)
+        D = (left, bottom)
         uv_dict[id] = [(A, D, C), (A, C, B)]
 
 
