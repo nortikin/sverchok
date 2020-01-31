@@ -46,20 +46,25 @@ def simple_console_xy(context, args):
     config.shader.uniform_int("image", 0)
     config.batch.draw(config.shader)
 
-def generate_batch_shader(node, args):
-    x, y, w, h, data = args
-    positions, poly_indices = data
-    
-    uv_indices = terminal_text_to_uv(node.terminal_text)
+def process_grid_for_shader(grid):
+    positions, poly_indices = grid
     verts = []
     for poly in poly_indices:
         for v_idx in poly:
             verts.append(positions[v_idx][:2])
-    
+    return verts
+
+def process_uvs_for_shader(node):
+    uv_indices = terminal_text_to_uv(node.terminal_text)
     uvs = []
     add_uv = uvs.append
     _ = [[add_uv(uv) for uv in uvset] for uvset in uv_indices]
-    uv_indices = uvs
+    return uvs
+
+
+def generate_batch_shader(node, args):
+    x, y, w, h, data = args
+    verts, uv_indices = data
 
     shader = gpu.shader.from_builtin('2D_IMAGE')
     batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
@@ -129,15 +134,17 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         height = self.num_rows * 32
 
         try:
+            verts = process_grid_for_shader(grid)
+            uvs = process_uvs_for_shader(self)
+            
             x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
-            batch, shader = generate_batch_shader(self, (x, y, width, height, grid))
+            batch, shader = generate_batch_shader(self, (x, y, width, height, (verts, uvs)))
 
             dims = (width, height)
             loc = (x, y)
             config.loc = loc
             config.batch = batch
             config.shader = shader
-            config.grid_data = grid
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
