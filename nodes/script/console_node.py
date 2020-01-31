@@ -21,10 +21,10 @@ from sverchok.data_structure import updateNode, node_id
 
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
-from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, tri_grid
+from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 
 
-demo_text = inspect.getsource(tri_grid)
+# demo_text = inspect.getsource(tri_grid)
 
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
@@ -93,23 +93,22 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     texture = {}
     n_id: bpy.props.StringProperty(default='')
 
+    num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
+
     def prepare_for_grid(self):
-        nx = self.terminal_width + 1
-        ny = self.num_rows + 1
-        dim_x = 15 * nx
-        dim_y = 32 * ny
-        return tri_grid(dim_x=dim_x, dim_y=dim_y, nx=nx, ny=ny)
+        nx = self.terminal_width
+        ny = self.num_rows
+        return get_console_grid(15, 32, nx, ny)
 
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.get_and_set_gl_scale_info()
-        # initial_state = (15, 32, self.terminal_width+1, self.num_rows+1)
-        # grid_data[initial_state] = tri_grid(dim_x=15, dim_y=32, nx=self.terminal_width+1, ny=self.num_rows+1)
         self.outputs.new("SvVerticesSocket", "verts")
         self.outputs.new("SvStringsSocket", "faces")
 
     def draw_buttons(self, context, layout):
+        layout.prop(self, "num_chars")
         layout.prop(self, "char_image")
 
     def process(self):
@@ -157,7 +156,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         finally:
         
             self.outputs[0].sv_set([grid[0]])
-            self.outputs[1].sv_set([grid[1]])
+            self.outputs[1].sv_set([grid[1][:self.num_chars]])
 
 
     def free(self):
