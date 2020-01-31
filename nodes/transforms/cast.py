@@ -125,7 +125,7 @@ class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvCastNode'
     bl_label = 'Cast'
-    bl_icon = 'MOD_DISPLACE'
+    bl_icon = 'MOD_CAST'
 
     origin_modes = [
         ('AVERAGE', 'Average', 'Texture displacement along Vertex Normal', '', 1),
