@@ -5,6 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import numpy as np
 from mathutils import Matrix
 
 from sverchok.settings import get_params
@@ -37,46 +38,37 @@ class SvNodeViewDrawMixin():
         return x, y, width, height
 
 
-def triangles_from_quads(faces):
+
+def faces_from_xy(ncx, ncy):
     r"""
     this splits up the quad from geom.grid to triangles
 
                 (ABCD)                   (ABC, ACD)
 
-    go from:    A - - - B           to    A - B            A 
-                |       |                  \  |            | \
-                |       |                   \ |            |  \
-                D - - - C                     C            D - C
+    go from:    A - - - D           to    A        A - D 
+                |       |                 | \       \  |
+                |       |                 |  \       \ |
+                B - - - C                 B - C        C
 
     """
-    tri_faces = []
-    tris_add = tri_faces.extend
-    _ = [tris_add(((poly[0], poly[1], poly[2]), (poly[0], poly[2], poly[3]))) for poly in faces]
-    return tri_faces
+    faces = []
+    add = faces.append
+    pattern = np.array([0, ncx+1, ncx+2, 1])
+    for row in range(ncy):
+        for col in range(ncx):
+            x_offset = ((ncx+1) * row) + col
+            quad = (pattern + x_offset).tolist()
+            add((quad[0], quad[1], quad[2]))
+            add((quad[0], quad[2], quad[3]))
+    return faces
 
-
-def tri_grid(dim_x=3, dim_y=2, nx=3, ny=3):
-    """
-    This generates 2d grid, into which we texture each polygon with it's associated character UV
-
-    AA -  -  -AB -  -  -AC -  -  -AD -  -  - n
-     | -       | -       | -       |
-     |    -    |    -    |    -    |
-     |       - |       - |       - |
-    BA -  -  -BB -  -  -BC -  - 
-     | -       | -
-     |    -    |    -
-     |       - |       -
-    CA -  -  -CB -  -  -
-     | -
-     |    -
-     |       -
-    etc
-
-    There's a mapping between int(char) to uv coordinates, charmap will support ascii only.
-
-    """
-    neg_y = Matrix(((1, 0, 0, 0), (0, -1, 0, 0), (0, 0, 1, 0), (0, 0, 0, 1)))
-    verts, _, faces = grid(dim_x, dim_y, nx, ny, anchor=7, matrix=neg_y, mode='pydata')
-    tri_faces = triangles_from_quads(faces)
-    return verts, tri_faces
+def get_console_grid(char_width, char_height, num_chars_x, num_chars_y):
+    num_verts_x = num_chars_x + 1
+    num_verts_y = num_chars_y + 1
+    
+    X = np.linspace(0, num_chars_x*char_width, num_verts_x)
+    Y = np.linspace(0, -num_chars_y*char_height, num_verts_y)
+    coords = np.vstack(np.meshgrid(X, Y, 0)).reshape(3, -1).T.tolist()
+    cfaces = faces_from_xy(num_chars_x, num_chars_y)
+    return coords, cfaces
+ 
