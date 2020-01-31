@@ -12,6 +12,7 @@ Transforms
    barycentric_transform
    bend_along_path
    bend_along_surface
+   cast
    deform
    mirror_mk2
    symmetrize
