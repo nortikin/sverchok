@@ -113,7 +113,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def process(self):
         n_id = node_id(self)
-        # nvBGL2.callback_disable(n_id)
+        nvBGL2.callback_disable(n_id)
 
         if not self.char_image:
             return
@@ -140,7 +140,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             dims = (width, height)
             loc = (x, y)
             config.loc = loc
-            # config.scale = scale
             config.batch = batch
             config.shader = shader
             config.grid_data = grid
