@@ -110,6 +110,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         layout.prop(self, "char_image")
 
     def terminal_text_to_config(self, update=False):
+        """
+        this function does not work correctly :)
+        """
         with self.sv_throttle_tree_update():
 
             # text = self.inputs[0].sv_get()[0]
@@ -160,7 +163,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
             return
 
-        self.terminal_text_to_config()
+        # self.terminal_text_to_config()
 
         config = lambda: None
         grid = self.prepare_for_grid()
