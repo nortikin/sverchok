@@ -18,9 +18,30 @@ from sverchok.utils.logging import debug, info, exception
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.sv_IO_panel_tools import import_tree
 
+try:
+    import coverage
+    coverage_available = True
+except ImportError:
+    info("Coverage module is not installed")
+    coverage_available = False
+
 ##########################################
 # Utility methods
 ##########################################
+
+@contextmanager
+def coverage_report():
+    if not coverage_available:
+        yield None
+    else:
+        try:
+            cov = coverage.Coverage()
+            cov.start()
+            yield cov
+        finally:
+            cov.stop()
+            cov.save()
+            cov.html_report()
 
 def generate_node_definition(node):
     """
@@ -178,9 +199,10 @@ def run_all_tests(pattern=None):
         suite = loader.discover(start_dir = tests_path, pattern = pattern)
         buffer = StringIO()
         runner = unittest.TextTestRunner(stream = buffer, verbosity=2)
-        result = runner.run(suite)
-        info("Test cases result:\n%s", buffer.getvalue())
-        return result
+        with coverage_report():
+            result = runner.run(suite)
+            info("Test cases result:\n%s", buffer.getvalue())
+            return result
     finally:
         logging.getLogger().removeHandler(log_handler)
 
