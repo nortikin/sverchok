@@ -92,7 +92,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
-
+    
     texture = {}
     n_id: bpy.props.StringProperty(default='')
 
@@ -104,12 +104,47 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.get_and_set_gl_scale_info()
-        self.outputs.new("SvVerticesSocket", "verts")
-        self.outputs.new("SvStringsSocket", "faces")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_chars")
         layout.prop(self, "char_image")
+
+    def terminal_text_to_config(self, update=False):
+        with self.sv_throttle_tree_update():
+
+            # text = self.inputs[0].sv_get()[0]
+            # if len(text) == 1:
+            #     self.terminal_text = text[0]
+            # else:
+            #     text = text[0]
+            #     if len(text):
+            #         self.terminal_text = "\n".join(i[0] for i in text)
+            #     else:
+            #         print("wtf..")
+
+            lines = self.terminal_text.split()
+
+            if len(lines) == 0:
+                pass
+            elif len(lines) == 1:
+                self.terminal_width = len(lines[0])
+                self.num_rows = 1
+            else:
+                # splitting the terminal text results in some number of lines
+                # if all lines are the same length, cool. 
+                # if there is one (or more) longest line, then all shorter lines are  
+                # right-padded with empty space until all match length
+                longest = max(len(line)for line in lines)
+                new_lines = []
+                for line in lines:
+                    new_lines.append(line.ljust(longest))
+                self.terminal_text = '\n'.join(new_lines)
+                self.num_rows = len(lines)
+                self.terminal_width = longest
+
+        if update:
+            updateNode(self, None)
+
 
     def process(self):
         n_id = node_id(self)
@@ -119,45 +154,39 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
         
         image = bpy.data.images.get(self.char_image)
-        if not image: # or image.gl_load():
+        if not image or image.gl_load():
             raise Exception()
 
-        if image.gl_load():
-            raise Exception()
+        if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
+            return
+
+        self.terminal_text_to_config()
 
         config = lambda: None
-
         grid = self.prepare_for_grid()
         x, y = self.xy_offset
-        
         width = self.terminal_width * 15
         height = self.num_rows * 32
 
-        try:
-            verts = process_grid_for_shader(grid)
-            uvs = process_uvs_for_shader(self)
-            
-            x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
-            batch, shader = generate_batch_shader(self, (x, y, width, height, (verts, uvs)))
-
-            dims = (width, height)
-            loc = (x, y)
-            config.loc = loc
-            config.batch = batch
-            config.shader = shader
-
-            draw_data = {
-                'tree_name': self.id_data.name[:],
-                'mode': 'custom_function_context', 
-                'custom_function': simple_console_xy,
-                'args': (image, config)
-            }
-            nvBGL2.callback_enable(n_id, draw_data)
+        verts = process_grid_for_shader(grid)
+        uvs = process_uvs_for_shader(self)
         
-        finally:
-        
-            self.outputs[0].sv_set([grid[0]])
-            self.outputs[1].sv_set([grid[1][:self.num_chars]])
+        x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
+        batch, shader = generate_batch_shader(self, (x, y, width, height, (verts, uvs)))
+
+        dims = (width, height)
+        loc = (x, y)
+        config.loc = loc
+        config.batch = batch
+        config.shader = shader
+
+        draw_data = {
+            'tree_name': self.id_data.name[:],
+            'mode': 'custom_function_context', 
+            'custom_function': simple_console_xy,
+            'args': (image, config)
+        }
+        nvBGL2.callback_enable(n_id, draw_data)
 
 
     def free(self):
