@@ -22,7 +22,7 @@ try:
     import coverage
     coverage_available = True
 except ImportError:
-    info("Coverage module is not installed")
+    #info("Coverage module is not installed")
     coverage_available = False
 
 ##########################################
