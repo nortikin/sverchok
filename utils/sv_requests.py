@@ -35,8 +35,11 @@ def urlretrieve(url, filename, **kwargs):
     def certifi_retrieve(url, filename, **kwargs):
         try:
             import certifi
-            ssl_context = ssl.create_default_context(cafile = os.path.relpath(certifi.where()))
-            return rq.urlretrieve(url, filename, context=ssl_context, **kwargs)
+            # urlretrieve function does not have `context' parameter
+            # on some python versions... we have to do a hack:
+            mk_ssl_context = lambda: ssl.create_default_context(cafile = os.path.relpath(certifi.where()))
+            ssl._create_default_https_context = mk_ssl_context
+            return rq.urlretrieve(url, filename, **kwargs)
         except ImportError:
             return rq.urlretrieve(url, filename, **kwargs)
 
