@@ -102,12 +102,28 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='N Verts Y', description='Number of vertices along Y',
         default=2, min=2, update=updateNode)
 
+    numx_draft: IntProperty(
+        name='[D] N Verts X', description='Number of vertices along X (draft mode)',
+        default=2, min=2, update=updateNode)
+
+    numy_draft: IntProperty(
+        name='[D] N Verts Y', description='Number of vertices along Y (draft mode)',
+        default=2, min=2, update=updateNode)
+
     stepx: FloatProperty(
         name='Step X', description='Step length X',
         default=1.0, update=updateNode)
 
     stepy: FloatProperty(
         name='Step Y', description='Step length Y',
+        default=1.0, update=updateNode)
+
+    stepx_draft: FloatProperty(
+        name='[D] Step X', description='Step length X (draft mode)',
+        default=1.0, update=updateNode)
+
+    stepy_draft: FloatProperty(
+        name='[D] Step Y', description='Step length Y (draft mode)',
         default=1.0, update=updateNode)
 
     separate: BoolProperty(
@@ -141,10 +157,18 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='Syncing', description='Syncing flag', default=False)
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', "Num X").prop_name = 'numx'
-        self.inputs.new('SvStringsSocket', "Num Y").prop_name = 'numy'
-        self.inputs.new('SvStringsSocket', "Step X").prop_name = 'stepx'
-        self.inputs.new('SvStringsSocket', "Step Y").prop_name = 'stepy'
+        inp = self.inputs.new('SvStringsSocket', "Num X")
+        inp.prop_name = 'numx'
+        inp.prop_name_draft = 'numx_draft'
+        inp = self.inputs.new('SvStringsSocket', "Num Y")
+        inp.prop_name = 'numy'
+        inp.prop_name_draft = 'numy_draft'
+        inp = self.inputs.new('SvStringsSocket', "Step X")
+        inp.prop_name = 'stepx'
+        inp.prop_name_draft = 'stepx_draft'
+        inp = self.inputs.new('SvStringsSocket', "Step Y")
+        inp.prop_name = 'stepy'
+        inp.prop_name_draft = 'stepy_draft'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Polygons")
@@ -203,6 +227,8 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if outputs['Polygons'].is_linked:
             outputs['Polygons'].sv_set(polys)
 
+    def does_support_draft_mode(self):
+        return True
 
 def register():
     bpy.utils.register_class(SvPlaneNodeMK2)

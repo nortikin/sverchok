@@ -63,7 +63,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         get=lambda s: uget(s, 'int_'),
         set=lambda s, val: uset(s, val, 'int_', 'int_min', 'int_max'))
     int_draft_ : IntProperty(
-        default=0, name="an int", update=updateNode,
+        default=0, name="[D] an int", update=updateNode,
         description = "Integer value (draft mode)",
         get=lambda s: uget(s, 'int_draft_'),
         set=lambda s, val: uset(s, val, 'int_draft_', 'int_min', 'int_max'))
@@ -71,7 +71,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     int_max: IntProperty(default=1024, description='maximum')
 
     float_: FloatProperty(
-        default=0.0, name="a float", update=updateNode,
+        default=0.0, name="[D] a float", update=updateNode,
         description = "Floating-point value",
         get=lambda s: uget(s, 'float_'),
         set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max'))
@@ -185,6 +185,9 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
             # same for float to int.
 
             self.outputs[0].sv_set(self.inputs[0].sv_get())
+
+    def does_support_draft_mode(self):
+        return True
 
 
 def register():

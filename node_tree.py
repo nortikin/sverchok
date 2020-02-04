@@ -297,6 +297,14 @@ class SverchCustomTreeNode:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
 
+    def does_support_draft_mode(self):
+        """
+        Nodes that either store separate property values
+        for draft mode, or perform another version of
+        algorithm in draft mode, should return True here.
+        """
+        return False
+
     def sv_throttle_tree_update(self):
         return throttle_tree_update(self)
 
