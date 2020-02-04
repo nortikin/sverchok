@@ -218,6 +218,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors: StringProperty(default="")
+    sv_draft : BoolProperty(name = "Draft", description="Draft (simplified processing) mode", default = False)
 
     tree_link_count: IntProperty(name='keep track of current link count', default=0)
     configuring_new_node: BoolProperty(name="indicate node initialization", default=False)

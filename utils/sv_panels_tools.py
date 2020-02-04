@@ -24,13 +24,14 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty
 from sverchok.core.update_system import process_tree, build_update_list
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.logging import debug, info
+from sverchok.ui.development import displaying_sverchok_nodes
 import sverchok
 
 
 class SverchokUpdateAll(bpy.types.Operator):
-    """Sverchok update all"""
+    """Update all Sverchok node trees"""
     bl_idname = "node.sverchok_update_all"
-    bl_label = "Sverchok update all"
+    bl_label = "Update all node trees"
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
@@ -68,10 +69,10 @@ class SverchokBakeAll(bpy.types.Operator):
 
 
 class SverchokUpdateCurrent(bpy.types.Operator):
-    """Sverchok update all"""
+    """Update current Sverchok node tree"""
     bl_idname = "node.sverchok_update_current"
-    bl_label = "Sverchok update all"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_label = "Update current node tree"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
 
     node_group: StringProperty(default="")
 
@@ -83,6 +84,54 @@ class SverchokUpdateCurrent(bpy.types.Operator):
             process_tree(ng)
         return {'FINISHED'}
 
+class SverchokUpdateContext(bpy.types.Operator):
+    """Update current Sverchok node tree"""
+    bl_idname = "node.sverchok_update_context"
+    bl_label = "Update current node tree"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        try:
+            ng = context.space_data.node_tree
+            if ng:
+                ng.unfreeze(hard=True)
+                build_update_list(ng)
+                process_tree(ng)
+        except:
+            pass
+
+        return {'FINISHED'}
+
+class SverchokUpdateContextForced(bpy.types.Operator):
+    """Update current Sverchok node tree (even if it's processing is disabled)"""
+    bl_idname = "node.sverchok_update_context_force"
+    bl_label = "Update current node tree - forced mode"
+    bl_options = {'REGISTER', 'UNDO', 'INTERNAL'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        try:
+            ng = context.space_data.node_tree
+            if ng:
+                try:
+                    prev_process_state = ng.sv_process
+                    ng.sv_process = True
+                    ng.unfreeze(hard=True)
+                    build_update_list(ng)
+                    process_tree(ng)
+                finally:
+                    ng.sv_process = prev_process_state
+        except:
+            pass
+
+        return {'FINISHED'}
 
 class SverchokPurgeCache(bpy.types.Operator):
     """Sverchok purge cache"""
@@ -236,6 +285,8 @@ class SvLayoutScanProperties(bpy.types.Operator):
 
 sv_tools_classes = [
     SverchokUpdateCurrent,
+    SverchokUpdateContext,
+    SverchokUpdateContextForced,
     SverchokUpdateAll,
     SverchokBakeAll,
     SverchokPurgeCache,

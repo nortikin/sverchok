@@ -51,8 +51,24 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_Dynamic_Menu"
         nodeview_keymaps.append((km, kmi))
 
-        # ctrl + Space  | enter extra search operator
+        # alt + Space  | enter extra search operator
         kmi = km.keymap_items.new('node.sv_extra_search', 'SPACE', 'PRESS', alt=True)
+        nodeview_keymaps.append((km, kmi))
+
+        # F5 | Trigger update of context node tree
+        kmi = km.keymap_items.new('node.sverchok_update_context', 'F5', 'PRESS')
+        nodeview_keymaps.append((km, kmi))
+
+        # Ctrl + F5 | Trigger update of context node tree, forced mode
+        kmi = km.keymap_items.new('node.sverchok_update_context_force', 'F5', 'PRESS', ctrl=True)
+        nodeview_keymaps.append((km, kmi))
+
+        # F6 | Toggle processing mode of the active node tree
+        kmi = km.keymap_items.new('node.sv_toggle_process', 'F6', 'PRESS')
+        nodeview_keymaps.append((km, kmi))
+
+        # F7 | Toggle draft mode for the active node tree
+        kmi = km.keymap_items.new('node.sv_toggle_draft', 'F7', 'PRESS')
         nodeview_keymaps.append((km, kmi))
 
         # Right Click   | show custom menu
