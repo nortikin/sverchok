@@ -26,9 +26,9 @@ from sverchok.data_structure import updateNode
 def uget(self, origin):
     return self[origin]
 
-def uset(self, value, origin):
-    MAX = getattr(self, origin + 'max')
-    MIN = getattr(self, origin + 'min')
+def uset(self, value, origin, min_prop, max_prop):
+    MAX = getattr(self, max_prop)
+    MIN = getattr(self, min_prop)
 
     # rudimentary min max flipping
     MAX, MIN = (MAX, MIN) if MAX >= MIN else (MIN, MAX)
@@ -51,21 +51,36 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     @throttled
     def wrapped_update(self, context):
         kind = self.selected_mode
-        prop = kind + '_'
-        self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop
+        prop_name = kind + '_'
+        inp = self.inputs[0].replace_socket('SvStringsSocket', kind.title())
+        inp.prop_name = prop_name
+        inp.prop_name_draft = prop_name + 'draft_'
         self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
 
     int_: IntProperty(
         default=0, name="an int", update=updateNode,
+        description = "Integer value",
         get=lambda s: uget(s, 'int_'),
-        set=lambda s, val: uset(s, val, 'int_'))
+        set=lambda s, val: uset(s, val, 'int_', 'int_min', 'int_max'))
+    int_draft_ : IntProperty(
+        default=0, name="an int", update=updateNode,
+        description = "Integer value (draft mode)",
+        get=lambda s: uget(s, 'int_draft_'),
+        set=lambda s, val: uset(s, val, 'int_draft_', 'int_min', 'int_max'))
     int_min: IntProperty(default=-1024, description='minimum')
     int_max: IntProperty(default=1024, description='maximum')
 
     float_: FloatProperty(
         default=0.0, name="a float", update=updateNode,
+        description = "Floating-point value",
         get=lambda s: uget(s, 'float_'),
-        set=lambda s, val: uset(s, val, 'float_'))
+        set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max'))
+    float_draft_: FloatProperty(
+        default=0.0, name="a float",
+        description = "Floating-point value (draft mode)",
+        update=updateNode,
+        get=lambda s: uget(s, 'float_draft_'),
+        set=lambda s, val: uset(s, val, 'float_draft_', 'float_min', 'float_max'))
     float_min: FloatProperty(default=-500.0, description='minimum')
     float_max: FloatProperty(default=500.0, description='maximum')
 
@@ -80,9 +95,12 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self['float_'] = 0.0
         self['int_'] = 0
-        self.inputs.new('SvStringsSocket', "Float").prop_name = 'float_'
+        self['float_draft_'] = 0.0
+        self['int_draft_'] = 0
+        inp = self.inputs.new('SvStringsSocket', "Float")
+        inp.prop_name = 'float_'
+        inp.prop_name_draft = 'float_draft_'
         self.outputs.new('SvStringsSocket', "Float").custom_draw = 'mode_custom_draw'
-
 
     def mode_custom_draw(self, socket, context, layout):
 
@@ -107,10 +125,24 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     @property
     def draw_3dpanel(self):
         return False if self.inputs[0].is_linked or not self.outputs[0].is_linked or not self.to3d else True
+    
+    def get_prop_name(self):
+        if self.id_data.sv_draft:
+            if self.selected_mode == 'float':
+                prop_name = 'float_draft_'
+            else:
+                prop_name = 'int_draft_'
+        else:
+            if self.selected_mode == 'float':
+                prop_name = 'float_'
+            else:
+                prop_name = 'int_'
+        return prop_name
 
     def draw_buttons_3dpanel(self, layout):
         row = layout.row(align=True)
-        row.prop(self, 'float_' if self.selected_mode == 'float' else 'int_',
+        prop_name = self.get_prop_name()
+        row.prop(self, prop_name,
                  text=self.label if self.label else self.name)
         colo = row.row(align=True)
         colo.scale_x = 0.8
@@ -120,27 +152,32 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
         colo.prop(self, 'show_limits', icon='SETTINGS', text='')
 
     def draw_label(self):
-        kind = self.selected_mode + '_'
+        prop_name = self.get_prop_name()
+        kind = self.selected_mode
 
         if self.hide:
             if not self.inputs[0].links:
-                value = getattr(self, kind)
-                if kind == 'float_':
-                    return 'Float: ' + str(round(value, 3))
+                value = getattr(self, prop_name)
+                if kind == 'float':
+                    label = 'Float: ' + str(round(value, 3))
                 else:
-                    return 'Int: ' + str(value)
+                    label = 'Int: ' + str(value)
             else:
-                return kind[:-1].title()
-
+                label = kind.title()
         else:
-            return self.label or self.name
+            label = self.label or self.name
+
+        if self.id_data.sv_draft:
+            label = "[D] " + label
+
+        return label
 
 
     def process(self):
 
         if not self.inputs[0].is_linked:
-            kind = self.selected_mode + '_'
-            self.outputs[0].sv_set([[getattr(self, kind)]])
+            prop_name = self.get_prop_name()
+            self.outputs[0].sv_set([[getattr(self, prop_name)]])
         else:
             # found_data = self.inputs[0].sv_get()
 
@@ -156,3 +193,4 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvNumberNode)
+

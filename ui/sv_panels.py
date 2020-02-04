@@ -33,7 +33,7 @@ def redraw_panels():
         for area in window.screen.areas:
             if area.type == 'NODE_EDITOR':
                 for region in area.regions:
-                    if region.type in {'HEADER', 'UI'}:
+                    if region.type in {'HEADER', 'UI', 'WINDOW'}:
                         region.tag_redraw()
 
 class SvToggleProcess(bpy.types.Operator):
