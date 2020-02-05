@@ -15,20 +15,33 @@ It can also output Numpy arrays (flat arrays) when using the activating the "Out
 Inputs and Parameters
 ---------------------
 
-**Use Alpha** - Include alpha (transparency) data in the outputs
-**Color space** - RGB, HSV and HSL inputs are available
+**Use Alpha** - Include alpha (transparency) data in the outputs.
+
+**Color space** - RGB, HSV and HSL inputs are available.
+
 - RGB:
-  **R** - Red value or series of values
-  **G** - Green value or series of values
-  **B** - Blue value or series of values
+
+  - **R** - Red value or series of values
+
+  - **G** - Green value or series of values
+
+  - **B** - Blue value or series of values
+
 - HSV:
-  **H** - Hue value or series of values
-  **S** - Saturation value or series of values
-  **V** - Value value or series of values
+
+  - **H** - Hue value or series of values
+
+  - **S** - Saturation value or series of values
+
+  - **V** - 'Value' value or series of values
+
 - HSL:
-  **H** - Hue value or series of values
-  **S** - Saturation value or series of values
-  **L** - Luminosity value or series of values
+
+  - **H** - Hue value or series of values
+
+  - **S** - Saturation value or series of values
+
+  - **L** - Luminosity value or series of values
 
 **A** - Alpha value or series of values
 
