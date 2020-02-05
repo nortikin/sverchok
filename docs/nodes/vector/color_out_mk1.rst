@@ -52,13 +52,4 @@ Outputs
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4905358/0a4e7df4-644f-11e4-8ff1-1530c7aac8dc.png
-  :alt: with vector out
-
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4905359/0a56565a-644f-11e4-91b3-24ac4d78cb11.png
-  :alt: generating line
-
-.. image:: https://user-images.githubusercontent.com/28003269/34647574-202304d2-f39f-11e7-8113-87047546b81e.gif
-  :alt: object mode
-
-Gist: https://gist.github.com/cf884ea62f9960d609158ef2d5c994ed
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/color/color_out/color_out_texture_hsv_sverchok_blender_example.png
