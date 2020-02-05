@@ -190,6 +190,12 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 row.prop(self, "linkSizes", icon="UNLINKED", text="")
             row.prop(self, "sizey")
 
+    def draw_label(self):
+        label = self.label or self.name
+        if self.id_data.sv_draft:
+            label = "[D] " + label
+        return label
+
     def process(self):
         if not any(s.is_linked for s in self.outputs):
             return
