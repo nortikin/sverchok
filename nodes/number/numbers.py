@@ -71,12 +71,12 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     int_max: IntProperty(default=1024, description='maximum')
 
     float_: FloatProperty(
-        default=0.0, name="[D] a float", update=updateNode,
+        default=0.0, name="a float", update=updateNode,
         description = "Floating-point value",
         get=lambda s: uget(s, 'float_'),
         set=lambda s, val: uset(s, val, 'float_', 'float_min', 'float_max'))
     float_draft_: FloatProperty(
-        default=0.0, name="a float",
+        default=0.0, name="[D] a float",
         description = "Floating-point value (draft mode)",
         update=updateNode,
         get=lambda s: uget(s, 'float_draft_'),
