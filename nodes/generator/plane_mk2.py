@@ -156,19 +156,18 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     syncing: BoolProperty(
         name='Syncing', description='Syncing flag', default=False)
 
+    draft_properties_mapping = dict(
+            numx = 'numx_draft',
+            numy = 'numy_draft',
+            stepx = 'stepx_draft',
+            stepy = 'stepy_draft'
+        )
+
     def sv_init(self, context):
-        inp = self.inputs.new('SvStringsSocket', "Num X")
-        inp.prop_name = 'numx'
-        inp.prop_name_draft = 'numx_draft'
-        inp = self.inputs.new('SvStringsSocket', "Num Y")
-        inp.prop_name = 'numy'
-        inp.prop_name_draft = 'numy_draft'
-        inp = self.inputs.new('SvStringsSocket', "Step X")
-        inp.prop_name = 'stepx'
-        inp.prop_name_draft = 'stepx_draft'
-        inp = self.inputs.new('SvStringsSocket', "Step Y")
-        inp.prop_name = 'stepy'
-        inp.prop_name_draft = 'stepy_draft'
+        self.inputs.new('SvStringsSocket', "Num X").prop_name = 'numx'
+        self.inputs.new('SvStringsSocket', "Num Y").prop_name = 'numy'
+        self.inputs.new('SvStringsSocket', "Step X").prop_name = 'stepx'
+        self.inputs.new('SvStringsSocket', "Step Y").prop_name = 'stepy'
         self.outputs.new('SvVerticesSocket', "Vertices")
         self.outputs.new('SvStringsSocket', "Edges")
         self.outputs.new('SvStringsSocket', "Polygons")

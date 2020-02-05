@@ -70,6 +70,7 @@ class SvToggleDraft(bpy.types.Operator):
         layout = self.layout
         node_tree = context.space_data.node_tree
         node_tree.sv_draft = not node_tree.sv_draft
+        node_tree.on_draft_mode_changed(node_tree.sv_draft)
 
         # From the user perspective, some of node parameters
         # got new parameter values, so the setup should be recalculated;
@@ -78,11 +79,7 @@ class SvToggleDraft(bpy.types.Operator):
         # of draft mode does not automatically trigger tree update.
         # Here we trigger it manually.
 
-        start_nodes = []
-        for node in node_tree.nodes:
-            if hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode():
-                start_nodes.append(node)
-
+        start_nodes = node_tree.get_nodes_supporting_draft_mode()
         if start_nodes:
             node_tree.unfreeze(hard=True)
             process_from_nodes(start_nodes)

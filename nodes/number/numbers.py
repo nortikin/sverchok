@@ -52,9 +52,7 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     def wrapped_update(self, context):
         kind = self.selected_mode
         prop_name = kind + '_'
-        inp = self.inputs[0].replace_socket('SvStringsSocket', kind.title())
-        inp.prop_name = prop_name
-        inp.prop_name_draft = prop_name + 'draft_'
+        self.inputs[0].replace_socket('SvStringsSocket', kind.title()).prop_name = prop_name
         self.outputs[0].replace_socket('SvStringsSocket', kind.title()).custom_draw = 'mode_custom_draw'
 
     int_: IntProperty(
@@ -92,14 +90,14 @@ class SvNumberNode(bpy.types.Node, SverchCustomTreeNode):
     show_limits: BoolProperty(default=False)
     to3d: BoolProperty(default=False, update=updateNode)
 
+    draft_properties_mapping = dict(float_ = 'float_draft_', int_ = 'int_draft_')
+
     def sv_init(self, context):
         self['float_'] = 0.0
         self['int_'] = 0
         self['float_draft_'] = 0.0
         self['int_draft_'] = 0
-        inp = self.inputs.new('SvStringsSocket', "Float")
-        inp.prop_name = 'float_'
-        inp.prop_name_draft = 'float_draft_'
+        self.inputs.new('SvStringsSocket', "Float").prop_name = 'float_'
         self.outputs.new('SvStringsSocket', "Float").custom_draw = 'mode_custom_draw'
 
     def mode_custom_draw(self, socket, context, layout):
