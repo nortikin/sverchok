@@ -21,10 +21,71 @@ import bpy
 from bpy.props import FloatProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, fullList
+from sverchok.data_structure import updateNode, fullList, numpy_match_long_repeat
 from sverchok.utils.sv_itertools import sv_zip_longest
+from sverchok.utils.modules.color_utils import hsl_to_rgb, hsv_to_rgb
+from numpy import array, stack, zeros
 
 # pylint: disable=w0141
+
+def python_color_pack(i0_g, i1_g, i2_g, i3_g, color_mode, use_alpha):
+    series_vec = []
+    for i0, i1, i2, i3 in zip(i0_g, i1_g, i2_g, i3_g):
+
+        max_v = max(map(len, (i0, i1, i2, i3)))
+        fullList(i0, max_v)
+        fullList(i1, max_v)
+        fullList(i2, max_v)
+        fullList(i3, max_v)
+
+        if color_mode == 'RGB':
+            if use_alpha:
+                series_vec.append(list(zip(i0, i1, i2, i3)))
+            else:
+                series_vec.append(list(zip(i0, i1, i2)))
+        else:
+            if color_mode == 'HSV':
+                convert = colorsys.hsv_to_rgb
+            elif color_mode == 'HSL':
+                convert = lambda h, s, l: colorsys.hls_to_rgb(h, l, s)
+
+
+            colordata = []
+            for c0, c1, c2, c3 in zip(i0, i1, i2, i3):
+                colorv = list(convert(c0, c1, c2))
+                if use_alpha:
+                    colordata.append([colorv[0], colorv[1], colorv[2], c3])
+                else:
+                    colordata.append(colorv)
+
+            series_vec.append(colordata)
+    return series_vec
+
+def numpy_pack_vecs(i0_g, i1_g, i2_g, i3_g, color_mode, use_alpha, output_numpy):
+    series_vec = []
+    for obj in zip(i0_g, i1_g, i2_g, i3_g):
+        np_obj = [array(p) for p in obj]
+        x, y, z, alpha = numpy_match_long_repeat(np_obj)
+        if color_mode == 'RGB':
+            if use_alpha:
+                vecs = array([x, y, z, alpha]).T
+            else:
+                vecs = array([x, y, z]).T
+        else:
+            if color_mode == 'HSV':
+                convert = hsv_to_rgb
+            else:
+                convert = hsl_to_rgb
+
+            if use_alpha:
+                vecs = zeros((x.shape[0],4))
+                vecs[:,:3] = convert(array([x, y, z]).T)
+                vecs[:,3] = alpha
+            else:
+                vecs = convert(array([x, y, z]).T)
+
+        series_vec.append(vecs if output_numpy else vecs.tolist())
+    return series_vec
 
 
 def fprop_generator(**altprops):
@@ -35,9 +96,13 @@ def fprop_generator(**altprops):
 
 
 class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
-    ''' rgb(a) ---> color /// Generator for Color data'''
+    """
+    Triggers: rgb, hsv, hsl -> color
+    Tooltip: Generator for Color data from color components
+
+    """
     bl_idname = 'SvColorsInNodeMK1'
-    bl_label = 'Color in MK1'
+    bl_label = 'Color in'
     sv_icon = 'SV_COLOR_IN'
 
     def psuedo_update(self, context):
@@ -46,7 +111,7 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
             self.inputs[idx].prop_name = socket.lower() + '_'
         updateNode(self, context)
 
-    use_alpha: BoolProperty(default=False, update=updateNode)
+    use_alpha: BoolProperty(name='Use Alpha', default=False, update=updateNode)
 
     r_: fprop_generator(name='R', description='Red (0..1)')
     g_: fprop_generator(name='G', description='Green (0..1)')
@@ -68,10 +133,36 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         default="RGB", description="offers color spaces",
         items=mode_options, update=psuedo_update
     )
+    implementation_modes = [
+        ("NumPy", "NumPy", "NumPy", 0),
+        ("Python", "Python", "Python", 1)]
+
+    implementation: bpy.props.EnumProperty(
+        name='Implementation', items=implementation_modes,
+        description='Choose calculation method',
+        default="NumPy", update=updateNode)
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'selected_mode', expand=True)
         layout.prop(self, 'use_alpha')
+
+    def draw_buttons_ext(self, ctx, layout):
+        layout.prop(self, "selected_mode", expand=True)
+        layout.label(text="Implementation:")
+        layout.prop(self, "implementation", expand=True)
+        if self.implementation == "NumPy":
+            layout.prop(self, "output_numpy", toggle=False)
+
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "selected_mode", text="Color Space")
+        layout.prop_menu_enum(self, "implementation", text="Implementation")
+        if self.implementation == "NumPy":
+            layout.prop(self, "output_numpy", toggle=True)
 
     def sv_init(self, context):
         self.width = 110
@@ -84,62 +175,26 @@ class SvColorsInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
         onew('SvColorSocket', "Colors")
 
     def process(self):
-        """
-        colorsys.rgb_to_yiq(r, g, b)
-        colorsys.yiq_to_rgb(y, i, q)
-        colorsys.rgb_to_hls(r, g, b)
-        colorsys.hls_to_rgb(h, l, s)
-        colorsys.rgb_to_hsv(r, g, b)
-        colorsys.hsv_to_rgb(h, s, v)
-        """
 
         if not self.outputs['Colors'].is_linked:
             return
         inputs = self.inputs
 
-        i0 = inputs[0].sv_get()
-        i1 = inputs[1].sv_get()
-        i2 = inputs[2].sv_get()
-        i3 = inputs[3].sv_get()
+        i0_g = inputs[0].sv_get()
+        i1_g = inputs[1].sv_get()
+        i2_g = inputs[2].sv_get()
+        i3_g = inputs[3].sv_get()
 
         series_vec = []
-        max_obj = max(map(len, (i0, i1, i2, i3)))
-        fullList(i0, max_obj)
-        fullList(i1, max_obj)
-        fullList(i2, max_obj)
-        fullList(i3, max_obj)
-        for i in range(max_obj):
-
-            max_v = max(map(len, (i0[i], i1[i], i2[i], i3[i])))
-            fullList(i0[i], max_v)
-            fullList(i1[i], max_v)
-            fullList(i2[i], max_v)
-            fullList(i3[i], max_v)
-
-            if self.selected_mode == 'RGB':
-                if self.use_alpha:
-                    series_vec.append(list(zip(i0[i], i1[i], i2[i], i3[i])))
-                else:
-                    series_vec.append(list(zip(i0[i], i1[i], i2[i])))
-            else:
-                if self.selected_mode == 'HSV':
-                    convert = colorsys.hsv_to_rgb
-                elif self.selected_mode == 'HSL':
-                    convert = colorsys.hls_to_rgb
-
-                # not sure if the python hsl function is simply named wrong but accepts
-                # the params in the right order.. or they need to be supplied i0[i] i2[i] i1[i]
-                # colordata = [list(convert(c0, c1, c2)) + [c3] for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i])]
-                colordata = []
-                for c0, c1, c2, c3 in zip(i0[i], i1[i], i2[i], i3[i]):
-                    colorv = list(convert(c0, c1, c2))
-                    if self.use_alpha:
-                        colordata.append([colorv[0], colorv[1], colorv[2], c3])
-                    else:
-                        colordata.append(colorv)
-
-                series_vec.append(colordata)
-
+        max_obj = max(map(len, (i0_g, i1_g, i2_g, i3_g)))
+        fullList(i0_g, max_obj)
+        fullList(i1_g, max_obj)
+        fullList(i2_g, max_obj)
+        fullList(i3_g, max_obj)
+        if self.implementation == 'Python':
+            series_vec = python_color_pack(i0_g, i1_g, i2_g, i3_g, self.selected_mode, self.use_alpha)
+        else:
+            series_vec = numpy_pack_vecs(i0_g, i1_g, i2_g, i3_g, self.selected_mode, self.use_alpha, self.output_numpy)
         self.outputs['Colors'].sv_set(series_vec)
 
 
