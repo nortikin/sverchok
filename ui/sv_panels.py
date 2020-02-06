@@ -81,8 +81,12 @@ class SvToggleDraft(bpy.types.Operator):
 
         start_nodes = node_tree.get_nodes_supporting_draft_mode()
         if start_nodes:
-            node_tree.unfreeze(hard=True)
-            process_from_nodes(start_nodes)
+            try:
+                bpy.context.window.cursor_set("WAIT")
+                node_tree.unfreeze(hard=True)
+                process_from_nodes(start_nodes)
+            finally:
+                bpy.context.window.cursor_set("DEFAULT")
 
         if node_tree.sv_draft:
             message = "Draft mode set for `%s'" % node_tree.name

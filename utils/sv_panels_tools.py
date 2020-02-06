@@ -35,13 +35,16 @@ class SverchokUpdateAll(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO'}
 
     def execute(self, context):
-        sv_ngs = filter(lambda ng:ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
-        for ng in sv_ngs:
-            ng.unfreeze(hard=True)
-        build_update_list()
-        process_tree()
+        try:
+            bpy.context.window.cursor_set("WAIT")
+            sv_ngs = filter(lambda ng:ng.bl_idname == 'SverchCustomTreeType', bpy.data.node_groups)
+            for ng in sv_ngs:
+                ng.unfreeze(hard=True)
+            build_update_list()
+            process_tree()
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
-
 
 class SverchokBakeAll(bpy.types.Operator):
     """Bake all nodes on this layout"""
@@ -77,11 +80,15 @@ class SverchokUpdateCurrent(bpy.types.Operator):
     node_group: StringProperty(default="")
 
     def execute(self, context):
-        ng = bpy.data.node_groups.get(self.node_group)
-        if ng:
-            ng.unfreeze(hard=True)
-            build_update_list(ng)
-            process_tree(ng)
+        try:
+            bpy.context.window.cursor_set("WAIT")
+            ng = bpy.data.node_groups.get(self.node_group)
+            if ng:
+                ng.unfreeze(hard=True)
+                build_update_list(ng)
+                process_tree(ng)
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
         return {'FINISHED'}
 
 class SverchokUpdateContext(bpy.types.Operator):
@@ -96,6 +103,7 @@ class SverchokUpdateContext(bpy.types.Operator):
 
     def execute(self, context):
         try:
+            bpy.context.window.cursor_set("WAIT")
             ng = context.space_data.node_tree
             if ng:
                 ng.unfreeze(hard=True)
@@ -103,6 +111,8 @@ class SverchokUpdateContext(bpy.types.Operator):
                 process_tree(ng)
         except:
             pass
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
 
         return {'FINISHED'}
 
@@ -118,6 +128,7 @@ class SverchokUpdateContextForced(bpy.types.Operator):
 
     def execute(self, context):
         try:
+            bpy.context.window.cursor_set("WAIT")
             ng = context.space_data.node_tree
             if ng:
                 try:
@@ -130,6 +141,8 @@ class SverchokUpdateContextForced(bpy.types.Operator):
                     ng.sv_process = prev_process_state
         except:
             pass
+        finally:
+            bpy.context.window.cursor_set("DEFAULT")
 
         return {'FINISHED'}
 
