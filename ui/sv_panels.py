@@ -70,23 +70,7 @@ class SvToggleDraft(bpy.types.Operator):
         layout = self.layout
         node_tree = context.space_data.node_tree
         node_tree.sv_draft = not node_tree.sv_draft
-        node_tree.on_draft_mode_changed(node_tree.sv_draft)
-
-        # From the user perspective, some of node parameters
-        # got new parameter values, so the setup should be recalculated;
-        # but techically, node properties were not changed
-        # (only other properties were shown in UI), so enabling/disabling
-        # of draft mode does not automatically trigger tree update.
-        # Here we trigger it manually.
-
-        start_nodes = node_tree.get_nodes_supporting_draft_mode()
-        if start_nodes:
-            try:
-                bpy.context.window.cursor_set("WAIT")
-                node_tree.unfreeze(hard=True)
-                process_from_nodes(start_nodes)
-            finally:
-                bpy.context.window.cursor_set("DEFAULT")
+        #node_tree.on_draft_mode_changed(context)
 
         if node_tree.sv_draft:
             message = "Draft mode set for `%s'" % node_tree.name

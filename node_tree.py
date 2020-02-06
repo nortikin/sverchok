@@ -31,7 +31,7 @@ from sverchok.data_structure import get_other_socket
 
 from sverchok.core.update_system import (
     build_update_list,
-    process_from_node,
+    process_from_node, process_from_nodes,
     process_tree,
     get_update_lists, update_error_nodes,
     get_original_node_color)
@@ -223,9 +223,30 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         """
         This is triggered when Draft mode of the tree is toggled.
         """
+        draft_nodes = []
         for node in self.nodes:
             if hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode():
+                draft_nodes.append(node)
                 node.on_draft_mode_changed(self.sv_draft)
+
+        # From the user perspective, some of node parameters
+        # got new parameter values, so the setup should be recalculated;
+        # but techically, node properties were not changed
+        # (only other properties were shown in UI), so enabling/disabling
+        # of draft mode does not automatically trigger tree update.
+        # Here we trigger it manually.
+
+        if draft_nodes:
+            try:
+                bpy.context.window.cursor_set("WAIT")
+                was_frozen = self.is_frozen()
+                self.unfreeze(hard=True)
+                process_from_nodes(draft_nodes)
+            finally:
+                if was_frozen:
+                    self.freeze(hard=True)
+                bpy.context.window.cursor_set("DEFAULT")
+
 
     sv_draft : BoolProperty(
                 name = "Draft",
