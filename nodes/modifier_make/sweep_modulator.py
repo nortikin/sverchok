@@ -45,9 +45,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     def decompose_both(self, construct):
         num_trajectory_verts = self.get_object("Trajectory", construct.traject)
-        profile_a = self.get_object("Shape", construct.shape_a)
-        profile_b = self.get_object("Shape", construct.shape_b)
-        if not self.same_count(profile_a, profile_b):
+        if not self.same_count(construct.shape_a, construct.shape_b):
             print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
             return
 
