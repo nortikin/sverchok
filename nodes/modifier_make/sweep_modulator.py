@@ -11,6 +11,7 @@ import bpy
 # from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     
@@ -40,18 +41,37 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         ...
 
-    def decompose(self, construct):
-        ...
-
-    def decompose_both(self, construct):
-        num_trajectory_verts = self.get_object("Trajectory", construct.traject)
-        if not self.same_count(construct.shape_a, construct.shape_b):
-            print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
-            return
-
     def sweep_between(self, construct):
         self.ensure_bevels(construct)
-        v1, v2, e1, e2, f1, f2 = self.decompose_both(construct)
+
+        # -- get verts without depsgraph, just path verts
+        path_obj = bpy.data.objects.get(construct.traject.name)
+        path_obj_data = path_obj.to_mesh()
+        path_verts = [v.co for v in path_obj_data.vertices]
+        num_path_verts = len(path_verts)
+
+        # -- use the depsgraph for the beveled objects
+        sv_depsgraph = get_sv_depsgraph()
+        shape_a = sv_depsgraph.objects[construct.shape_a.name]
+        shape_b = sv_depsgraph.objects[construct.shape_b.name]
+
+        obj_data_1 = obj_a.to_mesh()
+        obj_data = obj.to_mesh()
+        
+        verts = [v.co for v in obj_data.vertices]
+        edges = obj_data.edge_keys
+        faces = [list(p.vertices) for p in obj_data.polygons]
+
+        # -- release these things
+        path_obj.to_mesh_clear()
+        obj.to_mesh_clear()
+
+
+        #if not self.same_count(construct.shape_a, construct.shape_b):
+        #    print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
+        #    return
+
+        
 
 
     def process(self):
@@ -86,12 +106,14 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             if not construct.complete:
                 return
             
+            set_sv_depsgraph_need(True)
             v, e, f = self.sweep_between(construct)
             self.outputs['Verts'].sv_set([v])
             self.outputs['Edges'].sv_set([e])
             self.outputs['Faces'].sv_set([f])
 
-        
+    def free(self):
+        set_sv_depsgraph_need(False)        
 
 
 classes = [SvSweepModulator]
