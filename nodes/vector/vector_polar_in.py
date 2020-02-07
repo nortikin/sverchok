@@ -16,18 +16,41 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from math import sin, cos, radians
 import bpy
-from bpy.props import FloatProperty, EnumProperty
+from bpy.props import FloatProperty, EnumProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
-from sverchok.utils.math import from_cylindrical, from_spherical
+from sverchok.data_structure import updateNode, match_long_repeat, numpy_match_long_repeat
+from numpy import array, sin, cos, radians
 
-def cylindrical(rho, phi, z, mode):
-    return from_cylindrical(rho, phi, z, mode)
+def numpy_polar_to_cartesian(ps, coordinates, angles_mode, out_numpy):
 
-def spherical(rho, phi, theta, mode):
-    return from_spherical(rho, phi, theta,mode)
+    u_rho, u_phi, u_z = [array(p) for p in ps]
+
+    if coordinates == 'theta_':
+        if angles_mode == 'degrees':
+            ang1 = radians(u_phi)
+            ang2 = radians(u_z)
+        else:
+            ang1 = u_phi
+            ang2 = u_z
+        rho, phi, theta = numpy_match_long_repeat([u_rho, ang1, ang2])
+
+        cartesian = array([
+            rho * cos(phi) * sin(theta),
+            rho * sin(phi) * sin(theta),
+            rho * cos(theta)
+            ]).T
+    else:
+        if angles_mode == 'degrees':
+            ang1 = radians(u_phi)
+        else:
+            ang1 = u_phi
+        rho, phi, z = numpy_match_long_repeat([u_rho, ang1, u_z])
+        
+        cartesian = array([rho * cos(phi), rho * sin(phi), z]).T
+
+    return cartesian if out_numpy else cartesian.tolist()
+
 
 class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
     '''Generate vectors by spherical or cylindrical coordinates'''
@@ -51,8 +74,14 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
 
     coord_modes = [
         ("z_", "Cylinder", "Use cylindrical coordinates", 1),
-        ("theta_",  "Sphere", "Use spherical coordinates", 2),
+        ("theta_", "Sphere", "Use spherical coordinates", 2),
     ]
+
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
 
     def coordinate_changed(self, context):
         self.inputs[2].prop_name = self.coordinates
@@ -60,11 +89,11 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
 
     coordinates: EnumProperty(items=coord_modes, default='z_', update=coordinate_changed)
 
-    func_dict = {'z_': cylindrical, 'theta_': spherical}
+
 
     angle_modes = [
-            ("radians", "Radian", "Use angles in radians", 1),
-            ("degrees", "Degree", "Use angles in degrees", 2)
+        ("radians", "Radian", "Use angles in radians", 1),
+        ("degrees", "Degree", "Use angles in degrees", 2)
         ]
 
     angles_mode: EnumProperty(items=angle_modes, default="radians", update=updateNode)
@@ -80,6 +109,16 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "coordinates", expand=True)
         layout.prop(self, "angles_mode", expand=True)
 
+    def draw_buttons_ext(self, context, layout):
+        layout.prop(self, "coordinates", expand=True)
+        layout.prop(self, "angles_mode", expand=True)
+        layout.prop(self, "output_numpy", toggle=False)
+
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "coordinates", text="Polar system")
+        layout.prop_menu_enum(self, "angles_mode", text="Angle Units")
+        layout.prop(self, "output_numpy", toggle=True)
+
     def process(self):
         if not self.outputs['Vectors'].is_linked:
             return
@@ -90,12 +129,9 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
 
         parameters = match_long_repeat([rhoss, phiss, zss])
         result = []
-        for rhos, phis, zs in zip(*parameters):
-            vs = []
-            ps = match_long_repeat([rhos, phis, zs])
-            for rho, phi, z in zip(*ps):
-                v = self.func_dict[self.coordinates](rho, phi, z, self.angles_mode)
-                vs.append(v)
+
+        for ps in zip(*parameters):
+            vs = numpy_polar_to_cartesian(ps, self.coordinates, self.angles_mode, self.output_numpy)
             result.append(vs)
 
         self.outputs['Vectors'].sv_set(result)
