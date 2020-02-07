@@ -4,6 +4,8 @@ List Join
 Functionality
 -------------
 
+This node joins different list into a single one.
+
 level 1:
 [ [ (1,2,3), (4,5,6) ] ] + [ [ (7,8,9), (10,11,12) ] ] = [ [ (1,2,3), (4,5,6), (7,8,9), (10,11,12) ] ]
 
@@ -39,6 +41,14 @@ Parameters
 **mix** to mix (not zip) data inside
 **wrap** to wrap additional level
 **levels** level of joining
+
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**NumPy Mode**: When enabled the node will expect and produce lists of NumPy arrays. It will be faster when joining NumPy Arrays but due the nature of the implementation it will fail when trying to join arrays with different axis number. 
+
 
 Outputs
 -------
