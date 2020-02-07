@@ -54,22 +54,36 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         sv_depsgraph = get_sv_depsgraph()
         shape_a = sv_depsgraph.objects[construct.shape_a.name]
         shape_b = sv_depsgraph.objects[construct.shape_b.name]
+        shape_a_data = shape_a.to_mesh()
+        shape_b_data = shape_b.to_mesh()
+        shape_a_verts = [v.co for v in shape_a_data.vertices]
+        shape_b_verts = [v.co for v in shape_b_data.vertices]
+        num_verts_shape_a = len(shape_a_verts)
+        num_verts_shape_b = len(shape_b_verts)
 
-        obj_data_1 = obj_a.to_mesh()
-        obj_data = obj.to_mesh()
-        
-        verts = [v.co for v in obj_data.vertices]
-        edges = obj_data.edge_keys
-        faces = [list(p.vertices) for p in obj_data.polygons]
+        if num_verts_shape_a == num_verts_shape_b:
+            extruded_data_a = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+            extruded_data_b = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
 
-        # -- release these things
+            verts_a = [v.co for v in extruded_data_a.vertices]
+            verts_b = [v.co for v in extruded_data_b.vertices]
+
+            # -- perform mix
+            verts_final = self.mix(verts_a, verts_b, construct.factors, divider=num_verts_shape_a)
+
+            # -- because both A and B should have identical topology, we'll copy A's edges/faes.
+            edges = extruded_data_a.edge_keys
+            faces = [list(p.vertices) for p in extruded_data_a.polygons]
+
+        else:
+           print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
+
+        # -- cleanup
         path_obj.to_mesh_clear()
-        obj.to_mesh_clear()
+        shape_a.to_mesh_clear()
+        shape_b.to_mesh_clear()
 
 
-        #if not self.same_count(construct.shape_a, construct.shape_b):
-        #    print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
-        #    return
 
         
 
