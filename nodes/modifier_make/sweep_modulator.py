@@ -47,6 +47,9 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         num_trajectory_verts = self.get_object("Trajectory", construct.traject)
         profile_a = self.get_object("Shape", construct.shape_a)
         profile_b = self.get_object("Shape", construct.shape_b)
+        if not self.same_count(profile_a, profile_b):
+            print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
+            return
 
     def sweep_between(self, construct):
         self.ensure_bevels(construct)
