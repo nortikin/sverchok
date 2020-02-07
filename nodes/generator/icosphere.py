@@ -25,13 +25,13 @@ from mathutils import Matrix, Vector
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
-from sverchok.nodes.vector.vector_polar_in import cylindrical as from_cylindrical
+from sverchok.utils.math import from_cylindrical
 
 def icosahedron_cylindrical(r):
 
     d = 2.0/sqrt(5)
 
-    # Calculate icosahedron vertices in cylindrical coordinates 
+    # Calculate icosahedron vertices in cylindrical coordinates
     vertices = []
     vertices.append((0, 0, r))
     for i in range(5):
@@ -56,7 +56,7 @@ def icosahedron_cylindrical(r):
     edges.append((6,10))
     for i in range(6,11):
         edges.append((i, 11))
-        
+
     faces = []
     for i in range(1,5):
         faces.append([0, i, i+1])
@@ -108,7 +108,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
         name = "Max. Subdivisions", description = "Maximum number of subdivisions available",
         default = 5, min=2,
         update=updateNode)
-    
+
     radius: FloatProperty(
         name = "Radius",
         default=1.0, min=0.0,
@@ -116,7 +116,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self['subdivisions'] = 2
-        
+
         self.inputs.new('SvStringsSocket', 'Subdivisions').prop_name = 'subdivisions'
         self.inputs.new('SvStringsSocket', 'Radius').prop_name = 'radius'
 
@@ -152,7 +152,7 @@ class SvIcosphereNode(bpy.types.Node, SverchCustomTreeNode):
 
             if subdivisions > self.subdivisions_max:
                 subdivisions = self.subdivisions_max
-            
+
             bm = bmesh.new()
             bmesh.ops.create_icosphere(bm,
                     subdivisions = subdivisions,
@@ -173,4 +173,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvIcosphereNode)
-
