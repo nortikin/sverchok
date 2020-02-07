@@ -37,14 +37,23 @@ def python_join(slots, level, mix, wrap):
 def numpy_join(slots, level, mix):
     if level == 1:
         if mix:
-            result = [l for s in zip(*slots) for l in s]
+            result = [np.array(l) for s in zip(*slots) for l in s]
         else:
             result = [np.array(l) for s in slots for l in s]
     elif level == 2:
         if mix:
             result = [np.concatenate([l for s in zip(*slots) for l in zip(*s)], axis=0)]
+            joined = np.concatenate(slots, axis=2)
+            ln = len(slots[0][0][0])
+            result = [joined.reshape(-1, ln)]
         else:
             result = [np.concatenate([l for s in slots for l in s], axis=0)]
+            joined = np.concatenate(slots, axis=0)
+            ln = len(slots[0][0][0])
+            result = [joined.reshape(-1, ln)]
+            # result = [joined]
+            # result = [np.concatenate(slots, axis=2)]
+            print(joined.shape, ln, slots[0][0][0])
     elif level == 3:
         if mix:
             result = [np.concatenate([sl for s in zip(*slots) for l in zip(*s) for sl in zip(*l)], axis=0)]
