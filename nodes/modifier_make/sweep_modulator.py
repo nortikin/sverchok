@@ -25,6 +25,9 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Sweep Modulator'
     bl_icon = 'GREASEPENCIL'
 
+    construct_name: bpy.props.StringProperty(name="construct_name", update=updateNode)
+    active: bpy.props.BoolProperty(update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "Factor")
         self.inputs.new("SvObjectsSocket", "Shape A")
@@ -36,6 +39,19 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         ...
+
+    def decompose(self, construct):
+        ...
+
+    def decompose_both(self, construct):
+        num_trajectory_verts = self.get_object("Trajectory", construct.traject)
+        profile_a = self.get_object("Shape", construct.shape_a)
+        profile_b = self.get_object("Shape", construct.shape_b)
+
+    def sweep_between(self, construct):
+        self.ensure_bevels(construct)
+        v1, v2, e1, e2, f1, f2 = self.decompose_both(construct)
+
 
     def process(self):
         """
@@ -52,6 +68,21 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         [ ] hide dummy objects option.
         [ ] output result V E F.
         """
+        if not all([self.active, self.construct_name]):
+            return
+        
+        try:
+            construct = lambda: None
+            construct.name = self.construct_name
+            construct.factors = self.inputs["Factor"].sv_get()[0]
+            construct.shape_a = self.inputs["Shape A"].sv_get()[0]
+            construct.shape_b = self.inputs["Shape B"].sv_get()[0]
+            construct.traject = self.inputs["Trajectory"].sv_get()[0]
+            v, e, f = self.sweep_between(construct)
+
+        finally:
+            pass
+        
 
 
 classes = [SvSweepModulator]
