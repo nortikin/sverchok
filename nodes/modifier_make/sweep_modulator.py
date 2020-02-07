@@ -74,17 +74,25 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         if not all([self.active, self.construct_name]):
             return
         
+        construct = lambda: None
+        construct.complete = False
         try:
-            construct = lambda: None
             construct.name = self.construct_name
             construct.factors = self.inputs["Factor"].sv_get()[0]
             construct.shape_a = self.inputs["Shape A"].sv_get()[0]
             construct.shape_b = self.inputs["Shape B"].sv_get()[0]
             construct.traject = self.inputs["Trajectory"].sv_get()[0]
-            v, e, f = self.sweep_between(construct)
+            construct.complete = True
 
         finally:
-            pass
+            if not construct.complete:
+                return
+            
+            v, e, f = self.sweep_between(construct)
+            self.outputs['Verts'].sv_set([v])
+            self.outputs['Edges'].sv_set([e])
+            self.outputs['Faces'].sv_set([f])
+
         
 
 
