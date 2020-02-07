@@ -33,13 +33,22 @@ def python_join(slots, level, mix, wrap):
             list_result = joiner(slots, level)
             result = list_result.copy()
     return result
-
+def correct_arrays(arrays):
+    tmp_list =[]
+    for a in arrays:
+        print(a.shape)
+        if len(a.shape) > 2:
+            tmp_list.append([l for l in a])
+        else:
+            tmp_list.append(a)
+    return tmp_list
 def numpy_join(slots, level, mix):
     if level == 1:
         if mix:
-            result = [np.array(l) for s in zip(*slots) for l in s]
+            result =  correct_arrays([np.array(l) for s in zip(*slots) for l in s])
         else:
             result = [np.array(l) for s in slots for l in s]
+            result = correct_arrays(result)
     elif level == 2:
         if mix:
             result = [np.concatenate([l for s in zip(*slots) for l in zip(*s)], axis=0)]
@@ -51,14 +60,25 @@ def numpy_join(slots, level, mix):
             joined = np.concatenate(slots, axis=0)
             ln = len(slots[0][0][0])
             result = [joined.reshape(-1, ln)]
-            # result = [joined]
-            # result = [np.concatenate(slots, axis=2)]
-            print(joined.shape, ln, slots[0][0][0])
+
     elif level == 3:
         if mix:
-            result = [np.concatenate([sl for s in zip(*slots) for l in zip(*s) for sl in zip(*l)], axis=0)]
+            # result = [np.concatenate([sl for s in zip(*slots) for l in zip(*s) for sl in zip(*l)], axis=0)]
+            joined = np.concatenate(slots, axis=0)
+            result = [joined]
+            if type(slots[0][0][0][0]) in [int, float]:
+                result = [np.transpose(joined, (1, 2,0)).flatten()]
+            # else:
+            #     ln = len(slots[0][0][0][0])
+            #     result = [joined.reshape(-1, ln)]
         else:
-            result = [np.concatenate([sl for s in slots for l in s for sl in l], axis=0)]
+            joined = np.concatenate(slots, axis=0)
+            if type(slots[0][0][0][0]) in [int, float]:
+                result = [joined.flatten()]
+            else:
+                ln = len(slots[0][0][0][0])
+                result = [joined.reshape(-1, ln)]
+            # result = [np.concatenate([sl for s in slots for l in s for sl in l], axis=0)]
     else:
         result = python_join(slots, level, mix, False)
     return result
