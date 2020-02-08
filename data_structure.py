@@ -180,6 +180,24 @@ def cycle_for_length(lst, count):
         result.append(lst[i % n])
     return result
 
+def repeat_last_for_length(lst, count):
+    """
+    Repeat last item of the list enough times
+    for result's length to be equal to `count`.
+
+    repeat_last_for_length(None, n) = None
+    repeat_last_for_length([], n) = []
+    repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
+    """
+    if not lst or len(lst) >= count:
+        return lst
+    n = len(lst)
+    x = lst[-1]
+    result = lst[:]
+    for i in range(count - n):
+        result.append(x)
+    return result
+
 def sv_zip(*iterables):
     """zip('ABCD', 'xy') --> Ax By
     like standard zip but list instead of tuple
