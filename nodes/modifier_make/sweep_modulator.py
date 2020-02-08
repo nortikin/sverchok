@@ -97,7 +97,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         path_verts = [v.co for v in path_obj_data.vertices]
         num_path_verts = len(path_verts)
 
-        # -- use the depsgraph for the beveled objects
+        # -- use the depsgraph for the bevelled objects
         sv_depsgraph = get_sv_depsgraph()
         shape_a = sv_depsgraph.objects[construct.shape_a.name]
         shape_b = sv_depsgraph.objects[construct.shape_b.name]
@@ -121,7 +121,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             # -- perform mix
             verts_final = self.mix(verts_a, verts_b, construct.factors, divider=num_verts_shape_a)
 
-            # -- because both A and B should have identical topology, we'll copy A's edges/faes.
+            # -- because both A and B should have identical topology, we'll copy A's edges/faces.
             edges = extruded_data_a.edge_keys
             faces = [list(p.vertices) for p in extruded_data_a.polygons]
 
