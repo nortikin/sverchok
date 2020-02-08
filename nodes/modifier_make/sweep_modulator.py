@@ -6,20 +6,15 @@
 # License-Filename: LICENSE
 
 import bpy
-# import mathutils
-# from mathutils import Vector
-# from bpy.props import FloatProperty, BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
-    
+
     """
     Triggers: SvSweepModulator
     Tooltip: 
-    
-    A short description for reader of node code
     """
 
     bl_idname = 'SvSweepModulator'
@@ -30,16 +25,28 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     active: bpy.props.BoolProperty(update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new("SvStringsSocket", "Factor")
-        self.inputs.new("SvObjectsSocket", "Shape A")
-        self.inputs.new("SvObjectsSocket", "Shape B")
-        self.inputs.new("SvObjectsSocket", "Trajectory")
-        self.outputs.new("SvVerticesSocket", "Verts")
-        self.outputs.new("SvStringsSocket", "Edges")
-        self.outputs.new("SvStringsSocket", "Faces")
+        inew = self.inputs.new
+        inew("SvStringsSocket", "Factor")
+        inew("SvObjectsSocket", "Shape A")
+        inew("SvObjectsSocket", "Shape B")
+        inew("SvObjectsSocket", "Trajectory")
+        onew = self.outputs.new
+        onew("SvVerticesSocket", "Verts")
+        onew("SvStringsSocket", "Edges")
+        onew("SvStringsSocket", "Faces")
 
     def draw_buttons(self, context, layout):
         ...
+
+    def ensure_bevels(self, construct):
+        # [ ] create new collection, if not yet present
+        # [ ] duplicate trajectory twice into the collection, if not yet present
+        # [ ] attach shapes A,B to trajectories A,B, as bevel objects, 
+        # [ ] add extrusions as extrusion_a + extrusion_b to construct
+        new_obj = obj.copy()
+        new_obj.data = obj.data.copy()
+        bpy.context.collection.objects.link(new_obj)
+
 
     def sweep_between(self, construct):
         self.ensure_bevels(construct)
@@ -62,9 +69,10 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         num_verts_shape_b = len(shape_b_verts)
 
         if num_verts_shape_a == num_verts_shape_b:
-            extruded_data_a = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-            extruded_data_b = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
 
+            # -- get vertices
+            extruded_data_a = construct.extrusion_a.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+            extruded_data_b = construct.extrusion_b.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
             verts_a = [v.co for v in extruded_data_a.vertices]
             verts_b = [v.co for v in extruded_data_b.vertices]
 
@@ -75,6 +83,10 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             edges = extruded_data_a.edge_keys
             faces = [list(p.vertices) for p in extruded_data_a.polygons]
 
+            # -- cleanup
+            construct.extrusion_a.to_mesh_clear()
+            construct.extrusion_b.to_mesh_clear()
+
         else:
            print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
 
@@ -82,10 +94,6 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         path_obj.to_mesh_clear()
         shape_a.to_mesh_clear()
         shape_b.to_mesh_clear()
-
-
-
-        
 
 
     def process(self):
@@ -121,10 +129,11 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
                 return
             
             set_sv_depsgraph_need(True)
-            v, e, f = self.sweep_between(construct)
-            self.outputs['Verts'].sv_set([v])
-            self.outputs['Edges'].sv_set([e])
-            self.outputs['Faces'].sv_set([f])
+            with self.sv_throttle_tree_update():
+                v, e, f = self.sweep_between(construct)
+                self.outputs['Verts'].sv_set([v])
+                self.outputs['Edges'].sv_set([e])
+                self.outputs['Faces'].sv_set([f])
 
     def free(self):
         set_sv_depsgraph_need(False)        
