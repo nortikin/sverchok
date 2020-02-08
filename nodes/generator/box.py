@@ -15,15 +15,16 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-
+from math import pi
 import bpy
 from bpy.props import IntProperty, FloatProperty
 import bmesh
-from mathutils import Vector
+from mathutils import Vector, Matrix
+
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -73,54 +74,70 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
 
         b = size / 2.0
 
-        verts = [
-            [b, b, -b], [b, -b, -b], [-b, -b, -b],
-            [-b, b, -b], [b, b, b], [b, -b, b],
-            [-b, -b, b], [-b, b, b]
-        ]
-
-        faces = [[0, 1, 2, 3], [4, 7, 6, 5],
-                 [0, 4, 5, 1], [1, 5, 6, 2],
-                 [2, 6, 7, 3], [4, 0, 3, 7]]
-
-        edges = [[0, 4], [4, 5], [5, 1], [1, 0],
-                 [5, 6], [6, 2], [2, 1], [6, 7],
-                 [7, 3], [3, 2], [7, 4], [0, 3]]
-
         if (divx, divy, divz) == (1, 1, 1):
+            verts = [
+                [b, b, -b], [b, -b, -b], [-b, -b, -b],
+                [-b, b, -b], [b, b, b], [b, -b, b],
+                [-b, -b, b], [-b, b, b]
+            ]
+
+            faces = [[0, 1, 2, 3], [4, 7, 6, 5],
+                     [0, 4, 5, 1], [1, 5, 6, 2],
+                     [2, 6, 7, 3], [4, 0, 3, 7]]
+
+            edges = [[0, 4], [4, 5], [5, 1], [1, 0],
+                     [5, 6], [6, 2], [2, 1], [6, 7],
+                     [7, 3], [3, 2], [7, 4], [0, 3]]
+
             return verts, edges, faces
 
-        bm = bmesh_from_pydata(verts, [], faces)
-        dist = 0.0001
-        section_dict = {0: divx, 1: divy, 2: divz}
+        bm_box = bmesh.new()
+        add_vert = bm_box.verts.new
+        add_face = bm_box.faces.new
 
-        for axis in range(3):
+        pos = [
+            [[0, 0, b], [0, 'X'], [divx + 1, divy + 1]],
+            [[0, 0, -b], [pi, 'X'], [divx + 1, divy + 1]],
+            [[0, -b, 0], [pi/2, 'X'], [divx + 1, divz + 1]],
+            [[0, b, 0], [-pi/2, 'X'], [divx + 1, divz + 1]],
+            [[b, 0, 0], [pi/2, 'Y'], [divz + 1, divy + 1]],
+            [[-b, 0, 0], [-pi/2, 'Y'], [divz + 1, divy + 1]],
+            ]
 
-            num_sections = section_dict[axis]
-            if num_sections == 1:
-                continue
+        v_len = 0
 
-            step = 1 / num_sections
-            v1 = Vector(tuple((b if (i == axis) else 0) for i in [0, 1, 2]))
-            v2 = Vector(tuple((-b if (i == axis) else 0) for i in [0, 1, 2]))
+        for plane_props in pos:
+            bm = bmesh.new()
+            pos = plane_props[0]
+            rot = plane_props[1]
+            p_divx = plane_props[2][0]
+            p_divy = plane_props[2][1]
+            mat_loc = Matrix.Translation((pos[0], pos[1], pos[2]))
+            mat_rot = Matrix.Rotation(rot[0], 4, rot[1])
+            mat_out = mat_loc @ mat_rot
 
-            for section in range(num_sections):
-                mid_vec = v1.lerp(v2, section * step)
-                plane_no = v2 - mid_vec
-                plane_co = mid_vec
-                visible_geom = bm.faces[:] + bm.verts[:] + bm.edges[:]
+            bmesh.ops.create_grid(bm,
+                x_segments=p_divx ,
+                y_segments=p_divy,
+                size=b,
+                matrix=mat_out)
 
-                bmesh.ops.bisect_plane(
-                    bm, geom=visible_geom, dist=dist,
-                    plane_co=plane_co, plane_no=plane_no,
-                    use_snap_center=False,
-                    clear_outer=False, clear_inner=False)
+            for v in bm.verts:
+                add_vert(v.co)
 
-        indices = lambda i: [j.index for j in i.verts]
+            bm_box.verts.index_update()
+            bm_box.verts.ensure_lookup_table()
 
-        verts = [list(v.co.to_tuple()) for v in bm.verts]
-        faces = [indices(face) for face in bm.faces]
-        edges = [indices(edge) for edge in bm.edges]
+            for f in bm.faces:
+                add_face(tuple(bm_box.verts[v.index + v_len] for v in f.verts))
+            v_len += len(bm.verts)
+            bm.free()
+
+
+        bmesh.ops.remove_doubles(bm_box, verts=bm_box.verts, dist=1e-6)
+        # bmesh.ops.recalc_face_normals(bm_box, faces=bm_box.faces)
+        verts, edges, faces = pydata_from_bmesh(bm_box, face_data=None)
+
         return verts, edges, faces
 
     def process(self):
@@ -147,4 +164,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBoxNode)
-
