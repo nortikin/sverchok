@@ -143,10 +143,9 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
                 padding = [factors[-1]] * num_to_add
                 factors.extend(padding)
 
-        # ar = np.array(vecs[0])
-        split_num = np.split(ar, ar.shape[0] / divider)
-        vlist_a = np.split(np.array(verts_a), split_num)
-        vlist_b = np.split(np.array(verts_b), split_num)
+        split_num = len(verts_a) / divider
+        vlist_a = np.split(np.array(verts_a), divider)
+        vlist_b = np.split(np.array(verts_b), divider)
         vlist_mix = [interp_v3l_v3v3(*p) for p in zip(vlist_a, vlist_b, factors)]
         return vlist_mix
 
