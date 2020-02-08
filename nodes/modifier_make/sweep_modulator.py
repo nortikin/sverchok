@@ -5,10 +5,13 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+import numpy as np
+
 import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
+
 
 class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
@@ -122,13 +125,18 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         shape_a.to_mesh_clear()
         shape_b.to_mesh_clear()
 
+    def mix(verts_a, verts_b, factors, divider=0):
+        if len(factors) != divider:
+            if len(factors) > divider:
+                factors = factors[:divider]
+            else:
+                num_to_add = divider - len(factors)
+                padding = [factors[-1]] * num_to_add
+                factors.extend(padding)
+
 
     def process(self):
         """
-        [ ] make / ensure collection destination ready
-        [ ] duplicate trajectory into collection (twice)
-        [ ] ensure vertex/node count of Shapes are identical if not.
-        [ ] assign Shapes (bevel objects) A, B to trajectories (path)
         [ ] pickup the resulting geometry (like object in does) for both
             paths, and prepare for numpy to interpolate between them
         [ ] provide virtual Shape index shifting,
