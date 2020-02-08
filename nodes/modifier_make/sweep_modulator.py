@@ -109,8 +109,10 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         if num_verts_shape_a == num_verts_shape_b:
 
             # -- get vertices
-            extruded_data_a = construct.extrusion_a.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-            extruded_data_b = construct.extrusion_b.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+            extrusion_a = sv_depsgraph.objects[construct.extrusion_a.name]
+            extrusion_b = sv_depsgraph.objects[construct.extrusion_b.name]
+            extruded_data_a = extrusion_a.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
+            extruded_data_b = extrusion_b.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
             verts_a = [v.co[:] for v in extruded_data_a.vertices]
             verts_b = [v.co[:] for v in extruded_data_b.vertices]
 
@@ -122,8 +124,8 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             faces = [list(p.vertices) for p in extruded_data_a.polygons]
 
             # -- cleanup
-            construct.extrusion_a.to_mesh_clear()
-            construct.extrusion_b.to_mesh_clear()
+            extrusion_a.to_mesh_clear()
+            extrusion_b.to_mesh_clear()
             return verts_final, edges, faces
 
         else:
@@ -179,7 +181,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             set_sv_depsgraph_need(True)
             with self.sv_throttle_tree_update():
                 v, e, f = self.sweep_between(construct)
-                self.outputs['Verts'].sv_set(v)
+                self.outputs['Verts'].sv_set([v])
                 self.outputs['Edges'].sv_set([e])
                 self.outputs['Faces'].sv_set([f])
 
