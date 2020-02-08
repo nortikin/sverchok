@@ -160,6 +160,15 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     float_props: CollectionProperty(type=SvFloatPropertySettingsGroup)
     int_props: CollectionProperty(type=SvIntPropertySettingsGroup)
 
+    @property
+    def sv_draft(self):
+        # One monad tree can be used in several trees simultaneously;
+        # they can have different draft mode status.
+        # Let's assume that the monad tree is in Draft mode if *all*
+        # trees that use it are in the draft mode.
+        affected_trees = {instance.id_data for instance in self.instances}
+        return all(hasattr(tree, 'sv_draft') and tree.sv_draft for tree in affected_trees)
+
     def get_current_as_default(self, prop_dict, node, prop_name):
         prop_dict['default'] = getattr(node, prop_name)
         # if not prop_dict['name']:
