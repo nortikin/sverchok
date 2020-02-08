@@ -42,10 +42,10 @@ def correct_arrays(arrays):
         else:
             tmp_list.append(a)
     return tmp_list
-def numpy_join(slots, level, mix):
+def numpy_join(slots, level, mix, min_axis):
     if level == 1:
         if mix:
-            result =  correct_arrays([np.array(l) for s in zip(*slots) for l in s])
+            result = correct_arrays([np.array(l) for s in zip(*slots) for l in s])
         else:
             result = [np.array(l) for s in slots for l in s]
             result = correct_arrays(result)
@@ -53,12 +53,20 @@ def numpy_join(slots, level, mix):
         if mix:
             result = [np.concatenate([l for s in zip(*slots) for l in zip(*s)], axis=0)]
             joined = np.concatenate(slots, axis=2)
-            ln = len(slots[0][0][0])
+            # ln = len(slots[0][0][0])
+            if min_axis == 2:
+                ln =3
+            else:
+                ln = 1
             result = [joined.reshape(-1, ln)]
         else:
             result = [np.concatenate([l for s in slots for l in s], axis=0)]
             joined = np.concatenate(slots, axis=0)
-            ln = len(slots[0][0][0])
+            # ln = len(slots[0][0][0])
+            if min_axis == 2:
+                ln =3
+            else:
+                ln = 1
             result = [joined.reshape(-1, ln)]
 
     elif level == 3:
@@ -152,7 +160,11 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         if self.numpy_mode:
-            result = numpy_join(slots, self.JoinLevel, self.mix_check)
+            if self.outputs[0].bl_idname == 'SvVerticesSocket':
+                min_axis = 2
+            else:
+                min_axis = 1
+            result = numpy_join(slots, self.JoinLevel, self.mix_check, min_axis)
         else:
             result = python_join(slots, self.JoinLevel, self.mix_check, self.wrap_check)
 
