@@ -38,14 +38,24 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         ...
 
+    def ensure_collection(self):
+        collections = bpy.data.collections
+        if not collections.get(self.construct_name):
+            collection = collections.new(self.construct_name)
+            bpy.context.scene.collection.children.link(collection)
+        return collections.get(self.construct_name)
+
     def ensure_bevels(self, construct):
-        # [ ] create new collection, if not yet present
+        # [x] create new collection, if not yet present
+        collection = self.ensure_collection()
         # [ ] duplicate trajectory twice into the collection, if not yet present
+        traject_a = construct.traject.copy()
+        traject_a.data = construct.traject.data.copy()
+        collection.objects.link(traject_a)
+
         # [ ] attach shapes A,B to trajectories A,B, as bevel objects, 
         # [ ] add extrusions as extrusion_a + extrusion_b to construct
-        new_obj = obj.copy()
-        new_obj.data = obj.data.copy()
-        bpy.context.collection.objects.link(new_obj)
+        # bpy.context.collection.objects.link(new_obj)
 
 
     def sweep_between(self, construct):
