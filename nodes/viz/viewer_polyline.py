@@ -98,7 +98,10 @@ def live_curve(obj_index, node, verts, radii, twist):
 def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     sv_object = live_curve(obj_index, node, verts, radii, twist)
     sv_object.hide_select = False
-    node.set_auto_uv(sv_object)
+
+    if hasattr(sv_object.data, "use_uv_as_generated"):
+        node.set_auto_uv(sv_object)
+
     node.push_custom_matrix_if_present(sv_object, matrix)
     return sv_object
 
