@@ -15,6 +15,7 @@ from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 def interp_v3l_v3v3(a, b, t):
     """ interpolate an np array between two states """
+    print('called')
     if t == 0.0: return a
     elif t == 1.0: return b
     else: return ((1.0 - t) * a) + (t * b)
@@ -115,6 +116,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             extruded_data_b = extrusion_b.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
             verts_a = [v.co[:] for v in extruded_data_a.vertices]
             verts_b = [v.co[:] for v in extruded_data_b.vertices]
+            print(len(verts_a))
 
             # -- perform mix
             verts_final = self.mix(verts_a, verts_b, construct.factors, divider=num_verts_shape_a)
@@ -137,11 +139,12 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         shape_b.to_mesh_clear()
 
     def mix(self, verts_a, verts_b, factors, divider=0):
-        if len(factors) != divider:
-            if len(factors) > divider:
-                factors = factors[:divider]
+        splits = len(verts_a) / divider
+        if len(factors) != splits:
+            if len(factors) > splits:
+                factors = factors[:splits]
             else:
-                num_to_add = divider - len(factors)
+                num_to_add = splits - len(factors)
                 padding = [factors[-1]] * num_to_add
                 factors.extend(padding)
 
@@ -150,7 +153,9 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         split_num = np_verts_a.shape[0] / divider
         vlist_a = np.split(np_verts_a, split_num)
         vlist_b = np.split(np_verts_b, split_num)
-        vlist_mix = [interp_v3l_v3v3(*p).tolist() for p in zip(vlist_a, vlist_b, factors)]
+        print(len(vlist_a), len(vlist_b), len(factors))
+        vlist_mix = []
+        _ = [vlist_mix.extend(interp_v3l_v3v3(*p).tolist()) for p in zip(vlist_a, vlist_b, factors)]
         return vlist_mix
     
 
