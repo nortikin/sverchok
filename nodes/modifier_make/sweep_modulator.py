@@ -61,11 +61,13 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
         if trajectory_named in objects:
             traject = objects[trajectory_named]
+            traject.data = construct.traject.data.copy()
         else:
             traject = construct.traject.copy()
             traject.data = construct.traject.data.copy()
             traject.name = trajectory_named
             collection.objects.link(traject)
+        # ['django.A'].data.splines[0].use_smooth = False  for s in splines
         return traject
 
     def ensure_bevels(self, construct):
@@ -100,18 +102,17 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         shape_b = sv_depsgraph.objects[construct.shape_b.name]
         shape_a_data = shape_a.to_mesh()
         shape_b_data = shape_b.to_mesh()
-        shape_a_verts = [v.co for v in shape_a_data.vertices]
-        shape_b_verts = [v.co for v in shape_b_data.vertices]
-        num_verts_shape_a = len(shape_a_verts)
-        num_verts_shape_b = len(shape_b_verts)
+
+        num_verts_shape_a = len(shape_a_data.vertices)
+        num_verts_shape_b = len(shape_b_data.vertices)
 
         if num_verts_shape_a == num_verts_shape_b:
 
             # -- get vertices
             extruded_data_a = construct.extrusion_a.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
             extruded_data_b = construct.extrusion_b.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
-            verts_a = [v.co for v in extruded_data_a.vertices]
-            verts_b = [v.co for v in extruded_data_b.vertices]
+            verts_a = [v.co[:] for v in extruded_data_a.vertices]
+            verts_b = [v.co[:] for v in extruded_data_b.vertices]
 
             # -- perform mix
             verts_final = self.mix(verts_a, verts_b, construct.factors, divider=num_verts_shape_a)
@@ -123,7 +124,6 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             # -- cleanup
             construct.extrusion_a.to_mesh_clear()
             construct.extrusion_b.to_mesh_clear()
-
             return verts_final, edges, faces
 
         else:
@@ -150,7 +150,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         vlist_b = np.split(np_verts_b, split_num)
         vlist_mix = [interp_v3l_v3v3(*p).tolist() for p in zip(vlist_a, vlist_b, factors)]
         return vlist_mix
-
+    
 
     def process(self):
         """
