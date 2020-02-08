@@ -37,9 +37,9 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         inew = self.inputs.new
         inew("SvStringsSocket", "Factor")
-        inew("SvObjectsSocket", "Shape A")
-        inew("SvObjectsSocket", "Shape B")
-        inew("SvObjectsSocket", "Trajectory")
+        inew("SvObjectSocket", "Shape A")
+        inew("SvObjectSocket", "Shape B")
+        inew("SvObjectSocket", "Trajectory")
         onew = self.outputs.new
         onew("SvVerticesSocket", "Verts")
         onew("SvStringsSocket", "Edges")
@@ -55,8 +55,10 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             bpy.context.scene.collection.children.link(collection)
         return collections.get(self.construct_name)
 
-    def get_trajectory_object(self, collection, trajectory_named):
+    def get_trajectory_object(self, collection, construct, ident):
         objects = bpy.data.objects
+        trajectory_named = construct.name + "." + ident
+
         if trajectory_named in objects:
             traject = objects[trajectory_named]
         else:
@@ -71,14 +73,12 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         collection = self.ensure_collection()
         
         # -- duplicate trajectory twice into the collection, if not yet present
-        traject_name_a = construct_name + ".A"
-        traject_name_b = construct_name + ".B"
-        traject_a = self.get_trajectory_object(collection, trajectory_name_a)
-        traject_b = self.get_trajectory_object(collection, trajectory_name_b)
+        traject_a = self.get_trajectory_object(collection, construct, "A")
+        traject_b = self.get_trajectory_object(collection, construct, "B")
         
         # -- attach shapes A,B to trajectories A,B, as bevel objects, 
-        traject_a.bevel_object = construct.shape_a
-        traject_b.bevel_object = construct.shape_b
+        traject_a.data.bevel_object = construct.shape_a
+        traject_b.data.bevel_object = construct.shape_b
 
         # -- add extrusions as extrusion_a + extrusion_b to construct
         construct.extrusion_a = traject_a
@@ -134,7 +134,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         shape_a.to_mesh_clear()
         shape_b.to_mesh_clear()
 
-    def mix(verts_a, verts_b, factors, divider=0):
+    def mix(self, verts_a, verts_b, factors, divider=0):
         if len(factors) != divider:
             if len(factors) > divider:
                 factors = factors[:divider]
@@ -143,10 +143,12 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
                 padding = [factors[-1]] * num_to_add
                 factors.extend(padding)
 
-        split_num = len(verts_a) / divider
-        vlist_a = np.split(np.array(verts_a), divider)
-        vlist_b = np.split(np.array(verts_b), divider)
-        vlist_mix = [interp_v3l_v3v3(*p) for p in zip(vlist_a, vlist_b, factors)]
+        np_verts_a = np.array(verts_a)
+        np_verts_b = np.array(verts_b)
+        split_num = np_verts_a.shape[0] / divider
+        vlist_a = np.split(np_verts_a, split_num)
+        vlist_b = np.split(np_verts_b, split_num)
+        vlist_mix = [interp_v3l_v3v3(*p).tolist() for p in zip(vlist_a, vlist_b, factors)]
         return vlist_mix
 
 
@@ -177,7 +179,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             set_sv_depsgraph_need(True)
             with self.sv_throttle_tree_update():
                 v, e, f = self.sweep_between(construct)
-                self.outputs['Verts'].sv_set([v])
+                self.outputs['Verts'].sv_set(v)
                 self.outputs['Edges'].sv_set([e])
                 self.outputs['Faces'].sv_set([f])
 
