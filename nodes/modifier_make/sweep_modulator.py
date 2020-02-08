@@ -13,6 +13,13 @@ from sverchok.data_structure import updateNode
 from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 
+def interp_v3l_v3v3(a, b, t):
+    """ interpolate an np array between two states """
+    if t == 0.0: return a
+    elif t == 1.0: return b
+    else: return ((1.0 - t) * a) + (t * b)
+
+
 class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     """
@@ -117,6 +124,8 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             construct.extrusion_a.to_mesh_clear()
             construct.extrusion_b.to_mesh_clear()
 
+            return verts_final, edges, faces
+
         else:
            print("nope, they are not the same topology, ideally you will use PolyLine Viewer output")
 
@@ -134,17 +143,20 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
                 padding = [factors[-1]] * num_to_add
                 factors.extend(padding)
 
+        # ar = np.array(vecs[0])
+        split_num = np.split(ar, ar.shape[0] / divider)
+        vlist_a = np.split(np.array(verts_a), split_num)
+        vlist_b = np.split(np.array(verts_b), split_num)
+        vlist_mix = [interp_v3l_v3v3(*p) for p in zip(vlist_a, vlist_b, factors)]
+        return vlist_mix
+
 
     def process(self):
         """
-        [ ] pickup the resulting geometry (like object in does) for both
-            paths, and prepare for numpy to interpolate between them
         [ ] provide virtual Shape index shifting,
               - shifts the vertices in-situ of A or B to match the other
               - to avoid awkward surface twisting.
-        [ ] apply the factor (list) to each pair of profiles from start to end
         [ ] hide dummy objects option.
-        [ ] output result V E F.
         """
         if not all([self.active, self.construct_name]):
             return
