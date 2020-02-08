@@ -19,7 +19,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     bl_idname = 'SvSweepModulator'
     bl_label = 'Sweep Modulator'
-    bl_icon = 'GREASEPENCIL'
+    bl_icon = 'GP_MULTIFRAME_EDITING'
 
     construct_name: bpy.props.StringProperty(name="construct_name", update=updateNode)
     active: bpy.props.BoolProperty(update=updateNode)
@@ -45,17 +45,34 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             bpy.context.scene.collection.children.link(collection)
         return collections.get(self.construct_name)
 
-    def ensure_bevels(self, construct):
-        # [x] create new collection, if not yet present
-        collection = self.ensure_collection()
-        # [ ] duplicate trajectory twice into the collection, if not yet present
-        traject_a = construct.traject.copy()
-        traject_a.data = construct.traject.data.copy()
-        collection.objects.link(traject_a)
+    def get_trajectory_object(self, collection, trajectory_named):
+        objects = bpy.data.objects
+        if trajectory_named in objects:
+            traject = objects[trajectory_named]
+        else:
+            traject = construct.traject.copy()
+            traject.data = construct.traject.data.copy()
+            traject.name = trajectory_named
+            collection.objects.link(traject)
+        return traject
 
-        # [ ] attach shapes A,B to trajectories A,B, as bevel objects, 
-        # [ ] add extrusions as extrusion_a + extrusion_b to construct
-        # bpy.context.collection.objects.link(new_obj)
+    def ensure_bevels(self, construct):
+        # -- create new collection, if not yet present
+        collection = self.ensure_collection()
+        
+        # -- duplicate trajectory twice into the collection, if not yet present
+        traject_name_a = construct_name + ".A"
+        traject_name_b = construct_name + ".B"
+        traject_a = self.get_trajectory_object(collection, trajectory_name_a)
+        traject_b = self.get_trajectory_object(collection, trajectory_name_b)
+        
+        # -- attach shapes A,B to trajectories A,B, as bevel objects, 
+        traject_a.bevel_object = construct.shape_a
+        traject_b.bevel_object = construct.shape_b
+
+        # -- add extrusions as extrusion_a + extrusion_b to construct
+        construct.extrusion_a = traject_a
+        construct.extrusion_b = traject_b
 
 
     def sweep_between(self, construct):
