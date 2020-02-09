@@ -52,12 +52,12 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "active", text="UPDATE")
-        row.prop(self, "interpolate_smooth", text="smooth")
-        row.label(icon="AUTOMERGE_ON" if self.modifying_factors else "AUTOMERGE_OFF")
         row = layout.row(align=True)
         row.prop(self, "hide_construct", text="", icon="HIDE_OFF")
-        row.prop(self, "interpolate", text="", icon="SHADERFX")
         row.prop(self, "construct_name", text="", icon="EXPERIMENTAL")
+        row = layout.row(align=True)
+        row.alert = self.modifying_factors
+        row.prop(self, "interpolate", text="Interpolate Factors", icon="SHADERFX")
 
     def ensure_collection(self):
         collections = bpy.data.collections
@@ -153,7 +153,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         shape_b.to_mesh_clear()
 
     def mix(self, verts_a, verts_b, factors, divider=0):
-        splits = len(verts_a) / divider
+        splits = int(len(verts_a) / divider)
         
         self.modifying_factors = False
 
@@ -162,7 +162,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             
             if self.interpolate:
                 tvals = np.linspace(0, 1, splits)
-                factors = np.interp(tvals, values[0], values[0]).to_list()[0]
+                factors = np.interp(tvals, factors, factors).tolist()
             else:
                 if len(factors) > splits:
                     factors = factors[:splits]
