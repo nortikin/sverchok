@@ -34,6 +34,10 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     construct_name: bpy.props.StringProperty(name="construct_name", update=updateNode)
     active: bpy.props.BoolProperty(name="active", update=updateNode)
     hide_construct: bpy.props.BoolProperty(name="hide construction", update=updateNode)
+    interpolating: bpy.props.BoolProperty(name="interpolating")
+
+    # False = linear, True = cubic
+    interpolate_smooth: bpy.props.BoolProperty(name="interpolate smooth", update=updateNode)
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -49,6 +53,8 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "active", text="UPDATE")
+        row.prop(self, "interpolate_smooth", text="smooth")
+        row.label(icon="AUTOMERGE_ON" if self.interpolating else "AUTOMERGE_OFF")
         row = layout.row(align=True)
         row.prop(self, "hide_construct", text="", icon="HIDE_OFF")
         row.prop(self, "construct_name", text="", icon="EXPERIMENTAL")
@@ -148,7 +154,16 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     def mix(self, verts_a, verts_b, factors, divider=0):
         splits = len(verts_a) / divider
+        
+        self.interpolating = False
+
         if len(factors) != splits:
+            self.interpolating = True
+            
+            tvals = np.linspace(0, 1, splits)
+            newvals = np.interp(tvals, values[0], values[0]).to_list()[0]
+            
+
             if len(factors) > splits:
                 factors = factors[:splits]
             else:
