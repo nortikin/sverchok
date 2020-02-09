@@ -15,7 +15,6 @@ from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 def interp_v3l_v3v3(a, b, t):
     """ interpolate an np array between two states """
-    print('called')
     if t == 0.0: return a
     elif t == 1.0: return b
     else: return ((1.0 - t) * a) + (t * b)
@@ -33,7 +32,8 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'GP_MULTIFRAME_EDITING'
 
     construct_name: bpy.props.StringProperty(name="construct_name", update=updateNode)
-    active: bpy.props.BoolProperty(update=updateNode)
+    active: bpy.props.BoolProperty(name="active", update=updateNode)
+    hide_construct: bpy.props.BoolProperty(name="hide construction", update=updateNode)
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -47,7 +47,11 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         onew("SvStringsSocket", "Faces")
 
     def draw_buttons(self, context, layout):
-        ...
+        row = layout.row(align=True)
+        row.prop(self, "active", text="UPDATE")
+        row = layout.row(align=True)
+        row.prop(self, "hide_construct", text="", icon="HIDE_OFF")
+        row.prop(self, "construct_name", text="", icon="EXPERIMENTAL")
 
     def ensure_collection(self):
         collections = bpy.data.collections
@@ -74,10 +78,15 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
     def ensure_bevels(self, construct):
         # -- create new collection, if not yet present
         collection = self.ensure_collection()
+
         
         # -- duplicate trajectory twice into the collection, if not yet present
         traject_a = self.get_trajectory_object(collection, construct, "A")
         traject_b = self.get_trajectory_object(collection, construct, "B")
+
+        # if self.hide_construct:
+        #     collection.hide_render = True
+        #     collection.hide_viewport = True
         
         # -- attach shapes A,B to trajectories A,B, as bevel objects, 
         traject_a.data.bevel_object = construct.shape_a
@@ -164,6 +173,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         [ ] provide virtual Shape index shifting,
               - shifts the vertices in-situ of A or B to match the other
               - to avoid awkward surface twisting.
+        [ ] auto interpolate linear/cubic if factors input length does not match num path elements.
         [ ] hide dummy objects option.
         """
         if not all([self.active, self.construct_name]):
