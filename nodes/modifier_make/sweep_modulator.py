@@ -33,7 +33,6 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
 
     construct_name: bpy.props.StringProperty(name="construct_name", update=updateNode)
     active: bpy.props.BoolProperty(name="active", update=updateNode)
-    hide_construct: bpy.props.BoolProperty(name="hide construction", update=updateNode)
     modifying_factors: bpy.props.BoolProperty(name="modifying_factors")
 
     interpolate: bpy.props.BoolProperty(name="interpolate smooth", update=updateNode)
@@ -53,7 +52,6 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "active", text="UPDATE")
         row = layout.row(align=True)
-        row.prop(self, "hide_construct", text="", icon="HIDE_OFF")
         row.prop(self, "construct_name", text="", icon="EXPERIMENTAL")
         row = layout.row(align=True)
         row.alert = self.modifying_factors
@@ -78,22 +76,17 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             traject.data = construct.traject.data.copy()
             traject.name = trajectory_named
             collection.objects.link(traject)
-        # ['django.A'].data.splines[0].use_smooth = False  for s in splines
+
         return traject
 
     def ensure_bevels(self, construct):
         # -- create new collection, if not yet present
         collection = self.ensure_collection()
-
         
         # -- duplicate trajectory twice into the collection, if not yet present
         traject_a = self.get_trajectory_object(collection, construct, "A")
         traject_b = self.get_trajectory_object(collection, construct, "B")
 
-        # if self.hide_construct:
-        #     collection.hide_render = True
-        #     collection.hide_viewport = True
-        
         # -- attach shapes A,B to trajectories A,B, as bevel objects, 
         traject_a.data.bevel_object = construct.shape_a
         traject_b.data.bevel_object = construct.shape_b
@@ -187,8 +180,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         [ ] provide virtual Shape index shifting,
               - shifts the vertices in-situ of A or B to match the other
               - to avoid awkward surface twisting.
-        [ ] auto interpolate linear/cubic if factors input length does not match num path elements.
-        [ ] hide dummy objects option.
+        [ ] hide dummy objects option.   seems tricky. or ugly.  use the outliner for now.
         """
         if not all([self.active, self.construct_name]):
             return
