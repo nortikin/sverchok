@@ -42,7 +42,7 @@ Parameters
 +=====================+=========+==================================================================+
 | **update**          | bool    | node is on or off                                                |  
 +---------------------+---------+------------------------------------------------------------------+
-| **construct name ** | string  | use this name to generate a set of dummy objects                 |
+| **construct name**  | string  | use this name to generate a set of dummy objects                 |
 |                     |         |  - two trajectories inside a collection                          | 
 +---------------------+---------+------------------------------------------------------------------+
 | **interpolate**     | bool    | if the number of elements in the factor socket doesn't           |
