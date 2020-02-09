@@ -412,6 +412,7 @@
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
     SvTopologySimple
+    SvSweepModulator
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2
