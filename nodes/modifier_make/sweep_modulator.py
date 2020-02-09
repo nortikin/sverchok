@@ -125,8 +125,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
             extruded_data_b = extrusion_b.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
             verts_a = [v.co[:] for v in extruded_data_a.vertices]
             verts_b = [v.co[:] for v in extruded_data_b.vertices]
-            print(len(verts_a))
-
+            
             # -- perform mix
             verts_final = self.mix(verts_a, verts_b, construct.factors, divider=num_verts_shape_a)
 
@@ -162,7 +161,7 @@ class SvSweepModulator(bpy.types.Node, SverchCustomTreeNode):
         split_num = np_verts_a.shape[0] / divider
         vlist_a = np.split(np_verts_a, split_num)
         vlist_b = np.split(np_verts_b, split_num)
-        print(len(vlist_a), len(vlist_b), len(factors))
+        # print(len(vlist_a), len(vlist_b), len(factors))
         vlist_mix = []
         _ = [vlist_mix.extend(interp_v3l_v3v3(*p).tolist()) for p in zip(vlist_a, vlist_b, factors)]
         return vlist_mix
