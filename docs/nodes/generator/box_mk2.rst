@@ -65,4 +65,4 @@ Boxes in the corner of boxes repeatedly
 
 Different data shapes output depending on "Simplify Output" advanced property
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_2.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/generators/box/box_node_sverchok_example_3.png
