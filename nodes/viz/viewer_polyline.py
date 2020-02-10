@@ -257,7 +257,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
             obj.data.use_uv_as_generated = self.use_auto_uv
 
     def draw_label(self):
-        return f"Poly V {self.basedata_name}"
+        return f"PV {self.basedata_name}"
     
 
 def register():
