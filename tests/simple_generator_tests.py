@@ -10,6 +10,7 @@ from sverchok.utils.logging import debug, info
 
 class BoxNodeTest(NodeProcessTestCase):
     node_bl_idname = "SvBoxNodeMk2"
+    connect_output_sockets = ["Vers"]
 
     def test_box(self):
         # It is not in general necessary to set properties of the node
@@ -26,7 +27,7 @@ class BoxNodeTest(NodeProcessTestCase):
         # You may want to inspect what the node outputs
         # data = self.get_output_data("Vers")
 
-        expected_verts = ([[0.5, 0.5, -0.5], [0.5, -0.5, -0.5], [-0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [0.5, 0.5, 0.5], [0.5, -0.5, 0.5], [-0.5, -0.5, 0.5], [-0.5, 0.5, 0.5]],)
+        expected_verts = [[[0.5, 0.5, -0.5], [0.5, -0.5, -0.5], [-0.5, -0.5, -0.5], [-0.5, 0.5, -0.5], [0.5, 0.5, 0.5], [0.5, -0.5, 0.5], [-0.5, -0.5, 0.5], [-0.5, 0.5, 0.5]],]
 
         self.assert_output_data_equals("Vers", expected_verts)
 
