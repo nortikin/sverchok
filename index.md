@@ -13,7 +13,7 @@
     SvSegmentGenerator
     SvPlaneNodeMK2
     SvNGonNode
-    SvBoxNode
+    SvBoxNodeMk2
     SvCircleNode
     SvCylinderNodeMK2
     SphereNode

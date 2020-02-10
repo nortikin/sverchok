@@ -9,7 +9,7 @@ from sverchok.utils.logging import debug, info
 # is badly broken in general node processing mechanism.
 
 class BoxNodeTest(NodeProcessTestCase):
-    node_bl_idname = "SvBoxNode"
+    node_bl_idname = "SvBoxNodeMk2"
 
     def test_box(self):
         # It is not in general necessary to set properties of the node
@@ -33,11 +33,11 @@ class BoxNodeTest(NodeProcessTestCase):
 class NGonNodeTest(NodeProcessTestCase):
     node_bl_idname = "SvNGonNode"
 
-    # The NGon node does not do anything in 
-    # it's process() method if outputs are not 
-    # linked to anything. 
+    # The NGon node does not do anything in
+    # it's process() method if outputs are not
+    # linked to anything.
     # So we ask base test case class to connect
-    # something (actually a Note node) to the 
+    # something (actually a Note node) to the
     # Vertices output.
     connect_output_sockets = ["Vertices"]
 
