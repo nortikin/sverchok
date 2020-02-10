@@ -233,6 +233,9 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.draw_buttons(context, layout)
         self.draw_ext_object_buttons(context, layout)
 
+    def draw_label(self):
+        return f"CV {self.basedata_name}"
+
     def set_fill_mode(self):
         return getattr(self, "fill_" + self.curve_dimensions) 
 

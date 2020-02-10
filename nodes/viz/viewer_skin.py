@@ -293,6 +293,8 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def flip_roots_or_junctions_only(self, data):
         pass
 
+    def draw_label(self):
+        return f"SK {self.basedata_name}"
 
 def register():
     bpy.utils.register_class(SvSkinViewerNodeV28)

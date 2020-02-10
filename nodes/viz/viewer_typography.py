@@ -266,6 +266,8 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 elif obj.parent:
                     obj.parent = None
 
+    def draw_label(self):
+        return f"TV {self.basedata_name}"
 
 
 classes = [SvTypeViewerNodeV28, SvFontFileImporterOpV28]

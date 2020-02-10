@@ -250,10 +250,15 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     def set_auto_uv(self, obj):
         """
         this will change the state of the object.prop if it does not match the new desired state
+        
+        this is no longer supported in blender 2.92+
         """
         if obj.data.use_uv_as_generated != self.use_auto_uv:
             obj.data.use_uv_as_generated = self.use_auto_uv
 
+    def draw_label(self):
+        return f"PV {self.basedata_name}"
+    
 
 def register():
     bpy.utils.register_class(SvPolylineViewerNodeV28)

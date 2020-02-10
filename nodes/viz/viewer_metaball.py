@@ -132,6 +132,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         layout.prop(self, "view_resolution")
         layout.prop(self, "render_resolution")
 
+    def draw_label(self):
+        return f"MB {self.basedata_name}"
+
     def process(self):
         if not self.activate:
             return

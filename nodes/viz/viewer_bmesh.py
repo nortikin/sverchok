@@ -291,6 +291,9 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             box.prop(self, 'randomize_vcol_islands', text='randomize vcol islands')
         col.prop(self, 'to3d')
 
+    def draw_label(self):
+        return f"BV {self.basedata_name}"
+
     @property
     def draw_3dpanel(self):
         return self.to3d
