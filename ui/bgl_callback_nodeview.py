@@ -224,7 +224,7 @@ def draw_callback_px(n_id, data):
         return
 
     ng_name = space.edit_tree.name
-    print(ng_name)
+
     if not (data['tree_name'] == ng_name):
         return
     if not isinstance(ng_view, node_tree.SverchCustomTree):
