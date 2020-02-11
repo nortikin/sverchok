@@ -336,6 +336,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             start = time.perf_counter()
             if hasattr(node, "process"):
                 node.process()
+
             delta = time.perf_counter() - start
             total_time += delta
 

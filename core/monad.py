@@ -529,6 +529,21 @@ class SvGroupNodeExp:
             else:
                 layout.prop(self, 'loops_max')
 
+    def get_nodes_to_process(self, out_node_name):
+        """
+        nodes not indirectly / directly contributing to the data we eventually pass to "monad.output_node" 
+        are discarded if only `self.monad.outputs_node.name` is passed in endpoints_nodes.
+
+        The exceptions are nodes that we use for debugging inside the monad. At present SvDebugPrint instances
+        are added as endpoints (this allows them to be processed and they can write to the bpy.data.texta
+        """
+        endpoint_nodes = [out_node_name]
+        nodes = self.monad.nodes
+        for n in nodes:
+            if n.bl_idname == 'SvDebugPrintNode' and n.print_data:
+                endpoint_nodes.append(n.name)
+        return endpoint_nodes
+
     def process(self):
         if not self.monad:
             return
@@ -547,9 +562,9 @@ class SvGroupNodeExp:
             data = socket.sv_get(deepcopy=False)
             in_node.outputs[index].sv_set(data)
 
-        #  get update list
-        #  could be cached
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
+
         do_update(ul, monad.nodes)
         # set output sockets correctly
         for index, socket in enumerate(self.outputs):
@@ -561,7 +576,9 @@ class SvGroupNodeExp:
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
 
         data_out = [[] for s in self.outputs]
 
@@ -601,8 +618,8 @@ class SvGroupNodeExp:
         for index, data in enumerate(sockets_data_in):
             in_node.outputs[index].sv_set(data)        
 
-
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
         do_update(ul, monad.nodes)
 
         # set output sockets correctly
@@ -631,11 +648,10 @@ class SvGroupNodeExp:
         out_node = monad.output_node
 
         for iteration in range(iterations_remaining):
-            if 'Monad Info' in monad.nodes:
-                # info_node = monad.nodes['Monad Info']
-                # info_node.outputs[0].sv_set([[iteration]])
-                monad["current_index"] = iteration
-
+            # if 'Monad Info' in monad.nodes:
+            #     info_node = monad.nodes['Monad Info']
+            #     info_node.outputs[0].sv_set([[iteration]])
+            monad["current_index"] = iteration
             sockets_in = self.do_process(sockets_in)
         self.apply_output(sockets_in)
 
