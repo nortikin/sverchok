@@ -62,6 +62,13 @@ class SvDebugPrintNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.print_data:
             return
 
+        if self.id_data.bl_idname == "SverchGroupTreeType":
+            monad = self.id_data.monad
+            if monad.loop_me:
+                index = monad["current_index"] 
+                total = monad["current_total"]
+                self.info(f"Iteration/Total:  {index} / {current_total}")
+
         for i, socket in enumerate(self.inputs):
             if socket.is_linked and self.print_socket[i]:
                 self.info(socket.sv_get(deepcopy=False))

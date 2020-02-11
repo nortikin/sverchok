@@ -577,7 +577,9 @@ class SvGroupNodeExp:
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
 
         data_out = [[] for s in self.outputs]
 
@@ -617,8 +619,8 @@ class SvGroupNodeExp:
         for index, data in enumerate(sockets_data_in):
             in_node.outputs[index].sv_set(data)        
 
-
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
         do_update(ul, monad.nodes)
 
         # set output sockets correctly
