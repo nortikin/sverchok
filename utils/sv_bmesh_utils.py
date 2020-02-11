@@ -323,6 +323,51 @@ def dual_mesh(bm, recalc_normals=True):
     vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
     return vertices, new_faces
 
+def diamond_mesh(bm):
+    new_bm = bmesh.new()
+    copied_verts = dict()
+    for vert in bm.verts:
+        co = vert.co
+        copied_verts[vert.index] = new_bm.verts.new(co)
+
+    # Make vertices of dual mesh by finding
+    # centers of original mesh faces.
+    center_verts = dict()
+    for face in bm.faces:
+        co = face.calc_center_median()
+        center_verts[face.index] = new_bm.verts.new(co)
+
+    for edge in bm.edges:
+        edge_faces = edge.link_faces
+        n_faces = len(edge_faces)
+        if not n_faces:
+            continue
+        if n_faces > 2:
+            continue
+        if n_faces == 1:
+            face = edge_faces[0]
+            ev1, ev2 = edge.verts
+            face_verts = copied_verts[ev1.index], copied_verts[ev2.index], center_verts[face.index]
+            new_normal = mathutils.geometry.normal(*[vert.co for vert in face_verts])
+            old_normal = face.normal
+            if new_normal.dot(old_normal) < 0:
+                face_verts = list(reversed(face_verts))
+            new_bm.faces.new(face_verts)
+        else: # n_faces == 2
+            face1, face2 = edge_faces
+            ev1, ev2 = edge.verts
+            face_verts = copied_verts[ev1.index], center_verts[face1.index], copied_verts[ev2.index], center_verts[face2.index]
+            new_normal = mathutils.geometry.normal(*[vert.co for vert in face_verts])
+            old_normal = face1.normal + face2.normal
+            if new_normal.dot(old_normal) < 0:
+                face_verts = list(reversed(face_verts))
+            new_bm.faces.new(face_verts)
+    new_bm.verts.index_update()
+    new_bm.edges.index_update()
+    new_bm.faces.index_update()
+
+    return new_bm
+
 def get_neighbour_faces(face, by_vert = True):
     """
     Get neighbour faces of the given face.
