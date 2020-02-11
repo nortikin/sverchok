@@ -22,7 +22,7 @@ import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, face_data_from_bmesh_faces
 
 class SvPokeFacesNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -100,7 +100,7 @@ class SvPokeFacesNode(bpy.types.Node, SverchCustomTreeNode):
             if face_data:
                 face_data = repeat_last_for_length(face_data, len(faces))
 
-            bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True)
+            bm = bmesh_from_pydata(vertices, edges, faces, normal_update=True, markup_face_data=True)
             bm_faces = [face for mask, face in zip(masks, bm.faces[:]) if mask]
 
             bmesh.ops.poke(bm, faces=bm_faces, offset=offset,
