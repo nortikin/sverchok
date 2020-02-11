@@ -649,8 +649,8 @@ class SvGroupNodeExp:
 
         for iteration in range(iterations_remaining):
             # if 'Monad Info' in monad.nodes:
-                # info_node = monad.nodes['Monad Info']
-                # info_node.outputs[0].sv_set([[iteration]])
+            #     info_node = monad.nodes['Monad Info']
+            #     info_node.outputs[0].sv_set([[iteration]])
             monad["current_index"] = iteration
             sockets_in = self.do_process(sockets_in)
         self.apply_output(sockets_in)
