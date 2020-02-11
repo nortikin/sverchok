@@ -130,6 +130,7 @@
     SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
+    SvPokeFacesNode
     SvVertMaskNode
     SvSplitEdgesNode
     ---
