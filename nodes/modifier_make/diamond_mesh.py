@@ -26,13 +26,13 @@ from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh, bmesh_from_pydata, 
 
 class SvDiamondMeshNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Trigers: Diamond Mesh
+    Trigers: Diamond Rhomboid Mesh
     Tooltip: Create diamond-like (rhomboid) mesh for the given mesh
     """
     bl_idname = 'SvDiamondMeshNode'
     bl_label = "Diamond Mesh"
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_DUAL_MESH'
+    sv_icon = 'SV_DIAMOND_MESH'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
