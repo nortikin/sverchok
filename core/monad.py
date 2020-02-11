@@ -529,6 +529,18 @@ class SvGroupNodeExp:
             else:
                 layout.prop(self, 'loops_max')
 
+    def get_nodes_to_process(self, out_node_name):
+        """
+        nodes that do not indirectly/directly contribute to the data that eventually gets passed to
+        the " monad.output_node "  are discarted, expect for instances of the debugprint node.
+        """
+        endpoint_nodes = [out_node_name]
+        nodes = self.monad.nodes
+        for n in nodes:
+            if n.bl_idname == 'SvDebugPrintNode' and n.print_data:
+                endpoint_nodes.append(n.name)
+        return endpoint_nodes
+
     def process(self):
         if not self.monad:
             return
@@ -539,6 +551,8 @@ class SvGroupNodeExp:
             self.process_looped(self.loops)
             return
 
+        print('here')
+
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
@@ -547,9 +561,10 @@ class SvGroupNodeExp:
             data = socket.sv_get(deepcopy=False)
             in_node.outputs[index].sv_set(data)
 
-        #  get update list
-        #  could be cached
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        node_names = self.get_nodes_to_process(out_node.name)
+        #  get update list could be cached
+        ul = make_tree_from_nodes(node_names, monad, down=False)
+
         do_update(ul, monad.nodes)
         # set output sockets correctly
         for index, socket in enumerate(self.outputs):
