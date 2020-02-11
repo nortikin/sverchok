@@ -551,8 +551,6 @@ class SvGroupNodeExp:
             self.process_looped(self.loops)
             return
 
-        print('here')
-
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
