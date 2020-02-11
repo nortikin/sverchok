@@ -26,12 +26,13 @@ from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 class SvPokeFacesNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Poke Faces (Alt-P)
+    Triggers: Poke Faces
     Tooltip: Poke selected faces
     """
     bl_idname = 'SvPokeFacesNode'
     bl_label = 'Poke Faces'
-    bl_icon = 'MOD_BEVEL'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_POKE'
 
     modes = [
         ('MEAN_WEIGHTED', "Weighted Mean", "Using the mean average weighted by edge length", 0),
