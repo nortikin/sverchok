@@ -563,7 +563,6 @@ class SvGroupNodeExp:
             in_node.outputs[index].sv_set(data)
 
         node_names = self.get_nodes_to_process(out_node.name)
-        #  get update list could be cached
         ul = make_tree_from_nodes(node_names, monad, down=False)
 
         do_update(ul, monad.nodes)
@@ -649,11 +648,10 @@ class SvGroupNodeExp:
         out_node = monad.output_node
 
         for iteration in range(iterations_remaining):
-            if 'Monad Info' in monad.nodes:
+            # if 'Monad Info' in monad.nodes:
                 # info_node = monad.nodes['Monad Info']
                 # info_node.outputs[0].sv_set([[iteration]])
-                monad["current_index"] = iteration
-
+            monad["current_index"] = iteration
             sockets_in = self.do_process(sockets_in)
         self.apply_output(sockets_in)
 
