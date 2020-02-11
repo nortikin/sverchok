@@ -531,8 +531,11 @@ class SvGroupNodeExp:
 
     def get_nodes_to_process(self, out_node_name):
         """
-        nodes that do not indirectly/directly contribute to the data that eventually gets passed to
-        the " monad.output_node "  are discarted, expect for instances of the debugprint node.
+        nodes not indirectly / directly contributing to the data we eventually pass to "monad.output_node" 
+        are discarded if only `self.monad.outputs_node.name` is passed in endpoints_nodes.
+
+        The exceptions are nodes that we use for debugging inside the monad. At present SvDebugPrint instances
+        are added as endpoints (this allows them to be processed and they can write to the bpy.data.texta
         """
         endpoint_nodes = [out_node_name]
         nodes = self.monad.nodes
