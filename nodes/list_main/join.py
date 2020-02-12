@@ -52,22 +52,46 @@ def numpy_join(slots, level, mix, min_axis):
     elif level == 2:
         if mix:
             result = [np.concatenate([l for s in zip(*slots) for l in zip(*s)], axis=0)]
-            joined = np.concatenate(slots, axis=2)
-            # ln = len(slots[0][0][0])
             if min_axis == 2:
-                ln =3
+                joined = np.concatenate(slots, axis=2)
             else:
-                ln = 1
-            result = [joined.reshape(-1, ln)]
+                joined = np.concatenate(slots, axis=0).T
+            result = [joined]
+            # ln = len(slots[0][0][0])
+            if type(slots[0][0][0]) in [int, float]:
+                result = [joined.flatten()]
+            else:
+                if min_axis == 2:
+                    ln =3
+                else:
+                    ln = 1
+                result = [joined.reshape(-1, ln)]
         else:
-            result = [np.concatenate([l for s in slots for l in s], axis=0)]
-            joined = np.concatenate(slots, axis=0)
-            # ln = len(slots[0][0][0])
-            if min_axis == 2:
-                ln =3
+            # result = [np.concatenate([l for s in slots for l in s], axis=0)]
+            joined = np.concatenate(slots, axis=1)
+            print("F", type(slots[0][0][0]), joined.shape)
+            if type(slots[0][0][0]) in [list, tuple, np.ndarray]:
+                if min_axis == 2:
+                    if len(joined.shape) > 3:
+                        print("e")
+                        result = [joined[0, l] for l in range(joined.shape[1])]
+                    else:
+                        result = [joined.reshape(-1, 3)]
+                else:
+                    if len(joined.shape) > 2:
+                        print("e")
+                        result = [[joined[0, l] for l in range(joined.shape[1])]]
+                    else:
+                        #   result = [joined.reshape(-1, 3)]
+                        result =[joined]
             else:
-                ln = 1
-            result = [joined.reshape(-1, ln)]
+                result = [joined.flatten()]
+                #     if min_axis == 2:
+            # # ln = len(slots[0][0][0])
+            #         ln =3
+            #     else:
+            #         ln = 1
+            #     result = [joined.reshape(-1, ln)]
 
     elif level == 3:
         if mix:
