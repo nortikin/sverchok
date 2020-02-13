@@ -4,8 +4,9 @@ Monad
 Functionality
 -------------
 
- .. Warning: This feature is a work in progress in 2.8+. Expect stuff to be broken and breakages during usage.
-    -- zeffii
+.. 
+      Warning: This feature is a work in progress in 2.8+. Expect stuff to be broken and breakages during usage.
+      -- zeffii
 
 This node encapsulates several selected nodes (Ctrl+G) into a single node, similar to a shadertree node group. 
 
@@ -42,7 +43,7 @@ The UI hints at a few fundamental features of the Monad:
 
     for example:
 
-::  
+.. role:: bash(code)
                                                   yes                             no     
     _____________                            _____________                 _____________ 
    |_input_node _|                          |_output node_|               |_output node_|
