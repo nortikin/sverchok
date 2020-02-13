@@ -41,9 +41,8 @@ The UI hints at a few fundamental features of the Monad:
     - currently you must connect all named sockets, 
     - the input and output nodes must be fully connected and the arrangement/order of sockets must be consistent. 
 
-    for example:
+    for example::
 
-.. role:: bash(code)
                                                   yes                             no     
     _____________                            _____________                 _____________ 
    |_input_node _|                          |_output node_|               |_output node_|
