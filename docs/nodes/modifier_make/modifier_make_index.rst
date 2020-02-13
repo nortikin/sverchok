@@ -27,6 +27,7 @@ Modifier Make
    convex_hull_mk2
    dual_mesh
    diamond_mesh
+   clip_verts
    random_points_on_mesh
    delaunay_2d_cdt
    sweep_modulator
