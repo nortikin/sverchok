@@ -4,7 +4,7 @@ Monad
 Functionality
 -------------
 
-    Warning: This feature is a work in progress in 2.8+. Expect stuff to be broken and breakages during usage.
+ .. Warning: This feature is a work in progress in 2.8+. Expect stuff to be broken and breakages during usage.
     -- zeffii
 
 This node encapsulates several selected nodes (Ctrl+G) into a single node, similar to a shadertree node group. 
@@ -37,6 +37,20 @@ The UI hints at a few fundamental features of the Monad:
 
 *Loop n times*
     This can be used for repeatedly applying an effect to a mesh, the number of iteration is currently only configurable via the node UI - it's too easy to accidentally grind your computer to a halt if that was set dynamically via an input socket.
+    - currently you must connect all named sockets, 
+    - the input and output nodes must be fully connected and the arrangement/order of sockets must be consistent. 
+
+    for example:
+
+::  
+                                                  yes                             no     
+    _____________                            _____________                 _____________ 
+   |_input_node _|                          |_output node_|               |_output node_|
+   |      verts  o =------       ---------= o verts       |     --------= o edges       |
+   |      edges  o =--------       -------= o edges       |       ------= o faces       |
+   |      faces  o =----------       -----= o faces       |         ----= o verts       |
+   |             -                          -             |               -             |
+   |_____________|                          |_____________|               |_____________|
 
 
 Inputs and Outputs
