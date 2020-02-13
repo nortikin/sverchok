@@ -114,6 +114,7 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
         layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
         layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
         layout.menu("NODEVIEW_MT_AddCAD", **icon('TOOL_SETTINGS'))
+        layout.menu("NODEVIEW_MT_AddMesh")
         layout.separator()
         layout.menu("NODEVIEW_MT_AddNumber", **icon("SV_NUMBER"))
         layout.menu("NODEVIEW_MT_AddVector", **icon("SV_VECTOR"))
@@ -251,6 +252,7 @@ classes = [
     make_class('Matrix', "Matrix"),
     make_class('Quaternion', "Quaternion"),
     make_class('CAD', "CAD"),
+    make_class('Mesh', 'Mesh'),
     make_class('ModifierChange', "Modifier Change"),
     make_class('ModifierMake', "Modifier Make"),
     make_class('Logic', "Logic"),

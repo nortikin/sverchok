@@ -19,6 +19,9 @@ class Mesh:
         self._faces = Faces()
         self._loops = Loops()
 
+    def __repr__(self):
+        return f"<SvMesh: name='{self.name}', verts={len(self.verts.co)}, edges={len(self.edges.ind)}, faces={len(self.faces.ind)}>"
+
     @property
     def verts(self):
         return self._verts
@@ -54,6 +57,12 @@ class Verts(Iterable):
     co: list = field(default_factory=list)
     uv: list = field(default_factory=list)
 
+    def __bool__(self) -> bool:
+        return bool(self.co)
+
+    def __len__(self) -> int:
+        return len(self.co)
+
 
 @dataclass
 class Edges(Iterable):
@@ -64,6 +73,12 @@ class Edges(Iterable):
 class Faces(Iterable):
     ind: list = field(default_factory=list)
     material_ind: list = field(default_factory=list)
+
+    def __bool__(self):
+        return bool(self.ind)
+
+    def __len__(self):
+        return len(self.ind)
 
 
 @dataclass
