@@ -368,6 +368,42 @@ def diamond_mesh(bm):
 
     return new_bm
 
+def truncate_vertices(bm):
+
+    def calc_angle(co, orth, co_orth, vert):
+        direction = vert.co - co
+        dx = direction.dot(orth)
+        dy = direction.dot(co_orth)
+        return math.atan2(dy, dx)
+
+    new_bm = bmesh.new()
+    edge_centers = dict()
+    for edge in bm.edges:
+        center_co = (edge.verts[0].co + edge.verts[1].co) / 2.0
+        edge_centers[edge.index] = new_bm.verts.new(center_co)
+    for face in bm.faces:
+        new_face = [edge_centers[edge.index] for edge in face.edges]
+        old_normal = face.normal
+        new_normal = mathutils.geometry.normal(*[vert.co for vert in new_face])
+        if new_normal.dot(old_normal) < 0:
+            new_face = list(reversed(new_face))
+        new_bm.faces.new(new_face)
+    for vertex in bm.verts:
+        new_face = [edge_centers[edge.index] for edge in vertex.link_edges]
+        if len(new_face) > 2:
+            old_normal = vertex.normal
+            orth = old_normal.orthogonal()
+            co_orth = old_normal.cross(orth)
+            new_face = sorted(new_face, key = lambda edge_center : calc_angle(vertex.co, orth, co_orth, edge_center))
+            new_face = list(new_face)
+            new_bm.faces.new(new_face)
+
+    new_bm.verts.index_update()
+    new_bm.edges.index_update()
+    new_bm.faces.index_update()
+
+    return new_bm
+
 def get_neighbour_faces(face, by_vert = True):
     """
     Get neighbour faces of the given face.
