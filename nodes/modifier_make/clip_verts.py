@@ -32,7 +32,7 @@ class SvClipVertsNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvClipVertsNode'
     bl_label = "Clip Vertices"
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_DIAMOND_MESH'
+    sv_icon = 'SV_CLIP_VERTS'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
