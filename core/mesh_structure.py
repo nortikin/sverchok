@@ -7,6 +7,7 @@
 
 
 from dataclasses import dataclass, field
+from abc import ABC, abstractmethod
 
 
 class Mesh:
@@ -38,18 +39,35 @@ class Mesh:
     def loops(self):
         return self._loops
 
+    @verts.setter
+    def verts(self, verts):
+        self._verts.co = verts
+
+    @edges.setter
+    def edges(self, edges):
+        self._edges.ind = edges
+
+    @faces.setter
+    def faces(self, faces):
+        self._faces.ind = faces
+
     def sv_deep_copy(self) -> 'Mesh': ...
 
 
-class Iterable:
+class Iterable(ABC):
 
-    def __bool__(self) -> bool: ...
+    def __bool__(self) -> bool:
+        return bool(self._main_attr)
 
-    def __len__(self) -> int: ...
+    def __len__(self) -> int:
+        return len(self._main_attr)
 
-    def __iter__(self) -> 'Iterable': ...
+    def __iter__(self) -> 'Iterable':
+        return iter(self._main_attr)
 
-    def __next__(self) -> tuple: ...
+    @property
+    @abstractmethod
+    def _main_attr(self): ...
 
 
 @dataclass
@@ -57,16 +75,18 @@ class Verts(Iterable):
     co: list = field(default_factory=list)
     uv: list = field(default_factory=list)
 
-    def __bool__(self) -> bool:
-        return bool(self.co)
-
-    def __len__(self) -> int:
-        return len(self.co)
+    @property
+    def _main_attr(self):
+        return self.co
 
 
 @dataclass
 class Edges(Iterable):
     ind: list = field(default_factory=list)
+
+    @property
+    def _main_attr(self):
+        return self.ind
 
 
 @dataclass
@@ -74,13 +94,25 @@ class Faces(Iterable):
     ind: list = field(default_factory=list)
     material_ind: list = field(default_factory=list)
 
-    def __bool__(self):
-        return bool(self.ind)
-
-    def __len__(self):
-        return len(self.ind)
+    @property
+    def _main_attr(self):
+        return self.ind
 
 
 @dataclass
 class Loops(Iterable):
-    pass
+    uv: list = field(default_factory=list)
+
+    @property
+    def _main_attr(self):
+        return self.uv
+
+
+if __name__ == '__main__':
+    me = Mesh()
+    me.verts = [(0, 0, 0), (1, 0, 0), (2, 0, 0)]
+    for v in me.verts:
+        print(v)
+    me.faces = [[0, 1, 2]]
+    for f in me.faces:
+        print(f)

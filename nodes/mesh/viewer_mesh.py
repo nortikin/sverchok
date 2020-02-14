@@ -19,8 +19,8 @@ def generate_mesh(objects: bpy.types.CollectionProperty, meshes: List[Mesh]) -> 
     for bl_me, me in zip((prop.obj.data for prop in objects), meshes):
         is_topology_changed = len(bl_me.vertices) != len(me.verts) or len(bl_me.polygons) != len(me.faces)
         if is_topology_changed:
-            me_edges = generate_unique_edges_from_faces(me.faces.ind)
-            me_faces = correct_faces(len(me.verts), me.faces.ind)
+            me_edges = generate_unique_edges_from_faces(me.faces)
+            me_faces = correct_faces(len(me.verts), me.faces)
             ensure_number_of_elements(bl_me, me, me_edges, me_faces)
             update_edges(bl_me, me_edges)
             update_loops(bl_me, me_faces, me_edges)
@@ -64,7 +64,7 @@ def correct_faces(len_verts: int, faces: List[List[int]]) -> List[List[int]]:
 
 
 def update_vertices(bl_me: bpy.types.Mesh, me: Mesh) -> None:
-    for bl_v, v in zip(bl_me.vertices, me.verts.co):
+    for bl_v, v in zip(bl_me.vertices, me.verts):
         bl_v.co = v
 
 
