@@ -175,6 +175,16 @@ class SvEditSocketOpExp(Operator, MonadOpCommon):
         return context.window_manager.invoke_props_dialog(self)
 
 
+class SvNewSocketOpExp(Operator, MonadOpCommon):
+    """Generate new socket"""
+    bl_idname = "node.sverchok_new_socket_exp"
+    bl_label = "New Socket"
+
+    socket_type: EnumProperty(items=spclet_types, default="SvStringsSocket")
+
+    ...
+
+
 class SvGroupEdit(Operator):
     bl_idname = "node.sv_group_edit"
     bl_label = "edits an sv group"
