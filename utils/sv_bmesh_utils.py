@@ -16,12 +16,35 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
+from contextlib import contextmanager
+
 import bmesh
-import mathutils
-import numpy as np
 import math
 
 from sverchok.utils.logging import info, debug
+
+
+@contextmanager
+def empty_bmesh(use_operators=True):
+    """
+    Usage:
+    with empty_bmesh() as bm:
+        generate_mesh(bm)
+        bm.do_something
+        ...
+    """
+    error = None
+    bm = bmesh.new(use_operators=use_operators)
+    try:
+        yield bm
+    except Exception as Ex:
+        error = Ex
+    finally:
+        bm.free()
+    if error:
+        raise error
+
 
 def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional

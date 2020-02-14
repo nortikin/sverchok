@@ -53,6 +53,11 @@ class Mesh:
 
     def sv_deep_copy(self) -> 'Mesh': ...
 
+    def to_bmesh(self, bm) -> None:
+        bm_verts = [bm.verts.new(v) for v in self.verts]
+        _ = [bm.edges.new([bm_verts[i] for i in e]) for e in self.edges]
+        _ = [bm.faces.new([bm_verts[i] for i in f]) for f in self.faces]
+
 
 class Iterable(ABC):
 
@@ -116,3 +121,5 @@ if __name__ == '__main__':
     me.faces = [[0, 1, 2]]
     for f in me.faces:
         print(f)
+    for e in me.edges:
+        print('Empty?')

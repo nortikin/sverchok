@@ -13,12 +13,13 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.mesh_structure import Mesh
+from sverchok.utils.sv_bmesh_utils import empty_bmesh
 
 
 def generate_mesh(objects: bpy.types.CollectionProperty, meshes: List[Mesh]) -> None:
+    # faster (some tests show 3 times faster, some equal speed) but can crash Blender easily
     for bl_me, me in zip((prop.obj.data for prop in objects), meshes):
-        is_topology_changed = len(bl_me.vertices) != len(me.verts) or len(bl_me.polygons) != len(me.faces)
-        if is_topology_changed:
+        if is_topology_changed(bl_me, me):
             me_edges = generate_unique_edges_from_faces(me.faces)
             me_faces = correct_faces(len(me.verts), me.faces)
             ensure_number_of_elements(bl_me, me, me_edges, me_faces)
@@ -27,6 +28,21 @@ def generate_mesh(objects: bpy.types.CollectionProperty, meshes: List[Mesh]) -> 
             update_faces(bl_me, me_faces)
         update_vertices(bl_me, me)
         bl_me.update()
+
+
+def generate_mesh2(objects: bpy.types.CollectionProperty, meshes: List[Mesh]) -> None:
+    for bl_me, me in zip((prop.obj.data for prop in objects), meshes):
+        if is_topology_changed(bl_me, me):
+            with empty_bmesh(False) as bm:
+                me.to_bmesh(bm)
+                bm.to_mesh(bl_me)
+        else:
+            update_vertices(bl_me, me)
+        bl_me.update()
+
+
+def is_topology_changed(bl_me: bpy.types.Mesh, me: Mesh) -> bool:
+    return len(bl_me.vertices) != len(me.verts) or len(bl_me.polygons) != len(me.faces)
 
 
 def ensure_number_of_elements(bl_me: bpy.types.Mesh, me: Mesh, me_edges: dict, me_faces: List[List[int]]) -> None:
@@ -159,7 +175,7 @@ class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
 
         with self.sv_throttle_tree_update():
             ensure_object_list(self.objects, [me.name for me in self.inputs['Mesh'].sv_get(deepcopy=False, default=[])])
-            generate_mesh(self.objects, self.inputs['Mesh'].sv_get(deepcopy=False, default=[]))
+            generate_mesh2(self.objects, self.inputs['Mesh'].sv_get(deepcopy=False, default=[]))
 
 
 classes = [SvViewerMeshObjectList,
