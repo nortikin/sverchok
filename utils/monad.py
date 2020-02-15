@@ -181,10 +181,14 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     bl_label = "New Socket"
 
     socket_type: EnumProperty(items=socket_types, default="SvStringsSocket")
+    kind: StringProperty(name="kind")
 
-    ...
+    def execute(self, context):
+        print('yep')
+        return {'FINISHED'}
 
-class SvNewEmptyMonad(Operator):
+
+class SvMonadNewEmpty(Operator):
     """generate a new empty monad at the mouse cursor location"""
     bl_idname = "node.sverchok_new_empty_monad"
     bl_label = "New Empty Monad"
@@ -217,8 +221,6 @@ class SvNewEmptyMonad(Operator):
         ...  # monad_make(new_monad_name)
 
     def invoke(self, context, event):
-        
-
         return context.window_manager.invoke_props_dialog(self)
 
 
@@ -715,10 +717,12 @@ classes = [
     SvGroupEdit,
     SvMonadEnter,
     SvMonadExpand,
-    SvTreePathParent,
+    SvMonadMakeUnique,
     SvMonadCreateFromSelected,
+    SvMonadNewEmpty,
+    SvTreePathParent,
     SvUpdateMonadClasses,
-    SvMonadMakeUnique
+    SvNewSocketOpExp
 ]
 
 

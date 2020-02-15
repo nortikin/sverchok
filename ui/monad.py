@@ -113,10 +113,12 @@ class SV_PT_CustomGroupInterface(Panel):
         column1.label(text='inputs')
         for i, s in enumerate(in_node.outputs):
             draw_socket_row(column1, s, i)
+        column1.operator("node.sverchok_new_socket_exp", text="New", icon="ADD").kind = "input"
 
         column2.label(text='outputs')
         for i, s in enumerate(out_node.inputs):
             draw_socket_row(column2, s, i)
+        column2.operator("node.sverchok_new_socket_exp", text="New", icon="ADD").kind = "output"
 
       
         if len(monad.instances) == 1:
