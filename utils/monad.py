@@ -184,7 +184,7 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     kind: StringProperty(name="kind")
 
     def execute(self, context):
-        print('yep')
+        print('yep', self.kind)
         return {'FINISHED'}
 
 
