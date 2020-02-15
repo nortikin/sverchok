@@ -8,12 +8,14 @@
 
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
+from typing import List
 
 
 class Mesh:
 
     def __init__(self):
-        self.name = 'Sv mesh'
+        self.name: str = 'Sv mesh'
+        self.materials: List[str] = []
 
         self._verts = Verts()
         self._edges = Edges()

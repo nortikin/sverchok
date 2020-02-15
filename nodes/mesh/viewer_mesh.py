@@ -6,8 +6,10 @@
 # License-Filename: LICENSE
 
 
+from collections import ChainMap
 from itertools import cycle, chain, count
-from typing import List, Tuple
+from typing import List, Tuple, Union, Type, Dict, Iterable
+from functools import singledispatch
 
 import bpy
 
@@ -16,7 +18,7 @@ from sverchok.core.mesh_structure import Mesh
 from sverchok.utils.sv_bmesh_utils import empty_bmesh
 
 
-def generate_mesh(objects: bpy.types.CollectionProperty, meshes: List[Mesh]) -> None:
+def generate_mesh(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh]) -> None:
     # faster (some tests show 3 times faster, some equal speed) but can crash Blender easily
     for bl_me, me in zip((prop.obj.data for prop in objects), meshes):
         if is_topology_changed(bl_me, me):
@@ -30,7 +32,7 @@ def generate_mesh(objects: bpy.types.CollectionProperty, meshes: List[Mesh]) -> 
         bl_me.update()
 
 
-def generate_mesh2(objects: bpy.types.CollectionProperty, meshes: List[Mesh]) -> None:
+def generate_mesh2(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh]) -> None:
     for bl_me, me in zip((prop.obj.data for prop in objects), meshes):
         if is_topology_changed(bl_me, me):
             with empty_bmesh(False) as bm:
@@ -109,45 +111,131 @@ def update_faces(bl_me: bpy.types.Mesh, me_faces: List[List[int]]) -> None:
             next_loop_index += len(f)
 
 
-def ensure_object_list(objects: bpy.types.CollectionProperty, names: List[str]) -> None:
-    correct_object_list_length(objects, len(names))
+BlenderDataBlocks = Union[bpy.types.Object, bpy.types.Mesh, bpy.types.Material]
+BlenderDataBlockTypes = Union[Type[bpy.types.Object], Type[bpy.types.Mesh], Type[bpy.types.Material]]
+
+
+def safe_del_object(obj: BlenderDataBlocks) -> None:
+    @singledispatch
+    def del_object(bl_obj) -> None:
+        raise TypeError(f"Such type={type(bl_obj)} is not supported")
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Object):
+        bpy.data.objects.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Mesh):
+        bpy.data.meshes.remove(bl_obj)
+
+    @del_object.register
+    def _(bl_obj: bpy.types.Material):
+        pass
+        # if bl_obj.users == 1:
+        #     bpy.data.materials.remove(bl_obj)
+
+    try:
+        del_object(obj)
+    except ReferenceError:
+        # looks like already was deleted
+        pass
+
+
+def pick_object(obj_type: BlenderDataBlockTypes, name: str, data: bpy.types.ID = None) -> bpy.types.ID:
+    def pick(bl_obj_type, _, __):
+        raise TypeError(f"Such type={bl_obj_type} is not supported")
+
+    def pick_obj(_, obj_name, mesh_data):
+        return bpy.data.objects.new(name=obj_name, object_data=mesh_data)
+
+    def pick_mesh(_, obj_name, __):
+        return bpy.data.meshes.new(name=obj_name)
+
+    def pick_mat(_, obj_name, __):
+        mat = bpy.data.materials.get(obj_name)
+        if not mat:
+            mat = bpy.data.materials.new(obj_name)
+        return mat
+
+    function_to_call = {bpy.types.Object: pick_obj, bpy.types.Mesh: pick_mesh, bpy.types.Material: pick_mat}
+    return function_to_call.get(obj_type, pick)(obj_type, name, data)
+
+
+def ensure_object_list(objects: bpy.types.bpy_prop_collection, names: List[str]) -> None:
+    # for animation mode could be implemented in faster way
+    correct_collection_length(objects, len(names))
     ensure_links_to_objects(objects, names)
-    fix_object_properties(objects, names)
+    check_data_name(objects, names)
 
 
-def correct_object_list_length(objects: bpy.types.CollectionProperty, length: int) -> None:
-    if len(objects) < length:
-        for i in range(len(objects), length):
-            objects.add()
-    elif len(objects) > length:
-        for i in range(len(objects) - 1, length - 1, -1):
-            if objects[i].obj:
-                me = objects[i].obj.data
-                bpy.data.objects.remove(objects[i].obj)
-                bpy.data.meshes.remove(me)
-            objects.remove(i)
+def ensure_material_list(collection: bpy.types.bpy_prop_collection, names: List[List[str]]) -> Dict[str, int]:
+    names = ChainMap(*[dict(zip(l, cycle([None]))) for l in names])
+    correct_collection_length(collection, len(names))
+    ensure_links_to_materials(collection, names)
+    check_data_name(collection, names, False)
+    return {prop.mat.name: i for prop, i in zip(collection, count())}
 
 
-def ensure_links_to_objects(objects: bpy.types.CollectionProperty, names: List[str]) -> None:
-    # objects can be deleted by users, so if property is exist it does not mean that it as an object
+def correct_collection_length(collection: bpy.types.bpy_prop_collection, length: int) -> None:
+    if len(collection) < length:
+        for i in range(len(collection), length):
+            collection.add()
+    elif len(collection) > length:
+        for i in range(len(collection) - 1, length - 1, -1):
+            for key, value in collection[i].items():
+                if key == 'name':
+                    continue
+                if value:
+                    safe_del_object(value)
+            collection.remove(i)
+
+
+def ensure_links_to_objects(objects: bpy.types.bpy_prop_collection, names: List[str]) -> None:
+    # objects can be deleted by users, so if property is exist it does not mean that it has an object
     for prop, name in zip(objects, names):
+        if not prop.mesh:
+            prop.mesh = pick_object(bpy.types.Mesh, name)
         if not prop.obj:
-            me = bpy.data.meshes.new(name)
-            prop.obj = bpy.data.objects.new(name=name, object_data=me)
+            prop.obj = pick_object(bpy.types.Object, name, prop.mesh)
+        try:
             bpy.context.scene.collection.objects.link(prop.obj)
+        except RuntimeError:
+            # then the object already added, it looks like more faster way to ensure object is in the scene
+            pass
 
 
-def fix_object_properties(objects: bpy.types.CollectionProperty, names: List[str]) -> None:
+def ensure_links_to_materials(collection: bpy.types.bpy_prop_collection, names: Iterable[str]) -> None:
+    for prop, name in zip(collection, names):
+        if not prop.mat or prop.mat.name != name:
+            prop.mat = pick_object(bpy.types.Material, name)
+
+
+def check_data_name(objects: bpy.types.bpy_prop_collection, names: Iterable[str], let_numbers: bool = True) -> None:
     for prop, name in zip(objects, names):
-        name_parts = prop.obj.name.rsplit('.', 1) 
-        if len(name_parts) > 2:
-            raise NameError(f"SvMesh: using dots in names is forbidden, name={prop.obj.name}")
-        elif name_parts[0] != name:
-            prop.obj.name = name
+        for data in prop.values():
+            real_name = data.name.rsplit('.', 1)[0] if let_numbers else data.name
+            if real_name != name:
+                data.name = name
+
+
+def apply_materials_to_mesh(objects: bpy.types.bpy_prop_collection,
+                            materials: bpy.types.bpy_prop_collection,
+                            meshes: List[Mesh],
+                            mat_name_obj_ind: Dict[str, int]) -> None:
+    for prop, me in zip(objects, meshes):
+        prop.mesh.materials.clear()
+        for mat_name in me.materials:
+            mat = materials[mat_name_obj_ind[mat_name]].mat
+            prop.mesh.materials.append(mat)
 
 
 class SvViewerMeshObjectList(bpy.types.PropertyGroup):
     obj: bpy.props.PointerProperty(type=bpy.types.Object)
+    mesh: bpy.props.PointerProperty(type=bpy.types.Mesh)
+
+
+class SvViewerMeshMaterials(bpy.types.PropertyGroup):
+    mat: bpy.props.PointerProperty(type=bpy.types.Material)
 
 
 class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
@@ -161,6 +249,7 @@ class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_BOOLEAN'
 
     objects: bpy.props.CollectionProperty(type=SvViewerMeshObjectList)
+    materials: bpy.props.CollectionProperty(type=SvViewerMeshMaterials)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Mesh')
@@ -174,11 +263,15 @@ class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
             return
 
         with self.sv_throttle_tree_update():
-            ensure_object_list(self.objects, [me.name for me in self.inputs['Mesh'].sv_get(deepcopy=False, default=[])])
-            generate_mesh2(self.objects, self.inputs['Mesh'].sv_get(deepcopy=False, default=[]))
+            meshes = self.inputs['Mesh'].sv_get(deepcopy=False, default=[])
+            ensure_object_list(self.objects, [me.name for me in meshes])
+            material_obj_ind = ensure_material_list(self.materials, [me.materials for me in meshes])
+            generate_mesh2(self.objects, meshes)
+            apply_materials_to_mesh(self.objects, self.materials, meshes, material_obj_ind)
 
 
 classes = [SvViewerMeshObjectList,
+           SvViewerMeshMaterials,
            SvViewerMesh]
 
 
