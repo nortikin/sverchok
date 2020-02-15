@@ -180,9 +180,46 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     bl_idname = "node.sverchok_new_socket_exp"
     bl_label = "New Socket"
 
-    socket_type: EnumProperty(items=spclet_types, default="SvStringsSocket")
+    socket_type: EnumProperty(items=socket_types, default="SvStringsSocket")
 
     ...
+
+class SvNewEmptyMonad(Operator):
+    """generate a new empty monad at the mouse cursor location"""
+    bl_idname = "node.sverchok_new_empty_monad"
+    bl_label = "New Empty Monad"
+
+    new_monad_name: StringProperty(name="new monad name")
+    mouse_xy: bpy.props.IntVectorProperty(size=2, default=(0,0), name="mouse location")
+
+    @classmethod
+    def poll(cls, context):
+        tree_type = context.space_data.tree_type
+        if tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+            return True
+
+    @staticmethod
+    def store_mouse_cursor(context, event):
+        space = context.space_data
+        tree = space.edit_tree
+
+        # convert mouse position to the View2D for later node placement
+        if context.region.type == 'WINDOW':
+            # convert mouse position to the View2D for later node placement
+            space.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+        else:
+            space.cursor_location = tree.view_center
+
+    def draw(self, context):
+        ... # draw this dialogue
+
+    def execute(self, context):
+        ...  # monad_make(new_monad_name)
+
+    def invoke(self, context, event):
+        
+
+        return context.window_manager.invoke_props_dialog(self)
 
 
 class SvGroupEdit(Operator):
