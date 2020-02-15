@@ -183,8 +183,54 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     socket_type: EnumProperty(items=socket_types, default="SvStringsSocket")
     kind: StringProperty(name="kind")
 
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        row = layout.row()
+        row.prop(self, 'socket_type', text='Socket Type')
+
     def execute(self, context):
-        print('yep', self.kind)
+        print('yep', self.kind, self.socket_type)
+
+        # this is a code duplication from the monad.py in nodes/scene/monad
+
+        if False:
+            # gather socket data
+            socket = socket_list[-1]
+            if kind == "outputs":
+                prop_name = monad.add_prop_from(socket)
+                cls = monad.update_cls()
+                new_name, new_type, prop_data = cls.input_template[-1]
+            else:
+                prop_name = ""
+                cls = monad.update_cls()
+                prop_data = {}
+                new_name, new_type = cls.output_template[-1]
+
+            # transform socket type from dummy to new type
+            new_socket = socket.replace_socket(new_type, new_name=new_name)
+            if prop_name:
+                new_socket.prop_name = prop_name
+
+            # update all monad nodes (front facing)
+            for instance in monad.instances:
+                sockets = getattr(instance, reverse_lookup[kind])
+                new_socket = sockets.new(new_type, new_name)
+                for name, value in prop_data.items():
+                    if not name == 'prop_name':
+                        setattr(new_socket, name, value)
+                    else:
+                        new_socket.prop_name = prop_name or ''
+
+            # print('------')
+            # print(prop_data)
+            # pprint.pprint(self.get_outputs_info)
+
+            # add new dangling dummy
+            socket_list.new('SvDummySocket', 'connect me')
+
         return {'FINISHED'}
 
 
