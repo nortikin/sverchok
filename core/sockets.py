@@ -66,7 +66,7 @@ class SvSocketCommon:
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
     def get_prop_name(self):
-        if self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
+        if self.node and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
             prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
             if prop_name_draft:
                 return prop_name_draft
