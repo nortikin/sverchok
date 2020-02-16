@@ -233,6 +233,11 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         socket_row = col1.row()
         socket_row.prop(self, 'socket_type', text='Socket Type', expand=True)
         col1.prop(self, 'new_prop_name')
+
+        if self.kind == "outputs":
+            # there are no other properties to configure for the output node
+            return
+
         col1.prop(self, 'new_prop_type')
 
         if self.socket_type == "SvStringsSocket":
