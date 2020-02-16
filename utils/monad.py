@@ -261,12 +261,25 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
             col1_row2_col2_r.prop(self, "enable_soft_max", text="", icon="CHECKMARK")
             col1_row2_col2_r.prop(self, soft_max)
 
-
-
         col1.prop(self, "new_prop_description")
 
     def get_prop_dict(self):
-        return False
+        empty_dict = {}
+        sig = self.new_prop_type
+        empty_dict['name'] = self.new_prop_name
+        if sig in {"Int", "Float"}:
+            empty_dict['update'] = updateNode
+            empty_dict['default'] = getattr(self, f"new_prop_{sig.lower()}_default")
+            if self.enable_min:
+                empty_dict['min'] = getattr(self, f"new_prop_{sig.lower()}_min")
+            if self.enable_max:
+                empty_dict['max'] = getattr(self, f"new_prop_{sig.lower()}_max")
+            if self.enable_soft_min:
+                empty_dict['soft_min'] = getattr(self, f"new_prop_{sig.lower()}_soft_min")
+            if self.enable_soft_max:
+                empty_dict['soft_max'] = getattr(self, f"new_prop_{sig.lower()}_soft_max")
+
+        return empty_dict
 
     def execute(self, context):
 
@@ -279,9 +292,10 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         socket_list = getattr(io_node, reverse_lookup.get(self.kind))
         socket = socket_list[-1]
 
-        # prop_dict will compose a prop_dict from the operator's properties, selected
-        # by the user. These shall be sparse representations.
+        # we'll compose a prop_dict from the user configured properties. 
+        # These shall be sparse representations.
         prop_dict = self.get_prop_dict()
+        print(prop_dict)
 
         # this is a partial code duplication from the monad.py in nodes/scene/monad
         if False:
