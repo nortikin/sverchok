@@ -24,7 +24,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
-from sverchok.data_structure import get_other_socket
+from sverchok.data_structure import get_other_socket, enum_item_4
 from sverchok.core.monad import monad_make_unique
 
 
@@ -180,8 +180,32 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     bl_idname = "node.sverchok_new_socket_exp"
     bl_label = "New Socket"
 
+    # private
+    kind: StringProperty(name="io kind")
+
+    # client
     socket_type: EnumProperty(items=socket_types, default="SvStringsSocket")
-    kind: StringProperty(name="kind")
+    new_prop_name: StringProperty(name="prop name")
+    new_prop_type: EnumProperty(name="prop type", items=enum_item_4(["Int", "Float"]), default='Int')
+    new_prop_description: StringProperty(name="description", default="lazy?")
+    
+    # no subtype. it is not worth it.
+    
+    # int specific
+    new_prop_int_default: IntProperty(default=0, name="default")
+    new_prop_int_min: IntProperty(default=-2**31, name="min")
+    new_prop_int_max: IntProperty(default=2**31-1, name="max")
+    new_prop_int_soft_min: IntProperty(default=-2**31, name="soft min")
+    new_prop_int_soft_max: IntProperty(default=2**31-1, name="soft max")
+    new_prop_int_step: IntProperty(default=1, name="step")
+    
+    # float specific
+    new_prop_float_default: IntProperty(default=0, name="default")
+    new_prop_float_min: IntProperty(default=-2**31, name="min")
+    new_prop_float_max: IntProperty(default=2**31-1, name="max")
+    new_prop_float_soft_min: IntProperty(default=-2**31, name="soft min")
+    new_prop_float_soft_max: IntProperty(default=2**31-1, name="soft max")
+    new_prop_float_step: IntProperty(default=1.0, name="step")
 
     @classmethod
     def poll(cls, context):
@@ -194,20 +218,32 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
+    def get_display_props(self):
+        prop_prefix = f"new_prop_{self.new_prop_type.lower()}_"
+        props = "default", "min", "max", "soft_min", "soft_max", "step"
+        return [(prop_prefix + prop) for prop in props]
+
     def draw(self, context):
         layout = self.layout
-        row = layout.row()
-        row.prop(self, 'socket_type', text='Socket Type')
+        col1 = layout.column()
+        col1.prop(self, 'socket_type', text='Socket Type')
+        col1.prop(self, 'new_prop_name')
+        col1.prop(self, 'new_prop_type')
+
+        if self.socket_type == "SvStringsSocket":
+            for prop in self.get_display_props():
+                col1.prop(self, prop)
+
+        col1.prop(self, "new_prop_description")
 
     def execute(self, context):
 
         monad = context.space_data.edit_tree
         io_node = monad.input_node if self.kind == 'inputs' else monad.output_node
         socket_list = getattr(io_node, self.kind)
-
-        # this is a partial code duplication from the monad.py in nodes/scene/monad
         socket = socket_list[-1]
 
+        # this is a partial code duplication from the monad.py in nodes/scene/monad
         if False:
 
             # gather socket data
