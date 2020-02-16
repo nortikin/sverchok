@@ -24,7 +24,7 @@ from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, F
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
-from sverchok.data_structure import get_other_socket, enum_item_4
+from sverchok.data_structure import updateNode, get_other_socket, enum_item_4
 from sverchok.core.monad import monad_make_unique
 
 
