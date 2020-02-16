@@ -1722,24 +1722,48 @@ def linear_approximation(data):
     return result
 
 class SphericalApproximationData(object):
+    """
+    This class contains results of approximation of
+    vertices by a sphere.
+    It's instance is returned by spherical_approximation() method.
+    """
     def __init__(self):
         self.radius = 0
         self.center = None
         self.residues = None
 
     def get_projections(self, vertices):
+        """
+        Calculate projections of vertices to the sphere.
+        """
         vertices = np.array(vertices) - self.center
         norms = np.linalg.norm(vertices, axis=1)[np.newaxis].T
         normalized = vertices / norms
         return self.radius * normalized + self.center
 
 def spherical_approximation(data):
+    """
+    Calculate best approximation of the list of vertices
+    by a sphere.
+
+    input: list of 3-tuples.
+    output. an instance of SphericalApproximationData class.
+    """
 
     data = np.array(data)
     data_x = data[:,0]
     data_y = data[:,1]
     data_z = data[:,2]
     n = len(data)
+
+    # Compose an overdetermined system of linear equations
+    # from
+    # (xi-x0)^2 + (yi-y0)^2 + (zi-z0)^2 = R^2
+    #   ||
+    #   V
+    # xi^2 + yi^2 + zi^2 = 2xi*x0 + 2yi*y0 + 2zi*z0 + R^2 - x0^2 - y0^2 - z0^2
+    #
+    # In this system, we know all xi, yi, zi, and want to find x0, y0, z0 and R^2.
 
     A = np.zeros((n, 4))
     A[:,0] = data_x * 2
@@ -1760,12 +1784,23 @@ def spherical_approximation(data):
     return result
 
 class CircleApproximationData(object):
+    """
+    This class contains results of approximation of set of vertices
+    by a circle (lying in 2D or 3D).
+    It's instances are returned form circle_approximation_2d() and
+    circle_approximation() methods.
+    The `normal` member is None for 2D approximation.
+    """
     def __init__(self):
         self.radius = 0
         self.center = None
         self.normal = None
 
     def get_matrix(self):
+        """
+        Calculate the matrix, Z axis of which is
+        parallel to the plane's normal.
+        """
         normal = Vector(self.normal)
         e1 = normal.orthogonal()
         e2 = normal.cross(e1)
@@ -1775,7 +1810,12 @@ class CircleApproximationData(object):
         return m
 
     def get_projections(self, vertices):
-        vertices = np.array(vertices)# - self.center
+        """
+        Calculate projections of vertices to the
+        circle. This method works with 3D circles only
+        (i.e., requires `normal` to be specified).
+        """
+        vertices = np.array(vertices)
         plane = PlaneEquation.from_normal_and_point(self.normal, self.center)
         projected = plane.projection_of_points(vertices)
         centered = projected - self.center
@@ -1783,11 +1823,33 @@ class CircleApproximationData(object):
         normalized = centered / norms
         return self.radius * normalized + self.center
 
-def circle_approximation_2d(data):
+def circle_approximation_2d(data, mean_is_zero=False):
+    """
+    Calculate best approximation of set of 2D vertices
+    by a 2D circle.
+
+    input: list of 2-tuples or np.array of shape (n, 2). 
+    output: an instance of CircleApproximationData class.
+    """
     data = np.array(data)
     data_x = data[:,0]
     data_y = data[:,1]
     n = len(data)
+    if mean_is_zero:
+        mean_x = 0
+        mean_y = 0
+    else:
+        mean_x = data_x.mean()
+        mean_y = data_y.mean()
+        data_x = data_x - mean_x
+        data_y = data_y - mean_y
+
+    # One can show that the solution of linear system below
+    # gives the solution to least squares problem
+    #
+    # (xi - x0)^2 + (yi - y0)2 - R^2 --> min
+    #
+    # knowing that mean(xi) == mean(yi) == 0.
 
     su2 = (data_x*data_x).sum()
     sv2 = (data_y*data_y).sum()
@@ -1809,21 +1871,33 @@ def circle_approximation_2d(data):
 
     result = CircleApproximationData()
     result.radius = sqrt(r2)
-    result.center = C[:2].T[0]
+    result.center = C[:2].T[0] + np.array([mean_x, mean_y])
     return result
 
 def circle_approximation(data):
+    """
+    Calculate best approximation of set of 3D vertices
+    by a circle lying in 3D space.
+
+    input: list of 3-tuples
+    output: an instance of CircleApproximationData class.
+    """
+    # Approximate vertices with a plane
     linear = linear_approximation(data)
     plane = linear.most_similar_plane()
     data = np.array(data)
+    # Project all vertices to the plane and shift everything to origin
     projected = plane.projection_of_points(data)
     linear_center = np.array(linear.center)
     centered = projected - linear_center
+    # Map all vertices onto plane Z == 0
     e1, e2 = plane.two_vectors()
     e1, e2 = e1.normalized(), e2.normalized()
     matrix = np.array([e1, e2, plane.normal])
     on_plane = np.apply_along_axis(lambda v: matrix @ v, 1, centered)# All vectors here have Z == 0
-    circle_2d = circle_approximation_2d(on_plane[:,0:2])
+    # Calculate circluar approximation in 2D
+    circle_2d = circle_approximation_2d(on_plane[:,0:2], mean_is_zero=True)
+    # Map the center back into 3D space
     matrix_inv = np.linalg.inv(matrix)
 
     result = CircleApproximationData()
