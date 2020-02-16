@@ -20,7 +20,7 @@ import sys
 
 import bpy
 from bpy.types import Operator
-from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
+from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatProperty
 
 
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
@@ -200,12 +200,12 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     new_prop_int_step: IntProperty(default=1, name="step")
     
     # float specific
-    new_prop_float_default: IntProperty(default=0, name="default")
-    new_prop_float_min: IntProperty(default=-2**31, name="min")
-    new_prop_float_max: IntProperty(default=2**31-1, name="max")
-    new_prop_float_soft_min: IntProperty(default=-2**31, name="soft min")
-    new_prop_float_soft_max: IntProperty(default=2**31-1, name="soft max")
-    new_prop_float_step: IntProperty(default=1.0, name="step")
+    new_prop_float_default: FloatProperty(default=0, name="default")
+    new_prop_float_min: FloatProperty(default=-2**31, name="min")
+    new_prop_float_max: FloatProperty(default=2**31-1, name="max")
+    new_prop_float_soft_min: FloatProperty(default=-2**31, name="soft min")
+    new_prop_float_soft_max: FloatProperty(default=2**31-1, name="soft max")
+    new_prop_float_step: FloatProperty(default=1.0, name="step")
 
     @classmethod
     def poll(cls, context):
@@ -240,7 +240,11 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
 
         monad = context.space_data.edit_tree
         io_node = monad.input_node if self.kind == 'inputs' else monad.output_node
-        socket_list = getattr(io_node, self.kind)
+
+        # if we want to add a socket to the inputs node, we must update that node's output sokets.
+        # because the output sockets are the sockets that feed data into the monad tree. This is
+        # why the reverse lookup is used.
+        socket_list = getattr(io_node, reverse_lookup.get(self.kind))
         socket = socket_list[-1]
 
         # this is a partial code duplication from the monad.py in nodes/scene/monad
