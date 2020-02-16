@@ -190,6 +190,10 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     new_prop_description: StringProperty(name="description", default="lazy?")
     
     # no subtype. it is not worth it.
+    enable_min: BoolProperty(default=False, name="enable min")
+    enable_max: BoolProperty(default=False, name="enable max")
+    enable_soft_min: BoolProperty(default=False, name="enable soft min")
+    enable_soft_max: BoolProperty(default=False, name="enable soft max")
     
     # int specific
     new_prop_int_default: IntProperty(default=0, name="default")
@@ -226,15 +230,43 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     def draw(self, context):
         layout = self.layout
         col1 = layout.column()
-        col1.prop(self, 'socket_type', text='Socket Type')
+        socket_row = col1.row()
+        socket_row.prop(self, 'socket_type', text='Socket Type', expand=True)
         col1.prop(self, 'new_prop_name')
         col1.prop(self, 'new_prop_type')
 
         if self.socket_type == "SvStringsSocket":
-            for prop in self.get_display_props():
-                col1.prop(self, prop)
+            default, min, max, soft_min, soft_max, step = self.get_display_props()
+            col1.prop(self, default, text="default")
+
+            # enable min / max
+            col1_row1 = col1.row(align=True)
+            col1_row1_col1_r = col1_row1.column().row(align=True)
+            col1_row1_col1_r.active = self.enable_min
+            col1_row1_col1_r.prop(self, "enable_min", text="", icon="CHECKMARK")
+            col1_row1_col1_r.prop(self, min)
+            col1_row1_col2_r = col1_row1.column().row(align=True)
+            col1_row1_col2_r.active = self.enable_max
+            col1_row1_col2_r.prop(self, "enable_max", text="", icon="CHECKMARK")
+            col1_row1_col2_r.prop(self, max)
+
+            # enable soft min / max
+            col1_row2 = col1.row(align=True)
+            col1_row2_col1_r = col1_row2.column().row(align=True)
+            col1_row2_col1_r.active = self.enable_soft_min
+            col1_row2_col1_r.prop(self, "enable_soft_min", text="", icon="CHECKMARK")
+            col1_row2_col1_r.prop(self, soft_min)
+            col1_row2_col2_r = col1_row2.column().row(align=True)
+            col1_row2_col2_r.active = self.enable_soft_max
+            col1_row2_col2_r.prop(self, "enable_soft_max", text="", icon="CHECKMARK")
+            col1_row2_col2_r.prop(self, soft_max)
+
+
 
         col1.prop(self, "new_prop_description")
+
+    def get_prop_dict(self):
+        return False
 
     def execute(self, context):
 
@@ -247,11 +279,15 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         socket_list = getattr(io_node, reverse_lookup.get(self.kind))
         socket = socket_list[-1]
 
+        # prop_dict will compose a prop_dict from the operator's properties, selected
+        # by the user. These shall be sparse representations.
+        prop_dict = self.get_prop_dict()
+
         # this is a partial code duplication from the monad.py in nodes/scene/monad
         if False:
 
             # gather socket data
-            if kind == "outputs":
+            if self.kind == reverse_lookup.get("outputs"):
                 prop_name = monad.add_prop_from(socket)
                 cls = monad.update_cls()
                 new_name, new_type, prop_data = cls.input_template[-1]
