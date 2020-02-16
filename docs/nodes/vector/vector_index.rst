@@ -26,6 +26,8 @@ Vector
    variable_lacunarity
    turbulence
    linear_approx
+   circle_approx
+   sphere_approx
    color_input
    color_in_mk1
    color_out_mk1
