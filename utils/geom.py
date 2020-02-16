@@ -21,8 +21,7 @@ None of this file is in a working condition. skip this file.
 
 Eventual purpose of this file is to store the convenience functions which
 can be used for regular nodes or as part of recipes for script nodes. These
-functions will initially be sub optimal quick implementations, then optimized
-only for speed, never for aesthetics or line count or cleverness.
+functions will initially be sub optimal quick implementations, then optimized only for speed, never for aesthetics or line count or cleverness.
 
 '''
 
@@ -1720,6 +1719,44 @@ def linear_approximation(data):
         ])
     
     result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
+    return result
+
+class SphericalApproximationData(object):
+    def __init__(self):
+        self.radius = 0
+        self.center = None
+        self.residues = None
+
+    def get_projections(self, vertices):
+        vertices = np.array(vertices) - self.center
+        norms = np.linalg.norm(vertices, axis=1)[np.newaxis].T
+        normalized = vertices / norms
+        return self.radius * normalized + self.center
+
+def spherical_approximation(data):
+
+    data = np.array(data)
+    data_x = data[:,0]
+    data_y = data[:,1]
+    data_z = data[:,2]
+    n = len(data)
+
+    A = np.zeros((n, 4))
+    A[:,0] = data_x * 2
+    A[:,1] = data_y * 2
+    A[:,2] = data_z * 2
+    A[:,3] = 1
+
+    f = np.zeros((n, 1))
+    f[:,0] = (data_x * data_x) + (data_y * data_y) + (data_z * data_z)
+
+    C, residues, rank, singval = np.linalg.lstsq(A, f)
+    r2 = (C[0]*C[0]) + (C[1]*C[1]) + (C[2]*C[2]) + C[3]
+
+    result = SphericalApproximationData()
+    result.radius = sqrt(r2)
+    result.center = C[:3].T[0]
+    result.residues = residues
     return result
 
 def multiply_vectors(M, vlist):
