@@ -1759,6 +1759,80 @@ def spherical_approximation(data):
     result.residues = residues
     return result
 
+class CircleApproximationData(object):
+    def __init__(self):
+        self.radius = 0
+        self.center = None
+        self.normal = None
+
+    def get_matrix(self):
+        normal = Vector(self.normal)
+        e1 = normal.orthogonal()
+        e2 = normal.cross(e1)
+        e1, e2 = e1.normalized(), e2.normalized()
+        m = Matrix([e1, e2, normal]).inverted().to_4x4()
+        m.translation = Vector(self.center)
+        return m
+
+    def get_projections(self, vertices):
+        vertices = np.array(vertices)# - self.center
+        plane = PlaneEquation.from_normal_and_point(self.normal, self.center)
+        projected = plane.projection_of_points(vertices)
+        centered = projected - self.center
+        norms = np.linalg.norm(centered, axis=1)[np.newaxis].T
+        normalized = centered / norms
+        return self.radius * normalized + self.center
+
+def circle_approximation_2d(data):
+    data = np.array(data)
+    data_x = data[:,0]
+    data_y = data[:,1]
+    n = len(data)
+
+    su2 = (data_x*data_x).sum()
+    sv2 = (data_y*data_y).sum()
+    su3 = (data_x*data_x*data_x).sum()
+    sv3 = (data_y*data_y*data_y).sum()
+    suv = (data_x*data_y).sum()
+    suvv = (data_x*data_y*data_y).sum()
+    svuu = (data_y*data_x*data_x).sum()
+
+    A = np.array([
+            [su2, suv],
+            [suv, sv2]
+        ])
+
+    B = np.array([[(su3 + suvv)/2.0], [(sv3 + svuu)/2.0]])
+
+    C = np.linalg.solve(A, B)
+    r2 = (C[0]*C[0]) + (C[1]*C[1]) + (su2 + sv2)/n
+
+    result = CircleApproximationData()
+    result.radius = sqrt(r2)
+    result.center = C[:2].T[0]
+    return result
+
+def circle_approximation(data):
+    linear = linear_approximation(data)
+    plane = linear.most_similar_plane()
+    data = np.array(data)
+    projected = plane.projection_of_points(data)
+    linear_center = np.array(linear.center)
+    centered = projected - linear_center
+    e1, e2 = plane.two_vectors()
+    e1, e2 = e1.normalized(), e2.normalized()
+    matrix = np.array([e1, e2, plane.normal])
+    on_plane = np.apply_along_axis(lambda v: matrix @ v, 1, centered)# All vectors here have Z == 0
+    circle_2d = circle_approximation_2d(on_plane[:,0:2])
+    matrix_inv = np.linalg.inv(matrix)
+
+    result = CircleApproximationData()
+    result.radius = circle_2d.radius
+    center = np.array((circle_2d.center[0], circle_2d.center[1], 0))
+    result.center = np.matmul(matrix_inv, center) + linear_center
+    result.normal = plane.normal
+    return result
+
 def multiply_vectors(M, vlist):
     # (4*4 matrix)  X   (3*1 vector)
 
