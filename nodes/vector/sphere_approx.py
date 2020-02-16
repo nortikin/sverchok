@@ -33,7 +33,7 @@ class SvSphereApproxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSphereApproxNode'
     bl_label = 'Sphere Fit'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_LINEAR_APPROXIMATION'
+    sv_icon = 'SV_SPHERE_FIT'
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
