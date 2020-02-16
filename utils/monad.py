@@ -183,6 +183,14 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
     socket_type: EnumProperty(items=socket_types, default="SvStringsSocket")
     kind: StringProperty(name="kind")
 
+    @classmethod
+    def poll(cls, context):
+        try:
+            if context.space_data.edit_tree.bl_idname == 'SverchGroupTreeType':
+                return not context.space_data.edit_tree.library
+        except:
+            return False
+
     def invoke(self, context, event):
         return context.window_manager.invoke_props_dialog(self)
 
@@ -192,13 +200,17 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         row.prop(self, 'socket_type', text='Socket Type')
 
     def execute(self, context):
-        print('yep', self.kind, self.socket_type)
 
-        # this is a code duplication from the monad.py in nodes/scene/monad
+        monad = context.space_data.edit_tree
+        io_node = monad.input_node if self.kind == 'inputs' else monad.output_node
+        socket_list = getattr(io_node, self.kind)
+
+        # this is a partial code duplication from the monad.py in nodes/scene/monad
+        socket = socket_list[-1]
 
         if False:
+
             # gather socket data
-            socket = socket_list[-1]
             if kind == "outputs":
                 prop_name = monad.add_prop_from(socket)
                 cls = monad.update_cls()
@@ -224,9 +236,6 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
                     else:
                         new_socket.prop_name = prop_name or ''
 
-            # print('------')
-            # print(prop_data)
-            # pprint.pprint(self.get_outputs_info)
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
