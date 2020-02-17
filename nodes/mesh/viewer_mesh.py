@@ -11,10 +11,11 @@ from itertools import cycle, chain, count
 from typing import List, Tuple, Union, Type, Dict, Iterable
 from functools import singledispatch
 
+import numpy as np
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.mesh_structure import Mesh
+from sverchok.core.mesh_structure import Mesh, Verts, Edges, Faces, Loops
 from sverchok.utils.sv_bmesh_utils import empty_bmesh
 
 
@@ -141,24 +142,22 @@ def safe_del_object(obj: BlenderDataBlocks) -> None:
         pass
 
 
-def pick_object(obj_type: BlenderDataBlockTypes, name: str, data: bpy.types.ID = None) -> bpy.types.ID:
-    def pick(bl_obj_type, _, __):
-        raise TypeError(f"Such type={bl_obj_type} is not supported")
+def pick_data_block_from_collection(collection: bpy.types.bpy_prop_collection, block_name: str, new: bool = True):
+    block = None
+    if not new:
+        block = collection.get(block_name)
+    if not block:
+        block = collection.new(name=block_name)
+    return block
 
-    def pick_obj(_, obj_name, mesh_data):
-        return bpy.data.objects.new(name=obj_name, object_data=mesh_data)
 
-    def pick_mesh(_, obj_name, __):
-        return bpy.data.meshes.new(name=obj_name)
-
-    def pick_mat(_, obj_name, __):
-        mat = bpy.data.materials.get(obj_name)
-        if not mat:
-            mat = bpy.data.materials.new(obj_name)
-        return mat
-
-    function_to_call = {bpy.types.Object: pick_obj, bpy.types.Mesh: pick_mesh, bpy.types.Material: pick_mat}
-    return function_to_call.get(obj_type, pick)(obj_type, name, data)
+def pick_object(obj_name: str, mesh: bpy.types.Mesh, new: bool = True):
+    block = None
+    if not new:
+        block = bpy.data.objects.get(obj_name)
+    if not block:
+        block = bpy.data.objects.new(name=obj_name, object_data=mesh)
+    return block
 
 
 def ensure_object_list(objects: bpy.types.bpy_prop_collection, names: List[str]) -> None:
@@ -194,9 +193,9 @@ def ensure_links_to_objects(objects: bpy.types.bpy_prop_collection, names: List[
     # objects can be deleted by users, so if property is exist it does not mean that it has an object
     for prop, name in zip(objects, names):
         if not prop.mesh:
-            prop.mesh = pick_object(bpy.types.Mesh, name)
+            prop.mesh = pick_data_block_from_collection(bpy.data.meshes, name, True)
         if not prop.obj:
-            prop.obj = pick_object(bpy.types.Object, name, prop.mesh)
+            prop.obj = pick_object(name, prop.mesh, True)
         try:
             bpy.context.scene.collection.objects.link(prop.obj)
         except RuntimeError:
@@ -207,7 +206,7 @@ def ensure_links_to_objects(objects: bpy.types.bpy_prop_collection, names: List[
 def ensure_links_to_materials(collection: bpy.types.bpy_prop_collection, names: Iterable[str]) -> None:
     for prop, name in zip(collection, names):
         if not prop.mat or prop.mat.name != name:
-            prop.mat = pick_object(bpy.types.Material, name)
+            prop.mat = pick_data_block_from_collection(bpy.data.materials, name, False)
 
 
 def check_data_name(objects: bpy.types.bpy_prop_collection, names: Iterable[str], let_numbers: bool = True) -> None:
@@ -227,6 +226,60 @@ def apply_materials_to_mesh(objects: bpy.types.bpy_prop_collection,
         for mat_name in me.materials:
             mat = materials[mat_name_obj_ind[mat_name]].mat
             prop.mesh.materials.append(mat)
+
+
+def set_vertex_color(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh]):
+    for bm_me, me in zip((prop.mesh for prop in objects), meshes):
+        loop_colors = get_loop_colors(me)
+        if np.any(loop_colors):
+            col_layer = pick_data_block_from_collection(bm_me.vertex_colors, 'SvCol', False)
+            col_layer.data.foreach_set('color', loop_colors)
+
+
+def get_loop_colors(me: Mesh) -> np.ndarray:
+    @singledispatch
+    def loop_colors(elem, _, __):
+        raise TypeError(f"Such type={type(elem)} of mesh elements does not supported")
+
+    @loop_colors.register
+    def _(loops: Loops, np_colors: np.ndarray, _):
+        for i, col in zip(range(len(np_colors)), chain.from_iterable(loops.vertex_colors)):
+            np_colors[i] = col
+        return np_colors
+
+    @loop_colors.register
+    def _(verts: Verts, np_colors: np.ndarray, mesh: Mesh):
+        for i, col in zip(range(len(np_colors)), chain.from_iterable([verts.vertex_colors[i] for i in mesh.loops])):
+            np_colors[i] = col
+        return np_colors
+
+    @loop_colors.register
+    def _(mesh: Mesh, np_colors: np.ndarray, _):
+        for i, col in zip(range(len(np_colors)), cycle(mesh.vertex_colors)):
+            np_colors[i] = col
+        return np_colors
+
+    @loop_colors.register
+    def _(faces: Faces, np_colors: np.ndarray, mesh: Mesh):
+        for i, col in zip(range(len(np_colors)), chain.from_iterable([faces.vertex_colors[i] for i, f in enumerate(faces) for fi in f])):
+            np_colors[i] = col
+        return np_colors
+
+    elements = None
+    if me.loops.vertex_colors:
+        elements = me.loops
+    elif me.verts.vertex_colors:
+        elements = me.verts
+    elif me.faces.vertex_colors:
+        elements = me.faces
+    elif me.vertex_colors:
+        elements = me
+
+    if elements:
+        colors = np.zeros((len(me.loops) * 4), dtype=float)
+        return loop_colors(elements, colors, me)
+    else:
+        return []
 
 
 class SvViewerMeshObjectList(bpy.types.PropertyGroup):
@@ -268,6 +321,7 @@ class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
             material_obj_ind = ensure_material_list(self.materials, [me.materials for me in meshes])
             generate_mesh2(self.objects, meshes)
             apply_materials_to_mesh(self.objects, self.materials, meshes, material_obj_ind)
+            set_vertex_color(self.objects, meshes)
 
 
 classes = [SvViewerMeshObjectList,
