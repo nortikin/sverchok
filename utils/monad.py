@@ -313,7 +313,7 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
 
             if self.kind == "inputs":
                 # -- adding an output socket to the input node
-                prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type)
+                prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type, socket)
                 cls = monad.update_cls()
                 new_name, new_type, prop_data = cls.input_template[-1]
 
@@ -321,8 +321,6 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
                 # -- adding an input socket to the output node
                 cls = monad.update_cls()
                 new_name, new_type = cls.output_template[-1]
-
-            #    BELOW DOESNT WORK
 
             # transform socket type from dummy to new type
             new_socket = socket.replace_socket(new_type, new_name=new_name)
@@ -338,7 +336,6 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
                         setattr(new_socket, name, value)
                     else:
                         new_socket.prop_name = prop_name or ''
-
 
             # add new dangling dummy
             socket_list.new('SvDummySocket', 'connect me')
