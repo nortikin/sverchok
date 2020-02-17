@@ -303,26 +303,26 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         socket_list = getattr(io_node, socket_kind_to_add)
         socket = socket_list[-1]
 
-        # we'll compose a prop_dict from the user configured properties. 
-        # These shall be sparse representations.
+        # we'll compose a (sparse) prop_dict from the user configured properties. 
         prop_dict = self.get_prop_dict()
-        print(prop_dict)
+        prop_name = ""
+        prop_data = {}
 
         # this is a partial code duplication from the monad.py in nodes/scene/monad
         if False:
 
-            # gather socket data
-            if self.kind == reverse_lookup.get("outputs"):
-                
-                prop_name = monad.add_prop_from(socket)
+            if self.kind == "inputs":
+                # -- adding an output socket to the input node
+                prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type)
                 cls = monad.update_cls()
                 new_name, new_type, prop_data = cls.input_template[-1]
+
             else:
-                # adding to the input socket of output-into-parent-tree node
-                prop_name = ""
+                # -- adding an input socket to the output node
                 cls = monad.update_cls()
-                prop_data = {}
                 new_name, new_type = cls.output_template[-1]
+
+            #    BELOW DOESNT WORK
 
             # transform socket type from dummy to new type
             new_socket = socket.replace_socket(new_type, new_name=new_name)

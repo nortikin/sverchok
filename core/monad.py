@@ -225,6 +225,26 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return None
 
+    def add_prop_from_dict(self, prop_dict, new_prop_type):
+        cls = get_node_class_reference(self.cls_bl_idname)
+        cls_dict = cls.__dict__ if cls else {}
+
+        if new_prop_type == "Float":
+            prop_settings = self.float_props.add()
+        elif new_prop_type == "Int":
+            prop_settings = self.int_props.add()
+        else:
+            return None
+
+        # below does nt work yet
+        new_name = generate_name(prop_name, cls_dict)
+        prop_settings.prop_name = new_name
+        prop_settings.set_settings(prop_dict)
+        socket.prop_name = new_name
+        return new_name
+
+
+
     def get_all_props(self):
         """
         return a dict with all data needed to setup monad
