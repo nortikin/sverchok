@@ -309,36 +309,34 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         prop_data = {}
 
         # this is a partial code duplication from the monad.py in nodes/scene/monad
-        if False:
+        if self.kind == "inputs":
+            # -- adding an output socket to the input node
+            prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type, socket)
+            cls = monad.update_cls()
+            new_name, new_type, prop_data = cls.input_template[-1]
 
-            if self.kind == "inputs":
-                # -- adding an output socket to the input node
-                prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type, socket)
-                cls = monad.update_cls()
-                new_name, new_type, prop_data = cls.input_template[-1]
+        else:
+            # -- adding an input socket to the output node
+            cls = monad.update_cls()
+            new_name, new_type = cls.output_template[-1]
 
-            else:
-                # -- adding an input socket to the output node
-                cls = monad.update_cls()
-                new_name, new_type = cls.output_template[-1]
+        # transform socket type from dummy to new type
+        new_socket = socket.replace_socket(new_type, new_name=new_name)
+        if prop_name:
+            new_socket.prop_name = prop_name
 
-            # transform socket type from dummy to new type
-            new_socket = socket.replace_socket(new_type, new_name=new_name)
-            if prop_name:
-                new_socket.prop_name = prop_name
+        # update all monad nodes (front facing)
+        for instance in monad.instances:
+            sockets = getattr(instance, reverse_lookup[self.kind])
+            new_socket = sockets.new(new_type, new_name)
+            for name, value in prop_data.items():
+                if not name == 'prop_name':
+                    setattr(new_socket, name, value)
+                else:
+                    new_socket.prop_name = prop_name or ''
 
-            # update all monad nodes (front facing)
-            for instance in monad.instances:
-                sockets = getattr(instance, reverse_lookup[kind])
-                new_socket = sockets.new(new_type, new_name)
-                for name, value in prop_data.items():
-                    if not name == 'prop_name':
-                        setattr(new_socket, name, value)
-                    else:
-                        new_socket.prop_name = prop_name or ''
-
-            # add new dangling dummy
-            socket_list.new('SvDummySocket', 'connect me')
+        # add new dangling dummy is done automatically in the monad cycle code.
+        # socket_list.new('SvDummySocket', 'connect me')
 
         return {'FINISHED'}
 
