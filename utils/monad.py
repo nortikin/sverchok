@@ -235,7 +235,7 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         col1.prop(self, 'new_prop_name')
 
         if self.kind == "outputs":
-            # there are no other properties to configure for the output node
+            # there are no other properties to configure for the <output node>
             return
 
         col1.prop(self, 'new_prop_type')
@@ -245,26 +245,26 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
             col1.prop(self, default, text="default")
 
             # enable min / max
-            col1_row1 = col1.row(align=True)
-            col1_row1_col1_r = col1_row1.column().row(align=True)
-            col1_row1_col1_r.active = self.enable_min
-            col1_row1_col1_r.prop(self, "enable_min", text="", icon="CHECKMARK")
-            col1_row1_col1_r.prop(self, min)
-            col1_row1_col2_r = col1_row1.column().row(align=True)
-            col1_row1_col2_r.active = self.enable_max
-            col1_row1_col2_r.prop(self, "enable_max", text="", icon="CHECKMARK")
-            col1_row1_col2_r.prop(self, max)
+            row1 = col1.row(align=True)
+            row1_col1_r = row1.column().row(align=True)
+            row1_col1_r.active = self.enable_min
+            row1_col1_r.prop(self, "enable_min", text="", icon="CHECKMARK")
+            row1_col1_r.prop(self, min)
+            row1_col2_r = row1.column().row(align=True)
+            row1_col2_r.active = self.enable_max
+            row1_col2_r.prop(self, "enable_max", text="", icon="CHECKMARK")
+            row1_col2_r.prop(self, max)
 
             # enable soft min / max
-            col1_row2 = col1.row(align=True)
-            col1_row2_col1_r = col1_row2.column().row(align=True)
-            col1_row2_col1_r.active = self.enable_soft_min
-            col1_row2_col1_r.prop(self, "enable_soft_min", text="", icon="CHECKMARK")
-            col1_row2_col1_r.prop(self, soft_min)
-            col1_row2_col2_r = col1_row2.column().row(align=True)
-            col1_row2_col2_r.active = self.enable_soft_max
-            col1_row2_col2_r.prop(self, "enable_soft_max", text="", icon="CHECKMARK")
-            col1_row2_col2_r.prop(self, soft_max)
+            row2 = col1.row(align=True)
+            row2_col1_r = row2.column().row(align=True)
+            row2_col1_r.active = self.enable_soft_min
+            row2_col1_r.prop(self, "enable_soft_min", text="", icon="CHECKMARK")
+            row2_col1_r.prop(self, soft_min)
+            row2_col2_r = row2.column().row(align=True)
+            row2_col2_r.active = self.enable_soft_max
+            row2_col2_r.prop(self, "enable_soft_max", text="", icon="CHECKMARK")
+            row2_col2_r.prop(self, soft_max)
 
         col1.prop(self, "new_prop_description")
 
@@ -272,6 +272,11 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         empty_dict = {}
         sig = self.new_prop_type
         empty_dict['name'] = self.new_prop_name
+
+        if self.kind == 'outputs':
+            # we do not set the slider on the <output node> sockets
+            return {}
+
         if sig in {"Int", "Float"}:
             empty_dict['update'] = updateNode
             empty_dict['default'] = getattr(self, f"new_prop_{sig.lower()}_default")
@@ -294,7 +299,8 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         # if we want to add a socket to the inputs node, we must update that node's output sokets.
         # because the output sockets are the sockets that feed data into the monad tree. This is
         # why the reverse lookup is used.
-        socket_list = getattr(io_node, reverse_lookup.get(self.kind))
+        socket_kind_to_add = reverse_lookup.get(self.kind)
+        socket_list = getattr(io_node, socket_kind_to_add)
         socket = socket_list[-1]
 
         # we'll compose a prop_dict from the user configured properties. 
@@ -307,10 +313,12 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
 
             # gather socket data
             if self.kind == reverse_lookup.get("outputs"):
+                
                 prop_name = monad.add_prop_from(socket)
                 cls = monad.update_cls()
                 new_name, new_type, prop_data = cls.input_template[-1]
             else:
+                # adding to the input socket of output-into-parent-tree node
                 prop_name = ""
                 cls = monad.update_cls()
                 prop_data = {}
