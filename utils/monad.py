@@ -269,27 +269,24 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         col1.prop(self, "new_prop_description")
 
     def get_prop_dict(self):
-        empty_dict = {}
-        sig = self.new_prop_type
-        empty_dict['name'] = self.new_prop_name
+        prop_dict = {}
+        prop_dict['name'] = self.new_prop_name
 
+        # we do not set the slider on the <output node> sockets
         if self.kind == 'outputs':
-            # we do not set the slider on the <output node> sockets
             return {}
 
-        if sig in {"Int", "Float"}:
-            empty_dict['update'] = updateNode
-            empty_dict['default'] = getattr(self, f"new_prop_{sig.lower()}_default")
-            if self.enable_min:
-                empty_dict['min'] = getattr(self, f"new_prop_{sig.lower()}_min")
-            if self.enable_max:
-                empty_dict['max'] = getattr(self, f"new_prop_{sig.lower()}_max")
-            if self.enable_soft_min:
-                empty_dict['soft_min'] = getattr(self, f"new_prop_{sig.lower()}_soft_min")
-            if self.enable_soft_max:
-                empty_dict['soft_max'] = getattr(self, f"new_prop_{sig.lower()}_soft_max")
+        sig = self.new_prop_type.lower()
+        if sig in {"int", "float"}:
+            prop_dict['update'] = updateNode
+            prop_dict['default'] = getattr(self, f"new_prop_{sig}_default")
 
-        return empty_dict
+            properties = 'min max soft_min soft_max'.split()
+            for prop in properties:
+                if getattr(self, f"enable_{prop}"):
+                    prop_dict[prop] = getattr(self, f"new_prop_{sig}_{prop}")
+
+        return prop_dict
 
     def execute(self, context):
 
@@ -307,6 +304,8 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         prop_dict = self.get_prop_dict()
         prop_name = ""
         prop_data = {}
+
+        print(prop_dict)
 
         # this is a partial code duplication from the monad.py in nodes/scene/monad
         if self.kind == "inputs":
