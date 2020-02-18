@@ -36,6 +36,7 @@ In the N-Panel (and on the right-click menu) you can find:
 
 **Match List Local**: Define how list with different lengths should be matched. Refers to the matching inside groups (level 2)
 
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). Available for Vertices, Edges and Pols
 
 Outputs
 -------

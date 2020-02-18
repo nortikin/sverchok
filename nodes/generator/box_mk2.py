@@ -15,17 +15,14 @@
 #  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 #
 # ##### END GPL LICENSE BLOCK #####
-from math import pi
-import bpy
-from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
-import bmesh
-from mathutils import Matrix
 
+import bpy
+from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolVectorProperty
+from mathutils import Matrix
+import numpy as np
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
-from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-from sverchok.utils.sv_mesh_utils import mesh_join
 
 def extend_lists(data, result):
     for d, r in zip(data, result):
@@ -35,23 +32,223 @@ def append_lists(data, result):
     for d, r in zip(data, result):
         r.append(d)
 
-def simple_box(b):
-    verts = [
-        [b, b, -b], [b, -b, -b], [-b, -b, -b],
-        [-b, b, -b], [b, b, b], [b, -b, b],
-        [-b, -b, b], [-b, b, b]
-    ]
+def mesh_join_np(verts, edges, pols):
+    lens = [0]
+    for v in verts:
+        lens.append(lens[-1]+v.shape[0])
 
-    faces = [[0, 1, 2, 3], [4, 7, 6, 5],
-             [0, 4, 5, 1], [1, 5, 6, 2],
-             [2, 6, 7, 3], [4, 0, 3, 7]]
+    v = np.concatenate(verts)
+    e, p = np.array([]), np.array([])
 
-    edges = [[0, 4], [4, 5], [5, 1], [1, 0],
-             [5, 6], [6, 2], [2, 1], [6, 7],
-             [7, 3], [3, 2], [7, 4], [0, 3]]
+    if len(edges[0]) > 0:
+        e = np.concatenate([edg + l for edg, l in zip(edges, lens)])
+    if len(pols[0]) > 0:
+        p = np.concatenate([pol + l for pol, l in zip(pols, lens)])
+    return v, e, p
 
+def numpy_check(data, bool_list):
+    print(bool_list, data[0])
+    return [lg if b else [l.tolist() for l in lg] for lg, b in zip(data, bool_list)]
+
+def matrix_apply_np(verts, matrix):
+    '''taken from https://blender.stackexchange.com/a/139517'''
+
+    verts_co_4d = np.ones(shape=(verts.shape[0], 4), dtype=np.float)
+    verts_co_4d[:, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
+    return np.einsum('ij,aj->ai', matrix, verts_co_4d)[:, :-1]
+
+def numpy_cube(params, origin, flags):
+    '''
+    based on zeffii inplementation at
+    https://github.com/nortikin/sverchok/pull/2876#issuecomment-584556422
+    '''
+    size, divx, divy, divz, matrix = params
+    get_verts, get_edges, get_faces = flags
+    verts, edges, faces = [np.array([[]]) for i in range(3)]
+    if get_verts:
+        verts = make_verts(size, divx+1, divy+1, divz+1, matrix, origin)
+    if get_edges or get_faces:
+        edges, faces = make_edg_pol(divx+1, divy+1, divz+1, flags)
     return verts, edges, faces
 
+def make_verts(size, x_verts, y_verts, z_verts, matrix, origin):
+    '''creates cube verts, first vertical faces as a roll and after the bottom and top caps'''
+    size_h = size/2
+    if origin == 'CENTER':
+        offset = [0, 0, 0]
+    elif origin == 'BOTTOM':
+        offset = [0, 0, size_h]
+    else:
+        offset = [size_h, size_h, size_h]
+
+    sidex = np.linspace(-size_h + offset[0], size_h + offset[0], x_verts)
+    sidey = np.linspace(-size_h + offset[1], size_h + offset[1], y_verts)
+    sidez = np.linspace(-size_h + offset[2], size_h + offset[2], z_verts)
+
+    z_spread = 2 * x_verts+ 2 * y_verts - 4
+
+    roll = np.zeros((z_spread * z_verts, 3))
+    row_id = np.arange(z_spread * z_verts) % z_spread
+
+    plane_y1 = row_id < y_verts
+    plane_x1 = np.all((y_verts-2 < row_id, row_id < y_verts + x_verts-1), axis=0)
+    plane_y2 = np.all((y_verts + x_verts - 3 < row_id, row_id < z_spread - x_verts + 2), axis=0)
+    plane_x2 = row_id > z_spread - x_verts + 1
+
+    roll[:, 2] = np.repeat(sidez, z_spread)
+    roll[plane_y1, 0] = sidex[0]
+    roll[plane_y1, 1] = np.repeat(sidey, z_verts).reshape(-1, z_verts).T.flat
+
+    roll[plane_x1, 0] = np.repeat(sidex, z_verts).reshape(-1, z_verts).T.flat
+    roll[plane_x1, 1] = sidey[-1]
+
+    roll[plane_y2, 0] = sidex[-1]
+    roll[plane_y2, 1] = np.repeat(np.flip(sidey), z_verts).reshape(-1, z_verts).T.flat
+
+    roll[plane_x2, 1] = sidey[0]
+    roll[plane_x2, 0] = np.repeat(np.flip(sidex[1:-1]), z_verts).reshape(-1, z_verts).T.flat
+
+
+    x_coords, y_coords = np.meshgrid(sidex[1:-1], sidey[1:-1], sparse=False, indexing='xy')
+    z_coords = np.full(x_coords.shape, -size_h + offset[2])
+    bottom = np.array([x_coords, y_coords, z_coords]).T.reshape(-1, 3)
+    top = np.array([x_coords, y_coords, z_coords + size]).T.reshape(-1, 3)
+
+
+    if not matrix == Matrix():
+        return matrix_apply_np(np.concatenate([roll, bottom, top]), matrix)
+
+    return np.concatenate([roll, bottom, top])
+
+def create_cap_grid(outside, inside, x_verts, y_verts, num_iplanar):
+    '''creates the bottom or top indices grid'''
+    opposite = y_verts + (x_verts-2)
+    if y_verts < 3:
+        plane_grid = np.empty((x_verts, y_verts), 'i')
+        plane_grid[0, :] = outside[0:y_verts]
+        plane_grid[1:-1, 0] = np.flip(outside[x_verts+2:])
+        plane_grid[1:-1, -1] = outside[2:x_verts]
+        plane_grid[-1, :] = outside[opposite:opposite+y_verts][::-1]
+
+    else:
+        stride = y_verts-2
+        np_id = np.arange(0, num_iplanar, stride)
+        np_idx = np.arange(np_id.shape[0])
+        sides1 = outside[-(np_idx + 1)]
+        mid = inside.reshape(-1, stride)
+        sides2 = outside[y_verts + np_idx]
+        plane_grid = np.empty((x_verts, y_verts), 'i')
+        plane_grid[0, :] = outside[0:y_verts]
+        plane_grid[1:-1, 0] = sides1
+        plane_grid[1:-1, 1:-1] = mid
+        plane_grid[1:-1, -1] = sides2
+        plane_grid[-1, :] = outside[opposite : opposite+y_verts][::-1]
+    return plane_grid
+
+def roll_around(direction, outside, inside, x_verts, y_verts, num_iplanar, flags):
+    '''creates the bottom or top edges and faces'''
+    _, get_edges, get_faces = flags
+    cap_edges, cap_faces = [], np.empty((1, 4), 'i')
+    plane_grid = create_cap_grid(outside, inside, x_verts, y_verts, num_iplanar)
+
+    if get_faces:
+        cap_faces = np.empty((x_verts-1, y_verts-1, 4), 'i')
+        cap_faces[:, :, 0] = plane_grid[:-1, :-1]
+        cap_faces[:, :, 1] = plane_grid[:-1, 1:]
+        cap_faces[:, :, 2] = plane_grid[1:, 1:]
+        cap_faces[:, :, 3] = plane_grid[1:, :-1]
+        if direction == 'ccw':
+            cap_faces = np.flip(cap_faces, axis=2)
+
+    if get_edges:
+        edg_x_dir = np.empty((x_verts-1, y_verts-2, 2), 'i')
+        edg_x_dir[:, :, 0] = plane_grid[0:-1, 1:-1]
+        edg_x_dir[:, :, 1] = plane_grid[1:, 1:-1]
+
+        edg_y_dir = np.empty((x_verts-2, y_verts-1, 2), 'i')
+        edg_y_dir[:, :, 0] = plane_grid[1:-1, :-1]
+        edg_y_dir[:, :, 1] = plane_grid[1:-1, 1:]
+
+        edge_num = (x_verts-1)* (y_verts-2) + (x_verts-2)*(y_verts-1)
+        cap_edges = np.empty((edge_num, 2), 'i')
+        cap_edges[:(x_verts - 1) * (y_verts - 2), :] = edg_x_dir.reshape(-1, 2)
+        cap_edges[(x_verts - 1) * (y_verts - 2):, :] = edg_y_dir.reshape(-1, 2)
+
+
+    return cap_edges, cap_faces.reshape(-1, 4)
+
+def make_edges(x_verts, y_verts, z_verts, z_spread, grid, edg_top, edg_bottom):
+    edges_roll = (z_verts*2 - 1) * z_spread
+    edges_cap = (x_verts-1)* (y_verts-2) + (x_verts-2)*(y_verts-1)
+    edges_num = edges_roll + 2 * edges_cap
+
+    egd_roll = np.empty((z_verts*2-1, z_spread, 2), 'i')
+    egd_roll[:z_verts, :, 0] = grid[:, : -1]
+    egd_roll[:z_verts, :, 1] = grid[:, 1: ]
+
+    egd_roll[z_verts:, :, 0] = grid[:-1, : -1]
+    egd_roll[z_verts:, :, 1] = grid[1:, :-1]
+
+    edges = np.empty((edges_num, 2), 'i')
+    edges[:edges_roll] = egd_roll.reshape(-1, 2)
+    edges[edges_roll: edges_roll + edges_cap] = edg_top
+    edges[edges_roll+edges_cap:] = edg_bottom
+
+    return edges
+
+def make_edg_pol(x_verts, y_verts, z_verts, flags):
+    _, get_edges, get_faces = flags
+
+    edges = np.array([])
+
+    z_spread = 2 * x_verts+ 2 * y_verts - 4
+
+    roll_faces_n = (z_verts - 1) * z_spread
+    cap_faces = (x_verts-1) * (y_verts-1)
+    num_faces = roll_faces_n + 2 * (cap_faces)
+
+    grid = np.empty((z_verts, z_spread + 1), 'i')
+    grid[:, : -1] = np.arange(z_spread * z_verts).reshape(z_verts, z_spread)
+    grid[:, -1] = grid[:, 0]
+
+    if get_faces:
+        all_faces = np.empty((num_faces, 4), 'i')
+        roll_faces = np.zeros((z_verts-1, z_spread, 4))
+        roll_faces[:, :, 0] = grid[:-1, :-1]
+        roll_faces[:, :, 1] = grid[:-1, 1:]
+        roll_faces[:, :, 2] = grid[1:, 1:]
+        roll_faces[:, :, 3] = grid[1:, :-1]
+        all_faces[:roll_faces_n, :] = roll_faces.reshape(-1, 4)
+    else:
+        all_faces = np.empty((1, 4), 'i')
+        roll_faces_n = 0
+        cap_faces = 0
+
+    top_max = z_verts * z_spread
+    bottom_outer_ring = np.arange(z_spread)
+    top_outer_ring = np.arange(top_max-(z_spread), top_max)
+
+    # num internal planar
+    num_iplanar = (x_verts-2) * (y_verts-2)
+
+    # book keeping
+    num_verts_bass = x_verts * y_verts
+    num_verts_ring_total = (z_verts - 2) * z_spread
+    last_vertex_idx = (num_verts_bass * 2) + num_verts_ring_total
+
+    top_internal = np.arange(last_vertex_idx - num_iplanar, last_vertex_idx)
+    bottom_internal = top_internal - num_iplanar
+    cap_init = roll_faces_n + cap_faces
+
+    edg_top, all_faces[roll_faces_n : cap_init, :] = roll_around('ccw', top_outer_ring, top_internal, x_verts, y_verts, num_iplanar, flags)
+    edg_bottom, all_faces[cap_init :, :] = roll_around('cw', bottom_outer_ring, bottom_internal, x_verts, y_verts, num_iplanar, flags)
+
+    if get_edges:
+        edges = make_edges(x_verts, y_verts, z_verts, z_spread, grid, edg_top, edg_bottom)
+
+    return edges, all_faces
+
+socket_names = ['Vertices', 'Edges', 'Polygons']
 
 class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -98,6 +295,7 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         description="Behavior on different list lengths, multiple objects level",
         items=origin_modes, default="CENTER",
         update=updateNode)
+
     list_match_global: EnumProperty(
         name="Match Global",
         description="Behavior on different list lengths, multiple objects level",
@@ -108,12 +306,18 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         description="Behavior on different list lengths, object level",
         items=list_match_modes, default="REPEAT",
         update=updateNode)
+
     correct_output: EnumProperty(
         name="Simplify Output",
         description="Behavior on different list lengths, object level",
         items=correct_output_modes, default="FLAT",
         update=updateNode)
 
+    out_np = BoolVectorProperty(
+        name="Ouput Numpy",
+        description="Output NumPy arrays",
+        default=(False, False, False),
+        size=3, update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Size").prop_name = 'Size'
@@ -137,7 +341,11 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.label(text="List Match:")
         layout.prop(self, "list_match_global", text="Global Match", expand=False)
-        layout.prop(self, "list_match_local", text="Local Match", expand=False)
+
+        layout.label(text="Ouput Numpy:")
+        r = layout.row()
+        for i in range(3):
+            r.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
@@ -145,117 +353,59 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_menu_enum(self, "correct_output", text="Simplify Output")
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
+        layout.label(text="Ouput Numpy:")
 
-    def makecube(self, params, origin):
-        size, divx, divy, divz, matrix = params
-        if 0 in (divx, divy, divz):
-            return [], []
+        for i in range(3):
+            layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
+    def get_data(self):
+        inputs = self.inputs
 
-        b = size / 2.0
-        null_matrix = matrix == Matrix()
-        if (divx, divy, divz) == (1, 1, 1) and null_matrix and origin == 'CENTER':
-            return simple_box(b)
+        params = [inputs['Size'].sv_get()]
 
+        for socket in inputs[1: 4]:
+            params.append([[int(v) for v in l] for l in socket.sv_get()])
 
-        bm_box = bmesh.new()
-        add_vert = bm_box.verts.new
-        add_face = bm_box.faces.new
-
-        pos = [
-            [[0, 0, b], [0, 'X'], [divx + 1, divy + 1]],
-            [[0, 0, -b], [pi, 'X'], [divx + 1, divy + 1]],
-            [[0, -b, 0], [pi/2, 'X'], [divx + 1, divz + 1]],
-            [[0, b, 0], [-pi/2, 'X'], [divx + 1, divz + 1]],
-            [[b, 0, 0], [pi/2, 'Y'], [divz + 1, divy + 1]],
-            [[-b, 0, 0], [-pi/2, 'Y'], [divz + 1, divy + 1]],
-            ]
-
-
-        if origin == 'CENTER':
-            offset = [0, 0, 0]
-        elif origin == 'BOTTOM':
-            offset = [0, 0, b]
+        mat_input = inputs['Matrix'].sv_get(default=[[Matrix()]])
+        if type(mat_input[0]) == Matrix:
+            params.append([[m] for m in mat_input])
         else:
-            offset = [b, b, b]
+            params.append(mat_input)
 
-        v_len = 0
-
-        for plane_props in pos:
-            bm_plane = bmesh.new()
-            pos = plane_props[0]
-            rot = plane_props[1]
-            p_divx = plane_props[2][0]
-            p_divy = plane_props[2][1]
-            mat_loc = Matrix.Translation((pos[0] + offset[0], pos[1] + offset[1], pos[2] + offset[2]))
-            mat_rot = Matrix.Rotation(rot[0], 4, rot[1])
-            mat_out = mat_loc @ mat_rot
-
-            bmesh.ops.create_grid(
-                bm_plane,
-                x_segments=p_divx,
-                y_segments=p_divy,
-                size=b,
-                matrix=mat_out)
-
-            for vert in bm_plane.verts:
-                add_vert(vert.co)
-
-            bm_box.verts.index_update()
-            bm_box.verts.ensure_lookup_table()
-
-            for face in bm_plane.faces:
-                add_face(tuple(bm_box.verts[v.index + v_len] for v in face.verts))
-            v_len += len(bm_plane.verts)
-            bm_plane.free()
-
-
-        bmesh.ops.remove_doubles(bm_box, verts=bm_box.verts, dist=1e-6)
-
-        if not null_matrix:
-            bmesh.ops.transform(bm_box, matrix=matrix, verts=bm_box.verts)
-
-        verts, edges, faces = pydata_from_bmesh(bm_box, face_data=None)
-
-        return verts, edges, faces
+        return list_match_func[self.list_match_global](params)
 
     def process(self):
-        inputs = self.inputs
+
         outputs = self.outputs
 
         if not any(s.is_linked for s in outputs):
             return
 
-        params_p = [inputs['Size'].sv_get()]
-
-        for s in inputs[1: 4]:
-            params_p.append([[int(v) for v in l] for l in s.sv_get()])
-
-        mat_input = inputs['Matrix'].sv_get(default=[[Matrix()]])
-        if type(mat_input[0]) == Matrix:
-            params_p.append([[m] for m in mat_input])
-        else:
-            params_p.append(mat_input)
-
-        params = list_match_func[self.list_match_global](params_p)
+        data_in = self.get_data()
 
         verts_out, edges_out, pols_out = [], [], []
+        flags = [s.is_linked for s in outputs]
+        output_numpy = [b for b in self.out_np]
 
-        for pa in zip(*params):
-            m_par = list_match_func[self.list_match_local](pa)
+        for params in zip(*data_in):
+            m_par = list_match_func[self.list_match_local](params)
             v_obj, e_obj, p_obj = [], [], []
 
             for local_p in zip(*m_par):
-                v, e, p = self.makecube(local_p, self.origin)
-                append_lists([v,e,p], [v_obj, e_obj, p_obj])
+                verts, edgs, pols = numpy_cube(local_p, self.origin, flags)
+                append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
 
 
             if self.correct_output == 'FLAT':
-                extend_lists([v_obj, e_obj, p_obj], [verts_out, edges_out, pols_out])
+                extend_lists(
+                    numpy_check([v_obj, e_obj, p_obj], output_numpy),
+                    [verts_out, edges_out, pols_out])
 
             else:
                 if self.correct_output == 'JOIN':
-                    v_obj, e_obj, p_obj = mesh_join(v_obj, e_obj, p_obj)
-                append_lists([v_obj, e_obj, p_obj], [verts_out, edges_out, pols_out])
+                    mesh = mesh_join_np(v_obj, e_obj, p_obj)
+                append_lists(
+                    numpy_check(mesh, output_numpy),
+                    [verts_out, edges_out, pols_out])
 
 
         outputs['Vers'].sv_set(verts_out)
