@@ -136,5 +136,7 @@ utils_modules = [
     "debug_script", "sv_update_utils", "sv_obj_helper", "sv_batch_primitives", "sv_idx_viewer28_draw",
     # geom 2d tools
     "geom_2d.lin_alg", "geom_2d.dcel", "geom_2d.dissolve_mesh", "geom_2d.merge_mesh", "geom_2d.intersections",
-    "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger"
+    "geom_2d.make_monotone", "geom_2d.sort_mesh", "geom_2d.dcel_debugger",
+    # mesh structure utils
+    "mesh_structure.check_input"
 ]

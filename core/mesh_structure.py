@@ -8,7 +8,9 @@
 
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Union, Any
+
+import numpy as np
 
 
 class Mesh:
@@ -16,7 +18,7 @@ class Mesh:
     def __init__(self):
         self.name: str = 'Sv mesh'
         self.materials: List[str] = []
-        self.vertex_colors: Optional[Tuple[float, float, float, float]] = None
+        self.vertex_colors: Optional[np.ndarray] = None
 
         self._verts = Verts(self)
         self._edges = Edges(self)
@@ -43,7 +45,7 @@ class Mesh:
         return self._loops
 
     @verts.setter
-    def verts(self, verts):
+    def verts(self, verts: np.ndarray):
         self._verts.co = verts
 
     @edges.setter
@@ -69,7 +71,7 @@ class Mesh:
 class Iterable(ABC):
 
     def __bool__(self) -> bool:
-        return bool(self._main_attr)
+        return bool(len(self._main_attr))
 
     def __len__(self) -> int:
         return len(self._main_attr)
@@ -88,8 +90,7 @@ class Iterable(ABC):
 @dataclass
 class Verts(Iterable):
     mesh: Mesh
-    co: list = field(default_factory=list)
-    uv: list = field(default_factory=list)
+    co: np.ndarray = field(default_factory=list)
     vertex_colors: List[Tuple[float, float, float, float]] = field(default_factory=list)
 
     @property
@@ -112,7 +113,7 @@ class Faces(Iterable):
     mesh: Mesh
     _ind: list = field(default_factory=list)
     material_ind: list = field(default_factory=list)
-    vertex_colors: List[Tuple[float, float, float, float]] = field(default_factory=list)
+    vertex_colors: np.ndarray = field(default_factory=list)
 
     @property
     def _main_attr(self):
@@ -132,8 +133,8 @@ class Faces(Iterable):
 class Loops(Iterable):
     mesh: Mesh
     ind: list = field(default_factory=list)
-    uv: list = field(default_factory=list)
-    vertex_colors: List[Tuple[float, float, float, float]] = field(default_factory=list)
+    uv: np.ndarray = field(default_factory=list)
+    vertex_colors: np.ndarray = field(default_factory=list)
 
     @property
     def _main_attr(self):

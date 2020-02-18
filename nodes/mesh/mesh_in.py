@@ -12,17 +12,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.mesh_structure import Mesh
-
-
-def fix_input_data(attrs_dict: dict) -> None:
-    # should be in data structure
-    for key, val in attrs_dict.items():
-        if key == 'name':
-            if not isinstance(val, str):
-                if not isinstance(val, list) or not isinstance(val[0], str):
-                    raise ValueError(f"Name attribute expect string value or list of strings, {val} got instead")
-            if isinstance(val, list):
-                attrs_dict[key] = val[0]
+from sverchok.utils.mesh_structure.check_input import set_safe_attr
 
 
 class SvMeshIn(bpy.types.Node, SverchCustomTreeNode):
@@ -36,11 +26,11 @@ class SvMeshIn(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_BOOLEAN'
 
     def sv_init(self, context):
-        self.inputs.new('SvDictionarySocket', 'Verts')
-        self.inputs.new('SvDictionarySocket', 'Edges')
-        self.inputs.new('SvDictionarySocket', 'Faces')
-        self.inputs.new('SvDictionarySocket', 'Loops')
         self.inputs.new('SvDictionarySocket', 'Object')
+        self.inputs.new('SvDictionarySocket', 'Faces')
+        self.inputs.new('SvDictionarySocket', 'Edges')
+        self.inputs.new('SvDictionarySocket', 'Verts')
+        self.inputs.new('SvDictionarySocket', 'Loops')
         self.outputs.new('SvStringsSocket', 'Mesh')
 
     def process(self):
@@ -52,10 +42,9 @@ class SvMeshIn(bpy.types.Node, SverchCustomTreeNode):
         out = []
         for i, layer in zip(range(max_len), zip(*data)):
             me = Mesh()
-            for element, attrs in zip([me.verts, me.edges, me.faces, me.loops, me], layer):
+            for element, attrs in zip([me, me.faces, me.edges, me.verts, me.loops], layer):
                 if attrs:
-                    fix_input_data(attrs)
-                    [setattr(element, key, values) for key, values in attrs.items()]
+                    [set_safe_attr(element, key, values) for key, values in attrs.items()]
             out.append(me)
         self.outputs['Mesh'].sv_set(out)
 

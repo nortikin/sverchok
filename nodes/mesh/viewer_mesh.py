@@ -266,13 +266,13 @@ def get_loop_colors(me: Mesh) -> np.ndarray:
         return np_colors
 
     elements = None
-    if me.loops.vertex_colors:
+    if len(me.loops.vertex_colors):
         elements = me.loops
-    elif me.verts.vertex_colors:
+    elif len(me.verts.vertex_colors):
         elements = me.verts
-    elif me.faces.vertex_colors:
+    elif len(me.faces.vertex_colors):
         elements = me.faces
-    elif me.vertex_colors:
+    elif len(me.vertex_colors):
         elements = me
 
     if elements:
