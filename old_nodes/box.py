@@ -35,6 +35,7 @@ class SvBoxNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Box'
     bl_icon = 'MESH_CUBE'
 
+    replacement_nodes = [('SvBoxNodeMk2', None, None)]
     Divx: IntProperty(
         name='Divx', description='divisions x',
         default=1, min=1, options={'ANIMATABLE'},
@@ -147,4 +148,3 @@ def register():
 
 def unregister():
     bpy.utils.unregister_class(SvBoxNode)
-

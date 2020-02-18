@@ -8,7 +8,7 @@ Generators
    basic_3pt_arc
    basic_spline
    quad_spline
-   box
+   box_mk2
    bricks
    circle
    cylinder_mk2
