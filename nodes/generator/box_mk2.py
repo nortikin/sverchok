@@ -47,7 +47,6 @@ def mesh_join_np(verts, edges, pols):
     return v, e, p
 
 def numpy_check(data, bool_list):
-    print(bool_list, data[0])
     return [lg if b else [l.tolist() for l in lg] for lg, b in zip(data, bool_list)]
 
 def matrix_apply_np(verts, matrix):
