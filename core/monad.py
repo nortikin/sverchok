@@ -225,7 +225,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return None
 
-    def add_prop_from_dict(self, prop_dict, new_prop_type, socket):
+    def add_prop_from_dict(self, prop_dict, new_prop_type):
         cls = get_node_class_reference(self.cls_bl_idname)
         cls_dict = cls.__dict__ if cls else {}
 
@@ -239,7 +239,6 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         new_name = generate_name(prop_dict['name'], cls_dict)
         prop_settings.prop_name = new_name
         prop_settings.set_settings(prop_dict)
-        socket.prop_name = new_name
         return new_name
 
 

@@ -278,7 +278,7 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
 
         sig = self.new_prop_type.lower()
         if sig in {"int", "float"}:
-            prop_dict['update'] = updateNode
+            # prop_dict['update'] = updateNode
             prop_dict['default'] = getattr(self, f"new_prop_{sig}_default")
 
             properties = 'min max soft_min soft_max'.split()
@@ -300,33 +300,36 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         socket_list = getattr(io_node, socket_kind_to_add)
         socket = socket_list[-1]
 
-        # we'll compose a (sparse) prop_dict from the user configured properties. 
+        # compose a (sparse) prop_dict from the user configured property. 
         prop_dict = self.get_prop_dict()
         prop_name = ""
         prop_data = {}
 
-        print(prop_dict)
+        # print(prop_dict)
+        # print('get all', monad.get_all_props())
 
         # this is a partial code duplication from the monad.py in nodes/scene/monad
         if self.kind == "inputs":
             # -- adding an output socket to the input node
-            prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type, socket)
+            prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type)
             cls = monad.update_cls()
+            print("cls input_template after", cls.input_template)
             new_name, new_type, prop_data = cls.input_template[-1]
 
         else:
             # -- adding an input socket to the output node
             cls = monad.update_cls()
+            print("cls output_template after", cls.output_template[-1])
             new_name, new_type = cls.output_template[-1]
 
-        # transform socket type from dummy to new type
+        # from dummy to new type
         new_socket = socket.replace_socket(new_type, new_name=new_name)
-        if prop_name:
-            new_socket.prop_name = prop_name
 
         # update all monad nodes (front facing)
         for instance in monad.instances:
-            sockets = getattr(instance, reverse_lookup[self.kind])
+            # adding output sockets to the input node inside the monad tree, means 
+            # we add input sockets to the monad Node.
+            sockets = getattr(instance, self.kind)
             new_socket = sockets.new(new_type, new_name)
             for name, value in prop_data.items():
                 if not name == 'prop_name':
