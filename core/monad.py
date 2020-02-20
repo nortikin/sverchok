@@ -428,6 +428,11 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                     prop_data = {}
                 data = [socket_name, socket_bl_idname, prop_data]
                 in_socket.append(data)
+            else:
+                if socket.bl_idname == "SvDummySocket":
+                    print("skipping dummy socket -- on input node")
+                else:
+                    print("found unlinked new socket.. you added one?")
 
         return in_socket
 
@@ -437,6 +442,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             if socket.is_linked:
                 socket_name, socket_bl_idname, _ = get_socket_data(socket)
                 out_socket.append((socket_name, socket_bl_idname))
+            else:
+                if socket.bl_idname == "SvDummySocket":
+                    print("skipping dummy socket -- on output node")
+                else:
+                    print("found unlinked new socket.. you added one?")
+
         return out_socket
 
 
