@@ -396,9 +396,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         # done with setup
 
         old_cls_ref = get_node_class_reference(cls_name)
-
         bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
-
         cls_ref = type(cls_name, bases, cls_dict)
 
         if old_cls_ref:
