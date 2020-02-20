@@ -312,14 +312,14 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         if self.kind == "inputs":
             # -- adding an output socket to the input node
             prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type)
-            cls = monad.update_cls()
-            print("cls input_template after", cls.input_template)
+            cls = monad.update_cls(new_socket_from_definition=(prop_name, prop_dict, socket_type))
+            # print("cls input_template after", cls.input_template)
             new_name, new_type, prop_data = cls.input_template[-1]
 
         else:
             # -- adding an input socket to the output node
-            cls = monad.update_cls()
-            print("cls output_template after", cls.output_template)
+            cls = monad.update_cls(new_socket_from_definition=(prop_name, prop_dict, socket_type))
+            # print("cls output_template after", cls.output_template)
             new_name, new_type = cls.output_template[-1]
 
         # from dummy to new type
