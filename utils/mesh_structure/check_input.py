@@ -44,6 +44,10 @@ class MeshInputCorrector:
     def vertex_colors(input_val):
         return extract_np_array(input_val, dimension=1)
 
+    @staticmethod
+    def material_index(input_val):
+        return extract_value(input_val)
+
 
 class VertsInputCorrector:
     @staticmethod
@@ -120,6 +124,15 @@ def extract_np_array(input_val, dimension=2):
         nested_item = [it for i, it in zip(range(real_dimension - dimension), iter_first_items(input_val))][-1]
         return np.array(nested_item, dtype='f')
     raise TypeError(f"Can't convert data into numpy array - {input_val}")
+
+
+def extract_value(input_val):
+    if isinstance(input_val, (float, int)):
+        return input_val
+    elif hasattr(input_val, '__iter__'):
+        return extract_value(input_val[0])
+    else:
+        raise TypeError(f"Int or float values was not found in data={input_val}")
 
 
 def len_dimension(val: Any):

@@ -18,7 +18,8 @@ class Mesh:
     def __init__(self):
         self.name: str = 'Sv mesh'
         self.materials: List[str] = []
-        self.vertex_colors: Optional[np.ndarray] = None
+        self.vertex_colors: np.ndarray = []
+        self.material_index: int = 0
 
         self._verts = Verts(self)
         self._edges = Edges(self)
@@ -67,6 +68,17 @@ class Mesh:
         _ = [bm.edges.new([bm_verts[i] for i in e]) for e in self.edges]
         _ = [bm.faces.new([bm_verts[i] for i in f]) for f in self.faces]
 
+    def search_element_with_attr(self, start: str, name: str) -> 'MeshElements':
+        search_order = ['loops', 'verts', 'edges', 'faces', 'mesh']
+        elements = [self.loops, self.verts, self.edges, self.faces, self]
+        for element in elements[search_order.index(start):]:
+            attr_values = getattr(element, name, None) 
+            if attr_values is not None:
+                if isinstance(attr_values, np.ndarray):
+                    return element
+                elif attr_values:
+                    return element
+
 
 class Iterable(ABC):
 
@@ -91,7 +103,7 @@ class Iterable(ABC):
 class Verts(Iterable):
     mesh: Mesh
     co: np.ndarray = field(default_factory=list)
-    vertex_colors: List[Tuple[float, float, float, float]] = field(default_factory=list)
+    vertex_colors: np.ndarray = field(default_factory=list)
 
     @property
     def _main_attr(self):
@@ -112,7 +124,7 @@ class Edges(Iterable):
 class Faces(Iterable):
     mesh: Mesh
     _ind: list = field(default_factory=list)
-    material_ind: list = field(default_factory=list)
+    material_index: list = field(default_factory=list)
     vertex_colors: np.ndarray = field(default_factory=list)
 
     @property
@@ -139,6 +151,9 @@ class Loops(Iterable):
     @property
     def _main_attr(self):
         return self.ind
+
+
+MeshElements = Union[Mesh, Faces, Edges, Verts, Loops]
 
 
 if __name__ == '__main__':

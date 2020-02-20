@@ -7,7 +7,7 @@
 
 
 from collections import ChainMap
-from itertools import cycle, chain, count
+from itertools import cycle, chain, count, accumulate
 from typing import List, Tuple, Union, Type, Dict, Iterable
 from functools import singledispatch
 
@@ -83,13 +83,11 @@ def correct_faces(len_verts: int, faces: List[List[int]]) -> List[List[int]]:
 
 
 def update_vertices(bl_me: bpy.types.Mesh, me: Mesh) -> None:
-    for bl_v, v in zip(bl_me.vertices, me.verts):
-        bl_v.co = v
+    bl_me.vertices.foreach_set('co', me.verts.co.flatten())
 
 
 def update_edges(bl_me: bpy.types.Mesh, me_edges: dict) -> None:
-    for bl_e, e in zip(bl_me.edges, me_edges):
-        bl_e.vertices = e
+    bl_me.edges.foreach_set('vertices', [i for e in me_edges for i in e])
 
 
 def update_loops(bl_me: bpy.types.Mesh, me_faces: List[List[int]], me_edge_indexes: dict) -> None:
@@ -98,18 +96,14 @@ def update_loops(bl_me: bpy.types.Mesh, me_faces: List[List[int]], me_edge_index
         for f in me_faces:
             for vi, e in zip(f, edge_list(f)):
                 vert_edge_indexes.append((vi, me_edge_indexes[e]))
-        for l, (vi, ei) in zip(bl_me.loops, vert_edge_indexes):
-            l.edge_index = ei
-            l.vertex_index = vi
+        bl_me.loops.foreach_set('vertex_index', [vi for vi, ei in vert_edge_indexes])
+        bl_me.loops.foreach_set('edge_index', [ei for vi, ei in vert_edge_indexes])
 
 
 def update_faces(bl_me: bpy.types.Mesh, me_faces: List[List[int]]) -> None:
     if me_faces:
-        next_loop_index = 0
-        for bl_f, f in zip(bl_me.polygons, me_faces):
-            bl_f.loop_start = next_loop_index
-            bl_f.loop_total = len(f)
-            next_loop_index += len(f)
+        bl_me.polygons.foreach_set('loop_total', [len(f) for f in me_faces])
+        bl_me.polygons.foreach_set('loop_start', list(accumulate(chain([0], me_faces[:-1]), lambda x, y: x + len(y))))
 
 
 BlenderDataBlocks = Union[bpy.types.Object, bpy.types.Mesh, bpy.types.Material]
@@ -167,12 +161,11 @@ def ensure_object_list(objects: bpy.types.bpy_prop_collection, names: List[str])
     check_data_name(objects, names)
 
 
-def ensure_material_list(collection: bpy.types.bpy_prop_collection, names: List[List[str]]) -> Dict[str, int]:
+def ensure_material_list(collection: bpy.types.bpy_prop_collection, names: List[List[str]]) -> None:
     names = ChainMap(*[dict(zip(l, cycle([None]))) for l in names])
     correct_collection_length(collection, len(names))
     ensure_links_to_materials(collection, names)
     check_data_name(collection, names, False)
-    return {prop.mat.name: i for prop, i in zip(collection, count())}
 
 
 def correct_collection_length(collection: bpy.types.bpy_prop_collection, length: int) -> None:
@@ -219,8 +212,8 @@ def check_data_name(objects: bpy.types.bpy_prop_collection, names: Iterable[str]
 
 def apply_materials_to_mesh(objects: bpy.types.bpy_prop_collection,
                             materials: bpy.types.bpy_prop_collection,
-                            meshes: List[Mesh],
-                            mat_name_obj_ind: Dict[str, int]) -> None:
+                            meshes: List[Mesh]) -> None:
+    mat_name_obj_ind = {prop.mat.name: i for prop, i in zip(materials, count())}
     for prop, me in zip(objects, meshes):
         prop.mesh.materials.clear()
         for mat_name in me.materials:
@@ -238,46 +231,74 @@ def set_vertex_color(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh])
 
 def get_loop_colors(me: Mesh) -> np.ndarray:
     @singledispatch
-    def loop_colors(elem, _, __):
+    def loop_colors(elem, __):
         raise TypeError(f"Such type={type(elem)} of mesh elements does not supported")
 
     @loop_colors.register
-    def _(loops: Loops, np_colors: np.ndarray, _):
-        for i, col in zip(range(len(np_colors)), chain.from_iterable(loops.vertex_colors)):
-            np_colors[i] = col
-        return np_colors
+    def _(loops: Loops, _):
+        return ensure_array_length(loops.vertex_colors, len(loops)).flatten()
 
     @loop_colors.register
-    def _(verts: Verts, np_colors: np.ndarray, mesh: Mesh):
-        for i, col in zip(range(len(np_colors)), chain.from_iterable([verts.vertex_colors[i] for i in mesh.loops])):
-            np_colors[i] = col
-        return np_colors
+    def _(verts: Verts, mesh: Mesh):
+        last_ind = len(verts.vertex_colors) - 1
+        loop_inds = np.array(mesh.loops.ind)
+        loop_inds[loop_inds > last_ind] = last_ind
+        return verts.vertex_colors[loop_inds].flatten()
 
     @loop_colors.register
-    def _(mesh: Mesh, np_colors: np.ndarray, _):
-        for i, col in zip(range(len(np_colors)), cycle(mesh.vertex_colors)):
-            np_colors[i] = col
-        return np_colors
+    def _(faces: Faces, _):
+        cols = ensure_array_length(faces.vertex_colors, len(faces))
+        return np.repeat(cols, [len(f) for f in faces], 0).flatten()
 
     @loop_colors.register
-    def _(faces: Faces, np_colors: np.ndarray, mesh: Mesh):
-        for i, col in zip(range(len(np_colors)), chain.from_iterable([faces.vertex_colors[i] for i, f in enumerate(faces) for fi in f])):
-            np_colors[i] = col
-        return np_colors
+    def _(mesh: Mesh, _):
+        return np.repeat(mesh.vertex_colors[np.newaxis], len(mesh.loops), 0).flatten()
 
-    elements = None
-    if len(me.loops.vertex_colors):
-        elements = me.loops
-    elif len(me.verts.vertex_colors):
-        elements = me.verts
-    elif len(me.faces.vertex_colors):
-        elements = me.faces
-    elif len(me.vertex_colors):
-        elements = me
-
+    elements = me.search_element_with_attr('loops', 'vertex_colors')
     if elements:
-        colors = np.zeros((len(me.loops) * 4), dtype=float)
-        return loop_colors(elements, colors, me)
+        return loop_colors(elements, me)
+    else:
+        return []
+
+
+def ensure_array_length(array: np.ndarray, length: int) -> np.ndarray:
+    if len(array) == length:
+        return array
+    elif len(array) > length:
+        return array[:length]
+    else:
+        tail = np.repeat(array[-1][np.newaxis], length - len(array), 0)
+        return np.concatenate((array, tail))
+
+
+def set_material_index(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh]) -> None:
+    for bm_me, me in zip((prop.mesh for prop in objects), meshes):
+        mat_inds = get_material_index(me) 
+        if len(mat_inds):
+            bm_me.polygons.foreach_set('material_index', mat_inds)
+
+
+def get_material_index(me: Mesh) -> list:
+    @singledispatch
+    def mat_ind(elem):
+        raise TypeError(f"Such type={type(elem)} of mesh elements does not supported")
+
+    @mat_ind.register
+    def _(faces: Faces):
+        if len(faces.material_index) == len(faces):
+            return faces.material_index
+        elif len(faces.material_index) > len(faces):
+            return faces.material_index[:len(faces)]
+        else:
+            return faces.material_index + [faces.material_index[-1]] * (len(faces) - len(faces.material_index))
+
+    @mat_ind.register
+    def _(mesh: Mesh):
+        return [mesh.material_index] * len(mesh.faces)
+
+    elements = me.search_element_with_attr('faces', 'material_index')
+    if elements:
+        return mat_ind(elements)
     else:
         return []
 
@@ -318,10 +339,11 @@ class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
         with self.sv_throttle_tree_update():
             meshes = self.inputs['Mesh'].sv_get(deepcopy=False, default=[])
             ensure_object_list(self.objects, [me.name for me in meshes])
-            material_obj_ind = ensure_material_list(self.materials, [me.materials for me in meshes])
+            ensure_material_list(self.materials, [me.materials for me in meshes])
             generate_mesh2(self.objects, meshes)
-            apply_materials_to_mesh(self.objects, self.materials, meshes, material_obj_ind)
+            apply_materials_to_mesh(self.objects, self.materials, meshes)
             set_vertex_color(self.objects, meshes)
+            set_material_index(self.objects, meshes)
 
 
 classes = [SvViewerMeshObjectList,
@@ -335,3 +357,10 @@ def register():
 
 def unregister():
     [bpy.utils.unregister_class(cl) for cl in classes[::-1]]
+
+
+if __name__ == '__main__':
+    verts = np.array([[0, 0, 0], [1, 1, 1], [2, 2, 2]])
+    assert len(ensure_array_length(verts, 3)) == 3
+    assert len(ensure_array_length(verts, 4)) == 4
+    assert len(ensure_array_length(verts, 2)) == 2
