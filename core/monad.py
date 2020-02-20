@@ -380,9 +380,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         if new_socket_from_definition:
             # the user has decided to generate a new property without linking sockets
-            prop_name, prop_dict, socket_type, io_side = new_socket_from_definition
-            cls_dict["input_template"] = self.generate_inputs()
-            cls_dict["output_template"] = self.generate_outputs()            
+            cls_dict["input_template"] = self.generate_inputs(override=new_socket_from_definition)
+            cls_dict["output_template"] = self.generate_outputs(override=new_socket_from_definition)
 
         else:
             # this is run when the user hand-links a socket
@@ -420,8 +419,11 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             cls_dict['__annotations__'][s.prop_name] = IntProperty(**prop_dict)
 
 
-    def generate_inputs(self):
+    def generate_inputs(self, override=False):
         in_socket = []
+
+        if override:
+            prop_name, prop_dict, socket_type, io_side = override
 
         # if socket is dummysocket use the other for data
         for idx, socket in enumerate(self.input_node.outputs):
@@ -441,8 +443,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return in_socket
 
-    def generate_outputs(self):
+    def generate_outputs(self, override=False):
         out_socket = []
+
+        if override:
+            prop_name, prop_dict, socket_type, io_side = override
+
         for socket in self.output_node.inputs:
             if socket.is_linked:
                 socket_name, socket_bl_idname, _ = get_socket_data(socket)
