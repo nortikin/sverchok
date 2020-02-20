@@ -467,8 +467,8 @@ def describe_data_shape(data):
     """
     def helper(data):
         if not isinstance(data, (list, tuple)):
-            if isinstance(data,(np.ndarray)):
-                return 0, type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
+            if isinstance(data, (np.ndarray)):
+                return len(data.shape), type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
             return 0, type(data).__name__
         else:
             result = type(data).__name__

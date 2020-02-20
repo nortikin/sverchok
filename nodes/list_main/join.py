@@ -9,7 +9,7 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (multi_socket, updateNode)
+from sverchok.data_structure import (multi_socket, updateNode, levels_of_list_or_np)
 
 from sverchok.utils.listutils import joiner, myZip_2, wrapper_2
 import numpy as np
@@ -33,87 +33,37 @@ def python_join(slots, level, mix, wrap):
             list_result = joiner(slots, level)
             result = list_result.copy()
     return result
-def correct_arrays(arrays):
-    tmp_list =[]
-    for a in arrays:
-        print(a.shape)
-        if len(a.shape) > 2:
-            tmp_list.append([l for l in a])
-        else:
-            tmp_list.append(a)
-    return tmp_list
-def numpy_join(slots, level, mix, min_axis):
-    if level == 1:
-        if mix:
-            result = correct_arrays([np.array(l) for s in zip(*slots) for l in s])
-        else:
-            result = [np.array(l) for s in slots for l in s]
-            result = correct_arrays(result)
-    elif level == 2:
-        if mix:
-            result = [np.concatenate([l for s in zip(*slots) for l in zip(*s)], axis=0)]
-            if min_axis == 2:
-                joined = np.concatenate(slots, axis=2)
-            else:
-                joined = np.concatenate(slots, axis=0).T
-            result = [joined]
-            # ln = len(slots[0][0][0])
-            if type(slots[0][0][0]) in [int, float]:
-                result = [joined.flatten()]
-            else:
-                if min_axis == 2:
-                    ln =3
-                else:
-                    ln = 1
-                result = [joined.reshape(-1, ln)]
-        else:
-            # result = [np.concatenate([l for s in slots for l in s], axis=0)]
-            joined = np.concatenate(slots, axis=1)
-            print("F", type(slots[0][0][0]), joined.shape)
-            if type(slots[0][0][0]) in [list, tuple, np.ndarray]:
-                if min_axis == 2:
-                    if len(joined.shape) > 3:
-                        print("e")
-                        result = [joined[0, l] for l in range(joined.shape[1])]
-                    else:
-                        result = [joined.reshape(-1, 3)]
-                else:
-                    if len(joined.shape) > 2:
-                        print("e")
-                        result = [[joined[0, l] for l in range(joined.shape[1])]]
-                    else:
-                        #   result = [joined.reshape(-1, 3)]
-                        result =[joined]
-            else:
-                result = [joined.flatten()]
-                #     if min_axis == 2:
-            # # ln = len(slots[0][0][0])
-            #         ln =3
-            #     else:
-            #         ln = 1
-            #     result = [joined.reshape(-1, ln)]
 
-    elif level == 3:
+def np_object_level_2(slots):
+    return [np.concatenate([l for s in slots for l in s], axis=0)]
+
+def np_object_level_2_mix(slots):
+    return [np.concatenate([l for s in zip(*slots) for l in zip(*s)], axis=0)]
+
+def np_general_wrapper(slots, level, end_level, func):
+    if level == end_level:
+        return func(slots)
+    return [np_general_wrapper(slots, level-1, end_level, func)]
+
+def np_multi_object_level_3(slots):
+    return [[np.concatenate([l0 for s in slots for l in s for l0 in l])]]
+
+def np_multi_object_level_3_mix(slots):
+    return [[np.concatenate([l0 for s in zip(*slots) for l in zip(*s) for l0 in zip(*l)])]]
+
+def numpy_join(slots, level, mix, min_axis, depth):
+    true_depth = depth - min_axis
+    if  true_depth == 1 and level > 1:
         if mix:
-            # result = [np.concatenate([sl for s in zip(*slots) for l in zip(*s) for sl in zip(*l)], axis=0)]
-            joined = np.concatenate(slots, axis=0)
-            result = [joined]
-            if type(slots[0][0][0][0]) in [int, float]:
-                result = [np.transpose(joined, (1, 2,0)).flatten()]
-            # else:
-            #     ln = len(slots[0][0][0][0])
-            #     result = [joined.reshape(-1, ln)]
-        else:
-            joined = np.concatenate(slots, axis=0)
-            if type(slots[0][0][0][0]) in [int, float]:
-                result = [joined.flatten()]
-            else:
-                ln = len(slots[0][0][0][0])
-                result = [joined.reshape(-1, ln)]
-            # result = [np.concatenate([sl for s in slots for l in s for sl in l], axis=0)]
-    else:
-        result = python_join(slots, level, mix, False)
-    return result
+            return np_general_wrapper(slots, level, 2, np_object_level_2_mix)
+        return np_general_wrapper(slots, level, 2, np_object_level_2)
+
+    if true_depth == 2 and level > 2:
+        if mix:
+            return np_general_wrapper(slots, level, 3, np_multi_object_level_3_mix)
+        return np_general_wrapper(slots, level, 3, np_multi_object_level_3)
+
+    return python_join(slots, level, mix, False)
 
 class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
     ''' ListJoin node '''
@@ -188,7 +138,8 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
                 min_axis = 2
             else:
                 min_axis = 1
-            result = numpy_join(slots, self.JoinLevel, self.mix_check, min_axis)
+            depth = levels_of_list_or_np(slots[0])
+            result = numpy_join(slots, self.JoinLevel, self.mix_check, min_axis, depth)
         else:
             result = python_join(slots, self.JoinLevel, self.mix_check, self.wrap_check)
 
