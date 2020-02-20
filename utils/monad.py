@@ -319,7 +319,7 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         else:
             # -- adding an input socket to the output node
             cls = monad.update_cls()
-            print("cls output_template after", cls.output_template[-1])
+            print("cls output_template after", cls.output_template)
             new_name, new_type = cls.output_template[-1]
 
         # from dummy to new type
