@@ -18,6 +18,7 @@
 
 
 from functools import reduce
+from numpy import ndarray
 #####################################################
 #################### lists magic ####################
 #####################################################
@@ -116,7 +117,7 @@ def myZip_2(list_all, level, level2=1):
         def subDown(list_a, level):
             list_b = []
             for l2 in list_a:
-                if type(l2) in [list, tuple]:
+                if type(l2) in [list, tuple, ndarray]:
                     list_b.extend(l2)
                 else:
                     list_b.append(l2)
@@ -125,7 +126,7 @@ def myZip_2(list_all, level, level2=1):
             return list_b
 
         list_tmp = []
-        if type(list_all) in [list, tuple]:
+        if type(list_all) in [list, tuple, ndarray]:
             for l in list_all:
                 list_b = subDown(l, level-1)
                 list_tmp.append(list_b)
@@ -141,7 +142,7 @@ def myZip_2(list_all, level, level2=1):
     l_min = []
 
     for el in list_tmp:
-        if type(el) not in [list, tuple]:
+        if type(el) not in [list, tuple, ndarray]:
             break
 
         l_min.append(len(el))
@@ -165,9 +166,9 @@ def joiner(list_all, level, level2=1):
     list_tmp = []
 
     if level > level2:
-        if type(list_all) in [list, tuple]:
+        if type(list_all) in [list, tuple, ndarray]:
             for list_a in list_all:
-                if type(list_a) in [list, tuple]:
+                if type(list_a) in [list, tuple, ndarray]:
                     list_tmp.extend(list_a)
                 else:
                     list_tmp.append(list_a)
@@ -178,9 +179,9 @@ def joiner(list_all, level, level2=1):
         list_tmp = [list_res]
 
     if level == level2:
-        if type(list_all) in [list, tuple]:
+        if type(list_all) in [list, tuple, ndarray]:
             for list_a in list_all:
-                if type(list_a) in [list, tuple]:
+                if type(list_a) in [list, tuple, ndarray]:
                     list_tmp.extend(list_a)
                 else:
                     list_tmp.append(list_a)
@@ -188,7 +189,7 @@ def joiner(list_all, level, level2=1):
             list_tmp.append(list_all)
 
     if level < level2:
-        if type(list_all) in [list, tuple]:
+        if type(list_all) in [list, tuple, ndarray]:
             for l in list_all:
                 list_tmp.append(l)
         else:
@@ -218,7 +219,7 @@ def wrapper_2(l_etalon, list_a, level):
 
     def subWrap_2(l_etalon, len_l, level):
         len_r = len_l
-        if type(l_etalon) in [list, tuple]:
+        if type(l_etalon) in [list, tuple, ndarray]:
             len_r = len(l_etalon) * len_l
             if level > 1:
                 len_r = subWrap_2(l_etalon[0], len_r, level-1)

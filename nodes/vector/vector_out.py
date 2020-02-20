@@ -53,7 +53,7 @@ class VectorsOutNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
-        if self.inputs['Vectors'].is_linked:
+        if self.inputs['Vectors'].is_linked and any(s.is_linked for s in self.outputs):
             xyz = self.inputs['Vectors'].sv_get(deepcopy=False)
 
             data = dataCorrect_np(xyz)
