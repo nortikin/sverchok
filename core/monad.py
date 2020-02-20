@@ -375,20 +375,19 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         else:
             cls_name = self.cls_bl_idname
 
+        cls_dict["bl_idname"] = cls_name
+        cls_dict["bl_label"] = self.name
+
         if new_socket_from_definition:
             # the user has decided to generate a new property without linking sockets
             prop_name, prop_dict, socket_type = new_socket_from_definition
             self.verify_props()
-            cls_dict["bl_idname"] = cls_name
-            cls_dict["bl_label"] = self.name
             cls_dict["input_template"] = self.generate_inputs()
             cls_dict["output_template"] = self.generate_outputs()            
 
         else:
             # this is run when the user hand-links a socket
             self.verify_props()
-            cls_dict["bl_idname"] = cls_name
-            cls_dict["bl_label"] = self.name
             cls_dict["input_template"] = self.generate_inputs()
             cls_dict["output_template"] = self.generate_outputs()
 
