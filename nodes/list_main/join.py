@@ -34,7 +34,7 @@ def python_join(slots, level, mix, wrap):
             result = list_result.copy()
     return result
 
-def np_object_level_2(slots):
+def np_object_level_2_join(slots):
     return [np.concatenate([l for s in slots for l in s], axis=0)]
 
 def np_object_level_2_mix(slots):
@@ -45,23 +45,23 @@ def np_general_wrapper(slots, level, end_level, func):
         return func(slots)
     return [np_general_wrapper(slots, level-1, end_level, func)]
 
-def np_multi_object_level_3(slots):
+def np_multi_object_level_3_join(slots):
     return [[np.concatenate([l0 for s in slots for l in s for l0 in l])]]
 
 def np_multi_object_level_3_mix(slots):
     return [[np.concatenate([l0 for s in zip(*slots) for l in zip(*s) for l0 in zip(*l)])]]
 
-def numpy_join(slots, level, mix, min_axis, depth):
-    true_depth = depth - min_axis
+def numpy_join(slots, level, mix, true_depth):
+
     if  true_depth == 1 and level > 1:
         if mix:
             return np_general_wrapper(slots, level, 2, np_object_level_2_mix)
-        return np_general_wrapper(slots, level, 2, np_object_level_2)
+        return np_general_wrapper(slots, level, 2, np_object_level_2_join)
 
     if true_depth == 2 and level > 2:
         if mix:
             return np_general_wrapper(slots, level, 3, np_multi_object_level_3_mix)
-        return np_general_wrapper(slots, level, 3, np_multi_object_level_3)
+        return np_general_wrapper(slots, level, 3, np_multi_object_level_3_join)
 
     return python_join(slots, level, mix, False)
 
@@ -139,7 +139,8 @@ class ListJoinNode(bpy.types.Node, SverchCustomTreeNode):
             else:
                 min_axis = 1
             depth = levels_of_list_or_np(slots[0])
-            result = numpy_join(slots, self.JoinLevel, self.mix_check, min_axis, depth)
+            true_depth = depth - min_axis
+            result = numpy_join(slots, self.JoinLevel, self.mix_check, true_depth)
         else:
             result = python_join(slots, self.JoinLevel, self.mix_check, self.wrap_check)
 
