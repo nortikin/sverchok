@@ -380,8 +380,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         if new_socket_from_definition:
             # the user has decided to generate a new property without linking sockets
-            prop_name, prop_dict, socket_type = new_socket_from_definition
-            self.verify_props()
+            prop_name, prop_dict, socket_type, io_side = new_socket_from_definition
             cls_dict["input_template"] = self.generate_inputs()
             cls_dict["output_template"] = self.generate_outputs()            
 
