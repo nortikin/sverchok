@@ -1637,6 +1637,49 @@ class CircleEquation2D(object):
         else:
             return value < 0
 
+class Triangle(object):
+    def __init__(self, v1, v2, v3):
+        self.v1 = v1
+        self.v2 = v2
+        self.v3 = v3
+
+    @property
+    def vertices(self):
+        return [v1, v2, v3]
+
+    def normal(self):
+        return mathutils.geometry.normal(self.v1, self.v2, self.v3)
+
+    def area(self):
+        return mathutils.geometry.area_tri(self.v1, self.v2, self.v3)
+
+    def perimeter(self):
+        dv1 = self.v2 - self.v1
+        dv2 = self.v3 - self.v1
+        dv3 = self.v3 - self.v2
+        return dv1.length + dv2.length + dv3.length
+
+    def inscribed_circle_radius(self):
+        return 2 * self.area() / self.perimeter()
+
+    def inscribed_circle_center(self):
+        side_1 = (self.v2 - self.v3).length
+        side_2 = (self.v1 - self.v3).length
+        side_3 = (self.v1 - self.v2).length
+        return (side_1 * self.v1 + side_2 * self.v2 + side_3 * self.v3) / self.perimeter()
+
+    def inscribed_circle(self):
+        circle = CircleApproximationData()
+        side_1 = (self.v2 - self.v3).length
+        side_2 = (self.v1 - self.v3).length
+        side_3 = (self.v1 - self.v2).length
+        perimeter = side_1 + side_2 + side_3
+        center = (side_1 * self.v1 + side_2 * self.v2 + side_3 * self.v3) / perimeter
+        circle.radius = 2 * self.area() / perimeter
+        circle.center = np.array(center)
+        circle.normal = np.array(self.normal())
+        return circle
+
 class LinearApproximationData(object):
     """
     This class contains results of linear approximation calculation.
