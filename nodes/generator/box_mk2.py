@@ -312,7 +312,7 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
         items=correct_output_modes, default="FLAT",
         update=updateNode)
 
-    out_np = BoolVectorProperty(
+    out_np: BoolVectorProperty(
         name="Ouput Numpy",
         description="Output NumPy arrays",
         default=(False, False, False),
