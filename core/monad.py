@@ -380,8 +380,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         if new_socket_from_definition:
             # the user has decided to generate a new property without linking sockets
-            cls_dict["input_template"] = self.generate_inputs(override=new_socket_from_definition)
-            cls_dict["output_template"] = self.generate_outputs(override=new_socket_from_definition)
+            cls_dict["input_template"] = self.generate_inputs()
+            cls_dict["output_template"] = self.generate_outputs()
+            
+            # augment template here
+            (prop_name, prop_dict, socket_type, self.kind) = new_socket_from_definition
+
 
         else:
             # this is run when the user hand-links a socket
@@ -419,13 +423,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             cls_dict['__annotations__'][s.prop_name] = IntProperty(**prop_dict)
 
 
-    def generate_inputs(self, override=False):
+    def generate_inputs(self):
         in_socket = []
 
-        if override:
-            prop_name, prop_dict, socket_type, io_side = override
-
-        # if socket is dummysocket use the other for data
         for idx, socket in enumerate(self.input_node.outputs):
             if socket.is_linked:
                 socket_name, socket_bl_idname, prop_name = get_socket_data(socket)
@@ -435,29 +435,16 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                     prop_data = {}
                 data = [socket_name, socket_bl_idname, prop_data]
                 in_socket.append(data)
-            else:
-                if socket.bl_idname == "SvDummySocket":
-                    print("skipping dummy socket -- on input node")
-                else:
-                    print("found unlinked new socket.. you added one?")
 
         return in_socket
 
-    def generate_outputs(self, override=False):
+    def generate_outputs(self):
         out_socket = []
-
-        if override:
-            prop_name, prop_dict, socket_type, io_side = override
 
         for socket in self.output_node.inputs:
             if socket.is_linked:
                 socket_name, socket_bl_idname, _ = get_socket_data(socket)
                 out_socket.append((socket_name, socket_bl_idname))
-            else:
-                if socket.bl_idname == "SvDummySocket":
-                    print("skipping dummy socket -- on output node")
-                else:
-                    print("found unlinked new socket.. you added one?")
 
         return out_socket
 
