@@ -267,6 +267,7 @@
     SvLinearApproxNode
     SvCircleApproxNode
     SvSphereApproxNode
+    SvInscribedCircleNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
