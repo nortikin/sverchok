@@ -82,6 +82,12 @@
     SvLinkedVertsNode
     SvProjectPointToLine
     ---
+    SvLinearApproxNode
+    SvCircleApproxNode
+    SvSphereApproxNode
+    SvInscribedCircleNode
+    SvSteinerEllipseNode
+    ---
     SvMeshSelectNode
     SvSelectSimilarNode
     SvChessSelection
@@ -264,11 +270,6 @@
     SvInterpolationStripesNode
     SvInterpolationNodeMK3
     SvInterpolationNodeMK2
-    SvLinearApproxNode
-    SvCircleApproxNode
-    SvSphereApproxNode
-    SvInscribedCircleNode
-    SvSteinerEllipseNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
