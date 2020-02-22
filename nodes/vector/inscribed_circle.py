@@ -34,7 +34,7 @@ class SvInscribedCircleNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvInscribedCircleNode'
     bl_label = 'Inscribed Circle'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_CIRCLE_FIT'
+    sv_icon = 'SV_INSCRIBED_CIRCLE'
 
     error_modes = [
         ('SKIP', "Skip", "Skip non-triangular faces - do not generate output for them", 0),
