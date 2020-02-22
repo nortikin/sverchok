@@ -34,7 +34,7 @@ class SvSteinerEllipseNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvSteinerEllipseNode'
     bl_label = 'Steiner Ellipse'
     bl_icon = 'OUTLINER_OB_EMPTY'
-    sv_icon = 'SV_INSCRIBED_CIRCLE'
+    sv_icon = 'SV_STEINER_ELLIPSE'
 
     error_modes = [
         ('SKIP', "Skip", "Skip non-triangular faces - do not generate output for them", 0),
