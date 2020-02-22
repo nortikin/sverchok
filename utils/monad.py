@@ -335,9 +335,10 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         AB_LINK = (io_node.outputs[-1], io_sockets[-1]) if out2in else (io_sockets[-1], io_node.inputs[-1])
         tree.links.new(*AB_LINK)
 
-        # [x] unlink
-        tree.links.remove(*AB_LINK)
-        
+        # [x] unlink, remove node
+        # tree.links.remove(*AB_LINK)
+        tree.nodes.remove(property_node)
+
         # [x] unregister node
         unregister_node_class(cls_ref)
 
