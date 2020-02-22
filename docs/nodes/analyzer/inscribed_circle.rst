@@ -27,7 +27,7 @@ This node has the following parameter:
    - **Skip**. Just skip such faces - do not generate inscribed circles for them.
    - **Error**. Stop processing and give an error (turn the node red).
 
-   The default option is **Skip**.
+   The default option is **Skip**. This parameter is available in the N panel only.
 
 Outputs
 -------

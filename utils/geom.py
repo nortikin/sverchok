@@ -26,7 +26,7 @@ functions will initially be sub optimal quick implementations, then optimized on
 '''
 
 import math
-from math import sin, cos, sqrt
+from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
 from numpy import linalg
 from functools import wraps
@@ -1637,6 +1637,73 @@ class CircleEquation2D(object):
         else:
             return value < 0
 
+class Ellipse3D(object):
+    """
+    Class describing an ellipse in 3D.
+    """
+    def __init__(self, center, semi_major_axis, semi_minor_axis):
+        """
+        input: center - mathutils.Vector.
+               semi_major_axis, semi_minor_axis - mathutils.Vector (pointing from center).
+        """
+        self.center = center
+        self.semi_major_axis = semi_major_axis
+        self.semi_minor_axis = semi_minor_axis
+
+    @property
+    def a(self):
+        """
+        Length of the semi-major axis
+        """
+        return self.semi_major_axis.length
+
+    @property
+    def b(self):
+        """
+        Length of the semi-minor axis
+        """
+        return self.semi_minor_axis.length
+
+    @property
+    def c(self):
+        """
+        Distance from the center of the ellipse to it's focal points.
+        """
+        a = self.a
+        b = self.b
+        return sqrt(a*a - b*b)
+
+    @property
+    def eccentricity(self):
+        return self.c / self.a
+
+    def normal(self):
+        return self.semi_major_axis.cross(self.semi_minor_axis).normalized()
+
+    def get_matrix(self):
+        matrix = Matrix([self.semi_major_axis.normalized(), self.semi_minor_axis.normalized(), self.normal()]).to_4x4().inverted()
+        matrix.translation = self.center
+        return matrix
+
+    def focal_points(self):
+        c = self.c
+        dv = self.semi_major_axis.normalized() * c
+        f1 = self.center - dv
+        f2 = self.center + dv
+        return [f1, f2]
+
+    @property
+    def f1(self):
+        c = self.c
+        dv = self.semi_major_axis.normalized() * c
+        return self.center - dv
+
+    @property
+    def f2(self):
+        c = self.c
+        dv = self.semi_major_axis.normalized() * c
+        return self.center + dv
+
 class Triangle(object):
     """
     Class containing general information about a triangle (in 3D).
@@ -1655,7 +1722,13 @@ class Triangle(object):
         """
         List of triangle vertices.
         """
-        return [v1, v2, v3]
+        return [self.v1, self.v2, self.v3]
+
+    def centroid(self):
+        """
+        Centroid (barycenter) of the triangle.
+        """
+        return (self.v1 + self.v2 + self.v3) / 3.0
 
     def normal(self):
         """
@@ -1709,6 +1782,56 @@ class Triangle(object):
         circle.center = np.array(center)
         circle.normal = np.array(self.normal())
         return circle
+    
+    def steiner_circumellipse(self):
+        """
+        Steiner ellipse (circumellipse) of the triangle,
+        i.e. an ellipse that touches the triangle at it's vertices
+        and whose center is the triangle's centroid.
+        returns: an instance of Ellipse3D.
+        """
+        s = self.centroid()
+        a,b,c = self.vertices
+        sc = c - s
+        ab = b - a
+        f1 = sc
+        f2 = ab / sqrt(3.0)
+        f1sq = f1.length_squared
+        f2sq = f2.length_squared
+        #if f1sq < f2sq:
+        #    f1, f2 = f2, f1
+        #    f1sq, f2sq = f2sq, f1sq
+        f1f2 = f1.dot(f2)
+        if abs(f1f2) < 1e-6:
+            t0 = 0.0
+            p1 = f1
+            p2 = f2
+        else:
+            A = 2 * f1f2
+            B = f1sq - f2sq
+            tan_2t0 = A / B
+            t0 = atan(tan_2t0)/2.0
+            cos_t0 = cos(t0)
+            sin_t0 = sin(t0)
+            #C = sqrt(A*A + B*B)
+            #cos_2t0 = B / C
+            #cos_t0 = sqrt((1 + cos_2t0)/2.0)
+            #sin_t0 = sqrt((1 - cos_2t0)/2.0)
+            p1 = f1 * cos_t0 + f2 * sin_t0
+            p2 = - f1 * sin_t0 + f2 * cos_t0
+        if p1.length < p2.length:
+            p1, p2 = -p2, p1
+        return Ellipse3D(s, p1, p2)
+
+    def steiner_inellipse(self):
+        """
+        Steiner inellipse of the triangle,
+        i.e. an ellipse inscribed in the triangle and tangent
+        to the triangle's sides at their midpoints.
+        returns: an instance of Ellipse3D.
+        """
+        ellipse = self.steiner_circumellipse()
+        return Ellipse3D(ellipse.center, ellipse.semi_major_axis / 2.0, ellipse.semi_minor_axis / 2.0)
 
 class LinearApproximationData(object):
     """

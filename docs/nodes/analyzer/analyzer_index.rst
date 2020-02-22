@@ -38,4 +38,9 @@ Analyzers
    chess_selection
    wave_paint
    origins
+   linear_approx
+   circle_approx
+   sphere_approx
+   inscribed_circle
+   steiner_ellipse
 
