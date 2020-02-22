@@ -268,6 +268,7 @@
     SvCircleApproxNode
     SvSphereApproxNode
     SvInscribedCircleNode
+    SvSteinerEllipseNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
