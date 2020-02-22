@@ -1638,37 +1638,67 @@ class CircleEquation2D(object):
             return value < 0
 
 class Triangle(object):
+    """
+    Class containing general information about a triangle (in 3D).
+    A triangle is defined by three vertices.
+    """
     def __init__(self, v1, v2, v3):
+        """
+        inputs: v1, v2, v3 - mathutils.Vector.
+        """
         self.v1 = v1
         self.v2 = v2
         self.v3 = v3
 
     @property
     def vertices(self):
+        """
+        List of triangle vertices.
+        """
         return [v1, v2, v3]
 
     def normal(self):
+        """
+        Triangle plane normal.
+        """
         return mathutils.geometry.normal(self.v1, self.v2, self.v3)
 
     def area(self):
+        """
+        Triangle area.
+        """
         return mathutils.geometry.area_tri(self.v1, self.v2, self.v3)
 
     def perimeter(self):
+        """
+        Triangle perimeter.
+        """
         dv1 = self.v2 - self.v1
         dv2 = self.v3 - self.v1
         dv3 = self.v3 - self.v2
         return dv1.length + dv2.length + dv3.length
 
     def inscribed_circle_radius(self):
+        """
+        The radius of the inscribed circle.
+        """
         return 2 * self.area() / self.perimeter()
 
     def inscribed_circle_center(self):
+        """
+        The center of the inscribed circle.
+        returns: mathutils.Vector.
+        """
         side_1 = (self.v2 - self.v3).length
         side_2 = (self.v1 - self.v3).length
         side_3 = (self.v1 - self.v2).length
         return (side_1 * self.v1 + side_2 * self.v2 + side_3 * self.v3) / self.perimeter()
 
     def inscribed_circle(self):
+        """
+        Inscribed circle.
+        Returns: an instance of CircleApproximationData.
+        """
         circle = CircleApproximationData()
         side_1 = (self.v2 - self.v3).length
         side_2 = (self.v1 - self.v3).length
