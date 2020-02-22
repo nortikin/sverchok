@@ -225,23 +225,21 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return None
 
-    def add_prop_from_dict(self, prop_dict, new_prop_type):
-        cls = get_node_class_reference(self.cls_bl_idname)
-        cls_dict = cls.__dict__ if cls else {}
+    # def add_prop_from_dict(self, prop_dict, new_prop_type):
+    #     cls = get_node_class_reference(self.cls_bl_idname)
+    #     cls_dict = cls.__dict__ if cls else {}
 
-        if new_prop_type == "Float":
-            prop_settings = self.float_props.add()
-        elif new_prop_type == "Int":
-            prop_settings = self.int_props.add()
-        else:
-            return None
+    #     if new_prop_type == "Float":
+    #         prop_settings = self.float_props.add()
+    #     elif new_prop_type == "Int":
+    #         prop_settings = self.int_props.add()
+    #     else:
+    #         return None
 
-        new_name = generate_name(prop_dict['name'], cls_dict)
-        prop_settings.prop_name = new_name
-        prop_settings.set_settings(prop_dict)
-        return new_name
-
-
+    #     new_name = generate_name(prop_dict['name'], cls_dict)
+    #     prop_settings.prop_name = new_name
+    #     prop_settings.set_settings(prop_dict)
+    #     return new_name
 
     def get_all_props(self):
         """
@@ -348,7 +346,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     def output_node(self):
         return self.nodes.get("Group Outputs Exp")
 
-    def update_cls(self, new_socket_from_definition=False):
+    def update_cls(self):
         """
         create or update the corresponding class reference
         """
@@ -378,20 +376,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls_dict["bl_idname"] = cls_name
         cls_dict["bl_label"] = self.name
 
-        if new_socket_from_definition:
-            # the user has decided to generate a new property without linking sockets
-            cls_dict["input_template"] = self.generate_inputs()
-            cls_dict["output_template"] = self.generate_outputs()
-            
-            # augment template here
-            (prop_name, prop_dict, socket_type, self.kind) = new_socket_from_definition
-
-
-        else:
-            # this is run when the user hand-links a socket
-            self.verify_props()
-            cls_dict["input_template"] = self.generate_inputs()
-            cls_dict["output_template"] = self.generate_outputs()
+        self.verify_props()
+        cls_dict["input_template"] = self.generate_inputs()
+        cls_dict["output_template"] = self.generate_outputs()
 
         self.make_props(cls_dict)
 

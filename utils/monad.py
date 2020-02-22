@@ -19,10 +19,10 @@
 import sys
 
 import bpy
-from bpy.types import Operator
+from bpy.types import Operator, Node
 from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatProperty
 
-
+from sverchok.utils import get_node_class_reference, register_node_class, unregister_node_class
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import updateNode, get_other_socket, enum_item_4
 from sverchok.core.monad import monad_make_unique
@@ -280,7 +280,6 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         if sig in {"int", "float"}:
             # prop_dict['update'] = updateNode
             prop_dict['default'] = getattr(self, f"new_prop_{sig}_default")
-
             properties = 'min max soft_min soft_max'.split()
             for prop in properties:
                 if getattr(self, f"enable_{prop}"):
@@ -289,55 +288,58 @@ class SvNewSocketOpExp(Operator, MonadOpCommon):
         return prop_dict
 
     def execute(self, context):
-
         monad = context.space_data.edit_tree
-        io_node = monad.input_node if self.kind == 'inputs' else monad.output_node
-
-        # if we want to add a socket to the inputs node, we must update that node's output sokets.
-        # because the output sockets are the sockets that feed data into the monad tree. This is
-        # why the reverse lookup is used.
-        socket_kind_to_add = reverse_lookup.get(self.kind)
-        socket_list = getattr(io_node, socket_kind_to_add)
-        socket = socket_list[-1]
-
-        # compose a (sparse) prop_dict from the user configured property. 
-        prop_dict = self.get_prop_dict()
-        prop_name = ""
-        prop_data = {}
-
-        # print(prop_dict)
-        # print('get all', monad.get_all_props())
-
-        socket_definition = (prop_name, prop_dict, socket_type, self.kind)
-        if self.kind == "inputs":
-            # -- adding an output socket to the input node
-            prop_name = monad.add_prop_from_dict(prop_dict, self.new_prop_type)
-            cls = monad.update_cls(new_socket_from_definition=socket_definition)
-            new_name, new_type, prop_data = cls.input_template[-1]
-        else:
-            # -- adding an input socket to the output node
-            cls = monad.update_cls(new_socket_from_definition=socket_definition)
-            new_name, new_type = cls.output_template[-1]
-
-        # from dummy to new type
-        new_socket = socket.replace_socket(new_type, new_name=new_name)
-
-        # update all monad nodes (front facing)
-        for instance in monad.instances:
-            # adding output sockets to the input node inside the monad tree, means 
-            # we add input sockets to the monad Node.
-            sockets = getattr(instance, self.kind)
-            new_socket = sockets.new(new_type, new_name)
-            for name, value in prop_data.items():
-                if not name == 'prop_name':
-                    setattr(new_socket, name, value)
-                else:
-                    new_socket.prop_name = prop_name or ''
-
-        # add new dangling dummy is done automatically in the monad cycle code.
-        # socket_list.new('SvDummySocket', 'connect me')
+        monad_node = monad.instances[0]
+        with monad_node.sv_throttle_tree_update():
+            self.add_node(monad)
 
         return {'FINISHED'}
+
+    def add_node(self, tree):
+
+        class SvSingleSocketNode():
+            bl_idname = 'SvSingleSocketNode'
+            bl_label = 'DO NOT USE'
+            bl_icon = 'MOD_CURVE'
+
+
+        # [x] define new node
+        prop_dict = self.get_prop_dict()
+        bases = (SvSingleSocketNode, Node, SverchCustomTreeNode)
+        prop_func = IntProperty if self.new_prop_type == "int" else FloatProperty
+        
+        # [x] -- add prop if needed (only when inputs)
+        cls_dict = {}
+        cls_dict['__annotations__'] = {}
+        cls_dict['__annotations__'][self.new_prop_name] = prop_func(**prop_dict)
+        cls_name = SvSingleSocketNode.bl_idname
+        cls_ref = type(cls_name, bases, cls_dict)
+
+        # [x] register new node (but unregister first if needed..)
+        old_cls_ref = get_node_class_reference(cls_name)
+        if old_cls_ref:
+            unregister_node_class(old_cls_ref)
+
+        register_node_class(cls_ref)
+
+        # [x] add node
+        property_node = tree.nodes.new(cls_name)
+
+        # [x] -- add socket to node (add both in the template)
+        io_sockets = getattr(property_node, self.kind)
+        io_sockets.new(self.socket_type, prop_dict['name']).prop_name = prop_dict['name'] 
+
+        # [x] link node
+        io_node = tree.input_node if self.kind == 'inputs' else tree.output_node
+        out2in = self.kind == 'inputs'
+        AB_LINK = (io_node.outputs[-1], io_sockets[-1]) if out2in else (io_sockets[-1], io_node.inputs[-1])
+        tree.links.new(*AB_LINK)
+
+        # [x] unlink
+        tree.links.remove(*AB_LINK)
+        
+        # [x] unregister node
+        unregister_node_class(cls_ref)
 
 
 class SvMonadNewEmpty(Operator):
