@@ -28,6 +28,7 @@ Vector
    linear_approx
    circle_approx
    sphere_approx
+   inscribed_circle
    color_input
    color_in_mk1
    color_out_mk1
