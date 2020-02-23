@@ -20,7 +20,7 @@ from bpy.props import EnumProperty, FloatProperty, FloatVectorProperty, BoolProp
 import numpy as np
 from numpy import pi
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, numpy_list_match_func, no_space
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.modules.vector_math_utils import angle_between
 
@@ -89,7 +89,7 @@ def cast_meshes(params, constant, matching_f):
             size = np.sum(mag)/mag.shape[0]
         else:
             size = size[:, np.newaxis]
-        if cast_shape == 'UV Sphere':
+        if cast_shape == 'UV_Sphere':
             sub_props = [np_verts_c, u_sides, v_sides]
         elif cast_shape == 'Sphere':
             sub_props = [np_verts_c, mag]
@@ -137,7 +137,7 @@ class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
         ('EXTERNAL', 'Defined', 'Matrix to apply to verts before evaluating texture', '', 2),
     ]
 
-    cast_modes = [(t, t.title(), t.title(), '', id) for id, t in enumerate(CAST_FORMULAS)]
+    cast_modes = [(no_space(t), t.title(), t.title(), '', id) for id, t in enumerate(CAST_FORMULAS)]
 
     @throttled
     def handle_size_socket(self, context):
