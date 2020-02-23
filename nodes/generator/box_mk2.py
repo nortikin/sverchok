@@ -213,10 +213,10 @@ def make_edg_pol(x_verts, y_verts, z_verts, flags):
     if get_faces:
         all_faces = np.empty((num_faces, 4), 'i')
         roll_faces = np.zeros((z_verts-1, z_spread, 4))
-        roll_faces[:, :, 0] = grid[:-1, :-1]
-        roll_faces[:, :, 1] = grid[:-1, 1:]
-        roll_faces[:, :, 2] = grid[1:, 1:]
-        roll_faces[:, :, 3] = grid[1:, :-1]
+        roll_faces[:, :, 0] = grid[1:, :-1]
+        roll_faces[:, :, 1] = grid[1:, 1:]
+        roll_faces[:, :, 2] = grid[:-1, 1:]
+        roll_faces[:, :, 3] = grid[:-1, :-1]
         all_faces[:roll_faces_n, :] = roll_faces.reshape(-1, 4)
     else:
         all_faces = np.empty((1, 4), 'i')
