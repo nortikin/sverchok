@@ -53,25 +53,20 @@ class SvFormulaShapeNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_FORMULA_SHAPE'
     
     number: IntProperty(
-        name='number', description='vertex number', default=100,
-        options={'ANIMATABLE'}, update=updateNode)
+        name='number', description='vertex number', default=100, update=updateNode)
 
     scale: FloatProperty(
-        name='scale', description='scale', default=1,
-        options={'ANIMATABLE'}, update=updateNode)
+        name='scale', description='scale', default=1, update=updateNode)
 
     ## sphere
     XX: FloatProperty(
-        name='XX', description='XX factor', default=1,
-        options={'ANIMATABLE'}, update=updateNode)
+        name='XX', description='XX factor', default=1, update=updateNode)
 
     YY: FloatProperty(
-        name='YY', description='YY factor', default=1,
-        options={'ANIMATABLE'}, update=updateNode)
+        name='YY', description='YY factor', default=1, update=updateNode)
 
     ZZ: FloatProperty(
-        name='ZZ', description='ZZ factor', default=1,
-        options={'ANIMATABLE'}, update=updateNode)
+        name='ZZ', description='ZZ factor', default=1, update=updateNode)
     
     # formula for usual case
     list_formulaX = [    'i*XX',
