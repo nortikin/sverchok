@@ -37,7 +37,7 @@ class SvBMOpsNodeMK2(bpy.types.Node, SverchCustomTreeNode):
           'dissolve_faces(bm,faces=e,use_verts=v[0])',
           'connect_verts_concave(bm,faces=e)',
           'recalc_face_normals(bm,faces=e)',
-          'rotate_edges(bm, edges=e, use_ccw=v[0])',
+          'rotate_edges(bm,edges=e,use_ccw=v[0])',
           'connect_verts_nonplanar(bm,angle_limit=v[0],faces=e)',
           'triangulate(bm,faces=e,quad_method=v[0],ngon_method=v[1])',
           'dissolve_edges(bm,edges=e,use_verts=v[0],use_face_split=v[1])',
