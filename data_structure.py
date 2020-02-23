@@ -708,6 +708,9 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 #### random stuff
 ####
 
+def no_space(s):
+    return s.replace(' ', '_')
+
 def enum_item(s):
     """return a list usable in enum property from a list with one value"""
     return [(i, i, "") for i in s]
