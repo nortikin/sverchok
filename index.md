@@ -88,8 +88,10 @@
 
 ## Transforms
     SvRotationNodeMK2
+    SvRotationNodeMk3
     SvScaleNodeMK2
-    SvMoveNodeMK2
+    SvScaleNodeMk3
+    SvMoveNodeMk3
     SvSymmetrizeNode
     SvMirrorNodeMk2
     MatrixApplyNode
