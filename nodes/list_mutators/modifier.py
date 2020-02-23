@@ -22,7 +22,7 @@ import bpy
 from bpy.props import EnumProperty, IntProperty, BoolProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, no_space
 
 
 def normalize(a):
@@ -78,8 +78,8 @@ node_item_list = [
     (2, 100, SYMDIFF, lambda a, b: set(a) ^ set(b))
 ]
 
-func_dict = {k: v for _, _, k, v in node_item_list}
-num_inputs = {k: v for v, _, k, _ in node_item_list}
+func_dict = {no_space(k): v for _, _, k, v in node_item_list}
+num_inputs = {no_space(k): v for v, _, k, _ in node_item_list}
 
 
 class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
@@ -89,7 +89,7 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MODIFIER'
     sv_icon = 'SV_LIST_MODIFIER'
 
-    mode_items = [(name, name, "", idx) for _, idx, name, _ in node_item_list]
+    mode_items = [(no_space(name), name, "", idx) for _, idx, name, _ in node_item_list]
 
     func_: EnumProperty(
         name="Modes",
@@ -125,7 +125,7 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
         
-        unary = (num_inputs[self.func_] == 1)
+        unary = (num_inputs[no_space(self.func_)] == 1)
         f = self.get_f(unary)
 
         if unary:
@@ -146,9 +146,9 @@ class SvListModifierNode(bpy.types.Node, SverchCustomTreeNode):
         outputs[0].sv_set(out)
 
     def get_f(self, unary):
-        operation = func_dict[self.func_]
+        operation = func_dict[no_space(self.func_)]
 
-        do_post = (self.func_ in SET_OPS) and self.listify
+        do_post = (no_space(self.func_) in SET_OPS) and self.listify
         post_process = list if do_post else lambda x: x # identity function
 
         if unary:
