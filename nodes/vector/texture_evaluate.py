@@ -23,7 +23,7 @@ from mathutils import Vector, Matrix, Color
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.core.socket_data import SvGetSocketInfo
-from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func
+from sverchok.data_structure import updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func, no_space
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.modules.color_utils import color_channels
 
@@ -66,7 +66,7 @@ def meshes_texture_evaluate(params, constant, matching_f):
 
     return result
 
-color_channels_modes = [(t, t, t, '', color_channels[t][0]) for t in color_channels if not t == 'RGBA']
+color_channels_modes = [(no_space(t), t, t, '', color_channels[t][0]) for t in color_channels if not t == 'RGBA']
 
 mapper_funcs = {
     'UV': lambda v_uv: Vector((v_uv[0]*2-1, v_uv[1]*2-1, v_uv[2])),
