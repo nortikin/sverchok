@@ -108,9 +108,10 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         with self.sv_throttle_tree_update():
 
             self.ensure_collection()
-            for obj_index, matrix in enumerate(matrices):
+            combs = zip(objects * len(matrices), matrices)
+            for obj_index, comb in enumerate(combs):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
-                make_or_update_instance(self, obj_name, matrix, objects[0])
+                make_or_update_instance(self, obj_name, comb[1], comb[0])
 
             num_objects = len(matrices)
             self.remove_non_updated_objects(num_objects)
