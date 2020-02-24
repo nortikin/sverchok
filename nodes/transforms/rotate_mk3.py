@@ -187,14 +187,17 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     w_: FloatProperty(
         name='W', description='W', default=1.0, update=updateNode)
 
-    current_mode: StringProperty(default="")
+    actual_mode: StringProperty(default="")
 
     def update_sockets(self):
+        print(1,'updating sockets', self.mode, self.actual_mode)
         mode = self.mode
-        if mode == self.current_mode:
+        if mode == self.actual_mode:
             return
 
+        print(2, 'updating sockets', self.mode, self.actual_mode,  len(self.inputs))
         while len(self.inputs) > 2:
+            print(3, 'updating sockets', self.mode, self.actual_mode)
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
@@ -208,14 +211,14 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             if mode == 'QUAT':
                 self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
 
-        self.current_mode = mode
+        self.actual_mode = mode
     @throttled
     def mode_change(self, context):
+        print('changing')
         self.update_sockets()
         # just because click doesn't mean we need to change mode
-        print('changing')
         # mode = self.mode
-        # if mode == self.current_mode:
+        # if mode == self.actual_mode:
         #     return
         #
         # while len(self.inputs) > 2:
@@ -232,7 +235,7 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         #     if mode == 'QUAT':
         #         self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
         #
-        # self.current_mode = mode
+        # self.actual_mode = mode
 
     modes = [
         ("AXIS", "Axis", "Axis and angle rotation", 1),
@@ -276,7 +279,8 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvVerticesSocket', "Axis").prop_name = "axis_"
         self.inputs.new('SvStringsSocket', "Angle").prop_name = "angle_"
         self.outputs.new('SvVerticesSocket', "Vertices")
-        self.mode_change(context)
+        self.update_sockets()
+        # self.mode_change(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -295,21 +299,25 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def migrate_from(self, old_node):
-        self.mode = old_node.mode
-        # self.update_sockets()
+        # self.mode = old_node.mode
+        #
         if old_node.mode == 'AXIS':
-            return
+            return True
+        self.location.y -= 250
+        print(self.mode, self.actual_mode)
+        # self.update_sockets()
+        print(self.mode, self.actual_mode)
+        # while len(self.inputs) > 2:
+        #     self.inputs.remove(self.inputs[-1])
+        #
+        # if self.mode in ('EULER', 'QUAT'):
+        #     self.inputs.new('SvStringsSocket', "X").prop_name = "x_"
+        #     self.inputs.new('SvStringsSocket', "Y").prop_name = "y_"
+        #     self.inputs.new('SvStringsSocket', "Z").prop_name = "z_"
+        #     if self.mode == 'QUAT':
+        #         self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
+        return False
 
-        while len(self.inputs) > 2:
-            self.inputs.remove(self.inputs[-1])
-
-        if self.mode in ('EULER', 'QUAT'):
-            self.inputs.new('SvStringsSocket', "X").prop_name = "x_"
-            self.inputs.new('SvStringsSocket', "Y").prop_name = "y_"
-            self.inputs.new('SvStringsSocket', "Z").prop_name = "z_"
-            if self.mode == 'QUAT':
-                self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
-        
     def process(self):
         inputs, outputs = self.inputs, self.outputs
 

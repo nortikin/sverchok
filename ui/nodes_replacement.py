@@ -130,19 +130,23 @@ class SvReplaceNode(bpy.types.Operator):
 
         if hasattr(new_node, "migrate_from"):
             # Allow new node to copy what generic code could not.
-            new_node.migrate_from(old_node)
+            # and inform about sucesfull replaement
+            delete_old_node = new_node.migrate_from(old_node)
+        else:
+            delete_old_node = True
 
         msg = "Node `{}' ({}) has been replaced with new node `{}' ({})".format(
-                old_node.name, old_node.bl_idname,
-                new_node.name, new_node.bl_idname)
+            old_node.name, old_node.bl_idname,
+            new_node.name, new_node.bl_idname)
         info(msg)
         self.report({'INFO'}, msg)
-
-        if old_node.parent and old_node.parent.label == "Deprecated node!":
-            if old_node.parent.parent:
-                new_node.parent = old_node.parent.parent
-            tree.nodes.remove(old_node.parent)
-        tree.nodes.remove(old_node)
+        
+        if delete_old_node:
+            if old_node.parent and old_node.parent.label == "Deprecated node!":
+                if old_node.parent.parent:
+                    new_node.parent = old_node.parent.parent
+                tree.nodes.remove(old_node.parent)
+            tree.nodes.remove(old_node)
 
         return {'FINISHED'}
 

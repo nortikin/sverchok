@@ -89,7 +89,6 @@
 ## Transforms
     SvRotationNodeMK2
     SvRotationNodeMk3
-    SvScaleNodeMK2
     SvScaleNodeMk3
     SvMoveNodeMk3
     SvSymmetrizeNode
