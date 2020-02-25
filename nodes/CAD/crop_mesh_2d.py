@@ -11,7 +11,7 @@ import bpy
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, no_space
 from sverchok.utils.geom_2d.merge_mesh import crop_mesh, crop_edges
 from sverchok.utils.geom_2d.lin_alg import is_ccw_polygon
 
@@ -118,7 +118,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
 
     @throttled
     def update_sockets(self, context):
-        if self.alg_mode == 'Sweep line':
+        if self.alg_mode == 'Sweep_line':
             if self.inputs[1].name != self.input_mode:
                 self.inputs[1].name = self.input_mode.title()
                 self.outputs[1].name = self.input_mode.title()
@@ -127,25 +127,32 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs[1].name = 'Faces'
                 self.outputs[1].name = 'Faces'
 
-    alg_mode_items = [(k, k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
+    alg_mode_items = [(no_space(k), k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
     mode_items = [('inner', 'Inner', 'Fit mesh', 'SELECT_INTERSECT', 0),
                   ('outer', 'Outer', 'Make hole', 'SELECT_SUBTRACT', 1)]
     input_mode_items = [('faces', 'Faces', 'Input type', 'FACESEL', 0),
                         ('edges', 'Edges', 'Input type', 'EDGESEL', 1)]
 
-    mode: bpy.props.EnumProperty(items=mode_items, name='Mode of cropping mesh', update=updateNode,
-                                 description='Switch between creating holes and fitting mesh into another mesh')
-    input_mode: bpy.props.EnumProperty(items=input_mode_items, name="Type of input data", update=update_sockets,
-                                       description='Switch between input mesh type')
-    accuracy: bpy.props.IntProperty(name='Accuracy', update=updateNode, default=5, min=3, max=12,
-                                    description='Some errors of the node can be fixed by changing this value')
-    alg_mode: bpy.props.EnumProperty(items=alg_mode_items, name="Name of algorithm", update=update_sockets)
+    mode: bpy.props.EnumProperty(
+        items=mode_items, name='Mode of cropping mesh', update=updateNode,
+        description='Switch between creating holes and fitting mesh into another mesh')
+
+    input_mode: bpy.props.EnumProperty(
+        items=input_mode_items, name="Type of input data", update=update_sockets,
+        description='Switch between input mesh type')
+
+    accuracy: bpy.props.IntProperty(
+        name='Accuracy', update=updateNode, default=5, min=3, max=12,
+        description='Some errors of the node can be fixed by changing this value')
+
+    alg_mode: bpy.props.EnumProperty(
+        items=alg_mode_items, name="Name of algorithm", update=update_sockets, default="Sweep_Line")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'alg_mode', expand=True)
         col = layout.column(align=True)
         col.label(text='Type of input mesh:')
-        if self.alg_mode == 'Sweep line':
+        if self.alg_mode == 'Sweep_line':
             col.row().prop(self, 'input_mode', expand=True)
         else:
             col.row().label(text='Faces', icon='FACESEL')
@@ -181,7 +188,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
         for i, sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop in zip(range(max_len), in_verts, in_edges_faces,
                                                                              in_verts_crop, in_faces_crop):
             if self.input_mode == 'faces':
-                if self.alg_mode == 'Sweep line':
+                if self.alg_mode == 'Sweep_line':
                     out.append(crop_mesh(sv_verts, sv_faces_edges, sv_verts_crop, sv_faces_crop,
                                          self.mode, self.accuracy))
                 else:
