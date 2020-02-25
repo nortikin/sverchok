@@ -600,7 +600,7 @@
         -41.62611389160156
       ],
       "params": {
-        "current_op": "ANGLE RAD",
+        "current_op": "ANGLE_RAD",
         "socket_info": "vv s"
       },
       "width": 140.0
