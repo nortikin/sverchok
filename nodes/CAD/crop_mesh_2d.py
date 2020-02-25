@@ -146,7 +146,7 @@ class SvCropMesh2D(bpy.types.Node, SverchCustomTreeNode):
         description='Some errors of the node can be fixed by changing this value')
 
     alg_mode: bpy.props.EnumProperty(
-        items=alg_mode_items, name="Name of algorithm", update=update_sockets, default="Sweep_Line")
+        items=alg_mode_items, name="Name of algorithm", update=update_sockets, default="Sweep_line")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'alg_mode', expand=True)
