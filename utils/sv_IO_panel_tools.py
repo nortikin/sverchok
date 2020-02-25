@@ -39,9 +39,10 @@ from sverchok.utils.sv_requests import urlopen
 SCRIPTED_NODES = {'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite'}
 PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 
-_EXPORTER_REVISION_ = '0.079'
+_EXPORTER_REVISION_ = '0.079' #'0.080'
 
 IO_REVISION_HISTORY = r"""
+# 0.080 removes spaces from enum identifiers as per BPY API change of 20 feb 2020.
 0.079 only to suggest that exports will be compatible with socketnames currently in sv.
 0.072 export now stores the absolute node location (incase framed-n)
 0.072 new route for node.storage_get/set_data. no change to json format
