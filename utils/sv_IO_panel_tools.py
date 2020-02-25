@@ -581,10 +581,13 @@ def fix_enum_identifier_spaces_if_needed(node, node_ref):
     """
 
     found_enum_properties = find_enumerators(node)
-    # for prop_name, prop_val in node_ref
-    #     if prop_name in found_enum_properties
-    #         if " " in prop_val:
-    #               ... overwrite.
+    """
+    params = node_ref['params']
+    for prop_name, prop_val in params.items():
+        if prop_name in found_enum_properties
+            if " " in prop_val:
+                ... overwrite.
+    """
     pass
 
 
