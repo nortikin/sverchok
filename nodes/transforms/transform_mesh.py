@@ -573,11 +573,13 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         direction = iter_last(self.inputs['Direction'].sv_get(deepcopy=False))
         factor = iter_last(self.inputs['Factor'].sv_get(deepcopy=False))
         out = []
-        for v, e, f, m, o, sd, ai, d, fac in zip(verts, edges, faces, mask, origin, space_direction, active_index,
-                                                 direction, factor):
+
+        dir_mode = DIR_MODE.cust if self.inputs['Direction'].is_linked else self.direction_mode
+        
+        for v, e, f, m, o, sd, ai, d, fac in zip(verts, edges, faces, mask, origin, space_direction, active_index, direction, factor):
             out.append(transform_mesh(v, e, f, m, o, sd, ai, d, fac, self.transform_mode, self.origin_mode,
-                                      DIR_MODE.cust if self.inputs['Direction'].is_linked else self.direction_mode,
-                                      self.select_mode, self.space_mode, self.mask_mode))
+                                      dir_mode, self.select_mode, self.space_mode, self.mask_mode))
+
         self.outputs['Verts'].sv_set(out)
 
 
