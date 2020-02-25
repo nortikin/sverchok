@@ -148,7 +148,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Points Inside Mesh'
     sv_icon = 'SV_POINTS_INSIDE_MESH'
 
-    mode_options = [(k[0], k[1], '', i) for i, k in enumerate([("algo 1", "Regular"), ("algo 2", "Multisample")])]
+    mode_options = [(k[0], k[1], '', i) for i, k in enumerate([("algo_1", "Regular"), ("algo_2", "Multisample")])]
     dimension_options = [(k, k, '', i) for i, k in enumerate(["2D", "3D"])]
 
     @throttled
@@ -166,8 +166,8 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     dimensions_mode: EnumProperty(
         items=dimension_options,
         description="offers different approaches to finding internal points",
-        default="3D", update=update_sockets
-    )
+        default="3D", update=update_sockets)
+
     normal: FloatVectorProperty(
         name='Normal', description='Plane Normal',
         size=3, default=(0, 0, 1),
@@ -182,8 +182,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
     selected_algo: EnumProperty(
         items=mode_options,
         description="offers different approaches to finding internal points",
-        default="algo 1", update=updateNode
-    )
+        default="algo_1", update=updateNode)
 
     epsilon_bvh: FloatProperty(
         name='Tolerance', description='fudge value',
@@ -201,6 +200,7 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         description="Behavior on different list lengths, multiple objects level",
         items=list_match_modes, default="REPEAT",
         update=updateNode)
+
     list_match_local: EnumProperty(
         name="Match Local",
         description="Behavior on different list lengths, between Normal and Max Distance",
@@ -252,9 +252,9 @@ class SvPointInside(bpy.types.Node, SverchCustomTreeNode):
         params.append(cycle([self.epsilon_bvh]))
         # special options and main_func
         if self.dimensions_mode == '3D':
-            if self.selected_algo == 'algo 1':
+            if self.selected_algo == 'algo_1':
                 main_func = are_inside
-            elif self.selected_algo == 'algo 2':
+            elif self.selected_algo == 'algo_2':
                 params.append(cycle([self.num_samples]))
                 main_func = get_points_in_mesh
         else:
