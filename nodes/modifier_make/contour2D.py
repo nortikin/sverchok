@@ -34,8 +34,8 @@ mode_items = [
     ("Weighted", "Weighted", "One distance per each vertex  ", 1)]
 
 list_match_Items = [
-    ("Long Repeat", "Long Repeat", "Repeat last item until match the longest list", 0),
-    ("Long Cycle", "Long Cycle", "Cycle through the shorter lists until match the longest list", 1)]
+    ("Long_Repeat", "Long Repeat", "Repeat last item until match the longest list", 0),
+    ("Long_Cycle", "Long Cycle", "Cycle through the shorter lists until match the longest list", 1)]
 
 intersec_mode_items = [
     ("Circular", "Circular", "Intersecction based on distance (Slower)", 0),
@@ -340,7 +340,7 @@ def ciruclar_intersections(net2, verts, edges_in, v_len, radius):
 
 def list_matcher(a, list_match):
 
-    if list_match == "Long Cycle":
+    if list_match == "Long_Cycle":
         return match_long_cycle(a)
     else:
         return match_long_repeat(a)
@@ -432,9 +432,9 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     list_match: EnumProperty(
-        name="list_match",
+        name="list match",
         description="Behaviour on diffent list lengths",
-        items=list_match_Items, default="Long Repeat",
+        items=list_match_Items, default="Long_Repeat",
         update=updateNode)
 
     rm_doubles: FloatProperty(
@@ -617,7 +617,7 @@ class SvContourNode(bpy.types.Node, SverchCustomTreeNode):
         if self.modeI == "Weighted":
             perimeter_number = ceil(len(radius) / v_len)
             for i in range(perimeter_number):
-                if self.list_match == "Long Repeat":
+                if self.list_match == "Long_Repeat":
                     actual_radius.append([radius[min((i*v_len + j), len(radius) - 1)] for j in range(v_len)])
                 else:
                     actual_radius.append([radius[(i*v_len + j) % len(radius)] for j in range(v_len)])

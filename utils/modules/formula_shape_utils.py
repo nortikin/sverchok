@@ -262,7 +262,7 @@ list_Z_Z = [
     'sin(tan(ZZ*i))*50',    
     'cos(ZZ*pi*i)', 
     'tan(ZZ*i*pi)', 
-    'tan(i)*ZZ',    
+    'tan(i)*ZZ'
 ]
 
 # EOF
