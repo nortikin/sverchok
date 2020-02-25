@@ -42,7 +42,7 @@ PROFILE_NODES = {'SvProfileNode', 'SvProfileNodeMK2'}
 _EXPORTER_REVISION_ = '0.079' #'0.080'
 
 IO_REVISION_HISTORY = r"""
-# 0.080 removes spaces from enum identifiers as per BPY API change of 20 feb 2020.
+# 0.080 EFFECTS LOADING ONLY : removes spaces from enum identifiers as per BPY API change of 20 feb 2020.
 0.079 only to suggest that exports will be compatible with socketnames currently in sv.
 0.072 export now stores the absolute node location (incase framed-n)
 0.072 new route for node.storage_get/set_data. no change to json format
@@ -574,6 +574,19 @@ def apply_post_processing(node, node_ref):
         socket_kinds = node_ref.get(node.node_kind)
         node.repopulate(socket_kinds)
 
+def fix_enum_identifier_spaces_if_needed(node, node_ref):
+    """
+    in Blender 2.83 rules for declaring EnumProperty item identifiers have changed to prohibit spaces
+    this function attempts to correct stored enums in the json (in memory) by replacing spaces with underscores.
+    """
+
+    found_enum_properties = find_enumerators(node)
+    # for prop_name, prop_val in node_ref
+    #     if prop_name in found_enum_properties
+    #         if " " in prop_val:
+    #               ... overwrite.
+    pass
+
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
     node_ref = nodes_to_import[n]
@@ -594,6 +607,8 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
         exception(err)
         error('%s not currently registered, skipping', bl_idname)
         return
+
+    # fix_enum_identifier_spaces_if_needed(node, node_ref)
 
     if create_texts:
         add_texts(node, node_ref)
