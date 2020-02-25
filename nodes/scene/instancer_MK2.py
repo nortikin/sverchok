@@ -59,6 +59,11 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='Show', description='Activate node?',
         update=updateNode)
 
+    delete_source: BoolProperty(
+        default=False,
+        name='Delete Source', description='Delete Source Objects',
+        update=updateNode)
+
     basedata_name: StringProperty(
         default='Alpha',
         description='stores the mesh name found in the object, this mesh is instanced',
@@ -74,6 +79,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Update")
+        row = layout.row(align=True)
+        row.prop(self, "delete_source", text="Delete Source")
 
         layout.label(text="Object base name", icon='OUTLINER_OB_MESH')
         col = layout.column(align=True)
@@ -114,6 +121,11 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 make_or_update_instance(self, obj_name, comb[1], comb[0])
 
             num_objects = len(matrices)
+
+            if self.delete_source:
+                for obj in objects:
+                    bpy.data.objects.remove(obj)
+
             self.remove_non_updated_objects(num_objects)
 
     def ensure_collection(self):
