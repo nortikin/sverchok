@@ -182,7 +182,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def process(self):
 
-        self.ensure_enums_have_space(enums=[current_op])
+        self.ensure_enums_have_no_space(enums=[current_op])
 
         inputs, outputs = self.inputs, self.outputs
 

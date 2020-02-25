@@ -345,15 +345,15 @@ class SverchCustomTreeNode:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
 
-    def ensure_enums_have_space(self, enums=None):
+    def ensure_enums_have_no_space(self, enums=None):
         """
         enums: a list of property names to check. like  self.current_op  
 
-            self.ensure_enums_have_space(enums=[current_op])
+            self.ensure_enums_have_no_space(enums=[current_op])
 
         due to changes in EnumProperty defintion "laws" individual enum identifiers must not
-        contain spaces. This function takes a list of enums that the node current holds, and 
-        makes sure the stored enum has spaces.
+        contain spaces. This function takes a list of enums that the node currently holds, and 
+        makes sure the stored enum has no spaces.
         """
             for enum_property in enums:
                 current_value = getattr(self, enum_property)
