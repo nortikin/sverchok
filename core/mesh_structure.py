@@ -8,18 +8,45 @@
 
 from dataclasses import dataclass, field
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Optional, Union, Any
+from typing import List, Tuple, Optional, Union, Any, Dict
 
 import numpy as np
 
 
-class Mesh:
+@dataclass
+class LoopAttrs:
+    vertex_colors: np.ndarray = field(default_factory=list)
+
+
+@dataclass
+class VertAttrs(LoopAttrs):
+    vertex_colors: np.ndarray = field(default_factory=list)
+
+
+@dataclass
+class EdgeAttrs(VertAttrs):
+    vertex_colors: np.ndarray = field(default_factory=list)
+
+
+@dataclass
+class FaceAttrs(EdgeAttrs):
+    material_index: list = field(default_factory=list)
+
+
+class ObjectAttrs:
+    def __init__(self):
+        self.vertex_colors: np.ndarray = np.zeros(4)
+        self.material_index: int = 0
+
+
+class Mesh(ObjectAttrs):
 
     def __init__(self):
+        super().__init__()
         self.name: str = 'Sv mesh'
         self.materials: List[str] = []
-        self.vertex_colors: np.ndarray = []
-        self.material_index: int = 0
+
+        self.mesh_groups: Dict[str, Mesh] = dict()
 
         self._verts = Verts(self)
         self._edges = Edges(self)
@@ -72,12 +99,15 @@ class Mesh:
         search_order = ['loops', 'verts', 'edges', 'faces', 'mesh']
         elements = [self.loops, self.verts, self.edges, self.faces, self]
         for element in elements[search_order.index(start):]:
-            attr_values = getattr(element, name, None) 
+            attr_values = getattr(element, name, None)
             if attr_values is not None:
                 if isinstance(attr_values, np.ndarray):
                     return element
                 elif attr_values:
                     return element
+
+    def values_to_loops(self, value: Any) -> np.ndarray:
+        return np.repeat(value[np.newaxis], len(self.loops), 0)
 
 
 class Iterable(ABC):
@@ -99,33 +129,50 @@ class Iterable(ABC):
     def _main_attr(self): ...
 
 
-@dataclass
-class Verts(Iterable):
-    mesh: Mesh
-    co: np.ndarray = field(default_factory=list)
-    vertex_colors: np.ndarray = field(default_factory=list)
+class Verts(Iterable, VertAttrs):
+    def __init__(self, mesh: Mesh):
+        super().__init__()
+        self.mesh: Mesh = mesh
+        self.co: np.ndarray = []
 
     @property
     def _main_attr(self):
         return self.co
 
+    def values_to_loops(self, values: list) -> list:
+        last_ind = len(values) - 1
+        loop_inds = np.array(self.mesh.loops.ind)  # todo loops.ind should np array already later
+        loop_inds[loop_inds > last_ind] = last_ind
+        return values[loop_inds]
 
-@dataclass
-class Edges(Iterable):
-    mesh: Mesh
-    ind: list = field(default_factory=list)
+
+class Edges(Iterable, EdgeAttrs):
+    def __init__(self, mesh: Mesh):
+        super().__init__()
+        self.mesh: Mesh = mesh
+        self.ind: list = []
 
     @property
     def _main_attr(self):
         return self.ind
 
+    def values_to_verts(self, values: list) -> np.ndarray:
+        verts_values = np.zeros((len(self.mesh.verts), len(values[0])))
+        values = ensure_array_length(values, len(self))
+        np.add.at(verts_values, np.array(self.ind), values[:, np.newaxis])
+        _, vert_number = np.unique(self.ind, return_counts=True)
+        verts_values /= vert_number[:, np.newaxis]
+        return verts_values
 
-@dataclass
-class Faces(Iterable):
-    mesh: Mesh
-    _ind: list = field(default_factory=list)
-    material_index: list = field(default_factory=list)
-    vertex_colors: np.ndarray = field(default_factory=list)
+    def values_to_loops(self, values: list) -> np.ndarray:
+        return self.mesh.verts.values_to_loops(self.values_to_verts(values))
+
+
+class Faces(Iterable, FaceAttrs):
+    def __init__(self, mesh: Mesh):
+        super().__init__()
+        self.mesh: Mesh = mesh
+        self._ind: list = []
 
     @property
     def _main_attr(self):
@@ -140,20 +187,37 @@ class Faces(Iterable):
         self.mesh.loops = [i for f in faces for i in f]
         self._ind = faces
 
+    def values_to_loops(self, values: list) -> np.ndarray:
+        values = ensure_array_length(values, len(self))
+        return np.repeat(values, [len(f) for f in self.ind], 0)
 
-@dataclass
-class Loops(Iterable):
-    mesh: Mesh
-    ind: list = field(default_factory=list)
-    uv: np.ndarray = field(default_factory=list)
-    vertex_colors: np.ndarray = field(default_factory=list)
+
+class Loops(Iterable, LoopAttrs):
+    def __init__(self, mesh: Mesh):
+        super().__init__()
+        self.mesh: Mesh = mesh
+        self.ind: list = []
+        self.uv: np.ndarray = []
 
     @property
     def _main_attr(self):
         return self.ind
 
+    def values_to_loops(self, values: list) -> np.ndarray:
+        return ensure_array_length(values, len(self))
+
 
 MeshElements = Union[Mesh, Faces, Edges, Verts, Loops]
+
+
+def ensure_array_length(array: np.ndarray, length: int) -> np.ndarray:
+    if len(array) == length:
+        return array
+    elif len(array) > length:
+        return array[:length]
+    else:
+        tail = np.repeat(array[-1][np.newaxis], length - len(array), 0)
+        return np.concatenate((array, tail))
 
 
 if __name__ == '__main__':

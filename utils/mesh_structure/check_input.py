@@ -60,7 +60,9 @@ class VertsInputCorrector:
 
 
 class EdgesInputCorrector:
-    pass
+    @staticmethod
+    def vertex_colors(input_val):
+        return extract_np_array(input_val)
 
 
 class FacesInputCorrector:

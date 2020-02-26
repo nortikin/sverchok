@@ -83,7 +83,7 @@ def correct_faces(len_verts: int, faces: List[List[int]]) -> List[List[int]]:
 
 
 def update_vertices(bl_me: bpy.types.Mesh, me: Mesh) -> None:
-    bl_me.vertices.foreach_set('co', me.verts.co.flatten())
+    bl_me.vertices.foreach_set('co', np.ravel(me.verts.co))
 
 
 def update_edges(bl_me: bpy.types.Mesh, me_edges: dict) -> None:
@@ -224,39 +224,15 @@ def apply_materials_to_mesh(objects: bpy.types.bpy_prop_collection,
 def set_vertex_color(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh]):
     for bm_me, me in zip((prop.mesh for prop in objects), meshes):
         loop_colors = get_loop_colors(me)
-        if np.any(loop_colors):
+        if len(loop_colors):
             col_layer = pick_data_block_from_collection(bm_me.vertex_colors, 'SvCol', False)
             col_layer.data.foreach_set('color', loop_colors)
 
 
 def get_loop_colors(me: Mesh) -> np.ndarray:
-    @singledispatch
-    def loop_colors(elem, __):
-        raise TypeError(f"Such type={type(elem)} of mesh elements does not supported")
-
-    @loop_colors.register
-    def _(loops: Loops, _):
-        return ensure_array_length(loops.vertex_colors, len(loops)).flatten()
-
-    @loop_colors.register
-    def _(verts: Verts, mesh: Mesh):
-        last_ind = len(verts.vertex_colors) - 1
-        loop_inds = np.array(mesh.loops.ind)
-        loop_inds[loop_inds > last_ind] = last_ind
-        return verts.vertex_colors[loop_inds].flatten()
-
-    @loop_colors.register
-    def _(faces: Faces, _):
-        cols = ensure_array_length(faces.vertex_colors, len(faces))
-        return np.repeat(cols, [len(f) for f in faces], 0).flatten()
-
-    @loop_colors.register
-    def _(mesh: Mesh, _):
-        return np.repeat(mesh.vertex_colors[np.newaxis], len(mesh.loops), 0).flatten()
-
     elements = me.search_element_with_attr('loops', 'vertex_colors')
     if elements:
-        return loop_colors(elements, me)
+        return np.ravel(elements.values_to_loops(elements.vertex_colors))
     else:
         return []
 
