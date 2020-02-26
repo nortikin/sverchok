@@ -1544,7 +1544,7 @@ class LineEquation2D(object):
 
     def distance_to_point(self, point):
         a, b, c = self.a, self.b, self.c
-        x, y, z = tuple(point)
+        x, y = tuple(point)
         value = a*x + b*y + c
         numerator = abs(value)
         denominator = sqrt(a*a + b*b)
@@ -1620,6 +1620,12 @@ class CircleEquation2D(object):
         line = LineEquation2D.from_two_points(self.center, point)
         p1, p2 = self.intersect_with_line(line)
         if nearest:
+            if p1 is None and p2 is None:
+                return None
+            if p1 is None and p2 is not None:
+                return p2
+            if p1 is not None and p2 is None:
+                return p1
             rho1 = (point - p1).length
             rho2 = (point - p2).length
             if rho1 < rho2:
