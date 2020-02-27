@@ -40,6 +40,7 @@ def move_meshes(params, constant, matching_f):
 
     for props in zip(*params):
         verts, move_verts, strength = local_match([np.array(p) for p in props])
+        print(move_verts)
         verts_out = verts + move_verts * strength[:, np.newaxis]
         result.append(verts_out if output_numpy else verts_out.tolist())
 
@@ -54,7 +55,7 @@ class SvMoveNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvMoveNodeMk3'
-    bl_label = 'Move_mk3'
+    bl_label = 'Move'
     bl_icon = 'ORIENTATION_VIEW'
     sv_icon = 'SV_MOVE'
 
@@ -82,7 +83,7 @@ class SvMoveNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
 
         self.inputs.new('SvVerticesSocket', 'Vertices')
-        self.inputs.new('SvVerticesSocket', 'Movement Vectors').prop_name = 'move_vert'
+        self.inputs.new('SvVerticesSocket', 'Movement Vectors').prop_name = 'movement_vectors'
         self.inputs.new('SvStringsSocket', 'Strength').prop_name = 'strength'
 
 
@@ -91,7 +92,6 @@ class SvMoveNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
-        self.draw_buttons(context, layout)
         layout.prop(self, 'output_numpy')
         layout.prop(self, 'list_match', expand=False)
 

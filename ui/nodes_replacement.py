@@ -103,6 +103,10 @@ class SvReplaceNode(bpy.types.Operator):
         for prop_name, prop_value in old_node.items():
             new_node[prop_name] = old_node[prop_name]
 
+        # get the node ready for linking
+        if hasattr(new_node, "migrate_props_pre_relink"):
+            new_node.migrate_props_pre_relink(old_node)
+            
         # Copy incoming / outgoing links
         old_in_links = [link for link in tree.links if link.to_node == old_node]
         old_out_links = [link for link in tree.links if link.from_node == old_node]
@@ -130,23 +134,21 @@ class SvReplaceNode(bpy.types.Operator):
 
         if hasattr(new_node, "migrate_from"):
             # Allow new node to copy what generic code could not.
-            # and inform about sucesfull replaement
-            delete_old_node = new_node.migrate_from(old_node)
-        else:
-            delete_old_node = True
+            new_node.migrate_from(old_node)
+
 
         msg = "Node `{}' ({}) has been replaced with new node `{}' ({})".format(
             old_node.name, old_node.bl_idname,
             new_node.name, new_node.bl_idname)
         info(msg)
         self.report({'INFO'}, msg)
-        
-        if delete_old_node:
-            if old_node.parent and old_node.parent.label == "Deprecated node!":
-                if old_node.parent.parent:
-                    new_node.parent = old_node.parent.parent
-                tree.nodes.remove(old_node.parent)
-            tree.nodes.remove(old_node)
+
+
+        if old_node.parent and old_node.parent.label == "Deprecated node!":
+            if old_node.parent.parent:
+                new_node.parent = old_node.parent.parent
+            tree.nodes.remove(old_node.parent)
+        tree.nodes.remove(old_node)
 
         return {'FINISHED'}
 

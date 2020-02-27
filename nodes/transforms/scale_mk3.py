@@ -39,8 +39,8 @@ def scale_meshes(params, constant, matching_f):
     local_match = numpy_list_match_func[match_mode]
 
     for props in zip(*params):
-        verts, centers, strength = local_match([np.array(p) for p in props])
-        verts_out = centers + (verts - centers) * strength[:, np.newaxis]
+        verts, centers, scale, strength = local_match([np.array(p) for p in props])
+        verts_out = centers + (verts - centers) * scale * strength[:, np.newaxis]
         result.append(verts_out if output_numpy else verts_out.tolist())
 
     return result
@@ -54,7 +54,7 @@ class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvScaleNodeMk3'
-    bl_label = 'Scale_mk3'
+    bl_label = 'Scale'
     bl_icon = 'ORIENTATION_VIEW'
     sv_icon = 'SV_MOVE'
 
@@ -63,9 +63,13 @@ class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         name='Centers', description='Center of the scaling transform',
         size=3, default=(0, 0, 0),
         update=updateNode)
+    scale: FloatVectorProperty(
+        name='Scale', description='Center of the scaling transform',
+        size=3, default=(1, 1, 1),
+        update=updateNode)
 
     multiplier: FloatProperty(
-        name='Scale', description='Multiplying  factor',
+        name='Multiplier', description='Multiplier factor',
         default=1.0, update=updateNode)
 
     list_match: EnumProperty(
@@ -83,7 +87,8 @@ class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvVerticesSocket', 'Centers').prop_name = 'centers'
-        self.inputs.new('SvStringsSocket', 'Scale').prop_name = 'multiplier'
+        self.inputs.new('SvVerticesSocket', 'Scale').prop_name = 'scale'
+        self.inputs.new('SvStringsSocket', 'Strength').prop_name = 'multiplier'
 
 
         self.outputs.new('SvVerticesSocket', 'Vertices')
@@ -93,7 +98,6 @@ class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
-        self.draw_buttons(context, layout)
         layout.prop(self, 'output_numpy')
         layout.prop(self, 'list_match', expand=False)
 
@@ -112,7 +116,7 @@ class SvScaleNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs]
 
         matching_f = list_match_func[self.list_match]
-        desired_levels = [3, 3, 2]
+        desired_levels = [3, 3, 3, 2]
         ops = [self.list_match, self.output_numpy]
 
         result = recurse_f_level_control(params, ops, scale_meshes, matching_f, desired_levels)

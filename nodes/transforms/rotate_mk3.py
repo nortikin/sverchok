@@ -155,6 +155,11 @@ def quat_rotate_meshes(params, constant, matching_f):
             rotate_vecs_constant_mat(props, mat, output_numpy, np_local_match, result)
     return result
 
+modes_dict = {
+    'AXIS':  (axis_rotate_meshes,  ['Axis', 'Angle']),
+    'EULER': (euler_rotate_meshes, ['X', 'Y', 'Z']),
+    'QUAT':  (quat_rotate_meshes,  ['X', 'Y', 'Z', 'W'])
+}
 class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Rotate vertices
@@ -163,7 +168,7 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
 
     bl_idname = 'SvRotationNodeMk3'
-    bl_label = 'Rotation_mk3'
+    bl_label = 'Rotate'
     bl_icon = 'NONE'
     sv_icon = 'SV_ROTATE'
 
@@ -187,15 +192,15 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     w_: FloatProperty(
         name='W', description='W', default=1.0, update=updateNode)
 
-    actual_mode: StringProperty(default="")
+    actual_mode: StringProperty(default="AXIS")
 
     def update_sockets(self):
-        print(1,'updating sockets', self.mode, self.actual_mode)
+
         mode = self.mode
         if mode == self.actual_mode:
             return
 
-        print(2, 'updating sockets', self.mode, self.actual_mode,  len(self.inputs))
+
         while len(self.inputs) > 2:
             print(3, 'updating sockets', self.mode, self.actual_mode)
             self.inputs.remove(self.inputs[-1])
@@ -212,30 +217,11 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
 
         self.actual_mode = mode
+
     @throttled
     def mode_change(self, context):
-        print('changing')
         self.update_sockets()
-        # just because click doesn't mean we need to change mode
-        # mode = self.mode
-        # if mode == self.actual_mode:
-        #     return
-        #
-        # while len(self.inputs) > 2:
-        #     self.inputs.remove(self.inputs[-1])
-        #
-        # if mode == 'AXIS':
-        #     # self.inputs.new('SvVerticesSocket', "center").prop_name = "centers"
-        #     self.inputs.new('SvVerticesSocket', "Axis").prop_name = "axis_"
-        #     self.inputs.new('SvStringsSocket', "Angle").prop_name = "angle_"
-        # elif mode in ('EULER', 'QUAT'):
-        #     self.inputs.new('SvStringsSocket', "X").prop_name = "x_"
-        #     self.inputs.new('SvStringsSocket', "Y").prop_name = "y_"
-        #     self.inputs.new('SvStringsSocket', "Z").prop_name = "z_"
-        #     if mode == 'QUAT':
-        #         self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
-        #
-        # self.actual_mode = mode
+
 
     modes = [
         ("AXIS", "Axis", "Axis and angle rotation", 1),
@@ -273,20 +259,18 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     def sv_init(self, context):
+        new_input = self.inputs.new
+        new_input('SvVerticesSocket', "Vertices")
+        new_input('SvVerticesSocket', "Centers").prop_name = "centers_"
+        new_input('SvVerticesSocket', "Axis").prop_name = "axis_"
+        new_input('SvStringsSocket', "Angle").prop_name = "angle_"
 
-        self.inputs.new('SvVerticesSocket', "Vertices")
-        self.inputs.new('SvVerticesSocket', "Centers").prop_name = "centers_"
-        self.inputs.new('SvVerticesSocket', "Axis").prop_name = "axis_"
-        self.inputs.new('SvStringsSocket', "Angle").prop_name = "angle_"
         self.outputs.new('SvVerticesSocket', "Vertices")
-        self.update_sockets()
-        # self.mode_change(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
         if self.mode == 'EULER':
             layout.prop(self, "order", text="Order:")
-
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
@@ -298,25 +282,8 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'output_numpy')
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
-    def migrate_from(self, old_node):
-        # self.mode = old_node.mode
-        #
-        if old_node.mode == 'AXIS':
-            return True
-        self.location.y -= 250
-        print(self.mode, self.actual_mode)
-        # self.update_sockets()
-        print(self.mode, self.actual_mode)
-        # while len(self.inputs) > 2:
-        #     self.inputs.remove(self.inputs[-1])
-        #
-        # if self.mode in ('EULER', 'QUAT'):
-        #     self.inputs.new('SvStringsSocket', "X").prop_name = "x_"
-        #     self.inputs.new('SvStringsSocket', "Y").prop_name = "y_"
-        #     self.inputs.new('SvStringsSocket', "Z").prop_name = "z_"
-        #     if self.mode == 'QUAT':
-        #         self.inputs.new('SvStringsSocket', "W").prop_name = "w_"
-        return False
+    def migrate_props_pre_relink(self, old_node):
+        self.update_sockets()
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
@@ -324,22 +291,16 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         if not outputs[0].is_linked:
             return
 
-        result = []
-
-        params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs]
-
         matching_f = list_match_func[self.list_match]
         ops = [self.list_match, self.output_numpy]
-        if self.mode == 'AXIS':
-            desired_levels = [3, 3, 3, 2]
-            rotate_func = axis_rotate_meshes
-        elif self.mode == 'EULER':
-            desired_levels = [3, 3, 2, 2, 2]
-            rotate_func = euler_rotate_meshes
+        inputs_used = ['Vertices', 'Centers'] + modes_dict[self.mode][1]
+        rotate_func = modes_dict[self.mode][0]
+
+        if self.mode == 'EULER':
             ops.append(self.order)
-        else:
-            desired_levels = [3, 3, 2, 2, 2, 2]
-            rotate_func = quat_rotate_meshes
+
+        desired_levels = [3 if inputs[s].bl_idname == 'SvVerticesSocket' else 2 for s in inputs_used]
+        params = [si.sv_get(default=[[]], deepcopy=False) for si in inputs if si.name in inputs_used]
 
         result = recurse_f_level_control(params, ops, rotate_func, matching_f, desired_levels)
 

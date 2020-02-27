@@ -32,7 +32,7 @@ class SvScaleNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Scale'
     bl_icon = 'NONE' #'MAN_SCALE'
     sv_icon = 'SV_SCALE'
-    replacement_nodes = [('SvScaleNodeMk3', dict(vertices='Vertices', centers='Centers', multiplier='Scale'), dict(vertices='Vertices'))]
+    replacement_nodes = [('SvScaleNodeMk3', dict(vertices='Vertices', centers='Centers', multiplier='Strength'), dict(vertices='Vertices'))]
     factor_: FloatProperty(
         name='multiplyer', description='scaling factor', default=1.0, update=updateNode)
 

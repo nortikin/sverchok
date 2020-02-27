@@ -13,7 +13,8 @@ All inputs are vectorized and they will accept single or multiple values.
 There is three inputs:
 
 - **Vertices**
-- **Center**
+- **Centers**
+- **Scale**
 - **Factor**
 
 Parameters
@@ -23,13 +24,15 @@ All parameters except **Vertices** has a default value. **Factor** can be given 
 
 
 +----------------+---------------+-----------------+----------------------------------------------------+
-| Param          | Type          | Default         | Description                                        |  
+| Param          | Type          | Default         | Description                                        |
 +================+===============+=================+====================================================+
-| **Vertices**   | Vertices      | none            | vertices to scale                                  | 
+| **Vertices**   | Vector        | none            | vertices to scale                                  |
 +----------------+---------------+-----------------+----------------------------------------------------+
-| **Center**     | Vertices      | (0.0, 0.0, 0.0) | point from which the scaling will be done          |
+| **Centers**    | Vector        | (0.0, 0.0, 0.0) | point from which the scaling will be done          |
 +----------------+---------------+-----------------+----------------------------------------------------+
-| **Factor**     | Float         | 1.0             | factor of scaling                                  |
+| **Scale**      | Vector        | (1.0, 1.0, 1.0) | Axis scaling                                       |
++----------------+---------------+-----------------+----------------------------------------------------+
+| **Multiplier** | Float         | 1.0             | Uniform multiplier factor                          |
 +----------------+---------------+-----------------+----------------------------------------------------+
 
 Outputs
@@ -41,7 +44,14 @@ If you generate more outputs than inputs were given, then is probably that you n
 Example of usage
 ----------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5990821/4220292/73e9430e-3900-11e4-949f-02749baa7751.png
-  :alt: ScaleDemo1.PNG
+Creating a spiral from a Circle:
 
-In this example we use scale to convert a simple circle into a kind of parabola.
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/scale/scale_vectors_blender_sverchok_example_1.png
+
+The node will match different data structures, in this case this mechanism is used to create surface is generated from a line:
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/scale/scale_vectors_blender_sverchok_example_2.png
+
+Deforming an icosphere into a distorted ovoid:
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/scale/scale_vectors_blender_sverchok_example_3.png
