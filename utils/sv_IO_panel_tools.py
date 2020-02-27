@@ -581,14 +581,15 @@ def fix_enum_identifier_spaces_if_needed(node, node_ref):
     """
 
     found_enum_properties = find_enumerators(node)
-    """
+    
     params = node_ref['params']
-    for prop_name, prop_val in params.items():
-        if prop_name in found_enum_properties
-            if " " in prop_val:
-                ... overwrite.
-    """
-    pass
+    for prop_name in found_enum_properties:
+
+        # it should be...   
+        if prop_name in params:
+            stored_value = params[prop_name]
+            if " " in stored_value:
+                params[prop_name] = stored_value.replace(" ", "_")
 
 
 def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
