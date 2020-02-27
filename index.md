@@ -355,6 +355,7 @@
     SvFrameInfoNodeMK2
     SvLampOutNode
     SvInstancerNode
+    SvInstancerNodeMK2
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
 
