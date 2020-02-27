@@ -60,8 +60,8 @@
       },
       "width": 140.0
     },
-    "Move": {
-      "bl_idname": "SvMoveNodeMK2",
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMk3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -69,7 +69,9 @@
         137.00262451171875,
         245.15399169921875
       ],
-      "params": {},
+      "params": {
+        "strength": 1.0
+      },
       "width": 140.0
     },
     "Number Range": {
@@ -83,13 +85,10 @@
       ],
       "params": {
         "count_": 16,
-        "mode": 3,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
         "start_float": 0.0,
-        "step_": 60.0,
         "step_float": 60.0,
-        "stop_": 360.0,
         "stop_float": 360.0
       },
       "width": 140.0
@@ -182,17 +181,17 @@
     [
       "Circle",
       0,
-      "Move",
+      "Move.001",
       0
     ],
     [
       "Vectors in",
       0,
-      "Move",
+      "Move.001",
       1
     ],
     [
-      "Move",
+      "Move.001",
       0,
       "Apply matrix for vectors",
       0
