@@ -7,12 +7,13 @@
 
 
 import random
+import itertools
 
 import bpy
 import bmesh
 import mathutils
 from mathutils import Vector, Matrix
-from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
+from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
@@ -72,6 +73,14 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     has_instance: BoolProperty(default=False)
     data_kind: StringProperty(name='data kind', default='MESH')
 
+    mode_options = [(k, k, '', i) for i, k in enumerate(["CYCLE", "RND"])]
+    selected_mode = bpy.props.EnumProperty(
+        items=mode_options,
+        description="RND picks object at random, CYCLE will cycle throught objects",
+        default="CYCLE", update=updateNode
+    )
+    rnd_seed: IntProperty(default=0, name="Seed", description="Use this number to have predictable randomization")
+
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'objects')
         self.inputs.new('SvMatrixSocket', 'matrix')
@@ -86,6 +95,13 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "basedata_name", text="")
+
+        row = layout.row(align=True)
+        col1 = row.column().row()
+        col1.prop(self, "selected_mode", expand=True)
+        col2 = row.column()        
+        col2.active = (self.selected_mode == "RND")
+        col2.prop(self, "rnd_seed", text="")
         
     def get_objects(self):
         if self.inputs['objects'].is_linked:
@@ -115,10 +131,16 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         with self.sv_throttle_tree_update():
 
             self.ensure_collection()
-            combs = zip(objects * len(matrices), matrices)
-            for obj_index, comb in enumerate(combs):
+
+            if self.selected_mode == "RND":
+                random.seed(self.rnd_seed)
+                combinations = ((random.choice(objects), matrix) for matrix in matrices)
+            else:
+                combinations = zip(itertools.cycle(objects), matrices)
+            
+            for obj_index, (blueprint, matrix) in enumerate(combinations):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
-                make_or_update_instance(self, obj_name, comb[1], comb[0])
+                make_or_update_instance(self, obj_name, matrix, blueprint)
 
             num_objects = len(matrices)
 
