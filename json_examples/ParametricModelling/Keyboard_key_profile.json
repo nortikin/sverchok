@@ -9,14 +9,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -430.605712890625,
-        -96.57962799072266
+        -408.0633850097656,
+        -87.2991943359375
       ],
       "params": {
         "float_": 2.049999952316284,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
@@ -26,14 +24,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -616.9644775390625,
-        -323.5589599609375
+        -594.422119140625,
+        -314.2785339355469
       ],
       "params": {
         "float_": 2.0,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
@@ -43,14 +39,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -700.0881958007812,
-        -563.3015747070312
+        -677.5458374023438,
+        -554.0211181640625
       ],
       "params": {
         "float_": 9.639999389648438,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
@@ -60,33 +54,17 @@
       "hide": false,
       "label": "",
       "location": [
-        -444.0143127441406,
-        -9.854941368103027
+        -421.47198486328125,
+        -0.5745044350624084
       ],
       "params": {
         "float_": 0.7200000286102295,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
     "Move": {
-      "bl_idname": "SvMoveNodeMk3",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        373.3113708496094,
-        -340.7271728515625
-      ],
-      "params": {
-        "strength": 1.0
-      },
-      "width": 140.0
-    },
-    "Move.002": {
-      "bl_idname": "SvMoveNodeMk3",
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -94,9 +72,19 @@
         379.827392578125,
         -79.8314208984375
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
+      "width": 140.0
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        373.3113708496094,
+        -340.7271728515625
+      ],
+      "params": {},
       "width": 140.0
     },
     "Profile Parametric Mk3": {
@@ -105,8 +93,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -178.27545166015625,
-        93.1209945678711
+        -155.7331085205078,
+        102.40142822265625
       ],
       "params": {
         "filename": "Text",
@@ -121,8 +109,8 @@
       "hide": false,
       "label": "",
       "location": [
-        89.76090240478516,
-        35.54173278808594
+        112.3032455444336,
+        44.82217025756836
       ],
       "params": {
         "current_mode": "EULER",
@@ -137,8 +125,8 @@
       "hide": false,
       "label": "",
       "location": [
-        96.58085632324219,
-        -481.4555969238281
+        119.12319946289062,
+        -472.1751708984375
       ],
       "params": {
         "current_mode": "EULER",
@@ -152,8 +140,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -434.0495910644531,
-        -583.1076049804688
+        -411.50726318359375,
+        -573.8271484375
       ],
       "params": {
         "current_op": "NEG",
@@ -167,8 +155,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -438.2762145996094,
-        -230.544921875
+        -415.73388671875,
+        -221.2644805908203
       ],
       "params": {
         "current_op": "NEG",
@@ -182,8 +170,8 @@
       "hide": false,
       "label": "",
       "location": [
-        669.1881713867188,
-        -16.67555809020996
+        691.7305297851562,
+        -7.395121097564697
       ],
       "params": {
         "cap_U": 1,
@@ -205,8 +193,8 @@
       "hide": false,
       "label": "",
       "location": [
-        907.2828369140625,
-        84.55482482910156
+        929.8251953125,
+        93.83525848388672
       ],
       "params": {
         "activate": 1,
@@ -221,8 +209,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -253.00404357910156,
-        -290.7388916015625
+        -230.46170043945312,
+        -281.4584655761719
       ],
       "params": {
         "x_": 0.0,
@@ -236,8 +224,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -266.0361022949219,
-        -448.5808410644531
+        -243.49375915527344,
+        -439.3004150390625
       ],
       "params": {
         "x_": 0.0,
@@ -248,10 +236,16 @@
   },
   "update_lists": [
     [
-      "A Number.002",
+      "A Number.001",
       0,
-      "Scalar Math",
+      "Scalar Math.002",
       0
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Vector in",
+      1
     ],
     [
       "A Number",
@@ -268,18 +262,6 @@
     [
       "Profile Parametric Mk3",
       0,
-      "Rotation",
-      0
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Rotation",
-      1
-    ],
-    [
-      "Profile Parametric Mk3",
-      0,
       "Rotation.002",
       0
     ],
@@ -298,47 +280,53 @@
     [
       "Rotation.002",
       0,
-      "Move",
+      "Move.001",
       0
     ],
     [
       "Vector in.001",
       0,
-      "Move",
+      "Move.001",
       1
     ],
     [
-      "A Number.001",
+      "A Number.002",
       0,
-      "Scalar Math.002",
+      "Scalar Math",
       0
     ],
     [
-      "Scalar Math.002",
+      "Profile Parametric Mk3",
       0,
-      "Vector in",
+      "Rotation",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Rotation",
       1
     ],
     [
       "Rotation",
       0,
-      "Move.002",
+      "Move",
       0
     ],
     [
       "Vector in",
       0,
-      "Move.002",
+      "Move",
       1
     ],
     [
-      "Move.002",
+      "Move",
       0,
       "UV Connection",
       0
     ],
     [
-      "Move",
+      "Move.001",
       0,
       "UV Connection",
       1

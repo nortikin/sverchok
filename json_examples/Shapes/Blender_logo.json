@@ -89,9 +89,7 @@
       ],
       "params": {
         "float_": 0.25,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
@@ -200,21 +198,7 @@
       "width": 140.0
     },
     "Move": {
-      "bl_idname": "SvMoveNodeMk3",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2145.69677734375,
-        251.08917236328125
-      ],
-      "params": {
-        "strength": 1.0
-      },
-      "width": 140.0
-    },
-    "Move.002": {
-      "bl_idname": "SvMoveNodeMk3",
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -222,9 +206,19 @@
         -82.24569702148438,
         300.9383239746094
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
+      "width": 140.0
+    },
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2145.69677734375,
+        251.08917236328125
+      ],
+      "params": {},
       "width": 140.0
     },
     "Perspective": {
@@ -238,9 +232,7 @@
       ],
       "params": {
         "float_": 0.0,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
@@ -269,9 +261,7 @@
       ],
       "params": {
         "float_": 0.4000000059604645,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
@@ -321,9 +311,7 @@
       ],
       "params": {
         "float_": 2.0,
-        "float_draft_": 0.0,
-        "int_": 0,
-        "int_draft_": 0
+        "int_": 0
       },
       "width": 140.0
     },
@@ -392,23 +380,23 @@
     [
       "List Slice.001",
       0,
-      "Move.002",
+      "Move",
       0
     ],
     [
       "List Slice",
       0,
-      "Move.002",
+      "Move",
       1
     ],
     [
       "Tails",
       0,
-      "Move.002",
+      "Move",
       2
     ],
     [
-      "Move.002",
+      "Move",
       0,
       "UV Connection",
       0
@@ -418,12 +406,6 @@
       0,
       "UV Connection",
       1
-    ],
-    [
-      "Radi",
-      0,
-      "Circle.002",
-      0
     ],
     [
       "Circle",
@@ -480,27 +462,33 @@
       3
     ],
     [
+      "Radi",
+      0,
+      "Circle.002",
+      0
+    ],
+    [
       "Contour 2D",
-      1,
-      "List Join.003",
+      0,
+      "List Join.002",
       0
     ],
     [
       "Circle.002",
-      1,
-      "List Join.003",
+      0,
+      "List Join.002",
       1
     ],
     [
       "Contour 2D",
-      0,
-      "List Join.002",
+      1,
+      "List Join.003",
       0
     ],
     [
       "Circle.002",
-      0,
-      "List Join.002",
+      1,
+      "List Join.003",
       1
     ],
     [
@@ -525,6 +513,18 @@
       "Mesh Join.001",
       1,
       "Select mesh elements by location",
+      1
+    ],
+    [
+      "Mesh Join.001",
+      0,
+      "Proportional Edit Falloff",
+      0
+    ],
+    [
+      "Select mesh elements by location",
+      0,
+      "Proportional Edit Falloff",
       1
     ],
     [
@@ -542,35 +542,23 @@
     [
       "Mesh Join.001",
       0,
-      "Proportional Edit Falloff",
-      0
-    ],
-    [
-      "Select mesh elements by location",
-      0,
-      "Proportional Edit Falloff",
-      1
-    ],
-    [
-      "Mesh Join.001",
-      0,
-      "Move",
+      "Move.001",
       0
     ],
     [
       "Vector in",
       0,
-      "Move",
+      "Move.001",
       1
     ],
     [
       "Proportional Edit Falloff",
       0,
-      "Move",
+      "Move.001",
       2
     ],
     [
-      "Move",
+      "Move.001",
       0,
       "VD Experimental",
       0

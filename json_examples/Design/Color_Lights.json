@@ -224,18 +224,16 @@
       "params": {},
       "width": 140.0
     },
-    "Move.001": {
-      "bl_idname": "SvMoveNodeMk3",
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -187.34600830078125,
-        119.96371459960938
+        -166.12974548339844,
+        121.28948974609375
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
       "width": 140.0
     },
     "Plane MK2": {
@@ -301,18 +299,6 @@
   },
   "update_lists": [
     [
-      "Line",
-      0,
-      "Move.001",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move.001",
-      1
-    ],
-    [
       "List Input",
       0,
       "Color in MK1",
@@ -337,7 +323,19 @@
       0
     ],
     [
-      "Move.001",
+      "Line",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "Move",
       0,
       "Lamp.001",
       0

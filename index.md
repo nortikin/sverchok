@@ -93,10 +93,9 @@
     SvChessSelection
 
 ## Transforms
-    SvMoveNodeMk3
-    SvScaleNodeMk3
     SvRotationNodeMK2
-    SvRotationNodeMk3
+    SvScaleNodeMK2
+    SvMoveNodeMK2
     SvSymmetrizeNode
     SvMirrorNodeMk2
     MatrixApplyNode
