@@ -35,6 +35,15 @@ All parameters except **Vertices** has a default value. **Factor** can be given 
 | **Multiplier** | Float         | 1.0             | Uniform multiplier factor                          |
 +----------------+---------------+-----------------+----------------------------------------------------+
 
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Output NumPy arrays in stead of regular lists (makes the node faster)
+
+**List Match**: Define how list with different lengths should be matched
+
 Outputs
 -------
 
