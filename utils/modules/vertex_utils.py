@@ -135,7 +135,7 @@ def vertex_matrix(vertices, edges, faces, orientation):
 vertex_modes_dict = {
     'Normal':             (0,  'vep', '',   '',  vertex_normal,        'v', 'Normal', 'Vertex normal'),
     'Matrix':             (10, 'vep', 'mu', 'u', vertex_matrix,        'm', 'Matrix', 'Matrix aligned with normal'),
-    'Sharpness':          (20, 'vep', '',   '',  vertex_shell_factor,  's', 'Sharpness ', 'Curvature of mesh in vertex'),
+    'Sharpness':          (20, 'vep', '',   '',  vertex_shell_factor,  's', 'Sharpness', 'Curvature of mesh in vertex'),
     'Adjacent edges':     (30, 've',  '',   'u', adjacent_edg_pol,     's', 'Edges', 'Adjacent edges'),
     'Adjacent faces ':    (31, 'vp',  '',   'u', adjacent_edg_pol,     's', 'Faces ', 'Adjacent faces'),
     'Adjacent edges num': (40, 've',  '',   '',  adjacent_edg_pol_num, 's', 'Number', 'Number of Adjacent edges'),

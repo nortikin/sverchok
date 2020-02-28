@@ -346,7 +346,7 @@ edges_modes_dict = {
     'Matrix':             (10, 've',  'omu', 'u', edges_matrix,          'm',   'Matrix', 'Aligned with edge'),
     'Matrix Normal':      (11, 'vep', 'on',  'u', edges_matrix_normal,   'm',   'Matrix', 'Aligned with edge and Normal (Needs Faces)'),
     'Length':             (20, 've',  's',   '',  edges_length,          's',   'Length', 'Edge length'),
-    'Sharpness':          (21, 'vep', '',    '',  edges_shell_factor,    's',   'Sharpness ', 'Average of curvature of mesh in edges vertices'),
+    'Sharpness':          (21, 'vep', '',    '',  edges_shell_factor,    's',   'Sharpness', 'Average of curvature of mesh in edges vertices'),
     'Face Angle':         (22, 'vep', '',    '',  faces_angle_full,      's',   'Face Angle', 'Face angle'),
     'Inverted':           (30, 'e',  '',    '',  edges_inverted,        's',   'Edges', 'Reversed Edge'),
     'Adjacent Faces':     (31, 'ep',  '',    'u', adjacent_faces,        's',   'Faces', 'Adjacent faces'),
