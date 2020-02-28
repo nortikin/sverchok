@@ -13,7 +13,7 @@
     "Frame.008": "Frame.002",
     "Matrix in": "Frame.003",
     "Matrix in.001": "Frame.007",
-    "Move.001": "Frame.007",
+    "Move": "Frame.007",
     "Number Range": "Frame.006",
     "Objects in Lite": "Frame.001",
     "Scalar Math": "Frame.005",
@@ -42,11 +42,9 @@
       ],
       "params": {
         "float_": 0.0,
-        "float_draft_": 0.0,
         "float_max": 0.0,
         "float_min": 0.0,
         "int_": 0,
-        "int_draft_": 0,
         "show_limits": 0
       },
       "width": 140.0
@@ -62,9 +60,7 @@
       ],
       "params": {
         "float_": 0.0,
-        "float_draft_": 0.0,
         "int_": 40,
-        "int_draft_": 0,
         "int_max": 40,
         "int_min": 1,
         "selected_mode": "int",
@@ -84,9 +80,7 @@
       ],
       "params": {
         "float_": 0.0,
-        "float_draft_": 0.0,
         "int_": 8,
-        "int_draft_": 0,
         "int_max": 8,
         "int_min": 8,
         "selected_mode": "int",
@@ -116,7 +110,7 @@
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 291.18707275390625,
+      "height": 292.31988525390625,
       "hide": false,
       "label": "buddah",
       "location": [
@@ -124,11 +118,11 @@
         -49.86566162109375
       ],
       "params": {},
-      "width": 400.0
+      "width": 400.47998046875
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 722.866943359375,
+      "height": 723.5469970703125,
       "hide": false,
       "label": "lotus",
       "location": [
@@ -136,11 +130,11 @@
         -204.2548065185547
       ],
       "params": {},
-      "width": 2040.1749267578125
+      "width": 2041.1348876953125
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 288.82122802734375,
+      "height": 290.07403564453125,
       "hide": false,
       "label": "circle",
       "location": [
@@ -148,11 +142,11 @@
         -2.66998291015625
       ],
       "params": {},
-      "width": 423.2730712890625
+      "width": 423.7530517578125
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 90.0,
+      "height": 90.719970703125,
       "hide": false,
       "label": "saint number",
       "location": [
@@ -160,11 +154,11 @@
         27.570816040039062
       ],
       "params": {},
-      "width": 200.0
+      "width": 200.47998046875
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
-      "height": 662.866943359375,
+      "height": 663.06689453125,
       "hide": false,
       "label": "limits",
       "location": [
@@ -172,11 +166,11 @@
         178.46022033691406
       ],
       "params": {},
-      "width": 214.9697265625
+      "width": 215.44976806640625
     },
     "Frame.006": {
       "bl_idname": "NodeFrame",
-      "height": 235.1334228515625,
+      "height": 234.57342529296875,
       "hide": false,
       "label": "life stages",
       "location": [
@@ -184,11 +178,11 @@
         60.00001525878906
       ],
       "params": {},
-      "width": 909.409423828125
+      "width": 909.889404296875
     },
     "Frame.007": {
       "bl_idname": "NodeFrame",
-      "height": 346.133056640625,
+      "height": 346.81304931640625,
       "hide": false,
       "label": "nirvana",
       "location": [
@@ -196,11 +190,11 @@
         -0.753082275390625
       ],
       "params": {},
-      "width": 400.0
+      "width": 400.47998046875
     },
     "Frame.008": {
       "bl_idname": "NodeFrame",
-      "height": 90.0,
+      "height": 90.719970703125,
       "hide": false,
       "label": " ",
       "location": [
@@ -208,7 +202,7 @@
         52.69804382324219
       ],
       "params": {},
-      "width": 200.0
+      "width": 200.4801025390625
     },
     "Matrix in": {
       "bl_idname": "SvMatrixGenNodeMK2",
@@ -247,8 +241,8 @@
       },
       "width": 140.0
     },
-    "Move.001": {
-      "bl_idname": "SvMoveNodeMk3",
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -257,8 +251,7 @@
         -415.5169372558594
       ],
       "params": {
-        "separate": 0,
-        "strength": 1.0
+        "separate": 0
       },
       "width": 140.0
     },
@@ -273,10 +266,13 @@
       ],
       "params": {
         "count_": 11,
+        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
+        "start_": 0.0,
         "start_float": 0.0,
         "step_float": 1.0,
+        "stop_": 10.0,
         "stop_float": 10.0
       },
       "width": 140.0
@@ -579,16 +575,16 @@
       0
     ],
     [
-      "Scalar Math.006",
-      0,
-      "Scalar Math.007",
-      0
-    ],
-    [
       "Scalar Math.001",
       0,
       "Circle",
       1
+    ],
+    [
+      "Scalar Math.006",
+      0,
+      "Scalar Math.007",
+      0
     ],
     [
       "Scalar Math.005",
@@ -605,23 +601,23 @@
     [
       "Circle",
       0,
-      "Move.001",
+      "Move",
       0
     ],
     [
       "Circle",
       0,
-      "Move.001",
+      "Move",
       1
     ],
     [
       "Scalar Math.008",
       0,
-      "Move.001",
+      "Move",
       2
     ],
     [
-      "Move.001",
+      "Move",
       0,
       "Viewer Draw Mk3.001",
       0

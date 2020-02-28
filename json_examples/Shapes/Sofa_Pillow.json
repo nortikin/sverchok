@@ -3,8 +3,8 @@
   "framed_nodes": {},
   "groups": {},
   "nodes": {
-    "Move.001": {
-      "bl_idname": "SvMoveNodeMk3",
+    "Move": {
+      "bl_idname": "SvMoveNodeMK2",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -12,9 +12,7 @@
         492.6460266113281,
         208.35818481445312
       ],
-      "params": {
-        "strength": 1.0
-      },
+      "params": {},
       "width": 140.0
     },
     "Plane MK2": {
@@ -141,17 +139,17 @@
     [
       "Rounded Box",
       0,
-      "Move.001",
+      "Move",
       0
     ],
     [
       "Vector Attraction",
       0,
-      "Move.001",
+      "Move",
       1
     ],
     [
-      "Move.001",
+      "Move",
       0,
       "Viewer Draw Mk3",
       0

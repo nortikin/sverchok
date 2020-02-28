@@ -1,5 +1,5 @@
-Rotate
-======
+Rotation
+========
 
 Functionality
 -------------
@@ -15,7 +15,7 @@ Type of Rotation         Description
 ======================= ===========================================================================
 Axis Rotation            Based on axis (X, Y, Z) and a rotation angle (W)
 Euler Rotation           Using Euler Gimbal: 3 axis with a hierarchical relationship between them
-Quaternion rotation      Based on four values (X, Y, Z, W). W value will avoid X, Y, Z rotation
+Quaternion rotation      Based on four values (X, Y, Z, W). W value will avoid X, Y, Z rotation 
 ======================= ===========================================================================
 
 If you want to learn deeply about all this types of rotation, visit this link: http://wiki.blender.org/index.php/User:Pepribal/Ref/Appendices/Rotation
@@ -44,9 +44,9 @@ All parameters except **Vertices** has a default value. **Angle** can be given b
 
 
 +----------------+---------------+-----------------+----------------------------------------------------+
-| Param          | Type          | Default         | Description                                        |
+| Param          | Type          | Default         | Description                                        |  
 +================+===============+=================+====================================================+
-| **Vertices**   | Vertices      | none            | vertices to rotate                                 |
+| **Vertices**   | Vertices      | none            | vertices to rotate                                 | 
 +----------------+---------------+-----------------+----------------------------------------------------+
 | **Center**     | Vertices      | (0.0, 0.0, 0.0) | point to place the rotation axis                   |
 +----------------+---------------+-----------------+----------------------------------------------------+
@@ -58,15 +58,15 @@ All parameters except **Vertices** has a default value. **Angle** can be given b
 Outputs
 ^^^^^^^
 
-**Vertices**.
+Only **Vertices** will be generated. Depending on the type of the inputs, if more than one angle is set, then more objects will be outputted.
 
 Example of usage
 ^^^^^^^^^^^^^^^^
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_1.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4216976/adb4043a-38e1-11e4-8ff1-0ae83cbd9ccf.png
   :alt: AxisRotationDemo1.PNG
 
-In this example we use axis rotation to rotate a torus around the X axis 45 degrees .
+In this example we use axis rotation with multiple inputs in axis an angle to create a complex geometry from just one plane.
 
 
 Euler Rotation
@@ -92,9 +92,9 @@ All parameters except **Vertices** has a default value. **X**, **Y** and **Z** c
 
 
 +----------------+---------------+-----------------+-----------------------------------------------------+
-| Param          | Type          | Default         | Description                                         |
+| Param          | Type          | Default         | Description                                         |  
 +================+===============+=================+=====================================================+
-| **Vertices**   | Vertices      | none            | vertices to rotate                                  |
+| **Vertices**   | Vertices      | none            | vertices to rotate                                  | 
 +----------------+---------------+-----------------+-----------------------------------------------------+
 | **X**          | Float         | 0.00            | value to X axis rotation                            |
 +----------------+---------------+-----------------+-----------------------------------------------------+
@@ -108,24 +108,24 @@ All parameters except **Vertices** has a default value. **X**, **Y** and **Z** c
 Outputs
 ^^^^^^^
 
-**Vertices**
+Only **Vertices** will be generated. Depending on the type of the inputs, if one or more inputs have multiple values, then more objects will be outputted.
 
 Example of usage
 ^^^^^^^^^^^^^^^^
 
-.. image::https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_2.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4216977/adb5f682-38e1-11e4-88f9-decc6485b81f.png
   :alt: EulerRotationDemo1.PNG
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_3.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4216975/adb3a990-38e1-11e4-8e3b-1584f37573e3.png
   :alt: EulerRotationDemo2.PNG
 
-In the first example we use Euler rotation rotate the vertices of a line to create a 3d spiral
-The second is more complex, with multiple inputs in Y and Z to create a complex geometry from just one line.
+In the first example we use Euler rotation to perfomr a simple operation, we just rotate a plane around Z axis multiple times.
+The second is more complex, with multiple inputs in Y and Z to create a complex geometry from just one plane, simulating infinite loop.
 
 
 Quaternion Rotation
 -------------------
 
-In this mode rotation is defined by 4 values (X, Y, Z, W), but it works in a different way than Axis Rotation. The important thing is the relation between all four values. For example, X value rotate the object around X axis up to 180 degrees. The effect of W is to avoid that rotation and leave the element with zero rotation.
+In this mode rotation is defined by 4 velues (X, Y, Z, W), but it works in a different way than Axis Rotation. The important thing es the relation between all four values. For example, X value rotate the object around X axis up to 180 degrees. The effect of W is to avoid that rotation and leave the element with zero rotation.
 The final rotation is a combination of all four values.
 
 Inputs
@@ -147,9 +147,9 @@ All parameters except **Vertices** has a default value. **X**, **Y**, **Z** and 
 
 
 +----------------+---------------+-----------------+-----------------------------------------------------+
-| Param          | Type          | Default         | Description                                         |
+| Param          | Type          | Default         | Description                                         |  
 +================+===============+=================+=====================================================+
-| **Vertices**   | Vertices      | none            | vertices to rotate                                  |
+| **Vertices**   | Vertices      | none            | vertices to rotate                                  | 
 +----------------+---------------+-----------------+-----------------------------------------------------+
 | **X**          | Float         | 0.00            | value to X axis rotation                            |
 +----------------+---------------+-----------------+-----------------------------------------------------+
@@ -163,21 +163,12 @@ All parameters except **Vertices** has a default value. **X**, **Y**, **Z** and 
 Outputs
 ^^^^^^^
 
-**Vertices**.
+Only **Vertices** will be generated. Depending on the type of the inputs, if one or more inputs have multiple values, then more objects will be outputted.
 
 Example of usage
 ^^^^^^^^^^^^^^^^
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/rotate/rotate_vectors_blender_sverchok_example_4.png
+.. image:: https://cloud.githubusercontent.com/assets/5990821/4216974/adab7018-38e1-11e4-9c43-78a2fdff2fe1.png
   :alt: QuatRotationDemo1.PNG
 
 As we can see in this example, we try to rotate the plan 45 degrees and then set W with multiple values, each higher than before, but the plane is never get to rotate 180 degrees.
-
-Advanced Parameters
--------------------
-
-In the N-Panel (and on the right-click menu) you can find:
-
-**Output NumPy**: Output NumPy arrays in stead of regular lists (makes the node faster when you input one rotation value for each set of vertices)
-
-**List Match**: Define how list with different lengths should be matched
