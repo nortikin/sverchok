@@ -202,7 +202,6 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
 
         while len(self.inputs) > 2:
-            print(3, 'updating sockets', self.mode, self.actual_mode)
             self.inputs.remove(self.inputs[-1])
 
         if mode == 'AXIS':
