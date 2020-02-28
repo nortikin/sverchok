@@ -172,3 +172,12 @@ Example of usage
   :alt: QuatRotationDemo1.PNG
 
 As we can see in this example, we try to rotate the plan 45 degrees and then set W with multiple values, each higher than before, but the plane is never get to rotate 180 degrees.
+
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Output NumPy arrays in stead of regular lists (makes the node faster when you input one rotation value for each set of vertices)
+
+**List Match**: Define how list with different lengths should be matched
