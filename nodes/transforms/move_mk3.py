@@ -40,7 +40,6 @@ def move_meshes(params, constant, matching_f):
 
     for props in zip(*params):
         verts, move_verts, strength = local_match([np.array(p) for p in props])
-        print(move_verts)
         verts_out = verts + move_verts * strength[:, np.newaxis]
         result.append(verts_out if output_numpy else verts_out.tolist())
 
