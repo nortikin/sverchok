@@ -31,20 +31,20 @@ epsilon = 1e-10  # used to eliminate vertex overlap at the South/North poles
 
 # name : [ sx, sy, sz, xp, xm, np, nm ]
 super_presets = {
-    " ":                [0.0, 0.0, 0.0, 0.0, 0.0, 0, 0],
+    "_":                [0.0, 0.0, 0.0, 0.0, 0.0, 0, 0],
     "SPHERE":           [1.0, 1.0, 1.0, 1.0, 1.0, 32, 32],
     "CUBE":             [1.0, 1.0, 1.0, 0.0, 0.0, 3, 5],
     "CYLINDER":         [1.0, 1.0, 1.0, 1.0, 0.0, 4, 32],
     "OCTOHEDRON":       [1.0, 1.0, 1.0, 1.0, 1.0, 3, 4],
-    "SPINNING TOP":     [1.0, 1.0, 1.0, 1.0, 4.0, 32, 32],
-    "CUBIC CONE":       [1.0, 1.0, 1.0, 1.0, 2.0, 32, 32],
-    "CUBIC BALL":       [1.0, 1.0, 1.0, 2.0, 1.0, 32, 32],
+    "SPINNING_TOP":     [1.0, 1.0, 1.0, 1.0, 4.0, 32, 32],
+    "CUBIC_CONE":       [1.0, 1.0, 1.0, 1.0, 2.0, 32, 32],
+    "CUBIC_BALL":       [1.0, 1.0, 1.0, 2.0, 1.0, 32, 32],
     "CUSHION":          [1.0, 1.0, 0.2, 2.0, 1.0, 32, 32],
-    "STAR BALL":        [1.0, 1.0, 1.0, 4.0, 1.0, 32, 64],
+    "STAR_BALL":        [1.0, 1.0, 1.0, 4.0, 1.0, 32, 64],
     "STAR":             [1.0, 1.0, 1.0, 4.0, 4.0, 64, 64],
-    "ROUNDED BIN":      [1.0, 1.0, 1.0, 0.5, 0.0, 32, 32],
-    "ROUNDED CUBE":     [1.0, 1.0, 1.0, 0.2, 0.2, 32, 32],
-    "ROUNDED CYLINDER": [1.0, 1.0, 1.0, 1.0, 0.1, 32, 32],
+    "ROUNDED_BIN":      [1.0, 1.0, 1.0, 0.5, 0.0, 32, 32],
+    "ROUNDED_CUBE":     [1.0, 1.0, 1.0, 0.2, 0.2, 32, 32],
+    "ROUNDED_CYLINDER": [1.0, 1.0, 1.0, 1.0, 0.1, 32, 32],
 }
 
 
@@ -142,17 +142,17 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
         if self.updating:
             return
 
-        self.presets = " "
+        self.presets = "_"
         updateNode(self, context)
 
     def update_presets(self, context):
         self.updating = True
 
-        if self.presets == " ":
+        if self.presets == "_":
             self.updating = False
             return
 
-        sx, sy, sz, xp, xm, np, nm = super_presets[self.presets]
+        sx, sy, sz, xp, xm, np, nm = super_presets[self.presets.replace(" ", "_")]
         self.scale_x = sx
         self.scale_y = sy
         self.scale_z = sz
@@ -166,7 +166,7 @@ class SvSuperEllipsoidNode(bpy.types.Node, SverchCustomTreeNode):
         self.updating = False
         updateNode(self, context)
 
-    preset_items = [(k, k.title(), "", "", i) for i, (k, v) in enumerate(sorted(super_presets.items()))]
+    preset_items = [(k, k.replace("_", " ").title(), "", "", i) for i, (k, v) in enumerate(sorted(super_presets.items()))]
 
     presets: EnumProperty(
         name="Presets", items=preset_items, description="Various presets",
