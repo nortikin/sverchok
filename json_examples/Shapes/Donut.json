@@ -6,8 +6,8 @@
     "Matrix Track To": "Tangent Move",
     "Matrix in": "Tangent Move",
     "Matrix out": "Tangent Move",
-    "Move": "Tangent Move",
-    "Move.001": "Bottom Flat",
+    "Move": "Bottom Flat",
+    "Move.002": "Tangent Move",
     "Note.001": "Tangent Move",
     "Note.003": "Fractal",
     "Note.005": "Tangent Move",
@@ -15,7 +15,7 @@
     "Note.008": "Bottom Flat",
     "Proportional Edit Falloff": "Bottom Flat",
     "Scale": "Fractal",
-    "Scale.001": "Fractal",
+    "Scale.002": "Fractal",
     "Select mesh elements by location.001": "Bottom Flat",
     "Vector Noise": "Fractal",
     "Vector in": "Bottom Flat",
@@ -42,7 +42,7 @@
     },
     "Bottom Flat": {
       "bl_idname": "NodeFrame",
-      "height": 606.2786254882812,
+      "height": 605.8386840820312,
       "hide": false,
       "label": "Make Bottom Flat",
       "location": [
@@ -50,11 +50,11 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 599.87939453125
+      "width": 599.3994140625
     },
     "Fractal": {
       "bl_idname": "NodeFrame",
-      "height": 401.27923583984375,
+      "height": 401.1192626953125,
       "hide": false,
       "label": "Fractal vectors",
       "location": [
@@ -62,7 +62,7 @@
         193.4789276123047
       ],
       "params": {},
-      "width": 607.472412109375
+      "width": 606.992431640625
     },
     "Inset faces": {
       "bl_idname": "SvInsetFaces",
@@ -73,6 +73,7 @@
         2257.6279296875,
         607.4078979492188
       ],
+      "mask_type": [],
       "params": {
         "depth": 0.029999995604157448,
         "inset_type": "region",
@@ -134,7 +135,21 @@
       "width": 140.0
     },
     "Move": {
-      "bl_idname": "SvMoveNodeMK2",
+      "bl_idname": "SvMoveNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2974.266345977783,
+        914.8750438690186
+      ],
+      "params": {
+        "strength": 1.0
+      },
+      "width": 140.0
+    },
+    "Move.002": {
+      "bl_idname": "SvMoveNodeMk3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -143,20 +158,9 @@
         192.87377738952637
       ],
       "params": {
-        "mult_": 1.0
+        "mult_": 1.0,
+        "strength": 1.0
       },
-      "width": 140.0
-    },
-    "Move.001": {
-      "bl_idname": "SvMoveNodeMK2",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        2974.266345977783,
-        910.5752391815186
-      ],
-      "params": {},
       "width": 140.0
     },
     "Note": {
@@ -341,7 +345,7 @@
     },
     "Output": {
       "bl_idname": "NodeFrame",
-      "height": 548.0018310546875,
+      "height": 546.9617919921875,
       "hide": false,
       "label": "Output",
       "location": [
@@ -349,7 +353,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 484.154052734375
+      "width": 483.674072265625
     },
     "Proportional Edit Falloff": {
       "bl_idname": "SvProportionalEditNode",
@@ -426,21 +430,7 @@
       "width": 16.0
     },
     "Scale": {
-      "bl_idname": "SvScaleNodeMK2",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        568.0407161712646,
-        797.7181854248047
-      ],
-      "params": {
-        "factor_": 1.0899999141693115
-      },
-      "width": 140.0
-    },
-    "Scale.001": {
-      "bl_idname": "SvScaleNodeMK2",
+      "bl_idname": "SvScaleNodeMk3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -449,7 +439,23 @@
         832.4366912841797
       ],
       "params": {
-        "factor_": 0.1600000262260437
+        "factor_": 0.1600000262260437,
+        "multiplier": 0.1600000262260437
+      },
+      "width": 140.0
+    },
+    "Scale.002": {
+      "bl_idname": "SvScaleNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        568.0407161712646,
+        797.7181854248047
+      ],
+      "params": {
+        "factor_": 1.0899999141693115,
+        "multiplier": 1.0899999141693115
       },
       "width": 140.0
     },
@@ -518,7 +524,7 @@
     },
     "Tangent Move": {
       "bl_idname": "NodeFrame",
-      "height": 536.5537719726562,
+      "height": 535.873779296875,
       "hide": false,
       "label": "Move along Tangents",
       "location": [
@@ -526,7 +532,7 @@
         10.079999923706055
       ],
       "params": {},
-      "width": 1703.71142578125
+      "width": 1703.2313232421875
     },
     "Torus": {
       "bl_idname": "SvTorusNode",
@@ -619,29 +625,7 @@
         437.2855052947998
       ],
       "params": {
-        "autosmooth": 1,
-        "lp": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0
-        ]
+        "autosmooth": 1
       },
       "use_custom_color": true,
       "width": 140.0
@@ -656,45 +640,9 @@
     ],
     [
       "Torus",
-      "Edges",
-      "Reroute.002",
-      "Input"
-    ],
-    [
-      "Torus",
       "Vertices",
       "Reroute",
       "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Scale",
-      "vertices"
-    ],
-    [
-      "Scale",
-      0,
-      "Vector Noise",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "Scale.001",
-      0
-    ],
-    [
-      "Scale.001",
-      0,
-      "Vector Rewire",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Matrix in",
-      0
     ],
     [
       "Reroute",
@@ -715,6 +663,36 @@
       3
     ],
     [
+      "Reroute",
+      "Output",
+      "Scale.002",
+      "Vertices"
+    ],
+    [
+      "Scale.002",
+      0,
+      "Vector Noise",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Scale",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Matrix in",
+      0
+    ],
+    [
       "Matrix Track To",
       0,
       "Matrix Math",
@@ -724,24 +702,6 @@
       "Matrix in",
       0,
       "Matrix Math",
-      1
-    ],
-    [
-      "Matrix Math",
-      0,
-      "Matrix out",
-      0
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Move",
-      "vertices"
-    ],
-    [
-      "Matrix out",
-      0,
-      "Move",
       1
     ],
     [
@@ -763,7 +723,31 @@
       2
     ],
     [
-      "Move",
+      "Matrix Math",
+      0,
+      "Matrix out",
+      0
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Move.002",
+      "Vertices"
+    ],
+    [
+      "Matrix out",
+      0,
+      "Move.002",
+      1
+    ],
+    [
+      "Torus",
+      "Edges",
+      "Reroute.002",
+      "Input"
+    ],
+    [
+      "Move.002",
       0,
       "Inset faces",
       0
@@ -819,31 +803,31 @@
     [
       "Inset faces",
       0,
-      "Move.001",
+      "Move",
       0
     ],
     [
       "Vector in",
       0,
-      "Move.001",
+      "Move",
       1
     ],
     [
       "Proportional Edit Falloff",
       0,
-      "Move.001",
+      "Move",
       2
+    ],
+    [
+      "Move",
+      "Vertices",
+      "Reroute.003",
+      "Input"
     ],
     [
       "Inset faces",
       "Faces",
       "Reroute.004",
-      "Input"
-    ],
-    [
-      "Move.001",
-      "vertices",
-      "Reroute.003",
       "Input"
     ],
     [
