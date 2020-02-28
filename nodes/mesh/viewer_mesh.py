@@ -255,26 +255,9 @@ def set_material_index(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh
 
 
 def get_material_index(me: Mesh) -> list:
-    @singledispatch
-    def mat_ind(elem):
-        raise TypeError(f"Such type={type(elem)} of mesh elements does not supported")
-
-    @mat_ind.register
-    def _(faces: Faces):
-        if len(faces.material_index) == len(faces):
-            return faces.material_index
-        elif len(faces.material_index) > len(faces):
-            return faces.material_index[:len(faces)]
-        else:
-            return faces.material_index + [faces.material_index[-1]] * (len(faces) - len(faces.material_index))
-
-    @mat_ind.register
-    def _(mesh: Mesh):
-        return [mesh.material_index] * len(mesh.faces)
-
     elements = me.search_element_with_attr('faces', 'material_index')
     if elements:
-        return mat_ind(elements)
+        return np.ravel(elements.values_to_faces(elements.material_index))
     else:
         return []
 

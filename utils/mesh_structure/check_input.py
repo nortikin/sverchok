@@ -14,6 +14,7 @@ import sverchok.core.mesh_structure as ms
 
 
 MeshElements = Union[ms.Mesh, ms.Verts, ms.Edges, ms.Faces, ms.Loops]
+py_to_np_types = {int: np.int32, float: np.float32}
 
 
 def set_safe_attr(element: MeshElements, attr_name: str, val: Any) -> None:
@@ -41,6 +42,10 @@ class MeshInputCorrector:
         return extract_np_array(input_val)
 
     @staticmethod
+    def edges(input_val):
+        return extract_np_array(input_val)
+
+    @staticmethod
     def vertex_colors(input_val):
         return extract_np_array(input_val, dimension=1)
 
@@ -50,6 +55,10 @@ class MeshInputCorrector:
 
 
 class VertsInputCorrector:
+    @staticmethod
+    def co(input_val):
+        return extract_np_array(input_val)
+
     @staticmethod
     def uv(input_val):
         return extract_np_array(input_val)
@@ -61,6 +70,10 @@ class VertsInputCorrector:
 
 class EdgesInputCorrector:
     @staticmethod
+    def ind(input_val):
+        return extract_np_array(input_val)
+
+    @staticmethod
     def vertex_colors(input_val):
         return extract_np_array(input_val)
 
@@ -70,8 +83,16 @@ class FacesInputCorrector:
     def vertex_colors(input_val):
         return extract_np_array(input_val)
 
+    @staticmethod
+    def material_index(input_val):
+        return extract_np_array(input_val, dimension=1)
+
 
 class LoopsInputCorrector:
+    @staticmethod
+    def ind(input_val):
+        return extract_np_array(input_val, dimension=1)
+
     @staticmethod
     def uv(input_val):
         return extract_np_array(input_val)
@@ -121,10 +142,10 @@ def extract_np_array(input_val, dimension=2):
         return input_val
     real_dimension = len_dimension(input_val)
     if real_dimension == dimension and isinstance(get_last_noniterable(input_val), (int, float)):
-        return np.array(input_val, dtype='f')
+        return np.array(input_val, dtype=py_to_np_types[type(extract_value(input_val))])
     elif real_dimension > dimension:
         nested_item = [it for i, it in zip(range(real_dimension - dimension), iter_first_items(input_val))][-1]
-        return np.array(nested_item, dtype='f')
+        return np.array(nested_item, dtype=py_to_np_types[type(extract_value(input_val))])
     raise TypeError(f"Can't convert data into numpy array - {input_val}")
 
 
