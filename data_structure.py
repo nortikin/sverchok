@@ -261,9 +261,15 @@ def numpy_match_long_cycle(list_of_arrays):
         difl = maxl - array.shape[0]
         if difl > 0:
             if difl < array.shape[0]:
+
                 array = np.concatenate((array, array[:difl]))
             else:
                 new_part = np.repeat(array, ceil(difl / array.shape[0]), axis=0)
+                if len(array.shape) > 1:
+                    shape = (ceil(difl / array.shape[0]), 1)
+                else:
+                    shape = ceil(difl / array.shape[0])
+                new_part = np.tile(array, shape)
                 array = np.concatenate((array, new_part[:difl]))
         out.append(array)
     return out

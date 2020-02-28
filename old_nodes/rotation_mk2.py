@@ -42,7 +42,7 @@ def euler_rotation(vertex, x, y, z, order):
     mat_eul = Euler((radians(x), radians(y), radians(z)), order).to_matrix().to_4x4()
     for i in vertex:
         v = Vector(i)
-        rotated.append((mat_eul@v)[:])
+        rotated.append((mat_eul @ v)[:])
     return rotated
 
 def quat_rotation(vertex, x, y, z, w):
@@ -59,7 +59,7 @@ class SvRotationNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Rotation'
     bl_icon = 'NONE' #'MAN_ROT'
     sv_icon = 'SV_ROTATE'
-
+    replacement_nodes = [('SvRotationNodeMk3', dict(vertices='Vertices', center='Centers', axis='Axis', angle='Angle'), dict(vertices='Vertices'))]
     angle_: FloatProperty(
         name='Angle', description='rotation angle', default=0.0, update=updateNode)
     x_: FloatProperty(
