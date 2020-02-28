@@ -115,8 +115,8 @@
       "profile": "default height = 1.0\ndefault width = 4.0\ndefault depress = 0.1\ndefault top_coeff = 0.9\n\nlet depression = {height * depress}\nlet top_width = {width * top_coeff}\nlet depress_r = {(4*depression**2 + top_width**2)/(8*depression)}\nlet dx = {(width - top_width)/2.0}\n\nM {-width/2.0},0\nl dx, height\na depress_r, depress_r 0 0 1\n  top_width,0\nl dx, -height",
       "width": 140.0
     },
-    "Rotation": {
-      "bl_idname": "SvRotationNodeMK2",
+    "Rotate": {
+      "bl_idname": "SvRotationNodeMk3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -125,14 +125,15 @@
         35.54173278808594
       ],
       "params": {
+        "actual_mode": "EULER",
         "current_mode": "EULER",
         "mode": "EULER",
         "x_": -13.0
       },
       "width": 140.0
     },
-    "Rotation.002": {
-      "bl_idname": "SvRotationNodeMK2",
+    "Rotate.001": {
+      "bl_idname": "SvRotationNodeMk3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -141,6 +142,7 @@
         -481.4555969238281
       ],
       "params": {
+        "actual_mode": "EULER",
         "current_mode": "EULER",
         "mode": "EULER"
       },
@@ -248,10 +250,10 @@
   },
   "update_lists": [
     [
-      "A Number.002",
+      "A Number.001",
       0,
-      "Scalar Math",
-      0
+      "Vector in.001",
+      1
     ],
     [
       "A Number",
@@ -268,35 +270,17 @@
     [
       "Profile Parametric Mk3",
       0,
-      "Rotation",
-      0
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Rotation",
-      1
-    ],
-    [
-      "Profile Parametric Mk3",
-      0,
-      "Rotation.002",
+      "Rotate.001",
       0
     ],
     [
       "A Number.002",
       0,
-      "Rotation.002",
-      1
+      "Rotate.001",
+      2
     ],
     [
-      "A Number.001",
-      0,
-      "Vector in.001",
-      1
-    ],
-    [
-      "Rotation.002",
+      "Rotate.001",
       0,
       "Move",
       0
@@ -320,7 +304,25 @@
       1
     ],
     [
-      "Rotation",
+      "A Number.002",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Profile Parametric Mk3",
+      0,
+      "Rotate",
+      0
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Rotate",
+      2
+    ],
+    [
+      "Rotate",
       0,
       "Move.002",
       0
