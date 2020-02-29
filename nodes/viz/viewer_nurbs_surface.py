@@ -219,15 +219,16 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 spline.use_cyclic_u = self.is_cyclic_v
                 spline.use_endpoint_u = not self.is_cyclic_v and self.use_endpoint_v
                 spline.use_endpoint_v = not self.is_cyclic_u and self.use_endpoint_u
-                spline.order_u = degree_u# + 1
-                spline.order_v = degree_v# + 1
-                self.info("DU: %s, DV: %s", degree_u, degree_v)
-                self.info("OU: %s, OV: %s", spline.order_u, spline.order_v)
 
             bpy.context.view_layer.objects.active = surface_object
             bpy.ops.object.mode_set(mode = 'EDIT')
             bpy.ops.curve.make_segment()
             bpy.ops.object.mode_set(mode = 'OBJECT')
+            spline = surface_object.data.splines[0]
+            spline.order_u = degree_u + 1
+            spline.order_v = degree_v + 1
+            self.info("DU: %s, DV: %s", degree_u, degree_v)
+            self.info("OU: %s, OV: %s", spline.order_u, spline.order_v)
 
         self.remove_non_updated_objects(object_index)
         self.set_corresponding_materials()
