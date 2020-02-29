@@ -83,10 +83,10 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "delete_source", text="Delete Source")
 
-        layout.label(text="Object base name", icon='FILE_CACHE')
+        layout.label(text="Object base name")
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(self, "basedata_name", text="")
+        row.prop(self, "basedata_name", text="", icon='FILE_CACHE')
         
     def get_objects(self):
         if self.inputs['objects'].is_linked:
