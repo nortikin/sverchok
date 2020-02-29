@@ -70,6 +70,9 @@ class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         row.prop(self, 'use_endpoint', toggle=True)
         row.enabled = not self.is_cyclic
 
+    def draw_label(self):
+        return f"NURBS Curve {self.basedata_name}"
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'ControlPoints')
         self.inputs.new('SvStringsSocket', 'Weights')
