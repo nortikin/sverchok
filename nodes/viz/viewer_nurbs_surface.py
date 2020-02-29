@@ -174,7 +174,6 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             
         inputs = zip_long_repeat(vertices_s, weights_s, u_size_s, degree_u_s, degree_v_s)
         object_index = 0
-        objects = []
         for vertices, weights, u_size, degree_u, degree_v in inputs:
             if not vertices or not weights:
                 continue
