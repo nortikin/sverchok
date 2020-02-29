@@ -141,10 +141,14 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def remove_non_updated_objects(self, num_objects):
         meshes = bpy.data.meshes
         objects = bpy.data.objects
+        collections = bpy.data.collections
 
-        objs = [obj for obj in objects if obj.type == self.data_kind]
-        objs = [obj for obj in objs if obj.name.startswith(self.basedata_name)]
-        objs = [obj.name for obj in objs if int(obj.name.split(".")[-1]) >= num_objects]
+        # use collections to gather objects.
+        objs = collections.get(self.basedata_name)
+        if not objs:
+            return
+
+        objs = [obj.name for obj in objs.objects if int(obj.name.split(".")[-1]) >= num_objects]
         if not objs:
             return
 
@@ -157,6 +161,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             obj.hide_select = False
             collection.objects.unlink(obj)
             objects.remove(obj)
+
+        # does not yet remove meshes, nurbs...etc.
 
 
     # def free(self):
