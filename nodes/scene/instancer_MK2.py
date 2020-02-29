@@ -14,7 +14,7 @@ import mathutils
 from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.utils.sv_viewer_utils import greek_alphabet
 
@@ -25,43 +25,59 @@ def get_random_init():
 def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     context = bpy.context
     scene = context.scene
-    meshes = bpy.data.meshes
     objects = bpy.data.objects
-    mesh_name = blueprint_obj.data.name
+
+    # WHAT ABOUT MODIFIERS ON THESE OBJECTS?
 
     collections = bpy.data.collections
     collection = collections.get(node.basedata_name)
-    if not mesh_name:
-        return
 
     if obj_name in objects:
         sv_object = objects[obj_name]
     else:
-        mesh = meshes.get(mesh_name)
-        sv_object = objects.new(obj_name, mesh)
+        data = blueprint_obj.data# data_kind.get(data_name)
+
+        if node.full_copy:
+            sv_object = blueprint_obj.copy()
+            sv_object.name = obj_name
+        else:
+            sv_object = objects.new(obj_name, blueprint_obj.data)
+        
         collection.objects.link(sv_object)
+
+    # if the object is selected in the scene, this node can keep the instance unselected
+    sv_object.select_set(0)
 
     # apply matrices
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
         
         if sv_object.data:
-            # this will ignore lamps/empties
-            sv_object.data.update()   # for some reason this _is_ necessary.
+            if hasattr(sv_object.data, "update"):
+                sv_object.data.update()   # for some reason this _is_ necessary.
 
 
 class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Copy by mesh data from object input '''
     bl_idname = 'SvInstancerNodeMK2'
-    bl_label = 'Mesh instancer MK2'
+    bl_label = 'Obj instancer MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
+
+    @throttled
+    def updateNode_copy(self, context):
+        # this means we should empty the collection, and let process repopulate
+        objects = bpy.data.collections[self.basedata_name].objects
+        for obj in objects:
+            bpy.data.objects.remove(obj)
+
 
     activate: BoolProperty(
         default=True,
         name='Show', description='Activate node?',
         update=updateNode)
 
+    full_copy: BoolProperty(name="Full Copy", update=updateNode_copy)
     delete_source: BoolProperty(
         default=False,
         name='Delete Source', description='Delete Source Objects',
@@ -73,7 +89,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     has_instance: BoolProperty(default=False)
-    data_kind: StringProperty(name='data kind', default='MESH')
+    
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'objects')
@@ -83,12 +99,13 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Update")
         row = layout.row(align=True)
-        row.prop(self, "delete_source", text="Delete Source")
+        row.prop(self, "delete_source", text="RM Source", toggle=True)
+        row.prop(self, "full_copy", text="full copy", toggle=True)
 
-        layout.label(text="Object base name", icon='OUTLINER_OB_MESH')
+        layout.label(text="Object base name")
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(self, "basedata_name", text="")
+        row.prop(self, "basedata_name", text="", icon='FILE_CACHE')
         
     def get_objects(self):
         if self.inputs['objects'].is_linked:
@@ -101,9 +118,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         return []
 
     def process(self):
-        """
-        hello
-        """
+
         if not self.activate:
             return
 
@@ -119,9 +134,9 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
             self.ensure_collection()
             combinations = zip(itertools.cycle(objects), matrices)
-            for obj_index, comb in enumerate(combinations):
+            for obj_index, (obj, matrix) in enumerate(combinations):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
-                make_or_update_instance(self, obj_name, comb[1], comb[0])
+                make_or_update_instance(self, obj_name, matrix, obj)
 
             num_objects = len(matrices)
 
