@@ -14,7 +14,7 @@ import mathutils
 from mathutils import Vector, Matrix
 from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import dataCorrect, updateNode
 from sverchok.utils.sv_viewer_utils import greek_alphabet
 
@@ -36,7 +36,13 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
         sv_object = objects[obj_name]
     else:
         data = blueprint_obj.data# data_kind.get(data_name)
-        sv_object = objects.new(obj_name, blueprint_obj.data)
+
+        if node.full_copy:
+            sv_object = blueprint_obj.copy()
+            sv_object.name = obj_name
+        else:
+            sv_object = objects.new(obj_name, blueprint_obj.data)
+        
         collection.objects.link(sv_object)
 
     # apply matrices
@@ -55,12 +61,20 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
 
+    @throttled
+    def updateNode_copy(self, context):
+        # this means we should empty the collection, and let process repopulate
+        objects = bpy.data.collections[self.basedata_name].objects
+        for obj in objects:
+            bpy.data.objects.remove(obj)
+
+
     activate: BoolProperty(
         default=True,
         name='Show', description='Activate node?',
         update=updateNode)
 
-    full_copy: BoolProperty(name="Full Copy", update=updateNode)
+    full_copy: BoolProperty(name="Full Copy", update=updateNode_copy)
     delete_source: BoolProperty(
         default=False,
         name='Delete Source', description='Delete Source Objects',
