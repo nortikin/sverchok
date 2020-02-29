@@ -41,7 +41,7 @@ class SvCollectionPicker(bpy.types.Node, SverchCustomTreeNode):
         found_objects = []
         if self.named_collection:
             found = bpy.data.collections.get(self.named_collection)
-            found_objects = found.objects if found else []
+            found_objects = found.objects[:] if found else []
         
         self.outputs['Objects'].sv_set(found_objects)
 

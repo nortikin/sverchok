@@ -44,7 +44,10 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     # apply matrices
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
-        sv_object.data.update()   # for some reason this _is_ necessary.
+        
+        if sv_object.data:
+            # this will ignore lamps/empties
+            sv_object.data.update()   # for some reason this _is_ necessary.
 
 
 class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
