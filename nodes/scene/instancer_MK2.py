@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import itertools
 import random
 
 import bpy
@@ -118,8 +118,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         with self.sv_throttle_tree_update():
 
             self.ensure_collection()
-            combs = zip(objects * len(matrices), matrices)
-            for obj_index, comb in enumerate(combs):
+            combinations = zip(itertools.cycle(objects), matrices)
+            for obj_index, comb in enumerate(combinations):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
                 make_or_update_instance(self, obj_name, comb[1], comb[0])
 
