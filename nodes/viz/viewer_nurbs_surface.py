@@ -35,7 +35,6 @@ def is_scene_event():
         return True
     return False
 
-
 class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
     Triggers: Output NURBS Surface
@@ -56,7 +55,19 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         object_name = self.get_surface_name(index)
         surface_data = bpy.data.curves.new(object_name, 'SURFACE')
         surface_data.dimensions = '3D'
-        surface_object = self.get_or_create_object(object_name, index, surface_data)
+        surface_object = bpy.data.objects.get(object_name)
+        if not surface_object:
+            # FIXME: HACK:
+            # during scene load event, Blender is currently returning None
+            # when checking for bpy.data.objects.get('Alpha'); however,
+            # the object may actually exist, and if we create a new object
+            # with the same name, we will get Blender crash when trying to
+            # switch the object to EDIT mode. So, let's check call stack
+            # and do not do anything when processing scene events.
+            if is_scene_event():
+                self.info("Will not create object during scene event")
+                return None
+            surface_object = self.create_object(object_name, index, surface_data)
         return surface_object
 
     def find_surface(self, index):
@@ -148,16 +159,6 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def process(self):
         if not self.activate:
             return
-        # FIXME: HACK:
-        # during scene load event, Blender is currently returning None
-        # when checking for bpy.data.objects.get('Alpha'); however,
-        # the object may actually exist, and if we create a new object
-        # with the same name, we will get Blender crash when trying to
-        # switch the object to EDIT mode. So, let's check call stack
-        # and do not do anything when processing scene events.
-        if is_scene_event():
-            self.info("Will not process during scene event")
-            return
 
         vertices_s = self.inputs['ControlPoints'].sv_get()
         has_weights = self.inputs['Weights'].is_linked
@@ -196,6 +197,8 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
             surface_object = self.create_surface(object_index)
             self.debug("Object: %s", surface_object)
+            if not surface_object:
+                continue
 
             if self.input_mode == '1D':
                 n_v = u_size
@@ -220,6 +223,7 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 spline.use_endpoint_u = not self.is_cyclic_v and self.use_endpoint_v
                 spline.use_endpoint_v = not self.is_cyclic_u and self.use_endpoint_u
 
+            surface_object = self.find_surface(object_index)
             bpy.context.view_layer.objects.active = surface_object
             bpy.ops.object.mode_set(mode = 'EDIT')
             bpy.ops.curve.make_segment()
@@ -227,8 +231,6 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             spline = surface_object.data.splines[0]
             spline.order_u = degree_u + 1
             spline.order_v = degree_v + 1
-            self.info("DU: %s, DV: %s", degree_u, degree_v)
-            self.info("OU: %s, OV: %s", spline.order_u, spline.order_v)
 
         self.remove_non_updated_objects(object_index)
         self.set_corresponding_materials()

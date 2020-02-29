@@ -383,7 +383,6 @@ class SvObjHelper():
         obj = bpy.data.objects.get(object_name)
         if not obj:
             obj = self.create_object(object_name, obj_index, data)
-            print("Creating object")
         return obj
 
     def get_obj_curve(self, obj_index):
