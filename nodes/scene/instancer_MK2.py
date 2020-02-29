@@ -35,7 +35,7 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
 
     collections = bpy.data.collections
     collection = collections.get(node.basedata_name)
-    if not mesh_name:
+    if not data_name:
         return
 
     if obj_name in objects:
