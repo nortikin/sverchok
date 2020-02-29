@@ -90,41 +90,43 @@ class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         vertices_s = ensure_nesting_level(vertices_s, 3)
             
-        inputs = zip_long_repeat(vertices_s, weights_s, degree_s)
-        object_index = 0
-        for vertices, weights, degree in inputs:
-            if not vertices or not weights:
-                continue
-            object_index += 1
-            if isinstance(degree, (tuple, list)):
-                degree = degree[0]
+        # we need to suppress depsgraph updates emminating from this part of the process/            
+        with self.sv_throttle_tree_update():
+            inputs = zip_long_repeat(vertices_s, weights_s, degree_s)
+            object_index = 0
+            for vertices, weights, degree in inputs:
+                if not vertices or not weights:
+                    continue
+                object_index += 1
+                if isinstance(degree, (tuple, list)):
+                    degree = degree[0]
 
-            fullList(weights, len(vertices))
+                fullList(weights, len(vertices))
 
-            curve_object = self.create_curve(object_index)
-            self.debug("Object: %s", curve_object)
-            if not curve_object:
-                continue
+                curve_object = self.create_curve(object_index)
+                self.debug("Object: %s", curve_object)
+                if not curve_object:
+                    continue
 
-            curve_object.data.splines.clear()
-            spline = curve_object.data.splines.new(type='NURBS')
-            spline.use_bezier_u = False
-            spline.use_bezier_v = False
-            spline.points.add(len(vertices)-1)
+                curve_object.data.splines.clear()
+                spline = curve_object.data.splines.new(type='NURBS')
+                spline.use_bezier_u = False
+                spline.use_bezier_v = False
+                spline.points.add(len(vertices)-1)
 
-            for p, new_co, new_weight in zip(spline.points, vertices, weights):
-                p.co = Vector(list(new_co) + [new_weight])
-                p.select = True
+                for p, new_co, new_weight in zip(spline.points, vertices, weights):
+                    p.co = Vector(list(new_co) + [new_weight])
+                    p.select = True
 
-            spline.use_cyclic_u = self.is_cyclic
-            spline.use_endpoint_u = not self.is_cyclic and self.use_endpoint
-            spline.order_u = degree + 1
+                spline.use_cyclic_u = self.is_cyclic
+                spline.use_endpoint_u = not self.is_cyclic and self.use_endpoint
+                spline.order_u = degree + 1
 
-        self.remove_non_updated_objects(object_index)
-        self.set_corresponding_materials()
-        objects = self.get_children()
+            self.remove_non_updated_objects(object_index)
+            self.set_corresponding_materials()
+            objects = self.get_children()
 
-        self.outputs['Objects'].sv_set(objects)
+            self.outputs['Objects'].sv_set(objects)
 
 classes = [SvNurbsCurveOutNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
