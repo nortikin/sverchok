@@ -60,6 +60,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='Show', description='Activate node?',
         update=updateNode)
 
+    full_copy: BoolProperty(name="Full Copy", update=updateNode)
     delete_source: BoolProperty(
         default=False,
         name='Delete Source', description='Delete Source Objects',
@@ -71,7 +72,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     has_instance: BoolProperty(default=False)
-    data_kind: StringProperty(name='data kind', default='MESH')
+    
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'objects')
@@ -81,7 +82,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Update")
         row = layout.row(align=True)
-        row.prop(self, "delete_source", text="Delete Source")
+        row.prop(self, "delete_source", text="RM Source")
+        row.prop(self, "full_copy", text="full copy")
 
         layout.label(text="Object base name")
         col = layout.column(align=True)
@@ -99,9 +101,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         return []
 
     def process(self):
-        """
-        hello
-        """
+
         if not self.activate:
             return
 
@@ -117,9 +117,9 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
             self.ensure_collection()
             combinations = zip(itertools.cycle(objects), matrices)
-            for obj_index, comb in enumerate(combinations):
+            for obj_index, (obj, matrix) in enumerate(combinations):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
-                make_or_update_instance(self, obj_name, comb[1], comb[0])
+                make_or_update_instance(self, obj_name, matrix, obj)
 
             num_objects = len(matrices)
 
