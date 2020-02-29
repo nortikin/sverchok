@@ -25,9 +25,14 @@ def get_random_init():
 def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     context = bpy.context
     scene = context.scene
-    meshes = bpy.data.meshes
+
+    # WHAT ABOUT MODIFIERS ON THESE OBJECTS?
+
+    # this will be a function.. depending on blueprint_obj.data.type
+    data_kind = bpy.data.meshes
+    
     objects = bpy.data.objects
-    mesh_name = blueprint_obj.data.name
+    data_name = blueprint_obj.data.name
 
     collections = bpy.data.collections
     collection = collections.get(node.basedata_name)
@@ -37,8 +42,8 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     if obj_name in objects:
         sv_object = objects[obj_name]
     else:
-        mesh = meshes.get(mesh_name)
-        sv_object = objects.new(obj_name, mesh)
+        data = data_kind.get(data_name)
+        sv_object = objects.new(obj_name, data)
         collection.objects.link(sv_object)
 
     # apply matrices
