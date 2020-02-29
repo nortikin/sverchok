@@ -26,23 +26,17 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     context = bpy.context
     scene = context.scene
     objects = bpy.data.objects
-    data_name = blueprint_obj.data.name
 
     # WHAT ABOUT MODIFIERS ON THESE OBJECTS?
 
-    # this will be a function.. depending on blueprint_obj.data.type
-    data_kind = bpy.data.meshes
-
     collections = bpy.data.collections
     collection = collections.get(node.basedata_name)
-    if not data_name:
-        return
 
     if obj_name in objects:
         sv_object = objects[obj_name]
     else:
-        data = data_kind.get(data_name)
-        sv_object = objects.new(obj_name, data)
+        data = blueprint_obj.data# data_kind.get(data_name)
+        sv_object = objects.new(obj_name, blueprint_obj.data)
         collection.objects.link(sv_object)
 
     # apply matrices
@@ -50,14 +44,14 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
         sv_object.matrix_local = list(zip(*matrix))
         
         if sv_object.data:
-            # this will ignore lamps/empties
-            sv_object.data.update()   # for some reason this _is_ necessary.
+            if hasattr(sv_object.data, "update"):
+                sv_object.data.update()   # for some reason this _is_ necessary.
 
 
 class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Copy by mesh data from object input '''
     bl_idname = 'SvInstancerNodeMK2'
-    bl_label = 'Mesh instancer MK2'
+    bl_label = 'Obj instancer MK2'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_INSTANCER'
 
@@ -89,7 +83,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "delete_source", text="Delete Source")
 
-        layout.label(text="Object base name", icon='OUTLINER_OB_MESH')
+        layout.label(text="Object base name", icon='FILE_CACHE')
         col = layout.column(align=True)
         row = col.row(align=True)
         row.prop(self, "basedata_name", text="")
