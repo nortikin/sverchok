@@ -82,8 +82,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Update")
         row = layout.row(align=True)
-        row.prop(self, "delete_source", text="RM Source")
-        row.prop(self, "full_copy", text="full copy")
+        row.prop(self, "delete_source", text="RM Source", toggle=True)
+        row.prop(self, "full_copy", text="full copy", toggle=True)
 
         layout.label(text="Object base name")
         col = layout.column(align=True)
