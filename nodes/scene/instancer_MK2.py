@@ -25,14 +25,13 @@ def get_random_init():
 def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     context = bpy.context
     scene = context.scene
+    objects = bpy.data.objects
+    data_name = blueprint_obj.data.name
 
     # WHAT ABOUT MODIFIERS ON THESE OBJECTS?
 
     # this will be a function.. depending on blueprint_obj.data.type
     data_kind = bpy.data.meshes
-    
-    objects = bpy.data.objects
-    data_name = blueprint_obj.data.name
 
     collections = bpy.data.collections
     collection = collections.get(node.basedata_name)
