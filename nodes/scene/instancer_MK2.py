@@ -55,6 +55,8 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
         if sv_object.data:
             if hasattr(sv_object.data, "update"):
                 sv_object.data.update()   # for some reason this _is_ necessary.
+    
+    return sv_object
 
 
 class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -94,6 +96,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'objects')
         self.inputs.new('SvMatrixSocket', 'matrix')
+        self.outputs.new('SvObjectSocket', 'objects')
 
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
@@ -130,13 +133,14 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not objects:
             return
         
+        new_objects = [ ]
         with self.sv_throttle_tree_update():
 
             self.ensure_collection()
             combinations = zip(itertools.cycle(objects), matrices)
             for obj_index, (obj, matrix) in enumerate(combinations):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
-                make_or_update_instance(self, obj_name, matrix, obj)
+                new_objects.append(make_or_update_instance(self, obj_name, matrix, obj))
 
             num_objects = len(matrices)
 
@@ -145,6 +149,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                     bpy.data.objects.remove(obj)
 
             self.remove_non_updated_objects(num_objects)
+
+        self.outputs['objects'].sv_set(new_objects)
 
     def ensure_collection(self):
         collections = bpy.data.collections
