@@ -225,6 +225,22 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return None
 
+    # def add_prop_from_dict(self, prop_dict, new_prop_type):
+    #     cls = get_node_class_reference(self.cls_bl_idname)
+    #     cls_dict = cls.__dict__ if cls else {}
+
+    #     if new_prop_type == "Float":
+    #         prop_settings = self.float_props.add()
+    #     elif new_prop_type == "Int":
+    #         prop_settings = self.int_props.add()
+    #     else:
+    #         return None
+
+    #     new_name = generate_name(prop_dict['name'], cls_dict)
+    #     prop_settings.prop_name = new_name
+    #     prop_settings.set_settings(prop_dict)
+    #     return new_name
+
     def get_all_props(self):
         """
         return a dict with all data needed to setup monad
@@ -357,11 +373,10 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         else:
             cls_name = self.cls_bl_idname
 
-        self.verify_props()
-
         cls_dict["bl_idname"] = cls_name
         cls_dict["bl_label"] = self.name
 
+        self.verify_props()
         cls_dict["input_template"] = self.generate_inputs()
         cls_dict["output_template"] = self.generate_outputs()
 
@@ -370,9 +385,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         # done with setup
 
         old_cls_ref = get_node_class_reference(cls_name)
-
         bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
-
         cls_ref = type(cls_name, bases, cls_dict)
 
         if old_cls_ref:
@@ -400,7 +413,6 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     def generate_inputs(self):
         in_socket = []
 
-        # if socket is dummysocket use the other for data
         for idx, socket in enumerate(self.input_node.outputs):
             if socket.is_linked:
                 socket_name, socket_bl_idname, prop_name = get_socket_data(socket)
@@ -415,10 +427,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def generate_outputs(self):
         out_socket = []
+
         for socket in self.output_node.inputs:
             if socket.is_linked:
                 socket_name, socket_bl_idname, _ = get_socket_data(socket)
                 out_socket.append((socket_name, socket_bl_idname))
+
         return out_socket
 
 

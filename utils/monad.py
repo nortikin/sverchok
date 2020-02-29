@@ -19,12 +19,12 @@
 import sys
 
 import bpy
-from bpy.types import Operator
-from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty
+from bpy.types import Operator, Node
+from bpy.props import StringProperty, EnumProperty, IntProperty, BoolProperty, FloatProperty
 
-
+from sverchok.utils import get_node_class_reference, register_node_class, unregister_node_class
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
-from sverchok.data_structure import get_other_socket
+from sverchok.data_structure import updateNode, get_other_socket, enum_item_4
 from sverchok.core.monad import monad_make_unique
 
 
@@ -173,6 +173,210 @@ class SvEditSocketOpExp(Operator, MonadOpCommon):
         _, _, socket = self.get_data(context)
         self.socket_type = socket.bl_idname
         return context.window_manager.invoke_props_dialog(self)
+
+
+class SvNewSocketOpExp(Operator, MonadOpCommon):
+    """Generate new socket"""
+    bl_idname = "node.sverchok_new_socket_exp"
+    bl_label = "New Socket"
+
+    # private
+    kind: StringProperty(name="io kind")
+
+    # client
+    socket_type: EnumProperty(items=socket_types, default="SvStringsSocket")
+    new_prop_name: StringProperty(name="prop name")
+    new_prop_type: EnumProperty(name="prop type", items=enum_item_4(["Int", "Float"]), default='Int')
+    new_prop_description: StringProperty(name="description", default="lazy?")
+    
+    # no subtype. it is not worth it.
+    enable_min: BoolProperty(default=False, name="enable min")
+    enable_max: BoolProperty(default=False, name="enable max")
+    enable_soft_min: BoolProperty(default=False, name="enable soft min")
+    enable_soft_max: BoolProperty(default=False, name="enable soft max")
+    
+    # int specific
+    new_prop_int_default: IntProperty(default=0, name="default")
+    new_prop_int_min: IntProperty(default=-2**31, name="min")
+    new_prop_int_max: IntProperty(default=2**31-1, name="max")
+    new_prop_int_soft_min: IntProperty(default=-2**31, name="soft min")
+    new_prop_int_soft_max: IntProperty(default=2**31-1, name="soft max")
+    new_prop_int_step: IntProperty(default=1, name="step")
+    
+    # float specific
+    new_prop_float_default: FloatProperty(default=0, name="default")
+    new_prop_float_min: FloatProperty(default=-2**31, name="min")
+    new_prop_float_max: FloatProperty(default=2**31-1, name="max")
+    new_prop_float_soft_min: FloatProperty(default=-2**31, name="soft min")
+    new_prop_float_soft_max: FloatProperty(default=2**31-1, name="soft max")
+    new_prop_float_step: FloatProperty(default=1.0, name="step")
+
+    @classmethod
+    def poll(cls, context):
+        try:
+            if context.space_data.edit_tree.bl_idname == 'SverchGroupTreeType':
+                return not context.space_data.edit_tree.library
+        except:
+            return False
+
+    def invoke(self, context, event):
+        return context.window_manager.invoke_props_dialog(self)
+
+    def get_display_props(self):
+        prop_prefix = f"new_prop_{self.new_prop_type.lower()}_"
+        props = "default", "min", "max", "soft_min", "soft_max", "step"
+        return [(prop_prefix + prop) for prop in props]
+
+    def draw(self, context):
+        layout = self.layout
+        col1 = layout.column()
+        socket_row = col1.row()
+        socket_row.prop(self, 'socket_type', text='Socket Type', expand=True)
+        col1.prop(self, 'new_prop_name')
+
+        if self.kind == "outputs":
+            # there are no other properties to configure for the <output node>
+            return
+
+        col1.prop(self, 'new_prop_type')
+
+        if self.socket_type == "SvStringsSocket":
+            default, min, max, soft_min, soft_max, step = self.get_display_props()
+            col1.prop(self, default, text="default")
+
+            # enable min / max
+            row1 = col1.row(align=True)
+            row1_col1_r = row1.column().row(align=True)
+            row1_col1_r.active = self.enable_min
+            row1_col1_r.prop(self, "enable_min", text="", icon="CHECKMARK")
+            row1_col1_r.prop(self, min)
+            row1_col2_r = row1.column().row(align=True)
+            row1_col2_r.active = self.enable_max
+            row1_col2_r.prop(self, "enable_max", text="", icon="CHECKMARK")
+            row1_col2_r.prop(self, max)
+
+            # enable soft min / max
+            row2 = col1.row(align=True)
+            row2_col1_r = row2.column().row(align=True)
+            row2_col1_r.active = self.enable_soft_min
+            row2_col1_r.prop(self, "enable_soft_min", text="", icon="CHECKMARK")
+            row2_col1_r.prop(self, soft_min)
+            row2_col2_r = row2.column().row(align=True)
+            row2_col2_r.active = self.enable_soft_max
+            row2_col2_r.prop(self, "enable_soft_max", text="", icon="CHECKMARK")
+            row2_col2_r.prop(self, soft_max)
+
+        col1.prop(self, "new_prop_description")
+
+    def get_prop_dict(self):
+        prop_dict = {}
+        prop_dict['name'] = self.new_prop_name
+
+        # we do not set the slider on the <output node> sockets
+        if self.kind == 'outputs':
+            return {}
+
+        sig = self.new_prop_type.lower()
+        if sig in {"int", "float"}:
+            # prop_dict['update'] = updateNode
+            prop_dict['default'] = getattr(self, f"new_prop_{sig}_default")
+            properties = 'min max soft_min soft_max'.split()
+            for prop in properties:
+                if getattr(self, f"enable_{prop}"):
+                    prop_dict[prop] = getattr(self, f"new_prop_{sig}_{prop}")
+
+        return prop_dict
+
+    def execute(self, context):
+        monad = context.space_data.edit_tree
+        monad_node = monad.instances[0]
+        with monad_node.sv_throttle_tree_update():
+            self.add_node(monad)
+
+        return {'FINISHED'}
+
+    def add_node(self, tree):
+
+        class SvSingleSocketNode():
+            bl_idname = 'SvSingleSocketNode'
+            bl_label = 'DO NOT USE'
+            bl_icon = 'MOD_CURVE'
+
+
+        # [x] define new node
+        prop_dict = self.get_prop_dict()
+        bases = (SvSingleSocketNode, Node, SverchCustomTreeNode)
+        prop_func = IntProperty if self.new_prop_type == "int" else FloatProperty
+        
+        # [x] -- add prop if needed (only when inputs)
+        cls_dict = {}
+        cls_dict['__annotations__'] = {}
+        cls_dict['__annotations__'][self.new_prop_name] = prop_func(**prop_dict)
+        cls_name = SvSingleSocketNode.bl_idname
+        cls_ref = type(cls_name, bases, cls_dict)
+
+        # [x] register new node (but unregister first if needed..)
+        old_cls_ref = get_node_class_reference(cls_name)
+        if old_cls_ref:
+            unregister_node_class(old_cls_ref)
+
+        register_node_class(cls_ref)
+
+        # [x] add node
+        property_node = tree.nodes.new(cls_name)
+
+        # [x] -- add socket to node (add both in the template)
+        io_sockets = getattr(property_node, self.kind)
+        io_sockets.new(self.socket_type, prop_dict['name']).prop_name = prop_dict['name'] 
+
+        # [x] link node
+        io_node = tree.input_node if self.kind == 'inputs' else tree.output_node
+        out2in = self.kind == 'inputs'
+        AB_LINK = (io_node.outputs[-1], io_sockets[-1]) if out2in else (io_sockets[-1], io_node.inputs[-1])
+        tree.links.new(*AB_LINK)
+
+        # [x] unlink, remove node
+        # tree.links.remove(*AB_LINK)
+        tree.nodes.remove(property_node)
+
+        # [x] unregister node
+        unregister_node_class(cls_ref)
+
+
+# class SvMonadNewEmpty(Operator):
+#     """generate a new empty monad at the mouse cursor location"""
+#     bl_idname = "node.sverchok_new_empty_monad"
+#     bl_label = "New Empty Monad"
+
+#     new_monad_name: StringProperty(name="new monad name")
+#     mouse_xy: bpy.props.IntVectorProperty(size=2, default=(0,0), name="mouse location")
+
+#     @classmethod
+#     def poll(cls, context):
+#         tree_type = context.space_data.tree_type
+#         if tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
+#             return True
+
+#     @staticmethod
+#     def store_mouse_cursor(context, event):
+#         space = context.space_data
+#         tree = space.edit_tree
+
+#         # convert mouse position to the View2D for later node placement
+#         if context.region.type == 'WINDOW':
+#             # convert mouse position to the View2D for later node placement
+#             space.cursor_location_from_region(event.mouse_region_x, event.mouse_region_y)
+#         else:
+#             space.cursor_location = tree.view_center
+
+#     def draw(self, context):
+#         ... # draw this dialogue
+
+#     def execute(self, context):
+#         ...  # monad_make(new_monad_name)
+
+#     def invoke(self, context, event):
+#         return context.window_manager.invoke_props_dialog(self)
 
 
 class SvGroupEdit(Operator):
@@ -668,10 +872,12 @@ classes = [
     SvGroupEdit,
     SvMonadEnter,
     SvMonadExpand,
-    SvTreePathParent,
+    SvMonadMakeUnique,
     SvMonadCreateFromSelected,
+    # SvMonadNewEmpty,
+    SvTreePathParent,
     SvUpdateMonadClasses,
-    SvMonadMakeUnique
+    SvNewSocketOpExp
 ]
 
 
