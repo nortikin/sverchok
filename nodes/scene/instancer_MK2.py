@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
+import itertools
 import random
 
 import bpy
@@ -44,7 +44,10 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
     # apply matrices
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
-        sv_object.data.update()   # for some reason this _is_ necessary.
+        
+        if sv_object.data:
+            # this will ignore lamps/empties
+            sv_object.data.update()   # for some reason this _is_ necessary.
 
 
 class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
@@ -115,8 +118,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         with self.sv_throttle_tree_update():
 
             self.ensure_collection()
-            combs = zip(objects * len(matrices), matrices)
-            for obj_index, comb in enumerate(combs):
+            combinations = zip(itertools.cycle(objects), matrices)
+            for obj_index, comb in enumerate(combinations):
                 obj_name = f'{self.basedata_name}.{obj_index:04d}'
                 make_or_update_instance(self, obj_name, comb[1], comb[0])
 
@@ -138,10 +141,14 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def remove_non_updated_objects(self, num_objects):
         meshes = bpy.data.meshes
         objects = bpy.data.objects
+        collections = bpy.data.collections
 
-        objs = [obj for obj in objects if obj.type == self.data_kind]
-        objs = [obj for obj in objs if obj.name.startswith(self.basedata_name)]
-        objs = [obj.name for obj in objs if int(obj.name.split(".")[-1]) >= num_objects]
+        # use collections to gather objects.
+        objs = collections.get(self.basedata_name)
+        if not objs:
+            return
+
+        objs = [obj.name for obj in objs.objects if int(obj.name.split(".")[-1]) >= num_objects]
         if not objs:
             return
 
@@ -154,6 +161,8 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             obj.hide_select = False
             collection.objects.unlink(obj)
             objects.remove(obj)
+
+        # does not yet remove meshes, nurbs...etc.
 
 
     # def free(self):

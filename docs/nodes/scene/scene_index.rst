@@ -13,3 +13,4 @@ Scene
    obj_remote_mk2
    3dview_props
    monad
+   collection_picker_mk1

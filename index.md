@@ -358,6 +358,7 @@
     SvInstancerNodeMK2
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
+    SvCollectionPicker
 
 ## Objects
     SvVertexGroupNodeMK2
