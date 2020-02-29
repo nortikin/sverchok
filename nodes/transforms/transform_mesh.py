@@ -29,11 +29,11 @@ LayerNames = namedtuple('LayerNames', ['mask', 'index_prop'])
 
 TR_MODE = Transform_mode('Move', 'Scale', 'Rotate')
 SEL_MODE = Select_mode('Verts', 'Edges', 'Faces')
-OR_MODE = Origin_mode('Individual', 'Median', 'Center bound box', 'Custom')
+OR_MODE = Origin_mode('Individual', 'Median', 'Center_bound_box', 'Custom')
 SP_MODE = Space_mode('Normal', 'Global', 'Custom')
 DIR_MODE = Direction_mode('X', 'Y', 'Z', 'Custom')
 DIR_VEC = Direction_mode(Vector((1, 0, 0)), Vector((0, 1, 0)), Vector((0, 0, 1)), None)
-MASK_MODE = MaskMode('Bool mask', 'Index mask')
+MASK_MODE = MaskMode('Bool_mask', 'Index_mask')
 
 
 def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None, space_directions=None, indexes=None,
@@ -44,8 +44,8 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
     The function takes mesh and transform it according parameters. It can move, scale and rotate parts of mesh.
     The logic is close how Blender manipulate with mesh itself.
     Distribution of parameters: with bool mask all parameters are setting to selected elements ony by one.
-    With integer mask parameters are setting to a group of elements. 
-    For example: given indexes - [1, 3], given parameters - [param1, param2]. 
+    With integer mask parameters are setting to a group of elements.
+    For example: given indexes - [1, 3], given parameters - [param1, param2].
     To all parts of mesh masked by 1 will be assigned with param1.
     To all parts of mesh masked by 3 will be assigned param2. All other parts will be unchanged.
     :param verts: list of tuple(float, float, float)
@@ -58,7 +58,7 @@ def transform_mesh(verts, edges=None, faces=None, mask=None, custom_origins=None
     :param directions: list of tuple(float, float, float), transformation vector
     :param factors: list of float, direction * factor
     :param transform_mode: str, 'Move', 'Scale', 'Rotate'
-    :param origin_mode: str, 'Individual', 'Median', 'Center bound box', 'Custom'
+    :param origin_mode: str, 'Individual', 'Median', 'Center_bound_box', 'Custom'
     :param direction_mode: str, 'X', 'Y', 'Z', 'Custom'
     :param selection_mode: str, 'Verts', 'Edges', 'Faces'
     :param space_mode: str, 'Normal', 'Global', 'Custom'
@@ -311,7 +311,7 @@ def get_selected_verts(selected):
         raise ValueError(f"Such type: {type(selected)} is not supported")
 
 
-def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, custom_origins=None, 
+def get_space(selected, space_mode, origin_mode, layers: LayerNames, mask_mode, custom_origins=None,
               space_directions=None):
     # returns space matrix for selected elements according given options
     origin = get_origin(selected, origin_mode, mask_mode, layers, custom_origins)
@@ -494,11 +494,11 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         updateNode(self, context)
 
     transform_mode_items = [(i, i, '') for i in TR_MODE]
-    mask_mode_items = [(i, i, '') for i in MASK_MODE]
+    mask_mode_items = [(i, i.replace("_", " "), '') for i in MASK_MODE]
     select_mode_items = [(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
         ('Verts', 'Edges', 'Faces'), ('VERTEXSEL', 'EDGESEL', 'FACESEL')))]
-    origin_mode_items = [(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
-        ('Individual', 'Median', 'Center bound box', 'Custom'),
+    origin_mode_items = [(n, n.replace("_", " "), '', ic, i) for i, (n, ic) in enumerate(zip(
+        ('Individual', 'Median', 'Center_bound_box', 'Custom'),
         ('PIVOT_INDIVIDUAL', 'PIVOT_MEDIAN', 'PIVOT_BOUNDBOX', 'PIVOT_CURSOR')))]
     space_mode_items = [(n, n, '', ic, i) for i, (n, ic) in enumerate(zip(
         ('Normal', 'Global', 'Custom'), ('ORIENTATION_NORMAL', 'ORIENTATION_GLOBAL', 'ORIENTATION_CURSOR')))]
@@ -575,7 +575,7 @@ class SvTransformMesh(bpy.types.Node, SverchCustomTreeNode):
         out = []
 
         dir_mode = DIR_MODE.cust if self.inputs['Direction'].is_linked else self.direction_mode
-        
+
         for v, e, f, m, o, sd, ai, d, fac in zip(verts, edges, faces, mask, origin, space_direction, active_index, direction, factor):
             out.append(transform_mesh(v, e, f, m, o, sd, ai, d, fac, self.transform_mode, self.origin_mode,
                                       dir_mode, self.select_mode, self.space_mode, self.mask_mode))
