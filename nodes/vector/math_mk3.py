@@ -133,7 +133,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     def draw_label(self):
-        text = self.current_op
+        text = self.current_op.replace("_", " ")
         if text in {'SCALAR', '1/SCALAR'}:
             text = f'A * {text}'
         return text
@@ -181,6 +181,9 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+
+        self.ensure_enums_have_no_space(enums=["current_op"])
+
         inputs, outputs = self.inputs, self.outputs
 
         if not outputs[0].is_linked:

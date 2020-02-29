@@ -31,11 +31,11 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CUSTOM_NORMALS'
 
     modes = [
-        ("per Vert", "per Vert", "", 1),
-        ("per Loop", "per Loop", "", 2)
+        ("per_Vert", "per Vert", "", 1),
+        ("per_Loop", "per Loop", "", 2)
         ]
 
-    mode: EnumProperty(items=modes, default='per Vert', update=updateNode)
+    mode: EnumProperty(items=modes, default='per_Vert', update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=True)
@@ -48,7 +48,7 @@ class SvSetCustomMeshNormals(bpy.types.Node, SverchCustomTreeNode):
         O, Vnorm = self.inputs
         objml = [ob.data for ob in O.sv_get()]
         if Vnorm.is_linked:
-            if self.mode == 'per Vert':
+            if self.mode == 'per_Vert':
                 for obm, norml in zip(objml, Vnorm.sv_get()):
                     obm.use_auto_smooth = True
                     obm.normals_split_custom_set_from_vertices(safc(obm.vertices[:], norml))

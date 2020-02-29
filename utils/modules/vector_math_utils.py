@@ -11,11 +11,12 @@ from itertools import zip_longest
 from mathutils import Vector
 import numpy as np
 
+
 mathutils_vector_func_dict = {
     "DOT":            (1,  lambda u, v: Vector(u).dot(v),                          ('vv s'),        "Dot product"),
     "DISTANCE":       (5,  lambda u, v: (Vector(u) - Vector(v)).length,            ('vv s'),           "Distance"),
-    "ANGLE DEG":      (12, lambda u, v: degrees(Vector(u).angle(v, 0)),            ('vv s'),      "Angle Degrees"),
-    "ANGLE RAD":      (17, lambda u, v: Vector(u).angle(v, 0),                     ('vv s'),      "Angle Radians"),
+    "ANGLE_DEG":      (12, lambda u, v: degrees(Vector(u).angle(v, 0)),            ('vv s'),      "Angle Degrees"),
+    "ANGLE_RAD":      (17, lambda u, v: Vector(u).angle(v, 0),                     ('vv s'),      "Angle Radians"),
 
     "LEN":            (4,  lambda u: sqrt((u[0]*u[0])+(u[1]*u[1])+(u[2]*u[2])),     ('v s'),             "Length"),
     "CROSS":          (0,  lambda u, v: Vector(u).cross(v)[:],                     ('vv v'),      "Cross product"),
@@ -32,21 +33,21 @@ mathutils_vector_func_dict = {
     "NORMALIZE":      (6,  lambda u: Vector(u).normalized()[:],                     ('v v'),          "Normalize"),
     "NEG":            (7,  lambda u: (-Vector(u))[:],                               ('v v'),             "Negate"),
 
-    "SCALE XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),           "Scale XY"),
-    "SCALE XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),           "Scale XZ"),
-    "SCALE YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),           "Scale YZ"),
+    "SCALE_XY":       (30, lambda u, s: (u[0]*s, u[1]*s, u[2]),                    ('vs v'),           "Scale XY"),
+    "SCALE_XZ":       (31, lambda u, s: (u[0]*s, u[1],   u[2]*s),                  ('vs v'),           "Scale XZ"),
+    "SCALE_YZ":       (32, lambda u, s: (u[0],   u[1]*s, u[2]*s),                  ('vs v'),           "Scale YZ"),
 
-    "SCALAR TO X":    (40, lambda u, s: (s, u[1], u[2]),                           ('vs v'),        "Scalar to X"),
-    "SCALAR TO Y":    (41, lambda u, s: (u[0], s, u[2]),                           ('vs v'),        "Scalar to Y"),
-    "SCALAR TO Z":    (42, lambda u, s: (u[0], u[1], s),                           ('vs v'),        "Scalar to Z"),
+    "SCALAR_TO_X":    (40, lambda u, s: (s, u[1], u[2]),                           ('vs v'),        "Scalar to X"),
+    "SCALAR_TO_Y":    (41, lambda u, s: (u[0], s, u[2]),                           ('vs v'),        "Scalar to Y"),
+    "SCALAR_TO_Z":    (42, lambda u, s: (u[0], u[1], s),                           ('vs v'),        "Scalar to Z"),
 
-    "SWITCH X":       (50, lambda u, v: (v[0], u[1], u[2]),                        ('vv v'),           "Switch X"),
-    "SWITCH Y":       (51, lambda u, v: (u[0], v[1], u[2]),                        ('vv v'),           "Switch Y"),
-    "SWITCH Z":       (52, lambda u, v: (u[0], u[1], v[2]),                        ('vv v'),           "Switch Z"),
+    "SWITCH_X":       (50, lambda u, v: (v[0], u[1], u[2]),                        ('vv v'),           "Switch X"),
+    "SWITCH_Y":       (51, lambda u, v: (u[0], v[1], u[2]),                        ('vv v'),           "Switch Y"),
+    "SWITCH_Z":       (52, lambda u, v: (u[0], u[1], v[2]),                        ('vv v'),           "Switch Z"),
 
-    "SWAP XY":        (60, lambda u: (u[1], u[0], u[2]),                            ('v v'),            "Swap XY"),
-    "SWAP XZ":        (61, lambda u: (u[2], u[1], u[0]),                            ('v v'),            "Swap XZ"),
-    "SWAP YZ":        (62, lambda u: (u[0], u[2], u[1]),                            ('v v'),            "Swap YZ"),
+    "SWAP_XY":        (60, lambda u: (u[1], u[0], u[2]),                            ('v v'),            "Swap XY"),
+    "SWAP_XZ":        (61, lambda u: (u[2], u[1], u[0]),                            ('v v'),            "Swap XZ"),
+    "SWAP_YZ":        (62, lambda u: (u[0], u[2], u[1]),                            ('v v'),            "Swap YZ"),
 
 }
 
@@ -121,20 +122,20 @@ numpy_vector_func_dict = {
     "NORMALIZE":      (6,  lambda u: unit_vector(u),                    ('v v'),           "Normalize"),
     "NEG":            (7,  lambda u: -u,                                ('v v'),              "Negate"),
 
-    "SCALE XY":       (30, lambda u, s: scale_two_axis(u, s, 0, 1),     ('vs v'),           "Scale XY"),
-    "SCALE XZ":       (31, lambda u, s: scale_two_axis(u, s, 0, 2),     ('vs v'),           "Scale XZ"),
-    "SCALE YZ":       (32, lambda u, s: scale_two_axis(u, s, 1, 2),     ('vs v'),           "Scale YZ"),
+    "SCALE_XY":       (30, lambda u, s: scale_two_axis(u, s, 0, 1),     ('vs v'),           "Scale XY"),
+    "SCALE_XZ":       (31, lambda u, s: scale_two_axis(u, s, 0, 2),     ('vs v'),           "Scale XZ"),
+    "SCALE_YZ":       (32, lambda u, s: scale_two_axis(u, s, 1, 2),     ('vs v'),           "Scale YZ"),
 
-    "SCALAR TO X":    (40, lambda u, s: scalar_to_axis(u, s, 0),        ('vs v'),        "Scalar to X"),
-    "SCALAR TO Y":    (41, lambda u, s: scalar_to_axis(u, s, 1),        ('vs v'),        "Scalar to Y"),
-    "SCALAR TO Z":    (42, lambda u, s: scalar_to_axis(u, s, 2),        ('vs v'),        "Scalar to Z"),
+    "SCALAR_TO_X":    (40, lambda u, s: scalar_to_axis(u, s, 0),        ('vs v'),        "Scalar to X"),
+    "SCALAR_TO_Y":    (41, lambda u, s: scalar_to_axis(u, s, 1),        ('vs v'),        "Scalar to Y"),
+    "SCALAR_TO_Z":    (42, lambda u, s: scalar_to_axis(u, s, 2),        ('vs v'),        "Scalar to Z"),
 
-    "SWITCH X":       (50, lambda u, v: switch_component(u, v, 0),      ('vv v'),           "Switch X"),
-    "SWITCH Y":       (51, lambda u, v: switch_component(u, v, 1),      ('vv v'),           "Switch Y"),
-    "SWITCH Z":       (52, lambda u, v: switch_component(u, v, 2),      ('vv v'),           "Switch Z"),
+    "SWITCH_X":       (50, lambda u, v: switch_component(u, v, 0),      ('vv v'),           "Switch X"),
+    "SWITCH_Y":       (51, lambda u, v: switch_component(u, v, 1),      ('vv v'),           "Switch Y"),
+    "SWITCH_Z":       (52, lambda u, v: switch_component(u, v, 2),      ('vv v'),           "Switch Z"),
 
-    "SWAP XY":        (60, lambda u: swap_component(u, 0, 1),         ('v v'),           "Swap XY"),
-    "SWAP XZ":        (61, lambda u: swap_component(u, 0, 2),         ('v v'),           "Swap XZ"),
-    "SWAP YZ":        (62, lambda u: swap_component(u, 1, 2),         ('v v'),           "Swap YZ"),
+    "SWAP_XY":        (60, lambda u: swap_component(u, 0, 1),         ('v v'),           "Swap XY"),
+    "SWAP_XZ":        (61, lambda u: swap_component(u, 0, 2),         ('v v'),           "Swap XZ"),
+    "SWAP_YZ":        (62, lambda u: swap_component(u, 1, 2),         ('v v'),           "Swap YZ"),
 
 }

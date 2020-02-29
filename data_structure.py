@@ -714,17 +714,20 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 #### random stuff
 ####
 
+def no_space(s):
+    return s.replace(' ', '_')
+
 def enum_item(s):
     """return a list usable in enum property from a list with one value"""
-    return [(i, i, "") for i in s]
+    return [(no_space(i), i, "") for i in s]
 
 def enum_item_4(s):
     """return a 4*n list usable in enum property from a list with one value"""
-    return [(n, n, '', i) for i, n in enumerate(s)]
+    return [(no_space(n), n, '', i) for i, n in enumerate(s)]
 
 def enum_item_5(s, icons):
     """return a 4*n list usable in enum property from a list with one value"""
-    return [(n, n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
+    return [(no_space(n), n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
 
 
 #####################################################

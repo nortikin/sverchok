@@ -39,7 +39,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     tu_axes: EnumProperty(
         name="Track/Up Axes",
         description="Select which two of the XYZ axes to be the Track and Up axes",
-        items=e(TUA), default=TUA[0], update=updateNode)
+        items=e(TUA), default="X_Y", update=updateNode)
 
     normalize: BoolProperty(
         name="Normalize Vectors", description="Normalize the output X,Y,Z vectors",
@@ -69,7 +69,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     tu_mapping: EnumProperty(
         name="Track/Up Mapping",
         description="Map the Track and Up vectors to one of the two inputs or their negatives",
-        items=e(TUM), default=TUM[0], update=updateNode)
+        items=e(TUM), default="A_B", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Location").prop_name = "origin"  # L
@@ -152,7 +152,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         return X, Y, Z
 
     def orthogonalizer(self):
-        order = self.tu_axes.replace(" ", "")
+        order = self.tu_axes.replace("_", "")
         orthogonalizer = eval("self.orthogonalize" + order)
         return lambda T, U: orthogonalizer(T, U)
 
@@ -203,7 +203,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         params = match_long_repeat([Vector_generate(s.sv_get()) for s in inputs])
         orthogonalize = self.orthogonalizer()
 
-        mT, mU = self.tu_mapping.split(" ")
+        mT, mU = self.tu_mapping.split("_")
         gates = [s.is_linked for s in outputs]
         gates.append(self.normalize)
         x_lists = []  # ortho-normal X vector list

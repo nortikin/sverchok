@@ -42,7 +42,7 @@
         187.14275932312012
       ],
       "params": {
-        "alg_mode": "Sweep line",
+        "alg_mode": "Sweep_line",
         "input_mode": "faces",
         "mode": "outer"
       },

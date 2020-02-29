@@ -52,7 +52,7 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     def draw(self, context):
         if context.active_node:
             node = context.active_node
-            if node.selected_mode == 'To TextBlok':
+            if node.selected_mode == 'To_TextBlok':
                 self.path_menu([snlite_template_path], "text.open", {"internal": True})
             else:
                 self.path_menu([snlite_template_path], "node.scriptlite_import")
@@ -145,14 +145,14 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         default=defaults, size=32, update=updateNode)
 
     mode_options = [
-        ("To TextBlok", "To TextBlok", "", 0),
-        ("To Node", "To Node", "", 1),
+        ("To_TextBlok", "To TextBlok", "", 0),
+        ("To_Node", "To Node", "", 1),
     ]
 
     selected_mode: bpy.props.EnumProperty(
         items=mode_options,
         description="load the template directly to the node or add to textblocks",
-        default="To Node",
+        default="To_Node",
         update=updateNode
     )
     

@@ -364,7 +364,7 @@ faces_modes_dict = {
     'Sides Number':       (52, 'p',  's',  '',  pols_sides,            's',   'Sides', "Number of sides of faces"),
     'Adjacent Faces Num': (53, 'p',  '',   '',  pols_adjacent_num,     's',   'Number', "Number of Faces that share a edge with face"),
     'Neighbor Faces Num': (54, 'vp', '',   '',  pols_neighbor_num,     's',   'Number', "Number of Faces that share a vertex with face"),
-    'Sharpness':          (55, 'vp', '',   '',  pols_shell_factor,     's',   'Sharpness ', 'Average of curvature of mesh in faces vertices'),
+    'Sharpness':          (55, 'vp', '',   '',  pols_shell_factor,     's',   'Sharpness', 'Average of curvature of mesh in faces vertices'),
     'Inverse':            (60, 'p',  '',   '',  pols_inverted,         's',   'Faces', 'Reversed Polygons (Flipped)'),
     'Edges':              (61, 'p',  '',   'u', pols_edges,            's',   'Edges', 'Face Edges'),
     'Adjacent Faces':     (62, 'p',  '',   'u', pols_adjacent,         's',   'Faces', 'Faces that share a edge with face'),

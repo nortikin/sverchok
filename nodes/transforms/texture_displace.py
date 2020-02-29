@@ -160,7 +160,7 @@ def meshes_texture_diplace(params, constant, matching_f):
     return result
 
 
-color_channels_modes = [(t, t, t, '', color_channels[t][0]) for t in color_channels]
+color_channels_modes = [(t.replace(" ", "_"), t, t, '', color_channels[t][0]) for t in color_channels]
 
 displace_funcs = {
     'NORMAL': apply_texture_displace_normal,
@@ -195,15 +195,15 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
         ('X', 'X', 'Texture displacement along X axis', '', 2),
         ('Y', 'Y', 'Texture displacement along Y axis', '', 3),
         ('Z', 'Z', 'Texture displacement along Z axis', '', 4),
-        ('Custom Axis', 'Custom Axis', 'Texture displacement along Custom Axis', '', 5),
-        ('RGB to XYZ', 'RGB to XYZ', 'Texture displacement with RGB as vector', '', 6),
-        ('HSV to XYZ', 'HSV to XYZ', 'Texture displacement with HSV as vector', '', 7),
-        ('HLS to XYZ', 'HLS to XYZ', 'Texture displacement with HSV as vector', '', 8)]
+        ('Custom_Axis', 'Custom Axis', 'Texture displacement along Custom Axis', '', 5),
+        ('RGB_to_XYZ', 'RGB to XYZ', 'Texture displacement with RGB as vector', '', 6),
+        ('HSV_to_XYZ', 'HSV to XYZ', 'Texture displacement with HSV as vector', '', 7),
+        ('HLS_to_XYZ', 'HLS to XYZ', 'Texture displacement with HSV as vector', '', 8)]
 
     texture_coord_modes = [
         ('UV', 'UV', 'Input UV coordinates to evaluate texture', '', 1),
-        ('Mesh Matrix', 'Mesh Matrix', 'Matrix to apply to verts before evaluating texture', '', 2),
-        ('Texture Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
+        ('Mesh_Matrix', 'Mesh Matrix', 'Matrix to apply to verts before evaluating texture', '', 2),
+        ('Texture_Matrix', 'Texture Matrix', 'Matrix of texture (External Object matrix)', '', 3),
 
     ]
     @throttled
@@ -259,7 +259,7 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
     tex_coord_type: EnumProperty(
         name='Texture Coord',
         items=texture_coord_modes,
-        default='Texture Matrix',
+        default='Texture_Matrix',
         description="Mapping method",
         update=change_mode)
 
@@ -365,7 +365,8 @@ class SvDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
 
         matching_f = list_match_func[self.list_match]
         desired_levels = [3, 3, 2, 3, mat_level, 2, 2, 3]
-        ops = [self.out_mode, displace_funcs[self.out_mode], self.color_channel, self.list_match, self.tex_coord_type]
+        out_mode = self.out_mode.replace("_", " ")
+        ops = [out_mode, displace_funcs[out_mode], self.color_channel.replace("_", " "), self.list_match, self.tex_coord_type.replace("_", " ")]
 
         result = recurse_f_level_control(params, ops, meshes_texture_diplace, matching_f, desired_levels)
 
