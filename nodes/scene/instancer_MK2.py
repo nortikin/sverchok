@@ -45,6 +45,9 @@ def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
         
         collection.objects.link(sv_object)
 
+    # if the object is selected in the scene, this node can keep the instance unselected
+    sv_object.select_set(0)
+
     # apply matrices
     if matrix:
         sv_object.matrix_local = list(zip(*matrix))
