@@ -147,7 +147,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         shader.bind()
         shader.uniform_float("u_mvp", dashed_data.matrix)
         shader.uniform_float("u_resolution", dashed_data.u_resolution)
-        shader.uniform_float("u_dashSize", dashed_data.u_dash_size)    
+        shader.uniform_float("u_dashSize", dashed_data.u_dash_size)
         shader.uniform_float("u_gapSize", dashed_data.u_gap_size)
         shader.uniform_float("m_color", dashed_data.m_color)
         batch.draw(shader)
@@ -158,7 +158,7 @@ def draw_uniform(GL_KIND, coords, indices, color, width=1, dashed_data=None):
         batch = batch_for_shader(shader, GL_KIND, {"pos" : coords}, **params)
         shader.bind()
         shader.uniform_float("color", color)
-    
+
         batch.draw(shader)
 
     if GL_KIND == 'LINES':
@@ -246,7 +246,7 @@ def draw_complex(context, args):
 
     if config.draw_gl_polygonoffset:
         bgl.glDisable(bgl.GL_POLYGON_OFFSET_FILL)
-    
+
     if config.display_edges:
         draw_lines_uniform(context, config, geom.verts, geom.edges, config.line4f, config.line_width)
     if config.display_faces:
@@ -381,7 +381,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         inew('SvStringsSocket', 'edges')
         inew('SvStringsSocket', 'faces')
         inew('SvMatrixSocket', 'matrix')
-        
+
         attr_socket = inew('SvStringsSocket', 'attrs')
         attr_socket.hide = True
         attr_socket.quicklink_func_name = "draw_basic_attr_qlink"
@@ -523,7 +523,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             [  {attr: attr_vale, attr2: attr2_value } ]
 
         """
- 
+
         if self.node_ui_show_attrs_socket and not self.inputs['attrs'].hide and self.inputs['attrs'].is_linked:
             socket_acquired_attrs = self.inputs['attrs'].sv_get(default=[{'activate': False}])
 
@@ -566,8 +566,10 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
 
             config = self.fill_config()
             data = self.get_data()
-            coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
-
+            if len(data[0]) > 1:
+                coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
+            else:
+                coords, edge_indices, face_indices = data[0][0], data[1][0], data[2][0]
             geom = lambda: None
             geom.verts = coords
 
@@ -592,7 +594,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
                     geom.faces = ensure_triangles(self, coords, face_indices)
 
                 if self.display_edges:
-                    if self.use_dashed:    
+                    if self.use_dashed:
                         self.add_gl_stuff_to_config(config)
 
                     # we don't want to draw the inner edges of triangulated faces; use original face_indices.
