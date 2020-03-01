@@ -317,6 +317,8 @@
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
+    SvNurbsCurveOutNode
+    SvNurbsSurfaceOutNode
     ---
     SvEmptyOutNode
     ---
