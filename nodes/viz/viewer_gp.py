@@ -18,6 +18,13 @@ from sverchok.utils.context_managers import new_input
 
 nodule_color = (0.899, 0.8052, 0.0, 1.0)
 
+def msg_box(message="", title="Message Box", icon='INFO'):
+
+    def msg_draw(self, context):
+        self.layout.label(text=message)
+
+    bpy.context.window_manager.popup_menu(msg_draw, title=title, icon=icon)
+
 
 def set_correct_stroke_count(strokes, coords, BLACK):
     """ ensure that the number of strokes match the sets of coordinates """
@@ -138,6 +145,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
     def local_updateNode(self, context):
         print('changed name')
+        msg_box(message="hey.. don't use this for serious stuff, and don't do bugreports for this node", title="BETA NODE : Sverchok Info", icon='INFO')
         updateNode(self, context)
 
     gp_object_name: bpy.props.StringProperty(default="", name="GP name", update=local_updateNode)
