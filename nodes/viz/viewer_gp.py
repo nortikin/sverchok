@@ -25,7 +25,7 @@ def set_correct_stroke_count(strokes, coords, BLACK):
     if diff < 0:
         # add new strokes
         for _ in range(abs(diff)):
-            strokes.new(colorname=BLACK.name)
+            strokes.new() # colorname=BLACK.name)
     elif diff > 0:
         # remove excess strokes
         for _ in range(diff):
@@ -58,7 +58,7 @@ def match_points_and_pressures(pressure_set, num_points):
 
 
 def get_palette(grease_pencil, palette_name=None):
-    palettes = grease_pencil.palettes
+    palettes = bpy.data.palettes
     if not palette_name in palettes:
         palette = palettes.new(palette_name)
     else:
@@ -70,26 +70,31 @@ def remove_unused_colors(palette, strokes):
     """
     optional cleanup step, probably best to not have this switched on by default
     """
-    named_colors = [stroke.colorname for stroke in strokes] + [str([0,0,0])]
-    unused_named_colors = {color.name for color in palette.colors} - set(named_colors)
-    for unused_color in unused_named_colors:
-        palette.colors.remove(palette.colors[unused_color])
+    # named_colors = [stroke.colorname for stroke in strokes] + [str([0,0,0])]
+    # unused_named_colors = {color.name for color in palette.colors} - set(named_colors)
+    # for unused_color in unused_named_colors:
+    #     palette.colors.remove(palette.colors[unused_color])
+    pass
 
 
 def ensure_color_in_palette(node, palette, color, named_color=None, fill=None):
 
-    if not named_color:
-        if fill:
-            rounded_color = str([round(i, 4) for i in color[:4]]) + str([round(i, 4) for i in fill[:4]])
-        else:
-            rounded_color = str([round(i, 4) for i in color[:4]])
-        named_color = str(rounded_color)
-    else:
-        named_color = 'BLACK'
+    # if not named_color:
+    #     if fill:
+    #         rounded_color = str([round(i, 4) for i in color[:4]]) + str([round(i, 4) for i in fill[:4]])
+    #     else:
+    #         rounded_color = str([round(i, 4) for i in color[:4]])
+    #     named_color = str(rounded_color)
+    # else:
+    #     named_color = 'BLACK'
 
-    if not named_color in palette.colors:
+    #if not named_color in palette.colors:
+    if palette.colors:
+        new_color = palette.colors[0]
+    else:
+
         new_color = palette.colors.new()
-        new_color.name = named_color
+        # new_color.name = named_color
         new_color.color = color[:3]
         new_color.alpha = color[3]
         new_color.use_hq_fill = node.use_hq_fill
@@ -97,10 +102,7 @@ def ensure_color_in_palette(node, palette, color, named_color=None, fill=None):
             new_color.fill_color = fill[:3]
             new_color.fill_alpha = fill[3]
 
-        # print('made', new_color.name)
-        return new_color
-    else:
-        return palette.colors[named_color]
+    return new_color
 
 
 class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
@@ -240,7 +242,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
             BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
 
-            coords = coordinates.sv_get()
+            coords = coordinates_socket.sv_get()
             self.num_strokes = len(coords)
             set_correct_stroke_count(strokes, coords, BLACK)
             cols = colors.sv_get()[0]
@@ -255,7 +257,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
                 color_from_palette = ensure_color_in_palette(self, PALETTE, color=color, named_color=None, fill=fill)
 
-                stroke.draw_mode = self.draw_mode
+                # stroke.draw_mode = self.draw_mode  called display_mode now... default SCREEN.
                 stroke.draw_cyclic = cyclic_socket_value[idx]
 
                 num_points = len(coord_set)
