@@ -84,44 +84,52 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     input_mode : EnumProperty(
             name = "Input mode",
+            description = "What to expect in ControlPoints and Weights inputs: either single list (and subdivide it into rows in the node), or pre-subdivided list of lists",
             default = '1D',
             items = input_modes,
             update = update_sockets)
 
     u_size : IntProperty(
             name = "U Size",
+            description = "Number of control points in one row",
             default = 5,
             min = 3,
             update = updateNode)
 
     is_cyclic_u : BoolProperty(
             name = "Cyclic U",
+            description = "Whether to make surface cyclic in the U direction",
             default = False,
             update = updateNode)
 
     is_cyclic_v : BoolProperty(
             name = "Cyclic V",
+            description = "Whether to make surface cyclic in the V direction",
             default = False,
             update = updateNode)
 
     use_endpoint_u : BoolProperty(
             name = "Endpoint U",
+            description = "Whether the surface should touch it's end points in the U direction",
             default = True,
             update = updateNode)
 
     use_endpoint_v : BoolProperty(
             name = "Endpoint V",
+            description = "Whether the surface should touch it's end points in the V direction",
             default = True,
             update = updateNode)
 
     degree_u : IntProperty(
             name = "Degree U",
+            description = "Degree of the surface in the U direction",
             min = 2, max = 6,
             default = 3,
             update = updateNode)
 
     degree_v : IntProperty(
             name = "Degree V",
+            description = "Degree of the surface in the V direction",
             min = 2, max = 6,
             default = 3,
             update = updateNode)

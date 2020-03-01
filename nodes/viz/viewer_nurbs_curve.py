@@ -47,16 +47,19 @@ class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     is_cyclic : BoolProperty(
             name = "Cyclic",
+            description = "Whether to make cyclic curve",
             default = False,
             update = updateNode)
 
     use_endpoint : BoolProperty(
             name = "Endpoint",
+            description = "Whether should the curve touch it's end points",
             default = True,
             update = updateNode)
 
     degree : IntProperty(
             name = "Degree",
+            description = "Degree of the curve",
             min = 2, max = 6,
             default = 3,
             update = updateNode)
