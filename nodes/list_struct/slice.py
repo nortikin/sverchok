@@ -22,6 +22,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets,
                                      repeat_last, match_long_repeat)
+from numpy import ndarray, arange, delete
 
 # ListSlice
 # by Linus Yng
@@ -78,7 +79,7 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
             self.outputs['Other'].sv_set(out)
 
     def slice(self, data, start, stop):
-        if isinstance(data, (tuple, list)):
+        if isinstance(data, (tuple, list, ndarray)):
             return data[start:stop]
         else:
             return None
@@ -86,6 +87,8 @@ class ListSliceNode(bpy.types.Node, SverchCustomTreeNode):
     def other(self, data, start, stop):
         if isinstance(data, (tuple, list)):
             return data[:start] + data[stop:]
+        elif isinstance(data,(ndarray)):
+            return delete(data, arange(start,stop))
         else:
             return None
 
