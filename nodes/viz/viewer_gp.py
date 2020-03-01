@@ -161,7 +161,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         # layout.prop(self, 'draw_mode', expand=True)
-        ...
+        layout.prop(self, "gp_object_name")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'use_hq_fill', toggle=True)
@@ -186,64 +186,73 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+
+        # we have things to consider before doing any work.
+        if not self.gp_object_name:
+            return
+
         frame = self.inputs[0]
         coordinates = self.inputs[1]
+        if not (frame.is_linked and coordinates.is_linked):
+            return
+
         colors = self.inputs["stroke color"]
         fills = self.inputs["fill color"]
+        with self.sv_throttle_tree_update():
 
-        if frame.is_linked and coordinates.is_linked:
+            gp_object = bpy.data.objects.get(self.gp_object_name)
+            if not gp_object:
+                bpy.data.objects.new()
 
-            with self.sv_throttle_tree_update():
+            # here the frame socket expects frame data, not just an integer. 
+            #
+            # layer = bpy.data.objects['GPencil'].data.layers.new()
+            # frame = layer.frames.new(0)
+            # stroke = frame.strokes.new()
+            # stroke.points.add(20)
 
-                # here the frame socket expects frame data, not just an integer. 
-                #
-                # layer = bpy.data.objects['GPencil'].data.layers.new()
-                # frame = layer.frames.new(0)
-                # stroke = frame.strokes.new()
-                # stroke.points.add(20)
+            # bpy.data.objects['GPencil'].data.layers[0].frames[0].strokes[0].points.add(20)
 
-                # bpy.data.objects['GPencil'].data.layers[0].frames[0].strokes[0].points.add(20)
+            frame_number = frame.sv_get()[0][0]
+            
+            strokes = ...
+            GP_DATA = strokes.id_data
+            
+            PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
+            BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
 
-                frame_number = frame.sv_get()[0][0]
-                
-                strokes = ...
-                GP_DATA = strokes.id_data
-                
-                PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
-                BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
+            coords = coordinates.sv_get()
+            self.num_strokes = len(coords)
+            set_correct_stroke_count(strokes, coords, BLACK)
+            cols = colors.sv_get()[0]
+            fill_cols = fills.sv_get()[0]
 
-                coords = coordinates.sv_get()
-                self.num_strokes = len(coords)
-                set_correct_stroke_count(strokes, coords, BLACK)
-                cols = colors.sv_get()[0]
-                fill_cols = fills.sv_get()[0]
+            cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
+            fullList(cyclic_socket_value, self.num_strokes)
+            fullList(cols, self.num_strokes)
+            fullList(fill_cols, self.num_strokes)
+            pressures = self.get_pressures()
 
-                cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
-                fullList(cyclic_socket_value, self.num_strokes)
-                fullList(cols, self.num_strokes)
-                fullList(fill_cols, self.num_strokes)
-                pressures = self.get_pressures()
+            for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
+                color_from_palette = ensure_color_in_palette(self, PALETTE, color=color, named_color=None, fill=fill)
 
-                for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
-                    color_from_palette = ensure_color_in_palette(self, PALETTE, color=color, named_color=None, fill=fill)
+                stroke.draw_mode = self.draw_mode
+                stroke.draw_cyclic = cyclic_socket_value[idx]
 
-                    stroke.draw_mode = self.draw_mode
-                    stroke.draw_cyclic = cyclic_socket_value[idx]
+                num_points = len(coord_set)
+                pass_data_to_stroke(stroke, coord_set)
 
-                    num_points = len(coord_set)
-                    pass_data_to_stroke(stroke, coord_set)
+                flat_pressures = match_points_and_pressures(pressures[idx], num_points)
+                pass_pressures_to_stroke(stroke, flat_pressures)
 
-                    flat_pressures = match_points_and_pressures(pressures[idx], num_points)
-                    pass_pressures_to_stroke(stroke, flat_pressures)
+                stroke.line_width = 1
+                try:
+                    stroke.colorname = color_from_palette.name
+                except:
+                    print('stroke with index', idx, 'is not generated yet.')
 
-                    stroke.line_width = 1
-                    try:
-                        stroke.colorname = color_from_palette.name
-                    except:
-                        print('stroke with index', idx, 'is not generated yet.')
-
-                remove_unused_colors(PALETTE, strokes)
-                self.outputs[0].sv_set(strokes)
+            remove_unused_colors(PALETTE, strokes)
+            self.outputs[0].sv_set(strokes)
 
 
 classes = [SvGreasePencilStrokes]
