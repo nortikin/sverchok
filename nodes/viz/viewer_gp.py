@@ -191,9 +191,9 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         if not self.gp_object_name:
             return
 
-        frame = self.inputs[0]
-        coordinates = self.inputs[1]
-        if not (frame.is_linked and coordinates.is_linked):
+        frame_socket = self.inputs[0]
+        coordinates_socket = self.inputs[1]
+        if not (frame_socket.is_linked and coordinates_socket.is_linked):
             return
 
         # is frame a number? else 0
@@ -220,7 +220,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             layer = gp_object.data.layers[0]
 
             try:
-                frame_number = frame.sv_get()[0][0]
+                frame_number = frame_socket.sv_get()[0][0]
             except:
                 frame_number = 0
 
@@ -230,6 +230,8 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             else:
                 # object has frames, we look for frame number or create one if not present
                 frame = [f for f in layer.frames if f.frame_number == frame_number]
+                if len(frame) == 1:
+                    frame = frame[0]
                 if not frame:
                     frame = layer.frames.new(frame_number)
 
