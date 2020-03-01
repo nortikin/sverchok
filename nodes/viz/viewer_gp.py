@@ -108,7 +108,7 @@ def ensure_color_in_palette(node, palette, color, named_color=None, fill=None):
 class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     ''' Make GreasePencil Strokes '''
     bl_idname = 'SvGreasePencilStrokes'
-    bl_label = 'Grease Pencil'
+    bl_label = 'Grease Pencil (BETA)'
     bl_icon = 'GREASEPENCIL'
 
     # SCREEN / 3DSPACE / 2DSPACE / 2DIMAGE
