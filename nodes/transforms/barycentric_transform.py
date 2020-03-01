@@ -76,10 +76,10 @@ def compute_barycentric_transform_np(params, matched_index, result, out_numpy, e
 
 
     for v_id, edge_id, tri_src_id, tri_dest_id in zip(*matched_index):
-    
-        barycentric_co = dot(inverted_matrix_s[tri_src_id], (np_verts[v_id] - tri3_src[tri_src_id]).T)       
+
+        barycentric_co = dot(inverted_matrix_s[tri_src_id], (np_verts[v_id] - tri3_src[tri_src_id]).T)
         cartesian_co = dot(barycentric_co.T, matrix_transform_d[tri_dest_id]) + tri3_dest[tri_dest_id]
-        
+
         result[0].append(cartesian_co if out_numpy else cartesian_co.tolist())
         if edg_pol_data:
             result[1].append(egde_pol[edge_id])
@@ -149,7 +149,7 @@ class SvBarycentricTransformNode(bpy.types.Node, SverchCustomTreeNode):
         '''right click sv_menu items'''
         layout.prop_menu_enum(self, "implementation", text="Implementation")
         if self.implementation == "NumPy":
-            layout.prop(self, "output_numpy", toggle=False)
+            layout.prop(self, "output_numpy", toggle=True)
         layout.prop_menu_enum(self, "list_match", text="List Match")
 
     def get_data(self):

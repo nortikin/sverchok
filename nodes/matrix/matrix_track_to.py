@@ -18,13 +18,18 @@
 
 import bpy
 from bpy.props import BoolProperty, EnumProperty, FloatVectorProperty
-from mathutils import Vector, Matrix
+from mathutils import Matrix
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, match_long_repeat, enum_item as e)
+from sverchok.data_structure import (updateNode, Vector_generate, match_long_repeat, enum_item as e)
 
 
 class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' Construct a Matrix from arbitrary Track and Up vectors '''
+    """
+    Triggers: Align to Track & Up vectors
+    Tooltip:  Construct a Matrix from arbitrary Track and Up vectors
+
+    """
+
     bl_idname = 'SvMatrixTrackToNode'
     bl_label = 'Matrix Track To'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -34,7 +39,7 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     tu_axes: EnumProperty(
         name="Track/Up Axes",
         description="Select which two of the XYZ axes to be the Track and Up axes",
-        items=e(TUA), default=TUA[0], update=updateNode)
+        items=e(TUA), default="X_Y", update=updateNode)
 
     normalize: BoolProperty(
         name="Normalize Vectors", description="Normalize the output X,Y,Z vectors",
@@ -55,12 +60,16 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
     vB: FloatVectorProperty(
         name='B', description='B direction',
         default=(0, 1, 0), update=updateNode)
-
+    flat_output: BoolProperty(
+        name="Flat output",
+        description="Flatten output by list-joining level 1",
+        default=True,
+        update=updateNode)
     TUM = ["A B", "A -B", "-A B", "-A -B", "B A", "B -A", "-B A", "-B -A"]
     tu_mapping: EnumProperty(
         name="Track/Up Mapping",
         description="Map the Track and Up vectors to one of the two inputs or their negatives",
-        items=e(TUM), default=TUM[0], update=updateNode)
+        items=e(TUM), default="A_B", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Location").prop_name = "origin"  # L
@@ -102,7 +111,15 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         cols[1].prop(self, "tu_mapping", text="")
 
     def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         layout.prop(self, "normalize")
+        layout.prop(self, "flat_output")
+
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "tu_axes")
+        layout.prop_menu_enum(self, "tu_mapping")
+        layout.prop(self, "normalize")
+        layout.prop(self, "flat_output", text="Flat Output", expand=False)
 
     def orthogonalizeXY(self, X, Y):  # keep X, recalculate Z form X&Y then Y
         Z = X.cross(Y)
@@ -135,9 +152,44 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
         return X, Y, Z
 
     def orthogonalizer(self):
-        order = self.tu_axes.replace(" ", "")
+        order = self.tu_axes.replace("_", "")
         orthogonalizer = eval("self.orthogonalize" + order)
         return lambda T, U: orthogonalizer(T, U)
+
+    def matrix_track_to(self, params, mT, mU, orthogonalize, gates):
+        x_list = []  # ortho-normal X vector list
+        y_list = []  # ortho-normal Y vector list
+        z_list = []  # ortho-normal Z vector list
+        matrix_list = []
+        print(len(params))
+        for L, S, A, B in zip(*params):
+            T = eval(mT)  # map T to one of A, B or its negative
+            U = eval(mU)  # map U to one of A, B or its negative
+
+            X, Y, Z = orthogonalize(T, U)
+
+            if gates[4]:
+                X.normalize()
+                Y.normalize()
+                Z.normalize()
+
+            # prepare the Ortho-Normalized outputs
+            if gates[1]:
+                x_list.append([X.x, X.y, X.z])
+            if gates[2]:
+                y_list.append([Y.x, Y.y, Y.z])
+            if gates[3]:
+                z_list.append([Z.x, Z.y, Z.z])
+            if gates[0]:
+                # composite matrix: M = T * R * S (Tanslation x Rotation x Scale)
+                m = [[X.x * S.x, Y.x * S.y, Z.x * S.z, L.x],
+                     [X.y * S.x, Y.y * S.y, Z.y * S.z, L.y],
+                     [X.z * S.x, Y.z * S.y, Z.z * S.z, L.z],
+                     [0, 0, 0, 1]]
+
+                matrix_list.append(Matrix(m))
+
+        return matrix_list, x_list, y_list, z_list
 
     def process(self):
         outputs = self.outputs
@@ -148,58 +200,31 @@ class SvMatrixTrackToNode(bpy.types.Node, SverchCustomTreeNode):
 
         # input values lists
         inputs = self.inputs
-        input_locations = inputs["Location"].sv_get()[0]
-        input_scales = inputs["Scale"].sv_get()[0]
-        input_vAs = inputs["A"].sv_get()[0]
-        input_vBs = inputs["B"].sv_get()[0]
-
-        locations = [Vector(i) for i in input_locations]
-        scales = [Vector(i) for i in input_scales]
-        vAs = [Vector(i) for i in input_vAs]
-        vBs = [Vector(i) for i in input_vBs]
-
-        params = match_long_repeat([locations, scales, vAs, vBs])
-
+        params = match_long_repeat([Vector_generate(s.sv_get()) for s in inputs])
         orthogonalize = self.orthogonalizer()
 
-        mT, mU = self.tu_mapping.split(" ")
+        mT, mU = self.tu_mapping.split("_")
+        gates = [s.is_linked for s in outputs]
+        gates.append(self.normalize)
+        x_lists = []  # ortho-normal X vector list
+        y_lists = []  # ortho-normal Y vector list
+        z_lists = []  # ortho-normal Z vector list
+        matrix_lists = []
+        if self.flat_output:
+            m_add, x_add, y_add, z_add = matrix_lists.extend,  x_lists.extend, y_lists.extend, z_lists.extend
+        else:
+            m_add, x_add, y_add, z_add = matrix_lists.append, x_lists.append, y_lists.append, z_lists.append
+        for par in zip(*params):
+            matrix_list, x_list, y_list, z_list = self.matrix_track_to(match_long_repeat(par), mT, mU, orthogonalize, gates)
+            m_add(matrix_list)
+            x_add([x_list])
+            y_add(y_list)
+            z_add(z_list)
 
-        xList = []  # ortho-normal X vector list
-        yList = []  # ortho-normal Y vector list
-        zList = []  # ortho-normal Z vector list
-        matrixList = []
-        for L, S, A, B in zip(*params):
-            T = eval(mT)  # map T to one of A, B or its negative
-            U = eval(mU)  # map U to one of A, B or its negative
-
-            X, Y, Z = orthogonalize(T, U)
-
-            if self.normalize:
-                X.normalize()
-                Y.normalize()
-                Z.normalize()
-
-            # prepare the Ortho-Normalized outputs
-            if outputs["X"].is_linked:
-                xList.append([X.x, X.y, X.z])
-            if outputs["Y"].is_linked:
-                yList.append([Y.x, Y.y, Y.z])
-            if outputs["Z"].is_linked:
-                zList.append([Z.x, Z.y, Z.z])
-
-            # composite matrix: M = T * R * S (Tanslation x Rotation x Scale)
-            m = [[X.x * S.x, Y.x * S.y, Z.x * S.z, L.x],
-                 [X.y * S.x, Y.y * S.y, Z.y * S.z, L.y],
-                 [X.z * S.x, Y.z * S.y, Z.z * S.z, L.z],
-                 [0, 0, 0, 1]]
-
-            matrixList.append(Matrix(m))
-
-        outputs["Matrix"].sv_set(matrixList)
-        outputs["X"].sv_set([xList])
-        outputs["Y"].sv_set([yList])
-        outputs["Z"].sv_set([zList])
-
+        outputs["Matrix"].sv_set(matrix_lists)
+        outputs["X"].sv_set(x_lists)
+        outputs["Y"].sv_set(y_lists)
+        outputs["Z"].sv_set(z_lists)
 
 def register():
     bpy.utils.register_class(SvMatrixTrackToNode)

@@ -31,6 +31,7 @@ def make_name(type_, index_):
 class SvSNCallbackFunctorB(bpy.types.Operator, SvGenericCallbackWithParams):
     bl_idname = sn_callback
     bl_label = "Callback for functor node"
+    bl_options = {'INTERNAL'}
 
 
 def make_annotations():

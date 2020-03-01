@@ -65,7 +65,7 @@ class SverchokPreferences(AddonPreferences):
         if self.auto_apply_theme:
             color_def.apply_theme()
 
-    tab_modes = [(k, k, '', i) for i, k in enumerate(["General", "Node Defaults", "Theme"])]
+    tab_modes = data_structure.enum_item_4(["General", "Node Defaults", "Theme"])
     
     selected_tab: bpy.props.EnumProperty(
         items=tab_modes,
@@ -294,7 +294,7 @@ class SverchokPreferences(AddonPreferences):
 
 
     # updating sverchok
-    dload_archive_name: StringProperty(name="archive name", default="b28_prelease_master") # default = "master"
+    dload_archive_name: StringProperty(name="archive name", default="master") # default = "master"
     dload_archive_path: StringProperty(name="archive path", default="https://github.com/nortikin/sverchok/archive/")
 
 
@@ -360,7 +360,7 @@ class SverchokPreferences(AddonPreferences):
 
             log_box.prop(self, "log_to_console")
 
-        if self.selected_tab == "Node Defaults":
+        if self.selected_tab == "Node_Defaults":
 
             row = layout.row()
             col = row.column(align=True)

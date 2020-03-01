@@ -7,7 +7,7 @@ import logging
 import logging.handlers
 
 import sverchok
-from sverchok.ui.development import get_version_string
+from sverchok.utils.development import get_version_string
 from sverchok.utils.context_managers import sv_preferences
 
 # Hardcoded for now

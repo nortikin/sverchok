@@ -28,9 +28,7 @@ from bpy.props import (
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
-from sverchok.nodes.object_nodes.getsetprop import (
-    assign_data, wrap_output_data, types
-)
+from sverchok.nodes.object_nodes.getsetprop import assign_data, types
 
 
 class SvNodePickup(bpy.types.Operator):

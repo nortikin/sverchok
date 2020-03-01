@@ -1,0 +1,227 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        15.998117446899414,
+        354.1291198730469
+      ],
+      "params": {
+        "float_": 1.1899998188018799,
+        "int_": 0
+      },
+      "width": 140.0
+    },
+    "Formula": {
+      "bl_idname": "SvFormulaNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        209.60821533203125,
+        357.2672119140625
+      ],
+      "params": {
+        "dimensions": 1,
+        "formula1": "rho * base ** (-z)",
+        "formula2": "",
+        "formula3": "",
+        "formula4": ""
+      },
+      "width": 140.0
+    },
+    "Framework": {
+      "bl_idname": "SvFrameworkNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -182.53016662597656,
+        134.69235229492188
+      ],
+      "params": {
+        "make_basis": 0,
+        "max_rho": 2.9600000381469727,
+        "n_connections": 3,
+        "z_mode": "AXIS"
+      },
+      "width": 140.0
+    },
+    "NGon": {
+      "bl_idname": "SvNGonNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -395.3817443847656,
+        12.887941360473633
+      ],
+      "params": {
+        "divisions": 2,
+        "rad_": 3.5799999237060547,
+        "sides_": 4
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Vector polar input": {
+      "bl_idname": "VectorPolarInNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        421.8861389160156,
+        287.048828125
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Vector polar output": {
+      "bl_idname": "VectorPolarOutNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        51.93073272705078,
+        257.8312072753906
+      ],
+      "params": {},
+      "width": 100.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        852.43603515625,
+        245.92530822753906
+      ],
+      "params": {
+        "activate": 1,
+        "face_color": [
+          0.3890626132488251,
+          0.762140154838562,
+          0.8100003600120544,
+          1.0
+        ],
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Wireframe": {
+      "bl_idname": "SvWireframeNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        632.43603515625,
+        299.7569885253906
+      ],
+      "params": {
+        "boundary": 1,
+        "offset": 0.0,
+        "relative_offset": 1,
+        "thickness": 0.10000000149011612
+      },
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "NGon",
+      0,
+      "Framework",
+      0
+    ],
+    [
+      "NGon",
+      1,
+      "Framework",
+      1
+    ],
+    [
+      "Framework",
+      0,
+      "Vector polar output",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Vector polar output",
+      0,
+      "Formula",
+      1
+    ],
+    [
+      "Vector polar output",
+      2,
+      "Formula",
+      2
+    ],
+    [
+      "Formula",
+      0,
+      "Vector polar input",
+      0
+    ],
+    [
+      "Vector polar output",
+      1,
+      "Vector polar input",
+      1
+    ],
+    [
+      "Vector polar output",
+      2,
+      "Vector polar input",
+      2
+    ],
+    [
+      "Vector polar input",
+      0,
+      "Wireframe",
+      2
+    ],
+    [
+      "Framework",
+      2,
+      "Wireframe",
+      3
+    ],
+    [
+      "Wireframe",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Wireframe",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}

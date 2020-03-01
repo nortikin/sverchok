@@ -19,31 +19,18 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
 from mathutils import Vector, Matrix
+from mathutils.kdtree import KDTree
 import math
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.utils.math import inverse, inverse_square, inverse_cubic, inverse_exp, gauss
 
 def get_avg_vector(vectors):
     result = Vector((0,0,0))
     for vector in vectors:
         result += vector
     return result / len(vectors)
-
-def inverse(c, x):
-    return 1.0/x
-
-def inverse_square(c, x):
-    return 1.0/(x*x)
-
-def inverse_cubic(c, x):
-    return 1.0/(x*x*x)
-
-def inverse_exp(c, x):
-    return math.exp(-c*x)
-
-def gauss(c, x):
-    return math.exp(-c*x*x/2.0)
 
 class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
     '''Attraction vectors calculator'''
@@ -66,10 +53,10 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
             ("gauss", "Gauss - Exp(-R^2/2)", "", 4)
         ]
 
+    @throttled
     def update_type(self, context):
         self.inputs['Direction'].hide_safe = (self.attractor_type == 'Point')
         self.inputs['Coefficient'].hide_safe = (self.falloff_type not in ['inverse_exp', 'gauss'])
-        updateNode(self, context)
 
     attractor_type: EnumProperty(
         name="Attractor type", items=types, default='Point', update=update_type)
@@ -85,6 +72,18 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
 
     coefficient: FloatProperty(
         name="Coefficient", default=0.5, update=updateNode)
+
+    point_modes = [
+        ('AVG', "Average", "Use average distance to all attraction centers", 0),
+        ('MIN', "Nearest", "Use minimum distance to any of attraction centers", 1)
+    ]
+
+    point_mode : EnumProperty(
+        name = "Points mode",
+        description = "How to define the distance when multiple attraction centers are used",
+        items = point_modes,
+        default = 'AVG',
+        update = updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
@@ -107,6 +106,8 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'attractor_type')
+        if self.attractor_type == 'Point':
+            layout.prop(self, 'point_mode')
         layout.prop(self, 'falloff_type')
         layout.prop(self, 'clamp')
 
@@ -127,13 +128,24 @@ class SvAttractorNode(bpy.types.Node, SverchCustomTreeNode):
 
     def to_point(self, amplitude, coefficient, vertex, centers, direction):
         vertex = Vector(vertex)
-        vectors = []
-        for center in centers:
-            vector = Vector(center) - vertex
-            vector = self.falloff(amplitude, coefficient, vector.length) * vector.normalized()
-            vectors.append(vector)
-        result = get_avg_vector(vectors)
-        return result.length, result.normalized()
+        n = len(centers)
+        if self.point_mode == 'AVG' or n <= 1:
+            vectors = []
+            for center in centers:
+                vector = Vector(center) - vertex
+                vector = self.falloff(amplitude, coefficient, vector.length) * vector.normalized()
+                vectors.append(vector)
+            result = get_avg_vector(vectors)
+            return result.length, result.normalized()
+        else:
+            kdt = KDTree(n)
+            for i, center in enumerate(centers):
+                kdt.insert(Vector(center), i)
+            kdt.balance()
+            nearest_co, nearest_idx, nearest_distance = kdt.find(vertex)
+            vector = nearest_co - vertex
+            coeff = self.falloff(amplitude, coefficient, nearest_distance)
+            return coeff, vector.normalized()
 
     def to_line(self, amplitude, coefficient, vertex, centers, direction):
         center = Vector(centers[0])

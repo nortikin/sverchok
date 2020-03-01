@@ -6,7 +6,7 @@ Functionality
 
 Inputs vector from ranges or number values either integer of floats.
 
-With the NumPy implementation the node will accept regular lists or lists of NumPy arrays if the arrays have two axis arrays with shape [n,3]
+With the NumPy implementation the node will accept regular lists or lists of flat NumPy arrays
 
 It can also output Numpy arrays (flat arrays) when using the activating the "Output NumPy" parameter.
 (See advanced parameters)

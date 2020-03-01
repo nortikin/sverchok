@@ -8,7 +8,6 @@
     "Cross Section.001": "Frame.001",
     "Cross Section.002": "Frame.001",
     "Extrude Separate Faces": "Frame.003",
-    "Float Series.002": "Frame",
     "Frame": "Frame.005",
     "Frame.001": "Frame.005",
     "Frame.002": "Frame.005",
@@ -19,11 +18,12 @@
     "Matrix in.002": "Frame",
     "Matrix in.003": "Frame",
     "Note.001": "Frame.005",
+    "Number Range": "Frame",
     "Random Vector": "Frame.003",
     "Regular Solid": "Frame.003",
     "Reroute": "Frame.003",
     "Reroute.001": "Frame.003",
-    "Scalar Math": "Frame",
+    "Scalar Math.001": "Frame",
     "VD Experimental.001": "Frame.004",
     "VD Experimental.002": "Frame.004",
     "VD Experimental.003": "Frame.003",
@@ -32,8 +32,8 @@
     "Vectors in.005": "Frame",
     "Vectors in.006": "Frame",
     "Vectors in.007": "Frame",
-    "Wafel.003": "Frame.004",
-    "Wafel.004": "Frame.004"
+    "Wafel": "Frame.004",
+    "Wafel.003": "Frame.004"
   },
   "groups": {},
   "nodes": {
@@ -133,44 +133,28 @@
         -1544.0283203125,
         -500.4442138671875
       ],
+      "mask_out_type": [],
       "params": {
         "height_": 0.20000000298023224,
         "scale_": 0.5
       },
       "width": 140.0
     },
-    "Float Series.002": {
-      "bl_idname": "SvGenFloatRange",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1554.166732788086,
-        -1027.5097045898438
-      ],
-      "params": {
-        "count_": 5,
-        "mode": "FRANGE_COUNT",
-        "start_": -0.699999988079071,
-        "stop_": 0.5
-      },
-      "width": 140.0
-    },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 490.6219482421875,
+      "height": 561.725830078125,
       "hide": false,
       "label": "Section matrices",
       "location": [
-        -70.76756286621094,
-        -408.28802490234375
+        -167.2046356201172,
+        -605.294921875
       ],
       "params": {},
-      "width": 564.5869140625
+      "width": 610.8179321289062
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 533.392333984375,
+      "height": 534.0322265625,
       "hide": false,
       "label": "sections",
       "location": [
@@ -178,11 +162,11 @@
         1190.4915771484375
       ],
       "params": {},
-      "width": 457.2799072265625
+      "width": 457.7598876953125
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 233.678955078125,
+      "height": 233.958984375,
       "hide": false,
       "label": "inputs",
       "location": [
@@ -190,11 +174,11 @@
         191.23883056640625
       ],
       "params": {},
-      "width": 208.4720458984375
+      "width": 208.9521484375
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 468.25457763671875,
+      "height": 554.694580078125,
       "hide": false,
       "label": "Object_to_sect",
       "location": [
@@ -202,11 +186,11 @@
         -150.84490966796875
       ],
       "params": {},
-      "width": 841.3101806640625
+      "width": 841.7902221679688
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 670.0707397460938,
+      "height": 638.9636840820312,
       "hide": false,
       "label": "outputs",
       "location": [
@@ -214,7 +198,7 @@
         -205.84217834472656
       ],
       "params": {},
-      "width": 688.8506469726562
+      "width": 689.3306274414062
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
@@ -223,7 +207,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 1367.8226318359375,
+      "height": 1565.2626953125,
       "hide": false,
       "label": "",
       "location": [
@@ -232,7 +216,7 @@
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 2527.662109375
+      "width": 2528.6220703125
     },
     "Input Switch MOD": {
       "bl_idname": "SvInputSwitchNodeMOD",
@@ -270,8 +254,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1189.579818725586,
-        -989.3639526367188
+        -1286.0168914794922,
+        -1186.370849609375
       ],
       "params": {},
       "width": 140.0
@@ -282,8 +266,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1189.579818725586,
-        -1176.3696899414062
+        -1286.0168914794922,
+        -1373.3765258789062
       ],
       "params": {},
       "width": 140.0
@@ -308,6 +292,28 @@
       },
       "use_custom_color": true,
       "width": 320.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1650.6038055419922,
+        -1224.5166625976562
+      ],
+      "params": {
+        "count_": 5,
+        "mode": 2,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_": -0.699999988079071,
+        "start_float": -0.699999988079071,
+        "step_float": 1.0,
+        "stop_": 0.5,
+        "stop_float": 0.5
+      },
+      "width": 140.0
     },
     "Random Vector": {
       "bl_idname": "RandomVectorNodeMK2",
@@ -356,7 +362,7 @@
       "hide": false,
       "label": "",
       "location": [
-        -1168.7572631835938,
+        -1168.75732421875,
         -770.4481811523438
       ],
       "params": {},
@@ -368,20 +374,20 @@
       "hide": false,
       "label": "",
       "location": [
-        -1176.5834350585938,
+        -1176.58349609375,
         -870.4052124023438
       ],
       "params": {},
       "width": 16.0
     },
-    "Scalar Math": {
-      "bl_idname": "SvScalarMathNodeMK3",
+    "Scalar Math.001": {
+      "bl_idname": "SvScalarMathNodeMK4",
       "height": 100.0,
-      "hide": true,
+      "hide": false,
       "label": "",
       "location": [
-        -1545.2794036865234,
-        -992.3779907226562
+        -1696.3547821044922,
+        -1113.4742431640625
       ],
       "params": {
         "current_op": "NEG",
@@ -401,7 +407,7 @@
       "label": "",
       "location": [
         156.81788635253906,
-        -651.9292449951172
+        -651.9292755126953
       ],
       "params": {
         "activate": 1,
@@ -485,8 +491,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1463.179428100586,
-        -1205.8256225585938
+        -1559.6165008544922,
+        -1402.8325805664062
       ],
       "params": {
         "axis_x": "0",
@@ -500,8 +506,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1304.1741790771484,
-        -1029.9225463867188
+        -1400.6112518310547,
+        -1226.9295043945312
       ],
       "params": {
         "y_": 0.0,
@@ -515,8 +521,8 @@
       "hide": true,
       "label": "",
       "location": [
-        -1312.9229583740234,
-        -1215.8671264648438
+        -1409.3600311279297,
+        -1412.8740844726562
       ],
       "params": {
         "x_": 0.0,
@@ -530,8 +536,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1319.7274017333984,
-        -1291.6541137695312
+        -1416.1644744873047,
+        -1488.6609497070312
       ],
       "params": {
         "x_": 0.029999999329447746,
@@ -546,8 +552,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -1348.391098022461,
-        -1062.6992797851562
+        -1444.8281707763672,
+        -1259.7061157226562
       ],
       "params": {
         "x_": 1.0,
@@ -556,39 +562,14 @@
       },
       "width": 100.0
     },
-    "Wafel.003": {
+    "Wafel": {
       "bl_idname": "SvWafelNode",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -81.18870544433594,
-        -669.3585662841797
-      ],
-      "params": {
-        "bindCircle": 0,
-        "circle_rad": 0.019999999552965164,
-        "do_contra": 1,
-        "out_up_down": "Up",
-        "rounded": 0,
-        "rounded_outside": 0,
-        "threshold": 10.0
-      },
-      "width": 140.0
-    },
-    "Wafel.004": {
-      "bl_idname": "SvWafelNode",
-      "color": [
-        0.800000011920929,
-        0.0,
-        0.0
-      ],
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -87.87626647949219,
-        -1011.7710723876953
+        -77.44316864013672,
+        -962.2157135009766
       ],
       "params": {
         "bindCircle": 0,
@@ -600,53 +581,30 @@
         "rounded_outside": 0,
         "threshold": 10.0
       },
-      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Wafel.003": {
+      "bl_idname": "SvWafelNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -81.18870544433594,
+        -669.3585968017578
+      ],
+      "params": {
+        "bindCircle": 0,
+        "circle_rad": 0.019999999552965164,
+        "do_contra": 1,
+        "out_up_down": "Up",
+        "rounded": 0,
+        "rounded_outside": 0,
+        "threshold": 10.0
+      },
       "width": 140.0
     }
   },
   "update_lists": [
-    [
-      "A Number.001",
-      0,
-      "Scalar Math",
-      0
-    ],
-    [
-      "Scalar Math",
-      0,
-      "Float Series.002",
-      0
-    ],
-    [
-      "A Number.001",
-      0,
-      "Float Series.002",
-      1
-    ],
-    [
-      "Float Series.002",
-      0,
-      "Vectors in.005",
-      1
-    ],
-    [
-      "Vectors in.005",
-      0,
-      "Matrix in.003",
-      0
-    ],
-    [
-      "Vector X | Y | Z",
-      0,
-      "Matrix in.003",
-      2
-    ],
-    [
-      "Vectors in.006",
-      0,
-      "Matrix in.003",
-      3
-    ],
     [
       "Regular Solid",
       0,
@@ -690,22 +648,52 @@
       13
     ],
     [
-      "Input Switch MOD",
-      "Data 1",
-      "Reroute.001",
-      "Input"
+      "A Number.001",
+      0,
+      "Scalar Math.001",
+      0
     ],
     [
-      "Input Switch MOD",
-      "Data 0",
-      "Reroute",
-      "Input"
+      "Scalar Math.001",
+      0,
+      "Number Range",
+      0
     ],
     [
-      "Float Series.002",
+      "A Number.001",
+      0,
+      "Number Range",
+      1
+    ],
+    [
+      "Number Range",
       0,
       "Vectors in.004",
       0
+    ],
+    [
+      "Number Range",
+      0,
+      "Vectors in.005",
+      1
+    ],
+    [
+      "Vectors in.005",
+      0,
+      "Matrix in.003",
+      0
+    ],
+    [
+      "Vector X | Y | Z",
+      0,
+      "Matrix in.003",
+      2
+    ],
+    [
+      "Vectors in.006",
+      0,
+      "Matrix in.003",
+      3
     ],
     [
       "Vectors in.004",
@@ -726,6 +714,18 @@
       3
     ],
     [
+      "Input Switch MOD",
+      "Data 1",
+      "Reroute.001",
+      "Input"
+    ],
+    [
+      "Input Switch MOD",
+      "Data 0",
+      "Reroute",
+      "Input"
+    ],
+    [
       "Reroute",
       "Output",
       "Cross Section",
@@ -768,6 +768,48 @@
       0
     ],
     [
+      "Cross Section.002",
+      0,
+      "Wafel.003",
+      0
+    ],
+    [
+      "Cross Section",
+      0,
+      "Wafel.003",
+      1
+    ],
+    [
+      "Cross Section",
+      1,
+      "Wafel.003",
+      2
+    ],
+    [
+      "A Number",
+      0,
+      "Wafel.003",
+      3
+    ],
+    [
+      "List Item",
+      0,
+      "Wafel.003",
+      4
+    ],
+    [
+      "Wafel.003",
+      0,
+      "VD Experimental.001",
+      0
+    ],
+    [
+      "Wafel.003",
+      1,
+      "VD Experimental.001",
+      1
+    ],
+    [
       "Reroute",
       "Output",
       "Cross Section.001",
@@ -788,74 +830,38 @@
     [
       "Cross Section.002",
       0,
-      "Wafel.004",
+      "Wafel",
       0
     ],
     [
       "Cross Section.001",
       0,
-      "Wafel.004",
+      "Wafel",
       1
     ],
     [
       "Cross Section.001",
       1,
-      "Wafel.004",
+      "Wafel",
       2
     ],
     [
       "A Number",
       0,
-      "Wafel.004",
+      "Wafel",
       3
     ],
     [
-      "List Item",
-      0,
-      "Wafel.004",
-      4
-    ],
-    [
-      "Wafel.004",
+      "Wafel",
       0,
       "VD Experimental.002",
       0
     ],
     [
-      "Wafel.004",
+      "Wafel",
       1,
       "VD Experimental.002",
       1
-    ],
-    [
-      "Cross Section.002",
-      0,
-      "Wafel.003",
-      0
-    ],
-    [
-      "Cross Section",
-      0,
-      "Wafel.003",
-      1
-    ],
-    [
-      "Cross Section",
-      1,
-      "Wafel.003",
-      2
-    ],
-    [
-      "A Number",
-      0,
-      "Wafel.003",
-      3
-    ],
-    [
-      "List Item",
-      0,
-      "Wafel.003",
-      4
     ],
     [
       "Reroute",
@@ -868,18 +874,6 @@
       "Output",
       "VD Experimental.003",
       "faces"
-    ],
-    [
-      "Wafel.003",
-      0,
-      "VD Experimental.001",
-      0
-    ],
-    [
-      "Wafel.003",
-      1,
-      "VD Experimental.001",
-      1
     ]
   ]
 }

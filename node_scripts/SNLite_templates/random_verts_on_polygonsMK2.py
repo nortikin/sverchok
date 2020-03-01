@@ -31,7 +31,7 @@ for verts, faces in zip(verts_list, faces_list):
         mesh.from_pydata(verts, [], tessellated_faces)
 
         tessfaces = mesh.polygons
-        new_verts = mesh_utils.face_random_points(num_points, tessfaces)
+        new_verts = mesh_utils.triangle_random_points(num_points, tessfaces)
         verts_out.append([v[:] for v in new_verts])
         
         if "xxxxaaaa" in bpy.data.meshes:

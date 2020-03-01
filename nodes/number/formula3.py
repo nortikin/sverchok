@@ -16,161 +16,18 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import ast
 from math import *
+from collections import defaultdict
 
 import bpy
 from bpy.props import BoolProperty, StringProperty, EnumProperty, FloatVectorProperty, IntProperty
-from mathutils import Vector, Matrix
 import json
 import io
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import fullList, updateNode, dataCorrect, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
 from sverchok.utils import logging
-
-def make_functions_dict(*functions):
-    return dict([(function.__name__, function) for function in functions])
-
-# Standard functions which for some reasons are not in the math module
-def sign(x):
-    if x < 0:
-        return -1
-    elif x > 0:
-        return 1
-    else:
-        return 0
-
-# Functions
-safe_names = make_functions_dict(
-        # From math module
-        acos, acosh, asin, asinh, atan, atan2,
-        atanh, ceil, copysign, cos, cosh, degrees,
-        erf, erfc, exp, expm1, fabs, factorial, floor,
-        fmod, frexp, fsum, gamma, hypot, isfinite, isinf,
-        isnan, ldexp, lgamma, log, log10, log1p, log2, modf,
-        pow, radians, sin, sinh, sqrt, tan, tanh, trunc,
-        # Additional functions
-        abs, sign,
-        # From mathutlis module
-        Vector, Matrix,
-        # Python type conversions
-        tuple, list, str
-    )
-# Constants
-safe_names['e'] = e
-safe_names['pi'] = pi
-
-# Blender modules
-# Consider this not safe for now
-# safe_names["bpy"] = bpy
-
-class VariableCollector(ast.NodeVisitor):
-    """
-    Visitor class to collect free variable names from the expression.
-    The problem is that one doesn't just select all names from expression:
-    there can be local-only variables.
-
-    For example, in
-
-        [g*g for g in lst]
-
-    only "lst" should be considered as a free variable, "g" should be not,
-    as it is bound by list comprehension scope.
-
-    This implementation is not exactly complete (at least, dictionary comprehensions
-    are not supported yet). But it works for most cases.
-
-    Please refer to ast.NodeVisitor class documentation for general reference.
-    """
-    def __init__(self):
-        self.variables = set()
-        # Stack of local variables
-        # It is not enough to track just a plain set of names,
-        # since one name can be re-introduced in the nested scope
-        self.local_vars = []
-
-    def push(self, local_vars):
-        self.local_vars.append(local_vars)
-
-    def pop(self):
-        return self.local_vars.pop()
-
-    def is_local(self, name):
-        """
-        Check if name is local variable
-        """
-
-        for stack_frame in self.local_vars:
-            if name in stack_frame:
-                return True
-        return False
-
-    def visit_SetComp(self, node):
-        local_vars = set()
-        for generator in node.generators:
-            if isinstance(generator.target, ast.Name):
-                local_vars.add(generator.target.id)
-        self.push(local_vars)
-        self.generic_visit(node)
-        self.pop()
-
-    def visit_ListComp(self, node):
-        local_vars = set()
-        for generator in node.generators:
-            if isinstance(generator.target, ast.Name):
-                local_vars.add(generator.target.id)
-        self.push(local_vars)
-        self.generic_visit(node)
-        self.pop()
-
-    def visit_Lambda(self, node):
-        local_vars = set()
-        arguments = node.args
-        for arg in arguments.args:
-            local_vars.add(arg.id)
-        if arguments.vararg:
-            local_vars.add(arguments.vararg.arg)
-        self.push(local_vars)
-        self.generic_visit(node)
-        self.pop()
-
-    def visit_Name(self, node):
-        name = node.id
-        if not self.is_local(name):
-            self.variables.add(name)
-
-        self.generic_visit(node)
-
-def get_variables(string):
-    """
-    Get set of free variables used by formula
-    """
-    string = string.strip()
-    if not len(string):
-        return set()
-    root = ast.parse(string, mode='eval')
-    visitor = VariableCollector()
-    visitor.visit(root)
-    result = visitor.variables
-    return result.difference(safe_names.keys())
-
-# It could be safer...
-def safe_eval(string, variables):
-    """
-    Evaluate expression, allowing only functions known to be "safe"
-    to be used.
-    """
-    try:
-        env = dict()
-        env.update(safe_names)
-        env.update(variables)
-        env["__builtins__"] = {}
-        root = ast.parse(string, mode='eval')
-        return eval(compile(root, "<expression>", 'eval'), env)
-    except SyntaxError as e:
-        logging.exception(e)
-        raise Exception("Invalid expression syntax: " + str(e))
+from sverchok.utils.modules.eval_formula import get_variables, safe_eval
 
 class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -182,10 +39,11 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_FORMULA'
 
+    @throttled
     def on_update(self, context):
         self.adjust_sockets()
-        updateNode(self, context)
 
+    @throttled
     def on_update_dims(self, context):
         if self.dimensions < 4:
             self.formula4 = ""
@@ -195,7 +53,6 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             self.formula2 = ""
 
         self.adjust_sockets()
-        updateNode(self, context)
 
     dimensions : IntProperty(name="Dimensions", default=1, min=1, max=4, update=on_update_dims)
 
@@ -269,13 +126,25 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     def get_input(self):
         variables = self.get_variables()
-        result = {}
+        inputs = {}
 
         for var in variables:
             if var in self.inputs and self.inputs[var].is_linked:
-                result[var] = self.inputs[var].sv_get()[0]
-                #self.debug("get_input: {} => {}".format(var, result[var]))
-        return result
+                inputs[var] = self.inputs[var].sv_get()
+
+#         n_max = max(len(inputs[var]) for var in inputs)
+#         result = []
+#         for i in range(n_max):
+#             item = defaultdict(list)
+#             for var in inputs:
+#                 value = inputs[var]
+#                 if i < len(value):
+#                     item[var].append(value[i])
+#                 else:
+#                     item[var].append(value[-1])
+#             result.append(item)
+
+        return inputs
 
     def migrate_from(self, old_node):
         if old_node.bl_idname == 'Formula2Node':
@@ -312,21 +181,24 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         results = []
 
         if var_names:
-            input_values = [inputs.get(name, []) for name in var_names]
+            input_values = [inputs.get(name, [[0]]) for name in var_names]
             parameters = match_long_repeat(input_values)
         else:
             parameters = [[[]]]
-        for values in zip(*parameters):
-            variables = dict(zip(var_names, values))
-            vector = []
-            for formula in self.formulas():
-                if formula:
-                    value = safe_eval(formula, variables)
-                    vector.append(value)
-            if self.separate:
-                results.append(vector)
-            else:
-                results.extend(vector)
+        for objects in zip(*parameters):
+            object_results = []
+            for values in zip_long_repeat(*objects):
+                variables = dict(zip(var_names, values))
+                vector = []
+                for formula in self.formulas():
+                    if formula:
+                        value = safe_eval(formula, variables)
+                        vector.append(value)
+                if self.separate:
+                    object_results.append(vector)
+                else:
+                    object_results.extend(vector)
+            results.append(object_results)
 
         if self.wrap:
             results = [results]

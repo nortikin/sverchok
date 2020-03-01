@@ -12,7 +12,7 @@ Inputs & Parameters
 | Noise Function | Pick between Scalar and Vector output                                   |
 +----------------+-------------------------------------------------------------------------+
 | Noise Type     | Pick between several noise types                                        |
-|                |                                                                         | 
+|                |                                                                         |
 |                | - Blender                                                               |
 |                | - Cell Noise                                                            |
 |                | - New Perlin                                                            |
@@ -35,7 +35,18 @@ Inputs & Parameters
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/21771352/502fc060-d687-11e6-8f3a-cf7526a83656.png
+Different noises:
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_1.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_2.png
+
+Using noise to mask a mesh:
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_3.png
+
+Adding noise transformations:
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_4.png
 
 Notes
 -----

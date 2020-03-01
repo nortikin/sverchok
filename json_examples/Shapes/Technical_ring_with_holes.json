@@ -1,0 +1,531 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "Circle": "Frame",
+    "Circle.001": "Frame",
+    "Crop mesh 2D": "Frame",
+    "Inset faces": "Frame.002",
+    "Inset faces.001": "Frame.002",
+    "Logic functions": "Frame.001",
+    "Matrix Apply": "Frame",
+    "Ring": "Frame",
+    "Scalar Math": "Frame.001",
+    "Scalar Math.001": "Frame.001",
+    "Select mesh elements by location": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -759.931640625,
+        -108.62287139892578
+      ],
+      "params": {
+        "float_": 2.180000066757202,
+        "int_": 0,
+        "selected_mode": "float"
+      },
+      "width": 140.0
+    },
+    "A Number.001": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -760.685546875,
+        38.979434967041016
+      ],
+      "params": {
+        "float_": 0.30000001192092896,
+        "int_": 0,
+        "selected_mode": "float"
+      },
+      "width": 140.0
+    },
+    "Circle": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -226.71238327026367,
+        -229.33854866027832
+      ],
+      "params": {
+        "rad_": 0.30000001192092896,
+        "vert_": 18
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Circle.001": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -218.79864120483398,
+        -466.59922981262207
+      ],
+      "params": {
+        "rad_": 1.9999998807907104,
+        "vert_": 12
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Crop mesh 2D": {
+      "bl_idname": "SvCropMesh2D",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        404.36503982543945,
+        33.44805908203125
+      ],
+      "params": {
+        "alg_mode": "Blender",
+        "mode": "outer"
+      },
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 823.0158081054688,
+      "hide": false,
+      "label": "Base Ring with holes",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 862.4633178710938
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 559.2898559570312,
+      "hide": false,
+      "label": "Select outer rim",
+      "location": [
+        -36.756248474121094,
+        -123.00218963623047
+      ],
+      "params": {},
+      "width": 756.7841186523438
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 400.10150146484375,
+      "hide": false,
+      "label": "Extrude outer rim",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 413.444091796875
+    },
+    "Inset faces": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1425.3887825012207,
+        151.90373039245605
+      ],
+      "mask_type": [
+        "out"
+      ],
+      "params": {
+        "depth": 0.5699999928474426,
+        "inset_type": "region",
+        "thickness": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Inset faces.001": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1638.3527717590332,
+        171.621488571167
+      ],
+      "mask_type": [
+        "out"
+      ],
+      "params": {
+        "depth": 0.35999998450279236,
+        "inset_type": "region",
+        "thickness": 0.0
+      },
+      "width": 140.0
+    },
+    "Logic functions": {
+      "bl_idname": "SvLogicNode",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        1167.797706604004,
+        -246.79991149902344
+      ],
+      "params": {
+        "items_": "NOT"
+      },
+      "width": 140.0
+    },
+    "Matrix Apply": {
+      "bl_idname": "SvMatrixApplyJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        203.22316360473633,
+        -199.70488166809082
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Reroute": {
+      "bl_idname": "NodeReroute",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -317.0646057128906,
+        -192.65512084960938
+      ],
+      "params": {},
+      "width": 16.0
+    },
+    "Ring": {
+      "bl_idname": "SvRingNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -257.618221282959,
+        106.8557186126709
+      ],
+      "params": {
+        "mode": "MAJOR_MINOR",
+        "ring_R": 1.9900000095367432,
+        "ring_eR": 2.5399999618530273,
+        "ring_iR": 1.440000057220459,
+        "ring_n1": 48,
+        "ring_n2": 6,
+        "ring_r": 0.550000011920929
+      },
+      "width": 170.0
+    },
+    "Scalar Math": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        807.0434951782227,
+        -419.0549545288086
+      ],
+      "params": {
+        "current_op": "ADD",
+        "y_": -0.019999999552965164
+      },
+      "width": 140.0
+    },
+    "Scalar Math.001": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        611.4936904907227,
+        -476.34969329833984
+      ],
+      "params": {
+        "current_op": "ADD",
+        "y_": 0.009999999776482582
+      },
+      "width": 140.0
+    },
+    "Scalar Math.002": {
+      "bl_idname": "SvScalarMathNodeMK4",
+      "height": 100.0,
+      "hide": true,
+      "label": "",
+      "location": [
+        -552.927490234375,
+        41.59259796142578
+      ],
+      "params": {
+        "current_op": "*2",
+        "input_mode_two": "Float"
+      },
+      "width": 140.0
+    },
+    "Select mesh elements by location": {
+      "bl_idname": "SvMeshSelectNode",
+      "custom_socket_props": {
+        "3": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        },
+        "4": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1002.6408462524414,
+        -103.11018943786621
+      ],
+      "params": {
+        "include_partial": 1,
+        "mode": "ByCylinder"
+      },
+      "width": 140.0
+    },
+    "Solidify": {
+      "bl_idname": "SvSolidifyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        730.5525512695312,
+        181.73666381835938
+      ],
+      "params": {
+        "thickness": 0.7300000190734863
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1870.505126953125,
+        135.4547119140625
+      ],
+      "params": {
+        "activate": 1,
+        "draw_gl_polygonoffset": 1,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "A Number.001",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "A Number",
+      "Float",
+      "Reroute",
+      "Input"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Ring",
+      "R"
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Ring",
+      1
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Circle.001",
+      "Radius"
+    ],
+    [
+      "Circle",
+      0,
+      "Matrix Apply",
+      0
+    ],
+    [
+      "Circle",
+      2,
+      "Matrix Apply",
+      2
+    ],
+    [
+      "Circle.001",
+      0,
+      "Matrix Apply",
+      3
+    ],
+    [
+      "Ring",
+      0,
+      "Crop mesh 2D",
+      0
+    ],
+    [
+      "Ring",
+      2,
+      "Crop mesh 2D",
+      1
+    ],
+    [
+      "Matrix Apply",
+      0,
+      "Crop mesh 2D",
+      2
+    ],
+    [
+      "Matrix Apply",
+      2,
+      "Crop mesh 2D",
+      3
+    ],
+    [
+      "Crop mesh 2D",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "Crop mesh 2D",
+      1,
+      "Solidify",
+      2
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Scalar Math.001",
+      "x"
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Scalar Math.001",
+      1
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "Solidify",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Select mesh elements by location",
+      2
+    ],
+    [
+      "Scalar Math",
+      0,
+      "Select mesh elements by location",
+      6
+    ],
+    [
+      "Select mesh elements by location",
+      2,
+      "Logic functions",
+      0
+    ],
+    [
+      "Solidify",
+      0,
+      "Inset faces",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Inset faces",
+      2
+    ],
+    [
+      "Logic functions",
+      0,
+      "Inset faces",
+      4
+    ],
+    [
+      "Inset faces",
+      0,
+      "Inset faces.001",
+      0
+    ],
+    [
+      "Inset faces",
+      2,
+      "Inset faces.001",
+      2
+    ],
+    [
+      "Inset faces",
+      4,
+      "Inset faces.001",
+      4
+    ],
+    [
+      "Inset faces.001",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Inset faces.001",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}

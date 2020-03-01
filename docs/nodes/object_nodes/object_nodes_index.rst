@@ -12,3 +12,7 @@ Objects
    select_mesh_verts
    weightsmk2
    getsetprop
+   getsetprop_mk2
+   assign_materials
+   material_index
+   set_custom_uv_map

@@ -7,6 +7,7 @@ Modifier Make
 
    bisect
    cross_section
+   cut_object_by_surface
    edges_adaptative
    lathe
    matrix_tube
@@ -25,4 +26,8 @@ Modifier Make
    fractal_curve
    convex_hull_mk2
    dual_mesh
-
+   diamond_mesh
+   clip_verts
+   random_points_on_mesh
+   delaunay_2d_cdt
+   sweep_modulator

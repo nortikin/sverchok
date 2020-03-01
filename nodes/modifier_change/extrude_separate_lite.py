@@ -35,9 +35,14 @@ class SvExtrudeSeparateLiteNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_EXTRUDE_FACE'
 
     replacement_nodes = [
+        ('SvExtrudeSeparateNode', None, None),
         ('SvInsetSpecial',
             dict(Vertices='vertices', Polygons='polygons'),
-            dict(Vertices='vertices', Polygons='polygons'))]
+            dict(Vertices='vertices', Polygons='polygons')),
+        ('SvInsetFaces',
+            dict(Vertices='Verts', Polygons='Faces'),
+            dict(Vertices='Verts', Polygons='Faces'))
+    ]
 
     def sv_init(self, context):
         inew = self.inputs.new

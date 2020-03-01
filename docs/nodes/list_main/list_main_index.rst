@@ -5,6 +5,7 @@ List Main
 .. toctree::
    :maxdepth: 2
 
+   constant
    decompose
    func
    join

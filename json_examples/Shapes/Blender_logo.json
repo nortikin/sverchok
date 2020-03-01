@@ -1,0 +1,585 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Circle": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -588.1015014648438,
+        438.6376647949219
+      ],
+      "params": {
+        "vert_": 32
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Circle.001": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -586.13525390625,
+        225.41236877441406
+      ],
+      "params": {
+        "vert_": 8
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Circle.002": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        895.4562377929688,
+        -8.79241943359375
+      ],
+      "params": {
+        "vert_": 32
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Contour 2D": {
+      "bl_idname": "SvContourNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        917.0526733398438,
+        329.1271057128906
+      ],
+      "params": {
+        "modeI": "Constant",
+        "vert_": 22
+      },
+      "width": 140.0
+    },
+    "Distance": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -601.4820556640625,
+        -81.92831420898438
+      ],
+      "params": {
+        "float_": 0.25,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "List Join": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        471.7171325683594,
+        356.56884765625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join.001": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        455.86517333984375,
+        126.72047424316406
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join.002": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1153.6085205078125,
+        264.7659606933594
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Join.003": {
+      "bl_idname": "ListJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1152.15087890625,
+        47.11817932128906
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "List Slice": {
+      "bl_idname": "ListSliceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -320.4908752441406,
+        309.9058837890625
+      ],
+      "params": {
+        "level": 1,
+        "start": 3,
+        "stop": 6
+      },
+      "width": 140.0
+    },
+    "List Slice.001": {
+      "bl_idname": "ListSliceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -320.4908752441406,
+        112.42638397216797
+      ],
+      "params": {
+        "level": 1,
+        "start": 1,
+        "stop": 4
+      },
+      "width": 140.0
+    },
+    "Mesh Join": {
+      "bl_idname": "SvMeshJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        704.6729736328125,
+        158.16912841796875
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Mesh Join.001": {
+      "bl_idname": "SvMeshJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1367.8446044921875,
+        147.22817993164062
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2145.69677734375,
+        251.08917236328125
+      ],
+      "params": {
+        "strength": 1.0
+      },
+      "width": 140.0
+    },
+    "Move.002": {
+      "bl_idname": "SvMoveNodeMk3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -82.24569702148438,
+        300.9383239746094
+      ],
+      "params": {
+        "strength": 1.0
+      },
+      "width": 140.0
+    },
+    "Perspective": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -597.9000854492188,
+        -278.99554443359375
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "Proportional Edit Falloff": {
+      "bl_idname": "SvProportionalEditNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1885.85400390625,
+        87.88578796386719
+      ],
+      "params": {
+        "radius": 10.989999771118164
+      },
+      "width": 140.0
+    },
+    "Radi": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -602.9112548828125,
+        -173.49114990234375
+      ],
+      "params": {
+        "float_": 0.4000000059604645,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "Select mesh elements by location": {
+      "bl_idname": "SvMeshSelectNode",
+      "custom_socket_props": {
+        "3": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        },
+        "4": {
+          "expanded": true,
+          "prop": [
+            2.1500000953674316,
+            2.1500000953674316,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1624.7384033203125,
+        -4.454736709594727
+      ],
+      "params": {
+        "mode": "BySphere",
+        "radius": 2.0399999618530273
+      },
+      "width": 140.0
+    },
+    "Tails": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -595.9483642578125,
+        8.71741771697998
+      ],
+      "params": {
+        "float_": 2.0,
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
+      },
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        153.37774658203125,
+        223.33303833007812
+      ],
+      "params": {
+        "dir_check": "V_dir",
+        "polygons": "Edges",
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "VD Experimental": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2360.603271484375,
+        280.1027526855469
+      ],
+      "params": {
+        "activate": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1612.5091552734375,
+        311.01898193359375
+      ],
+      "params": {},
+      "width": 100.0
+    }
+  },
+  "update_lists": [
+    [
+      "Circle.001",
+      0,
+      "List Slice",
+      0
+    ],
+    [
+      "Circle.001",
+      0,
+      "List Slice.001",
+      0
+    ],
+    [
+      "List Slice.001",
+      0,
+      "Move.002",
+      0
+    ],
+    [
+      "List Slice",
+      0,
+      "Move.002",
+      1
+    ],
+    [
+      "Tails",
+      0,
+      "Move.002",
+      2
+    ],
+    [
+      "Move.002",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "List Slice.001",
+      0,
+      "UV Connection",
+      1
+    ],
+    [
+      "Radi",
+      0,
+      "Circle.002",
+      0
+    ],
+    [
+      "Circle",
+      1,
+      "List Join.001",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "List Join.001",
+      1
+    ],
+    [
+      "Circle",
+      0,
+      "List Join",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "List Join",
+      1
+    ],
+    [
+      "List Join",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "List Join.001",
+      0,
+      "Mesh Join",
+      1
+    ],
+    [
+      "Distance",
+      0,
+      "Contour 2D",
+      0
+    ],
+    [
+      "Mesh Join",
+      0,
+      "Contour 2D",
+      2
+    ],
+    [
+      "Mesh Join",
+      1,
+      "Contour 2D",
+      3
+    ],
+    [
+      "Contour 2D",
+      1,
+      "List Join.003",
+      0
+    ],
+    [
+      "Circle.002",
+      1,
+      "List Join.003",
+      1
+    ],
+    [
+      "Contour 2D",
+      0,
+      "List Join.002",
+      0
+    ],
+    [
+      "Circle.002",
+      0,
+      "List Join.002",
+      1
+    ],
+    [
+      "List Join.002",
+      0,
+      "Mesh Join.001",
+      0
+    ],
+    [
+      "List Join.003",
+      0,
+      "Mesh Join.001",
+      1
+    ],
+    [
+      "Mesh Join.001",
+      0,
+      "Select mesh elements by location",
+      0
+    ],
+    [
+      "Mesh Join.001",
+      1,
+      "Select mesh elements by location",
+      1
+    ],
+    [
+      "Perspective",
+      0,
+      "Vector in",
+      0
+    ],
+    [
+      "Perspective",
+      0,
+      "Vector in",
+      1
+    ],
+    [
+      "Mesh Join.001",
+      0,
+      "Proportional Edit Falloff",
+      0
+    ],
+    [
+      "Select mesh elements by location",
+      0,
+      "Proportional Edit Falloff",
+      1
+    ],
+    [
+      "Mesh Join.001",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move",
+      1
+    ],
+    [
+      "Proportional Edit Falloff",
+      0,
+      "Move",
+      2
+    ],
+    [
+      "Move",
+      0,
+      "VD Experimental",
+      0
+    ],
+    [
+      "Mesh Join.001",
+      1,
+      "VD Experimental",
+      1
+    ]
+  ]
+}

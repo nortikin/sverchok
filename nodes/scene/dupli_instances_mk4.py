@@ -1,20 +1,10 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import math
 from random import random
@@ -31,6 +21,7 @@ from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 
 def wipe_object(ob):
     ''' this removes all geometry '''
+    # this can be done with the new  `ob.data.clear_geometry()` i think..
     bm = bmesh.new()
     bm.to_mesh(ob.data)
     bm.free()
@@ -86,6 +77,25 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, 'scale', text='Scale children', toggle=True)
         col.prop(self, 'auto_release', text='One Object only', toggle=True)
 
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column()
+
+        try:
+            ob = bpy.data.objects.get(self.name_node_generated_parent)
+            if ob.instance_type == "FACES":
+                row = col.row()
+                row.prop(ob, "show_instancer_for_viewport", text="Display Instancer") # bool
+                row2 = col.row()
+                row2.prop(ob, "show_instancer_for_render", text="Render Instancer") # bool
+                row3 = col.row()
+                row3.prop(self, "scale", text="Scale by Face Size") # bool
+                row4 = col.row()
+                row4.enabled = ob.use_instance_faces_scale
+                row4.prop(ob, "instance_faces_scale", text="Factor")  #float
+
+        finally:
+            pass
+
     def process(self):
         #objectsP = self.inputs['parent'].sv_get(default=None)
         objectsC = self.inputs['child'].sv_get()
@@ -137,7 +147,7 @@ class SvDupliInstancesMK4(bpy.types.Node, SverchCustomTreeNode):
 
             ob.data.from_pydata(verts, [], faces)
             ob.instance_type = self.mode
-            ob.instance_faces_scale = self.scale
+            ob.use_instance_faces_scale = self.scale
             child.parent = ob
 
 

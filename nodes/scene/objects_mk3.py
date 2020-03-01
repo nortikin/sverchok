@@ -24,12 +24,13 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_bmesh_utils import pydata_from_bmesh
-
+from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 class SvOB3Callback(bpy.types.Operator):
 
     bl_idname = "node.ob3_callback"
     bl_label = "Object In mk3 callback"
+    bl_options = {'INTERNAL'}
 
     fn_name: StringProperty(default='')
     node_name: StringProperty(default='')
@@ -52,9 +53,12 @@ class SvOB3Callback(bpy.types.Operator):
 
 
 class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
-    ''' Objects Input slot MK3'''
+    """
+    Triggers: Input Scene Objects
+    Tooltip: Get Scene Objects into Sverchok Tree
+    """
     bl_idname = 'SvObjectsNodeMK3'
-    bl_label = 'Objects in mk3'
+    bl_label = 'Objects in'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECTS_IN'
 
@@ -67,6 +71,10 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         elif not self.vergroups and showing_vg:
             outs.remove(outs['Vers_grouped'])
 
+    def modifiers_handle(self, context):
+        set_sv_depsgraph_need(self.modifiers)
+        updateNode(self, context)
+
     groupname: StringProperty(
         name='groupname', description='group of objects (green outline CTRL+G)',
         default='', update=updateNode)
@@ -74,7 +82,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     modifiers: BoolProperty(
         name='Modifiers',
         description='Apply modifier geometry to import (original untouched)',
-        default=False, update=updateNode)
+        default=False, update=modifiers_handle)
 
     vergroups: BoolProperty(
         name='Vergroups',
@@ -95,6 +103,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         new('SvVerticesSocket', "Vertices")
         new('SvStringsSocket', "Edges")
         new('SvStringsSocket', "Polygons")
+        new('SvStringsSocket', "MaterialIdx")
         new('SvMatrixSocket', "Matrixes")
         new('SvObjectSocket', "Object")
 
@@ -208,6 +217,14 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             vers.append(list(v.co))
         return vers, vers_grouped
 
+    def get_materials_from_bmesh(self, bm):
+        return [face.material_index for face in bm.faces[:]]
+
+    def get_materials_from_mesh(self, mesh):
+        return [face.material_index for face in mesh.polygons[:]]
+
+    def free(self):
+        set_sv_depsgraph_need(False)
 
     def process(self):
 
@@ -218,15 +235,16 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         data_objects = bpy.data.objects
         outputs = self.outputs
 
+
         edgs_out = []
         vers_out = []
         vers_out_grouped = []
         pols_out = []
         mtrx_out = []
+        materials_out = []
 
-        if self.modifiers or self.vergroups:
-            with self.sv_throttle_tree_update():
-                depsgraph = bpy.context.evaluated_depsgraph_get()
+        if self.modifiers:
+            sv_depsgraph = get_sv_depsgraph()
 
         # iterate through references
         for obj in (data_objects.get(o.name) for o in self.object_names):
@@ -239,6 +257,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             vers_grouped = []
             pols = []
             mtrx = []
+            materials = []
 
             with self.sv_throttle_tree_update():
 
@@ -253,26 +272,29 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                         me = obj.data
                         bm = bmesh.from_edit_mesh(me)
                         vers, edgs, pols = pydata_from_bmesh(bm)
+                        materials = self.get_materials_from_bmesh(bm)
                         del bm
                     else:
 
                         """
                         this is where the magic happens.
-                        because we are in throttled tree update state at this point, we can aquire a depsgraph if 
+                        because we are in throttled tree update state at this point, we can aquire a depsgraph if
                         - modifiers
                         - or vertex groups are desired
 
                         """
-                        if self.modifiers or self.vergroups:
-                            # depsgraph = bpy.context.evaluated_depsgraph_get()
-                            obj = depsgraph.objects[obj.name]
-                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=depsgraph)
+
+                        if self.modifiers:
+
+                            obj = sv_depsgraph.objects[obj.name]
+                            obj_data = obj.to_mesh(preserve_all_data_layers=True, depsgraph=sv_depsgraph)
                         else:
                             obj_data = obj.to_mesh()
 
                         if obj_data.polygons:
                             pols = [list(p.vertices) for p in obj_data.polygons]
                         vers, vers_grouped = self.get_verts_and_vertgroups(obj_data)
+                        materials = self.get_materials_from_mesh(obj_data)
                         edgs = obj_data.edge_keys
 
                         obj.to_mesh_clear()
@@ -285,12 +307,15 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             edgs_out.append(edgs)
             pols_out.append(pols)
             mtrx_out.append(mtrx)
+            materials_out.append(materials)
             vers_out_grouped.append(vers_grouped)
 
         if vers_out and vers_out[0]:
             outputs['Vertices'].sv_set(vers_out)
             outputs['Edges'].sv_set(edgs_out)
             outputs['Polygons'].sv_set(pols_out)
+            if 'MaterialIdx' in outputs:
+                outputs['MaterialIdx'].sv_set(materials_out)
 
             if 'Vers_grouped' in outputs and self.vergroups:
                 outputs['Vers_grouped'].sv_set(vers_out_grouped)

@@ -172,7 +172,7 @@ class SverchokUpdateAddon(bpy.types.Operator):
             print('> obtaining: [{0}]\n> sending to path: [{1}]'.format(url, to_path))
             # return {'CANCELLED'}
 
-            file = urllib.request.urlretrieve(url, to_path)
+            file = requests.urlretrieve(url, to_path)
             wm.progress_update(50)
         except Exception as err:
             self.report({'ERROR'}, "Cannot get archive from Internet")

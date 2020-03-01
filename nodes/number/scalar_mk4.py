@@ -90,7 +90,7 @@ func_dict = {
     "*2":          (132, lambda x: x * 2,                  ('s s'), "x * 2"),
     "/2":          (133, lambda x: x / 2,                  ('s s'), "x / 2"),
     "RECIP":       (135, lambda x: 1 / x,                  ('s s'), "1 / x"),
-    "THETA TAU":   (140, lambda x: pi * 2 * ((x-1) / x),   ('s s'), "tau * (x-1 / x)")
+    "THETA_TAU":   (140, lambda x: pi * 2 * ((x-1) / x),   ('s s'), "tau * (x-1 / x)")
 }
 
 def func_from_mode(mode):
@@ -245,6 +245,9 @@ class SvScalarMathNodeMK4(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+
+        self.ensure_enums_have_no_space(enums=["current_op"])
+
         if self.outputs[0].is_linked:
             current_func = func_from_mode(self.current_op)
             params = [si.sv_get(default=[[]], deepcopy=False) for si in self.inputs]

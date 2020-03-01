@@ -103,6 +103,9 @@ def match_long_repeat(lsts):
             tmp.append(repeat_last(l))
     return list(map(list, zip(*zip(*tmp))))
 
+def zip_long_repeat(*lists):
+    objects = match_long_repeat(lists)
+    return zip(*objects)
 
 def match_long_cycle(lsts):
     """return matched list, cycling the shorter lists
@@ -177,6 +180,24 @@ def cycle_for_length(lst, count):
         result.append(lst[i % n])
     return result
 
+def repeat_last_for_length(lst, count):
+    """
+    Repeat last item of the list enough times
+    for result's length to be equal to `count`.
+
+    repeat_last_for_length(None, n) = None
+    repeat_last_for_length([], n) = []
+    repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
+    """
+    if not lst or len(lst) >= count:
+        return lst
+    n = len(lst)
+    x = lst[-1]
+    result = lst[:]
+    for i in range(count - n):
+        result.append(x)
+    return result
+
 def sv_zip(*iterables):
     """zip('ABCD', 'xy') --> Ax By
     like standard zip but list instead of tuple
@@ -240,9 +261,15 @@ def numpy_match_long_cycle(list_of_arrays):
         difl = maxl - array.shape[0]
         if difl > 0:
             if difl < array.shape[0]:
+
                 array = np.concatenate((array, array[:difl]))
             else:
                 new_part = np.repeat(array, ceil(difl / array.shape[0]), axis=0)
+                if len(array.shape) > 1:
+                    shape = (ceil(difl / array.shape[0]), 1)
+                else:
+                    shape = ceil(difl / array.shape[0])
+                new_part = np.tile(array, shape)
                 array = np.concatenate((array, new_part[:difl]))
         out.append(array)
     return out
@@ -264,6 +291,29 @@ numpy_list_match_func = {
     "SHORT":  numpy_match_short,
     "CYCLE":  numpy_match_long_cycle,
     "REPEAT": numpy_match_long_repeat,
+    }
+
+def make_repeaters(lists):
+    chain = itertools.chain
+    repeat = itertools.repeat
+    out =[]
+    for l in lists:
+        out.append(chain(l, repeat(l[-1])))
+
+    return out
+
+def make_cyclers(lists):
+
+    cycle = itertools.cycle
+    out =[]
+    for l in lists:
+        out.append(cycle(l))
+    return out
+
+iter_list_match_func = {
+    "SHORT":  lambda x: x,
+    "CYCLE":  make_cyclers,
+    "REPEAT": make_repeaters,
     }
 #####################################################
 ################# list levels magic #################
@@ -441,6 +491,8 @@ def describe_data_shape(data):
     """
     def helper(data):
         if not isinstance(data, (list, tuple)):
+            if isinstance(data, (np.ndarray)):
+                return len(data.shape), type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
             return 0, type(data).__name__
         else:
             result = type(data).__name__
@@ -662,17 +714,20 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 #### random stuff
 ####
 
+def no_space(s):
+    return s.replace(' ', '_')
+
 def enum_item(s):
     """return a list usable in enum property from a list with one value"""
-    return [(i, i, "") for i in s]
+    return [(no_space(i), i, "") for i in s]
 
 def enum_item_4(s):
     """return a 4*n list usable in enum property from a list with one value"""
-    return [(n, n, '', i) for i, n in enumerate(s)]
+    return [(no_space(n), n, '', i) for i, n in enumerate(s)]
 
 def enum_item_5(s, icons):
     """return a 4*n list usable in enum property from a list with one value"""
-    return [(n, n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
+    return [(no_space(n), n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
 
 
 #####################################################
@@ -811,7 +866,8 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         outputs.move(len(outputs)-1, socket_pos)
 
         for to_socket in to_sockets:
-            ng.links.new(new_socket, to_socket)
+            link = ng.links.new(new_socket, to_socket)
+            link.is_valid = True
 
     else:
         inputs = socket.node.inputs
@@ -822,7 +878,8 @@ def replace_socket(socket, new_type, new_name=None, new_pos=None):
         inputs.move(len(inputs)-1, socket_pos)
 
         if from_socket:
-            ng.links.new(from_socket, new_socket)
+            link = ng.links.new(from_socket, new_socket)
+            link.is_valid = True
 
     ng.unfreeze()
 

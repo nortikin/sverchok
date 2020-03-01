@@ -92,7 +92,12 @@ Preset is a named set of stored settings of one of several nodes. You can:
 * Share presets with other users via gist.github.com service, or import presets
   made by other users.
 
-Presets are saved as `.json` files under Blender configuration directory, in `datafiles/sverchok/presets`.
+Each preset belongs to some preset category. By default, all presets are in
+special category named "General".
+
+Presets are saved as `.json` files under Blender configuration directory, in
+`datafiles/sverchok/presets`. Preset categories are represented as directories
+under that one.
 
 It can be good idea to store as a preset (and maybe share) the following things:
 
@@ -110,6 +115,11 @@ It can be good idea to store as a preset (and maybe share) the following things:
 Panel Buttons
 -------------
 
+At the top of the Presets panel, there is a drop-down menu, which allows you to
+select the category of presets to work with. By default, there is only one
+category named "General".
+All buttons placed below this menu work inside the selected category.
+
 The Presets panel has the following buttons:
 
 * **Save Preset**. This button is only shown when there are some nodes selected
@@ -125,7 +135,7 @@ Contents of lower part of the panel depend on whether the **Manage Presets** but
 
 When management mode is disabled, there is a button shown for each preset that you already have:
 
-.. image:: https://user-images.githubusercontent.com/284644/34495416-df370a76-f016-11e7-98e7-97c01969fe74.png
+.. image:: https://user-images.githubusercontent.com/284644/71767705-aa47f680-2f30-11ea-9611-1b7fee9a6f61.png
 
 By pressing such button, you add nodes saved in corresponding preset into
 current tree. New nodes are automatically selected, so that you can move them
@@ -133,7 +143,7 @@ to another part of the node view.
 
 When management mode is enabled, there are more buttons:
 
-.. image:: https://user-images.githubusercontent.com/284644/34495429-f1b9a6d6-f016-11e7-9d2c-ffd6432c27db.png
+.. image:: https://user-images.githubusercontent.com/284644/71767749-3fe38600-2f31-11ea-9630-3239b903dc07.png
 
 * **Import preset from Gist**. You will be asked for Gist ID or full URL of the
   gist, and preset name. If you have gist URL in the clibpoard, it will be
@@ -141,12 +151,21 @@ When management mode is enabled, there are more buttons:
 * **Import preset from file**. File browser will appear to allow you to select
   a `.json` file to import. In the left bottom part of this file browser, there
   is mandatory text field asking you to enter preset name.
+* **Create new category**. You will be asked for the name of the category.
+  Category name must be correct directory name (for example, it can not contain
+  `/` character). Category name must be unique.
+* **Delete category {NAME}**. You will be asked for confirmation. Only empty
+  category can be deleted.
 
 The following buttons (in this order) are shown for each preset you have:
 
-* **Export preset to Gist**. Preset will be exported to gist service. Gist URL will be automatically copied into clipboard.
-* **Export preset to outer file**. File browser will appear asking you to select where to save the preset.
-* **Edit preset properties**. A dialog will appear allowing you to change the following properties of preset: Name, Description, Author, License. The Description attribute will be used as a tooltip for preset button. 
+* **Export preset to Gist**. Preset will be exported to gist service. Gist URL
+  will be automatically copied into clipboard.
+* **Export preset to outer file**. File browser will appear asking you to
+  select where to save the preset.
+* **Edit preset properties**. A dialog will appear allowing you to change the
+  following properties of preset: Name, Description, Author, License. The
+  Description attribute will be used as a tooltip for preset button. 
 
   .. image:: https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png
 

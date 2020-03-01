@@ -5,12 +5,33 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-
 import bpy
+from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, no_space
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
+from sverchok.utils.geom_2d.lin_alg import is_ccw_polygon
+
+try:
+    from mathutils.geometry import delaunay_2d_cdt as bl_merge_mesh
+except ImportError:
+    bl_merge_mesh = None
+
+
+def get_bl_merge_mesh(verts, faces, epsilon):
+    """
+    Merge mesh into one with all intersection and overlapping information by Blender internal function
+    :param verts: list of Sv vertices
+    :param faces: list of Sv faces
+    :param epsilon: For nearness tests
+    :return:  list of Sv Vertices, Faces, list of face old index, list of face overlapping
+    """
+    faces = [f if is_ccw_polygon([verts[i] for i in f], accuracy=epsilon) else f[::-1] for f in faces]
+    verts = [Vector(co[:2]) for co in verts]
+    verts_new, _, faces_new, _, _, face_indexes = bl_merge_mesh(verts, [], faces, 3, epsilon)
+    return [v.to_3d()[:] for v in verts_new], [f for f, fi in zip(faces_new, face_indexes) if fi], \
+           [min(fi) for fi in face_indexes if fi], [len(fi) - 1 for fi in face_indexes if fi]
 
 
 class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
@@ -36,6 +57,7 @@ class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
         [[self.id_data.links.new(sock, link) for link in links[sock.name]]
                                              for sock in new_socks if sock.name in links]
 
+    alg_mode_items = [(no_space(k), k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
 
     face_index: bpy.props.BoolProperty(name="Show face mask", update=update_sockets,
                                        description="Show output socket of index face mask")
@@ -44,6 +66,12 @@ class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
                                                        "of overlapping of polygon with other polygons")
     accuracy: bpy.props.IntProperty(name='Accuracy', update=updateNode, default=5, min=3, max=12,
                                     description='Some errors of the node can be fixed by changing this value')
+    alg_mode: bpy.props.EnumProperty(items=alg_mode_items, name="Name of algorithm", update=updateNode)
+
+    def draw_buttons(self, context, layout):
+        layout.prop(self, 'alg_mode', expand=True)
+        if self.alg_mode == "Blender" and not bl_merge_mesh:
+            layout.label(text="For 2.81+ only", icon='ERROR')
 
     def draw_buttons_ext(self, context, layout):
         col = layout.column(align=True)
@@ -60,9 +88,14 @@ class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not all([sock.is_linked for sock in self.inputs]):
             return
+        if self.alg_mode == "Blender" and not bl_merge_mesh:
+            return
         out = []
         for sv_verts, sv_faces in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get()):
-            out.append(merge_mesh_light(sv_verts, sv_faces, self.face_index, self.overlap_number, self.accuracy))
+            if self.alg_mode == "Sweep_line":
+                out.append(merge_mesh_light(sv_verts, sv_faces, self.face_index, self.overlap_number, self.accuracy))
+            else:
+                out.append(get_bl_merge_mesh(sv_verts, sv_faces, 1 / 10 ** self.accuracy))
         out_verts, out_faces, face_index, overlap_number = zip(*out)
         self.outputs['Verts'].sv_set(out_verts)
         self.outputs['Faces'].sv_set(out_faces)

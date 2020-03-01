@@ -4,18 +4,18 @@ sudo: enabled
 branches:
   only:
     - master
-    - b28_prelease_master
+    - 279_master
 
 install:
   - |
     #set -x
-    set -e
-    if [ $TRAVIS_BRANCH = "b28_prelease_master" ]
+    #set -e
+    if [ $TRAVIS_BRANCH = "master" ]
     then BLENDER_VERSION=2.80
          BLENDER_URL=https://ftp.nluug.nl/pub/graphics/blender/release/Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2
          SVERCHOK_DIR=scripts/addons_contrib/sverchok
     else BLENDER_VERSION=2.79
-         BLENDER_URL=https://www.blend4web.com/blender/release/Blender2.79/blender-2.79-linux-glibc219-x86_64.tar.bz2
+         BLENDER_URL=https://download.blender.org/release/Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2
          SVERCHOK_DIR=scripts/addons/sverchok
     fi
     BLENDER_TAR=$(basename $BLENDER_URL)
@@ -62,11 +62,11 @@ deploy:
   provider: releases
   skip_cleanup: true
   api_key: $GITHUB_TOKEN
-  github_token: $GITHUB_TOKEN
   keep_history: true
   file: docs/_build/sverchok_documentation.tar.bz2
   draft: true
   on:
+    repo: nortikin/sverchok
     condition: $DOCS_UPDATED = Y
     branch: master
 

@@ -1,0 +1,327 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "Circle": "Frame.001",
+    "Crop mesh 2D": "Frame.001",
+    "Matrix Apply.001": "Frame.002",
+    "Origins": "Frame",
+    "Polygon Boom": "Frame",
+    "Remove Doubles": "Frame.002",
+    "Vector Drop": "Frame"
+  },
+  "groups": {},
+  "nodes": {
+    "Circle": {
+      "bl_idname": "SvCircleNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        850.0259895324707,
+        -151.37022590637207
+      ],
+      "params": {
+        "rad_": 0.3499999940395355,
+        "vert_": 12
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Crop mesh 2D": {
+      "bl_idname": "SvCropMesh2D",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1092.4225959777832,
+        187.14275932312012
+      ],
+      "params": {
+        "alg_mode": "Sweep_line",
+        "input_mode": "faces",
+        "mode": "outer"
+      },
+      "width": 140.0
+    },
+    "Cylinder": {
+      "bl_idname": "SvCylinderNodeMK2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 1.100000023841858,
+      "hide": false,
+      "label": "",
+      "location": [
+        -358.2538146972656,
+        100.83606719970703
+      ],
+      "params": {
+        "height": 1.100000023841858,
+        "meridians": 8,
+        "radius_b": 1.2999999523162842,
+        "radius_t": 0.7599999904632568
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 273.26617431640625,
+      "hide": false,
+      "label": "Take each face and put it into XOY plane",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 624.6648559570312
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 587.1427612304688,
+      "hide": false,
+      "label": "Cut a hole in each face",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 442.39654541015625
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 293.3472900390625,
+      "hide": false,
+      "label": "Put faces back in their places",
+      "location": [
+        -30.240001678466797,
+        10.079999923706055
+      ],
+      "params": {},
+      "width": 466.843505859375
+    },
+    "Matrix Apply.001": {
+      "bl_idname": "SvMatrixApplyJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1350.6568489074707,
+        48.16956901550293
+      ],
+      "params": {
+        "do_join": 1
+      },
+      "width": 141.03147888183594
+    },
+    "Origins": {
+      "bl_idname": "SvOrigins",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        100.57364273071289,
+        153.2661418914795
+      ],
+      "params": {
+        "flat_matrix": 1,
+        "mode": "Faces"
+      },
+      "width": 140.0
+    },
+    "Polygon Boom": {
+      "bl_idname": "PolygonBoomNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -117.74206161499023,
+        57.826467514038086
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Remove Doubles": {
+      "bl_idname": "SvRemoveDoublesNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1617.5003547668457,
+        54.68060874938965
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Solidify": {
+      "bl_idname": "SvSolidifyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1814.6839599609375,
+        116.75218963623047
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector Drop": {
+      "bl_idname": "VectorDropNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        306.9228096008301,
+        110.55397605895996
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1998.459228515625,
+        216.9752197265625
+      ],
+      "params": {
+        "activate": 1,
+        "draw_gl_wireframe": 0,
+        "handle_concave_quads": 0,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Cylinder",
+      0,
+      "Polygon Boom",
+      0
+    ],
+    [
+      "Cylinder",
+      2,
+      "Polygon Boom",
+      1
+    ],
+    [
+      "Polygon Boom",
+      0,
+      "Origins",
+      0
+    ],
+    [
+      "Polygon Boom",
+      1,
+      "Origins",
+      2
+    ],
+    [
+      "Polygon Boom",
+      0,
+      "Vector Drop",
+      0
+    ],
+    [
+      "Origins",
+      3,
+      "Vector Drop",
+      1
+    ],
+    [
+      "Vector Drop",
+      0,
+      "Crop mesh 2D",
+      0
+    ],
+    [
+      "Polygon Boom",
+      1,
+      "Crop mesh 2D",
+      1
+    ],
+    [
+      "Circle",
+      0,
+      "Crop mesh 2D",
+      2
+    ],
+    [
+      "Circle",
+      2,
+      "Crop mesh 2D",
+      3
+    ],
+    [
+      "Crop mesh 2D",
+      0,
+      "Matrix Apply.001",
+      0
+    ],
+    [
+      "Crop mesh 2D",
+      1,
+      "Matrix Apply.001",
+      2
+    ],
+    [
+      "Origins",
+      3,
+      "Matrix Apply.001",
+      3
+    ],
+    [
+      "Matrix Apply.001",
+      0,
+      "Remove Doubles",
+      1
+    ],
+    [
+      "Matrix Apply.001",
+      2,
+      "Remove Doubles",
+      2
+    ],
+    [
+      "Remove Doubles",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "Remove Doubles",
+      2,
+      "Solidify",
+      2
+    ],
+    [
+      "Solidify",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}

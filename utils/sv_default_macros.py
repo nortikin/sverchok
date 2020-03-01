@@ -181,7 +181,7 @@ class DefaultMacros():
             links.new(obj_in_node.outputs[3], vd_node.inputs[3])
 
         elif term == 'zen':
-            full_url_term = 'https://blenderpython.tumblr.com/post/91951323209/zen-of-sverchok'
+            full_url_term = 'https://gist.github.com/zeffii/d843b985b0db97af56dfa9c30cd54712'
             webbrowser.open(full_url_term)
 
         elif term == 'sn petal':

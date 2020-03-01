@@ -99,6 +99,7 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         if idx == 1:
             return self.basedata_name
         else:
+            #return f'{self.basedata_name}.{(idx-1):04d}'
             return self.basedata_name + '.' + str("%04d" % (idx-1))
 
     def create_metaball(self, index):
@@ -130,6 +131,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         self.draw_ext_object_buttons(context, layout)
         layout.prop(self, "view_resolution")
         layout.prop(self, "render_resolution")
+
+    def draw_label(self):
+        return f"MB {self.basedata_name}"
 
     def process(self):
         if not self.activate:

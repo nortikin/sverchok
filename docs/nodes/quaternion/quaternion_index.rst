@@ -8,3 +8,4 @@ Quaternion
    quaternion_in
    quaternion_out
    quaternion_math
+   rotation_difference

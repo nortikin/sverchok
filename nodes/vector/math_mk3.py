@@ -44,8 +44,7 @@ def recurse_fx_numpy(l, func, level, out_numpy):
         t = [rfx(i, func, level-1, out_numpy) for i in l]
     return t
 
-def recurse_fxy_numpy(l1, l2, func, level, out_numpy):
-
+def recurse_fxy_numpy(l1, l2, func, level, min_l2_level, out_numpy):
     if level == 1:
         nl1 = np.array(l1)
         nl2 = np.array(l2)
@@ -55,10 +54,14 @@ def recurse_fxy_numpy(l1, l2, func, level, out_numpy):
     else:
         res = []
         res_append = res.append
+        if levels_of_list_or_np([l1]) < 4:
+            l1 = [l1]
+        if levels_of_list_or_np([l2]) < min_l2_level+1:
+            l2 = [l2]
         # will only be used if lists are of unequal length
         fl = l2[-1] if len(l1) > len(l2) else l1[-1]
         for u, v in zip_longest(l1, l2, fillvalue=fl):
-            res_append(recurse_fxy_numpy(u, v, func, level-1, out_numpy))
+            res_append(recurse_fxy_numpy(u, v, func, level-1, min_l2_level, out_numpy))
         return res
 
 def recurse_fx(l, func, level):
@@ -69,12 +72,13 @@ def recurse_fx(l, func, level):
         t = [rfx(i, func, level-1) for i in l]
     return t
 
-def recurse_fxy(l1, l2, func, level):
+def recurse_fxy(l1, l2, func, level, min_l2_level):
     res = []
     res_append = res.append
-    if levelsOflist(l1) < 2:
+
+    if levelsOflist([l1]) < 3:
         l1 = [l1]
-    if levelsOflist(l2) < 2:
+    if levelsOflist([l2]) < min_l2_level:
         l2 = [l2]
     # will only be used if lists are of unequal length
     fl = l2[-1] if len(l1) > len(l2) else l1[-1]
@@ -83,7 +87,7 @@ def recurse_fxy(l1, l2, func, level):
             res_append(func(u, v))
     else:
         for u, v in zip_longest(l1, l2, fillvalue=fl):
-            res_append(recurse_fxy(u, v, func, level-1))
+            res_append(recurse_fxy(u, v, func, level-1, min_l2_level))
     return res
 
 
@@ -129,7 +133,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     def draw_label(self):
-        text = self.current_op
+        text = self.current_op.replace("_", " ")
         if text in {'SCALAR', '1/SCALAR'}:
             text = f'A * {text}'
         return text
@@ -177,6 +181,9 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
 
     def process(self):
+
+        self.ensure_enums_have_no_space(enums=["current_op"])
+
         inputs, outputs = self.inputs, self.outputs
 
         if not outputs[0].is_linked:
@@ -188,7 +195,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         # get either input data, or socket default
         input_one = inputs[0].sv_get(deepcopy=True)
 
-        # level = levelsOflist(input_one) - 1
+
         level = levels_of_list_or_np(input_one) - 1
         if num_inputs == 1:
             recurse_func = self.implementation_func_dict[self.implementation][1]
@@ -197,7 +204,8 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         else:
             input_two = inputs[1].sv_get(deepcopy=True)
             level = max(level, levels_of_list_or_np(input_two) - 1)
-            params = [input_one, input_two, func, level]
+            min_l2_level = 3 if inputs[1].bl_idname == "SvVerticesSocket" else 2
+            params = [input_one, input_two, func, level, min_l2_level]
             recurse_func = self.implementation_func_dict[self.implementation][2]
 
         if self.implementation == 'NumPy':

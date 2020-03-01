@@ -21,12 +21,64 @@ from bpy.props import StringProperty, BoolProperty, FloatProperty
 
 
 import sverchok
-from sverchok.core.update_system import process_from_nodes
+from sverchok.core.update_system import process_from_nodes, process_tree, build_update_list
 from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
+from sverchok.ui.development import displaying_sverchok_nodes
 
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
+def redraw_panels():
+    for window in bpy.context.window_manager.windows:
+        for area in window.screen.areas:
+            if area.type == 'NODE_EDITOR':
+                for region in area.regions:
+                    if region.type in {'HEADER', 'UI', 'WINDOW'}:
+                        region.tag_redraw()
+
+class SvToggleProcess(bpy.types.Operator):
+    bl_idname = "node.sv_toggle_process"
+    bl_label = "Toggle processing of the current node tree"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        layout = self.layout
+        node_tree = context.space_data.node_tree
+        node_tree.sv_process = not node_tree.sv_process
+        if node_tree.sv_process:
+            message = "Processing enabled for `%s'" % node_tree.name
+        else:
+            message = "Processing disabled for `%s'" % node_tree.name
+        self.report({'INFO'}, message)
+        redraw_panels()
+        return {'FINISHED'}
+
+class SvToggleDraft(bpy.types.Operator):
+    bl_idname = "node.sv_toggle_draft"
+    bl_label = "Toggle draft mode of the current node tree"
+    bl_options = {'REGISTER', 'UNDO'}
+
+    @classmethod
+    def poll(cls, context):
+        return displaying_sverchok_nodes(context)
+
+    def execute(self, context):
+        layout = self.layout
+        node_tree = context.space_data.node_tree
+        node_tree.sv_draft = not node_tree.sv_draft
+        #node_tree.on_draft_mode_changed(context)
+
+        if node_tree.sv_draft:
+            message = "Draft mode set for `%s'" % node_tree.name
+        else:
+            message = "Draft mode disabled for `%s'" % node_tree.name
+        self.report({'INFO'}, message)
+        redraw_panels()
+        return {'FINISHED'}
 
 class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
 
@@ -185,6 +237,10 @@ class SV_PT_3DPanel(bpy.types.Panel):
 
                 split = row.column(align=True)
                 split.scale_x = little_width
+                split.prop(tree, "sv_draft", toggle=True, text="D")
+
+                split = row.column(align=True)
+                split.scale_x = little_width
                 split.prop(tree, 'use_fake_user', toggle=True, text='F')
 
                 # variables
@@ -259,9 +315,13 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         col3.scale_x = little_width
         col3.label(text='P')
 
-        col3 = row.column(align=True)
-        col3.scale_x = little_width
-        col3.label(text='F')
+        col4 = row.column(align=True)
+        col4.scale_x = little_width
+        col4.label(text='D')
+
+        col5 = row.column(align=True)
+        col5.scale_x = little_width
+        col5.label(text='F')
 
 
     def draw(self, context):
@@ -314,10 +374,13 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         col3.scale_x = little_width
         col3.label(text='P')
 
-        col3 = row.column(align=True)
-        col3.scale_x = little_width
-        col3.label(text='F')
+        col4 = row.column(align=True)
+        col4.scale_x = little_width
+        col4.label(text='D')
 
+        col5 = row.column(align=True)
+        col5.scale_x = little_width
+        col5.label(text='F')
 
         for name, tree in bpy.data.node_groups.items():
             if tree.bl_idname == 'SverchCustomTreeType':
@@ -351,6 +414,10 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
 
                 split = row.column(align=True)
                 split.scale_x = little_width
+                split.prop(tree, "sv_draft", toggle=True, text="D")
+
+                split = row.column(align=True)
+                split.scale_x = little_width
                 split.prop(tree, 'use_fake_user', toggle=True, text='F')
 
         if context.scene.sv_new_version:
@@ -366,12 +433,30 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         layout.separator()
         layout.row().operator('node.remove_stale_draw_callbacks')
 
+def node_show_tree_mode(self, context):
+    if not displaying_sverchok_nodes(context):
+        return
+    layout = self.layout
+    node_tree = context.space_data.node_tree
+    if hasattr(node_tree, 'sv_draft') and hasattr(node_tree, 'sv_process'):
+        if not node_tree.sv_process:
+            message = "Disabled"
+            icon = 'X'
+        elif node_tree.sv_draft:
+            message = "DRAFT"
+            icon = 'CHECKBOX_DEHLT'
+        else:
+            message = "Processing"
+            icon = 'CHECKMARK'
+        layout.label(text=message, icon=icon)
 
 sv_tools_classes = [
     Sv3DViewObjInUpdater,
     SV_PT_ToolsMenu,
     SV_PT_3DPanel,
-    SvRemoveStaleDrawCallbacks
+    SvRemoveStaleDrawCallbacks,
+    SvToggleProcess,
+    SvToggleDraft
 ]
 
 
@@ -389,7 +474,7 @@ def register():
     for class_name in sv_tools_classes:
         bpy.utils.register_class(class_name)
 
-
+    bpy.types.NODE_HT_header.append(node_show_tree_mode)
 
 def unregister():
     for class_name in reversed(sv_tools_classes):
@@ -397,3 +482,5 @@ def unregister():
 
     del bpy.types.NodeTree.SvShowIn3D
     del bpy.types.Scene.SvShowIn3D_active
+    bpy.types.NODE_HT_header.remove(node_show_tree_mode)
+

@@ -82,13 +82,13 @@ def get_obj_and_fontcurve(context, name):
 
 def make_text_object(node, idx, context, data):
     txt, matrix = data
-    name = node.basedata_name + '.' + str("%04d" % idx)
+    name = f'{node.basedata_name}.{idx:04d}'
 
     sv_object, f = get_obj_and_fontcurve(context, name)
     font_set_props(f, node, txt)
     sv_object['idx'] = idx
     sv_object['madeby'] = node.name
-    sv_object['basedata_name'] = node.basemesh_name
+    sv_object['basedata_name'] = node.basedata_name
     sv_object.hide_select = False
     node.push_custom_matrix_if_present(sv_object, matrix)
 
@@ -123,7 +123,7 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     bl_icon = 'OUTLINER_OB_FONT'
     sv_icon = 'SV_TYPOGRAPHY_VIEWER'
 
-    grouping: BoolProperty(default=False)
+    grouping: BoolProperty(default=False, update=SvObjHelper.group_state_update_handler)
     data_kind: StringProperty(name='data kind', default='FONT')
 
     show_options: BoolProperty(default=0)
@@ -228,43 +228,46 @@ class SvTypeViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         text = self.inputs['text'].sv_get(default=[['sv_text']])[0]
         matrices = self.inputs['matrix'].sv_get(default=[[]])
 
-        if self.parent_to_empty:
-            mtname = 'Empty_' + self.basemesh_name
-            self.parent_name = mtname
-            
-            scene = bpy.context.scene
-            collection = scene.collection
-
-            if not mtname in bpy.data.objects:
-                empty = bpy.data.objects.new(mtname, None)
-                collection.objects.link(empty)
-                scene.update()
-
-        last_index = 0
-        for obj_index, txt_content in enumerate(text):
-            matrix = matrices[obj_index]
-            if isinstance(txt_content, list) and (len(txt_content) == 1):
-                txt_content = txt_content[0]
-            else:
-                txt_content = str(txt_content)
-
-            make_text_object(self, obj_index, bpy.context, (txt_content, matrix))
-            last_index = obj_index
-
-        self.remove_non_updated_objects(last_index)
-        objs = self.get_children()
-
-        if self.grouping:
-            self.to_group(objs)
-
-        self.set_corresponding_materials()
-
-        for obj in objs:
+        with self.sv_throttle_tree_update():
             if self.parent_to_empty:
-                obj.parent = bpy.data.objects[mtname]
-            elif obj.parent:
-                obj.parent = None
+                mtname = 'Empty_' + self.basedata_name
+                self.parent_name = mtname
+                
+                scene = bpy.context.scene
+                collection = scene.collection
 
+                if not mtname in bpy.data.objects:
+                    empty = bpy.data.objects.new(mtname, None)
+                    collection.objects.link(empty)
+                    scene.update()
+
+            last_index = 0
+            for obj_index, txt_content in enumerate(text):
+                matrix = matrices[obj_index]
+                if isinstance(txt_content, list) and (len(txt_content) == 1):
+                    txt_content = txt_content[0]
+                else:
+                    txt_content = str(txt_content)
+
+                make_text_object(self, obj_index, bpy.context, (txt_content, matrix))
+                last_index = obj_index
+
+            self.remove_non_updated_objects(last_index)
+            objs = self.get_children()
+
+            if self.grouping:
+                self.to_collection(objs)
+
+            self.set_corresponding_materials()
+
+            for obj in objs:
+                if self.parent_to_empty:
+                    obj.parent = bpy.data.objects[mtname]
+                elif obj.parent:
+                    obj.parent = None
+
+    def draw_label(self):
+        return f"TV {self.basedata_name}"
 
 
 classes = [SvTypeViewerNodeV28, SvFontFileImporterOpV28]

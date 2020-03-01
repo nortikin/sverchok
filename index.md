@@ -9,10 +9,11 @@
 > Failing to follow these points will break the node category parser.
 
 ## Generator
-    SvLineNodeMK3
+    SvLineNodeMK4
+    SvSegmentGenerator
     SvPlaneNodeMK2
     SvNGonNode
-    SvBoxNode
+    SvBoxNodeMk2
     SvCircleNode
     SvCylinderNodeMK2
     SphereNode
@@ -47,9 +48,11 @@
     SvRegularSolid
     SvConicSectionNode
     SvTriangleNode
+    SvPentagonTilerNode
 
 ## Analyzers
     SvBBoxNodeMk2
+    SvComponentAnalyzerNode
     SvDiameterNode
     SvVolumeNode
     SvAreaNode
@@ -58,7 +61,7 @@
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
     SvPathLengthNode
-    CentersPolsNodeMK3
+    SvOrigins
     GetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
@@ -70,36 +73,53 @@
     SvBvhOverlapNodeNew
     SvMeshFilterNode
     SvEdgeAnglesNode
-    SvMeshSelectNode
-    SvSelectSimilarNode
     SvPointInside
     SvProportionalEditNode
+    SvWavePainterNode
     SvRaycasterLiteNode
     SvOBJInsolationNode
     SvDeformationNode
     SvLinkedVertsNode
     SvProjectPointToLine
+    ---
+    SvLinearApproxNode
+    SvCircleApproxNode
+    SvSphereApproxNode
+    SvInscribedCircleNode
+    SvSteinerEllipseNode
+    ---
+    SvMeshSelectNode
+    SvSelectSimilarNode
+    SvChessSelection
 
 ## Transforms
-    SvRotationNodeMK2
-    SvScaleNodeMK2
-    SvMoveNodeMK2
-    SvMirrorNode
+    SvMoveNodeMk3
+    SvRotationNodeMk3
+    SvScaleNodeMk3
+    SvSymmetrizeNode
+    SvMirrorNodeMk2
     MatrixApplyNode
     SvBarycentricTransformNode
     SvAlignMeshByMesh
     ---
     SvTransformSelectNode
+    SvTransformMesh
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
+    SvDisplaceNode
+    SvNoiseDisplaceNode
     SvRandomizeVerticesNode
+    SvCastNode
 
 ## Modifier Change
     SvDeleteLooseNode
     SvRemoveDoublesNode
     SvSeparateMeshNode
+    SvSeparatePartsToIndexes
     SvLimitedDissolve
+    SvPlanarFacesNode
+    SvSplitFacesNode
     SvMeshBeautify
     SvTriangulateNode
     SvMakeMonotone
@@ -113,11 +133,14 @@
     SvRecalcNormalsNode
     SvFlipNormalsNode
     ---
-    SvExtrudeEdgesNode
+    SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
+    SvPokeFacesNode
     SvVertMaskNode
     SvSplitEdgesNode
+    ---
+    SvFollowActiveQuads
 
 ## Modifier Make
     LineConnectNodeMK2
@@ -125,10 +148,15 @@
     SvConvexHullNodeMK2
     SvSubdivideNode
     DelaunayTriangulation2DNode
+    SvDelaunay2DCdt
     Voronoi2DNode
     SvOffsetLineNode
     SvContourNode
+    SvRandomPointsOnMesh
+    ---
     SvDualMeshNode
+    SvDiamondMeshNode
+    SvClipVertsNode
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
@@ -158,6 +186,7 @@
 
 ## List Main
     ListJoinNode
+    SvConstantListNode
     ZipNode
     ListLevelsNode
     ListLengthNode
@@ -180,17 +209,23 @@
     ListSortNodeMK2
     ListFlipNode
 
+## Dictionary
+    SvDictionaryIn
+    SvDictionaryOut
+
 ## CAD
     SvBevelNode
     SvIntersectEdgesNodeMK2
     SvOffsetNode
     SvInsetSpecial
+    SvInsetFaces
     SvLatheNode
     SvSmoothNode
     SvSmoothLines
     ---
     CrossSectionNode
     SvBisectNode
+    SvCutObjBySurfaceNode
     SvEdgesToFaces2D
     SvMergeMesh2D
     SvMergeMesh2DLite
@@ -235,7 +270,6 @@
     SvInterpolationStripesNode
     SvInterpolationNodeMK3
     SvInterpolationNodeMK2
-    SvLinearApproxNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
@@ -261,10 +295,11 @@
     SvQuaternionInNode
     SvQuaternionOutNode
     SvQuaternionMathNode
+    SvRotationDifference
 
 ## Logic
     SvLogicNode
-    SvSwitchNode
+    SvSwitchNodeMK2
     SvInputSwitchNodeMOD
     SvNeuroElman1LNode
     SvCustomSwitcher
@@ -321,12 +356,17 @@
     SvFrameInfoNodeMK2
     SvLampOutNode
     SvInstancerNode
+    SvInstancerNodeMK2
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
+    SvCollectionPicker
 
 ## Objects
     SvVertexGroupNodeMK2
     SvVertexColorNodeMK3
+    SvAssignMaterialListNode
+    SvMaterialIndexNode
+    SvSetCustomUVMap
 
 ## Layout
     WifiInNode
@@ -356,6 +396,7 @@
     SvColorsInNodeMK1
     SvColorInputNode
     SvColorsOutNodeMK1
+    SvTextureEvaluateNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
@@ -384,3 +425,7 @@
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
     SvTopologySimple
+    SvSweepModulator
+    ---
+    SvGetPropNodeMK2
+    SvSetPropNodeMK2

@@ -115,7 +115,8 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
     meshes = bpy.data.meshes
     objects = bpy.data.objects
     verts, edges, matrix, _, _ = geometry
-    name = node.basedata_name + '.' + str("%04d" % idx)
+
+    name = f'{node.basedata_name}.{idx:04d}'
 
     if name in objects:
         obj = objects.get(name)
@@ -292,6 +293,8 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def flip_roots_or_junctions_only(self, data):
         pass
 
+    def draw_label(self):
+        return f"SK {self.basedata_name}"
 
 def register():
     bpy.utils.register_class(SvSkinViewerNodeV28)

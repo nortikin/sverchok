@@ -8,7 +8,7 @@ from sverchok.utils.sv_IO_panel_tools import create_dict_of_tree
 class ExportSingleSimpleNode(EmptyTreeTestCase):
 
     def test_box_export(self):
-        node = create_node("SvBoxNode", self.tree.name)
+        node = create_node("SvBoxNodeMk2", self.tree.name)
         node.Divx = 1
         node.Divy = 3
         node.Divz = 4
@@ -33,11 +33,11 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
         node.twist = 1.0299999713897705
         node.phase = 1.0299999713897705
         node.scale = 1.0299999713897705
-        
+
         export_result = create_dict_of_tree(self.tree)
-        
+
         self.assert_json_equals_file(export_result, "cylinder.json")
-        
+
     def test_torus_export(self):
         node = create_node("SvTorusNode", self.tree.name)
         node.mode = "MAJOR_MINOR"
@@ -55,4 +55,3 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
         export_result = create_dict_of_tree(self.tree)
 
         self.assert_json_equals_file(export_result, "torus.json")
-

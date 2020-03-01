@@ -23,27 +23,7 @@ from bpy.props import FloatProperty, EnumProperty, StringProperty, BoolProperty
 
 from sverchok.data_structure import updateNode, fullList, match_long_repeat
 from sverchok.node_tree import SverchCustomTreeNode
-
-def smooth(x):
-    return 3*x*x - 2*x*x*x
-
-def sharp(x):
-    return x * (2 - x)
-
-def root(x):
-    return 1.0 - math.sqrt(1.0 - x)
-
-def linear(x):
-    return x
-
-def const(x):
-    return 0.0
-
-def sphere(x):
-    return 1.0 - math.sqrt(1.0 - x*x)
-
-def invsquare(x):
-    return x*x
+from sverchok.utils.math import falloff
 
 class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Curved mask coeffs.'''
@@ -80,14 +60,6 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'falloff_type')
 
-    def falloff(self, radius, rho):
-        if rho <= 0:
-            return 1.0
-        if rho > radius:
-            return 0.0
-        func = globals()[self.falloff_type]
-        return 1.0 - func(rho / radius)
-
     def process(self):
         if not any(output.is_linked for output in self.outputs):
             return
@@ -120,7 +92,7 @@ class SvProportionalEditNode(bpy.types.Node, SverchCustomTreeNode):
                         coef = 1.0
                     else:
                         _, _, rho = tree.find(vertex)
-                        coef = self.falloff(radius, rho)
+                        coef = falloff(self.falloff_type, radius, rho)
                     coeffs.append(coef)
 
             else:

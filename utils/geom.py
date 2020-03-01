@@ -21,13 +21,12 @@ None of this file is in a working condition. skip this file.
 
 Eventual purpose of this file is to store the convenience functions which
 can be used for regular nodes or as part of recipes for script nodes. These
-functions will initially be sub optimal quick implementations, then optimized
-only for speed, never for aesthetics or line count or cleverness.
+functions will initially be sub optimal quick implementations, then optimized only for speed, never for aesthetics or line count or cleverness.
 
 '''
 
 import math
-from math import sin, cos, sqrt
+from math import sin, cos, sqrt, acos, pi, atan
 import numpy as np
 from numpy import linalg
 from functools import wraps
@@ -1545,7 +1544,7 @@ class LineEquation2D(object):
 
     def distance_to_point(self, point):
         a, b, c = self.a, self.b, self.c
-        x, y, z = tuple(point)
+        x, y = tuple(point)
         value = a*x + b*y + c
         numerator = abs(value)
         denominator = sqrt(a*a + b*b)
@@ -1621,6 +1620,12 @@ class CircleEquation2D(object):
         line = LineEquation2D.from_two_points(self.center, point)
         p1, p2 = self.intersect_with_line(line)
         if nearest:
+            if p1 is None and p2 is None:
+                return None
+            if p1 is None and p2 is not None:
+                return p2
+            if p1 is not None and p2 is None:
+                return p1
             rho1 = (point - p1).length
             rho2 = (point - p2).length
             if rho1 < rho2:
@@ -1637,6 +1642,202 @@ class CircleEquation2D(object):
             return (value < 0) or on_edge
         else:
             return value < 0
+
+class Ellipse3D(object):
+    """
+    Class describing an ellipse in 3D.
+    """
+    def __init__(self, center, semi_major_axis, semi_minor_axis):
+        """
+        input: center - mathutils.Vector.
+               semi_major_axis, semi_minor_axis - mathutils.Vector (pointing from center).
+        """
+        self.center = center
+        self.semi_major_axis = semi_major_axis
+        self.semi_minor_axis = semi_minor_axis
+
+    @property
+    def a(self):
+        """
+        Length of the semi-major axis
+        """
+        return self.semi_major_axis.length
+
+    @property
+    def b(self):
+        """
+        Length of the semi-minor axis
+        """
+        return self.semi_minor_axis.length
+
+    @property
+    def c(self):
+        """
+        Distance from the center of the ellipse to it's focal points.
+        """
+        a = self.a
+        b = self.b
+        return sqrt(a*a - b*b)
+
+    @property
+    def eccentricity(self):
+        return self.c / self.a
+
+    def normal(self):
+        return self.semi_major_axis.cross(self.semi_minor_axis).normalized()
+
+    def get_matrix(self):
+        matrix = Matrix([self.semi_major_axis.normalized(), self.semi_minor_axis.normalized(), self.normal()]).to_4x4().inverted()
+        matrix.translation = self.center
+        return matrix
+
+    def focal_points(self):
+        c = self.c
+        dv = self.semi_major_axis.normalized() * c
+        f1 = self.center - dv
+        f2 = self.center + dv
+        return [f1, f2]
+
+    @property
+    def f1(self):
+        c = self.c
+        dv = self.semi_major_axis.normalized() * c
+        return self.center - dv
+
+    @property
+    def f2(self):
+        c = self.c
+        dv = self.semi_major_axis.normalized() * c
+        return self.center + dv
+
+class Triangle(object):
+    """
+    Class containing general information about a triangle (in 3D).
+    A triangle is defined by three vertices.
+    """
+    def __init__(self, v1, v2, v3):
+        """
+        inputs: v1, v2, v3 - mathutils.Vector.
+        """
+        self.v1 = v1
+        self.v2 = v2
+        self.v3 = v3
+
+    @property
+    def vertices(self):
+        """
+        List of triangle vertices.
+        """
+        return [self.v1, self.v2, self.v3]
+
+    def centroid(self):
+        """
+        Centroid (barycenter) of the triangle.
+        """
+        return (self.v1 + self.v2 + self.v3) / 3.0
+
+    def normal(self):
+        """
+        Triangle plane normal.
+        """
+        return mathutils.geometry.normal(self.v1, self.v2, self.v3)
+
+    def area(self):
+        """
+        Triangle area.
+        """
+        return mathutils.geometry.area_tri(self.v1, self.v2, self.v3)
+
+    def perimeter(self):
+        """
+        Triangle perimeter.
+        """
+        dv1 = self.v2 - self.v1
+        dv2 = self.v3 - self.v1
+        dv3 = self.v3 - self.v2
+        return dv1.length + dv2.length + dv3.length
+
+    def inscribed_circle_radius(self):
+        """
+        The radius of the inscribed circle.
+        """
+        return 2 * self.area() / self.perimeter()
+
+    def inscribed_circle_center(self):
+        """
+        The center of the inscribed circle.
+        returns: mathutils.Vector.
+        """
+        side_1 = (self.v2 - self.v3).length
+        side_2 = (self.v1 - self.v3).length
+        side_3 = (self.v1 - self.v2).length
+        return (side_1 * self.v1 + side_2 * self.v2 + side_3 * self.v3) / self.perimeter()
+
+    def inscribed_circle(self):
+        """
+        Inscribed circle.
+        Returns: an instance of CircleApproximationData.
+        """
+        circle = CircleApproximationData()
+        side_1 = (self.v2 - self.v3).length
+        side_2 = (self.v1 - self.v3).length
+        side_3 = (self.v1 - self.v2).length
+        perimeter = side_1 + side_2 + side_3
+        center = (side_1 * self.v1 + side_2 * self.v2 + side_3 * self.v3) / perimeter
+        circle.radius = 2 * self.area() / perimeter
+        circle.center = np.array(center)
+        circle.normal = np.array(self.normal())
+        return circle
+    
+    def steiner_circumellipse(self):
+        """
+        Steiner ellipse (circumellipse) of the triangle,
+        i.e. an ellipse that touches the triangle at it's vertices
+        and whose center is the triangle's centroid.
+        returns: an instance of Ellipse3D.
+        """
+        s = self.centroid()
+        a,b,c = self.vertices
+        sc = c - s
+        ab = b - a
+        f1 = sc
+        f2 = ab / sqrt(3.0)
+        f1sq = f1.length_squared
+        f2sq = f2.length_squared
+        #if f1sq < f2sq:
+        #    f1, f2 = f2, f1
+        #    f1sq, f2sq = f2sq, f1sq
+        f1f2 = f1.dot(f2)
+        if abs(f1f2) < 1e-6:
+            t0 = 0.0
+            p1 = f1
+            p2 = f2
+        else:
+            A = 2 * f1f2
+            B = f1sq - f2sq
+            tan_2t0 = A / B
+            t0 = atan(tan_2t0)/2.0
+            cos_t0 = cos(t0)
+            sin_t0 = sin(t0)
+            #C = sqrt(A*A + B*B)
+            #cos_2t0 = B / C
+            #cos_t0 = sqrt((1 + cos_2t0)/2.0)
+            #sin_t0 = sqrt((1 - cos_2t0)/2.0)
+            p1 = f1 * cos_t0 + f2 * sin_t0
+            p2 = - f1 * sin_t0 + f2 * cos_t0
+        if p1.length < p2.length:
+            p1, p2 = -p2, p1
+        return Ellipse3D(s, p1, p2)
+
+    def steiner_inellipse(self):
+        """
+        Steiner inellipse of the triangle,
+        i.e. an ellipse inscribed in the triangle and tangent
+        to the triangle's sides at their midpoints.
+        returns: an instance of Ellipse3D.
+        """
+        ellipse = self.steiner_circumellipse()
+        return Ellipse3D(ellipse.center, ellipse.semi_major_axis / 2.0, ellipse.semi_minor_axis / 2.0)
 
 class LinearApproximationData(object):
     """
@@ -1720,6 +1921,192 @@ def linear_approximation(data):
         ])
     
     result.eigenvalues, result.eigenvectors = linalg.eig(matrix)
+    return result
+
+class SphericalApproximationData(object):
+    """
+    This class contains results of approximation of
+    vertices by a sphere.
+    It's instance is returned by spherical_approximation() method.
+    """
+    def __init__(self):
+        self.radius = 0
+        self.center = None
+        self.residues = None
+
+    def get_projections(self, vertices):
+        """
+        Calculate projections of vertices to the sphere.
+        """
+        vertices = np.array(vertices) - self.center
+        norms = np.linalg.norm(vertices, axis=1)[np.newaxis].T
+        normalized = vertices / norms
+        return self.radius * normalized + self.center
+
+def spherical_approximation(data):
+    """
+    Calculate best approximation of the list of vertices
+    by a sphere.
+
+    input: list of 3-tuples.
+    output. an instance of SphericalApproximationData class.
+    """
+
+    data = np.array(data)
+    data_x = data[:,0]
+    data_y = data[:,1]
+    data_z = data[:,2]
+    n = len(data)
+
+    # Compose an overdetermined system of linear equations
+    # from
+    # (xi-x0)^2 + (yi-y0)^2 + (zi-z0)^2 = R^2
+    #   ||
+    #   V
+    # xi^2 + yi^2 + zi^2 = 2xi*x0 + 2yi*y0 + 2zi*z0 + R^2 - x0^2 - y0^2 - z0^2
+    #
+    # In this system, we know all xi, yi, zi, and want to find x0, y0, z0 and R^2.
+
+    A = np.zeros((n, 4))
+    A[:,0] = data_x * 2
+    A[:,1] = data_y * 2
+    A[:,2] = data_z * 2
+    A[:,3] = 1
+
+    f = np.zeros((n, 1))
+    f[:,0] = (data_x * data_x) + (data_y * data_y) + (data_z * data_z)
+
+    C, residues, rank, singval = np.linalg.lstsq(A, f)
+    r2 = (C[0]*C[0]) + (C[1]*C[1]) + (C[2]*C[2]) + C[3]
+
+    result = SphericalApproximationData()
+    result.radius = sqrt(r2)
+    result.center = C[:3].T[0]
+    result.residues = residues
+    return result
+
+class CircleApproximationData(object):
+    """
+    This class contains results of approximation of set of vertices
+    by a circle (lying in 2D or 3D).
+    It's instances are returned form circle_approximation_2d() and
+    circle_approximation() methods.
+    The `normal` member is None for 2D approximation.
+    """
+    def __init__(self):
+        self.radius = 0
+        self.center = None
+        self.normal = None
+
+    def get_matrix(self):
+        """
+        Calculate the matrix, Z axis of which is
+        parallel to the plane's normal.
+        """
+        normal = Vector(self.normal)
+        e1 = normal.orthogonal()
+        e2 = normal.cross(e1)
+        e1, e2 = e1.normalized(), e2.normalized()
+        m = Matrix([e1, e2, normal]).inverted().to_4x4()
+        m.translation = Vector(self.center)
+        return m
+
+    def get_projections(self, vertices):
+        """
+        Calculate projections of vertices to the
+        circle. This method works with 3D circles only
+        (i.e., requires `normal` to be specified).
+        """
+        vertices = np.array(vertices)
+        plane = PlaneEquation.from_normal_and_point(self.normal, self.center)
+        projected = plane.projection_of_points(vertices)
+        centered = projected - self.center
+        norms = np.linalg.norm(centered, axis=1)[np.newaxis].T
+        normalized = centered / norms
+        return self.radius * normalized + self.center
+
+def circle_approximation_2d(data, mean_is_zero=False):
+    """
+    Calculate best approximation of set of 2D vertices
+    by a 2D circle.
+
+    input: list of 2-tuples or np.array of shape (n, 2). 
+    output: an instance of CircleApproximationData class.
+    """
+    data = np.array(data)
+    data_x = data[:,0]
+    data_y = data[:,1]
+    n = len(data)
+    if mean_is_zero:
+        mean_x = 0
+        mean_y = 0
+    else:
+        mean_x = data_x.mean()
+        mean_y = data_y.mean()
+        data_x = data_x - mean_x
+        data_y = data_y - mean_y
+
+    # One can show that the solution of linear system below
+    # gives the solution to least squares problem
+    #
+    # (xi - x0)^2 + (yi - y0)2 - R^2 --> min
+    #
+    # knowing that mean(xi) == mean(yi) == 0.
+
+    su2 = (data_x*data_x).sum()
+    sv2 = (data_y*data_y).sum()
+    su3 = (data_x*data_x*data_x).sum()
+    sv3 = (data_y*data_y*data_y).sum()
+    suv = (data_x*data_y).sum()
+    suvv = (data_x*data_y*data_y).sum()
+    svuu = (data_y*data_x*data_x).sum()
+
+    A = np.array([
+            [su2, suv],
+            [suv, sv2]
+        ])
+
+    B = np.array([[(su3 + suvv)/2.0], [(sv3 + svuu)/2.0]])
+
+    C = np.linalg.solve(A, B)
+    r2 = (C[0]*C[0]) + (C[1]*C[1]) + (su2 + sv2)/n
+
+    result = CircleApproximationData()
+    result.radius = sqrt(r2)
+    result.center = C[:2].T[0] + np.array([mean_x, mean_y])
+    return result
+
+def circle_approximation(data):
+    """
+    Calculate best approximation of set of 3D vertices
+    by a circle lying in 3D space.
+
+    input: list of 3-tuples
+    output: an instance of CircleApproximationData class.
+    """
+    # Approximate vertices with a plane
+    linear = linear_approximation(data)
+    plane = linear.most_similar_plane()
+    data = np.array(data)
+    # Project all vertices to the plane and shift everything to origin
+    projected = plane.projection_of_points(data)
+    linear_center = np.array(linear.center)
+    centered = projected - linear_center
+    # Map all vertices onto plane Z == 0
+    e1, e2 = plane.two_vectors()
+    e1, e2 = e1.normalized(), e2.normalized()
+    matrix = np.array([e1, e2, plane.normal])
+    on_plane = np.apply_along_axis(lambda v: matrix @ v, 1, centered)# All vectors here have Z == 0
+    # Calculate circluar approximation in 2D
+    circle_2d = circle_approximation_2d(on_plane[:,0:2], mean_is_zero=True)
+    # Map the center back into 3D space
+    matrix_inv = np.linalg.inv(matrix)
+
+    result = CircleApproximationData()
+    result.radius = circle_2d.radius
+    center = np.array((circle_2d.center[0], circle_2d.center[1], 0))
+    result.center = np.matmul(matrix_inv, center) + linear_center
+    result.normal = plane.normal
     return result
 
 def multiply_vectors(M, vlist):

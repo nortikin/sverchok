@@ -48,6 +48,7 @@ class SvExecNodeModCallback(bpy.types.Operator):
 
     bl_idname = callback_id
     bl_label = "generic callback"
+    bl_options = {'INTERNAL'}
 
     cmd: bpy.props.StringProperty(default='')
     idx: bpy.props.IntProperty(default=-1)

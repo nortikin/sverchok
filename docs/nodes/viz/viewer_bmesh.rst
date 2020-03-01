@@ -14,6 +14,7 @@ Inputs
 - Verts
 - Edges
 - Faces
+- material_idx - material indexes per object face.
 - Matrix
 
 Parameters & Features

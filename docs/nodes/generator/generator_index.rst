@@ -8,12 +8,12 @@ Generators
    basic_3pt_arc
    basic_spline
    quad_spline
-   box
+   box_mk2
    bricks
    circle
    cylinder_mk2
    image
-   line_mk3
+   line_mk4
    ngon
    plane_mk2
    random_vector_mk2
@@ -24,3 +24,4 @@ Generators
    torus
    torusKnot
    formula_shape
+   segment

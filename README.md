@@ -9,7 +9,7 @@
 
 ## English
 
-**addon for**: [Blender](http://blender.org)  (version *2.80* and above).  
+**addon for**: [Blender](http://blender.org) version *2.80* and above. For *2.79* see [special installation instruction](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation).  
 **current sverchok version**: Find version in addon settings or in the node Sverchok panel   
 **License**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **prerequisites**: Python 3.6, and `numpy`, both included in recent versions of Blender (precompiled binaries are convenient for this)  
@@ -99,7 +99,7 @@ Email: sverchok-b3d@yandex.ru
 
 ## По-русски
 
-**дополнение к**: [Blender](http://blender.org)  (версия *2.80* и выше).  
+**дополнение к**: [Blender](http://blender.org)  версия *2.80* и выше. Для версии *2.79*, см. [специальную инструкцию по установке](https://github.com/nortikin/sverchok/wiki/Sverchok-for-Blender-2.79-installation). 
 **текущая версия**: Смотри настройки Сверчка или панель   
 **Лицензия**: [GPL3](http://www.gnu.org/licenses/quick-guide-gplv3.html)   
 **требования**: Python 3.6, numpy, они оба присутствуют в Blender  

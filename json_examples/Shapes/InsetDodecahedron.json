@@ -1,0 +1,251 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Inset faces": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -40.383575439453125,
+        179.76739501953125
+      ],
+      "mask_type": [
+        "in"
+      ],
+      "params": {
+        "depth": 0.1799999624490738,
+        "thickness": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Inset faces.001": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        199.2362060546875,
+        279.615478515625
+      ],
+      "mask_type": [
+        "in"
+      ],
+      "params": {
+        "depth": -0.030000023543834686,
+        "thickness": 0.10000000149011612
+      },
+      "width": 140.0
+    },
+    "Inset faces.002": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        440.04998779296875,
+        281.24993896484375
+      ],
+      "mask_type": [
+        "in"
+      ],
+      "params": {
+        "depth": -0.09000001847743988,
+        "thickness": 0.07000000029802322
+      },
+      "width": 140.0
+    },
+    "Inset faces.003": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        678.3073120117188,
+        298.80389404296875
+      ],
+      "mask_type": [
+        "in"
+      ],
+      "params": {
+        "depth": 0.29999998211860657,
+        "thickness": 0.0
+      },
+      "width": 140.0
+    },
+    "Inset faces.004": {
+      "bl_idname": "SvInsetFaces",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -260.3835754394531,
+        180.7999725341797
+      ],
+      "mask_type": [
+        "in"
+      ],
+      "params": {
+        "depth": 0.0,
+        "thickness": 0.03999999910593033
+      },
+      "width": 140.0
+    },
+    "Regular Solid": {
+      "bl_idname": "SvRegularSolid",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -521.619873046875,
+        131.11920166015625
+      ],
+      "params": {
+        "source": "12"
+      },
+      "width": 140.0
+    },
+    "Viewer BMesh": {
+      "bl_idname": "SvBmeshViewerNodeV28",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        904.3076171875,
+        291.5682678222656
+      ],
+      "params": {
+        "autosmooth": 1,
+        "lp": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Regular Solid",
+      0,
+      "Inset faces.004",
+      0
+    ],
+    [
+      "Regular Solid",
+      2,
+      "Inset faces.004",
+      2
+    ],
+    [
+      "Inset faces.004",
+      0,
+      "Inset faces",
+      0
+    ],
+    [
+      "Inset faces.004",
+      2,
+      "Inset faces",
+      2
+    ],
+    [
+      "Inset faces.004",
+      4,
+      "Inset faces",
+      4
+    ],
+    [
+      "Inset faces",
+      0,
+      "Inset faces.001",
+      0
+    ],
+    [
+      "Inset faces",
+      2,
+      "Inset faces.001",
+      2
+    ],
+    [
+      "Inset faces",
+      4,
+      "Inset faces.001",
+      4
+    ],
+    [
+      "Inset faces.001",
+      0,
+      "Inset faces.002",
+      0
+    ],
+    [
+      "Inset faces.001",
+      2,
+      "Inset faces.002",
+      2
+    ],
+    [
+      "Inset faces.001",
+      4,
+      "Inset faces.002",
+      4
+    ],
+    [
+      "Inset faces.002",
+      0,
+      "Inset faces.003",
+      0
+    ],
+    [
+      "Inset faces.002",
+      2,
+      "Inset faces.003",
+      2
+    ],
+    [
+      "Inset faces.002",
+      4,
+      "Inset faces.003",
+      4
+    ],
+    [
+      "Inset faces.003",
+      0,
+      "Viewer BMesh",
+      0
+    ],
+    [
+      "Inset faces.003",
+      2,
+      "Viewer BMesh",
+      2
+    ]
+  ]
+}

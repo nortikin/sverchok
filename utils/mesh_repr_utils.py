@@ -43,6 +43,7 @@ def flatten(data):
         'Vertices': list(itertools.chain.from_iterable(data['Vertices'])),
         'Edges': list(itertools.chain.from_iterable(data['Edges'])),
         'Polygons': xjoined(data['Polygons']),
+        'MaterialIdx': data.get('MaterialIdx', []),
         'Matrix': list(itertools.chain.from_iterable(data['Matrix']))
     }
 
@@ -70,6 +71,7 @@ def unflatten(data):
         'Vertices': unroll(data['Vertices'], stride=3),
         'Edges': [] or unroll(data['Edges'], stride=2),
         'Polygons': [] or unroll(data['Polygons'], constant=False),
+        'MaterialIdx': data.get('MaterialIdx',[]),
         'Matrix': unroll(data['Matrix'], stride=4)
     }
 
@@ -81,7 +83,8 @@ def generate_object(name, bm):
 
     # create object and link to scene
     obj = bpy.data.objects.new(name, mesh)
-    bpy.context.scene.objects.link(obj)
+    collection = bpy.context.scene.collection
+    collection.objects.link(obj)
     return obj 
 
 

@@ -58,7 +58,7 @@ class SvDualMeshNode(bpy.types.Node, SverchCustomTreeNode):
 
         objects = match_long_repeat([verts_s, edges_s, faces_s])
         for verts, edges, faces in zip(*objects):
-            bm = bmesh_from_pydata(verts, edges, faces)
+            bm = bmesh_from_pydata(verts, edges, faces, normal_update=True)
             new_verts, new_faces = dual_mesh(bm)
             bm.free()
             new_verts = [tuple(v) for v in new_verts]

@@ -17,6 +17,7 @@ from sverchok.utils.sv_operator_mixins import SvGenericCallbackWithParams
 class SvFCurveMK1CB(bpy.types.Operator, SvGenericCallbackWithParams):
     bl_idname = "node.sv_fcurvenodemk1_callback_with_params"
     bl_label = "Callback for fcurve sampler node mk1"
+    bl_options = {'INTERNAL'}
 
 class SvFCurveInNodeMK1(bpy.types.Node, SverchCustomTreeNode):
     '''

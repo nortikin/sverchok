@@ -1,0 +1,248 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "List First & Last": "Frame",
+    "Sphere": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 209.29226684570312,
+      "hide": false,
+      "label": "extra level of data filter",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 200.47998046875
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 251.93832397460938,
+      "hide": false,
+      "label": "separate flag needed",
+      "location": [
+        0.0,
+        60.0
+      ],
+      "params": {},
+      "width": 200.47998046875
+    },
+    "List First & Last": {
+      "bl_idname": "ListFLNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1617.6082763671875,
+        120.01226806640625
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Number Range": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1412.118408203125,
+        -268.3941955566406
+      ],
+      "params": {
+        "count_": 16,
+        "mode": 2,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.0,
+        "step_float": 1.0,
+        "stop_": 1.0,
+        "stop_float": 1.0
+      },
+      "width": 140.0
+    },
+    "Number Range.001": {
+      "bl_idname": "SvGenNumberRange",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1410.51611328125,
+        -86.94154357910156
+      ],
+      "params": {
+        "count_": 48,
+        "mode": 2,
+        "number_mode": "float",
+        "range_mode": "RANGE_COUNT",
+        "start_float": 0.0,
+        "step_float": 1.0,
+        "stop_": 1.0,
+        "stop_float": 1.0
+      },
+      "width": 140.0
+    },
+    "Sphere": {
+      "bl_idname": "SphereNode",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1409.1754150390625,
+        136.7383270263672
+      ],
+      "params": {
+        "Separate": 1,
+        "U_": 24,
+        "V_": 24
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "UV Connection": {
+      "bl_idname": "LineConnectNodeMK2",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2048.80908203125,
+        125.01702880859375
+      ],
+      "params": {
+        "cicl_check_V": 1,
+        "slice_check": 0
+      },
+      "width": 140.0
+    },
+    "Vector Stripes": {
+      "bl_idname": "SvInterpolationStripesNode",
+      "custom_socket_props": {
+        "0": {
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        },
+        "3": {
+          "expanded": true,
+          "prop": [
+            1.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "Stripes COS",
+      "location": [
+        1849.3497314453125,
+        134.64039611816406
+      ],
+      "params": {
+        "current_op": "COS",
+        "factor": 2.0,
+        "maximum": 0.8999999761581421,
+        "minimum": 0.15000000596046448,
+        "operations": "COS",
+        "scale": 3.5
+      },
+      "width": 140.0
+    },
+    "Vector in": {
+      "bl_idname": "GenVectorsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1442.5181884765625,
+        -458.8643798828125
+      ],
+      "params": {
+        "x_": 1.5,
+        "z_": 1.0
+      },
+      "width": 100.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        2248.80908203125,
+        125.01702880859375
+      ],
+      "params": {
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Sphere",
+      0,
+      "List First & Last",
+      0
+    ],
+    [
+      "List First & Last",
+      0,
+      "Vector Stripes",
+      0
+    ],
+    [
+      "Number Range.001",
+      0,
+      "Vector Stripes",
+      1
+    ],
+    [
+      "Number Range",
+      0,
+      "Vector Stripes",
+      2
+    ],
+    [
+      "Vector in",
+      0,
+      "Vector Stripes",
+      3
+    ],
+    [
+      "Vector Stripes",
+      0,
+      "UV Connection",
+      0
+    ],
+    [
+      "UV Connection",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "UV Connection",
+      1,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}

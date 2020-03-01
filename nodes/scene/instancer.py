@@ -1,20 +1,10 @@
-# ##### BEGIN GPL LICENSE BLOCK #####
-#
-#  This program is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU General Public License
-#  as published by the Free Software Foundation; either version 2
-#  of the License, or (at your option) any later version.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program; if not, write to the Free Software Foundation,
-#  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# ##### END GPL LICENSE BLOCK #####
+# This file is part of project Sverchok. It's copyrighted by the contributors
+# recorded in the version control history of the file, available from
+# its original location https://github.com/nortikin/sverchok/commit/master
+#  
+# SPDX-License-Identifier: GPL3
+# License-Filename: LICENSE
+
 
 import random
 
@@ -26,16 +16,9 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
-
+from sverchok.utils.sv_viewer_utils import greek_alphabet
 
 def get_random_init():
-    greek_alphabet = [
-        'Alpha', 'Beta', 'Gamma', 'Delta',
-        'Epsilon', 'Zeta', 'Eta', 'Theta',
-        'Iota', 'Kappa', 'Lamda', 'Mu',
-        'Nu', 'Xi', 'Omicron', 'Pi',
-        'Rho', 'Sigma', 'Tau', 'Upsilon',
-        'Phi', 'Chi', 'Psi', 'Omega']
     return random.choice(greek_alphabet)
 
 
@@ -46,6 +29,8 @@ def make_or_update_instance(node, obj_name, matrix):
     objects = bpy.data.objects
     mesh_name = node.mesh_to_clone
 
+    collections = bpy.data.collections
+    collection = collections.get(node.basedata_name)
     if not mesh_name:
         return
 
@@ -54,7 +39,7 @@ def make_or_update_instance(node, obj_name, matrix):
     else:
         mesh = meshes.get(mesh_name)
         sv_object = objects.new(obj_name, mesh)
-        scene.objects.link(sv_object)
+        collection.objects.link(sv_object)
 
     # apply matrices
     if matrix:
@@ -96,7 +81,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
             return [('None', 'None', "", 0)]
 
         objs = bpy.data.objects
-        display = lambda i: (not i.name.startswith(self.basemesh_name)) and i.type == "MESH"
+        display = lambda i: (not i.name.startswith(self.basedata_name)) and i.type == "MESH"
         sorted_named_objects = sorted([i.name for i in objs if display(i)])
         return [(name, name, "") for name in sorted_named_objects]
 
@@ -106,14 +91,12 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         description="Choose Object to take mesh from",
         update=updateNode)
 
-    grouping: BoolProperty(default=False, update=updateNode)
-
     activate: BoolProperty(
         default=True,
         name='Show', description='Activate node?',
         update=updateNode)
 
-    basemesh_name: StringProperty(
+    basedata_name: StringProperty(
         default='Alpha',
         description='stores the mesh name found in the object, this mesh is instanced',
         update=updateNode)
@@ -124,6 +107,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     has_instance: BoolProperty(default=False)
+    data_kind: StringProperty(name='data kind', default='MESH')
 
     def sv_init(self, context):
         self.inputs.new('SvMatrixSocket', 'matrix')
@@ -131,8 +115,7 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "activate", text="Update")
-        row.prop(self, "grouping", text="Grouped")
-
+        
         cfg = "node.instancer_config"
         if not self.has_instance:
             row = layout.row(align=True)
@@ -151,93 +134,68 @@ class SvInstancerNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="Object base name", icon='OUTLINER_OB_MESH')
         col = layout.column(align=True)
         row = col.row(align=True)
-        row.prop(self, "basemesh_name", text="")
+        row.prop(self, "basedata_name", text="")
 
-    def abort_processing(self):
 
-        if not bpy.data.meshes:
-            return True
-
-        try:
-            l = bpy.data.node_groups[self.id_data.name]
-        except Exception as e:
-            print(self.name, "cannot run during startup, press update.")
-            return True
-
-    def get_corrected_data(self, socket_name, socket_type):
-        inputs = self.inputs
-        socket = inputs[socket_name].links[0].from_socket
-        if socket.bl_idname == socket_type:
-            return dataCorrect(inputs[socket_name].sv_get())
-        else:
-            return []
+    def get_matrices(self):
+        if self.inputs['matrix'].is_linked:
+            return dataCorrect(self.inputs['matrix'].sv_get())
+        return []
 
     def process(self):
-        if self.abort_processing() and not self.activate:
+        """
+        hello
+        """
+        if not self.activate:
             return
 
-        inputs = self.inputs
-        s_name, s_type = ['matrix', "SvMatrixSocket"]
-        matrices = []
-        if s_name in inputs and inputs[s_name].is_linked:
-            matrices = self.get_corrected_data(s_name, s_type)
-
+        matrices = self.get_matrices()
         if not matrices:
             return
 
-        # we have matrices, we can process, go go go!
-        for obj_index, matrix in enumerate(matrices):
-            obj_name = self.basemesh_name + "_" + str(obj_index)
-            make_or_update_instance(self, obj_name, matrix)
+        with self.sv_throttle_tree_update():
 
-        # obj_index is now the last index found in matrices
-        self.remove_non_updated_objects(obj_index, self.basemesh_name)
+            self.ensure_collection()
+            for obj_index, matrix in enumerate(matrices):
+                obj_name = f'{self.basedata_name}.{obj_index:04d}'
+                make_or_update_instance(self, obj_name, matrix)
 
-        if self.grouping:
-            self.to_group()
-        else:
-            self.ungroup()
+            num_objects = len(matrices)
+            self.remove_non_updated_objects(num_objects)
 
-    def remove_non_updated_objects(self, obj_index, _name):
+    def ensure_collection(self):
+        collections = bpy.data.collections
+        if not collections.get(self.basedata_name):
+            collection = collections.new(self.basedata_name)
+            bpy.context.scene.collection.children.link(collection)
+
+
+    def remove_non_updated_objects(self, num_objects):
         meshes = bpy.data.meshes
         objects = bpy.data.objects
 
-        objs = [obj for obj in objects if obj.type == 'MESH']
-        objs = [obj for obj in objs if obj.name.startswith(_name)]
-        objs = [obj.name for obj in objs if int(obj.name.split("_")[-1]) > obj_index]
+        objs = [obj for obj in objects if obj.type == self.data_kind]
+        objs = [obj for obj in objs if obj.name.startswith(self.basedata_name)]
+        objs = [obj.name for obj in objs if int(obj.name.split(".")[-1]) >= num_objects]
         if not objs:
             return
 
         # select and finally remove all excess objects
-        scene = bpy.context.scene  # fix for render mode is needed?
+        collections = bpy.data.collections
+        collection = collections.get(self.basedata_name)
 
         for object_name in objs:
             obj = objects[object_name]
-            obj.hide_select = False  # needed?
-            scene.objects.unlink(obj)
+            obj.hide_select = False
+            collection.objects.unlink(obj)
             objects.remove(obj)
 
-    def to_group(self):
 
-        objs = bpy.data.objects
-        if not (self.basemesh_name in bpy.data.groups):
-            newgroup = bpy.data.groups.new(self.basemesh_name)
-        else:
-            newgroup = bpy.data.groups[self.basemesh_name]
-
-        for obj in objs:
-            if self.basemesh_name in obj.name:
-                if obj.name not in newgroup.objects:
-                    newgroup.objects.link(obj)
-
-    def ungroup(self):
-        g = bpy.data.groups.get(self.basemesh_name)
-        if g:
-            bpy.data.groups.remove(g)
-
-    def free(self):
-        self.remove_non_updated_objects(-1, self.basemesh_name)
-        self.ungroup()
+    # def free(self):
+    #     # self.remove_non_updated_objects(-1)
+    #     # or remove content of associated collection...undecided, lets see what
+    #     # people expect...
+    #     pass
 
 
 def register():

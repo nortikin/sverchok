@@ -20,13 +20,33 @@ def urlopen(url, **kwargs):
             import certifi
             ssl_context = ssl.create_default_context(cafile = os.path.relpath(certifi.where()))
             return rq.urlopen(url, context=ssl_context, **kwargs)
-        except ImportException:
+        except ImportError:
             return rq.urlopen(url, **kwargs)
 
     if os.name == 'posix':
         return certifi_open(url, **kwargs)
     else:
         return rq.urlopen(url, **kwargs)
+
+# version of urllib.request.urlretrieve()
+# which handles certificate issues properly
+def urlretrieve(url, filename, **kwargs):
+
+    def certifi_retrieve(url, filename, **kwargs):
+        try:
+            import certifi
+            # urlretrieve function does not have `context' parameter
+            # on some python versions... we have to do a hack:
+            mk_ssl_context = lambda: ssl.create_default_context(cafile = os.path.relpath(certifi.where()))
+            ssl._create_default_https_context = mk_ssl_context
+            return rq.urlretrieve(url, filename, **kwargs)
+        except ImportError:
+            return rq.urlretrieve(url, filename, **kwargs)
+
+    if os.name == 'posix':
+        return certifi_retrieve(url, filename, **kwargs)
+    else:
+        return rq.urlretrieve(url, filename, **kwargs)
 
 # we dont use requests for anything significant other than getting 
 # a json, this is a dummy module with one feature implemented (.get )

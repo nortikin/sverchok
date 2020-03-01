@@ -21,8 +21,8 @@ import bpy
 from bpy.props import IntProperty, EnumProperty, BoolProperty, FloatProperty
 import bmesh.ops
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 
@@ -58,9 +58,11 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Bevel'
     bl_icon = 'MOD_BEVEL'
 
+    @throttled
     def mode_change(self, context):
-        self.inputs[3].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
-        updateNode(self, [])
+        self.inputs[5].name = 'BevelEdges' if not self.vertexOnly else 'VerticesMask'
+        if 'Spread' in self.inputs:
+            self.inputs['Spread'].hide_safe = self.miter_inner == 'SHARP' and self.miter_outer == 'SHARP'
 
     offset_: FloatProperty(
         name='Amount', description='Amount to offset beveled edge',
@@ -89,37 +91,103 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         name="Vertex mode", description="Only bevel edges, not edges",
         default=False, update=mode_change)
 
+    clamp_overlap : BoolProperty(
+        name = "Clamp Overlap",
+        description = "do not allow beveled edges/vertices to overlap each other",
+        default = False,
+        update = updateNode)
+
+    loop_slide : BoolProperty(
+        name = "Loop Slide",
+        description = "prefer to slide along edges to having even widths",
+        default = True,
+        update = updateNode)
+
+    miter_types = [
+        ('SHARP', "Sharp", "Sharp", 0),
+        ('PATCH', "Patch", "Patch", 1),
+        ('ARC', "Arc", "Arc", 2)
+    ]
+
+    miter_outer : EnumProperty(
+        name = "Outer",
+        description = "Outer mitter type",
+        items = miter_types,
+        default = 'SHARP',
+        update = mode_change)
+
+    miter_inner : EnumProperty(
+        name = "Inner",
+        description = "Inner mitter type",
+        items = miter_types,
+        default = 'SHARP',
+        update = mode_change)
+    
+    spread : FloatProperty(
+        name = "Spread",
+        description = "Amount to offset beveled edge",
+        default = 0.0, min = 0.0,
+        update = updateNode)
+
     def sv_init(self, context):
         si, so = self.inputs.new, self.outputs.new
         si('SvVerticesSocket', "Vertices")
         si('SvStringsSocket', 'Edges')
         si('SvStringsSocket', 'Polygons')
+        si('SvStringsSocket', 'FaceData')
+        si('SvStringsSocket', 'BevelFaceData')
         si('SvStringsSocket', 'BevelEdges')
 
         si('SvStringsSocket', "Offset").prop_name = "offset_"
         si('SvStringsSocket', "Segments").prop_name = "segments_"
         si('SvStringsSocket', "Profile").prop_name = "profile_"
+        si('SvStringsSocket', "Spread").prop_name = "spread"
 
         so('SvVerticesSocket', 'Vertices')
         so('SvStringsSocket', 'Edges')
         so('SvStringsSocket', 'Polygons')
+        so('SvStringsSocket', 'FaceData')
         so('SvStringsSocket', 'NewPolys')
+
+        self.mode_change(context)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "vertexOnly")
-        layout.prop(self, "offsetType")
+        layout.prop(self, "clamp_overlap")
+        layout.label(text="Amount type:")
+        layout.prop(self, "offsetType", expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, "loop_slide")
+        layout.label(text="Miter type:")
+        layout.prop(self, 'miter_inner')
+        layout.prop(self, 'miter_outer')
 
     def get_socket_data(self):
-        Vertices, Edges, Polygons, Mask, Offsets, Segments, Profiles = self.inputs
-        return [
-            Vertices.sv_get(default=[[]]),
-            Edges.sv_get(default=[[]]),
-            Polygons.sv_get(default=[[]]),
-            Mask.sv_get(default=[[]]),
-            Offsets.sv_get()[0],
-            Segments.sv_get()[0],
-            Profiles.sv_get()[0]
-        ]
+        vertices = self.inputs['Vertices'].sv_get(default=[[]])
+        edges = self.inputs['Edges'].sv_get(default=[[]])
+        faces = self.inputs['Polygons'].sv_get(default=[[]])
+        if 'FaceData' in self.inputs:
+            face_data = self.inputs['FaceData'].sv_get(default=[[]])
+        else:
+            face_data = [[]]
+        if 'BevelFaceData' in self.inputs:
+            bevel_face_data = self.inputs['BevelFaceData'].sv_get(default=[[]])
+        else:
+            bevel_face_data = [[]]
+        if self.vertexOnly:
+            mask = self.inputs['VerticesMask'].sv_get(default=[[]])
+        else:
+            mask = self.inputs['BevelEdges'].sv_get(default=[[]])
+        offsets = self.inputs['Offset'].sv_get()[0]
+        segments = self.inputs['Segments'].sv_get()[0]
+        profiles = self.inputs['Profile'].sv_get()[0]
+        if 'Spread' in self.inputs:
+            spreads = self.inputs['Spread'].sv_get()[0]
+        else:
+            spreads = [0.0]
+        return vertices, edges, faces, face_data, mask, offsets, segments, profiles, bevel_face_data, spreads
 
     def create_geom(self, bm, mask):
         if not self.vertexOnly:
@@ -127,7 +195,12 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
             geom = list(bm.verts) + list(b_edges) + list(bm.faces)
         else:
             b_verts = get_bevel_verts(bm, mask)
-            geom = b_verts + list(bm.edges) + list(bm.faces)
+            b_verts_set = set(b_verts)
+            b_edges = [edge for edge in bm.edges if all(v in b_verts_set for v in edge.verts)]
+            b_faces = [face for face in bm.faces if all(v in b_verts_set for v in face.verts)]
+
+            geom = b_verts + b_edges + b_faces
+            #geom = b_verts + list(bm.edges) + list(bm.faces)
         return geom
 
     def process(self):
@@ -137,16 +210,20 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(self.outputs[name].is_linked for name in ['Vertices', 'Edges', 'Polygons', 'NewPolys']):
             return
 
-        out, result_bevel_faces = [], []
+        verts_out = []
+        edges_out = []
+        faces_out = []
+        face_data_out = []
+        result_bevel_faces = []
 
         meshes = match_long_repeat(self.get_socket_data())
 
-        # bevel(bm, 
-        #       geom, offset, offset_type, segments, profile, vertex_only, clamp_overlap, 
-        #       material, loop_slide, mark_seam, mark_sharp, strength, hnmode)
-
-        for vertices, edges, faces, mask, offset, segments, profile in zip(*meshes):
-            bm = bmesh_from_pydata(vertices, edges, faces)
+        for vertices, edges, faces, face_data, mask, offset, segments, profile, bevel_face_data, spread in zip(*meshes):
+            if face_data:
+                fullList(face_data, len(faces))
+            if bevel_face_data and isinstance(bevel_face_data, (list, tuple)):
+                bevel_face_data = bevel_face_data[0]
+            bm = bmesh_from_pydata(vertices, edges, faces, markup_face_data=True, normal_update=True)
             geom = self.create_geom(bm, mask)
 
             try:
@@ -157,22 +234,57 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
                     segments=segments,
                     profile=profile,
                     vertex_only=self.vertexOnly,
+                    clamp_overlap = self.clamp_overlap,
+                    loop_slide = self.loop_slide,
+                    spread = spread,
+                    miter_inner = self.miter_inner,
+                    miter_outer = self.miter_outer,
                     # strength= (float)
                     # hnmode= (enum in ['NONE', 'FACE', 'ADJACENT', 'FIXED_NORMAL_SHADING'], default 'NONE')
                     material=-1)['faces']
-            except:
-                print('wtf?!...')
+            except Exception as e:
+                self.exception(e)
 
             new_bevel_faces = [[v.index for v in face.verts] for face in bevel_faces]
-            out.append(pydata_from_bmesh(bm))
+            if not face_data:
+                verts, edges, faces = pydata_from_bmesh(bm)
+                verts_out.append(verts)
+                edges_out.append(edges)
+                faces_out.append(faces)
+                if bevel_face_data != []:
+                    new_face_data = []
+                    for face in faces:
+                        if set(face) in map(set, new_bevel_faces):
+                            new_face_data.append(bevel_face_data)
+                        else:
+                            new_face_data.append(None)
+                    face_data_out.append(new_face_data)
+                else:
+                    face_data_out.append([])
+            else:
+                verts, edges, faces, new_face_data = pydata_from_bmesh(bm, face_data)
+                verts_out.append(verts)
+                edges_out.append(edges)
+                faces_out.append(faces)
+                if bevel_face_data != []:
+                    new_face_data_m = []
+                    for data, face in zip(new_face_data, faces):
+                        if set(face) in map(set, new_bevel_faces):
+                            new_face_data_m.append(bevel_face_data)
+                        else:
+                            new_face_data_m.append(data)
+                    face_data_out.append(new_face_data_m)
+                else:
+                    face_data_out.append(new_face_data)
             bm.free()
             result_bevel_faces.append(new_bevel_faces)
 
-        Vertices, Edges, Polygons, NewPolygons = self.outputs
-        Vertices.sv_set([i[0] for i in out])
-        Edges.sv_set([i[1] for i in out])
-        Polygons.sv_set([i[2] for i in out])
-        NewPolygons.sv_set(result_bevel_faces)
+        self.outputs['Vertices'].sv_set(verts_out)
+        self.outputs['Edges'].sv_set(edges_out)
+        self.outputs['Polygons'].sv_set(faces_out)
+        if 'FaceData' in self.outputs:
+            self.outputs['FaceData'].sv_set(face_data_out)
+        self.outputs['NewPolys'].sv_set(result_bevel_faces)
 
 
 def register():

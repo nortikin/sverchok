@@ -28,63 +28,9 @@ from bpy.props import StringProperty, CollectionProperty, BoolProperty, FloatPro
 import sverchok
 from sverchok.utils.sv_help import remapper
 from sverchok.utils.context_managers import sv_preferences
-
-
-
-BRANCH = ""
-
-def get_branch():
-    global BRANCH
-
-    # this commented out code needs revisiting at some point.
-
-    # first use git to find branch
-    # try:
-    #     res = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
-    #                           stdout=subprocess.PIPE,
-    #                           cwd=os.path.dirname(sverchok.__file__),
-    #                           timeout=2)
-
-    #     branch = str(res.stdout.decode("utf-8"))
-    #     BRANCH = branch.rstrip()
-    # except: # if does not work ignore it
-    #     BRANCH = ""
-    # if BRANCH:
-    #     return
-
-    # if the above failed we can dig deeper, if this failed we concede victory.
-    try:
-        head = os.path.join(os.path.dirname(sverchok.__file__), '.git', 'HEAD')
-        branch = ""
-        with open(head) as headfile:
-            branch = headfile.readlines()[0].split("/")[-1]
-        BRANCH = branch.rstrip()
-    except:
-        BRANCH = ""
-
-    return BRANCH
-
-def get_hash():
-    get_branch()
-    if BRANCH:
-        path = os.path.join(os.path.dirname(sverchok.__file__), '.git', 'refs', 'heads', BRANCH)
-        if os.path.exists(path):
-            with open(path) as hashfile:
-                return hashfile.readlines()[0].strip()[:8]
-        else:
-            return None
-    else:
-        return None
-
-def get_version_string():
-    version = ".".join(map(str, sverchok.bl_info['version']))
-    branch = get_branch()
-    if branch:
-        version += ", branch " + branch
-        hash = get_hash()
-        if hash:
-            version += ", commit " + hash
-    return version
+from sverchok.utils import get_node_class_reference
+from sverchok.utils.development import get_branch
+from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
 
 def displaying_sverchok_nodes(context):
     return context.space_data.tree_type in {'SverchCustomTreeType', 'SverchGroupTreeType'}
@@ -92,9 +38,10 @@ def displaying_sverchok_nodes(context):
 def node_show_branch(self, context):
     if not displaying_sverchok_nodes(context):
         return
-    if BRANCH:
+    branch = get_branch()
+    if branch:
         layout = self.layout
-        layout.label(icon='CON_CHILDOF', text=BRANCH)
+        layout.label(icon='CON_CHILDOF', text=branch)
 
 class SvCopyIDName(bpy.types.Operator):
     ''' Copy node's ID name to clipboard to use in code '''
@@ -273,10 +220,27 @@ def idname_draw(self, context):
     row.operator('node.sv_view_node_source', text='Externally').kind = 'external'
     row.operator('node.sv_view_node_source', text='Internally').kind = 'internal'
 
+    if hasattr(node, 'replacement_nodes'):
+        box = col.box()
+        box.label(text="Replace with:")
+        for new_bl_idname, inputs_mapping, outputs_mapping in node.replacement_nodes:
+            node_class = get_node_class_reference(new_bl_idname)
+            text = node_class.bl_label
+            op = box.operator("node.sv_replace_node", text=text)
+            op.old_node_name = node.name
+            op.new_bl_idname = new_bl_idname
+            set_inputs_mapping(op, inputs_mapping)
+            set_outputs_mapping(op, outputs_mapping)
+
+    row = col.row(align=True)
+    op = row.operator('node.sv_replace_node', text='Re-Create Node')
+    op.old_node_name = node.name
+    op.new_bl_idname = bl_idname
+
 
 def register():
-    get_branch()
-    if BRANCH:
+    branch = get_branch()
+    if branch:
         bpy.types.NODE_HT_header.append(node_show_branch)
 
     bpy.utils.register_class(SvCopyIDName)
@@ -286,9 +250,11 @@ def register():
 
 
 def unregister():
-    if BRANCH:
+    branch = get_branch()
+    if branch:
         bpy.types.NODE_HT_header.remove(node_show_branch)
     bpy.types.NODE_PT_active_node_generic.remove(idname_draw)
     bpy.utils.unregister_class(SvCopyIDName)
     bpy.utils.unregister_class(SvViewHelpForNode)
     bpy.utils.unregister_class(SvViewSourceForNode)
+

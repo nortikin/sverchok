@@ -59,6 +59,7 @@ __MACOSX
 #Ignore sphinx build folder
 docs/404_custom.html
 docs/_build
+docs/_sources
 docs/.make.bat.swp
 
 nodes/generator/meta_balls.py
@@ -71,3 +72,5 @@ nodes/generator/meta_balls.py
 *.swp
 
 local_test.py
+htmlcov/
+

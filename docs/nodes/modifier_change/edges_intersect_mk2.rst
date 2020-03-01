@@ -1,7 +1,7 @@
 Intersect Edges
 ===============
 
-.. image:: https://user-images.githubusercontent.com/28003269/67563530-f48f4900-f731-11e9-9441-25d3708e0502.png
+.. image:: https://user-images.githubusercontent.com/28003269/70894030-a7c74080-2005-11ea-8594-dced40b05c03.png
 
 Functionality
 -------------
@@ -44,6 +44,34 @@ It takes two edges, removes Z coordinates and finds their intersection.
 But after intersection is found it projects intersection point back onto one of the given edges.
 This means that input mesh still should be flat but it can be located in space however you like.
 Only location of input flatten mesh along Z coordinate will bring the error.
+
+**Blender mode**  *- for 2D mode only*
+
+This mode is using internal Blender function from `mathutils` module. 
+It is pretty fast with not big number of intersections (about 1000) 
+but is quite unstable and can cause crash of Blender easily. 
+Also it is not design for such cases where one edge is intersect with all or most of all other edges. Use with care.
+It's available only with Blender 2.81+
+
+
+Benchmark of 2D algorithms
+--------------------------
+
+In seconds:
+
++-------------------------+---------+------------+---------+
+| number of intersections | Alg 1   | Sweep line | Blender |
++-------------------------+---------+------------+---------+
+| 100                     | 0.05    | 0.15       | 0.009   |
++-------------------------+---------+------------+---------+
+| 1 000                   | 1.43    | 2.20       | 0.12    |
++-------------------------+---------+------------+---------+
+| 10 000                  | 150     | 27         | 8.2     |
++-------------------------+---------+------------+---------+
+| 20 000                  | too long| 65         | 48      |
++-------------------------+---------+------------+---------+
+| 30 000                  | too long| 97         | 150     |
++-------------------------+---------+------------+---------+
 
 Inputs
 ------
