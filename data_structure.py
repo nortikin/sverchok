@@ -21,6 +21,7 @@ import itertools
 import time
 import ast
 import copy
+from itertools import zip_longest
 import bpy
 from mathutils import Vector, Matrix
 import numpy as np
@@ -474,6 +475,13 @@ def transpose_list(lst):
     transpose_list([[1,2], [3,4]]) == [[1,3], [2, 4]]
     """
     return list(map(list, zip(*lst)))
+
+# from python 3.5 docs https://docs.python.org/3.5/library/itertools.html recipes
+def split_by_count(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
 
 def describe_data_shape(data):
     """
