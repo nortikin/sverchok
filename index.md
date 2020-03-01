@@ -320,6 +320,7 @@
     SvNurbsCurveOutNode
     SvNurbsSurfaceOutNode
     ---
+    SvGreasePencilStrokes
     SvEmptyOutNode
     ---
     SvTextureViewerNode
