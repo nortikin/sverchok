@@ -182,6 +182,16 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'use_hq_fill', toggle=True)
         layout.prop(self, 'auto_cleanup_colors', text='auto remove unused colors')
     
+        # data = bpy.data.palettes.get("drafting_" + self.name)
+        # if data:
+        #     print(data)
+        #     layout.template_palette(data, "colors", colors=True)
+        
+        # settings = # self.paint_settings(context)
+        # settings = context.tool_settings.gpencil_paint
+        # layout.template_ID(settings, "palette", new="palette.new")
+        # if settings.palette:
+        #     layout.template_palette(settings, "palette", color=True)        
 
     def get_pressures(self):
         pressures = self.inputs["pressure"].sv_get()
