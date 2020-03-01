@@ -104,7 +104,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
          'movieclips', 'node_groups', 'particles', 'scenes', 'screens', 'shape_keys',
          'sounds', 'speakers', 'texts', 'textures', 'worlds', 'objects']
     T = ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE', 'GPENCIL',
-         'LATTICE', 'EMPTY', 'CAMERA', 'LAMP', 'SPEAKER']
+         'LATTICE', 'EMPTY', 'CAMERA', 'LIGHT', 'SPEAKER']
 
     Mode: EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
     Type: EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
