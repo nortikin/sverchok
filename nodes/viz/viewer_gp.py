@@ -157,7 +157,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         with new_input(self, 'SvColorSocket', 'fill color') as c2:
             c2.prop_name = 'fill_color'
 
-        onew('SvObjectSocket', 'frame')
+        onew('SvObjectSocket', 'object')
         
 
 
@@ -272,8 +272,8 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 except:
                     print('stroke with index', idx, 'is not generated yet.')
 
-            remove_unused_colors(PALETTE, strokes)
-            self.outputs[0].sv_set(strokes)
+            # remove_unused_colors(PALETTE, strokes)
+            self.outputs[0].sv_set([gp_object])
 
     def ensure_collection(self):
         collections = bpy.data.collections
