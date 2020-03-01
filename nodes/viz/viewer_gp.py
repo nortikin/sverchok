@@ -196,26 +196,44 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         if not (frame.is_linked and coordinates.is_linked):
             return
 
+        # is frame a number? else 0
+
         colors = self.inputs["stroke color"]
         fills = self.inputs["fill color"]
         with self.sv_throttle_tree_update():
 
-            gp_object = bpy.data.objects.get(self.gp_object_name)
+            self.ensure_collection() # the collection name will be that of self.gp_object_name
+
+            objects = bpy.data.objects
+            collections = bpy.data.collections
+            collection = collections.get(self.gp_object_name)
+
+            gp_object = collection.objects.get(self.gp_object_name)
             if not gp_object:
-                bpy.data.objects.new()
+                gp_data = bpy.data.grease_pencils.new(self.gp_object_name)
+                gp_object = objects.new(self.gp_object_name, gp_data)
+                collection.objects.link(gp_object)
 
-            # here the frame socket expects frame data, not just an integer. 
-            #
-            # layer = bpy.data.objects['GPencil'].data.layers.new()
-            # frame = layer.frames.new(0)
-            # stroke = frame.strokes.new()
-            # stroke.points.add(20)
+            # ensure a layer to draw to, at the moment only layer one.
+            if not gp_object.data.layers:
+                gp_object.data.layers.new("layer 1")
+            layer = gp_object.data.layers[0]
 
-            # bpy.data.objects['GPencil'].data.layers[0].frames[0].strokes[0].points.add(20)
+            try:
+                frame_number = frame.sv_get()[0][0]
+            except:
+                frame_number = 0
 
-            frame_number = frame.sv_get()[0][0]
-            
-            strokes = ...
+            if not layer.frames:
+                # object has no frames
+                frame = layer.frames.new(frame_number)
+            else:
+                # object has frames, we look for frame number or create one if not present
+                frame = [f for f in layer.frames if f.frame_number == frame_number]
+                if not frame:
+                    frame = layer.frames.new(frame_number)
+
+            strokes = frame.strokes
             GP_DATA = strokes.id_data
             
             PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
@@ -254,6 +272,11 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             remove_unused_colors(PALETTE, strokes)
             self.outputs[0].sv_set(strokes)
 
+    def ensure_collection(self):
+        collections = bpy.data.collections
+        if not collections.get(self.gp_object_name):
+            collection = collections.new(self.gp_object_name)
+            bpy.context.scene.collection.children.link(collection)
 
 classes = [SvGreasePencilStrokes]
 register, unregister = bpy.utils.register_classes_factory(classes)
