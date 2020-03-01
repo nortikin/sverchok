@@ -149,7 +149,10 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         msg_box(message="hey.. don't use this for serious stuff, and don't do bugreports for this node", title="BETA NODE : Sverchok Info", icon='INFO')
         updateNode(self, context)
 
-    gp_object_name: bpy.props.StringProperty(default="", name="GP name", update=local_updateNode)
+    gp_object_name: bpy.props.StringProperty(
+        default="", name="GP name", 
+        description="This textfield is used to generate (or pickup) a Collection name and an associated GreasePencil object",
+        update=local_updateNode)
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -173,7 +176,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         # layout.prop(self, 'draw_mode', expand=True)
         layout.prop(self, "active_sv_node")
-        layout.prop(self, "gp_object_name", text="Name")
+        layout.prop(self, "gp_object_name", text="", icon="GROUP")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'use_hq_fill', toggle=True)
