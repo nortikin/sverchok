@@ -142,13 +142,17 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     draw_cyclic: bpy.props.BoolProperty(default=True, update=updateNode)
     pressure: bpy.props.FloatProperty(default=2.0, min=0.1, max=8.0, update=updateNode)
     num_strokes: bpy.props.IntProperty()
+    active_sv_node: bpy.props.BoolProperty(name="Active", default=True, update=updateNode)
 
     def local_updateNode(self, context):
         print('changed name')
         msg_box(message="hey.. don't use this for serious stuff, and don't do bugreports for this node", title="BETA NODE : Sverchok Info", icon='INFO')
         updateNode(self, context)
 
-    gp_object_name: bpy.props.StringProperty(default="", name="GP name", update=local_updateNode)
+    gp_object_name: bpy.props.StringProperty(
+        default="", name="GP name", 
+        description="This textfield is used to generate (or pickup) a Collection name and an associated GreasePencil object",
+        update=local_updateNode)
 
     def sv_init(self, context):
         inew = self.inputs.new
@@ -171,12 +175,23 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         # layout.prop(self, 'draw_mode', expand=True)
-        layout.prop(self, "gp_object_name")
+        layout.prop(self, "active_sv_node")
+        layout.prop(self, "gp_object_name", text="", icon="GROUP")
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'use_hq_fill', toggle=True)
         layout.prop(self, 'auto_cleanup_colors', text='auto remove unused colors')
     
+        # data = bpy.data.palettes.get("drafting_" + self.name)
+        # if data:
+        #     print(data)
+        #     layout.template_palette(data, "colors", colors=True)
+        
+        # settings = # self.paint_settings(context)
+        # settings = context.tool_settings.gpencil_paint
+        # layout.template_ID(settings, "palette", new="palette.new")
+        # if settings.palette:
+        #     layout.template_palette(settings, "palette", color=True)        
 
     def get_pressures(self):
         pressures = self.inputs["pressure"].sv_get()
@@ -198,6 +213,10 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
 
         # we have things to consider before doing any work.
+        if not self.active_sv_node:
+            return
+
+
         if not self.gp_object_name:
             return
 
