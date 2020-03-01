@@ -192,6 +192,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         # layout.template_ID(settings, "palette", new="palette.new")
         # if settings.palette:
         #     layout.template_palette(settings, "palette", color=True)        
+        # new code
 
     def get_pressures(self):
         pressures = self.inputs["pressure"].sv_get()
