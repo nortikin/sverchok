@@ -134,6 +134,12 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     pressure: bpy.props.FloatProperty(default=2.0, min=0.1, max=8.0, update=updateNode)
     num_strokes: bpy.props.IntProperty()
 
+    def local_updateNode(self, context):
+        print('changed name')
+        updateNode(self, context)
+
+    gp_object_name: bpy.props.StringProperty(default="", name="GP name", update=local_updateNode)
+
     def sv_init(self, context):
         inew = self.inputs.new
         onew = self.outputs.new
@@ -154,10 +160,11 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, 'draw_mode', expand=True)
-        layout.prop(self, 'use_hq_fill', expand=True)
+        # layout.prop(self, 'draw_mode', expand=True)
+        ...
 
     def draw_buttons_ext(self, context, layout):
+        layout.prop(self, 'use_hq_fill', toggle=True)
         layout.prop(self, 'auto_cleanup_colors', text='auto remove unused colors')
     
 
@@ -190,8 +197,16 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
                 # here the frame socket expects frame data, not just an integer. 
                 #
-                #
-                strokes = frame.sv_get()
+                # layer = bpy.data.objects['GPencil'].data.layers.new()
+                # frame = layer.frames.new(0)
+                # stroke = frame.strokes.new()
+                # stroke.points.add(20)
+
+                # bpy.data.objects['GPencil'].data.layers[0].frames[0].strokes[0].points.add(20)
+
+                frame_number = frame.sv_get()[0][0]
+                
+                strokes = ...
                 GP_DATA = strokes.id_data
                 
                 PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
