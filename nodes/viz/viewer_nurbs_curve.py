@@ -64,6 +64,13 @@ class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             default = 3,
             update = updateNode)
 
+    resolution : IntProperty(
+            name = "Resolution",
+            description = "Curve subdivisions per segment",
+            min = 1, max = 1024,
+            default = 10,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         self.draw_live_and_outliner(context, layout)
         self.draw_object_buttons(context, layout)
@@ -71,6 +78,10 @@ class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         row = layout.row(align=True)
         row.prop(self, 'use_endpoint', toggle=True)
         row.enabled = not self.is_cyclic
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'resolution')
 
     def draw_label(self):
         return f"NURBS Curve {self.basedata_name}"
@@ -123,6 +134,7 @@ class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 spline.use_cyclic_u = self.is_cyclic
                 spline.use_endpoint_u = not self.is_cyclic and self.use_endpoint
                 spline.order_u = degree + 1
+                spline.resolution_u = self.resolution
 
             self.remove_non_updated_objects(object_index)
             self.set_corresponding_materials()

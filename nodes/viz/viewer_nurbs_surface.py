@@ -134,6 +134,26 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             default = 3,
             update = updateNode)
 
+    resolution_u : IntProperty(
+            name = "Resolution U",
+            description = "Surface subdivisions per segment",
+            min = 1, max = 1024,
+            default = 10,
+            update = updateNode)
+
+    resolution_v : IntProperty(
+            name = "Resolution V",
+            description = "Surface subdivisions per segment",
+            min = 1, max = 1024,
+            default = 10,
+            update = updateNode)
+
+    smooth : BoolProperty(
+            name = "Smooth",
+            description = "Smooth the normals of the surface",
+            default = True,
+            update = updateNode)
+
     def draw_buttons(self, context, layout):
         self.draw_live_and_outliner(context, layout)
         self.draw_object_buttons(context, layout)
@@ -151,6 +171,12 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         s2 = row.split()
         row.prop(self, 'use_endpoint_v', toggle=True)
         s2.enabled = not self.is_cyclic_v
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
+        layout.prop(self, 'smooth')
+        layout.prop(self, 'resolution_u')
+        layout.prop(self, 'resolution_v')
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'ControlPoints')
@@ -239,6 +265,9 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 spline = surface_object.data.splines[0]
                 spline.order_u = degree_u + 1
                 spline.order_v = degree_v + 1
+                spline.resolution_u = self.resolution_v
+                spline.resolution_v = self.resolution_u
+                spline.use_smooth = self.smooth
 
             self.remove_non_updated_objects(object_index)
             self.set_corresponding_materials()
