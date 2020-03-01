@@ -43,8 +43,7 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     bl_idname = 'SvNurbsSurfaceOutNode'
     bl_label = 'NURBS Surface Out'
-    bl_icon = 'META_BALL'
-    sv_icon = 'SV_METABALL'
+    bl_icon = 'SURFACE_NSURFACE'
 
     data_kind: StringProperty(default='SURFACE')
 

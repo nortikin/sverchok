@@ -25,8 +25,7 @@ class SvNurbsCurveOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
     bl_idname = 'SvNurbsCurveOutNode'
     bl_label = 'NURBS Curve Out'
-    bl_icon = 'META_BALL'
-    sv_icon = 'SV_METABALL'
+    bl_icon = 'CURVE_NCURVE'
 
     data_kind: StringProperty(default='CURVE')
 
