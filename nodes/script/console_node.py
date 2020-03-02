@@ -109,6 +109,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "num_chars")
+    
+    def draw_buttons_ext(self, context, layout):
         layout.prop(self, "char_image")
 
     def terminal_text_to_config(self, update=False):
