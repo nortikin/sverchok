@@ -27,7 +27,7 @@ from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 # from sverchok.utils.sv_viewer_utils import matrix_sanitizer
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (dataCorrect, fullList, updateNode)
+from sverchok.data_structure import (dataCorrect_np, fullList, updateNode)
 
 
 def tuple_to_enumdata(*iterable):
@@ -67,7 +67,7 @@ def make_duplicates_live_curve(node, obj_index, verts, edges, matrices):
         cu.splines.clear()
 
     set_curve_props(node, cu)
-    
+
     # rebuild!
     for edge in edges:
         v0, v1 = verts[edge[0]], verts[edge[1]]
@@ -102,9 +102,9 @@ def make_merged_live_curve(node, obj_index, verts, edges, matrices):
 
     obj, cu = node.get_obj_curve(obj_index)
     set_curve_props(node, cu)
-    
+
     for m in matrices:
-        
+
         # and rebuild
         for edge in edges:
             v0, v1 = m @ Vector(verts[edge[0]]), m @ Vector(verts[edge[1]])
@@ -154,14 +154,14 @@ def live_curve(obj_index, verts, edges, matrix, node):
                         v1 = v_obj[e]
                         points.extend([v1[0], v1[1], v1[2], 0.0])
             segment.points.foreach_set('co', points)
-            segment.use_cyclic_u = True        
+            segment.use_cyclic_u = True
 
     return obj
 
 
 def make_curve_geometry(node, context, obj_index, verts, *topology):
     edges, matrix = topology
-    
+
     sv_object = live_curve(obj_index, verts, edges, matrix, node)
     sv_object.hide_select = False
     node.push_custom_matrix_if_present(sv_object, matrix)
@@ -183,7 +183,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         description="merge or use duplicates",
         default="Unique",
         update=updateNode)
-    
+
     curve_dimensions: bpy.props.EnumProperty(
         items=dimension_modes, update=updateNode,
         description="2D or 3D curves", default="3D")
@@ -224,7 +224,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         col = layout.column(align=True)
         col.prop(self, 'depth', text='depth radius')
         col.prop(self, 'resolution', text='surface resolution')
-        
+
         col.separator()
         row = col.row()
         row.prop(self, 'fill_' + self.curve_dimensions, expand=True)
@@ -237,7 +237,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         return f"CV {self.basedata_name}"
 
     def set_fill_mode(self):
-        return getattr(self, "fill_" + self.curve_dimensions) 
+        return getattr(self, "fill_" + self.curve_dimensions)
 
     def remove_cloner_curve(self, obj_index):
         # opportunity to remove the .cloner.
@@ -245,7 +245,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             curve_name = f'{self.basedata_name}.cloner.{obj_index:04d}'
             cu = bpy.data.curves.get(curve_name)
             if cu:
-                bpy.data.curves.remove(cu) 
+                bpy.data.curves.remove(cu)
 
     def output_dupe_or_merged_geometry(self, TYPE, mverts, *mrest):
         '''
@@ -268,7 +268,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         def get(socket_name):
             data = self.inputs[socket_name].sv_get(default=[])
-            return dataCorrect(data)
+            return dataCorrect_np(data)
 
         mverts = get('vertices')
         medges = get('edges')
@@ -329,7 +329,7 @@ class SvCurveViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
                 if self.curve_dimensions == '3D':
 
                     for obj_index, Verts in enumerate(mverts):
-                        if not Verts:
+                        if len(Verts) == 0:
                             continue
 
                         data = get_edges_matrices(obj_index)
