@@ -46,12 +46,14 @@ def simple_console_xy(context, args):
     config.shader.uniform_int("image", 0)
     config.batch.draw(config.shader)
 
-def process_grid_for_shader(grid):
+def process_grid_for_shader(grid, loc):
+    x, y = loc
     positions, poly_indices = grid
+    translated_positions = [(p[0] + x, p[1] + y) for p in positions]
     verts = []
     for poly in poly_indices:
         for v_idx in poly:
-            verts.append(positions[v_idx][:2])
+            verts.append(translated_positions[v_idx])
     return verts
 
 def process_uvs_for_shader(node):
@@ -81,7 +83,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     bl_idname = 'SvConsoleNode'
     bl_label = 'Console Node'
-    bl_icon = 'GREASEPENCIL'
+    bl_icon = 'CONSOLE'
 
     @throttled
     def local_updateNode(self, context):
@@ -171,7 +173,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         width = self.terminal_width * 15
         height = self.num_rows * 32
 
-        verts = process_grid_for_shader(grid)
+        verts = process_grid_for_shader(grid, loc=(x, y))
         uvs = process_uvs_for_shader(self)
         
         x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
