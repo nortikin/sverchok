@@ -122,10 +122,11 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     @throttled
     def local_updateNode(self, context):
+        # self.process()
         ...
 
-    num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1, max=140, update=updateNode)
-    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=10, max=140, update=updateNode)
+    num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1, max=140) #, update=updateNode)
+    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=10, max=140) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
@@ -133,7 +134,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     texture = {}
     n_id: bpy.props.StringProperty(default='')
 
-    num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
+    # num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
 
     def prepare_for_grid(self):
         return get_console_grid(15, 32, self.terminal_width, self.num_rows)
@@ -143,7 +144,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         self.get_and_set_gl_scale_info()
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "num_chars")
+        # layout.prop(self, "num_chars")
+        pass
     
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "char_image")
@@ -152,26 +154,22 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         """
         this function does not work correctly :)
         """
-        import itertools
+
         with self.sv_throttle_tree_update():
 
-            text = ""
             socket_data = self.inputs[0].sv_get()
-            print(socket_data)
 
-            if not socket_data:
-                return
-
-            merged_socket_data = list(itertools.chain.from_iterable(socket_data))
-            if len(merged_socket_data):
-                if all((isinstance(i, list) and len(i) == 1) for i in merged_socket_data):
-                    merged_socket_data = "\n".join(item[0] for item in merged_socket_data)
-            
-            print(merged_socket_data.__repr__())
-            print("becomes")
-            print(merged_socket_data)
-
-
+            # this will find the newline delimited text from Object ID selector.
+            if len(socket_data) == 1:
+                socket_data = socket_data[0]
+                if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
+                    print(socket_data)
+                    multiline, (chars_y, chars_x) = text_decompose('\n'.join(socket_data))
+                    valid_multiline = '\n'.join(multiline)
+                    print(valid_multiline, chars_y, chars_x)
+                    self.terminal_text = valid_multiline
+                    self.num_rows = chars_y
+                    self.terminal_width = chars_x
 
         if update:
             updateNode(self, None)
@@ -188,8 +186,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not image or image.gl_load():
             raise Exception()
 
-        # if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
-        #     return
+        if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
+            return
 
         self.terminal_text_to_config()
 
