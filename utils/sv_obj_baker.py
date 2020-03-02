@@ -1,7 +1,7 @@
 # This file is part of project Sverchok. It's copyrighted by the contributors
 # recorded in the version control history of the file, available from
 # its original location https://github.com/nortikin/sverchok/commit/master
-#  
+#
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
@@ -10,7 +10,7 @@ import bpy
 from bpy.props import StringProperty
 from mathutils import Vector, Matrix
 
-from sverchok.data_structure import node_id, dataCorrect
+from sverchok.data_structure import node_id, dataCorrect, dataCorrect_np
 
 cache_viewer_baker = {}
 
@@ -63,7 +63,7 @@ class SvObjBakeMK3(bpy.types.Operator):
         if matrix_cache and not vertex_cache:
             return {'CANCELLED'}
 
-        v = dataCorrect(vertex_cache)
+        v = dataCorrect_np(vertex_cache)
         e = self.dataCorrect3(edg_cache)
         p = self.dataCorrect3(pol_cache)
         m = self.dataCorrect2(matrix_cache, v)

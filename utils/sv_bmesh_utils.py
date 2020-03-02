@@ -17,6 +17,10 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
+import mathutils
+import numpy as np
+import math
+
 from sverchok.utils.logging import info, debug
 
 def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
@@ -286,8 +290,14 @@ def dual_mesh(bm, recalc_normals=True):
     for face in bm.faces:
         new_verts[face.index] = face.calc_center_median()
 
-    #new_edges = []
     new_faces = []
+
+    def calc_angle(co, orth, co_orth, face_idx):
+        face_center = new_verts[face_idx]
+        direction = face_center - co
+        dx = direction.dot(orth)
+        dy = direction.dot(co_orth)
+        return math.atan2(dy, dx)
 
     # For each vertex of original mesh,
     # find all connected faces and connect
@@ -299,42 +309,100 @@ def dual_mesh(bm, recalc_normals=True):
     for vert in bm.verts:
         if not vert.link_faces:
             continue
-        face0 = vert.link_faces[0]
-        new_face = [face0.index]
-        other_faces = set(vert.link_faces[:])
-        n = len(vert.link_faces)
-        while other_faces:
-            n = n-1
-            if n <= 0:
-                break
-            for edge in vert.link_edges:
-                if face0 in edge.link_faces:
-                    fcs = [face for face in edge.link_faces if face != face0]
-                    if not fcs:
-                        continue
-                    other_face = fcs[0]
-                    if other_face in other_faces:
-                        face0 = other_face
-                        other_faces.remove(face0)
-                        if face0.index not in new_face:
-                            new_face.append(face0.index)
+        normal = vert.normal
+        orth = normal.orthogonal()
+        co_orth = normal.cross(orth)
+        face_idxs = [face.index for face in vert.link_faces]
+        new_face = sorted(face_idxs, key = lambda idx : calc_angle(vert.co, orth, co_orth, idx))
+        new_face = list(new_face)
 
-        if len(new_face) > 2:
+        m = len(new_face)
+        if m > 2:
             new_faces.append(new_face)
 
     vertices = [new_verts[idx] for idx in sorted(new_verts.keys())]
-    # We cannot guarantee that our sorting above gave us faces
-    # of original mesh in counterclockwise order each time.
-    # So if we want normals of dual mesh to be consistent,
-    # we have to call bmesh.ops.recalc_face_normals.
-    if not recalc_normals:
-        return vertices, new_faces
-    else:
-        bm2 = bmesh_from_pydata(vertices, [], new_faces, normal_update=True)
-        bmesh.ops.recalc_face_normals(bm2, faces=bm2.faces)
-        new_vertices, new_edges, new_faces = pydata_from_bmesh(bm2)
-        bm2.free()
-        return new_vertices, new_faces
+    return vertices, new_faces
+
+def diamond_mesh(bm):
+    new_bm = bmesh.new()
+    copied_verts = dict()
+    for vert in bm.verts:
+        co = vert.co
+        copied_verts[vert.index] = new_bm.verts.new(co)
+
+    # Make vertices of dual mesh by finding
+    # centers of original mesh faces.
+    center_verts = dict()
+    for face in bm.faces:
+        co = face.calc_center_median()
+        center_verts[face.index] = new_bm.verts.new(co)
+
+    for edge in bm.edges:
+        edge_faces = edge.link_faces
+        n_faces = len(edge_faces)
+        if not n_faces:
+            continue
+        if n_faces > 2:
+            continue
+        if n_faces == 1:
+            face = edge_faces[0]
+            ev1, ev2 = edge.verts
+            face_verts = copied_verts[ev1.index], copied_verts[ev2.index], center_verts[face.index]
+            new_normal = mathutils.geometry.normal(*[vert.co for vert in face_verts])
+            old_normal = face.normal
+            if new_normal.dot(old_normal) < 0:
+                face_verts = list(reversed(face_verts))
+            new_bm.faces.new(face_verts)
+        else: # n_faces == 2
+            face1, face2 = edge_faces
+            ev1, ev2 = edge.verts
+            face_verts = copied_verts[ev1.index], center_verts[face1.index], copied_verts[ev2.index], center_verts[face2.index]
+            new_normal = mathutils.geometry.normal(*[vert.co for vert in face_verts])
+            old_normal = face1.normal + face2.normal
+            if new_normal.dot(old_normal) < 0:
+                face_verts = list(reversed(face_verts))
+            new_bm.faces.new(face_verts)
+    new_bm.verts.index_update()
+    new_bm.edges.index_update()
+    new_bm.faces.index_update()
+
+    return new_bm
+
+def truncate_vertices(bm):
+
+    def calc_angle(co, orth, co_orth, vert):
+        direction = vert.co - co
+        dx = direction.dot(orth)
+        dy = direction.dot(co_orth)
+        return math.atan2(dy, dx)
+
+    new_bm = bmesh.new()
+    edge_centers = dict()
+    for edge in bm.edges:
+        center_co = (edge.verts[0].co + edge.verts[1].co) / 2.0
+        edge_centers[edge.index] = new_bm.verts.new(center_co)
+    for face in bm.faces:
+        new_face = [edge_centers[edge.index] for edge in face.edges]
+        old_normal = face.normal
+        new_normal = mathutils.geometry.normal(*[vert.co for vert in new_face])
+        if new_normal.dot(old_normal) < 0:
+            new_face = list(reversed(new_face))
+        new_bm.faces.new(new_face)
+    for vertex in bm.verts:
+        new_face = [edge_centers[edge.index] for edge in vertex.link_edges]
+        if len(new_face) > 2:
+            old_normal = vertex.normal
+            orth = old_normal.orthogonal()
+            co_orth = old_normal.cross(orth)
+            new_face = sorted(new_face, key = lambda edge_center : calc_angle(vertex.co, orth, co_orth, edge_center))
+            new_face = list(new_face)
+            new_bm.faces.new(new_face)
+
+    new_bm.verts.index_update()
+    new_bm.edges.index_update()
+    new_bm.faces.index_update()
+
+    return new_bm
 
 def get_neighbour_faces(face, by_vert = True):
     """

@@ -43,7 +43,7 @@ spiralTypeItems = [
 
 # name : [ type, eR, iR, exponent, turns, resolution, scale, height ]
 spiralPresets = {
-    " ":            ["", 0.0, 0.0, 0.0, 0, 0, 0.0, 0.0],
+    "_":            ["", 0.0, 0.0, 0.0, 0, 0, 0.0, 0.0],
     "FIBONACCI":    ["LOGARITHMIC", 1.0, 0.5, PHIPI, 3, 100, 1.0, 0.0],
     "HELIX":        ["LOGARITHMIC", 1.0, 0.0, 0.0, 7, 100, 1.0, 4.0],
     "ARCHIMEDEAN":  ["ARCHIMEDEAN", 1.0, 0.0, 1.0, 7, 100, 1.0, 0.0],
@@ -55,8 +55,8 @@ spiralPresets = {
     "OVOIDAL":      ["OVOIDAL", 5.0, 1.0, 0.0, 7, 55, 1.0, 6.0],
     "CORNU":        ["CORNU", 1.0, 1.0, 1.0, 5, 55, 1.0, 0.0],
     "EXO":          ["EXO", 1.0, 0.1, PHI, 11, 101, 1.0, 0.0],
-    "SPIRANGLE SC": ["SPIRANGLE", 1.0, 0.0, 0.0, 8, 4, 1.0, 0.0],
-    "SPIRANGLE HX": ["SPIRANGLE", 1.0, 0.0, 0.5, 7, 6, 1.0, 0.0]
+    "SPIRANGLE_SC": ["SPIRANGLE", 1.0, 0.0, 0.0, 8, 4, 1.0, 0.0],
+    "SPIRANGLE_HX": ["SPIRANGLE", 1.0, 0.0, 0.5, 7, 6, 1.0, 0.0]
 }
 
 normalizeItems = [
@@ -463,17 +463,17 @@ class SvSpiralNode(bpy.types.Node, SverchCustomTreeNode):
         if self.updating:
             return
 
-        self.presets = " "
+        self.presets = "_"
         updateNode(self, context)
 
     def update_presets(self, context):
         self.updating = True
 
-        if self.presets == " ":
+        if self.presets == "_":
             self.updating = False
             return
 
-        st, eR, iR, e, t, N, s, h = spiralPresets[self.presets]
+        st, eR, iR, e, t, N, s, h = spiralPresets[self.presets.replace(" ", "_")]
         self.stype = st
         self.eRadius = eR
         self.iRadius = iR
@@ -488,7 +488,7 @@ class SvSpiralNode(bpy.types.Node, SverchCustomTreeNode):
         self.updating = False
         updateNode(self, context)
 
-    presetItems = [(k, k.title(), "", "", i) for i, (k, v) in enumerate(sorted(spiralPresets.items()))]
+    presetItems = [(k, k.replace("_", " ").title(), "", "", i) for i, (k, v) in enumerate(sorted(spiralPresets.items()))]
 
     presets: EnumProperty(
         name="Presets", items=presetItems,

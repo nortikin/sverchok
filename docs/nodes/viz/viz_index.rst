@@ -10,3 +10,6 @@ Viz
    viewer_waveform_output
    vd_draw_experimental
    empty_out
+   viewer_nurbs_curve
+   viewer_nurbs_surface
+

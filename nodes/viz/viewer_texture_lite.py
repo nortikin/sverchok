@@ -24,7 +24,7 @@ from sverchok.nodes.viz.viewer_texture import (
 
 
 out_modes = [
-    ('UV\image editor', 'UV\image editor', 'insert values into image editor (only RGBA mode!)', '', 0),
+    ('image_editor', 'UV\image editor', 'insert values into image editor (only RGBA mode!)', '', 0),
     ('bgl', 'bgl', 'create texture inside nodetree', '', 1),
 ]
 

@@ -160,6 +160,15 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     float_props: CollectionProperty(type=SvFloatPropertySettingsGroup)
     int_props: CollectionProperty(type=SvIntPropertySettingsGroup)
 
+    @property
+    def sv_draft(self):
+        # One monad tree can be used in several trees simultaneously;
+        # they can have different draft mode status.
+        # Let's assume that the monad tree is in Draft mode if *all*
+        # trees that use it are in the draft mode.
+        affected_trees = {instance.id_data for instance in self.instances}
+        return all(hasattr(tree, 'sv_draft') and tree.sv_draft for tree in affected_trees)
+
     def get_current_as_default(self, prop_dict, node, prop_name):
         prop_dict['default'] = getattr(node, prop_name)
         # if not prop_dict['name']:
@@ -215,6 +224,22 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             return new_name
 
         return None
+
+    # def add_prop_from_dict(self, prop_dict, new_prop_type):
+    #     cls = get_node_class_reference(self.cls_bl_idname)
+    #     cls_dict = cls.__dict__ if cls else {}
+
+    #     if new_prop_type == "Float":
+    #         prop_settings = self.float_props.add()
+    #     elif new_prop_type == "Int":
+    #         prop_settings = self.int_props.add()
+    #     else:
+    #         return None
+
+    #     new_name = generate_name(prop_dict['name'], cls_dict)
+    #     prop_settings.prop_name = new_name
+    #     prop_settings.set_settings(prop_dict)
+    #     return new_name
 
     def get_all_props(self):
         """
@@ -348,11 +373,10 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         else:
             cls_name = self.cls_bl_idname
 
-        self.verify_props()
-
         cls_dict["bl_idname"] = cls_name
         cls_dict["bl_label"] = self.name
 
+        self.verify_props()
         cls_dict["input_template"] = self.generate_inputs()
         cls_dict["output_template"] = self.generate_outputs()
 
@@ -361,9 +385,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         # done with setup
 
         old_cls_ref = get_node_class_reference(cls_name)
-
         bases = (SvGroupNodeExp, Node, SverchCustomTreeNode)
-
         cls_ref = type(cls_name, bases, cls_dict)
 
         if old_cls_ref:
@@ -391,7 +413,6 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     def generate_inputs(self):
         in_socket = []
 
-        # if socket is dummysocket use the other for data
         for idx, socket in enumerate(self.input_node.outputs):
             if socket.is_linked:
                 socket_name, socket_bl_idname, prop_name = get_socket_data(socket)
@@ -406,10 +427,12 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
     def generate_outputs(self):
         out_socket = []
+
         for socket in self.output_node.inputs:
             if socket.is_linked:
                 socket_name, socket_bl_idname, _ = get_socket_data(socket)
                 out_socket.append((socket_name, socket_bl_idname))
+
         return out_socket
 
 
@@ -520,6 +543,21 @@ class SvGroupNodeExp:
             else:
                 layout.prop(self, 'loops_max')
 
+    def get_nodes_to_process(self, out_node_name):
+        """
+        nodes not indirectly / directly contributing to the data we eventually pass to "monad.output_node" 
+        are discarded if only `self.monad.outputs_node.name` is passed in endpoints_nodes.
+
+        The exceptions are nodes that we use for debugging inside the monad. At present SvDebugPrint instances
+        are added as endpoints (this allows them to be processed and they can write to the bpy.data.texta
+        """
+        endpoint_nodes = [out_node_name]
+        nodes = self.monad.nodes
+        for n in nodes:
+            if n.bl_idname == 'SvDebugPrintNode' and n.print_data:
+                endpoint_nodes.append(n.name)
+        return endpoint_nodes
+
     def process(self):
         if not self.monad:
             return
@@ -538,9 +576,9 @@ class SvGroupNodeExp:
             data = socket.sv_get(deepcopy=False)
             in_node.outputs[index].sv_set(data)
 
-        #  get update list
-        #  could be cached
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
+
         do_update(ul, monad.nodes)
         # set output sockets correctly
         for index, socket in enumerate(self.outputs):
@@ -552,7 +590,9 @@ class SvGroupNodeExp:
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
 
         data_out = [[] for s in self.outputs]
 
@@ -592,8 +632,8 @@ class SvGroupNodeExp:
         for index, data in enumerate(sockets_data_in):
             in_node.outputs[index].sv_set(data)        
 
-
-        ul = make_tree_from_nodes([out_node.name], monad, down=False)
+        node_names = self.get_nodes_to_process(out_node.name)
+        ul = make_tree_from_nodes(node_names, monad, down=False)
         do_update(ul, monad.nodes)
 
         # set output sockets correctly
@@ -622,11 +662,10 @@ class SvGroupNodeExp:
         out_node = monad.output_node
 
         for iteration in range(iterations_remaining):
-            if 'Monad Info' in monad.nodes:
-                # info_node = monad.nodes['Monad Info']
-                # info_node.outputs[0].sv_set([[iteration]])
-                monad["current_index"] = iteration
-
+            # if 'Monad Info' in monad.nodes:
+            #     info_node = monad.nodes['Monad Info']
+            #     info_node.outputs[0].sv_set([[iteration]])
+            monad["current_index"] = iteration
             sockets_in = self.do_process(sockets_in)
         self.apply_output(sockets_in)
 

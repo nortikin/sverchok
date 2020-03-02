@@ -32,11 +32,15 @@ from sverchok.utils.logging import info, error, exception
 from sverchok.utils.sv_help import build_help_remap
 from sverchok.ui.sv_icons import node_icon, icon
 from sverchok.utils.context_managers import sv_preferences
+from sverchok.utils.extra_categories import get_extra_categories
 
 class SverchNodeCategory(NodeCategory):
     @classmethod
     def poll(cls, context):
         return context.space_data.tree_type == 'SverchCustomTreeType'
+
+    def __repr__(self):
+        return f"<SverchNodeCategory {self.identifier}>"
 
 def make_node_cats():
     '''
@@ -442,8 +446,15 @@ def make_categories():
 
     return node_categories, node_count, original_categories
 
-def register_node_panels(identifier, cat_list):
+def register_node_panels(identifier, std_menu):
     global node_panels
+
+    def get_cat_list():
+        extra_categories = get_extra_categories()
+        cat_list = std_menu[:]
+        cat_list.extend(extra_categories)
+        return cat_list
+
     with sv_preferences() as prefs:
         if prefs.node_panels == "N":
 
@@ -453,7 +464,7 @@ def register_node_panels(identifier, cat_list):
                 for item in self.category.items(context):
                     item.draw(item, col, context)
 
-            for category in cat_list:
+            for category in get_cat_list():
                 panel_type = type("NODE_PT_category_sv_" + category.identifier, (bpy.types.Panel,), {
                         "bl_space_type": "NODE_EDITOR",
                         "bl_region_type": "UI",
@@ -496,7 +507,7 @@ def register_node_panels(identifier, cat_list):
                     check_category = not check_search
                     category_is_first = True
 
-                    for category in cat_list:
+                    for category in get_cat_list():
                         category_ok = category.identifier == context.scene.sv_selected_category
                         if check_category:
                             if not category_ok:
@@ -561,6 +572,19 @@ def unregister_node_add_operators():
     for idname in node_add_operators:
         bpy.utils.unregister_class(node_add_operators[idname])
 
+def get_all_categories(std_categories):
+
+    def generate(self, context):
+        nonlocal std_categories
+        extra_categories = get_extra_categories()
+        n = len(std_categories)
+        all_categories = std_categories[:]
+        for category in extra_categories:
+            n += 1
+            all_categories.append((category.identifier, category.name, category.name, n))
+        return all_categories
+    return generate
+
 def register():
     menu, node_count, original_categories = make_categories()
     if 'SVERCHOK' in nodeitems_utils._node_categories:
@@ -572,7 +596,7 @@ def register():
     bpy.types.Scene.sv_selected_category = bpy.props.EnumProperty(
                         name = "Category",
                         description = "Select nodes category",
-                        items = categories
+                        items = get_all_categories(categories)
                     )
     bpy.types.Scene.sv_node_search = bpy.props.StringProperty(
                         name = "Search",
@@ -585,7 +609,6 @@ def register():
 
     build_help_remap(original_categories)
     print(f"sv: {node_count} nodes.")
-
 
 def unregister():
     if 'SVERCHOK' in nodeitems_utils._node_categories:

@@ -98,7 +98,10 @@ def live_curve(obj_index, node, verts, radii, twist):
 def make_curve_geometry(obj_index, node, verts, matrix, radii, twist):
     sv_object = live_curve(obj_index, node, verts, radii, twist)
     sv_object.hide_select = False
-    node.set_auto_uv(sv_object)
+
+    if hasattr(sv_object.data, "use_uv_as_generated"):
+        node.set_auto_uv(sv_object)
+
     node.push_custom_matrix_if_present(sv_object, matrix)
     return sv_object
 
@@ -247,10 +250,15 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     def set_auto_uv(self, obj):
         """
         this will change the state of the object.prop if it does not match the new desired state
+        
+        this is no longer supported in blender 2.92+
         """
         if obj.data.use_uv_as_generated != self.use_auto_uv:
             obj.data.use_uv_as_generated = self.use_auto_uv
 
+    def draw_label(self):
+        return f"PV {self.basedata_name}"
+    
 
 def register():
     bpy.utils.register_class(SvPolylineViewerNodeV28)

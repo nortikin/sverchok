@@ -111,6 +111,29 @@ def get_variables(string):
     result = visitor.variables
     return result.difference(safe_names.keys())
 
+def sv_compile(string):
+    try:
+        root = ast.parse(string, mode='eval')
+        return compile(root, "<expression>", 'eval')
+    except SyntaxError as e:
+        logging.exception(e)
+        raise Exception("Invalid expression syntax: " + str(e))
+
+def safe_eval_compiled(compiled, variables):
+    """
+    Evaluate expression, allowing only functions known to be "safe"
+    to be used.
+    """
+    try:
+        env = dict()
+        env.update(safe_names)
+        env.update(variables)
+        env["__builtins__"] = {}
+        return eval(compiled, env)
+    except SyntaxError as e:
+        logging.exception(e)
+        raise Exception("Invalid expression syntax: " + str(e))
+
 # It could be safer...
 def safe_eval(string, variables):
     """

@@ -21,7 +21,7 @@ from bpy.props import FloatProperty
 import bmesh
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, Vector_generate, repeat_last
+from sverchok.data_structure import updateNode, Vector_generate, repeat_last, zip_long_repeat
 from sverchok.utils.logging import info, debug
 
 #
@@ -133,7 +133,7 @@ class SvRemoveDoublesNode(bpy.types.Node, SverchCustomTreeNode):
         face_data_out = []
         d_out = []
 
-        for v, p, ms, d in zip(verts, polys, face_data, repeat_last(distance)):
+        for v, p, ms, d in zip_long_repeat(verts, polys, face_data, distance):
             res = remove_doubles(v, p, d, ms, has_double_out)
             if not res:
                 return

@@ -196,7 +196,17 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         self.buttons(layout)
-        layout.prop(self, "as_list")
+        layout.prop(self, "as_list", invert_checkbox=True, text="Output NumPy")
+
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "type_selected_mode", text="Number Type: "+ self.type_selected_mode)
+        if self.type_selected_mode == "Int":
+            layout.prop(self, "unique", toggle=True )
+            layout.prop(self, "weighted", toggle=True)
+        else:
+            layout.prop_menu_enum(self, "distribute_mode")
+        layout.prop(self, "as_list", toggle=True, invert_checkbox=True, text="Output NumPy")
+
 
     def int_random_range(self, *params):
         if len(params) < 5:

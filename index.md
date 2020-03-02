@@ -9,10 +9,11 @@
 > Failing to follow these points will break the node category parser.
 
 ## Generator
-    SvLineNodeMK3
+    SvLineNodeMK4
+    SvSegmentGenerator
     SvPlaneNodeMK2
     SvNGonNode
-    SvBoxNode
+    SvBoxNodeMk2
     SvCircleNode
     SvCylinderNodeMK2
     SphereNode
@@ -60,7 +61,7 @@
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
     SvPathLengthNode
-    CentersPolsNodeMK3
+    SvOrigins
     GetNormalsNode
     VectorNormalNode
     SvIntersectLineSphereNode
@@ -81,14 +82,20 @@
     SvLinkedVertsNode
     SvProjectPointToLine
     ---
+    SvLinearApproxNode
+    SvCircleApproxNode
+    SvSphereApproxNode
+    SvInscribedCircleNode
+    SvSteinerEllipseNode
+    ---
     SvMeshSelectNode
     SvSelectSimilarNode
     SvChessSelection
 
 ## Transforms
-    SvRotationNodeMK2
-    SvScaleNodeMK2
-    SvMoveNodeMK2
+    SvMoveNodeMk3
+    SvRotationNodeMk3
+    SvScaleNodeMk3
     SvSymmetrizeNode
     SvMirrorNodeMk2
     MatrixApplyNode
@@ -96,16 +103,20 @@
     SvAlignMeshByMesh
     ---
     SvTransformSelectNode
+    SvTransformMesh
     SvSimpleDeformNode
     SvBendAlongPathNode
     SvBendAlongSurfaceNode
+    SvDisplaceNode
     SvNoiseDisplaceNode
     SvRandomizeVerticesNode
+    SvCastNode
 
 ## Modifier Change
     SvDeleteLooseNode
     SvRemoveDoublesNode
     SvSeparateMeshNode
+    SvSeparatePartsToIndexes
     SvLimitedDissolve
     SvPlanarFacesNode
     SvSplitFacesNode
@@ -125,6 +136,7 @@
     SvExtrudeEdgesNodeMk2
     SvExtrudeSeparateNode
     SvExtrudeRegionNode
+    SvPokeFacesNode
     SvVertMaskNode
     SvSplitEdgesNode
     ---
@@ -140,8 +152,11 @@
     Voronoi2DNode
     SvOffsetLineNode
     SvContourNode
-    SvDualMeshNode
     SvRandomPointsOnMesh
+    ---
+    SvDualMeshNode
+    SvDiamondMeshNode
+    SvClipVertsNode
     ---
     SvBevelCurveNode
     SvAdaptiveEdgeNode
@@ -171,6 +186,7 @@
 
 ## List Main
     ListJoinNode
+    SvConstantListNode
     ZipNode
     ListLevelsNode
     ListLengthNode
@@ -254,7 +270,6 @@
     SvInterpolationStripesNode
     SvInterpolationNodeMK3
     SvInterpolationNodeMK2
-    SvLinearApproxNode
     ---
     SvHomogenousVectorField
     SvNoiseNodeMK2
@@ -280,6 +295,7 @@
     SvQuaternionInNode
     SvQuaternionOutNode
     SvQuaternionMathNode
+    SvRotationDifference
 
 ## Logic
     SvLogicNode
@@ -301,7 +317,10 @@
     SvTypeViewerNodeV28
     SvSkinViewerNodeV28
     SvMetaballOutNode
+    SvNurbsCurveOutNode
+    SvNurbsSurfaceOutNode
     ---
+    SvGreasePencilStrokes
     SvEmptyOutNode
     ---
     SvTextureViewerNode
@@ -340,8 +359,10 @@
     SvFrameInfoNodeMK2
     SvLampOutNode
     SvInstancerNode
+    SvInstancerNodeMK2
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
+    SvCollectionPicker
 
 ## Objects
     SvVertexGroupNodeMK2
@@ -378,6 +399,7 @@
     SvColorsInNodeMK1
     SvColorInputNode
     SvColorsOutNodeMK1
+    SvTextureEvaluateNode
     ---
     SvSculptMaskNode
     SvSelectMeshVerts
@@ -406,6 +428,7 @@
     SvPlanarEdgenetToPolygons
     SvPulgaPhysicsNode
     SvTopologySimple
+    SvSweepModulator
     ---
     SvGetPropNodeMK2
     SvSetPropNodeMK2

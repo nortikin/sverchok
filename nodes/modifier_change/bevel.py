@@ -195,7 +195,12 @@ class SvBevelNode(bpy.types.Node, SverchCustomTreeNode):
             geom = list(bm.verts) + list(b_edges) + list(bm.faces)
         else:
             b_verts = get_bevel_verts(bm, mask)
-            geom = b_verts + list(bm.edges) + list(bm.faces)
+            b_verts_set = set(b_verts)
+            b_edges = [edge for edge in bm.edges if all(v in b_verts_set for v in edge.verts)]
+            b_faces = [face for face in bm.faces if all(v in b_verts_set for v in face.verts)]
+
+            geom = b_verts + b_edges + b_faces
+            #geom = b_verts + list(bm.edges) + list(bm.faces)
         return geom
 
     def process(self):

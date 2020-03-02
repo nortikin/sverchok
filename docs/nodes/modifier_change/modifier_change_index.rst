@@ -12,6 +12,7 @@ Modifier Change
    smooth
    delete_loose
    edges_intersect_mk2
+   poke
    extrude_edges_mk2
    extrude_separate
    extrude_separate_lite
@@ -35,3 +36,4 @@ Modifier Change
    pulga_physics
    inset_faces
    follow_active_quads
+   separate_parts_to_indexes

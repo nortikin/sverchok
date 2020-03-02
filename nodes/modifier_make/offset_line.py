@@ -24,7 +24,7 @@ from mathutils import Vector, Matrix
 from mathutils.geometry import normal
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.data_structure import updateNode, match_long_repeat, zip_long_repeat
 from sverchok.core.sv_custom_exceptions import SvNotFullyConnected
 
 TWO_PI = 2 * pi
@@ -220,9 +220,7 @@ class SvOffsetLineNode(bpy.types.Node, SverchCustomTreeNode):
         # verts_out, faces_out, outer_edges, vers_mask
         out_geometry = [[], [], [], []]
         
-        shifter = match_long_repeat([verts_in, shifter])[1]
-        
-        for verts,edges,shift in zip(verts_in, edges_in, shifter):
+        for verts,edges,shift in zip_long_repeat(verts_in, edges_in, shifter):
             geometry = offset_edges(verts, edges, shift)
             _ = [out_geometry[idx].append(data) for idx, data in enumerate(geometry)]
         

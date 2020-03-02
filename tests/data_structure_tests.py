@@ -33,6 +33,26 @@ class DataStructureTests(SverchokTestCase):
         fullList_deep_copy(data, 7)
         self.assertEquals(data, [[3], [2], [1], [1], [1], [1], [1]])    
 
+    def test_repeat_last_for_length_1(self):
+        data = None
+        result = repeat_last_for_length(data, 4)
+        self.assertEquals(result, None)
+
+    def test_repeat_last_for_length_2(self):
+        data = []
+        result = repeat_last_for_length(data, 4)
+        self.assertEquals(result, [])
+
+    def test_repeat_last_for_length_3(self):
+        data = [1,2,3,4]
+        result = repeat_last_for_length(data, 4)
+        self.assertEquals(result, data)
+
+    def test_repeat_last_for_length_4(self):
+        data = [1,2,3]
+        result = repeat_last_for_length(data, 4)
+        self.assertEquals(result, [1,2,3,3])
+
     def test_get_data_nesting_level_1(self):
         self.subtest_assert_equals(get_data_nesting_level(1), 0)
         self.subtest_assert_equals(get_data_nesting_level([]), 1)

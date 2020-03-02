@@ -7,7 +7,31 @@ import sverchok
 
 # custom icons dictionary
 _icon_collection = {}
+
+class SvIconProviderRecord(object):
+    def __init__(self, provider_id, provider):
+        self.provider_id = provider_id
+        self.provider = provider
+        self.provider_inited = False
+
+    def init(self, custom_icons):
+        if self.provider_inited:
+            return
+        for icon_id, path in self.provider.get_icons():
+            custom_icons.load(icon_id, path, "IMAGE")
+
+_icon_providers = dict()
+
 addon_name = sverchok.__name__
+
+def register_custom_icon_provider(provider_id, provider):
+    global _icon_providers
+    # make sure that _icon_collection["main"] is initialized
+    load_custom_icons()
+    record = SvIconProviderRecord(provider_id, provider)
+    _icon_providers[provider_id] = record
+    custom_icons = _icon_collection["main"]
+    record.init(custom_icons)
 
 def custom_icon(name):
     load_custom_icons()  # load in case they custom icons not already loaded
@@ -35,6 +59,9 @@ def load_custom_icons():
         iconName = os.path.splitext(iconFile)[0]
         iconID = iconName.upper()
         custom_icons.load(iconID, os.path.join(iconsDir, iconFile), "IMAGE")
+
+    for provider in _icon_providers.values():
+        provider.init(custom_icons)
 
     _icon_collection["main"] = custom_icons
 

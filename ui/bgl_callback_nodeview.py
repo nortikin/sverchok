@@ -217,12 +217,14 @@ def restore_opengl_defaults():
 def draw_callback_px(n_id, data):
 
     space = bpy.context.space_data
-  
     ng_view = space.edit_tree
+
     # ng_view can be None
     if not ng_view:
         return
+
     ng_name = space.edit_tree.name
+
     if not (data['tree_name'] == ng_name):
         return
     if not isinstance(ng_view, node_tree.SverchCustomTree):

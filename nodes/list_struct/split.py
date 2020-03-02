@@ -21,7 +21,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, repeat_last, updateNode)
-
+import numpy as np
 # ListSplit
 # by Linus Yng
 def split(data, size):
@@ -83,7 +83,7 @@ class SvListSplitNode(bpy.types.Node, SverchCustomTreeNode):
     def get(self, data, level, size):
         if not isinstance(data, (list, tuple)):
             return data
-        if not isinstance(data[0], (list, tuple)):
+        if not isinstance(data[0], (list, tuple, np.ndarray)):
             return data
         if level > 1:  # find level to work on
             return [self.get(d, level - 1, size) for d in data]

@@ -31,7 +31,7 @@ from sverchok.data_structure import get_other_socket
 
 from sverchok.core.update_system import (
     build_update_list,
-    process_from_node,
+    process_from_node, process_from_nodes,
     process_tree,
     get_update_lists, update_error_nodes,
     get_original_node_color)
@@ -219,6 +219,41 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors: StringProperty(default="")
 
+    def on_draft_mode_changed(self, context):
+        """
+        This is triggered when Draft mode of the tree is toggled.
+        """
+        draft_nodes = []
+        for node in self.nodes:
+            if hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode():
+                draft_nodes.append(node)
+                node.on_draft_mode_changed(self.sv_draft)
+
+        # From the user perspective, some of node parameters
+        # got new parameter values, so the setup should be recalculated;
+        # but techically, node properties were not changed
+        # (only other properties were shown in UI), so enabling/disabling
+        # of draft mode does not automatically trigger tree update.
+        # Here we trigger it manually.
+
+        if draft_nodes:
+            try:
+                bpy.context.window.cursor_set("WAIT")
+                was_frozen = self.is_frozen()
+                self.unfreeze(hard=True)
+                process_from_nodes(draft_nodes)
+            finally:
+                if was_frozen:
+                    self.freeze(hard=True)
+                bpy.context.window.cursor_set("DEFAULT")
+
+
+    sv_draft : BoolProperty(
+                name = "Draft",
+                description="Draft (simplified processing) mode",
+                default = False,
+                update=on_draft_mode_changed)
+
     tree_link_count: IntProperty(name='keep track of current link count', default=0)
     configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
 
@@ -278,6 +313,13 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         self.has_changed = False
 
+    def get_nodes_supporting_draft_mode(self):
+        draft_nodes = []
+        for node in self.nodes:
+            if hasattr(node, 'does_support_draft_mode') and node.does_support_draft_mode():
+                draft_nodes.append(node)
+        return draft_nodes
+
 
 class SverchCustomTreeNode:
 
@@ -285,6 +327,13 @@ class SverchCustomTreeNode:
     _docstring = None
 
     _implicit_conversion_policy = dict()
+
+    # In node classes that support draft mode
+    # and use separate properties in the draft mode,
+    # this should contain mapping from "standard"
+    # mode property names to draft mode property names.
+    # E.g., draft_properties_mapping = dict(count = 'count_draft').
+    draft_properties_mapping = dict()
 
     @classmethod
     def poll(cls, ntree):
@@ -295,6 +344,64 @@ class SverchCustomTreeNode:
         if not self.n_id:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
+
+    def ensure_enums_have_no_space(self, enums=None):
+        """
+        enums: a list of property names to check. like  self.current_op  
+
+            self.ensure_enums_have_no_space(enums=[current_op])
+
+        due to changes in EnumProperty defintion "laws" individual enum identifiers must not
+        contain spaces. This function takes a list of enums that the node currently holds, and 
+        makes sure the stored enum has no spaces.
+        """
+        for enum_property in enums:
+            current_value = getattr(self, enum_property)
+            if " " in current_value:
+                with self.sv_throttle_tree_update():        
+                    setattr(self, enum_property, data_structure.no_space(current_value))
+
+
+    def does_support_draft_mode(self):
+        """
+        Nodes that either store separate property values
+        for draft mode, or perform another version of
+        algorithm in draft mode, should return True here.
+        """
+        return False
+
+    def on_draft_mode_changed(self, new_draft_mode):
+        """
+        This is triggered when Draft mode of the tree is toggled.
+        Nodes should not usually override this, but may override
+        sv_draft_mode_changed() instead.
+        """
+        if self.does_support_draft_mode():
+            if new_draft_mode == True:
+                with self.sv_throttle_tree_update():
+                    if not self.was_in_draft_mode():
+                        # Copy values from standard properties
+                        # to draft mode ones, when the node enters the
+                        # draft mode first time.
+                        for prop_name, draft_prop_name in self.draft_properties_mapping.items():
+                            setattr(self, draft_prop_name, getattr(self, prop_name))
+                    self['_was_in_draft_mode'] = True
+        self.sv_draft_mode_changed(new_draft_mode)
+
+    def sv_draft_mode_changed(self, new_draft_mode):
+        """
+        This is triggered when Draft mode of the tree is toggled.
+        Nodes may override this if they need to do something specific
+        on this event.
+        """
+        pass
+
+    def was_in_draft_mode(self):
+        """
+        Whether this instance of the node ever has been in Draft mode.
+        Nodes should not usually override this.
+        """
+        return self.get('_was_in_draft_mode', False)
 
     def sv_throttle_tree_update(self):
         return throttle_tree_update(self)

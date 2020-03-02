@@ -65,13 +65,23 @@ class SvSocketCommon:
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
 
+    def get_prop_name(self):
+        if self.node and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
+            prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
+            if prop_name_draft:
+                return prop_name_draft
+            else:
+                return self.prop_name
+        else:
+            return self.prop_name
+
     @property
     def other(self):
         return get_other_socket(self)
 
     def set_default(self, value):
-        if self.prop_name:
-            setattr(self.node, self.prop_name, value)
+        if self.get_prop_name():
+            setattr(self.node, self.get_prop_name(), value)
 
     @property
     def socket_id(self):
@@ -195,14 +205,14 @@ class SvSocketCommon:
                     return
             elif node.bl_idname in {'SvSNFunctor'} and not self.is_output:
                 if not self.is_linked:
-                    layout.prop(node, self.prop_name, text=self.name)
+                    layout.prop(node, self.get_prop_name(), text=self.name)
                     return
 
         if self.is_linked:  # linked INPUT or OUTPUT
             t = text
             if not self.is_output:
-                if self.prop_name:
-                    prop = node.rna_type.properties.get(self.prop_name, None)
+                if self.get_prop_name():
+                    prop = node.rna_type.properties.get(self.get_prop_name(), None)
                     t = prop.name if prop else text
             info_text = t + '. ' + SvGetSocketInfo(self)
             info_text += self.extra_info
@@ -212,8 +222,8 @@ class SvSocketCommon:
             layout.label(text=text)
 
         else:  # unlinked INPUT
-            if self.prop_name:  # has property
-                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.prop_name)
+            if self.get_prop_name():  # has property
+                self.draw_expander_template(context, layout, prop_origin=node, prop_name=self.get_prop_name())
 
             elif self.use_prop:  # no property but use default prop
                 self.draw_expander_template(context, layout, prop_origin=self)
@@ -360,8 +370,8 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
     use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": socket.prop_name}
+        if self.get_prop_name():
+            return {"prop_name": socket.get_prop_name()}
         elif self.use_prop:
             return {"use_prop": True,
                     "prop": self.prop[:]}
@@ -373,8 +383,8 @@ class SvVerticesSocket(NodeSocket, SvSocketCommon):
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+        if self.get_prop_name():
+            return [[getattr(self.node, self.get_prop_name())[:]]]
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
@@ -392,8 +402,8 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
     use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": socket.prop_name}
+        if self.get_prop_name():
+            return {"prop_name": socket.get_prop_name()}
         elif self.use_prop:
             return {"use_prop": True,
                     "prop": self.prop[:]}
@@ -405,8 +415,8 @@ class SvQuaternionSocket(NodeSocket, SvSocketCommon):
             source_data = SvGetSocket(self, deepcopy = True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+        if self.get_prop_name():
+            return [[getattr(self.node, self.get_prop_name())[:]]]
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
@@ -424,8 +434,8 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
     use_prop: BoolProperty(default=False)
 
     def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": socket.prop_name}
+        if self.get_prop_name():
+            return {"prop_name": socket.get_prop_name()}
         elif self.use_prop:
             return {"use_prop": True,
                     "prop": self.prop[:]}
@@ -436,8 +446,8 @@ class SvColorSocket(NodeSocket, SvSocketCommon):
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
 
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+        if self.get_prop_name():
+            return [[getattr(self.node, self.get_prop_name())[:]]]
         elif self.use_prop:
             return [[self.prop[:]]]
         elif default is sentinel:
@@ -488,8 +498,8 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
     prop_index: IntProperty()
 
     def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": self.prop_name}
+        if self.get_prop_name():
+            return {"prop_name": self.get_prop_name()}
         elif self.prop_type:
             return {"prop_type": self.prop_type,
                     "prop_index": self.prop_index}
@@ -502,13 +512,13 @@ class SvStringsSocket(NodeSocket, SvSocketCommon):
 
         if self.is_linked and not self.is_output:
             return self.convert_data(SvGetSocket(self, deepcopy), implicit_conversions)
-        elif self.prop_name:
+        elif self.get_prop_name():
             # to deal with subtype ANGLE, this solution should be considered temporary...
-            _, prop_dict = getattr(self.node.rna_type, self.prop_name, (None, {}))
+            _, prop_dict = getattr(self.node.rna_type, self.get_prop_name(), (None, {}))
             subtype = prop_dict.get("subtype", "")
             if subtype == "ANGLE":
-                return [[math.degrees(getattr(self.node, self.prop_name))]]
-            return [[getattr(self.node, self.prop_name)]]
+                return [[math.degrees(getattr(self.node, self.get_prop_name()))]]
+            return [[getattr(self.node, self.get_prop_name())]]
         elif self.prop_type:
             return [[getattr(self.node, self.prop_type)[self.prop_index]]]
         elif default is not sentinel:
@@ -523,8 +533,8 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
     bl_label = "Dictionary Socket"
 
     def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": self.prop_name}
+        if self.get_prop_name():
+            return {"prop_name": self.get_prop_name()}
         else:
             return {}
 
@@ -533,8 +543,8 @@ class SvDictionarySocket(NodeSocket, SvSocketCommon):
             source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
             return self.convert_data(source_data, implicit_conversions)
 
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+        if self.get_prop_name():
+            return [[getattr(self.node, self.get_prop_name())[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:
@@ -562,8 +572,8 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
             self.dynamic_type = self.bl_idname
 
     def get_prop_data(self):
-        if self.prop_name:
-            return {"prop_name": self.prop_name}
+        if self.get_prop_name():
+            return {"prop_name": self.get_prop_name()}
         else:
             return {}
 
@@ -571,8 +581,8 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
         if self.is_linked and not self.is_output:
             return SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
 
-        if self.prop_name:
-            return [[getattr(self.node, self.prop_name)[:]]]
+        if self.get_prop_name():
+            return [[getattr(self.node, self.get_prop_name())[:]]]
         elif default is sentinel:
             raise SvNoDataError(self)
         else:

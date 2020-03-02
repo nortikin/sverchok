@@ -21,6 +21,7 @@ import itertools
 import time
 import ast
 import copy
+from itertools import zip_longest
 import bpy
 from mathutils import Vector, Matrix
 import numpy as np
@@ -180,6 +181,24 @@ def cycle_for_length(lst, count):
         result.append(lst[i % n])
     return result
 
+def repeat_last_for_length(lst, count):
+    """
+    Repeat last item of the list enough times
+    for result's length to be equal to `count`.
+
+    repeat_last_for_length(None, n) = None
+    repeat_last_for_length([], n) = []
+    repeat_last_for_length([1,2], 4) = [1, 2, 2, 2]
+    """
+    if not lst or len(lst) >= count:
+        return lst
+    n = len(lst)
+    x = lst[-1]
+    result = lst[:]
+    for i in range(count - n):
+        result.append(x)
+    return result
+
 def sv_zip(*iterables):
     """zip('ABCD', 'xy') --> Ax By
     like standard zip but list instead of tuple
@@ -243,9 +262,15 @@ def numpy_match_long_cycle(list_of_arrays):
         difl = maxl - array.shape[0]
         if difl > 0:
             if difl < array.shape[0]:
+
                 array = np.concatenate((array, array[:difl]))
             else:
                 new_part = np.repeat(array, ceil(difl / array.shape[0]), axis=0)
+                if len(array.shape) > 1:
+                    shape = (ceil(difl / array.shape[0]), 1)
+                else:
+                    shape = ceil(difl / array.shape[0])
+                new_part = np.tile(array, shape)
                 array = np.concatenate((array, new_part[:difl]))
         out.append(array)
     return out
@@ -451,6 +476,13 @@ def transpose_list(lst):
     """
     return list(map(list, zip(*lst)))
 
+# from python 3.5 docs https://docs.python.org/3.5/library/itertools.html recipes
+def split_by_count(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
+
 def describe_data_shape(data):
     """
     Describe shape of data in human-readable form.
@@ -467,6 +499,8 @@ def describe_data_shape(data):
     """
     def helper(data):
         if not isinstance(data, (list, tuple)):
+            if isinstance(data, (np.ndarray)):
+                return len(data.shape), type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
             return 0, type(data).__name__
         else:
             result = type(data).__name__
@@ -688,17 +722,20 @@ def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):
 #### random stuff
 ####
 
+def no_space(s):
+    return s.replace(' ', '_')
+
 def enum_item(s):
     """return a list usable in enum property from a list with one value"""
-    return [(i, i, "") for i in s]
+    return [(no_space(i), i, "") for i in s]
 
 def enum_item_4(s):
     """return a 4*n list usable in enum property from a list with one value"""
-    return [(n, n, '', i) for i, n in enumerate(s)]
+    return [(no_space(n), n, '', i) for i, n in enumerate(s)]
 
 def enum_item_5(s, icons):
     """return a 4*n list usable in enum property from a list with one value"""
-    return [(n, n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
+    return [(no_space(n), n, '', icon, i) for i, (n, icon) in enumerate(zip(s, icons))]
 
 
 #####################################################

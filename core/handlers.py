@@ -14,6 +14,22 @@ from sverchok.utils import app_handler_ops
 
 _state = {'frame': None}
 
+pre_running = False
+sv_depsgraph = []
+depsgraph_need = False
+
+def get_sv_depsgraph():
+    global sv_depsgraph
+    global depsgraph_need
+    if not depsgraph_need:
+
+        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+        depsgraph_need = True
+    return sv_depsgraph
+
+def set_sv_depsgraph_need(val):
+    global depsgraph_need
+    depsgraph_need = val
 
 def sverchok_trees():
     for ng in bpy.data.node_groups:
@@ -30,9 +46,9 @@ def has_frame_changed(scene):
 #  app.handlers.undo_post and app.handlers.undo_pre are necessary to help remove stale
 #  draw callbacks (bgl / gpu / blf). F.ex the rightlick menu item "attache viewer draw"
 #  will invoke a number of commands as one event, if you undo that event (ctrl+z) then
-#  there is never a point where the node can ask "am i connected to anything, do i need 
+#  there is never a point where the node can ask "am i connected to anything, do i need
 #  to stop drawing?". When the Undo event causes a node to be removed, its node.free function
-#  is not called. (maybe it should be...) 
+#  is not called. (maybe it should be...)
 #
 #  If at any time the undo system is fixed and does call "node.free()" when a node is removed
 #  after ctrl+z. then these two functions and handlers are no longer needed.
@@ -52,7 +68,7 @@ def sv_handler_undo_post(scene):
     print('called undo post')
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
-    
+
     from sverchok.core import undo_handler_node_count
 
     num_to_test_against = 0
@@ -76,7 +92,7 @@ def sv_update_handler(scene):
     """
     if not has_frame_changed(scene):
         return
-    
+
     for ng in sverchok_trees():
         try:
             # print('sv_update_handler')
@@ -111,19 +127,28 @@ def sv_main_handler(scene):
     """
     Main Sverchok handler for updating node tree upon editor changes
     """
-    for ng in sverchok_trees():
-        # print("Scene handler looking at tree {}".format(ng.name))
+    global pre_running
+    global sv_depsgraph
+    global depsgraph_need
 
+    # when this handler is called from inside another call to this handler we end early
+    # to avoid stack overflow.
+    if pre_running:
+        return
+
+    pre_running = True
+    if depsgraph_need:
+        sv_depsgraph = bpy.context.evaluated_depsgraph_get()
+    for ng in sverchok_trees():
         # if P (sv_process is False, we can skip this node tree.
         if not ng.sv_process:
             continue
 
-
         if ng.has_changed:
             print('depsgraph_update_pre called - ng.has_changed -> ')
-            # print('sv_main_handler')
-            # print("Edit detected in {}".format(ng.name))
+
             ng.process()
+    pre_running = False
 
 
 @persistent

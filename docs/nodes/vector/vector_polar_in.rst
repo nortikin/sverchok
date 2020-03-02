@@ -13,8 +13,10 @@ Inputs & Parameters
 
 All parameters except for ``Coordinates`` and ``Angles mode`` can be specified using corresponding inputs.
 
+The node will accept regular lists or lists of flat NumPy arrays
+
 +-----------------+---------------+-------------+----------------------------------------------------+
-| Parameter       | Type          | Default     | Description                                        |  
+| Parameter       | Type          | Default     | Description                                        |
 +=================+===============+=============+====================================================+
 | **Coordinates** | Cylindrical   | Cylindrical | Which coordinates system to use.                   |
 |                 | or Spherical  |             |                                                    |
@@ -32,6 +34,13 @@ All parameters except for ``Coordinates`` and ``Angles mode`` can be specified u
 | **theta**       | Float         | 0.0         | Theta coordinate. This input is used only for      |
 |                 |               |             | spherical coordinates.                             |
 +-----------------+---------------+-------------+----------------------------------------------------+
+
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes node faster)
 
 Outputs
 -------
@@ -57,4 +66,3 @@ Helix:
 With spherical coordinates, you can easily generate complex forms:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5840984/2e5bd24c-a1bb-11e4-97b3-99864881fa69.png
-

@@ -9,7 +9,7 @@ import bpy
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode
+from sverchok.data_structure import updateNode, no_space
 from sverchok.utils.geom_2d.merge_mesh import merge_mesh_light
 from sverchok.utils.geom_2d.lin_alg import is_ccw_polygon
 
@@ -57,7 +57,7 @@ class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
         [[self.id_data.links.new(sock, link) for link in links[sock.name]]
                                              for sock in new_socks if sock.name in links]
 
-    alg_mode_items = [(k, k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
+    alg_mode_items = [(no_space(k), k, "", i) for i, k in enumerate(['Sweep line', 'Blender'])]
 
     face_index: bpy.props.BoolProperty(name="Show face mask", update=update_sockets,
                                        description="Show output socket of index face mask")
@@ -92,7 +92,7 @@ class SvMergeMesh2DLite(bpy.types.Node, SverchCustomTreeNode):
             return
         out = []
         for sv_verts, sv_faces in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get()):
-            if self.alg_mode == "Sweep line":
+            if self.alg_mode == "Sweep_line":
                 out.append(merge_mesh_light(sv_verts, sv_faces, self.face_index, self.overlap_number, self.accuracy))
             else:
                 out.append(get_bl_merge_mesh(sv_verts, sv_faces, 1 / 10 ** self.accuracy))

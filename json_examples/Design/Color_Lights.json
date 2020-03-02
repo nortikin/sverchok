@@ -44,8 +44,8 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Line MK2": {
-      "bl_idname": "SvLineNodeMK3",
+    "Line": {
+      "bl_idname": "SvLineNodeMK4",
       "color": [
         0.0,
         0.5,
@@ -55,8 +55,8 @@
       "hide": false,
       "label": "",
       "location": [
-        -440.75177001953125,
-        255.88723754882812
+        -554.4129028320312,
+        287.5152587890625
       ],
       "params": {
         "num": 4,
@@ -224,16 +224,18 @@
       "params": {},
       "width": 140.0
     },
-    "Move": {
-      "bl_idname": "SvMoveNodeMK2",
+    "Move.001": {
+      "bl_idname": "SvMoveNodeMk3",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
-        -166.12974548339844,
-        121.28948974609375
+        -187.34600830078125,
+        119.96371459960938
       ],
-      "params": {},
+      "params": {
+        "strength": 1.0
+      },
       "width": 140.0
     },
     "Plane MK2": {
@@ -299,6 +301,18 @@
   },
   "update_lists": [
     [
+      "Line",
+      0,
+      "Move.001",
+      0
+    ],
+    [
+      "Vector in",
+      0,
+      "Move.001",
+      1
+    ],
+    [
       "List Input",
       0,
       "Color in MK1",
@@ -323,19 +337,7 @@
       0
     ],
     [
-      "Line MK2",
-      0,
-      "Move",
-      0
-    ],
-    [
-      "Vector in",
-      0,
-      "Move",
-      1
-    ],
-    [
-      "Move",
+      "Move.001",
       0,
       "Lamp.001",
       0

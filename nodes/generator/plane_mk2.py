@@ -102,12 +102,28 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         name='N Verts Y', description='Number of vertices along Y',
         default=2, min=2, update=updateNode)
 
+    numx_draft: IntProperty(
+        name='[D] N Verts X', description='Number of vertices along X (draft mode)',
+        default=2, min=2, update=updateNode)
+
+    numy_draft: IntProperty(
+        name='[D] N Verts Y', description='Number of vertices along Y (draft mode)',
+        default=2, min=2, update=updateNode)
+
     stepx: FloatProperty(
         name='Step X', description='Step length X',
         default=1.0, update=updateNode)
 
     stepy: FloatProperty(
         name='Step Y', description='Step length Y',
+        default=1.0, update=updateNode)
+
+    stepx_draft: FloatProperty(
+        name='[D] Step X', description='Step length X (draft mode)',
+        default=1.0, update=updateNode)
+
+    stepy_draft: FloatProperty(
+        name='[D] Step Y', description='Step length Y (draft mode)',
         default=1.0, update=updateNode)
 
     separate: BoolProperty(
@@ -140,6 +156,13 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     syncing: BoolProperty(
         name='Syncing', description='Syncing flag', default=False)
 
+    draft_properties_mapping = dict(
+            numx = 'numx_draft',
+            numy = 'numy_draft',
+            stepx = 'stepx_draft',
+            stepy = 'stepy_draft'
+        )
+
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "Num X").prop_name = 'numx'
         self.inputs.new('SvStringsSocket', "Num Y").prop_name = 'numy'
@@ -165,6 +188,12 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             else:
                 row.prop(self, "linkSizes", icon="UNLINKED", text="")
             row.prop(self, "sizey")
+
+    def draw_label(self):
+        label = self.label or self.name
+        if self.id_data.sv_draft:
+            label = "[D] " + label
+        return label
 
     def process(self):
         if not any(s.is_linked for s in self.outputs):
@@ -203,6 +232,8 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if outputs['Polygons'].is_linked:
             outputs['Polygons'].sv_set(polys)
 
+    def does_support_draft_mode(self):
+        return True
 
 def register():
     bpy.utils.register_class(SvPlaneNodeMK2)

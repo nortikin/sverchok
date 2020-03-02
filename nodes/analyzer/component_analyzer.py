@@ -75,11 +75,11 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         ('Faces', "Faces", "Faces Operators", 2)
     ]
 
-    edge_modes =        [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(edges_modes_dict.items(),  key=lambda k: k[1][0])]
-    vertex_modes =      [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(vertex_modes_dict.items(), key=lambda k: k[1][0])]
-    face_modes =        [(k, k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(faces_modes_dict.items(),  key=lambda k: k[1][0])]
-    pols_origin_modes = [(k, k, descr, ident) for k, (ident, _, descr) in sorted(pols_origin_modes_dict.items(), key=lambda k: k[1][0])]
-    tangent_modes =     [(k, k, descr, ident) for k, (ident, _, descr) in sorted(tangent_modes_dict.items(), key=lambda k: k[1][0])]
+    edge_modes =        [(k.replace(" ", "_"), k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(edges_modes_dict.items(),  key=lambda k: k[1][0])]
+    vertex_modes =      [(k.replace(" ", "_"), k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(vertex_modes_dict.items(), key=lambda k: k[1][0])]
+    face_modes =        [(k.replace(" ", "_"), k, descr, ident) for k, (ident, _, _, _, _, _, _, descr) in sorted(faces_modes_dict.items(),  key=lambda k: k[1][0])]
+    pols_origin_modes = [(k.replace(" ", "_"), k, descr, ident) for k, (ident, _, descr) in sorted(pols_origin_modes_dict.items(), key=lambda k: k[1][0])]
+    tangent_modes =     [(k.replace(" ", "_"), k, descr, ident) for k, (ident, _, descr) in sorted(tangent_modes_dict.items(), key=lambda k: k[1][0])]
 
     origin_modes = [
         ("Center", "Center", "Median Center", 0),
@@ -103,7 +103,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
     @throttled
     def update_mode(self, context):
         # for mode in self.modes:
-        info = modes_dicts[self.mode][self.actual_mode()]
+        info = modes_dicts[self.mode][self.actual_mode().replace("_", " ")]
 
         input_names = info[1]
         output_socket_type = info[5]
@@ -184,13 +184,13 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
     center_mode: EnumProperty(
         name="Center",
         items=pols_origin_modes[:3],
-        default="Median Center",
+        default="Median_Center",
         update=update_mode)
 
     pols_origin_mode: EnumProperty(
         name="Origin",
         items=pols_origin_modes,
-        default="Median Center",
+        default="Median_Center",
         update=update_mode)
 
     matrix_track: EnumProperty(
@@ -232,7 +232,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "edge_mode", text="")
         elif self.mode == 'Faces':
             layout.prop(self, "face_mode", text="")
-        info = modes_dicts[self.mode][self.actual_mode()]
+        info = modes_dicts[self.mode][self.actual_mode().replace("_", " ")]
         local_ops = info[2]
         out_ops = info[3]
 
@@ -255,7 +255,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.mode == 'Faces':
             layout.prop_menu_enum(self, "face_mode", text=self.face_mode)
 
-        info = modes_dicts[self.mode][self.actual_mode()]
+        info = modes_dicts[self.mode][self.actual_mode().replace("_", " ")]
         local_ops = info[2]
         out_ops = info[3]
         for option in local_ops:
@@ -270,15 +270,15 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'wrap')
 
     def sv_init(self, context):
-        inew = self.inputs.new
-        inew('SvVerticesSocket', "Vertices")
-        inew('SvStringsSocket', "Edges")
-        inew('SvStringsSocket', "Faces")
+        new_input = self.inputs.new
+        new_input('SvVerticesSocket', "Vertices")
+        new_input('SvStringsSocket', "Edges")
+        new_input('SvStringsSocket', "Faces")
 
-        onew = self.outputs.new
-        onew('SvStringsSocket', "Vals")
-        onew('SvVerticesSocket', "Faces")
-        onew('SvVerticesSocket', "Mask")
+        new_output = self.outputs.new
+        new_output('SvStringsSocket', "Vals")
+        new_output('SvVerticesSocket', "Faces")
+        new_output('SvVerticesSocket', "Mask")
 
         self.update_mode(context)
 
@@ -296,7 +296,7 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(output.is_linked for output in self.outputs):
             return
         modes_dict = modes_dicts[self.mode]
-        component_mode = self.actual_mode()
+        component_mode = self.actual_mode().replace("_", " ")
         func_inputs, local_ops, output_ops, func, output_sockets = modes_dict[component_mode][1:6]
         params = []
         if "v" in func_inputs:

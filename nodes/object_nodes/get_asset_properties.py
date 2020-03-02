@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, enum_item as e)
+from sverchok.data_structure import (updateNode, no_space, enum_item as e)
 
 # class SvGenericCallbackWithParams() mixin  <- refresh
 
@@ -86,7 +86,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             self.frame_collection_name.add().name = str(idx) + ' | ' + str(f.frame_number)
 
         # updateNode(self, context)
-        if self.gp_selected_frame_mode == 'active frame':
+        if self.gp_selected_frame_mode == 'active_frame':
             if len(self.inputs) == 0:
                 self.inputs.new("SvStringsSocket", 'frame#')
         else:
@@ -104,7 +104,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
          'movieclips', 'node_groups', 'particles', 'scenes', 'screens', 'shape_keys',
          'sounds', 'speakers', 'texts', 'textures', 'worlds', 'objects']
     T = ['MESH', 'CURVE', 'SURFACE', 'META', 'FONT', 'ARMATURE', 'GPENCIL',
-         'LATTICE', 'EMPTY', 'CAMERA', 'LAMP', 'SPEAKER']
+         'LATTICE', 'EMPTY', 'CAMERA', 'LIGHT', 'SPEAKER']
 
     Mode: EnumProperty(name="getmodes", default="objects", items=e(M), update=updateNode)
     Type: EnumProperty(name="getmodes", default="MESH", items=e(T), update=pre_updateNode)
@@ -120,10 +120,10 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
     gp_frame_override: bpy.props.IntProperty(default=1, update=updateNode)
     gp_stroke_idx: bpy.props.IntProperty(update=updateNode)
 
-    gp_frame_mode_options = [(k, k, '', i) for i, k in enumerate(["pick frame", "active frame"])]
+    gp_frame_mode_options = [(no_space(k), k, '', i) for i, k in enumerate(["pick frame", "active frame"])]
     gp_selected_frame_mode: bpy.props.EnumProperty(
         items=gp_frame_mode_options, description="offers choice between current frame or available frames",
-        default="pick frame", update=frame_updateNode
+        default="pick_frame", update=frame_updateNode
     )
     gp_frame_pick: bpy.props.StringProperty(update=frame_updateNode)
     gp_pass_points: bpy.props.BoolProperty(default=True, update=updateNode)
@@ -149,7 +149,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'gp_selected_frame_mode', expand=True)
         gp_layer = bpy.data.grease_pencils[self.gp_name].layers[self.gp_layer]
         frame_data = None
-        if self.gp_selected_frame_mode == 'active frame':
+        if self.gp_selected_frame_mode == 'active_frame':
             frame_data = gp_layer.active_frame
         else:
             # maybe display uilist with frame_index and frame_nmber.
@@ -215,7 +215,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
             # candidate for refactor
             if self.gp_name and self.gp_layer:
                 GP_and_layer = data_list[self.gp_name].layers[self.gp_layer]
-                if self.gp_selected_frame_mode == 'active frame':
+                if self.gp_selected_frame_mode == 'active_frame':
                     if len(self.inputs) > 0 and self.inputs[0].is_linked:
 
                         frame_number = self.inputs[0].sv_get()[0][0]

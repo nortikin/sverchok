@@ -7,7 +7,7 @@ from sverchok.utils.sv_IO_panel_tools import import_tree
 class ImportSingleSimpleNode(EmptyTreeTestCase):
 
     def test_box_import(self):
-        node = create_node("SvBoxNode", self.tree.name)
+        node = create_node("SvBoxNodeMk2", self.tree.name)
         node.Divx = 1
         node.Divy = 3
         node.Divz = 4
@@ -48,4 +48,3 @@ class ImportSingleSimpleNode(EmptyTreeTestCase):
         node.torus_sT = 1
 
         self.assert_node_equals_file(node, "Torus", "torus.json")
-
