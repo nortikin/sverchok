@@ -175,15 +175,14 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         width = self.terminal_width * 15
         height = self.num_rows * 32
 
+        x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
         verts = process_grid_for_shader(grid, loc=(x, y))
         uvs = process_uvs_for_shader(self)
         
-        x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
         batch, shader = generate_batch_shader(self, (x, y, width, height, (verts, uvs)))
 
         dims = (width, height)
-        loc = (x, y)
-        config.loc = loc
+        config.loc = (x, y)
         config.batch = batch
         config.shader = shader
 
