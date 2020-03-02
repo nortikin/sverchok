@@ -23,11 +23,46 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL2
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 
-
-# demo_text = inspect.getsource(tri_grid)
-
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
+
+
+def find_longest_linelength(lines):
+    return len(max(lines, key=len))
+
+
+def ensure_line_padding(text, filler=" "):
+    """ expects a single string, with newlines """
+    lines = text.split('\n')
+    longest_line = find_longest_linelength(lines)
+    
+    new_lines = []
+    new_line = new_lines.append
+    for line in lines:
+        new_line(line.ljust(longest_line, filler))
+    
+    return new_lines, longest_line
+        
+
+def text_decompose(content):
+    """
+    input: 
+        expects to receive a newline separated string, to indicate multiline text
+        if anything else is received a "no valid text found..." message is passed.
+    return:
+        return_str : a a list of strings, padded with " " to match the longest line
+        dims       : 1. number of lines high, 
+                     2. length of longest line (its char count)
+    """
+    return_str = ""
+    if isinstance(content, str):
+        return_str, width = ensure_line_padding(content)
+    else:
+        return_str, width = ensure_line_padding("no valid text found\nfeed it multiline\ntext")
+
+    dims = len(return_str), width
+    return return_str, dims
+
 
 def terminal_text_to_uv(lines):
     fnt = get_lookup_dict(r"C:\Users\zeffi\Desktop\GITHUB\sverchok\utils\modules\bitmap_font\consolas.fnt") 
@@ -117,37 +152,26 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         """
         this function does not work correctly :)
         """
+        import itertools
         with self.sv_throttle_tree_update():
 
-            # text = self.inputs[0].sv_get()[0]
-            # if len(text) == 1:
-            #     self.terminal_text = text[0]
-            # else:
-            #     text = text[0]
-            #     if len(text):
-            #         self.terminal_text = "\n".join(i[0] for i in text)
-            #     else:
-            #         print("wtf..")
+            text = ""
+            socket_data = self.inputs[0].sv_get()
+            print(socket_data)
 
-            lines = self.terminal_text.split()
+            if not socket_data:
+                return
 
-            if len(lines) == 0:
-                pass
-            elif len(lines) == 1:
-                self.terminal_width = len(lines[0])
-                self.num_rows = 1
-            else:
-                # splitting the terminal text results in some number of lines
-                # if all lines are the same length, cool. 
-                # if there is one (or more) longest line, then all shorter lines are  
-                # right-padded with empty space until all match length
-                longest = max(len(line)for line in lines)
-                new_lines = []
-                for line in lines:
-                    new_lines.append(line.ljust(longest))
-                self.terminal_text = '\n'.join(new_lines)
-                self.num_rows = len(lines)
-                self.terminal_width = longest
+            merged_socket_data = list(itertools.chain.from_iterable(socket_data))
+            if len(merged_socket_data):
+                if all((isinstance(i, list) and len(i) == 1) for i in merged_socket_data):
+                    merged_socket_data = "\n".join(item[0] for item in merged_socket_data)
+            
+            print(merged_socket_data.__repr__())
+            print("becomes")
+            print(merged_socket_data)
+
+
 
         if update:
             updateNode(self, None)
@@ -164,10 +188,10 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not image or image.gl_load():
             raise Exception()
 
-        if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
-            return
+        # if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
+        #     return
 
-        # self.terminal_text_to_config()
+        self.terminal_text_to_config()
 
         config = lambda: None
         grid = self.prepare_for_grid()
