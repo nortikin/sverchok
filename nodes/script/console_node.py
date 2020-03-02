@@ -26,6 +26,13 @@ from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_cons
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
 
+def syntax_highlight_basic(text):
+    enclosures = "{}()[]"
+    kw_common = "^(def|class)\("
+    kw_lazy = ...
+
+    return color_indices
+
 
 def find_longest_linelength(lines):
     return len(max(lines, key=len))
