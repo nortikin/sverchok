@@ -9,7 +9,6 @@ import numpy as np
 from mathutils import Matrix
 
 from sverchok.settings import get_params
-from sverchok.utils.geom import grid
 
 # pylint: disable=c0111
 # pylint: disable=c0103

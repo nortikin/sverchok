@@ -60,14 +60,14 @@ def text_decompose(content):
     else:
         return_str, width = ensure_line_padding("no valid text found\nfeed it multiline\ntext")
 
-    dims = len(return_str), width
+    dims = width, len(return_str)
     return return_str, dims
 
 
 def terminal_text_to_uv(lines):
     fnt = get_lookup_dict(r"C:\Users\zeffi\Desktop\GITHUB\sverchok\utils\modules\bitmap_font\consolas.fnt") 
     uvs = []
-    for line in lines.split():
+    for line in lines.split("\n"):
         uvs.extend(letters_to_uv(line, fnt))
     return uvs
 
@@ -126,7 +126,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         ...
 
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1, max=140) #, update=updateNode)
-    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=10, max=140) #, update=updateNode)
+    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2, max=140) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
@@ -164,9 +164,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
                     print(socket_data)
-                    multiline, (chars_y, chars_x) = text_decompose('\n'.join(socket_data))
+                    multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data))
+                    for l in multiline:
+                        print(l + '|')
                     valid_multiline = '\n'.join(multiline)
-                    print(valid_multiline, chars_y, chars_x)
+                    print(valid_multiline)
+                    print(chars_y, chars_x)
                     self.terminal_text = valid_multiline
                     self.num_rows = chars_y
                     self.terminal_width = chars_x
