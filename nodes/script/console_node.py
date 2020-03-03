@@ -26,6 +26,13 @@ from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_cons
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
 
+def random_color_chars(self):
+    """
+    returns all values [0,1,2,3,4...]
+    """
+    import random
+    return [random.randint(0, 4) for i in range(self.terminal_width * self.num_rows)]
+
 def syntax_highlight_basic(text):
     """
     this uses the built in lexer/tokenizer in python to identify part of code
@@ -206,7 +213,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        syntax_highlight_basic(self.terminal_text)
+        # syntax_highlight_basic(self.terminal_text)
+        random_color_chars(self)
 
         config = lambda: None
         grid = self.prepare_for_grid()
