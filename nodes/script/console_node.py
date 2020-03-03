@@ -27,6 +27,10 @@ from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_cons
 grid_data = {}
 
 def syntax_highlight_basic(text):
+    """
+    this uses the built in lexer/tokenizer in python to identify part of code
+    will return a meaningful lookuptable for index colours per character
+    """
     import tokenize
     import io
 
@@ -175,13 +179,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             if len(socket_data) == 1:
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
-                    print(socket_data)
+                    # print(socket_data)
                     multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data))
-                    for l in multiline:
-                        print(l + '|')
+                    # for l in multiline:
+                    #     print(l + '|')
                     valid_multiline = '\n'.join(multiline)
-                    print(valid_multiline)
-                    print(chars_y, chars_x)
+                    # print(valid_multiline)
+                    # print(chars_y, chars_x)
                     self.terminal_text = valid_multiline
                     self.num_rows = chars_y
                     self.terminal_width = chars_x
