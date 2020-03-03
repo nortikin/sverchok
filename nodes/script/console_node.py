@@ -167,9 +167,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         layout.prop(self, "char_image")
 
     def terminal_text_to_config(self, update=False):
-        """
-        this function does not work correctly :)
-        """
 
         with self.sv_throttle_tree_update():
 
@@ -179,13 +176,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             if len(socket_data) == 1:
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
-                    # print(socket_data)
+
                     multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data))
-                    # for l in multiline:
-                    #     print(l + '|')
                     valid_multiline = '\n'.join(multiline)
-                    # print(valid_multiline)
-                    # print(chars_y, chars_x)
                     self.terminal_text = valid_multiline
                     self.num_rows = chars_y
                     self.terminal_width = chars_x
