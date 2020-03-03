@@ -22,7 +22,7 @@ from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.geom import multiply_vectors
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect_np, fullList, updateNode
+from sverchok.data_structure import dataCorrect_np, fullList, numpy_full_list, updateNode
 
 
 def set_bevel_object(node, cu, obj_index):
@@ -71,19 +71,13 @@ def live_curve(obj_index, node, verts, radii, twist):
         polyline.points.add(len(VERTS)-1)
         polyline.points.foreach_set('co', full_flat)
 
-        if RADII:
-            if len(VERTS) < len(RADII):
-                RADII = RADII[:len(VERTS)]
-            elif len(VERTS) > len(RADII):
-                fullList(RADII, len(VERTS))
-            polyline.points.foreach_set('radius', RADII)
+        if len(RADII) > 0:
+            rad = numpy_full_list(RADII, len(VERTS))
+            polyline.points.foreach_set('radius', rad)
 
-        if TWIST:
-            if len(VERTS) < len(TWIST):
-                TWIST = TWIST[:len(VERTS)]
-            elif len(VERTS) > len(TWIST):
-                fullList(TWIST, len(VERTS))
-            polyline.points.foreach_set('tilt', TWIST)
+        if  len(TWIST) > 0:
+            twist = numpy_full_list(TWIST, len(VERTS))
+            polyline.points.foreach_set('tilt', twist)
 
         if node.close:
             cu.splines[idx].use_cyclic_u = True
@@ -193,7 +187,6 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         mradii = self.inputs['radii'].sv_get(deepcopy=True)
         mtwist = self.inputs['twist'].sv_get(deepcopy=True)
         mmtrix = get('matrix')
-
         # extend all non empty lists to longest of these
         maxlen = max(len(mverts), len(mmtrix))
         if has_matrices:
