@@ -37,8 +37,8 @@ def syntax_highlight_basic(text):
     with io.StringIO(text) as f:
 
         tokens = tokenize.generate_tokens(f.readline)
-        for token in tokens:
-            print(token)
+        # for token in tokens:
+        #    print(token)
 
 
 def find_longest_linelength(lines):
@@ -148,6 +148,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     texture = {}
     n_id: bpy.props.StringProperty(default='')
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, update=updateNode)
+    show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
 
     # num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
 
@@ -161,7 +162,10 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         self.get_and_set_gl_scale_info()
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "local_scale")
+        row = layout.row(align=True)
+        row.prop(self, "show_me", text="", icon="HIDE_OFF")
+        row.separator()
+        row.prop(self, "local_scale")
     
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "char_image")
@@ -191,7 +195,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         n_id = node_id(self)
         nvBGL2.callback_disable(n_id)
 
-        if not self.char_image:
+        if not self.char_image or not self.show_me:
             return
         
         image = bpy.data.images.get(self.char_image)
