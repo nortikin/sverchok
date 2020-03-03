@@ -29,6 +29,7 @@ from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
+from numpy import ndarray
 
 default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -264,8 +265,6 @@ def get_shader_data(named_shader=None):
     local_vars = vars().copy()
     names = ['vertex_shader', 'fragment_shader', 'draw_fragment']
     return [local_vars.get(name) for name in names]
-
-
 
 class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -569,7 +568,17 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             if len(data[0]) > 1:
                 coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
             else:
+                # print(type(data[0][0]))
                 coords, edge_indices, face_indices = data[0][0], data[1][0], data[2][0]
+
+                coords, edge_indices, face_indices = [d[0].tolist() if type(d[0]) == ndarray else d[0] for d in data[:3]]
+
+                # coords = data[0][0].tolist() if type(data[0][0]) == ndarray else data[0][0]
+                # edge_indices = data[1][0].tolist() if type(data[1][0]) == ndarray else data[1][0]
+                # face_indices = data[2][0].tolist() if type(data[2][0]) == ndarray else data[2][0]
+                # edge_indices,
+                # face_indices = data[0][0], data[1][0], data[2][0]
+                # coords, edge_indices, face_indices = [d[0] for d in data]
             geom = lambda: None
             geom.verts = coords
 
