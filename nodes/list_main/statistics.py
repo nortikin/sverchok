@@ -24,16 +24,16 @@ from sverchok.data_structure import updateNode, match_long_repeat
 from sverchok.utils.modules.statistics_functions import *
 
 functions = {
-    "ALL STATISTICS":     (0, 0),
+    "ALL_STATISTICS":     (0, 0),
     "SUM":                (10, get_sum),
-    "SUM OF SQUARES":     (11, get_sum_of_squares),
-    "SUM OF INVERSIONS":  (12, get_sum_of_inversions),
+    "SUM_OF_SQUARES":     (11, get_sum_of_squares),
+    "SUM_OF_INVERSIONS":  (12, get_sum_of_inversions),
     "PRODUCT":            (13, get_product),
     "AVERAGE":            (14, get_average),
-    "GEOMETRIC MEAN":     (15, get_geometric_mean),
-    "HARMONIC MEAN":      (16, get_harmonic_mean),
-    "STANDARD DEVIATION": (17, get_standard_deviation),
-    "ROOT MEAN SQUARE":   (18, get_root_mean_square),
+    "GEOMETRIC_MEAN":     (15, get_geometric_mean),
+    "HARMONIC_MEAN":      (16, get_harmonic_mean),
+    "STANDARD_DEVIATION": (17, get_standard_deviation),
+    "ROOT_MEAN_SQUARE":   (18, get_root_mean_square),
     "SKEWNESS":           (19, get_skewness),
     "KURTOSIS":           (20, get_kurtosis),
     "MINIMUM":            (21, get_minimum),
@@ -48,7 +48,7 @@ modeItems = [
     ("INT", "Int", "", "", 0),
     ("FLOAT", "Float", "", "", 1)]
 
-functionItems = [(k, k.title(), "", "", s[0]) for k, s in sorted(functions.items(), key=lambda k: k[1][0])]
+functionItems = [(k, k.replace("_", " ").title(), "", "", s[0]) for k, s in sorted(functions.items(), key=lambda k: k[1][0])]
 
 
 class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
@@ -148,7 +148,7 @@ class SvListStatisticsNode(bpy.types.Node, SverchCustomTreeNode):
         if self.mode == "INT":
             input_P = list(map(lambda x: int(x), input_P))
 
-        if self.function == "ALL STATISTICS":
+        if self.function == "ALL_STATISTICS":
             functionNames = [fn[0] for fn in functionItems[1:]]
         else:
             functionNames = [self.function]
