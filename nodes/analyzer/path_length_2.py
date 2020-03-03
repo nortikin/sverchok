@@ -23,7 +23,6 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 import numpy as np
 
-
 def edges_aux(vertices):
     '''create auxiliary edges array '''
     v_len = [len(v) for v in vertices]
@@ -32,7 +31,6 @@ def edges_aux(vertices):
     np_edges = np.array([np_in, np_in + 1]).T
 
     return [np_edges]
-
 
 def edges_length(meshes, need_total=False, need_cumsum=False, need_cumsum1=False, as_numpy=False):
     '''calculate edges length '''
@@ -62,9 +60,6 @@ def edges_length(meshes, need_total=False, need_cumsum=False, need_cumsum1=False
         else:
             cumsum = None
 
-        print(need_cumsum1)
-        print(total_length is not None)
-        print(cumsum is not None)
         if need_cumsum1 and total_length is not None and cumsum is not None:
             cumsum_1 = cumsum / total_length
         else:
@@ -85,8 +80,6 @@ def edges_length(meshes, need_total=False, need_cumsum=False, need_cumsum1=False
         cumsum_1_out.append(cumsum_1)
 
     return lengths_out, cumsum_out, cumsum_1_out, total_lengths_out
-
-
 
 class SvPathLengthMk2Node(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -145,6 +138,40 @@ class SvPathLengthMk2Node(bpy.types.Node, SverchCustomTreeNode):
         self.outputs['TotalLength'].sv_set(total_lengths_out)
         self.outputs['CumulativeSum'].sv_set(cumsum_out)
         self.outputs['CumulativeSum1'].sv_set(cumsum_1_out)
+
+    def migrate_links_from(self, old_node, operator):
+        if old_node.bl_idname != 'SvPathLengthNode':
+            return
+        tree = self.id_data
+
+        old_in_links = [link for link in tree.links if link.to_node == old_node]
+        old_out_links = [link for link in tree.links if link.from_node == old_node]
+
+        for old_link in old_in_links:
+            new_target_socket_name = operator.get_new_input_name(old_link.to_socket.name)
+            if new_target_socket_name in self.inputs:
+                new_target_socket = self.inputs[new_target_socket_name]
+                new_link = tree.links.new(old_link.from_socket, new_target_socket)
+            else:
+                self.debug("New node %s has no input named %s, skipping", self.name, new_target_socket_name)
+            tree.links.remove(old_link)
+
+        for old_link in old_out_links:
+            if old_node.segment:
+                new_source_socket_name = 'SegmentLength'
+            else:
+                new_source_socket_name = 'TotalLength'
+
+            # We have to remove old link before creating new one
+            # Blender would not allow two links pointing to the same target socket
+            old_target_socket = old_link.to_socket
+            tree.links.remove(old_link)
+            if new_source_socket_name in self.outputs:
+                new_source_socket = self.outputs[new_source_socket_name]
+                new_link = tree.links.new(new_source_socket, old_target_socket)
+            else:
+                self.debug("New node %s has no output named %s, skipping", self.name, new_source_socket_name)
+
 
 def register():
     '''register class in Blender'''
