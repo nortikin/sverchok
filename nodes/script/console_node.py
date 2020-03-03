@@ -27,11 +27,14 @@ from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_cons
 grid_data = {}
 
 def syntax_highlight_basic(text):
-    enclosures = "{}()[]"
-    kw_common = "^(def|class)\("
-    kw_lazy = ...
+    import tokenize
+    import io
 
-    return color_indices
+    with io.StringIO(text) as f:
+
+        tokens = tokenize.generate_tokens(f.readline)
+        for token in tokens:
+            print(token)
 
 
 def find_longest_linelength(lines):
@@ -202,6 +205,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
+        syntax_highlight_basic(self.terminal_text)
 
         config = lambda: None
         grid = self.prepare_for_grid()
