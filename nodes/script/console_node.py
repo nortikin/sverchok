@@ -34,8 +34,8 @@ vertex_shader = '''
     in vec2 pos;
     in int lexer;
 
-    out vec2 texCoord_interp;
     out int v_lexer;
+    out vec2 texCoord_interp;
 
     void main()
     {
@@ -173,6 +173,7 @@ def process_uvs_for_shader(node):
 def generate_batch_shader(node, args):
     x, y, w, h, data = args
     verts, uv_indices, lexer = data
+    print(len(verts), len(lexer))
 
     # shader = gpu.shader.from_builtin('2D_IMAGE')
     shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
