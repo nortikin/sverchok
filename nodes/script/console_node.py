@@ -140,19 +140,21 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     
     texture = {}
     n_id: bpy.props.StringProperty(default='')
+    local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, update=updateNode)
 
     # num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
 
     def prepare_for_grid(self):
-        return get_console_grid(15, 32, self.terminal_width, self.num_rows)
+        char_width = int(15 * self.local_scale)
+        char_height = int(32 * self.local_scale)
+        return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.get_and_set_gl_scale_info()
 
     def draw_buttons(self, context, layout):
-        # layout.prop(self, "num_chars")
-        pass
+        layout.prop(self, "local_scale")
     
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "char_image")
