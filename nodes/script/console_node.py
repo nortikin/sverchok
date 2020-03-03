@@ -26,6 +26,35 @@ from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_cons
 # this data need only be generated once, or at runtime at request (low frequency).
 grid_data = {}
 
+vertex_shader = '''
+    uniform mat4 ModelViewProjectionMatrix;
+
+    in vec2 texCoord;
+    in vec2 pos;
+    out vec2 texCoord_interp;
+    void main()
+    {
+       gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
+       gl_Position.z = 1.0;
+       texCoord_interp = texCoord;
+    }
+'''
+
+fragment_shader = '''
+    in vec2 texCoord_interp;
+    out vec4 fragColor;
+    uniform sampler2D image;
+    uniform bool ColorMode;
+    void main()
+    {
+        if (ColorMode) {
+           fragColor = texture(image, texCoord_interp);
+        } else {
+           fragColor = texture(image, texCoord_interp).rrrr;
+        }
+    }
+'''
+
 def random_color_chars(self):
     """
     returns all values [0,1,2,3,4...]
