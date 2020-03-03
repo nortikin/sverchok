@@ -17,10 +17,10 @@ from bpy.props import (
 
 from mathutils import Vector, Matrix
 from mathutils.geometry import tessellate_polygon as tessellate
+from numpy import ndarray
 
-import sverchok
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import node_id, updateNode, enum_item_4, enum_item_5, match_long_repeat, dataCorrect
+from sverchok.data_structure import node_id, updateNode, enum_item_5, match_long_repeat
 from sverchok.ui.bgl_callback_3dview import callback_disable, callback_enable
 from sverchok.utils.sv_shader_sources import dashed_vertex_shader, dashed_fragment_shader
 from sverchok.utils.sv_batch_primitives import MatrixDraw28
@@ -29,7 +29,7 @@ from sverchok.utils.geom import multiply_vectors_deep
 from sverchok.utils.modules.geom_utils import obtain_normal3 as normal
 from sverchok.utils.context_managers import hard_freeze
 from sverchok.utils.sv_mesh_utils import mesh_join
-from numpy import ndarray
+
 
 default_vertex_shader = '''
     uniform mat4 viewProjectionMatrix;
@@ -221,7 +221,7 @@ def draw_faces_uniform(context, args):
     geom, config = args
 
     if config.draw_gl_wireframe:
-            bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
+        bgl.glPolygonMode(bgl.GL_FRONT_AND_BACK, bgl.GL_LINE)
 
     if config.draw_gl_polygonoffset:
         bgl.glEnable(bgl.GL_POLYGON_OFFSET_FILL)
@@ -568,17 +568,8 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
             if len(data[0]) > 1:
                 coords, edge_indices, face_indices = mesh_join(data[0], data[1], data[2])
             else:
-                # print(type(data[0][0]))
-                coords, edge_indices, face_indices = data[0][0], data[1][0], data[2][0]
-
                 coords, edge_indices, face_indices = [d[0].tolist() if type(d[0]) == ndarray else d[0] for d in data[:3]]
 
-                # coords = data[0][0].tolist() if type(data[0][0]) == ndarray else data[0][0]
-                # edge_indices = data[1][0].tolist() if type(data[1][0]) == ndarray else data[1][0]
-                # face_indices = data[2][0].tolist() if type(data[2][0]) == ndarray else data[2][0]
-                # edge_indices,
-                # face_indices = data[0][0], data[1][0], data[2][0]
-                # coords, edge_indices, face_indices = [d[0] for d in data]
             geom = lambda: None
             geom.verts = coords
 
