@@ -254,13 +254,11 @@ numpy_list_match_modes =  list_match_modes[:3]
 #     ]
 
 def numpy_full_list(array, maxl):
-    # difl = maxl - array.shape[0]
-    try:
-        difl = maxl - array.shape[0]
-    except:
+    if type(array) != np.ndarray:
         array = np.array(array)
-        difl = maxl - array.shape[0]
-    difl = maxl - len(array)
+
+    difl = maxl - array.shape[0]
+
     if difl > 0:
         new_part = np.repeat(array[np.newaxis, -1], difl, axis=0)
         array = np.concatenate((array, new_part))
