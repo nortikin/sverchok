@@ -29,7 +29,7 @@ Analyzers
    normals
    bvh_overlap_polys
    object_insolation
-   path_length
+   path_length_2
    points_inside_mesh
    project_point_to_line
    volume
