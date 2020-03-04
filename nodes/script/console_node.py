@@ -69,7 +69,10 @@ fragment_shader = '''
 
 def random_color_chars(self):
     """
-    returns all values [0,1,2,3,...]
+    returns all values [0,1,2,3,...] as floats.
+    the reason i'm using floats is because i didn't figure out a better way to a single
+    integer per tri-angle, so i am passing a float per vertex, because an int per vertex can not
+    be interpolated for all pixels in the fragment.
     """
     array_size = self.terminal_width * self.num_rows
     ints = np.random.randint(0, 4, size=array_size)
