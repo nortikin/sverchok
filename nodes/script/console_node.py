@@ -53,14 +53,14 @@ fragment_shader = '''
     out vec4 fragColor;
     
     uniform sampler2D image;
-    // uniform bool ColorMode;
+    uniform bool ColorMode;
     
     void main()
     {
         vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
-        int cIndex = int(v_lexer);
-        if (cIndex == 0) {
-            test_tint = vec4(0.9, 0.2, 1.0, 1.0);
+        if (ColorMode) {
+            int cIndex = int(v_lexer);
+            if (cIndex == 0) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
         }
         fragColor = texture(image, texCoord_interp) * test_tint;
         
@@ -146,7 +146,7 @@ def simple_console_xy(context, args):
     config.shader.bind()
     config.shader.uniform_float("ModelViewProjectionMatrix", matrix)
     config.shader.uniform_int("image", 0)
-    # config.shader.uniform_bool("ColorMode", bool(config.color_mode))
+    config.shader.uniform_bool("ColorMode", [bool(config.color_mode)])
     config.batch.draw(config.shader)
 
 def process_grid_for_shader(grid, loc):
