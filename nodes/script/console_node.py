@@ -32,14 +32,14 @@ vertex_shader = '''
 
     in vec2 texCoord;
     in vec2 pos;
-    in int lexer;
+    //in int lexer;
 
-    out int v_lexer;
+    //out int v_lexer;
     out vec2 texCoord_interp;
 
     void main()
     {
-       v_lexer = lexer;
+       //v_lexer = lexer;
        gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
        gl_Position.z = 1.0;
        texCoord_interp = texCoord;
@@ -48,31 +48,18 @@ vertex_shader = '''
 
 fragment_shader = '''
     in vec2 texCoord_interp;
-    in int v_lexer;
+    // in int v_lexer;
 
     out vec4 fragColor;
     
     uniform sampler2D image;
-    uniform bool ColorMode;
+    // uniform bool ColorMode;
     
     void main()
     {
-        vec4 test_color = vec4(1.0, 1.0, 1.0, 1.0);
-        vec4 tint = vec4(0.3, 0.3, 0.3, 1.0);
-        if (ColorMode) {
-           
-           // if (v_lexer == 0){ tint = vec4(0.3, 0.3, 1.0, 1.0); }
-           // if (v_lexer == 1){ tint = vec4(0.7, 0.3, 1.0, 1.0); }
-           // if (v_lexer == 2){ tint = vec4(0.3, 0.7, 1.0, 1.0); }
-           // if (v_lexer == 3){ tint = vec4(0.6, 0.3, 0.5, 1.0); }
-           
-           // fragColor = texture(image, texCoord_interp) * tint;
-           test_color = texture(image, texCoord_interp);
-           fragColor = test_color * tint;
-
-        } else {
-           fragColor = texture(image, texCoord_interp);
-        }
+        // vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
+        fragColor = texture(image, texCoord_interp);
+        
     }
 '''
 
@@ -145,14 +132,15 @@ def terminal_text_to_uv(lines):
 
 def simple_console_xy(context, args):
     image, config = args
-    matrix = bpy.context.region_data.perspective_matrix
+    # matrix = bpy.context.region_data.perspective_matrix
+    matrix = gpu.matrix.get_projection_matrix()
 
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
     config.shader.bind()
     config.shader.uniform_float("ModelViewProjectionMatrix", matrix)
     config.shader.uniform_int("image", 0)
-    config.shader.uniform_bool("ColorMode", bool(config.color_mode))
+    # config.shader.uniform_bool("ColorMode", bool(config.color_mode))
     config.batch.draw(config.shader)
 
 def process_grid_for_shader(grid, loc):
@@ -180,7 +168,7 @@ def generate_batch_shader(node, args):
 
     # shader = gpu.shader.from_builtin('2D_IMAGE')
     shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-    batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
+    batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices}) # , "lexer": lexer})
     return batch, shader
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
