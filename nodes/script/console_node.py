@@ -60,9 +60,9 @@ fragment_shader = '''
         vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
         if (ColorMode) {
             int cIndex = int(v_lexer);
-            if (cIndex == 0) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
+            if (cIndex == 3) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
             if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
-            if (cIndex == 2) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
+            if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
         }
         fragColor = texture(image, texCoord_interp) * test_tint;
         
@@ -91,26 +91,36 @@ def syntax_highlight_basic(node):
     import token
 
     text = node.terminal_text
-
-    # token.tok_name  <--- dict of token-kinds.
-    # NAME
-    # OP
-    # STRING
-    # NUMBER
+    print(token.tok_name) #   <--- dict of token-kinds.
+    # NAME, OP, STRING, NUMBER
 
     array_size = node.terminal_width * node.num_rows
-    ones = np.ones(array_size).reshape((-1, node.terminal_width))
-    print(ones)
+    ones = np.ones(array_size)
 
     with io.StringIO(text) as f:
 
         tokens = tokenize.generate_tokens(f.readline)
         for token in tokens:
+            if not token.string or (token.start == token.end) or token.type in (0, 4, 56, 256):
+                continue
             # 'end', 'exact_type', 'index', 'line', 'start', 'string', 'type'
             # print(token)
             # print(repr(token.line))
             # print(token.string, "[", token.exact_type, token.type, "]")
+            #  start = (line number, 1 indexed) , (char index, 0 indexed)
             print('|start:', token.start, '|end:', token.end, "[", token.exact_type, token.type, "]")
+            current_type = float(token.type)
+            row_start, char_start = token.start[0]-1, token.start[1]
+            row_end, char_end = token.end[0]-1, token.end[1]
+            index1 = (row_start * node.terminal_width) + char_start
+            index2 = (row_end * node.terminal_width) + char_end
+
+            np.put(ones, np.arange(index1, index2), [current_type])
+            
+    # .reshape((-1, node.terminal_width))
+
+    final_ones = ones.reshape((-1, node.terminal_width))
+    return final_ones
 
 
 def find_longest_linelength(lines):
@@ -287,8 +297,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        syntax_highlight_basic(self)
-        lexer = random_color_chars(self)
+        lexer = syntax_highlight_basic(self).repeat(6).tolist()
+        # lexer = random_color_chars(self)
 
         config = lambda: None
         grid = self.prepare_for_grid()
