@@ -12,6 +12,7 @@
     SvLineNodeMK4
     SvSegmentGenerator
     SvPlaneNodeMK2
+    SvPlaneNodeMk3
     SvNGonNode
     SvBoxNodeMk2
     SvCircleNode
