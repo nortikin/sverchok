@@ -69,14 +69,14 @@ fragment_shader = '''
     }
 '''
 
-def random_color_chars(self):
+def random_color_chars(node):
     """
     returns all values [0,1,2,3,...] as floats.
     the reason i'm using floats is because i didn't figure out a better way to a single
     integer per tri-angle, so i am passing a float per vertex, because an int per vertex can not
     be interpolated for all pixels in the fragment.
     """
-    array_size = self.terminal_width * self.num_rows
+    array_size = node.terminal_width * node.num_rows
     ints = np.random.randint(0, 4, size=array_size)
     floats = np.array(ints, dtype='int').repeat(6).tolist()
     return floats
@@ -98,15 +98,19 @@ def syntax_highlight_basic(node):
     # STRING
     # NUMBER
 
+    array_size = node.terminal_width * node.num_rows
+    ones = np.ones(array_size).reshape((-1, node.terminal_width))
+    print(ones)
+
     with io.StringIO(text) as f:
 
         tokens = tokenize.generate_tokens(f.readline)
         for token in tokens:
             # 'end', 'exact_type', 'index', 'line', 'start', 'string', 'type'
             # print(token)
-            print(repr(token.line))
-            print(token.string, "[", token.exact_type, token.type, "]")
-            print(token.line, '|start:', token.start, '|end:', token.end)
+            # print(repr(token.line))
+            # print(token.string, "[", token.exact_type, token.type, "]")
+            print('|start:', token.start, '|end:', token.end, "[", token.exact_type, token.type, "]")
 
 
 def find_longest_linelength(lines):
