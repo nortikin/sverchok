@@ -27,8 +27,7 @@ def edges_aux(vertices):
     '''create auxiliary edges array '''
     v_len = [len(v) for v in vertices]
     v_len_max = max(v_len)
-    np_in = np.arange(v_len_max - 1)
-    np_edges = np.array([np_in, np_in + 1]).T
+    np_edges = np.add.outer(np.arange(v_len_max - 1), [0, 1])
 
     return [np_edges]
 
@@ -87,7 +86,7 @@ class SvPathLengthMk2Node(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Measures the length of a path or the length of its segments
     '''
     bl_idname = 'SvPathLengthMk2Node'
-    bl_label = 'Path Length Mk2'
+    bl_label = 'Path Length'
     sv_icon = 'SV_PATH_LENGTH'
 
     output_numpy : BoolProperty(
