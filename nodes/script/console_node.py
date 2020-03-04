@@ -57,15 +57,18 @@ fragment_shader = '''
     
     void main()
     {
+        vec4 test_color = vec4(1.0, 1.0, 1.0, 1.0);
+        vec4 tint = vec4(0.3, 0.3, 0.3, 1.0);
         if (ColorMode) {
            
-           vec4 tint = vec4(1.0, 1.0, 1.0, 1.0);
-           if (v_lexer == 0){ tint = vec4(0.3, 0.3, 1.0, 1.0); }
-           if (v_lexer == 1){ tint = vec4(0.7, 0.3, 1.0, 1.0); }
-           if (v_lexer == 2){ tint = vec4(0.3, 0.7, 1.0, 1.0); }
-           if (v_lexer == 3){ tint = vec4(0.6, 0.3, 0.5, 1.0); }
+           // if (v_lexer == 0){ tint = vec4(0.3, 0.3, 1.0, 1.0); }
+           // if (v_lexer == 1){ tint = vec4(0.7, 0.3, 1.0, 1.0); }
+           // if (v_lexer == 2){ tint = vec4(0.3, 0.7, 1.0, 1.0); }
+           // if (v_lexer == 3){ tint = vec4(0.6, 0.3, 0.5, 1.0); }
            
-           fragColor = texture(image, texCoord_interp) * tint;
+           // fragColor = texture(image, texCoord_interp) * tint;
+           test_color = texture(image, texCoord_interp);
+           fragColor = test_color * tint;
 
         } else {
            fragColor = texture(image, texCoord_interp);
