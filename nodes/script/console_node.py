@@ -61,6 +61,7 @@ fragment_shader = '''
         if (ColorMode) {
             int cIndex = int(v_lexer);
             if (cIndex == 3) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
+            if (cIndex == 2) { test_tint = vec4(0.9, 0.9, 1.0, 1.0); }
             if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
             if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
         }
