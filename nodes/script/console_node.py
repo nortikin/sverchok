@@ -32,14 +32,14 @@ vertex_shader = '''
 
     in vec2 texCoord;
     in vec2 pos;
-    //in int lexer;
+    in float lexer;
 
-    //out int v_lexer;
+    out float v_lexer;
     out vec2 texCoord_interp;
 
     void main()
     {
-       //v_lexer = lexer;
+       v_lexer = lexer;
        gl_Position = ModelViewProjectionMatrix * vec4(pos.xy, 0.0f, 1.0f);
        gl_Position.z = 1.0;
        texCoord_interp = texCoord;
@@ -47,8 +47,8 @@ vertex_shader = '''
 '''
 
 fragment_shader = '''
+    in float v_lexer;
     in vec2 texCoord_interp;
-    // in int v_lexer;
 
     out vec4 fragColor;
     
@@ -57,8 +57,12 @@ fragment_shader = '''
     
     void main()
     {
-        // vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
-        fragColor = texture(image, texCoord_interp);
+        vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
+        int cIndex = int(v_lexer);
+        if (cIndex == 0) {
+            test_tint = vec4(0.9, 0.2, 1.0, 1.0);
+        }
+        fragColor = texture(image, texCoord_interp) * test_tint;
         
     }
 '''
@@ -68,7 +72,9 @@ def random_color_chars(self):
     returns all values [0,1,2,3,...]
     """
     array_size = self.terminal_width * self.num_rows
-    return np.random.randint(0, 4, size=array_size).repeat(6).tolist()
+    ints = np.random.randint(0, 4, size=array_size)
+    floats = np.array(ints, dtype='int').repeat(6).tolist()
+    return floats
 
 def syntax_highlight_basic(text):
     """
@@ -168,7 +174,7 @@ def generate_batch_shader(node, args):
 
     # shader = gpu.shader.from_builtin('2D_IMAGE')
     shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-    batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices}) # , "lexer": lexer})
+    batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
     return batch, shader
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
