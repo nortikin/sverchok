@@ -91,7 +91,7 @@ def syntax_highlight_basic(node):
     import token
 
     text = node.terminal_text
-    print(token.tok_name) #   <--- dict of token-kinds.
+    # print(token.tok_name) #   <--- dict of token-kinds.
     # NAME, OP, STRING, NUMBER
 
     array_size = node.terminal_width * node.num_rows
@@ -103,12 +103,9 @@ def syntax_highlight_basic(node):
         for token in tokens:
             if not token.string or (token.start == token.end) or token.type in (0, 4, 56, 256):
                 continue
-            # 'end', 'exact_type', 'index', 'line', 'start', 'string', 'type'
             # print(token)
-            # print(repr(token.line))
-            # print(token.string, "[", token.exact_type, token.type, "]")
             #  start = (line number, 1 indexed) , (char index, 0 indexed)
-            print('|start:', token.start, '|end:', token.end, "[", token.exact_type, token.type, "]")
+            # print('|start:', token.start, '|end:', token.end, "[", token.exact_type, token.type, "]")
             current_type = float(token.type)
             row_start, char_start = token.start[0]-1, token.start[1]
             row_end, char_end = token.end[0]-1, token.end[1]
@@ -117,7 +114,6 @@ def syntax_highlight_basic(node):
 
             np.put(ones, np.arange(index1, index2), [current_type])
             
-    # .reshape((-1, node.terminal_width))
 
     final_ones = ones.reshape((-1, node.terminal_width))
     return final_ones
