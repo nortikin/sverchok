@@ -17,26 +17,63 @@ class LoopAttrs:
         self.vertex_colors: np.ndarray = np.array([], np.float32)
 
 
-class VertAttrs(LoopAttrs):
+class VertAttrs(ABC):
     def __init__(self):
-        super().__init__()
+        self.vertex_colors: np.ndarray = np.array([], np.float32)
+
+    @abstractmethod
+    def values_to_loops(self, values: list) -> np.ndarray: ...
 
 
-class EdgeAttrs(VertAttrs):
+class EdgeAttrs():
     def __init__(self):
-        super().__init__()
+        self.vertex_colors: np.ndarray = np.array([], np.float32)
 
 
-class FaceAttrs(EdgeAttrs):
+class FaceAttrs():
     def __init__(self):
-        super().__init__()
+        self.vertex_colors: np.ndarray = np.array([], np.float32)
         self.material_index: np.ndarray = np.array([], np.int32)
 
 
-class ObjectAttrs:
+class ObjectAttrs(ABC):
     def __init__(self):
         self.vertex_colors: np.ndarray = np.array([], np.float32)
         self.material_index: int = 0
+
+    @property
+    @abstractmethod
+    def faces(self) -> 'MeshElements': ...
+
+    @property
+    @abstractmethod
+    def edges(self) -> 'MeshElements': ...
+
+    @property
+    @abstractmethod
+    def verts(self) -> 'MeshElements': ...
+
+    @property
+    @abstractmethod
+    def loops(self) -> 'MeshElements': ...
+
+    def values_to_loops(self, value: Any) -> np.ndarray:
+        return np.repeat(value[np.newaxis], len(self.loops), 0)
+
+    def values_to_faces(self, value: Any) -> np.ndarray:
+        return np.repeat(value, len(self.faces))
+
+    def search_element_with_attr(self, start: str, name: str) -> 'MeshElements':
+        search_order = ['loops', 'verts', 'edges', 'faces', 'mesh']
+        elements = [self.loops, self.verts, self.edges, self.faces, self]
+        for element in elements[search_order.index(start):]:
+            attr_values = getattr(element, name, None)
+            if attr_values is not None:
+                if hasattr(attr_values, '__iter__'):
+                    if len(attr_values):
+                        return element
+                else:
+                    return element
 
 
 class Mesh(ObjectAttrs):
@@ -46,7 +83,7 @@ class Mesh(ObjectAttrs):
         self.name: str = 'Sv mesh'
         self.materials: List[str] = []
 
-        self.mesh_groups: Dict[str, Mesh] = dict()
+        self.groups: Dict[str, MeshGroup] = dict()
 
         self._verts = Verts(self)
         self._edges = Edges(self)
@@ -95,24 +132,6 @@ class Mesh(ObjectAttrs):
         _ = [bm.edges.new([bm_verts[i] for i in e]) for e in self.edges]
         _ = [bm.faces.new([bm_verts[i] for i in f]) for f in self.faces]
 
-    def search_element_with_attr(self, start: str, name: str) -> 'MeshElements':
-        search_order = ['loops', 'verts', 'edges', 'faces', 'mesh']
-        elements = [self.loops, self.verts, self.edges, self.faces, self]
-        for element in elements[search_order.index(start):]:
-            attr_values = getattr(element, name, None)
-            if attr_values is not None:
-                if hasattr(attr_values, '__iter__'):
-                    if len(attr_values):
-                        return element
-                else:
-                    return element
-
-    def values_to_loops(self, value: Any) -> np.ndarray:
-        return np.repeat(value[np.newaxis], len(self.loops), 0)
-
-    def values_to_faces(self, value: Any) -> np.ndarray:
-        return np.repeat(value, len(self.faces))
-
 
 class Iterable(ABC):
 
@@ -154,7 +173,7 @@ class Edges(Iterable, EdgeAttrs):
     def __init__(self, mesh: Mesh):
         super().__init__()
         self.mesh: Mesh = mesh
-        self.ind: np.ndarray = np.ndarray([], np.int32)
+        self.ind: np.ndarray = np.array([], np.int32)
 
     @property
     def _main_attr(self):
@@ -176,11 +195,11 @@ class Faces(Iterable, FaceAttrs):
     def __init__(self, mesh: Mesh):
         super().__init__()
         self.mesh: Mesh = mesh
-        self._ind: np.ndarray = np.array([], np.int32)
+        self._ind: np.ndarray = np.array([], np.int32)  # todo convert to indexes of only first loop
 
     @property
     def _main_attr(self):
-        return [self.mesh.loops[range(*sl)] for sl in self._ind]
+        return [self.mesh.loops[range(*sl)] for sl in self._ind]  # todo too slow
 
     @property
     def ind(self):
@@ -215,6 +234,120 @@ class Loops(Iterable, LoopAttrs):
 
     def values_to_loops(self, values: list) -> np.ndarray:
         return ensure_array_length(values, len(self))
+
+
+class MeshGroup(ObjectAttrs):
+    def __init__(self, mesh):
+        super().__init__()
+        self.name: str = "MG.001"
+        self.mesh: Mesh = mesh
+        self._verts: VertsGroup = VertsGroup(self)
+        self._edges: EdgesGroup = EdgesGroup(self)
+        self._faces: FacesGroup = FacesGroup(self)
+        self._loops: LoopsGroup = LoopsGroup(self)
+
+    @property
+    def verts(self):
+        return self._verts
+
+    @property
+    def edges(self):
+        return self._edges
+
+    @property
+    def faces(self):
+        return self._faces
+
+    @property
+    def loops(self):
+        return self._loops
+
+
+class VertsGroup(VertAttrs, Iterable):
+    def __init__(self, group):
+        super().__init__()
+        self.group: MeshGroup = group
+        self._links: np.ndarray = np.array([], np.int32)
+        self.link_sorter = np.array([], np.int32)
+
+    @property
+    def links(self):
+        return self._links
+
+    @links.setter
+    def links(self, indexes):
+        self._links = indexes
+        self.link_sorter = np.argsort(indexes)
+
+    @property
+    def _main_attr(self):
+        return self.links
+
+    def values_to_loops(self, values: list) -> np.ndarray:
+        values_to_loops_mask = self.link_sorter[np.searchsorted(self.links, self.group.loops.ind, sorter=self.link_sorter)]
+        np.clip(values_to_loops_mask, None, len(values) - 1, out=values_to_loops_mask)
+        return values[values_to_loops_mask]
+
+
+class EdgesGroup(EdgeAttrs, Iterable):
+    def __init__(self, group):
+        super().__init__()
+        self.group: MeshGroup = group
+        self.links: np.ndarray = np.array([], np.int32)
+
+    @property
+    def links(self):
+        return self._links
+
+    @links.setter
+    def links(self, values):
+        self._links = np.unique(values)
+
+    @property
+    def _main_attr(self):
+        return self.links
+
+
+class FacesGroup(FaceAttrs, Iterable):
+    def __init__(self, group):
+        super().__init__()
+        self.group: MeshGroup = group
+        self.links: np.ndarray = np.array([], np.int32)
+
+    @property
+    def links(self):
+        return self._links
+
+    @links.setter
+    def links(self, values):
+        self._links = np.unique(values)
+
+    @property
+    def _main_attr(self):
+        return self.links
+
+
+class LoopsGroup(LoopAttrs, Iterable):
+    def __init__(self, group):
+        super().__init__()
+        self.group: MeshGroup = group
+        self.links: np.ndarray = np.array([], np.int32)
+
+    @property
+    def links(self):
+        return self._links
+
+    @property
+    def ind(self):
+        return self.group.mesh.loops[self.links]
+
+    @links.setter
+    def links(self, values):
+        self._links = np.unique(values)
+
+    @property
+    def _main_attr(self):
+        return self.links
 
 
 MeshElements = Union[Mesh, Faces, Edges, Verts, Loops]

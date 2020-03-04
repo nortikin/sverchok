@@ -13,7 +13,8 @@ import numpy as np
 import sverchok.core.mesh_structure as ms
 
 
-MeshElements = Union[ms.Mesh, ms.Verts, ms.Edges, ms.Faces, ms.Loops]
+MeshElements = Union[ms.Mesh, ms.Verts, ms.Edges, ms.Faces, ms.Loops, ms.MeshGroup, ms.FacesGroup, ms.EdgesGroup,
+                     ms.VertsGroup, ms.LoopsGroup]
 py_to_np_types = {int: np.int32, float: np.float32}
 
 
@@ -107,7 +108,12 @@ def fix_input_data(element: MeshElements, attr_name: str, val: Any) -> Any:
                   ms.Verts: VertsInputCorrector,
                   ms.Edges: EdgesInputCorrector,
                   ms.Faces: FacesInputCorrector,
-                  ms.Loops: LoopsInputCorrector}
+                  ms.Loops: LoopsInputCorrector,
+                  ms.MeshGroup: MeshInputCorrector,
+                  ms.VertsGroup: VertsInputCorrector,
+                  ms.EdgesGroup: EdgesInputCorrector,
+                  ms.FacesGroup: FacesInputCorrector,
+                  ms.LoopsGroup: LoopsInputCorrector}
     corrector = correctors.get(type(element))
     if not corrector:
         return NotImplemented

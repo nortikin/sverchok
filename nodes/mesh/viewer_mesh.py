@@ -232,7 +232,12 @@ def set_vertex_color(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh])
 def get_loop_colors(me: Mesh) -> np.ndarray:
     elements = me.search_element_with_attr('loops', 'vertex_colors')
     if elements:
-        return np.ravel(elements.values_to_loops(elements.vertex_colors))
+        vertex_colors = elements.values_to_loops(elements.vertex_colors)
+        for mg in me.groups.values():
+            mg_elements = mg.search_element_with_attr('loops', 'vertex_colors')
+            if mg_elements:
+                vertex_colors[mg.loops.links] = mg_elements.values_to_loops(mg_elements.vertex_colors)
+        return np.ravel(vertex_colors)
     else:
         return []
 

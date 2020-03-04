@@ -224,6 +224,7 @@
 ## Mesh
     SvMeshIn
     SvViewerMesh
+    SvMeshGroup
 
 ## Number
     SvNumberNode
