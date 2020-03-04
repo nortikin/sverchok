@@ -83,6 +83,9 @@ def syntax_highlight_basic(text):
     """
     import tokenize
     import io
+    import token
+
+    # token.tok_name  <--- dict of token-kinds.
 
     with io.StringIO(text) as f:
 
