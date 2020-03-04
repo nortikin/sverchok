@@ -320,7 +320,7 @@ class DefaultMacros():
         elif term == 'gp +':
             needed_nodes = [
                 ['SvGetAssetProperties', (0.00, 0.00)],
-                ['SvPathLengthNode', (250, 55)],
+                ['SvPathLengthMk2Node', (250, 55)],
                 ['SvScalarMathNodeMK4', (430, 115)],
                 ['Float2IntNode', (600, 50)],
                 ['SvGenNumberRange', (720, 90)],
@@ -336,9 +336,6 @@ class DefaultMacros():
                 n.location = node_location[0] + x, node_location[1] + y
                 made_nodes.append(n)
 
-            # Path legnth node
-            made_nodes[1].segment = False
-
             # ID Selector
             made_nodes[0].Mode = 'grease_pencils'  # the rest must be user driven
             links.new(made_nodes[0].outputs[0], made_nodes[1].inputs[0])
@@ -346,7 +343,7 @@ class DefaultMacros():
             # Scalar Math node
             made_nodes[2].current_op = 'MUL'
             made_nodes[2].y_ = 2.5
-            links.new(made_nodes[1].outputs[0], made_nodes[2].inputs[0])   # snlite-> math
+            links.new(made_nodes[1].outputs[1], made_nodes[2].inputs[0])   # snlite-> math
             links.new(made_nodes[2].outputs[0], made_nodes[3].inputs[0])   # math -> float
 
             # Float2Int node
@@ -372,3 +369,4 @@ class DefaultMacros():
             made_nodes[7]
             links.new(made_nodes[6].outputs[0], made_nodes[7].inputs[0])
             links.new(made_nodes[6].outputs[1], made_nodes[7].inputs[1])
+

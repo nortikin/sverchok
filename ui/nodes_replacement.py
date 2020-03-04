@@ -107,30 +107,9 @@ class SvReplaceNode(bpy.types.Operator):
         if hasattr(new_node, "migrate_props_pre_relink"):
             new_node.migrate_props_pre_relink(old_node)
             
-        # Copy incoming / outgoing links
-        old_in_links = [link for link in tree.links if link.to_node == old_node]
-        old_out_links = [link for link in tree.links if link.from_node == old_node]
-
-        for old_link in old_in_links:
-            new_target_socket_name = self.get_new_input_name(old_link.to_socket.name)
-            if new_target_socket_name in new_node.inputs:
-                new_target_socket = new_node.inputs[new_target_socket_name]
-                new_link = tree.links.new(old_link.from_socket, new_target_socket)
-            else:
-                debug("New node %s has no input named %s, skipping", new_node.name, new_target_socket_name)
-            tree.links.remove(old_link)
-
-        for old_link in old_out_links:
-            new_source_socket_name = self.get_new_output_name(old_link.from_socket.name)
-            # We have to remove old link before creating new one
-            # Blender would not allow two links pointing to the same target socket
-            old_target_socket = old_link.to_socket
-            tree.links.remove(old_link)
-            if new_source_socket_name in new_node.outputs:
-                new_source_socket = new_node.outputs[new_source_socket_name]
-                new_link = tree.links.new(new_source_socket, old_target_socket)
-            else:
-                debug("New node %s has no output named %s, skipping", new_node.name, new_source_socket_name)
+        # remove old links and create new ones
+        if hasattr(new_node, "migrate_links_from"):
+            new_node.migrate_links_from(old_node, self)
 
         if hasattr(new_node, "migrate_from"):
             # Allow new node to copy what generic code could not.

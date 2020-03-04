@@ -60,7 +60,7 @@
     SvDistancePointLineNode
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
-    SvPathLengthNode
+    SvPathLengthMk2Node
     SvOrigins
     GetNormalsNode
     VectorNormalNode
