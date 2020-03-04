@@ -61,6 +61,8 @@ fragment_shader = '''
         if (ColorMode) {
             int cIndex = int(v_lexer);
             if (cIndex == 0) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
+            if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
+            if (cIndex == 2) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
         }
         fragColor = texture(image, texCoord_interp) * test_tint;
         
@@ -79,7 +81,7 @@ def random_color_chars(self):
     floats = np.array(ints, dtype='int').repeat(6).tolist()
     return floats
 
-def syntax_highlight_basic(text):
+def syntax_highlight_basic(node):
     """
     this uses the built in lexer/tokenizer in python to identify part of code
     will return a meaningful lookuptable for index colours per character
@@ -88,13 +90,22 @@ def syntax_highlight_basic(text):
     import io
     import token
 
+    text = node.terminal_text
+
     # token.tok_name  <--- dict of token-kinds.
+    # NAME
+    # OP
+    # STRING
+    # NUMBER
 
     with io.StringIO(text) as f:
 
         tokens = tokenize.generate_tokens(f.readline)
-        # for token in tokens:
-        #    print(token)
+        for token in tokens:
+            # 'end', 'exact_type', 'index', 'line', 'start', 'string', 'type'
+            # print(token)
+            print(token.string, "(", token.exact_type, token.type, ")")
+            print(token.line, '|start:', token.start, '|end:', token.end)
 
 
 def find_longest_linelength(lines):
@@ -271,7 +282,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        # syntax_highlight_basic(self.terminal_text)
+        syntax_highlight_basic(self)
         lexer = random_color_chars(self)
 
         config = lambda: None
