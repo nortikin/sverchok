@@ -104,7 +104,8 @@ def syntax_highlight_basic(node):
         for token in tokens:
             # 'end', 'exact_type', 'index', 'line', 'start', 'string', 'type'
             # print(token)
-            print(token.string, "(", token.exact_type, token.type, ")")
+            print(repr(token.line))
+            print(token.string, "[", token.exact_type, token.type, "]")
             print(token.line, '|start:', token.start, '|end:', token.end)
 
 
