@@ -53,19 +53,16 @@ fragment_shader = '''
     out vec4 fragColor;
     
     uniform sampler2D image;
-    uniform bool ColorMode;
     
     void main()
     {
         vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
-        if (ColorMode) {
-            int cIndex = int(v_lexer);
-            if (cIndex == 3) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
-            if (cIndex == 2) { test_tint = vec4(0.9, 0.9, 1.0, 1.0); }
-            if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
-            if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
-            if (cIndex == 90) { test_tint = vec4(0.7, 0.9, 0.3, 1.0); }
-        }
+        int cIndex = int(v_lexer);
+        if (cIndex == 3) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
+        if (cIndex == 2) { test_tint = vec4(0.9, 0.9, 1.0, 1.0); }
+        if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
+        if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
+        if (cIndex == 90) { test_tint = vec4(0.7, 0.9, 0.3, 1.0); }
         fragColor = texture(image, texCoord_interp) * test_tint;
         
     }
@@ -179,15 +176,16 @@ def terminal_text_to_uv(lines):
 
 def simple_console_xy(context, args):
     image, config = args
-    # matrix = bpy.context.region_data.perspective_matrix
-    matrix = gpu.matrix.get_projection_matrix()
 
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
     config.shader.bind()
-    config.shader.uniform_float("ModelViewProjectionMatrix", matrix)
+    
+    if not config.syntax_mode == "None":
+        matrix = gpu.matrix.get_projection_matrix()
+        config.shader.uniform_float("ModelViewProjectionMatrix", matrix)
+    
     config.shader.uniform_int("image", 0)
-    config.shader.uniform_bool("ColorMode", [bool(config.color_mode)])
     config.batch.draw(config.shader)
 
 def process_grid_for_shader(grid, loc):
@@ -211,11 +209,15 @@ def process_uvs_for_shader(node):
 def generate_batch_shader(node, args):
     x, y, w, h, data = args
     verts, uv_indices, lexer = data
-    print(len(verts), len(lexer))
+    # print(len(verts), len(lexer))
 
-    # shader = gpu.shader.from_builtin('2D_IMAGE')
-    shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
-    batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
+    if node.syntax_mode == "None":
+        shader = gpu.shader.from_builtin('2D_IMAGE')
+        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
+    else:
+        shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
+        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
+    
     return batch, shader
 
 class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
@@ -246,9 +248,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     n_id: bpy.props.StringProperty(default='')
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, update=updateNode)
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
-    color_mode: bpy.props.BoolProperty(default=True, name="show colors", update=updateNode)
+    # color_mode: bpy.props.BoolProperty(default=True, name="show colors", update=updateNode)
 
-    # num_chars: bpy.props.IntProperty(min=2, default=20, update=updateNode)
+    syntax_mode = bpy.props.EnumProperty(
+        items=[(k, k, '', i) for i, k in enumerate(["Code", "f1", "None"])],
+        description="Code (useful code highlighting\nf1 (useful general text highlighting", default="None", update=updateNode
+    )
 
     def prepare_for_grid(self):
         char_width = int(15 * self.local_scale)
@@ -265,7 +270,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row.separator()
         row.prop(self, "local_scale")
         row2 = layout.row(align=True)
-        row2.prop(self, "color_mode", toggle=True)
+        row2.prop(self, "syntax_mode", expand=True)
     
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "char_image")
@@ -306,8 +311,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        lexer = syntax_highlight_basic(self).repeat(6).tolist()
-        # lexer = random_color_chars(self)
+
+        if self.syntax_mode == "Code":
+            lexer = syntax_highlight_basic(self).repeat(6).tolist()
+        elif self.syntax_mode == "f1":
+            lexer = random_color_chars(self)
+        else:
+            lexer = None
 
         config = lambda: None
         grid = self.prepare_for_grid()
@@ -325,7 +335,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         config.loc = (x, y)
         config.batch = batch
         config.shader = shader
-        config.color_mode = self.color_mode
+        config.syntax_mode = self.syntax_mode
 
         draw_data = {
             'tree_name': self.id_data.name[:],
