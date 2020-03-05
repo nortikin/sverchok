@@ -238,8 +238,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         # self.process()
         ...
 
-    num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1, max=140) #, update=updateNode)
-    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2, max=140) #, update=updateNode)
+    num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
+    terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
