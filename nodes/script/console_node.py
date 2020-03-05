@@ -209,7 +209,7 @@ def process_uvs_for_shader(node):
 def generate_batch_shader(node, args):
     x, y, w, h, data = args
     verts, uv_indices, lexer = data
-    # print(len(verts), len(lexer))
+    # print("len(verts)", len(verts), "len(uv_indices)", len(uv_indices))
 
     if node.syntax_mode == "None":
         shader = gpu.shader.from_builtin('2D_IMAGE')
