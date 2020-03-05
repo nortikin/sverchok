@@ -64,6 +64,7 @@ fragment_shader = '''
             if (cIndex == 2) { test_tint = vec4(0.9, 0.9, 1.0, 1.0); }
             if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
             if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
+            if (cIndex == 90) { test_tint = vec4(0.7, 0.9, 0.3, 1.0); }
         }
         fragColor = texture(image, texCoord_interp) * test_tint;
         
@@ -93,7 +94,6 @@ def syntax_highlight_basic(node):
 
     text = node.terminal_text
     # print(token.tok_name) #   <--- dict of token-kinds.
-    # NAME, OP, STRING, NUMBER
 
     array_size = node.terminal_width * node.num_rows
     ones = np.ones(array_size)
@@ -101,13 +101,22 @@ def syntax_highlight_basic(node):
     with io.StringIO(text) as f:
 
         tokens = tokenize.generate_tokens(f.readline)
+
         for token in tokens:
-            if not token.string or (token.start == token.end) or token.type in (0, 4, 56, 256):
+            if token.type in (0, 4, 56, 256):
                 continue
+            if not token.string or (token.start == token.end):
+                continue
+            
+            token_type = token.type
+            if token.type == 1:
+                if token.string in {'print', 'def', 'class', 'break', 'continue', 'yield', 'return', 'repr', 'dir'}:
+                    token_type = 90
+
             # print(token)
             #  start = (line number, 1 indexed) , (char index, 0 indexed)
             # print('|start:', token.start, '|end:', token.end, "[", token.exact_type, token.type, "]")
-            current_type = float(token.type)
+            current_type = float(token_type)
             row_start, char_start = token.start[0]-1, token.start[1]
             row_end, char_end = token.end[0]-1, token.end[1]
             index1 = (row_start * node.terminal_width) + char_start
