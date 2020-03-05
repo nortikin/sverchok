@@ -146,7 +146,7 @@ def ensure_line_padding(text, filler=" "):
     return new_lines, longest_line
         
 
-def text_decompose(content):
+def text_decompose(content, last_n_lines):
     """
     input: 
         expects to receive a newline separated string, to indicate multiline text
@@ -158,6 +158,9 @@ def text_decompose(content):
     """
     return_str = ""
     if isinstance(content, str):
+        if last_n_lines > 0:
+            content = "\n".join(content.split('\n')[-last_n_lines:])
+
         return_str, width = ensure_line_padding(content)
     else:
         return_str, width = ensure_line_padding("no valid text found\nfeed it multiline\ntext")
@@ -250,10 +253,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
     # color_mode: bpy.props.BoolProperty(default=True, name="show colors", update=updateNode)
 
-    syntax_mode = bpy.props.EnumProperty(
+    syntax_mode: bpy.props.EnumProperty(
         items=[(k, k, '', i) for i, k in enumerate(["Code", "f1", "None"])],
         description="Code (useful code highlighting\nf1 (useful general text highlighting", default="None", update=updateNode
     )
+
+    last_n_lines: bpy.props.IntProperty(min=0, name="last n lines", description="show n number of last lines", update=updateNode)
 
     def prepare_for_grid(self):
         char_width = int(15 * self.local_scale)
@@ -271,6 +276,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row.prop(self, "local_scale")
         row2 = layout.row(align=True)
         row2.prop(self, "syntax_mode", expand=True)
+        
+        row3 = layout.row()
+        row3.prop(self, "last_n_lines")
     
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "char_image")
@@ -286,7 +294,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
 
-                    multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data))
+                    multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
                     valid_multiline = '\n'.join(multiline)
                     self.terminal_text = valid_multiline
                     self.num_rows = chars_y
