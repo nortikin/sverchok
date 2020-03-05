@@ -110,8 +110,11 @@ def syntax_highlight_basic(node):
             
             token_type = token.type
             if token.type == 1:
-                if token.string in {'print', 'def', 'class', 'break', 'continue', 'yield', 'return', 'repr', 'dir'}:
+                if token.string in {
+                        'print', 'def', 'class', 'break', 'continue', 'yield', 'return', 
+                        'repr', 'dir', 'if', 'in', 'as', 'out', 'with'}:
                     token_type = 90
+
 
             # print(token)
             #  start = (line number, 1 indexed) , (char index, 0 indexed)
