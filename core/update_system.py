@@ -184,7 +184,16 @@ def separate_nodes(ng, links=None):
             nodes.discard(n)
             node_set_list[-1].add(n)
 
-    return [ns for ns in node_set_list if len(ns) > 1]
+    found_node_sets = [ns for ns in node_set_list if len(ns) > 1]
+    sort_component = 'x'  # ["x", "y", "None"]
+    
+    if sort_component == 'x':
+        print(found_node_sets)
+        find_lowest_coordinate = lambda ns: min(ng.nodes[n].location.x for n in ns)
+        found_node_sets = sorted(found_node_sets, key=find_lowest_coordinate)
+        print(found_node_sets)
+
+    return found_node_sets
 
 def make_tree_from_nodes(node_names, tree, down=True):
     """
