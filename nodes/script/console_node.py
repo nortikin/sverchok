@@ -7,6 +7,7 @@
 
 # pylint: disable=c0103
 
+import os
 import inspect
 import numpy as np
 
@@ -21,10 +22,14 @@ from sverchok.settings import get_params
 from sverchok.data_structure import updateNode, node_id
 
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
+from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 
 # this data need only be generated once, or at runtime at request (low frequency).
+sv_path = os.path.dirname(sv_get_local_path()[0])
+bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
+
 grid_data = {}
 
 vertex_shader = '''
@@ -67,6 +72,12 @@ fragment_shader = '''
         
     }
 '''
+
+def get_font_pydata_location():
+    return os.path.join(bitmap_font_location, 'consolas_0.npy')
+
+def get_font_fnt_location():
+    return os.path.join(bitmap_font_location, 'consolas.fnt')
 
 def random_color_chars(node):
     """
@@ -180,7 +191,7 @@ def text_decompose(content, last_n_lines):
 
 
 def terminal_text_to_uv(lines):
-    fnt = get_lookup_dict(r"C:\Users\zeffi\Desktop\GITHUB\sverchok\utils\modules\bitmap_font\consolas.fnt") 
+    fnt = get_lookup_dict(get_font_fnt_location()) 
     uvs = []
     for line in lines.split("\n"):
         uvs.extend(letters_to_uv(line, fnt))
@@ -188,10 +199,10 @@ def terminal_text_to_uv(lines):
 
 
 def simple_console_xy(context, args):
-    image, config = args
+    texture, config = args
 
     bgl.glActiveTexture(bgl.GL_TEXTURE0)
-    bgl.glBindTexture(bgl.GL_TEXTURE_2D, image.bindcode)
+    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
     config.shader.bind()
     
     if not config.syntax_mode == "None":
@@ -250,9 +261,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         # self.process()
         ...
 
-    def load_pydata(self, filepath):
-        np.load(filepath)
-        pass
 
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
@@ -281,9 +289,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
 
     def get_font_texture(self):
-        if not texture_dict:
-            # filepath = ...
-            pass
+        if not self.texture_dict:
+            filepath = get_font_pydata_location()
+            data = np.load(filepath)
+            total_size = data.size  
+            self.texture_dict['texture'] = bgl.Buffer(bgl.GL_FLOAT, total_size, data.tolist())
+           
+        return self.texture_dict.get('texture')
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
