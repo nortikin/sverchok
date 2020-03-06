@@ -249,6 +249,19 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     Tooltip:  Console for Sverchok node
 
     This node prints the input to the nodeview using a fixedwidth character map.
+
+    at the moment this node expects to find a 256*256 png ( actually, npy ..a numpy array saved to disk in a binary form)
+
+        import os
+        import bpy
+        import numpy as np
+        import bgl
+
+        image = bpy.data.images.get("consolas_0.png")
+        image_array = np.array(image.pixels[:])
+        destination = os.path.join(your_file_path, consolas_0.npy)
+        np.save(destination, image_array)
+
     """
 
     bl_idname = 'SvConsoleNode'
@@ -264,7 +277,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
-    char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
     
     # for now all such nodes will use the same texture.
@@ -273,7 +285,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     n_id: bpy.props.StringProperty(default='')
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, update=updateNode)
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
-    # color_mode: bpy.props.BoolProperty(default=True, name="show colors", update=updateNode)
 
     syntax_mode: bpy.props.EnumProperty(
         items=[(k, k, '', i) for i, k in enumerate(["Code", "f1", "None"])],
@@ -313,15 +324,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row3 = layout.row()
         row3.prop(self, "last_n_lines")
     
-    def draw_buttons_ext(self, context, layout):
-        layout.prop(self, "char_image")
-
     def init_texture(self, width, height):
         clr = bgl.GL_RGBA
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
         texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
-        self.texture_dict['buffer'] = texture
+        # self.texture_dict['buffer'] = texture
 
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
