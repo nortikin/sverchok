@@ -241,6 +241,10 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         # self.process()
         ...
 
+    def load_pydata(self, filepath):
+        np.load(filepath)
+        pass
+
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
