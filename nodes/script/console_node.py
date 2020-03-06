@@ -200,16 +200,15 @@ def terminal_text_to_uv(lines):
 
 def simple_console_xy(context, args):
     texture, config = args
-
-    bgl.glActiveTexture(bgl.GL_TEXTURE0)
-    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture)
-    config.shader.bind()
     
+    act_tex = bgl.Buffer(bgl.GL_INT, 1)
+    bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
+    
+    config.shader.bind()
     if not config.syntax_mode == "None":
         matrix = gpu.matrix.get_projection_matrix()
         config.shader.uniform_float("ModelViewProjectionMatrix", matrix)
-    
-    config.shader.uniform_int("image", 0)
+    config.shader.uniform_int("image", act_tex)
     config.batch.draw(config.shader)
 
 def process_grid_for_shader(grid, loc):
@@ -292,9 +291,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not self.texture_dict:
             filepath = get_font_pydata_location()
             data = np.load(filepath)
-            self.texture_dict['texture'] = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
+            name = bgl.Buffer(bgl.GL_INT, 1)
+            bgl.glGenTextures(1, name)
+            self.texture_dict['texture'] = name[0]
+            self.texture_dict['texture_data'] = data # bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
            
-        return self.texture_dict.get('texture')
+        # return self.texture_dict.get('texture')
 
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
@@ -313,6 +315,23 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "char_image")
+
+    def init_texture(self, width, height):
+        clr = 6407 # 'RGB'
+        texname = self.texture_dict['texture']
+        data = self.texture_dict['texture_data']
+        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
+        self.texture_dict['buffer'] = texture
+
+        bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
+        bgl.glEnable(bgl.GL_TEXTURE_2D)
+        bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
+        bgl.glActiveTexture(bgl.GL_TEXTURE0)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_S, bgl.GL_CLAMP_TO_EDGE)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_WRAP_T, bgl.GL_CLAMP_TO_EDGE)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MAG_FILTER, bgl.GL_LINEAR)
+        bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
+        bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
 
     def terminal_text_to_config(self, update=False):
 
@@ -343,11 +362,21 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        texture = self.get_font_texture()
-        lexer = self.get_lexer()
-
+        """
+            name = bgl.Buffer(bgl.GL_INT, 1)
+            bgl.glGenTextures(1, name)
+            self.texture[n_id] = name[0]
+        """
         config = lambda: None
+        texture = lambda: None
+        texture.texture_dict = self.texture_dict
+
+        self.get_font_texture()
+        self.init_texture(256, 256)
+
+        lexer = self.get_lexer()
         grid = self.prepare_for_grid()
+
         x, y = self.xy_offset
         width = self.terminal_width * 15
         height = self.num_rows * 32
