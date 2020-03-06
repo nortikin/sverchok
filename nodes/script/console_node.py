@@ -317,7 +317,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         layout.prop(self, "char_image")
 
     def init_texture(self, width, height):
-        clr = 6407 # 'RGB'
+        clr = bgl.GL_RGBA
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
         texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
@@ -362,17 +362,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             return
 
         self.terminal_text_to_config()
-        """
-            name = bgl.Buffer(bgl.GL_INT, 1)
-            bgl.glGenTextures(1, name)
-            self.texture[n_id] = name[0]
-        """
+        self.get_font_texture()
+        self.init_texture(256, 256)
+
         config = lambda: None
         texture = lambda: None
         texture.texture_dict = self.texture_dict
-
-        self.get_font_texture()
-        self.init_texture(256, 256)
 
         lexer = self.get_lexer()
         grid = self.prepare_for_grid()
