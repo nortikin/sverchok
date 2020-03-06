@@ -329,7 +329,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
         texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
-        # self.texture_dict['buffer'] = texture
 
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
