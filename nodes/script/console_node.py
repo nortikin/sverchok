@@ -74,7 +74,7 @@ fragment_shader = '''
 '''
 
 def get_font_pydata_location():
-    return os.path.join(bitmap_font_location, 'consolas_0.npy')
+    return os.path.join(bitmap_font_location, 'consolas_0.npz')
 
 def get_font_fnt_location():
     return os.path.join(bitmap_font_location, 'consolas.fnt')
@@ -252,15 +252,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
     at the moment this node expects to find a 256*256 png ( actually, npy ..a numpy array saved to disk in a binary form)
 
-        import os
-        import bpy
-        import numpy as np
-        import bgl
-
-        image = bpy.data.images.get("consolas_0.png")
-        image_array = np.array(image.pixels[:])
-        destination = os.path.join(your_file_path, consolas_0.npy)
-        np.save(destination, image_array)
 
     """
 
@@ -301,7 +292,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def get_font_texture(self):
         if not self.texture_dict:
             filepath = get_font_pydata_location()
-            data = np.load(filepath)
+            # this is a compressed npz, which we can dict lookup.
+            found_data = np.load(filepath)
+            data = found_data['a']
+
+            dsize = data.size
+            data = data.repeat(3).reshape(-1, 3)
+            data = np.concatenate((data, np.ones(dsize)[:,None]),axis=1).flatten()
             name = bgl.Buffer(bgl.GL_INT, 1)
             bgl.glGenTextures(1, name)
             self.texture_dict['texture'] = name[0]
