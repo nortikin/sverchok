@@ -292,8 +292,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not self.texture_dict:
             filepath = get_font_pydata_location()
             data = np.load(filepath)
-            total_size = data.size  
-            self.texture_dict['texture'] = bgl.Buffer(bgl.GL_FLOAT, total_size, data.tolist())
+            self.texture_dict['texture'] = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
            
         return self.texture_dict.get('texture')
 
