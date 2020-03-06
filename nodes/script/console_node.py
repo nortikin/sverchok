@@ -145,6 +145,16 @@ def ensure_line_padding(text, filler=" "):
     
     return new_lines, longest_line
         
+def get_last_n_lines(content, last_n_lines):
+    content = content.strip()
+    try:
+        return '\n'.join(content.rsplit("\n", last_n_lines)[1:])
+        
+    except Exception as err:
+        print(err)
+        
+    return "\n".join(content.split('\n')[-last_n_lines:])
+
 
 def text_decompose(content, last_n_lines):
     """
@@ -159,7 +169,7 @@ def text_decompose(content, last_n_lines):
     return_str = ""
     if isinstance(content, str):
         if last_n_lines > 0:
-            content = "\n".join(content.split('\n')[-last_n_lines:])
+            content = get_last_n_lines(content, last_n_lines)
 
         return_str, width = ensure_line_padding(content)
     else:
@@ -209,8 +219,7 @@ def process_uvs_for_shader(node):
     return uvs
 
 
-def generate_batch_shader(node, args):
-    x, y, w, h, data = args
+def generate_batch_shader(node, data):
     verts, uv_indices, lexer = data
     # print("len(verts)", len(verts), "len(uv_indices)", len(uv_indices))
 
@@ -322,8 +331,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if self.end_early():
             return
 
-        self.get_font_texture()
         self.terminal_text_to_config()
+        texture = self.get_font_texture()
         lexer = self.get_lexer()
 
         config = lambda: None
@@ -336,7 +345,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         verts = process_grid_for_shader(grid, loc=(x, y))
         uvs = process_uvs_for_shader(self)
 
-        batch, shader = generate_batch_shader(self, (x, y, width, height, (verts, uvs, lexer)))
+        batch, shader = generate_batch_shader(self, (verts, uvs, lexer))
         config.loc = (x, y)
         config.batch = batch
         config.shader = shader
@@ -346,7 +355,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             'tree_name': self.id_data.name[:],
             'mode': 'custom_function_context', 
             'custom_function': simple_console_xy,
-            'args': (image, config)
+            'args': (texture, config)
         }
         nvBGL2.callback_enable(n_id, draw_data)
 
