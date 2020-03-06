@@ -13,7 +13,7 @@ import numpy as np
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import repeat_last
+from sverchok.data_structure import repeat_last, updateNode
 from sverchok.core.mesh_structure import Mesh, MeshGroup, FacesGroup, EdgesGroup, VertsGroup, LoopsGroup
 from sverchok.utils.mesh_structure.check_input import set_safe_attr
 
@@ -72,7 +72,7 @@ class SvMeshGroup(bpy.types.Node, SverchCustomTreeNode):
 
     group_name = bpy.props.StringProperty(default="Mesh group")
     element = bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges', 'faces']])
-    attr_element = bpy.props.EnumProperty(items=[(i, i, '') for i in ['object', 'faces', 'edges', 'verts', 'loops']])
+    attr_element = bpy.props.EnumProperty(items=[(i, i, '') for i in ['object', 'faces', 'edges', 'verts', 'loops']], update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'group_name', text='')

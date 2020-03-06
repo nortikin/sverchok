@@ -25,9 +25,15 @@ class VertAttrs(ABC):
     def values_to_loops(self, values: list) -> np.ndarray: ...
 
 
-class EdgeAttrs():
+class EdgeAttrs(ABC):
     def __init__(self):
         self.vertex_colors: np.ndarray = np.array([], np.float32)
+
+    @abstractmethod
+    def values_to_verts(self, values: list) -> np.ndarray: ...
+
+    @abstractmethod
+    def values_to_loops(self, values: list) -> np.ndarray: ...
 
 
 class FaceAttrs():
@@ -294,18 +300,35 @@ class EdgesGroup(EdgeAttrs, Iterable):
         super().__init__()
         self.group: MeshGroup = group
         self.links: np.ndarray = np.array([], np.int32)
+        # self.link_sorter = np.array([], np.int32)
 
     @property
     def links(self):
         return self._links
 
     @links.setter
-    def links(self, values):
-        self._links = np.unique(values)
+    def links(self, indexes):
+        self._links = indexes
+        # self.link_sorter = np.argsort(indexes)
+
+    @property
+    def ind(self):
+        return self.group.mesh.edges.ind[self.links]
 
     @property
     def _main_attr(self):
         return self.links
+
+    def values_to_loops(self, values: list) -> np.ndarray:
+        edge_sorter = np.argsort(np.ravel(self.ind))
+        loop_mask = edge_sorter[np.searchsorted(np.ravel(self.ind), self.group.loops.ind, sorter=edge_sorter)]
+        loop_mask[np.asarray(loop_mask % 2, np.bool)] -= 1
+        loop_mask //= 2
+        np.clip(loop_mask, None, len(values) - 1, out=loop_mask)
+        return values[loop_mask]
+
+    def values_to_verts(self, values: list) -> np.ndarray: ...
+        
 
 
 class FacesGroup(FaceAttrs, Iterable):
@@ -313,18 +336,30 @@ class FacesGroup(FaceAttrs, Iterable):
         super().__init__()
         self.group: MeshGroup = group
         self.links: np.ndarray = np.array([], np.int32)
+        self.link_sorter = np.array([], np.int32)
 
     @property
     def links(self):
         return self._links
 
     @links.setter
-    def links(self, values):
-        self._links = np.unique(values)
+    def links(self, indexes):
+        self._links = indexes
+        self.link_sorter = np.argsort(indexes)
+
+    @property
+    def ind(self):
+        return self.group.mesh.faces.ind[self.links]
 
     @property
     def _main_attr(self):
         return self.links
+
+    def values_to_loops(self, values: list) -> np.ndarray:
+        loop_mask = np.arange(len(self))
+        loop_mask = np.repeat(loop_mask, self.ind[:, 1] - self.ind[:, 0])
+        np.clip(loop_mask, None, len(values) - 1, out=loop_mask)
+        return values[loop_mask]
 
 
 class LoopsGroup(LoopAttrs, Iterable):
@@ -343,11 +378,16 @@ class LoopsGroup(LoopAttrs, Iterable):
 
     @links.setter
     def links(self, values):
-        self._links = np.unique(values)
+        # should be with a same order as face.links
+        self._links = values
 
     @property
     def _main_attr(self):
         return self.links
+
+    def values_to_loops(self, values: list) -> np.ndarray:
+        loop_mask = np.clip(self.links, None, len(values) - 1)
+        return values[loop_mask]
 
 
 MeshElements = Union[Mesh, Faces, Edges, Verts, Loops]

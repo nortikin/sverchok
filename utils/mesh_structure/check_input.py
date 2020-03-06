@@ -138,14 +138,25 @@ def extract_strings(input_val):
     elif isinstance(input_val[0], str):
         return input_val
     elif hasattr(input_val[0], '__iter__'):
-        return extract_string(input_val[0])
+        return extract_strings(input_val[0])
     else:
         raise TypeError(f"String values was not found in data={input_val}")
 
 
 def extract_np_array(input_val, dimension=2):
-    if isinstance(input_val, np.ndarray) and input_val.dtype == np.dtype('f') and len(input_val.shape) == dimension:
-        return input_val
+    if isinstance(input_val, np.ndarray):
+        if input_val.dtype == np.float:
+            if input_val.dtype != np.float32:
+                input_val = np.asarray(input_val, np.float32)
+        if input_val.ndim != dimension:
+            if input_val.ndim == 1:
+                return input_val[None, ]
+            elif input_val.ndim == 2:
+                return np.ravel(input_val)
+            else:
+                raise ValueError(f"Unexpected shape of given array={input_val.shape}")
+        else:
+            return input_val
     real_dimension = len_dimension(input_val)
     if real_dimension == dimension and isinstance(get_last_noniterable(input_val), (int, float)):
         return np.array(input_val, dtype=py_to_np_types[type(extract_value(input_val))])
