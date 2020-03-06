@@ -251,7 +251,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     char_image: bpy.props.StringProperty(name="image name", update=local_updateNode, default="consolas_0.png")
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
     
-    texture = {}
+    # for now all such nodes will use the same texture.
+    texture_dict = {}
+
     n_id: bpy.props.StringProperty(default='')
     local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, update=updateNode)
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
@@ -269,10 +271,15 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         char_height = int(32 * self.local_scale)
         return get_console_grid(char_width, char_height, self.terminal_width, self.num_rows)
 
+    def get_font_texture(self):
+        if not texture_dict:
+            # filepath = ...
+            pass
+
     def sv_init(self, context):
         self.inputs.new("SvStringsSocket", "text")
         self.get_and_set_gl_scale_info()
-
+        
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "show_me", text="", icon="HIDE_OFF")
@@ -312,24 +319,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         n_id = node_id(self)
         nvBGL2.callback_disable(n_id)
 
-        if not self.char_image or not self.show_me:
-            return
-        
-        image = bpy.data.images.get(self.char_image)
-        if not image or image.gl_load():
-            raise Exception()
-
-        if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
+        if self.end_early():
             return
 
+        self.get_font_texture()
         self.terminal_text_to_config()
-
-        if self.syntax_mode == "Code":
-            lexer = syntax_highlight_basic(self).repeat(6).tolist()
-        elif self.syntax_mode == "f1":
-            lexer = random_color_chars(self)
-        else:
-            lexer = None
+        lexer = self.get_lexer()
 
         config = lambda: None
         grid = self.prepare_for_grid()
@@ -342,8 +337,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         uvs = process_uvs_for_shader(self)
 
         batch, shader = generate_batch_shader(self, (x, y, width, height, (verts, uvs, lexer)))
-
-        dims = (width, height)
         config.loc = (x, y)
         config.batch = batch
         config.shader = shader
@@ -363,9 +356,23 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         # self.delete_texture()
 
     def sv_copy(self, node):
-        # reset n_id on copy
         self.n_id = ''
 
+    def get_lexer(self):
+        if self.syntax_mode == "Code":
+            lexer = syntax_highlight_basic(self).repeat(6).tolist()
+        elif self.syntax_mode == "f1":
+            lexer = random_color_chars(self)
+        else:
+            lexer = None
+        return lexer
+
+    def end_early(self):
+        if not self.show_me:
+            return True
+
+        if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
+            return True
 
 
 classes = [SvConsoleNode]
