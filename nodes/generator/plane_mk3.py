@@ -25,7 +25,12 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
 
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
-
+dimensionsItems = [
+    ("SIZE", 'Size', 'Define size by total size'),
+    ("NUMBER", 'Num', 'Define size by numer of steps and step size'),
+    ("STEPS", 'Steps', 'Define size by total size'),
+    ("SIZE_STEPS", 'Si+St', 'Define size by total size'),
+]
 def extend_lists(data, result):
     for d, r in zip(data, result):
         r.extend(d)
@@ -51,6 +56,7 @@ def mesh_join_np(verts, edges, pols):
 def numpy_check(data, bool_list):
     return [lg if b else [l.tolist() for l in lg] for lg, b in zip(data, bool_list)]
 
+
 def matrix_apply_np(verts, matrix):
     '''taken from https://blender.stackexchange.com/a/139517'''
 
@@ -58,7 +64,8 @@ def matrix_apply_np(verts, matrix):
     verts_co_4d[:, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
     return np.einsum('ij,aj->ai', matrix, verts_co_4d)[:, :-1]
 
-def numpy_cube(params, ops, flags):
+
+def plane_size_number(params, ops, flags):
     '''
     based on zeffii inplementation at
     https://github.com/nortikin/sverchok/pull/2876#issuecomment-584556422
@@ -69,23 +76,104 @@ def numpy_cube(params, ops, flags):
     if get_verts:
         verts = make_verts(size_x, size_y, divx, divy, matrix, ops)
     if get_edges or get_faces:
-        edges, faces = make_edg_pol(divx, divy, 1, flags)
+        edges, faces = make_edg_pol(divx, divy, flags)
     return verts, edges, faces
 
-def make_verts(size_x, size_y, x_verts, y_verts, matrix, ops):
-    '''creates cube verts, first vertical faces as a roll and after the bottom and top caps'''
-    sizex_h = size_x/2
-    sizey_h = size_y/2
-    origin, direction = ops
-    if origin == 'CENTER':
-        offset = [0, 0, 0]
+def plane_number_steps(params, ops, flags):
+    '''
+    based on zeffii inplementation at
+    https://github.com/nortikin/sverchok/pull/2876#issuecomment-584556422
+    '''
+    step_x, step_y, num_x, num_y, matrix = params
+    get_verts, get_edges, get_faces = flags
+    verts, edges, faces = [np.array([[]]) for i in range(3)]
+    if get_verts:
+        size_x = (num_x-1) * step_x
+        size_y = (num_y-1) * step_y
+        verts = make_verts(size_x, size_y, num_x, num_y, matrix, ops)
+    if get_edges or get_faces:
+        edges, faces = make_edg_pol(num_x, num_y, flags)
+    return verts, edges, faces
+def accum_steps(steps_x, steps_y):
+    accum_steps_x = np.zeros(len(steps_x) + 1)
+    accum_steps_x[1:] = np.add.accumulate(steps_x)
+    accum_steps_y = np.zeros(len(steps_y) + 1)
+    accum_steps_y[1:] = np.add.accumulate(steps_y)
+    return accum_steps_x, accum_steps_y
+
+def plane_size_steps(params, ops, flags):
+    v_obj, e_obj, p_obj = [], [], []
+    center, list_match, direction = ops
+    steps_x = params[0]
+    steps_y = params[1]
+    accum_steps_x, accum_steps_y = accum_steps(steps_x, steps_y)
+
+    edgs, pols = make_edg_pol(len(steps_x) + 1, len(steps_y) + 1, flags)
+
+    sizes_mats = list_match_func[list_match]([params[2], params[3], params[-1]])
+    accum_steps_x /= accum_steps_x[-1]
+    accum_steps_y /= accum_steps_y[-1]
+    for s_x, s_y, mat in zip(*sizes_mats):
+        offset_x = -s_x/2 if center else 0
+        offset_y = -s_y/2 if center else 0
+        verts = make_verts_grid(
+            (accum_steps_x * s_x) + offset_x,
+            (accum_steps_y * s_y) + offset_y,
+            mat,
+            direction)
+        append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
+
+    return v_obj, e_obj, p_obj
+
+
+def plane_steps(params, ops, flags):
+
+    center, _, direction = ops
+    steps_x = params[0]
+    steps_y = params[1]
+    accum_steps_x, accum_steps_y = accum_steps(steps_x, steps_y)
+    edgs, pols = make_edg_pol(len(steps_x) + 1, len(steps_y) + 1, flags)
+    offset_x = -accum_steps_x[-1]/2 if center else 0
+    offset_y = -accum_steps_y[-1]/2 if center else 0
+    verts = make_verts_grid(
+        accum_steps_x + offset_x,
+        accum_steps_y + offset_y,
+        params[-1][0],
+        direction)
+
+    return [verts], [edgs], [pols]
+
+def plane_steps2(params, ops, flags):
+    v_obj, e_obj, p_obj = [], [], []
+    center, dimension_mode, list_match, direction = ops
+    steps_x = params[0]
+    steps_y = params[1]
+    accum_steps_x, accum_steps_y = accum_steps(steps_x, steps_y)
+    edgs, pols = make_edg_pol(len(steps_x) + 1, len(steps_y) + 1, flags)
+    if dimension_mode == 'SIZE_STEPS':
+        sizes = list_match_func[list_match]([params[2], params[3], params[-1]])
+        accum_steps_x /= accum_steps_x[-1]
+        accum_steps_y /= accum_steps_y[-1]
+        for s_x, s_y, mat in zip(*sizes):
+            offset_x = -s_x/2 if center else 0
+            offset_y = -s_y/2 if center else 0
+            verts = make_verts_grid(
+                (accum_steps_x * s_x) + offset_x,
+                (accum_steps_y * s_y) + offset_y,
+                mat,
+                direction)
+            append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
     else:
-        offset = [sizex_h, sizey_h]
 
-    sidex = np.linspace(-sizex_h + offset[0], sizex_h + offset[0], x_verts)
-    sidey = np.linspace(-sizey_h + offset[1], sizey_h + offset[1], y_verts)
+        offset_x = -accum_steps_x[-1]/2 if center else 0
+        offset_y = -accum_steps_y[-1]/2 if center else 0
+        verts = make_verts_grid(accum_steps_x+offset_x, accum_steps_y+ offset_y, params[-1][0], direction)
+        v_obj, e_obj, p_obj = [verts], [edgs], [pols]
 
-    x_coords, y_coords = np.meshgrid(sidex, sidey, sparse=False, indexing='xy')
+    return v_obj, e_obj, p_obj
+
+def make_verts_grid(sidex, sidey, matrix, direction):
+    y_coords, x_coords = np.meshgrid(sidey, sidex, sparse=False, indexing='xy')
     z_coords = np.full(x_coords.shape, 0.0)
     if direction == 'XY':
         plane = np.array([x_coords, y_coords, z_coords]).T.reshape(-1, 3)
@@ -94,138 +182,58 @@ def make_verts(size_x, size_y, x_verts, y_verts, matrix, ops):
     else:
         plane = np.array([y_coords, z_coords, x_coords]).T.reshape(-1, 3)
 
-
-
     if not matrix == Matrix():
         return matrix_apply_np(plane, matrix)
-
     return plane
 
-def create_cap_grid(outside, inside, x_verts, y_verts, num_iplanar):
-    '''creates the bottom or top indices grid'''
-    opposite = y_verts + (x_verts-2)
-    if y_verts < 3:
-        plane_grid = np.empty((x_verts, y_verts), 'i')
-        plane_grid[0, :] = outside[0:y_verts]
-        plane_grid[1:-1, 0] = np.flip(outside[x_verts+2:])
-        plane_grid[1:-1, -1] = outside[2:x_verts]
-        plane_grid[-1, :] = outside[opposite:opposite+y_verts][::-1]
-
+def make_verts(size_x, size_y, x_verts, y_verts, matrix, ops):
+    '''creates cube verts, first vertical faces as a roll and after the bottom and top caps'''
+    sizex_h = size_x/2
+    sizey_h = size_y/2
+    center, _, direction = ops
+    if center:
+        offset = [0, 0, 0]
     else:
-        stride = y_verts-2
-        np_id = np.arange(0, num_iplanar, stride)
-        np_idx = np.arange(np_id.shape[0])
-        sides1 = outside[-(np_idx + 1)]
-        mid = inside.reshape(-1, stride)
-        sides2 = outside[y_verts + np_idx]
-        plane_grid = np.empty((x_verts, y_verts), 'i')
-        plane_grid[0, :] = outside[0:y_verts]
-        plane_grid[1:-1, 0] = sides1
-        plane_grid[1:-1, 1:-1] = mid
-        plane_grid[1:-1, -1] = sides2
-        plane_grid[-1, :] = outside[opposite : opposite+y_verts][::-1]
-    return plane_grid
+        offset = [sizex_h, sizey_h]
 
-def roll_around(direction, outside, inside, x_verts, y_verts, num_iplanar, flags):
-    '''creates the bottom or top edges and faces'''
-    _, get_edges, get_faces = flags
-    cap_edges, cap_faces = [], np.empty((1, 4), 'i')
-    plane_grid = create_cap_grid(outside, inside, x_verts, y_verts, num_iplanar)
+    sidex = np.linspace(-sizex_h + offset[0], sizex_h + offset[0], x_verts)
+    sidey = np.linspace(-sizey_h + offset[1], sizey_h + offset[1], y_verts)
 
-    if get_faces:
-        cap_faces = np.empty((x_verts-1, y_verts-1, 4), 'i')
-        cap_faces[:, :, 0] = plane_grid[:-1, :-1]
-        cap_faces[:, :, 1] = plane_grid[:-1, 1:]
-        cap_faces[:, :, 2] = plane_grid[1:, 1:]
-        cap_faces[:, :, 3] = plane_grid[1:, :-1]
-        if direction == 'ccw':
-            cap_faces = np.flip(cap_faces, axis=2)
+    return make_verts_grid(sidex, sidey, matrix, direction)
 
-    if get_edges:
-        edg_x_dir = np.empty((x_verts-1, y_verts-2, 2), 'i')
-        edg_x_dir[:, :, 0] = plane_grid[0:-1, 1:-1]
-        edg_x_dir[:, :, 1] = plane_grid[1:, 1:-1]
-
-        edg_y_dir = np.empty((x_verts-2, y_verts-1, 2), 'i')
-        edg_y_dir[:, :, 0] = plane_grid[1:-1, :-1]
-        edg_y_dir[:, :, 1] = plane_grid[1:-1, 1:]
-
-        edge_num = (x_verts-1)* (y_verts-2) + (x_verts-2)*(y_verts-1)
-        cap_edges = np.empty((edge_num, 2), 'i')
-        cap_edges[:(x_verts - 1) * (y_verts - 2), :] = edg_x_dir.reshape(-1, 2)
-        cap_edges[(x_verts - 1) * (y_verts - 2):, :] = edg_y_dir.reshape(-1, 2)
-
-
-    return cap_edges, cap_faces.reshape(-1, 4)
-
-def make_edges(x_verts, y_verts, z_verts, z_spread, grid, edg_top, edg_bottom):
-    edges_roll = (z_verts*2 - 1) * z_spread
-    edges_cap = (x_verts-1)* (y_verts-2) + (x_verts-2)*(y_verts-1)
-    edges_num = edges_roll + 2 * edges_cap
-
-    egd_roll = np.empty((z_verts*2-1, z_spread, 2), 'i')
-    egd_roll[:z_verts, :, 0] = grid[:, : -1]
-    egd_roll[:z_verts, :, 1] = grid[:, 1: ]
-
-    egd_roll[z_verts:, :, 0] = grid[:-1, : -1]
-    egd_roll[z_verts:, :, 1] = grid[1:, :-1]
-
-    edges = np.empty((edges_num, 2), 'i')
-    edges[:edges_roll] = egd_roll.reshape(-1, 2)
-    edges[edges_roll: edges_roll + edges_cap] = edg_top
-    edges[edges_roll+edges_cap:] = edg_bottom
-
-    return edges
-
-def make_edg_pol(x_verts, y_verts, z_verts, flags):
+def make_edg_pol(x_verts, y_verts, flags):
     _, get_edges, get_faces = flags
 
     edges = np.array([])
 
-    z_spread = 2 * x_verts+ 2 * y_verts - 4
-
-    roll_faces_n = (z_verts - 1) * z_spread
-    cap_faces = (x_verts-1) * (y_verts-1)
-    num_faces = roll_faces_n + 2 * (cap_faces)
-
-    grid = np.empty((z_verts, z_spread + 1), 'i')
-    grid[:, : -1] = np.arange(z_spread * z_verts).reshape(z_verts, z_spread)
-    grid[:, -1] = grid[:, 0]
+    grid = np.arange(x_verts*y_verts).reshape(x_verts, y_verts)
 
     if get_faces:
-        all_faces = np.empty((num_faces, 4), 'i')
-        roll_faces = np.zeros((z_verts-1, z_spread, 4))
-        roll_faces[:, :, 0] = grid[1:, :-1]
-        roll_faces[:, :, 1] = grid[1:, 1:]
-        roll_faces[:, :, 2] = grid[:-1, 1:]
-        roll_faces[:, :, 3] = grid[:-1, :-1]
-        all_faces[:roll_faces_n, :] = roll_faces.reshape(-1, 4)
+        grid_faces = np.zeros((x_verts-1, y_verts-1, 4))
+        grid_faces[:, :, 0] = grid[:-1, 1:]
+        grid_faces[:, :, 1] = grid[1:, 1:]
+        grid_faces[:, :, 2] = grid[1:, :-1]
+        grid_faces[:, :, 3] = grid[:-1, :-1]
+
+        all_faces = grid_faces.reshape(-1, 4)
     else:
         all_faces = np.empty((1, 4), 'i')
-        roll_faces_n = 0
-        cap_faces = 0
 
-    top_max = z_verts * z_spread
-    bottom_outer_ring = np.arange(z_spread)
-    top_outer_ring = np.arange(top_max-(z_spread), top_max)
-
-    # num internal planar
-    num_iplanar = (x_verts-2) * (y_verts-2)
-
-    # book keeping
-    num_verts_bass = x_verts * y_verts
-    num_verts_ring_total = (z_verts - 2) * z_spread
-    last_vertex_idx = (num_verts_bass * 2) + num_verts_ring_total
-
-    top_internal = np.arange(last_vertex_idx - num_iplanar, last_vertex_idx)
-    bottom_internal = top_internal - num_iplanar
-    cap_init = roll_faces_n + cap_faces
-
-    edg_top, all_faces[roll_faces_n : cap_init, :] = roll_around('ccw', top_outer_ring, top_internal, x_verts, y_verts, num_iplanar, flags)
-    edg_bottom, all_faces[cap_init :, :] = roll_around('cw', bottom_outer_ring, bottom_internal, x_verts, y_verts, num_iplanar, flags)
 
     if get_edges:
-        edges = make_edges(x_verts, y_verts, z_verts, z_spread, grid, edg_top, edg_bottom)
+        edg_x_dir = np.empty((x_verts-1, y_verts, 2), 'i')
+        edg_x_dir[:, :, 0] = grid[:-1, :]
+        edg_x_dir[:, :, 1] = grid[1:, :]
+
+        edg_y_dir = np.empty((x_verts, y_verts-1, 2), 'i')
+        edg_y_dir[:, :, 0] = grid[:, :-1]
+        edg_y_dir[:, :, 1] = grid[:, 1:]
+
+        edge_num = (x_verts-1)* (y_verts) + (x_verts)*(y_verts-1)
+        edges = np.empty((edge_num, 2), 'i')
+        edges[:(x_verts - 1) * (y_verts), :] = edg_x_dir.reshape(-1, 2)
+        edges[(x_verts - 1) * (y_verts):, :] = edg_y_dir.reshape(-1, 2)
+
 
     return edges, all_faces
 
@@ -246,11 +254,7 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         ('JOIN', 'Join', 'Join (mesh join) last level of boxes', 1),
         ('FLAT', 'Flat Output', 'Flat to object level', 2),
     ]
-    origin_modes = [
-        ('CENTER', 'Center', 'Origin at center of the box', 0),
-        ('BOTTOM', 'Bottom', 'Origin at the bottom center of the box', 1),
-        ('CORNER', 'Corner', 'Origin at the bottom left front corner of the box', 2),
-    ]
+
     Divx: IntProperty(
         name='Divx', description='divisions x',
         default=2, min=2, options={'ANIMATABLE'},
@@ -271,11 +275,7 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         default=1.0, options={'ANIMATABLE'},
         update=updateNode)
 
-    origin: EnumProperty(
-        name="Origin",
-        description="Behavior on different list lengths, multiple objects level",
-        items=origin_modes, default="CENTER",
-        update=updateNode)
+
     def update_size_link(self, context):
         self.sizeRatio = self.sizex / self.sizey
 
@@ -297,9 +297,50 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     def update_sizey(self, context):
         self.update_size(context, "Y")
 
+    def hide_socket(self, name, hide):
+        if hide:
+            self.inputs[name].hide_safe = True
+        else:
+            if self.inputs[name].hide_safe:
+                self.inputs[name].hide_safe = False
+
+    def update_sockets(self, context):
+
+        hide = self.hide_socket
+        if self.dimension_mode in ('STEPS', 'SIZE_STEPS'):
+            self.inputs['Step X'].prop_name = ''
+            self.inputs['Step Y'].prop_name = ''
+
+            hide('Step X', False)
+            hide('Step Y', False)
+            hide('Num X', True)
+            hide('Num Y', True)
+            step_mode = self.dimension_mode == 'STEPS'
+            hide('Size X', step_mode)
+            hide('Size Y', step_mode)
+
+        else:
+            size_mode = self.dimension_mode == 'SIZE'
+            number_mode = self.dimension_mode == 'NUMBER'
+
+            hide('Size X', number_mode)
+            hide('Size Y', number_mode)
+            hide('Step X', size_mode)
+            hide('Step Y', size_mode)
+
+            self.inputs['Step X'].prop_name = 'stepx'
+            self.inputs['Step Y'].prop_name = 'stepy'
+            hide('Num X', False)
+            hide('Num Y', False)
+
+        updateNode(self, context)
+
     direction: EnumProperty(
         name="Direction", items=directionItems,
         default="XY", update=updateNode)
+    dimension_mode: EnumProperty(
+        name="Mode", items=dimensionsItems,
+        default="SIZE", update=update_sockets)
 
     numx: IntProperty(
         name='N Verts X', description='Number of vertices along X',
@@ -353,6 +394,14 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         name='Size Y', description='Plane size along Y',
         default=10.0, min=0.01, update=update_sizey)
 
+    sizex_draft: FloatProperty(
+        name='[D] Size X', description='Plane size along X (draft mode)',
+        default=1.0, update=updateNode)
+
+    sizey_draft: FloatProperty(
+        name='[D] Size Y', description='Plane size along y (draft mode)',
+        default=1.0, update=updateNode)
+
     sizeRatio: FloatProperty(
         name="Size Ratio", default=1.0)
 
@@ -367,7 +416,9 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             numx = 'numx_draft',
             numy = 'numy_draft',
             stepx = 'stepx_draft',
-            stepy = 'stepy_draft'
+            stepy = 'stepy_draft',
+            sizex = 'sizex_draft',
+            sizey = 'sizey_draft'
         )
 
     list_match_global: EnumProperty(
@@ -398,33 +449,29 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Size Y").prop_name = 'sizey'
         self.inputs.new('SvStringsSocket', "Num X").prop_name = 'numx'
         self.inputs.new('SvStringsSocket', "Num Y").prop_name = 'numy'
+        self.inputs.new('SvStringsSocket', "Step X").prop_name = 'stepx'
+        self.inputs.new('SvStringsSocket', "Step Y").prop_name = 'stepy'
 
         self.inputs.new('SvMatrixSocket', "Matrix")
+
         self.outputs.new('SvVerticesSocket', "Vers")
         self.outputs.new('SvStringsSocket', "Edgs")
         self.outputs.new('SvStringsSocket', "Pols")
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "origin", expand=False)
-        layout.prop(self, "separate")
-        col = layout.column(align=True)
+        col = layout.column()
         row = col.row(align=True)
         row.prop(self, "direction", expand=True)
         row = col.row(align=True)
-        row.prop(self, "center", toggle=True)
-        row.prop(self, "normalize", toggle=True)
-        if self.normalize:
-            row = col.row(align=True)
-            row.prop(self, "sizex")
-            if self.linkSizes:
-                row.prop(self, "linkSizes", icon="LINKED", text="")
-            else:
-                row.prop(self, "linkSizes", icon="UNLINKED", text="")
-            row.prop(self, "sizey")
+        row.prop(self, "dimension_mode", expand=True)
+        col.prop(self, "center", toggle=False)
+
+        # layout.prop(self, "separate")
+
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
-        layout.prop(self, "origin", expand=True)
+        layout.prop(self, "center")
         layout.label(text="Simplify Output:")
         layout.prop(self, "correct_output", expand=True)
 
@@ -439,7 +486,7 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
-        layout.prop_menu_enum(self, "origin", text="Origin")
+        layout.prop_menu_enum(self, "center", text="Origin")
         layout.prop_menu_enum(self, "correct_output", text="Simplify Output")
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
@@ -447,13 +494,24 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
         for i in range(3):
             layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
+
     def get_data(self):
         inputs = self.inputs
+        if self.dimension_mode == 'SIZE':
+            params = [inputs['Size X'].sv_get(), inputs['Size Y'].sv_get()]
+        elif self.dimension_mode == 'NUMBER':
+            params = [inputs['Step X'].sv_get(), inputs['Step Y'].sv_get()]
+        elif self.dimension_mode == 'STEPS':
+            params = [inputs['Step X'].sv_get(default=[[1.0]]), inputs['Step Y'].sv_get(default=[[1.0]])]
+        else:
+            params=[inputs['Step X'].sv_get(default=[[1.0]])]
+            params.append(inputs['Step Y'].sv_get(default=[[1.0]]))
+            params.append(inputs['Size X'].sv_get())
+            params.append(inputs['Size Y'].sv_get())
 
-        params = [inputs['Size X'].sv_get(), inputs['Size Y'].sv_get()]
-
-        for socket in inputs[2: 4]:
-            params.append([[int(v) for v in l] for l in socket.sv_get()])
+        if self.dimension_mode in ('SIZE', 'NUMBER'):
+            for socket in inputs[2: 4]:
+                params.append([[int(v) for v in l] for l in socket.sv_get()])
 
         mat_input = inputs['Matrix'].sv_get(default=[[Matrix()]])
         if type(mat_input[0]) == Matrix:
@@ -462,6 +520,15 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             params.append(mat_input)
 
         return list_match_func[self.list_match_global](params)
+
+    def does_support_draft_mode(self):
+        return True
+
+    def draw_label(self):
+        label = self.label or self.name
+        if self.id_data.sv_draft:
+            label = "[D] " + label
+        return label
 
     def process(self):
 
@@ -475,15 +542,26 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         verts_out, edges_out, pols_out = [], [], []
         flags = [s.is_linked for s in outputs]
         output_numpy = [b for b in self.out_np]
-        ops = [self.origin, self.direction]
+        ops = [self.center, self.list_match_local, self.direction]
+        if self.dimension_mode == 'SIZE':
+            func = plane_size_number
+        else:
+            func = plane_number_steps
 
         for params in zip(*data_in):
-            m_par = list_match_func[self.list_match_local](params)
-            v_obj, e_obj, p_obj = [], [], []
 
-            for local_p in zip(*m_par):
-                verts, edgs, pols = numpy_cube(local_p, ops, flags)
-                append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
+            v_obj, e_obj, p_obj = [], [], []
+            if self.dimension_mode == 'STEPS':
+
+                v_obj, e_obj, p_obj = plane_steps(params, ops, flags)
+            elif self.dimension_mode == 'SIZE_STEPS':
+                v_obj, e_obj, p_obj = plane_size_steps(params, ops, flags)
+
+            else:
+                m_par = list_match_func[self.list_match_local](params)
+                for local_p in zip(*m_par):
+                    verts, edgs, pols = func(local_p, ops, flags)
+                    append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
 
 
             if self.correct_output == 'FLAT':
