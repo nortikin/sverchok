@@ -64,12 +64,26 @@ def matrix_apply_np(verts, matrix):
     verts_co_4d[:, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
     return np.einsum('ij,aj->ai', matrix, verts_co_4d)[:, :-1]
 
+def planes_size_number(params, ops, flags):
+    list_match = ops[1]
+    v_obj, e_obj, p_obj = [], [], []
+    m_par = list_match_func[list_match](params)
+    for local_p in zip(*m_par):
+        verts, edgs, pols = plane_size_number(local_p, ops, flags)
+        append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
+    return v_obj, e_obj, p_obj
+
+def planes_number_steps(params, ops, flags):
+    list_match = ops[1]
+    v_obj, e_obj, p_obj = [], [], []
+    m_par = list_match_func[list_match](params)
+    for local_p in zip(*m_par):
+        verts, edgs, pols = plane_number_steps(local_p, ops, flags)
+        append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
+    return v_obj, e_obj, p_obj
 
 def plane_size_number(params, ops, flags):
-    '''
-    based on zeffii inplementation at
-    https://github.com/nortikin/sverchok/pull/2876#issuecomment-584556422
-    '''
+
     size_x, size_y, divx, divy, matrix = params
     get_verts, get_edges, get_faces = flags
     verts, edges, faces = [np.array([[]]) for i in range(3)]
@@ -80,10 +94,6 @@ def plane_size_number(params, ops, flags):
     return verts, edges, faces
 
 def plane_number_steps(params, ops, flags):
-    '''
-    based on zeffii inplementation at
-    https://github.com/nortikin/sverchok/pull/2876#issuecomment-584556422
-    '''
     step_x, step_y, num_x, num_y, matrix = params
     get_verts, get_edges, get_faces = flags
     verts, edges, faces = [np.array([[]]) for i in range(3)]
@@ -94,6 +104,7 @@ def plane_number_steps(params, ops, flags):
     if get_edges or get_faces:
         edges, faces = make_edg_pol(num_x, num_y, flags)
     return verts, edges, faces
+
 def accum_steps(steps_x, steps_y):
     accum_steps_x = np.zeros(len(steps_x) + 1)
     accum_steps_x[1:] = np.add.accumulate(steps_x)
@@ -143,35 +154,6 @@ def plane_steps(params, ops, flags):
 
     return [verts], [edgs], [pols]
 
-def plane_steps2(params, ops, flags):
-    v_obj, e_obj, p_obj = [], [], []
-    center, dimension_mode, list_match, direction = ops
-    steps_x = params[0]
-    steps_y = params[1]
-    accum_steps_x, accum_steps_y = accum_steps(steps_x, steps_y)
-    edgs, pols = make_edg_pol(len(steps_x) + 1, len(steps_y) + 1, flags)
-    if dimension_mode == 'SIZE_STEPS':
-        sizes = list_match_func[list_match]([params[2], params[3], params[-1]])
-        accum_steps_x /= accum_steps_x[-1]
-        accum_steps_y /= accum_steps_y[-1]
-        for s_x, s_y, mat in zip(*sizes):
-            offset_x = -s_x/2 if center else 0
-            offset_y = -s_y/2 if center else 0
-            verts = make_verts_grid(
-                (accum_steps_x * s_x) + offset_x,
-                (accum_steps_y * s_y) + offset_y,
-                mat,
-                direction)
-            append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
-    else:
-
-        offset_x = -accum_steps_x[-1]/2 if center else 0
-        offset_y = -accum_steps_y[-1]/2 if center else 0
-        verts = make_verts_grid(accum_steps_x+offset_x, accum_steps_y+ offset_y, params[-1][0], direction)
-        v_obj, e_obj, p_obj = [verts], [edgs], [pols]
-
-    return v_obj, e_obj, p_obj
-
 def make_verts_grid(sidex, sidey, matrix, direction):
     y_coords, x_coords = np.meshgrid(sidey, sidex, sparse=False, indexing='xy')
     z_coords = np.full(x_coords.shape, 0.0)
@@ -187,7 +169,7 @@ def make_verts_grid(sidex, sidey, matrix, direction):
     return plane
 
 def make_verts(size_x, size_y, x_verts, y_verts, matrix, ops):
-    '''creates cube verts, first vertical faces as a roll and after the bottom and top caps'''
+
     sizex_h = size_x/2
     sizey_h = size_y/2
     center, _, direction = ops
@@ -206,10 +188,10 @@ def make_edg_pol(x_verts, y_verts, flags):
 
     edges = np.array([])
 
-    grid = np.arange(x_verts*y_verts).reshape(x_verts, y_verts)
+    grid = np.arange(x_verts*y_verts).reshape(y_verts, x_verts)
 
     if get_faces:
-        grid_faces = np.zeros((x_verts-1, y_verts-1, 4))
+        grid_faces = np.zeros((y_verts-1, x_verts-1, 4))
         grid_faces[:, :, 0] = grid[:-1, 1:]
         grid_faces[:, :, 1] = grid[1:, 1:]
         grid_faces[:, :, 2] = grid[1:, :-1]
@@ -221,18 +203,18 @@ def make_edg_pol(x_verts, y_verts, flags):
 
 
     if get_edges:
-        edg_x_dir = np.empty((x_verts-1, y_verts, 2), 'i')
+        edg_x_dir = np.empty((y_verts-1, x_verts, 2), 'i')
         edg_x_dir[:, :, 0] = grid[:-1, :]
         edg_x_dir[:, :, 1] = grid[1:, :]
 
-        edg_y_dir = np.empty((x_verts, y_verts-1, 2), 'i')
+        edg_y_dir = np.empty((y_verts, x_verts-1, 2), 'i')
         edg_y_dir[:, :, 0] = grid[:, :-1]
         edg_y_dir[:, :, 1] = grid[:, 1:]
 
         edge_num = (x_verts-1)* (y_verts) + (x_verts)*(y_verts-1)
         edges = np.empty((edge_num, 2), 'i')
-        edges[:(x_verts - 1) * (y_verts), :] = edg_x_dir.reshape(-1, 2)
-        edges[(x_verts - 1) * (y_verts):, :] = edg_y_dir.reshape(-1, 2)
+        edges[:(y_verts - 1) * (x_verts), :] = edg_x_dir.reshape(-1, 2)
+        edges[(y_verts - 1) * (x_verts):, :] = edg_y_dir.reshape(-1, 2)
 
 
     return edges, all_faces
@@ -254,26 +236,6 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         ('JOIN', 'Join', 'Join (mesh join) last level of boxes', 1),
         ('FLAT', 'Flat Output', 'Flat to object level', 2),
     ]
-
-    Divx: IntProperty(
-        name='Divx', description='divisions x',
-        default=2, min=2, options={'ANIMATABLE'},
-        update=updateNode)
-
-    Divy: IntProperty(
-        name='Divy', description='divisions y',
-        default=2, min=2, options={'ANIMATABLE'},
-        update=updateNode)
-
-    Divz: IntProperty(
-        name='Divz', description='divisions z',
-        default=2, min=2, options={'ANIMATABLE'},
-        update=updateNode)
-
-    Size: FloatProperty(
-        name='Size', description='Size',
-        default=1.0, options={'ANIMATABLE'},
-        update=updateNode)
 
 
     def update_size_link(self, context):
@@ -382,10 +344,6 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         name='Center', description='Center the plane around origin',
         default=False, update=updateNode)
 
-    normalize: BoolProperty(
-        name='Normalize', description='Normalize the plane sizes',
-        default=False, update=updateNode)
-
     sizex: FloatProperty(
         name='Size X', description='Plane size along X',
         default=10.0, min=0.01, update=update_sizex)
@@ -465,9 +423,6 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "dimension_mode", expand=True)
         col.prop(self, "center", toggle=False)
-
-        # layout.prop(self, "separate")
-
 
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
@@ -557,7 +512,10 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
             elif self.dimension_mode == 'SIZE_STEPS':
                 v_obj, e_obj, p_obj = plane_size_steps(params, ops, flags)
 
+            # elif self.dimension_mode == 'SIZE':
+            #     v_obj, e_obj, p_obj = planes_size_number(params, ops, flags)
             else:
+                # v_obj, e_obj, p_obj = planes_number_steps(params, ops, flags)
                 m_par = list_match_func[self.list_match_local](params)
                 for local_p in zip(*m_par):
                     verts, edgs, pols = func(local_p, ops, flags)
