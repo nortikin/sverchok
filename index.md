@@ -417,7 +417,6 @@
     ---
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
-    SvParticlesNode
     SvParticlesMK2Node
     SvJoinTrianglesNode
     SvListSliceLiteNode
