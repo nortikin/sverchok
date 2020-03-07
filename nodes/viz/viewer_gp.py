@@ -154,11 +154,22 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         description="This textfield is used to generate (or pickup) a Collection name and an associated GreasePencil object",
         update=local_updateNode)
 
+    @staticmethod
+    def draw_framenode_qlink(socket, context, layout, node):
+        visible_socket_index = socket.infer_visible_location_of_socket(node)
+        op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="TIME")
+        op.socket_index = socket.index
+        op.origin = node.name
+        op.new_node_idname = "SvFrameInfoNodeMK2"
+        op.new_node_offsetx = -200 - 40 * visible_socket_index
+        op.new_node_offsety = -30 * visible_socket_index
+
     def sv_init(self, context):
         inew = self.inputs.new
         onew = self.outputs.new
 
-        inew('SvStringsSocket', 'frame')
+        inew('SvStringsSocket', 'frame').quicklink_func_name = "draw_framenode_qlink"
+
         inew('SvVerticesSocket', 'coordinates')  # per stroke
         inew('SvStringsSocket', 'draw cyclic').prop_name = 'draw_cyclic'   # per stroke
         inew('SvStringsSocket', 'pressure').prop_name = 'pressure'         # per point
@@ -170,7 +181,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             c2.prop_name = 'fill_color'
 
         onew('SvObjectSocket', 'object')
-        
+       
 
 
     def draw_buttons(self, context, layout):
