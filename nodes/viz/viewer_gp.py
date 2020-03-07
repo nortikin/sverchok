@@ -276,10 +276,11 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             layer = ensure_layer_availability(gp_object)
             frame = ensure_frame_availability(layer, frame_number)
 
-            # seen as palettes are no longer using named colors, i think this should be focussing on
-            # generating materials instead            
             strokes = frame.strokes
             GP_DATA = strokes.id_data
+            
+            # seen as palettes are no longer using named colors, i think this should be focussing on
+            # generating materials instead            
             # PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
             # BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
 
