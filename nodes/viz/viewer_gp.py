@@ -112,7 +112,20 @@ def ensure_color_in_palette(node, palette, color, named_color=None, fill=None):
     return new_color
 
 
-def ensure_layer_availability(node, gp_object):
+def ensure_gp_object(gp_object_name):
+    objects = bpy.data.objects
+    collections = bpy.data.collections
+    collection = collections.get(gp_object_name)
+
+    gp_object = collection.objects.get(gp_object_name)
+    if not gp_object:
+        gp_data = bpy.data.grease_pencils.new(gp_object_name)
+        gp_object = objects.new(gp_object_name, gp_data)
+        collection.objects.link(gp_object)
+
+    return gp_object
+
+def ensure_layer_availability(gp_object):
     # ensure a layer to draw to, at the moment only layer one.
     if not gp_object.data.layers:
         gp_object.data.layers.new("layer 1")
@@ -260,17 +273,8 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
             self.ensure_collection() # the collection name will be that of self.gp_object_name
 
-            objects = bpy.data.objects
-            collections = bpy.data.collections
-            collection = collections.get(self.gp_object_name)
-
-            gp_object = collection.objects.get(self.gp_object_name)
-            if not gp_object:
-                gp_data = bpy.data.grease_pencils.new(self.gp_object_name)
-                gp_object = objects.new(self.gp_object_name, gp_data)
-                collection.objects.link(gp_object)
-
-            layer = ensure_layer_availability(self, gp_object)
+            gp_object = ensure_gp_object(self.gp_object_name)
+            layer = ensure_layer_availability(gp_object)
             frame = ensure_frame_availability(layer, frame_number)
             strokes = frame.strokes
             GP_DATA = strokes.id_data
