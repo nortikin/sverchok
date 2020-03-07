@@ -321,7 +321,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row.prop(self, "local_scale")
         row2 = layout.row(align=True)
         row2.prop(self, "syntax_mode", expand=True)
-        
         row3 = layout.row()
         row3.prop(self, "last_n_lines")
     
@@ -329,8 +328,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         clr = bgl.GL_RGBA
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
-        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
 
+        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
@@ -380,11 +379,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         lexer = self.get_lexer()
         grid = self.prepare_for_grid()
 
-        x, y = self.xy_offset
-        width = self.terminal_width * 15
-        height = self.num_rows * 32
-
-        x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
+        x, y, width, height = self.adjust_position_and_dimensions(*self.dims)
         verts = process_grid_for_shader(grid, loc=(x, y))
         uvs = process_uvs_for_shader(self)
 
@@ -402,6 +397,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         }
         nvBGL2.callback_enable(n_id, draw_data)
 
+    @property
+    def dims(self):
+        x, y = self.xy_offset
+        width = self.terminal_width * 15
+        height = self.num_rows * 32
+        return (x, y, width, height)
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
