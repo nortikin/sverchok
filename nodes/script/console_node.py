@@ -30,7 +30,7 @@ from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_cons
 sv_path = os.path.dirname(sv_get_local_path()[0])
 bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
 
-grid_data = {}
+lookup_dict_data = {}
 
 vertex_shader = '''
     uniform mat4 ModelViewProjectionMatrix;
@@ -189,18 +189,22 @@ def text_decompose(content, last_n_lines):
     dims = width, len(return_str)
     return return_str, dims
 
+def get_fnt_lookup():
+    # this caches the fnt lookup function, and reuses it in any subsequent call to process.
+    # this is the same lookup table for all instances of this node. This is conscious limitation. for now.
+    if not lookup_dict_data.get('fnt'):
+        lookup_dict_data['fnt'] = get_lookup_dict(get_font_fnt_location())
+    return lookup_dict_data['fnt']
 
 def terminal_text_to_uv(lines):
-    fnt = get_lookup_dict(get_font_fnt_location()) 
+    fnt = get_fnt_lookup()
     uvs = []
     for line in lines.split("\n"):
         uvs.extend(letters_to_uv(line, fnt))
     return uvs
 
-
 def simple_console_xy(context, args):
     texture, config = args
-    
     act_tex = bgl.Buffer(bgl.GL_INT, 1)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
     
