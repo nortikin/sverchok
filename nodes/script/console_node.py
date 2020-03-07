@@ -30,7 +30,7 @@ from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_cons
 sv_path = os.path.dirname(sv_get_local_path()[0])
 bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
 
-grid_data = {}
+lookup_dict_data = {}
 
 vertex_shader = '''
     uniform mat4 ModelViewProjectionMatrix;
@@ -189,18 +189,22 @@ def text_decompose(content, last_n_lines):
     dims = width, len(return_str)
     return return_str, dims
 
+def get_fnt_lookup():
+    # this caches the fnt lookup function, and reuses it in any subsequent call to process.
+    # this is the same lookup table for all instances of this node. This is conscious limitation. for now.
+    if not lookup_dict_data.get('fnt'):
+        lookup_dict_data['fnt'] = get_lookup_dict(get_font_fnt_location())
+    return lookup_dict_data['fnt']
 
 def terminal_text_to_uv(lines):
-    fnt = get_lookup_dict(get_font_fnt_location()) 
+    fnt = get_fnt_lookup()
     uvs = []
     for line in lines.split("\n"):
         uvs.extend(letters_to_uv(line, fnt))
     return uvs
 
-
 def simple_console_xy(context, args):
     texture, config = args
-    
     act_tex = bgl.Buffer(bgl.GL_INT, 1)
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
     
@@ -317,7 +321,6 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row.prop(self, "local_scale")
         row2 = layout.row(align=True)
         row2.prop(self, "syntax_mode", expand=True)
-        
         row3 = layout.row()
         row3.prop(self, "last_n_lines")
     
@@ -325,8 +328,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         clr = bgl.GL_RGBA
         texname = self.texture_dict['texture']
         data = self.texture_dict['texture_data']
-        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
 
+        texture = bgl.Buffer(bgl.GL_FLOAT, data.size, data.tolist())
         bgl.glPixelStorei(bgl.GL_UNPACK_ALIGNMENT, 1)
         bgl.glEnable(bgl.GL_TEXTURE_2D)
         bgl.glBindTexture(bgl.GL_TEXTURE_2D, texname)
@@ -376,11 +379,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         lexer = self.get_lexer()
         grid = self.prepare_for_grid()
 
-        x, y = self.xy_offset
-        width = self.terminal_width * 15
-        height = self.num_rows * 32
-
-        x, y, width, height = self.adjust_position_and_dimensions(x, y, width, height)
+        x, y, width, height = self.adjust_position_and_dimensions(*self.dims)
         verts = process_grid_for_shader(grid, loc=(x, y))
         uvs = process_uvs_for_shader(self)
 
@@ -398,6 +397,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         }
         nvBGL2.callback_enable(n_id, draw_data)
 
+    @property
+    def dims(self):
+        x, y = self.xy_offset
+        width = self.terminal_width * 15
+        height = self.num_rows * 32
+        return (x, y, width, height)
 
     def free(self):
         nvBGL2.callback_disable(node_id(self))
