@@ -112,6 +112,26 @@ def ensure_color_in_palette(node, palette, color, named_color=None, fill=None):
     return new_color
 
 
+def ensure_layer_availability(node, gp_object):
+    # ensure a layer to draw to, at the moment only layer one.
+    if not gp_object.data.layers:
+        gp_object.data.layers.new("layer 1")
+    return gp_object.data.layers[0]
+
+def ensure_frame_availability(layer, frame_number): 
+    if not layer.frames:
+        # object has no frames
+        frame = layer.frames.new(frame_number)
+    else:
+        # object has frames, we look for frame number or create one if not present
+        frame = [f for f in layer.frames if f.frame_number == frame_number]
+        if len(frame) == 1:
+            frame = frame[0]
+        if not frame:
+            frame = layer.frames.new(frame_number)
+    return frame
+
+
 class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     ''' Make GreasePencil Strokes '''
     bl_idname = 'SvGreasePencilStrokes'
@@ -235,6 +255,7 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
         colors = self.inputs["stroke color"]
         fills = self.inputs["fill color"]
+
         with self.sv_throttle_tree_update():
 
             self.ensure_collection() # the collection name will be that of self.gp_object_name
@@ -249,26 +270,13 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 gp_object = objects.new(self.gp_object_name, gp_data)
                 collection.objects.link(gp_object)
 
-            # ensure a layer to draw to, at the moment only layer one.
-            if not gp_object.data.layers:
-                gp_object.data.layers.new("layer 1")
-            layer = gp_object.data.layers[0]
-
-
-            if not layer.frames:
-                # object has no frames
-                frame = layer.frames.new(frame_number)
-            else:
-                # object has frames, we look for frame number or create one if not present
-                frame = [f for f in layer.frames if f.frame_number == frame_number]
-                if len(frame) == 1:
-                    frame = frame[0]
-                if not frame:
-                    frame = layer.frames.new(frame_number)
-
+            layer = ensure_layer_availability(self, gp_object)
+            frame = ensure_frame_availability(layer, frame_number)
             strokes = frame.strokes
             GP_DATA = strokes.id_data
-            
+
+            # seen as palettes are no longer using named colors, i think this should be focussing on
+            # generating materials instead            
             PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
             BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
 
