@@ -325,10 +325,10 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
             }
             special_op = []
             for option in local_ops:
-                special_op.append(options_dict[option])
+                special_op.append(options_dict[option].replace("_", " "))
             special = True
             if len(local_ops) == 1:
-                special_op = special_op[0]
+                special_op = special_op[0].replace("_", " ")
 
         for param in zip(*meshes):
             if special:
