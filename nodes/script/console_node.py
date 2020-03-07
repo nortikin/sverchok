@@ -68,6 +68,15 @@ fragment_shader = '''
         if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
         if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
         if (cIndex == 90) { test_tint = vec4(0.7, 0.9, 0.3, 1.0); }
+   
+        // vec4 outputColor = texture(image, texCoord_interp) * test_tint;
+        // if (length(outputColor.xyz) < 0.0001){
+        //    if (cIndex == 3){
+        //        outputColor = vec4(0.2, 0.2, 0.2, 1.0);
+        //    }
+        //}
+        // fragColor = outputColor;
+
         fragColor = texture(image, texCoord_interp) * test_tint;
         
     }
