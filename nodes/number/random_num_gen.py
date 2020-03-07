@@ -73,9 +73,17 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
          name="t", description='Distribution parameter',
          default=.5, min=1e-06, max=1.0-1e-06, precision=6, update=updateNode)
 
+
     as_list : BoolProperty(
         name='As List', description='on means output list, off means output np.array 1d',
         default=True, update=updateNode)
+
+    def numpy_bridge(self, context):
+        self.as_list = not self.output_numpy
+    output_numpy : BoolProperty(
+        name='Output Numpy', description='Output numpy arrays',
+        default=False, update=numpy_bridge)
+
 
     func_dict = {
         "UNIFORM":       (0, np.random.ranf,                  [0],          False, "Uniform",               (1e-06, 1e-06)),
@@ -205,7 +213,7 @@ class SvRndNumGen(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, "weighted", toggle=True)
         else:
             layout.prop_menu_enum(self, "distribute_mode")
-        layout.prop(self, "as_list", toggle=True, invert_checkbox=True, text="Output NumPy")
+        layout.prop(self, "output_numpy", toggle=True, text="Output NumPy")
 
 
     def int_random_range(self, *params):

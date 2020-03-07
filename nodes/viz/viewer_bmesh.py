@@ -349,7 +349,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if mrest[idx]:
                 fullList(mrest[idx], maxlen)
 
-        # we need to suppress depsgraph updates emminating from this part of the process/            
+        # we need to suppress depsgraph updates emminating from this part of the process/
         with self.sv_throttle_tree_update():
 
             if self.merge:
@@ -369,7 +369,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
             else:
                 for obj_index, Verts in enumerate(mverts):
-                    if not Verts:
+                    if not len(Verts) > 0:
                         continue
 
                     data = get_edges_faces_matrices(obj_index)
@@ -409,7 +409,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         nodes = mat.node_tree.nodes
         self.material = mat.name
-        
+
         if bpy.context.scene.render.engine == 'CYCLES':
             # add attr node to the left of diffuse BSDF + connect it
             diffuse_node = nodes['Diffuse BSDF']
@@ -418,7 +418,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             attr_node.attribute_name = 'SvCol'
 
             links = mat.node_tree.links
-            links.new(attr_node.outputs[0], diffuse_node.inputs[0])        
+            links.new(attr_node.outputs[0], diffuse_node.inputs[0])
 
 
 def register():
