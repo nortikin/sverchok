@@ -276,31 +276,37 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             layer = ensure_layer_availability(gp_object)
             frame = ensure_frame_availability(layer, frame_number)
 
+            gp_materials = gp_object.data.materials
             strokes = frame.strokes
             GP_DATA = strokes.id_data
-            
-            # seen as palettes are no longer using named colors, i think this should be focussing on
-            # generating materials instead            
-            # PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
-            # BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
 
             coords = coordinates_socket.sv_get()
             self.num_strokes = len(coords)
             set_correct_stroke_count(strokes, coords)
+
             cols = colors.sv_get()[0]
             fill_cols = fills.sv_get()[0]
-
             cyclic_socket_value = self.inputs["draw cyclic"].sv_get()[0]
             fullList(cyclic_socket_value, self.num_strokes)
             fullList(cols, self.num_strokes)
             fullList(fill_cols, self.num_strokes)
             pressures = self.get_pressures()
-            # print(pressures)
 
             for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
-                # color_from_palette = ensure_color_in_palette(self, PALETTE, color=color, named_color=None, fill=fill)
 
-                # stroke.draw_mode = self.draw_mode  called display_mode now... default SCREEN.
+                # color_name = f"{idx}_color_{self.gp_object_name}" 
+                # if color_name not in gp_materials:
+                #     mat = bpy.data.materials.new(color_name)
+                #     mat.is_grease_pencil = True
+                #     gp_materials.append(mat)
+                
+                # material = gp_materials.get(color_name)
+                # material.grease_pencil.color = color
+                # material.grease_pencil.fill_color = fill
+                # material.grease_pencil.show_fill = True
+                # material.grease_pencil.show_stroke = True
+
+                # stroke.material_index = idx
                 stroke.draw_cyclic = cyclic_socket_value[idx]
 
                 num_points = len(coord_set)
