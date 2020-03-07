@@ -169,23 +169,15 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         onew = self.outputs.new
 
         inew('SvStringsSocket', 'frame').quicklink_func_name = "draw_framenode_qlink"
-
         inew('SvVerticesSocket', 'coordinates')  # per stroke
         inew('SvStringsSocket', 'draw cyclic').prop_name = 'draw_cyclic'   # per stroke
         inew('SvStringsSocket', 'pressure').prop_name = 'pressure'         # per point
-
-        with new_input(self, 'SvColorSocket', 'stroke color') as c1:
-            c1.prop_name = 'stroke_color'
- 
-        with new_input(self, 'SvColorSocket', 'fill color') as c2:
-            c2.prop_name = 'fill_color'
+        inew('SvColorSocket', 'stroke color').prop_name = 'stroke_color'
+        inew('SvColorSocket', 'fill color').prop_name = 'fill_color'
 
         onew('SvObjectSocket', 'object')
-       
-
 
     def draw_buttons(self, context, layout):
-        # layout.prop(self, 'draw_mode', expand=True)
         layout.prop(self, "active_sv_node")
         layout.prop(self, "gp_object_name", text="", icon="GROUP")
 
