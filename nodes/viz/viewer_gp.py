@@ -283,9 +283,10 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             fullList(cols, self.num_strokes)
             fullList(fill_cols, self.num_strokes)
             pressures = self.get_pressures()
+            # print(pressures)
 
             for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
-                color_from_palette = ensure_color_in_palette(self, PALETTE, color=color, named_color=None, fill=fill)
+                # color_from_palette = ensure_color_in_palette(self, PALETTE, color=color, named_color=None, fill=fill)
 
                 # stroke.draw_mode = self.draw_mode  called display_mode now... default SCREEN.
                 stroke.draw_cyclic = cyclic_socket_value[idx]
@@ -294,13 +295,9 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
                 pass_data_to_stroke(stroke, coord_set)
 
                 flat_pressures = match_points_and_pressures(pressures[idx], num_points)
+                # print(flat_pressures)
                 pass_pressures_to_stroke(stroke, flat_pressures)
-
-                stroke.line_width = 1
-                try:
-                    stroke.colorname = color_from_palette.name
-                except:
-                    print('stroke with index', idx, 'is not generated yet.')
+                stroke.line_width = 4
 
             # remove_unused_colors(PALETTE, strokes)
             self.outputs[0].sv_set([gp_object])
