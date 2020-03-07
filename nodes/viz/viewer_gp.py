@@ -26,7 +26,7 @@ def msg_box(message="", title="Message Box", icon='INFO'):
     bpy.context.window_manager.popup_menu(msg_draw, title=title, icon=icon)
 
 
-def set_correct_stroke_count(strokes, coords, BLACK):
+def set_correct_stroke_count(strokes, coords):
     """ ensure that the number of strokes match the sets of coordinates """
     diff = len(strokes) - len(coords)
     if diff < 0:
@@ -252,7 +252,6 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
         if not self.active_sv_node:
             return
 
-
         if not self.gp_object_name:
             return
 
@@ -276,17 +275,17 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
             gp_object = ensure_gp_object(self.gp_object_name)
             layer = ensure_layer_availability(gp_object)
             frame = ensure_frame_availability(layer, frame_number)
-            strokes = frame.strokes
-            GP_DATA = strokes.id_data
 
             # seen as palettes are no longer using named colors, i think this should be focussing on
             # generating materials instead            
-            PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
-            BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
+            strokes = frame.strokes
+            GP_DATA = strokes.id_data
+            # PALETTE = get_palette(GP_DATA, "drafting_" + self.name)
+            # BLACK = ensure_color_in_palette(self, PALETTE, [0,0,0], None, None)
 
             coords = coordinates_socket.sv_get()
             self.num_strokes = len(coords)
-            set_correct_stroke_count(strokes, coords, BLACK)
+            set_correct_stroke_count(strokes, coords)
             cols = colors.sv_get()[0]
             fill_cols = fills.sv_get()[0]
 
