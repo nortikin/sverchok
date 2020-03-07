@@ -60,7 +60,7 @@
     SvDistancePointLineNode
     SvDistancePointPlaneNode
     SvDistancetLineLineNode
-    SvPathLengthNode
+    SvPathLengthMk2Node
     SvOrigins
     GetNormalsNode
     VectorNormalNode
@@ -326,6 +326,7 @@
     SvTextureViewerNode
     SvTextureViewerNodeLite
     SvWaveformViewer
+    SvConsoleNode
 
 ## Text
     ViewerNodeTextMK3
@@ -416,7 +417,6 @@
     ---
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
-    SvParticlesNode
     SvParticlesMK2Node
     SvJoinTrianglesNode
     SvListSliceLiteNode

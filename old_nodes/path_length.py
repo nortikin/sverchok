@@ -63,6 +63,8 @@ class SvPathLengthNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Path Length'
     sv_icon = 'SV_PATH_LENGTH'
 
+    replacement_nodes = [('SvPathLengthMk2Node', None, None)]
+
     output_numpy : BoolProperty(
         name='Output NumPy', description='output NumPy arrays',
         default=False, update=updateNode)

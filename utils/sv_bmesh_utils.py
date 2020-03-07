@@ -37,14 +37,14 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
     bm.verts.index_update()
     bm.verts.ensure_lookup_table()
 
-    if faces:
+    if len(faces) > 0:
         add_face = bm.faces.new
         for face in faces:
             add_face(tuple(bm.verts[i] for i in face))
 
         bm.faces.index_update()
 
-    if edges:
+    if len(edges) > 0:
         if markup_edge_data:
             initial_index_layer = bm.edges.layers.int.new("initial_index")
 
@@ -409,7 +409,7 @@ def get_neighbour_faces(face, by_vert = True):
     Get neighbour faces of the given face.
 
     face : BMFace
-    by_vert: True if by "neighbour" you mean having any common vertex; 
+    by_vert: True if by "neighbour" you mean having any common vertex;
              or False, if by "neighbour" you mean having any common edge.
 
     result: set of BMFace.
@@ -498,7 +498,7 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
 
     bm : BMesh
     init_face_mask : Mask for faces to start from.
-    neighbour_by_vert : True if by "neighbour" you mean having any common vertex; 
+    neighbour_by_vert : True if by "neighbour" you mean having any common vertex;
              or False, if by "neighbour" you mean having any common edge.
     find_shortest_path : if set to True, markup enough information to trace the shortest
             path from each face of the mesh to the initially selected faces.
@@ -549,7 +549,7 @@ def wave_markup_faces(bm, init_face_mask, neighbour_by_vert = True, find_shortes
     init_faces = [face for face, mask in zip(bm.faces[:], init_face_mask) if mask]
     if not init_faces:
         raise Exception("Initial faces set is empty")
-    
+
     def is_obstacle(face):
         if obstacles is None:
             return False
@@ -654,4 +654,3 @@ def wave_markup_verts(bm, init_vert_mask, neighbour_by_edge = True, find_shortes
         wave_front = new_wave_front
 
     return [vert[index] for vert in bm.verts]
-

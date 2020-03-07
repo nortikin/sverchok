@@ -104,8 +104,8 @@ def np_round(v,s):
 numpy_vector_func_dict = {
     "DOT":            (1,  lambda u, v: np.sum(u * v, axis=1),          ('vv s'),        "Dot product"),
     "DISTANCE":       (5,  lambda u, v: np.linalg.norm(u - v, axis=1),  ('vv s'),           "Distance"),
-    "ANGLE DEG":      (12, lambda u, v: np.degrees(angle_between(u, v)),('vv s'),      "Angle Degrees"),
-    "ANGLE RAD":      (17, lambda u, v: angle_between(u, v),            ('vv s'),      "Angle Radians"),
+    "ANGLE_DEG":      (12, lambda u, v: np.degrees(angle_between(u, v)),('vv s'),      "Angle Degrees"),
+    "ANGLE_RAD":      (17, lambda u, v: angle_between(u, v),            ('vv s'),      "Angle Radians"),
 
     "LEN":            (4,  lambda u: np.linalg.norm(u, axis=1),         ('v s'),              "Length"),
     "CROSS":          (0,  lambda u, v: np.cross(u, v),                 ('vv v'),      "Cross product"),

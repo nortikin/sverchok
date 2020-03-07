@@ -21,6 +21,7 @@ import itertools
 import time
 import ast
 import copy
+from itertools import zip_longest
 import bpy
 from mathutils import Vector, Matrix
 import numpy as np
@@ -165,6 +166,22 @@ def fullList(l, count):
         l.extend([l[-1] for a in range(d)])
     return
 
+def fullList_np(l, count):
+    """extends list l so len is at least count if needed with the
+    last element of l"""
+    n = len(l)
+    if n == count:
+        return
+    d = count - n
+    if d > 0:
+        try:
+            l.extend([l[-1] for a in range(d)])
+        except:
+            l = numpy_full_list(l, n)
+    else:
+        l = l[:count]
+    return
+
 def fullList_deep_copy(l, count):
     """the same that full list function but
     it have correct work with objects such as lists."""
@@ -236,6 +253,16 @@ numpy_list_match_modes =  list_match_modes[:3]
 #     ("REPEAT", "Repeat Last", "Match longest List by repeating last item",     3),
 #     ]
 
+def numpy_full_list(array, maxl):
+    if type(array) != np.ndarray:
+        array = np.array(array)
+
+    difl = maxl - array.shape[0]
+
+    if difl > 0:
+        new_part = np.repeat(array[np.newaxis, -1], difl, axis=0)
+        array = np.concatenate((array, new_part))
+    return array[:maxl]
 
 def numpy_match_long_repeat(list_of_arrays):
     '''match numpy arrays length by repeating last one'''
@@ -474,6 +501,13 @@ def transpose_list(lst):
     transpose_list([[1,2], [3,4]]) == [[1,3], [2, 4]]
     """
     return list(map(list, zip(*lst)))
+
+# from python 3.5 docs https://docs.python.org/3.5/library/itertools.html recipes
+def split_by_count(iterable, n, fillvalue=None):
+    "Collect data into fixed-length chunks or blocks"
+    # grouper('ABCDEFG', 3, 'x') --> ABC DEF Gxx"
+    args = [iter(iterable)] * n
+    return list(map(list, zip_longest(*args, fillvalue=fillvalue)))
 
 def describe_data_shape(data):
     """
