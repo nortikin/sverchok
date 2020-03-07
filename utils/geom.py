@@ -1533,7 +1533,7 @@ class LineEquation2D(object):
 
     def side_of_point(self, point, eps=1e-8):
         a, b, c = self.a, self.b, self.c
-        x, y, z = tuple(point)
+        x, y = tuple(point)
         value = a*x + b*y + c
         if abs(value) < eps:
             return 0
