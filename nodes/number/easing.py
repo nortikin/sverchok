@@ -127,7 +127,7 @@ class SvEasingNode(bpy.types.Node, SverchCustomTreeNode):
         """
         adjust render location based on preference multiplier setting
         """
-        x, y = [int(j) for j in (self.location + Vector((self.width + 20, 0)))[:]]
+        x, y = [int(j) for j in (Vector(self.absolute_location) + Vector((self.width + 20, 0)))[:]]
 
         try:
             with sv_preferences() as prefs:
