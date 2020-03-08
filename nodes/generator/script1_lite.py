@@ -414,9 +414,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             print('on line: ', lineno)
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
-            # set_autocolor(self, True, FAIL_COLOR)
-            # raise SNLITE_EXCEPTION(), None, sys.exc_info()[2] from 
-            raise SNLITE_EXCEPTION(sys.exc_info()[2]) from err
+            raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
 
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
