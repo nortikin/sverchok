@@ -44,6 +44,7 @@ snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = [0] * 32
 
+class SNLITE_EXCEPTION(Exception): pass
 
 class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     bl_label = "SNLite templates"
@@ -405,17 +406,17 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
             set_autocolor(self, True, READY_COLOR)
 
-        except:
+        except Exception as err:
+
             print("Unexpected error:", sys.exc_info()[0])
             exc_type, exc_value, exc_traceback = sys.exc_info()
             lineno = traceback.extract_tb(exc_traceback)[-1][1]
             print('on line: ', lineno)
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
-            set_autocolor(self, True, FAIL_COLOR)
-        else:
-            return
-
+            # set_autocolor(self, True, FAIL_COLOR)
+            # raise SNLITE_EXCEPTION(), None, sys.exc_info()[2] from 
+            raise SNLITE_EXCEPTION(sys.exc_info()[2]) from err
 
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
