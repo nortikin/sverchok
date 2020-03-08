@@ -328,6 +328,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     total_time = 0
     done_nodes = set(procesed_nodes)
 
+    clear_exception_drawing_with_bgl(ng)
+
     for node_name in node_list:
         if node_name in done_nodes:
             continue
@@ -351,6 +353,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
+            start_exception_drawing_with_bgl(ng, node_name, err)
             return None
 
     graphs.append(graph)
