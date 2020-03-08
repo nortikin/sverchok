@@ -56,12 +56,18 @@ def clear_exception_drawing_with_bgl(nodes):
     nvBGL2.callback_disable(ng_id)
 
 
-def start_exception_drawing_with_bgl(ng, node_name, err):
+def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
     """ start drawing the exception data beside the node """
     node = ng.nodes[node_name]
-    text = lambda: None
-    text.body = err
     config = lambda: None
+    text = lambda: None
+    text.final_error_message = str(err)
+    
+    if "\n" in error_text:
+        text.body = error_text.splitlines()
+    else:
+        text.body = error_text
+
     x, y, scale = adjust_position_and_dimensions(node, xyoffset(node))
     config.loc = x, y
     config.scale = scale
@@ -81,9 +87,6 @@ def simple_exception_display(context, args):
     """
     text, config = args
 
-    # print(dir(text.body))
-    line = str(text.body)
-    
     x, y = config.loc
     x, y = int(x), int(y)
     r, g, b = (1.0, 1.0, 1.0)
@@ -97,7 +100,17 @@ def simple_exception_display(context, args):
     blf.color(font_id, r, g, b, 1.0)
     ypos = y
 
-    # for line in lines:
+    if isinstance(text.body, list):
+        for line in text.body:
+            blf.position(0, x, ypos, 0)
+            blf.draw(font_id, line)
+            ypos -= int(line_height * 1.3)
+    
+    elif isinstance(text.body, str):
+        blf.position(0, x, ypos, 0)
+        blf.draw(font_id, text.body)
+        ypos -= int(line_height * 1.3)
+
+    blf.color(font_id, 0.911393, 0.090249, 0.257536, 1.0)
     blf.position(0, x, ypos, 0)
-    blf.draw(font_id, line)
-    ypos -= int(line_height * 1.3)
+    blf.draw(font_id, text.final_error_message)

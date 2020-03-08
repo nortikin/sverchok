@@ -31,7 +31,7 @@ from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_wi
 
 import traceback
 import ast
-import sys
+# import sys
 
 graphs = []
 
@@ -357,9 +357,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             exception("Node %s had exception: %s", node_name, err)
             
             if True:  # if ng.show_error_beside_node
-                tb = sys.exc_info()[2]
-                error_text = err.with_traceback(tb)
-                start_exception_drawing_with_bgl(ng, node_name, error_text)
+                error_text = traceback.format_exc()
+                start_exception_drawing_with_bgl(ng, node_name, error_text, err)
             
             return None
 
