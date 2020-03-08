@@ -240,6 +240,9 @@ class SvNurbsSurfaceOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
                     vertices = grouper(vertices, n_u)
                     weights = grouper(weights, n_u)
+                else:
+                    n_v = len(vertices)
+                    n_u = len(vertices[0])
 
                 surface_object.data.splines.clear()
                 for vertices_row, weights_row in zip(vertices, weights):
