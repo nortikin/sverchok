@@ -125,7 +125,7 @@ utils_modules = [
     "csg_core", "csg_geom", "geom", "sv_easing_functions", "sv_text_io_common", "sv_obj_baker",
     "snlite_utils", "snlite_importhelper", "context_managers", "sv_node_utils", "sv_noise_utils",
     "profile", "logging", "testing", "sv_prefs", "sv_requests", "sv_examples_utils", "sv_shader_sources",
-    "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser",
+    "avl_tree", "sv_nodeview_draw_helper", "sv_font_xml_parser", "exception_drawing_with_bgl",
     # UI text editor ui
     "text_editor_submenu", "text_editor_plugins",
     # UI operators and tools
