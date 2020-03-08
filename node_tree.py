@@ -351,6 +351,12 @@ class SverchCustomTreeNode:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
 
+    @property
+    def asbolute_location(self):
+        """ does not return a vactor, it returns a:  tuple(x, y) """
+        return recursive_framed_location_finder(node, node.location[:])
+
+
     def ensure_enums_have_no_space(self, enums=None):
         """
         enums: a list of property names to check. like  self.current_op  

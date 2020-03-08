@@ -14,7 +14,6 @@ import time
 
 import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
-from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 
 def exception_nodetree_id(ng):
     """ only one node per ng will have an exception """
@@ -44,7 +43,7 @@ def adjust_position_and_dimensions(node, loc):
 def xyoffset(node):
     """ what is the location, offset to draw to """
     loc_xy = node.location[:]
-    a = recursive_framed_location_finder(node, loc_xy)
+    a = node.absolute_location
     b = int(node.width) + 20
     return int(a[0] + b), int(a[1])
 
