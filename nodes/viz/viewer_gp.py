@@ -16,8 +16,6 @@ from sverchok.data_structure import updateNode, fullList
 from sverchok.utils.context_managers import new_input
 
 
-nodule_color = (0.899, 0.8052, 0.0, 1.0)
-
 def msg_box(message="", title="Message Box", icon='INFO'):
 
     def msg_draw(self, context):
@@ -82,35 +80,6 @@ def remove_unused_colors(palette, strokes):
     # for unused_color in unused_named_colors:
     #     palette.colors.remove(palette.colors[unused_color])
     pass
-
-
-def ensure_color_in_palette(node, palette, color, named_color=None, fill=None):
-
-    # if not named_color:
-    #     if fill:
-    #         rounded_color = str([round(i, 4) for i in color[:4]]) + str([round(i, 4) for i in fill[:4]])
-    #     else:
-    #         rounded_color = str([round(i, 4) for i in color[:4]])
-    #     named_color = str(rounded_color)
-    # else:
-    #     named_color = 'BLACK'
-
-    #if not named_color in palette.colors:
-    if palette.colors:
-        new_color = palette.colors[0]
-    else:
-
-        new_color = palette.colors.new()
-        # new_color.name = named_color
-        new_color.color = color[:3]
-        new_color.alpha = color[3]
-        new_color.use_hq_fill = node.use_hq_fill
-        if fill:
-            new_color.fill_color = fill[:3]
-            new_color.fill_alpha = fill[3]
-
-    return new_color
-
 
 def ensure_gp_object(gp_object_name):
     objects = bpy.data.objects
@@ -217,17 +186,6 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, 'use_hq_fill', toggle=True)
         layout.prop(self, 'auto_cleanup_colors', text='auto remove unused colors')
-    
-        # data = bpy.data.palettes.get("drafting_" + self.name)
-        # if data:
-        #     print(data)
-        #     layout.template_palette(data, "colors", colors=True)
-        
-        # settings = # self.paint_settings(context)
-        # settings = context.tool_settings.gpencil_paint
-        # layout.template_ID(settings, "palette", new="palette.new")
-        # if settings.palette:
-        #     layout.template_palette(settings, "palette", color=True)        
 
     def get_pressures(self):
         pressures = self.inputs["pressure"].sv_get()
@@ -294,19 +252,19 @@ class SvGreasePencilStrokes(bpy.types.Node, SverchCustomTreeNode):
 
             for idx, (stroke, coord_set, color, fill) in enumerate(zip(strokes, coords, cols, fill_cols)):
 
-                # color_name = f"{idx}_color_{self.gp_object_name}" 
-                # if color_name not in gp_materials:
-                #     mat = bpy.data.materials.new(color_name)
-                #     mat.is_grease_pencil = True
-                #     gp_materials.append(mat)
+                color_name = f"{idx}_color_{self.gp_object_name}" 
+                if color_name not in gp_materials:
+                    mat = bpy.data.materials.new(color_name)
+                    bpy.data.materials.create_gpencil_data(mat)
+                    gp_materials.append(mat)
                 
-                # material = gp_materials.get(color_name)
-                # material.grease_pencil.color = color
-                # material.grease_pencil.fill_color = fill
-                # material.grease_pencil.show_fill = True
-                # material.grease_pencil.show_stroke = True
+                material = gp_materials.get(color_name)
+                material.grease_pencil.color = color
+                material.grease_pencil.fill_color = fill
+                material.grease_pencil.show_fill = True
+                material.grease_pencil.show_stroke = True
 
-                # stroke.material_index = idx
+                stroke.material_index = idx
                 stroke.draw_cyclic = cyclic_socket_value[idx]
 
                 num_points = len(coord_set)
