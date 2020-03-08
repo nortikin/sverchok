@@ -352,7 +352,7 @@ class SverchCustomTreeNode:
         return self.n_id
 
     @property
-    def asbolute_location(self):
+    def absolute_location(self):
         """ does not return a vactor, it returns a:  tuple(x, y) """
         return recursive_framed_location_finder(self, self.location[:])
 

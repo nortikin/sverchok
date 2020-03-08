@@ -42,7 +42,6 @@ def adjust_position_and_dimensions(node, loc):
 
 def xyoffset(node):
     """ what is the location, offset to draw to """
-    loc_xy = node.location[:]
     a = node.absolute_location
     b = int(node.width) + 20
     return int(a[0] + b), int(a[1])
