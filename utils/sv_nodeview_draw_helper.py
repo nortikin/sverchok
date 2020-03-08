@@ -18,7 +18,7 @@ class SvNodeViewDrawMixin():
 
     @property
     def xy_offset(self):
-        a = self.location[:]
+        a = self.absolute_location
         b = int(self.width) + 20
         return int(a[0] + b), int(a[1])
 
