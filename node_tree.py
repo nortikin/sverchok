@@ -206,7 +206,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def turn_off_ng(self, context):
         process_tree(self)
-
         # should turn off tree. for now it does by updating it whole
         # should work something like this
         # outputs = filter(lambda n: isinstance(n,SvOutput), self.nodes)

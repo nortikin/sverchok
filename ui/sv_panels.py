@@ -432,6 +432,7 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         layout.row().operator('node.sv_show_latest_commits')
         layout.separator()
         layout.row().operator('node.remove_stale_draw_callbacks')
+        # layout.row().prop(addon, "sv_display_error_in_nodeview")
 
 def node_show_tree_mode(self, context):
     if not displaying_sverchok_nodes(context):
