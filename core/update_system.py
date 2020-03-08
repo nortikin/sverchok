@@ -356,7 +356,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
             
-            if True:  # if ng.show_error_beside_node
+            if ng.sv_show_error_in_tree:  # if ng.show_error_beside_node
                 error_text = traceback.format_exc()
                 start_exception_drawing_with_bgl(ng, node_name, error_text, err)
             

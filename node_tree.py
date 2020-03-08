@@ -212,11 +212,18 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # for node in outputs:
         #   node.disable()
 
+    def show_error_update(self, context):
+        process_tree(self)    
+
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors: StringProperty(default="")
+
+    sv_show_error_in_tree: BoolProperty(
+        description="use bgl to draw the error to the nodeview",
+        name="Show error in tree", default=False, update=show_error_update)
 
     def on_draft_mode_changed(self, context):
         """
