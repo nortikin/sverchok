@@ -26,6 +26,8 @@ from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
 
+ui_tooltip = "node.sv_generic_ui_tooltip"
+
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
 def redraw_panels():
@@ -91,7 +93,6 @@ class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
         scene = context.scene
         sv_clean(scene)
         sv_scene_handler(scene)
-
         return {'FINISHED'}
 
 
@@ -332,22 +333,22 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
 
         if ng.sv_toggle_nodetree_props:
             col = box.column()
-
+            
             row = col.row()
             row.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
             tooltip_exception = "This will show Node Exceptions in the 3dview, right beside the node"
-            row.operator("node.sv_generic_ui_tooltip", text="", icon="QUESTION").arg = tooltip_exception
+            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_exception
 
             row = col.row()
             row.label(text="Eval dir")
             row.prop(ng, "sv_subtree_evaluation_order", expand=True)
             tooltip_eval_order = "This will give you control over the order in which subset graphs are evaluated"
-            row.operator("node.sv_generic_ui_tooltip", text="", icon="QUESTION").arg = tooltip_eval_order
+            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_eval_order
             
             row = col.row()
             row.operator('node.remove_stale_draw_callbacks')
             tooltip_gl_purge = "This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"
-            row.operator("node.sv_generic_ui_tooltip", text="", icon="QUESTION").arg = tooltip_gl_purge
+            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_gl_purge
 
     def draw_general_sverchok_features(self, layout, context):
         box_layout = layout.box()
