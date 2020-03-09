@@ -186,13 +186,12 @@ def separate_nodes(ng, links=None):
             node_set_list[-1].add(n)
 
     found_node_sets = [ns for ns in node_set_list if len(ns) > 1]
-    sort_component = 'x'  # ["x", "y", "None"]
-    
-    if sort_component == 'x':
-        print(found_node_sets)
-        find_lowest_coordinate = lambda ns: min(ng.nodes[n].location.x for n in ns)
-        found_node_sets = sorted(found_node_sets, key=find_lowest_coordinate)
-        print(found_node_sets)
+  
+    sorting_type = ng.sv_subtree_evaluation_order  
+    if sorting_type in {'X', 'Y'}:
+        sort_index = 0 if sorting_type == "X" else 1
+        find_lowest = lambda ns: min(ng.nodes[n].absolute_location[sort_index] for n in ns)
+        found_node_sets = sorted(found_node_sets, key=find_lowest)
 
     return found_node_sets
 

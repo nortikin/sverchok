@@ -237,13 +237,6 @@ def idname_draw(self, context):
     op.old_node_name = node.name
     op.new_bl_idname = bl_idname
 
-    col.separator()
-
-    box = col.box()
-    box.alert = True
-    box.label(text="common node features")
-    box.prop(node.id_data, "sv_show_error_in_tree", icon="CONSOLE")
-
 
 def register():
     branch = get_branch()

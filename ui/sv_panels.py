@@ -323,10 +323,33 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         col5.scale_x = little_width
         col5.label(text='F')
 
+    def draw_nodetree_props(self, layout, ng):
+        box = layout.box()
+        box.label(text=f"Active Tree: {ng.name}")
+        col = box.column()
+        col.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
+        row = col.row()
+        row.label(text="Eval dir")
+        row.prop(ng, "sv_subtree_evaluation_order", expand=True)
+        col.row().operator('node.remove_stale_draw_callbacks')
+
+    def draw_general_sverchok_features(self, layout, context):
+        box_layout = layout.box()
+        box_layout.label(text="General Sverchok utils")
+        if context.scene.sv_new_version:
+            row = box_layout.row()
+            row.alert = True
+            row.operator(
+                "node.sverchok_update_addon", text='Upgrade Sverchok addon')
+        else:
+            sha_update = "node.sverchok_check_for_upgrades_wsha"
+            box_layout.row().operator(sha_update, text='Check for updates')
+        box_layout.row().operator('node.sv_show_latest_commits')
 
     def draw(self, context):
 
-        ng_name = context.space_data.node_tree.name
+        ng = context.space_data.node_tree
+        ng_name = ng.name
         layout = self.layout
         layout.active = True
 
@@ -420,18 +443,10 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 split.prop(tree, 'use_fake_user', toggle=True, text='F')
 
-        if context.scene.sv_new_version:
-            row = layout.row()
-            row.alert = True
-            row.operator(
-                "node.sverchok_update_addon", text='Upgrade Sverchok addon')
-        else:
-            sha_update = "node.sverchok_check_for_upgrades_wsha"
-            layout.row().operator(sha_update, text='Check for updates')
+        self.draw_nodetree_props(layout, ng)
+        self.draw_general_sverchok_features(layout, context)
 
-        layout.row().operator('node.sv_show_latest_commits')
-        layout.separator()
-        layout.row().operator('node.remove_stale_draw_callbacks')
+
 
 def node_show_tree_mode(self, context):
     if not displaying_sverchok_nodes(context):

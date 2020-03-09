@@ -22,7 +22,7 @@ import time
 from contextlib import contextmanager
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from mathutils import Matrix
 
@@ -212,7 +212,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # for node in outputs:
         #   node.disable()
 
-    def show_error_update(self, context):
+    def sv_process_tree_callback(self, context):
         process_tree(self)    
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
@@ -223,7 +223,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     sv_show_error_in_tree: BoolProperty(
         description="use bgl to draw the error to the nodeview",
-        name="Show error in tree", default=False, update=show_error_update)
+        name="Show error in tree", default=False, update=sv_process_tree_callback)
+
+    sv_subtree_evaluation_order: EnumProperty(
+        name="Subtree eval order",
+        items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
+        description="1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry\n2) None does no sorting",
+        default="None", update=sv_process_tree_callback
+    )
 
     def on_draft_mode_changed(self, context):
         """
