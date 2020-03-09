@@ -22,7 +22,7 @@ from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty)
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.geom import multiply_vectors
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import dataCorrect, fullList, updateNode
+from sverchok.data_structure import dataCorrect_np, fullList, numpy_full_list, updateNode
 
 
 def set_bevel_object(node, cu, obj_index):
@@ -35,7 +35,7 @@ def set_bevel_object(node, cu, obj_index):
             cu.use_fill_caps = node.caps
     else:
         cu.bevel_object = None
-        cu.use_fill_caps = False    
+        cu.use_fill_caps = False
 
 
 # -- POLYLINE --
@@ -71,20 +71,14 @@ def live_curve(obj_index, node, verts, radii, twist):
         polyline.points.add(len(VERTS)-1)
         polyline.points.foreach_set('co', full_flat)
 
-        if RADII:
-            if len(VERTS) < len(RADII):
-                RADII = RADII[:len(VERTS)]
-            elif len(VERTS) > len(RADII):
-                fullList(RADII, len(VERTS))
-            polyline.points.foreach_set('radius', RADII)
+        if len(RADII) > 0:
+            rad = numpy_full_list(RADII, len(VERTS))
+            polyline.points.foreach_set('radius', rad)
 
-        if TWIST:
-            if len(VERTS) < len(TWIST):
-                TWIST = TWIST[:len(VERTS)]
-            elif len(VERTS) > len(TWIST):
-                fullList(TWIST, len(VERTS))
-            polyline.points.foreach_set('tilt', TWIST)
-            
+        if  len(TWIST) > 0:
+            twist = numpy_full_list(TWIST, len(VERTS))
+            polyline.points.foreach_set('tilt', twist)
+
         if node.close:
             cu.splines[idx].use_cyclic_u = True
 
@@ -121,7 +115,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     )
 
     dimension_modes = [(k, k, '', i) for i, k in enumerate(["3D", "2D"])]
-    
+
     curve_dimensions: bpy.props.EnumProperty(
         items=dimension_modes, update=updateNode,
         description="2D or 3D curves", default="3D"
@@ -184,16 +178,15 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
 
 
     def get_geometry_from_sockets(self, has_matrices):
-        
+
         def get(socket_name):
             data = self.inputs[socket_name].sv_get(default=[])
-            return dataCorrect(data)
+            return dataCorrect_np(data)
 
         mverts = get('vertices')
         mradii = self.inputs['radii'].sv_get(deepcopy=True)
         mtwist = self.inputs['twist'].sv_get(deepcopy=True)
         mmtrix = get('matrix')
-
         # extend all non empty lists to longest of these
         maxlen = max(len(mverts), len(mmtrix))
         if has_matrices:
@@ -221,7 +214,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
         with self.sv_throttle_tree_update():
             out_objects = []
             for obj_index, Verts in enumerate(mverts):
-                if not Verts:
+                if len(Verts) == 0:
                     continue
 
                 matrix = mmatrices[obj_index] if has_matrices else []
@@ -250,7 +243,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
     def set_auto_uv(self, obj):
         """
         this will change the state of the object.prop if it does not match the new desired state
-        
+
         this is no longer supported in blender 2.92+
         """
         if obj.data.use_uv_as_generated != self.use_auto_uv:
@@ -258,7 +251,7 @@ class SvPolylineViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper)
 
     def draw_label(self):
         return f"PV {self.basedata_name}"
-    
+
 
 def register():
     bpy.utils.register_class(SvPolylineViewerNodeV28)

@@ -19,7 +19,7 @@
 from sverchok.data_structure import get_other_socket
 
 from mathutils import Matrix, Quaternion
-
+from numpy import ndarray
 
 # conversion tests, to be used in sv_get!
 
@@ -54,7 +54,7 @@ def get_matrices_from_locs(data):
 
     def get_all(data):
         for item in data:
-            if isinstance(item, (tuple, list)) and len(item) == 3 and isinstance(item[0], (float, int)):
+            if isinstance(item, (tuple, list, ndarray)) and len(item) == 3 and isinstance(item[0], (float, int)):
                 # generate location matrix from location
                 x, y, z = item
                 collect_matrix(Matrix([(1., .0, .0, x), (.0, 1., .0, y), (.0, .0, 1., z), (.0, .0, .0, 1.)]))

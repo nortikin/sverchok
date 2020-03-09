@@ -197,6 +197,7 @@ class SvGetAssetProperties(bpy.types.Node, SverchCustomTreeNode):
         
         elif self.Mode == 'texts':
             if self.text_name:
+                # print(repr(data_list[self.text_name].as_string()))
                 output_socket.sv_set([[data_list[self.text_name].as_string()]])
             else:
                 output_socket.sv_set(data_list[:])

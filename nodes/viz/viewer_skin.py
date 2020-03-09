@@ -24,7 +24,7 @@ import bpy
 from bpy.props import (BoolProperty, FloatProperty, IntProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.data_structure import updateNode, match_long_repeat, fullList, fullList_np, numpy_full_list
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
@@ -88,7 +88,7 @@ def shrink_geometry(bm, dist, layers):
 
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=dist)
     bm.verts.ensure_lookup_table()
-    
+
     verts, edges, faces = pydata_from_bmesh(bm)
     data_out = [verts, edges]
     for layer_name in made_layers:
@@ -154,7 +154,7 @@ def make_bmesh_geometry(node, context, geometry, idx, layers):
         b.levels = node.levels
         b.render_levels = node.render_levels
 
-    node.push_custom_matrix_if_present(obj, matrix)    
+    node.push_custom_matrix_if_present(obj, matrix)
 
     return obj, data_layers
 
@@ -163,7 +163,7 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     """
     Triggers: Output Skin Mesh
     Tooltip: Outputs Blender Edges + Skin Modifier + Subdivision Surface
-    
+
     """
     bl_idname = 'SvSkinViewerNodeV28'
     bl_label = 'Skin Mesher'
@@ -245,12 +245,13 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
 
         # pad all input to longest
         maxlen = max(*(map(len, geometry_full)))
-        fullList(geometry_full[0], maxlen)
-        fullList(geometry_full[1], maxlen)
-        fullList(geometry_full[2], maxlen)
-        fullList(geometry_full[3], maxlen)
-        fullList(geometry_full[4], maxlen)
 
+        fullList_np(geometry_full[0], maxlen)
+        fullList_np(geometry_full[1], maxlen)
+        fullList_np(geometry_full[2], maxlen)
+        fullList_np(geometry_full[3], maxlen)
+        fullList_np(geometry_full[4], maxlen)
+        print(geometry_full[1])
         catch_idx = 0
         for idx, (geometry) in enumerate(zip(*geometry_full)):
             catch_idx = idx
@@ -263,17 +264,18 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def unit_generator(self, idx, geometry):
         verts, _, _, radiix, radiiy = geometry
         ntimes = len(verts)
-        radiix, _ = match_long_repeat([radiix, verts])
-        radiiy, _ = match_long_repeat([radiiy, verts])
 
-        # assign radii after creation
-        obj, data_layers = make_bmesh_geometry(self, bpy.context, geometry, idx, [radiix, radiiy])
+        radiix = numpy_full_list(radiix, ntimes)
+        radiiy = numpy_full_list(radiiy, ntimes)
+        radiuses = [radiix, radiiy]
+
+        obj, data_layers = make_bmesh_geometry(self, bpy.context, geometry, idx, radiuses)
 
         if data_layers and self.distance_doubles > 0.0:
             # This sets the modified geometry with radius x and radius y.
             f_r = list(itertools.chain(*zip(data_layers[0], data_layers[1])))
             f_r = [abs(f) for f in f_r]
-            obj.data.skin_vertices[0].data.foreach_set('radius', f_r)   
+            obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
             all_yes = list(itertools.repeat(True, len(obj.data.vertices)))
             obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)
 
@@ -282,7 +284,7 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             f_r = [abs(f) for f in f_r]
             obj.data.skin_vertices[0].data.foreach_set('radius', f_r)
 
-        if self.use_root:        
+        if self.use_root:
             # set all to root
             all_yes = list(itertools.repeat(True, ntimes))
             obj.data.skin_vertices[0].data.foreach_set('use_root', all_yes)

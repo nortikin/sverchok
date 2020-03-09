@@ -49,7 +49,7 @@ from sverchok.utils.logging import debug
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
-
+from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
 class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
@@ -206,18 +206,24 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     def turn_off_ng(self, context):
         process_tree(self)
-
         # should turn off tree. for now it does by updating it whole
         # should work something like this
         # outputs = filter(lambda n: isinstance(n,SvOutput), self.nodes)
         # for node in outputs:
         #   node.disable()
 
+    def show_error_update(self, context):
+        process_tree(self)    
+
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
     sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     sv_user_colors: StringProperty(default="")
+
+    sv_show_error_in_tree: BoolProperty(
+        description="use bgl to draw the error to the nodeview",
+        name="Show error in tree", default=False, update=show_error_update)
 
     def on_draft_mode_changed(self, context):
         """
@@ -274,10 +280,12 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
+
+        clear_exception_drawing_with_bgl(self.nodes)
+
         if self.skip_tree_update:
             # print('throttled update from context manager')
             return
-
 
         # print('svtree update', self.timestamp)
         self.has_changed = True
@@ -344,6 +352,12 @@ class SverchCustomTreeNode:
         if not self.n_id:
             self.n_id = str(hash(self) ^ hash(time.monotonic()))
         return self.n_id
+
+    @property
+    def absolute_location(self):
+        """ does not return a vactor, it returns a:  tuple(x, y) """
+        return recursive_framed_location_finder(self, self.location[:])
+
 
     def ensure_enums_have_no_space(self, enums=None):
         """

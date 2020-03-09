@@ -21,6 +21,7 @@ import numpy as np
 from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, second_as_first_cycle as safc
+from sverchok.core.handlers import get_sv_depsgraph, set_sv_depsgraph_need
 
 
 class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
@@ -41,28 +42,47 @@ class SvParticlesMK2Node(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket',  "Size")
         self.outputs.new('SvVerticesSocket', "outLocation")
         self.outputs.new('SvVerticesSocket', "outVelocity")
+        set_sv_depsgraph_need()
 
     def process(self):
         O, V, L, S = self.inputs
         outL, outV = self.outputs
-        listobj = [i.particle_systems.active.particles for i in O.sv_get() if i.particle_systems]
-        if V.is_linked:
-            for i, i2 in zip(listobj, V.sv_get()):
-                i.foreach_set('velocity', np.array(safc(i, i2)).flatten())
-        if S.is_linked:
-            for i, i2 in zip(listobj, S.sv_get()):
-                i.foreach_set('size', safc(i, i2))
-        if L.is_linked:
-            for i, i2 in zip(listobj, L.sv_get()):
-                i.foreach_set('location', np.array(safc(i, i2)).flatten())
-        if outL.is_linked:
-            if self.Filt_D:
-                outL.sv_set([[i.location[:] for i in Plist if i.alive_state == 'ALIVE'] for Plist in listobj])
-            else:
-                outL.sv_set([[i.location[:] for i in Plist] for Plist in listobj])
-        if outV.is_linked:
-            outV.sv_set([[i.velocity[:] for i in Plist] for Plist in listobj])
 
+        # this may not work in render mode.
+        sv_depsgraph = get_sv_depsgraph()
+
+        with self.sv_throttle_tree_update():
+    
+
+            # listobj = [i.particle_systems.active.particles for i in O.sv_get() if i.particle_systems]
+            listobj = []
+            for obj in O.sv_get():
+                if not obj.particle_systems:
+                    continue
+                obj = sv_depsgraph.objects[obj.name]
+                particle_systems = obj.evaluated_get(sv_depsgraph).particle_systems
+                particles = particle_systems[0].particles
+                listobj.append(particles)
+    
+            if V.is_linked:
+                for i, i2 in zip(listobj, V.sv_get()):
+                    i.foreach_set('velocity', np.array(safc(i, i2)).flatten())
+            if S.is_linked:
+                for i, i2 in zip(listobj, S.sv_get()):
+                    i.foreach_set('size', safc(i, i2))
+            if L.is_linked:
+                for i, i2 in zip(listobj, L.sv_get()):
+                    i.foreach_set('location', np.array(safc(i, i2)).flatten())
+            if outL.is_linked:
+                if self.Filt_D:
+                    outL.sv_set([[i.location[:] for i in Plist if i.alive_state == 'ALIVE'] for Plist in listobj])
+                else:
+                    outL.sv_set([[i.location[:] for i in Plist] for Plist in listobj])
+            if outV.is_linked:
+                outV.sv_set([[i.velocity[:] for i in Plist] for Plist in listobj])
+
+    def free(self):
+        set_sv_depsgraph_need(False)
 
 def register():
     bpy.utils.register_class(SvParticlesMK2Node)

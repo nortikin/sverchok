@@ -326,6 +326,7 @@
     SvTextureViewerNode
     SvTextureViewerNodeLite
     SvWaveformViewer
+    SvConsoleNode
 
 ## Text
     ViewerNodeTextMK3
@@ -416,7 +417,6 @@
     ---
     SvCSGBooleanNodeMK2
     SvNumpyArrayNode
-    SvParticlesNode
     SvParticlesMK2Node
     SvJoinTrianglesNode
     SvListSliceLiteNode
