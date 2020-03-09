@@ -232,6 +232,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         default="None", update=sv_process_tree_callback
     )
 
+    sv_toggle_nodetree_props: BoolProperty(name="Toggle visibility of props", description="Show more properties for this node tree")
+
     def on_draft_mode_changed(self, context):
         """
         This is triggered when Draft mode of the tree is toggled.

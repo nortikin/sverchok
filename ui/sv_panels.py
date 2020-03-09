@@ -325,13 +325,17 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
 
     def draw_nodetree_props(self, layout, ng):
         box = layout.box()
-        box.label(text=f"Active Tree: {ng.name}")
-        col = box.column()
-        col.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
-        row = col.row()
-        row.label(text="Eval dir")
-        row.prop(ng, "sv_subtree_evaluation_order", expand=True)
-        col.row().operator('node.remove_stale_draw_callbacks')
+        triangle = "TRIA_UP" if ng.sv_toggle_nodetree_props else "TRIA_DOWN"
+        row = box.row()
+        row.label(text=f"Active Tree: {ng.name}")
+        row.prop(ng, "sv_toggle_nodetree_props", text="", icon=triangle)
+        if ng.sv_toggle_nodetree_props:
+            col = box.column()
+            col.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
+            row = col.row()
+            row.label(text="Eval dir")
+            row.prop(ng, "sv_subtree_evaluation_order", expand=True)
+            col.row().operator('node.remove_stale_draw_callbacks')
 
     def draw_general_sverchok_features(self, layout, context):
         box_layout = layout.box()
