@@ -18,6 +18,12 @@ Inputs
 | Matrices | One or more, never empty                                                    |
 +----------+-----------------------------------------------------------------------------+
 
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Output NumPy arrays in stead of regular lists (makes the node faster)
 
 Outputs
 -------
@@ -33,9 +39,3 @@ Examples
 
 .. image:: https://cloud.githubusercontent.com/assets/619340/4186411/a3e1c14a-3760-11e4-84fe-2acaf1858ad7.PNG
   :alt: MatrixApplyDemo5.PNG
-
-
-Notes
--------
-
-The ``update`` function is outdated, functionally this is of no relevance to users but we should change it for future compatibility.

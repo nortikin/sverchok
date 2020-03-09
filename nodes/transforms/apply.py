@@ -18,11 +18,18 @@
 
 import bpy
 from mathutils import Matrix, Vector
-
+from bpy.props import BoolProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (Vector_generate, Vector_degenerate,
                                      Matrix_generate, updateNode)
+import numpy as np
 
+def matrix_apply_np(verts, matrix):
+    '''taken from https://blender.stackexchange.com/a/139517'''
+
+    verts_co_4d = np.ones(shape=(verts.shape[0], 4), dtype=np.float)
+    verts_co_4d[:, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
+    return np.einsum('ij,aj->ai', matrix, verts_co_4d)[:, :-1]
 
 class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Multiply vectors on matrixes with several objects in output '''
@@ -31,33 +38,42 @@ class MatrixApplyNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_APPLY'
 
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vectors")
         self.inputs.new('SvMatrixSocket', "Matrixes")
         self.outputs.new('SvVerticesSocket', "Vectors")
 
+    def draw_buttons_ext(self, context, layout):
+        '''draw buttons on the N-panel'''
+        layout.prop(self, 'output_numpy')
+    def rclick_menu(self, context, layout):
+        '''right click sv_menu items'''
+        layout.prop(self, "output_numpy", expand=False)
+
     def process(self):
-        if self.outputs['Vectors'].is_linked:
-            vecs_ = self.inputs['Vectors'].sv_get(deepcopy=False)
-            vecs = Vector_generate(vecs_)
+        if not self.outputs['Vectors'].is_linked:
+            return
+            
+        vecs_ = self.inputs['Vectors'].sv_get(deepcopy=False)
+        mats = self.inputs['Matrixes'].sv_get(deepcopy=False)
 
-            mats = self.inputs['Matrixes'].sv_get(deepcopy=False)
-            vectors_ = self.vecscorrect(vecs, mats)
-            vectors = Vector_degenerate(vectors_)
-            self.outputs['Vectors'].sv_set(vectors)
-
-    def vecscorrect(self, vecs, mats):
         out = []
-        lengthve = len(vecs) - 1
-        for i, m in enumerate(mats):
-            out_ = []
-            k = i
-            if k > lengthve:
-                k = lengthve
-            for v in vecs[k]:
-                out_.append(m @ v)
-            out.append(out_)
-        return out
+        s_len = max(map(len, [vecs_, mats]))
+        vecs = [np.array(vs) for vs in vecs_]
+        v_l = len(vecs_) - 1
+        m_l = len(mats) - 1
+        func = matrix_apply_np
+        if self.output_numpy:
+            out = [func(vecs[min(i, v_l)], mats[min(i, m_l)]) for i in range(s_len)]
+        else:
+            out = [func(vecs[min(i, v_l)], mats[min(i, m_l)]).tolist() for i in range(s_len)]
+
+        self.outputs['Vectors'].sv_set(out)
 
 
 def register():
