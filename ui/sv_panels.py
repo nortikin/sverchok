@@ -329,13 +329,25 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         row = box.row()
         row.label(text=f"Active Tree: {ng.name}")
         row.prop(ng, "sv_toggle_nodetree_props", text="", icon=triangle)
+
         if ng.sv_toggle_nodetree_props:
+        
             col = box.column()
-            col.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
+            row = col.row()
+            row.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
+            tooltip_exception = "This will show Node Exceptions in the 3dview, right beside the node"
+            row.operator("node.sv_generic_ui_tooltip", text="", icon="QUESTION").arg = tooltip_exception
+
             row = col.row()
             row.label(text="Eval dir")
             row.prop(ng, "sv_subtree_evaluation_order", expand=True)
-            col.row().operator('node.remove_stale_draw_callbacks')
+            tooltip_eval_order = "This will give you control over the order in which subset graphs are evaluated"
+            row.operator("node.sv_generic_ui_tooltip", text="", icon="QUESTION").arg = tooltip_eval_order
+            
+            row = col.row()
+            row.operator('node.remove_stale_draw_callbacks')
+            tooltip_gl_purge = "This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"
+            row.operator("node.sv_generic_ui_tooltip", text="", icon="QUESTION").arg = tooltip_gl_purge
 
     def draw_general_sverchok_features(self, layout, context):
         box_layout = layout.box()

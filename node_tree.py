@@ -194,9 +194,14 @@ class SvNodeTreeCommon(object):
         return res
 
 
+class SvGenericUITooltipOperator(bpy.types.Operator):
+    arg: StringProperty()
+    bl_idname = "node.sv_generic_ui_tooltip"
+    bl_label = "tip"
 
-
-
+    @classmethod
+    def description(cls, context, properties):
+        return properties.arg
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -748,7 +753,8 @@ class SverchCustomTreeNode:
 
 classes = [
     SverchCustomTree, 
-    SvLinkNewNodeInput
+    SvLinkNewNodeInput,
+    SvGenericUITooltipOperator
 ]
 
 
