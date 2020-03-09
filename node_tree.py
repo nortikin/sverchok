@@ -20,6 +20,7 @@
 import sys
 import time
 from contextlib import contextmanager
+import textwrap
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, EnumProperty
@@ -233,7 +234,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_subtree_evaluation_order: EnumProperty(
         name="Subtree eval order",
         items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
-        description="1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry\n2) None does no sorting",
+        description=textwrap.dedent("""\
+            1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
+            2) None does no sorting
+        """),
         default="None", update=sv_process_tree_callback
     )
 
