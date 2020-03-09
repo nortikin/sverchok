@@ -26,6 +26,8 @@ from sverchok.utils import profile
 from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.ui.development import displaying_sverchok_nodes
 
+ui_tooltip = "node.sv_generic_ui_tooltip"
+
 objects_nodes_set = {'ObjectsNode', 'ObjectsNodeMK2', 'SvObjectsNodeMK3'}
 
 def redraw_panels():
@@ -91,7 +93,6 @@ class SvRemoveStaleDrawCallbacks(bpy.types.Operator):
         scene = context.scene
         sv_clean(scene)
         sv_scene_handler(scene)
-
         return {'FINISHED'}
 
 
@@ -323,10 +324,49 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         col5.scale_x = little_width
         col5.label(text='F')
 
+    def draw_nodetree_props(self, layout, ng):
+        box = layout.box()
+        triangle = "TRIA_UP" if ng.sv_toggle_nodetree_props else "TRIA_DOWN"
+        row = box.row()
+        row.label(text=f"Active Tree: {ng.name}")
+        row.prop(ng, "sv_toggle_nodetree_props", text="", icon=triangle)
+
+        if ng.sv_toggle_nodetree_props:
+            col = box.column()
+            
+            row = col.row()
+            row.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
+            tooltip_exception = "This will show Node Exceptions in the 3dview, right beside the node"
+            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_exception
+
+            row = col.row()
+            row.label(text="Eval dir")
+            row.prop(ng, "sv_subtree_evaluation_order", expand=True)
+            tooltip_eval_order = "This will give you control over the order in which subset graphs are evaluated"
+            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_eval_order
+            
+            row = col.row()
+            row.operator('node.remove_stale_draw_callbacks')
+            tooltip_gl_purge = "This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own"
+            row.operator(ui_tooltip, text="", icon="QUESTION").arg = tooltip_gl_purge
+
+    def draw_general_sverchok_features(self, layout, context):
+        box_layout = layout.box()
+        box_layout.label(text="General Sverchok utils")
+        if context.scene.sv_new_version:
+            row = box_layout.row()
+            row.alert = True
+            row.operator(
+                "node.sverchok_update_addon", text='Upgrade Sverchok addon')
+        else:
+            sha_update = "node.sverchok_check_for_upgrades_wsha"
+            box_layout.row().operator(sha_update, text='Check for updates')
+        box_layout.row().operator('node.sv_show_latest_commits')
 
     def draw(self, context):
 
-        ng_name = context.space_data.node_tree.name
+        ng = context.space_data.node_tree
+        ng_name = ng.name
         layout = self.layout
         layout.active = True
 
@@ -420,18 +460,10 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
                 split.scale_x = little_width
                 split.prop(tree, 'use_fake_user', toggle=True, text='F')
 
-        if context.scene.sv_new_version:
-            row = layout.row()
-            row.alert = True
-            row.operator(
-                "node.sverchok_update_addon", text='Upgrade Sverchok addon')
-        else:
-            sha_update = "node.sverchok_check_for_upgrades_wsha"
-            layout.row().operator(sha_update, text='Check for updates')
+        self.draw_nodetree_props(layout, ng)
+        self.draw_general_sverchok_features(layout, context)
 
-        layout.row().operator('node.sv_show_latest_commits')
-        layout.separator()
-        layout.row().operator('node.remove_stale_draw_callbacks')
+
 
 def node_show_tree_mode(self, context):
     if not displaying_sverchok_nodes(context):

@@ -20,9 +20,10 @@
 import sys
 import time
 from contextlib import contextmanager
+import textwrap
 
 import bpy
-from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty
+from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, EnumProperty
 from bpy.types import NodeTree, NodeSocket, NodeSocketStandard
 from mathutils import Matrix
 
@@ -194,9 +195,14 @@ class SvNodeTreeCommon(object):
         return res
 
 
+class SvGenericUITooltipOperator(bpy.types.Operator):
+    arg: StringProperty()
+    bl_idname = "node.sv_generic_ui_tooltip"
+    bl_label = "tip"
 
-
-
+    @classmethod
+    def description(cls, context, properties):
+        return properties.arg
 
 class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - architectural node programming of geometry in low level '''
@@ -212,7 +218,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         # for node in outputs:
         #   node.disable()
 
-    def show_error_update(self, context):
+    def sv_process_tree_callback(self, context):
         process_tree(self)    
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
@@ -223,7 +229,19 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     sv_show_error_in_tree: BoolProperty(
         description="use bgl to draw the error to the nodeview",
-        name="Show error in tree", default=False, update=show_error_update)
+        name="Show error in tree", default=False, update=sv_process_tree_callback)
+
+    sv_subtree_evaluation_order: EnumProperty(
+        name="Subtree eval order",
+        items=[(k, k, '', i) for i, k in enumerate(["X", "Y", "None"])],
+        description=textwrap.dedent("""\
+            1) X, Y modes evaluate subtrees in sequence of lowest absolute node location, useful when working with real geometry
+            2) None does no sorting
+        """),
+        default="None", update=sv_process_tree_callback
+    )
+
+    sv_toggle_nodetree_props: BoolProperty(name="Toggle visibility of props", description="Show more properties for this node tree")
 
     def on_draft_mode_changed(self, context):
         """
@@ -739,7 +757,8 @@ class SverchCustomTreeNode:
 
 classes = [
     SverchCustomTree, 
-    SvLinkNewNodeInput
+    SvLinkNewNodeInput,
+    SvGenericUITooltipOperator
 ]
 
 

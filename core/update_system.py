@@ -185,7 +185,15 @@ def separate_nodes(ng, links=None):
             nodes.discard(n)
             node_set_list[-1].add(n)
 
-    return [ns for ns in node_set_list if len(ns) > 1]
+    found_node_sets = [ns for ns in node_set_list if len(ns) > 1]
+  
+    sorting_type = ng.sv_subtree_evaluation_order  
+    if sorting_type in {'X', 'Y'}:
+        sort_index = 0 if sorting_type == "X" else 1
+        find_lowest = lambda ns: min(ng.nodes[n].absolute_location[sort_index] for n in ns)
+        found_node_sets = sorted(found_node_sets, key=find_lowest)
+
+    return found_node_sets
 
 def make_tree_from_nodes(node_names, tree, down=True):
     """
