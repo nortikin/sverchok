@@ -331,8 +331,8 @@ class SV_PT_ToolsMenu(bpy.types.Panel):
         row.prop(ng, "sv_toggle_nodetree_props", text="", icon=triangle)
 
         if ng.sv_toggle_nodetree_props:
-        
             col = box.column()
+
             row = col.row()
             row.prop(ng, "sv_show_error_in_tree", icon="CONSOLE")
             tooltip_exception = "This will show Node Exceptions in the 3dview, right beside the node"
