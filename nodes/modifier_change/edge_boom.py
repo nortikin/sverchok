@@ -17,7 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
-from bpy.props import EnumProperty
+from bpy.props import EnumProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import zip_long_repeat, updateNode
@@ -52,6 +52,12 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
         items = modes,
         update = update_sockets)
 
+    separate : BoolProperty(
+        name = "Separate",
+        description = "If checked, output separate list of edge objects for each input objects",
+        default = False,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Edges')
@@ -65,11 +71,13 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.label(text="Output mode:")
         layout.prop(self, "out_mode", text="")
+        if self.out_mode == 'OBJ':
+            layout.prop(self, 'separate')
 
     def process(self):
         vertices_s = self.inputs['Vertices'].sv_get()
         edges_s = self.inputs['Edges'].sv_get(default=[[]])
-        faces_s = self.inputs['Faces'].sv_get()
+        faces_s = self.inputs['Faces'].sv_get(default=[[]])
 
         verts1_out = []
         verts2_out = []
@@ -80,6 +88,8 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
             new_verts2 = []
             if not edges:
                 edges = polygons_to_edges([faces], unique_edges=True)[0]
+            obj_verts = []
+            obj_edges = []
             for i1, i2 in edges:
                 new_verts = []
                 new_edges = []
@@ -91,8 +101,14 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
                 new_verts.append(v1)
                 new_verts.append(v2)
                 new_edges.append([0,1])
-                verts_out.append(new_verts)
-                edges_out.append(new_edges)
+                obj_verts.append(new_verts)
+                obj_edges.append(new_edges)
+            if self.separate:
+                verts_out.append(obj_verts)
+                edges_out.append(obj_edges)
+            else:
+                verts_out.extend(obj_verts)
+                edges_out.extend(obj_edges)
 
             verts1_out.append(new_verts1)
             verts2_out.append(new_verts2)
