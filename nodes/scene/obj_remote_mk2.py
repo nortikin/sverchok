@@ -45,8 +45,11 @@ class SvObjRemoteNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         matrices = dataCorrect(self.inputs[0].sv_get())
         objects = self.inputs[1].sv_get()
         matrices, objects = match_long_repeat([matrices, objects])
-        for obj, mat in zip(objects, matrices):
-            setattr(obj, 'matrix_world', mat)
+
+        with self.sv_throttle_tree_update():
+            for obj, mat in zip(objects, matrices):
+                obj.matrix_world = mat
+                obj.data.update()
 
         if self.outputs[0].is_linked:
             self.outputs[0].sv_set(objects)
