@@ -23,6 +23,7 @@ Modifier Change
    objects_along_edge
    offset
    polygons_boom
+   edge_boom
    polygons_to_edges
    recalc_normals
    remove_doubles
