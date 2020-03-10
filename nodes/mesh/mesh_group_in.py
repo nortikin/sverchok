@@ -60,14 +60,14 @@ def get_next_name(current_name: str, groups: dict):
             return get_next_name(f"{current_name}.001", groups)
 
 
-class SvMeshGroup(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshGroupIn(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: ...
 
     ...
     """
-    bl_idname = 'SvMeshGroup'
-    bl_label = 'Mesh Group'
+    bl_idname = 'SvMeshGroupIn'
+    bl_label = 'Mesh Group In'
     bl_icon = 'MOD_BOOLEAN'
 
     group_name = bpy.props.StringProperty(default="Mesh group")
@@ -101,21 +101,21 @@ class SvMeshGroup(bpy.types.Node, SverchCustomTreeNode):
         for me, inds, attrs in zip(self.inputs['Mesh'].sv_get(), indexes, attrs):
             mg = MeshGroup(me)
             group_elements = {'object': mg, 'faces': mg.faces, 'edges': mg.edges, 'verts': mg.verts, 'loops': mg.loops}
-            mg.name = self.name
+            mg.name = self.group_name
             mg.verts.links, mg.edges.links, mg.faces.links, mg.loops.links = generate_indexes(me, inds, self.element)
             if attrs:
                 for atr_name, val in attrs.items():
                     set_safe_attr(group_elements[self.attr_element], atr_name, val)
-            me.groups[self.name] = mg
+            me.groups[self.group_name] = mg
         self.outputs['Mesh'].sv_set(self.inputs['Mesh'].sv_get())
 
 
 def register():
-    bpy.utils.register_class(SvMeshGroup)
+    bpy.utils.register_class(SvMeshGroupIn)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvMeshGroup)
+    bpy.utils.unregister_class(SvMeshGroupIn)
 
 
 if __name__ == "__main__":

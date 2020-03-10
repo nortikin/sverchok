@@ -254,7 +254,7 @@ def ensure_array_length(array: np.ndarray, length: int) -> np.ndarray:
 
 def set_material_index(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh]) -> None:
     for bm_me, me in zip((prop.mesh for prop in objects), meshes):
-        mat_inds = get_material_index(me) 
+        mat_inds = get_material_index(me)
         if len(mat_inds):
             bm_me.polygons.foreach_set('material_index', mat_inds)
 
@@ -262,7 +262,12 @@ def set_material_index(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh
 def get_material_index(me: Mesh) -> list:
     elements = me.search_element_with_attr('faces', 'material_index')
     if elements:
-        return np.ravel(elements.values_to_faces(elements.material_index))
+        material_indexes = elements.values_to_faces(elements.material_index)
+        for mg in me.groups.values():
+            mg_elements = mg.search_element_with_attr('faces', 'material_index')
+            if mg_elements:
+                material_indexes[mg.faces.links] = mg_elements.values_to_faces(mg_elements.material_index)
+        return np.ravel(material_indexes)
     else:
         return []
 

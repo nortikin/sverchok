@@ -37,7 +37,7 @@ class SvMeshIn(bpy.types.Node, SverchCustomTreeNode):
         if not any([s.is_linked for s in self.inputs]):
             return
 
-        max_len = max([len(s.sv_get(default=[])) for s in self.inputs])
+        max_len = max([len(s.sv_get(default=[], deepcopy=False)) for s in self.inputs])
         data = [chain(s.sv_get(default=([None]), deepcopy=False), cycle([None])) for s in self.inputs]
         out = []
         for i, layer in zip(range(max_len), zip(*data)):

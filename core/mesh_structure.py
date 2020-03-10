@@ -327,8 +327,8 @@ class EdgesGroup(EdgeAttrs, Iterable):
         np.clip(loop_mask, None, len(values) - 1, out=loop_mask)
         return values[loop_mask]
 
-    def values_to_verts(self, values: list) -> np.ndarray: ...
-        
+    def values_to_verts(self, values: list) -> np.ndarray:
+        raise NotImplementedError
 
 
 class FacesGroup(FaceAttrs, Iterable):
@@ -360,6 +360,9 @@ class FacesGroup(FaceAttrs, Iterable):
         loop_mask = np.repeat(loop_mask, self.ind[:, 1] - self.ind[:, 0])
         np.clip(loop_mask, None, len(values) - 1, out=loop_mask)
         return values[loop_mask]
+
+    def values_to_faces(self, values: list) -> np.ndarray:
+        return ensure_array_length(values, len(self))
 
 
 class LoopsGroup(LoopAttrs, Iterable):
