@@ -232,14 +232,18 @@ class SvMonadInfoNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         # outputs
         monad = self.id_data
+        display_message = False
         try:
             idx = monad["current_index"]
             total = monad["current_total"]
         except Exception as err:
-            print(repr(err))
+            print("This error is being displayed by Monad Info: ", repr(err))
+            print("could not find monad[\"current_index\"] nor monad [\"current_total\"], setting to 0, 0 instead")
             idx, total = 0 , 0
-            print("couldn't find monad info")
+            display_message = True
 
+        if display_message:
+            print('recovering from error, processing anyway')
         for socket, data in zip(self.outputs, [idx, total]):
             if socket.is_linked:
                 socket.sv_set([[data]])
