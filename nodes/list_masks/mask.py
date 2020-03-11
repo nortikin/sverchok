@@ -20,37 +20,56 @@ from itertools import cycle
 import bpy
 from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, changable_sockets
+from sverchok.data_structure import updateNode, changable_sockets, numpy_full_list
+import numpy as np
+
+def mask_list(list_a, mask):
+    mask_out, ind_true, ind_false, result_t, result_f = [], [], [], [], []
+    if len(mask) < len(list_a):
+        mask = cycle(mask)
+        mask_out = [m for m, l in zip(mask, list_a)]
+    else:
+        mask_out = mask[:len(list_a)]
+
+    for mask_val, (id_item, item) in zip(mask_out, enumerate(list_a)):
+        if mask_val:
+            result_t.append(item)
+            ind_true.append(id_item)
+        else:
+            result_f.append(item)
+            ind_false.append(id_item)
+    return mask_out, ind_true, ind_false, result_t, result_f
+
+def mask_array(list_a, mask):
+
+    mask_out = np.resize(np.array(mask).astype(bool), len(list_a))
+    id_t = np.arange(len(list_a))
+    f_mask = np.invert(mask_out)
+
+    return mask_out, id_t[mask_out], id_t[f_mask], list_a[mask_out], list_a[f_mask]
 
 def mask_data(list_a, mask_l, level, idx=0):
 
     mask_out, ind_true, ind_false, result_t, result_f = [], [], [], [], []
 
     if level > 1:
-        if isinstance(list_a, (list, tuple)):
+        if isinstance(list_a, (list, tuple, np.ndarray)):
             result = [mask_out, ind_true, ind_false, result_t, result_f]
 
             for idx, sub_list in enumerate(list_a):
+
                 for i, res in enumerate(mask_data(sub_list, mask_l, level - 1, idx)):
                     result[i].append(res)
 
     else:
         indx = min(len(mask_l)-1, idx)
         mask = mask_l[indx]
-        if len(mask) < len(list_a):
-            if not mask:
-                mask = [1, 0]
-            mask = cycle(mask)
-            mask_out = [m for m, l in zip(mask, list_a)]
+
+        if type(list_a) == np.ndarray:
+            return mask_array(list_a, mask)
         else:
-            mask_out = mask[:len(list_a)]
-        for mask_val, (id_item, item) in zip(mask_out, enumerate(list_a)):
-            if mask_val:
-                result_t.append(item)
-                ind_true.append(id_item)
-            else:
-                result_f.append(item)
-                ind_false.append(id_item)
+            return mask_list(list_a, mask)
+
 
     return mask_out, ind_true, ind_false, result_t, result_f
 

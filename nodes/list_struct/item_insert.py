@@ -20,7 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty, EnumProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, repeat_last, updateNode, list_match_func, list_match_modes)
-
+import numpy as np
 
 # ListItem2
 # Allows a list of items, with both negative and positive index and repeated values
@@ -108,7 +108,16 @@ class SvListItemInsertNode(bpy.types.Node, SverchCustomTreeNode):
                     data.pop(ind)
                 data.insert(ind, i)
             return data
+        elif type(data) == np.ndarray:
+            ind, items = list_match_func[self.list_match_local]([indexes, new_items])
+            if self.replace:
+                data[ind] = items
 
+            else:
+                for i, item in zip(ind, items):
+                    data = np.concatenate([data[:i], [item], data[i:]])
+
+            return data
         return None
 
     def get(self, data, new_items, level, items, f):
