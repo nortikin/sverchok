@@ -210,6 +210,14 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     bl_label = 'Sverchok Nodes'
     bl_icon = 'RNA'
 
+    def app_preferences(self):
+        try:
+            from svercok.settings import get_params
+        except:
+            get_params = lambda A: A
+        
+        return get_params
+
     def turn_off_ng(self, context):
         process_tree(self)
         # should turn off tree. for now it does by updating it whole
