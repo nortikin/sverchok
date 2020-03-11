@@ -571,6 +571,8 @@ class SvGroupNodeExp:
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
+        monad['current_index'] = 0
+        monad['current_total'] = 0
 
         for index, socket in enumerate(self.inputs):
             data = socket.sv_get(deepcopy=False)

@@ -364,9 +364,11 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
             
-            if ng.sv_show_error_in_tree:
-                error_text = traceback.format_exc()
-                start_exception_drawing_with_bgl(ng, node_name, error_text, err)
+            if hasattr(ng, "sv_show_error_in_tree"):
+                # not yet supported in monad trees..
+                if ng.sv_show_error_in_tree:
+                    error_text = traceback.format_exc()
+                    start_exception_drawing_with_bgl(ng, node_name, error_text, err)
             
             return None
 

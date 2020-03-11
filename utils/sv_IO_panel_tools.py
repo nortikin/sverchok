@@ -402,19 +402,21 @@ def perform_scripted_node_inject(node, node_ref):
         script_name = params.get('script_name')
         script_content = params.get('script_str')
 
-        if script_name and not (script_name in texts):
-            new_text = texts.new(script_name)
-            new_text.from_string(script_content)
-        elif script_name and (script_name in texts):
-            # This was added to fix existing texts with the same name but no / different content.
-            if texts[script_name].as_string() == script_content:
-                debug("SN skipping text named `%s' - their content are the same", script_name)
-            else:
-                info("SN text named `%s' already found in current, but content differs", script_name)
+        with node.sv_throttle_tree_update():
+        
+            if script_name and not (script_name in texts):
                 new_text = texts.new(script_name)
                 new_text.from_string(script_content)
-                script_name = new_text.name
-                info('SN text named replaced with %s', script_name)
+            elif script_name and (script_name in texts):
+                # This was added to fix existing texts with the same name but no / different content.
+                if texts[script_name].as_string() == script_content:
+                    debug("SN skipping text named `%s' - their content are the same", script_name)
+                else:
+                    info("SN text named `%s' already found in current, but content differs", script_name)
+                    new_text = texts.new(script_name)
+                    new_text.from_string(script_content)
+                    script_name = new_text.name
+                    info('SN text named replaced with %s', script_name)
 
         node.script_name = script_name
         node.script_str = script_content
