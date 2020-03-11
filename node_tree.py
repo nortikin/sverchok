@@ -50,7 +50,8 @@ from sverchok.utils.logging import debug
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
-from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
+from sverchok.ui import bgl_callback_nodeview as nvBGL2
+
 
 class SvLinkNewNodeInput(bpy.types.Operator):
     ''' Spawn and link new node to the left of the caller node'''
@@ -301,14 +302,21 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.tree_link_count = link_count
             return True
 
+    @property
+    def ng_id(self):
+        return str(hash(self)) + "_exception"
+
+    def clear_bgl_exceptions(self):
+        nvBGL2.callback_disable(self.ng_id)
+
     def update(self):
         '''
         Tags tree for update for handle
         get update list for debug info, tuple (fulllist, dictofpartiallists)
         '''
 
-        clear_exception_drawing_with_bgl(self.nodes)
-
+        self.clear_bgl_exceptions()
+        
         if self.skip_tree_update:
             # print('throttled update from context manager')
             return

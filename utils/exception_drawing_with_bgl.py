@@ -15,10 +15,6 @@ import time
 import sverchok
 from sverchok.ui import bgl_callback_nodeview as nvBGL2
 
-def exception_nodetree_id(ng):
-    """ only one node per ng will have an exception """
-    return str(hash(ng)) + "_exception"
-
 
 def get_preferences(ng):
     """ obtain the dpi adjusted xy and scale factors """
@@ -50,14 +46,12 @@ def xyoffset(node):
 
 def clear_exception_drawing_with_bgl(nodes):
     """ remove the previously drawn exception if needed """
-    ng = nodes.id_data
-    ng_id = exception_nodetree_id(ng)
-    nvBGL2.callback_disable(ng_id)
+    nvBGL2.callback_disable(nodes.id_data.ng_id)
 
 
-def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
+def start_exception_drawing_with_bgl(tree, node_name, error_text, err):
     """ start drawing the exception data beside the node """
-    node = ng.nodes[node_name]
+    node = tree.nodes[node_name]
     config = lambda: None
     text = lambda: None
     text.final_error_message = str(err)
@@ -71,14 +65,13 @@ def start_exception_drawing_with_bgl(ng, node_name, error_text, err):
     config.loc = x, y
     config.scale = scale
 
-    ng_id = exception_nodetree_id(ng)
     draw_data = {
-        'tree_name': ng.name[:],
+        'tree_name': tree.name[:],
         'mode': 'custom_function_context', 
         'custom_function': simple_exception_display,
         'args': (text, config)
     }
-    nvBGL2.callback_enable(ng_id, draw_data)
+    nvBGL2.callback_enable(tree.ng_id, draw_data)
 
 def simple_exception_display(context, args):
     """
