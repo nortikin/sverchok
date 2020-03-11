@@ -323,6 +323,8 @@ def create_dict_of_tree(ng, skip_set={}, selected=False, identified_node=None):
 
         if IsMonadInstanceNode:
             node_dict['bl_idname'] = 'SvMonadGenericNode'
+            # these are indeed stored. as ints. which is fine.
+            # must also store (.vectorize, bool) (.loop_me, bool) (.loops, int)
         else:
             node_dict['bl_idname'] = node.bl_idname
 
