@@ -300,11 +300,11 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
         func_inputs, local_ops, output_ops, func, output_sockets = modes_dict[component_mode][1:6]
         params = []
         if "v" in func_inputs:
-            params.append(self.inputs['Vertices'].sv_get())
+            params.append(self.inputs['Vertices'].sv_get(deepcopy=False))
         if "e" in func_inputs:
-            params.append(self.inputs['Edges'].sv_get(default=[[]]))
+            params.append(self.inputs['Edges'].sv_get(default=[[]], deepcopy=False))
         if "p" in func_inputs:
-            params.append(self.inputs['Faces'].sv_get(default=[[]]))
+            params.append(self.inputs['Faces'].sv_get(default=[[]], deepcopy=False))
 
         result_vals = []
 
@@ -325,10 +325,11 @@ class SvComponentAnalyzerNode(bpy.types.Node, SverchCustomTreeNode):
             }
             special_op = []
             for option in local_ops:
-                special_op.append(options_dict[option].replace("_", " "))
+                option_val = options_dict[option]
+                special_op.append(option_val if type(option_val) == bool else option_val.replace("_", " "))
             special = True
             if len(local_ops) == 1:
-                special_op = special_op[0].replace("_", " ")
+                special_op = special_op[0]
 
         for param in zip(*meshes):
             if special:

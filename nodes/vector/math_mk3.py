@@ -193,7 +193,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         num_inputs = len(inputs)
 
         # get either input data, or socket default
-        input_one = inputs[0].sv_get(deepcopy=True)
+        input_one = inputs[0].sv_get(deepcopy=False)
 
 
         level = levels_of_list_or_np(input_one) - 1
@@ -202,7 +202,7 @@ class SvVectorMathNodeMK3(bpy.types.Node, SverchCustomTreeNode):
             params = [input_one, func, level]
             # result = recurse_func(input_one, func, level, self.output_numpy)
         else:
-            input_two = inputs[1].sv_get(deepcopy=True)
+            input_two = inputs[1].sv_get(deepcopy=False)
             level = max(level, levels_of_list_or_np(input_two) - 1)
             min_l2_level = 3 if inputs[1].bl_idname == "SvVerticesSocket" else 2
             params = [input_one, input_two, func, level, min_l2_level]
