@@ -111,7 +111,7 @@ CAST_FORMULAS = {
     'Sphere': sphere_points,
     'Cylinder': cylinder_points,
     'Prism': prism_points,
-    'UV Sphere': uv_sphere_points
+    'UV_Sphere': uv_sphere_points
     }
 
 
@@ -137,7 +137,7 @@ class SvCastNode(bpy.types.Node, SverchCustomTreeNode):
         ('EXTERNAL', 'Defined', 'Matrix to apply to verts before evaluating texture', '', 2),
     ]
 
-    cast_modes = [(no_space(t), t.title(), t.title(), '', id) for id, t in enumerate(CAST_FORMULAS)]
+    cast_modes = [(t, t.replace('_', ' '), 'Cast to ' + t.replace('_', ' '), '', id) for id, t in enumerate(CAST_FORMULAS)]
 
     @throttled
     def handle_size_socket(self, context):
