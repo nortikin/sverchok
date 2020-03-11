@@ -60,6 +60,7 @@ def pack_monad(node, node_items, groups_dict, create_dict_of_tree):
 def unpack_monad(nodes, node_ref):
     params = node_ref.get('params')
     if params:
+
         socket_prop_data = params.get('all_props')
 
         monad_name = params.get('monad')
@@ -96,8 +97,10 @@ def unpack_monad(nodes, node_ref):
                 #else:
                 #    print('node name:', node, node.name, 'has no property called', k, 'yet..')
 
-
         # node.output_template = cls_dict['output_template']
+        for attr in 'vectorize', 'loop_me', 'loops_max', 'loops':
+            if attr in params:
+                setattr(node, attr, params[attr])
 
         return node
     else:
