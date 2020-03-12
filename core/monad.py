@@ -492,13 +492,15 @@ class SvGroupNodeExp:
     def monad(self):
         try:
             for tree in bpy.data.node_groups:
-                if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
-                   return tree
+                if tree.bl_idname == 'SverchGroupTreeType':
+                    print(self.bl_idname, tree.cls_bl_idname)
+                    if self.bl_idname == tree.cls_bl_idname:
+                        return tree
         except:
-            raise
+            print(f'failed to find {self.bl_idname} in bpy.data.node_groups')
         
-        finally:
-            return None # or raise LookupError or something, anyway big FAIL
+        # or raise LookupError or something, anyway big FAIL
+        return None
 
     def sv_init(self, context):
         self['loops'] = 0
