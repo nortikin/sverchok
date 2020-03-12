@@ -162,7 +162,7 @@ def ensure_line_padding(text, filler=" ", max_line_length=200):
     new_lines = []
     new_line = new_lines.append
 
-    # this may produce untokenizable linesm when trimming
+    # this may produce untokenizable lines when trimming
     for line in lines:
         line_length = len(line)
         if line_length == longest_line:
@@ -375,6 +375,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
 
+                    # if max_line_length passed, it mst math terminal_width (chars_x)
                     multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines, self.max_line_length)
                     valid_multiline = '\n'.join(multiline)
                     self.terminal_text = valid_multiline
