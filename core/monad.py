@@ -571,7 +571,7 @@ class SvGroupNodeExp:
         if not self.monad:
             print(">> monad.process didn't find self.monad")
             print(bpy.data.node_groups)
-            print([tree.name for tree in bpy.data.node_groups])
+            print([(tree.name, tree.cls_bl_idname) for tree in bpy.data.node_groups if tree.bl_idname == "SverchGroupTreeType"])
             return
         if self.vectorize:
             self.process_vectorize()
