@@ -28,9 +28,9 @@ class SvMeshGroupEdit(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mesh Group Edit'
     bl_icon = 'MOD_BOOLEAN'
 
-    group_name = bpy.props.StringProperty(default="Mesh group", update=updateNode)
-    element = bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges', 'faces']])
-    is_name_valid = bpy.props.BoolProperty(default=True)
+    group_name: bpy.props.StringProperty(default="Mesh group", update=updateNode)
+    element: bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges', 'faces']])
+    is_name_valid: bpy.props.BoolProperty(default=True)
 
     def draw_buttons(self, context, layout):
         layout.alert = not self.is_name_valid

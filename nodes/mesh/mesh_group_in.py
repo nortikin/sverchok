@@ -70,9 +70,9 @@ class SvMeshGroupIn(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Mesh Group In'
     bl_icon = 'MOD_BOOLEAN'
 
-    group_name = bpy.props.StringProperty(default="Mesh group")
-    element = bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges', 'faces']])
-    attr_element = bpy.props.EnumProperty(items=[(i, i, '') for i in ['object', 'faces', 'edges', 'verts', 'loops']], update=updateNode)
+    group_name: bpy.props.StringProperty(default="Mesh group")
+    element: bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges', 'faces']])
+    attr_element: bpy.props.EnumProperty(items=[(i, i, '') for i in ['object', 'faces', 'edges', 'verts', 'loops']], update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'group_name', text='')

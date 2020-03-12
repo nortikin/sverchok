@@ -226,6 +226,7 @@
     SvViewerMesh
     SvMeshGroupIn
     SvMeshGroupEdit
+    SvZipMeshes
 
 ## Number
     SvNumberNode
