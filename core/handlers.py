@@ -174,8 +174,10 @@ def sv_post_load(scene):
 
 
     for monad in (ng for ng in bpy.data.node_groups if ng.bl_idname == 'SverchGroupTreeType'):
+        monad.freeze(True)
         if monad.input_node and monad.output_node:
             monad.update_cls()
+        monad.unfreeze(True)
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)

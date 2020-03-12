@@ -488,20 +488,6 @@ class SvGroupNodeExp:
             return self.monad.name
         return "Monad (init failure)"
 
-    @property
-    def monad(self):
-
-        try:
-            for tree in bpy.data.node_groups:
-                if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
-                    return tree
-        except:
-            raise
-        
-        finally:
-            return None # or raise LookupError or something, anyway big FAIL        
-
-
     def sv_init(self, context):
         self['loops'] = 0
         self.use_custom_color = True
@@ -567,9 +553,24 @@ class SvGroupNodeExp:
                 endpoint_nodes.append(n.name)
         return endpoint_nodes
 
+    @property
+    def monad(self):
+        try:
+            for tree in bpy.data.node_groups:
+                if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
+                    print('found!', tree, tree.cls_bl_idname, tree.name)
+                    return tree
+        except:
+            raise
+        
+        finally:
+            # print(f"self.bl_idname: {self.bl_idname}")
+            return None # or raise LookupError or something, anyway big FAIL        
+
+
     def process(self):
         if not self.monad:
-            print(">> monad.process didn't find self.monad", self.monad)
+            print(">> monad.process didn't find self.monad, got:", self.monad)
             print(bpy.data.node_groups)
             print([(tree.name, tree.cls_bl_idname) for tree in bpy.data.node_groups if tree.bl_idname == "SverchGroupTreeType"])
             return
