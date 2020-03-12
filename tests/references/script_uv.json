@@ -52,6 +52,7 @@
           0.0,
           0.0
         ],
+        "halt_updates": 0,
         "inject_params": 0,
         "injected_state": 0,
         "int_list": [
