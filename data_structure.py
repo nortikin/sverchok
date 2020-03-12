@@ -299,7 +299,7 @@ def numpy_match_long_repeat(list_of_arrays):
     return out
 
 def numpy_match_long_cycle(list_of_arrays):
-    '''match numpy arrays length by repeating last one'''
+    '''match numpy arrays length by cycling over the array'''
     out = []
     maxl = 0
     for array in list_of_arrays:
@@ -322,7 +322,7 @@ def numpy_match_long_cycle(list_of_arrays):
     return out
 
 def numpy_match_short(list_of_arrays):
-    '''match numpy arrays length by repeating last one'''
+    '''match numpy arrays length by cutting the longer arrays'''
     out = []
     minl = list_of_arrays[0].shape[0]
     for array in list_of_arrays:
