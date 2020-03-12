@@ -264,6 +264,24 @@ def numpy_full_list(array, maxl):
         array = np.concatenate((array, new_part))
     return array[:maxl]
 
+def numpy_full_list_cycle(array, maxl):
+    '''retuns array with desired length by cycling'''
+
+    difl = maxl - array.shape[0]
+    if difl > 0:
+        if difl < array.shape[0]:
+
+            return np.concatenate((array, array[:difl]))
+
+        new_part = np.repeat(array, ceil(difl / array.shape[0]), axis=0)
+        if len(array.shape) > 1:
+            shape = (ceil(difl / array.shape[0]), 1)
+        else:
+            shape = ceil(difl / array.shape[0])
+        new_part = np.tile(array, shape)
+        return np.concatenate((array, new_part[:difl]))
+
+    return array[:maxl]
 def numpy_match_long_repeat(list_of_arrays):
     '''match numpy arrays length by repeating last one'''
     out = []

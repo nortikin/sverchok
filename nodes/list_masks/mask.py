@@ -20,35 +20,48 @@ from itertools import cycle
 import bpy
 from bpy.props import IntProperty
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, changable_sockets, numpy_full_list
+from sverchok.data_structure import updateNode, changable_sockets, numpy_full_list_cycle
 import numpy as np
 
-def mask_list(list_a, mask):
+def mask_list(list_a, mask, flags):
     mask_out, ind_true, ind_false, result_t, result_f = [], [], [], [], []
-    if len(mask) < len(list_a):
-        mask = cycle(mask)
-        mask_out = [m for m, l in zip(mask, list_a)]
-    else:
-        mask_out = mask[:len(list_a)]
+    if any(flags[:3]):
+        mask_out = numpy_full_list_cycle(np.array(mask).astype(bool), len(list_a))
 
-    for mask_val, (id_item, item) in zip(mask_out, enumerate(list_a)):
-        if mask_val:
-            result_t.append(item)
-            ind_true.append(id_item)
-        else:
-            result_f.append(item)
-            ind_false.append(id_item)
-    return mask_out, ind_true, ind_false, result_t, result_f
+    if flags[1] or flags[2]:
+        id_t = np.arange(len(list_a))
 
-def mask_array(list_a, mask):
+        if flags[1]:
+            ind_true = id_t[mask_out].tolist()
+        if flags[2]:
+            ind_false = id_t[np.invert(mask_out)].tolist()
+    mask_iter = cycle(mask) if any(flags[3:]) else []
+    if flags[3]:
+        result_t = [item for item, m in zip(list_a, mask_iter) if m]
+    if flags[4]:
+        result_f = [item for item, m in zip(list_a, mask_iter) if not m]
 
-    mask_out = np.resize(np.array(mask).astype(bool), len(list_a))
-    id_t = np.arange(len(list_a))
-    f_mask = np.invert(mask_out)
+    return mask_out.tolist() if flags[0] else [], ind_true, ind_false, result_t, result_f
 
-    return mask_out, id_t[mask_out], id_t[f_mask], list_a[mask_out], list_a[f_mask]
+def mask_array(list_a, mask, flags):
+    id_t, f_mask = [], []
 
-def mask_data(list_a, mask_l, level, idx=0):
+    mask_out = numpy_full_list_cycle(np.array(mask).astype(bool), len(list_a))
+    if flags[1] or flags[2]:
+        id_t = np.arange(len(list_a))
+
+    if flags[2] or flags[4]:
+        f_mask = np.invert(mask_out)
+
+
+    return (
+        mask_out if flags[0] else [],
+        id_t[mask_out] if flags[1] else [],
+        id_t[f_mask] if flags[2] else [],
+        list_a[mask_out] if flags[3] else [],
+        list_a[f_mask] if flags[4] else [])
+
+def mask_data(list_a, mask_l, level, flags, idx=0):
 
     mask_out, ind_true, ind_false, result_t, result_f = [], [], [], [], []
 
@@ -58,7 +71,7 @@ def mask_data(list_a, mask_l, level, idx=0):
 
             for idx, sub_list in enumerate(list_a):
 
-                for i, res in enumerate(mask_data(sub_list, mask_l, level - 1, idx)):
+                for i, res in enumerate(mask_data(sub_list, mask_l, level - 1, flags, idx)):
                     result[i].append(res)
 
     else:
@@ -66,9 +79,9 @@ def mask_data(list_a, mask_l, level, idx=0):
         mask = mask_l[indx]
 
         if type(list_a) == np.ndarray:
-            return mask_array(list_a, mask)
+            return mask_array(list_a, mask, flags)
         else:
-            return mask_list(list_a, mask)
+            return mask_list(list_a, mask, flags)
 
 
     return mask_out, ind_true, ind_false, result_t, result_f
@@ -108,11 +121,12 @@ class MaskListNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         inputs = self.inputs
         outputs = self.outputs
-
-        data = inputs['data'].sv_get()
-        mask = inputs['mask'].sv_get(default=[[1, 0]])
-
-        result = mask_data(data, mask, self.Level)
+        if not any(s.is_linked for s in outputs) and inputs[0].is_linked:
+            return
+        data = inputs['data'].sv_get(deepcopy=False)
+        mask = inputs['mask'].sv_get(default=[[1, 0]],deepcopy=False)
+        flags = [s.is_linked for s in outputs]
+        result = mask_data(data, mask, self.Level, flags)
 
         for s, res  in zip(outputs, result):
             if s.is_linked:
