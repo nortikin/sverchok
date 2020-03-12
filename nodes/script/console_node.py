@@ -165,12 +165,10 @@ def ensure_line_padding(text, filler=" ", max_line_length=200):
     # this may produce untokenizable lines when trimming
     for line in lines:
         line_length = len(line)
-        if line_length == longest_line:
-            new_line(line)
-        elif line_length < longest_line: 
+        if line_length <= longest_line: 
             new_line(line.ljust(longest_line, filler))
         else:
-            new_line(line[:line_length])  # trimming
+            new_line(line[:longest_line])  # trimming
 
     return new_lines, longest_line
         
@@ -200,7 +198,7 @@ def text_decompose(content, last_n_lines, max_line_length):
         if last_n_lines > 0:
             content = get_last_n_lines(content, last_n_lines)
 
-        return_str, width = ensure_line_padding(content, max_line_length=200)
+        return_str, width = ensure_line_padding(content, " ", max_line_length)
     else:
         return_str, width = ensure_line_padding("no valid text found\nfeed it multiline\ntext")
 
