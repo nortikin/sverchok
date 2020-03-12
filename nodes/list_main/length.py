@@ -35,7 +35,7 @@ class ListLengthNode(bpy.types.Node, SverchCustomTreeNode):
 
         if 'Length' in self.outputs and self.outputs['Length'].is_linked:
             if 'Data' in self.inputs and self.inputs['Data'].is_linked:
-                data = self.inputs['Data'].sv_get()
+                data = self.inputs['Data'].sv_get(deepcopy=False)
 
                 if not self.level:
                     out = [[len(data)]]

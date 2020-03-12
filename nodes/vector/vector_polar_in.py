@@ -46,7 +46,7 @@ def numpy_polar_to_cartesian(ps, coordinates, angles_mode, out_numpy):
         else:
             ang1 = u_phi
         rho, phi, z = numpy_match_long_repeat([u_rho, ang1, u_z])
-        
+
         cartesian = array([rho * cos(phi), rho * sin(phi), z]).T
 
     return cartesian if out_numpy else cartesian.tolist()
@@ -123,9 +123,9 @@ class VectorPolarInNode(bpy.types.Node, SverchCustomTreeNode):
         if not self.outputs['Vectors'].is_linked:
             return
         inputs = self.inputs
-        rhoss = inputs['rho'].sv_get()
-        phiss = inputs['phi'].sv_get()
-        zss = inputs['Z'].sv_get()
+        rhoss = inputs['rho'].sv_get(deepcopy=False)
+        phiss = inputs['phi'].sv_get(deepcopy=False)
+        zss = inputs['Z'].sv_get(deepcopy=False)
 
         parameters = match_long_repeat([rhoss, phiss, zss])
         result = []
