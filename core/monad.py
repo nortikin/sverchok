@@ -484,14 +484,21 @@ class SvGroupNodeExp:
         update=updateNode)
 
     def draw_label(self):
-        return self.monad.name
+        if hasattr(self.monad, "name"):
+            return self.monad.name
+        return "Monad (init failure)"
 
     @property
     def monad(self):
-        for tree in bpy.data.node_groups:
-            if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
-               return tree
-        return None # or raise LookupError or something, anyway big FAIL
+        try:
+            for tree in bpy.data.node_groups:
+                if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
+                   return tree
+        except:
+            raise
+        
+        finally:
+            return None # or raise LookupError or something, anyway big FAIL
 
     def sv_init(self, context):
         self['loops'] = 0
