@@ -494,7 +494,7 @@ class SvGroupNodeExp:
         try:
             for tree in bpy.data.node_groups:
                 if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
-                   return tree
+                    return tree
         except:
             raise
         
@@ -569,7 +569,7 @@ class SvGroupNodeExp:
 
     def process(self):
         if not self.monad:
-            print(">> monad.process didn't find self.monad")
+            print(">> monad.process didn't find self.monad", self.monad)
             print(bpy.data.node_groups)
             print([(tree.name, tree.cls_bl_idname) for tree in bpy.data.node_groups if tree.bl_idname == "SverchGroupTreeType"])
             return
