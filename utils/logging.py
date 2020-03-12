@@ -24,6 +24,7 @@ def get_log_buffer(log_buffer_name):
     """
     Get internal blender text buffer for logging.
     """
+    return None
     try:
         if log_buffer_name in bpy.data.texts:
             return bpy.data.texts[log_buffer_name]

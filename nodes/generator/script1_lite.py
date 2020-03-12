@@ -44,7 +44,6 @@ snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = [0] * 32
 
-class SNLITE_EXCEPTION(Exception): pass
 
 class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     bl_label = "SNLite templates"
@@ -184,11 +183,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
                 print(socket_description, idx, 'was unparsable')
                 return
 
-            if len(sockets) > 0 and idx in set(range(len(sockets))):
-                if not are_matched(sockets[idx], socket_description):
-                    sockets[idx].replace_socket(*socket_description[:2])
-            else:
-                sockets.new(*socket_description[:2])
+            with self.sv_throttle_tree_update():
+            
+                if len(sockets) > 0 and idx in set(range(len(sockets))):
+                    if not are_matched(sockets[idx], socket_description):
+                        sockets[idx].replace_socket(*socket_description[:2])
+                else:
+                    sockets.new(*socket_description[:2])
 
         return True
 
@@ -222,8 +223,9 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         sockets = getattr(self, k)
         if len(sockets) > len(v):
             num_to_remove = (len(sockets) - len(v))
-            for _ in range(num_to_remove):
-                sockets.remove(sockets[-1])
+            with self.sv_throttle_tree_update():
+                for _ in range(num_to_remove):
+                    sockets.remove(sockets[-1])
 
 
     def update_sockets(self):
@@ -417,7 +419,10 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             print('on line: ', lineno)
             show = traceback.print_exception
             show(exc_type, exc_value, exc_traceback, limit=2, file=sys.stdout)
-            raise #   SNLITE_EXCEPTION(sys.exc_info()[2]) from err
+            # raise
+            set_autocolor(self, True, FAIL_COLOR)
+        else:
+            return
 
     def custom_draw(self, context, layout):
         tk = self.node_dict.get(hash(self))
