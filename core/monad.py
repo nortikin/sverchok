@@ -560,12 +560,10 @@ class SvGroupNodeExp:
                 if tree.bl_idname == 'SverchGroupTreeType' and self.bl_idname == tree.cls_bl_idname:
                     print('found!', tree, tree.cls_bl_idname, tree.name)
                     return tree
-        except:
-            raise
-        
-        finally:
-            # print(f"self.bl_idname: {self.bl_idname}")
-            return None # or raise LookupError or something, anyway big FAIL        
+        except Exception as err:
+            print(f"self.bl_idname: {self.bl_idname}", err)
+
+        return None # or raise LookupError or something, anyway big FAIL        
 
 
     def process(self):
