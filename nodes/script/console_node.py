@@ -170,7 +170,7 @@ def ensure_line_padding(text, filler=" ", max_line_length=200):
         elif line_length < longest_line: 
             new_line(line.ljust(longest_line, filler))
         else:
-            new_line(line[:line_length+1])  # trimming
+            new_line(line[:line_length])  # trimming
 
     return new_lines, longest_line
         
