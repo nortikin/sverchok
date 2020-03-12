@@ -242,10 +242,13 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
             self.flush_excess_sockets(k, v)
 
         self.add_props_to_sockets(socket_info)
+
         self.node_dict[hash(self)] = {}
         self.node_dict[hash(self)]['sockets'] = socket_info
 
         return True
+
+
 
 
     def sv_init(self, context):
