@@ -624,7 +624,7 @@ class CubicSpline(Spline):
         tanget_mh = self.eval(t_mh)
         tanget = tanget_ph - tanget_mh
         tanget[t_less_than_0 | t_great_than_1] *= 2
-        return tanget
+        return tanget / h
 
 class LinearSpline(Spline):
     def __init__(self, vertices, tknots = None, metric = None, is_cyclic = False):
