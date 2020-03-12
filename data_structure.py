@@ -253,35 +253,37 @@ numpy_list_match_modes =  list_match_modes[:3]
 #     ("REPEAT", "Repeat Last", "Match longest List by repeating last item",     3),
 #     ]
 
-def numpy_full_list(array, maxl):
+def numpy_full_list(array, desired_length):
+    '''retuns array with desired length by repeating last item'''
     if type(array) != np.ndarray:
         array = np.array(array)
 
-    difl = maxl - array.shape[0]
+    length_diff = desired_length - array.shape[0]
 
-    if difl > 0:
-        new_part = np.repeat(array[np.newaxis, -1], difl, axis=0)
-        array = np.concatenate((array, new_part))
-    return array[:maxl]
+    if length_diff > 0:
+        new_part = np.repeat(array[np.newaxis, -1], length_diff, axis=0)
+        return np.concatenate((array, new_part))[:desired_length]
+    return array[:desired_length]
 
-def numpy_full_list_cycle(array, maxl):
+def numpy_full_list_cycle(array, desired_length):
     '''retuns array with desired length by cycling'''
 
-    difl = maxl - array.shape[0]
-    if difl > 0:
-        if difl < array.shape[0]:
+    length_diff = desired_length - array.shape[0]
+    if length_diff > 0:
+        if length_diff < array.shape[0]:
 
-            return np.concatenate((array, array[:difl]))
+            return np.concatenate((array, array[:length_diff]))
 
-        new_part = np.repeat(array, ceil(difl / array.shape[0]), axis=0)
+        new_part = np.repeat(array, ceil(length_diff / array.shape[0]), axis=0)
         if len(array.shape) > 1:
-            shape = (ceil(difl / array.shape[0]), 1)
+            shape = (ceil(length_diff / array.shape[0]), 1)
         else:
-            shape = ceil(difl / array.shape[0])
+            shape = ceil(length_diff / array.shape[0])
         new_part = np.tile(array, shape)
-        return np.concatenate((array, new_part[:difl]))
+        return np.concatenate((array, new_part[:length_diff]))
 
-    return array[:maxl]
+    return array[:desired_length]
+
 def numpy_match_long_repeat(list_of_arrays):
     '''match numpy arrays length by repeating last one'''
     out = []
@@ -289,9 +291,9 @@ def numpy_match_long_repeat(list_of_arrays):
     for array in list_of_arrays:
         maxl = max(maxl, array.shape[0])
     for array in list_of_arrays:
-        difl = maxl - array.shape[0]
-        if difl > 0:
-            new_part = np.repeat(array[np.newaxis, -1], difl, axis=0)
+        length_diff = maxl - array.shape[0]
+        if length_diff > 0:
+            new_part = np.repeat(array[np.newaxis, -1], length_diff, axis=0)
             array = np.concatenate((array, new_part))
         out.append(array)
     return out
@@ -303,19 +305,19 @@ def numpy_match_long_cycle(list_of_arrays):
     for array in list_of_arrays:
         maxl = max(maxl, array.shape[0])
     for array in list_of_arrays:
-        difl = maxl - array.shape[0]
-        if difl > 0:
-            if difl < array.shape[0]:
+        length_diff = maxl - array.shape[0]
+        if length_diff > 0:
+            if length_diff < array.shape[0]:
 
-                array = np.concatenate((array, array[:difl]))
+                array = np.concatenate((array, array[:length_diff]))
             else:
-                new_part = np.repeat(array, ceil(difl / array.shape[0]), axis=0)
+                new_part = np.repeat(array, ceil(length_diff / array.shape[0]), axis=0)
                 if len(array.shape) > 1:
-                    shape = (ceil(difl / array.shape[0]), 1)
+                    shape = (ceil(length_diff / array.shape[0]), 1)
                 else:
-                    shape = ceil(difl / array.shape[0])
+                    shape = ceil(length_diff / array.shape[0])
                 new_part = np.tile(array, shape)
-                array = np.concatenate((array, new_part[:difl]))
+                array = np.concatenate((array, new_part[:length_diff]))
         out.append(array)
     return out
 
@@ -326,8 +328,8 @@ def numpy_match_short(list_of_arrays):
     for array in list_of_arrays:
         minl = min(minl, array.shape[0])
     for array in list_of_arrays:
-        difl = array.shape[0] - minl
-        if difl > 0:
+        length_diff = array.shape[0] - minl
+        if length_diff > 0:
             array = array[:minl]
         out.append(array)
     return out
