@@ -153,16 +153,25 @@ def find_longest_linelength(lines):
     return len(max(lines, key=len))
 
 
-def ensure_line_padding(text, filler=" "):
+def ensure_line_padding(text, filler=" ", max_line_length=200):
     """ expects a single string, with newlines """
     lines = text.split('\n')
     longest_line = find_longest_linelength(lines)
-    
+    longest_line = min(longest_line, max_line_length)
+
     new_lines = []
     new_line = new_lines.append
+
+    # this may produce untokenizable linesm when trimming
     for line in lines:
-        new_line(line.ljust(longest_line, filler))
-    
+        line_length = len(line)
+        if line_length == longest_line:
+            new_line(line)
+        elif line_length < longest_line: 
+            new_line(line.ljust(longest_line, filler))
+        else:
+            new_line(line[:line_length+1])  # trimming
+
     return new_lines, longest_line
         
 def get_last_n_lines(content, last_n_lines):
@@ -176,7 +185,7 @@ def get_last_n_lines(content, last_n_lines):
     return "\n".join(content.split('\n')[-last_n_lines:])
 
 
-def text_decompose(content, last_n_lines):
+def text_decompose(content, last_n_lines, max_line_length):
     """
     input: 
         expects to receive a newline separated string, to indicate multiline text
@@ -191,7 +200,7 @@ def text_decompose(content, last_n_lines):
         if last_n_lines > 0:
             content = get_last_n_lines(content, last_n_lines)
 
-        return_str, width = ensure_line_padding(content)
+        return_str, width = ensure_line_padding(content, max_line_length=200)
     else:
         return_str, width = ensure_line_padding("no valid text found\nfeed it multiline\ntext")
 
@@ -282,6 +291,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
     terminal_text: bpy.props.StringProperty(name="terminal text", default="1234567890\n0987654321\n098765BbaA")
+    max_line_length: bpy.props.IntProperty(name="max line length", default=200, update=updateNode)
     
     # for now all such nodes will use the same texture.
     texture_dict = {}
@@ -332,6 +342,11 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row2.prop(self, "syntax_mode", expand=True)
         row3 = layout.row()
         row3.prop(self, "last_n_lines")
+
+    def draw_buttons_ext(self, context, layout):
+        row = layout.row(align=True)
+        row.prop(self, "max_line_length", text="")
+
     
     def init_texture(self, width, height):
         clr = bgl.GL_RGBA
@@ -360,7 +375,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
 
-                    multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
+                    multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines, self.max_line_length)
                     valid_multiline = '\n'.join(multiline)
                     self.terminal_text = valid_multiline
                     self.num_rows = chars_y
