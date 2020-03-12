@@ -22,7 +22,7 @@ import bpy
 from bpy.props import StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-
+import numpy as np
 
 class SvMaskToIndexNode(bpy.types.Node, SverchCustomTreeNode):
     '''
@@ -58,15 +58,19 @@ class SvMaskToIndexNode(bpy.types.Node, SverchCustomTreeNode):
 
 
     def true_indices(self, mask):
-        if type(mask[0]) in [list, tuple]:
+        if type(mask[0]) in [list, tuple, np.ndarray]:
             return [self.true_indices(m) for m in mask]
         else:
+            if type(mask) == np.ndarray:
+                return np.arange(len(mask))[mask.astype(bool)]
             return [i for i, m in enumerate(mask) if m]
 
     def false_indices(self, mask):
-        if type(mask[0]) in [list, tuple]:
+        if type(mask[0]) in [list, tuple, np.ndarray]:
             return [self.false_indices(m) for m in mask]
         else:
+            if type(mask) == np.ndarray:
+                return np.arange(len(mask))[np.invert(mask.astype(bool))]
             return [i for i, m in enumerate(mask) if not m]
 
 

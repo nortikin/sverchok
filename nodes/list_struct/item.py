@@ -20,7 +20,7 @@ import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, repeat_last, updateNode)
-
+import numpy as np
 
 # SvListItemNode
 # Allows a list of indexes, with both negative and positive index and repeated values
@@ -90,11 +90,17 @@ class SvListItemNode(bpy.types.Node, SverchCustomTreeNode):
         '''extract the indexes from the list'''
         if type(data) in [list, tuple]:
             return [data[index] for index in indexes if -len(data) <= index < len(data)]
+        elif type(data) == np.ndarray:
+            return data[indexes]
         else:
             return None
 
     def get_other(self, data, indexes):
         '''remove the indexes from the list'''
+        if type(data) == np.ndarray:
+            mask = np.ones(len(data), bool)
+            mask[indexes] = False
+            return data[mask]
         is_tuple = False
         if type(data) == tuple:
             data = list(data)
