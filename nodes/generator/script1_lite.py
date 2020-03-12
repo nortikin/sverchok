@@ -137,13 +137,19 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
     script_str: StringProperty()
     node_dict = {}
 
+    halt_updates: BoolProperty(name="snlite halting token")
+    
+    def updateNode2(self, context):
+        if not self.halt_updates:
+            updateNode(self, context)
+
     int_list: IntVectorProperty(
         name='int_list', description="Integer list",
-        default=defaults, size=32, update=updateNode)
+        default=defaults, size=32, update=updateNode2)
 
     float_list: FloatVectorProperty(
         name='float_list', description="Float list",
-        default=defaults, size=32, update=updateNode)
+        default=defaults, size=32, update=updateNode2)
 
     mode_options = [
         ("To_TextBlok", "To TextBlok", "", 0),
@@ -197,6 +203,8 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
         self.id_data.freeze(hard=True)
         try:
+            self.halt_updates = True
+            
             for idx, (socket_description) in enumerate(socket_info['inputs']):
                 dval = socket_description[2]
                 print(idx, socket_description)
@@ -215,6 +223,7 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         except:
             print('some failure in the add_props_to_sockets function. ouch.')
 
+        self.halt_updates = False
         self.id_data.unfreeze(hard=True)
 
     
