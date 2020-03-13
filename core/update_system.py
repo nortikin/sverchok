@@ -26,8 +26,9 @@ from sverchok import data_structure
 from sverchok.core.socket_data import SvNoDataError, reset_socket_cache
 from sverchok.utils.logging import debug, info, warning, error, exception
 from sverchok.utils.profile import profile
-from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl, start_exception_drawing_with_bgl
+# from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl, start_exception_drawing_with_bgl
 import sverchok
+
 
 import traceback
 import ast
@@ -338,7 +339,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     total_time = 0
     done_nodes = set(procesed_nodes)
 
-    clear_exception_drawing_with_bgl(nodes)
+    exceptions = sverchok.utils.exception_drawing_with_bgl
+    exceptions.clear_exception_drawing_with_bgl(nodes)
 
     for node_name in node_list:
         if node_name in done_nodes:
@@ -368,7 +370,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
                 # not yet supported in monad trees..
                 if ng.sv_show_error_in_tree:
                     error_text = traceback.format_exc()
-                    start_exception_drawing_with_bgl(ng, node_name, error_text, err)
+                    exceptions.start_exception_drawing_with_bgl(ng, node_name, error_text, err)
             
             return None
 
