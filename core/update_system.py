@@ -323,6 +323,14 @@ def reset_error_nodes(ng):
                 node.color = data[1]
         del ng["error nodes"]
 
+def draw_exception(ng, node_name, err):
+    if not hasattr(ng, "sv_show_error_in_tree"):
+        return
+    if ng.sv_show_error_in_tree:
+        error_text = traceback.format_exc()
+        bgl_exceptions = sverchok.utils.exception_drawing_with_bgl
+        bgl_exceptions.start_exception_drawing_with_bgl(ng, node_name, error_text, err)
+
 
 @profile(section="UPDATE")
 def do_update_general(node_list, nodes, procesed_nodes=set()):
@@ -362,13 +370,13 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
-            
-            if hasattr(ng, "sv_show_error_in_tree"):
-                # not yet supported in monad trees..
-                if ng.sv_show_error_in_tree:
-                    error_text = traceback.format_exc()
-                    bgl_exceptions = sverchok.utils.exception_drawing_with_bgl
-                    bgl_exceptions.start_exception_drawing_with_bgl(ng, node_name, error_text, err)
+            draw_exception(ng, node_name, err)
+            # if hasattr(ng, "sv_show_error_in_tree"):
+            #     # not yet supported in monad trees..
+            #     if ng.sv_show_error_in_tree:
+            #         error_text = traceback.format_exc()
+            #         bgl_exceptions = sverchok.utils.exception_drawing_with_bgl
+            #         bgl_exceptions.start_exception_drawing_with_bgl(ng, node_name, error_text, err)
             
             return None
 
