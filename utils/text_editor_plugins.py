@@ -103,7 +103,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                         if n.custom_shader_location == text_file_name:
                             n.custom_shader_location = n.custom_shader_location
 
-                elif b.bl_idname == 'SvSNFunctorB':
+                elif n.bl_idname == 'SvSNFunctorB':
                     if n.script_name.strip() == text_file_name.strip():
                         with n.sv_throttle_tree_update():
                             print('handle the shortcut')
