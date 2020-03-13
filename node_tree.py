@@ -50,13 +50,14 @@ from sverchok.utils.logging import debug
 
 from sverchok.ui import color_def
 from sverchok.ui.nodes_replacement import set_inputs_mapping, set_outputs_mapping
-# from sverchok.utils.exception_drawing_with_bgl import clear_exception_drawing_with_bgl
 
 
 def clear_exception(tree):
-    edwb = sys.modules.get('sverchok.utils.exception_drawing_with_bgl')
-    if edwb:
-        edwb.clear_exception_drawing_with_bgl(tree.nodes)
+    # edwb = sys.modules.get('sverchok.utils.exception_drawing_with_bgl')
+    # if edwb:
+    #     edwb.clear_exception_drawing_with_bgl(tree.nodes)
+    exceptions = sverchok.utils.exception_drawing_with_bgl
+    exceptions.clear_exception_drawing_with_bgl(tree.nodes)
 
 
 class SvLinkNewNodeInput(bpy.types.Operator):
