@@ -28,8 +28,6 @@ from sverchok.utils.logging import debug, info, warning, error, exception
 from sverchok.utils.profile import profile
 import sverchok
 
-bgl_exceptions = sverchok.utils.exception_drawing_with_bgl
-
 import traceback
 import ast
 
@@ -339,6 +337,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     total_time = 0
     done_nodes = set(procesed_nodes)
 
+    bgl_exceptions = sverchok.utils.exception_drawing_with_bgl
     bgl_exceptions.clear_exception_drawing_with_bgl(nodes)
 
     for node_name in node_list:
