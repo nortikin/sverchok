@@ -56,8 +56,8 @@ def clear_exception(tree):
     # edwb = sys.modules.get('sverchok.utils.exception_drawing_with_bgl')
     # if edwb:
     #     edwb.clear_exception_drawing_with_bgl(tree.nodes)
-    exceptions = sverchok.utils.exception_drawing_with_bgl
-    exceptions.clear_exception_drawing_with_bgl(tree.nodes)
+    bgl_exceptions = sverchok.utils.exception_drawing_with_bgl
+    bgl_exceptions.clear_exception_drawing_with_bgl(tree.nodes)
 
 
 class SvLinkNewNodeInput(bpy.types.Operator):

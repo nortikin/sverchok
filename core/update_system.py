@@ -338,8 +338,8 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     total_time = 0
     done_nodes = set(procesed_nodes)
 
-    exceptions = sverchok.utils.exception_drawing_with_bgl
-    exceptions.clear_exception_drawing_with_bgl(nodes)
+    bgl_exceptions = sverchok.utils.exception_drawing_with_bgl
+    bgl_exceptions.clear_exception_drawing_with_bgl(nodes)
 
     for node_name in node_list:
         if node_name in done_nodes:
@@ -369,7 +369,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
                 # not yet supported in monad trees..
                 if ng.sv_show_error_in_tree:
                     error_text = traceback.format_exc()
-                    exceptions.start_exception_drawing_with_bgl(ng, node_name, error_text, err)
+                    bgl_exceptions.start_exception_drawing_with_bgl(ng, node_name, error_text, err)
             
             return None
 
