@@ -328,6 +328,8 @@
     SvTextureViewerNodeLite
     SvWaveformViewer
     SvConsoleNode
+    ---
+    SvVDBasicLines
 
 ## Text
     ViewerNodeTextMK3
