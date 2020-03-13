@@ -43,11 +43,11 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
                     row.label(text='3dview {idx}:'.format(idx=idx))
 
                     col = row.column()
-                    col.prop(n_panel, 'show_overlays', text='render')
+                    col.prop(n_panel, 'show_overlays', text='overlays', toggle=True)
 
                     col = row.column()
-                    col.active = not n_panel.show_overlays
-                    col.prop(n_panel, 'show_floor', text='grid')
+                    col.active = n_panel.show_overlays
+                    col.prop(n_panel, 'show_floor', text='grid', toggle=True)
 
                     row = layout.row(align=True)
                     row.active = not n_panel.show_overlays
@@ -67,9 +67,9 @@ class Sv3DviewPropsNode(bpy.types.Node, SverchCustomTreeNode):
 
         gradients = theme.view_3d.space.gradients
         boxrow = box.row(align=True)
-        boxrow.prop(gradients, 'show_grad', text='gradient')
+        boxrow.prop(gradients, 'background_type', text='bg type', expand=True)
 
-        if not gradients.show_grad:
+        if gradients.background_type == 'SINGLE_COLOR':
             boxrow.prop(gradients, 'high_gradient', text='background')
         else:
             boxrow.prop(gradients, 'high_gradient', text='')
