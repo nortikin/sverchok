@@ -60,7 +60,7 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
         edit_text = bpy.context.edit_text
         text_file_name = edit_text.name
-        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', 'SvRxTree'}
+        is_sv_tree = lambda ng: ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}
         ngs = list(filter(is_sv_tree, ngs))
 
         if not ngs:
@@ -69,14 +69,18 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
 
         node_types = set([
             'SvScriptNode', 'SvScriptNodeMK2', 'SvScriptNodeLite',
-            'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode',
+            'SvProfileNode', 'SvTextInNode', 'SvGenerativeArtNode', 'SvSNFunctorB',
             'SvRxNodeScript', 'SvProfileNodeMK2', 'SvVDExperimental', 'SvProfileNodeMK3'])
 
         for ng in ngs:
+
+            # make sure this tree has nodes that demand updating.
             nodes = [n for n in ng.nodes if n.bl_idname in node_types]
             if not nodes:
                 continue
+
             for n in nodes:
+
                 if hasattr(n, "script_name") and n.script_name == text_file_name:
                     try:
                         n.load()
@@ -87,27 +91,23 @@ class SvNodeRefreshFromTextEditor(bpy.types.Operator):
                     except:
                         self.report({"WARNING"}, 'unspecified error in load()')
                         return {'CANCELLED'}
+
                 elif hasattr(n, "text_file_name") and n.text_file_name == text_file_name:
                     pass  # no nothing for profile node, just update ng, could use break...
+
                 elif hasattr(n, "current_text") and n.current_text == text_file_name:
                     n.reload()
-                elif n.bl_idname == 'SvRxNodeScript' and n.text_file == text_file_name:
-                    # handle SVRX node reload
-                    n.load_text()
-                else:
-                    pass
-           
-            # only handle viewerdraw experimental
-            for n in nodes:
-                if n.bl_idname == 'SvVDExperimental':
-                    if n.custom_shader_location == text_file_name:
-                        # this may seem silly, but it triggers an update.
-                        n.custom_shader_location = n.custom_shader_location
 
-            for n in [n for n in ng.nodes if n.bl_idname in {'SvSNFunctor', 'SvSNFunctorB'}]:
-                if n.script_name.strip() == text_file_name.strip():
-                    print('handle the shortcut')
-                    n.handle_reload(context)
+                elif n.bl_idname == 'SvVDExperimental' and n.selected_draw_mode == "fragment":
+                    with n.sv_throttle_tree_update():
+                        if n.custom_shader_location == text_file_name:
+                            n.custom_shader_location = n.custom_shader_location
+
+                elif n.bl_idname == 'SvSNFunctorB':
+                    if n.script_name.strip() == text_file_name.strip():
+                        with n.sv_throttle_tree_update():
+                            print('handle the shortcut')
+                            n.handle_reload(context)
 
             # update node group with affected nodes
             ng.update()
