@@ -96,47 +96,54 @@ class Mesh(ObjectAttrs):
         self._faces = Faces(self)
         self._loops = Loops(self)
 
-    def __repr__(self):
-        return f"<SvMesh: name='{self.name}', verts={len(self.verts.co)}, edges={len(self.edges.ind)}, faces={len(self.faces.ind)}>"
+    def set(self, verts: np.ndarray, edges: np.ndarray = None, faces: list = None):
+        self._verts.co = np.asarray(verts, np.float32)
+        if edges:
+            self._edges.ind = np.asarray(edges, np.int32)
+        if faces:
+            self._faces.set(faces)
+            self._loops.ind = np.array([i for f in faces for i in f], np.int32)
+
+    def get(self) -> Tuple[np.ndarray, np.ndarray, list]:
+        return self._verts.co, self._edges.ind, self._faces.get(self._loops.ind)
+
+    def to_bmesh(self, bm) -> None:
+        bm_verts = [bm.verts.new(v) for v in self._verts]
+        _ = [bm.edges.new([bm_verts[i] for i in e]) for e in self._edges]
+        _ = [bm.faces.new([bm_verts[i] for i in f]) for f in self._faces.get(self._loops.ind)]
 
     @property
     def verts(self):
         return self._verts
 
-    @property
-    def edges(self):
-        return self._edges
-
-    @property
-    def faces(self):
-        return self._faces
-
-    @property
-    def loops(self):
-        return self._loops
-
     @verts.setter
     def verts(self, verts: np.ndarray):
         self._verts.co = verts
+
+    @property
+    def edges(self):
+        return self._edges
 
     @edges.setter
     def edges(self, edges):
         self._edges.ind = edges
 
+    @property
+    def faces(self):
+        return self._faces
+
     @faces.setter
     def faces(self, faces):
-        self._faces.ind = faces
+        self._faces.set(faces)
 
-    @loops.setter
-    def loops(self, loops):
-        self._loops.ind = loops
+    @property
+    def loops(self):
+        return self._loops
 
     def sv_deep_copy(self) -> 'Mesh': ...
 
-    def to_bmesh(self, bm) -> None:
-        bm_verts = [bm.verts.new(v) for v in self.verts]
-        _ = [bm.edges.new([bm_verts[i] for i in e]) for e in self.edges]
-        _ = [bm.faces.new([bm_verts[i] for i in f]) for f in self.faces]
+    def __repr__(self):
+        return f"<SvMesh: name='{self.name}', verts={len(self.verts.co)}, edges={len(self.edges.ind)}, faces={len(self.faces.ind)}>"
 
 
 class Iterable(ABC):
@@ -200,46 +207,42 @@ class Edges(Iterable, EdgeAttrs):
 class Faces(Iterable, FaceAttrs):
     def __init__(self, mesh: Mesh):
         super().__init__()
-        self.mesh: Mesh = mesh
-        self._ind: np.ndarray = np.array([], np.int32)  # todo convert to indexes of only first loop
+        self.loop_starts = np.array([], np.int32)
+        self.loop_totals = np.array([], np.int32)
 
-    @property
-    def _main_attr(self):
-        return [self.mesh.loops[range(*sl)] for sl in self._ind]  # todo too slow
+    def get(self, loops_ind: np.ndarray) -> list:
+        return np.split(loops_ind, self.loop_starts[1:])
 
-    @property
-    def ind(self):
-        return self._ind
-
-    @ind.setter
-    def ind(self, faces):
-        self.mesh.loops = np.array([i for f in faces for i in f])
-        faces_length = np.add.accumulate(list(map(len, faces)))
-        start_slice = np.roll(faces_length, 1)
-        start_slice[0] = 0
-        self._ind = np.column_stack((start_slice, faces_length))
+    def set(self, faces: list):
+        self.loop_totals = np.fromiter(map(len, faces), np.int32)
+        self.loop_starts = np.add.accumulate(np.concatenate(([0], self.loop_totals[:-1])))
 
     def values_to_loops(self, values: list) -> np.ndarray:
         values = ensure_array_length(values, len(self))
-        return np.repeat(values, self.ind[:, 1] - self.ind[:, 0], 0)
+        return np.repeat(values, self.loop_totals, 0)
 
     def values_to_faces(self, values: list) -> np.ndarray:
         return ensure_array_length(values, len(self))
+
+    @property
+    def _main_attr(self):
+        return self.loop_starts
 
 
 class Loops(Iterable, LoopAttrs):
     def __init__(self, mesh: Mesh):
         super().__init__()
         self.mesh: Mesh = mesh
-        self.ind: np.ndarray = np.array([], np.int32)
         self.uv: np.ndarray = np.array([], np.float32)
+
+        self.ind: np.ndarray = np.array([], np.int32)
+
+    def values_to_loops(self, values: list) -> np.ndarray:
+        return ensure_array_length(values, len(self))
 
     @property
     def _main_attr(self):
         return self.ind
-
-    def values_to_loops(self, values: list) -> np.ndarray:
-        return ensure_array_length(values, len(self))
 
 
 class MeshGroup(ObjectAttrs):
@@ -247,6 +250,7 @@ class MeshGroup(ObjectAttrs):
         super().__init__()
         self.name: str = "MG.001"
         self.mesh: Mesh = mesh
+
         self._verts: VertsGroup = VertsGroup(self)
         self._edges: EdgesGroup = EdgesGroup(self)
         self._faces: FacesGroup = FacesGroup(self)
@@ -335,6 +339,7 @@ class FacesGroup(FaceAttrs, Iterable):
     def __init__(self, group):
         super().__init__()
         self.group: MeshGroup = group
+
         self.links: np.ndarray = np.array([], np.int32)
         self.link_sorter = np.array([], np.int32)
 

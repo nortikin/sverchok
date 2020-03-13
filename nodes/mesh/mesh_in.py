@@ -12,7 +12,6 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.core.mesh_structure import Mesh
-from sverchok.utils.mesh_structure.check_input import set_safe_attr
 
 
 class SvMeshIn(bpy.types.Node, SverchCustomTreeNode):
@@ -26,25 +25,21 @@ class SvMeshIn(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_BOOLEAN'
 
     def sv_init(self, context):
-        self.inputs.new('SvDictionarySocket', 'Object')
-        self.inputs.new('SvDictionarySocket', 'Faces')
-        self.inputs.new('SvDictionarySocket', 'Edges')
-        self.inputs.new('SvDictionarySocket', 'Verts')
-        self.inputs.new('SvDictionarySocket', 'Loops')
+        self.inputs.new('SvVerticesSocket', 'Verts')
+        self.inputs.new('SvStringsSocket', 'Edges')
+        self.inputs.new('SvStringsSocket', 'Faces')
         self.outputs.new('SvStringsSocket', 'Mesh')
 
     def process(self):
-        if not any([s.is_linked for s in self.inputs]):
+        if not self.inputs['Verts'].is_linked:
             return
 
-        max_len = max([len(s.sv_get(default=[], deepcopy=False)) for s in self.inputs])
-        data = [chain(s.sv_get(default=([None]), deepcopy=False), cycle([None])) for s in self.inputs]
         out = []
-        for i, layer in zip(range(max_len), zip(*data)):
+        for verts, edges, faces in zip(self.inputs['Verts'].sv_get(deepcopy=False),
+                                    chain(self.inputs['Edges'].sv_get(default=[None], deepcopy=False), cycle([None])),
+                                    chain(self.inputs['Faces'].sv_get(default=[None], deepcopy=False), cycle([None]))):
             me = Mesh()
-            for element, attrs in zip([me, me.faces, me.edges, me.verts, me.loops], layer):
-                if attrs:
-                    [set_safe_attr(element, key, values) for key, values in attrs.items()]
+            me.set(verts, edges, faces)
             out.append(me)
         self.outputs['Mesh'].sv_set(out)
 
