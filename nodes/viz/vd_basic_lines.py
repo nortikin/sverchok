@@ -31,6 +31,11 @@ vertex_shader = '''
 '''
 
 fragment_shader = '''
+    #define M_1_SQRTPI 0.5641895835477563 /* 1/sqrt(pi) */
+    #define DISC_RADIUS (M_1_SQRTPI * 1.05)
+    #define LINE_SMOOTH_START (0.5 - DISC_RADIUS)
+    #define LINE_SMOOTH_END (0.5 + DISC_RADIUS)
+
     uniform vec4 color;
     // in vec3 pos;
     void main()
