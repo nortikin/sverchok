@@ -42,6 +42,7 @@ from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 from sverchok.core.node_defaults import set_defaults_if_defined
 
 from sverchok.utils import get_node_class_reference
+from sverchok.utils.sv_node_utils import recursive_framed_location_finder
 from sverchok.utils.context_managers import sv_preferences
 from sverchok.utils.docstring import SvDocstring
 import sverchok.utils.logging
