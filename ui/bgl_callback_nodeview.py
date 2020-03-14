@@ -26,8 +26,6 @@ import blf
 import bgl
 from bpy.types import SpaceNodeEditor
 
-from sverchok import node_tree
-
 
 callback_dict = {}
 point_dict = {}
@@ -227,7 +225,8 @@ def draw_callback_px(n_id, data):
 
     if not (data['tree_name'] == ng_name):
         return
-    if not isinstance(ng_view, node_tree.SverchCustomTree):
+ 
+    if not ng_view.bl_idname in {"SverchCustomTreeType"}:
         return
 
     if data.get('mode', 'text-based') == 'text-based':
