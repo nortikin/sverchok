@@ -71,7 +71,7 @@ def get_valid_evaluate_function2(mat_name, node_name):
     node = get_valid_node(mat_name, node_name, 'ShaderNodeRGBCurve')
 
     curve = node.mapping.curves[3]
-    try: curve.evaluate(0.0)
+    try:  node.mapping.evaluate(curve, 0.0)
     except: node.mapping.initialize()
 
     evaluate = lambda val: node.mapping.evaluate(curve, val)
