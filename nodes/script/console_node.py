@@ -128,8 +128,8 @@ def syntax_highlight_basic(node):
             token_type = token.type
             if token.type == 1:
                 if token.string in {
-                        'print', 'def', 'class', 'break', 'continue', 'yield', 'return', 
-                        'repr', 'dir', 'if', 'in', 'as', 'out', 'with', 'from', 'import'}:
+                        'print', 'def', 'class', 'break', 'continue', 'yield', 'return', 'while',
+                        'repr', 'dir', 'if', 'in', 'as', 'out', 'with', 'from', 'import', 'with'}:
                     token_type = 90
 
 
