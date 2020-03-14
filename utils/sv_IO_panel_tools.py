@@ -144,7 +144,7 @@ def get_superficial_props(node_dict, node):
     node_dict['hide'] = node.hide
 
     _x, _y = recursive_framed_location_finder(node, node.location[:])
-    node_dict['location'] = _x, _y
+    node_dict['location'] = _x, _y  # node.absolute_location
 
     if node.use_custom_color:
         node_dict['color'] = node.color[:]
