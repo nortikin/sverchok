@@ -148,58 +148,54 @@ def syntax_highlight_basic(node):
     final_ones = ones.reshape((-1, node.terminal_width))
     return final_ones
 
-# def filter_incoming(socket_data):
-#     """
-#     a preprocessing step, inefficient, to replace all long string tokens with an abbreviated line + [...]
-#     """
+def filter_incoming(socket_data):
+    """
+    a preprocessing step, inefficient, to replace all long string tokens with an abbreviated line + [...]
+    """
 
-#     import tokenize
-#     import io
-#     import token
-#     import textwrap
+    import tokenize
+    import io
+    import token
+    import textwrap
 
-#     text = '\n'.join(socket_data[0])
-#     # print(socket_data[0])
+    text = socket_data[0]
+    line_indices_done = set()
 
-#     line_indices_done = set()
+    replacements = {}
+    with io.StringIO(text) as f:
+        tokens = tokenize.generate_tokens(f.readline)
 
-#     replacements = {}
-#     with io.StringIO(text) as f:
-#         tokens = tokenize.generate_tokens(f.readline)
+        for token in tokens:
+            if not token.type == 3:
+                continue
+            if not token.start[0] == token.end[0]:
+                # this is a multiline nicely formatted textstring.. should be OK.
+                continue
+            if not ((token.end[1] - token.start[1]) > 80):
+                continue
 
-#         for token in tokens:
-#             if not token.type == 3:
-#                 continue
-#             if not token.start[0] == token.end[0]:
-#                 # this is a multiline nicely formatted textstring.. should be OK.
-#                 continue
-#             if not ((token.end[1] - token.start[1]) > 80):
-#                 continue
+            # if reaches here, then we have a single line, very long string
+            # print(token.string)
+            suggested_line = textwrap.shorten(token.string, width=80) + "\""
+            replacements[(token.start, token.end)] = suggested_line
+            # print(suggested_line)
 
-#             # if reaches here, then we have a single line, very long string
-#             # print(token.string)
-#             suggested_line = textwrap.shorten(token.string, width=80) + "\""
-#             replacements[(token.start, token.end)] = suggested_line
-#             # print(suggested_line)
+    socket_data = socket_data[0].splitlines()
+    for ridx, proposal in replacements.items():
 
-#     # print(len(socket_data))
-#     socket_data = socket_data[0].splitlines()
-#     for ridx, proposal in replacements.items():
-#         # because i am not storing multiline strings, this will be enough
-#         (linenum, char_start), (_, char_end) = ridx
-#         linenum -= 1
-#         if linenum in line_indices_done:
-#             continue
+        # because i am not storing multiline strings, this will be enough
+        (linenum, char_start), (_, char_end) = ridx
+        linenum -= 1
+        if linenum in line_indices_done:
+            continue
         
-#         # if reaching here.. means we are going to replace a string. hold tight!
-#         # print(linenum)
-#         found_line = socket_data[linenum]
-#         new_line = found_line[:char_start] + proposal + found_line[char_end:]
-#         print(new_line)
-#         socket_data[linenum] = new_line
-#         line_indices_done.add(linenum)
+        # if reaching here.. means we are going to replace a string. hold tight!
+        found_line = socket_data[linenum]
+        new_line = found_line[:char_start] + proposal + found_line[char_end:]
+        socket_data[linenum] = new_line
+        line_indices_done.add(linenum)
 
-#     return ["\n".join(socket_data)]
+    return ["\n".join(socket_data)]
 
 def find_longest_linelength(lines):
     return len(max(lines, key=len))
@@ -415,8 +411,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
 
-                    # if self.filter_long_strings:
-                    #     socket_data = filter_incoming(socket_data)
+                    if self.filter_long_strings:
+                        socket_data = filter_incoming(socket_data)
 
                     multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
                     valid_multiline = '\n'.join(multiline)
