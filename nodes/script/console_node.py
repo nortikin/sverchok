@@ -148,6 +148,58 @@ def syntax_highlight_basic(node):
     final_ones = ones.reshape((-1, node.terminal_width))
     return final_ones
 
+# def filter_incoming(socket_data):
+#     """
+#     a preprocessing step, inefficient, to replace all long string tokens with an abbreviated line + [...]
+#     """
+
+#     import tokenize
+#     import io
+#     import token
+#     import textwrap
+
+#     text = '\n'.join(socket_data[0])
+#     # print(socket_data[0])
+
+#     line_indices_done = set()
+
+#     replacements = {}
+#     with io.StringIO(text) as f:
+#         tokens = tokenize.generate_tokens(f.readline)
+
+#         for token in tokens:
+#             if not token.type == 3:
+#                 continue
+#             if not token.start[0] == token.end[0]:
+#                 # this is a multiline nicely formatted textstring.. should be OK.
+#                 continue
+#             if not ((token.end[1] - token.start[1]) > 80):
+#                 continue
+
+#             # if reaches here, then we have a single line, very long string
+#             # print(token.string)
+#             suggested_line = textwrap.shorten(token.string, width=80) + "\""
+#             replacements[(token.start, token.end)] = suggested_line
+#             # print(suggested_line)
+
+#     # print(len(socket_data))
+#     socket_data = socket_data[0].splitlines()
+#     for ridx, proposal in replacements.items():
+#         # because i am not storing multiline strings, this will be enough
+#         (linenum, char_start), (_, char_end) = ridx
+#         linenum -= 1
+#         if linenum in line_indices_done:
+#             continue
+        
+#         # if reaching here.. means we are going to replace a string. hold tight!
+#         # print(linenum)
+#         found_line = socket_data[linenum]
+#         new_line = found_line[:char_start] + proposal + found_line[char_end:]
+#         print(new_line)
+#         socket_data[linenum] = new_line
+#         line_indices_done.add(linenum)
+
+#     return ["\n".join(socket_data)]
 
 def find_longest_linelength(lines):
     return len(max(lines, key=len))
@@ -287,7 +339,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     texture_dict = {}
 
     n_id: bpy.props.StringProperty(default='')
-    local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, update=updateNode)
+    local_scale: bpy.props.FloatProperty(default=1.0, min=0.2, name="scale", update=updateNode)
     show_me: bpy.props.BoolProperty(default=True, name="show me", update=updateNode)
 
     syntax_mode: bpy.props.EnumProperty(
@@ -296,6 +348,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     )
 
     last_n_lines: bpy.props.IntProperty(min=0, name="last n lines", description="show n number of last lines", update=updateNode)
+    filter_long_strings: bpy.props.BoolProperty(default=True, name="Filter", description="Filter long strings", update=updateNode)
 
     def prepare_for_grid(self):
         char_width = int(15 * self.local_scale)
@@ -328,6 +381,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row.prop(self, "show_me", text="", icon="HIDE_OFF")
         row.separator()
         row.prop(self, "local_scale")
+        row.separator()
+        row.prop(self, "filter_long_strings", text="", icon="FILTER")
         row2 = layout.row(align=True)
         row2.prop(self, "syntax_mode", expand=True)
         row3 = layout.row()
@@ -359,6 +414,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             if len(socket_data) == 1:
                 socket_data = socket_data[0]
                 if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
+
+                    # if self.filter_long_strings:
+                    #     socket_data = filter_incoming(socket_data)
 
                     multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
                     valid_multiline = '\n'.join(multiline)
