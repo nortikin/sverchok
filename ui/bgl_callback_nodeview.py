@@ -226,7 +226,7 @@ def draw_callback_px(n_id, data):
     if not (data['tree_name'] == ng_name):
         return
  
-    if not ng_view.bd_idname in {"SverchCustomTreeType"}:
+    if not ng_view.bl_idname in {"SverchCustomTreeType"}:
         return
 
     if data.get('mode', 'text-based') == 'text-based':
