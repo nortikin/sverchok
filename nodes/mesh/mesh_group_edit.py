@@ -18,23 +18,27 @@ from sverchok.core.mesh_structure import Mesh, MeshGroup, FacesGroup, EdgesGroup
 from sverchok.utils.mesh_structure.check_input import set_safe_attr
 
 
-class SvMeshGroupEdit(bpy.types.Node, SverchCustomTreeNode):
+class SvMeshEditAttrs(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: ...
 
     ...
     """
-    bl_idname = 'SvMeshGroupEdit'
-    bl_label = 'Mesh Group Edit'
+    bl_idname = 'SvMeshEditAttrs'
+    bl_label = 'Mesh Edit Attributes'
     bl_icon = 'MOD_BOOLEAN'
 
+    edit_group: bpy.props.BoolProperty(name="Edit mesh group", update=updateNode)
     group_name: bpy.props.StringProperty(default="Mesh group", update=updateNode)
     element: bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges', 'faces']])
     is_name_valid: bpy.props.BoolProperty(default=True)
 
     def draw_buttons(self, context, layout):
-        layout.alert = not self.is_name_valid
-        layout.prop(self, 'group_name', text='')
+        layout.prop(self, 'edit_group')
+        col = layout.column()
+        col.active = self.edit_group
+        col.alert = not self.is_name_valid and self.edit_group
+        col.prop(self, 'group_name', text='')
 
     def draw_index_socket(self, socket, context, layout):
         layout.label(text='Indexes')
@@ -79,8 +83,8 @@ class SvMeshGroupEdit(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvMeshGroupEdit)
+    bpy.utils.register_class(SvMeshEditAttrs)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvMeshGroupEdit)
+    bpy.utils.unregister_class(SvMeshEditAttrs)

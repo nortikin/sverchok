@@ -225,7 +225,7 @@
     SvMeshIn
     SvViewerMesh
     SvMeshGroupIn
-    SvMeshGroupEdit
+    SvMeshEditAttrs
     SvZipMeshes
 
 ## Number
