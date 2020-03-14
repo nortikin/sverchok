@@ -436,6 +436,14 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         if not self.inputs[0].is_linked or not self.inputs[0].sv_get():
             return True
 
+    def update(self):
+        if not ("text" in self.inputs):
+            return
+        try:
+            if not self.inputs[0].other:
+                self.free()
+        except:
+            print('ConsoleNode was disconnected, holdout (not a problem)')
 
 classes = [SvConsoleNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
