@@ -8,14 +8,14 @@
 
 from collections import ChainMap
 from itertools import cycle, chain, count, accumulate
-from typing import List, Tuple, Union, Type, Dict, Iterable
+from typing import List, Tuple, Union, Type, Iterable
 from functools import singledispatch
 
 import numpy as np
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.mesh_structure import Mesh, Verts, Edges, Faces, Loops
+from sverchok.utils.mesh_structure.mesh import Mesh
 from sverchok.utils.sv_bmesh_utils import empty_bmesh
 
 

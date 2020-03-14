@@ -10,7 +10,7 @@ from typing import Any, Union
 
 import numpy as np
 
-import sverchok.core.mesh_structure as ms
+import sverchok.utils.mesh_structure.mesh as ms
 
 
 MeshElements = Union[ms.Mesh, ms.Verts, ms.Edges, ms.Faces, ms.Loops, ms.MeshGroup, ms.FacesGroup, ms.EdgesGroup,

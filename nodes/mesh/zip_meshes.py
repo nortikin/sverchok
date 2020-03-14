@@ -6,16 +6,10 @@
 # License-Filename: LICENSE
 
 
-from itertools import cycle, chain
-
-import numpy as np
-
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import repeat_last, updateNode
-from sverchok.core.mesh_structure import Mesh, MeshGroup, FacesGroup, EdgesGroup, VertsGroup, LoopsGroup
-from sverchok.utils.mesh_structure.check_input import set_safe_attr
+from sverchok.data_structure import updateNode
 
 
 class SvZipMeshes(bpy.types.Node, SverchCustomTreeNode):

@@ -11,7 +11,7 @@ from itertools import cycle, chain
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.core.mesh_structure import Mesh
+from sverchok.utils.mesh_structure.mesh import Mesh
 
 
 class SvMeshIn(bpy.types.Node, SverchCustomTreeNode):
