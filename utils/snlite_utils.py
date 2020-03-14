@@ -60,6 +60,23 @@ def get_valid_evaluate_function(mat_name, node_name):
 
     return curve.evaluate
 
+def get_valid_evaluate_function2(mat_name, node_name):
+    ''' 
+    Takes a material name (cycles) and a Node name it expects to find.
+    The node will be of type ShaderNodeRGBCurve and this function
+    will force its existence, then return the evaluate function for the last
+    component of RGBA - allowing us to use this as a float modifier.
+    '''
+
+    node = get_valid_node(mat_name, node_name, 'ShaderNodeRGBCurve')
+
+    curve = node.mapping.curves[3]
+    try:  node.mapping.evaluate(curve, 0.0)
+    except: node.mapping.initialize()
+
+    evaluate = lambda val: node.mapping.evaluate(curve, val)
+    return evaluate
+
 
 def vectorize(all_data):
 

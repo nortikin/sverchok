@@ -4,7 +4,7 @@ out floats_out s
 ui = my_temp_material2, RGB Curves2
 """
 
-from sverchok.utils.snlite_utils import get_valid_evaluate_function as get_evaluator
+from sverchok.utils.snlite_utils import get_valid_evaluate_function2 as get_evaluator
 
 # currently the node noame (here 'RGB Curves') must be uniqe per material.
 # copying nodes within the same nodetree  does not automatically 'bump' the nodename
