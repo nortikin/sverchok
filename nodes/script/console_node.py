@@ -132,7 +132,7 @@ def syntax_highlight_basic(node):
                         'print', 'def', 'class', 'break', 'continue', 'return', 'while', 'or', 'and',
                         'dir', 'if', 'in', 'as', 'out', 'with', 'from', 'import', 'with', 'for'}:
                     token_type = 90
-                elif token.string in {'False', 'True', 'yield', 'repr'}:
+                elif token.string in {'False', 'True', 'yield', 'repr', 'range', 'enumerate'}:
                     token_type = 91
 
             # print(token)
