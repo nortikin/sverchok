@@ -75,9 +75,7 @@ class SvLinkNewNodeInput(bpy.types.Operator):
 
         if caller_node.parent:
             new_node.parent = caller_node.parent
-            loc_xy = new_node.location[:]
-            locx, locy = recursive_framed_location_finder(new_node, loc_xy)
-            new_node.location = locx, locy
+            new_node.location = new_node.absolute_location
 
         new_node.process_node(context)
 
