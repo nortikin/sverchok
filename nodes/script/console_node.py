@@ -63,11 +63,12 @@ fragment_shader = '''
     {
         vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
         int cIndex = int(v_lexer);
-        if (cIndex == 3) { test_tint = vec4(0.9, 0.4, 1.0, 1.0); }
+        if (cIndex == 3) { test_tint = vec4(0.148, 0.447, 0.040, 1.0); }
         if (cIndex == 2) { test_tint = vec4(0.9, 0.9, 1.0, 1.0); }
-        if (cIndex == 1) { test_tint = vec4(0.3, 0.9, 1.0, 1.0); }
+        if (cIndex == 1) { test_tint = vec4(0.4, 0.9, 0.8, 1.0); }
         if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
         if (cIndex == 90) { test_tint = vec4(0.7, 0.9, 0.3, 1.0); }
+        if (cIndex == 91) { test_tint = vec4(0.3, 0.9, 0.4, 1.0); }
    
         // vec4 outputColor = texture(image, texCoord_interp) * test_tint;
         // if (length(outputColor.xyz) < 0.0001){
@@ -128,10 +129,11 @@ def syntax_highlight_basic(node):
             token_type = token.type
             if token.type == 1:
                 if token.string in {
-                        'print', 'def', 'class', 'break', 'continue', 'yield', 'return', 'while', 'or', 'and',
-                        'repr', 'dir', 'if', 'in', 'as', 'out', 'with', 'from', 'import', 'with'}:
+                        'print', 'def', 'class', 'break', 'continue', 'return', 'while', 'or', 'and',
+                        'dir', 'if', 'in', 'as', 'out', 'with', 'from', 'import', 'with', 'for'}:
                     token_type = 90
-
+                elif token.string in {'False', 'True', 'yield', 'repr', 'range', 'enumerate'}:
+                    token_type = 91
 
             # print(token)
             #  start = (line number, 1 indexed) , (char index, 0 indexed)
