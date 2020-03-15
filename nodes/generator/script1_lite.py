@@ -54,16 +54,17 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
 
     def draw(self, context):
         if context.active_node:
+
             node = context.active_node
+            if (node.selected_mode == 'To_TextBlok'):
+                args = dict(operator='text.open', props_default={'internal': True})
+            else:
+                args = dict(operator='node.scriptlite_import') 
 
             for folder in template_categories:
                 final_path = os.path.join(snlite_template_path, folder)
-                
                 self.layout.label(text=folder)
-                if node.selected_mode == 'To_TextBlok':
-                    self.path_menu([final_path], "text.open", {"internal": True})
-                else:
-                    self.path_menu([final_path], "node.scriptlite_import")
+                self.path_menu(searchpaths=[final_path], *args)
                 self.layout.row().separator()
 
 
