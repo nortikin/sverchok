@@ -53,6 +53,9 @@ class Pols2EdgsNode(bpy.types.Node, SverchCustomTreeNode):
         result = polygons_to_edges(X, self.unique_edges)
         self.outputs['edgs'].sv_set(result)
 
+    def draw_label(self):
+        return (self.label or self.name) if not self.hide else "P to E"
+
 
 def register():
     bpy.utils.register_class(Pols2EdgsNode)
