@@ -59,7 +59,7 @@ Outputs
 -------
 
 **Vertices**, **Edges** and **Polygons**.
-All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independant grids.
+All outputs will be generated. Depending on the type of the inputs, the node will generate only one or multiples independent grids.
 
 If **Separate** is True, the output is totally different. The grid disappear (no more **polygons** are generated) and instead it generates a series of lines repeated along Y axis. See examples below to a better understanding.
 

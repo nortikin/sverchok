@@ -188,10 +188,10 @@ def make_edg_pol(x_verts, y_verts, flags):
 
     edges = np.array([])
 
-    grid = np.arange(x_verts*y_verts).reshape(y_verts, x_verts)
+    grid = np.arange(x_verts*y_verts, dtype=np.int32).reshape(y_verts, x_verts)
 
     if get_faces:
-        grid_faces = np.zeros((y_verts-1, x_verts-1, 4))
+        grid_faces = np.zeros((y_verts-1, x_verts-1, 4), 'i' )
         grid_faces[:, :, 0] = grid[:-1, 1:]
         grid_faces[:, :, 1] = grid[1:, 1:]
         grid_faces[:, :, 2] = grid[1:, :-1]
@@ -220,16 +220,22 @@ def make_edg_pol(x_verts, y_verts, flags):
     return edges, all_faces
 
 socket_names = ['Vertices', 'Edges', 'Polygons']
+plane_func_dict = {
+    'STEPS': plane_steps,
+    'SIZE_STEPS': plane_size_steps,
+    'SIZE': planes_size_number,
+    'NUMBER': planes_number_steps
 
+}
 class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Box
-    Tooltip: Generate a Box primitive.
+    Triggers: Grid,
+    Tooltip: Generate a Plane primitive.
     """
 
     bl_idname = 'SvPlaneNodeMk3'
-    bl_label = 'Plane mk3'
-    bl_icon = 'MESH_CUBE'
+    bl_label = 'Plane'
+    bl_icon = 'MESH_PLANE'
 
     correct_output_modes = [
         ('NONE', 'None', 'Leave at multi-object level (Advanced)', 0),
@@ -237,27 +243,6 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         ('FLAT', 'Flat Output', 'Flat to object level', 2),
     ]
 
-
-    def update_size_link(self, context):
-        self.sizeRatio = self.sizex / self.sizey
-
-    def update_size(self, context, sizeID):
-        if self.syncing:
-            return
-        if self.linkSizes:
-            self.syncing = True
-            if sizeID == "X":  # updating X => sync Y
-                self.sizey = self.sizex / self.sizeRatio
-            else:  # updating Y => sync X
-                self.sizex = self.sizey * self.sizeRatio
-            self.syncing = False
-        updateNode(self, context)
-
-    def update_sizex(self, context):
-        self.update_size(context, "X")
-
-    def update_sizey(self, context):
-        self.update_size(context, "Y")
 
     def hide_socket(self, name, hide):
         if hide:
@@ -336,21 +321,17 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         name='[D] Step Y', description='Step length Y (draft mode)',
         default=1.0, update=updateNode)
 
-    separate: BoolProperty(
-        name='Separate', description='Separate UV coords',
-        default=False, update=updateNode)
-
     center: BoolProperty(
         name='Center', description='Center the plane around origin',
         default=False, update=updateNode)
 
     sizex: FloatProperty(
         name='Size X', description='Plane size along X',
-        default=10.0, min=0.01, update=update_sizex)
+        default=10.0, min=0.01, update=updateNode)
 
     sizey: FloatProperty(
         name='Size Y', description='Plane size along Y',
-        default=10.0, min=0.01, update=update_sizey)
+        default=10.0, min=0.01, update=updateNode)
 
     sizex_draft: FloatProperty(
         name='[D] Size X', description='Plane size along X (draft mode)',
@@ -359,16 +340,6 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
     sizey_draft: FloatProperty(
         name='[D] Size Y', description='Plane size along y (draft mode)',
         default=1.0, update=updateNode)
-
-    sizeRatio: FloatProperty(
-        name="Size Ratio", default=1.0)
-
-    linkSizes: BoolProperty(
-        name='Link', description='Link the normalize sizes',
-        default=False, update=update_size_link)
-
-    syncing: BoolProperty(
-        name='Syncing', description='Syncing flag', default=False)
 
     draft_properties_mapping = dict(
             numx = 'numx_draft',
@@ -409,12 +380,25 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Num Y").prop_name = 'numy'
         self.inputs.new('SvStringsSocket', "Step X").prop_name = 'stepx'
         self.inputs.new('SvStringsSocket', "Step Y").prop_name = 'stepy'
-
+        self.inputs['Step X'].hide_safe = True
+        self.inputs['Step Y'].hide_safe = True
         self.inputs.new('SvMatrixSocket', "Matrix")
 
-        self.outputs.new('SvVerticesSocket', "Vers")
-        self.outputs.new('SvStringsSocket', "Edgs")
-        self.outputs.new('SvStringsSocket', "Pols")
+        self.outputs.new('SvVerticesSocket', "Vertices")
+        self.outputs.new('SvStringsSocket', "Edges")
+        self.outputs.new('SvStringsSocket', "Polygons")
+
+    def migrate_props_pre_relink(self, old_node):
+        if old_node.normalize:
+            if old_node.inputs["Step X"].is_linked or old_node.inputs["Step Y"].is_linked:
+                self.dimension_mode = "SIZE_STEPS"
+            else:
+                self.dimension_mode = "SIZE"
+        else:
+            if old_node.inputs["Step X"].is_linked or old_node.inputs["Step Y"].is_linked:
+                self.dimension_mode = 'STEPS'
+            else:
+                self.dimension_mode = 'NUMBER'
 
     def draw_buttons(self, context, layout):
         col = layout.column()
@@ -433,6 +417,7 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         layout.separator()
         layout.label(text="List Match:")
         layout.prop(self, "list_match_global", text="Global Match", expand=False)
+        layout.prop(self, "list_match_local", text="Local Match", expand=False)
 
         layout.label(text="Ouput Numpy:")
         r = layout.row()
@@ -498,29 +483,11 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         flags = [s.is_linked for s in outputs]
         output_numpy = [b for b in self.out_np]
         ops = [self.center, self.list_match_local, self.direction]
-        if self.dimension_mode == 'SIZE':
-            func = plane_size_number
-        else:
-            func = plane_number_steps
 
+
+        plane_func = plane_func_dict[self.dimension_mode]
         for params in zip(*data_in):
-
-            v_obj, e_obj, p_obj = [], [], []
-            if self.dimension_mode == 'STEPS':
-
-                v_obj, e_obj, p_obj = plane_steps(params, ops, flags)
-            elif self.dimension_mode == 'SIZE_STEPS':
-                v_obj, e_obj, p_obj = plane_size_steps(params, ops, flags)
-
-            # elif self.dimension_mode == 'SIZE':
-            #     v_obj, e_obj, p_obj = planes_size_number(params, ops, flags)
-            else:
-                # v_obj, e_obj, p_obj = planes_number_steps(params, ops, flags)
-                m_par = list_match_func[self.list_match_local](params)
-                for local_p in zip(*m_par):
-                    verts, edgs, pols = func(local_p, ops, flags)
-                    append_lists([verts, edgs, pols], [v_obj, e_obj, p_obj])
-
+            v_obj, e_obj, p_obj = plane_func(params, ops, flags)
 
             if self.correct_output == 'FLAT':
                 extend_lists(
@@ -529,15 +496,15 @@ class SvPlaneNodeMk3(bpy.types.Node, SverchCustomTreeNode):
 
             else:
                 if self.correct_output == 'JOIN':
-                    mesh = mesh_join_np(v_obj, e_obj, p_obj)
+                    v_obj, e_obj, p_obj = mesh_join_np(v_obj, e_obj, p_obj)
                 append_lists(
-                    numpy_check(mesh, output_numpy),
+                    numpy_check([v_obj, e_obj, p_obj], output_numpy),
                     [verts_out, edges_out, pols_out])
 
 
-        outputs['Vers'].sv_set(verts_out)
-        outputs['Edgs'].sv_set(edges_out)
-        outputs['Pols'].sv_set(pols_out)
+        outputs['Vertices'].sv_set(verts_out)
+        outputs['Edges'].sv_set(edges_out)
+        outputs['Polygons'].sv_set(pols_out)
 
 
 def register():

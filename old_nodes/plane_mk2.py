@@ -69,6 +69,8 @@ class SvPlaneNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Plane MK2'
     bl_icon = 'MESH_PLANE'
 
+    replacement_nodes = [('SvPlaneNodeMk3', None, None)]
+
     def update_size_link(self, context):
         self.sizeRatio = self.sizex / self.sizey
 

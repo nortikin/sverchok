@@ -35,8 +35,8 @@
       "params": {},
       "width": 140.0
     },
-    "Plane MK2": {
-      "bl_idname": "SvPlaneNodeMK2",
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
       "color": [
         0.0,
         0.5,
@@ -50,6 +50,7 @@
         110.25822448730469
       ],
       "params": {
+        "dimension_mode": "SIZE",
         "normalize": 1,
         "numx": 10,
         "numy": 10,
@@ -126,7 +127,7 @@
   },
   "update_lists": [
     [
-      "Plane MK2",
+      "Plane",
       0,
       "List Length",
       0
@@ -138,7 +139,7 @@
       0
     ],
     [
-      "Plane MK2",
+      "Plane",
       0,
       "Pulga Physics",
       0
