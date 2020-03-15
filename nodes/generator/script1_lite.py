@@ -64,7 +64,7 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
             for folder in template_categories:
                 final_path = os.path.join(snlite_template_path, folder)
                 self.layout.label(text=folder)
-                self.path_menu(searchpaths=[final_path], *args)
+                self.path_menu(searchpaths=[final_path], **args)
                 self.layout.row().separator()
 
 
