@@ -37,6 +37,11 @@ This node has the following parameters:
   **Objects**. If checked, output separate list of edge objects per each input
   objects. Otherwise, output one flat list of edge objects for all input
   objects. Unchecked by default.
+- **Sort vertices**. This parameter is available only when **Output mode** is
+  set to **Vertices**. If checked, the node will sort vertices of each edge, so
+  that the **Vertex1** output will always contain a vertex with index (in the
+  input mesh) smaller than the index of the vertex in the **Vertex2** output.
+  Checked by default.
 
 Outputs
 -------

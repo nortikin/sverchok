@@ -58,6 +58,12 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    sort : BoolProperty(
+        name = "Sort vertices",
+        description = "Make sure that index of vertex in the Vertex1 output is always smaller than index of vertex in Vertex2 output",
+        default = True,
+        update = updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', 'Edges')
@@ -73,6 +79,8 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "out_mode", text="")
         if self.out_mode == 'OBJ':
             layout.prop(self, 'separate')
+        else:
+            layout.prop(self, 'sort')
 
     def process(self):
         vertices_s = self.inputs['Vertices'].sv_get()
@@ -93,8 +101,9 @@ class SvEdgeBoomNode(bpy.types.Node, SverchCustomTreeNode):
             for i1, i2 in edges:
                 new_verts = []
                 new_edges = []
-                if i1 > i2:
-                    i1, i2 = i2, i1
+                if self.sort:
+                    if i1 > i2:
+                        i1, i2 = i2, i1
                 v1, v2 = vertices[i1], vertices[i2]
                 new_verts1.append(v1)
                 new_verts2.append(v2)
