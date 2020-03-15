@@ -44,6 +44,8 @@ snlite_template_path = os.path.join(sv_path, 'node_scripts', 'SNLite_templates')
 
 defaults = [0] * 32
 
+template_categories = ['demo', 'bpy_stuff', 'bmesh', 'utils']
+
 class SNLITE_EXCEPTION(Exception): pass
 
 class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
@@ -53,10 +55,15 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
     def draw(self, context):
         if context.active_node:
             node = context.active_node
-            if node.selected_mode == 'To_TextBlok':
-                self.path_menu([snlite_template_path], "text.open", {"internal": True})
-            else:
-                self.path_menu([snlite_template_path], "node.scriptlite_import")
+
+            internal = node.selected_mode == 'To_TextBlok'
+            args = ("text.open", {"internal": True}) if internal else ("node.scriptlite_import",)
+
+            for folder in template_categories:
+                final_path = os.path.join(snlite_template_path, folder)
+                self.layout.label(text=folder)
+                self.path_menu([final_path], *args)
+                self.layout.row().separator()
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
