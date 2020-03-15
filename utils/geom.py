@@ -606,6 +606,22 @@ class CubicSpline(Spline):
         out = ax + t_r * (bx + t_r * (cx + t_r * dx))
         return out
 
+#     def integrate(self, t_in, tknots=None):
+#         if tknots is None:
+#             tknots = self.tknots
+# 
+#         index = tknots.searchsorted(t_in, side='left') - 1
+#         index = index.clip(0, len(self.splines) - 1)
+#         to_calc = self.splines[index]
+#         ax, bx, cx, dx, tx = np.swapaxes(to_calc, 0, 1)
+#         bx /= 2.0
+#         cx /= 3.0
+#         dx /= 4.0
+#         t_r = t_in[:, np.newaxis] - tx
+#         out = ax + t_r * (bx + t_r * (cx + t_r * dx))
+#         out = t_r * out
+#         return out
+
     def tangent(self, t_in, h=0.001, tknots=None):
         """
         Calc numerical tangents for spline at t_in
@@ -1451,6 +1467,22 @@ class LineEquation(object):
         plane = PlaneEquation.from_normal_and_point(self.direction, point)
         # Then find an intersection of that plane with this line.
         return plane.intersect_with_line(self)
+
+    def projection_of_points(self, points):
+        """
+        Return the projections of the specified points on this line.
+        input: np.array of shape (n, 3)
+        output: np.array of shape (n, 3)
+        """
+        direction = np.array(self.direction)
+        unit_direction = direction / np.linalg.norm(direction)
+        unit_direction = unit_direction[np.newaxis]
+        center = np.array(self.point)
+        to_points = points - center
+        projection_lengths = (to_points * unit_direction).sum(axis=1) # np.dot(to_points, unit_direction)
+        projection_lengths = projection_lengths[np.newaxis].T
+        projections = projection_lengths * unit_direction
+        return center + projections
 
 class LineEquation2D(object):
     def __init__(self, a, b, c):
