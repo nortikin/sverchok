@@ -251,6 +251,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         description="experimental option to find islands in the outputmesh and colour them randomly")
 
     to3d: BoolProperty(default=False, update=updateNode)
+    show_wireframe: BoolProperty(default=False, update=updateNode, name="Show Edges")
 
     def sv_init(self, context):
         self.sv_init_helper_basedata_name()
@@ -289,6 +290,7 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             box.prop(self, 'calc_normals', text='calculate normals')
             box.prop(self, 'layer_choice', text='layer')
             box.prop(self, 'randomize_vcol_islands', text='randomize vcol islands')
+            box.prop(self, 'show_wireframe')
         col.prop(self, 'to3d')
 
     def draw_label(self):
@@ -387,19 +389,28 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             if bpy.data.materials.get(self.material):
                 self.set_corresponding_materials()
 
-            if self.autosmooth:
-                self.set_autosmooth(objs)
+            self.set_autosmooth(objs)
+            self.set_wireframe_visibility(objs)
 
             if self.outputs[0].is_linked:
                 self.outputs[0].sv_set(objs)
 
 
     def set_autosmooth(self, objs):
+        if not self.autosmooth:
+            return
+        
         for obj in objs:
             mesh = obj.data
             smooth_states = [True] * len(mesh.polygons)
             mesh.polygons.foreach_set('use_smooth', smooth_states)
             mesh.update()
+
+    def set_wireframe_visibility(self, objs):
+        # this will only update the obj if there is a state change.
+        for obj in objs:
+            if obj.show_wire != self.show_wireframe:
+                obj.show_wire = self.show_wireframe
 
     def add_material(self):
 
