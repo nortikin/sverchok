@@ -17,8 +17,8 @@
       },
       "width": 140.0
     },
-    "Plane MK2": {
-      "bl_idname": "SvPlaneNodeMK2",
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
       "color": [
         0.0,
         0.5,
@@ -33,6 +33,7 @@
       ],
       "params": {
         "center": 1,
+        "dimension_mode": "NUMBER",
         "stepx": 2.3500001430511475,
         "stepy": 1.9299999475479126
       },
@@ -133,7 +134,7 @@
       0
     ],
     [
-      "Plane MK2",
+      "Plane",
       0,
       "Vector Attraction",
       1

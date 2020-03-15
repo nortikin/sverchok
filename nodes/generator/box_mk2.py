@@ -401,9 +401,9 @@ class SvBoxNodeMk2(bpy.types.Node, SverchCustomTreeNode):
 
             else:
                 if self.correct_output == 'JOIN':
-                    mesh = mesh_join_np(v_obj, e_obj, p_obj)
+                    v_obj, e_obj, p_obj = mesh_join_np(v_obj, e_obj, p_obj)
                 append_lists(
-                    numpy_check(mesh, output_numpy),
+                    numpy_check([v_obj, e_obj, p_obj], output_numpy),
                     [verts_out, edges_out, pols_out])
 
 

@@ -11,7 +11,7 @@
     "Move": "Frame.001",
     "Move.002": "Frame",
     "Origins": "Frame.004",
-    "Plane MK2": "Frame.002",
+    "Plane": "Frame.002",
     "Proportional Edit Falloff": "Frame",
     "Proportional Edit Falloff.001": "Frame.001",
     "Reroute": "Frame.002",
@@ -64,6 +64,11 @@
     },
     "Adaptive Polygons Mk2": {
       "bl_idname": "SvAdaptivePolygonsNodeMk2",
+      "color": [
+        0.800000011920929,
+        0.0,
+        0.0
+      ],
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -77,6 +82,7 @@
         "remove_doubles": 1,
         "z_coef": 0.4000000059604645
       },
+      "use_custom_color": true,
       "width": 140.0
     },
     "Assign Materials List": {
@@ -121,7 +127,7 @@
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 648.910400390625,
+      "height": 651.4228515625,
       "hide": false,
       "label": "Recipient",
       "location": [
@@ -129,7 +135,7 @@
         35.03232192993164
       ],
       "params": {},
-      "width": 1808.922119140625
+      "width": 1689.933837890625
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
@@ -249,8 +255,8 @@
       },
       "width": 140.0
     },
-    "Plane MK2": {
-      "bl_idname": "SvPlaneNodeMK2",
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
       "color": [
         0.0,
         0.5,
@@ -260,11 +266,12 @@
       "hide": false,
       "label": "",
       "location": [
-        -825.93212890625,
-        1015.9103736877441
+        -706.9437866210938,
+        1018.4228858947754
       ],
       "params": {
         "center": 1,
+        "dimension_mode": "SIZE",
         "normalize": 1,
         "numx": 20,
         "numy": 20
@@ -537,19 +544,19 @@
   },
   "update_lists": [
     [
-      "Plane MK2",
+      "Plane",
       0,
       "Select mesh elements by location",
       0
     ],
     [
-      "Plane MK2",
+      "Plane",
       2,
       "Select mesh elements by location",
       2
     ],
     [
-      "Plane MK2",
+      "Plane",
       0,
       "Proportional Edit Falloff",
       0
@@ -561,7 +568,7 @@
       1
     ],
     [
-      "Plane MK2",
+      "Plane",
       0,
       "Move.002",
       0
@@ -585,10 +592,16 @@
       0
     ],
     [
-      "Plane MK2",
+      "Plane",
       2,
       "Select mesh elements by location.001",
       2
+    ],
+    [
+      "Plane",
+      "Polygons",
+      "Reroute.002",
+      "Input"
     ],
     [
       "Move.002",
@@ -627,12 +640,6 @@
       "Input"
     ],
     [
-      "Plane MK2",
-      "Polygons",
-      "Reroute.002",
-      "Input"
-    ],
-    [
       "Reroute",
       "Output",
       "Origins",
@@ -661,18 +668,6 @@
       "Value",
       "Reroute.001",
       "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Viewer Draw Mk3.001",
-      "verts"
-    ],
-    [
-      "Reroute.002",
-      "Output",
-      "Viewer Draw Mk3.001",
-      "faces"
     ],
     [
       "Reroute.001",
@@ -787,6 +782,18 @@
       2,
       "Viewer BMesh",
       3
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Viewer Draw Mk3.001",
+      "verts"
+    ],
+    [
+      "Reroute.002",
+      "Output",
+      "Viewer Draw Mk3.001",
+      "faces"
     ],
     [
       "Viewer BMesh",

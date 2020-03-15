@@ -5,7 +5,7 @@
     "Move.001": "Frame.001",
     "Note.001": "Frame",
     "Note.002": "Frame.001",
-    "Plane MK2": "Frame.001",
+    "Plane": "Frame.001",
     "Torus": "Frame",
     "Vector Turbulence": "Frame.001"
   },
@@ -155,8 +155,8 @@
       "use_custom_color": true,
       "width": 400.0
     },
-    "Plane MK2": {
-      "bl_idname": "SvPlaneNodeMK2",
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
       "color": [
         0.0,
         0.5,
@@ -166,10 +166,11 @@
       "hide": false,
       "label": "",
       "location": [
-        -915.595452785492,
-        -48.429237365722656
+        -911.3057799339294,
+        -39.04937744140625
       ],
       "params": {
+        "dimension_mode": "NUMBER",
         "numx": 6,
         "numy": 6
       },
@@ -277,23 +278,23 @@
     [
       "A Number",
       0,
-      "Plane MK2",
-      0
+      "Plane",
+      2
     ],
     [
       "A Number",
       0,
-      "Plane MK2",
-      1
+      "Plane",
+      3
     ],
     [
-      "Plane MK2",
+      "Plane",
       0,
       "Vector Turbulence",
       0
     ],
     [
-      "Plane MK2",
+      "Plane",
       0,
       "Move.001",
       0
@@ -323,7 +324,7 @@
       0
     ],
     [
-      "Plane MK2",
+      "Plane",
       2,
       "Viewer Draw Mk3",
       2
