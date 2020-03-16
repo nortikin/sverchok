@@ -12,12 +12,27 @@ from enum import Enum
 
 import numpy as np
 
-from .mesh_properties import ElementUserAttributes, Iterable
+from .mesh_properties import UserAttribute, UserAttributes, Iterable
 
 
 class BlenderAttributes(Enum):
     vertex_colors = 1
     material_index = 2
+
+
+class MeshElements(Enum):
+    OBJECT = 1
+    FACES = 2
+    EDGES = 3
+    VERTICES = 4
+    LOOPS = 5
+
+    @property
+    def is_iterable(self):
+        if self == MeshElements.OBJECT:
+            return False
+        else:
+            return True
 
 
 class Elements(NamedTuple):
@@ -27,9 +42,17 @@ class Elements(NamedTuple):
     vertices: Union['Verts', 'VertsGroup']
     loops: Union['Loops', 'LoopsGroup']
 
-    def get_elements_above(self, element: Union['MeshElements', 'GroupElements'])\
-            -> List[Union['MeshElements', 'GroupElements']]:
+    def get_elements_above(self, element: Union['MeshElementsCls', 'GroupElementsCls'])\
+            -> List[Union['MeshElementsCls', 'GroupElementsCls']]:
         return self[self.index(element):0:-1]
+
+    def get_element_from_enum(self, element: MeshElements):
+        elements = {MeshElements.OBJECT: self.object,
+                    MeshElements.FACES: self.faces,
+                    MeshElements.EDGES: self.edges,
+                    MeshElements.VERTICES: self.vertices,
+                    MeshElements.LOOPS: self.loops}
+        return elements[element]
 
 
 class ObjectAttrs(ABC):
@@ -40,19 +63,19 @@ class ObjectAttrs(ABC):
 
     @property
     @abstractmethod
-    def faces(self) -> 'MeshElements': ...
+    def faces(self) -> 'MeshElementsCls': ...
 
     @property
     @abstractmethod
-    def edges(self) -> 'MeshElements': ...
+    def edges(self) -> 'MeshElementsCls': ...
 
     @property
     @abstractmethod
-    def verts(self) -> 'MeshElements': ...
+    def verts(self) -> 'MeshElementsCls': ...
 
     @property
     @abstractmethod
-    def loops(self) -> 'MeshElements': ...
+    def loops(self) -> 'MeshElementsCls': ...
 
     def values_to_loops(self, value: Any) -> np.ndarray:
         return np.repeat(value[np.newaxis], len(self.loops), 0)
@@ -60,7 +83,7 @@ class ObjectAttrs(ABC):
     def values_to_faces(self, value: Any) -> np.ndarray:
         return np.repeat(value, len(self.faces))
 
-    def search_element_with_attr(self, start: str, name: str) -> 'MeshElements':
+    def search_element_with_attr(self, start: str, name: str) -> 'MeshElementsCls':
         search_order = ['loops', 'verts', 'edges', 'faces', 'mesh']
         elements = [self.loops, self.verts, self.edges, self.faces, self]
         for element in elements[search_order.index(start):]:
@@ -73,7 +96,7 @@ class ObjectAttrs(ABC):
                     return element
 
 
-class Mesh(ObjectAttrs, ElementUserAttributes):
+class Mesh(ObjectAttrs, UserAttributes):
 
     def __init__(self):
         super().__init__()
@@ -105,7 +128,12 @@ class Mesh(ObjectAttrs, ElementUserAttributes):
         _ = [bm.edges.new([bm_verts[i] for i in e]) for e in self._edges]
         _ = [bm.faces.new([bm_verts[i] for i in f]) for f in self._faces.get(self._loops.ind)]
 
-    def set_element_attribute(self, element: 'MeshElements', name: str, value: Any): ...
+    def set_element_attribute(self, element: 'MeshElementsCls', name: str, value: Any): ...
+
+    def set_element_user_attribute(self, element: MeshElements, name: str, value: Any):
+        attr = UserAttribute(name, value, element.is_iterable, id(self))
+        attr.fix()
+        self._elements.get_element_from_enum(element).set_user_attribute(attr)
 
     @property
     def verts(self):
@@ -141,13 +169,13 @@ class Mesh(ObjectAttrs, ElementUserAttributes):
         return f"<SvMesh: name='{self.name}', verts={len(self.verts.co)}, edges={len(self.edges.ind)}," \
                f" faces={len(self.faces.ind)}>"
 
-    def _search_element_with_attr(self, from_element: 'MeshElements', name: str) -> 'MeshElements':
+    def _search_element_with_attr(self, from_element: 'MeshElementsCls', name: str) -> 'MeshElementsCls':
         for nex_element in self._elements.get_elements_above(from_element):
             if nex_element.has_attribute(name):
                 return nex_element
 
 
-class Verts(Iterable, ElementUserAttributes):
+class Verts(Iterable, UserAttributes):
     def __init__(self, mesh: Mesh):
         super().__init__()
         self.mesh: Mesh = mesh
@@ -164,7 +192,7 @@ class Verts(Iterable, ElementUserAttributes):
         return values[loop_inds]
 
 
-class Edges(Iterable, ElementUserAttributes):
+class Edges(Iterable, UserAttributes):
     def __init__(self, mesh: Mesh):
         super().__init__()
         self.mesh: Mesh = mesh
@@ -186,7 +214,7 @@ class Edges(Iterable, ElementUserAttributes):
         return self.mesh.verts.values_to_loops(self.values_to_verts(values))
 
 
-class Faces(Iterable, ElementUserAttributes):
+class Faces(Iterable, UserAttributes):
     def __init__(self, mesh: Mesh):
         super().__init__()
         self.loop_starts = np.array([], np.int32)
@@ -211,7 +239,7 @@ class Faces(Iterable, ElementUserAttributes):
         return self.loop_starts
 
 
-class Loops(Iterable, ElementUserAttributes):
+class Loops(Iterable, UserAttributes):
     def __init__(self, mesh: Mesh):
         super().__init__()
         self.mesh: Mesh = mesh
@@ -255,7 +283,7 @@ class MeshGroup(ObjectAttrs):
         return self._loops
 
 
-class VertsGroup(Iterable, ElementUserAttributes):
+class VertsGroup(Iterable, UserAttributes):
     def __init__(self, group):
         super().__init__()
         self.group: MeshGroup = group
@@ -281,7 +309,7 @@ class VertsGroup(Iterable, ElementUserAttributes):
         return values[values_to_loops_mask]
 
 
-class EdgesGroup(Iterable, ElementUserAttributes):
+class EdgesGroup(Iterable, UserAttributes):
     def __init__(self, group):
         super().__init__()
         self.group: MeshGroup = group
@@ -317,7 +345,7 @@ class EdgesGroup(Iterable, ElementUserAttributes):
         raise NotImplementedError
 
 
-class FacesGroup(Iterable, ElementUserAttributes):
+class FacesGroup(Iterable, UserAttributes):
     def __init__(self, group):
         super().__init__()
         self.group: MeshGroup = group
@@ -352,7 +380,7 @@ class FacesGroup(Iterable, ElementUserAttributes):
         return ensure_array_length(values, len(self))
 
 
-class LoopsGroup(Iterable, ElementUserAttributes):
+class LoopsGroup(Iterable, UserAttributes):
     def __init__(self, group):
         super().__init__()
         self.group: MeshGroup = group
@@ -380,8 +408,8 @@ class LoopsGroup(Iterable, ElementUserAttributes):
         return values[loop_mask]
 
 
-MeshElements = Union[Mesh, Faces, Edges, Verts, Loops]
-GroupElements = Union[MeshGroup, FacesGroup, EdgesGroup, VertsGroup, LoopsGroup]
+MeshElementsCls = Union[Mesh, Faces, Edges, Verts, Loops]
+GroupElementsCls = Union[MeshGroup, FacesGroup, EdgesGroup, VertsGroup, LoopsGroup]
 
 
 def ensure_array_length(array: np.ndarray, length: int) -> np.ndarray:
