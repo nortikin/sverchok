@@ -34,6 +34,19 @@ class MeshElements(Enum):
         else:
             return True
 
+    @classmethod
+    def string_to_item(cls, name: str) -> 'MeshElements':
+        name = name.lower()
+        names = {'object': cls.OBJECT,
+                 'faces': cls.FACES,
+                 'edges': cls.EDGES,
+                 'verts': cls.VERTICES,
+                 'loops': cls.LOOPS}
+        if name not in names:
+            raise ValueError(f"The Name={name} is not available, "
+                             f"available names={names.keys()}")
+        return names[name]
+
 
 class Elements(NamedTuple):
     object: Union['Mesh', 'MeshGroup']
@@ -53,6 +66,14 @@ class Elements(NamedTuple):
                     MeshElements.VERTICES: self.vertices,
                     MeshElements.LOOPS: self.loops}
         return elements[element]
+
+
+class MeshData(NamedTuple):
+        verts: np.array
+        edges: np.array = np.array([])
+        loop_starts: np.array = np.array([])
+        loop_totals: np.array = np.array([])
+        loops: np.array = np.array([])
 
 
 class ObjectAttrs(ABC):
@@ -103,7 +124,7 @@ class Mesh(ObjectAttrs, UserAttributes):
         self.name: str = 'Sv mesh'
         self.materials: List[str] = []
 
-        self.groups: Dict[str, MeshGroup] = dict()
+        self.groups: 'Groups' = Groups(self)
 
         self._verts = Verts(self)
         self._edges = Edges(self)
@@ -123,6 +144,10 @@ class Mesh(ObjectAttrs, UserAttributes):
     def get(self) -> Tuple[np.ndarray, np.ndarray, list]:
         return self._verts.co, self._edges.ind, self._faces.get(self._loops.ind)
 
+    def get_mesh_data(self) -> MeshData:
+        return MeshData(self._verts.co, self._edges.ind,
+                        self._faces.loop_starts, self._faces.loop_totals, self.loops.ind)
+
     def to_bmesh(self, bm) -> None:
         bm_verts = [bm.verts.new(v) for v in self._verts]
         _ = [bm.edges.new([bm_verts[i] for i in e]) for e in self._edges]
@@ -139,25 +164,13 @@ class Mesh(ObjectAttrs, UserAttributes):
     def verts(self):
         return self._verts
 
-    @verts.setter
-    def verts(self, verts: np.ndarray):
-        self._verts.co = verts
-
     @property
     def edges(self):
         return self._edges
 
-    @edges.setter
-    def edges(self, edges):
-        self._edges.ind = edges
-
     @property
     def faces(self):
         return self._faces
-
-    @faces.setter
-    def faces(self, faces):
-        self._faces.set(faces)
 
     @property
     def loops(self):
@@ -255,16 +268,96 @@ class Loops(Iterable, UserAttributes):
         return self.ind
 
 
-class MeshGroup(ObjectAttrs):
-    def __init__(self, mesh):
+class Groups:
+    def __init__(self, mesh: Mesh):
+        self._mesh = mesh
+        self._groups: Dict[str, MeshGroup] = dict()
+
+    def get(self, name: str) -> 'MeshGroup':
+        mg = self._groups.get(name, None)
+        if mg:
+            return mg
+        raise LookupError(f"Mesh group={name} does not found in mesh{self._mesh.name}")
+
+    def add(self, name: str, indexes: List[int], element: MeshElements) -> 'MeshGroup':
+        mg = MeshGroup(self._mesh, name)
+        if element == MeshElements.VERTICES:
+            v_ind, e_ind, f_ind, l_ind = self._get_indexes_from_verts(indexes)
+        elif element == MeshElements.EDGES:
+            v_ind, e_ind, f_ind, l_ind = self._get_indexes_from_edges(indexes)
+        elif element == MeshElements.FACES:
+            v_ind, e_ind, f_ind, l_ind = self._get_indexes_from_faces(indexes)
+        else:
+            raise TypeError(f"Unsupported element={element}, verts or edges or faces are expected")
+        mg.set(v_ind, e_ind, f_ind, l_ind)
+        self._groups[name] = mg
+        return mg
+
+    def __contains__(self, name: str) -> bool:
+        return name in self._groups
+
+    def __iter__(self):
+        return iter(self._groups.values())
+
+    @property
+    def _mesh_data(self):
+        return self._mesh.get_mesh_data()
+
+    def _get_indexes_from_verts(self, indexes: list):
+        edge_verts_in = np.isin(self._mesh_data.edges, indexes)
+        edge_mask = np.all(edge_verts_in, -1)
+        loop_verts_in = np.isin(self._mesh_data.loops, indexes)
+        face_mask = np.logical_and.reduceat(loop_verts_in, self._mesh_data.loop_starts)
+        return indexes,\
+               np.arange(len(self._mesh_data.edges))[edge_mask].copy(), \
+               np.arange(len(self._mesh_data.loop_starts))[face_mask].copy(),\
+               np.arange(len(self._mesh_data.loops))[loop_verts_in].copy()
+
+    def _get_indexes_from_edges(self, indexes: list):
+        vert_indexes = np.unique(self._mesh_data.edges[indexes])
+        loop_verts_in = np.isin(self._mesh_data.loops, vert_indexes)
+        face_mask = np.logical_and.reduceat(loop_verts_in, self._mesh_data.loop_starts)
+        return vert_indexes,\
+               indexes,\
+               np.arange(len(self._mesh_data.loop_starts))[face_mask].copy(), \
+               np.arange(len(self._mesh_data.loops))[loop_verts_in].copy()
+
+    def _get_indexes_from_faces(self, indexes: list):
+        face_mask = np.zeros(len(self._mesh_data.loop_starts), np.bool)
+        face_mask[indexes] = True
+        loop_mask = np.repeat(face_mask, self._mesh_data.loop_totals)
+        vert_indexes = np.unique(self._mesh_data.loops[loop_mask])
+        edge_verts_in = np.isin(self._mesh_data.edges, vert_indexes)
+        edge_mask = np.all(edge_verts_in, -1)
+        return vert_indexes, \
+               np.arange(len(self._mesh_data.edges))[edge_mask].copy(), \
+               indexes, \
+               np.arange(len(self._mesh_data.loops))[loop_mask].copy()
+
+
+class MeshGroup(ObjectAttrs, UserAttributes):
+    def __init__(self, mesh, name):
         super().__init__()
-        self.name: str = "MG.001"
+        self.name: str = name
         self.mesh: Mesh = mesh
 
         self._verts: VertsGroup = VertsGroup(self)
         self._edges: EdgesGroup = EdgesGroup(self)
         self._faces: FacesGroup = FacesGroup(self)
         self._loops: LoopsGroup = LoopsGroup(self)
+
+        self._elements = Elements(self, self._faces, self._edges, self._verts, self._loops)
+
+    def set(self, vert_ind: list, edge_ind: list, face_ind: list, loop_ind: list):
+        self._verts.links = vert_ind
+        self._edges.links = edge_ind
+        self._faces.links = face_ind
+        self._loops.links = loop_ind
+
+    def set_element_user_attribute(self, element: MeshElements, name: str, value: Any):
+        attr = UserAttribute(name, value, element.is_iterable, id(self))
+        attr.fix()
+        self._elements.get_element_from_enum(element).set_user_attribute(attr)
 
     @property
     def verts(self):

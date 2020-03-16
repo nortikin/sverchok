@@ -233,7 +233,7 @@ def get_loop_colors(me: Mesh) -> np.ndarray:
     elements = me.search_element_with_attr('loops', 'vertex_colors')
     if elements:
         vertex_colors = elements.values_to_loops(elements.vertex_colors)
-        for mg in me.groups.values():
+        for mg in me.groups:
             mg_elements = mg.search_element_with_attr('loops', 'vertex_colors')
             if mg_elements:
                 vertex_colors[mg.loops.links] = mg_elements.values_to_loops(mg_elements.vertex_colors)
@@ -263,7 +263,7 @@ def get_material_index(me: Mesh) -> list:
     elements = me.search_element_with_attr('faces', 'material_index')
     if elements:
         material_indexes = elements.values_to_faces(elements.material_index)
-        for mg in me.groups.values():
+        for mg in me.groups:
             mg_elements = mg.search_element_with_attr('faces', 'material_index')
             if mg_elements:
                 material_indexes[mg.faces.links] = mg_elements.values_to_faces(mg_elements.material_index)

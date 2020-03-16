@@ -13,7 +13,6 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.mesh_structure.mesh import Mesh, MeshElements
-from sverchok.utils.mesh_structure.check_input import set_safe_attr
 
 
 class SvMeshEditAttrs(bpy.types.Node, SverchCustomTreeNode):
@@ -66,9 +65,9 @@ class SvMeshEditAttrs(bpy.types.Node, SverchCustomTreeNode):
             if self.edit_group:
                 mg = me.groups.get(self.group_name)
                 if mg:
-                    for element, attrs in zip([mg, mg.faces, mg.edges, mg.verts, mg.loops], layer):
+                    for element, attrs in zip(MeshElements, layer):
                         if attrs:
-                            [set_safe_attr(element, key, values) for key, values in attrs.items()]
+                            [mg.set_element_user_attribute(element, key, value) for key, value in attrs.items()]
             else:
                 for element, attrs in zip(MeshElements, layer):
                     if attrs:

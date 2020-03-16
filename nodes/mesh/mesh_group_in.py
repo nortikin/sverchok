@@ -12,8 +12,7 @@ import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import repeat_last, updateNode
-from sverchok.utils.mesh_structure.mesh import Mesh, MeshGroup
-from sverchok.utils.mesh_structure.check_input import set_safe_attr
+from sverchok.utils.mesh_structure.mesh import Mesh, MeshElements
 
 
 def generate_indexes(me: Mesh, indexes: list, input_type: str):
@@ -70,7 +69,8 @@ class SvMeshGroupIn(bpy.types.Node, SverchCustomTreeNode):
 
     group_name: bpy.props.StringProperty(default="Mesh group")
     element: bpy.props.EnumProperty(items=[(i, i, '') for i in ['verts', 'edges', 'faces']])
-    attr_element: bpy.props.EnumProperty(items=[(i, i, '') for i in ['object', 'faces', 'edges', 'verts', 'loops']], update=updateNode)
+    attr_element: bpy.props.EnumProperty(items=[(i, i, '') for i in ['object', 'faces', 'edges', 'verts', 'loops']],
+                                         update=updateNode)
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'group_name', text='')
@@ -90,22 +90,23 @@ class SvMeshGroupIn(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'Mesh')
 
     def process(self):
-        if not self.inputs['Mesh'].is_linked and not self.inputs['Indexes'].is_linked:
+        if not all([self.inputs['Indexes'].is_linked, self.inputs['Mesh'].is_linked]):
+            if self.inputs['Mesh'].is_linked:
+                self.outputs['Mesh'].sv_set(self.inputs['Mesh'].sv_get())
             return
 
         indexes, attrs = [repeat_last(s.sv_get(deepcopy=False, default=[None])) for s in self.inputs[1:]]
         me: Mesh
         attrs: dict
+        out = []
         for me, inds, attrs in zip(self.inputs['Mesh'].sv_get(), indexes, attrs):
-            mg = MeshGroup(me)
-            group_elements = {'object': mg, 'faces': mg.faces, 'edges': mg.edges, 'verts': mg.verts, 'loops': mg.loops}
-            mg.name = self.group_name
-            mg.verts.links, mg.edges.links, mg.faces.links, mg.loops.links = generate_indexes(me, inds, self.element)
+            mg = me.groups.add(self.group_name, inds, MeshElements.string_to_item(self.element))
             if attrs:
                 for atr_name, val in attrs.items():
-                    set_safe_attr(group_elements[self.attr_element], atr_name, val)
-            me.groups[self.group_name] = mg
-        self.outputs['Mesh'].sv_set(self.inputs['Mesh'].sv_get())
+                    mg.set_element_user_attribute(MeshElements.string_to_item(self.attr_element), atr_name, val)
+            out.append(me)
+
+        self.outputs['Mesh'].sv_set(out)
 
 
 def register():
