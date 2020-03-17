@@ -56,12 +56,12 @@ def compute_distances_mu(plane, pts, result, gates, tolerance):
 
 def barycentric_mask_np(pts, edges, np_pol_v, pol_normals, ed_id, tolerance):
     '''Helper function to mask which points are inside the triangles'''
-       
+
     edge = edges[ed_id, :]
     triangle_vert = np_pol_v[ed_id, :]
     vert_pts = pts - triangle_vert[np.newaxis, :]
     cross = np.cross(edge[ np.newaxis, :], vert_pts)
-    
+
     return np.sum(pol_normals * cross, axis=1) > -tolerance
 
 def pts_in_tris_np(pts, edges, pol_v, pol_normals, tolerance):
@@ -69,8 +69,8 @@ def pts_in_tris_np(pts, edges, pol_v, pol_normals, tolerance):
     w = barycentric_mask_np(pts, edges, pol_v, pol_normals, 0, tolerance)
     u = barycentric_mask_np(pts, edges, pol_v, pol_normals, 1, tolerance)
     v = barycentric_mask_np(pts, edges, pol_v, pol_normals, 2, tolerance)
-    return w * u * v 
-    
+    return w * u * v
+
 def compute_distances_np(plane, pts, result, gates, tolerance):
     '''The theory of this function was taken from "Optimizing The Computation Of Barycentric Coordinates" in
        https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates'''
@@ -83,7 +83,7 @@ def compute_distances_np(plane, pts, result, gates, tolerance):
     np_tolerance = np.array(tolerance)
     if normals_d == 0:
         print("Error: the three points of the plane are aligned. Not valid plane")
-    normals_n = normals / normals_d 
+    normals_n = normals / normals_d
     edges = np.zeros(np_plane_v.shape, dtype=np.float32)
     edges[ 0, :] = v1
     edges[ 1, :] = np_plane_v[ 2, :] - np_plane_v[ 1, :]
@@ -97,18 +97,18 @@ def compute_distances_np(plane, pts, result, gates, tolerance):
     closest = np_pts - normals_n[np.newaxis, :] * distance[:,np.newaxis]
     side = (distance >= 0 ) if gates[5] else []
     dist_abs = np.abs(distance)
-    
+
     is_in_triangle = []
     is_in_plane = []
     closest_in_tri = []
-    
+
     if gates[4] or gates[1]:
         closest_in_tri = pts_in_tris_np(closest, edges, np_plane_v, normals_n, np_tolerance)
     if gates[1] or gates[2]:
         is_in_plane = dist_abs < np_tolerance
         if gates[1]:
             is_in_triangle = np.all([closest_in_tri, is_in_plane], axis=0)
-            
+
 
     local_result = [dist_abs, is_in_triangle, is_in_plane, closest, closest_in_tri, side]
 
@@ -143,7 +143,7 @@ class SvDistancePointPlaneNode(bpy.types.Node, SverchCustomTreeNode):
         name='Implementation', items=implentation_modes,
         description='Choose calculation method',
         default="NumPy", update=updateNode)
-    
+
     tolerance : FloatProperty(
         name="Tolerance", description='Intersection tolerance',
         default=1.0e-6, min=0.0, precision=6,
@@ -154,7 +154,7 @@ class SvDistancePointPlaneNode(bpy.types.Node, SverchCustomTreeNode):
         description="Behavior on different list lengths, multiple objects level",
         items=list_match_modes, default="REPEAT",
         update=updateNode)
-        
+
     list_match_local : EnumProperty(
         name="Match Local",
         description="Behavior on different list lengths, object level",
@@ -185,20 +185,20 @@ class SvDistancePointPlaneNode(bpy.types.Node, SverchCustomTreeNode):
         layout.label(text="List Match:")
         layout.prop(self, "list_match_global", expand=False)
         layout.prop(self, "list_match_local", expand=False)
-        
+
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
         layout.prop_menu_enum(self, "implementation", text="Implementation")
         if self.implementation == "NumPy":
-            layout.prop(self, "output_numpy", toggle=False)
+            layout.prop(self, "output_numpy", toggle=True)
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
 
-        
+
     def get_data(self):
         '''get all data from sockets'''
         si = self.inputs
-        return list_match_func[self.list_match_global]([sckt.sv_get(default=[[]]) for sckt in si])
+        return list_match_func[self.list_match_global]([sckt.sv_get(default=[[]], deepcopy=False) for sckt in si])
 
     def process(self):
         '''main node function called every update'''

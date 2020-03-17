@@ -28,7 +28,7 @@ All parameters can be given by the node or an external input.
 This node has the following parameters:
 
 +-----------------+---------------+-------------+----------------------------------------------------+
-| Parameter       | Type          | Default     | Description                                        |  
+| Parameter       | Type          | Default     | Description                                        |
 +=================+===============+=============+====================================================+
 | **X amplitude** | Float         | 0.0         | Maximum distance to move vertices along X axis.    |
 +-----------------+---------------+-------------+----------------------------------------------------+
@@ -43,6 +43,13 @@ This node has the following parameters:
 along corresponding axis. Vertices can be moved both in negative and positive
 directions. For example, for vertex X coordinate = 10.0, and ``X amplitude`` = 1.0,
 you can get output vertex coordinate from 9.0 to 11.0.
+
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Output NumPy arrays in stead of regular lists (makes the node faster)
 
 Outputs
 -------
@@ -59,4 +66,3 @@ Given simplest nodes setup:
 you will have something like:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/5693007/b71402fe-992c-11e4-9e1a-da2ff3d20947.png
-

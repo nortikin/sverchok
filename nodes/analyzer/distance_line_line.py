@@ -73,7 +73,7 @@ class SvDistancetLineLineNode(bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         '''get all data from sockets and match lengths'''
         si = self.inputs
-        return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in si])
+        return list_match_func[self.list_match_global]([s.sv_get(default=[[]], deepcopy=False) for s in si])
 
     def process(self):
         '''main node function called every update'''

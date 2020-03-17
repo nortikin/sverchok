@@ -61,15 +61,15 @@ class SvPointOnMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         for i, i2 in zip(obj, max_dist):
             if sm1:
-                Out.append([i.closest_point_on_mesh(i.matrix_local.inverted() @ Vector(p), i2) for p in point])
+                Out.append([i.closest_point_on_mesh(i.matrix_local.inverted() @ Vector(p), distance=i2) for p in point])
             else:
-                Out.append([i.closest_point_on_mesh(p, i2) for p in point])
+                Out.append([i.closest_point_on_mesh(p, distance=i2) for p in point])
 
         if P.is_linked:
             if sm2:
                 out = []
                 for i, i2 in zip(obj, Out):
-                    out.append([(i.matrix_world * i3[1])[:] for i3 in i2])
+                    out.append([(i.matrix_world @ i3[1])[:] for i3 in i2])
                 P.sv_set(out)
             else:
                 P.sv_set([[i2[1][:] for i2 in o] for o in Out])
