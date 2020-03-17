@@ -61,11 +61,16 @@ class SV_MT_ScriptNodeLitePyMenu(bpy.types.Menu):
             else:
                 args = dict(operator='node.scriptlite_import') 
 
-            for folder in template_categories:
-                final_path = os.path.join(snlite_template_path, folder)
-                self.layout.label(text=folder)
-                self.path_menu(searchpaths=[final_path], **args)
-                self.layout.row().separator()
+            if hasattr(node, 'template_enum'):
+                    final_path = os.path.join(snlite_template_path, node.template_enum)
+                    self.path_menu(searchpaths=[final_path], **args)
+            else:
+
+                for folder in template_categories:
+                    final_path = os.path.join(snlite_template_path, folder)
+                    self.layout.label(text=folder)
+                    self.path_menu(searchpaths=[final_path], **args)
+                    self.layout.row().separator()
 
 
 class SvScriptNodeLiteCallBack(bpy.types.Operator):
@@ -179,6 +184,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
 
     custom_enum: bpy.props.EnumProperty(
         items=custom_enum_func, description="custom enum", update=updateNode
+    )
+
+    template_enum: bpy.props.EnumProperty(
+        items=[(k, k, '', i) for i, k in enumerate(template_categories)],
+        description="categories of snlite scripts",
+        default="demo", update=updateNode
     )
 
     def draw_label(self):
@@ -476,9 +487,12 @@ class SvScriptNodeLite(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, 'selected_mode', expand=True)
         col = layout.column()
+        if hasattr(self, 'template_enum'):
+            row = col.row()
+            row.prop(self, 'template_enum', expand=True)
         col.menu(SV_MT_ScriptNodeLitePyMenu.bl_idname)
 
-
+        
     # ---- IO Json storage is handled in this node locally ----
 
 
