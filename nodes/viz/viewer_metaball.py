@@ -224,9 +224,9 @@ class SvMetaballOutNode(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         
         self.remove_non_updated_objects(object_index)
         self.set_corresponding_materials()
-        objects = self.get_children()
 
         if 'Objects' in self.outputs:
+            objects = self.get_children()
             self.outputs['Objects'].sv_set(objects)
 
 
