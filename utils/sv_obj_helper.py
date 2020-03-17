@@ -342,6 +342,8 @@ class SvObjHelper():
             kinds = bpy.data.meshes
         elif self.data_kind == 'CURVE':
             kinds = bpy.data.curves
+        elif self.data_kind == 'META':
+            kinds = bpy.data.metaballs
 
         objects = bpy.data.objects
         collection = bpy.context.scene.collection
