@@ -19,22 +19,23 @@
 import random
 
 import bpy
-from bpy.props import FloatProperty, IntProperty
+from bpy.props import FloatProperty, IntProperty, BoolProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
 
-def randomize(vertices, random_x, random_y, random_z, seed):
-    random.seed(seed)
-    result = []
-    for x,y,z in vertices:
-        rx = random.uniform(-random_x, random_x)
-        ry = random.uniform(-random_y, random_y)
-        rz = random.uniform(-random_z, random_z)
-        r = (x+rx, y+ry, z+rz)
-        result.append(r)
-    return result
+import numpy as np
 
+def randomize(vertices, random_x, random_y, random_z, seed, output_numpy=False):
+    np.random.seed(seed)
+    np_verts = np.array(vertices)
+    random.seed(seed)
+    x_r = np.random.uniform(
+        low=[-random_x, -random_y, -random_z],
+        high=[random_x, random_y, random_z],
+        size=np_verts.shape)
+
+    return (np_verts + x_r) if output_numpy else (np_verts + x_r).tolist()
 
 class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -63,6 +64,11 @@ class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
     random_seed_: IntProperty(
         name='Seed', description='Random seed', default=0, update=updateNode)
 
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "RandomX").prop_name = "random_x_"
@@ -71,23 +77,25 @@ class SvRandomizeVerticesNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Seed").prop_name = "random_seed_"
 
         self.outputs.new('SvVerticesSocket', "Vertices")
+    def rclick_menu(self, context, layout):
+        layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
         # inputs
-        if not self.inputs['Vertices'].is_linked:
+        if not (self.inputs['Vertices'].is_linked and self.outputs['Vertices'].is_linked):
             return
 
-        vertices = self.inputs['Vertices'].sv_get()
-        random_x = self.inputs['RandomX'].sv_get()[0]
-        random_y = self.inputs['RandomY'].sv_get()[0]
-        random_z = self.inputs['RandomZ'].sv_get()[0]
+        vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
+        random_x = self.inputs['RandomX'].sv_get(deepcopy=False)[0]
+        random_y = self.inputs['RandomY'].sv_get(deepcopy=False)[0]
+        random_z = self.inputs['RandomZ'].sv_get(deepcopy=False)[0]
         seed = self.inputs['Seed'].sv_get()[0]
 
         if self.outputs['Vertices'].is_linked:
 
             parameters = match_long_repeat([vertices, random_x, random_y, random_z, seed])
 
-            result = [randomize(vs, rx, ry, rz, se) for vs, rx, ry, rz, se in zip(*parameters)]
+            result = [randomize(vs, rx, ry, rz, se, output_numpy=self.output_numpy) for vs, rx, ry, rz, se in zip(*parameters)]
 
             self.outputs['Vertices'].sv_set(result)
 

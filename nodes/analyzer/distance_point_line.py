@@ -31,7 +31,8 @@ def compute_distance(point, line, line_end, tolerance):
     inter_p = intersect_point_line(point, line, line_end)
     dist = (inter_p[0] - point).length
     segment_percent = inter_p[1]
-    is_in_line = dist < tolerance
+    print(tolerance, dist)
+    is_in_line = dist < tolerance[0]
     closest_in_segment = 0 <= segment_percent <= 1
     is_in_segment = is_in_line and closest_in_segment
     return dist, is_in_segment, is_in_line, list(inter_p[0]), closest_in_segment
@@ -121,13 +122,13 @@ class SvDistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
         description="Behavior on different list lengths, multiple objects level",
         items=list_match_modes, default="REPEAT",
         update=updateNode)
-        
+
     list_match_local : EnumProperty(
         name="Match Local",
         description="Behavior on different list lengths, object level",
         items=list_match_modes, default="REPEAT",
         update=updateNode)
-        
+
     def sv_init(self, context):
         '''create sockets'''
         sinw = self.inputs.new
@@ -157,7 +158,7 @@ class SvDistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
         '''right click sv_menu items'''
         layout.prop_menu_enum(self, "implementation", text="Implementation")
         if self.implementation == "NumPy":
-            layout.prop(self, "output_numpy", toggle=False)
+            layout.prop(self, "output_numpy", toggle=True)
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
 
@@ -165,7 +166,7 @@ class SvDistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         '''get all data from sockets and match lengths'''
         si = self.inputs
-        return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in si])
+        return list_match_func[self.list_match_global]([s.sv_get(default=[[]], deepcopy=False) for s in si])
 
     def process(self):
         '''main node function called every update'''
@@ -182,7 +183,7 @@ class SvDistancePointLineNode(bpy.types.Node, SverchCustomTreeNode):
         group = self.get_data()
         main_func = self.compute_distances[self.implementation]
         match_func = list_match_func[self.list_match_local]
-        
+
         for pts, line, tolerance in zip(*group):
             if len(tolerance) > 1:
                 pts, tolerance = match_func([pts, tolerance])

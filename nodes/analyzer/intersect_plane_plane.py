@@ -28,7 +28,7 @@ from mathutils.geometry import intersect_plane_plane
 def compute_intersect_plane_plane(params, result, gates):
 
     plane_co_a, plane_norm_a, plane_co_b, plane_norm_b = params
-    
+
     local_result = []
     plane_co_a_V = V(plane_co_a)
     plane_norm_a_V = V(plane_norm_a)
@@ -46,7 +46,7 @@ def compute_intersect_plane_plane(params, result, gates):
         intersect = False
         line_origin = list(plane_co_a_V)
         line_direction = list(plane_norm_a_V)
-        
+
     local_result =[intersect, line_origin, line_direction]
 
     for i, r in enumerate(result):
@@ -123,8 +123,8 @@ class SvIntersectPlanePlaneNode(bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         '''get all data from sockets'''
         si = self.inputs
-        return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in si])
-        
+        return list_match_func[self.list_match_global]([s.sv_get(default=[[]], deepcopy=False) for s in si])
+
 
     def process(self):
         '''main node function called every update'''

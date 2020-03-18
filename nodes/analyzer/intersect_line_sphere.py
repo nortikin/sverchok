@@ -199,7 +199,7 @@ class SvIntersectLineSphereNode(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         '''right click sv_menu items'''
-        layout.prop(self, "output_numpy", toggle=False)
+        layout.prop(self, "output_numpy", toggle=True)
         layout.prop_menu_enum(self, "list_match_global", text="List Match Global")
         layout.prop_menu_enum(self, "list_match_local", text="List Match Local")
 
@@ -207,7 +207,7 @@ class SvIntersectLineSphereNode(bpy.types.Node, SverchCustomTreeNode):
     def get_data(self):
         '''get all data from sockets and match lengths'''
         inputs = self.inputs
-        return list_match_func[self.list_match_global]([s.sv_get(default=[[]]) for s in inputs])
+        return list_match_func[self.list_match_global]([s.sv_get(default=[[]], deepcopy=False) for s in inputs])
 
     def process(self):
         '''main node function called every update'''
