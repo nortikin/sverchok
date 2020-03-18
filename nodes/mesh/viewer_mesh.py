@@ -17,6 +17,7 @@ import bpy
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.utils.mesh_structure.mesh import Mesh
 from sverchok.utils.sv_bmesh_utils import empty_bmesh
+from sverchok.utils.mesh_structure.visualize import SvMeshVisualizer
 
 
 def generate_mesh(objects: bpy.types.bpy_prop_collection, meshes: List[Mesh]) -> None:
@@ -281,7 +282,7 @@ class SvViewerMeshMaterials(bpy.types.PropertyGroup):
     mat: bpy.props.PointerProperty(type=bpy.types.Material)
 
 
-class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
+class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode, SvMeshVisualizer):
     """
     Triggers: ...
 
@@ -290,9 +291,6 @@ class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvViewerMesh'
     bl_label = 'Viewer Mesh'
     bl_icon = 'MOD_BOOLEAN'
-
-    objects: bpy.props.CollectionProperty(type=SvViewerMeshObjectList)
-    materials: bpy.props.CollectionProperty(type=SvViewerMeshMaterials)
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Mesh')
@@ -307,17 +305,10 @@ class SvViewerMesh(bpy.types.Node, SverchCustomTreeNode):
 
         with self.sv_throttle_tree_update():
             meshes = self.inputs['Mesh'].sv_get(deepcopy=False, default=[])
-            ensure_object_list(self.objects, [me.name for me in meshes])
-            ensure_material_list(self.materials, [me.materials for me in meshes])
-            generate_mesh2(self.objects, meshes)
-            apply_materials_to_mesh(self.objects, self.materials, meshes)
-            set_vertex_color(self.objects, meshes)
-            set_material_index(self.objects, meshes)
+            self.show_meshes(meshes)
 
 
-classes = [SvViewerMeshObjectList,
-           SvViewerMeshMaterials,
-           SvViewerMesh]
+classes = [SvViewerMesh]
 
 
 def register():
