@@ -5,6 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from enum import Enum
+from typing import NamedTuple, Any, Iterable
 import random
 from itertools import cycle, chain, repeat
 
@@ -14,6 +16,52 @@ from mathutils.geometry import tessellate_polygon, area_tri
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
+
+
+class InputProps(NamedTuple):
+    name: str
+    socket_type: str
+    prop_name: str = ''
+    deep_copy: bool = True
+    vectorize: bool = True
+    default: Any = object()
+
+
+class Inputs(Enum):
+    VERTICES = InputProps('Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False)
+    FACES = InputProps('Faces', 'SvStringsSocket', deep_copy=False, vectorize=False)
+    FACE_WEIGHT = InputProps('Face weight', 'SvStringsSocket', deep_copy=False, default=[[1]])
+    NUMBER = InputProps('Number', 'SvStringsSocket', prop_name='points_number', deep_copy=False)
+    SEED = InputProps('Seed', 'SvStringsSocket', prop_name='seed', deep_copy=False)
+
+    @property
+    def props(self) -> InputProps:
+        return self.value
+
+    def get_data(self, node_inputs: bpy.types.bpy_prop_collection, deep_copy=None) -> list:
+        deep_copy = deep_copy if deep_copy else self.props.deep_copy
+        return node_inputs.get(self.props.name).sv_get(deepcopy=deep_copy, default=self.props.default)
+
+    @classmethod
+    def init(cls, node_inputs: bpy.types.bpy_prop_collection):
+        for _input in cls:
+            props: InputProps = _input.value
+            socket = node_inputs.new(props.socket_type, props.name)
+            if props.prop_name:
+                socket.prop_name = props.prop_name
+
+    @classmethod
+    def get_iterator(cls, node_inputs: bpy.types.bpy_prop_collection) -> Iterable:
+        length_max = max([len(_input.get_data(node_inputs, False)) for _input in cls])
+        socket_iterators = []
+        for _input in cls:
+            props: InputProps = _input.value
+            socket_data = node_inputs.get(props.name).sv_get(deepcopy=props.deep_copy, default=props.default)
+            if props.vectorize:
+                socket_iterators.append(chain(socket_data, repeat(socket_data[-1])))
+            else:
+                socket_iterators.append(socket_data)
+        return zip(range(length_max), *socket_iterators)
 
 
 def get_points(sv_verts, faces, number, seed, face_weight=None, proportional=True):
@@ -104,9 +152,10 @@ def get_random_vectors_on_tri(v1, v2, v3, number):
 
 class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: distribute points on given mesh
-    points are created evenly according area faces
+    Triggers: random points vertices
 
+    distribute points on given mesh
+    points are created evenly according area faces
     based on Blender function - tessellate_polygon
     """
     bl_idname = 'SvRandomPointsOnMesh'
@@ -117,32 +166,27 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
                                          update=updateNode)
     seed: bpy.props.IntProperty(name='Seed', update=updateNode)
 
-    proportional : bpy.props.BoolProperty(
-            name = "Proportional",
-            description = "If checked, then number of points at each face is proportional to the area of the face",
-            default = True,
-            update = updateNode)
+    proportional: bpy.props.BoolProperty(
+            name="Proportional",
+            description="If checked, then number of points at each face is proportional to the area of the face",
+            default=True,
+            update=updateNode)
     
     def draw_buttons(self, context, layout):
         layout.prop(self, "proportional", toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvVerticesSocket', 'Verts')
-        self.inputs.new('SvStringsSocket', 'Faces')
-        self.inputs.new('SvStringsSocket', 'Face weight')
-        self.inputs.new('SvStringsSocket', 'Number').prop_name = 'points_number'
-        self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
+        Inputs.init(self.inputs)
         self.outputs.new('SvVerticesSocket', 'Verts')
         self.outputs.new('SvStringsSocket', 'Face index')
 
     def process(self):
         if not all([self.inputs['Verts'].is_linked, self.inputs['Faces'].is_linked]):
             return
+
         out_verts = []
         out_face_index = []
-        for v, f, n, s, w in zip(self.inputs['Verts'].sv_get(), self.inputs['Faces'].sv_get(),
-                         self.inputs['Number'].sv_get(), self.inputs['Seed'].sv_get(),
-                         self.inputs['Face weight'].sv_get() if self.inputs['Face weight'].is_linked else cycle([[1]])):
+        for i, v, f, w, n, s in Inputs.get_iterator(self.inputs):
             new_vertices, face_index = get_points(v, f, n[0], s[0], w, self.proportional)
             out_verts.append(new_vertices)
             out_face_index.append(face_index)
