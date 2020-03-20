@@ -17,6 +17,9 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+
+from typing import NamedTuple, Any
+from itertools import count
 import math
 
 import bpy
@@ -34,6 +37,21 @@ from sverchok.data_structure import (
     get_other_socket,
     socket_id,
     replace_socket)
+
+
+socket_config = dict()
+config_id_iterator = count()
+
+
+class InputSocketConfig(NamedTuple):
+    id: int
+    name: str
+    socket_type: str
+    prop_name: str = ''
+    deep_copy: bool = True
+    vectorize: bool = True
+    default: Any = object()
+
 
 socket_colors = {
     "SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
@@ -64,6 +82,13 @@ class SvSocketCommon:
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
+    config_id: IntProperty(default=-1)
+
+    @property
+    def config(self):
+        if self.config_id in socket_config:
+            return socket_config[self.config_id]
+        raise LookupError(f"Config does not fount")
 
     def get_prop_name(self):
         if self.node and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
