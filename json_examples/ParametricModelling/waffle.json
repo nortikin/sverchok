@@ -14,9 +14,11 @@
     "Frame.003": "Frame.005",
     "Frame.004": "Frame.005",
     "Input Switch MOD": "Frame.003",
+    "List Input": "Frame",
+    "List Input.001": "Frame",
     "List Item": "Frame.004",
-    "Matrix in.002": "Frame",
-    "Matrix in.003": "Frame",
+    "Matrix In": "Frame",
+    "Matrix In.001": "Frame",
     "Note.001": "Frame.005",
     "Number Range": "Frame",
     "Random Vector": "Frame.003",
@@ -30,8 +32,6 @@
     "Vector X | Y | Z": "Frame",
     "Vectors in.004": "Frame",
     "Vectors in.005": "Frame",
-    "Vectors in.006": "Frame",
-    "Vectors in.007": "Frame",
     "Wafel": "Frame.004",
     "Wafel.003": "Frame.004"
   },
@@ -48,7 +48,9 @@
       ],
       "params": {
         "float_": 0.029999999329447746,
-        "int_": 0
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
       },
       "width": 140.0
     },
@@ -63,7 +65,9 @@
       ],
       "params": {
         "float_": 0.800000011920929,
-        "int_": 0
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
       },
       "width": 140.0
     },
@@ -142,7 +146,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 561.725830078125,
+      "height": 596.5257568359375,
       "hide": false,
       "label": "Section matrices",
       "location": [
@@ -150,11 +154,11 @@
         -605.294921875
       ],
       "params": {},
-      "width": 610.8179321289062
+      "width": 610.3379516601562
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 534.0322265625,
+      "height": 533.392333984375,
       "hide": false,
       "label": "sections",
       "location": [
@@ -162,11 +166,11 @@
         1190.4915771484375
       ],
       "params": {},
-      "width": 457.7598876953125
+      "width": 457.2799072265625
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 233.958984375,
+      "height": 233.678955078125,
       "hide": false,
       "label": "inputs",
       "location": [
@@ -174,11 +178,11 @@
         191.23883056640625
       ],
       "params": {},
-      "width": 208.9521484375
+      "width": 208.4720458984375
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 554.694580078125,
+      "height": 555.2545776367188,
       "hide": false,
       "label": "Object_to_sect",
       "location": [
@@ -186,11 +190,11 @@
         -150.84490966796875
       ],
       "params": {},
-      "width": 841.7902221679688
+      "width": 841.3101806640625
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
-      "height": 638.9636840820312,
+      "height": 634.6707153320312,
       "hide": false,
       "label": "outputs",
       "location": [
@@ -198,7 +202,7 @@
         -205.84217834472656
       ],
       "params": {},
-      "width": 689.3306274414062
+      "width": 688.8506469726562
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
@@ -207,7 +211,7 @@
         0.6079999804496765,
         0.6079999804496765
       ],
-      "height": 1565.2626953125,
+      "height": 1599.8226318359375,
       "hide": false,
       "label": "",
       "location": [
@@ -216,7 +220,7 @@
       ],
       "params": {},
       "use_custom_color": true,
-      "width": 2528.6220703125
+      "width": 2527.662109375
     },
     "Input Switch MOD": {
       "bl_idname": "SvInputSwitchNodeMOD",
@@ -230,6 +234,104 @@
       "params": {
         "num_switches": 3,
         "selected": 1
+      },
+      "width": 140.0
+    },
+    "List Input": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1481.2472381591797,
+        -1485.3763427734375
+      ],
+      "params": {
+        "float_list": [
+          0.029999999329447746,
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "int_": 3,
+        "mode": "float_list"
+      },
+      "width": 140.0
+    },
+    "List Input.001": {
+      "bl_idname": "SvListInputNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -1658.4873504638672,
+        -1485.2037353515625
+      ],
+      "params": {
+        "float_list": [
+          1.0,
+          0.009999999776482582,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "int_": 3,
+        "mode": "float_list"
       },
       "width": 140.0
     },
@@ -248,8 +350,8 @@
       },
       "width": 140.0
     },
-    "Matrix in.002": {
-      "bl_idname": "SvMatrixGenNodeMK2",
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -257,19 +359,53 @@
         -1286.0168914794922,
         -1186.370849609375
       ],
-      "params": {},
+      "params": {
+        "angle": 0.0,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
       "width": 140.0
     },
-    "Matrix in.003": {
-      "bl_idname": "SvMatrixGenNodeMK2",
+    "Matrix In.001": {
+      "bl_idname": "SvMatrixInNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
       "location": [
         -1286.0168914794922,
-        -1373.3765258789062
+        -1397.0433349609375
       ],
-      "params": {},
+      "params": {
+        "angle": 0.0,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
       "width": 140.0
     },
     "Note.001": {
@@ -300,17 +436,14 @@
       "label": "",
       "location": [
         -1650.6038055419922,
-        -1224.5166625976562
+        -1224.5166015625
       ],
       "params": {
         "count_": 5,
-        "mode": 2,
         "number_mode": "float",
         "range_mode": "RANGE_COUNT",
-        "start_": -0.699999988079071,
         "start_float": -0.699999988079071,
         "step_float": 1.0,
-        "stop_": 0.5,
         "stop_float": 0.5
       },
       "width": 140.0
@@ -492,7 +625,7 @@
       "label": "",
       "location": [
         -1559.6165008544922,
-        -1402.8325805664062
+        -1402.83251953125
       ],
       "params": {
         "axis_x": "0",
@@ -507,7 +640,7 @@
       "label": "",
       "location": [
         -1400.6112518310547,
-        -1226.9295043945312
+        -1226.929443359375
       ],
       "params": {
         "y_": 0.0,
@@ -522,42 +655,10 @@
       "label": "",
       "location": [
         -1409.3600311279297,
-        -1412.8740844726562
+        -1412.8740234375
       ],
       "params": {
         "x_": 0.0,
-        "z_": 0.0
-      },
-      "width": 100.0
-    },
-    "Vectors in.006": {
-      "bl_idname": "GenVectorsNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1416.1644744873047,
-        -1488.6609497070312
-      ],
-      "params": {
-        "x_": 0.029999999329447746,
-        "y_": 1.0,
-        "z_": 0.0
-      },
-      "width": 100.0
-    },
-    "Vectors in.007": {
-      "bl_idname": "GenVectorsNode",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        -1444.8281707763672,
-        -1259.7061157226562
-      ],
-      "params": {
-        "x_": 1.0,
-        "y_": 0.009999999776482582,
         "z_": 0.0
       },
       "width": 100.0
@@ -606,6 +707,54 @@
   },
   "update_lists": [
     [
+      "A Number.001",
+      0,
+      "Scalar Math.001",
+      0
+    ],
+    [
+      "Scalar Math.001",
+      0,
+      "Number Range",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Number Range",
+      1
+    ],
+    [
+      "Number Range",
+      0,
+      "Vectors in.005",
+      1
+    ],
+    [
+      "Vectors in.005",
+      0,
+      "Matrix In.001",
+      0
+    ],
+    [
+      "Vector X | Y | Z",
+      0,
+      "Matrix In.001",
+      6
+    ],
+    [
+      "List Input",
+      0,
+      "Matrix In.001",
+      7
+    ],
+    [
+      "Random Vector",
+      0,
+      "Convex Hull",
+      0
+    ],
+    [
       "Regular Solid",
       0,
       "Extrude Separate Faces",
@@ -616,12 +765,6 @@
       2,
       "Extrude Separate Faces",
       2
-    ],
-    [
-      "Random Vector",
-      0,
-      "Convex Hull",
-      0
     ],
     [
       "Convex Hull",
@@ -648,22 +791,10 @@
       13
     ],
     [
-      "A Number.001",
-      0,
-      "Scalar Math.001",
-      0
-    ],
-    [
-      "Scalar Math.001",
-      0,
-      "Number Range",
-      0
-    ],
-    [
-      "A Number.001",
-      0,
-      "Number Range",
-      1
+      "Input Switch MOD",
+      "Data 0",
+      "Reroute",
+      "Input"
     ],
     [
       "Number Range",
@@ -672,46 +803,22 @@
       0
     ],
     [
-      "Number Range",
-      0,
-      "Vectors in.005",
-      1
-    ],
-    [
-      "Vectors in.005",
-      0,
-      "Matrix in.003",
-      0
-    ],
-    [
-      "Vector X | Y | Z",
-      0,
-      "Matrix in.003",
-      2
-    ],
-    [
-      "Vectors in.006",
-      0,
-      "Matrix in.003",
-      3
-    ],
-    [
       "Vectors in.004",
       0,
-      "Matrix in.002",
+      "Matrix In",
       0
     ],
     [
       "Vector X | Y | Z",
       0,
-      "Matrix in.002",
-      2
+      "Matrix In",
+      6
     ],
     [
-      "Vectors in.007",
+      "List Input.001",
       0,
-      "Matrix in.002",
-      3
+      "Matrix In",
+      7
     ],
     [
       "Input Switch MOD",
@@ -720,10 +827,34 @@
       "Input"
     ],
     [
-      "Input Switch MOD",
-      "Data 0",
       "Reroute",
-      "Input"
+      "Output",
+      "VD Experimental.003",
+      "verts"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "VD Experimental.003",
+      "faces"
+    ],
+    [
+      "Reroute",
+      "Output",
+      "Cross Section.001",
+      "vertices"
+    ],
+    [
+      "Reroute.001",
+      "Output",
+      "Cross Section.001",
+      "edg_pol"
+    ],
+    [
+      "Matrix In.001",
+      0,
+      "Cross Section.001",
+      3
     ],
     [
       "Reroute",
@@ -738,7 +869,7 @@
       "edg_pol"
     ],
     [
-      "Matrix in.002",
+      "Matrix In",
       0,
       "Cross Section",
       3
@@ -756,10 +887,46 @@
       1
     ],
     [
-      "Matrix in.003",
+      "Matrix In.001",
       0,
       "Cross Section.002",
       3
+    ],
+    [
+      "Cross Section.002",
+      0,
+      "Wafel",
+      0
+    ],
+    [
+      "Cross Section.001",
+      0,
+      "Wafel",
+      1
+    ],
+    [
+      "Cross Section.001",
+      1,
+      "Wafel",
+      2
+    ],
+    [
+      "A Number",
+      0,
+      "Wafel",
+      3
+    ],
+    [
+      "Wafel",
+      0,
+      "VD Experimental.002",
+      0
+    ],
+    [
+      "Wafel",
+      1,
+      "VD Experimental.002",
+      1
     ],
     [
       "Cross Section",
@@ -808,72 +975,6 @@
       1,
       "VD Experimental.001",
       1
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Cross Section.001",
-      "vertices"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "Cross Section.001",
-      "edg_pol"
-    ],
-    [
-      "Matrix in.003",
-      0,
-      "Cross Section.001",
-      3
-    ],
-    [
-      "Cross Section.002",
-      0,
-      "Wafel",
-      0
-    ],
-    [
-      "Cross Section.001",
-      0,
-      "Wafel",
-      1
-    ],
-    [
-      "Cross Section.001",
-      1,
-      "Wafel",
-      2
-    ],
-    [
-      "A Number",
-      0,
-      "Wafel",
-      3
-    ],
-    [
-      "Wafel",
-      0,
-      "VD Experimental.002",
-      0
-    ],
-    [
-      "Wafel",
-      1,
-      "VD Experimental.002",
-      1
-    ],
-    [
-      "Reroute",
-      "Output",
-      "VD Experimental.003",
-      "verts"
-    ],
-    [
-      "Reroute.001",
-      "Output",
-      "VD Experimental.003",
-      "faces"
     ]
   ]
 }
