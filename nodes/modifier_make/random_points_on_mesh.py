@@ -5,8 +5,8 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
-from enum import Enum
-from typing import NamedTuple, Any, Iterable
+
+from typing import NamedTuple, Any, List
 import random
 from itertools import cycle, chain, repeat
 
@@ -16,20 +16,23 @@ from mathutils.geometry import tessellate_polygon, area_tri
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
-from sverchok.core.sockets import socket_config, config_id_iterator, InputSocketConfig
 
 
-VERTICES = InputSocketConfig(next(config_id_iterator), 'Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False)
-FACES = InputSocketConfig(next(config_id_iterator), 'Faces', 'SvStringsSocket', deep_copy=False, vectorize=False)
-FACE_WEIGHT = InputSocketConfig(next(config_id_iterator), 'Face weight', 'SvStringsSocket', deep_copy=False, default=[[1]])
-NUMBER = InputSocketConfig(next(config_id_iterator), 'Number', 'SvStringsSocket', prop_name='points_number', deep_copy=False)
-SEED = InputSocketConfig(next(config_id_iterator), 'Seed', 'SvStringsSocket', prop_name='seed', deep_copy=False)
+class SocketProperties(NamedTuple):
+    name: str
+    socket_type: str
+    prop_name: str = ''
+    deep_copy: bool = True
+    vectorize: bool = True
+    default: Any = object()
 
-socket_config[VERTICES.id] = VERTICES
-socket_config[FACES.id] = FACES
-socket_config[FACE_WEIGHT.id] = FACE_WEIGHT
-socket_config[NUMBER.id] = NUMBER
-socket_config[SEED.id] = SEED
+
+INPUT_CONFIG = [
+    SocketProperties('Verts', 'SvVerticesSocket', deep_copy=False, vectorize=False),
+    SocketProperties('Faces', 'SvStringsSocket', deep_copy=False, vectorize=False),
+    SocketProperties('Face weight', 'SvStringsSocket', deep_copy=False, default=[[1]]),
+    SocketProperties('Number', 'SvStringsSocket', prop_name='points_number', deep_copy=False),
+    SocketProperties('Seed', 'SvStringsSocket', prop_name='seed', deep_copy=False)]
 
 
 def get_points(sv_verts, faces, number, seed, face_weight=None, proportional=True):
@@ -144,18 +147,8 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "proportional", toggle=True)
 
     def sv_init(self, context):
-        verts = self.inputs.new("SvVerticesSocket", "Verts")
-        verts.config_id = VERTICES.id
-        faces = self.inputs.new("SvStringsSocket", "Faces")
-        faces.config_id = FACES.id
-        weight = self.inputs.new("SvStringsSocket", "Face Weight")
-        weight.config_id = FACE_WEIGHT.id
-        number = self.inputs.new("SvStringsSocket", "Number")
-        number.prop_name = "points_number"
-        number.config_id = NUMBER.id
-        seed = self.inputs.new("SvStringsSocket", "Seed")
-        seed.prop_name = "seed"
-        seed.config_id = SEED.id
+        [self.inputs.new(p.name, p.socket_type) for p in INPUT_CONFIG]
+        [setattr(s, 'prop_name', p.prop_name) for s, p in zip(self.inputs, INPUT_CONFIG)]
 
         self.outputs.new('SvVerticesSocket', 'Verts')
         self.outputs.new('SvStringsSocket', 'Face index')
@@ -166,18 +159,17 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
 
         out_verts = []
         out_face_index = []
-        for i, v, f, w, n, s in self.get_input_data_iterator():
+        for i, v, f, w, n, s in self.get_input_data_iterator(INPUT_CONFIG):
             new_vertices, face_index = get_points(v, f, n[0], s[0], w, self.proportional)
             out_verts.append(new_vertices)
             out_face_index.append(face_index)
         self.outputs['Verts'].sv_set(out_verts)
         self.outputs['Face index'].sv_set(out_face_index)
 
-    def get_input_data_iterator(self):
-        length_max = max([len(s.sv_get(default=s.config.default, deepcopy=False)) for s in self.inputs])
+    def get_input_data_iterator(self, input_config: List[SocketProperties]):
+        length_max = max([len(s.sv_get(default=p.default, deepcopy=False)) for s, p in zip(self.inputs, input_config)])
         socket_iterators = []
-        for socket in self.inputs:
-            props: InputSocketConfig = socket.config
+        for socket, props in zip(self.inputs, input_config):
             socket_data = socket.sv_get(deepcopy=props.deep_copy, default=props.default)
             if props.vectorize:
                 socket_iterators.append(chain(socket_data, repeat(socket_data[-1])))
