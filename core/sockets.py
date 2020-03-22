@@ -23,7 +23,11 @@ import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 from bpy.types import NodeTree, NodeSocket
 
-from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy, is_vector_to_matrix
+from sverchok.core.socket_conversions import (
+        DefaultImplicitConversionPolicy,
+        FieldImplicitConversionPolicy,
+        is_vector_to_matrix
+    )
 
 from sverchok.core.socket_data import (
     SvGetSocketInfo, SvGetSocket, SvSetSocket,
@@ -34,6 +38,9 @@ from sverchok.data_structure import (
     get_other_socket,
     socket_id,
     replace_socket)
+
+from sverchok.utils.field.scalar import SvExConstantScalarField
+from sverchok.utils.field.vector import SvExMatrixVectorField, SvExConstantVectorField
 
 socket_colors = {
     "SvStringsSocket": (0.6, 1.0, 0.6, 1.0),
@@ -591,6 +598,97 @@ class SvChameleonSocket(NodeSocket, SvSocketCommon):
     def draw_color(self, context, node):
         return self.dynamic_color
 
+class SvExSurfaceSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvExSurfaceSocket"
+    bl_label = "Surface Socket"
+
+    def get_prop_data(self):
+        return {}
+
+    def draw_color(self, context, node):
+        return (0.1, 0.1, 1.0, 1.0)
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if self.is_linked and not self.is_output:
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif default is sentinel:
+            raise SvNoDataError(self)
+        else:
+            return default
+
+class SvExCurveSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvExCurveSocket"
+    bl_label = "Curve Socket"
+
+    def get_prop_data(self):
+        return {}
+
+    def draw_color(self, context, node):
+        return (0.5, 0.6, 1.0, 1.0)
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if self.is_linked and not self.is_output:
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif default is sentinel:
+            raise SvNoDataError(self)
+        else:
+            return default
+
+class SvExScalarFieldSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvExScalarFieldSocket"
+    bl_label = "Scalar Field Socket"
+
+    def get_prop_data(self):
+        return {}
+
+    def draw_color(self, context, node):
+        return (0.9, 0.4, 0.1, 1.0)
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if implicit_conversions is None:
+            implicit_conversions = FieldImplicitConversionPolicy
+        if self.is_linked and not self.is_output:
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif default is sentinel:
+            raise SvNoDataError(self)
+        else:
+            return default
+
+class SvExVectorFieldSocket(NodeSocket, SvSocketCommon):
+    bl_idname = "SvExVectorFieldSocket"
+    bl_label = "Vector Field Socket"
+
+    def get_prop_data(self):
+        return {}
+
+    def draw_color(self, context, node):
+        return (0.1, 0.1, 0.9, 1.0)
+
+    def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
+        if implicit_conversions is None:
+            implicit_conversions = FieldImplicitConversionPolicy
+        if self.is_linked and not self.is_output:
+            source_data = SvGetSocket(self, deepcopy=True if self.needs_data_conversion() else deepcopy)
+            return self.convert_data(source_data, implicit_conversions)
+
+        if self.prop_name:
+            return [[getattr(self.node, self.prop_name)[:]]]
+        elif default is sentinel:
+            raise SvNoDataError(self)
+        else:
+            return default
 
 """
 type_map_to/from are used to get the bl_idname from a single letter
@@ -621,7 +719,9 @@ type_map_from = {bl_idname: shortname for shortname, bl_idname in type_map_to.it
 classes = [
     SvVerticesSocket, SvMatrixSocket, SvStringsSocket,
     SvColorSocket, SvQuaternionSocket, SvDummySocket, SvSeparatorSocket,
-    SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket
+    SvTextSocket, SvObjectSocket, SvDictionarySocket, SvChameleonSocket,
+    SvExSurfaceSocket, SvExCurveSocket, SvExScalarFieldSocket, SvExVectorFieldSocket
 ]
 
 register, unregister = bpy.utils.register_classes_factory(classes)
+
