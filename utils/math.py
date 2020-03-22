@@ -71,6 +71,12 @@ def inverse_exp(c, x):
 def gauss(c, x):
     return math.exp(-c*x*x/2.0)
 
+def inverse_exp_np(c, x):
+    return np.exp(-c*x)
+
+def gauss_np(c, x):
+    return np.exp(-c*x*x/2.0)
+
 def falloff(type, radius, rho):
     if rho <= 0:
         return 1.0
@@ -80,7 +86,14 @@ def falloff(type, radius, rho):
     return 1.0 - func(rho / radius)
 
 def falloff_array(falloff_type, amplitude, coefficient, clamp=False):
-    falloff_func = globals()[falloff_type]
+    types = {
+            'inverse': inverse,
+            'inverse_square': inverse_square,
+            'inverse_cubic': inverse_cubic,
+            'inverse_exp': inverse_exp_np,
+            'gauss': gauss_np
+        }
+    falloff_func = types[falloff_type]
 
     def function(rho_array):
         zero_idxs = (rho_array == 0)

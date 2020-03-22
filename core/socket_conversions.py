@@ -16,7 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from sverchok.data_structure import get_other_socket
+from sverchok.data_structure import get_other_socket, get_data_nesting_level
 from sverchok.utils.field.vector import SvExMatrixVectorField, SvExConstantVectorField
 from sverchok.utils.field.scalar import SvExConstantScalarField
 
