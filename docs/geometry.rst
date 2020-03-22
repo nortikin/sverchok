@@ -11,6 +11,14 @@ further study::
 
     List, Index, Vector, Vertex, Edge, Polygon, Normal, Transformation, and Matrix.
 
+Also, Sverchok uses the following terms to generate and modify geometrical entities:
+
+* Curve
+* Surface
+* Scalar Field
+* Vector Field
+
+Although the terms by theirselve are of common use and most probably you know them, there are some things we have to discuss about them in Sverchok context. They will be discussed in corresponding paragraphs below.
 
 List
 ----
@@ -182,9 +190,3 @@ Ready?
 I think this broadly covers the things you should be
 comfortable with before Sverchok will make sense.
 
-
-Sverchok
---------
-
-This section will introduce you to a selection of nodes that can be combined
-to create renderable geometry. Starting with the simple Plane generator
