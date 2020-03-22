@@ -11,6 +11,7 @@ from math import sin, cos, pi
 
 from sverchok.utils.geom import PlaneEquation, LineEquation, LinearSpline, CubicSpline
 from sverchok.utils.integrate import TrapezoidIntegral
+from sverchok.utils.logging import error, exception
 
 ##################
 #                #
@@ -165,8 +166,14 @@ class SvExCurve(object):
         tangents = tangents / np.linalg.norm(tangents, axis=1)[np.newaxis].T
         matrices_np = np.dstack((normals, binormals, tangents))
         matrices_np = np.transpose(matrices_np, axes=(0,2,1))
-        matrices_np = np.linalg.inv(matrices_np)
-        return matrices_np, normals, binormals
+        try:
+            matrices_np = np.linalg.inv(matrices_np)
+            return matrices_np, normals, binormals
+        except np.linalg.LinAlgError as e:
+            error("Some of matrices are singular:")
+            for m in matrices_np:
+                error("M:\n%s", m)
+            raise e
 
     def curvature_array(self, ts):
         tangents, seconds = self.derivatives_array(2, ts)

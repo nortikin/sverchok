@@ -726,7 +726,7 @@ class SvExBendAlongCurveField(SvExVectorField):
             matrix = self.get_matrix(spline_tangent, scale)
         src_vector_projection = np.array([x, y, z])
         src_vector_projection[self.axis] = 0
-        new_vertex = np.matmul(matrix, src_vertex_projection) + spline_vertex
+        new_vertex = np.matmul(matrix, src_vector_projection) + spline_vertex
         vector = new_vertex - np.array([x, y, z])
         return vector
 
