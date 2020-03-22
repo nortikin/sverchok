@@ -7,7 +7,6 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, repeat_last_for_length, ensure_nesting_level
 from sverchok.utils.logging import info, exception
-
 from sverchok.utils.curve import SvExLine, SvExConcatCurve
 from sverchok.utils.fillet import calc_fillet
 

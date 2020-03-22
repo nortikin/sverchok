@@ -6,20 +6,20 @@ import bpy
 from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, fullList, match_long_repeat, ensure_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, match_long_repeat, ensure_nesting_level
 from sverchok.utils.modules.eval_formula import get_variables, sv_compile, safe_eval_compiled
 from sverchok.utils.logging import info, exception
 from sverchok.utils.math import from_cylindrical, from_spherical, to_cylindrical, to_spherical
 from sverchok.utils.math import coordinate_modes
-from sverchok.utils.curve import SvExLambdaCurve
+from sverchok.utils.surface import SvExLambdaSurface
 
-class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
+class SvExSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     """
-    Triggers: Curve Formula
-    Tooltip: Generate curve by formula
+    Triggers: Surface Formula
+    Tooltip: Generate surface by formula
     """
-    bl_idname = 'SvExCurveFormulaNode'
-    bl_label = 'Curve Formula'
+    bl_idname = 'SvExSurfaceFormulaNode'
+    bl_label = 'Surface Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
 
     @throttled
@@ -28,17 +28,17 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
 
     formula1: StringProperty(
             name = "Formula",
-            default = "cos(t)",
+            default = "(2 + 0.5*cos(u))*cos(v)",
             update = on_update)
 
     formula2: StringProperty(
             name = "Formula",
-            default = "sin(t)",
+            default = "(2 + 0.5*cos(u))*sin(v)",
             update = on_update)
 
     formula3: StringProperty(
             name = "Formula",
-            default = "t/(2*pi)",
+            default = "0.5*sin(u)",
             update = on_update)
 
     output_mode : EnumProperty(
@@ -47,20 +47,32 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         default = 'XYZ',
         update = updateNode)
 
-    t_min : FloatProperty(
-        name = "T Min",
+    u_min : FloatProperty(
+        name = "U Min",
         default = 0,
         update = updateNode)
 
-    t_max : FloatProperty(
-        name = "T Max",
+    u_max : FloatProperty(
+        name = "U Max",
+        default = 2*math.pi,
+        update = updateNode)
+
+    v_min : FloatProperty(
+        name = "V Min",
+        default = 0,
+        update = updateNode)
+
+    v_max : FloatProperty(
+        name = "V Max",
         default = 2*math.pi,
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvStringsSocket', 'TMin').prop_name = 't_min'
-        self.inputs.new('SvStringsSocket', 'TMax').prop_name = 't_max'
-        self.outputs.new('SvExCurveSocket', 'Curve').display_shape = 'DIAMOND'
+        self.inputs.new('SvStringsSocket', 'UMin').prop_name = 'u_min'
+        self.inputs.new('SvStringsSocket', 'UMax').prop_name = 'u_max'
+        self.inputs.new('SvStringsSocket', 'VMin').prop_name = 'v_min'
+        self.inputs.new('SvStringsSocket', 'VMax').prop_name = 'v_max'
+        self.outputs.new('SvExSurfaceSocket', 'Surface').display_shape = 'DIAMOND'
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula1", text="")
@@ -84,8 +96,8 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
             def out_coordinates(rho, phi, theta):
                 return from_spherical(rho, phi, theta, mode='radians')
 
-        def function(t):
-            variables.update(dict(t=t))
+        def function(u, v):
+            variables.update(dict(u=u, v=v))
             v1 = safe_eval_compiled(compiled1, variables)
             v2 = safe_eval_compiled(compiled2, variables)
             v3 = safe_eval_compiled(compiled3, variables)
@@ -94,7 +106,7 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         return function
 
     def get_coordinate_variables(self):
-        return {'t'}
+        return {'u', 'v'}
 
     def get_variables(self):
         variables = set()
@@ -107,7 +119,7 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     def adjust_sockets(self):
         variables = self.get_variables()
         for key in self.inputs.keys():
-            if key not in variables and key not in {'TMin', 'TMax'}:
+            if key not in variables and key not in {'UMin', 'UMax', 'VMin', 'VMax'}:
                 self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
                 self.inputs.remove(self.inputs[key])
         for v in variables:
@@ -133,37 +145,43 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         if not any(socket.is_linked for socket in self.outputs):
             return
 
-        t_min_s = self.inputs['TMin'].sv_get()
-        t_max_s = self.inputs['TMax'].sv_get()
-        t_min_s = ensure_nesting_level(t_min_s, 2)
-        t_max_s = ensure_nesting_level(t_max_s, 2)
+        u_min_s = self.inputs['UMin'].sv_get()
+        u_max_s = self.inputs['UMax'].sv_get()
+        u_min_s = ensure_nesting_level(u_min_s, 2)
+        u_max_s = ensure_nesting_level(u_max_s, 2)
+
+        v_min_s = self.inputs['VMin'].sv_get()
+        v_max_s = self.inputs['VMax'].sv_get()
+        v_min_s = ensure_nesting_level(v_min_s, 2)
+        v_max_s = ensure_nesting_level(v_max_s, 2)
 
         var_names = self.get_variables()
         inputs = self.get_input()
         input_values = [inputs.get(name, [[0]]) for name in var_names]
         if var_names:
-            parameters = match_long_repeat([t_min_s, t_max_s] + input_values)
+            parameters = match_long_repeat([u_min_s, u_max_s, v_min_s, v_max_s] + input_values)
         else:
-            parameters = [t_min_s, t_max_s]
+            parameters = [u_min_s, u_max_s, v_min_s, v_max_s]
 
-        curves_out = []
-        for t_mins, t_maxs, *objects in zip(*parameters):
+        surfaces_out = []
+        for u_mins, u_maxs, v_mins, v_maxs, *objects in zip(*parameters):
             if var_names:
-                var_values_s = zip_long_repeat(t_mins, t_maxs, *objects)
+                var_values_s = zip_long_repeat(u_mins, u_maxs, v_mins, v_maxs, *objects)
             else:
-                var_values_s = zip_long_repeat(t_mins, t_maxs)
-            for t_min, t_max, *var_values in var_values_s:
+                var_values_s = zip_long_repeat(u_mins, u_maxs, v_mins, v_maxs)
+            for u_min, u_max, v_min, v_max, *var_values in var_values_s:
                 variables = dict(zip(var_names, var_values))
                 function = self.make_function(variables.copy())
-                new_curve = SvExLambdaCurve(function)
-                new_curve.u_bounds = (t_min, t_max)
-                curves_out.append(new_curve)
+                new_surface = SvExLambdaSurface(function)
+                new_surface.u_bounds = (u_min, u_max)
+                new_surface.v_bounds = (v_min, v_max)
+                surfaces_out.append(new_surface)
         
-        self.outputs['Curve'].sv_set(curves_out)
+        self.outputs['Surface'].sv_set(surfaces_out)
 
 def register():
-    bpy.utils.register_class(SvExCurveFormulaNode)
+    bpy.utils.register_class(SvExSurfaceFormulaNode)
 
 def unregister():
-    bpy.utils.unregister_class(SvExCurveFormulaNode)
+    bpy.utils.unregister_class(SvExSurfaceFormulaNode)
 

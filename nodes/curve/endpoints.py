@@ -3,7 +3,6 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level
-
 from sverchok.utils.curve import SvExCurve
 
 class SvExCurveEndpointsNode(bpy.types.Node, SverchCustomTreeNode):
