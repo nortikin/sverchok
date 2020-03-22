@@ -16,7 +16,8 @@ class SvExSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExSurfaceBoundaryNode'
     bl_label = 'Surface Boundary'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SURFACE_BOUNDARY'
 
     modes = [
         ('NO', "Plain", "Non-cyclic surface (similar to plane)", 0),

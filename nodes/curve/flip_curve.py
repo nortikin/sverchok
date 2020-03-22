@@ -15,7 +15,8 @@ class SvExFlipCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
         bl_idname = 'SvExFlipCurveNode'
         bl_label = 'Flip Curve'
-        bl_icon = 'CURVE_NCURVE'
+        bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_FLIP_CURVE'
 
         def sv_init(self, context):
             self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'

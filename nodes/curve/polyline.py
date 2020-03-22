@@ -14,7 +14,8 @@ class SvExPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExPolylineNode'
     bl_label = 'Polyline'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_POLYLINE'
 
     is_cyclic : BoolProperty(name = "Cyclic",
         description = "Whether the polyline is cyclic",

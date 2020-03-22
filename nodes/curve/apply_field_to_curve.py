@@ -17,6 +17,8 @@ class SvExApplyFieldToCurveNode(bpy.types.Node, SverchCustomTreeNode):
         bl_idname = 'SvExApplyFieldToCurveNode'
         bl_label = 'Apply Field to Curve'
         bl_icon = 'CURVE_NCURVE'
+        bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_CURVE_VFIELD'
 
         coefficient : FloatProperty(
                 name = "Coefficient",

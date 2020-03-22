@@ -15,7 +15,8 @@ class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExCurveLengthParameterNode'
     bl_label = 'Curve Length Parameter'
-    bl_icon = 'MESH_CIRCLE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CURVE_LENGTH_P'
 
     resolution : IntProperty(
         name = 'Resolution',

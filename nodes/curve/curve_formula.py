@@ -21,6 +21,7 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExCurveFormulaNode'
     bl_label = 'Curve Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CURVE_FORMULA'
 
     @throttled
     def on_update(self, context):

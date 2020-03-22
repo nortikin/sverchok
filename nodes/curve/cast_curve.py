@@ -16,7 +16,8 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
         """
         bl_idname = 'SvExCastCurveNode'
         bl_label = 'Cast Curve'
-        bl_icon = 'CURVE_NCURVE'
+        bl_icon = 'OUTLINER_OB_EMPTY'
+        sv_icon = 'SV_CAST_CURVE'
 
         coefficient : FloatProperty(
                 name = "Coefficient",

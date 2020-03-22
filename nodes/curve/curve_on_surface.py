@@ -16,7 +16,8 @@ class SvExCurveOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExCurveOnSurfaceNode'
     bl_label = 'Curve on Surface'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CURVE_ON_SURFACE'
 
     planes = [
             ("XY", "XY", "XOY plane", 0),

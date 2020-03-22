@@ -16,7 +16,8 @@ class SvExIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExIsoUvCurveNode'
     bl_label = 'Iso U/V Curve'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_UV_ISO_CURVE'
 
     value : FloatProperty(
         name = "Value",

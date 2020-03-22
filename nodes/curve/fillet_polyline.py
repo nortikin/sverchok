@@ -17,7 +17,8 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExFilletPolylineNode'
     bl_label = 'Fillet Polyline'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_FILLET_POLYLINE'
 
     radius : FloatProperty(
         name = "Radius",

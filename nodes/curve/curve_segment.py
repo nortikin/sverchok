@@ -15,7 +15,8 @@ class SvExCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExCurveSegmentNode'
     bl_label = 'Curve Segment'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_CURVE_SEGMENT'
 
     t_min : FloatProperty(
         name = "T Min",

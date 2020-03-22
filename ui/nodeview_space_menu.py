@@ -110,6 +110,9 @@ class NODEVIEW_MT_Dynamic_Menu(bpy.types.Menu):
 
         layout.separator()
         layout.menu("NODEVIEW_MT_AddGenerators", **icon('OBJECT_DATAMODE'))
+        layout.menu("NODEVIEW_MT_AddCurves", **icon('OUTLINER_OB_CURVE'))
+        layout.menu("NODEVIEW_MT_AddSurfaces", **icon('SURFACE_DATA'))
+        layout.menu("NODEVIEW_MT_AddFields", **icon('OUTLINER_OB_FORCE_FIELD'))
         layout.menu("NODEVIEW_MT_AddTransforms", **icon('ORIENTATION_LOCAL'))
         layout.menu("NODEVIEW_MT_AddAnalyzers", **icon('VIEWZOOM'))
         layout.menu("NODEVIEW_MT_AddModifiers", **icon('MODIFIER'))
@@ -150,7 +153,6 @@ class NODEVIEW_MT_AddGenerators(bpy.types.Menu):
         layout = self.layout
         layout_draw_categories(self.layout, node_cats[self.bl_label])
         layout.menu("NODEVIEW_MT_AddGeneratorsExt", **icon('PLUGIN'))
-
 
 class NODEVIEW_MT_AddModifiers(bpy.types.Menu):
     bl_label = "Modifiers"
@@ -237,6 +239,9 @@ classes = [
     # like magic.
     # make | NODEVIEW_MT_Add + class name , menu name
     make_class('GeneratorsExt', "Generators Extended"),
+    make_class('Curves', "Curves"),
+    make_class('Surfaces', "Surfaces"),
+    make_class('Fields', "Fields"),
     make_class('Transforms', "Transforms"),
     make_class('Analyzers', "Analyzers"),
     make_class('Viz', "Viz"),

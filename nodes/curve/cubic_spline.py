@@ -14,7 +14,7 @@ class SvExCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExCubicSplineNode'
     bl_label = 'Cubic Spline'
-    bl_icon = 'CURVE_NCURVE'
+    bl_icon = 'CON_SPLINEIK'
 
     is_cyclic : BoolProperty(name = "Cyclic",
         description = "Whether the spline is cyclic",
