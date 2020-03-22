@@ -72,7 +72,7 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
             centers.append(fillet.matrix)
 
         if not self.cyclic:
-            edge_direction = np.array(vertices[-1])
+            edge_direction = np.array(vertices[-1]) - np.array(prev_edge_start)
             edge_len = np.linalg.norm(edge_direction)
             edge = SvExLine(prev_edge_start, edge_direction / edge_len)
             edge.u_bounds = (0.0, edge_len)
