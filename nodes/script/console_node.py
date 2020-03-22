@@ -26,6 +26,9 @@ from sverchok.utils.sv_update_utils import sv_get_local_path
 from sverchok.utils.sv_font_xml_parser import get_lookup_dict, letters_to_uv
 from sverchok.utils.sv_nodeview_draw_helper import SvNodeViewDrawMixin, get_console_grid
 
+def make_color(name, default):
+    return bpy.props.FloatVectorProperty(name=name, default=default, size=4, min=0, max=1, update=updateNode, subtype="COLOR")
+
 # this data need only be generated once, or at runtime at request (low frequency).
 sv_path = os.path.dirname(sv_get_local_path()[0])
 bitmap_font_location = os.path.join(sv_path, 'utils', 'modules', 'bitmap_font')
@@ -69,19 +72,40 @@ fragment_shader = '''
         if (cIndex == 53) { test_tint = vec4(1.0, 0.3, 0.7, 1.0); }
         if (cIndex == 90) { test_tint = vec4(0.7, 0.9, 0.3, 1.0); }
         if (cIndex == 91) { test_tint = vec4(0.3, 0.9, 0.4, 1.0); }
-   
-        // vec4 outputColor = texture(image, texCoord_interp) * test_tint;
-        // if (length(outputColor.xyz) < 0.0001){
-        //    if (cIndex == 3){
-        //        outputColor = vec4(0.2, 0.2, 0.2, 1.0);
-        //    }
-        //}
-        // fragColor = outputColor;
-
         fragColor = texture(image, texCoord_interp) * test_tint;
-        
     }
 '''
+
+lexed_colors = ['stringColor', 'numberColor', 'name1Color', 'errorColor', 'name2Color', 'name3Color']
+
+lexed_fragment_shader = '''
+    in float v_lexer;
+    in vec2 texCoord_interp;
+
+    out vec4 fragColor;
+    
+    uniform sampler2D image;
+    uniform vec4 stringColor;
+    uniform vec4 numberColor;
+    uniform vec4 name1Color;
+    uniform vec4 errorColor;
+    uniform vec4 name2Color;
+    uniform vec4 name3Color;
+    
+    void main()
+    {
+        vec4 test_tint = vec4(0.2, 0.7, 1.0, 1.0);
+        int cIndex = int(v_lexer);
+        if (cIndex == 3) { test_tint = stringColor; }
+        if (cIndex == 2) { test_tint = numberColor; }
+        if (cIndex == 1) { test_tint = name1Color; } 
+        if (cIndex == 53) { test_tint = errorColor; }
+        if (cIndex == 90) { test_tint = name2Color; }
+        if (cIndex == 91) { test_tint = name3Color; }
+        fragColor = texture(image, texCoord_interp) * test_tint;
+    }
+'''
+
 
 def get_font_pydata_location():
     return os.path.join(bitmap_font_location, 'consolas_0.npz')
@@ -268,9 +292,15 @@ def simple_console_xy(context, args):
     bgl.glBindTexture(bgl.GL_TEXTURE_2D, texture.texture_dict['texture'])
     
     config.shader.bind()
+    
     if not config.syntax_mode == "None":
         matrix = gpu.matrix.get_projection_matrix()
         config.shader.uniform_float("ModelViewProjectionMatrix", matrix)
+    
+    if config.syntax_mode == "Code":
+        for color_name, color_value in config.colors.items():
+            config.shader.uniform_float(color_name, color_value)
+
     config.shader.uniform_int("image", act_tex)
     config.batch.draw(config.shader)
 
@@ -299,7 +329,10 @@ def generate_batch_shader(node, data):
     if node.syntax_mode == "None":
         shader = gpu.shader.from_builtin('2D_IMAGE')
         batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices})
-    else:
+    elif node.syntax_mode == "Code":
+        shader = gpu.types.GPUShader(vertex_shader, lexed_fragment_shader)
+        batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
+    elif node.syntax_mode == "f1":
         shader = gpu.types.GPUShader(vertex_shader, fragment_shader)
         batch = batch_for_shader(shader, 'TRIS', {"pos": verts, "texCoord": uv_indices, "lexer": lexer})
     
@@ -348,6 +381,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     last_n_lines: bpy.props.IntProperty(min=0, name="last n lines", description="show n number of last lines", update=updateNode)
     filter_long_strings: bpy.props.BoolProperty(default=True, name="Filter", description="Filter long strings", update=updateNode)
 
+    stringColor: make_color("string color", (0.148, 0.447, 0.040, 1.0))  # 3
+    numberColor: make_color("number color", (0.9, 0.9, 1.0, 1.0))  # 2
+    name1Color: make_color("name1 color", (0.4, 0.9, 0.8, 1.0))  # 1
+    errorColor: make_color("error color", (1.0, 0.3, 0.7, 1.0))  # 53
+    name2Color: make_color("name2 color", (0.7, 0.9, 0.3, 1.0))  # 90
+    name3Color: make_color("name3 color", (0.3, 0.9, 0.4, 1.0))  # 91
+
     def prepare_for_grid(self):
         char_width = int(15 * self.local_scale)
         char_height = int(32 * self.local_scale)
@@ -385,6 +425,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         row2.prop(self, "syntax_mode", expand=True)
         row3 = layout.row()
         row3.prop(self, "last_n_lines")
+
+    def draw_buttons_ext(self, context, layout):
+        col = layout.column()
+        for color_name in lexed_colors:
+            col.prop(self, color_name)
+
     
     def init_texture(self, width, height):
         clr = bgl.GL_RGBA
@@ -453,6 +499,11 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         config.batch = batch
         config.shader = shader
         config.syntax_mode = self.syntax_mode
+
+        if self.syntax_mode == "Code":
+            config.colors = {}
+            for color_name in lexed_colors:
+                config.colors[color_name] = getattr(self, color_name)[:]
 
         draw_data = {
             'tree_name': self.id_data.name[:],
