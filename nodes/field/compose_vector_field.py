@@ -19,6 +19,7 @@ class SvExComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExComposeVectorFieldNode'
     bl_label = 'Compose Vector Field'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VFIELD_IN'
 
     @throttled
     def update_sockets(self, context):

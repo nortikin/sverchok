@@ -19,8 +19,9 @@ class SvExVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate vector field by formula
     """
     bl_idname = 'SvExVectorFieldFormulaNode'
-    bl_label = 'Vector Field'
+    bl_label = 'Vector Field Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VECTOR_FIELD'
 
     @throttled
     def on_update(self, context):

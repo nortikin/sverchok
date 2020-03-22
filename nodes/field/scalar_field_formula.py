@@ -19,8 +19,9 @@ class SvExScalarFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate scalar field by formula
     """
     bl_idname = 'SvExScalarFieldFormulaNode'
-    bl_label = 'Scalar Field'
+    bl_label = 'Scalar Field Formula'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SCALAR_FIELD'
 
     @throttled
     def on_update(self, context):
