@@ -37,6 +37,7 @@ class SvExScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExScalarFieldMathNode'
     bl_label = 'Scalar Field Math'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SCALAR_FIELD_MATH'
 
     @throttled
     def update_sockets(self, context):

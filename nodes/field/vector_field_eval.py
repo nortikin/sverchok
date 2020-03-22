@@ -16,6 +16,7 @@ class SvExVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExVectorFieldEvaluateNode'
     bl_label = 'Evaluate Vector Field'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EVAL_VECTOR_FIELD'
 
     def sv_init(self, context):
         self.inputs.new('SvExVectorFieldSocket', "Field").display_shape = 'CIRCLE_DOT'

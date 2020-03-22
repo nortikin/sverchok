@@ -19,6 +19,7 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExBendAlongCurveFieldNode'
     bl_label = 'Bend Along Curve Field'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_BEND_CURVE_FIELD'
 
     algorithms = [
             ("householder", "Householder", "Use Householder reflection matrix", 1),

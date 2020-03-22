@@ -19,6 +19,7 @@ class SvExVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExVectorFieldGraphNode'
     bl_label = 'Vector Field Graph'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VECTOR_FIELD'
 
     samples_x : IntProperty(
         name = "Samples X",

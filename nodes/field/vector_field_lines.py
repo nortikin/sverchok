@@ -17,6 +17,7 @@ class SvExVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExVectorFieldLinesNode'
     bl_label = 'Vector Field Lines'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_VECTOR_FIELD_LINES'
 
     step : FloatProperty(
             name = "Step",
