@@ -17,6 +17,8 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from sverchok.data_structure import get_other_socket
+from sverchok.utils.field.vector import SvExMatrixVectorField, SvExConstantVectorField
+from sverchok.utils.field.scalar import SvExConstantScalarField
 
 from mathutils import Matrix, Quaternion
 from numpy import ndarray
