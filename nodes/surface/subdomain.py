@@ -16,7 +16,8 @@ class SvExSurfaceSubdomainNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExSurfaceSubdomainNode'
     bl_label = 'Surface Subdomain'
-    bl_icon = 'MOD_THICKNESS'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SURFACE_SUBDOMAIN'
 
     u_min : FloatProperty(
         name = "U Min",

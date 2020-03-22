@@ -12,7 +12,8 @@ class SvExSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExSurfaceDomainNode'
     bl_label = 'Surface Domain'
-    bl_icon = 'MESH_CIRCLE'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SURFACE_DOMAIN'
 
     def sv_init(self, context):
         self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'

@@ -16,8 +16,9 @@ class SvExExtrudeCurveVectorNode(bpy.types.Node, SverchCustomTreeNode):
     Tooltip: Generate a surface by extruding a curve along a vector
     """
     bl_idname = 'SvExExtrudeCurveVectorNode'
-    bl_label = 'Extrude Curve'
-    bl_icon = 'MOD_THICKNESS'
+    bl_label = 'Extrude Curve along Vector'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EXTRUDE_CURVE_VECTOR'
 
     def sv_init(self, context):
         self.inputs.new('SvExCurveSocket', "Profile").display_shape = 'DIAMOND'

@@ -15,6 +15,7 @@ class SvExApplyFieldToSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         """
         bl_idname = 'SvExApplyFieldToSurfaceNode'
         bl_label = 'Apply Field to Surface'
+        sv_icon = 'SV_SURFACE_VFIELD'
 
         coefficient : FloatProperty(
                 name = "Coefficient",

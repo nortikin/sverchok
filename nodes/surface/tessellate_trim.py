@@ -25,6 +25,7 @@ class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExTessellateTrimSurfaceNode'
     bl_label = 'Tessellate & Trim Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_TRIM_TESSELLATE'
 
     axes = [
         ('XY', "X Y", "XOY plane", 0),

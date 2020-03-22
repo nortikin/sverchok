@@ -21,6 +21,7 @@ class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvExEvalSurfaceNode'
     bl_label = 'Evaluate Surface'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EVAL_SURFACE'
 
     @throttled
     def update_sockets(self, context):

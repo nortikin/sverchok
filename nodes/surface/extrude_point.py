@@ -17,7 +17,8 @@ class SvExExtrudeCurvePointNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExExtrudeCurvePointNode'
     bl_label = 'Extrude to Point'
-    bl_icon = 'MOD_THICKNESS'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_EXTRUDE_CURVE_POINT'
 
     def sv_init(self, context):
         self.inputs.new('SvExCurveSocket', "Profile").display_shape = 'DIAMOND'

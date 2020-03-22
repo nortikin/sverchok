@@ -20,6 +20,7 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_idname = 'SvInterpolatingSurfaceNode'
     bl_label = 'Surface from Curves'
     bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_SURFACE_FROM_CURVES'
 
     def get_interp_modes(self, context):
         modes = [

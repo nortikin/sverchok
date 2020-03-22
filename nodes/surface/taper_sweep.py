@@ -17,7 +17,8 @@ class SvExTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """
     bl_idname = 'SvExTaperSweepSurfaceNode'
     bl_label = 'Taper Sweep'
-    bl_icon = 'MOD_THICKNESS'
+    bl_icon = 'OUTLINER_OB_EMPTY'
+    sv_icon = 'SV_TAPER_SWEEP'
 
     def sv_init(self, context):
         self.inputs.new('SvExCurveSocket', "Profile").display_shape = 'DIAMOND'
