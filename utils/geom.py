@@ -1455,6 +1455,16 @@ class LineEquation(object):
         projection = self.projection_of_point(point)
         return (mathutils.Vector(point) - projection).length
 
+    def distance_to_points(self, points):
+        """
+        Return the distance between the specified points and this line.
+        input: np.array of shape (n, 3)
+        output: np.array of shape (n,)
+        """
+        # TODO: there should be more effective way to do this
+        projection = self.projection_of_points(point)
+        return np.linalg.norm(points - projection, axis=1)
+
     def projection_of_point(self, point):
         """
         Return the projection of the specified point on this line.
