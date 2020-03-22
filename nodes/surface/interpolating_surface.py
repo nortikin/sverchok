@@ -9,9 +9,8 @@ import sverchok
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_level, get_data_nesting_level
 from sverchok.utils.geom import LinearSpline, CubicSpline
-
-from sverchok.data.surface import SvExInterpolatingSurface
-from sverchok.data.curve import SvExSplineCurve, make_euclidian_ts
+from sverchok.utils.surface import SvExInterpolatingSurface
+from sverchok.utils.curve import SvExSplineCurve, make_euclidian_ts
 
 class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     """

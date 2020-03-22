@@ -12,8 +12,8 @@ from mathutils import Color
 
 from sverchok.utils.modules.color_utils import color_channels
 
-from sverchok_extra.data.field.scalar import SvExScalarField
-from sverchok_extra.data.field.vector import SvExVectorField
+from sverchok.utils.field.scalar import SvExScalarField
+from sverchok.utils.field.vector import SvExVectorField
 
 def get_scalar(channel, x):
     return color_channels[channel][1](x)
