@@ -462,7 +462,8 @@ class SvExLine(SvExCurve):
         tg = self.direction
         n = np.linalg.norm(tg)
         tangent = tg / n
-        return np.tile(tangent, len(ts))
+        result = np.tile(tangent[np.newaxis].T, len(ts)).T
+        return result
 
 class SvExCircle(SvExCurve):
     def __init__(self, matrix, radius):
@@ -499,7 +500,8 @@ class SvExCircle(SvExCurve):
         ys = self.radius * np.cos(ts)
         zs = np.zeros_like(xs)
         vectors = np.stack((xs, ys, zs)).T
-        return np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
+        result = np.apply_along_axis(lambda v: self.matrix @ v, 1, vectors)
+        return result
 
 #     def second_derivative_array(self, ts):
 #         xs = - np.cos(ts)
