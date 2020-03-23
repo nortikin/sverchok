@@ -606,7 +606,7 @@ class SvExSurfaceSocket(NodeSocket, SvSocketCommon):
         return {}
 
     def draw_color(self, context, node):
-        return (0.1, 0.1, 1.0, 1.0)
+        return (0.4, 0.2, 1.0, 1.0)
 
     def sv_get(self, default=sentinel, deepcopy=True, implicit_conversions=None):
         if self.is_linked and not self.is_output:
