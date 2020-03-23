@@ -71,12 +71,12 @@ class SvExBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.inputs.new('SvExSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', 'UMin').prop_name = 'u_min'
         self.inputs.new('SvStringsSocket', 'UMax').prop_name = 'u_max'
         self.inputs.new('SvStringsSocket', 'VMin').prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', 'VMax').prop_name = 'v_max'
-        self.outputs.new('SvExVectorFieldSocket', 'Field').display_shape = 'CIRCLE_DOT'
+        self.outputs.new('SvExVectorFieldSocket', 'Field')
 
     def draw_buttons(self, context, layout):
         layout.label(text="Object vertical axis:")

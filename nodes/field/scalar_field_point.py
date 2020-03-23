@@ -58,7 +58,7 @@ class SvExScalarFieldPointNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
         self.inputs.new('SvStringsSocket', 'Coefficient').prop_name = 'coefficient'
 
-        self.outputs.new('SvExScalarFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
+        self.outputs.new('SvExScalarFieldSocket', "Field")
         self.update_type(context)
 
     def draw_buttons(self, context, layout):

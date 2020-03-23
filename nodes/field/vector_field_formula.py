@@ -55,8 +55,8 @@ class SvExVectorFieldFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExVectorFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
+        self.inputs.new('SvExVectorFieldSocket', "Field")
+        self.outputs.new('SvExVectorFieldSocket', "Field")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Input:")

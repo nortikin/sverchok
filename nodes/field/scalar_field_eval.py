@@ -24,7 +24,7 @@ class SvExScalarFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_EVAL_SCALAR_FIELD'
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
+        self.inputs.new('SvExScalarFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
         d.prop = (0.0, 0.0, 0.0)

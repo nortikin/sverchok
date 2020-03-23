@@ -19,7 +19,7 @@ class SvExVectorFieldEvaluateNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_EVAL_VECTOR_FIELD'
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
+        self.inputs.new('SvExVectorFieldSocket', "Field")
         d = self.inputs.new('SvVerticesSocket', "Vertices")
         d.use_prop = True
         d.prop = (0.0, 0.0, 0.0)

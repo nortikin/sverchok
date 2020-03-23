@@ -89,8 +89,8 @@ class SvExAttractorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'Amplitude').prop_name = 'amplitude'
         self.inputs.new('SvStringsSocket', 'Coefficient').prop_name = 'coefficient'
 
-        self.outputs.new('SvExVectorFieldSocket', "VField").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "SField").display_shape = 'CIRCLE_DOT'
+        self.outputs.new('SvExVectorFieldSocket', "VField")
+        self.outputs.new('SvExScalarFieldSocket', "SField")
         self.update_type(context)
 
     def draw_buttons(self, context, layout):

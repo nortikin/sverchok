@@ -33,7 +33,7 @@ class SvExNoiseVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
-        self.outputs.new('SvExVectorFieldSocket', 'Noise').display_shape = 'CIRCLE_DOT'
+        self.outputs.new('SvExVectorFieldSocket', 'Noise')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'noise_type', text="Type")

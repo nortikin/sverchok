@@ -43,10 +43,10 @@ class SvExComposeVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "Field1").display_shape = 'CIRCLE_DOT'
-        self.inputs.new('SvExScalarFieldSocket', "Field2").display_shape = 'CIRCLE_DOT'
-        self.inputs.new('SvExScalarFieldSocket', "Field3").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExVectorFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
+        self.inputs.new('SvExScalarFieldSocket', "Field1")
+        self.inputs.new('SvExScalarFieldSocket', "Field2")
+        self.inputs.new('SvExScalarFieldSocket', "Field3")
+        self.outputs.new('SvExVectorFieldSocket', "Field")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):

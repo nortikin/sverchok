@@ -65,7 +65,7 @@ class SvExVectorFieldGraphNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'join', toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
+        self.inputs.new('SvExVectorFieldSocket', "Field")
         self.inputs.new('SvVerticesSocket', "Bounds")
         self.inputs.new('SvStringsSocket', "Scale").prop_name = 'scale'
         self.inputs.new('SvStringsSocket', "SamplesX").prop_name = 'samples_x'

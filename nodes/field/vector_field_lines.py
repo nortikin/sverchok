@@ -46,7 +46,7 @@ class SvExVectorFieldLinesNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'join', toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvExVectorFieldSocket', "Field").display_shape = 'CIRCLE_DOT'
+        self.inputs.new('SvExVectorFieldSocket', "Field")
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Step").prop_name = 'step'
         self.inputs.new('SvStringsSocket', "Iterations").prop_name = 'iterations'

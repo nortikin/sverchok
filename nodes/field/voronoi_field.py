@@ -24,8 +24,8 @@ class SvExVoronoiFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
-        self.outputs.new('SvExScalarFieldSocket', "SField").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExVectorFieldSocket', "VField").display_shape = 'CIRCLE_DOT'
+        self.outputs.new('SvExScalarFieldSocket', "SField")
+        self.outputs.new('SvExVectorFieldSocket', "VField")
 
     def process(self):
 

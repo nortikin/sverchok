@@ -44,17 +44,17 @@ class SvExImageFieldNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop_search(self, 'image_name', bpy.data, 'images', text='', icon='IMAGE')
 
     def sv_init(self, context):
-        self.outputs.new('SvExVectorFieldSocket', "RGB").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExVectorFieldSocket', "HSV").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Red").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Green").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Blue").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Hue").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Saturation").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Value").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Alpha").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "RGB Average").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "Luminosity").display_shape = 'CIRCLE_DOT'
+        self.outputs.new('SvExVectorFieldSocket', "RGB")
+        self.outputs.new('SvExVectorFieldSocket', "HSV")
+        self.outputs.new('SvExScalarFieldSocket', "Red")
+        self.outputs.new('SvExScalarFieldSocket', "Green")
+        self.outputs.new('SvExScalarFieldSocket', "Blue")
+        self.outputs.new('SvExScalarFieldSocket', "Hue")
+        self.outputs.new('SvExScalarFieldSocket', "Saturation")
+        self.outputs.new('SvExScalarFieldSocket', "Value")
+        self.outputs.new('SvExScalarFieldSocket', "Alpha")
+        self.outputs.new('SvExScalarFieldSocket', "RGB Average")
+        self.outputs.new('SvExScalarFieldSocket', "Luminosity")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

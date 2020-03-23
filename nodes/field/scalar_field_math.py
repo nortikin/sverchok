@@ -50,9 +50,9 @@ class SvExScalarFieldMathNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def sv_init(self, context):
-        self.inputs.new('SvExScalarFieldSocket', "FieldA").display_shape = 'CIRCLE_DOT'
-        self.inputs.new('SvExScalarFieldSocket', "FieldB").display_shape = 'CIRCLE_DOT'
-        self.outputs.new('SvExScalarFieldSocket', "FieldC").display_shape = 'CIRCLE_DOT'
+        self.inputs.new('SvExScalarFieldSocket', "FieldA")
+        self.inputs.new('SvExScalarFieldSocket', "FieldB")
+        self.outputs.new('SvExScalarFieldSocket', "FieldC")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
