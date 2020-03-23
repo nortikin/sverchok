@@ -59,8 +59,8 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'is_cyclic', toggle=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curves").display_shape = 'DIAMOND'
-        self.outputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Curves")
+        self.outputs.new('SvExSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def process(self):

@@ -16,7 +16,7 @@ class SvExSurfaceDomainNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_SURFACE_DOMAIN'
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.inputs.new('SvExSurfaceSocket', "Surface")
         self.outputs.new('SvStringsSocket', "UMin")
         self.outputs.new('SvStringsSocket', "UMax")
         self.outputs.new('SvStringsSocket', "URange")

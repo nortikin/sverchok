@@ -103,7 +103,7 @@ class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'clamp_mode', expand=True)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND' #0
+        self.inputs.new('SvExSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', "U") # 1 — U_SOCKET
         self.inputs.new('SvStringsSocket', "V") # 2 — V_SOCKET
         self.inputs.new('SvVerticesSocket', "Vertices") # 3

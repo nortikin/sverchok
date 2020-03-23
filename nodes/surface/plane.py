@@ -74,7 +74,7 @@ class SvExPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "UMax").prop_name = 'u_max'
         self.inputs.new('SvStringsSocket', "VMin").prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', "VMax").prop_name = 'v_max'
-        self.outputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.outputs.new('SvExSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):

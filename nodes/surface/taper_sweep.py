@@ -21,15 +21,15 @@ class SvExTaperSweepSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_TAPER_SWEEP'
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Profile").display_shape = 'DIAMOND'
-        self.inputs.new('SvExCurveSocket', "Taper").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Profile")
+        self.inputs.new('SvExCurveSocket', "Taper")
         p = self.inputs.new('SvVerticesSocket', "Point")
         p.use_prop = True
         p.prop = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
         p.prop = (0.0, 0.0, 1.0)
-        self.outputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.outputs.new('SvExSurfaceSocket', "Surface")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

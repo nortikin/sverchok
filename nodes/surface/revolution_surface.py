@@ -20,14 +20,14 @@ class SvExRevolutionSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MOD_SCREW'
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Profile").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Profile")
         p = self.inputs.new('SvVerticesSocket', "Point")
         p.use_prop = True
         p.prop = (0.0, 0.0, 0.0)
         p = self.inputs.new('SvVerticesSocket', "Direction")
         p.use_prop = True
         p.prop = (0.0, 0.0, 1.0)
-        self.outputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.outputs.new('SvExSurfaceSocket', "Surface")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

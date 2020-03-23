@@ -81,8 +81,8 @@ class SvExTessellateTrimSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, 'accuracy')
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
-        self.inputs.new('SvExCurveSocket', "TrimCurve").display_shape = 'DIAMOND'
+        self.inputs.new('SvExSurfaceSocket', "Surface")
+        self.inputs.new('SvExCurveSocket', "TrimCurve")
         self.inputs.new('SvStringsSocket', "SamplesU").prop_name = 'samples_u'
         self.inputs.new('SvStringsSocket', "SamplesV").prop_name = 'samples_v'
         self.inputs.new('SvStringsSocket', "CurveSamples").prop_name = 'samples_t'

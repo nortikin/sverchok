@@ -24,10 +24,10 @@ class SvExSurfaceLerpNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface1").display_shape = 'DIAMOND'
-        self.inputs.new('SvExSurfaceSocket', "Surface2").display_shape = 'DIAMOND'
+        self.inputs.new('SvExSurfaceSocket', "Surface1")
+        self.inputs.new('SvExSurfaceSocket', "Surface2")
         self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
-        self.outputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.outputs.new('SvExSurfaceSocket', "Surface")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

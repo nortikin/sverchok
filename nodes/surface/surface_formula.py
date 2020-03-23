@@ -73,7 +73,7 @@ class SvExSurfaceFormulaNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', 'UMax').prop_name = 'u_max'
         self.inputs.new('SvStringsSocket', 'VMin').prop_name = 'v_min'
         self.inputs.new('SvStringsSocket', 'VMax').prop_name = 'v_max'
-        self.outputs.new('SvExSurfaceSocket', 'Surface').display_shape = 'DIAMOND'
+        self.outputs.new('SvExSurfaceSocket', 'Surface')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula1", text="")

@@ -45,10 +45,10 @@ class SvExExtrudeCurveCurveSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "algorithm")
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Profile").display_shape = 'DIAMOND'
-        self.inputs.new('SvExCurveSocket', "Extrusion").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Profile")
+        self.inputs.new('SvExCurveSocket', "Extrusion")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
-        self.outputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.outputs.new('SvExSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def process(self):

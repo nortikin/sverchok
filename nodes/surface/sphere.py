@@ -52,7 +52,7 @@ class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
         p.prop = (0.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
         self.inputs.new('SvStringsSocket', "Theta1").prop_name = 'theta1'
-        self.outputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.outputs.new('SvExSurfaceSocket', "Surface")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):
