@@ -24,10 +24,10 @@ class SvExCurveLerpCurveNode(bpy.types.Node, SverchCustomTreeNode):
             update=updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve1").display_shape = 'DIAMOND'
-        self.inputs.new('SvExCurveSocket', "Curve2").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Curve1")
+        self.inputs.new('SvExCurveSocket', "Curve2")
         self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
-        self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', "Curve")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

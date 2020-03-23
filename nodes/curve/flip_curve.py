@@ -19,8 +19,8 @@ class SvExFlipCurveNode(bpy.types.Node, SverchCustomTreeNode):
         sv_icon = 'SV_FLIP_CURVE'
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
-            self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+            self.inputs.new('SvExCurveSocket', "Curve")
+            self.outputs.new('SvExCurveSocket', "Curve")
 
         def process(self):
             if not any(socket.is_linked for socket in self.outputs):

@@ -25,10 +25,10 @@ class SvExIsoUvCurveNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
+        self.inputs.new('SvExSurfaceSocket', "Surface")
         self.inputs.new('SvStringsSocket', "Value").prop_name = 'value'
-        self.outputs.new('SvExCurveSocket', "UCurve").display_shape = 'DIAMOND'
-        self.outputs.new('SvExCurveSocket', "VCurve").display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', "UCurve")
+        self.outputs.new('SvExCurveSocket', "VCurve")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

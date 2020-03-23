@@ -32,8 +32,8 @@ class SvExSurfaceBoundaryNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
-        self.outputs.new('SvExCurveSocket', "Boundary").display_shape = 'DIAMOND'
+        self.inputs.new('SvExSurfaceSocket', "Surface")
+        self.outputs.new('SvExCurveSocket', "Boundary")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Cyclic:")

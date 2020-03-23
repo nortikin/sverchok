@@ -47,7 +47,7 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
             update = update_sockets)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+            self.inputs.new('SvExCurveSocket', "Curve")
             
             p = self.inputs.new('SvVerticesSocket', "Center")
             p.use_prop = True
@@ -59,7 +59,7 @@ class SvExCastCurveNode(bpy.types.Node, SverchCustomTreeNode):
 
             self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
             self.inputs.new('SvStringsSocket', "Coefficient").prop_name = 'coefficient'
-            self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+            self.outputs.new('SvExCurveSocket', "Curve")
             self.update_sockets(context)
 
         def draw_buttons(self, context, layout):

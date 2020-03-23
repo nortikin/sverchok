@@ -16,7 +16,7 @@ class SvExCurveEndpointsNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CURVE_ENDPOINTS'
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Curve")
         self.outputs.new('SvVerticesSocket', "Start")
         self.outputs.new('SvVerticesSocket', "End")
 

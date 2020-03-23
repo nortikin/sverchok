@@ -57,7 +57,7 @@ class SvExLineCurveNode(bpy.types.Node, SverchCustomTreeNode):
         p.prop = (1.0, 0.0, 0.0)
         self.inputs.new('SvStringsSocket', "UMin").prop_name = 'u_min'
         self.inputs.new('SvStringsSocket', "UMax").prop_name = 'u_max'
-        self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', "Curve")
         self.update_sockets(context)
 
     def draw_buttons(self, context, layout):

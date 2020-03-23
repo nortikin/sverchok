@@ -17,7 +17,7 @@ class SvExCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
         bl_icon = 'CURVE_NCURVE'
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+            self.inputs.new('SvExCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T")
             self.outputs.new('SvStringsSocket', "Curvature")
             self.outputs.new('SvStringsSocket', "Radius")

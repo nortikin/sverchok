@@ -16,7 +16,7 @@ class SvExCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
     sv_icon = 'SV_CURVE_DOMAIN'
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Curve")
         self.outputs.new('SvStringsSocket', "TMin")
         self.outputs.new('SvStringsSocket', "TMax")
         self.outputs.new('SvStringsSocket', "Range")

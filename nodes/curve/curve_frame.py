@@ -18,7 +18,7 @@ class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
         sv_icon = 'SV_CURVE_FRAME'
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+            self.inputs.new('SvExCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T")
             self.outputs.new('SvMatrixSocket', 'Matrix')
             self.outputs.new('SvVerticesSocket', 'Normal')

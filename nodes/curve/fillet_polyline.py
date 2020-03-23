@@ -43,7 +43,7 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
-        self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', "Curve")
         self.outputs.new('SvMatrixSocket', "Centers")
 
     def make_curve(self, vertices, radiuses):

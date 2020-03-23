@@ -40,7 +40,7 @@ class SvExCircleNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs.new('SvStringsSocket', "Radius").prop_name = 'radius'
         self.inputs.new('SvStringsSocket', "TMin").prop_name = 't_min'
         self.inputs.new('SvStringsSocket', "TMax").prop_name = 't_max'
-        self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', "Curve")
 
     def process(self):
         if not any(socket.is_linked for socket in self.outputs):

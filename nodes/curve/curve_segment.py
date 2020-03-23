@@ -34,10 +34,10 @@ class SvExCurveSegmentNode(bpy.types.Node, SverchCustomTreeNode):
         update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "TMin").prop_name = 't_min'
         self.inputs.new('SvStringsSocket', "TMax").prop_name = 't_max'
-        self.outputs.new('SvExCurveSocket', "Segment").display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', "Segment")
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "rescale", toggle=True)

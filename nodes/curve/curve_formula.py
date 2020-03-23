@@ -61,7 +61,7 @@ class SvExCurveFormulaNode(bpy.types.Node, SverchCustomTreeNode):
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', 'TMin').prop_name = 't_min'
         self.inputs.new('SvStringsSocket', 'TMax').prop_name = 't_max'
-        self.outputs.new('SvExCurveSocket', 'Curve').display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', 'Curve')
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "formula1", text="")

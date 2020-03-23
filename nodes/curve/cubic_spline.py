@@ -41,7 +41,7 @@ class SvExCubicSplineNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', "Vertices")
-        self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.outputs.new('SvExCurveSocket', "Curve")
 
     def build_spline(self, path):
         spline = CubicSpline(path, metric = self.metric, is_cyclic = self.is_cyclic)

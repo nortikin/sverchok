@@ -36,8 +36,8 @@ class SvExConcatCurvesNode(bpy.types.Node, SverchCustomTreeNode):
                 layout.prop(self, 'max_rho')
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curves").display_shape = 'DIAMOND'
-            self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+            self.inputs.new('SvExCurveSocket', "Curves")
+            self.outputs.new('SvExCurveSocket', "Curve")
 
         def run_check(self, curves):
             for idx, (curve1, curve2) in enumerate(zip(curves, curves[1:])):

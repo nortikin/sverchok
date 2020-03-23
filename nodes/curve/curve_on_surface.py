@@ -40,9 +40,9 @@ class SvExCurveOnSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
             return 1
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', 'Curve').display_shape = 'DIAMOND'
-        self.inputs.new('SvExSurfaceSocket', "Surface").display_shape = 'DIAMOND'
-        self.outputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', 'Curve')
+        self.inputs.new('SvExSurfaceSocket', "Surface")
+        self.outputs.new('SvExCurveSocket', "Curve")
 
     def draw_buttons(self, context, layout):
         layout.label(text="Curve plane:")

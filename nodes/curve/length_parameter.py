@@ -58,7 +58,7 @@ class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
             update = updateNode)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+        self.inputs.new('SvExCurveSocket', "Curve")
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         self.inputs.new('SvStringsSocket', "Length").prop_name = 'length'
         self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'

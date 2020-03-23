@@ -43,7 +43,7 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             layout.prop(self, 'eval_mode', expand=True)
 
         def sv_init(self, context):
-            self.inputs.new('SvExCurveSocket', "Curve").display_shape = 'DIAMOND'
+            self.inputs.new('SvExCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T")
             self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
             self.outputs.new('SvVerticesSocket', "Vertices")
