@@ -7,7 +7,7 @@ Nodes
 
    Generators <nodes/generator/generator_index>
    Generators Extended<nodes/generators_extended/generators_extended_index>
-   Curves<nodes/curves/curves_index>
+   Curves<nodes/curve/curve_index>
    Transforms <nodes/transforms/transforms_index>
    Analyzers <nodes/analyzer/analyzer_index>
    Modifier Change <nodes/modifier_change/modifier_change_index>
