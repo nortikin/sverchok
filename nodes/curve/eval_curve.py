@@ -39,12 +39,17 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
                 min = 4,
                 update = updateNode)
 
+        t_value : FloatProperty(
+            name = "T",
+            default = 0.5,
+            update = updateNode)
+
         def draw_buttons(self, context, layout):
             layout.prop(self, 'eval_mode', expand=True)
 
         def sv_init(self, context):
             self.inputs.new('SvExCurveSocket', "Curve")
-            self.inputs.new('SvStringsSocket', "T")
+            self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.inputs.new('SvStringsSocket', "Samples").prop_name = 'sample_size'
             self.outputs.new('SvVerticesSocket', "Vertices")
             self.outputs.new('SvStringsSocket', "Edges")

@@ -7,4 +7,5 @@ Curves
 
    line
    circle
+   eval_curve
 
