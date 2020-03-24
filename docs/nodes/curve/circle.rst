@@ -9,6 +9,8 @@ This node generates a Curve object, which represents a circle, or an arc of the 
 Specifics of curve parametrization: the T parameter is proportional to curve
 length, and equals to the angle along the circle arc.
 
+Curve domain: defined in node's inputs, by default from 0 to 2*pi.
+
 Behavior when trying to evaluate curve outside of it's boundaries: returns
 corresponding point on the circle.
 
