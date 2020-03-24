@@ -19,7 +19,7 @@
 import bpy
 
 from sverchok.node_tree import SverchCustomTreeNode
-
+from numpy import ndarray
 
 class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Float2Int '''
@@ -42,6 +42,8 @@ class Float2IntNode(bpy.types.Node, SverchCustomTreeNode):
     def inte(cls, l):
         if isinstance(l, (int, float)):
             return round(l)
+        elif isinstance(l, ndarray):
+            return l.astype(int)
         else:
             return [cls.inte(i) for i in l]
 

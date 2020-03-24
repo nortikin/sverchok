@@ -453,7 +453,7 @@ def levels_of_list_or_np(lst):
         return level
     return 0
 
-def get_data_nesting_level(data, data_types=(float, int, np.float64, str)):
+def get_data_nesting_level(data, data_types=(float, int, np.float64, np.int32, str)):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -477,7 +477,7 @@ def get_data_nesting_level(data, data_types=(float, int, np.float64, str)):
         """ Needed only for better error reporting. """
         if type(data) in data_types:
             return 0
-        elif type(data) in (list, tuple):
+        elif type(data) in (list, tuple, np.ndarray):
             if len(data) == 0:
                 return 1
             else:

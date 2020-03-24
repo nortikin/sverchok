@@ -12,6 +12,7 @@ Inputs & Parameters
 | Mode           | Pick between Scalar along Normal and Vector output                      |
 +----------------+-------------------------------------------------------------------------+
 | Noise Type     | Pick between several noise types                                        |
+|                | Mathutils noise:                                                        |
 |                |                                                                         |
 |                | - Blender                                                               |
 |                | - Cell Noise                                                            |
@@ -25,6 +26,18 @@ Inputs & Parameters
 |                | - Voronoi F4                                                            |
 |                |                                                                         |
 |                | See mathutils.noise docs ( Noise_ )                                     |
+|                | Custom noises:                                                          |
+|                |                                                                         |
+|                | - Random Cells                                                          |
+|                | - Random Gradients                                                      |
+|                | - Ortho Gradients                                                       |
+|                | - Numpy Perlin                                                          |
+|                |                                                                         |
+|                | (see examples)                                                          |
++----------------+-------------------------------------------------------------------------+
+| Smooth         | Smooth curvature (Only for custom noises)                               |
++----------------+-------------------------------------------------------------------------+
+| Interpolate    | Gradient interpolation (Hard noise when un-checked) (For custom noises) |
 +----------------+-------------------------------------------------------------------------+
 | Seed           | Accepts float values, they are hashed into *Integers* internally.       |
 |                | Seed values of 0 will internally be replaced with a randomly picked     |
@@ -45,13 +58,6 @@ Examples
 
 Basic example
 
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_2.png
-
-Seed and scale per vertex can be passed, in this example the seed is chosen by determining the closest point of another mesh and the scale is based on the distance to that point
-
-.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_4.png
-
-One matrix per point can be passed if the matrix list is wrapped, note that the "Flat Output" checkbox of the matrix in is un-checked
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_3.png
 
@@ -69,6 +75,30 @@ The "Vector" Mode does not use vertex normals so it can be used just with vertic
 
 The "Scale out" input can be used to mask the affected vertices
 
+For the Mathutils Noises:
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_2.png
+
+Seed and scale per vertex can be passed, in this example the seed is chosen by determining the closest point of another mesh and the scale is based on the distance to that point.
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_4.png
+
+One matrix per point can be passed if the matrix list is wrapped, note that the "Flat Output" checkbox of the matrix in is un-checked
+
+For the custom noises:
+
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_8.png
+
+The custom noises will only allow one seed and matrix per object but the offer two different interpolations per noise to change the noise look
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_9.png
+
+Scale will be passed per vertex allowing different effects.
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_10.png
+
+When interpolate is off there will be seams in the texture. The seems are placed every unit with the use of the matrix can be used to produce hard edges.
 
 
 .. _Noise: http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html
