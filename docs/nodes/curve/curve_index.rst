@@ -7,5 +7,6 @@ Curves
 
    line
    circle
+   concat_curves
    eval_curve
 
