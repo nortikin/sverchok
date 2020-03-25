@@ -8,6 +8,8 @@ This node composes one Curve object from several Curve objects, by "glueing"
 their ends. It assumes that end points of the curves being concatenated are
 already coinciding. You can make the node check this fact additionaly.
 
+Curve domain: summed up from domains of curves being concatenated.
+
 Inputs
 ------
 

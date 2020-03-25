@@ -8,6 +8,8 @@ This node generates a Curve object by taking another Curve and "bending" it
 according to some Vector Field. More precisely, it generates a curve, each
 point of which is calculated as `x + Coefficient * VectorPoint(x)`.
 
+Curve domain: the same as the domain of curve being deformed.
+
 Inputs
 ------
 
