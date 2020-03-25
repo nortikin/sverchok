@@ -249,14 +249,18 @@ class SvExCurveLengthSolver(object):
         return spline_verts[:,1]
 
 class SvExConcatCurve(SvExCurve):
-    def __init__(self, curves):
+    def __init__(self, curves, scale_to_unit = False):
         self.curves = curves
+        self.scale_to_unit = scale_to_unit
         bounds = [curve.get_u_bounds() for curve in curves]
         self.src_min_bounds = np.array([bound[0] for bound in bounds])
-        #self.max_bounds = np.array([bound[1] for bound in bounds])
         self.ranges = np.array([bound[1] - bound[0] for bound in bounds])
-        self.u_max = self.ranges.sum()
-        self.min_bounds = np.insert(np.cumsum(self.ranges), 0, 0)
+        if scale_to_unit:
+            self.u_max = float(len(curves))
+            self.min_bounds = np.array(range(len(curves)), dtype=np.float64)
+        else:
+            self.u_max = self.ranges.sum()
+            self.min_bounds = np.insert(np.cumsum(self.ranges), 0, 0)
         self.tangent_delta = 0.001
 
     def get_u_bounds(self):
@@ -268,6 +272,8 @@ class SvExConcatCurve(SvExCurve):
         left_bounds = self.min_bounds[index]
         curve_left_bounds = self.src_min_bounds[index]
         dts = ts - left_bounds + curve_left_bounds
+        if self.scale_to_unit:
+            dts = dts * self.ranges[index]
         #dts_grouped = np.split(dts, np.cumsum(np.unique(index, return_counts=True)[1])[:-1])
         # TODO: this should be vectorized somehow
         dts_grouped = []

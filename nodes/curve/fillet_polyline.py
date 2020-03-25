@@ -36,8 +36,16 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
         default = False,
         update = updateNode)
 
+    scale_to_unit : BoolProperty(
+        name = "Even domains",
+        description = "Give each segment and each arc equal T parameter domain of [0; 1]",
+        default = False,
+        update = updateNode)
+
     def draw_buttons(self, context, layout):
         layout.prop(self, "concat", toggle=True)
+        if self.concat:
+            layout.prop(self, "scale_to_unit", toggle=True)
         layout.prop(self, "cyclic", toggle=True)
 
     def sv_init(self, context):
@@ -80,7 +88,8 @@ class SvExFilletPolylineNode(bpy.types.Node, SverchCustomTreeNode):
             curves.append(edge)
 
         if self.concat:
-            return SvExConcatCurve(curves), centers
+            concat = SvExConcatCurve(curves, scale_to_unit = self.scale_to_unit)
+            return concat, centers
         else:
             return curves, centers
 
