@@ -41,7 +41,7 @@
     SvMeshEvalNode
     SvGenerativeArtNode
     SvImageComponentsNode
-    SvTorusKnotNode
+    SvTorusKnotNodeMK2
     SvRingNode
     SvEllipseNode
     SvSuperEllipsoidNode

@@ -47,10 +47,13 @@ All parameters except **mode** can be given by the node or an external input.
 +-------------------------+------------+------------+-----------------------------------------------+
 | **Spin Phase**          |  Float     |  0.00      |  Phase spin vertices by a radian amount       |
 +-------------------------+------------+------------+-----------------------------------------------+
+| **Shift**               |  Float     |  0.00      |  Shift the points along the curve (0-1) [3]   |
++-------------------------+------------+------------+-----------------------------------------------+
 
 Notes:
 [1] : Major/Minor radii are available when Major/Minor mode is elected.
 [2] : Exterior/Interior radii are available when Exterior/Interior mode is elected.
+[3] : shift = 0 for no shift, shift = 1 for a complete shift along the curve
 
 Extra Parameters
 ----------------
