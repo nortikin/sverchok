@@ -10,7 +10,7 @@ from sverchok.core import upgrade_nodes, undo_handler_node_count
 
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
-
+from sverchok.utils.logging import debug
 
 _state = {'frame': None}
 
@@ -101,7 +101,7 @@ def sv_update_handler(scene):
             print('Failed to update:', str(e)) #name,
 
     if scene.render:
-        print(f'is rendering frame {scene.frame_current}, updates missed?')
+        debug(f'is rendering frame {scene.frame_current}, updates missed?')
         # ---- raise Exception("asserting error")
 
     # scene.update()  <-- does not exist in 2.80 recent builds
