@@ -105,7 +105,7 @@ class SvFormulaNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         #self.debug("adjust_sockets:" + str(variables))
         #self.debug("inputs:" + str(self.inputs.keys()))
         for key in self.inputs.keys():
-            if key not in variables:
+            if (key not in variables) and (key in self.inputs):
                 self.debug("Input {} not in variables {}, remove it".format(key, str(variables)))
                 self.inputs.remove(self.inputs[key])
         for v in variables:
