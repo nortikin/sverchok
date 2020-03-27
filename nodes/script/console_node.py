@@ -413,6 +413,9 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     name3Color: make_color("name3 color", (0.3, 0.9, 0.4, 1.0))  # 91
     commentColor: make_color("comment color", (0.2, 0.2, 0.2, 1.0))
 
+    def get_lexed_colors(self):
+        return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
+
     def prepare_for_grid(self):
         char_width = int(15 * self.local_scale)
         char_height = int(32 * self.local_scale)
