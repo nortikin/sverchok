@@ -42,6 +42,9 @@ class SvBlenderBoolean(bpy.types.Node, SverchCustomTreeNode):
         default="INTERSECT", update=updateNode)
 
     bool_name: bpy.props.StringProperty(name="bool name", update=updateNode)
+    overlap_threshold: bpy.props.FloatProperty(
+        step=0.00001, default=0.000001,
+        name="overlap threshold", description="double threshold, epsilon", update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', 'Obj A')
@@ -52,6 +55,7 @@ class SvBlenderBoolean(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.row().prop(self, 'selected_mode', expand=True)
         layout.row().prop(self, 'bool_name', text="name")
+        layout.row().prop(self, 'overlap_threshold', text="Eps")
 
     def process(self):
         """ off load boolean computation to Blender """
@@ -59,16 +63,19 @@ class SvBlenderBoolean(bpy.types.Node, SverchCustomTreeNode):
         start_obj = self.inputs[0].sv_get()[0]
         modifier_obj = self.inputs[1].sv_get()[0]
 
-        if not (self.bool_name in start_obj.modifiers):
-            start_obj.modifiers.new(name=self.bool_name, type="BOOLEAN")
+        with self.sv_throttle_tree_update():
         
-        modifier = start_obj.modifiers.get(self.bool_name)
-        
-        if not modifier.operation == self.selected_mode:
-             modifier.operation = self.selected_mode
+            if not (self.bool_name in start_obj.modifiers):
+                start_obj.modifiers.new(name=self.bool_name, type="BOOLEAN")
+            
+            modifier = start_obj.modifiers.get(self.bool_name)
+            if not modifier.operation == self.selected_mode:
+                 modifier.operation = self.selected_mode
 
-        if not modifier.object or (not modifier.object == modifier_obj):
-            modifier.object = modifier_obj
+            if not modifier.object or (not modifier.object == modifier_obj):
+                modifier.object = modifier_obj
+
+            modifier.double_threshold = self.overlap_threshold
 
         self.outputs[0].sv_set([start_obj])
 
