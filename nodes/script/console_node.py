@@ -459,7 +459,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def draw_buttons_ext(self, context, layout):
         col = layout.column()
         for color_name in lexed_colors:
-            col.prop(self, color_name)
+            row = col.row()
+            row.prop(self, color_name)
 
     
     def init_texture(self, width, height):
@@ -478,6 +479,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
         bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
 
+    def set_node_props(self, socket_data):
+        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
+        valid_multiline = '\n'.join(multiline)
+        self.terminal_text = valid_multiline
+        self.num_rows = chars_y
+        self.terminal_width = chars_x
+
     def terminal_text_to_config(self, update=False):
 
         with self.sv_throttle_tree_update():
@@ -492,23 +500,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
                         if self.filter_long_strings:
                             socket_data = filter_incoming(socket_data)
+                        self.set_node_props(socket_data)
 
-                        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
-                        valid_multiline = '\n'.join(multiline)
-                        self.terminal_text = valid_multiline
-                        self.num_rows = chars_y
-                        self.terminal_width = chars_x
             else:
                 # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
                 if self.inputs[0].other.node.bl_idname == "SvScriptNodeLite":
-
                     socket_data = list(self.inputs[0].other.node.script_str.splitlines())
-
-                    multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
-                    valid_multiline = '\n'.join(multiline)
-                    self.terminal_text = valid_multiline
-                    self.num_rows = chars_y
-                    self.terminal_width = chars_x
+                    self.set_node_props(socket_data)
 
         if update:
             updateNode(self, None)
