@@ -21,28 +21,35 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, dataCorrect, updateNode)
+from numpy import stack, ndarray
 
-def flip(list, level):
+def flip(data, level):
     level -= 1
     out = []
     if not level:
-        for l in list:
+        for l in data:
             out.append(flip(l, level))
     else:
-        length = maxlen(list)
-        for i in range(length):
-            out_ = []
-            for l in list:
-                try:
-                    out_.append(l[i])
-                except:
-                    continue
-            out.append(out_)
+        if compatible_arrays(data):
+            out = [o for o in stack(data, axis=1)]
+        else:
+            length = maxlen(data)
+            for i in range(length):
+                out_ = []
+                for l in data:
+                    try:
+                        out_.append(l[i])
+                    except:
+                        continue
+                out.append(out_)
     return out
 
-def maxlen(list):
+def compatible_arrays(data):
+    return all([type(d) == ndarray for d in data]) and all([data[i].shape == data[i+1].shape for i in range(len(data[:-1]))] )
+
+def maxlen(data):
     le = []
-    for l in list:
+    for l in data:
         le.append(len(l))
     return max(le)
 

@@ -70,7 +70,11 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             # levelsOfList replacement:
             depth = dat.ndim #len(np.shape(dat))-1
             # roll with enclose (we need case of declose and vectorization)
-            output = np.roll(dat, number, axis=min(self.level, depth)).tolist()
+            
+            if type(data[0]) in [np.ndarray]:
+                output = [o for o in np.roll(dat, number, axis=min(self.level, depth))]
+            else:
+                output = np.roll(dat, number, axis=min(self.level, depth)).tolist()
 
         elif self.selected_mode == 'py':
             output = []

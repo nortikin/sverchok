@@ -23,8 +23,8 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets
-
-
+import numpy as np
+from numpy import random as np_random, ndarray, array
 class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
     ''' List Shuffle Node '''
     bl_idname = 'ListShuffleNode'
@@ -55,30 +55,41 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if self.outputs['data'].is_linked:
+        if self.outputs[0].is_linked and self.inputs[0].is_linked:
 
             seed = self.inputs['seed'].sv_get()[0][0]
 
             random.seed(seed)
+            np_random.seed(seed)
             data = self.inputs['data'].sv_get()
             output = self.shuffle(data, self.level)
             self.outputs['data'].sv_set(output)
 
     def shuffle(self, lst, level):
         level -= 1
+        lst_type = type(lst)
         if level:
+            if level == 1 and lst_type == ndarray:
+                out = np.array(lst)
+                for row in out:
+                    np_random.shuffle(row)
+                return out
             out = []
             for l in lst:
                 out.append(self.shuffle(l, level))
             return out
-        elif type(lst) in [type([])]:
+        elif lst_type == list:
             l = lst.copy()
             random.shuffle(l)
             return l
-        elif type(lst) in [type(tuple())]:
+        elif lst_type == tuple:
             lst = list(lst)
             random.shuffle(lst)
             return tuple(lst)
+        elif lst_type == np.ndarray:
+            out = array(lst)
+            np_random.shuffle(out)
+            return out
 
 
 def register():
