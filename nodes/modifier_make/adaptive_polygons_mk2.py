@@ -706,7 +706,7 @@ class SvAdaptivePolygonsNodeMk2(bpy.types.Node, SverchCustomTreeNode):
                     self._process_face(sub_map_mode, output, sub_recpt, donor, zcoef, zoffset, angle, wcoef, facerot)
 
     def _process(self, verts_recpt, faces_recpt, verts_donor, faces_donor, face_data_donor, frame_widths, zcoefs, zoffsets, zrotations, wcoefs, facerots, mask):
-        bm = bmesh_from_pydata(verts_recpt, None, faces_recpt, normal_update=True)
+        bm = bmesh_from_pydata(verts_recpt, [], faces_recpt, normal_update=True)
         bm.verts.ensure_lookup_table()
         single_donor = self.matching_mode == 'LONG'
         frame_level = get_data_nesting_level(frame_widths)
