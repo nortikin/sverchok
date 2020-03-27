@@ -78,7 +78,7 @@ fragment_shader = '''
 
 lexed_colors = [
     'stringColor', 'numberColor', 'name1Color',
-    'parenColor', 'braceColor', 'bracketColor',
+    'parenColor', 'braceColor', 'bracketColor', 'equalsColor',
     'opColor', 'commentColor', 'name2Color', 'name3Color'
 ]
 
@@ -96,6 +96,7 @@ lexed_fragment_shader = '''
     uniform vec4 braceColor;
     uniform vec4 bracketColor;
     uniform vec4 opColor;
+    uniform vec4 equalsColor;
     uniform vec4 commentColor;
     uniform vec4 name2Color;
     uniform vec4 name3Color;
@@ -107,6 +108,7 @@ lexed_fragment_shader = '''
         if (cIndex == 3) { test_tint = stringColor; }
         if (cIndex == 2) { test_tint = numberColor; }
         if (cIndex == 1) { test_tint = name1Color; }
+        if (cIndex == 22) { test_tint = equalsColor; }
         if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
         if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
         if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
@@ -178,6 +180,9 @@ def syntax_highlight_basic(node):
                 # 9: 'LSQB', 10: 'RSQB'
                 # 25: 'LBRACE', 26: 'RBRACE'
                 if token.exact_type in {7, 8, 9, 10, 25, 26}:
+                    token_type = token.exact_type
+
+                elif token.exact_type == 22:
                     token_type = token.exact_type
 
             # print(token)
@@ -412,6 +417,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     name2Color: make_color("name2 color", (0.7, 0.9, 0.3, 1.0))  # 90
     name3Color: make_color("name3 color", (0.3, 0.9, 0.4, 1.0))  # 91
     commentColor: make_color("comment color", (0.2, 0.2, 0.2, 1.0))
+    equalsColor: make_color("equals color", (0.9, 0.7, 0.6, 1.0))
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
@@ -459,7 +465,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def draw_buttons_ext(self, context, layout):
         col = layout.column()
         for color_name in lexed_colors:
-            col.prop(self, color_name)
+            row = col.row()
+            row.prop(self, color_name)
 
     
     def init_texture(self, width, height):
@@ -478,6 +485,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         bgl.glTexParameterf(bgl.GL_TEXTURE_2D, bgl.GL_TEXTURE_MIN_FILTER, bgl.GL_LINEAR)
         bgl.glTexImage2D(bgl.GL_TEXTURE_2D, 0, clr, width, height, 0, clr, bgl.GL_FLOAT, texture)
 
+    def set_node_props(self, socket_data):
+        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
+        valid_multiline = '\n'.join(multiline)
+        self.terminal_text = valid_multiline
+        self.num_rows = chars_y
+        self.terminal_width = chars_x
+
     def terminal_text_to_config(self, update=False):
 
         with self.sv_throttle_tree_update():
@@ -492,23 +506,13 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
                         if self.filter_long_strings:
                             socket_data = filter_incoming(socket_data)
+                        self.set_node_props(socket_data)
 
-                        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
-                        valid_multiline = '\n'.join(multiline)
-                        self.terminal_text = valid_multiline
-                        self.num_rows = chars_y
-                        self.terminal_width = chars_x
             else:
                 # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
                 if self.inputs[0].other.node.bl_idname == "SvScriptNodeLite":
-
                     socket_data = list(self.inputs[0].other.node.script_str.splitlines())
-
-                    multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
-                    valid_multiline = '\n'.join(multiline)
-                    self.terminal_text = valid_multiline
-                    self.num_rows = chars_y
-                    self.terminal_width = chars_x
+                    self.set_node_props(socket_data)
 
         if update:
             updateNode(self, None)
@@ -592,7 +596,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             if not self.inputs[0].other:
                 self.free()
         except:
-            print('ConsoleNode was disconnected, holdout (not a problem)')
+            # print('ConsoleNode was disconnected, holdout (not a problem)')
+            pass
 
 classes = [SvConsoleNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
