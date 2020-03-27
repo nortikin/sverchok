@@ -360,7 +360,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         # self.process()
         ...
 
-
+    snlite_mode: bpy.props.BoolProperty(name="Snlite mode", description="read script str from snlite node", update=updateNode)
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
@@ -417,10 +417,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "show_me", text="", icon="HIDE_OFF")
+        row.prop(self, "snlite_mode", text="", icon="CONSOLE")
         row.separator()
         row.prop(self, "local_scale")
-        row.separator()
-        row.prop(self, "filter_long_strings", text="", icon="FILTER")
+        if not self.snlite_mode:
+            row.separator()
+            row.prop(self, "filter_long_strings", text="", icon="FILTER")
         row2 = layout.row(align=True)
         row2.prop(self, "syntax_mode", expand=True)
         row3 = layout.row()
@@ -452,15 +454,27 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
         with self.sv_throttle_tree_update():
 
-            socket_data = self.inputs[0].sv_get()
+            if not self.snlite_mode:
+                socket_data = self.inputs[0].sv_get()
 
-            # this will find the newline delimited text from Object ID selector.
-            if len(socket_data) == 1:
-                socket_data = socket_data[0]
-                if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
+                # this will find the newline delimited text from Object ID selector.
+                if len(socket_data) == 1:
+                    socket_data = socket_data[0]
+                    if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
 
-                    if self.filter_long_strings:
-                        socket_data = filter_incoming(socket_data)
+                        if self.filter_long_strings:
+                            socket_data = filter_incoming(socket_data)
+
+                        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
+                        valid_multiline = '\n'.join(multiline)
+                        self.terminal_text = valid_multiline
+                        self.num_rows = chars_y
+                        self.terminal_width = chars_x
+            else:
+                # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
+                if self.inputs[0].other.node.bl_idname == "SvScriptNodeLite":
+
+                    socket_data = list(self.inputs[0].other.node.script_str.splitlines())
 
                     multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
                     valid_multiline = '\n'.join(multiline)
