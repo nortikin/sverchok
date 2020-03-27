@@ -78,7 +78,7 @@ fragment_shader = '''
 
 lexed_colors = [
     'stringColor', 'numberColor', 'name1Color',
-    'parenColor', 'braceColor', 'bracketColor',
+    'parenColor', 'braceColor', 'bracketColor', 'equalsColor',
     'opColor', 'commentColor', 'name2Color', 'name3Color'
 ]
 
@@ -96,6 +96,7 @@ lexed_fragment_shader = '''
     uniform vec4 braceColor;
     uniform vec4 bracketColor;
     uniform vec4 opColor;
+    uniform vec4 equalsColor;
     uniform vec4 commentColor;
     uniform vec4 name2Color;
     uniform vec4 name3Color;
@@ -107,6 +108,7 @@ lexed_fragment_shader = '''
         if (cIndex == 3) { test_tint = stringColor; }
         if (cIndex == 2) { test_tint = numberColor; }
         if (cIndex == 1) { test_tint = name1Color; }
+        if (cIndex == 22) { test_tint = equalsColor; }
         if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
         if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
         if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
@@ -178,6 +180,9 @@ def syntax_highlight_basic(node):
                 # 9: 'LSQB', 10: 'RSQB'
                 # 25: 'LBRACE', 26: 'RBRACE'
                 if token.exact_type in {7, 8, 9, 10, 25, 26}:
+                    token_type = token.exact_type
+
+                elif token.exact_type == 22:
                     token_type = token.exact_type
 
             # print(token)
@@ -412,6 +417,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     name2Color: make_color("name2 color", (0.7, 0.9, 0.3, 1.0))  # 90
     name3Color: make_color("name3 color", (0.3, 0.9, 0.4, 1.0))  # 91
     commentColor: make_color("comment color", (0.2, 0.2, 0.2, 1.0))
+    equalsColor: make_color("equals color", (0.9, 0.7, 0.6, 1.0))
 
     def get_lexed_colors(self):
         return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
@@ -590,7 +596,8 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
             if not self.inputs[0].other:
                 self.free()
         except:
-            print('ConsoleNode was disconnected, holdout (not a problem)')
+            # print('ConsoleNode was disconnected, holdout (not a problem)')
+            pass
 
 classes = [SvConsoleNode]
 register, unregister = bpy.utils.register_classes_factory(classes)
