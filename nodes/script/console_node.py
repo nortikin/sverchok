@@ -76,7 +76,11 @@ fragment_shader = '''
     }
 '''
 
-lexed_colors = ['stringColor', 'numberColor', 'name1Color', 'errorColor', 'name2Color', 'name3Color']
+lexed_colors = [
+    'stringColor', 'numberColor', 'name1Color',
+    'parenColor', 'braceColor', 'bracketColor',
+    'opColor', 'commentColor', 'name2Color', 'name3Color'
+]
 
 lexed_fragment_shader = '''
     in float v_lexer;
@@ -88,7 +92,11 @@ lexed_fragment_shader = '''
     uniform vec4 stringColor;
     uniform vec4 numberColor;
     uniform vec4 name1Color;
-    uniform vec4 errorColor;
+    uniform vec4 parenColor;
+    uniform vec4 braceColor;
+    uniform vec4 bracketColor;
+    uniform vec4 opColor;
+    uniform vec4 commentColor;
     uniform vec4 name2Color;
     uniform vec4 name3Color;
     
@@ -98,8 +106,12 @@ lexed_fragment_shader = '''
         int cIndex = int(v_lexer);
         if (cIndex == 3) { test_tint = stringColor; }
         if (cIndex == 2) { test_tint = numberColor; }
-        if (cIndex == 1) { test_tint = name1Color; } 
-        if (cIndex == 53) { test_tint = errorColor; }
+        if (cIndex == 1) { test_tint = name1Color; }
+        if (cIndex == 7 || cIndex == 8) { test_tint = parenColor; }
+        if (cIndex == 25 || cIndex == 26) { test_tint = braceColor; }
+        if (cIndex == 9 || cIndex == 10) { test_tint = bracketColor; }
+        if (cIndex == 53) { test_tint = opColor; }
+        if (cIndex == 55) { test_tint = commentColor; }
         if (cIndex == 90) { test_tint = name2Color; }
         if (cIndex == 91) { test_tint = name3Color; }
         fragColor = texture(image, texCoord_interp) * test_tint;
@@ -149,8 +161,9 @@ def syntax_highlight_basic(node):
                 continue
             if not token.string or (token.start == token.end):
                 continue
-            
+
             token_type = token.type
+            
             if token.type == 1:
                 if token.string in {
                         'print', 'def', 'class', 'break', 'continue', 'return', 'while', 'or', 'and',
@@ -158,6 +171,14 @@ def syntax_highlight_basic(node):
                     token_type = 90
                 elif token.string in {'False', 'True', 'yield', 'repr', 'range', 'enumerate'}:
                     token_type = 91
+
+            elif token.type == 53:
+                # OPS
+                # 7: 'LPAR', 8: 'RPAR
+                # 9: 'LSQB', 10: 'RSQB'
+                # 25: 'LBRACE', 26: 'RBRACE'
+                if token.exact_type in {7, 8, 9, 10, 25, 26}:
+                    token_type = token.exact_type
 
             # print(token)
             #  start = (line number, 1 indexed) , (char index, 0 indexed)
@@ -360,7 +381,7 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
         # self.process()
         ...
 
-
+    snlite_mode: bpy.props.BoolProperty(name="Snlite mode", description="read script str from snlite node", update=updateNode)
     num_rows: bpy.props.IntProperty(name="num rows", default=3, min=1) #, update=updateNode)
     terminal_width: bpy.props.IntProperty(name="terminal width", default=10, min=2) #, update=updateNode)
     use_char_colors: bpy.props.BoolProperty(name="use char colors", update=updateNode)
@@ -384,9 +405,16 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     stringColor: make_color("string color", (0.148, 0.447, 0.040, 1.0))  # 3
     numberColor: make_color("number color", (0.9, 0.9, 1.0, 1.0))  # 2
     name1Color: make_color("name1 color", (0.4, 0.9, 0.8, 1.0))  # 1
-    errorColor: make_color("error color", (1.0, 0.3, 0.7, 1.0))  # 53
+    parenColor: make_color("parenthesis color", (0.4, 0.3, 0.7, 1.0))  # 53     7/8
+    bracketColor: make_color("brackets color", (0.5, 0.7, 0.7, 1.0))  # 53      9/10
+    braceColor: make_color("braces color", (0.4, 0.5, 0.7, 1.0))  # 53         25/26
+    opColor: make_color("op color", (1.0, 0.3, 0.7, 1.0))  # 53
     name2Color: make_color("name2 color", (0.7, 0.9, 0.3, 1.0))  # 90
     name3Color: make_color("name3 color", (0.3, 0.9, 0.4, 1.0))  # 91
+    commentColor: make_color("comment color", (0.2, 0.2, 0.2, 1.0))
+
+    def get_lexed_colors(self):
+        return [(lex_name, getattr(self, lex_name)[:]) for lex_name in lexed_colors]
 
     def prepare_for_grid(self):
         char_width = int(15 * self.local_scale)
@@ -417,10 +445,12 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
     def draw_buttons(self, context, layout):
         row = layout.row(align=True)
         row.prop(self, "show_me", text="", icon="HIDE_OFF")
+        row.prop(self, "snlite_mode", text="", icon="CONSOLE")
         row.separator()
         row.prop(self, "local_scale")
-        row.separator()
-        row.prop(self, "filter_long_strings", text="", icon="FILTER")
+        if not self.snlite_mode:
+            row.separator()
+            row.prop(self, "filter_long_strings", text="", icon="FILTER")
         row2 = layout.row(align=True)
         row2.prop(self, "syntax_mode", expand=True)
         row3 = layout.row()
@@ -452,15 +482,27 @@ class SvConsoleNode(bpy.types.Node, SverchCustomTreeNode, SvNodeViewDrawMixin):
 
         with self.sv_throttle_tree_update():
 
-            socket_data = self.inputs[0].sv_get()
+            if not self.snlite_mode:
+                socket_data = self.inputs[0].sv_get()
 
-            # this will find the newline delimited text from Object ID selector.
-            if len(socket_data) == 1:
-                socket_data = socket_data[0]
-                if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
+                # this will find the newline delimited text from Object ID selector.
+                if len(socket_data) == 1:
+                    socket_data = socket_data[0]
+                    if isinstance(socket_data, list) and len(socket_data) and isinstance(socket_data[0], str):
 
-                    if self.filter_long_strings:
-                        socket_data = filter_incoming(socket_data)
+                        if self.filter_long_strings:
+                            socket_data = filter_incoming(socket_data)
+
+                        multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
+                        valid_multiline = '\n'.join(multiline)
+                        self.terminal_text = valid_multiline
+                        self.num_rows = chars_y
+                        self.terminal_width = chars_x
+            else:
+                # if the origin node for this socket is a snlite node, we read the node.script_str instead of the data
+                if self.inputs[0].other.node.bl_idname == "SvScriptNodeLite":
+
+                    socket_data = list(self.inputs[0].other.node.script_str.splitlines())
 
                     multiline, (chars_x, chars_y) = text_decompose('\n'.join(socket_data), self.last_n_lines)
                     valid_multiline = '\n'.join(multiline)
