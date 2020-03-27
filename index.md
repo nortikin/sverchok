@@ -417,6 +417,7 @@
     SvBMOpsNodeMK2
     ---
     SvCSGBooleanNodeMK2
+    SvBlenderBoolean
     SvNumpyArrayNode
     SvParticlesMK2Node
     SvJoinTrianglesNode
