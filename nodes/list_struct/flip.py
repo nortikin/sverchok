@@ -45,7 +45,7 @@ def flip(data, level):
     return out
 
 def compatible_arrays(data):
-    return all([type(d) == ndarray for d in data]) and all([data[i].shape == data[i+1].shape for i in range(len(data[:-1]))] )
+    return all([isinstance(d, ndarray) for d in data]) and all([data[i].shape == data[i+1].shape for i in range(len(data[:-1]))] )
 
 def maxlen(data):
     le = []

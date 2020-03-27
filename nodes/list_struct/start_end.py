@@ -76,7 +76,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         if level:
             for obj in data:
                 out.append(self.count(obj, level-1, mode))
-        elif type(data) in [tuple, list, ndarray]:
+        elif isinstance(data, (tuple, list, ndarray)):
             if mode == 0:
                 out.append(data[0])
             elif mode == 1 and len(data) >= 3:
