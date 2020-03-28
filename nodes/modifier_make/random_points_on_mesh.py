@@ -159,7 +159,7 @@ class SvRandomPointsOnMesh(bpy.types.Node, SverchCustomTreeNode):
         layout.prop(self, "proportional", toggle=True)
 
     def sv_init(self, context):
-        [self.inputs.new(p.name, p.socket_type) for p in INPUT_CONFIG]
+        [self.inputs.new(p.socket_type, p.name) for p in INPUT_CONFIG]
         [setattr(s, 'prop_name', p.prop_name) for s, p in zip(self.inputs, INPUT_CONFIG)]
 
         self.outputs.new('SvVerticesSocket', 'Verts')
