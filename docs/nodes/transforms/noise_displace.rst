@@ -54,7 +54,7 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**List Match**: Define how list with different lengths should be matched
+**List Match**: Define how list with different lengths should be matched.
 
 **Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster with  Custom noises slower with Mathutils noises).
 
@@ -64,30 +64,33 @@ Examples
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_1.png
 
-Basic example
+Basic examples
 
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_3.png
 
-The node offers three ways of matching the list lengths "Repeat Last", "Cycle" and "Match Short" in this example "Cycle" is used to alternate the noise matrix
+The node offers three ways of matching the list lengths "Repeat Last", "Cycle" and "Match Short" in this example "Cycle" is used to alternate the noise matrix.
+
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_5.png
 
-In this example the scale output is used to blend with another oscillation texture
+In this example the scale output is used to blend with another oscillation texture.
+
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_6.png
 
-The "Vector" Mode does not use vertex normals so it can be used just with vertices
+The "Vector" Mode does not use vertex normals so it can be used just with vertices.
 
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_7.png
 
-The "Scale out" input can be used to mask the affected vertices
+The "Scale out" input can be used to mask the affected vertices.
 
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_11.png
 
-You can create many different outputs from one set of vertices if you input multiple seeds :
+You can create many different outputs from one set of vertices if you input multiple seeds.
+
 
 For the Mathutils Noises:
 
@@ -97,10 +100,10 @@ Seed and scale per vertex can be passed, in this example the seed is chosen by d
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_4.png
 
-One matrix per point can be passed if the matrix list is wrapped, note that the "Flat Output" checkbox of the matrix in is un-checked
+One matrix per point can be passed if the matrix list is wrapped, note that the "Flat Output" checkbox of the matrix in is un-checked.
+
 
 For the custom noises:
-
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_8.png
 
