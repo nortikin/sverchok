@@ -90,7 +90,7 @@ class TriangulatedMesh:
             tri_random_points = self._get_random_vectors_on_tri(*[self._verts[i] for i in tri_face], points_total)
             random_points.extend(tri_random_points)
             old_face_indexes_per_point.extend([face_index for _ in range(len(tri_random_points))])
-        return random_points, old_face_indexes_per_point
+        return [v[:] for v in random_points], old_face_indexes_per_point
 
     @property
     def tri_face_areas(self):
