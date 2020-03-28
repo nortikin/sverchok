@@ -16,33 +16,57 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import operator
-from math import sqrt
+
 
 import bpy
-from bpy.props import EnumProperty, IntProperty, FloatProperty
+from bpy.props import EnumProperty, IntProperty, BoolProperty
 from mathutils import noise
 
-from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate, match_long_repeat)
-from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL
+from sverchok.node_tree import SverchCustomTreeNode, throttled
+from sverchok.data_structure import updateNode
+from sverchok.utils.sv_noise_utils import noise_options, PERLIN_ORIGINAL, noise_numpy_types
+import numpy as np
 
 
-def deepnoise(v, noise_basis=PERLIN_ORIGINAL):
-    u = noise.noise_vector(v, noise_basis=noise_basis)[:]
-    a = u[0], u[1], u[2]-1   # a = u minus (0,0,1)
-    return sqrt((a[0] * a[0]) + (a[1] * a[1]) + (a[2] * a[2])) * 0.5
+def numpy_noise(vecs, out, out_mode, seed, noise_function, smooth, output_numpy):
+    if out_mode == 'VECTOR':
+        obj = np.array(vecs)
+        r_noise = np.stack((
+            noise_function(obj, seed, smooth),
+            noise_function(obj, seed + 1, smooth),
+            noise_function(obj, seed + 2, smooth)
+            )).T
+        out.append((2 * r_noise - 1) if output_numpy else (2 * r_noise - 1).tolist())
+    else:
+        if output_numpy:
+            out.append(noise_function(np.array(vecs), seed, smooth))
+        else:
+            out.append(noise_function(np.array(vecs), seed, smooth).tolist())
+
+def mathulis_noise(vecs, out, out_mode, noise_type, noise_function, output_numpy):
+    if out_mode == 'VECTOR':
+        if output_numpy:
+            out.append(np.array([noise_function(v, noise_basis=noise_type)[:] for v in vecs]))
+        else:
+            out.append([noise_function(v, noise_basis=noise_type)[:] for v in vecs])
+    else:
+        vecs = np.array([noise_function(v, noise_basis=noise_type)[:] for v in vecs])
+        vecs -= [0, 0, 1]
+        noise_output = np.linalg.norm(vecs, axis=1)*0.5
+        out.append(noise_output if output_numpy else noise_output.tolist())
 
 
-avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
-noise_f = {'SCALAR': deepnoise, 'VECTOR': noise.noise_vector}
+avail_noise = [(t[0], t[0].title().replace('_', ' '), t[0].title(), '', t[1]) for t in noise_options]
+
+for idx, new_type in enumerate(noise_numpy_types.keys()):
+    avail_noise.append((new_type, new_type.title().replace('_', ' '), new_type.title(), '', 100 + idx))
 
 
 class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Vector Noise
     Tooltip: Affect input verts with a noise function.
-    
+
     A short description for reader of node code
     """
 
@@ -51,6 +75,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
 
+    @throttled
     def changeMode(self, context):
         outputs = self.outputs
         if self.out_mode == 'SCALAR':
@@ -80,6 +105,21 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     seed: IntProperty(default=0, name='Seed', update=updateNode)
 
+    smooth: BoolProperty(
+        name='Smooth',
+        description='Smooth noise',
+        default=True, update=updateNode)
+
+    interpolate: BoolProperty(
+        name='Interpolate',
+        description='Interpolate gradients',
+        default=True, update=updateNode)
+
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Seed').prop_name = 'seed'
@@ -88,35 +128,63 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons(self, context, layout):
         layout.prop(self, 'out_mode', expand=True)
         layout.prop(self, 'noise_type', text="Type")
+        if self.noise_type in noise_numpy_types.keys():
+            row = layout.row(align=True)
+            row.prop(self, 'smooth', toggle=True)
+            row.prop(self, 'interpolate', toggle=True)
+
+
+    def draw_buttons_ext(self, ctx, layout):
+        self.draw_buttons(ctx, layout)
+        layout.prop(self, "output_numpy", toggle=False)
+
+    def rclick_menu(self, context, layout):
+        layout.prop_menu_enum(self, "out_mode")
+        layout.prop_menu_enum(self, "noise_type")
+        if self.noise_type in noise_numpy_types.keys():
+            layout.prop(self, 'smooth', toggle=True)
+            layout.prop(self, 'interpolate', toggle=True)
+        layout.prop(self, "output_numpy", toggle=True)
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
 
-        if not outputs[0].is_linked:
+        if not (outputs[0].is_linked and inputs[0].is_linked):
             return
 
         out = []
         verts = inputs['Vertices'].sv_get(deepcopy=False)
         seeds = inputs['Seed'].sv_get()[0]
 
-        noise_function = noise_f[self.out_mode]
+        max_len = max(map(len, (seeds, verts)))
+        noise_type = self.noise_type
 
+        out_mode = self.out_mode
+        output_numpy = self.output_numpy
 
-        for idx, (seed, obj) in enumerate(zip(*match_long_repeat([seeds, verts]))):
-            # multi-pass, make sure seed_val is a number and it isn't 0.
-            # 0 unsets the seed and generates unreproducable output based on system time
-            # We force the seed to a non 0 value.
-            # See https://github.com/nortikin/sverchok/issues/1095#issuecomment-271261600
-            seed_val = seed if isinstance(seed, (int, float)) else 0
-            seed_val = int(round(seed_val)) or 140230
+        if noise_type in noise_numpy_types.keys():
 
-            noise.seed_set(seed_val)
-            out.append([noise_function(v, noise_basis=self.noise_type) for v in obj])
+            noise_function = noise_numpy_types[noise_type][self.interpolate]
+            smooth = self.smooth
+            for i in range(max_len):
+                seed = seeds[min(i, len(seeds)-1)]
+                obj_id = min(i, len(verts)-1)
+                numpy_noise(verts[obj_id], out, out_mode, seed, noise_function, smooth, output_numpy)
 
-        if 'Noise V' in outputs:
-            outputs['Noise V'].sv_set(Vector_degenerate(out))
         else:
-            outputs['Noise S'].sv_set(out)
+
+            noise_function = noise.noise_vector
+
+            for i in range(max_len):
+                seed = seeds[min(i, len(seeds)-1)]
+                obj_id = min(i, len(verts)-1)
+                # 0 unsets the seed and generates unreproducable output based on system time
+                seed_val = int(round(seed)) or 140230
+                noise.seed_set(seed_val)
+                mathulis_noise(verts[obj_id], out, out_mode, noise_type, noise_function, output_numpy)
+
+        outputs[0].sv_set(out)
+
 
     def draw_label(self):
         if self.hide:
@@ -130,4 +198,3 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
 classes = [SvNoiseNodeMK2]
 register, unregister = bpy.utils.register_classes_factory(classes)
-

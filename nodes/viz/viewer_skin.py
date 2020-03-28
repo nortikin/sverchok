@@ -24,7 +24,7 @@ import bpy
 from bpy.props import (BoolProperty, FloatProperty, IntProperty)
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, fullList_np, numpy_full_list
+from sverchok.data_structure import updateNode, fullList_np, numpy_full_list
 from sverchok.utils.sv_obj_helper import SvObjHelper
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
@@ -59,7 +59,7 @@ def process_mesh_into_features(skin_vertices, edge_keys, assume_unique=True):
         ndA[highest].add(lowest)
 
     ndB = defaultdict(set)
-    ndC = {k: len(ndA[k]) for k in sorted(ndA.keys()) if len(ndA[k]) == 1 or len(ndA[k]) >=3}
+    ndC = {k: len(ndA[k]) for k in sorted(ndA.keys()) if len(ndA[k]) == 1 or len(ndA[k]) >= 3}
     for k, v in ndC.items():
         ndB[v].add(k)
 
@@ -89,7 +89,7 @@ def shrink_geometry(bm, dist, layers):
     bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=dist)
     bm.verts.ensure_lookup_table()
 
-    verts, edges, faces = pydata_from_bmesh(bm)
+    verts, edges, _ = pydata_from_bmesh(bm)
     data_out = [verts, edges]
     for layer_name in made_layers:
         data_out.append([bm.verts[i][layer_name] for i in range(len(bm.verts))])
@@ -251,7 +251,7 @@ class SvSkinViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
         fullList_np(geometry_full[2], maxlen)
         fullList_np(geometry_full[3], maxlen)
         fullList_np(geometry_full[4], maxlen)
-        print(geometry_full[1])
+
         catch_idx = 0
         for idx, (geometry) in enumerate(zip(*geometry_full)):
             catch_idx = idx
