@@ -80,7 +80,7 @@ Custom noises:
 - Random Gradients:
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_7.png
 
--Ortho Gradients:
+- Ortho Gradients:
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/vector/noise/noise_sverchok_blender_example_8.png
 
 - Numpy Perlin:

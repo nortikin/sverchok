@@ -90,7 +90,7 @@ For the custom noises:
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_8.png
 
-The custom noises will only allow one seed and matrix per object but the offer two different interpolations per noise to change the noise look
+The custom noises will only allow one seed and matrix per object but they offer two different interpolations per noise to change the noise look.
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_9.png
 
@@ -98,7 +98,7 @@ Scale will be passed per vertex allowing different effects.
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_10.png
 
-When interpolate is off there will be seams in the texture. The seems are placed every unit with the use of the matrix can be used to produce hard edges.
+When interpolate is off there will be seams in the texture. As the seems are placed every unit with the use of the matrix can be used to produce hard edges.
 
 
 .. _Noise: http://www.blender.org/documentation/blender_python_api_current/mathutils.noise.html

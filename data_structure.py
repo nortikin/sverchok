@@ -18,14 +18,20 @@
 
 from math import radians, ceil
 import itertools
-import time
 import ast
 import copy
 from itertools import zip_longest
 import bpy
 from mathutils import Vector, Matrix
-import numpy as np
-
+from numpy import (
+    array as np_array,
+    newaxis as np_newaxis,
+    ndarray,
+    repeat as np_repeat,
+    concatenate as np_concatenate,
+    tile as np_tile,
+    float64,
+    int32)
 from sverchok.utils.logging import info
 
 DEBUG_MODE = False
@@ -180,7 +186,7 @@ def fullList_np(l, count):
             l = numpy_full_list(l, n)
     else:
         l = l[:count]
-    return
+
 
 def fullList_deep_copy(l, count):
     """the same that full list function but
@@ -255,14 +261,14 @@ numpy_list_match_modes =  list_match_modes[:3]
 
 def numpy_full_list(array, desired_length):
     '''retuns array with desired length by repeating last item'''
-    if type(array) != np.ndarray:
-        array = np.array(array)
+    if not isinstance(array, ndarray):
+        array = np_array(array)
 
     length_diff = desired_length - array.shape[0]
 
     if length_diff > 0:
-        new_part = np.repeat(array[np.newaxis, -1], length_diff, axis=0)
-        return np.concatenate((array, new_part))[:desired_length]
+        new_part = np_repeat(array[np_newaxis, -1], length_diff, axis=0)
+        return np_concatenate((array, new_part))[:desired_length]
     return array[:desired_length]
 
 def numpy_full_list_cycle(array, desired_length):
@@ -272,18 +278,24 @@ def numpy_full_list_cycle(array, desired_length):
     if length_diff > 0:
         if length_diff < array.shape[0]:
 
-            return np.concatenate((array, array[:length_diff]))
+            return np_concatenate((array, array[:length_diff]))
 
-        new_part = np.repeat(array, ceil(length_diff / array.shape[0]), axis=0)
+        new_part = np_repeat(array, ceil(length_diff / array.shape[0]), axis=0)
         if len(array.shape) > 1:
             shape = (ceil(length_diff / array.shape[0]), 1)
         else:
             shape = ceil(length_diff / array.shape[0])
-        new_part = np.tile(array, shape)
-        return np.concatenate((array, new_part[:length_diff]))
+        new_part = np_tile(array, shape)
+        return np_concatenate((array, new_part[:length_diff]))
 
     return array[:desired_length]
 
+numpy_full_list_func = {
+    "SHORT":  lambda x,l: x[:l],
+    "CYCLE":  numpy_full_list_cycle,
+    "REPEAT": numpy_full_list,
+    }
+    
 def numpy_match_long_repeat(list_of_arrays):
     '''match numpy arrays length by repeating last one'''
     out = []
@@ -293,8 +305,8 @@ def numpy_match_long_repeat(list_of_arrays):
     for array in list_of_arrays:
         length_diff = maxl - array.shape[0]
         if length_diff > 0:
-            new_part = np.repeat(array[np.newaxis, -1], length_diff, axis=0)
-            array = np.concatenate((array, new_part))
+            new_part = np_repeat(array[np_newaxis, -1], length_diff, axis=0)
+            array = np_concatenate((array, new_part))
         out.append(array)
     return out
 
@@ -309,15 +321,15 @@ def numpy_match_long_cycle(list_of_arrays):
         if length_diff > 0:
             if length_diff < array.shape[0]:
 
-                array = np.concatenate((array, array[:length_diff]))
+                array = np_concatenate((array, array[:length_diff]))
             else:
-                new_part = np.repeat(array, ceil(length_diff / array.shape[0]), axis=0)
+                new_part = np_repeat(array, ceil(length_diff / array.shape[0]), axis=0)
                 if len(array.shape) > 1:
                     shape = (ceil(length_diff / array.shape[0]), 1)
                 else:
                     shape = ceil(length_diff / array.shape[0])
-                new_part = np.tile(array, shape)
-                array = np.concatenate((array, new_part[:length_diff]))
+                new_part = np_tile(array, shape)
+                array = np_concatenate((array, new_part[:length_diff]))
         out.append(array)
     return out
 
@@ -447,13 +459,13 @@ def levels_of_list_or_np(lst):
     for n in lst:
         if isinstance(n, (list, tuple)):
             level += levels_of_list_or_np(n)
-        elif isinstance(n, (np.ndarray)):
+        elif isinstance(n, (ndarray)):
             level += len(n.shape)
 
         return level
     return 0
 
-def get_data_nesting_level(data, data_types=(float, int, np.float64, np.int32, str)):
+def get_data_nesting_level(data, data_types=(float, int, float64, int32, str)):
     """
     data: number, or list of numbers, or list of lists, etc.
     data_types: list or tuple of types.
@@ -475,9 +487,9 @@ def get_data_nesting_level(data, data_types=(float, int, np.float64, np.int32, s
 
     def helper(data, recursion_depth):
         """ Needed only for better error reporting. """
-        if type(data) in data_types:
+        if isinstance(data, data_types):
             return 0
-        elif type(data) in (list, tuple, np.ndarray):
+        elif isinstance(data, (list, tuple, ndarray)):
             if len(data) == 0:
                 return 1
             else:
@@ -489,7 +501,7 @@ def get_data_nesting_level(data, data_types=(float, int, np.float64, np.int32, s
 
     return helper(data, 0)
 
-def ensure_nesting_level(data, target_level, data_types=(float, int, np.float64, str)):
+def ensure_nesting_level(data, target_level, data_types=(float, int, int32, float64, str)):
     """
     data: number, or list of numbers, or list of lists, etc.
     target_level: data nesting level required for further processing.
@@ -545,7 +557,7 @@ def describe_data_shape(data):
     """
     def helper(data):
         if not isinstance(data, (list, tuple)):
-            if isinstance(data, (np.ndarray)):
+            if isinstance(data, ndarray):
                 return len(data.shape), type(data).__name__ + " of " + str(data.dtype) + " with shape " + str(data.shape)
             return 0, type(data).__name__
         else:
@@ -643,9 +655,9 @@ def partition(p, lst):
 def Matrix_listing(prop):
     """Convert Matrix() into Sverchok data"""
     mat_out = []
-    for i, matrix in enumerate(prop):
+    for matrix in prop:
         unit = []
-        for k, m in enumerate(matrix):
+        for m in matrix:
             # [Matrix0, Matrix1, ... ]
             unit.append(m[:])
         mat_out.append((unit))
@@ -655,7 +667,7 @@ def Matrix_listing(prop):
 def Matrix_generate(prop):
     """Generate Matrix() data from Sverchok data"""
     mat_out = []
-    for i, matrix in enumerate(prop):
+    for matrix in prop:
         unit = Matrix()
         for k, m in enumerate(matrix):
             # [Matrix0, Matrix1, ... ]
@@ -664,36 +676,36 @@ def Matrix_generate(prop):
     return mat_out
 
 
-def Matrix_location(prop, list=False):
+def Matrix_location(prop, is_list=False):
     """return a list of locations represeting the translation of the matrices"""
     Vectors = []
     for p in prop:
-        if list:
+        if is_list:
             Vectors.append(p.translation[:])
         else:
             Vectors.append(p.translation)
     return [Vectors]
 
 
-def Matrix_scale(prop, list=False):
+def Matrix_scale(prop, is_list=False):
     """return a Vector()/list represeting the scale factor of the matrices"""
     Vectors = []
     for p in prop:
-        if list:
+        if is_list:
             Vectors.append(p.to_scale()[:])
         else:
             Vectors.append(p.to_scale())
     return [Vectors]
 
 
-def Matrix_rotation(prop, list=False):
+def Matrix_rotation(prop, is_list=False):
     """return (Vector, rotation) utility function for Matrix Destructor.
     if list is true the Vector() is decomposed into tuple format.
     """
     Vectors = []
     for p in prop:
         q = p.to_quaternion()
-        if list:
+        if is_list:
             vec, angle = q.to_axis_angle()
             Vectors.append((vec[:], angle))
         else:
@@ -714,16 +726,16 @@ def Vector_degenerate(prop):
 def Edg_pol_generate(prop):
     edg_pol_out = []
     if len(prop[0][0]) == 2:
-        type = 'edg'
+        e_type = 'edg'
     elif len(prop[0]) > 2:
-        type = 'pol'
+        e_type = 'pol'
     for ob in prop:
-        list = []
+        list_out = []
         for p in ob:
-            list.append(p)
-        edg_pol_out.append(list)
+            list_out.append(p)
+        edg_pol_out.append(list_out)
     # [ [(n1,n2,n3), (n1,n7,n9), p, p, p, p...], [...],... ] n = vertexindex
-    return type, edg_pol_out
+    return e_type, edg_pol_out
 
 
 def matrixdef(orig, loc, scale, rot, angle, vec_angle=[[]]):

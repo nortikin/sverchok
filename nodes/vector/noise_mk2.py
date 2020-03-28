@@ -52,8 +52,8 @@ def mathulis_noise(vecs, out, out_mode, noise_type, noise_function, output_numpy
     else:
         vecs = np.array([noise_function(v, noise_basis=noise_type)[:] for v in vecs])
         vecs -= [0, 0, 1]
-        n = np.linalg.norm(vecs, axis=1)*0.5
-        out.append(n if output_numpy else n.tolist())
+        noise_output = np.linalg.norm(vecs, axis=1)*0.5
+        out.append(noise_output if output_numpy else noise_output.tolist())
 
 
 avail_noise = [(t[0], t[0].title().replace('_', ' '), t[0].title(), '', t[1]) for t in noise_options]
@@ -74,7 +74,7 @@ class SvNoiseNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Vector Noise'
     bl_icon = 'FORCE_TURBULENCE'
     sv_icon = 'SV_VECTOR_NOISE'
-    
+
     @throttled
     def changeMode(self, context):
         outputs = self.outputs

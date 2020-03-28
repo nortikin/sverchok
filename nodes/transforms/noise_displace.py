@@ -24,7 +24,7 @@ from bpy.props import EnumProperty, IntProperty, FloatVectorProperty, BoolProper
 from mathutils import noise, Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate, list_match_func, numpy_full_list, numpy_list_match_modes, iter_list_match_func, numpy_list_match_func)
+from sverchok.data_structure import (updateNode, Vector_degenerate, list_match_func, numpy_list_match_modes, iter_list_match_func, numpy_full_list_func)
 from sverchok.utils.sv_noise_utils import noise_options, noise_numpy_types
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
@@ -75,11 +75,11 @@ def vector_noise_normal_multi_seed(params, noise_basis='PERLIN_ORIGINAL'):
     return v_vert + Vector((noise_v[0]*scale_out[0], noise_v[1]*scale_out[1], noise_v[2]*scale_out[2]))
 
 
-def v_noise(verts, pols, m_prop, noise_type, result):
+def v_noise(verts, _, m_prop, noise_type, result):
     func = vector_noise if len(m_prop) == 2 else vector_noise_multi_seed
     result.append([func(v_prop, noise_basis=noise_type) for v_prop in zip(verts, *m_prop)])
 
-def v_noise_numpy(verts, pols, noise_type, n_props, result):
+def v_noise_numpy(verts, _, noise_type, n_props, result):
     scale, seed, matrix, smooth, interpolate = n_props
     noise_function = noise_numpy_types[noise_type][interpolate]
     smooth = smooth
@@ -112,7 +112,7 @@ def v_normal_numpy(verts, pols, noise_type, n_props, result):
 
 def noise_displace(params, constant, matching_f):
     result = []
-    noise_function, noise_type, smooth, interpolate, match_mode = constant
+    noise_function, noise_type, _, _, match_mode = constant
     params = matching_f(params)
     local_match = iter_list_match_func[match_mode]
     for props in zip(*params):
@@ -123,11 +123,10 @@ def noise_displace(params, constant, matching_f):
             matrix = [matrix.inverted()]
         if len(seed_val) > 1:
             m_prop = local_match([seed_val, scale_out, matrix])
-            seed = seed_val[0]
         else:
             m_prop = local_match([scale_out, matrix])
             seed_val = seed_val[0]
-            seed = seed_val
+            
             noise.seed_set(int(seed_val) if seed_val else 1385)
         noise_function(verts, pols, m_prop, noise_type, result)
 
@@ -138,11 +137,12 @@ def noise_displace_numpy(params, constant, matching_f):
     result = []
     noise_function, noise_type, smooth, interpolate, match_mode = constant
     params = matching_f(params)
+    local_match = numpy_full_list_func[match_mode]
     for props in zip(*params):
         verts, pols, seed_val, scale_out, matrix = props
-        np_scale = numpy_full_list(np.array(scale_out), len(verts))
+        np_scale = local_match(np.array(scale_out), len(verts))
         if type(matrix) == list:
-            matrix = m[0].inverted()
+            matrix = matrix[0].inverted()
         else:
             matrix = matrix.inverted()
 
@@ -259,7 +259,6 @@ class SvNoiseDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
             main_func = noise_displace
             noise_function = noise_func[self.out_mode]
         ops = [noise_function, self.noise_type, self.smooth, self.interpolate, self.list_match]
-        # main_func = noise_displace_numpy if self.noise_type in noise_numpy_types.keys() else noise_displace
         result = recurse_f_level_control(params, ops, main_func, matching_f, desired_levels)
 
         self.outputs[0].sv_set(result)
