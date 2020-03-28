@@ -49,9 +49,17 @@ Inputs & Parameters
 | Noise Matrix   | Matrix input to determinate noise origin, scale and rotation            |
 +----------------+-------------------------------------------------------------------------+
 
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**List Match**: Define how list with different lengths should be matched
+
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster with  Custom noises slower with Mathutils noises).
+
 Examples
 --------
-
 
 
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_1.png
@@ -71,9 +79,15 @@ In this example the scale output is used to blend with another oscillation textu
 
 The "Vector" Mode does not use vertex normals so it can be used just with vertices
 
+
 .. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_7.png
 
 The "Scale out" input can be used to mask the affected vertices
+
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/transforms/noise_displace/noise_displace_blender_sverchok_example_11.png
+
+You can create many different outputs from one set of vertices if you input multiple seeds :
 
 For the Mathutils Noises:
 

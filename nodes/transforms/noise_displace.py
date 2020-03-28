@@ -24,7 +24,7 @@ from bpy.props import EnumProperty, IntProperty, FloatVectorProperty, BoolProper
 from mathutils import noise, Vector, Matrix
 
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, Vector_degenerate, list_match_func, numpy_list_match_modes, iter_list_match_func, numpy_full_list_func)
+from sverchok.data_structure import (updateNode, list_match_func, numpy_list_match_modes, iter_list_match_func, numpy_full_list_func)
 from sverchok.utils.sv_noise_utils import noise_options, noise_numpy_types
 from sverchok.utils.sv_itertools import recurse_f_level_control
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
@@ -75,31 +75,53 @@ def vector_noise_normal_multi_seed(params, noise_basis='PERLIN_ORIGINAL'):
     return v_vert + Vector((noise_v[0]*scale_out[0], noise_v[1]*scale_out[1], noise_v[2]*scale_out[2]))
 
 
-def v_noise(verts, _, m_prop, noise_type, result):
+def v_noise(verts, _, m_prop, noise_type, result, output_numpy):
+    py_verts = verts.tolist() if isinstance(verts, np.ndarray) else verts
     func = vector_noise if len(m_prop) == 2 else vector_noise_multi_seed
-    result.append([func(v_prop, noise_basis=noise_type) for v_prop in zip(verts, *m_prop)])
+    if output_numpy:
+        result.append(
+            np.array(
+                [func(v_prop, noise_basis=noise_type)[:] for v_prop in zip(py_verts, *m_prop)]
+                )
+            )
+    else:
+        result.append([func(v_prop, noise_basis=noise_type)[:] for v_prop in zip(py_verts, *m_prop)])
 
-def v_noise_numpy(verts, _, noise_type, n_props, result):
+def v_noise_numpy(verts, _, noise_type, n_props, result, output_numpy):
     scale, seed, matrix, smooth, interpolate = n_props
     noise_function = noise_numpy_types[noise_type][interpolate]
     smooth = smooth
     np_verts = np.array(verts)
     distorted_v = matrix_apply_np(np_verts, matrix)
+
     n_v = np.stack((
         noise_function(distorted_v, seed, smooth),
         noise_function(distorted_v, seed+1, smooth),
         noise_function(distorted_v, seed+2, smooth)
         )).T
-    result.append(np_verts +  (2 * n_v - 1) * scale)
 
-def v_normal(verts, pols, m_prop, noise_type, result):
-    bm = bmesh_from_pydata(verts, [], pols, normal_update=True)
+    if output_numpy:
+        result.append(np_verts +  (2 * n_v - 1) * scale)
+    else:
+        result.append((np_verts +  (2 * n_v - 1) * scale).tolist())
+
+def v_normal(verts, pols, m_prop, noise_type, result, output_numpy):
+    py_verts = verts.tolist() if isinstance(verts, np.ndarray) else verts
+    bm = bmesh_from_pydata(py_verts, [], pols, normal_update=True)
     normals = [Vector(v.normal) for v in bm.verts]
     func = vector_noise_normal if len(m_prop) == 2 else vector_noise_normal_multi_seed
-    result.append([func(v_prop, noise_basis=noise_type) for v_prop in zip(verts, *m_prop, normals)])
+    if output_numpy:
+        result.append(
+            np.array(
+                [func(v_prop, noise_basis=noise_type)[:] for v_prop in zip(py_verts, *m_prop, normals)]
+                )
+            )
+    else:
+        result.append([func(v_prop, noise_basis=noise_type)[:] for v_prop in zip(verts, *m_prop, normals)])
+
     bm.free()
 
-def v_normal_numpy(verts, pols, noise_type, n_props, result):
+def v_normal_numpy(verts, pols, noise_type, n_props, result, output_numpy):
     bm = bmesh_from_pydata(verts, [], pols, normal_update=True)
     normals = np.array([v.normal for v in bm.verts])
     scale, seed, matrix, smooth, interpolate = n_props
@@ -107,12 +129,15 @@ def v_normal_numpy(verts, pols, noise_type, n_props, result):
     smooth = smooth
     np_verts = np.array(verts)
     n_v = noise_function(matrix_apply_np(np_verts, matrix), seed, smooth)
-    result.append(np_verts + normals * n_v[:, np.newaxis] * scale)
+    if output_numpy:
+        result.append(np_verts + normals * n_v[:, np.newaxis] * scale)
+    else:
+        result.append((np_verts + normals * n_v[:, np.newaxis] * scale).tolist())
     bm.free()
 
 def noise_displace(params, constant, matching_f):
     result = []
-    noise_function, noise_type, _, _, match_mode = constant
+    noise_function, noise_type, _, _, match_mode, output_numpy = constant
     params = matching_f(params)
     local_match = iter_list_match_func[match_mode]
     for props in zip(*params):
@@ -126,16 +151,16 @@ def noise_displace(params, constant, matching_f):
         else:
             m_prop = local_match([scale_out, matrix])
             seed_val = seed_val[0]
-            
-            noise.seed_set(int(seed_val) if seed_val else 1385)
-        noise_function(verts, pols, m_prop, noise_type, result)
 
-    return Vector_degenerate(result)
+            noise.seed_set(int(seed_val) if seed_val else 1385)
+        noise_function(verts, pols, m_prop, noise_type, result, output_numpy)
+
+    return result
 
 
 def noise_displace_numpy(params, constant, matching_f):
     result = []
-    noise_function, noise_type, smooth, interpolate, match_mode = constant
+    noise_function, noise_type, smooth, interpolate, match_mode, output_numpy = constant
     params = matching_f(params)
     local_match = numpy_full_list_func[match_mode]
     for props in zip(*params):
@@ -147,9 +172,9 @@ def noise_displace_numpy(params, constant, matching_f):
             matrix = matrix.inverted()
 
         n_props = [np_scale, seed_val[0], matrix, smooth, interpolate]
-        noise_function(verts, pols, noise_type, n_props, result)
+        noise_function(verts, pols, noise_type, n_props, result, output_numpy)
 
-    return Vector_degenerate(result)
+    return result
 
 
 avail_noise = [(t[0], t[0].title(), t[0].title(), '', t[1]) for t in noise_options]
@@ -211,6 +236,11 @@ class SvNoiseDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
         description='Interpolate gradients',
         default=True, update=updateNode)
 
+    output_numpy: BoolProperty(
+        name='Output NumPy',
+        description='Output NumPy arrays',
+        default=False, update=updateNode)
+
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'Vertices')
         self.inputs.new('SvStringsSocket', 'Polygons')
@@ -231,13 +261,16 @@ class SvNoiseDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
     def draw_buttons_ext(self, context, layout):
         '''draw buttons on the N-panel'''
         self.draw_buttons(context, layout)
+        layout.prop(self, "output_numpy", toggle=False)
         layout.prop(self, 'list_match', expand=False)
 
     def rclick_menu(self, context, layout):
-        layout.prop_menu_enum(self, "list_match", text="List Match")
         if self.noise_type in noise_numpy_types.keys():
             layout.prop(self, 'smooth', toggle=True)
             layout.prop(self, 'interpolate', toggle=True)
+        layout.prop_menu_enum(self, "list_match", text="List Match")
+        layout.prop(self, "output_numpy", toggle=True)
+
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
@@ -258,7 +291,7 @@ class SvNoiseDisplaceNode(bpy.types.Node, SverchCustomTreeNode):
         else:
             main_func = noise_displace
             noise_function = noise_func[self.out_mode]
-        ops = [noise_function, self.noise_type, self.smooth, self.interpolate, self.list_match]
+        ops = [noise_function, self.noise_type, self.smooth, self.interpolate, self.list_match, self.output_numpy]
         result = recurse_f_level_control(params, ops, main_func, matching_f, desired_levels)
 
         self.outputs[0].sv_set(result)
