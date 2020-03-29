@@ -9,6 +9,7 @@ Curves
    circle
    polyline
    cubic_spline
+   fillet_polyline
    apply_field_to_curve
    concat_curves
    cast_curve
