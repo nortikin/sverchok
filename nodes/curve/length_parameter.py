@@ -33,7 +33,7 @@ class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
     modes = [('SPL', 'Cubic', "Cubic Spline", 0),
              ('LIN', 'Linear', "Linear Interpolation", 1)]
 
-    mode: EnumProperty(name='Mode', default="SPL", items=modes, update=updateNode)
+    mode: EnumProperty(name='Interpolation mode', default="SPL", items=modes, update=updateNode)
 
     @throttled
     def update_sockets(self, context):
@@ -68,6 +68,9 @@ class SvExCurveLengthParameterNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, 'mode', expand=True)
+
+    def draw_buttons_ext(self, context, layout):
+        self.draw_buttons(context, layout)
         layout.prop(self, 'eval_mode', expand=True)
 
     def process(self):

@@ -14,6 +14,7 @@ Curves
    apply_field_to_curve
    concat_curves
    curve_length
+   length_parameter
    cast_curve
    eval_curve
 
