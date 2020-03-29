@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from textwrap import dedent
 
 import bpy
 from mathutils import Matrix
@@ -31,7 +32,7 @@ from sverchok.data_structure import (updateNode, second_as_first_cycle as safc)
 class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     ''' Set Object Props '''
     bl_idname = 'SvSetDataObjectNodeMK2'
-    bl_label = 'Object ID Set MK2'
+    bl_label = 'Object ID Set'
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_OBJECT_ID_SET'
 
@@ -52,40 +53,56 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         Prop = self.formula
         objs = O.sv_get()
         if isinstance(objs[0], list):
+
             if V.is_linked:
+
+                # ensure correct V nesting.
                 v = V.sv_get()
                 if "matrix" in Prop:
                     v = safc(objs, [v])
-                    for OBL, VALL in zip(objs, v):
-                        VALL = safc(OBL, VALL)
-                        exec("for i, i2 in zip(OBL, VALL):\n    i."+Prop+"= i2")
                 else:
-                    if isinstance(v[0], list):
-                        v = safc(objs, v)
-                    else:
-                        v = safc(objs, [v])
-                    for OBL, VALL in zip(objs, v):
-                        VALL = safc(OBL, VALL)
-                        exec("for i, i2 in zip(OBL, VALL):\n    i."+Prop+"= i2")
+                    v = safc(objs, v) if isinstance(v[0], list) else safc(objs, [v])
+
+                # execute
+                for OBL, VALL in zip(objs, v):
+                    VALL = safc(OBL, VALL)
+                    exec(dedent(f"""\
+                    for i, i2 in zip(OBL, VALL):
+                        i.{Prop} = i2"""))                        
+
             elif Ov.is_linked:
-                Ov.sv_set(eval("[[i."+Prop+" for i in OBL] for OBL in objs]"))
+                Ov.sv_set(eval(f"[[i.{Prop} for i in OBL] for OBL in objs]"))
             else:
-                exec("for OL in objs:\n    for i in OL:\n        i."+Prop)
+                exec(dedent(f"""\
+                for OL in objs:
+                    for i in OL:
+                        i.{Prop}"""))
+
         else:
+
             if V.is_linked:
+                
+                # ensure correct V nesting.
                 v = V.sv_get()
                 if "matrix" in Prop:
                     v = safc(objs, v)
-                    exec("for i, i2 in zip(objs, v):\n    i."+Prop+"= i2")
                 else:
                     if isinstance(v[0], list):
                         v = v[0]
                     v = safc(objs, v)
-                    exec("for i, i2 in zip(objs, v):\n    i."+Prop+"= i2")
+
+                # execute                    
+                exec(dedent(f"""\
+                for i, i2 in zip(objs, v):
+                    i.{Prop} = i2"""))
+
             elif Ov.is_linked:
-                Ov.sv_set(eval("[i."+Prop+" for i in objs]"))
+                Ov.sv_set(eval(f"[i.{Prop} for i in objs]"))
             else:
-                exec("for i in objs:\n    i."+Prop)
+                exec(dedent(f"""\
+                for i in objs:
+                    i.{Prop}"""))
+        
         if Oo.is_linked:
             Oo.sv_set(objs)
 
