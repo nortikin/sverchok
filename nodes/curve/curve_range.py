@@ -34,12 +34,18 @@ class SvExCurveRangeNode(bpy.types.Node, SverchCustomTreeNode):
             curve_s = [curve_s]
 
         for curves in curve_s:
+            t_min_new = []
+            t_max_new = []
+            range_new = []
             for curve in curves:
                 t_min, t_max = curve.get_u_bounds()
                 t_range = t_max - t_min
-                t_min_out.append(t_min)
-                t_max_out.append(t_max)
-                range_out.append(t_range)
+                t_min_new.append(t_min)
+                t_max_new.append(t_max)
+                range_new.append(t_range)
+            t_min_out.append(t_min_new)
+            t_max_out.append(t_max_new)
+            range_out.append(range_new)
 
         self.outputs['TMin'].sv_set(t_min_out)
         self.outputs['TMax'].sv_set(t_max_out)

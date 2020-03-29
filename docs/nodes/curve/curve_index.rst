@@ -13,6 +13,7 @@ Curves
    curve_formula
    apply_field_to_curve
    concat_curves
+   curve_length
    cast_curve
    eval_curve
 

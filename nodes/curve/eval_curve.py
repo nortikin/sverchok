@@ -85,7 +85,7 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
                         t_min, t_max = curve.get_u_bounds()
                         ts = np.linspace(t_min, t_max, num=samples, dtype=np.float64)
                     else:
-                        ts = np.array(ts)
+                        ts = np.array(ts)[np.newaxis].T
 
                     new_verts = curve.evaluate_array(ts)
                     new_verts = new_verts.tolist()
