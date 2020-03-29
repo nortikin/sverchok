@@ -7,6 +7,7 @@ Curves
 
    line
    circle
+   polyline
    cubic_spline
    apply_field_to_curve
    concat_curves
