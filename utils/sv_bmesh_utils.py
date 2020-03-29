@@ -31,7 +31,9 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
     bm = bmesh.new()
     add_vert = bm.verts.new
 
-    for co in verts:
+    py_verts = verts.tolist() if type(verts) == np.ndarray else verts
+
+    for co in py_verts:
         add_vert(co)
 
     bm.verts.index_update()
@@ -39,7 +41,8 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
 
     if len(faces) > 0:
         add_face = bm.faces.new
-        for face in faces:
+        py_faces = faces.tolist() if type(faces) == np.ndarray else faces
+        for face in py_faces:
             add_face(tuple(bm.verts[i] for i in face))
 
         bm.faces.index_update()
@@ -50,6 +53,7 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
 
         add_edge = bm.edges.new
         get_edge = bm.edges.get
+        py_faces = edges.tolist() if type(edges) == np.ndarray else edges
         for idx, edge in enumerate(edges):
             edge_seq = tuple(bm.verts[i] for i in edge)
             bm_edge = get_edge(edge_seq)
@@ -76,11 +80,35 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
         bm.normal_update()
     return bm
 
+def numpy_data_from_bmesh(bm, out_np, face_data=None):
+    if out_np[0]:
+        verts = np.array([v.co[:] for v in bm.verts])
+    else:
+        verts = [v.co[:] for v in bm.verts]
+    if out_np[1]:
+        edges = np.array([[e.verts[0].index, e.verts[1].index] for e in bm.edges])
+    else:
+        edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
+    if out_np[2]:
+        faces = np.array([[i.index for i in p.verts] for p in bm.faces])
+    else:
+        faces = [[i.index for i in p.verts] for p in bm.faces]
+
+    if face_data:
+        if out_np[3]:
+            face_data_out = np.array(face_data_from_bmesh_faces(bm, face_data))
+        else:
+            face_data_out = face_data_from_bmesh_faces(bm, face_data)
+            return verts, edges, faces, face_data_out
+    else:
+        return verts, edges, faces, []
 
 def pydata_from_bmesh(bm, face_data=None):
+
     verts = [v.co[:] for v in bm.verts]
-    edges = [[i.index for i in e.verts] for e in bm.edges]
+    edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
     faces = [[i.index for i in p.verts] for p in bm.faces]
+
     if face_data is None:
         return verts, edges, faces
     else:
