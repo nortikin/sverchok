@@ -28,7 +28,7 @@ def avr(data):
         result = sum_d / len(data)
     return result
 def numpy_average(data):
-    if len(data.shape) > 1:
+    if data.ndim > 1:
         return data[data.shape[0] //2]
     return np.sum(data)/data.shape[0]
 

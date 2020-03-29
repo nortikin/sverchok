@@ -86,7 +86,7 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
             lst = list(lst)
             random.shuffle(lst)
             return tuple(lst)
-        elif lst_type == np.ndarray:
+        elif lst_type == ndarray:
             out = array(lst)
             np_random.shuffle(out)
             return out

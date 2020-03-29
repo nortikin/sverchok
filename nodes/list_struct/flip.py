@@ -21,7 +21,7 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (changable_sockets, dataCorrect, updateNode)
-from numpy import stack, ndarray
+from numpy import stack, ndarray, split
 
 def flip(data, level):
     level -= 1
@@ -39,13 +39,15 @@ def flip(data, level):
                 for l in data:
                     try:
                         out_.append(l[i])
-                    except:
+                    except IndexError:
                         continue
                 out.append(out_)
     return out
 
 def compatible_arrays(data):
-    return all([isinstance(d, ndarray) for d in data]) and all([data[i].shape == data[i+1].shape for i in range(len(data[:-1]))] )
+    is_all_np_arrays = all([isinstance(d, ndarray) for d in data])
+    is_all_equal_shape = all([data[i].shape == data[i+1].shape for i in range(len(data[:-1]))])
+    return is_all_np_arrays and is_all_equal_shape
 
 def maxlen(data):
     le = []
