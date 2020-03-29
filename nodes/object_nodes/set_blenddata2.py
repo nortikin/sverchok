@@ -47,6 +47,26 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', 'outvalues')
         self.outputs.new('SvObjectSocket', 'Objects')
 
+
+    def get_v_for_list(self, socket=None):
+        v = socket.sv_get()
+        if "matrix" in self.formula:
+            v = safc(objs, [v])
+        else:
+            v = safc(objs, v) if isinstance(v[0], list) else safc(objs, [v])
+        return v
+
+    def get_v_for_obj(self, socket=None):
+        v = socket.sv_get()
+        if "matrix" in self.formula:
+            v = safc(objs, v)
+        else:
+            if isinstance(v[0], list):
+                v = v[0]
+            v = safc(objs, v)
+        return v
+
+
     def process(self):
         O, V = self.inputs
         Ov, Oo = self.outputs
@@ -55,49 +75,31 @@ class SvSetDataObjectNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if isinstance(objs[0], list):
 
             if V.is_linked:
-
-                # ensure correct V nesting.
-                v = V.sv_get()
-                if "matrix" in Prop:
-                    v = safc(objs, [v])
-                else:
-                    v = safc(objs, v) if isinstance(v[0], list) else safc(objs, [v])
-
-                # execute
-                for OBL, VALL in zip(objs, v):
+                for OBL, VALL in zip(objs, self.get_v_for_list(socket=V)):
                     VALL = safc(OBL, VALL)
                     exec(dedent(f"""\
                     for i, i2 in zip(OBL, VALL):
-                        i.{Prop} = i2"""))                        
+                        i.{Prop} = i2"""))
 
             elif Ov.is_linked:
                 Ov.sv_set(eval(f"[[i.{Prop} for i in OBL] for OBL in objs]"))
+
             else:
                 exec(dedent(f"""\
                 for OL in objs:
                     for i in OL:
                         i.{Prop}"""))
-
         else:
 
             if V.is_linked:
-                
-                # ensure correct V nesting.
-                v = V.sv_get()
-                if "matrix" in Prop:
-                    v = safc(objs, v)
-                else:
-                    if isinstance(v[0], list):
-                        v = v[0]
-                    v = safc(objs, v)
-
-                # execute                    
+                v = self.get_v_for_obj(socket=V)
                 exec(dedent(f"""\
                 for i, i2 in zip(objs, v):
                     i.{Prop} = i2"""))
 
             elif Ov.is_linked:
                 Ov.sv_set(eval(f"[i.{Prop} for i in objs]"))
+
             else:
                 exec(dedent(f"""\
                 for i in objs:
