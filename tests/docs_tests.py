@@ -170,7 +170,6 @@ pulga_physics.py
 extrude_multi_alt.py
 limited_dissolve_mk2.py
 mesh_separate_mk2.py
-triangulate_heavy.py
 symmetrize.py
 vd_attr_node.py
 filter_empty_lists.py
