@@ -17,9 +17,6 @@
 # ##### END GPL LICENSE BLOCK #####
 
 # <pep8 compliant>
-import pprint
-import re
-from collections import defaultdict
 
 import bpy
 import blf

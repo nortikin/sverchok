@@ -5,6 +5,9 @@
 # SPDX-License-Identifier: GPL3
 # License-Filename: LICENSE
 
+from collections import defaultdict
+import pprint
+import re
 
 def draw_text_data(data):
     lines = data.get('content', 'no data')
