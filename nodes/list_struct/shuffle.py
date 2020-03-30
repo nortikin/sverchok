@@ -23,10 +23,13 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, changable_sockets
-
-
+import numpy as np
+from numpy import random as np_random, ndarray, array
 class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Shuffle Node '''
+    '''
+    Triggers: Randomize list order
+    Tooltip: Change randomly the order of the elements in a list
+    '''
     bl_idname = 'ListShuffleNode'
     bl_label = 'List Shuffle'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -55,30 +58,40 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
-        if self.outputs['data'].is_linked:
+        if self.outputs[0].is_linked and self.inputs[0].is_linked:
 
             seed = self.inputs['seed'].sv_get()[0][0]
 
             random.seed(seed)
+            np_random.seed(seed)
             data = self.inputs['data'].sv_get()
             output = self.shuffle(data, self.level)
             self.outputs['data'].sv_set(output)
 
-    def shuffle(self, lst, level):
+    def shuffle(self, data, level):
         level -= 1
         if level:
+            if level == 1 and isinstance(data, ndarray):
+                out = np.array(data)
+                for row in out:
+                    np_random.shuffle(row)
+                return out
             out = []
-            for l in lst:
+            for l in data:
                 out.append(self.shuffle(l, level))
             return out
-        elif type(lst) in [type([])]:
-            l = lst.copy()
+        elif isinstance(data, list):
+            l = data.copy()
             random.shuffle(l)
             return l
-        elif type(lst) in [type(tuple())]:
-            lst = list(lst)
-            random.shuffle(lst)
-            return tuple(lst)
+        elif isinstance(data, tuple):
+            data = list(data)
+            random.shuffle(data)
+            return tuple(data)
+        elif isinstance(data, ndarray):
+            out = array(data)
+            np_random.shuffle(out)
+            return out
 
 
 def register():

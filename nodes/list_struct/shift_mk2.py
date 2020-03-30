@@ -26,7 +26,10 @@ from sverchok.data_structure import (updateNode, changable_sockets)
 
 
 class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' ls - shift list elements '''
+    '''
+    Triggers: Offset list items
+    Tooltip: Shift the order of the elements in a list [1,2,3] --> [2,3,1]
+    '''
     bl_idname = 'ShiftNodeMK2'
     bl_label = 'List Shift'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -70,7 +73,11 @@ class ShiftNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             # levelsOfList replacement:
             depth = dat.ndim #len(np.shape(dat))-1
             # roll with enclose (we need case of declose and vectorization)
-            output = np.roll(dat, number, axis=min(self.level, depth)).tolist()
+
+            if isinstance(data[0], np.ndarray):
+                output = [o for o in np.roll(dat, number, axis=min(self.level, depth))]
+            else:
+                output = np.roll(dat, number, axis=min(self.level, depth)).tolist()
 
         elif self.selected_mode == 'py':
             output = []
