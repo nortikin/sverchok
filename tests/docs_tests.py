@@ -165,7 +165,6 @@ bmesh_obj_in.py
 bmesh_out.py
 bmesh_to_element.py
 bmesh_analyzer_big.py
-flip_normals.py
 mesh_beautify.py
 grid_fill.py
 limited_dissolve.py

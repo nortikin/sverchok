@@ -18,6 +18,7 @@ Modifier Change
    extrude_separate_lite
    extrude_region
    holes_fill
+   flip_normals
    mesh_join
    mesh_separate
    objects_along_edge
