@@ -24,6 +24,16 @@ def frame_adjust(caller_node, new_node):
         locx, locy = recursive_framed_location_finder(new_node, loc_xy)
         new_node.location = locx, locy
 
+def absolute_location_generic(node):
+    """
+    all nodes of type Sverchok Custom will have the absolute_location attribute,
+    but some nodes (at the moment only ReRoute) are "part of the pynodes API" and can not
+    be augmented, so this function will return the appropriate location for all nodes
+    """
+    if hasattr(node, 'absolute_location'):
+        return node.absolute_location
+    return recursive_framed_location_finder(node, node.location[:])
+
 
 def scaled_dpi():
     """

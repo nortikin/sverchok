@@ -31,6 +31,7 @@ from sverchok import old_nodes
 from sverchok.utils.sv_IO_monad_helpers import pack_monad, unpack_monad
 from sverchok.utils.logging import debug, info, warning, error, exception
 from sverchok.utils.sv_requests import urlopen
+from sverchok.utils.sv_node_utils import absolute_location_generic
 
 # pylint: disable=w0621
 
@@ -141,11 +142,7 @@ def get_superficial_props(node_dict, node):
     node_dict['width'] = node.width
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
-
-    if hasattr(node, 'absolute_location'):
-        node_dict['location'] = node.absolute_location
-    else:
-        node_dict['location'] = node.location[:]
+    node_dict['location'] = absolute_location_generic(node)
 
     if node.use_custom_color:
         node_dict['color'] = node.color[:]
@@ -167,9 +164,9 @@ def collect_custom_socket_properties(node, node_dict):
                 continue
 
             value = getattr(socket, tracked_prop_name)
-            defaultValue = socket.bl_rna.properties[tracked_prop_name].default
+            default_value = socket.bl_rna.properties[tracked_prop_name].default
             # property value same as default ? => don't store it
-            if value == defaultValue:
+            if value == default_value:
                 continue
 
             # print("Processing custom property: ", tracked_prop_name, " value = ", value)
