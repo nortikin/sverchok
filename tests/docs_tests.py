@@ -117,29 +117,29 @@ class DocumentationTests(SverchokTestCase):
         docs_dir = self.get_nodes_docs_directory()
 
         known_problems = """
-vd_matrix.py
-viewer_typography.py
-viewer_skin.py
-viewer_idx28.py
-viewer_texture.py
-viewer_curves.py
-viewer_gp.py
-vd_draw_experimental.py
-viewer_texture_lite.py
-viewer_polyline.py
-lamp_out.py
-text_out_mk2.py
+  vd_matrix.py
+  viewer_typography.py
+  viewer_skin.py
+  viewer_idx28.py
+  viewer_texture.py
+  viewer_curves.py
+  viewer_gp.py
+  vd_draw_experimental.py
+  viewer_texture_lite.py
+  viewer_polyline.py
+  lamp_out.py
+  text_out_mk2.py
 blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
-cache.py
+  cache.py
 uv_texture.py
 create_bvh_tree.py
-particles_MK2.py
-node_remote.py
-join_tris.py
+  particles_MK2.py
+  node_remote.py
+  join_tris.py
 csg_booleanMK2.py
-udp_client.py
+  udp_client.py
 vertex_colors_mk3.py
 sort_blenddata.py
 object_raycast2.py
@@ -152,27 +152,27 @@ custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
 edge_split.py
-color_in_mk1.py
+  color_in_mk1.py
+  color_out_mk1.py
 formula_deform_MK2.py
-color_out_mk1.py
 interpolation_mk2.py
 formula_color.py
-slice_lite.py
+  slice_lite.py
 numpy_array.py
 bmesh_obj_in.py
 bmesh_out.py
 bmesh_to_element.py
 bmesh_analyzer_big.py
 mesh_beautify.py
-grid_fill.py
-limited_dissolve.py
+  grid_fill.py
+  limited_dissolve.py
 pulga_physics.py
-extrude_multi_alt.py
-limited_dissolve_mk2.py
-mesh_separate_mk2.py
-symmetrize.py
-vd_attr_node.py
-filter_empty_lists.py
+  extrude_multi_alt.py
+  limited_dissolve_mk2.py
+  mesh_separate_mk2.py
+  symmetrize.py
+  vd_attr_node.py
+  filter_empty_lists.py
 bvh_nearest_new.py""".split("\n")
 
         def check_category(directory):
