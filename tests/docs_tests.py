@@ -159,7 +159,6 @@ edge_split.py
 multi_exec.py
 sn_functor_b.py
 topology_simple.py
-sn_functor.py
 color_in_mk1.py
 formula_deform_MK2.py
 color_out_mk1.py
