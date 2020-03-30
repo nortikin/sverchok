@@ -25,3 +25,4 @@ Generators
    torus_knot_mk2
    formula_shape
    segment
+   cricket

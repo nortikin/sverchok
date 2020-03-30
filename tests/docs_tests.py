@@ -136,7 +136,6 @@ cache.py
 objects_in_lite.py
 particles.py
 group.py
-curve_in.py
 uv_texture.py
 instancer.py
 create_bvh_tree.py
@@ -145,7 +144,6 @@ node_remote.py
 join_tris.py
 csg_booleanMK2.py
 udp_client.py
-cricket.py
 vertex_colors_mk3.py
 sort_blenddata.py
 object_raycast2.py
