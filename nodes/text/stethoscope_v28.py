@@ -16,8 +16,8 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-import os
-import gzip
+import pprint
+import re
 
 import bpy
 import blf

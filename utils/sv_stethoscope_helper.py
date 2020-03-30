@@ -6,9 +6,6 @@
 # License-Filename: LICENSE
 
 from collections import defaultdict
-import pprint
-import re
-
 import blf
 
 def draw_text_data(data):
