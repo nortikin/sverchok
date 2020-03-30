@@ -25,7 +25,10 @@ from sverchok.data_structure import updateNode, changable_sockets, levels_of_lis
 
 
 class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List First and last item of list '''
+    '''
+    Triggers: Split First and Last items
+    Tooltip: Get first and last elements of a list, also avaliable the middle.
+    '''
     bl_idname = 'ListFLNode'
     bl_label = 'List First & Last'
     bl_icon = 'OUTLINER_OB_EMPTY'

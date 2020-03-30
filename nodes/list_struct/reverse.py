@@ -24,7 +24,10 @@ from sverchok.data_structure import (updateNode, changable_sockets)
 from numpy import ndarray
 
 class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Reverse Node '''
+    '''
+    Triggers: Invert list order
+    Tooltip: Reverse the elements order of a list
+    '''
     bl_idname = 'ListReverseNode'
     bl_label = 'List Reverse'
     bl_icon = 'OUTLINER_OB_EMPTY'

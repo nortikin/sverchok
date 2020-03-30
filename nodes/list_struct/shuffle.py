@@ -26,7 +26,10 @@ from sverchok.data_structure import updateNode, changable_sockets
 import numpy as np
 from numpy import random as np_random, ndarray, array
 class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Shuffle Node '''
+    '''
+    Triggers: Randomize list order
+    Tooltip: Change randomly the order of the elements in a list
+    '''
     bl_idname = 'ListShuffleNode'
     bl_label = 'List Shuffle'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -65,29 +68,28 @@ class ListShuffleNode(bpy.types.Node, SverchCustomTreeNode):
             output = self.shuffle(data, self.level)
             self.outputs['data'].sv_set(output)
 
-    def shuffle(self, lst, level):
+    def shuffle(self, data, level):
         level -= 1
-        lst_type = type(lst)
         if level:
-            if level == 1 and lst_type == ndarray:
-                out = np.array(lst)
+            if level == 1 and isinstance(data, ndarray):
+                out = np.array(data)
                 for row in out:
                     np_random.shuffle(row)
                 return out
             out = []
-            for l in lst:
+            for l in data:
                 out.append(self.shuffle(l, level))
             return out
-        elif lst_type == list:
-            l = lst.copy()
+        elif isinstance(data, list):
+            l = data.copy()
             random.shuffle(l)
             return l
-        elif lst_type == tuple:
-            lst = list(lst)
-            random.shuffle(lst)
-            return tuple(lst)
-        elif lst_type == ndarray:
-            out = array(lst)
+        elif isinstance(data, tuple):
+            data = list(data)
+            random.shuffle(data)
+            return tuple(data)
+        elif isinstance(data, ndarray):
+            out = array(data)
             np_random.shuffle(out)
             return out
 
