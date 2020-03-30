@@ -153,7 +153,6 @@ custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
 edge_split.py
-sn_functor_b.py
 color_in_mk1.py
 formula_deform_MK2.py
 color_out_mk1.py
