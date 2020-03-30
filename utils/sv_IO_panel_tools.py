@@ -141,7 +141,11 @@ def get_superficial_props(node_dict, node):
     node_dict['width'] = node.width
     node_dict['label'] = node.label
     node_dict['hide'] = node.hide
-    node_dict['location'] = node.absolute_location
+
+    if hasattr(node, 'absolute_location'):
+        node_dict['location'] = node.absolute_location
+    else:
+        node_dict['location'] = node.location[:]
 
     if node.use_custom_color:
         node_dict['color'] = node.color[:]
@@ -402,7 +406,7 @@ def perform_scripted_node_inject(node, node_ref):
         script_content = params.get('script_str')
 
         with node.sv_throttle_tree_update():
-        
+
             if script_name and not (script_name in texts):
                 new_text = texts.new(script_name)
                 new_text.from_string(script_content)
@@ -582,11 +586,11 @@ def fix_enum_identifier_spaces_if_needed(node, node_ref):
     """
 
     found_enum_properties = find_enumerators(node)
-    
+
     params = node_ref['params']
     for prop_name in found_enum_properties:
 
-        # it should be...   
+        # it should be...
         if prop_name in params:
             stored_value = params[prop_name]
             if " " in stored_value:
