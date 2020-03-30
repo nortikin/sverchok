@@ -210,12 +210,12 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             _x, _y = Vector((_x, _y)) + Vector((node_width + 20, 0))
 
             # this alters location based on DPI/Scale settings.
-            location = adjust_location(_x, _y, location_theta)
+            draw_location = adjust_location(_x, _y, location_theta)
 
             draw_data = {
                 'tree_name': self.id_data.name[:],
                 'content': processed_data,
-                'location': location,
+                'location': draw_location,
                 'color': self.text_color[:],
                 'scale' : float(scale),
                 'mode': self.selected_mode[:],
