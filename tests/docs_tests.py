@@ -134,7 +134,6 @@ obj_edit.py
 BMOperatorsMK2.py
 cache.py
 uv_texture.py
-instancer.py
 create_bvh_tree.py
 particles_MK2.py
 node_remote.py
