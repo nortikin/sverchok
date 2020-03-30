@@ -9,6 +9,8 @@ from collections import defaultdict
 import pprint
 import re
 
+import blf
+
 def draw_text_data(data):
     lines = data.get('content', 'no data')
     x, y = data.get('location', (120, 120))
@@ -59,7 +61,7 @@ def draw_graphical_data(data):
         num_items = str(len(line))
         kind_of_item = type(line).__name__
 
-        tx, _ = draw_text(color, gfx_x, y_pos, "{0} of {1} items".format(kind_of_item, num_items))
+        tx, _ = draw_text(color, gfx_x, y_pos, f"{kind_of_item} of {num_items} items")
         gfx_x += (tx + 5)
         
         content_dict = defaultdict(int)
@@ -71,6 +73,6 @@ def draw_graphical_data(data):
 
         if idx == 19 and num_containers > 20:
             y_pos = y - ((idx+1)*lineheight)
-            text_body = "Showing the first 20 of {0} items"
-            draw_text(color, x, y_pos, text_body.format(num_containers))
+            text_body = f"Showing the first 20 of {num_containers} items"
+            draw_text(color, x, y_pos, text_body)
             break
