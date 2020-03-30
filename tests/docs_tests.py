@@ -133,7 +133,6 @@ blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
 cache.py
-objects_in_lite.py
 particles.py
 group.py
 uv_texture.py
