@@ -12,5 +12,7 @@ This node can syntax highlight incoming string data. At the moment it can displa
 - no syntax highlighting, useful for seeing stuff quickly.
 
 It is possible to display only the last n lines, and in ScriptNode mode it will display the 
-**sctript_str** associated with the ScriptNode lite node directly linked to the node.
+**script_str** associated with the ScriptNode lite node directly linked to the node.
+
+There is a mode that will automatically cut ultra long lines from being displayed.
 
