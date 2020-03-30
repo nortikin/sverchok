@@ -26,58 +26,11 @@ import blf
 import bgl
 from bpy.types import SpaceNodeEditor
 
+from sverchok.utils.sv_stethoscope_helper import draw_text_data, draw_graphical_data
+
 
 callback_dict = {}
 point_dict = {}
-
-
-def adjust_list(in_list, x, y):
-    return [[old_x + x, old_y + y] for (old_x, old_y) in in_list]
-
-
-def parse_socket(socket, rounding, element_index, view_by_element, props):
-
-    data = socket.sv_get(deepcopy=False)
-    num_data_items = len(data)
-    if num_data_items > 0 and view_by_element:
-        if element_index < num_data_items:
-            data = data[element_index]
-
-    str_width = props.line_width
-
-    # okay, here we should be more clever and extract part of the list
-    # to avoid the amount of time it take to format it.
-    
-    content_str = pprint.pformat(data, width=str_width, depth=props.depth, compact=props.compact)
-    content_array = content_str.split('\n')
-
-    if len(content_array) > 20:
-        ''' first 10, ellipses, last 10 '''
-        ellipses = ['... ... ...']
-        head = content_array[0:10]
-        tail = content_array[-10:]
-        display_text = head + ellipses + tail
-    elif len(content_array) == 1:
-        ''' split on subunit - case of no newline to split on. '''
-        content_array = content_array[0].replace("), (", "),\n (")
-        display_text = content_array.split("\n")
-    else:
-        display_text = content_array
-
-    # http://stackoverflow.com/a/7584567/1243487
-    rounded_vals = re.compile(r"\d*\.\d+")
-
-    def mround(match):
-        format_string = "{{:.{0}g}}".format(rounding)
-        return format_string.format(float(match.group()))
-
-    out = []
-    for line in display_text:
-        out.append(re.sub(rounded_vals, mround, line) if not "bpy." in line else line)
-    return out
-
-
-## end of util functions
 
 
 def tag_redraw_all_nodeviews():
@@ -119,90 +72,6 @@ def callback_disable_all():
             callback_disable(n_id)
 
 
-def draw_text_data(data):
-    lines = data.get('content', 'no data')
-    x, y = data.get('location', (120, 120))
-    x, y = int(x), int(y)
-    r, g, b = data.get('color', (0.1, 0.1, 0.1))
-    font_id = data.get('font_id', 0)
-    scale = data.get('scale', 1.0)
-    
-    text_height = 15 * scale
-    line_height = 14 * scale
-
-    blf.size(font_id, int(text_height), 72)
-    blf.color(font_id, r, g, b, 1.0)
-    ypos = y
-
-    for line in lines:
-        blf.position(0, x, ypos, 0)
-        blf.draw(font_id, line)
-        ypos -= int(line_height * 1.3)
-
-
-# def draw_rect(x=0, y=0, w=30, h=10, color=(0.0, 0.0, 0.0, 1.0)):
-
-#     bgl.glColor4f(*color)       
-#     bgl.glBegin(bgl.GL_POLYGON)
-
-#     for coord in [(x, y), (x+w, y), (w+x, y-h), (x, y-h)]:
-#         bgl.glVertex2f(*coord)
-#     bgl.glEnd()
-
-# def draw_triangle(x=0, y=0, w=30, h=10, color=(1.0, 0.3, 0.3, 1.0)):
-
-#     bgl.glColor4f(*color)       
-#     bgl.glBegin(bgl.GL_TRIANGLES)
-
-#     for coord in [(x, y), (x+w, y), (x + (w/2), y-h)]:
-#         bgl.glVertex2f(*coord)
-#     bgl.glEnd()
-
-
-def draw_graphical_data(data):
-    lines = data.get('content')
-    x, y = data.get('location', (120, 120))
-    color = data.get('color', (0.1, 0.1, 0.1))
-    font_id = data.get('font_id', 0)
-    scale = data.get('scale', 1.0)
-    text_height = 15 * scale
-
-    if not lines:
-        return
-
-    blf.size(font_id, int(text_height), 72)
-    
-    def draw_text(color, xpos, ypos, line):
-        r, g, b = color
-        blf.color(font_id, r, g, b, 1.0) # bgl.glColor3f(*color)
-        blf.position(0, xpos, ypos, 0)
-        blf.draw(font_id, line)
-        return blf.dimensions(font_id, line)
-
-    lineheight = 20 * scale
-    num_containers = len(lines)
-    for idx, line in enumerate(lines):
-        y_pos = y - (idx*lineheight)
-        gfx_x = x
-
-        num_items = str(len(line))
-        kind_of_item = type(line).__name__
-
-        tx, _ = draw_text(color, gfx_x, y_pos, "{0} of {1} items".format(kind_of_item, num_items))
-        gfx_x += (tx + 5)
-        
-        content_dict = defaultdict(int)
-        for item in line:
-            content_dict[type(item).__name__] += 1
-
-        tx, _ = draw_text(color, gfx_x, y_pos, str(dict(content_dict)))
-        gfx_x += (tx + 5)
-
-        if idx == 19 and num_containers > 20:
-            y_pos = y - ((idx+1)*lineheight)
-            text_body = "Showing the first 20 of {0} items"
-            draw_text(color, x, y_pos, text_body.format(num_containers))
-            break
 
 
 

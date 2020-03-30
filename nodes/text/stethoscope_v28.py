@@ -34,6 +34,47 @@ from sverchok.ui import bgl_callback_nodeview as nvBGL
 FAIL_COLOR = (0.1, 0.05, 0)
 READY_COLOR = (1, 0.3, 0)
 
+def parse_socket(socket, rounding, element_index, view_by_element, props):
+
+    data = socket.sv_get(deepcopy=False)
+    num_data_items = len(data)
+    if num_data_items > 0 and view_by_element:
+        if element_index < num_data_items:
+            data = data[element_index]
+
+    str_width = props.line_width
+
+    # okay, here we should be more clever and extract part of the list
+    # to avoid the amount of time it take to format it.
+    
+    content_str = pprint.pformat(data, width=str_width, depth=props.depth, compact=props.compact)
+    content_array = content_str.split('\n')
+
+    if len(content_array) > 20:
+        ''' first 10, ellipses, last 10 '''
+        ellipses = ['... ... ...']
+        head = content_array[0:10]
+        tail = content_array[-10:]
+        display_text = head + ellipses + tail
+    elif len(content_array) == 1:
+        ''' split on subunit - case of no newline to split on. '''
+        content_array = content_array[0].replace("), (", "),\n (")
+        display_text = content_array.split("\n")
+    else:
+        display_text = content_array
+
+    # http://stackoverflow.com/a/7584567/1243487
+    rounded_vals = re.compile(r"\d*\.\d+")
+
+    def mround(match):
+        format_string = "{{:.{0}g}}".format(rounding)
+        return format_string.format(float(match.group()))
+
+    out = []
+    for line in display_text:
+        out.append(re.sub(rounded_vals, mround, line) if not "bpy." in line else line)
+    return out
+
 
 def high_contrast_color(c):
     g = 2.2  # gamma
@@ -151,7 +192,7 @@ class SvStethoscopeNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 props.compact = self.compact
                 props.depth = self.depth or None
 
-                processed_data = nvBGL.parse_socket(
+                processed_data = parse_socket(
                     inputs[0],
                     self.rounding,
                     self.element_index,
