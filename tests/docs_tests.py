@@ -154,7 +154,6 @@ points_from_uv_to_mesh.py
 custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
-easing.py
 edge_split.py
 multi_exec.py
 sn_functor_b.py
