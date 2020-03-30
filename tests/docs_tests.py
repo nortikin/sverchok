@@ -155,7 +155,6 @@ custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
 edge_split.py
-multi_exec.py
 sn_functor_b.py
 topology_simple.py
 color_in_mk1.py
