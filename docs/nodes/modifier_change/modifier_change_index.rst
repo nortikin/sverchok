@@ -29,6 +29,7 @@ Modifier Change
    recalc_normals
    remove_doubles
    triangulate
+   triangulate_heavy
    planar_faces
    split_faces
    vertices_mask
