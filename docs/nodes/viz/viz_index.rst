@@ -12,4 +12,5 @@ Viz
    empty_out
    viewer_nurbs_curve
    viewer_nurbs_surface
+   console_node
 
