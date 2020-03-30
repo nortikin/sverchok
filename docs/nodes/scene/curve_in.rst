@@ -1,7 +1,7 @@
 curve in
 ========
 
-pick a curve from the scene, and output it into the nodetree, with additional options to apply smoothing. and reading radii for each points.
+pick a curve from the scene, and output it into the nodetree, with additional options to apply smoothing. and reading radii for each of its points.
 
 Best to read the development thread 
 
