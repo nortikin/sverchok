@@ -16,3 +16,4 @@ Viz
    viewer_texture
    viewer_texture_lite
    lamp_out
+   vd_matrix
