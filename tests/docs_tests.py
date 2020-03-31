@@ -173,7 +173,7 @@ pulga_physics.py
   symmetrize.py
   vd_attr_node.py
   filter_empty_lists.py
-bvh_nearest_new.py""".split("\n")
+bvh_nearest_new.py""".split()
 
         def check_category(directory):
             dir_name = basename(directory)
