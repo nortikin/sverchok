@@ -6,6 +6,7 @@ Scene
    :maxdepth: 2
 
    frame_info_mk2
+   cache
    objects_mk3
    objects_in_lite
    FCurve_in
