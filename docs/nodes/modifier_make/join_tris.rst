@@ -25,6 +25,7 @@ The workhorse code of this node is essentially a bmesh.operator (bmesh.ops)::
         bm.free()
         return (verts_out, faces_out)
 
+.. image:: https://user-images.githubusercontent.com/619340/78026930-bccda280-735c-11ea-809e-b60a51b9938d.png
 
 params
 ------
