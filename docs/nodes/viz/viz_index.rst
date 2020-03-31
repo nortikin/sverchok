@@ -15,3 +15,4 @@ Viz
    console_node
    viewer_texture
    viewer_texture_lite
+   lamp_out
