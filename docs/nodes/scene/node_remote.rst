@@ -10,4 +10,6 @@ A useful discussion on the node is
 https://github.com/nortikin/sverchok/issues/737
 https://github.com/nortikin/sverchok/issues/1173#issuecomment-274720763
 
+this node is more useful for sending data to AnimationNodes or AudioNodes.
+
 
