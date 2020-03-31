@@ -364,6 +364,7 @@
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
     SvCollectionPicker
+    SvSelectionGrabberLite
 
 ## Objects
     SvVertexGroupNodeMK2

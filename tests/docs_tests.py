@@ -161,6 +161,7 @@ limited_dissolve_mk2.py
 mesh_separate_mk2.py
 symmetrize.py
 vd_attr_node.py
+selection_grabber_lite.py
 filter_empty_lists.py
 bvh_nearest_new.py""".split()
 
