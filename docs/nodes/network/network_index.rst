@@ -5,4 +5,4 @@ Network
 .. toctree::
    :maxdepth: 2
 
-   upd_client
+   udp_client

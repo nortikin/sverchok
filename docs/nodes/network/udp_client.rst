@@ -1,4 +1,4 @@
-upd client
+udp client
 ==========
 
 the docs for this node are found here: https://takuro.ws/2015/09/14/sverchok-udpclientnode/
