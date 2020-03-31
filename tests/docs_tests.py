@@ -124,7 +124,6 @@ class DocumentationTests(SverchokTestCase):
   viewer_curves.py
   viewer_gp.py
   vd_draw_experimental.py
-  viewer_texture_lite.py
   viewer_polyline.py
   lamp_out.py
 blenddata_to_svdata2.py
