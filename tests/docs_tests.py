@@ -130,7 +130,6 @@ obj_edit.py
 BMOperatorsMK2.py
 uv_texture.py
 create_bvh_tree.py
-  join_tris.py
 csg_booleanMK2.py
 vertex_colors_mk3.py
 sort_blenddata.py
