@@ -132,14 +132,12 @@ class DocumentationTests(SverchokTestCase):
 blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
-  cache.py
 uv_texture.py
 create_bvh_tree.py
   particles_MK2.py
   node_remote.py
   join_tris.py
 csg_booleanMK2.py
-  udp_client.py
 vertex_colors_mk3.py
 sort_blenddata.py
 object_raycast2.py
