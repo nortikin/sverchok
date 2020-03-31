@@ -121,7 +121,6 @@ class DocumentationTests(SverchokTestCase):
   viewer_typography.py
   viewer_skin.py
   viewer_idx28.py
-  viewer_texture.py
   viewer_curves.py
   viewer_gp.py
   vd_draw_experimental.py
