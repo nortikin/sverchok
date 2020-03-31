@@ -117,13 +117,13 @@ class DocumentationTests(SverchokTestCase):
         docs_dir = self.get_nodes_docs_directory()
 
         known_problems = """
-  viewer_typography.py
-  viewer_skin.py
-  viewer_idx28.py
-  viewer_curves.py
-  viewer_gp.py
-  vd_draw_experimental.py
-  viewer_polyline.py
+viewer_typography.py
+viewer_skin.py
+viewer_idx28.py
+viewer_curves.py
+viewer_gp.py
+vd_draw_experimental.py
+viewer_polyline.py
 blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
@@ -142,12 +142,12 @@ custom_mesh_normals.py
 color_uv_texture.py
 filter_blenddata.py
 edge_split.py
-  color_in_mk1.py
-  color_out_mk1.py
+color_in_mk1.py
+color_out_mk1.py
 formula_deform_MK2.py
 interpolation_mk2.py
 formula_color.py
-  slice_lite.py
+slice_lite.py
 numpy_array.py
 bmesh_obj_in.py
 bmesh_out.py
@@ -155,13 +155,13 @@ bmesh_to_element.py
 bmesh_analyzer_big.py
 mesh_beautify.py
 pulga_physics.py
-  extrude_multi_alt.py
-  limited_dissolve.py
-  limited_dissolve_mk2.py
-  mesh_separate_mk2.py
-  symmetrize.py
-  vd_attr_node.py
-  filter_empty_lists.py
+extrude_multi_alt.py
+limited_dissolve.py
+limited_dissolve_mk2.py
+mesh_separate_mk2.py
+symmetrize.py
+vd_attr_node.py
+filter_empty_lists.py
 bvh_nearest_new.py""".split()
 
         def check_category(directory):
