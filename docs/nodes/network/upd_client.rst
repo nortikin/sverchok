@@ -13,10 +13,10 @@ here are the interface descriptions
 ============= ====================================================
 UI Element    description
 ============= ====================================================
-IP            IP address of remote server you want to access
-Port          Port number of remote server you want to access
-Buffer(Byte)  Size of buffer you want to read
-Timeout(sec)  Timeout length of network connection
+IP             IP address of remote server you want to access
+Port           Port number of remote server you want to access
+Buffer(Byte)   Size of buffer you want to read
+Timeout(sec)   Timeout length of network connection
 ============= ====================================================
 
 Examples
