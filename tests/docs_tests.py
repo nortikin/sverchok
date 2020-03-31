@@ -125,7 +125,6 @@ class DocumentationTests(SverchokTestCase):
   viewer_gp.py
   vd_draw_experimental.py
   viewer_polyline.py
-  lamp_out.py
 blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
