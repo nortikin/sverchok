@@ -18,3 +18,4 @@ Scene
    3dview_props
    monad
    collection_picker_mk1
+   particles_MK2
