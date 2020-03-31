@@ -41,7 +41,7 @@ class SvNodePickup(bpy.types.Operator):
     nodegroup_name: bpy.props.StringProperty(default='')
 
     def execute(self, context):
-        active = bpy.data.node_groups[nodegroup_name].nodes.active
+        active = bpy.data.node_groups[self.nodegroup_name].nodes.active
         n = context.node
         n.node_name = active.name
         return {'FINISHED'}
@@ -95,19 +95,22 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         node_group = bpy.data.node_groups.get(self.nodegroup_name)
-        if node_group:
-            node = node_group.nodes.get(self.node_name)
-            if node:
-                named_input = node.inputs.get(self.input_idx)
-                if named_input:
-                    data = self.inputs[0].sv_get()
-                    if 'value' in named_input:
-                        # [ ] switch socket type if needed
-                        assign_data(named_input.value, data)
-                    elif 'value_prop' in named_input:
-                        # for audio nodes for example
-                        # https://github.com/nomelif/Audionodes
-                        named_input.value_prop = data[0][0]
+        if not node_group:
+            return
+        node = node_group.nodes.get(self.node_name)
+        if not node:
+            return
+
+        named_input = node.inputs.get(self.input_idx)
+        if named_input:
+            data = self.inputs[0].sv_get()
+            if 'value' in named_input:
+                # [ ] switch socket type if needed
+                assign_data(named_input.value, data)
+            elif 'value_prop' in named_input:
+                # for audio nodes for example
+                # https://github.com/nomelif/Audionodes
+                named_input.value_prop = data[0][0]
                         
 
 

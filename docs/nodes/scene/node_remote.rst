@@ -7,5 +7,7 @@ This node can pickup an active node from a node tree you point at - in order to 
 It tries to let you narrow down the socket from the UI.
 
 A useful discussion on the node is 
+https://github.com/nortikin/sverchok/issues/737
 https://github.com/nortikin/sverchok/issues/1173#issuecomment-274720763
+
 
