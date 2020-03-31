@@ -164,9 +164,9 @@ bmesh_out.py
 bmesh_to_element.py
 bmesh_analyzer_big.py
 mesh_beautify.py
-  limited_dissolve.py
 pulga_physics.py
   extrude_multi_alt.py
+  limited_dissolve.py
   limited_dissolve_mk2.py
   mesh_separate_mk2.py
   symmetrize.py
