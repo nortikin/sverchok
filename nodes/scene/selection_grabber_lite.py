@@ -6,6 +6,8 @@
 # License-Filename: LICENSE
 
 import bpy
+import bmesh
+
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 
@@ -49,7 +51,7 @@ class SvSelectionGrabberLite(bpy.types.Node, SverchCustomTreeNode):
 
         for obj in objects:
             if obj == bpy.context.edit_object:
-                bm = bmesh.from_edit_mesh(mesh)
+                bm = bmesh.from_edit_mesh(obj.data)
                 if self.include_faces:
                     face_mask.append([f.select for f in bm.faces])
                 if self.include_edges:
@@ -57,6 +59,7 @@ class SvSelectionGrabberLite(bpy.types.Node, SverchCustomTreeNode):
                 if self.include_vertex:
                     vertex_mask.append([e.select for e in bm.verts])
             else:
+                mesh = obj.data
                 if self.include_faces:
                     face_mask.append([f.select for f in mesh.polygons])
                 if self.include_edges:
