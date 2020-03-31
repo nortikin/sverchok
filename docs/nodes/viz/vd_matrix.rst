@@ -11,3 +11,5 @@ see
 
 the development thread may provide more information:
 https://github.com/nortikin/sverchok/pull/1572
+
+the alpha mode is not working at the moment.
