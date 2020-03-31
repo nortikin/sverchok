@@ -128,7 +128,6 @@ class DocumentationTests(SverchokTestCase):
   viewer_texture_lite.py
   viewer_polyline.py
   lamp_out.py
-  text_out_mk2.py
 blenddata_to_svdata2.py
 obj_edit.py
 BMOperatorsMK2.py
