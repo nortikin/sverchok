@@ -164,7 +164,6 @@ bmesh_out.py
 bmesh_to_element.py
 bmesh_analyzer_big.py
 mesh_beautify.py
-  grid_fill.py
   limited_dissolve.py
 pulga_physics.py
   extrude_multi_alt.py
