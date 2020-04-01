@@ -40,25 +40,28 @@ class SvSelectionGrabberLite(bpy.types.Node, SverchCustomTreeNode):
         include_faces = self.outputs["Face Mask"].is_linked
 
         face_mask, edge_mask, vertex_mask = [], [], []
+        get_selected_from = lambda data: [i.select for i in data]
 
         for obj in objects:
             mesh = obj.data
 
             if obj == bpy.context.edit_object:
                 bm = bmesh.from_edit_mesh(mesh)
-                if include_faces:
-                    face_mask.append([f.select for f in bm.faces])
-                if include_edges:
-                    edge_mask.append([e.select for e in bm.edges])
-                if include_vertex:
-                    vertex_mask.append([e.select for e in bm.verts])
+                face_data = bm.faces
+                edge_data = bm.edges
+                vertex_data = bm.verts
             else:
-                if include_faces:
-                    face_mask.append([f.select for f in mesh.polygons])
-                if include_edges:
-                    edge_mask.append([f.select for f in mesh.edges])
-                if include_vertex:
-                    vertex_mask.append([f.select for f in mesh.vertices])
+                face_data = mesh.polygons
+                edge_data = mesh.edges
+                vertex_data = mesh.vertices
+
+            if include_faces:
+                face_mask.append(get_selected_from(face_data))
+            if include_edges:
+                edge_mask.append(get_selected_from(edge_data))                    
+            if include_vertex:
+                vertex_mask.append(get_selected_from(vertex_data))                    
+
 
         self.outputs['Vertex Mask'].sv_set(vertex_mask)
         self.outputs['Edge Mask'].sv_set(edge_mask)
