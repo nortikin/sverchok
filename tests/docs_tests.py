@@ -147,7 +147,6 @@ color_out_mk1.py
 formula_deform_MK2.py
 interpolation_mk2.py
 formula_color.py
-slice_lite.py
 numpy_array.py
 bmesh_obj_in.py
 bmesh_out.py
