@@ -295,7 +295,7 @@ numpy_full_list_func = {
     "CYCLE":  numpy_full_list_cycle,
     "REPEAT": numpy_full_list,
     }
-    
+
 def numpy_match_long_repeat(list_of_arrays):
     '''match numpy arrays length by repeating last one'''
     out = []
@@ -676,36 +676,36 @@ def Matrix_generate(prop):
     return mat_out
 
 
-def Matrix_location(prop, is_list=False):
+def Matrix_location(prop, to_list=False):
     """return a list of locations represeting the translation of the matrices"""
     Vectors = []
     for p in prop:
-        if is_list:
+        if to_list:
             Vectors.append(p.translation[:])
         else:
             Vectors.append(p.translation)
     return [Vectors]
 
 
-def Matrix_scale(prop, is_list=False):
+def Matrix_scale(prop, to_list=False):
     """return a Vector()/list represeting the scale factor of the matrices"""
     Vectors = []
     for p in prop:
-        if is_list:
+        if to_list:
             Vectors.append(p.to_scale()[:])
         else:
             Vectors.append(p.to_scale())
     return [Vectors]
 
 
-def Matrix_rotation(prop, is_list=False):
+def Matrix_rotation(prop, to_list=False):
     """return (Vector, rotation) utility function for Matrix Destructor.
     if list is true the Vector() is decomposed into tuple format.
     """
     Vectors = []
     for p in prop:
         q = p.to_quaternion()
-        if is_list:
+        if to_list:
             vec, angle = q.to_axis_angle()
             Vectors.append((vec[:], angle))
         else:
