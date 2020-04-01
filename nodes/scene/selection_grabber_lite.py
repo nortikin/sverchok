@@ -24,48 +24,44 @@ class SvSelectionGrabberLite(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Selection Grabber Lite'
     bl_icon = 'MOD_MASK'
 
-    include_vertex: bpy.props.BoolProperty(default=True, description='include vertex mask in baking', update=updateNode)
-    include_edges: bpy.props.BoolProperty(default=True, description='include edges mask in baking', update=updateNode)
-    include_faces: bpy.props.BoolProperty(default=True, description='include faces mask in baking', update=updateNode)
-
     def sv_init(self, context):
         self.inputs.new('SvObjectSocket', "Object")
         self.outputs.new('SvStringsSocket', "Vertex Mask")
         self.outputs.new('SvStringsSocket', "Edge Mask")
         self.outputs.new('SvStringsSocket', "Face Mask")
 
-    def draw_buttons(self, context, layout):
-        col = layout.column(align=True)
-        row = col.row(align=True)
-        row.prop(self, 'include_vertex', text=' ', icon='VERTEXSEL')
-        row.prop(self, 'include_edges', text=' ', icon='EDGESEL')
-        row.prop(self, 'include_faces', text=' ', icon='FACESEL')
-        # col.operator('node.copy_selection_from_object', text='Get from selected', icon='EYEDROPPER')
-
     def process(self):
         objects = self.inputs['Object'].sv_get()
         if not objects:
             return
 
+        include_vertex = self.outputs["Vertex Mask"].is_linked
+        include_edges = self.outputs["Edge Mask"].is_linked
+        include_faces = self.outputs["Face Mask"].is_linked
+
         face_mask, edge_mask, vertex_mask = [], [], []
+        get_selected_from = lambda data: [i.select for i in data]
 
         for obj in objects:
+            mesh = obj.data
+
             if obj == bpy.context.edit_object:
-                bm = bmesh.from_edit_mesh(obj.data)
-                if self.include_faces:
-                    face_mask.append([f.select for f in bm.faces])
-                if self.include_edges:
-                    edge_mask.append([e.select for e in bm.edges])
-                if self.include_vertex:
-                    vertex_mask.append([e.select for e in bm.verts])
+                bm = bmesh.from_edit_mesh(mesh)
+                face_data = bm.faces
+                edge_data = bm.edges
+                vertex_data = bm.verts
             else:
-                mesh = obj.data
-                if self.include_faces:
-                    face_mask.append([f.select for f in mesh.polygons])
-                if self.include_edges:
-                    edge_mask.append([f.select for f in mesh.edges])
-                if self.include_vertex:
-                    vertex_mask.append([f.select for f in mesh.vertices])
+                face_data = mesh.polygons
+                edge_data = mesh.edges
+                vertex_data = mesh.vertices
+
+            if include_faces:
+                face_mask.append(get_selected_from(face_data))
+            if include_edges:
+                edge_mask.append(get_selected_from(edge_data))                    
+            if include_vertex:
+                vertex_mask.append(get_selected_from(vertex_data))                    
+
 
         self.outputs['Vertex Mask'].sv_set(vertex_mask)
         self.outputs['Edge Mask'].sv_set(edge_mask)
