@@ -11,8 +11,8 @@
     "Frame.006": "Frame.002",
     "Frame.007": "Frame.002",
     "Frame.008": "Frame.002",
-    "Matrix in": "Frame.003",
-    "Matrix in.001": "Frame.007",
+    "Matrix In": "Frame.003",
+    "Matrix In.001": "Frame.007",
     "Move.001": "Frame.007",
     "Number Range": "Frame.006",
     "Objects in Lite": "Frame.001",
@@ -116,7 +116,7 @@
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 291.18707275390625,
+      "height": 286.68707275390625,
       "hide": false,
       "label": "buddah",
       "location": [
@@ -128,7 +128,7 @@
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 722.866943359375,
+      "height": 723.366943359375,
       "hide": false,
       "label": "lotus",
       "location": [
@@ -140,7 +140,7 @@
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 288.82122802734375,
+      "height": 285.82122802734375,
       "hide": false,
       "label": "circle",
       "location": [
@@ -164,7 +164,7 @@
     },
     "Frame.005": {
       "bl_idname": "NodeFrame",
-      "height": 662.866943359375,
+      "height": 663.366943359375,
       "hide": false,
       "label": "limits",
       "location": [
@@ -176,7 +176,7 @@
     },
     "Frame.006": {
       "bl_idname": "NodeFrame",
-      "height": 235.1334228515625,
+      "height": 233.6334228515625,
       "hide": false,
       "label": "life stages",
       "location": [
@@ -210,13 +210,8 @@
       "params": {},
       "width": 200.0
     },
-    "Matrix in": {
-      "bl_idname": "SvMatrixGenNodeMK2",
-      "custom_socket_props": {
-        "1": {
-          "expanded": true
-        }
-      },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK3",
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -225,7 +220,18 @@
         -449.46978759765625
       ],
       "params": {
-        "s_": [
+        "angle": 0.0,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
           2.0,
           2.0,
           2.0
@@ -233,8 +239,8 @@
       },
       "width": 140.0
     },
-    "Matrix in.001": {
-      "bl_idname": "SvMatrixGenNodeMK2",
+    "Matrix In.001": {
+      "bl_idname": "SvMatrixInNodeMK3",
       "height": 100.0,
       "hide": true,
       "label": "",
@@ -243,7 +249,22 @@
         -676.6499938964844
       ],
       "params": {
-        "a_": 22.5
+        "angle": 22.5,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
       },
       "width": 140.0
     },
@@ -257,7 +278,6 @@
         -415.5169372558594
       ],
       "params": {
-        "separate": 0,
         "strength": 1.0
       },
       "width": 140.0
@@ -513,6 +533,36 @@
   },
   "update_lists": [
     [
+      "Objects in Lite",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Objects in Lite",
+      1,
+      "Viewer Draw Mk3",
+      1
+    ],
+    [
+      "Objects in Lite",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ],
+    [
+      "A Number.002",
+      0,
+      "Scalar Math.004",
+      0
+    ],
+    [
+      "Scalar Math.004",
+      0,
+      "Scalar Math.003",
+      1
+    ],
+    [
       "A Number.002",
       0,
       "Scalar Math",
@@ -535,18 +585,6 @@
       0,
       "Scalar Math.002",
       0
-    ],
-    [
-      "A Number.002",
-      0,
-      "Scalar Math.004",
-      0
-    ],
-    [
-      "Scalar Math.004",
-      0,
-      "Scalar Math.003",
-      1
     ],
     [
       "A Number",
@@ -585,12 +623,6 @@
       0
     ],
     [
-      "Scalar Math.001",
-      0,
-      "Circle",
-      1
-    ],
-    [
       "Scalar Math.005",
       0,
       "Scalar Math.008",
@@ -603,6 +635,12 @@
       1
     ],
     [
+      "Scalar Math.001",
+      0,
+      "Circle",
+      1
+    ],
+    [
       "Circle",
       0,
       "Move.001",
@@ -633,7 +671,7 @@
       1
     ],
     [
-      "Matrix in.001",
+      "Matrix In.001",
       0,
       "Viewer Draw Mk3.001",
       3
@@ -651,28 +689,10 @@
       1
     ],
     [
-      "Matrix in",
+      "Matrix In",
       0,
       "Viewer Draw Mk3.002",
       3
-    ],
-    [
-      "Objects in Lite",
-      0,
-      "Viewer Draw Mk3",
-      0
-    ],
-    [
-      "Objects in Lite",
-      1,
-      "Viewer Draw Mk3",
-      1
-    ],
-    [
-      "Objects in Lite",
-      2,
-      "Viewer Draw Mk3",
-      2
     ]
   ]
 }

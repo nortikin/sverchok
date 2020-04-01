@@ -37,13 +37,8 @@
       "use_custom_color": true,
       "width": 140.0
     },
-    "Matrix in.001": {
-      "bl_idname": "SvMatrixGenNodeMK2",
-      "custom_socket_props": {
-        "2": {
-          "expanded": true
-        }
-      },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -52,10 +47,21 @@
         40.931617736816406
       ],
       "params": {
-        "r_": [
+        "angle": 0.0,
+        "axis": [
           1.0,
           0.0,
           0.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
         ]
       },
       "width": 140.0
@@ -173,12 +179,6 @@
   },
   "update_lists": [
     [
-      "Number Range",
-      0,
-      "Matrix in.001",
-      3
-    ],
-    [
       "Circle",
       0,
       "Move.001",
@@ -191,13 +191,19 @@
       1
     ],
     [
+      "Number Range",
+      0,
+      "Matrix In",
+      7
+    ],
+    [
       "Move.001",
       0,
       "Apply matrix for vectors",
       0
     ],
     [
-      "Matrix in.001",
+      "Matrix In",
       0,
       "Apply matrix for vectors",
       1

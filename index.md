@@ -279,7 +279,7 @@
     SvVectorFractal
 
 ## Matrix
-    SvMatrixGenNodeMK2
+    SvMatrixInNodeMK3
     MatrixOutNode
     SvMatrixApplyJoinNode
     SvIterateNode
