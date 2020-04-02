@@ -46,31 +46,6 @@ def natural_plus_one(object_names):
     return num+1
 
 
-def get_random_init():
-    objects = bpy.data.objects
-
-    with_underscore = lambda obj: '_' in obj.name and obj.type == 'MESH'
-    names_with_underscores = list(filter(with_underscore, objects))
-    print(names_with_underscores)
-    set_of_names_pre_underscores = set([n.name.split('_')[0] for n in names_with_underscores])
-    if '' in set_of_names_pre_underscores:
-        set_of_names_pre_underscores.remove('')
-
-    n = random.choice(greek_alphabet)
-
-    # not picked yet.
-    if not n in set_of_names_pre_underscores:
-        return n
-
-    # at this point the name was already picked, we don't want to overwrite
-    # existing obj/meshes and instead append digits onto the greek letter
-    # if Alpha is present already a new one will be Alpha2, Alpha3 etc..
-    # (not Alpha002, or Alpha.002)
-    similar_names = [name for name in set_of_names_pre_underscores if n in name]
-    plus_one = natural_plus_one(similar_names)
-    return n + str(plus_one)
-
-
 def get_children(node, kind='MESH'):
     # critera, basename must be in object.keys and the value must be self.basemesh_name
     objects = bpy.data.objects
