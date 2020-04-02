@@ -336,6 +336,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def process(self):
 
         if not self.activate:
+            if self.outputs[0].is_linked:
+                self.outputs[0].sv_set(self.get_children())
             return
 
         mverts, *mrest = self.get_geometry_from_sockets()
