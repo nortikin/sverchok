@@ -433,6 +433,15 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             links = mat.node_tree.links
             links.new(attr_node.outputs[0], diffuse_node.inputs[0])
 
+    def sv_copy(self, other):
+        with self.sv_throttle_tree_update():
+            print('copying bmesh node')
+            gai = bpy.context.scene.SvGreekAlphabet_index
+            alphabet = self.get_alphabet()
+            self.basedata_name = alphabet[gai]
+
+            bpy.context.scene.SvGreekAlphabet_index += 1
+
 
 def register():
     bpy.utils.register_class(SvBmeshViewerNodeV28)
