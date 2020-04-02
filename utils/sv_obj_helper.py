@@ -282,7 +282,7 @@ class SvObjHelper():
         this is to be used in sv_init, at the top
         """
         gai = bpy.context.scene.SvGreekAlphabet_index
-        self.basemesh_name = greek_alphabet[gai]
+        self.basedata_name = greek_alphabet[gai]
         bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True        
 
@@ -413,6 +413,9 @@ class SvObjHelper():
         bm.free()
         data.update()
 
+    def get_alphabet(self):
+        return greek_alphabet
+
 
     def push_custom_matrix_if_present(self, sv_object, matrix):
         if matrix:
@@ -420,10 +423,6 @@ class SvObjHelper():
             sv_object.matrix_local = matrix
         else:
             sv_object.matrix_local = Matrix.Identity(4)    
-
-
-    def copy(self, other):
-        self.basedata_name = get_random_init_v2()
 
 
 def register():
