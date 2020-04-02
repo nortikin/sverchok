@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import itertools
-import random
 
 import bpy
 import bmesh
@@ -178,8 +177,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             obj.hide_select = False
             collection.objects.unlink(obj)
             objects.remove(obj)
-
-        # does not yet remove meshes, nurbs...etc.
 
 
     # def free(self):
