@@ -282,7 +282,7 @@ class SvObjHelper():
         this is to be used in sv_init, at the top
         """
         gai = bpy.context.scene.SvGreekAlphabet_index
-        self.basemesh_name = greek_alphabet[gai]
+        self.basedata_name = greek_alphabet[gai]
         bpy.context.scene.SvGreekAlphabet_index += 1
         self.use_custom_color = True        
 
