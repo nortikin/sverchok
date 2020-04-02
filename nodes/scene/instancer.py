@@ -16,11 +16,6 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, updateNode
-from sverchok.utils.sv_viewer_utils import greek_alphabet
-
-def get_random_init():
-    return random.choice(greek_alphabet)
-
 
 def make_or_update_instance(node, obj_name, matrix):
     context = bpy.context

@@ -22,12 +22,7 @@ from mathutils import Matrix
 from bpy.props import StringProperty, BoolProperty, EnumProperty, FloatProperty, IntProperty, FloatVectorProperty
 from sverchok.data_structure import node_id, Matrix_generate, updateNode, match_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.utils.sv_viewer_utils import (
-    matrix_sanitizer,
-    natural_plus_one,
-    get_random_init,
-    greek_alphabet
-)
+
 
 class SvLampOutNode(bpy.types.Node, SverchCustomTreeNode):
     """

@@ -17,17 +17,18 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import random
+import string
 
 import bmesh
 import bpy
 from bpy.props import (BoolProperty, StringProperty, FloatProperty, IntProperty, BoolVectorProperty)
-
 from mathutils import Matrix
 
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_viewer_utils import (
     matrix_sanitizer, natural_plus_one, greek_alphabet)
 
+sv_caps = set(string.ascii_uppercase)
 
 def enum_from_list(*item_list):
     """
@@ -49,29 +50,16 @@ def enum_from_list_idx(*item_list):
 common_ops = ['object_hide_viewport', 'object_hide_select', 'object_hide_render']
 CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 
-def get_random_init_v2():
-    objects = bpy.data.objects
+def get_random_init_v3():
+    """ it's not random """
+    idx = bpy.context.scene.SvGreekAlphabet_index
+    if idx <= 23:
+        name = greek_alphabet[idx]
+        bpy.context.scene.SvGreekAlphabet_index += 1
+    else:
+        name = ''.join(random.sample(sv_caps, 6))
 
-    with_underscore = lambda obj: '_' in obj.name
-    names_with_underscores = list(filter(with_underscore, objects))
-
-    set_of_names_pre_underscores = set([n.name.split('_')[0] for n in names_with_underscores])
-    if '' in set_of_names_pre_underscores:
-        set_of_names_pre_underscores.remove('')
-
-    n = random.choice(greek_alphabet)
-
-    # not picked yet.
-    if not n in set_of_names_pre_underscores:
-        return n
-
-    # at this point the name was already picked, we don't want to overwrite
-    # existing obj/meshes and instead append digits onto the greek letter
-    # if Alpha is present already a new one will be Alpha2, Alpha3 etc..
-    # (not Alpha002, or Alpha.002)
-    similar_names = [name for name in set_of_names_pre_underscores if n in name]
-    plus_one = natural_plus_one(similar_names)
-    return n + str(plus_one)
+    return name
 
 
 def tracked_operator(node, layout_element, fn_name='', text='', icon=None):
@@ -128,7 +116,7 @@ class SvObjectsHelperCallback(bpy.types.Operator):
             n.object_select = not n.object_select
 
         elif type_op == 'random_basedata_name':   # random_data_name  ?
-            n.basedata_name = get_random_init_v2()
+            n.basedata_name = get_random_init_v3()
 
         elif type_op == 'add_material':
             if hasattr(n, type_op):
@@ -281,9 +269,8 @@ class SvObjHelper():
         """ 
         this is to be used in sv_init, at the top
         """
-        gai = bpy.context.scene.SvGreekAlphabet_index
-        self.basedata_name = greek_alphabet[gai]
-        bpy.context.scene.SvGreekAlphabet_index += 1
+        dname = get_random_init_v3()
+        self.basedata_name = dname
         self.use_custom_color = True        
 
 
