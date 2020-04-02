@@ -52,11 +52,13 @@ CALLBACK_OP = 'node.sv_callback_svobjects_helper'
 
 def get_random_init_v3():
     """ it's not random """
-    gai = bpy.context.scene.SvGreekAlphabet_index
-    name = greek_alphabet.get(gai)
-    if not name:
-        name = ''.join(random.sample(sv_caps, 2))
-    bpy.context.scene.SvGreekAlphabet_index += 1
+    idx = bpy.context.scene.SvGreekAlphabet_index
+    if idx <= 23:
+        name = greek_alphabet[idx]
+        bpy.context.scene.SvGreekAlphabet_index += 1
+    else:
+        name = ''.join(random.sample(sv_caps, 6))
+
     return name
 
 

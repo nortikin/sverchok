@@ -7,7 +7,7 @@ import mathutils
 from mathutils import Vector, Matrix
 
 
-bpy.types.Scene.SvGreekAlphabet_index = IntProperty(default=0, min=0, max=23)
+bpy.types.Scene.SvGreekAlphabet_index = IntProperty(default=0, min=0, max=24)
 greek_alphabet = [
     'Alpha', 'Beta', 'Gamma', 'Delta',
     'Epsilon', 'Zeta', 'Eta', 'Theta',
