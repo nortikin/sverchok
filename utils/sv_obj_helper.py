@@ -421,10 +421,12 @@ class SvObjHelper():
         else:
             sv_object.matrix_local = Matrix.Identity(4)    
 
-
-    def copy(self, other):
-        self.basedata_name = get_random_init_v2()
-
+    def sv_copy(self, other):
+        with self.sv_throttle_tree_update():
+            print('copying bmesh node')
+            bpy.context.scene.SvGreekAlphabet_index += 1
+            gai = bpy.context.scene.SvGreekAlphabet_index
+            self.basedata_name = greek_alphabet[gai]
 
 def register():
     bpy.utils.register_class(SvObjectsHelperCallback)
