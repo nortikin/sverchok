@@ -31,16 +31,16 @@ def add_temporal_viewer(tree, nodes, links, output_map, existing_node):
     bl_idname_new_node = 'SvVDExperimental'
     try:
         new_node = nodes['Temporal Viewer']
-        # for i in range(4):
-        #     for link in new_node.inputs[i].links:
-        #         links.remove(link)
+        if 'verts' in output_map and 'faces' in output_map:
+            for i in range(4):
+                for link in new_node.inputs[i].links:
+                    links.remove(link)
 
     except KeyError:
         new_node = nodes.new(bl_idname_new_node)
         new_node.name = 'Temporal Viewer'
         new_node.label = 'Temporal Viewer'
         new_node.color = (0.666141, 0.203022, 0)
-        new_node.hide = True
 
     offset_node_location(existing_node, new_node, [100, 250])
     frame_adjust(existing_node, new_node)
@@ -74,7 +74,7 @@ def add_temporal_stethoscope(tree, nodes, links, output_map, existing_node):
         new_node.label = 'Temporal Stethoscope'
         new_node.color = (0.336045, 0.336045, 0.666654)
 
-    offset_node_location(existing_node, new_node, [10,-200])
+    offset_node_location(existing_node, new_node, [30,-200])
     frame_adjust(existing_node, new_node)
 
     outputs = existing_node.outputs
