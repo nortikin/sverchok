@@ -76,6 +76,20 @@ def add_keymap():
         kmi.properties.name = "NODEVIEW_MT_sv_rclick_menu"
         nodeview_keymaps.append((km, kmi))
 
+        # Ctrl + Left Click   | Connect Temporal Viewer
+        kmi = km.keymap_items.new('node.sv_temporal_viewer', 'LEFTMOUSE', 'RELEASE', ctrl=True)
+        # kmi.properties.cut_links = False
+        nodeview_keymaps.append((km, kmi))
+
+        # Ctrl + Right Click   | Connect Temporal Viewer
+        kmi = km.keymap_items.new('node.sv_temporal_sthetoscope', 'RIGHTMOUSE', 'RELEASE', ctrl=True)
+        nodeview_keymaps.append((km, kmi))
+
+        # V   | Link selected nodes
+        kmi = km.keymap_items.new('node.sv_node_connector', 'V', 'PRESS')
+        # kmi.properties.cut_links = True
+        nodeview_keymaps.append((km, kmi))
+
 
 def remove_keymap():
 
