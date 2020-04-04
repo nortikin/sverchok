@@ -17,15 +17,15 @@
 # ##### END GPL LICENSE BLOCK #####
 
 from mathutils import Matrix, Vector
-#from math import copysign
+from itertools import chain
 
 import bpy
-from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty
+from bpy.props import FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, fill_faces_layer
+from sverchok.data_structure import updateNode, match_long_repeat, fullList
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
 
 def is_matrix(lst):
     return len(lst) == 4 and len(lst[0]) == 4
@@ -48,6 +48,143 @@ MASK = 0
 OUT = 1
 IN = 2
 MASK_MEANING = {MASK: 'mask', OUT: 'out', IN: 'in'}
+LAYER_INDEX_NAME = 'initial_index'
+LAYER_MASK_NAME = 'mask'
+
+
+def vert_neighbours_walk(vert):
+    for edge in vert.link_edges:
+        v = edge.other_vert(vert)
+        if ensure_next_element(vert, v):
+            yield v
+
+
+def edge_neighbours_walk(edge):
+    for vert in edge.verts:
+        for e in vert.link_edges:
+            if ensure_next_element(edge, e):
+                yield e
+
+
+def face_neighbours_walk(face):
+    for edge in face.edges:
+        for f in edge.link_faces:
+            if ensure_next_element(face, f):
+                yield f
+
+
+def ensure_next_element(start_elem, next_elem):
+    if start_elem == next_elem:
+        return False
+    else:
+        return True
+
+
+def mesh_walk(elements, neighbours_walk):
+    used = set()
+    for element in elements:
+        if element in used:
+            continue
+
+        stack = {element, }
+        while stack:
+            next_element = stack.pop()
+            yield next_element
+
+            used.add(next_element)
+            for el in neighbours_walk(next_element):
+                if el not in used:
+                    stack.add(el)
+
+
+def convert_bmesh_to_sv_mesh(bm, extruded_faces: set, extruded_verts: set, mask_content: set, face_data=None):
+    """
+    ++++++++++++++++++
+    +   ++  1   ++   +
+    +   + +    + +   +
+    +   +  ++++  +   +
+    + 0 +1 +2 +1 + 0 +
+    +   +  ++++  +   +
+    +   + +    + +   +
+    +   ++  1   ++   +
+    ++++++++++++++++++
+    0 - masked faces
+    1 - side faces
+    2 - extruded face
+
+    mask_content can include 0, 1, 2
+    """
+    mask_layer = bm.faces.layers.int.get(LAYER_MASK_NAME)
+    index_layer = bm.faces.layers.int.get(LAYER_INDEX_NAME)
+
+    def classify_faces():
+        for face in bm.faces:
+            if face in extruded_faces:
+                face[mask_layer] = 2
+            elif any(v in extruded_verts for v in face.verts):
+                face[mask_layer] = 1
+            else:
+                face[mask_layer] = 0
+
+    classify_faces()
+
+    def is_masked_face(face):
+        return face[mask_layer] == 0
+
+    def is_side_face(face):
+        return face[mask_layer] == 1
+
+    def is_extruded_face(face):
+        return face[mask_layer] == 2
+
+    def start_walk_face():
+        for face in extruded_faces:
+            for neighbour_face in face_neighbours_walk(face):
+                if is_side_face(neighbour_face):
+                    return face
+        raise LookupError(f"It looks impossible but no one extruded face does not have side face")
+
+    def sv_mesh_from_bm_faces(bm_faces):
+        def element_indexer():
+            indexes = dict()
+            element = None
+            stop_iteration = False
+            while True:
+                try:
+                    element = yield list(indexes.keys()) if stop_iteration else\
+                                    indexes[element] if element is not None else None
+                    if element not in indexes:
+                        indexes[element] = len(indexes)
+                    stop_iteration = False
+                except StopIteration:
+                    stop_iteration = True
+
+        vert_indexes = element_indexer()
+        vert_indexes.send(None)
+
+        sv_faces = [[vert_indexes.send(v) for v in f.verts] for f in bm_faces]
+        sv_edges = [[vert_indexes.send(v) for v in e.verts] for e in bm.edges]
+        sv_verts = [v.co[:] for v in vert_indexes.throw(StopIteration)]
+        return sv_verts, sv_edges, sv_faces
+
+    def rebuild_face_data(bm_faces):
+        return [face_data[min(f[index_layer], len(face_data))] for f in bm_faces]
+
+    def build_mask(bm_faces):
+        return [f[mask_layer] in mask_content for f in bm_faces]
+
+    if not extruded_faces:
+        new_vertices, new_edges, new_faces, *new_face_data = pydata_from_bmesh(bm, face_data)
+        face_mask = build_mask(bm.faces)
+    else:
+        # The idea is start from extruded face which coincides with side face
+        # and walk fromm neighbour face to another
+        new_face_order = [face for face in mesh_walk(chain([start_walk_face()], bm.faces), face_neighbours_walk)]
+        new_vertices, new_edges, new_faces = sv_mesh_from_bm_faces(new_face_order)
+        new_face_data = rebuild_face_data(new_face_order) if face_data else []
+        face_mask = build_mask(new_face_order)
+    return new_vertices, new_edges, new_faces, new_face_data, face_mask
+
 
 class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
     ''' Extrude region of faces '''
@@ -137,21 +274,6 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
         self.draw_buttons(context, layout)
         layout.prop(self, "keep_original", toggle=True)
 
-    def get_out_mask(self, bm, extruded_faces, extruded_verts):
-        mask_layer = bm.faces.layers.int.get('mask')
-        for face in extruded_faces:
-            face[mask_layer] = IN
-        # For some reason, bmesh.ops.extrude_face_region gets
-        # custom layers data for what we call "outer extrusion geometry"
-        # from *surrounding* faces, not from the faces being extruded.
-        # So here we have to manually find out the outer geometry.
-        for face in bm.faces:
-            if face[mask_layer] == MASK:
-                if any(v in extruded_verts for v in face.verts):
-                    face[mask_layer] = OUT
-        mask = [int(MASK_MEANING[face[mask_layer]] in self.mask_out_type) for face in bm.faces]
-        return mask
-
     def process(self):
         # inputs
         if not self.inputs['Vertices'].is_linked:
@@ -173,8 +295,6 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
             face_data_s = self.inputs['FaceData'].sv_get(default=[[]])
         else:
             face_data_s = [[]]
-
-        need_mask_out = 'Mask' in self.outputs and self.outputs['Mask'].is_linked
 
         result_vertices = []
         result_edges = []
@@ -279,18 +399,13 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
 
                 extrude_geom = new_geom
 
-            if face_data:
-                new_vertices, new_edges, new_faces, new_face_data = pydata_from_bmesh(bm, face_data)
-            else:
-                new_vertices, new_edges, new_faces = pydata_from_bmesh(bm)
-                new_face_data = []
-
-            if need_mask_out:
-                new_mask = self.get_out_mask(bm, extruded_bm_faces_last, extruded_bm_verts_all)
-                result_mask.append(new_mask)
+            mask_content = {i for i, mask_type in enumerate(['mask', 'out', 'in']) if mask_type in self.mask_out_type}
+            new_vertices, new_edges, new_faces, new_face_data, face_mask = convert_bmesh_to_sv_mesh(
+                bm, set(extruded_bm_faces_last), extruded_bm_verts_all, mask_content, face_data or None)
 
             bm.free()
 
+            result_mask.append(face_mask)
             result_vertices.append(new_vertices)
             result_edges.append(new_edges)
             result_faces.append(new_faces)
