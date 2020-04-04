@@ -18,6 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bpy
+from bpy.types import Operator
 from sverchok.ui.nodeview_rclick_menu import get_verts_edge_poly_output_sockets
 from sverchok.utils.sv_node_utils import frame_adjust
 
@@ -27,11 +28,12 @@ def offset_node_location(existing_node, new_node, offset):
     new_node.location = existing_node.location.x + offset[0] + existing_node.width, existing_node.location.y  + offset[1]
 
 
-def add_temporal_viewer(tree, nodes, links, output_map, existing_node):
+def add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links):
     bl_idname_new_node = 'SvVDExperimental'
+    output_map = get_verts_edge_poly_output_sockets(existing_node)
     try:
         new_node = nodes['Temporal Viewer']
-        if 'verts' in output_map and 'faces' in output_map:
+        if cut_links or ('verts' in output_map and 'faces' in output_map):
             for i in range(4):
                 for link in new_node.inputs[i].links:
                     links.remove(link)
@@ -63,7 +65,8 @@ def add_temporal_viewer(tree, nodes, links, output_map, existing_node):
                 break
     tree.update()
 
-def add_temporal_stethoscope(tree, nodes, links, output_map, existing_node):
+def add_temporal_stethoscope(tree, nodes, links, existing_node):
+    '''Add Temporal Stethoscope and connects it to exisiting node'''
     bl_idname_new_node = 'SvStethoscopeNodeMK2'
     try:
         new_node = nodes['Temporal Stethoscope']
@@ -74,12 +77,13 @@ def add_temporal_stethoscope(tree, nodes, links, output_map, existing_node):
         new_node.label = 'Temporal Stethoscope'
         new_node.color = (0.336045, 0.336045, 0.666654)
 
-    offset_node_location(existing_node, new_node, [30,-200])
+    offset_node_location(existing_node, new_node, [30, -200])
     frame_adjust(existing_node, new_node)
 
     outputs = existing_node.outputs
     inputs = new_node.inputs
     connected_to = 0
+    # find if the node was already connected to it and in that case use next socket
     for i, socket in enumerate(outputs):
         if inputs[0].other == socket:
             connected_to = i +1
@@ -94,52 +98,36 @@ def add_temporal_stethoscope(tree, nodes, links, output_map, existing_node):
 
     tree.update()
 
-def add_temporal_connection(operator, context, force_stetoscope):
+def add_temporal_viewer(context, force_stetoscope, cut_links):
+    '''initial fucntion to determine which viewer to add '''
     space = context.space_data
     tree = space.node_tree
     nodes = tree.nodes
     links = tree.links
 
     existing_node = nodes.active
-    output_map = get_verts_edge_poly_output_sockets(existing_node)
 
     if len(existing_node.outputs) == 0:
         return
 
-    # is_matrix_node = any([socket.bl_idname == 'SvMatrixSocket' for socket in existing_node.outputs])
     is_drawable = any([socket.bl_idname in ['SvMatrixSocket', 'SvVerticesSocket'] for socket in existing_node.outputs])
 
     if  not force_stetoscope and is_drawable:
 
-        add_temporal_viewer(tree, nodes, links, output_map, existing_node)
+        add_temporal_viewer_draw(tree, nodes, links, existing_node, cut_links)
         return
 
-    add_temporal_stethoscope(tree, nodes, links, output_map, existing_node)
+    add_temporal_stethoscope(tree, nodes, links, existing_node)
+
     return
 
-
-class SvTemporalViewerOperator(bpy.types.Operator):
+class SvTemporalViewerOperator(Operator):
     """Connect to temporal Viewer"""
     bl_idname = "node.sv_temporal_viewer"
     bl_label = "Sverchok Temporal Viewer"
-    cut_links: bpy.props.BoolProperty(name="cut_links", default=False)
-    @classmethod
-    def poll(cls, context):
 
-        space = context.space_data
-        tree_type = space.tree_type
-        return space.type == 'NODE_EDITOR' and tree_type in sv_tree_types
-
-    def execute(self, context):
-
-        add_temporal_connection(self, context, False)
-
-        return {'FINISHED'}
-
-class SvTemporalSthetoscopeOperator(bpy.types.Operator):
-    """Connect to temporal Sthetoscope"""
-    bl_idname = "node.sv_temporal_sthetoscope"
-    bl_label = "Sverchok Temporal Sthetoscope"
+    cut_links: bpy.props.BoolProperty(default=False)
+    force_stethoscope: bpy.props.BoolProperty(default=False)
 
     @classmethod
     def poll(cls, context):
@@ -150,16 +138,14 @@ class SvTemporalSthetoscopeOperator(bpy.types.Operator):
 
     def execute(self, context):
 
-        add_temporal_connection(self, context, True)
+        add_temporal_viewer(context, self.force_stethoscope, self.cut_links)
 
         return {'FINISHED'}
 
 
 def register():
     bpy.utils.register_class(SvTemporalViewerOperator)
-    bpy.utils.register_class(SvTemporalSthetoscopeOperator)
 
 
 def unregister():
     bpy.utils.unregister_class(SvTemporalViewerOperator)
-    bpy.utils.unregister_class(SvTemporalSthetoscopeOperator)
