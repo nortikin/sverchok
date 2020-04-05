@@ -22,6 +22,7 @@ import bpy
 import bmesh
 import mathutils
 from mathutils import Vector, Matrix
+from math import radians
 from bpy.props import (
     BoolProperty, FloatVectorProperty, StringProperty, EnumProperty, IntProperty
 )
@@ -71,6 +72,7 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
     input_idx: StringProperty()
     execstr: StringProperty(default='', update=updateNode)
+    input_Sc: EnumProperty(items=(('prop_int','int','prop_int'),('prop_float','float','prop_float'),('prop_angle','angle','prop_angle')),default='prop_int',name='input_Sc', update=updateNode)
 
     def sv_init(self, context):
         self.inputs.new('SvVerticesSocket', 'auto_convert')
@@ -88,7 +90,11 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
 
             if self.node_name:
                 node = node_group.nodes[self.node_name]
-                col.prop_search(self, 'input_idx', node, 'inputs', text='', icon='DRIVER')
+                if node_group.bl_idname == "ScNodeTree":
+                    # [['int',1,1,'prop_int'],['float',2,2,'prop_float'],['angle',3,3,'prop_angle']]
+                    col.prop(self, 'input_Sc',text='') #, text='', icon='DRIVER')
+                else:
+                    col.prop_search(self, 'input_idx', node, 'inputs', text='', icon='DRIVER')
 
     def process(self):
         if not self.activate:
@@ -99,10 +105,20 @@ class SvNodeRemoteNode(bpy.types.Node, SverchCustomTreeNode):
             node = node_group.nodes.get(self.node_name)
             if node:
                 named_input = node.inputs.get(self.input_idx)
-                if named_input:
+                if node_group.bl_idname == 'ScNodeTree':
+                    # sorcar node tree
+                    # it needs pure number
+                    data = self.inputs[0].sv_get()[0][0]
+                    if self.input_Sc == 'prop_float':
+                        node_group.set_value(node.name,'prop_float',data)
+                    elif self.input_Sc == 'prop_int':
+                        node_group.set_value(node.name,'prop_int',data)
+                    elif self.input_Sc == 'prop_angle':
+                        node_group.set_value(node.name,'prop_angle',radians(data))
+                elif named_input:
                     data = self.inputs[0].sv_get()
                     if 'value' in named_input:
-                        # [ ] switch socket type if needed
+                        # [ ] switch socket type if needed (AN)
                         assign_data(named_input.value, data)
                     elif 'value_prop' in named_input:
                         # for audio nodes for example
