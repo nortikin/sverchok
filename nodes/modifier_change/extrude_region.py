@@ -16,16 +16,18 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
-from mathutils import Matrix, Vector
-from itertools import chain
+
+from typing import Generator, Set
 
 import bpy
 from bpy.props import FloatProperty, BoolProperty, EnumProperty
 import bmesh.ops
+from mathutils import Matrix, Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, match_long_repeat, fullList
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh
+
 
 def is_matrix(lst):
     return len(lst) == 4 and len(lst[0]) == 4
@@ -80,24 +82,84 @@ def ensure_next_element(start_elem, next_elem):
         return True
 
 
-def mesh_walk(elements, neighbours_walk):
-    used = set()
-    for element in elements:
-        if element in used:
-            continue
+class UniqueStack:
+    # any element can get in the stack only once
+    def __init__(self, element=None):
+        self._added = set(list(element)) if element else set()
+        self._stack = list(element) if element else []
 
-        stack = {element, }
+    def try_add(self, element):
+        if element not in self._added:
+            self._stack.append(element)
+            self._added.add(element)
+
+    def pop(self):
+        return self._stack.pop()
+
+    def __bool__(self):
+        return bool(self._stack)
+
+
+def mesh_walk(elements, neighbours_walk):
+    stack = UniqueStack()
+    for element in elements:
+        stack.try_add(element)
+
         while stack:
             next_element = stack.pop()
             yield next_element
 
-            used.add(next_element)
             for el in neighbours_walk(next_element):
-                if el not in used:
-                    stack.add(el)
+                stack.try_add(el)
 
 
-def convert_bmesh_to_sv_mesh(bm, extruded_faces: set, extruded_verts: set, mask_content: set, face_data=None):
+def loop_neighbour_walk(start_loop) -> Generator[bmesh.types.BMLoop, None, None]:
+    """
+       +    6+
+    +++++++++++++
+      7+3   2+
+       +0   1+5
+    +++++++++++++
+       +4    +
+    0, 1, 2, ... - loops
+    0 - start loop
+    it returns 4, 5, 6, 7 loops in such particular order
+    if loop have several radial faces it will return their loops first
+    """
+    def radial_neighbour_faces(loop) -> Generator[bmesh.types.BMLoop, None, None]:
+        next_loop = loop.link_loop_radial_next
+        while loop != next_loop:
+            yield next_loop
+            next_loop = next_loop.link_loop_radial_next
+
+    def face_loops_from_loop(loop) -> Generator[bmesh.types.BMLoop, None, None]:
+        yield loop
+        next_loop = loop.link_loop_next
+        while loop != next_loop:
+            yield next_loop
+            next_loop = next_loop.link_loop_next
+
+    for l in face_loops_from_loop(start_loop):
+        yield from radial_neighbour_faces(l)
+
+
+def mesh_walk_from_loop(start_loop: bmesh.types.BMLoop) -> Generator[bmesh.types.BMFace, None, None]:
+    # Such walk can't walk over all mesh if mesh include disjoint mesh islands
+    # In this case islands should be detected and walk separately
+    used_faces = set()
+    stack = UniqueStack([start_loop])
+    while stack:
+        next_loop = stack.pop()
+        if next_loop.face not in used_faces:
+            yield next_loop.face
+            used_faces.add(next_loop.face)
+
+        for l in loop_neighbour_walk(next_loop):
+            stack.try_add(l)
+
+
+def convert_bmesh_to_sv_mesh(bm, extruded_faces: Set[bmesh.types.BMFace],
+                             extruded_verts: set, mask_content: set, face_data=None):
     """
     ++++++++++++++++++
     +   ++  1   ++   +
@@ -137,12 +199,16 @@ def convert_bmesh_to_sv_mesh(bm, extruded_faces: set, extruded_verts: set, mask_
     def is_extruded_face(face):
         return face[mask_layer] == 2
 
-    def start_walk_face():
+    def start_walk_loop() -> bmesh.types.BMLoop:
+        # The idea is start from firs of extruded face
+        # Even the order of edges is undefined
         for face in extruded_faces:
-            for neighbour_face in face_neighbours_walk(face):
-                if is_side_face(neighbour_face):
-                    return face
-        raise LookupError(f"It looks impossible but no one extruded face does not have side face")
+            if face.tag:
+                for loop in face.loops:
+                    if loop.tag:
+                        return loop
+        raise LookupError(f"No one extruded face was tagged as first face"
+                          f" or first face does not have tagged first loop")
 
     def sv_mesh_from_bm_faces(bm_faces):
         def element_indexer():
@@ -177,9 +243,7 @@ def convert_bmesh_to_sv_mesh(bm, extruded_faces: set, extruded_verts: set, mask_
         new_vertices, new_edges, new_faces, *new_face_data = pydata_from_bmesh(bm, face_data)
         face_mask = build_mask(bm.faces)
     else:
-        # The idea is start from extruded face which coincides with side face
-        # and walk fromm neighbour face to another
-        new_face_order = [face for face in mesh_walk(chain([start_walk_face()], bm.faces), face_neighbours_walk)]
+        new_face_order = [face for face in mesh_walk_from_loop(start_walk_loop())]
         new_vertices, new_edges, new_faces = sv_mesh_from_bm_faces(new_face_order)
         new_face_data = rebuild_face_data(new_face_order) if face_data else []
         face_mask = build_mask(new_face_order)
@@ -343,6 +407,8 @@ class SvExtrudeRegionNode(bpy.types.Node, SverchCustomTreeNode):
                     for vert in face.verts:
                         b_verts.add(vert)
 
+            b_faces[0].tag = True  # This is flag of first extruded face for reordering algorithm
+            b_faces[0].loops[0].tag = True  # This is flag walk direction
             extrude_geom = b_faces+list(b_edges)+list(b_verts)
 
             extruded_verts_last = []
