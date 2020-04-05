@@ -33,7 +33,7 @@ NodeView and 3DView
 
 
 3. **Sverchok Node Tree**:
-   
+
    This icon |image2| shows that Sverchok Nodes can be loaded, you’ll see it among the other Node Tree types. |image3|
 
 
@@ -60,10 +60,10 @@ NodeView and 3DView
 
      |image7|
 
-   * Hit *Ctrl-Space*. This shortcut calls for a special search menu, which allows you to search for nodes and macros:
+   * Hit *Alt-Space*. This shortcut calls for a special search menu, which allows you to search for nodes and macros:
 
      |image8|
-   
+
    * Use Blender's standard search box, which appears when you hit *Space* in node view:
 
      |image9|
@@ -87,4 +87,3 @@ NodeView and 3DView
 .. |image8| image:: https://user-images.githubusercontent.com/284644/34564128-499d91b2-f177-11e7-9259-d042ce8b9de6.png
 .. |image9| image:: https://user-images.githubusercontent.com/284644/34564221-9fb3acee-f177-11e7-9b0a-d64103d0ba0e.png
 .. |image10| image:: https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png
-

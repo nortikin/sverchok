@@ -6,49 +6,61 @@ Panels of Sverchok
 Node Tree Panel
 ===============
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512957/866dacd8-4b46-11e4-9cfa-2b78d2a2f8a9.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel.png
   :alt: nodetreepanel.ng
 
-This panel allows to manage sverchok layouts as easy as you press buttons on an elevator.
+This panel allows to manage Sverchok layouts as easy as you press buttons on an elevator.
 
 Update
 ------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512960/868c837e-4b46-11e4-9fba-a5062fd5434f.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel_01.png
   :alt: nodetreeupdate.png
 
-+-------------------+---------------------------------+  
++-------------------+---------------------------------+
 | Update            | description                     |
 +===================+=================================+
 | all               | Updates all trees of sverchok.  |
-+-------------------+---------------------------------+  
++-------------------+---------------------------------+
 | Update layout     | Updates currently active layout |
-+-------------------+---------------------------------+  
++-------------------+---------------------------------+
 
 Layout manager
 --------------
 
-.. image:: https://cloud.githubusercontent.com/assets/5783432/4512959/867d395a-4b46-11e4-9419-95ed1479ac72.png
-  :alt: manager.png
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel_02.png
 
-Box to quickly pick layout, switch between them with buttons instead of popup list. Also have settins:
+Box to quickly pick layout, switch between them with buttons instead of popup list. Also have settings:
 
 
 +--------------------+----------------------------------------------------------------------------------------+
-| Button             | Function                                                                               |  
+| Button             | Function                                                                               |
 +====================+========================================================================================+
 | **B**              | bake this layout - will gather all layout's viewer draw and viewer text to bake them.  |
-|                    | Bake only if bakeable button is active on node, else ignore.                           |   
+|                    | Bake only if bakeable button is active on node, else ignore.                           |
 +--------------------+----------------------------------------------------------------------------------------+
-| **Show layout**    | Controlls all OpenGL viewer of this layout. Viewer, Stethoscop and Viewer Indices      |
+| **Show layout**    | Controls all OpenGL viewer of this layout. Viewer, Stethoscope and Viewer Indices      |
 +--------------------+----------------------------------------------------------------------------------------+
 | **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
 +--------------------+----------------------------------------------------------------------------------------+
-| **Process layout** | Automaticlly evaluate layout while editing, disable for large or complex layouts       |
+| **Process layout** | Automatically evaluate layout while editing, disable for large or complex layouts (F6) |
++--------------------+----------------------------------------------------------------------------------------+
+| **Draft Mode**     | Switch tree to Draft mode (F7)                                                         |
 +--------------------+----------------------------------------------------------------------------------------+
 | **Fake User**      | Sets fake user so layout isn't deleted on save                                         |
 +--------------------+----------------------------------------------------------------------------------------+
 
+Active Tree Properties
+----------------------
+
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_main_panel_03.png
+  :alt: tree_properties.png
+
+**Show error in tree**: Display the errors in the node-tree right beside the Node
+
+**Eval dir**: This will give you control over the order in which subset graphs are evaluated
+
+**Remove Stale Drawing**: This will clear the opengl drawing if Sverchok didn't manage to correctly clear it on its own
 
 Check for updates
 -----------------
@@ -56,21 +68,29 @@ Check for updates
 .. image:: https://cloud.githubusercontent.com/assets/5783432/4512958/8671953c-4b46-11e4-898d-e09eec52b464.png
   :alt: upgradenewversion.png
 
-**Check for updates** - finds if master branch on github has new version of sverchok. In future there will be releases, but now dangerouse update.
+**Check for updates** - finds if master branch on github has new version of Sverchok. In future there will be releases, but now dangerous update.
+
+**Show Last Commits** - Show lastests commits in info panel and terminal
 
 **Upgrade Sverchok** - upgrades Sverchok from github with new version - button appears only if 'check for updates' finds a new version.
 
 
-Tools Panel
-===========
+Nodes Toolbar
+=============
 
-Blender's node editor, as well as other types of editor, has a Tools panel (on the left side), which is toggled by pressing the *T* key.
-Sverchok uses it to present all nodes available, organized in categories. Each category has a special tab for it.
+To see this panel it has to be enabled in the Sverchok properties inside the Blender Preferences Panel -> Add-ons -> Sverchok.
+There you can choose if to display it on the "N panel" or the "T panel".
+Also you can choose if you want to display only the icons
 
-.. image:: https://user-images.githubusercontent.com/284644/34564322-08f15328-f178-11e7-8b0d-76f49c7e3afe.png
-  :alt: t-panel.png
+The panel presents all nodes available, organized in categories with a search menu.
 
-You can add node to the tree by clicking corresponding button in the *T* panel.
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/docs_intro/sverchok_nodes_panel_04.png
+  :alt: nodes_panel.png
+
+.. image:: https://github.com/vicdoval/sverchok/blob/docs_images/images_for_docs/docs_intro/sverchok_nodes_panel_only_icons.png
+  :alt: nodes_panel.png
+
+You can add node to the tree by clicking corresponding button and dragging placing the node in the node-tree.
 
 Presets Panel
 =============
@@ -165,7 +185,7 @@ The following buttons (in this order) are shown for each preset you have:
   select where to save the preset.
 * **Edit preset properties**. A dialog will appear allowing you to change the
   following properties of preset: Name, Description, Author, License. The
-  Description attribute will be used as a tooltip for preset button. 
+  Description attribute will be used as a tooltip for preset button.
 
   .. image:: https://user-images.githubusercontent.com/284644/34521620-7ca698dc-f0b0-11e7-94a9-757975ec1ec7.png
 
@@ -177,7 +197,7 @@ The following buttons (in this order) are shown for each preset you have:
 .. image:: https://user-images.githubusercontent.com/28003269/70139516-16bea400-16ac-11ea-9c77-3125856b4d28.png
 
 With this panel your layout becomes addon itself. So, you making your life easy.
-Since Blender 2.8 this panel has two instances. One instance located on `N` panel in `Tool` category of `3D` editor. 
+Since Blender 2.8 this panel has two instances. One instance located on `N` panel in `Tool` category of `3D` editor.
 Another located in `Active tool and workspace settings` shelf of `Properties` editor.
 
 Scan for props
@@ -187,14 +207,14 @@ Scan for props
   :alt: scanprops.png
 
 When layout is in, check for next nodes to embad them as properties:
- - A number  
+ - A number
  - Color input
  - List Input
  - Objects in
  - Viewer BMesh
 
-Read documentation of this nodes for getting more details about how to enable them on 3D panel. 
- 
+Read documentation of this nodes for getting more details about how to enable them on 3D panel.
+
 Sorting them by label, that user defined in node tree panel or if no label, the name of the node is used.
 
 Update all
@@ -229,10 +249,10 @@ Properties
 Layouts by box. Every layout has buttons:
 
 +--------------------+----------------------------------------------------------------------------------------+
-| Button             | Function                                                                               |  
+| Button             | Function                                                                               |
 +====================+========================================================================================+
 | **B**              | bake this layout - will gather all layout's viewer draw and viewer text to bake them.  |
-|                    | Bake only if bakeable button is active on node, else ignore.                           |   
+|                    | Bake only if bakeable button is active on node, else ignore.                           |
 +--------------------+----------------------------------------------------------------------------------------+
 | **Show layout**    | show or hide all viewers - to draw or not to draw OpenGL in window, but bmesh viewer   |
 |                    | not handled for now.                                                                   |
@@ -240,6 +260,8 @@ Layouts by box. Every layout has buttons:
 | **Animate layout** | to animate the layout (or not) - may preserve you time.                                |
 +--------------------+----------------------------------------------------------------------------------------+
 | **P**              | Process layout, allows safely manupilate monsterouse layouts.                          |
++--------------------+----------------------------------------------------------------------------------------+
+| **D**              | Activate Draft mode                                                                    |
 +--------------------+----------------------------------------------------------------------------------------+
 | **F**              | Fake user of layout to preserve from removing with reloading file or                   |
 |                    | with **clean layouts** button.                                                         |
@@ -253,7 +275,7 @@ Import Export Panel
 
 location: N panel of any Sverchok Tree.
 
-Import and export of the current state of a Sverchok Tree. This tool stores 
+Import and export of the current state of a Sverchok Tree. This tool stores
 
  - Node state: location, hidden, frame parent
  - Node parameters: (internal state) like booleans, enum toggles and strings
@@ -266,14 +288,14 @@ Export
   :alt: panelexport.png
 
 +---------+-------------------------------------------------------------------------------------------------+
-| feature | description                                                                                     | 
+| feature | description                                                                                     |
 +=========+=================================================================================================+
 | Zip     | When toggled to *on* this will perform an extra zip operation when you press Export. The zip    |
-|         | can sometimes be a lot smaller that the json. These files can also be read by the import        |  
+|         | can sometimes be a lot smaller that the json. These files can also be read by the import        |
 |         | feature.                                                                                        |
 +---------+-------------------------------------------------------------------------------------------------+
 | Export  | Export to file, opens file browser in blender to let you type the name of the file, Sverchok    |
-|         | will auto append the .json or .zip file extention - trust it.                                   | 
+|         | will auto append the .json or .zip file extention - trust it.                                   |
 +---------+-------------------------------------------------------------------------------------------------+
 
 Import
@@ -283,7 +305,7 @@ Import
   :alt: panelimport.png
 
 +-------------+-------------------------------------------------------------------------------------------------+
-| feature     | description                                                                                     | 
+| feature     | description                                                                                     |
 +=============+=================================================================================================+
 | Layout name | name of layout to use, has a default but you might want to force a name                         |
 +-------------+-------------------------------------------------------------------------------------------------+
@@ -301,8 +323,8 @@ Consider this whole IO feature experimental for the time being. You use it at yo
 +-------------+---------------------------------------------------------------------------------------+
 | Node        | Issue                                                                                 |
 +=============+=======================================================================================+
-| Object In   | the json currently doesn't store geometry but an empty shell without object           | 
-|             | references instead                                                                    |  
+| Object In   | the json currently doesn't store geometry but an empty shell without object           |
+|             | references instead                                                                    |
 +-------------+---------------------------------------------------------------------------------------+
 | SN MK1      | currently this auto imports by design, but perhaps some interruption of the import    |
 |             | process will be implemented                                                           |
@@ -311,7 +333,7 @@ Consider this whole IO feature experimental for the time being. You use it at yo
 
 **Why make it if it's so limited?**
 
-Primarily this is for sharing quick setups, for showing people how to achieve a general result. The decision to not include geometry in the Object In references may change, until then consider it a challenge to avoid it. The way to exchange large complex setups will always be the ``.blend``, this loads faster and stores anything your Tree may reference. 
+Primarily this is for sharing quick setups, for showing people how to achieve a general result. The decision to not include geometry in the Object In references may change, until then consider it a challenge to avoid it. The way to exchange large complex setups will always be the ``.blend``, this loads faster and stores anything your Tree may reference.
 
 **While importing I see lots of messages in the console!**
 
