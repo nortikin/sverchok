@@ -205,6 +205,10 @@ class DefaultMacros():
             return {'FINISHED'}
 
         elif 'output numpy' in term:
+            #stop processing to avoid one update per property
+            previous_state = tree.sv_process
+            tree.sv_process = False
+
             state_ = term.split(' ')[2]
             state = state_ == 'True'
             for node in nodes:
@@ -224,7 +228,10 @@ class DefaultMacros():
                         node.implementation = 'NumPy' if state else 'Python'
                     except TypeError:
                         pass
-            # tree.update()
+                        
+            # establish previous processing state
+            tree.sv_process = previous_state
+            tree.update()
 
         elif term == 'gp +':
             needed_nodes = [
