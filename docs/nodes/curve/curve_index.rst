@@ -22,6 +22,7 @@ Curves
    endpoints
    surface_boundary
    curve_lerp
+   iso_uv_curve
    cast_curve
    eval_curve
 
