@@ -18,6 +18,7 @@ Curves
    curvature
    torsion
    curve_frame
+   zero_twist_frame
    cast_curve
    eval_curve
 

@@ -22,10 +22,15 @@ class SvExCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
             min = 10, default = 50,
             update = updateNode)
 
+        t_value : FloatProperty(
+                name = "T",
+                default = 0.5,
+                update = updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvExCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
-            self.inputs.new('SvStringsSocket', "T")
+            self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvStringsSocket', "CumulativeTorsion")
             self.outputs.new('SvMatrixSocket', 'Matrix')
 

@@ -11,6 +11,11 @@ orientation.
 
 .. _Frenet: https://en.wikipedia.org/wiki/Frenet%E2%80%93Serret_formulas
 
+Note that Frenet frame of the curve rotates along curve's tangent according to
+curve's own torsion. Thus, if you place something by this frame, the result can
+be somewhat twisted. If you want to minimize the twist, you may wish to use
+**Zero-Twist Frame** node.
+
 Inputs
 ------
 
