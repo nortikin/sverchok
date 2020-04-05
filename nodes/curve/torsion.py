@@ -16,9 +16,14 @@ class SvExCurveTorsionNode(bpy.types.Node, SverchCustomTreeNode):
         bl_label = 'Curve Torsion'
         bl_icon = 'CURVE_NCURVE'
 
+        t_value : FloatProperty(
+                name = "T",
+                default = 0.5,
+                update = updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvExCurveSocket', "Curve")
-            self.inputs.new('SvStringsSocket', "T")
+            self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvStringsSocket', "Torsion")
 
         def process(self):
