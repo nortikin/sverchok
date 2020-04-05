@@ -17,6 +17,7 @@ Curves
    length_parameter
    curvature
    torsion
+   curve_frame
    cast_curve
    eval_curve
 

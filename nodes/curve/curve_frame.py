@@ -17,9 +17,14 @@ class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
         bl_icon = 'OUTLINER_OB_EMPTY'
         sv_icon = 'SV_CURVE_FRAME'
 
+        t_value : FloatProperty(
+                name = "T",
+                default = 0.5,
+                update = updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvExCurveSocket', "Curve")
-            self.inputs.new('SvStringsSocket', "T")
+            self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvMatrixSocket', 'Matrix')
             self.outputs.new('SvVerticesSocket', 'Normal')
             self.outputs.new('SvVerticesSocket', 'Binormal')
@@ -45,7 +50,7 @@ class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
                     matrix.translation = Vector(point)
                     new_matrices.append(matrix)
 
-                matrix_out.append(new_matrices)
+                matrix_out.extend(new_matrices)
                 normals_out.append(normals.tolist())
                 binormals_out.append(binormals.tolist())
 

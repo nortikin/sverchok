@@ -61,7 +61,7 @@ class SvExCurveZeroTwistFrameNode(bpy.types.Node, SverchCustomTreeNode):
                     new_matrices.append(matrix)
 
                 torsion_out.append(integral.tolist())
-                matrix_out.append(new_matrices)
+                matrix_out.extend(new_matrices)
 
             self.outputs['CumulativeTorsion'].sv_set(torsion_out)
             self.outputs['Matrix'].sv_set(matrix_out)
