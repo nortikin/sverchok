@@ -24,5 +24,6 @@ Curves
    curve_lerp
    iso_uv_curve
    cast_curve
+   flip_curve
    eval_curve
 
