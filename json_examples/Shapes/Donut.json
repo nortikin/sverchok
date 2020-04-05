@@ -2,9 +2,9 @@
   "export_version": "0.079",
   "framed_nodes": {
     "Assign Materials List": "Output",
+    "Matrix In": "Tangent Move",
     "Matrix Math": "Tangent Move",
     "Matrix Track To": "Tangent Move",
-    "Matrix in": "Tangent Move",
     "Matrix out": "Tangent Move",
     "Move": "Bottom Flat",
     "Move.002": "Tangent Move",
@@ -54,7 +54,7 @@
     },
     "Fractal": {
       "bl_idname": "NodeFrame",
-      "height": 401.1192626953125,
+      "height": 400.6192626953125,
       "hide": false,
       "label": "Fractal vectors",
       "location": [
@@ -78,6 +78,35 @@
         "depth": 0.029999995604157448,
         "inset_type": "region",
         "thickness": 0.0
+      },
+      "width": 140.0
+    },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK3",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1410.7752571105957,
+        108.26798057556152
+      ],
+      "params": {
+        "angle": 0.0,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
       },
       "width": 140.0
     },
@@ -108,18 +137,6 @@
       "params": {
         "tu_axes": "X_Z"
       },
-      "width": 140.0
-    },
-    "Matrix in": {
-      "bl_idname": "SvMatrixGenNodeMK2",
-      "height": 100.0,
-      "hide": false,
-      "label": "",
-      "location": [
-        1410.7752571105957,
-        108.26798057556152
-      ],
-      "params": {},
       "width": 140.0
     },
     "Matrix out": {
@@ -158,7 +175,6 @@
         192.87377738952637
       ],
       "params": {
-        "mult_": 1.0,
         "strength": 1.0
       },
       "width": 140.0
@@ -345,7 +361,7 @@
     },
     "Output": {
       "bl_idname": "NodeFrame",
-      "height": 546.9617919921875,
+      "height": 541.9617919921875,
       "hide": false,
       "label": "Output",
       "location": [
@@ -439,7 +455,6 @@
         832.4366912841797
       ],
       "params": {
-        "factor_": 0.1600000262260437,
         "multiplier": 0.1600000262260437
       },
       "width": 140.0
@@ -454,7 +469,6 @@
         797.7181854248047
       ],
       "params": {
-        "factor_": 1.0899999141693115,
         "multiplier": 1.0899999141693115
       },
       "width": 140.0
@@ -524,7 +538,7 @@
     },
     "Tangent Move": {
       "bl_idname": "NodeFrame",
-      "height": 535.873779296875,
+      "height": 536.373779296875,
       "hide": false,
       "label": "Move along Tangents",
       "location": [
@@ -634,14 +648,44 @@
   "update_lists": [
     [
       "Torus",
-      "Polygons",
-      "Reroute.001",
+      "Vertices",
+      "Reroute",
       "Input"
     ],
     [
-      "Torus",
-      "Vertices",
       "Reroute",
+      "Output",
+      "Scale.002",
+      "Vertices"
+    ],
+    [
+      "Scale.002",
+      0,
+      "Vector Noise",
+      0
+    ],
+    [
+      "Vector Noise",
+      0,
+      "Scale",
+      0
+    ],
+    [
+      "Scale",
+      0,
+      "Vector Rewire",
+      0
+    ],
+    [
+      "Vector Rewire",
+      0,
+      "Matrix In",
+      0
+    ],
+    [
+      "Torus",
+      "Polygons",
+      "Reroute.001",
       "Input"
     ],
     [
@@ -663,46 +707,22 @@
       3
     ],
     [
-      "Reroute",
-      "Output",
-      "Scale.002",
-      "Vertices"
-    ],
-    [
-      "Scale.002",
-      0,
-      "Vector Noise",
-      0
-    ],
-    [
-      "Vector Noise",
-      0,
-      "Scale",
-      0
-    ],
-    [
-      "Scale",
-      0,
-      "Vector Rewire",
-      0
-    ],
-    [
-      "Vector Rewire",
-      0,
-      "Matrix in",
-      0
-    ],
-    [
       "Matrix Track To",
       0,
       "Matrix Math",
       0
     ],
     [
-      "Matrix in",
+      "Matrix In",
       0,
       "Matrix Math",
       1
+    ],
+    [
+      "Matrix Math",
+      0,
+      "Matrix out",
+      0
     ],
     [
       "Torus",
@@ -723,10 +743,10 @@
       2
     ],
     [
-      "Matrix Math",
-      0,
-      "Matrix out",
-      0
+      "Torus",
+      "Edges",
+      "Reroute.002",
+      "Input"
     ],
     [
       "Reroute",
@@ -735,16 +755,10 @@
       "Vertices"
     ],
     [
-      "Matrix out",
+      "Matrix Math",
       0,
       "Move.002",
       1
-    ],
-    [
-      "Torus",
-      "Edges",
-      "Reroute.002",
-      "Input"
     ],
     [
       "Move.002",
@@ -775,6 +789,12 @@
       2,
       "Inset faces",
       4
+    ],
+    [
+      "Inset faces",
+      "Faces",
+      "Reroute.004",
+      "Input"
     ],
     [
       "Inset faces",
@@ -822,12 +842,6 @@
       "Move",
       "Vertices",
       "Reroute.003",
-      "Input"
-    ],
-    [
-      "Inset faces",
-      "Faces",
-      "Reroute.004",
       "Input"
     ],
     [

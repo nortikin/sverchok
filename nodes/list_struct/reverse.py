@@ -21,10 +21,13 @@ from bpy.props import BoolProperty, IntProperty, StringProperty
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import (updateNode, changable_sockets)
-
+from numpy import ndarray
 
 class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List Reverse Node '''
+    '''
+    Triggers: Invert list order
+    Tooltip: Reverse the elements order of a list
+    '''
     bl_idname = 'ListReverseNode'
     bl_label = 'List Reverse'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -56,6 +59,8 @@ class ListReverseNode(bpy.types.Node, SverchCustomTreeNode):
     def revers(self, data, level):
         level -= 1
         if level:
+            if level == 1 and isinstance(data, ndarray):
+                return data[:,::-1]
             out = []
             for l in data:
                 out.append(self.revers(l, level))

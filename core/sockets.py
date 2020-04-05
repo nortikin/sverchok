@@ -174,14 +174,14 @@ class SvSocketCommon:
 
         if self.use_quicklink:
             if self.bl_idname == "SvMatrixSocket":
-                new_node_idname = "SvMatrixGenNodeMK2"
+                new_node_idname = "SvMatrixInNodeMK3"
             elif self.bl_idname == "SvVerticesSocket":
                 new_node_idname = "GenVectorsNode"
             else:
                 return
 
             op = layout.operator('node.sv_quicklink_new_node_input', text="", icon="PLUGIN")
-            op.socket_index = self.index 
+            op.socket_index = self.index
             op.origin = node.name
             op.new_node_idname = new_node_idname
             op.new_node_offsetx = -200 - 40 * self.index  ## this is not so useful, we should infer visible socket location

@@ -13,3 +13,7 @@ Viz
    viewer_nurbs_curve
    viewer_nurbs_surface
    console_node
+   viewer_texture
+   viewer_texture_lite
+   lamp_out
+   vd_matrix

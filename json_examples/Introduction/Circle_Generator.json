@@ -14,7 +14,9 @@
       ],
       "params": {
         "float_": 60.0,
-        "int_": 0
+        "float_draft_": 0.0,
+        "int_": 0,
+        "int_draft_": 0
       },
       "width": 140.0
     },
@@ -114,13 +116,8 @@
       "params": {},
       "width": 140.0
     },
-    "Matrix in.001": {
-      "bl_idname": "SvMatrixGenNodeMK2",
-      "custom_socket_props": {
-        "1": {
-          "expanded": true
-        }
-      },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -128,7 +125,24 @@
         284.8458557128906,
         -687.3954467773438
       ],
-      "params": {},
+      "params": {
+        "angle": 0.0,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
       "width": 140.0
     },
     "Number Range": {
@@ -268,13 +282,13 @@
     [
       "Number Range",
       0,
-      "Formula.003",
+      "Formula.002",
       0
     ],
     [
       "Number Range",
       0,
-      "Formula.002",
+      "Formula.003",
       0
     ],
     [
@@ -288,6 +302,72 @@
       0,
       "Gen Vectors.003",
       1
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula",
+      1
+    ],
+    [
+      "Number Range.004",
+      0,
+      "Formula.001",
+      0
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
+      1
+    ],
+    [
+      "Number Range.005",
+      0,
+      "Formula.001",
+      2
+    ],
+    [
+      "Formula.001",
+      0,
+      "Gen Vectors.001",
+      0
+    ],
+    [
+      "Formula",
+      0,
+      "Gen Vectors.001",
+      1
+    ],
+    [
+      "Formula.001",
+      0,
+      "Gen Vectors.001",
+      2
+    ],
+    [
+      "Gen Vectors.001",
+      0,
+      "Matrix In",
+      0
+    ],
+    [
+      "Gen Vectors.001",
+      0,
+      "Matrix In",
+      6
+    ],
+    [
+      "A Number",
+      0,
+      "Matrix In",
+      7
     ],
     [
       "Number Range.002",
@@ -302,72 +382,6 @@
       1
     ],
     [
-      "Number Range.004",
-      0,
-      "Formula.001",
-      0
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula.001",
-      1
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula.001",
-      2
-    ],
-    [
-      "Number Range.004",
-      0,
-      "Formula",
-      0
-    ],
-    [
-      "Number Range.005",
-      0,
-      "Formula",
-      1
-    ],
-    [
-      "Formula.001",
-      0,
-      "Gen Vectors.001",
-      0
-    ],
-    [
-      "Formula",
-      0,
-      "Gen Vectors.001",
-      1
-    ],
-    [
-      "Formula.001",
-      0,
-      "Gen Vectors.001",
-      2
-    ],
-    [
-      "Gen Vectors.001",
-      0,
-      "Matrix in.001",
-      0
-    ],
-    [
-      "Gen Vectors.001",
-      0,
-      "Matrix in.001",
-      2
-    ],
-    [
-      "A Number",
-      0,
-      "Matrix in.001",
-      3
-    ],
-    [
       "Gen Vectors.003",
       0,
       "Viewer Draw Mk3",
@@ -380,7 +394,7 @@
       1
     ],
     [
-      "Matrix in.001",
+      "Matrix In",
       0,
       "Viewer Draw Mk3",
       3

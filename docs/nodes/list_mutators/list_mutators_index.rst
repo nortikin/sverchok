@@ -8,3 +8,4 @@ List Mutators
    modifier
    polygon_sort
    combinatorics
+   filter_empty_lists

@@ -101,12 +101,13 @@ class SvReplaceNode(bpy.types.Operator):
             setattr(new_node, prop_name, getattr(old_node, prop_name))
         # Copy ID properties
         for prop_name, prop_value in old_node.items():
-            new_node[prop_name] = old_node[prop_name]
+            if hasattr(new_node, prop_name):
+                new_node[prop_name] = old_node[prop_name]
 
         # get the node ready for linking
         if hasattr(new_node, "migrate_props_pre_relink"):
             new_node.migrate_props_pre_relink(old_node)
-            
+
         # remove old links and create new ones
         if hasattr(new_node, "migrate_links_from"):
             new_node.migrate_links_from(old_node, self)

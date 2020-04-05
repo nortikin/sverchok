@@ -43,6 +43,8 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_IN'
 
+    replacement_nodes = [('SvMatrixInNodeMK3', dict(Rotation="Axis"), dict(Matrix = "Matrices"))]
+
     l_: FloatVectorProperty(
         name='L', default=(0.0, 0.0, 0.0), description='Location', precision=3, update=updateNode)
     s_: FloatVectorProperty(
@@ -57,6 +59,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         description="Flatten output by list-joining level 1",
         default=True,
         update=updateNode)
+
     def sv_init(self, context):
 
         inew = self.inputs.new
@@ -72,8 +75,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
-
-
+        self.node_replacement_menu(context, layout)
 
     def process(self):
         L, S, R, A = self.inputs

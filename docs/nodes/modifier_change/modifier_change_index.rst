@@ -18,6 +18,7 @@ Modifier Change
    extrude_separate_lite
    extrude_region
    holes_fill
+   flip_normals
    mesh_join
    mesh_separate
    objects_along_edge
@@ -28,6 +29,7 @@ Modifier Change
    recalc_normals
    remove_doubles
    triangulate
+   triangulate_heavy
    planar_faces
    split_faces
    vertices_mask
@@ -38,3 +40,4 @@ Modifier Change
    inset_faces
    follow_active_quads
    separate_parts_to_indexes
+   extrude_multi_alt

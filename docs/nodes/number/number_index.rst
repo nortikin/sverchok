@@ -19,3 +19,4 @@ Number
    numbers
    scalar_mk4
    oscillator
+   easing
