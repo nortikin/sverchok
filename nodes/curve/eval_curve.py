@@ -69,7 +69,7 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(curve_s[0], SvExCurve):
                 curve_s = [curve_s]
 
-            ts_s = ensure_nesting_level(ts_s, 2)
+            ts_s = ensure_nesting_level(ts_s, 3)
             samples_s = ensure_nesting_level(samples_s, 2)
 
             verts_out = []
@@ -85,7 +85,9 @@ class SvExEvalCurveNode(bpy.types.Node, SverchCustomTreeNode):
                         t_min, t_max = curve.get_u_bounds()
                         ts = np.linspace(t_min, t_max, num=samples, dtype=np.float64)
                     else:
-                        ts = np.array(ts)[np.newaxis].T
+                        ts = np.array(ts)
+                        #ts = np.array(ts)[np.newaxis].T
+                        #print(ts.shape)
 
                     new_verts = curve.evaluate_array(ts)
                     new_verts = new_verts.tolist()

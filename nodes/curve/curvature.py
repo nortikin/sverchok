@@ -16,9 +16,14 @@ class SvExCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
         bl_label = 'Curve Curvature'
         bl_icon = 'CURVE_NCURVE'
 
+        t_value : FloatProperty(
+                name = "T",
+                default = 0.5,
+                update = updateNode)
+
         def sv_init(self, context):
             self.inputs.new('SvExCurveSocket', "Curve")
-            self.inputs.new('SvStringsSocket', "T")
+            self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
             self.outputs.new('SvStringsSocket', "Curvature")
             self.outputs.new('SvStringsSocket', "Radius")
             self.outputs.new('SvMatrixSocket', 'Center')
@@ -51,13 +56,19 @@ class SvExCurveCurvatureNode(bpy.types.Node, SverchCustomTreeNode):
 
                 matrices_np = np.dstack((-normals, tangents, binormals))
                 matrices_np = np.transpose(matrices_np, axes=(0,2,1))
-                matrices_np = np.linalg.inv(matrices_np)
+                dets = np.linalg.det(matrices_np)
+                good_idx = abs(dets) > 1e-6
+                matrices_np[good_idx] = np.linalg.inv(matrices_np[good_idx])
 
                 new_matrices = []
-                for matrix_np, center in zip(matrices_np, centers):
-                    matrix = Matrix(matrix_np.tolist()).to_4x4()
-                    matrix.translation = Vector(center)
-                    new_matrices.append(matrix)
+                for ok, matrix_np, center in zip(good_idx, matrices_np, centers):
+                    if ok:
+                        matrix = Matrix(matrix_np.tolist()).to_4x4()
+                        matrix.translation = Vector(center)
+                        new_matrices.append(matrix)
+                    else:
+                        matrix = Matrix.Translation(center)
+                        new_matrices.append(matrix)
 
                 center_out.append(new_matrices)
                 radius_out.append(radiuses.tolist())

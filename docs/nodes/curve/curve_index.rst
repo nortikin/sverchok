@@ -15,6 +15,7 @@ Curves
    concat_curves
    curve_length
    length_parameter
+   curvature
    cast_curve
    eval_curve
 
