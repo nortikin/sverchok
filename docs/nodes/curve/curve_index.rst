@@ -26,5 +26,6 @@ Curves
    cast_curve
    curve_range
    flip_curve
+   curve_segment
    eval_curve
 
