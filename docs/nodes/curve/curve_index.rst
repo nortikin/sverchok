@@ -20,9 +20,10 @@ Curves
    curve_frame
    zero_twist_frame
    endpoints
-   surface_boundary
-   curve_lerp
    iso_uv_curve
+   surface_boundary
+   curve_on_surface
+   curve_lerp
    cast_curve
    curve_range
    flip_curve
