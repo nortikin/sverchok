@@ -20,6 +20,7 @@ Curves
    curve_frame
    zero_twist_frame
    endpoints
+   surface_boundary
    cast_curve
    eval_curve
 

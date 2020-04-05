@@ -75,7 +75,7 @@ class SvInterpolatingSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         surfaces_out = []
         for curves in curves_s:
 
-            u_spline_constructor = self.get_u_spline_constructor(degree)
+            u_spline_constructor = self.get_u_spline_constructor()
             v_bounds = (0.0, 1.0)
             u_bounds = (0.0, 1.0)
             surface = SvExInterpolatingSurface(u_bounds, v_bounds, u_spline_constructor, curves)
