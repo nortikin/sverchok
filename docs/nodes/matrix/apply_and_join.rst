@@ -32,9 +32,9 @@ Advanced Parameters
 
 In the N-Panel (and on the right-click menu) you can find:
 
-**Implementation**: 'NumPy' or 'Python'. As a general rule in this node the Numpy implementation will be faster if any input is a NumPy array or you want to get NumPy arrays from the outputs. If the surrounding nodes are using python list the performance of both implementations will depend on many factors. With a light geometry but many Matrixes the Python implementation will be faster, as heavier gets the input geometry and less the matrixes number the NumPy implementation will start being a better choice. Also if the incoming topology of polygons is regular the NumPy implementation will increase its performance while the Python implementation will not be affected by that parameter.
+**Implementation**: 'NumPy' or 'Python'. As a general rule in this node the Numpy implementation will be faster if any input is a NumPy array or you want to get NumPy arrays from the outputs. If the surrounding nodes are using python list the performance of both implementations will depend on many factors. With a light geometry but many matrices the Python implementation will be faster, as heavier gets the input geometry and less the matrices number the NumPy implementation will start being a better choice. Also if the incoming topology of polygons is regular the NumPy implementation will increase its performance while the Python implementation will not be affected by that parameter.
 
-**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). Available for Vertices, Edges and Pols in the NumPy implementation
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster). Available for Vertices, Edges and Polygons in the NumPy implementation
 
 Outputs
 -------
