@@ -21,6 +21,7 @@ Contents:
    contributing
    contribute_small_things
    testing
+   shortcuts
 
 
 Indices and tables
