@@ -21,6 +21,7 @@ Curves
    zero_twist_frame
    endpoints
    surface_boundary
+   curve_lerp
    cast_curve
    eval_curve
 
