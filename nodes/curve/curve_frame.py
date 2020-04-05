@@ -22,6 +22,15 @@ class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
                 default = 0.5,
                 update = updateNode)
 
+        join : BoolProperty(
+                name = "Join",
+                description = "If enabled, join generated lists of matrices; otherwise, output separate list of matrices for each curve",
+                default = True,
+                update = updateNode)
+
+        def draw_buttons(self, context, layout):
+            layout.prop(self, 'join', toggle=True)
+
         def sv_init(self, context):
             self.inputs.new('SvExCurveSocket', "Curve")
             self.inputs.new('SvStringsSocket', "T").prop_name = 't_value'
@@ -50,7 +59,10 @@ class SvExCurveFrameNode(bpy.types.Node, SverchCustomTreeNode):
                     matrix.translation = Vector(point)
                     new_matrices.append(matrix)
 
-                matrix_out.extend(new_matrices)
+                if self.join:
+                    matrix_out.extend(new_matrices)
+                else:
+                    matrix_out.append(new_matrices)
                 normals_out.append(normals.tolist())
                 binormals_out.append(binormals.tolist())
 

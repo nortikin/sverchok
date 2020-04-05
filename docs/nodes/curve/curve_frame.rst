@@ -27,7 +27,11 @@ This node has the following inputs:
 Parameters
 ----------
 
-This node does not have parameters.
+This node has the following parameter:
+
+* **Join**. If checked, the node will output the single list of matrices,
+  joined from any number of input curves provided. Otherwise, the node will
+  output a separate list of matrices for each input curve. Checked by default.
 
 Outputs
 -------
