@@ -9,11 +9,12 @@ import zipfile
 import json
 import os
 from os.path import basename, dirname
+from time import localtime as tl
 
 import bpy
 from bpy.utils import register_class, unregister_class
 from bpy.props import StringProperty, BoolProperty
-
+from sverchok.utils.sv_update_utils import version_and_sha
 from sverchok.utils import sv_gist_tools
 from sverchok.utils.sv_IO_panel_tools import (
     propose_archive_filepath,
@@ -214,7 +215,7 @@ class SvNodeTreeExportToGist(bpy.types.Operator):
     def execute(self, context):
         ng = context.space_data.node_tree
         gist_filename = ng.name
-        gist_description = 'to do later? 2018'
+        gist_description = "Sverchok_"+version_and_sha+ng.name+"_Bl_"+bpy.app.version_string.replace(" ","")+str(tl().tm_year)+str(tl().tm_mon)+str(tl().tm_mday)+str(tl().tm_hour)
         layout_dict = create_dict_of_tree(ng, skip_set={}, selected=self.selected_only)
 
         try:
