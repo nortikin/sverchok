@@ -6,7 +6,7 @@
     "Frame": "Frame.002",
     "Frame.001": "Frame.002",
     "Map Range": "Frame.004",
-    "Matrix in": "Frame.003",
+    "Matrix In": "Frame.003",
     "Mesh Expression": "Frame.003",
     "Move": "Frame.001",
     "Move.002": "Frame",
@@ -103,7 +103,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 387.03704833984375,
+      "height": 382.03704833984375,
       "hide": false,
       "label": "Buckle Up",
       "location": [
@@ -115,7 +115,7 @@
     },
     "Frame.001": {
       "bl_idname": "NodeFrame",
-      "height": 387.49041748046875,
+      "height": 382.49041748046875,
       "hide": false,
       "label": "Buckle Down",
       "location": [
@@ -127,7 +127,7 @@
     },
     "Frame.002": {
       "bl_idname": "NodeFrame",
-      "height": 651.4228515625,
+      "height": 646.4228515625,
       "hide": false,
       "label": "Recipient",
       "location": [
@@ -135,11 +135,11 @@
         35.03232192993164
       ],
       "params": {},
-      "width": 1689.933837890625
+      "width": 1685.933837890625
     },
     "Frame.003": {
       "bl_idname": "NodeFrame",
-      "height": 665.2750854492188,
+      "height": 661.7750854492188,
       "hide": false,
       "label": "Donor",
       "location": [
@@ -147,7 +147,7 @@
         519.9917602539062
       ],
       "params": {},
-      "width": 960.30224609375
+      "width": 956.30224609375
     },
     "Frame.004": {
       "bl_idname": "NodeFrame",
@@ -179,13 +179,8 @@
       },
       "width": 140.0
     },
-    "Matrix in": {
-      "bl_idname": "SvMatrixGenNodeMK2",
-      "custom_socket_props": {
-        "2": {
-          "expanded": true
-        }
-      },
+    "Matrix In": {
+      "bl_idname": "SvMatrixInNodeMK3",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -194,7 +189,22 @@
         143.91238403320312
       ],
       "params": {
-        "a_": 45.0
+        "angle": 45.0,
+        "axis": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "location_": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          1.0,
+          1.0
+        ]
       },
       "width": 140.0
     },
@@ -272,7 +282,6 @@
       "params": {
         "center": 1,
         "dimension_mode": "SIZE",
-        "normalize": 1,
         "numx": 20,
         "numy": 20
       },
@@ -598,12 +607,6 @@
       2
     ],
     [
-      "Plane",
-      "Polygons",
-      "Reroute.002",
-      "Input"
-    ],
-    [
       "Move.002",
       0,
       "Proportional Edit Falloff.001",
@@ -637,6 +640,12 @@
       "Move",
       "Vertices",
       "Reroute",
+      "Input"
+    ],
+    [
+      "Plane",
+      "Polygons",
+      "Reroute.002",
       "Input"
     ],
     [
@@ -706,7 +715,7 @@
       3
     ],
     [
-      "Matrix in",
+      "Matrix In",
       0,
       "Symmetrize Mesh",
       4
@@ -730,7 +739,7 @@
       3
     ],
     [
-      "Matrix in",
+      "Matrix In",
       0,
       "Symmetrize Mesh.001",
       4
@@ -784,6 +793,12 @@
       3
     ],
     [
+      "Viewer BMesh",
+      0,
+      "Assign Materials List",
+      0
+    ],
+    [
       "Reroute",
       "Output",
       "Viewer Draw Mk3.001",
@@ -794,12 +809,6 @@
       "Output",
       "Viewer Draw Mk3.001",
       "faces"
-    ],
-    [
-      "Viewer BMesh",
-      0,
-      "Assign Materials List",
-      0
     ]
   ]
 }

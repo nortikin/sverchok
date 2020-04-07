@@ -43,13 +43,13 @@ class MatrixOutNode(bpy.types.Node, SverchCustomTreeNode):
         if M.is_linked:
             matrixes = M.sv_get()
             if L.is_linked:
-                locs = Matrix_location(matrixes, list=True)
+                locs = Matrix_location(matrixes, to_list=True)
                 L.sv_set(locs)
             if S.is_linked:
-                locs = Matrix_scale(matrixes, list=True)
+                locs = Matrix_scale(matrixes, to_list=True)
                 S.sv_set(locs)
             if R.is_linked or A.is_linked:
-                locs = Matrix_rotation(matrixes, list=True)
+                locs = Matrix_rotation(matrixes, to_list=True)
                 rots, angles = [],[]
                 for lists in locs:
                     rots.append([pair[0] for pair in lists])

@@ -18,6 +18,7 @@ Modifier Make
    voronoi_2d
    delaunay_2d
    wafel
+   join_tris
    framework
    wireframe
    offset_line

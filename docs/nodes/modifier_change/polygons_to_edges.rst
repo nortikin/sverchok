@@ -12,18 +12,31 @@ Input & Output
 
 +--------+-------+-------------------------------------------+
 | socket | name  | Description                               |
-+========+=======+===========================================+    
++========+=======+===========================================+
 | input  | pols  | Polygons                                  |
 +--------+-------+-------------------------------------------+
 | output | edges | The edges from which the polygon is built |
 +--------+-------+-------------------------------------------+
 
+Parameters
+----------
+
+- **Regular Polygons: Activate when the incoming list of polygons has constant number of sides to make the node faster.
+
+- **Unique Edges** : When active the node will remove the doubled edges
+
+Advanced Parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node faster with regular polygon list or when the polygon lists are NumPy arrays)
 
 Examples
 --------
 
-.. image:: https://cloud.githubusercontent.com/assets/619340/4186197/c89fefae-375e-11e4-8224-14d47b5f9dd8.PNG
-  :alt: Polygon2EdgeDemo1.PNG
+.. image:: https://raw.githubusercontent.com/vicdoval/sverchok/docs_images/images_for_docs/modifier_change/polygons_to_edges/blender_sverchok_parametric_polygons_to_edges.png
+  :alt: Polygon_to_Edges_example
 
 Notes
 -------

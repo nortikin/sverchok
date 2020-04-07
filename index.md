@@ -280,7 +280,7 @@
     SvVectorFractal
 
 ## Matrix
-    SvMatrixGenNodeMK2
+    SvMatrixInNodeMK3
     MatrixOutNode
     SvMatrixApplyJoinNode
     SvIterateNode
@@ -365,6 +365,7 @@
     SvDupliInstancesMK4
     SvFCurveInNodeMK1
     SvCollectionPicker
+    SvSelectionGrabberLite
 
 ## Objects
     SvVertexGroupNodeMK2

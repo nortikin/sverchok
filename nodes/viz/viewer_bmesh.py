@@ -31,7 +31,7 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import dataCorrect, fullList, updateNode
 from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata
 from sverchok.utils.sv_viewer_utils import natural_plus_one, greek_alphabet
-from sverchok.utils.sv_obj_helper import SvObjHelper, CALLBACK_OP, get_random_init_v2
+from sverchok.utils.sv_obj_helper import SvObjHelper, CALLBACK_OP, get_random_init_v3
 from sverchok.utils.modules.sv_bmesh_ops import find_islands_treemap
 
 # this implements a customized version of this import
@@ -336,6 +336,8 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
     def process(self):
 
         if not self.activate:
+            if self.outputs[0].is_linked:
+                self.outputs[0].sv_set(self.get_children())
             return
 
         mverts, *mrest = self.get_geometry_from_sockets()
@@ -431,6 +433,11 @@ class SvBmeshViewerNodeV28(bpy.types.Node, SverchCustomTreeNode, SvObjHelper):
             links = mat.node_tree.links
             links.new(attr_node.outputs[0], diffuse_node.inputs[0])
 
+    def sv_copy(self, other):
+        with self.sv_throttle_tree_update():
+            print('copying bmesh node')
+            dname = get_random_init_v3()
+            self.basedata_name = dname
 
 def register():
     bpy.utils.register_class(SvBmeshViewerNodeV28)

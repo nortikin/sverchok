@@ -6,7 +6,6 @@
 # License-Filename: LICENSE
 
 import itertools
-import random
 
 import bpy
 import bmesh
@@ -16,10 +15,6 @@ from bpy.props import BoolProperty, FloatVectorProperty, StringProperty, EnumPro
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import dataCorrect, updateNode
-from sverchok.utils.sv_viewer_utils import greek_alphabet
-
-def get_random_init():
-    return random.choice(greek_alphabet)
 
 
 def make_or_update_instance(node, obj_name, matrix, blueprint_obj):
@@ -182,8 +177,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             obj.hide_select = False
             collection.objects.unlink(obj)
             objects.remove(obj)
-
-        # does not yet remove meshes, nurbs...etc.
 
 
     # def free(self):

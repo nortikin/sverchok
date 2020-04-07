@@ -18,13 +18,17 @@
 
 import bpy
 from bpy.props import BoolProperty, IntProperty, StringProperty
+from numpy import ndarray
+
 from sverchok.node_tree import SverchCustomTreeNode
-from sverchok.data_structure import (updateNode, changable_sockets,
-                                     levelsOflist)
+from sverchok.data_structure import updateNode, changable_sockets, levels_of_list_or_np
 
 
 class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
-    ''' List First and last item of list '''
+    '''
+    Triggers: Split First and Last items
+    Tooltip: Get first and last elements of a list, also avaliable the middle.
+    '''
     bl_idname = 'ListFLNode'
     bl_label = 'List First & Last'
     bl_icon = 'OUTLINER_OB_EMPTY'
@@ -46,7 +50,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
     def update(self):
         if self.inputs['Data'].links:
             inputsocketname = 'Data'
-            outputsocketname = ["Middl",'First', 'Last']
+            outputsocketname = ["Middl", 'First', 'Last']
             changable_sockets(self, inputsocketname, outputsocketname)
 
     def process(self):
@@ -54,7 +58,7 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
             data = self.inputs['Data'].sv_get(deepcopy=False)
 
             # blocking too height values of levels, reduce
-            levels = levelsOflist(data)-2
+            levels = levels_of_list_or_np(data)-1
             if levels >= self.level:
                 levels = self.level-1
             elif levels < 1:
@@ -75,11 +79,11 @@ class ListFLNode(bpy.types.Node, SverchCustomTreeNode):
         if level:
             for obj in data:
                 out.append(self.count(obj, level-1, mode))
-        elif type(data) in [tuple, list]:
+        elif isinstance(data, (tuple, list, ndarray)):
             if mode == 0:
                 out.append(data[0])
             elif mode == 1 and len(data) >= 3:
-                out.extend(data[1:-1])
+                out = data[1:-1]
             elif mode == 2:
                 out.append(data[-1])
             else:
