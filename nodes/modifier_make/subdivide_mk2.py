@@ -19,11 +19,11 @@
 import bpy
 from bpy.props import IntProperty, FloatProperty, BoolProperty, EnumProperty, BoolVectorProperty
 from bmesh.ops import subdivide_edges
-from bmesh.types import BMVert, BMEdge, BMFace
+
 from numpy import ndarray
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, fullList, Matrix_generate, numpy_full_list
-from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, numpy_data_from_bmesh
+from sverchok.utils.sv_bmesh_utils import bmesh_from_pydata, pydata_from_bmesh, numpy_data_from_bmesh, get_partial_result_pydata
 
 socket_names = ['Vertices', 'Edges', 'Faces', 'FaceData']
 def get_selected_edges(use_mask, masks, bm_edges):
@@ -81,7 +81,11 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
     cuts: IntProperty(
         description="Specifies the number of cuts per edge to make",
-        name="Number of Cuts", min=1, default=1, update=updateNode)
+        name="Number of Cuts", min=0, soft_max=10, default=1, update=updateNode)
+
+    cuts_draft: IntProperty(
+        description="Specifies the number of cuts per edge to make (draft mode)",
+        name="[D] Number of Cuts", min=0, default=1, update=updateNode)
 
     smooth: FloatProperty(
         description="Displaces subdivisions to maintain approximate curvature",
@@ -98,25 +102,6 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     seed: IntProperty(
         description="Random seed",
         name="Seed", default=0, update=updateNode)
-
-    sv_mute: BoolProperty(
-        description="fill in fully-selected faces with a grid",
-        name="Grid fill", default=False, update=updateNode)
-
-    mem = {}
-    def reset_memory(self, context):
-        self.sv_record = False
-        updateNode(self, context)
-
-    sv_frezze: BoolProperty(
-        description="Stop the processing of the node and keep showing actual results",
-        name="Freeze", default=False, update=reset_memory)
-    sv_record: BoolProperty(
-        description="fill in fully-selected faces with a grid",
-        name="Freeze fill", default=False)
-    mute: BoolProperty(
-        description="fill in fully-selected faces with a grid",
-        name="Mute", default=False, update=updateNode)
 
     grid_fill: BoolProperty(
         description="fill in fully-selected faces with a grid",
@@ -152,6 +137,18 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         default=(False, False, False, False),
         size=4, update=updateNode)
 
+    draft_properties_mapping = dict(
+            cuts = 'cuts_draft'
+
+        )
+    def does_support_draft_mode(self):
+        return True
+
+    def draw_label(self):
+        label = self.label or self.name
+        if self.id_data.sv_draft:
+            label = "[D] " + label
+        return label
     def draw_common(self, context, layout):
         col = layout.column(align=True)
         row = col.row(align=True)
@@ -174,10 +171,6 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         col.prop(self, "smooth_even", toggle=True)
 
     def draw_buttons(self, context, layout):
-        row = layout.row(align=True)
-        row.prop(self, 'sv_mute', icon="HIDE_" + ("ON" if self.sv_mute else "OFF"), icon_only=True)
-        row.prop(self, 'sv_frezze', icon="PAUSE", icon_only=True)
-
         self.draw_common(context, layout)
         if self.show_options:
             self.draw_options(context, layout)
@@ -205,6 +198,7 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         for i in range(4):
             layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
+
     def sv_init(self, context):
         inew = self.inputs.new
         inew('SvVerticesSocket', "Vertices")
@@ -243,22 +237,11 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 s.sv_set(self.inputs[i].sv_get(deepcopy=False))
 
     def freeze_node(self):
-        if 'storage' in self.mem.keys():
-            for m, s in zip(self.mem['storage'], self.outputs):
-                s.sv_set(m)
+        if hash(self) in self.mem.keys():
+            # for m, s in zip(self.mem[hash(self)], self.outputs):
+                # s.sv_set(m)
             return True
         return False
-
-    def get_result_pydata(self, geom):
-        new_verts = [v for v in geom if isinstance(v, BMVert)]
-        new_edges = [e for e in geom if isinstance(e, BMEdge)]
-        new_faces = [f for f in geom if isinstance(f, BMFace)]
-
-        new_verts = [tuple(v.co) for v in new_verts]
-        new_edges = [[edge.verts[0].index, edge.verts[1].index] for edge in new_edges]
-        new_faces = [[v.index for v in face.verts] for face in new_faces]
-
-        return new_verts, new_edges, new_faces
 
     def get_data(self):
         inputs = self.inputs
@@ -279,19 +262,8 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         return match_long_repeat([verts_s, edges_s, faces_s, face_data_s, masks_s, cuts_s, smooth_s, fractal_s, along_normal_s, seed_s])
 
     def dont_process(self):
-
         inputs, outputs = self.inputs, self.outputs
-        if not (any(s.is_linked for s in outputs) and all(s.is_linked for s in inputs[:2])):
-            return True
-        if self.sv_mute:
-            self.mute_node()
-            return True
-        if self.sv_frezze and self.sv_record:
-            if self.freeze_node():
-                return True
-        elif self.sv_frezze:
-            self.sv_record = True
-            return False
+        return not (any(s.is_linked for s in outputs) and all(s.is_linked for s in inputs[:2]))
 
     def process(self):
         inputs, outputs = self.inputs, self.outputs
@@ -312,6 +284,18 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         meshes = self.get_data()
 
         for vertices, edges, faces, face_data, masks, cuts, smooth, fractal, along_normal, seed in zip(*meshes):
+            if cuts < 1:
+                result_vertices.append(vertices)
+                result_edges.append(edges)
+                result_faces.append(faces)
+                result_face_data.append(face_data)
+                r_inner_vertices.append(vertices)
+                r_inner_edges.append(edges)
+                r_inner_faces.append(faces)
+                r_split_vertices.append(vertices)
+                r_split_edges.append(edges)
+                r_split_faces.append(faces)
+                continue
 
             if use_face_data and len(face_data) > 0:
                 if isinstance(face_data, ndarray):
@@ -370,12 +354,6 @@ class SvSubdivideNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
             bm.free()
 
-
-        if self.sv_frezze and self.sv_record:
-            self.mem['storage'] = [
-                result_vertices, result_edges, result_faces, result_face_data,
-                r_inner_vertices, r_inner_edges, r_inner_faces,
-                r_split_vertices, r_split_edges, r_split_faces]
 
         outputs['Vertices'].sv_set(result_vertices)
         outputs['Edges'].sv_set(result_edges)

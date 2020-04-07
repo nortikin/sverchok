@@ -17,6 +17,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
+from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 import numpy as np
 import math
@@ -114,6 +115,19 @@ def pydata_from_bmesh(bm, face_data=None):
     else:
         face_data_out = face_data_from_bmesh_faces(bm, face_data)
         return verts, edges, faces, face_data_out
+
+def get_partial_result_pydata(self, geom):
+    '''used by the subdivide node to get new and old verts/edges/pols'''
+
+    new_verts = [v for v in geom if isinstance(v, BMVert)]
+    new_edges = [e for e in geom if isinstance(e, BMEdge)]
+    new_faces = [f for f in geom if isinstance(f, BMFace)]
+
+    new_verts = [tuple(v.co) for v in new_verts]
+    new_edges = [[edge.verts[0].index, edge.verts[1].index] for edge in new_edges]
+    new_faces = [[v.index for v in face.verts] for face in new_faces]
+
+    return new_verts, new_edges, new_faces
 
 def face_data_from_bmesh_faces(bm, face_data):
     initial_index = bm.faces.layers.int.get("initial_index")
