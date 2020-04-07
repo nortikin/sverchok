@@ -635,15 +635,6 @@ class SvExRevolutionSurface(SvExSurface):
     def get_v_max(self):
         return self.v_bounds[1]
 
-    @property
-    def u_size(self):
-        m,M = self.curve.get_u_bounds()
-        return M - m
-
-    @property
-    def v_size(self):
-        return 2*pi
-
 class SvExExtrudeCurveVectorSurface(SvExSurface):
     def __init__(self, curve, vector):
         self.curve = curve
