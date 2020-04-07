@@ -611,6 +611,7 @@ class SvExRevolutionSurface(SvExSurface):
         self.point = point
         self.direction = direction
         self.normal_delta = 0.001
+        self.v_bounds = (0.0, 2*pi)
 
     def evaluate(self, u, v):
         point_on_curve = self.curve.evaluate(u)
@@ -629,10 +630,10 @@ class SvExRevolutionSurface(SvExSurface):
         return self.curve.get_u_bounds()[1]
 
     def get_v_min(self):
-        return 0.0
+        return self.v_bounds[0]
 
     def get_v_max(self):
-        return 2*pi
+        return self.v_bounds[1]
 
     @property
     def u_size(self):
