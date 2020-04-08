@@ -25,31 +25,39 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
-
+from itertools import chain
 
 socket_names = ['Vertices', 'Edges', 'Polygons']
 
 def mesh_join_np(verts, edges, pols, out_np):
 
-    lens = [0]
-    for v in verts:
-        lens.append(lens[-1] + v.shape[0])
+    _, _, output_numpy_pols = out_np
+
+    accum_vert_lens = np.add.accumulate([len(v) for v in chain([[]], verts)])
 
     v_out = np.concatenate(verts)
     e_out, p_out = np.array([]), np.array([])
 
-    if len(edges[0]) > 0:
-        e_out = np.concatenate([edg + l for edg, l in zip(edges, lens)])
+    # just checking the first object to detect presence of edges and Polygons
+    # this would fail if the first object does not have edges/pols and there
+    # are edges/pols in the next objects but I guess is enough
+    are_some_edges = len(edges[0]) > 0
+    are_some_pols = len(pols[0]) > 0
 
-    if len(pols[0]) > 0 and out_np[2]:
+    if are_some_edges:
+        e_out = np.concatenate([edg + l for edg, l in zip(edges, accum_vert_lens)])
 
-        if pols[0].dtype == object:
-            p_out = [np.array(p) + l  for pol, l in zip(pols, lens) for p in pol]
+    if are_some_pols:
+        if output_numpy_pols:
 
+            is_array_of_lists = pols[0].dtype == object
+            if is_array_of_lists:
+                p_out = [np.array(p) + l  for pol, l in zip(pols, accum_vert_lens) for p in pol]
+
+            else:
+                p_out = np.concatenate([pol + l for pol, l in zip(pols, accum_vert_lens)])
         else:
-            p_out = np.concatenate([pol + l for pol, l in zip(pols, lens)])
-    else:
-        p_out = [[v + l for v in p]  for pol, l in zip(pols, lens) for p in pol]
+            p_out = [[v + l for v in p]  for pol, l in zip(pols, accum_vert_lens) for p in pol]
 
     return v_out, e_out, p_out
 
@@ -66,6 +74,55 @@ def apply_matrix_to_vectors_np(vertices, matrices,out_verts):
         vert_id = min(i, max_v)
         out_verts.append(matrix_apply_np(r_vertices[vert_id], m))
 
+def apply_and_join_numpy(vertices, edges, faces, matrices, do_join, out_np):
+    out_verts = []
+    output_numpy_verts, output_numpy_edges, output_numpy_pols = out_np
+    n = len(matrices)
+    apply_matrix_to_vectors_np(vertices, matrices, out_verts)
+
+    if do_join:
+        #prepare data for joining
+        out_edges = ([np.array(e) for e in edges] * n)[:n]
+        if output_numpy_pols:
+            out_faces = ([np.array(f) for f in faces] * n)[:n]
+        else:
+            out_faces = (faces * n)[:n]
+
+        out_verts, out_edges, out_faces = mesh_join_np(out_verts, out_edges, out_faces, out_np)
+
+        out_verts, out_faces = [out_verts], [out_faces]
+
+        if output_numpy_edges:
+            out_edges = [out_edges]
+        else:
+            out_edges = [out_edges.tolist()]
+    else:
+        out_edges = (edges * n)[:n]
+        out_faces = (faces * n)[:n]
+
+    if not output_numpy_verts:
+        out_verts = [v.tolist() for v in out_verts]
+
+    return out_verts, out_edges, out_faces
+
+def apply_and_join_python(vertices, edges, faces, matrices, do_join):
+    n = len(matrices)
+    out_verts = []
+    if isinstance(vertices[0], np.ndarray):
+        py_verts = [v.tolist() for v in vertices]
+    else:
+        py_verts = vertices
+    apply_matrix_to_vectors(py_verts, matrices, out_verts)
+
+    if do_join:
+        out_edges = (edges * n)[:n]
+        out_faces = (faces * n)[:n]
+        out_verts, out_edges, out_faces = mesh_join(out_verts, out_edges, out_faces)
+        out_verts, out_edges, out_faces = [out_verts], [out_edges], [out_faces]
+    else:
+        out_edges = (edges * n)[:n]
+        out_faces = (faces * n)[:n]
+    return out_verts, out_edges, out_faces
 
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -136,59 +193,17 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     def process(self):
         if not (self.inputs['Matrices'].is_linked and any(s.is_linked for s in self.outputs)):
             return
-        vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
 
+        vertices = self.inputs['Vertices'].sv_get(deepcopy=False)
         edges = self.inputs['Edges'].sv_get(default=[[]], deepcopy=False)
         faces = self.inputs['Faces'].sv_get(default=[[]], deepcopy=False)
         matrices = self.inputs['Matrices'].sv_get(deepcopy=False)
 
-        out_verts = []
-        n = len(matrices)
-
         if self.implementation == 'NumPy':
-
-            apply_matrix_to_vectors_np(vertices, matrices, out_verts)
-
-            if self.do_join:
-                #prepare data for joining
-                out_edges = ([np.array(e) for e in edges] * n)[:n]
-                if self.out_np[2]:
-                    out_faces = ([np.array(f) for f in faces] * n)[:n]
-                else:
-                    out_faces = (faces * n)[:n]
-
-                out_verts, out_edges, out_faces = mesh_join_np(out_verts, out_edges, out_faces, self.out_np)
-
-                out_verts, out_faces = [out_verts], [out_faces]
-
-                if self.out_np[1]:
-                    out_edges = [out_edges]
-                else:
-                    out_edges = [out_edges.tolist()]
-            else:
-                out_edges = (edges * n)[:n]
-                out_faces = (faces * n)[:n]
-
-            if not self.out_np[0]:
-                out_verts = [v.tolist() for v in out_verts]
+            out_verts, out_edges, out_faces = apply_and_join_numpy(vertices, edges, faces, matrices, self.do_join, self.out_np)
 
         else:
-            if isinstance(vertices[0], np.ndarray):
-                py_verts = [v.tolist() for v in vertices]
-            else:
-                py_verts = vertices
-            apply_matrix_to_vectors(py_verts, matrices, out_verts)
-
-            if self.do_join:
-                out_edges = (edges * n)[:n]
-                out_faces = (faces * n)[:n]
-                out_verts, out_edges, out_faces = mesh_join(out_verts, out_edges, out_faces)
-                out_verts, out_edges, out_faces = [out_verts], [out_edges], [out_faces]
-            else:
-                out_edges = (edges * n)[:n]
-                out_faces = (faces * n)[:n]
-
-
+            out_verts, out_edges, out_faces = apply_and_join_python(vertices, edges, faces, matrices, self.do_join)
 
         self.outputs['Edges'].sv_set(out_edges)
         self.outputs['Faces'].sv_set(out_faces)
