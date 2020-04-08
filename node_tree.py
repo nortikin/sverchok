@@ -31,6 +31,7 @@ from sverchok import data_structure
 from sverchok.data_structure import get_other_socket
 
 from sverchok.core.update_system import (
+    partial_update_cache,
     build_update_list,
     process_from_node, process_from_nodes,
     process_tree,
@@ -94,7 +95,7 @@ def throttle_tree_update(node):
             self.inputs.new(...)
             self.outputs.new(...)
 
-    that's it. 
+    that's it.
 
     """
     try:
@@ -118,7 +119,7 @@ def throttled(func):
 
     When a node has changed, like a mode-change leading to a socket change (remove, new)
     Blender will trigger nodetree.update. We want to ignore this trigger-event, and we do so by
-    - first throttling the update system. 
+    - first throttling the update system.
     - then We execute the code that makes changes to the node/nodetree
     - then we end the throttle-state
     - we are then ready to process
@@ -217,7 +218,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         #   node.disable()
 
     def sv_process_tree_callback(self, context):
-        process_tree(self)    
+        process_tree(self)
 
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
@@ -240,6 +241,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     )
 
     sv_toggle_nodetree_props: BoolProperty(name="Toggle visibility of props", description="Show more properties for this node tree")
+
+    sv_links = {}
+    sv_linked_sockets = {}
+    sv_linked_output_sockets = {}
 
     def on_draft_mode_changed(self, context):
         """
@@ -286,11 +291,51 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     @property
     def has_link_count_changed(self):
         link_count = len(self.links)
-        if not link_count == self.tree_link_count: 
+        if not link_count == self.tree_link_count:
             # print('update event: link count changed', self.timestamp)
             self.tree_link_count = link_count
             return True
 
+    def fill_links_memory(self):
+        new_links = self.links.items()
+        self.sv_links[hash(self)] = self.links.items()
+        linked_sockets = []
+        output_sockets = []
+        for link in new_links:
+            linked_sockets.append((link[1].from_socket, link[1].to_socket))
+            output_sockets.append(link[1].from_socket)
+
+        self.sv_linked_sockets[hash(self)] = linked_sockets
+        self.sv_linked_output_sockets[hash(self)] = output_sockets
+    def use_link_memory(self):
+
+        links_has_changed = self.sv_links[hash(self)] != self.links.items()
+
+        if links_has_changed:
+            affected_nodes = []
+            new_links = self.links.items()
+            linked_sockets = []
+            output_sockets = []
+            before_linked_sockets = self.sv_linked_sockets[hash(self)]
+            before_output_sockets = self.sv_linked_output_sockets[hash(self)]
+
+            for link in new_links:
+                output_sockets.append(link[1].from_socket)
+                linked_sockets.append((link[1].from_socket, link[1].to_socket))
+                if not (link[1].from_socket, link[1].to_socket) in before_linked_sockets:
+                    if not link[1].from_socket in before_output_sockets:
+                        affected_nodes.append(link[1].from_node)
+                    affected_nodes.append(link[1].to_node)
+            print("Affected Nodes:", affected_nodes)
+
+            self.sv_links[hash(self)] = self.links.items()
+            self.sv_linked_sockets[hash(self)] = linked_sockets
+            self.sv_linked_output_sockets[hash(self)] = output_sockets
+
+            build_update_list(self)
+            if affected_nodes:
+                process_from_nodes(affected_nodes)
+                
     def update(self):
         '''
         Tags tree for update for handle
@@ -305,9 +350,16 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             return
 
         # print('svtree update', self.timestamp)
-        self.has_changed = True
-        # self.has_link_count_changed
-        self.process()
+        fill_memory_is_ready = hash(self) in self.sv_links.keys()
+        if fill_memory_is_ready:
+            print("memory_is_ready")
+            self.use_link_memory()
+        else:
+            print("filling link_memory")
+            self.fill_links_memory()
+            self.has_changed = True
+            # self.has_link_count_changed
+            self.process()
 
     def process_ani(self):
         """
@@ -331,7 +383,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.build_update_list()
             self.has_changed = False
         if self.is_frozen():
-            # print('not processing: because self/tree.is_frozen') 
+            # print('not processing: because self/tree.is_frozen')
             return
         if self.sv_process:
             process_tree(self)
@@ -378,18 +430,18 @@ class SverchCustomTreeNode:
 
     def ensure_enums_have_no_space(self, enums=None):
         """
-        enums: a list of property names to check. like  self.current_op  
+        enums: a list of property names to check. like  self.current_op
 
             self.ensure_enums_have_no_space(enums=[current_op])
 
         due to changes in EnumProperty defintion "laws" individual enum identifiers must not
-        contain spaces. This function takes a list of enums that the node currently holds, and 
+        contain spaces. This function takes a list of enums that the node currently holds, and
         makes sure the stored enum has no spaces.
         """
         for enum_property in enums:
             current_value = getattr(self, enum_property)
             if " " in current_value:
-                with self.sv_throttle_tree_update():        
+                with self.sv_throttle_tree_update():
                     setattr(self, enum_property, data_structure.no_space(current_value))
 
 
@@ -646,7 +698,7 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
-        
+
         if hasattr(self, "sv_init"):
 
             try:
@@ -706,12 +758,15 @@ class SverchCustomTreeNode:
         at the moment of node being copied.
         """
         pass
-        
+
     def free(self):
         """
-        some nodes require additional operations upon node removal
+        This method is not supposed to be overriden in specific nodes.
+        Override sv_free() instead
         """
-
+        self.sv_free()
+        for s in self.outputs:
+            s.sv_forget()
         if hasattr(self, "has_3dview_props"):
             print("about to remove this node's props from Sv3DProps")
             try:
@@ -719,6 +774,12 @@ class SverchCustomTreeNode:
             except:
                 print(f'failed to remove {self.name} from tree={self.id_data.name}')
 
+    def sv_free(self):
+        """
+        Override this method to do anything node-specific upon node removal
+
+        """
+        pass
 
     def wrapper_tracked_ui_draw_op(self, layout_element, operator_idname, **keywords):
         """
@@ -739,7 +800,7 @@ class SverchCustomTreeNode:
 
     def get_and_set_gl_scale_info(self, origin=None):
         """
-        This function is called in sv_init in nodes that draw GL instructions to the nodeview, 
+        This function is called in sv_init in nodes that draw GL instructions to the nodeview,
         the nodeview scale and dpi differs between users and must be queried to get correct nodeview
         x,y and dpi scale info.
         """
@@ -755,7 +816,7 @@ class SverchCustomTreeNode:
 
 
 classes = [
-    SverchCustomTree, 
+    SverchCustomTree,
     SvLinkNewNodeInput,
     SvGenericUITooltipOperator
 ]

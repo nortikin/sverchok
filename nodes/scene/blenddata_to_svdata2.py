@@ -51,7 +51,7 @@ class SvObjectToMeshNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = layout.row()
         row.prop(self, "modifiers", text="Post modifiers")
 
-    def free(self):
+    def sv_free(self):
         set_sv_depsgraph_need(False)
 
     def process(self):

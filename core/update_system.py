@@ -186,9 +186,9 @@ def separate_nodes(ng, links=None):
             node_set_list[-1].add(n)
 
     found_node_sets = [ns for ns in node_set_list if len(ns) > 1]
-  
+
     if hasattr(ng, "sv_subtree_evaluation_order"):
-        sorting_type = ng.sv_subtree_evaluation_order  
+        sorting_type = ng.sv_subtree_evaluation_order
         if sorting_type in {'X', 'Y'}:
             sort_index = 0 if sorting_type == "X" else 1
             find_lowest = lambda ns: min(ng.nodes[n].absolute_location[sort_index] for n in ns)
@@ -334,7 +334,7 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
     timings = []
     graph = []
     gather = graph.append
-    
+
     total_time = 0
     done_nodes = set(procesed_nodes)
 
@@ -364,19 +364,19 @@ def do_update_general(node_list, nodes, procesed_nodes=set()):
             update_error_nodes(ng, node_name, err)
             #traceback.print_tb(err.__traceback__)
             exception("Node %s had exception: %s", node_name, err)
-            
+
             if hasattr(ng, "sv_show_error_in_tree"):
                 # not yet supported in monad trees..
                 if ng.sv_show_error_in_tree:
                     error_text = traceback.format_exc()
                     start_exception_drawing_with_bgl(ng, node_name, error_text, err)
-            
+
             return None
 
     graphs.append(graph)
     if data_structure.DEBUG_MODE:
         debug("Node set updated in: %.4f seconds", total_time)
-    
+
     return timings
 
 
@@ -405,7 +405,7 @@ def build_update_list(ng=None):
         out = [make_update_list(ng, s, deps) for s in node_sets]
         update_cache[ng.name] = out
         partial_update_cache[ng.name] = {}
-        reset_socket_cache(ng)
+        # reset_socket_cache(ng)
 
 
 def process_to_node(node):
@@ -430,6 +430,7 @@ def process_from_nodes(nodes):
     node_names = [node.name for node in nodes]
     ng = nodes[0].id_data
     update_list = make_tree_from_nodes(node_names, ng)
+    print(update_list)
     do_update(update_list, ng.nodes)
 
 
@@ -458,6 +459,7 @@ def process_from_node(node):
         nodes = ng.nodes
         if not ng.sv_process:
             return
+        print(update_list)
         do_update(update_list, nodes)
     else:
         process_tree(ng)

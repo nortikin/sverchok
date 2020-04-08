@@ -66,6 +66,18 @@ def SvGetSocketInfo(socket):
                 return str(len(data))
     return ''
 
+def SvForgetSocket(socket):
+    """sets socket data for socket"""
+    global socket_data_cache
+    if data_structure.DEBUG_MODE:
+        if not socket.is_output:
+            warning(f"{socket.node.name} forgetting input socket: {socket.name}")
+        if not socket.is_linked:
+            warning(f"{socket.node.name} forgetting unconncted socket: {socket.name}")
+    s_id = socket.socket_id
+    s_ng = socket.id_data.name
+    print("forgetting")
+    socket_data_cache[s_ng].pop(s_id, None)
 
 def SvSetSocket(socket, out):
     """sets socket data for socket"""
@@ -110,7 +122,7 @@ def SvGetSocket(socket, deepcopy=True):
 
 class SvNoDataError(LookupError):
     def __init__(self, socket=None, node=None, msg=None):
-        
+
         self.extra_message = msg if msg else ""
 
         if node is None and socket is not None:
@@ -127,16 +139,16 @@ class SvNoDataError(LookupError):
             return "SvNoDataError"
         else:
             return f"No data passed into socket '{self.socket.name}'"
-    
+
     def __repr__(self):
         return self.get_message()
-    
+
     def __str__(self):
         return repr(self)
 
     def __unicode__(self):
         return repr(self)
-    
+
     def __format__(self, spec):
         return repr(self)
 

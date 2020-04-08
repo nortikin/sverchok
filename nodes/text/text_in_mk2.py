@@ -223,7 +223,7 @@ class SvTextInNodeMK2(bpy.types.Node, SverchCustomTreeNode, CommonTextMixinIO):
     def sv_copy(self, node):
         self.n_id = ''
 
-    def free(self):
+    def sv_free(self):
         # free potentially lots of data
         n_id = node_id(self)
         pop_all_data(self, n_id)

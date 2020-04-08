@@ -635,7 +635,7 @@ class SvVDExperimental(bpy.types.Node, SverchCustomTreeNode):
         except:
             print('vd basic lines update holdout', self.n_id)
 
-    def free(self):
+    def sv_free(self):
         callback_disable(node_id(self))
 
 

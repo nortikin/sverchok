@@ -108,7 +108,7 @@ class SvEmptyOutNode(bpy.types.Node, SverchCustomTreeNode):
         empty = self.create_empty()
         self.label = empty.name
 
-    def free(self):
+    def sv_free(self):
         if self.auto_remove:
             empty = self.find_empty()
             if empty:

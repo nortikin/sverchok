@@ -223,7 +223,7 @@ class SvObjectsNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     def get_materials_from_mesh(self, mesh):
         return [face.material_index for face in mesh.polygons[:]]
 
-    def free(self):
+    def sv_free(self):
         set_sv_depsgraph_need(False)
 
     def process(self):

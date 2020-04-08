@@ -179,7 +179,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             objects.remove(obj)
 
 
-    # def free(self):
+    # def sv_free(self):
     #     # self.remove_non_updated_objects(-1)
     #     # or remove content of associated collection...undecided, lets see what
     #     # people expect...

@@ -152,7 +152,7 @@ class SvTextureViewerNodeLite(bpy.types.Node, SverchCustomTreeNode):
         width, height = [width * scale, height * scale]
         return x, y, width, height
 
-    def free(self):
+    def sv_free(self):
         nvBGL2.callback_disable(node_id(self))
         self.delete_texture()
 
