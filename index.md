@@ -147,7 +147,6 @@
     LineConnectNodeMK2
     ---
     SvConvexHullNodeMK2
-    SvSubdivideNode
     SvSubdivideNodeMK2
     DelaunayTriangulation2DNode
     SvDelaunay2DCdt
