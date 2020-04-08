@@ -16,6 +16,7 @@
 #
 # ##### END GPL LICENSE BLOCK #####
 
+from itertools import chain
 import bpy
 from bpy.props import BoolProperty, EnumProperty, BoolVectorProperty
 from mathutils import Vector
@@ -25,13 +26,16 @@ from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode
 from sverchok.utils.sv_mesh_utils import mesh_join
 from sverchok.utils.modules.matrix_utils import matrix_apply_np
-from itertools import chain
 
 socket_names = ['Vertices', 'Edges', 'Polygons']
 
-def mesh_join_np(verts, edges, pols, out_np):
+def mesh_join_np(verts, edges, pols, out_np_pols):
+    '''
+    joins many meshes
+    verts and edges have to be list of numpy arrays [(n,3), (n,3),...] and [(n,2), (n,2), ...]
+    pols should be a numpy array only if you want to get a numpy array with polygons, otherways inputting a regular list will be faster
+    out_np_pols is a boolean to indicate if you want output numpy arrays in the faces'''
 
-    _, _, output_numpy_pols = out_np
 
     accum_vert_lens = np.add.accumulate([len(v) for v in chain([[]], verts)])
 
@@ -48,7 +52,7 @@ def mesh_join_np(verts, edges, pols, out_np):
         e_out = np.concatenate([edg + l for edg, l in zip(edges, accum_vert_lens)])
 
     if are_some_pols:
-        if output_numpy_pols:
+        if out_np_pols:
 
             is_array_of_lists = pols[0].dtype == object
             if is_array_of_lists:
@@ -63,16 +67,16 @@ def mesh_join_np(verts, edges, pols, out_np):
 
 def apply_matrix_to_vectors(vertices, matrices, out_verts):
     max_v = len(vertices) - 1
-    for i, m in enumerate(matrices):
+    for i, mat in enumerate(matrices):
         vert_id = min(i, max_v)
-        out_verts.append([(m @ Vector(v))[:] for v in vertices[vert_id]])
+        out_verts.append([(mat @ Vector(v))[:] for v in vertices[vert_id]])
 
-def apply_matrix_to_vectors_np(vertices, matrices,out_verts):
+def apply_matrix_to_vectors_np(vertices, matrices, out_verts):
     r_vertices = [np.array(v) for v in vertices]
     max_v = len(vertices) - 1
-    for i, m in enumerate(matrices):
+    for i, mat in enumerate(matrices):
         vert_id = min(i, max_v)
-        out_verts.append(matrix_apply_np(r_vertices[vert_id], m))
+        out_verts.append(matrix_apply_np(r_vertices[vert_id], mat))
 
 def apply_and_join_numpy(vertices, edges, faces, matrices, do_join, out_np):
     out_verts = []
@@ -88,7 +92,7 @@ def apply_and_join_numpy(vertices, edges, faces, matrices, do_join, out_np):
         else:
             out_faces = (faces * n)[:n]
 
-        out_verts, out_edges, out_faces = mesh_join_np(out_verts, out_edges, out_faces, out_np)
+        out_verts, out_edges, out_faces = mesh_join_np(out_verts, out_edges, out_faces, output_numpy_pols)
 
         out_verts, out_faces = [out_verts], [out_faces]
 
@@ -173,20 +177,21 @@ class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "do_join")
+
         layout.label(text="Implementation:")
         layout.prop(self, "implementation", expand=True)
         if self.implementation == 'NumPy':
             layout.label(text="Ouput Numpy:")
-            r = layout.row()
+            row = layout.row()
             for i in range(3):
-                r.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
+                row.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
 
     def rclick_menu(self, context, layout):
         layout.prop(self, "do_join")
+
         layout.prop_menu_enum(self, "implementation", text="Implementation")
         if self.implementation == 'NumPy':
             layout.label(text="Ouput Numpy:")
-
             for i in range(3):
                 layout.prop(self, "out_np", index=i, text=socket_names[i], toggle=True)
 
