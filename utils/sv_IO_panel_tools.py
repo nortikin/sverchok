@@ -737,12 +737,14 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         if center is not None:
             center_nodes(nodes_to_import, center)
         groups_to_import = nodes_json.get('groups', {})
+        previous_state = ng.sv_process
 
+        ng.sv_process = False
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
 
-        # now connect them / prevent unnecessary updates
         ng.freeze(hard=True)
+        # now connect them / prevent unnecessary updates
         make_links(update_lists, name_remap)
 
         # set frame parents '''
@@ -751,9 +753,11 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
-
+        ng.sv_process = True
         ng.update()
         ng.update_tag()
+        ng.sv_process = previous_state
+
 
     # ---- read files (.json or .zip) or straight json data -----
 

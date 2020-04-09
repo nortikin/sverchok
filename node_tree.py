@@ -308,7 +308,15 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         self.sv_linked_sockets[hash(self)] = linked_sockets
         self.sv_linked_output_sockets[hash(self)] = output_sockets
     def use_link_memory(self):
+        if self.configuring_new_node:
+            # print('skipping global process during node init')
+            return
+        if self.is_frozen():
+            # print('not processing: because self/tree.is_frozen')
+            return
 
+        if not self.sv_process:
+            return
         links_has_changed = self.sv_links[hash(self)] != self.links.items()
 
         if links_has_changed:
@@ -335,7 +343,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             build_update_list(self)
             if affected_nodes:
                 process_from_nodes(affected_nodes)
-                
+
     def update(self):
         '''
         Tags tree for update for handle
@@ -385,6 +393,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         if self.is_frozen():
             # print('not processing: because self/tree.is_frozen')
             return
+
         if self.sv_process:
             process_tree(self)
 
