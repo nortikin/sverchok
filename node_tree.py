@@ -245,7 +245,12 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_links = {}
     sv_linked_sockets = {}
     sv_linked_output_sockets = {}
-
+    tree_id: StringProperty(default="")
+    @property
+    def get_tree_id(self):
+        if not self.tree_id:
+            self.tree_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.tree_id
     def on_draft_mode_changed(self, context):
         """
         This is triggered when Draft mode of the tree is toggled.
@@ -297,16 +302,17 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             return True
 
     def fill_links_memory(self):
+        tree_id = self.get_tree_id
         new_links = self.links.items()
-        self.sv_links[hash(self)] = self.links.items()
+        self.sv_links[tree_id] = self.links.items()
         linked_sockets = []
         output_sockets = []
         for link in new_links:
             linked_sockets.append((link[1].from_socket, link[1].to_socket))
             output_sockets.append(link[1].from_socket)
 
-        self.sv_linked_sockets[hash(self)] = linked_sockets
-        self.sv_linked_output_sockets[hash(self)] = output_sockets
+        self.sv_linked_sockets[tree_id] = linked_sockets
+        self.sv_linked_output_sockets[tree_id] = output_sockets
     def use_link_memory(self):
         if self.configuring_new_node:
             # print('skipping global process during node init')
@@ -317,15 +323,17 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         if not self.sv_process:
             return
-        links_has_changed = self.sv_links[hash(self)] != self.links.items()
+
+        tree_id = self.get_tree_id
+        links_has_changed = self.sv_links[tree_id] != self.links.items()
 
         if links_has_changed:
             affected_nodes = []
             new_links = self.links.items()
             linked_sockets = []
             output_sockets = []
-            before_linked_sockets = self.sv_linked_sockets[hash(self)]
-            before_output_sockets = self.sv_linked_output_sockets[hash(self)]
+            before_linked_sockets = self.sv_linked_sockets[tree_id]
+            before_output_sockets = self.sv_linked_output_sockets[tree_id]
 
             for link in new_links:
                 output_sockets.append(link[1].from_socket)
@@ -336,9 +344,9 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                     affected_nodes.append(link[1].to_node)
             print("Affected Nodes:", affected_nodes)
 
-            self.sv_links[hash(self)] = self.links.items()
-            self.sv_linked_sockets[hash(self)] = linked_sockets
-            self.sv_linked_output_sockets[hash(self)] = output_sockets
+            self.sv_links[tree_id] = self.links.items()
+            self.sv_linked_sockets[tree_id] = linked_sockets
+            self.sv_linked_output_sockets[tree_id] = output_sockets
 
             build_update_list(self)
             if affected_nodes:
