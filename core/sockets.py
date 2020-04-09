@@ -18,7 +18,7 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import math
-
+import time
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, FloatProperty
 from bpy.types import NodeTree, NodeSocket
@@ -52,7 +52,6 @@ def process_from_socket(self, context):
     """Update function of exposed properties in Sockets"""
     self.node.process_node(context)
 
-
 class SvSocketCommon:
     """ Base class for all Sockets """
     use_prop: BoolProperty(default=False)
@@ -64,7 +63,7 @@ class SvSocketCommon:
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
-
+    socket_id_m: StringProperty(default="")
     def get_prop_name(self):
         if self.node and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
             prop_name_draft = self.node.draft_properties_mapping.get(self.prop_name, None)
@@ -86,7 +85,13 @@ class SvSocketCommon:
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        return str(hash(self.id_data.name + self.node.name + self.identifier))
+        if not self.socket_id_m:
+            self.socket_id_m = str(hash(self) ^ hash(time.monotonic()))
+            # self.socket_id_m.set(str(hash(self) ^ hash(time.monotonic())))
+            # self.set("socket_id_m", str(hash(self) ^ hash(time.monotonic())))
+        return self.socket_id_m
+
+        # return str(hash(self.id_data.get_tree_id + self.node.node_id + self.identifier))
 
     @property
     def index(self):

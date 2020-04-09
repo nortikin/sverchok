@@ -36,7 +36,13 @@ graphs = []
 
 no_data_color = (1, 0.3, 0)
 exception_color = (0.8, 0.0, 0)
-
+sv_first_run = True
+def set_first_run(value):
+    global sv_first_run
+    sv_first_run = value
+def get_first_run():
+    global sv_first_run
+    return sv_first_run
 def update_error_colors(self, context):
     global no_data_color
     global exception_color

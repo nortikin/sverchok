@@ -36,7 +36,9 @@ from sverchok.core.update_system import (
     process_from_node, process_from_nodes,
     process_tree,
     get_update_lists, update_error_nodes,
-    get_original_node_color)
+    get_original_node_color,
+    sv_first_run,
+    get_first_run)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
@@ -326,7 +328,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         tree_id = self.get_tree_id
         links_has_changed = self.sv_links[tree_id] != self.links.items()
-
+        print(links_has_changed)
         if links_has_changed:
             affected_nodes = []
             new_links = self.links.items()
@@ -360,13 +362,16 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
-
+        print("UFR", get_first_run())
+        if get_first_run():
+            return
         if self.skip_tree_update:
             # print('throttled update from context manager')
             return
 
         # print('svtree update', self.timestamp)
-        fill_memory_is_ready = hash(self) in self.sv_links.keys()
+        tree_id = self.get_tree_id
+        fill_memory_is_ready = tree_id in self.sv_links.keys()
         if fill_memory_is_ready:
             print("memory_is_ready")
             self.use_link_memory()
@@ -428,6 +433,8 @@ class SverchCustomTreeNode:
     # mode property names to draft mode property names.
     # E.g., draft_properties_mapping = dict(count = 'count_draft').
     draft_properties_mapping = dict()
+
+    n_id : StringProperty(default="")
 
     @classmethod
     def poll(cls, ntree):

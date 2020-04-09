@@ -6,8 +6,8 @@ from bpy.app.handlers import persistent
 from sverchok import old_nodes
 from sverchok import data_structure
 from sverchok.core import upgrade_nodes, undo_handler_node_count
-
-
+from sverchok.core.update_system import sv_first_run, set_first_run
+import sverchok.core.update_system as us
 from sverchok.ui import color_def, bgl_callback_nodeview, bgl_callback_3dview
 from sverchok.utils import app_handler_ops
 from sverchok.utils.logging import debug
@@ -163,11 +163,25 @@ def sv_clean(scene):
     data_structure.temp_handle = {}
 
 @persistent
+def sv_pre_load(scene):
+    print("sv_pre_load")
+    sv_clean(scene)
+
+
+    set_first_run(True)
+    global sv_first_run
+    print("FR",sv_first_run)
+
+@persistent
 def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
+    print("post_load")
 
+    set_first_run(False)
+
+    print('first_run', us.sv_first_run)
     # ensure current nodeview view scale / location parameters reflect users' system settings
     from sverchok import node_tree
     node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
@@ -179,8 +193,10 @@ def sv_post_load(scene):
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
+    print("old_load")
     for ng in sv_trees:
         ng.freeze(True)
+        ng.sv_process = False
         try:
             old_nodes.load_old(ng)
         except:
@@ -192,6 +208,7 @@ def sv_post_load(scene):
             traceback.print_exc()
         ng.unfreeze(True)
 
+        ng.sv_process = True
     addon_name = data_structure.SVERCHOK_NAME
     addon = bpy.context.preferences.addons.get(addon_name)
     if addon and hasattr(addon, "preferences"):
@@ -200,7 +217,9 @@ def sv_post_load(scene):
             color_def.apply_theme()
 
     for ng in sv_trees:
+        print("post_load_update")
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
+            ng.sv_links={}
             ng.update()
 
 
@@ -227,7 +246,7 @@ def set_frame_change(mode):
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
-    'load_pre': sv_clean,
+    'load_pre': sv_pre_load,
     'load_post': sv_post_load,
     'depsgraph_update_pre': sv_main_handler
 }
