@@ -342,9 +342,11 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 linked_sockets.append((link[1].from_socket, link[1].to_socket))
                 if not (link[1].from_socket, link[1].to_socket) in before_linked_sockets:
                     if not link[1].from_socket in before_output_sockets:
-                        affected_nodes.append(link[1].from_node)
-                    affected_nodes.append(link[1].to_node)
-            print("Affected Nodes:", affected_nodes)
+                        if not link[1].from_node in affected_nodes:
+                            affected_nodes.append(link[1].from_node)
+                    if not link[1].to_node in affected_nodes:
+                        affected_nodes.append(link[1].to_node)
+            print("Affected Nodes:", [n.name for n in affected_nodes])
 
             self.sv_links[tree_id] = self.links.items()
             self.sv_linked_sockets[tree_id] = linked_sockets

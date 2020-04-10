@@ -63,6 +63,7 @@ class SvSocketCommon:
     prop_name: StringProperty(default='', description="For displaying node property in socket UI")
 
     quicklink_func_name: StringProperty(default="", name="quicklink_func_name")
+    # socket_id_m: StringProperty(default="")
     socket_id_m: StringProperty(default="")
     def get_prop_name(self):
         if self.node and self.node.does_support_draft_mode() and hasattr(self.node.id_data, 'sv_draft') and self.node.id_data.sv_draft:
@@ -85,12 +86,15 @@ class SvSocketCommon:
     @property
     def socket_id(self):
         """Id of socket used by data_cache"""
-        if not self.socket_id_m:
-            self.socket_id_m = str(hash(self) ^ hash(time.monotonic()))
+        # if not self.socket_id_m:
+            # try:
+            # self.socket_id_m = str(hash(self) ^ hash(time.monotonic()))
+            # except:
+                # return str(hash(self) ^ hash(time.monotonic()))
             # self.socket_id_m.set(str(hash(self) ^ hash(time.monotonic())))
             # self.set("socket_id_m", str(hash(self) ^ hash(time.monotonic())))
-        return self.socket_id_m
-
+        # return self.socket_id_m
+        return str(hash(self.id_data.name + self.node.name + self.identifier))
         # return str(hash(self.id_data.get_tree_id + self.node.node_id + self.identifier))
 
     @property
