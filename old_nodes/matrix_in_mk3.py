@@ -69,6 +69,8 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix In'
     sv_icon = 'SV_MATRIX_IN'
 
+    replacement_nodes = [('SvMatrixInNodeMK4', None, None)]
+
     def update_mode(self, context):
 
         # hide all input sockets
@@ -199,6 +201,7 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     def rclick_menu(self, context, layout):
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
+        self.node_replacement_menu(context, layout)
 
     def process(self):
         if not self.outputs['Matrices'].is_linked:
