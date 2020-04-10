@@ -20,35 +20,14 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty, BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 from mathutils import Quaternion, Matrix, Euler
-from math import pi
 
-mode_items = [
+rotation_mode_items = [
     ("QUATERNION", "Quaternion",   "Rotation given as a Quaternion", 0),
     ("EULER",      "Euler Angles", "Rotation given as Euler Angles", 1),
     ("AXISANGLE",  "Axis Angle",   "Rotation given as Axis & Angle", 2),
 ]
-
-euler_order_items = [
-    ('XYZ', "XYZ", "", 0),
-    ('XZY', 'XZY', "", 1),
-    ('YXZ', 'YXZ', "", 2),
-    ('YZX', 'YZX', "", 3),
-    ('ZXY', 'ZXY', "", 4),
-    ('ZYX', 'ZYX', "", 5)
-]
-
-angle_unit_items = [
-    ("RAD", "Rad", "Radians", "", 0),
-    ("DEG", "Deg", "Degrees", "", 1),
-    ("UNI", "Uni", "Unities", "", 2)
-]
-
-angle_unit_conversion = {
-    "RAD": {"RAD": 1, "DEG": 180/pi, "UNI": 1/(2*pi)},
-    "DEG": {"RAD": pi/180, "DEG": 1, "UNI": 1/360},
-    "UNI": {"RAD": 2*pi, "DEG": 360, "UNI": 1}
-}
 
 input_sockets = {
     "QUATERNION": ["Quaternion"],
@@ -60,7 +39,7 @@ mat_t = Matrix().Identity(4)  # pre-allocate once for performance (translation)
 mat_s = Matrix().Identity(4)  # pre-allocate once for performance (scale)
 
 
-class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
+class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Loc, Rot, Scale, Angle
     Tooltip: Generate matrix from various components
@@ -69,7 +48,7 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Matrix In'
     sv_icon = 'SV_MATRIX_IN'
 
-    def update_mode(self, context):
+    def update_rotation_mode(self, context):
 
         # hide all input sockets
         for k, names in input_sockets.items():
@@ -77,49 +56,21 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                 self.inputs[name].hide_safe = True
 
         # show mode specific input sockets
-        for name in input_sockets[self.mode]:
+        for name in input_sockets[self.rotation_mode]:
             self.inputs[name].hide_safe = False
 
         updateNode(self, context)
 
-    def update_angle_units(self, context):
+    def update_angles(self, context, au):
         ''' Update all the angles to preserve their values in the new units '''
+        self.angle = self.angle * au
+        self.angle_x = self.angle_x * au
+        self.angle_y = self.angle_y * au
+        self.angle_z = self.angle_z * au
 
-        auc = angle_unit_conversion[self.last_angle_units][self.angle_units]
-
-        self.last_angle_units = self.angle_units  # keep track of the last units
-
-        self.syncing = True  # deactivate updates
-        self.angle = self.angle * auc
-        self.angle_x = self.angle_x * auc
-        self.angle_y = self.angle_y * auc
-        self.angle_z = self.angle_z * auc
-        self.syncing = False  # reactivate updates
-
-        updateNode(self, context)
-
-    def update_angle(self, context):
-        ''' Wrapper to suppress angle updates when units are changed '''
-        if self.syncing:
-            return
-
-        updateNode(self, context)
-
-    mode: EnumProperty(
-        name='Mode', description='The input component format of the matrix',
-        items=mode_items, default="AXISANGLE", update=update_mode)
-
-    euler_order: EnumProperty(
-        name="Euler Order", description="Order of the Euler rotations",
-        default="XYZ", items=euler_order_items, update=updateNode)
-
-    angle_units: EnumProperty(
-        name="Angle Units", description="Angle units (radians/degrees/unities)",
-        default="DEG", items=angle_unit_items, update=update_angle_units)
-
-    last_angle_units: EnumProperty(
-        name="Last Angle Units", description="Angle units (radians/degrees/unities)",
-        default="DEG", items=angle_unit_items)
+    rotation_mode: EnumProperty(
+        name='Rotation Mode', description='The rotation component format of the matrix',
+        items=rotation_mode_items, default="AXISANGLE", update=update_rotation_mode)
 
     scale: FloatVectorProperty(
         name='Scale', description='Scale component of the matrix',
@@ -136,19 +87,19 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
     angle_x: FloatProperty(
         name='Angle X', description='Rotation angle about X axis',
-        default=0.0, precision=3, update=update_angle)
+        default=0.0, precision=3, update=SvAngleHelper.update_angle)
 
     angle_y: FloatProperty(
         name='Angle Y', description='Rotation angle about Y axis',
-        default=0.0, precision=3, update=update_angle)
+        default=0.0, precision=3, update=SvAngleHelper.update_angle)
 
     angle_z: FloatProperty(
         name='Angle Z', description='Rotation angle about Z axis',
-        default=0.0, precision=3, update=update_angle)
+        default=0.0, precision=3, update=SvAngleHelper.update_angle)
 
     angle: FloatProperty(
         name='Angle', description='Rotation angle about the given axis',
-        default=0.0, precision=3, update=update_angle)
+        default=0.0, precision=3, update=SvAngleHelper.update_angle)
 
     axis: FloatVectorProperty(
         name='Axis', description='Axis of rotation',
@@ -158,15 +109,18 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         name="Flat output", description="Flatten output by list-joining level 1",
         default=True, update=updateNode)
 
-    syncing: BoolProperty(
-        name='Syncing', description='Syncing flag', default=False)
-
     def migrate_from(self, old_node):
-        ''' Migration from MK2 (attributes mapping) '''
-        self.location_ = old_node.l_
-        self.scale = old_node.s_
-        self.axis = old_node.r_
-        self.angle = old_node.a_
+        ''' Migration from old nodes (attributes mapping) '''
+        if old_node.bl_idname == "SvMatrixGenNodeMK2":
+            self.location_ = old_node.l_
+            self.scale = old_node.s_
+            self.axis = old_node.r_
+            self.angle = old_node.a_
+            self.angle_units = AngleUnits.DEGREES
+            self.last_angle_units = AngleUnits.DEGREES
+
+        elif old_node.bl_idname == "SvMatrixInNodeMK3":
+            self.rotation_mode = old_node.mode
 
     def sv_init(self, context):
 
@@ -183,19 +137,18 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
 
         self.outputs.new('SvMatrixSocket', "Matrices")
 
-        self.update_mode(context)
+        self.update_rotation_mode(context)
 
     def draw_buttons(self, context, layout):
-        layout.prop(self, "mode", expand=False, text="")
-        if self.mode == "EULER":
-            col = layout.column(align=True)
-            col.prop(self, "euler_order", text="")
-        if self.mode in {"EULER", "AXISANGLE"}:
-            row = layout.row(align=True)
-            row.prop(self, "angle_units", expand=True)
+        layout.prop(self, "rotation_mode", expand=False, text="")
+        if self.rotation_mode == "EULER":
+            self.draw_angle_euler_buttons(context, layout)
 
     def draw_buttons_ext(self, context, layout):
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
+
+        if self.rotation_mode in {"EULER", "AXISANGLE"}:
+            self.draw_angle_units_buttons(context, layout)
 
     def rclick_menu(self, context, layout):
         layout.prop(self, "flat_output", text="Flat Output", expand=False)
@@ -209,7 +162,7 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
         matrix_list = []
         add_matrix = matrix_list.extend if self.flat_output else matrix_list.append
 
-        if self.mode == "QUATERNION":
+        if self.rotation_mode == "QUATERNION":
             input_l = inputs["Location"].sv_get(deepcopy=False)
             input_s = inputs["Scale"].sv_get(deepcopy=False)
             input_q = inputs["Quaternion"].sv_get(deepcopy=False)
@@ -238,11 +191,12 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                     matrices.append(m)
                 add_matrix(matrices)
 
-        elif self.mode == "EULER":
+        elif self.rotation_mode == "EULER":
             socket_names = ["Location", "Angle X", "Angle Y", "Angle Z", "Scale"]
             I = [inputs[name].sv_get(deepcopy=False) for name in socket_names]
             params1 = match_long_repeat(I)
-            auc = angle_unit_conversion[self.angle_units]["RAD"]  # convert to radians
+            # conversion factor from the current angle units to radians
+            au = self.radians_conversion_factor()
             for ll, axl, ayl, azl, sl in zip(*params1):
                 params2 = match_long_repeat([ll, axl, ayl, azl, sl])
                 matrices = []
@@ -252,7 +206,7 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                     mat_t[1][3] = location[1]
                     mat_t[2][3] = location[2]
                     # rotation
-                    angles = (angleX * auc, angleY * auc, angleZ * auc)
+                    angles = (angleX * au, angleY * au, angleZ * au)
                     euler = Euler(angles, self.euler_order)
                     mat_r = euler.to_quaternion().to_matrix().to_4x4()
                     # scale
@@ -264,11 +218,12 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                     matrices.append(m)
                 add_matrix(matrices)
 
-        elif self.mode == "AXISANGLE":
+        elif self.rotation_mode == "AXISANGLE":
             socket_names = ["Location", "Axis", "Angle", "Scale"]
             I = [inputs[name].sv_get(deepcopy=False) for name in socket_names]
             params1 = match_long_repeat(I)
-            auc = angle_unit_conversion[self.angle_units]["RAD"]  # convert to radians
+            # conversion factor from the current angle units to radians
+            au = self.radians_conversion_factor()
             for ll, xl, al, sl in zip(*params1):
                 params2 = match_long_repeat([ll, xl, al, sl])
                 matrices = []
@@ -278,7 +233,7 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode):
                     mat_t[1][3] = location[1]
                     mat_t[2][3] = location[2]
                     # rotation
-                    mat_r = Quaternion(axis, angle * auc).to_matrix().to_4x4()
+                    mat_r = Quaternion(axis, angle * au).to_matrix().to_4x4()
                     # scale
                     mat_s[0][0] = scale[0]
                     mat_s[1][1] = scale[1]
