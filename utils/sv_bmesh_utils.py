@@ -24,27 +24,28 @@ import math
 
 from sverchok.utils.logging import info, debug
 
-def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
+def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
         normal_update, will update verts/edges/faces normals at the end
     '''
 
     bm = bmesh.new()
-    add_vert = bm.verts.new
+    bm_verts = bm.verts
+    add_vert = bm_verts.new
 
     py_verts = verts.tolist() if type(verts) == np.ndarray else verts
 
     for co in py_verts:
         add_vert(co)
 
-    bm.verts.index_update()
-    bm.verts.ensure_lookup_table()
+    bm_verts.index_update()
+    bm_verts.ensure_lookup_table()
 
     if len(faces) > 0:
         add_face = bm.faces.new
         py_faces = faces.tolist() if type(faces) == np.ndarray else faces
         for face in py_faces:
-            add_face(tuple(bm.verts[i] for i in face))
+            add_face(tuple(bm_verts[i] for i in face))
 
         bm.faces.index_update()
 
@@ -56,7 +57,7 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
         get_edge = bm.edges.get
         py_faces = edges.tolist() if type(edges) == np.ndarray else edges
         for idx, edge in enumerate(edges):
-            edge_seq = tuple(bm.verts[i] for i in edge)
+            edge_seq = tuple(bm_verts[i] for i in edge)
             bm_edge = get_edge(edge_seq)
             if not bm_edge:
                 bm_edge = add_edge(edge_seq)
@@ -66,9 +67,9 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
         bm.edges.index_update()
 
     if markup_vert_data:
-        bm.verts.ensure_lookup_table()
-        layer = bm.verts.layers.int.new("initial_index")
-        for idx, vert in enumerate(bm.verts):
+        bm_verts.ensure_lookup_table()
+        layer = bm_verts.layers.int.new("initial_index")
+        for idx, vert in enumerate(bm_verts):
             vert[layer] = idx
 
     if markup_face_data:
