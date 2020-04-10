@@ -39,12 +39,12 @@ mat_t = Matrix().Identity(4)  # pre-allocate once for performance (translation)
 mat_s = Matrix().Identity(4)  # pre-allocate once for performance (scale)
 
 
-class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvMatrixInNodeMK4(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Loc, Rot, Scale, Angle
     Tooltip: Generate matrix from various components
     """
-    bl_idname = 'SvMatrixInNodeMK3'
+    bl_idname = 'SvMatrixInNodeMK4'
     bl_label = 'Matrix In'
     sv_icon = 'SV_MATRIX_IN'
 
@@ -119,7 +119,7 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             self.angle_units = AngleUnits.DEGREES
             self.last_angle_units = AngleUnits.DEGREES
 
-        elif old_node.bl_idname == "SvMatrixInNodeMK3":
+        elif old_node.bl_idname == "SvMatrixInNodeMK4":
             self.rotation_mode = old_node.mode
 
     def sv_init(self, context):
@@ -247,8 +247,8 @@ class SvMatrixInNodeMK3(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
 
 def register():
-    bpy.utils.register_class(SvMatrixInNodeMK3)
+    bpy.utils.register_class(SvMatrixInNodeMK4)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvMatrixInNodeMK3)
+    bpy.utils.unregister_class(SvMatrixInNodeMK4)
