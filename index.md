@@ -147,7 +147,7 @@
     LineConnectNodeMK2
     ---
     SvConvexHullNodeMK2
-    SvSubdivideNode
+    SvSubdivideNodeMK2
     DelaunayTriangulation2DNode
     SvDelaunay2DCdt
     Voronoi2DNode
@@ -279,7 +279,7 @@
     SvVectorFractal
 
 ## Matrix
-    SvMatrixInNodeMK3
+    SvMatrixInNodeMK4
     MatrixOutNode
     SvMatrixApplyJoinNode
     SvIterateNode

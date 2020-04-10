@@ -6,7 +6,7 @@ Modifier Change
    :maxdepth: 2
 
    bevel
-   subdivide
+   subdivide_mk2
    subdivide_lite
    unsubdivide
    smooth

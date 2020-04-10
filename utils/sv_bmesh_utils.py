@@ -17,30 +17,35 @@
 # ##### END GPL LICENSE BLOCK #####
 
 import bmesh
+from bmesh.types import BMVert, BMEdge, BMFace
 import mathutils
 import numpy as np
 import math
 
 from sverchok.utils.logging import info, debug
 
-def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
+def bmesh_from_pydata(verts=None, edges=[], faces=[], markup_face_data=False, markup_edge_data=False, markup_vert_data=False, normal_update=False):
     ''' verts is necessary, edges/faces are optional
         normal_update, will update verts/edges/faces normals at the end
     '''
 
     bm = bmesh.new()
-    add_vert = bm.verts.new
+    bm_verts = bm.verts
+    add_vert = bm_verts.new
 
-    for co in verts:
+    py_verts = verts.tolist() if type(verts) == np.ndarray else verts
+
+    for co in py_verts:
         add_vert(co)
 
-    bm.verts.index_update()
-    bm.verts.ensure_lookup_table()
+    bm_verts.index_update()
+    bm_verts.ensure_lookup_table()
 
     if len(faces) > 0:
         add_face = bm.faces.new
-        for face in faces:
-            add_face(tuple(bm.verts[i] for i in face))
+        py_faces = faces.tolist() if type(faces) == np.ndarray else faces
+        for face in py_faces:
+            add_face(tuple(bm_verts[i] for i in face))
 
         bm.faces.index_update()
 
@@ -50,8 +55,9 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
 
         add_edge = bm.edges.new
         get_edge = bm.edges.get
+        py_faces = edges.tolist() if type(edges) == np.ndarray else edges
         for idx, edge in enumerate(edges):
-            edge_seq = tuple(bm.verts[i] for i in edge)
+            edge_seq = tuple(bm_verts[i] for i in edge)
             bm_edge = get_edge(edge_seq)
             if not bm_edge:
                 bm_edge = add_edge(edge_seq)
@@ -61,9 +67,9 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
         bm.edges.index_update()
 
     if markup_vert_data:
-        bm.verts.ensure_lookup_table()
-        layer = bm.verts.layers.int.new("initial_index")
-        for idx, vert in enumerate(bm.verts):
+        bm_verts.ensure_lookup_table()
+        layer = bm_verts.layers.int.new("initial_index")
+        for idx, vert in enumerate(bm_verts):
             vert[layer] = idx
 
     if markup_face_data:
@@ -76,16 +82,53 @@ def bmesh_from_pydata(verts=None, edges=None, faces=None, markup_face_data=False
         bm.normal_update()
     return bm
 
+def numpy_data_from_bmesh(bm, out_np, face_data=None):
+    if out_np[0]:
+        verts = np.array([v.co[:] for v in bm.verts])
+    else:
+        verts = [v.co[:] for v in bm.verts]
+    if out_np[1]:
+        edges = np.array([[e.verts[0].index, e.verts[1].index] for e in bm.edges])
+    else:
+        edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
+    if out_np[2]:
+        faces = np.array([[i.index for i in p.verts] for p in bm.faces])
+    else:
+        faces = [[i.index for i in p.verts] for p in bm.faces]
+
+    if face_data:
+        if out_np[3]:
+            face_data_out = np.array(face_data_from_bmesh_faces(bm, face_data))
+        else:
+            face_data_out = face_data_from_bmesh_faces(bm, face_data)
+            return verts, edges, faces, face_data_out
+    else:
+        return verts, edges, faces, []
 
 def pydata_from_bmesh(bm, face_data=None):
+
     verts = [v.co[:] for v in bm.verts]
-    edges = [[i.index for i in e.verts] for e in bm.edges]
+    edges = [[e.verts[0].index, e.verts[1].index] for e in bm.edges]
     faces = [[i.index for i in p.verts] for p in bm.faces]
+
     if face_data is None:
         return verts, edges, faces
     else:
         face_data_out = face_data_from_bmesh_faces(bm, face_data)
         return verts, edges, faces, face_data_out
+
+def get_partial_result_pydata(self, geom):
+    '''used by the subdivide node to get new and old verts/edges/pols'''
+
+    new_verts = [v for v in geom if isinstance(v, BMVert)]
+    new_edges = [e for e in geom if isinstance(e, BMEdge)]
+    new_faces = [f for f in geom if isinstance(f, BMFace)]
+
+    new_verts = [tuple(v.co) for v in new_verts]
+    new_edges = [[edge.verts[0].index, edge.verts[1].index] for edge in new_edges]
+    new_faces = [[v.index for v in face.verts] for face in new_faces]
+
+    return new_verts, new_edges, new_faces
 
 def face_data_from_bmesh_faces(bm, face_data):
     initial_index = bm.faces.layers.int.get("initial_index")

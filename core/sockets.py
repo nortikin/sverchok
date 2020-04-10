@@ -187,7 +187,7 @@ class SvSocketCommon:
 
         if self.use_quicklink:
             if self.bl_idname == "SvMatrixSocket":
-                new_node_idname = "SvMatrixInNodeMK3"
+                new_node_idname = "SvMatrixInNodeMK4"
             elif self.bl_idname == "SvVerticesSocket":
                 new_node_idname = "GenVectorsNode"
             else:

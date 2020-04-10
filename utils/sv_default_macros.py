@@ -46,7 +46,11 @@ macros = {
     "> sn petal": {
         'display_name': "load snlite w/ petalsine",
         'file': 'macro',
-        'ident': ['verbose_macro_handler', 'sn petal']},
+        'ident': ['verbose_macro_handler', 'snl demo/petal_sine.py']},
+    "> Subdiv to quads": {
+        'display_name': "snlite w/ subdiv to quads",
+        'file': 'macro',
+        'ident': ['verbose_macro_handler', 'snl demo/subidivide_to_quads.py']},
     "> monad info": {
         'display_name': "output current idx / total",
         'file': 'macro',
@@ -179,9 +183,10 @@ class DefaultMacros():
             full_url_term = 'https://gist.github.com/zeffii/d843b985b0db97af56dfa9c30cd54712'
             webbrowser.open(full_url_term)
 
-        elif term == 'sn petal':
+        elif 'snl' in term:
+            file = term.split(' ')[1]
             snlite = nodes.new('SvScriptNodeLite')
-            sn_loader(snlite, script_name='demo/petal_sine.py')
+            sn_loader(snlite, script_name=file)
 
         elif term == 'monad info':
             x, y = context.space_data.cursor_location[:]
@@ -228,7 +233,7 @@ class DefaultMacros():
                         node.implementation = 'NumPy' if state else 'Python'
                     except TypeError:
                         pass
-                        
+
             # establish previous processing state
             tree.sv_process = previous_state
             tree.update()

@@ -35,6 +35,8 @@ class SvSubdivideNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_SUBDIVIDE'
 
+    replacement_nodes = [('SvSubdivideNodeMK2', None, None)]
+
     falloff_types = [
         ("SMOOTH", "Smooth", "", 'SMOOTHCURVE', 0),
         ("SPHERE", "Sphere", "", 'SPHERECURVE', 1),

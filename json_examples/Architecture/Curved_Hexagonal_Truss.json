@@ -1,0 +1,645 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {
+    "A Number": "Frame",
+    "Bend object along surface": "Frame",
+    "Component Analyzer": "Frame.002",
+    "Curve Viewer": "Frame.002",
+    "Curve Viewer.001": "Frame.002",
+    "Dual Mesh": "Frame.002",
+    "Inset Special": "Frame.001",
+    "List Split": "Frame",
+    "List Split.001": "Frame.002",
+    "Mesh Join": "Frame.002",
+    "Move": "Frame",
+    "Plane": "Frame",
+    "Polygon Boom": "Frame.002",
+    "Polygons to Edges": "Frame.002",
+    "Randomize": "Frame",
+    "Segment": "Frame.002",
+    "Solidify": "Frame.001",
+    "Vector Math": "Frame.002",
+    "Viewer BMesh": "Frame.001",
+    "Viewer Draw Mk3.001": "Frame.001"
+  },
+  "groups": {},
+  "nodes": {
+    "A Number": {
+      "bl_idname": "SvNumberNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -878.9776306152344,
+        -800.5147476196289
+      ],
+      "params": {
+        "float_": 0.0,
+        "float_draft_": 0.0,
+        "int_": 3,
+        "int_draft_": 0,
+        "selected_mode": "int"
+      },
+      "width": 140.0
+    },
+    "Bend object along surface": {
+      "bl_idname": "SvBendAlongSurfaceNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        173.6556396484375,
+        -564.7157974243164
+      ],
+      "params": {
+        "grouped": 0
+      },
+      "width": 140.0
+    },
+    "Component Analyzer": {
+      "bl_idname": "SvComponentAnalyzerNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        594.5363464355469,
+        -1177.153793334961
+      ],
+      "params": {
+        "face_mode": "Center"
+      },
+      "width": 140.0
+    },
+    "Curve Viewer": {
+      "bl_idname": "SvCurveViewerNodeV28",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1724.8819274902344,
+        -923.9109344482422
+      ],
+      "params": {
+        "basedata_name": "Compressed Structure",
+        "depth": 0.07999999821186066
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Curve Viewer.001": {
+      "bl_idname": "SvCurveViewerNodeV28",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1722.6996765136719,
+        -1273.923080444336
+      ],
+      "params": {
+        "basedata_name": "Tight Structure",
+        "depth": 0.05000000074505806
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Dual Mesh": {
+      "bl_idname": "SvDualMeshNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        374.117919921875,
+        -1410.1214447021484
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Frame": {
+      "bl_idname": "NodeFrame",
+      "height": 452.89105224609375,
+      "hide": false,
+      "label": "Control Surface",
+      "location": [
+        -88.71127319335938,
+        107.1540756225586
+      ],
+      "params": {},
+      "width": 1252.63330078125
+    },
+    "Frame.001": {
+      "bl_idname": "NodeFrame",
+      "height": 400.29412841796875,
+      "hide": false,
+      "label": "Cover",
+      "location": [
+        68.99597930908203,
+        56.54072189331055
+      ],
+      "params": {},
+      "width": 806.707763671875
+    },
+    "Frame.002": {
+      "bl_idname": "NodeFrame",
+      "height": 732.0890502929688,
+      "hide": false,
+      "label": "Structure",
+      "location": [
+        85.90573120117188,
+        -95.03233337402344
+      ],
+      "params": {},
+      "width": 1550.7640380859375
+    },
+    "Inset Special": {
+      "bl_idname": "SvInsetSpecial",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        762.4587478637695,
+        -431.1054573059082
+      ],
+      "params": {
+        "inset": 0.550000011920929,
+        "make_inner": 0
+      },
+      "width": 140.0
+    },
+    "List Split": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -50.175506591796875,
+        -557.3967056274414
+      ],
+      "params": {
+        "split": 3
+      },
+      "width": 140.0
+    },
+    "List Split.001": {
+      "bl_idname": "SvListSplitNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1040.7282409667969,
+        -1097.4737396240234
+      ],
+      "params": {
+        "split": 1
+      },
+      "width": 140.0
+    },
+    "Mesh Join": {
+      "bl_idname": "SvMeshJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1457.0633239746094,
+        -1038.8115692138672
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Move": {
+      "bl_idname": "SvMoveNodeMk3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -270.1755065917969,
+        -568.8144302368164
+      ],
+      "params": {
+        "movement_vectors": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "strength": 4.480000019073486
+      },
+      "width": 140.0
+    },
+    "Plane": {
+      "bl_idname": "SvPlaneNodeMk3",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -677.8556823730469,
+        -482.10892486572266
+      ],
+      "params": {
+        "numx": 3,
+        "numy": 3,
+        "sizex": 20.0,
+        "sizey": 20.0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Polygon Boom": {
+      "bl_idname": "PolygonBoomNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1042.3290710449219,
+        -949.3807220458984
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Polygon Grid": {
+      "bl_idname": "SvPolygonGridNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -435.03851318359375,
+        -1049.250732421875
+      ],
+      "params": {
+        "gridType": "HEXAGON",
+        "numx": 10,
+        "numy": 10,
+        "separate": 0
+      },
+      "width": 170.0
+    },
+    "Polygons to Edges": {
+      "bl_idname": "Pols2EdgsNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        591.9270324707031,
+        -1403.2000579833984
+      ],
+      "params": {
+        "regular_pols": 1
+      },
+      "width": 140.0
+    },
+    "Randomize": {
+      "bl_idname": "SvRandomizeVerticesNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -490.1755065917969,
+        -488.76749420166016
+      ],
+      "params": {
+        "random_seed_": 14,
+        "random_z_": 5.840000152587891
+      },
+      "width": 140.0
+    },
+    "Segment": {
+      "bl_idname": "SvSegmentGenerator",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1237.0633239746094,
+        -976.4100799560547
+      ],
+      "params": {
+        "split": 0
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Solidify": {
+      "bl_idname": "SvSolidifyNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        973.722297668457,
+        -414.70586013793945
+      ],
+      "params": {
+        "thickness": -0.25999999046325684
+      },
+      "width": 140.0
+    },
+    "Vector Math": {
+      "bl_idname": "SvVectorMathNodeMK3",
+      "custom_socket_props": {
+        "1": {
+          "expanded": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        829.8253479003906,
+        -1280.355209350586
+      ],
+      "params": {
+        "current_op": "ADD",
+        "v3_input_1": [
+          0.0,
+          0.0,
+          -1.7100000381469727
+        ]
+      },
+      "width": 140.0
+    },
+    "Viewer BMesh": {
+      "bl_idname": "SvBmeshViewerNodeV28",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1369.1665115356445,
+        -456.61589431762695
+      ],
+      "params": {
+        "basedata_name": "Epsilon",
+        "lp": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Viewer Draw Mk3.001": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        1193.722297668457,
+        -422.68693923950195
+      ],
+      "params": {
+        "display_verts": 0,
+        "draw_gl_polygonoffset": 1
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Polygon Grid",
+      1,
+      "Dual Mesh",
+      0
+    ],
+    [
+      "Polygon Grid",
+      2,
+      "Dual Mesh",
+      1
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Dual Mesh",
+      2
+    ],
+    [
+      "Dual Mesh",
+      1,
+      "Polygons to Edges",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "Plane",
+      2
+    ],
+    [
+      "Plane",
+      0,
+      "Randomize",
+      0
+    ],
+    [
+      "Randomize",
+      0,
+      "Move",
+      0
+    ],
+    [
+      "Move",
+      0,
+      "List Split",
+      0
+    ],
+    [
+      "A Number",
+      0,
+      "List Split",
+      1
+    ],
+    [
+      "Polygon Grid",
+      1,
+      "Bend object along surface",
+      0
+    ],
+    [
+      "List Split",
+      0,
+      "Bend object along surface",
+      1
+    ],
+    [
+      "Bend object along surface",
+      0,
+      "Component Analyzer",
+      0
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Component Analyzer",
+      2
+    ],
+    [
+      "Component Analyzer",
+      0,
+      "Vector Math",
+      0
+    ],
+    [
+      "Vector Math",
+      0,
+      "List Split.001",
+      0
+    ],
+    [
+      "Bend object along surface",
+      0,
+      "Polygon Boom",
+      0
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Polygon Boom",
+      1
+    ],
+    [
+      "Polygon Boom",
+      0,
+      "Segment",
+      0
+    ],
+    [
+      "List Split.001",
+      0,
+      "Segment",
+      1
+    ],
+    [
+      "Segment",
+      0,
+      "Mesh Join",
+      0
+    ],
+    [
+      "Segment",
+      1,
+      "Mesh Join",
+      1
+    ],
+    [
+      "Mesh Join",
+      0,
+      "Curve Viewer",
+      0
+    ],
+    [
+      "Mesh Join",
+      1,
+      "Curve Viewer",
+      1
+    ],
+    [
+      "Vector Math",
+      0,
+      "Curve Viewer.001",
+      0
+    ],
+    [
+      "Polygons to Edges",
+      0,
+      "Curve Viewer.001",
+      1
+    ],
+    [
+      "Bend object along surface",
+      0,
+      "Inset Special",
+      2
+    ],
+    [
+      "Polygon Grid",
+      3,
+      "Inset Special",
+      3
+    ],
+    [
+      "Inset Special",
+      0,
+      "Solidify",
+      1
+    ],
+    [
+      "Inset Special",
+      1,
+      "Solidify",
+      2
+    ],
+    [
+      "Solidify",
+      0,
+      "Viewer Draw Mk3.001",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Viewer Draw Mk3.001",
+      2
+    ],
+    [
+      "Solidify",
+      0,
+      "Viewer BMesh",
+      0
+    ],
+    [
+      "Solidify",
+      2,
+      "Viewer BMesh",
+      2
+    ]
+  ]
+}

@@ -66,7 +66,7 @@ class SverchokPreferences(AddonPreferences):
             color_def.apply_theme()
 
     tab_modes = data_structure.enum_item_4(["General", "Node Defaults", "Theme"])
-    
+
     selected_tab: bpy.props.EnumProperty(
         items=tab_modes,
         description="pick viewing mode",
@@ -195,7 +195,7 @@ class SverchokPreferences(AddonPreferences):
 
     over_sized_buttons: BoolProperty(
         default=False, name="Big buttons", description="Very big buttons")
-    
+
     node_panel_modes = [
             ("X", "Do not show", "Do not show node buttons", 0),
             ("T", "T panel", "Show node buttons under the T panel", 1),
@@ -207,7 +207,7 @@ class SverchokPreferences(AddonPreferences):
         name = "Display node buttons",
         description = "Where to show node insertion buttons. Restart Blender to apply changes.",
         default = "X")
-    
+
     node_panels_icons_only : BoolProperty(
             name = "Display icons only",
             description = "Show node icon only when icon has an icon, otherwise show it's name",
@@ -235,9 +235,13 @@ class SverchokPreferences(AddonPreferences):
 
     stethoscope_view_scale: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default stethoscope scale')
-    
+
     index_viewer_scale: FloatProperty(
         default=1.0, min=0.01, step=0.01, description='default index viewer scale')
+
+    auto_update_angle_values: BoolProperty(
+        default=True,
+        description="Auto update angle values when angle units are changed to preserve the angle")
 
     def set_nodeview_render_params(self, context):
         # i think these are both the same..
@@ -262,7 +266,7 @@ class SverchokPreferences(AddonPreferences):
     def update_log_level(self, context):
         logging.info("Setting log level to %s", self.log_level)
         logging.setLevel(self.log_level)
-    
+
     log_levels = [
             ("DEBUG", "Debug", "Debug output", 0),
             ("INFO", "Information", "Informational output", 1),
@@ -367,18 +371,23 @@ class SverchokPreferences(AddonPreferences):
             row_sub1 = col.row().split(factor=0.5)
             box_sub1 = row_sub1.box()
             box_sub1_col = box_sub1.column(align=True)
-            
+
             box_sub1_col.label(text='Render Scale & Location')
             # box_sub1_col.prop(self, 'render_location_xy_multiplier', text='xy multiplier')
             # box_sub1_col.prop(self, 'render_scale', text='scale')
             box_sub1_col.label(text=f'xy multiplier: {self.render_location_xy_multiplier}')
             box_sub1_col.label(text=f'render_scale : {self.render_scale}')
-            
+
             box_sub1_col.label(text='Stethoscope')
             box_sub1_col.prop(self, 'stethoscope_view_scale', text='scale')
 
             box_sub1_col.label(text='Index Viewer')
-            box_sub1_col.prop(self, 'index_viewer_scale', text='scale')           
+            box_sub1_col.prop(self, 'index_viewer_scale', text='scale')
+
+            box_sub2 = box_sub1.box()
+            box_sub2_col = box_sub2.column(align=True)
+            box_sub2_col.label(text='Angle Units')
+            box_sub2_col.prop(self, 'auto_update_angle_values', text="Auto Update Angle Values")
 
             col3 = row_sub1.split().column()
             col3.label(text='Location of custom defaults')
