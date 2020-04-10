@@ -4,7 +4,7 @@ Subdivide Node
 Functionality
 -------------
 
-This node applies Blender's Subvidide operation to the input mesh. Please note that of options available differs from usual editing operator.
+This node applies Blender's Subdivide operation to the input mesh. Please note that of options available differs from usual editing operator.
 
 Inputs
 ------
@@ -39,7 +39,7 @@ This node has the following parameters:
   - **Path**
   - **Fan**
   - **Straight Cut**
-- **Grid fill**. If checked, then fully-selected faces will be filled with a grid (subdivided). Otherwise, only edges will be subdiveded, not faces. Checked by default.
+- **Grid fill**. If checked, then fully-selected faces will be filled with a grid (subdivided). Otherwise, only edges will be subdivided, not faces. Checked by default.
 - **Only Quads**. If checked, then only quad faces will be subdivided, other will not. By default not checked.
 - **Single edge**. If checked, tessellate the case of one edge selected in a quad or triangle. By default not checked.
 - **Even smooth**. Maintain even offset when smoothing. By default not checked.
@@ -48,6 +48,14 @@ This node has the following parameters:
 - **Fractal**. Displaces the vertices in random directions after the mesh is subdivided. This parameter can be also provided as input.
 - **Along normal**. If set to 1, causes the vertices to move along the their normals, instead of random directions. Values between 0 and 1 lead to intermediate results. This parameter can be also provided as input.
 - **Seed**. Random seed. This parameter can be also provided as input.
+
+
+Advanced parameters
+-------------------
+
+In the N-Panel (and on the right-click menu) you can find:
+
+**Output NumPy**: Get NumPy arrays in stead of regular lists (makes the node slower but can make faster the next nodes). Available for Vertices, Edges and Pols
 
 Outputs
 -------
@@ -86,4 +94,3 @@ Subdivide a cube, with smooth falloff type = Smooth:
 Subdivide a torus, with smooth falloff type = Sphere:
 
 .. image:: https://cloud.githubusercontent.com/assets/284644/25096721/479a2c72-23c3-11e7-9012-612ce3fd1039.png
-
