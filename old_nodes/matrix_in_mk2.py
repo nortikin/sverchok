@@ -43,7 +43,7 @@ class SvMatrixGenNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'OUTLINER_OB_EMPTY'
     sv_icon = 'SV_MATRIX_IN'
 
-    replacement_nodes = [('SvMatrixInNodeMK3', dict(Rotation="Axis"), dict(Matrix = "Matrices"))]
+    replacement_nodes = [('SvMatrixInNodeMK4', dict(Rotation="Axis"), dict(Matrix = "Matrices"))]
 
     l_: FloatVectorProperty(
         name='L', default=(0.0, 0.0, 0.0), description='Location', precision=3, update=updateNode)

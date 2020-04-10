@@ -351,7 +351,7 @@
       "width": 140.0
     },
     "Matrix In": {
-      "bl_idname": "SvMatrixInNodeMK3",
+      "bl_idname": "SvMatrixInNodeMK4",
       "height": 100.0,
       "hide": false,
       "label": "",
@@ -380,7 +380,7 @@
       "width": 140.0
     },
     "Matrix In.001": {
-      "bl_idname": "SvMatrixInNodeMK3",
+      "bl_idname": "SvMatrixInNodeMK4",
       "height": 100.0,
       "hide": false,
       "label": "",
