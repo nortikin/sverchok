@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loop)
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
@@ -44,46 +44,47 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     bl_label = 'Ellipse'
     sv_icon = 'SV_ELLIPSE'
 
+    @throttled
     def update_mode(self, context):
         ''' Update the ellipse parameters of the new mode based on previous mode ones'''
+
+        if self.mode == self.last_mode:
+            return
+
+        #               from            to
+        switch_state = (self.last_mode, self.mode)
+
+        a = self.major_radius
+        e = self.eccentricity
+        c = self.focal_length
+
         self.updating = True
 
-        if self.mode == "AB":
-            if self.last_mode == "AE":  # ae => ab
-                a = self.major_radius
-                e = self.eccentricity
-                self.minor_radius = a * sqrt(1 - e * e)
-            elif self.last_mode == "AC":  # ac => ab
-                a = self.major_radius
-                c = min(a, self.focal_length)
-                self.minor_radius = sqrt(a * a - c * c)
+        if switch_state == ("AE", "AB"):
+            self.minor_radius = a * sqrt(1 - e * e)
 
-        elif self.mode == "AE":
-            if self.last_mode == "AB":  # ab => ae
-                a = self.major_radius
-                b = min(a, self.minor_radius)
-                self.eccentricity = sqrt(1 - (b * b) / (a * a))
-            if self.last_mode == "AC":  # ac => ae
-                a = self.major_radius
-                c = self.focal_length
-                self.eccentricity = c / a
+        elif switch_state == ("AC", "AB"):
+            c = min(a, c)
+            self.minor_radius = sqrt(a * a - c * c)
 
-        elif self.mode == "AC":
-            if self.last_mode == "AB":  # ab => ac
-                a = self.major_radius
-                b = min(a, self.minor_radius)
-                self.focal_length = sqrt(a * a - b * b)
-            if self.last_mode == "AE":  # ae => ac
-                a = self.major_radius
-                e = self.eccentricity
-                self.focal_length = a * e
+        elif switch_state == ("AB", "AE"):
+            b = min(a, self.minor_radius)
+            self.eccentricity = sqrt(1 - (b * b) / (a * a))
+
+        elif switch_state == ("AC", "AE"):
+            self.eccentricity = c / a
+
+        elif switch_state == ("AB", "AC"):
+            b = min(a, self.minor_radius)
+            self.focal_length = sqrt(a * a - b * b)
+
+        elif switch_state == ("AE", "AC"):
+            self.focal_length = a * e
 
         self.updating = False
 
-        if self.mode != self.last_mode:
-            self.last_mode = self.mode
-            self.update_sockets()
-            updateNode(self, context)
+        self.last_mode = self.mode
+        self.update_sockets()
 
     def update_ellipse(self, context):
         if self.updating:
