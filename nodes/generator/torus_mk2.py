@@ -134,12 +134,12 @@ def torus_polygons(N1, N2, t):
     return list_polys
 
 
-class SvTorusNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvTorusNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Torus, Donut
     Tooltip: Generate toroidal meshes
     """
-    bl_idname = 'SvTorusNode'
+    bl_idname = 'SvTorusNodeMK2'
     bl_label = 'Torus'
     bl_icon = 'MESH_TORUS'
 
@@ -365,8 +365,8 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
 
 def register():
-    bpy.utils.register_class(SvTorusNode)
+    bpy.utils.register_class(SvTorusNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvTorusNode)
+    bpy.utils.unregister_class(SvTorusNodeMK2)
