@@ -177,15 +177,16 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.draw_angle_units_buttons(context, layout)
 
     def update_sockets(self):
-        if self.mode == "AB":
-            socket2 = self.inputs[1]
-            socket2.replace_socket("SvStringsSocket", "Minor Radius").prop_name = "minor_radius"
-        elif self.mode == "AE":
-            socket2 = self.inputs[1]
-            socket2.replace_socket("SvStringsSocket", "Eccentricity").prop_name = "eccentricity"
-        else:  # AC
-            socket2 = self.inputs[1]
-            socket2.replace_socket("SvStringsSocket", "Focal Length").prop_name = "focal_length"
+        socket2 = self.inputs[1]
+        with self.sv_throttle_tree_update():
+        
+            if self.mode == "AB":
+                socket2.replace_socket("SvStringsSocket", "Minor Radius").prop_name = "minor_radius"
+            elif self.mode == "AE":
+                socket2.replace_socket("SvStringsSocket", "Eccentricity").prop_name = "eccentricity"
+            else:  # AC
+                socket2.replace_socket("SvStringsSocket", "Focal Length").prop_name = "focal_length"
+
 
     def make_ellipse(self, a, b, N, phase, rotation, scale):
         '''
