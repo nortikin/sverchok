@@ -39,7 +39,7 @@ class ExportSingleSimpleNode(EmptyTreeTestCase):
         self.assert_json_equals_file(export_result, "cylinder.json")
 
     def test_torus_export(self):
-        node = create_node("SvTorusNode", self.tree.name)
+        node = create_node("SvTorusNodeMK2", self.tree.name)
         node.mode = "MAJOR_MINOR"
         node.Separate = 0
         node.torus_eR = 1.2799999713897705

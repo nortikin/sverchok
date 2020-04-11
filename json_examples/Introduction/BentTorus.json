@@ -45,7 +45,7 @@
     },
     "Frame": {
       "bl_idname": "NodeFrame",
-      "height": 547.8262939453125,
+      "height": 588.8262939453125,
       "hide": false,
       "label": "Donor",
       "location": [
@@ -178,7 +178,7 @@
       "width": 140.0
     },
     "Torus": {
-      "bl_idname": "SvTorusNode",
+      "bl_idname": "SvTorusNodeMK2",
       "color": [
         0.0,
         0.5,
@@ -318,18 +318,6 @@
       1
     ],
     [
-      "Move.001",
-      0,
-      "Viewer Draw Mk3",
-      0
-    ],
-    [
-      "Plane",
-      2,
-      "Viewer Draw Mk3",
-      2
-    ],
-    [
       "Torus",
       0,
       "Bend object along surface",
@@ -351,6 +339,18 @@
       "Torus",
       2,
       "Viewer Draw Mk3.001",
+      2
+    ],
+    [
+      "Move.001",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Plane",
+      2,
+      "Viewer Draw Mk3",
       2
     ]
   ]

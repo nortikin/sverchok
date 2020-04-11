@@ -18,7 +18,7 @@
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
-    SvTorusNode
+    SvTorusNodeMK2
     SvSuzanneNode
     SvCricketNode
     ---
@@ -43,7 +43,7 @@
     SvImageComponentsNode
     SvTorusKnotNodeMK2
     SvRingNode
-    SvEllipseNode
+    SvEllipseNodeMK2
     SvSuperEllipsoidNode
     SvRegularSolid
     SvConicSectionNode
