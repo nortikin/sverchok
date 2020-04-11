@@ -433,7 +433,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.load()
 
 
-def perform_profile_node_inject(node, node_ref):
+def perform_profixle_node_inject(node, node_ref):
     texts = bpy.data.texts
     new_text = texts.new(node_ref['params']['filename'])
     new_text.from_string(node_ref['path_file'])
@@ -707,9 +707,10 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
 
     def make_links(update_lists, name_remap):
         print_update_lists(update_lists)
-
+        print(ng.sv_linked_sockets)
         failed_connections = []
         for link in update_lists:
+            print(ng.sv_process)
             try:
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
             except Exception as err:
@@ -743,18 +744,22 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         ng.sv_process = False
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
-
+        print('DDD')
         ng.freeze(hard=True)
+        print('CCC')
         # now connect them / prevent unnecessary updates
         make_links(update_lists, name_remap)
-
+        print('BBB')
         # set frame parents '''
         place_frames(ng, nodes_json, name_remap)
-
+        print('AAAAA')
         # clean up
         old_nodes.scan_for_old(ng)
+        print(ng.sv_linked_sockets)
         ng.unfreeze(hard=True)
+
         ng.sv_process = True
+
         ng.update()
         ng.update_tag()
         ng.sv_process = previous_state

@@ -336,7 +336,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             output_sockets = []
             before_linked_sockets = self.sv_linked_sockets[tree_id]
             before_output_sockets = self.sv_linked_output_sockets[tree_id]
-
+            print(before_linked_sockets)
             for link in new_links:
                 output_sockets.append(link[1].from_socket)
                 linked_sockets.append((link[1].from_socket, link[1].to_socket))
@@ -378,7 +378,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.use_link_memory()
         else:
             print("filling link_memory")
-            self.fill_links_memory()
+            if self.sv_process:
+                self.fill_links_memory()
             self.has_changed = True
             # self.has_link_count_changed
             self.process()
