@@ -145,6 +145,12 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
     updating: BoolProperty(default=False)  # used for disabling update callback
 
+    def migrate_from(self, old_node):
+        ''' Migration from old nodes '''
+        if old_node.bl_idname == "SvEllipseNode":
+            self.angle_units = AngleUnits.RADIANS
+            self.last_angle_units = AngleUnits.RADIANS
+
     def sv_init(self, context):
         self.width = 160
         self.inputs.new('SvStringsSocket', "Major Radius").prop_name = "major_radius"
