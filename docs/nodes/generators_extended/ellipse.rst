@@ -15,14 +15,15 @@ All inputs are vectorized and they will accept single or multiple values.
 - **Eccentricity** [2]
 - **Focal Length** [3]
 - **Num Verts**
-- **Phase**
-- **Rotation**
+- **Phase**        [4]
+- **Rotation**     [4]
 - **Scale**
 
 Notes:
 [1] : The Minor Radius is available in **ab** mode
 [2] : The Eccentricity is available in **ae** mode
 [3] : The Focal Length is available in **ac** mode
+[4] : The angles are in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
 
 Parameters
 ----------
@@ -45,30 +46,48 @@ The inputs are "sanitized" to restrict their values to valid domains:
 - Focal Length is a float with value in the reange [0.0, a]
 - Number of vertices is an integer with value >= 3
 
-+------------------+--------+---------+------------------------------------------------------------------+
-| Param            | Type   | Default | Description                                                      |
-+==================+========+=========+==================================================================+
-| **Major Radius** | Float  | 1.0     | Major radius of the ellipse                                      |
-+------------------+--------+---------+------------------------------------------------------------------+
-| **Minor Radius** | Float  | 0.8     | Minor radius of the ellipse [1]                                  |
-+------------------+--------+---------+------------------------------------------------------------------+
-| **Eccentricity** | Float  | 0.6     | Eccentricity of the ellipse [2]                                  |
-+------------------+--------+---------+------------------------------------------------------------------+
-| **Focal Length** | Float  | 0.6     | Distance between the center and one of the foci [3]              |
-+------------------+--------+---------+------------------------------------------------------------------+
-| **Num Verts**    | Int    | 36      | Number of vertices in the ellipse                                |
-+------------------+--------+---------+------------------------------------------------------------------+
-| **Phase**        | Float  | 0.0     | Phase the vertices along the ellipse around its center [radians] |
-+------------------+--------+---------+------------------------------------------------------------------+
-| **Rotation**     | Float  | 0.0     | Rotate the ellipse around its centering point [radians]          |
-+------------------+--------+---------+------------------------------------------------------------------+
-| **Scale**        | Float  | 1.0     | Scale the ellipse radii by this amount.                          |
-+------------------+--------+---------+------------------------------------------------------------------+
++------------------+--------+---------+------------------------------------------------------------+
+| Param            | Type   | Default | Description                                                |
++==================+========+=========+============================================================+
+| **Major Radius** | Float  | 1.0     | Major radius of the ellipse                                |
++------------------+--------+---------+------------------------------------------------------------+
+| **Minor Radius** | Float  | 0.8     | Minor radius of the ellipse [1]                            |
++------------------+--------+---------+------------------------------------------------------------+
+| **Eccentricity** | Float  | 0.6     | Eccentricity of the ellipse [2]                            |
++------------------+--------+---------+------------------------------------------------------------+
+| **Focal Length** | Float  | 0.6     | Distance between the center and one of the foci [3]        |
++------------------+--------+---------+------------------------------------------------------------+
+| **Num Verts**    | Int    | 36      | Number of vertices in the ellipse                          |
++------------------+--------+---------+------------------------------------------------------------+
+| **Phase**        | Float  | 0.0     | Phase the vertices along the ellipse around its center [4] |
++------------------+--------+---------+------------------------------------------------------------+
+| **Rotation**     | Float  | 0.0     | Rotate the ellipse around its centering point [4]          |
++------------------+--------+---------+------------------------------------------------------------+
+| **Scale**        | Float  | 1.0     | Scale the ellipse radii by this amount.                    |
++------------------+--------+---------+------------------------------------------------------------+
 
 Notes:
 [1] : The Minor Radius is available in **ab** mode
 [2] : The Eccentricity is available in **ae** mode
 [3] : The Focal Length is available in **ac** mode
+[4] : Angles are given by default in DEGREES. The Property Panel has option to set angle units as: RADIANS, DEGREES or UNITIES.
+
+
+Extra Parameters
+----------------
+A set of extra parameters are available on the property panel.
+These parameters do not receive external input.
+
++------------------+----------+---------+--------------------------------------+
+| Extra Param      | Type     | Default | Description                          |
++==================+==========+=========+======================================+
+| **Angle Units**  | Enum     | DEGREES | Interprets the angle values based on |
+|                  |  RADIANS |         | the selected angle units:            |
+|                  |  DEGREES |         |   Radians = 0 - 2pi                  |
+|                  |  UNITIES |         |   Degrees = 0 - 360                  |
+|                  |          |         |   Unities = 0 - 1                    |
++------------------+----------+---------+--------------------------------------+
+
 
 Outputs
 -------
