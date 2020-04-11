@@ -144,7 +144,15 @@ class SvNodeTreeCommon(object):
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
     skip_tree_update: BoolProperty(default=False)
-
+    sv_links = {}
+    sv_linked_sockets = {}
+    sv_linked_output_sockets = {}
+    tree_id: StringProperty(default="")
+    @property
+    def get_tree_id(self):
+        if not self.tree_id:
+            self.tree_id = str(hash(self) ^ hash(time.monotonic()))
+        return self.tree_id
 
     def build_update_list(self):
         build_update_list(self)
@@ -244,15 +252,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
     sv_toggle_nodetree_props: BoolProperty(name="Toggle visibility of props", description="Show more properties for this node tree")
 
-    sv_links = {}
-    sv_linked_sockets = {}
-    sv_linked_output_sockets = {}
-    tree_id: StringProperty(default="")
-    @property
-    def get_tree_id(self):
-        if not self.tree_id:
-            self.tree_id = str(hash(self) ^ hash(time.monotonic()))
-        return self.tree_id
+
     def on_draft_mode_changed(self, context):
         """
         This is triggered when Draft mode of the tree is toggled.
@@ -328,7 +328,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         tree_id = self.get_tree_id
         links_has_changed = self.sv_links[tree_id] != self.links.items()
-        print(links_has_changed)
+        print('links_has_changed', links_has_changed)
         if links_has_changed:
             affected_nodes = []
             new_links = self.links.items()
@@ -364,7 +364,6 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         # this is a no-op if there's no drawing
         clear_exception_drawing_with_bgl(self.nodes)
-        print("UFR", get_first_run())
         if get_first_run():
             return
         if self.skip_tree_update:

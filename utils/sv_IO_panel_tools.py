@@ -607,7 +607,6 @@ def add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts):
             if not node:
                 raise Exception("It seems no valid node was created for this Monad {0}".format(node_ref))
         else:
-            print(bl_idname)
             node = nodes.new(bl_idname)
 
     except Exception as err:
@@ -644,7 +643,6 @@ def add_nodes(ng, nodes_to_import, nodes, create_texts):
     ng.skip_tree_update = True
     try:
         for n in sorted(nodes_to_import):
-            print(n, ng.sv_process, ng.skip_tree_update)
             add_node_to_tree(nodes, n, nodes_to_import, name_remap, create_texts)
     except Exception as err:
         exception(err)
@@ -756,7 +754,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         # clean up
         old_nodes.scan_for_old(ng)
         ng.unfreeze(hard=True)
-        # ng.sv_process = True
+        ng.sv_process = True
         ng.update()
         ng.update_tag()
         ng.sv_process = previous_state
