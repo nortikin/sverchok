@@ -43,7 +43,7 @@
     SvImageComponentsNode
     SvTorusKnotNodeMK2
     SvRingNode
-    SvEllipseNode
+    SvEllipseNodeMK2
     SvSuperEllipsoidNode
     SvRegularSolid
     SvConicSectionNode

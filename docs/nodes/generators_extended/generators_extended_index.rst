@@ -17,7 +17,7 @@ Generators Extended
    mesh_eval
    ring
    smooth_lines
-   ellipse
+   ellipse_mk2
    conic_section
    super_ellipsoid
    spiral
