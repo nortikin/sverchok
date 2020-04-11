@@ -707,10 +707,8 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
 
     def make_links(update_lists, name_remap):
         print_update_lists(update_lists)
-        print(ng.sv_linked_sockets)
         failed_connections = []
         for link in update_lists:
-            print(ng.sv_process)
             try:
                 ng.links.new(*resolve_socket(*link, name_dict=name_remap))
             except Exception as err:
@@ -744,15 +742,15 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
         ng.sv_process = False
         add_groups(groups_to_import)  # this return is not used yet
         name_remap = add_nodes(ng, nodes_to_import, nodes, create_texts)
-        print('DDD')
+
         ng.freeze(hard=True)
-        print('CCC')
+
         # now connect them / prevent unnecessary updates
         make_links(update_lists, name_remap)
-        print('BBB')
+
         # set frame parents '''
         place_frames(ng, nodes_json, name_remap)
-        print('AAAAA')
+
         # clean up
         old_nodes.scan_for_old(ng)
         print(ng.sv_linked_sockets)

@@ -328,7 +328,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
 
         tree_id = self.get_tree_id
         links_has_changed = self.sv_links[tree_id] != self.links.items()
-        print('links_has_changed', links_has_changed)
+        # print('links_has_changed', links_has_changed)
         if links_has_changed:
             affected_nodes = []
             new_links = self.links.items()
@@ -346,7 +346,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                             affected_nodes.append(link[1].from_node)
                     if not link[1].to_node in affected_nodes:
                         affected_nodes.append(link[1].to_node)
-            print("Affected Nodes:", [n.name for n in affected_nodes])
+            # print("Affected Nodes:", [n.name for n in affected_nodes])
 
             self.sv_links[tree_id] = self.links.items()
             self.sv_linked_sockets[tree_id] = linked_sockets
@@ -374,10 +374,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         tree_id = self.get_tree_id
         fill_memory_is_ready = tree_id in self.sv_links.keys()
         if fill_memory_is_ready:
-            print("memory_is_ready")
+            # print("memory_is_ready")
             self.use_link_memory()
         else:
-            print("filling link_memory")
+            # print("filling link_memory")
             if self.sv_process:
                 self.fill_links_memory()
             self.has_changed = True
