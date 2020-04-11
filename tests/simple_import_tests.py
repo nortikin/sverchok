@@ -34,7 +34,7 @@ class ImportSingleSimpleNode(EmptyTreeTestCase):
         self.assert_node_equals_file(node, "Cylinder", "cylinder.json")
 
     def test_torus_import(self):
-        node = create_node("SvTorusNode", self.tree.name)
+        node = create_node("SvTorusNodeMK2", self.tree.name)
         node.mode = "MAJOR_MINOR"
         node.Separate = 0
         node.torus_eR = 1.2799999713897705
