@@ -82,7 +82,7 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
             self.last_mode = self.mode
             self.update_sockets()
 
-        # there's an automatic updateNode call from the decorator at the.
+        # there's an automatic updateNode call from the decorator at the end.
         # people aren't going to be repeatedly pressing the same mode enum 
 
 
