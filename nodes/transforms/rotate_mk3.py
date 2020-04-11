@@ -257,6 +257,8 @@ class SvRotationNodeMk3(bpy.types.Node, SverchCustomTreeNode):
         description='Output NumPy arrays',
         default=False, update=updateNode)
 
+    properties_to_skip_iojson = ['actual_mode']
+
     def sv_init(self, context):
         new_input = self.inputs.new
         new_input('SvVerticesSocket', "Vertices")

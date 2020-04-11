@@ -125,7 +125,6 @@
         35.54173278808594
       ],
       "params": {
-        "actual_mode": "EULER",
         "mode": "EULER",
         "x_": -13.0
       },
@@ -141,7 +140,6 @@
         -481.4555969238281
       ],
       "params": {
-        "actual_mode": "EULER",
         "mode": "EULER"
       },
       "width": 140.0
@@ -248,6 +246,24 @@
   },
   "update_lists": [
     [
+      "A Number.002",
+      0,
+      "Scalar Math",
+      0
+    ],
+    [
+      "A Number.001",
+      0,
+      "Scalar Math.002",
+      0
+    ],
+    [
+      "Scalar Math.002",
+      0,
+      "Vector in",
+      1
+    ],
+    [
       "A Number",
       0,
       "Profile Parametric Mk3",
@@ -262,73 +278,55 @@
     [
       "Profile Parametric Mk3",
       0,
-      "Rotate.001",
+      "Rotate",
       0
     ],
     [
-      "A Number.002",
+      "Scalar Math",
       0,
-      "Rotate.001",
+      "Rotate",
       2
     ],
     [
-      "A Number.001",
+      "Rotate",
       0,
-      "Vector in.001",
-      1
-    ],
-    [
-      "Rotate.001",
-      0,
-      "Move",
+      "Move.002",
       0
     ],
     [
-      "Vector in.001",
-      0,
-      "Move",
-      1
-    ],
-    [
-      "A Number.001",
-      0,
-      "Scalar Math.002",
-      0
-    ],
-    [
-      "Scalar Math.002",
-      0,
       "Vector in",
-      1
-    ],
-    [
-      "A Number.002",
       0,
-      "Scalar Math",
-      0
+      "Move.002",
+      1
     ],
     [
       "Profile Parametric Mk3",
       0,
-      "Rotate",
+      "Rotate.001",
       0
     ],
     [
-      "Scalar Math",
+      "A Number.002",
       0,
-      "Rotate",
+      "Rotate.001",
       2
     ],
     [
-      "Rotate",
+      "A Number.001",
       0,
-      "Move.002",
+      "Vector in.001",
+      1
+    ],
+    [
+      "Rotate.001",
+      0,
+      "Move",
       0
     ],
     [
-      "Vector in",
+      "Vector in.001",
       0,
-      "Move.002",
+      "Move",
       1
     ],
     [
