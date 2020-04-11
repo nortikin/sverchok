@@ -293,8 +293,8 @@
     MatrixInterpolationNode
 
 ## Quaternion
-    SvQuaternionInNode
-    SvQuaternionOutNode
+    SvQuaternionInNodeMK2
+    SvQuaternionOutNodeMK2
     SvQuaternionMathNode
     SvRotationDifference
 
