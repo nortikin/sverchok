@@ -18,7 +18,7 @@
     SvCylinderNodeMK2
     SphereNode
     SvIcosphereNode
-    SvTorusNode
+    SvTorusNodeMK2
     SvSuzanneNode
     SvCricketNode
     ---

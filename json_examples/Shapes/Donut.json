@@ -549,7 +549,7 @@
       "width": 1703.2313232421875
     },
     "Torus": {
-      "bl_idname": "SvTorusNode",
+      "bl_idname": "SvTorusNodeMK2",
       "color": [
         0.0,
         0.5,
@@ -639,7 +639,8 @@
         437.2855052947998
       ],
       "params": {
-        "autosmooth": 1
+        "autosmooth": 1,
+        "basedata_name": "Alpha"
       },
       "use_custom_color": true,
       "width": 140.0
@@ -719,10 +720,16 @@
       1
     ],
     [
+      "Reroute",
+      "Output",
+      "Move.002",
+      "Vertices"
+    ],
+    [
       "Matrix Math",
       0,
-      "Matrix out",
-      0
+      "Move.002",
+      1
     ],
     [
       "Torus",
@@ -747,18 +754,6 @@
       "Edges",
       "Reroute.002",
       "Input"
-    ],
-    [
-      "Reroute",
-      "Output",
-      "Move.002",
-      "Vertices"
-    ],
-    [
-      "Matrix Math",
-      0,
-      "Move.002",
-      1
     ],
     [
       "Move.002",
@@ -866,6 +861,12 @@
       "Viewer BMesh",
       0,
       "Assign Materials List",
+      0
+    ],
+    [
+      "Matrix Math",
+      0,
+      "Matrix out",
       0
     ]
   ]

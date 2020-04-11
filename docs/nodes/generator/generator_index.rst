@@ -21,7 +21,7 @@ Generators
    sphere
    icosphere
    suzanne
-   torus
+   torus_mk2
    torus_knot_mk2
    formula_shape
    segment

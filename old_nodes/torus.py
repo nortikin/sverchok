@@ -126,6 +126,8 @@ class SvTorusNode(bpy.types.Node, SverchCustomTreeNode):
     bl_label = 'Torus'
     bl_icon = 'MESH_TORUS'
 
+    replacement_nodes = [('SvTorusNodeMK2', None, None)]
+
     def update_mode(self, context):
         # switch radii input sockets (R,r) <=> (eR,iR)
         if self.mode == 'EXT_INT':
