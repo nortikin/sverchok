@@ -35,12 +35,12 @@ mode_items = [("AB", "a b", "Major Radius / Minor Radius", 1),
               ("AC", "a c", "Major Radius / Focal Length", 3)]
 
 
-class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Ellipse
     Tooltip: Generate ellipses
     """
-    bl_idname = 'SvEllipseNode'
+    bl_idname = 'SvEllipseNodeMK2'
     bl_label = 'Ellipse'
     sv_icon = 'SV_ELLIPSE'
 
@@ -309,8 +309,8 @@ class SvEllipseNode(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
 
 
 def register():
-    bpy.utils.register_class(SvEllipseNode)
+    bpy.utils.register_class(SvEllipseNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvEllipseNode)
+    bpy.utils.unregister_class(SvEllipseNodeMK2)
