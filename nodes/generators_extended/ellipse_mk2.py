@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import BoolProperty, IntProperty, FloatProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import (match_long_repeat, updateNode, get_edge_loop)
 from sverchok.ui.sv_icons import custom_icon
 from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
@@ -44,9 +44,9 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     bl_label = 'Ellipse'
     sv_icon = 'SV_ELLIPSE'
 
+    @throttled
     def update_mode(self, context):
         ''' Update the ellipse parameters of the new mode based on previous mode ones'''
-        self.updating = True
 
         if self.mode == "AB":
             if self.last_mode == "AE":  # ae => ab
@@ -78,12 +78,13 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
                 e = self.eccentricity
                 self.focal_length = a * e
 
-        self.updating = False
-
         if self.mode != self.last_mode:
             self.last_mode = self.mode
             self.update_sockets()
-            updateNode(self, context)
+
+        # there's an automatic updateNode call from the decorator at the.
+        # people aren't going to be repeatedly pressing the same mode enum 
+
 
     def update_ellipse(self, context):
         if self.updating:
@@ -177,14 +178,12 @@ class SvEllipseNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
         self.draw_angle_units_buttons(context, layout)
 
     def update_sockets(self):
+        socket2 = self.inputs[1]
         if self.mode == "AB":
-            socket2 = self.inputs[1]
             socket2.replace_socket("SvStringsSocket", "Minor Radius").prop_name = "minor_radius"
         elif self.mode == "AE":
-            socket2 = self.inputs[1]
             socket2.replace_socket("SvStringsSocket", "Eccentricity").prop_name = "eccentricity"
         else:  # AC
-            socket2 = self.inputs[1]
             socket2.replace_socket("SvStringsSocket", "Focal Length").prop_name = "focal_length"
 
     def make_ellipse(self, a, b, N, phase, rotation, scale):
