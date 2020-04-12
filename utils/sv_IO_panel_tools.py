@@ -753,7 +753,7 @@ def import_tree(ng, fullpath='', nodes_json=None, create_texts=True, center=None
 
         # clean up
         old_nodes.scan_for_old(ng)
-        print(ng.sv_linked_sockets)
+
         ng.unfreeze(hard=True)
 
         ng.sv_process = True
