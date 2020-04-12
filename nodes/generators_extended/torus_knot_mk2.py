@@ -26,6 +26,7 @@ import time
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat, get_edge_loop
+from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 
 
 def make_torus_knot(flags, settings, link_index=0):
@@ -162,8 +163,11 @@ def make_torus_knot(flags, settings, link_index=0):
     return verts, edges, norms, tangs
 
 
-class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
-    ''' Torus Knot '''
+class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
+    """
+    Triggers: Torus, Knots, Links
+    Tooltip: Generate torus knots curves
+    """
     bl_idname = 'SvTorusKnotNodeMK2'
     bl_label = 'Torus Knot'
     bl_icon = 'MESH_TORUS'
@@ -193,6 +197,11 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
             self.torus_eR = self.torus_R + self.torus_r
             self.torus_iR = self.torus_R - self.torus_r
             updateNode(self, context)
+
+    def update_angles(self, context, au):
+        ''' Update all the angles to preserve their values in the new units '''
+        self.torus_rP = self.torus_rP * au
+        self.torus_sP = self.torus_sP * au
 
     # TORUS KNOT Options
     torus_p: IntProperty(
@@ -240,14 +249,14 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
     torus_rP: FloatProperty(
         name="Revolution Phase",
         default=0.0,
-        description="Phase the revolutions by this radian amount",
-        update=updateNode)
+        description="Phase the revolutions by this angle amount",
+        update=SvAngleHelper.update_angle)
 
     torus_sP: FloatProperty(
         name="Spin Phase",
         default=0.0,
-        description="Phase the spins by this radian amount",
-        update=updateNode)
+        description="Phase the spins by this angle amount",
+        update=SvAngleHelper.update_angle)
 
     torus_sh: FloatProperty(
         name="Shift",
@@ -317,6 +326,12 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         description="Auto adjust the curve resolution based on TK length",
         update=updateNode)
 
+    point_density: IntProperty(
+        name="Point Density",
+        default=10, min=1,
+        description="Number of points per unit length used with adaptive resolutin",
+        update=updateNode)
+
     # VECTORS options
     normalize_normals: BoolProperty(
         name="Normalize Normals",
@@ -331,7 +346,7 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         update=updateNode)
 
     def sv_init(self, context):
-        self.width = 180
+        self.width = 170
         self.inputs.new('SvStringsSocket', "R").prop_name = 'torus_R'
         self.inputs.new('SvStringsSocket', "r").prop_name = 'torus_r'
         self.inputs.new('SvStringsSocket', "p").prop_name = 'torus_p'
@@ -347,9 +362,11 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvVerticesSocket', "Tangents")
 
     def draw_buttons_ext(self, context, layout):
+        self.draw_angle_units_buttons(context, layout)
         layout.column().label(text="Curve")
         box = layout.box()
         box.prop(self, 'adaptive_resolution')
+        box.prop(self, 'point_density')
         box.prop(self, 'multiple_links')
         layout.column().label(text="Flipping")
         box = layout.box()
@@ -417,6 +434,9 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
 
         parameters = match_long_repeat([input_R, input_r, input_p, input_q, input_n, input_rP, input_sP, input_sh])
 
+        # conversion factor from the current angle units to radians
+        au = self.radians_conversion_factor()
+
         verts_list = []
         edges_list = []
         norms_list = []
@@ -432,14 +452,14 @@ class SvTorusKnotNodeMK2(bpy.types.Node, SverchCustomTreeNode):
                 maxTKLen = 2 * pi * sqrt(p * p * (R + r) * (R + r) + q * q * r * r)  # upper bound approximation
                 minTKLen = 2 * pi * sqrt(p * p * (R - r) * (R - r) + q * q * r * r)  # lower bound approximation
                 avgTKLen = (minTKLen + maxTKLen) / 2  # average approximation
-                n = int(max(3, avgTKLen / links * 10))  # x N factor = control points per unit length
+                n = int(max(3, avgTKLen / links * self.point_density))
 
             if self.multiple_links:
                 links = gcd(p, q)
             else:
                 links = 1
 
-            settings = [R, r, p, q, u, v, h, s, rP, sP, sh, fp, fq, n]  # link settings
+            settings = [R, r, p, q, u, v, h, s, rP*au, sP*au, sh, fp, fq, n]  # link settings
 
             for l in range(links):
                 verts, edges, norms, tangs = make_torus_knot(flags, settings, l)
