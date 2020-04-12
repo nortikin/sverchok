@@ -433,7 +433,7 @@ def perform_scripted_node_inject(node, node_ref):
         node.load()
 
 
-def perform_profixle_node_inject(node, node_ref):
+def perform_profile_node_inject(node, node_ref):
     texts = bpy.data.texts
     new_text = texts.new(node_ref['params']['filename'])
     new_text.from_string(node_ref['path_file'])
