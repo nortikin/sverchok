@@ -49,6 +49,7 @@
     SvConicSectionNode
     SvTriangleNode
     SvPentagonTilerNode
+    SvSpiralNodeMK2
 
 ## Analyzers
     SvBBoxNodeMk2
@@ -407,7 +408,6 @@
     SvSelectMeshVerts
     SvSetCustomMeshNormals
     ---
-    SvSpiralNode
     SvCombinatoricsNode
 
 ## Alpha Nodes
