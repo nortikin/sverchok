@@ -20,6 +20,7 @@ import bpy
 from bpy.props import EnumProperty, FloatProperty, BoolProperty, StringProperty, FloatVectorProperty
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, match_long_repeat
+from sverchok.utils.sv_transform_helper import AngleUnits, SvAngleHelper
 from mathutils import Quaternion, Matrix, Euler
 from math import pi
 
@@ -32,23 +33,6 @@ mode_items = [
     ("MATRIX", "Matrix", "Convert Rotation Matrix into quaternion", 4),
 ]
 
-euler_order_items = [
-    ('XYZ', "XYZ", "", 0),
-    ('XZY', 'XZY', "", 1),
-    ('YXZ', 'YXZ', "", 2),
-    ('YZX', 'YZX', "", 3),
-    ('ZXY', 'ZXY', "", 4),
-    ('ZYX', 'ZYX', "", 5)
-]
-
-angle_unit_items = [
-    ("RAD", "Rad", "Radians", "", 0),
-    ("DEG", "Deg", 'Degrees', "", 1),
-    ("UNI", "Uni", 'Unities', "", 2)
-]
-
-angle_conversion = {"RAD": 1.0, "DEG": pi / 180.0, "UNI": 2 * pi}
-
 id_mat = [[tuple(v) for v in Matrix()]]  # identity matrix
 
 input_sockets = {
@@ -60,17 +44,16 @@ input_sockets = {
 }
 
 
-class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
+class SvQuaternionInNodeMK2(bpy.types.Node, SverchCustomTreeNode, SvAngleHelper):
     """
     Triggers: Quaternions, In
     Tooltip: Generate quaternions from various quaternion components
     """
-    bl_idname = 'SvQuaternionInNode'
+    bl_idname = 'SvQuaternionInNodeMK2'
     bl_label = 'Quaternion In'
     sv_icon = 'SV_QUATERNION_IN'
 
-    def update_mode(self, context):
-
+    def update_sockets(self):
         # hide all input sockets
         for k, names in input_sockets.items():
             for name in names:
@@ -80,19 +63,22 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         for name in input_sockets[self.mode]:
             self.inputs[name].hide_safe = False
 
+    def update_mode(self, context):
+
+        self.update_sockets()
+
         updateNode(self, context)
+
+    def update_angles(self, context, au):
+        ''' Update all the angles to preserve their values in the new units '''
+        self.angle = self.angle * au
+        self.angle_x = self.angle_x * au
+        self.angle_y = self.angle_y * au
+        self.angle_z = self.angle_z * au
 
     mode : EnumProperty(
         name='Mode', description='The input component format of the quaternion',
         items=mode_items, default="WXYZ", update=update_mode)
-
-    euler_order : EnumProperty(
-        name="Euler Order", description="Order of the Euler rotations",
-        default="XYZ", items=euler_order_items, update=updateNode)
-
-    angle_units : EnumProperty(
-        name="Angle Units", description="Angle units (radians/degrees/unities)",
-        default="RAD", items=angle_unit_items, update=updateNode)
 
     component_w : FloatProperty(
         name='W', description='W component',
@@ -120,19 +106,19 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
 
     angle_x : FloatProperty(
         name='Angle X', description='Rotation angle about X axis',
-        default=0.0, precision=3, update=updateNode)
+        default=0.0, precision=3, update=SvAngleHelper.update_angle)
 
     angle_y : FloatProperty(
         name='Angle Y', description='Rotation angle about Y axis',
-        default=0.0, precision=3, update=updateNode)
+        default=0.0, precision=3, update=SvAngleHelper.update_angle)
 
     angle_z : FloatProperty(
         name='Angle Z', description='Rotation angle about Z axis',
-        default=0.0, precision=3, update=updateNode)
+        default=0.0, precision=3, update=SvAngleHelper.update_angle)
 
     angle : FloatProperty(
         name='Angle', description='Rotation angle about the given axis',
-        default=0.0, update=updateNode)
+        default=0.0, update=SvAngleHelper.update_angle)
 
     axis : FloatVectorProperty(
         name='Axis', description='Axis of rotation',
@@ -141,6 +127,12 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
     normalize : BoolProperty(
         name='Normalize', description='Normalize the output quaternion',
         default=False, update=updateNode)
+
+    def migrate_from(self, old_node):
+        self.angle_units = old_node.angle_units
+
+    def migrate_props_pre_relink(self, old_node):
+        self.update_sockets()
 
     def sv_init(self, context):
         self.inputs.new('SvStringsSocket', "W").prop_name = 'component_w'
@@ -161,14 +153,16 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
 
     def draw_buttons(self, context, layout):
         layout.prop(self, "mode", expand=False, text="")
+
         if self.mode == "EULER":
-            col = layout.column(align=True)
-            col.prop(self, "euler_order", text="")
-        if self.mode in {"EULER", "AXISANGLE"}:
-            row = layout.row(align=True)
-            row.prop(self, "angle_units", expand=True)
+            self.draw_angle_euler_buttons(context, layout)
+
         if self.mode in {"WXYZ", "SCALARVECTOR"}:
             layout.prop(self, "normalize", toggle=True)
+
+    def draw_buttons_ext(self, context, layout):
+        if self.mode in {"EULER", "AXISANGLE"}:
+            self.draw_angle_units_buttons(context, layout)
 
     def process(self):
         if not self.outputs['Quaternions'].is_linked:
@@ -199,7 +193,8 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.mode == "EULER":
             I = [inputs["Angle " + n].sv_get()[0] for n in "XYZ"]
             params = match_long_repeat(I)
-            au = angle_conversion[self.angle_units]
+            # conversion factor from the current angle units to radians
+            au = self.radians_conversion_factor()
             for angleX, angleY, angleZ in zip(*params):
                 euler = Euler((angleX * au, angleY * au, angleZ * au), self.euler_order)
                 q = euler.to_quaternion()
@@ -210,7 +205,8 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
         elif self.mode == "AXISANGLE":
             I = [inputs[n].sv_get()[0] for n in ["Axis", "Angle"]]
             params = match_long_repeat(I)
-            au = angle_conversion[self.angle_units]
+            # conversion factor from the current angle units to radians
+            au = self.radians_conversion_factor()
             for axis, angle in zip(*params):
                 q = Quaternion(axis, angle * au)
                 if self.normalize:
@@ -229,8 +225,8 @@ class SvQuaternionInNode(bpy.types.Node, SverchCustomTreeNode):
 
 
 def register():
-    bpy.utils.register_class(SvQuaternionInNode)
+    bpy.utils.register_class(SvQuaternionInNodeMK2)
 
 
 def unregister():
-    bpy.utils.unregister_class(SvQuaternionInNode)
+    bpy.utils.unregister_class(SvQuaternionInNodeMK2)
