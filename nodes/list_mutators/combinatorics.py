@@ -19,7 +19,7 @@
 import bpy
 from bpy.props import IntProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode
+from sverchok.node_tree import SverchCustomTreeNode, throttle_node
 from sverchok.data_structure import (match_long_repeat, updateNode)
 
 from itertools import (product, permutations, combinations)
@@ -73,19 +73,21 @@ class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
         self.outputs.new('SvStringsSocket', "Result")
 
         self.update_operation(context)
-
-    def update(self):
-        ''' Add/remove sockets as A-Z sockets are connected/disconnected '''
+    
+    def hold_check(self):
         if not 'Result' in self.outputs:
-            return
+            return True
 
         # not a multiple input operation ? => no need to update sockets
         if self.operation not in multiple_input_operations:
-            return
+            return True
 
-        inputs = self.inputs
+    @throttle_node
+    def update(self):
+        ''' Add/remove sockets as A-Z sockets are connected/disconnected '''
 
         # get all existing A-Z sockets (connected or not)
+        inputs = self.inputs
         inputs_AZ = list(filter(lambda s: s.name in ABC, inputs))
 
         # last A-Z socket connected ? => add an empty A-Z socket at the end
@@ -98,7 +100,7 @@ class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
                 s = inputs_AZ[-1]
                 inputs.remove(s)
                 inputs_AZ.remove(s)
-
+    
     def update_sockets(self):
         ''' Update sockets based on selected operation '''
 
