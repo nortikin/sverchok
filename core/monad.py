@@ -70,20 +70,20 @@ def monad_make_unique(node):
     Create a new version of the monad class (duplicate but unique)
 
     This will attempt to store the duplicate in a json using create_dict_of_tree (from the Gist IO).
-    The upside is that this will test the pack/unpack routine continuously. 
-    The downside is that this will likely expose all the shortcommings that we don't know 
+    The upside is that this will test the pack/unpack routine continuously.
+    The downside is that this will likely expose all the shortcommings that we don't know
     about because it wasn't being tested extensively.
     """
 
     node_tree = node.id_data
     nodes = node_tree.nodes
 
-    # generate a new copy of monad group node. using ( copy? ) 
+    # generate a new copy of monad group node. using ( copy? )
     monad_group = bpy.data.node_groups[node.monad.name]
     new_monad_group = monad_group.copy()
-    new_cls_name = make_new_classname(new_monad_group) 
+    new_cls_name = make_new_classname(new_monad_group)
 
-    # the new tree dict will contain information about 1 node only, and 
+    # the new tree dict will contain information about 1 node only, and
     # the node_group too (at the moment) but the node_group data can be ignored.
     layout_json = create_dict_of_tree(ng=node_tree, identified_node=node)
 
@@ -105,8 +105,8 @@ def monad_make_unique(node):
 
     """
     notions..:
-    
-        if (original instance has no connections) then 
+
+        if (original instance has no connections) then
             replace it outright.
         else
             if mode=='replace':
@@ -121,7 +121,7 @@ def monad_make_unique(node):
     """
 
     # return newly generated node!
-    return (set(node_tree.nodes) ^ pre_nodes).pop() 
+    return (set(node_tree.nodes) ^ pre_nodes).pop()
 
 
 
@@ -216,9 +216,9 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_settings = self.int_props.add()
             else:
                 return None
-            
+
             new_name = generate_name(make_valid_identifier(other.name), cls_dict)
-            prop_settings.prop_name = new_name 
+            prop_settings.prop_name = new_name
             prop_settings.set_settings({"name": other.name})
             socket.prop_name = new_name
             return new_name
@@ -358,7 +358,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls_dict = {}
 
         if not self.cls_bl_idname:
-            
+
             # the monad cls_bl_idname needs to be unique and cannot change
             monad_base_name = make_valid_identifier(self.name)
             monad_itentifier = id(self) ^ random.randint(0, 4294967296)
@@ -524,7 +524,7 @@ class SvGroupNodeExp:
         cA.prop(self, "vectorize", toggle=True)
         cB.active = self.vectorize
         cB.prop(self, "split", toggle=True)
-        
+
         c2 = layout.column()
         row = c2.row(align=True)
         row.prop(self, "loop_me", text='Loop', toggle=True)
@@ -545,7 +545,7 @@ class SvGroupNodeExp:
 
     def get_nodes_to_process(self, out_node_name):
         """
-        nodes not indirectly / directly contributing to the data we eventually pass to "monad.output_node" 
+        nodes not indirectly / directly contributing to the data we eventually pass to "monad.output_node"
         are discarded if only `self.monad.outputs_node.name` is passed in endpoints_nodes.
 
         The exceptions are nodes that we use for debugging inside the monad. At present SvDebugPrint instances
@@ -567,7 +567,7 @@ class SvGroupNodeExp:
         elif self.loop_me:
             self.process_looped(self.loops)
             return
-
+        print("processing monad")
         monad = self.monad
         in_node = monad.input_node
         out_node = monad.output_node
@@ -632,7 +632,7 @@ class SvGroupNodeExp:
         out_node = monad.output_node
 
         for index, data in enumerate(sockets_data_in):
-            in_node.outputs[index].sv_set(data)        
+            in_node.outputs[index].sv_set(data)
 
         node_names = self.get_nodes_to_process(out_node.name)
         ul = make_tree_from_nodes(node_names, monad, down=False)

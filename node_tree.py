@@ -144,9 +144,11 @@ class SvNodeTreeCommon(object):
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
     skip_tree_update: BoolProperty(default=False)
+    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
     sv_links = {}
     sv_linked_sockets = {}
     sv_linked_output_sockets = {}
+    sv_linked_input_sockets = {}
     tree_id: StringProperty(default="")
     @property
     def get_tree_id(self):
@@ -203,6 +205,102 @@ class SvNodeTreeCommon(object):
                 res.append(ng)
         return res
 
+    def fill_links_memory(self):
+        tree_id = self.get_tree_id
+        new_links = self.links.items()
+        self.sv_links[tree_id] = self.links.items()
+        linked_sockets = []
+        input_sockets = []
+        output_sockets = []
+        for link in new_links:
+            linked_sockets.append((link[1].from_socket, link[1].to_socket))
+            output_sockets.append(link[1].from_socket)
+
+        self.sv_linked_sockets[tree_id] = linked_sockets
+        self.sv_linked_output_sockets[tree_id] = output_sockets
+        self.sv_linked_input_sockets[tree_id] = input_sockets
+
+    def use_link_memory(self):
+        if self.configuring_new_node:
+            # print('skipping global process during node init')
+            return
+        if self.is_frozen():
+            # print('not processing: because self/tree.is_frozen')
+            return
+
+        if not self.sv_process:
+            return
+
+        tree_id = self.get_tree_id
+        links_has_changed = self.sv_links[tree_id] != self.links.items()
+        print('links_has_changed', links_has_changed)
+        if links_has_changed:
+            affected_nodes = []
+            new_links = self.links.items()
+            linked_sockets = []
+            input_sockets = []
+            output_sockets = []
+            before_linked_sockets = self.sv_linked_sockets[tree_id]
+            before_input_sockets = self.sv_linked_input_sockets[tree_id]
+            before_output_sockets = self.sv_linked_output_sockets[tree_id]
+            for link in new_links:
+
+                input_sockets.append(link[1].to_socket)
+                output_sockets.append(link[1].from_socket)
+                linked_sockets.append((link[1].from_socket, link[1].to_socket))
+
+                if not (link[1].from_socket, link[1].to_socket) in before_linked_sockets:
+                    if not link[1].from_socket in before_output_sockets:
+                        if not link[1].from_node in affected_nodes:
+                            affected_nodes.append(link[1].from_node)
+                    if not link[1].to_node in affected_nodes:
+                        affected_nodes.append(link[1].to_node)
+            # print("Affected Nodes:", [n.name for n in affected_nodes])
+            for socket in before_input_sockets:
+                try:
+                    name = socket.node.name
+                    if not socket in input_sockets:
+                        affected_nodes.append(socket.node)
+                except AttributeError:
+                    pass
+
+            self.sv_links[tree_id] = self.links.items()
+            self.sv_linked_sockets[tree_id] = linked_sockets
+            self.sv_linked_output_sockets[tree_id] = output_sockets
+            self.sv_linked_input_sockets[tree_id] = input_sockets
+
+            build_update_list(self)
+            if affected_nodes:
+                process_from_nodes(affected_nodes)
+                return True
+            else:
+                return False
+        else:
+            affected_groups  = []
+            for node in self.nodes:
+                if 'SvGroupNode' in node.bl_idname:
+                    subtree = node.monad
+                    tree_id = subtree.get_tree_id
+                    fill_memory_is_ready = tree_id in subtree.sv_links.keys()
+                    if fill_memory_is_ready:
+                        print("monad memory_is_ready")
+                        has_been_updated = subtree.use_link_memory()
+                        if has_been_updated:
+                            affected_groups.append(node)
+                    else:
+                        print("filling monad link_memory")
+                        # if subtree.sv_process:
+                        subtree.fill_links_memory()
+                        subtree.has_changed = True
+                        has_been_updated = True
+                        # self.has_link_count_changed
+                        node.process()
+                    print(node.name)
+            if affected_groups:
+                process_from_nodes(affected_groups)
+                return True
+            else:
+                return False
 
 class SvGenericUITooltipOperator(bpy.types.Operator):
     arg: StringProperty()
@@ -289,7 +387,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
                 update=on_draft_mode_changed)
 
     tree_link_count: IntProperty(name='keep track of current link count', default=0)
-    configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
+
 
     @property
     def timestamp(self):
@@ -303,58 +401,8 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             self.tree_link_count = link_count
             return True
 
-    def fill_links_memory(self):
-        tree_id = self.get_tree_id
-        new_links = self.links.items()
-        self.sv_links[tree_id] = self.links.items()
-        linked_sockets = []
-        output_sockets = []
-        for link in new_links:
-            linked_sockets.append((link[1].from_socket, link[1].to_socket))
-            output_sockets.append(link[1].from_socket)
 
-        self.sv_linked_sockets[tree_id] = linked_sockets
-        self.sv_linked_output_sockets[tree_id] = output_sockets
-    def use_link_memory(self):
-        if self.configuring_new_node:
-            # print('skipping global process during node init')
-            return
-        if self.is_frozen():
-            # print('not processing: because self/tree.is_frozen')
-            return
 
-        if not self.sv_process:
-            return
-
-        tree_id = self.get_tree_id
-        links_has_changed = self.sv_links[tree_id] != self.links.items()
-        # print('links_has_changed', links_has_changed)
-        if links_has_changed:
-            affected_nodes = []
-            new_links = self.links.items()
-            linked_sockets = []
-            output_sockets = []
-            before_linked_sockets = self.sv_linked_sockets[tree_id]
-            before_output_sockets = self.sv_linked_output_sockets[tree_id]
-            print(before_linked_sockets)
-            for link in new_links:
-                output_sockets.append(link[1].from_socket)
-                linked_sockets.append((link[1].from_socket, link[1].to_socket))
-                if not (link[1].from_socket, link[1].to_socket) in before_linked_sockets:
-                    if not link[1].from_socket in before_output_sockets:
-                        if not link[1].from_node in affected_nodes:
-                            affected_nodes.append(link[1].from_node)
-                    if not link[1].to_node in affected_nodes:
-                        affected_nodes.append(link[1].to_node)
-            # print("Affected Nodes:", [n.name for n in affected_nodes])
-
-            self.sv_links[tree_id] = self.links.items()
-            self.sv_linked_sockets[tree_id] = linked_sockets
-            self.sv_linked_output_sockets[tree_id] = output_sockets
-
-            build_update_list(self)
-            if affected_nodes:
-                process_from_nodes(affected_nodes)
 
     def update(self):
         '''
@@ -374,10 +422,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         tree_id = self.get_tree_id
         fill_memory_is_ready = tree_id in self.sv_links.keys()
         if fill_memory_is_ready:
-            # print("memory_is_ready")
-            self.use_link_memory()
+            print("memory_is_ready")
+            has_been_updated = self.use_link_memory()
         else:
-            # print("filling link_memory")
+            print("filling link_memory")
             if self.sv_process:
                 self.fill_links_memory()
             self.has_changed = True
