@@ -54,6 +54,10 @@ class SvExecNodeModCallback(bpy.types.Operator):
     idx: bpy.props.IntProperty(default=-1)
     form: bpy.props.StringProperty(default='')
 
+    @classmethod
+    def description(cls, context, properties):
+        return properties.cmd
+
     def execute(self, context):
         try:
             getattr(context.node, self.cmd)(self)
