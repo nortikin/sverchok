@@ -38,7 +38,8 @@ from sverchok.core.update_system import (
     get_update_lists, update_error_nodes,
     get_original_node_color,
     sv_first_run,
-    get_first_run)
+    get_first_run,
+    reset_error_nodes)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
 
@@ -140,7 +141,7 @@ class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
     '''
-
+    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
     has_changed: BoolProperty(default=False)
     limited_init: BoolProperty(default=False)
     skip_tree_update: BoolProperty(default=False)
@@ -234,6 +235,7 @@ class SvNodeTreeCommon(object):
         tree_id = self.get_tree_id
         links_has_changed = self.sv_links[tree_id] != self.links.items()
         print('links_has_changed', links_has_changed)
+        reset_error_nodes(self)
         if links_has_changed:
             affected_nodes = []
             new_links = self.links.items()
@@ -331,7 +333,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
     sv_animate: BoolProperty(name="Animate", default=True, description='Animate this layout')
     sv_show: BoolProperty(name="Show", default=True, description='Show this layout', update=turn_off_ng)
     sv_bake: BoolProperty(name="Bake", default=True, description='Bake this layout')
-    sv_process: BoolProperty(name="Process", default=True, description='Process layout')
+
     sv_user_colors: StringProperty(default="")
 
     sv_show_error_in_tree: BoolProperty(

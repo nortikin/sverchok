@@ -559,6 +559,8 @@ class SvGroupNodeExp:
         return endpoint_nodes
 
     def process(self):
+        if not any(s.is_linked for s in self.outputs):
+            return
         if not self.monad:
             return
         if self.vectorize:
