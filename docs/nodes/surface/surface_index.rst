@@ -7,4 +7,5 @@ Surface
 
    plane
    revolution_surface
+   evaluate_surface
 

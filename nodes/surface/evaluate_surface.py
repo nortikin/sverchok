@@ -2,7 +2,7 @@
 import numpy as np
 
 import bpy
-from bpy.props import EnumProperty, IntProperty
+from bpy.props import EnumProperty, IntProperty, FloatProperty
 
 import sverchok
 from sverchok.node_tree import SverchCustomTreeNode, throttled
@@ -71,12 +71,26 @@ class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     samples_u : IntProperty(
             name = "Samples U",
+            description = "Number of samples along U direction",
             default = 25, min = 3,
             update = updateNode)
 
     samples_v : IntProperty(
             name = "Samples V",
+            description = "Number of samples along V direction",
             default = 25, min = 3,
+            update = updateNode)
+
+    u_value : FloatProperty(
+            name = "U",
+            description = "Surface U parameter",
+            default = 0.5,
+            update = updateNode)
+
+    v_value : FloatProperty(
+            name = "V",
+            description = "Surface V parameter",
+            default = 0.5,
             update = updateNode)
 
     clamp_modes = [
@@ -104,8 +118,8 @@ class SvExEvalSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
 
     def sv_init(self, context):
         self.inputs.new('SvExSurfaceSocket', "Surface")
-        self.inputs.new('SvStringsSocket', "U") # 1 — U_SOCKET
-        self.inputs.new('SvStringsSocket', "V") # 2 — V_SOCKET
+        self.inputs.new('SvStringsSocket', "U").prop_name = 'u_value' # 1 — U_SOCKET
+        self.inputs.new('SvStringsSocket', "V").prop_name = 'v_value' # 2 — V_SOCKET
         self.inputs.new('SvVerticesSocket', "Vertices") # 3
         self.inputs.new('SvStringsSocket', "SamplesU").prop_name = 'samples_u' # 4
         self.inputs.new('SvStringsSocket', "SamplesV").prop_name = 'samples_v' # 5

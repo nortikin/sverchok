@@ -8,7 +8,10 @@ Given a curve, this node generates a surface which is made by revolving
 (rotating) this curve along some axis vector. Many surfaces of revolution, such
 as spheres, cylinders, cones may be made with this node.
 
+Note that the profile curve does not have to be planar (flat).
+
 Surface domain: in U direction - the same as profile curve; in V direction - defined by node inputs.
+Zero (0) value of V corresponds to initial position of the profile curve.
 
 Inputs
 ------
