@@ -19,10 +19,10 @@
 import bpy
 from bpy.props import IntProperty, EnumProperty
 
-from sverchok.node_tree import SverchCustomTreeNode, throttle_node_update
-from sverchok.data_structure import (match_long_repeat, updateNode)
+from sverchok.node_tree import SverchCustomTreeNode, poll_node
+from sverchok.data_structure import match_long_repeat, updateNode
 
-from itertools import (product, permutations, combinations)
+from itertools import product, permutations, combinations
 
 operations = {
     "PRODUCT":      (10, lambda s, r: product(*s, repeat=r)),
@@ -74,7 +74,7 @@ class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
 
         self.update_operation(context)
     
-    def hold_check(self):
+    def sv_poll(self):
         if not 'Result' in self.outputs:
             return True
 
@@ -82,7 +82,7 @@ class SvCombinatoricsNode(bpy.types.Node, SverchCustomTreeNode):
         if self.operation not in multiple_input_operations:
             return True
 
-    @throttle_node_update
+    @poll_node
     def update(self):
         ''' Add/remove sockets as A-Z sockets are connected/disconnected '''
 

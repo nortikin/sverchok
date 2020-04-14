@@ -136,31 +136,31 @@ def throttled(func):
     return wrapper_update
 
 
-def throttle_node_update(func):
+def poll_node(func):
     """
     this function is used to reject calls to node.update
 
     use as a decorator:
 
-        from sverchok.node_tree import SverchCustomTreeNode, throttle_node
+        from sverchok.node_tree import SverchCustomTreeNode, poll_node
 
         class node:
 
 
-            def hold_check(self):
+            def sv_poll(self):
                 ... test here to return True, if you want to avoid executing the update
                 ... function too early.
                 ... usually something like :   
                 ...      if 'last_output' in self.outputs: return True
 
-            @throttle_node_update
+            @poll_node
             def update(self):
                 ... stuff you do with a highly dynamic ui node
 
 
     """
     def wrapper_node_update(self):
-        if not self.hold_check():
+        if not self.sv_poll():
             func(self)
 
     return wrapper_node_update
