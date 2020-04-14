@@ -136,7 +136,7 @@ def throttled(func):
     return wrapper_update
 
 
-def throttle_node(func):
+def throttle_node_update(func):
     """
     this function is used to reject calls to node.update
 
@@ -153,7 +153,7 @@ def throttle_node(func):
                 ... usually something like :   
                 ...      if 'last_output' in self.outputs: return True
 
-            @throttle_node
+            @throttle_node_update
             def update(self):
                 ... stuff you do with a highly dynamic ui node
 
