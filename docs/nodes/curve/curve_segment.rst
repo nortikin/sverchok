@@ -8,6 +8,10 @@ This node generates a curve which is defined as a subset of the input curve
 with a smaller range of allowed T parameter values. In other words, the output
 curve is the same as input one, but with restricted range of T values allowed.
 
+Output curve domain: defined by node inputs.
+
+Output curve parametrization: the same as of input curve.
+
 Inputs
 ------
 
