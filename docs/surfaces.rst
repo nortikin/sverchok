@@ -47,3 +47,7 @@ Since Blender has mostly a mesh-based approach to modelling, as well as
 Sverchok, to "visualize" the Surface object you have to convert it to mesh. It
 is usually done by use of "Evaluate Surface" node.
 
+It is also possible to "visualize" the surface by use of "Tessellate & Trim"
+node. This node allows one to tessellate the part of surface, trimmed by some
+curve.
+

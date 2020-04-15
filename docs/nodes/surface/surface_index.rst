@@ -19,5 +19,6 @@ Surface
    apply_field_to_surface
    surface_domain
    subdomain
+   tessellate_trim
    evaluate_surface
 
