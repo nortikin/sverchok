@@ -9,6 +9,7 @@ Surface
    sphere
    curve_lerp
    surface_lerp
+   interpolating_surface
    revolution_surface
    taper_sweep
    extrude_vector
