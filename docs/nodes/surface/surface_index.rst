@@ -10,5 +10,6 @@ Surface
    curve_lerp
    revolution_surface
    taper_sweep
+   extrude_curve
    evaluate_surface
 
