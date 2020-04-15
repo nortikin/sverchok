@@ -15,5 +15,6 @@ Surface
    extrude_vector
    extrude_point
    extrude_curve
+   apply_field_to_surface
    evaluate_surface
 
