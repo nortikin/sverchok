@@ -7,6 +7,7 @@ Surface
 
    plane
    sphere
+   surface_formula
    curve_lerp
    surface_lerp
    interpolating_surface
