@@ -16,6 +16,7 @@ Surface
    extrude_point
    extrude_curve
    apply_field_to_surface
+   surface_domain
    subdomain
    evaluate_surface
 
