@@ -7,7 +7,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
 from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level
-from sverchok.utils.surface import SvExLambertSphere, SvExEquirectSphere, SvExGallSphere
+from sverchok.utils.surface import SvExLambertSphere, SvExEquirectSphere, SvExGallSphere, SvExDefaultSphere
 
 class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
     """
@@ -19,9 +19,10 @@ class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
     bl_icon = 'MESH_UVSPHERE'
 
     projections = [
-        ('EQUIRECT', "Equirectangular", "Equirectangular (geographic) projection", 0),
-        ('LAMBERT', "Lambert", "Lambert cylindrical equal-area projection", 1),
-        ('GALL', "Gall Stereographic", "Gall stereographic projection", 2)
+        ('DEFAULT', "Default", "Based on spherical coordinates", 0),
+        ('EQUIRECT', "Equirectangular", "Equirectangular (geographic) projection", 1),
+        ('LAMBERT', "Lambert", "Lambert cylindrical equal-area projection", 2),
+        ('GALL', "Gall Stereographic", "Gall stereographic projection", 3)
     ]
 
     @throttled
@@ -31,7 +32,7 @@ class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
     projection : EnumProperty(
         name = "Projection",
         items = projections,
-        default = 'EQUIRECT',
+        default = 'DEFAULT',
         update = update_sockets)
 
     radius : FloatProperty(
@@ -73,7 +74,9 @@ class SvExSphereNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(theta1, (list, tuple)):
                 theta1 = theta1[0]
 
-            if self.projection == 'EQUIRECT':
+            if self.projection == 'DEFAULT':
+                surface = SvExDefaultSphere(np.array(center), radius)
+            elif self.projection == 'EQUIRECT':
                 surface = SvExEquirectSphere(np.array(center), radius, theta1)
             elif self.projection == 'LAMBERT':
                 surface = SvExLambertSphere(np.array(center), radius)
