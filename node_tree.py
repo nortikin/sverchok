@@ -774,7 +774,7 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
-
+        self.n_id = str(hash(self) ^ hash(time.monotonic()))
         if hasattr(self, "sv_init"):
 
             try:

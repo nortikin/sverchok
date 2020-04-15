@@ -94,7 +94,8 @@ class SvSocketCommon:
             # self.socket_id_m.set(str(hash(self) ^ hash(time.monotonic())))
             # self.set("socket_id_m", str(hash(self) ^ hash(time.monotonic())))
         # return self.socket_id_m
-        return str(hash(self.id_data.name + self.node.name + self.identifier))
+        # return str(hash(self.id_data.name + self.node.name + self.identifier))
+        return str(hash(self.node.node_id + self.identifier))
         # return str(hash(self.id_data.get_tree_id + self.node.node_id + self.identifier))
 
     @property
