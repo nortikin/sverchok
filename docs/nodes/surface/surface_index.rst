@@ -8,6 +8,7 @@ Surface
    plane
    sphere
    curve_lerp
+   surface_lerp
    revolution_surface
    taper_sweep
    extrude_vector
