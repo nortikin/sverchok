@@ -796,13 +796,14 @@ class SverchCustomTreeNode:
 
     def load_in_node_dict(self):
         # print('loading in node_dict')
-        self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        # self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        n_id = self.node_id
         tree = self.id_data
         tree_id = tree.get_tree_id
 
         if tree_id not in tree.sv_node_dict:
             tree.sv_node_dict[tree_id] = {}
-        tree.sv_node_dict[tree_id][self.n_id] = self
+        tree.sv_node_dict[tree_id][n_id] = self
 
     def init(self, context):
         """
@@ -871,6 +872,7 @@ class SverchCustomTreeNode:
         if settings is not None:
             self.use_custom_color, self.color = settings
         self.sv_copy(original)
+        self.n_id = ""
         self.load_in_node_dict()
 
     def sv_copy(self, original):
