@@ -6,7 +6,7 @@ from bpy.props import FloatProperty, EnumProperty, BoolProperty, IntProperty
 from mathutils import Vector
 
 from sverchok.node_tree import SverchCustomTreeNode, throttled
-from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level
+from sverchok.data_structure import updateNode, zip_long_repeat, get_data_nesting_level, ensure_nesting_level
 from sverchok.utils.surface import SvExPlane
 
 class SvExPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
@@ -93,37 +93,38 @@ class SvExPlaneSurfaceNode(bpy.types.Node, SverchCustomTreeNode):
         v_min_s = self.inputs['VMin'].sv_get()
         v_max_s = self.inputs['VMax'].sv_get()
 
+        point1_s = ensure_nesting_level(point1_s, 3)
+        point2_s = ensure_nesting_level(point2_s, 3)
+        point3_s = ensure_nesting_level(point3_s, 3)
+        normal_s = ensure_nesting_level(normal_s, 3)
+        u_min_s = ensure_nesting_level(u_min_s, 2)
+        u_max_s = ensure_nesting_level(u_max_s, 2)
+        v_min_s = ensure_nesting_level(v_min_s, 2)
+        v_max_s = ensure_nesting_level(v_max_s, 2)
+
         surfaces_out = []
         inputs = zip_long_repeat(point1_s, point2_s, point3_s, normal_s, u_min_s, u_max_s, v_min_s, v_max_s)
-        for point1, point2, point3, normal, u_min, u_max, v_min, v_max in inputs:
-            if isinstance(u_min, (list, tuple)):
-                u_min = u_min[0]
-            if isinstance(u_max, (list, tuple)):
-                u_max = u_max[0]
-            if isinstance(v_min, (list, tuple)):
-                v_min = v_min[0]
-            if isinstance(v_max, (list, tuple)):
-                v_max = v_max[0]
-            if get_data_nesting_level(normal) == 2:
-                normal = normal[0]
+        for point1s, point2s, point3s, normals, u_mins, u_maxs, v_mins, v_maxs in inputs:
+            objects = zip_long_repeat(point1s, point2s, point3s, normals, u_mins, u_maxs, v_mins, v_maxs)
+            for point1, point2, point3, normal, u_min, u_max, v_min, v_max in objects:
 
-            point1 = np.array(point1)
-            if self.mode == '3PT':
-                point2 = np.array(point2)
-                point3 = np.array(point3)
-                vec1 = point2 - point1
-                vec2 = point3 - point1
-            else:
-                vec1 = np.array( Vector(normal).orthogonal() )
-                vec2 = np.cross(np.array(normal), vec1)
-                v1n = np.linalg.norm(vec1)
-                v2n = np.linalg.norm(vec2)
-                vec1, vec2 = vec1 / v1n, vec2 / v2n
+                point1 = np.array(point1)
+                if self.mode == '3PT':
+                    point2 = np.array(point2)
+                    point3 = np.array(point3)
+                    vec1 = point2 - point1
+                    vec2 = point3 - point1
+                else:
+                    vec1 = np.array( Vector(normal).orthogonal() )
+                    vec2 = np.cross(np.array(normal), vec1)
+                    v1n = np.linalg.norm(vec1)
+                    v2n = np.linalg.norm(vec2)
+                    vec1, vec2 = vec1 / v1n, vec2 / v2n
 
-            plane = SvExPlane(point1, vec1, vec2)
-            plane.u_bounds = (u_min, u_max)
-            plane.v_bounds = (v_min, v_max)
-            surfaces_out.append(plane)
+                plane = SvExPlane(point1, vec1, vec2)
+                plane.u_bounds = (u_min, u_max)
+                plane.v_bounds = (v_min, v_max)
+                surfaces_out.append(plane)
 
         self.outputs['Surface'].sv_set(surfaces_out)
 
