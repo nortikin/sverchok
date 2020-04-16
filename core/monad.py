@@ -228,6 +228,14 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             # print('dict')
             # pprint.pprint(prop_dict)
             # new_name = generate_name(prop_name, cls_dict)
+            if other.node.bl_idname == "SvNumberNode":
+                if "float" in prop_name:
+                    prop_dict['min'] = other.node.float_min
+                    prop_dict['max'] = other.node.float_max
+                elif "int" in prop_name:
+                    prop_dict['min'] = other.node.int_min
+                    prop_dict['max'] = other.node.int_max
+
             new_name = prop_name_prefix + prop_name
             prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
