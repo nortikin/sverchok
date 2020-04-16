@@ -185,7 +185,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             prop_name = other.prop_name
 
             prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
-            prop_dict.pop('attr')  # this we store in prop_name anyway
+            if 'attr' in prop_dict:
+                prop_dict.pop('attr')  # this we store in prop_name anyway
             
             if 'update' in prop_dict:
                 """
