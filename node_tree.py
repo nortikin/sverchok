@@ -21,6 +21,8 @@ import sys
 import time
 from contextlib import contextmanager
 import textwrap
+import collections
+
 
 import bpy
 from bpy.props import StringProperty, BoolProperty, FloatVectorProperty, IntProperty, EnumProperty
@@ -42,7 +44,7 @@ from sverchok.core.update_system import (
     reset_error_nodes)
 
 from sverchok.core.socket_conversions import DefaultImplicitConversionPolicy
-
+from sverchok.core.socket_data import socket_data_cache
 from sverchok.core.node_defaults import set_defaults_if_defined
 
 from sverchok.utils import get_node_class_reference
@@ -135,7 +137,17 @@ def throttled(func):
 
     return wrapper_update
 
+# Declaring namedtuple()
+Sv_Link = collections.namedtuple('sv_link',['from_node_id', 'to_node_id', 'from_socket_id', 'to_socket_id'])
 
+def get_output_socket_id(socket):
+    if socket.node.bl_idname == 'NodeReroute':
+        if socket.node.inputs[0].is_linked:
+            return get_output_socket_id(socket.node.inputs[0].links[0].from_socket)
+        else:
+            return None, None
+    else:
+        return socket.socket_id, socket.node.node_id
 
 class SvNodeTreeCommon(object):
     '''
@@ -146,10 +158,11 @@ class SvNodeTreeCommon(object):
     limited_init: BoolProperty(default=False)
     skip_tree_update: BoolProperty(default=False)
     configuring_new_node: BoolProperty(name="indicate node initialization", default=False)
+    sv_node_dict = {}
     sv_links = {}
-    sv_linked_sockets = {}
     sv_linked_output_sockets = {}
     sv_linked_input_sockets = {}
+    sv_linked_inputted_nodes = {}
     tree_id: StringProperty(default="")
     @property
     def get_tree_id(self):
@@ -205,21 +218,40 @@ class SvNodeTreeCommon(object):
             if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
                 res.append(ng)
         return res
+    def bl_links_to_sv_links(self):
+
+        sv_links=[]
+        for link in self.links.items():
+            if not link[1].to_socket.node.bl_idname == 'NodeReroute':
+                #recursive function to override reroutes
+                output_socket, output_node = get_output_socket_id(link[1].from_socket)
+                if output_socket:
+                    sv_link = Sv_Link(
+                        from_node_id=output_node,
+                        to_node_id=link[1].to_socket.node.node_id,
+                        from_socket_id=output_socket,
+                        to_socket_id=link[1].to_socket.socket_id )
+                    sv_links.append(sv_link)
+                    # sv_links.append((output_socket, link[1].to_socket.socket_id))
+        return sv_links
 
     def fill_links_memory(self):
         tree_id = self.get_tree_id
         new_links = self.links.items()
-        self.sv_links[tree_id] = self.links.items()
-        linked_sockets = []
+        new_sv_links = self.bl_links_to_sv_links()
+        self.sv_links[tree_id] = new_sv_links
+
+        inputted_nodes = []
         input_sockets = []
         output_sockets = []
-        for link in new_links:
-            linked_sockets.append((link[1].from_socket, link[1].to_socket))
-            output_sockets.append(link[1].from_socket)
+        for sv_link in new_sv_links:
+            inputted_nodes.append(sv_link.to_node_id)
+            input_sockets.append(sv_link.to_socket_id)
+            output_sockets.append(sv_link.from_socket_id)
 
-        self.sv_linked_sockets[tree_id] = linked_sockets
         self.sv_linked_output_sockets[tree_id] = output_sockets
         self.sv_linked_input_sockets[tree_id] = input_sockets
+        self.sv_linked_inputted_nodes[tree_id] = inputted_nodes
 
     def use_link_memory(self):
         if self.configuring_new_node:
@@ -233,71 +265,72 @@ class SvNodeTreeCommon(object):
             return
 
         tree_id = self.get_tree_id
-        links_has_changed = self.sv_links[tree_id] != self.links.items()
-        print('links_has_changed', links_has_changed)
-        reset_error_nodes(self)
+        new_sv_links = self.bl_links_to_sv_links()
+        links_has_changed = self.sv_links[tree_id] != new_sv_links
+
+        # print('links_has_changed', links_has_changed)
+        # reset_error_nodes(self)
         if links_has_changed:
             affected_nodes = []
             new_links = self.links.items()
-            linked_sockets = []
             input_sockets = []
+            inputted_nodes = []
             output_sockets = []
-            before_linked_sockets = self.sv_linked_sockets[tree_id]
+
             before_input_sockets = self.sv_linked_input_sockets[tree_id]
+            before_inputted_nodes = self.sv_linked_inputted_nodes[tree_id]
             before_output_sockets = self.sv_linked_output_sockets[tree_id]
-            for link in new_links:
+            for sv_link in new_sv_links:
+                inputted_nodes.append(sv_link.to_node_id)
+                input_sockets.append(sv_link.to_socket_id)
+                output_sockets.append(sv_link.from_socket_id)
+                if not sv_link in self.sv_links[tree_id]:
+                    if not sv_link.from_socket_id in before_output_sockets:
+                        if not sv_link.from_node_id in affected_nodes:
+                            affected_nodes.append(sv_link.from_node_id)
+                    if not sv_link.to_node_id in affected_nodes:
+                        affected_nodes.append(sv_link.to_node_id)
 
-                input_sockets.append(link[1].to_socket)
-                output_sockets.append(link[1].from_socket)
-                linked_sockets.append((link[1].from_socket, link[1].to_socket))
 
-                if not (link[1].from_socket, link[1].to_socket) in before_linked_sockets:
-                    if not link[1].from_socket in before_output_sockets:
-                        if not link[1].from_node in affected_nodes:
-                            affected_nodes.append(link[1].from_node)
-                    if not link[1].to_node in affected_nodes:
-                        affected_nodes.append(link[1].to_node)
-            # print("Affected Nodes:", [n.name for n in affected_nodes])
-            for socket in before_input_sockets:
-                try:
-                    name = socket.node.name
-                    if not socket in input_sockets:
-                        affected_nodes.append(socket.node)
-                except AttributeError:
-                    pass
+            for node_id, socket in zip(before_inputted_nodes, before_input_sockets):
+                if not socket in input_sockets:
+                    #if the node has been deleted it is not affected
+                    if node_id in self.sv_node_dict[tree_id]:
+                        affected_nodes.append(node_id)
 
-            self.sv_links[tree_id] = self.links.items()
-            self.sv_linked_sockets[tree_id] = linked_sockets
+
+            self.sv_links[tree_id] = new_sv_links
+            self.sv_linked_inputted_nodes[tree_id] = inputted_nodes
             self.sv_linked_output_sockets[tree_id] = output_sockets
             self.sv_linked_input_sockets[tree_id] = input_sockets
 
             build_update_list(self)
             if affected_nodes:
-                process_from_nodes(affected_nodes)
+                node_list = [self.sv_node_dict[tree_id][node_id] for node_id in affected_nodes]
+                # print("Affected Nodes:", [n.name for n in node_list])
+                process_from_nodes(node_list)
                 return True
             else:
                 return False
         else:
-            affected_groups  = []
+            affected_groups = []
             for node in self.nodes:
                 if 'SvGroupNode' in node.bl_idname:
                     subtree = node.monad
                     tree_id = subtree.get_tree_id
                     fill_memory_is_ready = tree_id in subtree.sv_links.keys()
                     if fill_memory_is_ready:
-                        print("monad memory_is_ready")
+                        # print("monad memory_is_ready")
                         has_been_updated = subtree.use_link_memory()
                         if has_been_updated:
                             affected_groups.append(node)
                     else:
-                        print("filling monad link_memory")
-                        # if subtree.sv_process:
+                        # print("filling monad link_memory")
+
                         subtree.fill_links_memory()
                         subtree.has_changed = True
-                        has_been_updated = True
-                        # self.has_link_count_changed
                         node.process()
-                    print(node.name)
+
             if affected_groups:
                 process_from_nodes(affected_groups)
                 return True
@@ -424,10 +457,10 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
         tree_id = self.get_tree_id
         fill_memory_is_ready = tree_id in self.sv_links.keys()
         if fill_memory_is_ready:
-            print("memory_is_ready")
+            # print("memory_is_ready")
             has_been_updated = self.use_link_memory()
         else:
-            print("filling link_memory")
+            # print("filling link_memory")
             if self.sv_process:
                 self.fill_links_memory()
             self.has_changed = True
@@ -761,6 +794,16 @@ class SverchCustomTreeNode:
     def sv_init(self, context):
         self.create_sockets()
 
+    def load_in_node_dict(self):
+        # print('loading in node_dict')
+        self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        tree = self.id_data
+        tree_id = tree.get_tree_id
+
+        if tree_id not in tree.sv_node_dict:
+            tree.sv_node_dict[tree_id] = {}
+        tree.sv_node_dict[tree_id][self.n_id] = self
+
     def init(self, context):
         """
         this function is triggered upon node creation,
@@ -774,7 +817,7 @@ class SverchCustomTreeNode:
         ng = self.id_data
 
         ng.freeze()
-        self.n_id = str(hash(self) ^ hash(time.monotonic()))
+        self.load_in_node_dict()
         if hasattr(self, "sv_init"):
 
             try:
@@ -823,10 +866,12 @@ class SverchCustomTreeNode:
         This method is not supposed to be overriden in specific nodes.
         Override sv_copy() instead.
         """
+        # self.n_id = str(hash(self) ^ hash(time.monotonic()))
         settings = get_original_node_color(self.id_data, original.name)
         if settings is not None:
             self.use_custom_color, self.color = settings
         self.sv_copy(original)
+        self.load_in_node_dict()
 
     def sv_copy(self, original):
         """
@@ -843,6 +888,7 @@ class SverchCustomTreeNode:
         self.sv_free()
         for s in self.outputs:
             s.sv_forget()
+        del self.id_data.sv_node_dict[self.id_data.get_tree_id][self.n_id]
         if hasattr(self, "has_3dview_props"):
             print("about to remove this node's props from Sv3DProps")
             try:

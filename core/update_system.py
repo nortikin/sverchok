@@ -78,15 +78,18 @@ def make_dep_dict(node_tree, down=False):
         #  a link is considered valid without a to_socket
         #  or a from_socket. proctects against a blender crash
         #  see https://github.com/nortikin/sverchok/issues/493
+
         if not (link.to_socket and link.from_socket):
             ng.links.remove(link)
             raise ValueError("Invalid link found!, please report this file")
-        if not link.is_valid:
-            return collections.defaultdict(set)  # this happens more often than one might think
+        # it seems to work even with invalid links, maybe beacuse sverchok update is indepentent from blender update
+        # if not link.is_valid:
+            # return collections.defaultdict(set)  # this happens more often than one might think
         if link.is_hidden:
             continue
         key, value = (link.from_node.name, link.to_node.name) if down else (link.to_node.name, link.from_node.name)
         deps[key].add(value)
+
 
     for name, var_name in wifi_out_nodes:
         other = wifi_dict.get(var_name)
@@ -220,6 +223,7 @@ def make_tree_from_nodes(node_names, tree, down=True):
 
     # build downwards links, this should be cached perhaps
     node_links = make_dep_dict(ng, down)
+
     while current_node:
         for node in node_links[current_node]:
             if node not in out_set:
@@ -319,6 +323,17 @@ def reset_error_node(ng, name):
                 node.use_custom_color, node.color = error_nodes[name]
                 del error_nodes[name]
             ng["error nodes"] = str(error_nodes)
+
+def reset_error_some_nodes(ng, names):
+    if "error nodes" in ng:
+        error_nodes = ast.literal_eval(ng["error nodes"])
+        for name in names:
+            node = ng.nodes.get(name)
+            if node:
+                if name in error_nodes:
+                    node.use_custom_color, node.color = error_nodes[name]
+                    del error_nodes[name]
+        ng["error nodes"] = str(error_nodes)
 
 def reset_error_nodes(ng):
     if "error nodes" in ng:
@@ -436,7 +451,8 @@ def process_from_nodes(nodes):
     node_names = [node.name for node in nodes]
     ng = nodes[0].id_data
     update_list = make_tree_from_nodes(node_names, ng)
-    print(update_list)
+    # print("process_from_nodes", update_list)
+    reset_error_some_nodes(ng, update_list)
     do_update(update_list, ng.nodes)
 
 
@@ -465,7 +481,7 @@ def process_from_node(node):
         nodes = ng.nodes
         if not ng.sv_process:
             return
-        print(update_list)
+        # print(update_list)
         do_update(update_list, nodes)
     else:
         process_tree(ng)

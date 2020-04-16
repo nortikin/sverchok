@@ -55,7 +55,6 @@ def has_frame_changed(scene):
 
 @persistent
 def sv_handler_undo_pre(scene):
-    print('called undo pre')
 
     from sverchok.core import undo_handler_node_count
 
@@ -65,23 +64,33 @@ def sv_handler_undo_pre(scene):
 
 @persistent
 def sv_handler_undo_post(scene):
-    print('called undo post')
+
     # this function appears to be hoisted into an environment that does not have the same locals()
     # hence this dict must be imported. (jan 2019)
 
     from sverchok.core import undo_handler_node_count
 
     num_to_test_against = 0
+    links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
+        tree_id = ng.get_tree_id
+        if tree_id in ng.sv_links.keys():
+            links_changed = links_changed  or  ng.sv_links[tree_id] != ng.bl_links_to_sv_links()
 
     # only perform clean if the undo event triggered
     # a difference in total node count among trees.
-    if not (undo_handler_node_count['sv_groups'] == num_to_test_against):
+    if links_changed or not (undo_handler_node_count['sv_groups'] == num_to_test_against):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
+        for ng in sverchok_trees():
+            tree_id = ng.get_tree_id
+            if tree_id in ng.sv_node_dict:
+                ng.sv_node_dict[tree_id]={}
+                for node in ng.nodes:
+                    ng.sv_node_dict[tree_id][node.node_id] = node
+            ng.has_changed = True
         sv_main_handler(scene)
-
     undo_handler_node_count['sv_groups'] = 0
 
 
@@ -95,7 +104,7 @@ def sv_update_handler(scene):
 
     for ng in sverchok_trees():
         try:
-            # print('sv_update_handler')
+
             ng.process_ani()
         except Exception as e:
             print('Failed to update:', str(e)) #name,
@@ -140,12 +149,13 @@ def sv_main_handler(scene):
     if depsgraph_need:
         sv_depsgraph = bpy.context.evaluated_depsgraph_get()
     for ng in sverchok_trees():
+
         # if P (sv_process is False, we can skip this node tree.
         if not ng.sv_process:
             continue
 
         if ng.has_changed:
-            print('depsgraph_update_pre called - ng.has_changed -> ')
+
 
             ng.process()
     pre_running = False
@@ -164,24 +174,23 @@ def sv_clean(scene):
 
 @persistent
 def sv_pre_load(scene):
-    print("sv_pre_load")
+
     sv_clean(scene)
 
 
     set_first_run(True)
     global sv_first_run
-    print("FR",sv_first_run)
+
 
 @persistent
 def sv_post_load(scene):
     """
     Upgrade nodes, apply preferences and do an update.
     """
-    print("post_load")
+
 
     set_first_run(False)
 
-    print('first_run', us.sv_first_run)
     # ensure current nodeview view scale / location parameters reflect users' system settings
     from sverchok import node_tree
     node_tree.SverchCustomTreeNode.get_and_set_gl_scale_info(None, "sv_post_load")
@@ -193,7 +202,7 @@ def sv_post_load(scene):
 
     sv_types = {'SverchCustomTreeType', 'SverchGroupTreeType'}
     sv_trees = list(ng for ng in bpy.data.node_groups if ng.bl_idname in sv_types and ng.nodes)
-    print("old_load")
+
     for ng in sv_trees:
         ng.freeze(True)
         ng.sv_process = False
@@ -217,9 +226,9 @@ def sv_post_load(scene):
             color_def.apply_theme()
 
     for ng in sv_trees:
-        print("post_load_update")
+
         if ng.bl_idname == 'SverchCustomTreeType' and ng.nodes:
-            ng.sv_links={}
+            ng.sv_links = {}
             ng.update()
 
 
@@ -242,13 +251,20 @@ def set_frame_change(mode):
     elif mode == "PRE":
         pre.append(sv_update_handler)
 
+# def sv_depsgraph_update_post(scene):
+#     print('sv_depsgraph_update_post')
+#     depsgraph = bpy.context.evaluated_depsgraph_get()
+#     print("nodetree", depsgraph.id_type_updated('NODETREE'))
+#     print("material",depsgraph.id_type_updated('MATERIAL'))
+#     print("items",depsgraph.ids.items())
 
 handler_dict = {
     'undo_pre': sv_handler_undo_pre,
     'undo_post': sv_handler_undo_post,
     'load_pre': sv_pre_load,
     'load_post': sv_post_load,
-    'depsgraph_update_pre': sv_main_handler
+    'depsgraph_update_pre': sv_main_handler,
+    # 'depsgraph_update_post': sv_depsgraph_update_post
 }
 
 
