@@ -38,10 +38,10 @@ class SvExDynamicSocketsHandler(object):
     def init_sockets(self, node):
         for socket in self.inputs_registry.values():
             s = node.inputs.new(socket.type, socket.id)
-            if socket.display_shape is not None:
-                s.display_shape = socket.display_shape
+#             if socket.display_shape is not None:
+#                 s.display_shape = socket.display_shape
         for socket in self.outputs_registry.values():
             s = node.outputs.new(socket.type, socket.id)
-            if socket.display_shape is not None:
-                s.display_shape = socket.display_shape
+#             if socket.display_shape is not None:
+#                 s.display_shape = socket.display_shape
 
