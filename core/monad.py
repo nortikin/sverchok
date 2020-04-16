@@ -46,6 +46,10 @@ socket_types = [
 reverse_lookup = {'outputs': 'inputs', 'inputs': 'outputs'}
 
 
+def nice_ui_name(input_str):
+    a = input_str.replace('_', ' ')
+    b = a.title()
+    return b
 
 def make_valid_identifier(name):
     """Create a valid python identifier from name for use a a part of class name"""
@@ -181,6 +185,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls = get_node_class_reference(self.cls_bl_idname)
         cls_dict = cls.__dict__ if cls else {}
 
+        local_debug = False
+
         if other.prop_name:
             prop_name = other.prop_name
 
@@ -205,11 +211,11 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_dict['name'] = regex.sub('', prop_name)
                 print(f"monad: generated name for property function: {prop_name} -> {prop_dict['name']}")
 
-            print("prop_func:", prop_func)   # < --- tells us the kind of property to make
-            print("prop_dict:", prop_dict)   # < --- tells us the attributes of the property
-            print("prop_name:", prop_name)   # < --- tells the socket / slider ui which prop to display
+            if local_debug:
+                print("prop_func:", prop_func)   # < --- tells us the kind of property to make
+                print("prop_dict:", prop_dict)   # < --- tells us the attributes of the property
+                print("prop_name:", prop_name)   # < --- tells the socket / slider ui which prop to display
                                              # and its associated 'name' attribute from the prop_dict
-
             
             if prop_func.__name__ == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
@@ -246,14 +252,21 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             print(f'{other.node} = other.node')
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
+                prop_name_prefix = f"floats_{len(self.float_props)}_"
             elif "int" in other.prop_type:
                 prop_settings = self.int_props.add()
+                prop_name_prefix = f"ints_{len(self.int_props)}_"
             else:
                 return None
             
-            new_name = generate_name(make_valid_identifier(other.name), cls_dict)
-            prop_settings.prop_name = new_name 
-            prop_settings.set_settings({"name": other.name})
+            # new_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            new_name = prop_name_prefix + other.name
+            
+            # this name will be used as the attr name of the newly generated property for the shellnode
+            # essentially this is 
+            #       __annotations__[prop_name] = new property function
+            prop_settings.prop_name = new_name
+            prop_settings.set_settings({"name": nice_ui_name(other.name), "update": updateNode})
             socket.prop_name = new_name
             return new_name
 
