@@ -10,4 +10,5 @@ Field
    decompose_vector_field
    scalar_field_eval
    vector_field_eval
+   vector_field_apply
 
