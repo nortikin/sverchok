@@ -13,6 +13,7 @@ Field
    decompose_vector_field
    scalar_field_math
    vector_field_math
+   differential_operations
    scalar_field_eval
    vector_field_eval
    vector_field_apply
