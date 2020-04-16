@@ -255,19 +255,16 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             print(f'{other.node} = other.node')
             print(f'{other.prop_type} = other.prop_type')
             
-            if not any(substring in other.prop_type for substring in ["float", 'int']): 
+            if not any(substring in other.prop_type for substring in ["float", "int"]): 
                 return None    
         
-            if self.instances:
-                with self.instances[0].sv_throttle_tree_update():
-                    if "float" in other.prop_type:
-                        prop_settings = self.float_props.add()
-                        prop_name_prefix = f"floats_{len(self.float_props)}_"
-                    elif "int" in other.prop_type:
-                        prop_settings = self.int_props.add()
-                        prop_name_prefix = f"ints_{len(self.int_props)}_"
-        
-            # new_name = generate_name(make_valid_identifier(other.name), cls_dict)
+            if "float" in other.prop_type:
+                prop_settings = self.float_props.add()
+                prop_name_prefix = f"floats_{len(self.float_props)}_"
+            elif "int" in other.prop_type:
+                prop_settings = self.int_props.add()
+                prop_name_prefix = f"ints_{len(self.int_props)}_"
+
             new_name = prop_name_prefix + other.name
             
             # this name will be used as the attr name of the newly generated property for the shellnode
