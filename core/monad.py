@@ -186,8 +186,30 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         if other.prop_name:
             prop_name = other.prop_name
 
-            # prop_func, prop_dict = getattr(other.node.rna_type, prop_name, ("", {}))  # <-- in 2.79
             prop_func, prop_dict = other.node.__annotations__.get(prop_name, ("", {}))
+            prop_dict.pop('attr')  # this we store in prop_name anyway
+            
+            if 'update' in prop_dict:
+                """
+                the node may be doing a tonne of stuff in a wrapped update,
+                but because this property will be on a shell node (the monad outside) we can
+                replace it with a reference to updateNode. i think this is a sane thing to ensure.
+                """
+                prop_dict['update'] = updateNode
+            
+            if not 'name' in prop_dict:
+                """ 
+                name is used exclusively for displaying name on the slider or label 
+                most properties will have this defined anyway, but just in case.
+                """ 
+                regex = re.compile('[^a-z A-Z0-9]')
+                prop_dict['name'] = regex.sub('', prop_name)
+                print(f"monad: generated name for property function: {prop_name} -> {prop_dict['name']}")
+
+            print("prop_func:", prop_func)   # < --- tells us the kind of property to make
+            print("prop_dict:", prop_dict)   # < --- tells us the attributes of the property
+            print("prop_name:", prop_name)   # < --- tells the socket / slider ui which prop to display
+                                             # and its associated 'name' attribute from the prop_dict
 
             if prop_func.__name__ == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
