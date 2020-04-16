@@ -249,16 +249,24 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             return new_name
 
         elif hasattr(other, "prop_type"):
-            print(f'{other.node} = other.node')
-            if "float" in other.prop_type:
-                prop_settings = self.float_props.add()
-                prop_name_prefix = f"floats_{len(self.float_props)}_"
-            elif "int" in other.prop_type:
-                prop_settings = self.int_props.add()
-                prop_name_prefix = f"ints_{len(self.int_props)}_"
-            else:
-                return None
             
+            # if you are seeing errors with this and the other.node.bl_idname is not scriptnodelite
+            # the fix will be here somewhere.
+            print(f'{other.node} = other.node')
+            print(f'{other.prop_type} = other.prop_type')
+            
+            if not any(substring in other.prop_type for substring in ["float", 'int']): 
+                return None    
+        
+            if self.instances:
+                with self.instances[0].sv_throttle_tree_update():
+                    if "float" in other.prop_type:
+                        prop_settings = self.float_props.add()
+                        prop_name_prefix = f"floats_{len(self.float_props)}_"
+                    elif "int" in other.prop_type:
+                        prop_settings = self.int_props.add()
+                        prop_name_prefix = f"ints_{len(self.int_props)}_"
+        
             # new_name = generate_name(make_valid_identifier(other.name), cls_dict)
             new_name = prop_name_prefix + other.name
             
@@ -266,7 +274,19 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             # essentially this is 
             #       __annotations__[prop_name] = new property function
             prop_settings.prop_name = new_name
-            prop_settings.set_settings({"name": nice_ui_name(other.name), "update": updateNode})
+      
+            custom_prop_dict = {
+                "name": nice_ui_name(other.name),
+                "update": updateNode
+            }
+
+            # there are other nodes that use this technique, 
+            if other.node.bl_idname == "SvScriptNodeLite":
+                prop_list = other.node.float_list if "float" in other.prop_type else other.node.int_list
+                default = prop_list[other.prop_index]
+                custom_prop_dict["default"] = default
+
+            prop_settings.set_settings(custom_prop_dict)
             socket.prop_name = new_name
             return new_name
 
