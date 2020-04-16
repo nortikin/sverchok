@@ -7,6 +7,7 @@ Field
 
    attractor_field
    scalar_field_formula
+   vector_field_formula
    noise_vfield
    compose_vector_field
    decompose_vector_field
