@@ -146,8 +146,6 @@ def generate_name(prop_name, cls_dict):
         return prop_name
 
 
-
-
 class SverchGroupTree(NodeTree, SvNodeTreeCommon):
     ''' Sverchok - groups '''
     bl_idname = 'SverchGroupTreeType'
@@ -211,12 +209,15 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             print("prop_name:", prop_name)   # < --- tells the socket / slider ui which prop to display
                                              # and its associated 'name' attribute from the prop_dict
 
+            
             if prop_func.__name__ == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.float_props.add()
+                prop_name_prefix = f"floats_{len(self.float_props)}_"
             elif prop_func.__name__ == "IntProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
                 prop_settings = self.int_props.add()
+                prop_name_prefix = f"ints_{len(self.int_props)}_"
             elif prop_func.__name__ == "FloatVectorProperty":
                 info("FloatVectorProperty ignored (normal behaviour since day one). prop_func: %s, prop_dict: %s.", prop_func, prop_dict)
                 return None # for now etc
@@ -225,7 +226,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
             # print('dict')
             # pprint.pprint(prop_dict)
-            new_name = generate_name(prop_name, cls_dict)
+            # new_name = generate_name(prop_name, cls_dict)
+            new_name = prop_name_prefix + prop_name
             prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
             socket.prop_name = new_name
