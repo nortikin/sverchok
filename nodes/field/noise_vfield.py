@@ -49,6 +49,8 @@ class SvExNoiseVectorFieldNode(bpy.types.Node, SverchCustomTreeNode):
             if isinstance(seed, (list, int)):
                 seed = seed[0]
 
+            if seed == 0:
+                seed = 12345
             field = SvExNoiseVectorField(self.noise_type, seed)
             fields_out.append(field)
 
