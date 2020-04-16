@@ -243,6 +243,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
             return new_name
 
         elif hasattr(other, "prop_type"):
+            print(f'{other.node} = other.node')
             if "float" in other.prop_type:
                 prop_settings = self.float_props.add()
             elif "int" in other.prop_type:
