@@ -75,8 +75,8 @@ class SvSocketAquisition:
                 prop_data = {}
                 new_name, new_type = cls.output_template[-1]
 
-            # transform socket type from dummy to new type
             new_socket = socket.replace_socket(new_type, new_name=new_name)
+
             if prop_name:
                 new_socket.prop_name = prop_name
 
