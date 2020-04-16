@@ -7,4 +7,5 @@ Field
 
    attractor_field
    compose_vector_field
+   decompose_vector_field
 
