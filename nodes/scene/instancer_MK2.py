@@ -105,10 +105,6 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         row = col.row(align=True)
         row.prop(self, "basedata_name", text="", icon='FILE_CACHE')
         
-    def get_objects(self):
-        if self.inputs['objects'].is_linked:
-            return dataCorrect(self.inputs['objects'].sv_get())
-        return []
 
     def get_matrices(self):
         if self.inputs['matrix'].is_linked:
@@ -124,7 +120,7 @@ class SvInstancerNodeMK2(bpy.types.Node, SverchCustomTreeNode):
         if not matrices:
             return
 
-        objects = self.get_objects()
+        objects = self.inputs['objects'].sv_get()
         if not objects:
             return
         
