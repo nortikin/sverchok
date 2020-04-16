@@ -656,6 +656,8 @@ class SvMonadCreateFromSelected(Operator):
         path.append(monad, node=parent_node)
 
         bpy.ops.node.view_all()
+
+        # requires (todo) a final ntree update here
         return {'FINISHED'}
 
 
