@@ -31,7 +31,7 @@ from sverchok.utils.logging import info, error
 from sverchok.node_tree import SverchCustomTreeNode, SvNodeTreeCommon
 from sverchok.data_structure import get_other_socket, updateNode, match_long_repeat
 from sverchok.core.update_system import make_tree_from_nodes, do_update
-from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup
+from sverchok.core.monad_properties import SvIntPropertySettingsGroup, SvFloatPropertySettingsGroup, ensure_unique
 
 
 MONAD_COLOR = (0.830819, 0.911391, 0.754562)
@@ -240,6 +240,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                     prop_dict['max'] = other.node.int_max
 
             new_name = prop_name_prefix + prop_name
+            # new_name = ensure_unique(obj_id, new_name)
+            
             prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
             socket.prop_name = new_name
@@ -263,6 +265,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_name_prefix = f"ints_{len(self.int_props)}_"
 
             new_name = prop_name_prefix + other.name
+            # new_name = ensure_unique(obj_id, new_name)
             
             # this name will be used as the attr name of the newly generated property for the shellnode
             # essentially this is 

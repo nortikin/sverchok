@@ -17,6 +17,7 @@
 # END GPL LICENSE BLOCK #####
 
 import sys
+import re
 
 import bpy
 from bpy.types import PropertyGroup
@@ -184,6 +185,32 @@ class SvIntPropertySettingsGroup(PropertyGroup, PropsBase):
     soft_max: IntProperty(default=2**31-1)
     step: IntProperty(default=1) # not used
     subtype: EnumProperty(items=float_items, name="Subtype", default='NONE')
+
+
+
+def find_hightest_num_in_matching_params(obj_id, kind):
+    regex = "^(?P<kind>ints|floats)_(?P<number>\d+)_(?P<variable>\S+)$"
+    nums = [1]
+    for name in obj_id.__annotations__:
+        matches = re.search(regex, name)
+        if matches and matches.group('kind') == kind:
+            nums.append(int(matches.group('number')))
+    return max(nums)
+
+
+def ensure_unique(obj_id, new_prop_name):
+
+    # can be used unchanged
+    if not (new_prop_name in obj_id.__annotations__):
+        return new_prop_name
+   
+    print(f"{new_prop_name} (prop_name) is used.. making a new one")
+    # find the highest token and return it plus one
+    kind, num, variable = new_prop_name.split('_', 2)
+    num = find_hightest_num_in_matching_params(obj_id, kind)
+    proposed_new_name = f"{kind}_{int(num) + 1}_{variable}"
+    print(f"new prop_name {proposed_new_name}")
+    return proposed_new_name
 
 
 classes = [
