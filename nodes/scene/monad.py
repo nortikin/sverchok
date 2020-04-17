@@ -92,12 +92,14 @@ class SvSocketAquisition:
 
                 if (not prop_data) and prop_name:
                     new_socket.prop_name = prop_name
+
                 else:
+
                     for name, value in prop_data.items():
-                        if not name == 'prop_name':
-                            setattr(new_socket, name, value)
-                        else:
+                        if name == 'prop_name':
                             new_socket.prop_name = prop_name or ''
+                        else:
+                            setattr(new_socket, name, value)
 
             # print('------')
             # print(prop_data)
