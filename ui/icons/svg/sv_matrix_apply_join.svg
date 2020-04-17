@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg32983"
+   version="1.1"
+   viewBox="0 0 4.2333332 4.2333335"
+   height="16"
+   width="16"
+   sodipodi:docname="sv_matrix_apply_join.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1360"
+     inkscape:window-height="705"
+     id="namedview10"
+     showgrid="false"
+     inkscape:zoom="14.75"
+     inkscape:cx="-0.71186441"
+     inkscape:cy="8"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg32983" />
+  <defs
+     id="defs32977" />
+  <metadata
+     id="metadata32980">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.87371045;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new"
+     d="M 2.9789706,2.1454887 0.97266153,3.5833881"
+     id="path4474"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="6.5963187"
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png" />
+  <path
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-xdpi="6.5963187"
+     sodipodi:nodetypes="cc"
+     inkscape:connector-curvature="0"
+     id="path4476"
+     d="M 3.0070693,2.1243882 0.97266153,2.5858877"
+     style="display:inline;fill:#ffff00;stroke:#000000;stroke-width:0.87371045;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new"
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png" />
+  <path
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png"
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-xdpi="6.5963187"
+     sodipodi:nodetypes="cc"
+     inkscape:connector-curvature="0"
+     id="path4478"
+     d="M 2.9775683,2.1343894 0.97125923,0.69648484"
+     style="display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.87371045;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new" />
+  <path
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png"
+     style="display:inline;fill:#ffff00;stroke:#000000;stroke-width:0.87371045;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new"
+     d="M 3.005667,2.1554873 0.97125923,1.6939852"
+     id="path4480"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="6.5963187"
+     inkscape:export-ydpi="6.5963187" />
+  <path
+     style="display:inline;fill:#000000;fill-opacity:0;stroke:#666666;stroke-width:0.34136632;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new"
+     d="M 2.9775683,2.1343894 0.97125923,0.69648484"
+     id="path4482"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="6.5963187"
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png" />
+  <path
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png"
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-xdpi="6.5963187"
+     sodipodi:nodetypes="cc"
+     inkscape:connector-curvature="0"
+     id="path4484"
+     d="M 3.012652,2.1413877 0.90246753,1.5563833"
+     style="display:inline;fill:#000000;fill-opacity:0;stroke:#666666;stroke-width:0.34136632;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new" />
+  <path
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png"
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-xdpi="6.5963187"
+     sodipodi:nodetypes="cc"
+     inkscape:connector-curvature="0"
+     id="path4486"
+     d="M 2.9789706,2.1454887 0.97266153,3.5833881"
+     style="display:inline;fill:#333333;fill-opacity:1;stroke:#666666;stroke-width:0.34136632;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new" />
+  <rect
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png"
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-xdpi="6.5963187"
+     y="-1.3109161e-06"
+     x="0"
+     height="4.233336"
+     width="4.233336"
+     id="rect4488"
+     style="display:inline;opacity:1;fill:none;fill-opacity:1;stroke:none;stroke-width:0.00343558;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:13.03029823;stroke-opacity:1;enable-background:new" />
+  <path
+     style="display:inline;fill:#000000;fill-opacity:0;stroke:#666666;stroke-width:0.34136632;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;enable-background:new"
+     d="M 3.0140543,2.1384878 0.92106773,2.5170881"
+     id="path4490"
+     inkscape:connector-curvature="0"
+     sodipodi:nodetypes="cc"
+     inkscape:export-xdpi="6.5963187"
+     inkscape:export-ydpi="6.5963187"
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png" />
+  <g
+     style="display:inline;enable-background:new"
+     id="g4504"
+     transform="matrix(0.03716968,0,0,0.03716968,77.42555,-8.7436156)"
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png"
+     inkscape:export-xdpi="6.5963187"
+     inkscape:export-ydpi="6.5963187">
+    <circle
+       r="12.078945"
+       cy="251.18491"
+       cx="-2058.9282"
+       id="circle4492"
+       style="opacity:1;fill:#e59933;fill-opacity:1;stroke:#000000;stroke-width:4.61219978;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       inkscape:export-xdpi="6.5963187"
+       inkscape:export-ydpi="6.5963187"
+       inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_list_item.png" />
+    <circle
+       inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_list_item.png"
+       inkscape:export-ydpi="6.5963187"
+       inkscape:export-xdpi="6.5963187"
+       style="opacity:1;fill:#99ff99;fill-opacity:1;stroke:#000000;stroke-width:4.61202765;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="circle4494"
+       cx="-2058.9282"
+       cy="276.68262"
+       r="12.078945" />
+    <g
+       id="g4502"
+       transform="matrix(0.77772407,0,0,0.77772407,-455.62097,49.191448)"
+       style="fill:#858500;fill-opacity:1"
+       inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_list_item.png"
+       inkscape:export-xdpi="6.5963187"
+       inkscape:export-ydpi="6.5963187">
+      <circle
+         r="15.531145"
+         cy="325.29395"
+         cx="-2061.5376"
+         id="circle4500"
+         style="opacity:1;fill:#99ff99;fill-opacity:1;stroke:#000000;stroke-width:5.93015909;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         inkscape:export-xdpi="6.5963187"
+         inkscape:export-ydpi="6.5963187"
+         inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_linked_verts.png" />
+    </g>
+    <g
+       transform="matrix(0.8183286,0,0,0.8183286,-371.16218,66.225474)"
+       id="g4498"
+       inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_list_item.png"
+       inkscape:export-xdpi="6.5963187"
+       inkscape:export-ydpi="6.5963187">
+      <circle
+         r="19.224251"
+         cy="322.30551"
+         cx="-2061.5376"
+         id="circle4496"
+         style="opacity:1;fill:#33cccc;fill-opacity:1;stroke:#000000;stroke-width:7.34027433;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         inkscape:export-xdpi="6.5963187"
+         inkscape:export-ydpi="6.5963187"
+         inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_linked_verts.png" />
+    </g>
+  </g>
+  <g
+     style="display:inline;enable-background:new"
+     id="g4520"
+     transform="matrix(0.04905175,0,0,0.04905175,104.26345,-12.831116)"
+     inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_matrix_apply_join.png"
+     inkscape:export-xdpi="6.5963187"
+     inkscape:export-ydpi="6.5963187">
+    <circle
+       inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_list_item.png"
+       inkscape:export-ydpi="6.5963187"
+       inkscape:export-xdpi="6.5963187"
+       style="opacity:1;fill:#e59933;fill-opacity:1;stroke:#000000;stroke-width:4.85281897;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="circle4510"
+       cx="-2058.1772"
+       cy="278.76486"
+       r="12.70958" />
+    <g
+       transform="matrix(0.8183286,0,0,0.8183286,-371.16218,66.225474)"
+       id="g4514"
+       inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_list_item.png"
+       inkscape:export-xdpi="6.5963187"
+       inkscape:export-ydpi="6.5963187">
+      <circle
+         r="15.531145"
+         cy="325.29395"
+         cx="-2061.5376"
+         id="circle4512"
+         style="opacity:1;fill:#99ff99;fill-opacity:1;stroke:#000000;stroke-width:5.93015909;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         inkscape:export-xdpi="6.5963187"
+         inkscape:export-ydpi="6.5963187"
+         inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_linked_verts.png" />
+    </g>
+    <g
+       id="g4518"
+       transform="matrix(0.8183286,0,0,0.8183286,-371.16218,39.39652)"
+       style="fill:#858500;fill-opacity:1"
+       inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_list_item.png"
+       inkscape:export-xdpi="6.5963187"
+       inkscape:export-ydpi="6.5963187">
+      <circle
+         r="15.531145"
+         cy="325.29395"
+         cx="-2061.5376"
+         id="circle4516"
+         style="opacity:1;fill:#99ff99;fill-opacity:1;stroke:#000000;stroke-width:5.93015909;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         inkscape:export-xdpi="6.5963187"
+         inkscape:export-ydpi="6.5963187"
+         inkscape:export-filename="C:\Users\PcCom\AppData\Roaming\Blender Foundation\Blender\2.80\scripts\addons\sverchok\ui\icons\sv_linked_verts.png" />
+    </g>
+  </g>
+</svg>
