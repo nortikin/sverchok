@@ -19,6 +19,7 @@ Field
    vector_field_math
    differential_operations
    vector_field_graph
+   vector_field_lines
    scalar_field_eval
    vector_field_eval
    vector_field_apply
