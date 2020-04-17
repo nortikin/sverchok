@@ -186,6 +186,17 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         cls_dict = cls.__dict__ if cls else {}
 
         local_debug = False
+        # reference_obj_id = cls.instances[0]
+        # print(reference_obj_id.__annotations__)
+        has_annotations = False
+
+        if not cls_dict:
+            print('no dict yet')
+        else:
+            print('found dict!')
+            if '__annotations' in cls_dict:
+                has_annotations = True
+                annotations = cls_dict['__annotations__']
 
         if other.prop_name:
             prop_name = other.prop_name
@@ -240,7 +251,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                     prop_dict['max'] = other.node.int_max
 
             new_name = prop_name_prefix + prop_name
-            # new_name = ensure_unique(obj_id, new_name)
+            if has_annotations:
+                new_name = ensure_unique(annotations, new_name)
             
             prop_settings.prop_name = new_name
             prop_settings.set_settings(prop_dict)
@@ -265,7 +277,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_name_prefix = f"ints_{len(self.int_props)}_"
 
             new_name = prop_name_prefix + other.name
-            # new_name = ensure_unique(obj_id, new_name)
+            if has_annotations:
+                new_name = ensure_unique(annotations, new_name)
             
             # this name will be used as the attr name of the newly generated property for the shellnode
             # essentially this is 

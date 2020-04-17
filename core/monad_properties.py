@@ -198,10 +198,10 @@ def find_hightest_num_in_matching_params(obj_id, kind):
     return max(nums)
 
 
-def ensure_unique(obj_id, new_prop_name):
+def ensure_unique(annotations, new_prop_name):
 
     # can be used unchanged
-    if not (new_prop_name in obj_id.__annotations__):
+    if not (new_prop_name in annotations):
         return new_prop_name
    
     print(f"{new_prop_name} (prop_name) is used.. making a new one")
