@@ -34,8 +34,9 @@ This node has the following inputs:
   default value is 50.
 
 The field bends the part of space which is between **Src T Min** and **Src T
-Max**, along the curve. The behaviour of the field outside of these bounds is
-not guaranteed.
+Max**, along the curve. For example, with default settings, the source part of
+space is the space between Z = -1 and Z = 1. The behaviour of the field outside
+of these bounds is not guaranteed.
 
 Parameters
 ----------

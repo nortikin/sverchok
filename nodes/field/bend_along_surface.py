@@ -51,22 +51,22 @@ class SvExBendAlongSurfaceFieldNode(bpy.types.Node, SverchCustomTreeNode):
         default=False, update=updateNode)
 
     u_min : FloatProperty(
-        name = "U Min",
-        default = 0.0,
+        name = "Src U Min",
+        default = -1.0,
         update = updateNode)
 
     u_max : FloatProperty(
-        name = "U Max",
+        name = "Src U Max",
         default = 1.0,
         update = updateNode)
 
     v_min : FloatProperty(
-        name = "V Min",
-        default = 0.0,
+        name = "Src V Min",
+        default = -1.0,
         update = updateNode)
 
     v_max : FloatProperty(
-        name = "V Max",
+        name = "Src V Max",
         default = 1.0,
         update = updateNode)
 
