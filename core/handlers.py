@@ -74,7 +74,7 @@ def sv_handler_undo_post(scene):
     links_changed = False
     for ng in sverchok_trees():
         num_to_test_against += len(ng.nodes)
-        tree_id = ng.get_tree_id
+        tree_id = ng.tree_id
         if tree_id in ng.sv_links.keys():
             links_changed = links_changed  or  ng.sv_links[tree_id] != ng.bl_links_to_sv_links()
 
@@ -84,7 +84,7 @@ def sv_handler_undo_post(scene):
         print('looks like a node was removed, cleaning')
         sv_clean(scene)
         for ng in sverchok_trees():
-            tree_id = ng.get_tree_id
+            tree_id = ng.tree_id
             if tree_id in ng.sv_node_dict:
                 ng.sv_node_dict[tree_id]={}
                 for node in ng.nodes:

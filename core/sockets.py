@@ -96,7 +96,7 @@ class SvSocketCommon:
         # return self.socket_id_m
         # return str(hash(self.id_data.name + self.node.name + self.identifier))
         return str(hash(self.node.node_id + self.identifier))
-        # return str(hash(self.id_data.get_tree_id + self.node.node_id + self.identifier))
+        # return str(hash(self.id_data.tree_id + self.node.node_id + self.identifier))
 
     @property
     def index(self):

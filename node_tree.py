@@ -163,12 +163,12 @@ class SvNodeTreeCommon(object):
     sv_linked_output_sockets = {}
     sv_linked_input_sockets = {}
     sv_linked_inputted_nodes = {}
-    tree_id: StringProperty(default="")
+    tree_id_memory: StringProperty(default="")
     @property
-    def get_tree_id(self):
-        if not self.tree_id:
-            self.tree_id = str(hash(self) ^ hash(time.monotonic()))
-        return self.tree_id
+    def tree_id(self):
+        if not self.tree_id_memory:
+            self.tree_id_memory = str(hash(self) ^ hash(time.monotonic()))
+        return self.tree_id_memory
 
     def build_update_list(self):
         build_update_list(self)
@@ -236,7 +236,7 @@ class SvNodeTreeCommon(object):
         return sv_links
 
     def fill_links_memory(self):
-        tree_id = self.get_tree_id
+        tree_id = self.tree_id
         new_links = self.links.items()
         new_sv_links = self.bl_links_to_sv_links()
         self.sv_links[tree_id] = new_sv_links
@@ -264,7 +264,7 @@ class SvNodeTreeCommon(object):
         if not self.sv_process:
             return
 
-        tree_id = self.get_tree_id
+        tree_id = self.tree_id
         new_sv_links = self.bl_links_to_sv_links()
         links_has_changed = self.sv_links[tree_id] != new_sv_links
 
@@ -317,7 +317,7 @@ class SvNodeTreeCommon(object):
             for node in self.nodes:
                 if 'SvGroupNode' in node.bl_idname:
                     subtree = node.monad
-                    tree_id = subtree.get_tree_id
+                    tree_id = subtree.tree_id
                     fill_memory_is_ready = tree_id in subtree.sv_links.keys()
                     if fill_memory_is_ready:
                         # print("monad memory_is_ready")
@@ -454,7 +454,7 @@ class SverchCustomTree(NodeTree, SvNodeTreeCommon):
             return
 
         # print('svtree update', self.timestamp)
-        tree_id = self.get_tree_id
+        tree_id = self.tree_id
         fill_memory_is_ready = tree_id in self.sv_links.keys()
         if fill_memory_is_ready:
             # print("memory_is_ready")
@@ -799,7 +799,7 @@ class SverchCustomTreeNode:
         # self.n_id = str(hash(self) ^ hash(time.monotonic()))
         n_id = self.node_id
         tree = self.id_data
-        tree_id = tree.get_tree_id
+        tree_id = tree.tree_id
 
         if tree_id not in tree.sv_node_dict:
             tree.sv_node_dict[tree_id] = {}
@@ -890,7 +890,7 @@ class SverchCustomTreeNode:
         self.sv_free()
         for s in self.outputs:
             s.sv_forget()
-        del self.id_data.sv_node_dict[self.id_data.get_tree_id][self.n_id]
+        del self.id_data.sv_node_dict[self.id_data.tree_id][self.n_id]
         if hasattr(self, "has_3dview_props"):
             print("about to remove this node's props from Sv3DProps")
             try:
