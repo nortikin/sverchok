@@ -23,6 +23,8 @@ import numpy as np
 
 from sverchok.node_tree import SverchCustomTreeNode
 from sverchok.data_structure import updateNode, list_match_func, list_match_modes
+from sverchok.utils.modules.matrix_utils import matrix_apply_np
+
 
 directionItems = [("XY", "XY", ""), ("YZ", "YZ", ""), ("ZX", "ZX", "")]
 dimensionsItems = [
@@ -56,13 +58,6 @@ def mesh_join_np(verts, edges, pols):
 def numpy_check(data, bool_list):
     return [lg if b else [l.tolist() for l in lg] for lg, b in zip(data, bool_list)]
 
-
-def matrix_apply_np(verts, matrix):
-    '''taken from https://blender.stackexchange.com/a/139517'''
-
-    verts_co_4d = np.ones(shape=(verts.shape[0], 4), dtype=np.float)
-    verts_co_4d[:, :-1] = verts  # cos v (x,y,z,1) - point,   v(x,y,z,0)- vector
-    return np.einsum('ij,aj->ai', matrix, verts_co_4d)[:, :-1]
 
 def planes_size_number(params, ops, flags):
     list_match = ops[1]
