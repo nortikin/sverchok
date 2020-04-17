@@ -212,10 +212,10 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 print(f"monad: generated name for property function: {prop_name} -> {prop_dict['name']}")
 
             if local_debug:
-                print("prop_func:", prop_func)   # < --- tells us the kind of property to make
-                print("prop_dict:", prop_dict)   # < --- tells us the attributes of the property
-                print("prop_name:", prop_name)   # < --- tells the socket / slider ui which prop to display
-                                             # and its associated 'name' attribute from the prop_dict
+                print("prop_func:", prop_func)   # tells us the kind of property to make
+                print("prop_dict:", prop_dict)   # tells us the attributes of the property
+                print("prop_name:", prop_name)   # tells the socket / slider ui which prop to display
+                #                                # and its associated 'name' attribute from the prop_dict
             
             if prop_func.__name__ == "FloatProperty":
                 self.get_current_as_default(prop_dict, other.node, prop_name)
@@ -227,13 +227,10 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
                 prop_name_prefix = f"ints_{len(self.int_props)}_"
             elif prop_func.__name__ == "FloatVectorProperty":
                 info("FloatVectorProperty ignored (normal behaviour since day one). prop_func: %s, prop_dict: %s.", prop_func, prop_dict)
-                return None # for now etc
+                return None
             else: # no way to handle it
                 return None
 
-            # print('dict')
-            # pprint.pprint(prop_dict)
-            # new_name = generate_name(prop_name, cls_dict)
             if other.node.bl_idname == "SvNumberNode":
                 if "float" in prop_name:
                     prop_dict['min'] = other.node.float_min
@@ -289,22 +286,6 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
 
         return None
 
-    # def add_prop_from_dict(self, prop_dict, new_prop_type):
-    #     cls = get_node_class_reference(self.cls_bl_idname)
-    #     cls_dict = cls.__dict__ if cls else {}
-
-    #     if new_prop_type == "Float":
-    #         prop_settings = self.float_props.add()
-    #     elif new_prop_type == "Int":
-    #         prop_settings = self.int_props.add()
-    #     else:
-    #         return None
-
-    #     new_name = generate_name(prop_dict['name'], cls_dict)
-    #     prop_settings.prop_name = new_name
-    #     prop_settings.set_settings(prop_dict)
-    #     return new_name
-
     def get_all_props(self):
         """
         return a dict with all data needed to setup monad
@@ -313,8 +294,8 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         float_props = {}
         for prop in self.float_props:
             float_props[prop.prop_name] = prop.get_settings()
-        monad_data["float_props"] = float_props
 
+        monad_data["float_props"] = float_props
         monad_data["int_props"] = {prop.prop_name: prop.get_settings() for prop in self.int_props}
 
         return monad_data
