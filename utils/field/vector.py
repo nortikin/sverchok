@@ -521,7 +521,8 @@ class SvExVectorFieldComposition(SvExVectorField):
         return v2
     
     def evaluate_grid(self, xs, ys, zs):
-        vx1, vy1, vz1 = self.field1.evaluate_grid(xs, ys, zs)
+        r = self.field1.evaluate_grid(xs, ys, zs)
+        vx1, vy1, vz1 = r
         return self.field2.evaluate_grid(vx1, vy1, vz1)
 
 class SvExScalarFieldGradient(SvExVectorField):

@@ -85,6 +85,7 @@ class SvExImageVectorField(SvExVectorField):
     def _evaluate(self, u, v):
         if u < 0 or u >= self.height or v < 0 or v >= self.width:
             return self.fallback
+        u, v = int(u), int(v)
         color = self.pixels[v][u]
         return get_vector(self.space, color)
 
@@ -95,5 +96,6 @@ class SvExImageVectorField(SvExVectorField):
             us, vs = ys, zs
         else: # XZ
             us, vs = xs, zs
-        return np.vectorize(self._evaluate, signature='(),()->(3)')(us, vs)
+        vectors = np.vectorize(self._evaluate, signature='(),()->(3)')(us, vs).T
+        return vectors[0], vectors[1], vectors[2]
 
