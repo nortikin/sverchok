@@ -9,6 +9,7 @@ Field
    scalar_field_formula
    vector_field_formula
    noise_vfield
+   voronoi_field
    curve_bend_field
    bend_along_surface
    compose_vector_field
