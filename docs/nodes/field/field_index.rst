@@ -18,6 +18,7 @@ Field
    scalar_field_math
    vector_field_math
    differential_operations
+   merge_scalar_fields
    vector_field_graph
    vector_field_lines
    scalar_field_eval
