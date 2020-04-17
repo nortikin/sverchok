@@ -10,6 +10,7 @@ Field
    vector_field_formula
    noise_vfield
    voronoi_field
+   image_field
    curve_bend_field
    bend_along_surface
    compose_vector_field
@@ -17,6 +18,7 @@ Field
    scalar_field_math
    vector_field_math
    differential_operations
+   vector_field_graph
    scalar_field_eval
    vector_field_eval
    vector_field_apply
