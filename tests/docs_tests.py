@@ -159,7 +159,8 @@ limited_dissolve_mk2.py
 mesh_separate_mk2.py
 symmetrize.py
 vd_attr_node.py
-bvh_nearest_new.py""".split()
+scalar_field_point.py
+bvh_nearest_new.py""".split("\n")
 
         def check_category(directory):
             dir_name = basename(directory)
