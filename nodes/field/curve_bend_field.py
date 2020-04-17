@@ -11,6 +11,9 @@ from sverchok.data_structure import updateNode, zip_long_repeat, ensure_nesting_
 
 from sverchok.utils.field.vector import SvExBendAlongCurveField
 
+T_MIN_SOCKET = 1
+T_MAX_SOCKET = 2
+
 class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Bend Along Curve
@@ -34,6 +37,8 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
         self.inputs['Resolution'].hide_safe = not(self.algorithm == 'ZERO' or self.length_mode == 'L')
         if self.algorithm in {'ZERO', 'FRENET'}:
             self.orient_axis_ = 'Z'
+        #self.inputs[T_MIN_SOCKET].name = "Src {} Min".format(self.orient_axis)
+        #self.inputs[T_MAX_SOCKET].name = "Src {} Max".format(self.orient_axis)
 
     algorithm: EnumProperty(
         name="Algorithm", description="Rotation calculation algorithm",
@@ -48,15 +53,15 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
 
     orient_axis_: EnumProperty(
         name="Orientation axis", description="Which axis of object to put along path",
-        default="Z", items=axes, update=updateNode)
+        default="Z", items=axes, update=update_sockets)
 
     t_min : FloatProperty(
-        name = "T Min",
+        name = "Src T Min",
         default = -1.0,
         update = updateNode)
 
     t_max : FloatProperty(
-        name = "T Max",
+        name = "Src T Max",
         default = 1.0,
         update = updateNode)
 
@@ -97,9 +102,9 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
         update = update_sockets)
 
     def sv_init(self, context):
-        self.inputs.new('SvExCurveSocket', 'Curve')
-        self.inputs.new('SvStringsSocket', 'TMin').prop_name = 't_min'
-        self.inputs.new('SvStringsSocket', 'TMax').prop_name = 't_max'
+        self.inputs.new('SvExCurveSocket', 'Curve')                    #0
+        self.inputs.new('SvStringsSocket', 'TMin').prop_name = 't_min' #1
+        self.inputs.new('SvStringsSocket', 'TMax').prop_name = 't_max' #2
         self.inputs.new('SvStringsSocket', "Resolution").prop_name = 'resolution'
         self.outputs.new('SvExVectorFieldSocket', 'Field')
         self.update_sockets(context)
@@ -123,8 +128,8 @@ class SvExBendAlongCurveFieldNode(bpy.types.Node, SverchCustomTreeNode):
             return
 
         curves_s = self.inputs['Curve'].sv_get()
-        t_min_s = self.inputs['TMin'].sv_get()
-        t_max_s = self.inputs['TMax'].sv_get()
+        t_min_s = self.inputs[T_MIN_SOCKET].sv_get()
+        t_max_s = self.inputs[T_MAX_SOCKET].sv_get()
         resolution_s = self.inputs['Resolution'].sv_get()
 
         fields_out = []
