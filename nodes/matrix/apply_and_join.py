@@ -40,7 +40,6 @@ def mesh_join_np(verts, edges, pols, out_np_pols):
     accum_vert_lens = np.add.accumulate([len(v) for v in chain([[]], verts)])
 
     v_out = np.concatenate(verts)
-    e_out, p_out = np.array([]), np.array([])
 
     # just checking the first object to detect presence of edges and Polygons
     # this would fail if the first object does not have edges/pols and there
@@ -50,10 +49,11 @@ def mesh_join_np(verts, edges, pols, out_np_pols):
 
     if are_some_edges:
         e_out = np.concatenate([edg + l for edg, l in zip(edges, accum_vert_lens)])
+    else:
+        e_out = np.array([])
 
     if are_some_pols:
         if out_np_pols:
-
             is_array_of_lists = pols[0].dtype == object
             if is_array_of_lists:
                 p_out = [np.array(p) + l  for pol, l in zip(pols, accum_vert_lens) for p in pol]
@@ -62,6 +62,8 @@ def mesh_join_np(verts, edges, pols, out_np_pols):
                 p_out = np.concatenate([pol + l for pol, l in zip(pols, accum_vert_lens)])
         else:
             p_out = [[v + l for v in p]  for pol, l in zip(pols, accum_vert_lens) for p in pol]
+    else:
+        p_out = np.array([])
 
     return v_out, e_out, p_out
 
@@ -131,9 +133,7 @@ def apply_and_join_python(vertices, edges, faces, matrices, do_join):
 class SvMatrixApplyJoinNode(bpy.types.Node, SverchCustomTreeNode):
     """
     Triggers: Mat * Mesh (& Join)
-    Tooltip: Multiply vectors on matrices with several objects in output,
-    and process edges & faces too. It can also join the output meshes in to a
-    single one.
+    Tooltip: Multiply vectors on matrices with several objects in output, processes edges & faces too. It can also join the output meshes in to a single one
     """
 
     bl_idname = 'SvMatrixApplyJoinNode'
