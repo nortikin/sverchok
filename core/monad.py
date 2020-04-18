@@ -200,6 +200,7 @@ class SverchGroupTree(NodeTree, SvNodeTreeCommon):
         try:
             monad_prop_names = self.get_stored_prop_names()
             has_monad_prop_names = True
+            print(monad_prop_names)
         except:
             print('no prop names yet in : add_prop_from call')
             has_monad_prop_names = False
