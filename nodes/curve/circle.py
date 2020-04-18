@@ -53,7 +53,7 @@ class SvExCircleNode(bpy.types.Node, SverchCustomTreeNode):
         radius_s = ensure_nesting_level(radius_s, 2)
         t_min_s = ensure_nesting_level(t_min_s, 2)
         t_max_s = ensure_nesting_level(t_max_s, 2)
-        center_s = ensure_nesting_level(center_s, 2, data_types=[Matrix])
+        center_s = ensure_nesting_level(center_s, 2, data_types=(Matrix,))
 
         curves_out = []
         for centers, radiuses, t_mins, t_maxs in zip_long_repeat(center_s, radius_s, t_min_s, t_max_s):
