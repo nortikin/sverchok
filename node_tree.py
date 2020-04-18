@@ -149,6 +149,35 @@ def get_output_socket_id(socket):
     else:
         return socket.socket_id, socket.node.node_id
 
+def get_new_linked_nodes(new_sv_links, before_sv_links, before_output_sockets):
+    affected_nodes = []
+    for link in new_sv_links:
+        if not link in before_sv_links:
+            if not link.from_socket_id in before_output_sockets:
+                if not link.from_node_id in affected_nodes:
+                    affected_nodes.append(link.from_node_id)
+            if not link.to_node_id in affected_nodes:
+                affected_nodes.append(link.to_node_id)
+    return affected_nodes
+
+def append_unlinked_nodes(before_inputted_nodes, before_input_sockets, input_sockets, affected_nodes, nodes_dict):
+    for node_id, socket in zip(before_inputted_nodes, before_input_sockets):
+        if not socket in input_sockets:
+            #if the node has been deleted it is not affected
+            if node_id in nodes_dict:
+                affected_nodes.append(node_id)
+
+def split_new_links_data(new_sv_links):
+    inputted_nodes = []
+    input_sockets = []
+    output_sockets = []
+    for link in new_sv_links:
+        inputted_nodes.append(link.to_node_id)
+        input_sockets.append(link.to_socket_id)
+        output_sockets.append(link.from_socket_id)
+
+    return  inputted_nodes, input_sockets, output_sockets
+
 class SvNodeTreeCommon(object):
     '''
     Common methods shared between Sverchok node trees
@@ -218,6 +247,7 @@ class SvNodeTreeCommon(object):
             if ng.bl_idname in {'SverchCustomTreeType', 'SverchGroupTreeType'}:
                 res.append(ng)
         return res
+
     def bl_links_to_sv_links(self):
 
         sv_links=[]
@@ -241,96 +271,80 @@ class SvNodeTreeCommon(object):
         new_sv_links = self.bl_links_to_sv_links()
         self.sv_links[tree_id] = new_sv_links
 
-        inputted_nodes = []
-        input_sockets = []
-        output_sockets = []
-        for sv_link in new_sv_links:
-            inputted_nodes.append(sv_link.to_node_id)
-            input_sockets.append(sv_link.to_socket_id)
-            output_sockets.append(sv_link.from_socket_id)
-
+        inputted_nodes, input_sockets, output_sockets = split_new_links_data(new_sv_links)
         self.sv_linked_output_sockets[tree_id] = output_sockets
         self.sv_linked_input_sockets[tree_id] = input_sockets
         self.sv_linked_inputted_nodes[tree_id] = inputted_nodes
 
-    def use_link_memory(self):
-        if self.configuring_new_node:
-            # print('skipping global process during node init')
-            return
-        if self.is_frozen():
-            # print('not processing: because self/tree.is_frozen')
-            return
 
-        if not self.sv_process:
-            return
+    def get_affected_groups(self):
+        affected_groups = []
+        for node in self.nodes:
+            if 'SvGroupNode' in node.bl_idname:
+                subtree = node.monad
+                tree_id = subtree.tree_id
+                fill_memory_is_ready = tree_id in subtree.sv_links.keys()
+                if fill_memory_is_ready:
+                    has_been_updated = subtree.use_link_memory()
+                else:
+                    subtree.fill_links_memory()
+                    subtree.has_changed = True
+                    node.process()
+                    has_been_updated = True
+
+                if has_been_updated:
+                    affected_groups.append(node)
+        return affected_groups
+
+    def translate_node_id_to_node_name(self, affected_nodes):
+        tree_id = self.tree_id
+        return [self.sv_node_dict[tree_id][node_id] for node_id in affected_nodes if node_id in self.sv_node_dict[tree_id].keys()]
+
+
+
+    def use_link_memory(self):
+        if self.configuring_new_node or self.is_frozen() or not self.sv_process:
+            return False
 
         tree_id = self.tree_id
         new_sv_links = self.bl_links_to_sv_links()
-        links_has_changed = self.sv_links[tree_id] != new_sv_links
+        before_sv_links = self.sv_links[tree_id]
+        links_has_changed = before_sv_links != new_sv_links
 
-        # print('links_has_changed', links_has_changed)
-        # reset_error_nodes(self)
         if links_has_changed:
-            affected_nodes = []
-            new_links = self.links.items()
-            input_sockets = []
-            inputted_nodes = []
-            output_sockets = []
 
+            affected_nodes = []
+
+            new_inputted_nodes, new_input_sockets, new_output_sockets = split_new_links_data(new_sv_links)
             before_input_sockets = self.sv_linked_input_sockets[tree_id]
             before_inputted_nodes = self.sv_linked_inputted_nodes[tree_id]
             before_output_sockets = self.sv_linked_output_sockets[tree_id]
-            for sv_link in new_sv_links:
-                inputted_nodes.append(sv_link.to_node_id)
-                input_sockets.append(sv_link.to_socket_id)
-                output_sockets.append(sv_link.from_socket_id)
-                if not sv_link in self.sv_links[tree_id]:
-                    if not sv_link.from_socket_id in before_output_sockets:
-                        if not sv_link.from_node_id in affected_nodes:
-                            affected_nodes.append(sv_link.from_node_id)
-                    if not sv_link.to_node_id in affected_nodes:
-                        affected_nodes.append(sv_link.to_node_id)
 
+            affected_nodes = get_new_linked_nodes(new_sv_links, before_sv_links, before_output_sockets)
 
-            for node_id, socket in zip(before_inputted_nodes, before_input_sockets):
-                if not socket in input_sockets:
-                    #if the node has been deleted it is not affected
-                    if node_id in self.sv_node_dict[tree_id]:
-                        affected_nodes.append(node_id)
-
+            append_unlinked_nodes(
+                before_inputted_nodes,
+                before_input_sockets,
+                new_input_sockets,
+                affected_nodes,
+                self.sv_node_dict[tree_id])
 
             self.sv_links[tree_id] = new_sv_links
-            self.sv_linked_inputted_nodes[tree_id] = inputted_nodes
-            self.sv_linked_output_sockets[tree_id] = output_sockets
-            self.sv_linked_input_sockets[tree_id] = input_sockets
+            self.sv_linked_inputted_nodes[tree_id] = new_inputted_nodes
+            self.sv_linked_output_sockets[tree_id] = new_output_sockets
+            self.sv_linked_input_sockets[tree_id] = new_input_sockets
 
             build_update_list(self)
+
             if affected_nodes:
-                node_list = [self.sv_node_dict[tree_id][node_id] for node_id in affected_nodes]
-                # print("Affected Nodes:", [n.name for n in node_list])
+                node_list = self.translate_node_id_to_node_name(affected_nodes)
                 process_from_nodes(node_list)
                 return True
             else:
                 return False
         else:
-            affected_groups = []
-            for node in self.nodes:
-                if 'SvGroupNode' in node.bl_idname:
-                    subtree = node.monad
-                    tree_id = subtree.tree_id
-                    fill_memory_is_ready = tree_id in subtree.sv_links.keys()
-                    if fill_memory_is_ready:
-                        # print("monad memory_is_ready")
-                        has_been_updated = subtree.use_link_memory()
-                        if has_been_updated:
-                            affected_groups.append(node)
-                    else:
-                        # print("filling monad link_memory")
 
-                        subtree.fill_links_memory()
-                        subtree.has_changed = True
-                        node.process()
-
+            affected_groups = self.get_affected_groups()
             if affected_groups:
                 process_from_nodes(affected_groups)
                 return True
@@ -795,8 +809,7 @@ class SverchCustomTreeNode:
         self.create_sockets()
 
     def load_in_node_dict(self):
-        # print('loading in node_dict')
-        # self.n_id = str(hash(self) ^ hash(time.monotonic()))
+
         n_id = self.node_id
         tree = self.id_data
         tree_id = tree.tree_id
