@@ -1,0 +1,228 @@
+{
+  "export_version": "0.079",
+  "framed_nodes": {},
+  "groups": {},
+  "nodes": {
+    "Apply Vector Field": {
+      "bl_idname": "SvExVectorFieldApplyNode",
+      "custom_socket_props": {
+        "1": {
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        444.5661926269531,
+        87.91435241699219
+      ],
+      "params": {
+        "coefficient": 1.0,
+        "iterations": 1
+      },
+      "width": 140.0
+    },
+    "Attractor Field.001": {
+      "bl_idname": "SvExAttractorFieldNode",
+      "custom_socket_props": {
+        "0": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "use_prop": true
+        },
+        "1": {
+          "expanded": true,
+          "prop": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "use_prop": true
+        }
+      },
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -262.32928466796875,
+        211.523193359375
+      ],
+      "params": {
+        "amplitude": 0.5,
+        "attractor_type": "Line",
+        "coefficient": 2.0,
+        "falloff_type": "gauss"
+      },
+      "width": 140.0
+    },
+    "Box.001": {
+      "bl_idname": "SvBoxNodeMk2",
+      "color": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -38.772281646728516,
+        107.41472625732422
+      ],
+      "params": {
+        "Divx": 4,
+        "Divy": 4,
+        "Divz": 4,
+        "Size": 0.5
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    },
+    "Matrix Apply": {
+      "bl_idname": "SvMatrixApplyJoinNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        230.62704467773438,
+        43.78866195678711
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Noise Vector Field": {
+      "bl_idname": "SvExNoiseVectorFieldNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        5.63525390625,
+        247.97918701171875
+      ],
+      "params": {},
+      "width": 140.0
+    },
+    "Vector Field Math.001": {
+      "bl_idname": "SvExVectorFieldMathNode",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        209.77171325683594,
+        245.20779418945312
+      ],
+      "params": {
+        "operation": "MUL"
+      },
+      "width": 153.2376708984375
+    },
+    "Vector P Field": {
+      "bl_idname": "SvHomogenousVectorField",
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        -30.303882598876953,
+        -153.09471130371094
+      ],
+      "params": {
+        "sizex__": 2.5,
+        "sizey__": 2.5,
+        "sizez__": 2.5,
+        "xdim__": 5,
+        "ydim__": 5,
+        "zdim__": 5
+      },
+      "width": 140.0
+    },
+    "Viewer Draw Mk3": {
+      "bl_idname": "SvVDExperimental",
+      "color": [
+        1.0,
+        0.30000001192092896,
+        0.0
+      ],
+      "height": 100.0,
+      "hide": false,
+      "label": "",
+      "location": [
+        637.34716796875,
+        118.8923110961914
+      ],
+      "params": {
+        "activate": 1,
+        "display_edges": 0,
+        "display_verts": 0,
+        "selected_draw_mode": "facet"
+      },
+      "use_custom_color": true,
+      "width": 140.0
+    }
+  },
+  "update_lists": [
+    [
+      "Box.001",
+      0,
+      "Matrix Apply",
+      0
+    ],
+    [
+      "Box.001",
+      2,
+      "Matrix Apply",
+      2
+    ],
+    [
+      "Vector P Field",
+      0,
+      "Matrix Apply",
+      3
+    ],
+    [
+      "Noise Vector Field",
+      0,
+      "Vector Field Math.001",
+      0
+    ],
+    [
+      "Attractor Field.001",
+      1,
+      "Vector Field Math.001",
+      2
+    ],
+    [
+      "Vector Field Math.001",
+      0,
+      "Apply Vector Field",
+      0
+    ],
+    [
+      "Matrix Apply",
+      0,
+      "Apply Vector Field",
+      1
+    ],
+    [
+      "Apply Vector Field",
+      0,
+      "Viewer Draw Mk3",
+      0
+    ],
+    [
+      "Matrix Apply",
+      2,
+      "Viewer Draw Mk3",
+      2
+    ]
+  ]
+}
